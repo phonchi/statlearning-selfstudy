@@ -1,0 +1,156 @@
+/* ============================================================
+   統計學習自學站附加樣式
+   base.css 是從資料結構自學站沿用的共用設計系統，維持不動；
+   這個區塊是統計學習需要的新元件與兩處修正，append-only。
+   ============================================================ */
+
+/* 統計視覺化用的色票（base.css 的 --node-* / --edge-* 保留不動） */
+:root {
+  --pt-train:#2c3e7a;      /* 訓練樣本 */
+  --pt-test:#c0392b;       /* 測試樣本 */
+  --pt-held:#f39c12;       /* 被留作驗證的樣本 */
+  --pt-a:#2c3e7a;          /* 類別 A */
+  --pt-b:#c0392b;          /* 類別 B */
+  --pt-c:#1a6b4a;          /* 類別 C */
+  --fit-line:#c0392b;      /* 配適線／決策邊界 */
+  --fit-true:#1a6b4a;      /* 真實函數／Bayes 邊界 */
+  --resid:#8e44ad;         /* 殘差線段 */
+  --band:rgba(44,62,122,.13);   /* 信賴帶 */
+  --regionA:rgba(44,62,122,.13);
+  --regionB:rgba(192,57,43,.13);
+  --regionC:rgba(26,107,74,.13);
+  --grid-line:#e8e2d6;
+}
+
+/* ---- 修正 base.css：裸 .btn 沒有 background，會變成瀏覽器預設灰 ---- */
+.btn{background:var(--accent2);color:#fff;}
+.btn:hover{filter:brightness(1.12);}
+.btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
+
+/* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
+.qa-box{margin:1.4rem 0;}
+.qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;color:var(--accent);margin-bottom:.6rem;}
+.qa-item{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--accent2);
+  border-radius:8px;margin-bottom:.6rem;overflow:hidden;}
+.qa-item>summary{cursor:pointer;padding:.75rem 1rem;font-weight:500;color:var(--accent2);
+  list-style:none;display:flex;gap:.5rem;align-items:baseline;transition:background .15s;}
+.qa-item>summary::-webkit-details-marker{display:none;}
+.qa-item>summary::before{content:'▸';color:var(--accent);flex:none;transition:transform .15s;}
+.qa-item[open]>summary::before{transform:rotate(90deg);}
+.qa-item>summary:hover{background:var(--highlight);}
+.qa-item[open]>summary{border-bottom:1px solid var(--card-border);}
+.qa-a{padding:.9rem 1rem 1rem 1.9rem;font-size:.95rem;}
+.qa-a p{margin-bottom:.7rem;}
+.qa-a p:last-child{margin-bottom:0;}
+.qa-a ul,.qa-a ol{margin:.4rem 0 .7rem 1.2rem;}
+.qa-a li{margin-bottom:.3rem;}
+
+/* ---- 出處標記：可機器檢查的 grounding ---- */
+.dx-src{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--muted);margin-top:.5rem;letter-spacing:.02em;}
+.dx-src a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+
+/* ---- Chart.js 畫布容器 + 離線退路 ---- */
+.chart-wrap{position:relative;width:100%;height:300px;background:#fafafa;border-radius:8px;
+  border:1px solid #ececec;padding:.4rem;}
+.chart-wrap.tall{height:380px;}
+.chart-wrap.square{height:330px;max-width:360px;margin:0 auto;}
+.chart-wrap canvas{display:block;width:100%!important;height:100%!important;}
+.chart-fallback{position:absolute;inset:.4rem;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1.2rem;font-size:.86rem;line-height:1.7;color:var(--muted);
+  background:var(--card);border-radius:6px;}
+.chart-wrap.ready .chart-fallback{display:none;}
+.chart-fallback b{display:block;color:var(--accent2);margin-bottom:.4rem;font-size:.9rem;}
+
+/* ---- 混淆矩陣（是表格，不是圖表） ---- */
+.cm-table{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.82rem;margin:.6rem 0;}
+.cm-table th,.cm-table td{border:1px solid var(--card-border);padding:.45rem .7rem;text-align:center;}
+.cm-table thead th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);}
+.cm-table tbody th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);
+  text-align:right;font-weight:600;}
+.cm-table .cm-tp{background:rgba(26,107,74,.14);font-weight:700;}
+.cm-table .cm-tn{background:rgba(26,107,74,.08);font-weight:700;}
+.cm-table .cm-fp{background:rgba(192,57,43,.12);}
+.cm-table .cm-fn{background:rgba(192,57,43,.18);font-weight:700;}
+.cm-note{font-size:.8rem;color:var(--muted);}
+
+/* ---- ESL 進階：可略過的標記 ---- */
+.eslx{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+  letter-spacing:.1em;color:#fff;background:#8e44ad;padding:.1rem .45rem;border-radius:3px;
+  margin-left:.5rem;vertical-align:.1em;}
+.skip-note{font-size:.82rem;color:var(--muted);margin:-.4rem 0 1rem;}
+
+/* ---- 環境版本註記 ---- */
+.ver-note{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;color:var(--muted);
+  background:var(--paper);border:1px dashed var(--card-border);border-radius:6px;
+  padding:.6rem .9rem;margin-top:1.2rem;}
+
+/* ---- 解答連結 pill 排 ---- */
+.sol-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+.sol-links a{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:600;
+  color:var(--accent2);background:var(--card);border:1px solid var(--card-border);
+  border-radius:999px;padding:.35rem .8rem;text-decoration:none;transition:all .15s;}
+.sol-links a:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* ---- 資料點圖例（SVG 元件共用） ---- */
+.viz-legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.5rem;font-size:.78rem;color:var(--muted);}
+.viz-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.viz-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;}
+.viz-legend i.sq{border-radius:2px;}
+.viz-legend i.ln{width:18px;height:0;border-top:3px solid;border-radius:0;}
+
+/* ---- SVG 元件共用樣式 ---- */
+.viz-svg{width:100%;display:block;background:#fafafa;border-radius:8px;border:1px solid #ececec;}
+.viz-svg .ax{stroke:var(--muted);stroke-width:1;}
+.viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
+.viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .dot{stroke:#fff;stroke-width:1;}
+.viz-svg .dot.drag{cursor:grab;}
+.viz-svg .dot.drag:active{cursor:grabbing;}
+.viz-svg .fit{stroke:var(--fit-line);stroke-width:2.5;fill:none;}
+.viz-svg .truef{stroke:var(--fit-true);stroke-width:2;fill:none;stroke-dasharray:6 4;}
+.viz-svg .resid{stroke:var(--resid);stroke-width:1.2;stroke-dasharray:2 2;}
+.viz-svg .band{fill:var(--band);stroke:none;}
+.viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
+.viz-svg text{user-select:none;}
+
+/* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
+.strip .cell{width:20px;height:20px;border-radius:3px;background:var(--card);
+  border:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;}
+.strip .cell.train{background:var(--pt-train);border-color:var(--pt-train);color:#fff;}
+.strip .cell.held{background:var(--pt-held);border-color:#d68910;color:#fff;font-weight:700;}
+.strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
+
+/* ---- 手機版 ---- */
+@media(max-width:700px){
+  .chart-wrap{height:250px;}
+  .chart-wrap.tall{height:300px;}
+  .qa-a{padding-left:1rem;}
+}
+
+/* ---- 尊重使用者的減少動態偏好 ---- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;}
+}
+
+/* ---- 列印：隱藏浮動導覽與控制列，深色區塊轉淺 ---- */
+@media print{
+  .float-nav,.controls-bar,.hero-grid,.hero-graph,.scroll-hint,.fc-controls{display:none!important;}
+  .hero{min-height:auto;background:#fff!important;color:var(--ink)!important;padding:1.5rem 0;}
+  .hero h1,.hero .subtitle{color:var(--ink)!important;}
+  .hero .big-formula{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--card-border)!important;}
+  .pseudo-code,.status-banner{background:var(--paper)!important;color:var(--ink)!important;}
+  .pseudo-code .kw,.pseudo-code .fn,.pseudo-code .str,.pseudo-code .num,.pseudo-code .com{color:var(--ink)!important;}
+  .qa-item{break-inside:avoid;}
+  .qa-item>summary::before{content:'';}
+  .qa-a{display:block!important;}
+  section{break-after:auto;border-bottom:none;}
+  a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
+}

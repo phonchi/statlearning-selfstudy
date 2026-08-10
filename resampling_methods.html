@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<!-- GEN:BEGIN head -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="重抽樣方法 — Resampling Methods 互動自學頁。ISLP 第 5 章 — 對應講義 05。NSYSU MATH524 統計學習與資料探勘。">
+<title>重抽樣方法 — Resampling Methods Interactive（Python）</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+        integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+  --node-white:#ffffff;--node-gray:#bdc3c7;--node-black:#34495e;
+  --node-current:#f39c12;--node-found:#16a085;--node-start:#9b59b6;
+  --edge-default:#95a5a6;--edge-tree:#27ae60;--edge-explore:#f39c12;--edge-mst:#1a6b4a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.9;font-size:17px;}
+
+/* Hero */
+.hero{min-height:62vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:860px;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:.04em;line-height:1.3;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero h1 .purple{color:#bb8fce;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.2rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.05rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Hero mini-graph illustration */
+.hero-graph{position:absolute;right:5%;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;}
+@media(max-width:900px){.hero-graph{display:none;}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+strong{color:var(--ink);}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:34px;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+
+/* Graph SVG canvas */
+.graph-canvas{position:relative;width:100%;height:380px;background:#fafafa;border-radius:8px;overflow:hidden;border:1px solid #ececec;}
+.graph-canvas svg{width:100%;height:100%;display:block;}
+
+/* SVG elements styles */
+.graph-edge{stroke:var(--edge-default);stroke-width:2;fill:none;transition:stroke .25s, stroke-width .25s;}
+.graph-edge.tree{stroke:var(--edge-tree);stroke-width:3.5;}
+.graph-edge.exploring{stroke:var(--edge-explore);stroke-width:3.5;stroke-dasharray:5 4;animation:dash 1s linear infinite;}
+.graph-edge.mst{stroke:var(--edge-mst);stroke-width:4;}
+.graph-edge.path{stroke:var(--accent);stroke-width:4;}
+.graph-edge.dotted{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 4;}
+@keyframes dash{to{stroke-dashoffset:-18;}}
+
+.edge-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;fill:var(--ink);pointer-events:none;}
+.edge-label-bg{fill:#fafafa;stroke:#ececec;stroke-width:1;}
+
+.graph-node{cursor:pointer;}
+.graph-node circle{fill:var(--node-white);stroke:var(--ink);stroke-width:2;transition:fill .25s, stroke .25s, r .2s;}
+.graph-node.gray circle{fill:var(--node-gray);}
+.graph-node.black circle{fill:var(--node-black);stroke:var(--node-black);}
+.graph-node.current circle{fill:var(--node-current);stroke:#d68910;stroke-width:3;}
+.graph-node.start circle{fill:var(--node-start);stroke:#7d3c98;stroke-width:3;}
+.graph-node.found circle{fill:var(--node-found);stroke:#117a65;stroke-width:3;}
+.graph-node.in-mst circle{fill:#82e0aa;stroke:var(--accent3);stroke-width:3;}
+.graph-node text.node-key{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.graph-node.black text.node-key{fill:#fff;}
+.graph-node.current text.node-key{fill:#fff;}
+.graph-node.start text.node-key{fill:#fff;}
+.graph-node.found text.node-key{fill:#fff;}
+.graph-node text.node-meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent);text-anchor:middle;pointer-events:none;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.btn-toggle{background:var(--accent2);color:#fff;}
+.btn-toggle:hover{background:#1f2e5f;}
+.btn-toggle.off{background:#bbb;color:#555;}
+.btn-shuffle{background:#8e44ad;color:#fff;}
+.btn-shuffle:hover{background:#6c3485;}
+
+/* Slider row */
+.slider-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;background:var(--paper);border-radius:8px;margin-bottom:.5rem;}
+.slider-row .slider-label{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent2);font-weight:600;min-width:60px;}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent3);height:5px;cursor:pointer;}
+.slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;min-width:60px;text-align:right;}
+
+/* Side panel */
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+.info-card .ic-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.83rem;padding:.2rem 0;}
+.info-card .ic-label{color:var(--muted);}
+.info-card .ic-value{color:var(--ink);font-weight:600;}
+.info-card .ic-value.highlight{color:var(--accent);}
+.info-card .ic-value.big{font-size:1.4rem;color:var(--accent2);}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;}
+.stat-tile{background:var(--paper);border-radius:8px;padding:.5rem .7rem;text-align:center;}
+.stat-tile .stat-label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+.stat-tile .stat-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--accent2);}
+
+/* Queue / Stack / PQ visualization */
+.ds-display{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--paper);border-radius:6px;padding:.5rem .7rem;min-height:36px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;border:1px dashed var(--card-border);}
+.ds-display .ds-empty{color:var(--muted);font-style:italic;}
+.ds-item{background:var(--accent2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:600;}
+.ds-item.front{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.top{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.pq{background:var(--accent3);}
+.ds-item.pq.min{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-arrow{color:var(--muted);}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid var(--node-current);padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+.pseudo-code .str{color:#f1fa8c;}
+
+/* Adjacency table */
+.adj-display{margin:.5rem 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.adj-matrix{border-collapse:collapse;margin:.5rem auto;}
+.adj-matrix td,.adj-matrix th{border:1px solid var(--card-border);padding:6px 10px;text-align:center;min-width:34px;background:#fff;}
+.adj-matrix th{background:var(--accent2);color:#fff;font-weight:700;}
+.adj-matrix td.zero{color:#ccc;}
+.adj-matrix td.nonzero{background:#eafaf1;color:var(--accent3);font-weight:700;}
+.adj-matrix td.highlight{background:#fff3cd;}
+.adj-list{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:.7rem 1rem;}
+.adj-list .adj-row{padding:3px 0;border-bottom:1px dashed var(--card-border);}
+.adj-list .adj-row:last-child{border-bottom:none;}
+.adj-list .adj-key{color:var(--accent);font-weight:700;display:inline-block;min-width:32px;}
+.adj-list .adj-arrow{color:var(--muted);margin:0 6px;}
+.adj-list .adj-neighbor{background:#eef2ff;color:var(--accent2);padding:1px 8px;border-radius:4px;margin:1px 3px;display:inline-block;font-weight:600;}
+
+/* Chess board for Knight's tour */
+.chess-board{display:grid;background:#fff;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin:.5rem auto;width:fit-content;}
+.chess-cell{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;position:relative;transition:background .2s;}
+.chess-cell.light{background:#f0d9b5;color:#666;}
+.chess-cell.dark{background:#b58863;color:#fff;}
+.chess-cell.visited{background:#27ae60 !important;color:#fff;}
+.chess-cell.current{background:#f39c12 !important;color:#fff;box-shadow:inset 0 0 0 3px #d68910;}
+.chess-cell.start{background:#9b59b6 !important;color:#fff;}
+.chess-cell .knight{font-size:1.4em;line-height:1;}
+.chess-cell .step-num{font-size:.7em;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box.purple{background:#f4ecf7;border-color:#8e44ad;}
+.info-box.purple .info-label{background:#8e44ad;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+.pill-gray{background:rgba(0,0,0,.06);color:var(--muted);border:1px solid rgba(0,0,0,.12);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+.legend-item{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .5rem;background:var(--paper);border-radius:5px;}
+.legend-item .lg-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);}
+.legend-item .lg-edge{width:18px;height:3px;border-radius:2px;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0;}
+.quiz-opt{display:flex;align-items:center;gap:.6rem;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;font-size:.86rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-letter{font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.wrong{background:#fef5e7;border-color:var(--accent);}
+.quiz-opt.wrong .opt-letter{color:var(--accent);}
+.quiz-feedback{margin-top:.7rem;padding:.7rem 1rem;border-radius:8px;font-size:.88rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#eafaf1;color:var(--accent3);border-left:4px solid var(--accent3);}
+.quiz-feedback.wrong{background:#fef5e7;color:var(--accent);border-left:4px solid var(--accent);}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:30px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+
+/* Distance / table inside graph viz */
+.vert-table{margin-top:.6rem;width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.vert-table th,.vert-table td{padding:4px 6px;text-align:center;border:1px solid var(--card-border);}
+.vert-table th{background:var(--accent2);color:#fff;font-weight:600;font-size:.74rem;}
+.vert-table td.tcell-current{background:#fff3cd;font-weight:700;color:var(--accent);}
+.vert-table td.tcell-done{background:#eafaf1;color:var(--accent3);}
+.vert-table td.tcell-inf{color:#ccc;}
+.sec-badge{font-size:.6em;color:var(--muted);border:1px solid var(--card-border);background:var(--card);padding:2px 10px;border-radius:999px;vertical-align:middle;margin-left:.6rem;font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.02em;white-space:nowrap;}
+
+/* Phase 8 shared widgets */
+.bs-stack{display:flex;flex-direction:column-reverse;align-items:center;gap:4px;min-height:180px;justify-content:flex-start;padding:.6rem;}
+.bs-item{width:110px;text-align:center;padding:.4rem .6rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.bs-hl{background:#f39c12;}
+.bs-toplabel,.bq-label{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.bq-row{display:flex;align-items:center;gap:6px;min-height:64px;flex-wrap:wrap;padding:.4rem;}
+.bq-item{min-width:52px;text-align:center;padding:.45rem .5rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.char-strip{display:flex;gap:3px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;padding:.4rem 0;}
+.char-cell{min-width:30px;text-align:center;padding:.35rem .25rem;border:1px solid var(--card-border);border-radius:5px;background:var(--card);}
+.char-cur{background:#f39c12;color:#fff;border-color:#f39c12;}
+.char-done{background:#e8f5ec;color:#1a6b4a;border-color:#bfe3cd;}
+.char-bad{background:#c0392b;color:#fff;border-color:#c0392b;}
+.token-out{display:flex;gap:4px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;min-height:40px;padding:.3rem 0;}
+.tok{padding:.3rem .55rem;border-radius:5px;background:#2c3e7a;color:#fff;font-weight:600;}
+.tok-op{background:#8e44ad;}
+.tok-new{outline:3px solid #f39c12;}
+.mono{font-family:'JetBrains Mono',monospace;}
+/* ===== 網站化附加樣式（study-guide / flashcards / chapter-nav）===== */
+.study-guide{background:var(--card);border:1px solid var(--card-border);border-left:5px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:0 0 2.2rem;}
+.study-guide .sg-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:1.5px;color:var(--accent3);margin-bottom:.5rem;}
+.study-guide p{font-size:.92rem;margin-bottom:.5rem;}
+.study-guide .sg-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+.study-guide .sg-links a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:var(--accent2);border:1px solid var(--card-border);border-radius:999px;padding:.3rem .85rem;text-decoration:none;transition:all .2s;}
+.study-guide .sg-links a:hover{background:var(--accent2);color:#fff;}
+.fc-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.fc-controls button{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:1px solid var(--card-border);cursor:pointer;background:var(--card);color:var(--ink);transition:all .2s;}
+.fc-controls button:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.fc-card{perspective:900px;height:170px;cursor:pointer;}
+.fc-card .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-card .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.fc-card .fc-front{background:linear-gradient(150deg,var(--accent2),var(--ink));color:#fff;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.fc-card .fc-front .fc-hint{font-size:.62rem;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.fc-card .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:2.5rem 0 1rem;}
+.chapter-nav a{display:block;border:1px solid var(--card-border);border-radius:12px;padding:.8rem 1.1rem;text-decoration:none;color:var(--ink);background:var(--card);transition:all .2s;}
+.chapter-nav a:hover{border-color:var(--accent2);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:.2rem;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.95rem;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+.chapter-nav a.home{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+@media(max-width:700px){.chapter-nav{grid-template-columns:1fr;}}
+/* ===== 講義範例卡 ===== */
+.deck-extra{margin:1.2rem 0;}
+.deck-extra .dx-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--accent3);margin-bottom:.4rem;}
+.deck-extra .dx-note{font-size:.9rem;margin-top:.6rem;}
+.expected-out{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);border-radius:0 8px 8px 0;padding:.5rem .9rem;margin-top:.5rem;}
+.expected-out .eo-tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--accent3);display:block;margin-bottom:.2rem;}
+.expected-out pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.55;white-space:pre-wrap;margin:0;}
+.warn-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem;}
+.warn-box b{color:var(--accent);}
+
+/* ============================================================
+   統計學習自學站附加樣式
+   base.css 是從資料結構自學站沿用的共用設計系統，維持不動；
+   這個區塊是統計學習需要的新元件與兩處修正，append-only。
+   ============================================================ */
+
+/* 統計視覺化用的色票（base.css 的 --node-* / --edge-* 保留不動） */
+:root {
+  --pt-train:#2c3e7a;      /* 訓練樣本 */
+  --pt-test:#c0392b;       /* 測試樣本 */
+  --pt-held:#f39c12;       /* 被留作驗證的樣本 */
+  --pt-a:#2c3e7a;          /* 類別 A */
+  --pt-b:#c0392b;          /* 類別 B */
+  --pt-c:#1a6b4a;          /* 類別 C */
+  --fit-line:#c0392b;      /* 配適線／決策邊界 */
+  --fit-true:#1a6b4a;      /* 真實函數／Bayes 邊界 */
+  --resid:#8e44ad;         /* 殘差線段 */
+  --band:rgba(44,62,122,.13);   /* 信賴帶 */
+  --regionA:rgba(44,62,122,.13);
+  --regionB:rgba(192,57,43,.13);
+  --regionC:rgba(26,107,74,.13);
+  --grid-line:#e8e2d6;
+}
+
+/* ---- 修正 base.css：裸 .btn 沒有 background，會變成瀏覽器預設灰 ---- */
+.btn{background:var(--accent2);color:#fff;}
+.btn:hover{filter:brightness(1.12);}
+.btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
+
+/* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
+.qa-box{margin:1.4rem 0;}
+.qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;color:var(--accent);margin-bottom:.6rem;}
+.qa-item{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--accent2);
+  border-radius:8px;margin-bottom:.6rem;overflow:hidden;}
+.qa-item>summary{cursor:pointer;padding:.75rem 1rem;font-weight:500;color:var(--accent2);
+  list-style:none;display:flex;gap:.5rem;align-items:baseline;transition:background .15s;}
+.qa-item>summary::-webkit-details-marker{display:none;}
+.qa-item>summary::before{content:'▸';color:var(--accent);flex:none;transition:transform .15s;}
+.qa-item[open]>summary::before{transform:rotate(90deg);}
+.qa-item>summary:hover{background:var(--highlight);}
+.qa-item[open]>summary{border-bottom:1px solid var(--card-border);}
+.qa-a{padding:.9rem 1rem 1rem 1.9rem;font-size:.95rem;}
+.qa-a p{margin-bottom:.7rem;}
+.qa-a p:last-child{margin-bottom:0;}
+.qa-a ul,.qa-a ol{margin:.4rem 0 .7rem 1.2rem;}
+.qa-a li{margin-bottom:.3rem;}
+
+/* ---- 出處標記：可機器檢查的 grounding ---- */
+.dx-src{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--muted);margin-top:.5rem;letter-spacing:.02em;}
+.dx-src a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+
+/* ---- Chart.js 畫布容器 + 離線退路 ---- */
+.chart-wrap{position:relative;width:100%;height:300px;background:#fafafa;border-radius:8px;
+  border:1px solid #ececec;padding:.4rem;}
+.chart-wrap.tall{height:380px;}
+.chart-wrap.square{height:330px;max-width:360px;margin:0 auto;}
+.chart-wrap canvas{display:block;width:100%!important;height:100%!important;}
+.chart-fallback{position:absolute;inset:.4rem;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1.2rem;font-size:.86rem;line-height:1.7;color:var(--muted);
+  background:var(--card);border-radius:6px;}
+.chart-wrap.ready .chart-fallback{display:none;}
+.chart-fallback b{display:block;color:var(--accent2);margin-bottom:.4rem;font-size:.9rem;}
+
+/* ---- 混淆矩陣（是表格，不是圖表） ---- */
+.cm-table{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.82rem;margin:.6rem 0;}
+.cm-table th,.cm-table td{border:1px solid var(--card-border);padding:.45rem .7rem;text-align:center;}
+.cm-table thead th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);}
+.cm-table tbody th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);
+  text-align:right;font-weight:600;}
+.cm-table .cm-tp{background:rgba(26,107,74,.14);font-weight:700;}
+.cm-table .cm-tn{background:rgba(26,107,74,.08);font-weight:700;}
+.cm-table .cm-fp{background:rgba(192,57,43,.12);}
+.cm-table .cm-fn{background:rgba(192,57,43,.18);font-weight:700;}
+.cm-note{font-size:.8rem;color:var(--muted);}
+
+/* ---- ESL 進階：可略過的標記 ---- */
+.eslx{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+  letter-spacing:.1em;color:#fff;background:#8e44ad;padding:.1rem .45rem;border-radius:3px;
+  margin-left:.5rem;vertical-align:.1em;}
+.skip-note{font-size:.82rem;color:var(--muted);margin:-.4rem 0 1rem;}
+
+/* ---- 環境版本註記 ---- */
+.ver-note{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;color:var(--muted);
+  background:var(--paper);border:1px dashed var(--card-border);border-radius:6px;
+  padding:.6rem .9rem;margin-top:1.2rem;}
+
+/* ---- 解答連結 pill 排 ---- */
+.sol-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+.sol-links a{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:600;
+  color:var(--accent2);background:var(--card);border:1px solid var(--card-border);
+  border-radius:999px;padding:.35rem .8rem;text-decoration:none;transition:all .15s;}
+.sol-links a:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* ---- 資料點圖例（SVG 元件共用） ---- */
+.viz-legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.5rem;font-size:.78rem;color:var(--muted);}
+.viz-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.viz-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;}
+.viz-legend i.sq{border-radius:2px;}
+.viz-legend i.ln{width:18px;height:0;border-top:3px solid;border-radius:0;}
+
+/* ---- SVG 元件共用樣式 ---- */
+.viz-svg{width:100%;display:block;background:#fafafa;border-radius:8px;border:1px solid #ececec;}
+.viz-svg .ax{stroke:var(--muted);stroke-width:1;}
+.viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
+.viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .dot{stroke:#fff;stroke-width:1;}
+.viz-svg .dot.drag{cursor:grab;}
+.viz-svg .dot.drag:active{cursor:grabbing;}
+.viz-svg .fit{stroke:var(--fit-line);stroke-width:2.5;fill:none;}
+.viz-svg .truef{stroke:var(--fit-true);stroke-width:2;fill:none;stroke-dasharray:6 4;}
+.viz-svg .resid{stroke:var(--resid);stroke-width:1.2;stroke-dasharray:2 2;}
+.viz-svg .band{fill:var(--band);stroke:none;}
+.viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
+.viz-svg text{user-select:none;}
+
+/* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
+.strip .cell{width:20px;height:20px;border-radius:3px;background:var(--card);
+  border:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;}
+.strip .cell.train{background:var(--pt-train);border-color:var(--pt-train);color:#fff;}
+.strip .cell.held{background:var(--pt-held);border-color:#d68910;color:#fff;font-weight:700;}
+.strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
+
+/* ---- 手機版 ---- */
+@media(max-width:700px){
+  .chart-wrap{height:250px;}
+  .chart-wrap.tall{height:300px;}
+  .qa-a{padding-left:1rem;}
+}
+
+/* ---- 尊重使用者的減少動態偏好 ---- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;}
+}
+
+/* ---- 列印：隱藏浮動導覽與控制列，深色區塊轉淺 ---- */
+@media print{
+  .float-nav,.controls-bar,.hero-grid,.hero-graph,.scroll-hint,.fc-controls{display:none!important;}
+  .hero{min-height:auto;background:#fff!important;color:var(--ink)!important;padding:1.5rem 0;}
+  .hero h1,.hero .subtitle{color:var(--ink)!important;}
+  .hero .big-formula{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--card-border)!important;}
+  .pseudo-code,.status-banner{background:var(--paper)!important;color:var(--ink)!important;}
+  .pseudo-code .kw,.pseudo-code .fn,.pseudo-code .str,.pseudo-code .num,.pseudo-code .com{color:var(--ink)!important;}
+  .qa-item{break-inside:avoid;}
+  .qa-item>summary::before{content:'';}
+  .qa-a{display:block!important;}
+  section{break-after:auto;border-bottom:none;}
+  a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
+}
+</style>
+</head>
+<!-- GEN:END head -->
+<body>
+<!-- GEN:BEGIN floatnav -->
+<nav class="float-nav" id="floatNav" aria-label="章節導覽">
+  <div class="fn-title">章節導覽</div>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">訓練誤差會騙人</span></a>
+  <a href="#validation" data-target="validation"><span class="fn-num">P01</span><span class="fn-name">驗證集法</span></a>
+  <a href="#loocv" data-target="loocv"><span class="fn-num">P02</span><span class="fn-name">LOOCV</span></a>
+  <a href="#kfold" data-target="kfold"><span class="fn-num">P03</span><span class="fn-name">k-fold CV</span></a>
+  <a href="#kbias" data-target="kbias"><span class="fn-num">P04</span><span class="fn-name">k 該取多少</span></a>
+  <a href="#cvclass" data-target="cvclass"><span class="fn-num">P05</span><span class="fn-name">分類問題上的 CV</span></a>
+  <a href="#cvwrong" data-target="cvwrong"><span class="fn-num">P06</span><span class="fn-name">CV 的對與錯</span></a>
+  <a href="#bootstrap" data-target="bootstrap"><span class="fn-num">P07</span><span class="fn-name">Bootstrap</span></a>
+  <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
+  <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
+</nav>
+<!-- GEN:END floatnav -->
+<!-- GEN:BEGIN hero -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+<g><rect x="40" y="50" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="88" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="88" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="136" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="126" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="184" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="164" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="232" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="202" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/></g>
+  </svg>
+  <div class="hero-content">
+    <h1><span class="green">重抽樣</span>：用手上的資料造出更多資料</h1>
+    <div class="subtitle">ISLP 第 5 章 — 對應講義 05</div>
+    <div class="big-formula">驗證集｜LOOCV｜k-fold CV｜偏差–變異取捨｜Bootstrap｜1−(1−1/n)ⁿ → 0.632</div>
+    <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
+  </div>
+</div>
+<!-- GEN:END hero -->
+<div class="container">
+<!-- GEN:BEGIN studyguide -->
+<div class="study-guide">
+  <div class="sg-title">📌 本頁使用方式（ISLP Ch.5｜講義 05）</div>
+  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
+  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/05_Resampling_Methods.pdf" target="_blank" rel="noopener">📑 講義 05 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch05 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 ESL 原書</a><a href="index.html">🏠 章節總覽</a></div>
+</div>
+<!-- GEN:END studyguide -->
+<!-- GEN:BEGIN toc -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · 內容目錄</div>
+  <div class="toc-grid">
+    <a href="#prologue"><span class="toc-num">P00</span>訓練誤差會騙人</a>
+    <a href="#validation"><span class="toc-num">P01</span>驗證集法</a>
+    <a href="#loocv"><span class="toc-num">P02</span>LOOCV</a>
+    <a href="#kfold"><span class="toc-num">P03</span>k-fold CV</a>
+    <a href="#kbias"><span class="toc-num">P04</span>k 該取多少</a>
+    <a href="#cvclass"><span class="toc-num">P05</span>分類問題上的 CV</a>
+    <a href="#cvwrong"><span class="toc-num">P06</span>CV 的對與錯</a>
+    <a href="#bootstrap"><span class="toc-num">P07</span>Bootstrap</a>
+    <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
+    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
+  </div>
+</div>
+<!-- GEN:END toc -->
+<section id="prologue">
+<!-- GEN:BEGIN sec:prologue -->
+  <div class="section-number">PROLOGUE · 開場</div>
+  <h2>為什麼要重抽樣：訓練誤差不是測試誤差 <span class="sec-badge">ISLP §5 開頭</span><span class="sec-badge">講義 05 · p.2–6</span></h2>
+<!-- GEN:END sec:prologue -->
+  <p class="skip-note">TODO 待撰寫：訓練誤差會騙人（ISLP §5 開頭|講義 05 · p.2–6）</p>
+</section>
+<section id="validation">
+<!-- GEN:BEGIN sec:validation -->
+  <div class="section-number">PART 01 · 驗證集法</div>
+  <h2>隨手一切兩半：簡單，但答案會跳 <span class="sec-badge">ISLP §5.1.1</span><span class="sec-badge">講義 05 · p.7–9</span></h2>
+<!-- GEN:END sec:validation -->
+  <p class="skip-note">TODO 待撰寫：驗證集法（ISLP §5.1.1|講義 05 · p.7–9）</p>
+</section>
+<section id="loocv">
+<!-- GEN:BEGIN sec:loocv -->
+  <div class="section-number">PART 02 · LOOCV</div>
+  <h2>一次只留一個：沒有隨機性，而且有捷徑 <span class="sec-badge">ISLP §5.1.2</span><span class="sec-badge">講義 05 · p.10–12</span></h2>
+<!-- GEN:END sec:loocv -->
+  <p class="skip-note">TODO 待撰寫：LOOCV（ISLP §5.1.2|講義 05 · p.10–12）</p>
+</section>
+<section id="kfold">
+<!-- GEN:BEGIN sec:kfold -->
+  <div class="section-number">PART 03 · k-fold CV</div>
+  <h2>折成 k 份輪流當驗證集 <span class="sec-badge">ISLP §5.1.3</span><span class="sec-badge">講義 05 · p.13–15</span></h2>
+<!-- GEN:END sec:kfold -->
+  <p class="skip-note">TODO 待撰寫：k-fold CV（ISLP §5.1.3|講義 05 · p.13–15）</p>
+</section>
+<section id="kbias">
+<!-- GEN:BEGIN sec:kbias -->
+  <div class="section-number">PART 04 · k 該取多少</div>
+  <h2>k 的偏差–變異取捨：為什麼實務上取 5 或 10 <span class="sec-badge">ISLP §5.1.4</span><span class="sec-badge">講義 05 · p.16</span></h2>
+<!-- GEN:END sec:kbias -->
+  <p class="skip-note">TODO 待撰寫：k 該取多少（ISLP §5.1.4|講義 05 · p.16）</p>
+</section>
+<section id="cvclass">
+<!-- GEN:BEGIN sec:cvclass -->
+  <div class="section-number">PART 05 · 分類問題上的 CV</div>
+  <h2>把 MSE 換成錯誤率，其餘一樣 <span class="sec-badge">ISLP §5.1.5</span><span class="sec-badge">講義 05 · p.17–18</span></h2>
+<!-- GEN:END sec:cvclass -->
+  <p class="skip-note">TODO 待撰寫：分類問題上的 CV（ISLP §5.1.5|講義 05 · p.17–18）</p>
+</section>
+<section id="cvwrong">
+<!-- GEN:BEGIN sec:cvwrong -->
+  <div class="section-number">PART 06 · CV 的對與錯</div>
+  <h2>先用全資料選特徵再 CV：一個很常見的致命錯誤 <span class="sec-badge">ISLP §5.1.4</span><span class="sec-badge">講義 05 · p.19–21</span></h2>
+<!-- GEN:END sec:cvwrong -->
+  <p class="skip-note">TODO 待撰寫：CV 的對與錯（ISLP §5.1.4|講義 05 · p.19–21）</p>
+</section>
+<section id="bootstrap">
+<!-- GEN:BEGIN sec:bootstrap -->
+  <div class="section-number">PART 07 · Bootstrap</div>
+  <h2>有放回地重抽：直接把標準誤算出來 <span class="sec-badge">ISLP §5.2</span><span class="sec-badge">講義 05 · p.22–35</span></h2>
+<!-- GEN:END sec:bootstrap -->
+  <p class="skip-note">TODO 待撰寫：Bootstrap（ISLP §5.2|講義 05 · p.22–35）</p>
+</section>
+<section id="exercises">
+<!-- GEN:BEGIN sec:exercises -->
+  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：ISLP 第 5 章精選題 <span class="sec-badge">ISLP §5.4 習題</span></h2>
+  <p>下面幾題取自 ISLP 第 5 章課後習題，題號都對得回課本。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面三個站。</p>
+  <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter5/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch05.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
+<!-- GEN:END sec:exercises -->
+  <!-- 練習題 quiz-box 寫在這裡 -->
+</section>
+<section id="reference">
+<!-- GEN:BEGIN sec:reference -->
+  <div class="section-number">REFERENCE · 總覽</div>
+  <h2>重抽樣方法速查表 <span class="sec-badge">ISLP Ch.5</span></h2>
+<!-- GEN:END sec:reference -->
+  <!-- 比較表、重點回顧、.ver-note 寫在這裡 -->
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 待注入</span></h2>
+  <p>詞彙卡取自本章講義與 ISLP 第 5 章，正面是中文術語（附英文原名）。
+  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  <div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div>
+<!-- GEN:END sec:cards -->
+</section>
+<!-- GEN:BEGIN chapternav -->
+<div class="chapter-nav"><a class="prev" href="classification.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">分類</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="model_selection.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">線性模型選擇與正則化</div></a></div>
+<!-- GEN:END chapternav -->
+</div>
+<!-- GEN:BEGIN footer -->
+<footer>
+  互動式重抽樣方法教學 · 基於 An Introduction to Statistical Learning with Applications in Python (ISLP) 第 5 章與 NSYSU MATH524 課程講義<br>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
+</footer>
+<!-- GEN:END footer -->
+<!-- GEN:BEGIN sharedjs -->
+<script>
+/* ============================================================
+   統計學習自學站共用函式庫
+   由 tools/build_page.py 內嵌到每一頁，十頁完全一致。
+   規則：LaTeX 一律放靜態 HTML，這裡的字串不放 $…$；
+        寫入含數學的 innerHTML 之後要呼叫 HC.retype(el)。
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- MathJax：注入後的內容不會自動排版 ---------- */
+const HC = {};
+HC.retype = el => {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
+  }
+};
+
+/* ---------- quiz ---------- */
+function quizCheck(quizId, optEl) {
+  const isCorrect = optEl.dataset.correct === 'true';
+  optEl.parentElement.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'wrong'));
+  optEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = $(quizId + 'Feedback');
+  if (!fb) { console.error('quizCheck: 找不到 #' + quizId + 'Feedback'); return; }
+  fb.classList.remove('correct', 'wrong');
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> ') + (optEl.dataset.fb || '');
+  HC.retype(fb);
+}
+
+/* ---------- 程式碼行高亮 ---------- */
+function hlLine(rootId, n) {
+  const root = $(rootId);
+  if (!root) return;
+  root.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+  if (n != null) {
+    const line = root.querySelector('.line[data-l="' + n + '"]');
+    if (line) line.classList.add('active');
+  }
+}
+
+/* ---------- 逐步播放器：frames = [{...}]，apply(frame) 負責渲染 ---------- */
+class Player {
+  constructor({ frames, apply, delayInput, onDone, onIndex }) {
+    this.frames = frames; this.apply = apply;
+    this.delayInput = delayInput; this.i = -1; this.timer = null;
+    this.onDone = onDone || (() => {});
+    this.onIndex = onIndex || (() => {});
+  }
+  get delay() { return this.delayInput ? parseInt(this.delayInput.value, 10) : 700; }
+  step() {
+    if (this.i + 1 >= this.frames.length) { this.stop(); this.onDone(); return false; }
+    this.i += 1; this.apply(this.frames[this.i], this.i); this.onIndex(this.i); return true;
+  }
+  play() {
+    this.stop();
+    const tick = () => { if (this.step()) this.timer = setTimeout(tick, this.delay); };
+    tick();
+  }
+  stop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+  get playing() { return this.timer !== null; }
+  reset() { this.stop(); this.i = -1; if (this.frames.length) { this.apply(this.frames[0], 0); this.i = 0; } }
+  seek(i) { this.stop(); this.i = Math.max(0, Math.min(i, this.frames.length - 1)); this.apply(this.frames[this.i], this.i); this.onIndex(this.i); }
+}
+HC.Player = Player;
+
+/* ---------- 旁白列 ---------- */
+function setStatus(id, html) {
+  const el = $(id); if (!el) return;
+  const t = el.querySelector('.status-text');
+  if (t) t.innerHTML = html;
+}
+
+/* ============================================================
+   HC：圖表與 SVG 共用 API
+   ============================================================ */
+
+/* 設計 token（讀 CSS 變數，樣式改一處就好） */
+HC.tok = (() => {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue('--' + n).trim();
+  return {
+    ink: g('ink'), paper: g('paper'), accent: g('accent'), accent2: g('accent2'),
+    accent3: g('accent3'), muted: g('muted'), card: g('card'), cardBorder: g('card-border'),
+    grid: g('grid-line') || g('card-border'),
+    train: g('pt-train'), test: g('pt-test'), held: g('pt-held'),
+    a: g('pt-a'), b: g('pt-b'), c: g('pt-c'),
+    fit: g('fit-line'), truef: g('fit-true'), resid: g('resid'),
+  };
+})();
+
+HC.MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+/* 數字格式：固定小數位，去掉負零 */
+HC.fmt = (v, d = 2) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const s = Number(v).toFixed(d);
+  return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s;
+};
+HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
+
+/* ---------- Chart.js ---------- */
+HC.hasChart = () => typeof window.Chart !== 'undefined';
+
+/* Chart.js 載入失敗時不要拋錯：讓 .chart-fallback 留在畫面上 */
+HC.ready = fn => {
+  const run = () => {
+    if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+};
+
+HC._charts = new Map();
+
+/* 房子的 Chart.js 預設值 */
+HC.base = (type, data, opts = {}) => {
+  const t = HC.tok;
+  const axis = {
+    grid: { color: t.grid, drawTicks: false },
+    border: { color: t.muted },
+    ticks: { font: { family: HC.MONO, size: 11 }, color: t.muted, padding: 6 },
+    title: { font: { family: HC.MONO, size: 11, weight: '600' }, color: t.accent2 },
+  };
+  const deep = (a, b) => {
+    const o = Array.isArray(b) ? b.slice() : Object.assign({}, a);
+    if (Array.isArray(b)) return o;
+    for (const k of Object.keys(b || {})) {
+      o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]))
+        ? deep(a && a[k] ? a[k] : {}, b[k]) : b[k];
+    }
+    return o;
+  };
+  const defaults = {
+    responsive: true, maintainAspectRatio: false, devicePixelRatio: 2,
+    animation: { duration: 250 },
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 6, right: 10, bottom: 2, left: 2 } },
+    plugins: {
+      legend: {
+        display: true, position: 'top', align: 'end',
+        labels: { boxWidth: 10, boxHeight: 10, font: { family: HC.MONO, size: 11 }, color: t.ink, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,46,.92)', titleFont: { family: HC.MONO, size: 11 },
+        bodyFont: { family: HC.MONO, size: 11 }, padding: 8, cornerRadius: 6, displayColors: true,
+      },
+    },
+    scales: { x: deep({}, axis), y: deep({}, axis) },
+    elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
+  };
+  return { type, data, options: deep(defaults, opts) };
+};
+
+/* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
+HC.chart = (canvasId, type, data, opts) => {
+  if (!HC.hasChart()) return null;
+  const cv = $(canvasId);
+  if (!cv) { console.error('HC.chart: 找不到 canvas #' + canvasId); return null; }
+  const old = HC._charts.get(canvasId);
+  if (old) old.destroy();
+  const c = new window.Chart(cv, HC.base(type, data, opts));
+  HC._charts.set(canvasId, c);
+  const wrap = cv.closest('.chart-wrap');
+  if (wrap) wrap.classList.add('ready');
+  return c;
+};
+HC.line = (id, data, opts) => HC.chart(id, 'line', data, opts);
+HC.scatter = (id, data, opts) => HC.chart(id, 'scatter', data, opts);
+HC.bar = (id, data, opts) => HC.chart(id, 'bar', data, opts);
+HC.get = id => HC._charts.get(id);
+
+/* 就地改資料再重畫，不重建 chart（滑桿連續拖動時比較順） */
+HC.update = (id, mutate) => {
+  const c = HC._charts.get(id);
+  if (!c) return null;
+  mutate(c);
+  c.update('none');
+  return c;
+};
+
+/* 自製 inline plugin：不需要下載 chartjs-plugin-annotation */
+HC.hline = (y, label, color) => ({
+  id: 'hline_' + y + '_' + (label || ''),
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea: ca, scales } = chart;
+    if (!scales.y) return;
+    const py = scales.y.getPixelForValue(y);
+    if (py < ca.top || py > ca.bottom) return;
+    ctx.save();
+    ctx.strokeStyle = color || HC.tok.muted;
+    ctx.lineWidth = 1.4; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(ca.left, py); ctx.lineTo(ca.right, py); ctx.stroke();
+    if (label) {
+      ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO;
+      ctx.fillStyle = color || HC.tok.muted; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+      ctx.fillText(label, ca.right - 4, py - 3);
+    }
+    ctx.restore();
+  },
+});
+
+HC.vline = (x, label, color) => ({
+  id: 'vline_' + x + '_' + (label || ''),
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea: ca, scales } = chart;
+    if (!scales.x) return;
+    const px = scales.x.getPixelForValue(x);
+    if (px < ca.left || px > ca.right) return;
+    ctx.save();
+    ctx.strokeStyle = color || HC.tok.accent;
+    ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, ca.bottom); ctx.stroke();
+    if (label) {
+      ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO;
+      ctx.fillStyle = color || HC.tok.accent; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText(label, px + 4, ca.top + 2);
+    }
+    ctx.restore();
+  },
+});
+
+HC.vband = (x0, x1, fill, label) => ({
+  id: 'vband_' + x0 + '_' + x1,
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea: ca, scales } = chart;
+    if (!scales.x) return;
+    const a = scales.x.getPixelForValue(x0), b = scales.x.getPixelForValue(x1);
+    ctx.save();
+    ctx.fillStyle = fill || 'rgba(44,62,122,.10)';
+    ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+    if (label) {
+      ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(label, (a + b) / 2, ca.top + 2);
+    }
+    ctx.restore();
+  },
+});
+
+/* ============================================================
+   HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
+   用法：const s = HC.svg('w03dragSvg', {xd:[0,10], yd:[0,30]});
+        s.grid(5,5); s.dot(x, y, {cls:'dot', fill:HC.tok.train});
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+
+HC.svg = (id, o = {}) => {
+  const host = $(id);
+  if (!host) { console.error('HC.svg: 找不到 #' + id); return null; }
+  const W = o.w || 620, H = o.h || 340;
+  const pad = Object.assign({ l: 46, r: 14, t: 14, b: 34 }, o.pad || {});
+  let el = host;
+  if (host.tagName.toLowerCase() !== 'svg') {
+    el = host.querySelector('svg');
+    if (!el) { el = document.createElementNS(NS, 'svg'); el.setAttribute('class', 'viz-svg'); host.appendChild(el); }
+  }
+  el.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  if (!el.getAttribute('height')) el.setAttribute('height', String(H));
+
+  const s = {
+    el, W, H, pad,
+    xd: (o.xd || [0, 1]).slice(), yd: (o.yd || [0, 1]).slice(),
+    get iw() { return W - pad.l - pad.r; },
+    get ih() { return H - pad.t - pad.b; },
+  };
+  s.domain = (xd, yd) => { if (xd) s.xd = xd.slice(); if (yd) s.yd = yd.slice(); return s; };
+  s.X = v => pad.l + (v - s.xd[0]) / (s.xd[1] - s.xd[0]) * s.iw;
+  s.Y = v => pad.t + s.ih - (v - s.yd[0]) / (s.yd[1] - s.yd[0]) * s.ih;
+  s.ix = px => s.xd[0] + (px - pad.l) / s.iw * (s.xd[1] - s.xd[0]);
+  s.iy = py => s.yd[0] + (pad.t + s.ih - py) / s.ih * (s.yd[1] - s.yd[0]);
+
+  /* client 座標 → viewBox 座標（縮放與 CSS 尺寸都會被吸收） */
+  s.toView = ev => {
+    const r = el.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    const cy = ev.clientY !== undefined ? ev.clientY : (ev.touches && ev.touches[0].clientY);
+    return { px: (cx - r.left) / r.width * W, py: (cy - r.top) / r.height * H };
+  };
+  s.toData = ev => { const p = s.toView(ev); return { x: s.ix(p.px), y: s.iy(p.py) }; };
+
+  s.add = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k of Object.keys(attrs)) {
+      if (attrs[k] === null || attrs[k] === undefined) continue;
+      n.setAttribute(k === 'cls' ? 'class' : k, String(attrs[k]));
+    }
+    (parent || el).appendChild(n);
+    return n;
+  };
+  /* 分層：只清掉自己那層，底圖不用重畫 */
+  s.layer = name => {
+    let g = el.querySelector('g[data-layer="' + name + '"]');
+    if (!g) { g = s.add('g', { 'data-layer': name }); }
+    return g;
+  };
+  s.clearLayer = name => { const g = s.layer(name); while (g.firstChild) g.removeChild(g.firstChild); return g; };
+  s.clear = () => { while (el.firstChild) el.removeChild(el.firstChild); return s; };
+
+  /* 座標軸 + 格線 + 刻度標籤 */
+  s.grid = (nx = 5, ny = 5, opt = {}) => {
+    const g = s.clearLayer('grid');
+    const fx = opt.xfmt || (v => HC.fmt(v, opt.xdec ?? 0));
+    const fy = opt.yfmt || (v => HC.fmt(v, opt.ydec ?? 0));
+    for (let i = 0; i <= nx; i++) {
+      const v = s.xd[0] + (s.xd[1] - s.xd[0]) * i / nx, x = s.X(v);
+      s.add('line', { cls: 'gridl', x1: x, y1: pad.t, x2: x, y2: pad.t + s.ih }, g);
+      s.add('text', { cls: 'axlab', x: x, y: pad.t + s.ih + 14, 'text-anchor': 'middle' }, g).textContent = fx(v);
+    }
+    for (let i = 0; i <= ny; i++) {
+      const v = s.yd[0] + (s.yd[1] - s.yd[0]) * i / ny, y = s.Y(v);
+      s.add('line', { cls: 'gridl', x1: pad.l, y1: y, x2: pad.l + s.iw, y2: y }, g);
+      s.add('text', { cls: 'axlab', x: pad.l - 6, y: y + 3.5, 'text-anchor': 'end' }, g).textContent = fy(v);
+    }
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t + s.ih, x2: pad.l + s.iw, y2: pad.t + s.ih }, g);
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + s.ih }, g);
+    if (opt.xtitle) s.add('text', { cls: 'axtitle', x: pad.l + s.iw / 2, y: H - 4, 'text-anchor': 'middle' }, g).textContent = opt.xtitle;
+    if (opt.ytitle) {
+      const t = s.add('text', { cls: 'axtitle', x: 0, y: 0, 'text-anchor': 'middle', transform: 'translate(11,' + (pad.t + s.ih / 2) + ') rotate(-90)' }, g);
+      t.textContent = opt.ytitle;
+    }
+    return s;
+  };
+
+  s.dot = (x, y, a = {}, parent) => s.add('circle', {
+    cls: a.cls || 'dot', cx: s.X(x), cy: s.Y(y), r: a.r ?? 4,
+    fill: a.fill || HC.tok.accent2, stroke: a.stroke, 'stroke-width': a.sw,
+    opacity: a.opacity, 'data-i': a.i,
+  }, parent);
+
+  s.poly = (pts, a = {}, parent) => s.add('polyline', {
+    cls: a.cls || 'fit', points: pts.map(p => s.X(p[0]) + ',' + s.Y(p[1])).join(' '),
+    stroke: a.stroke, 'stroke-width': a.sw, fill: 'none', 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.area = (pts, a = {}, parent) => {
+    const up = pts.map(p => s.X(p[0]) + ',' + s.Y(p[1]));
+    const dn = pts.slice().reverse().map(p => s.X(p[0]) + ',' + s.Y(p[2]));
+    return s.add('polygon', { cls: a.cls || 'band', points: up.concat(dn).join(' '), fill: a.fill }, parent);
+  };
+
+  s.seg = (x1, y1, x2, y2, a = {}, parent) => s.add('line', {
+    cls: a.cls || 'resid', x1: s.X(x1), y1: s.Y(y1), x2: s.X(x2), y2: s.Y(y2),
+    stroke: a.stroke, 'stroke-width': a.sw, 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.box = (x0, y0, x1, y1, a = {}, parent) => s.add('rect', {
+    x: Math.min(s.X(x0), s.X(x1)), y: Math.min(s.Y(y0), s.Y(y1)),
+    width: Math.abs(s.X(x1) - s.X(x0)), height: Math.abs(s.Y(y1) - s.Y(y0)),
+    fill: a.fill || 'none', stroke: a.stroke, 'stroke-width': a.sw, cls: a.cls, rx: a.rx,
+  }, parent);
+
+  s.txt = (x, y, str, a = {}, parent) => {
+    const n = s.add('text', {
+      cls: a.cls || 'vlab', x: s.X(x) + (a.dx || 0), y: s.Y(y) + (a.dy || 0),
+      'text-anchor': a.anchor || 'middle', fill: a.fill,
+    }, parent);
+    n.textContent = str;
+    return n;
+  };
+  /* 用 viewBox 像素座標直接放字（圖例、標題用） */
+  s.txtPx = (px, py, str, a = {}, parent) => {
+    const n = s.add('text', { cls: a.cls || 'axlab', x: px, y: py, 'text-anchor': a.anchor || 'start', fill: a.fill }, parent);
+    n.textContent = str;
+    return n;
+  };
+  return s;
+};
+
+/* 拖曳：pointer + touch，回呼收到資料座標；會夾在定義域內 */
+HC.drag = (node, svc, onMove, opts = {}) => {
+  const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
+  const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
+  let active = false;
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  };
+  const move = ev => {
+    if (!active) return;
+    const d = svc.toData(ev);
+    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    ev.preventDefault();
+  };
+  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  node.addEventListener('pointerdown', start);
+  node.addEventListener('pointermove', move);
+  node.addEventListener('pointerup', end);
+  node.addEventListener('pointercancel', end);
+  node.style.touchAction = 'none';
+  return () => {
+    node.removeEventListener('pointerdown', start);
+    node.removeEventListener('pointermove', move);
+    node.removeEventListener('pointerup', end);
+    node.removeEventListener('pointercancel', end);
+  };
+};
+
+/* ---------- 統計小工具（各頁元件共用，避免各自重寫） ---------- */
+HC.stat = {
+  mean: a => a.reduce((s, v) => s + v, 0) / a.length,
+  variance(a) { const m = this.mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); },
+  sd(a) { return Math.sqrt(this.variance(a)); },
+  /* 簡單線性迴歸：回傳 b0, b1, rss, tss, r2, se(b0), se(b1), t 值 */
+  ols(xs, ys) {
+    const n = xs.length, mx = this.mean(xs), my = this.mean(ys);
+    let sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sxx += (xs[i] - mx) ** 2; sxy += (xs[i] - mx) * (ys[i] - my); }
+    const b1 = sxx === 0 ? 0 : sxy / sxx, b0 = my - b1 * mx;
+    let rss = 0, tss = 0;
+    for (let i = 0; i < n; i++) { rss += (ys[i] - b0 - b1 * xs[i]) ** 2; tss += (ys[i] - my) ** 2; }
+    const df = n - 2;
+    const s2 = df > 0 ? rss / df : NaN;
+    const seB1 = sxx > 0 ? Math.sqrt(s2 / sxx) : NaN;
+    const seB0 = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+    return {
+      b0, b1, rss, tss, n, df, rse: Math.sqrt(s2),
+      r2: tss === 0 ? NaN : 1 - rss / tss,
+      seB0, seB1, tB0: b0 / seB0, tB1: b1 / seB1,
+    };
+  },
+  /* RSS(b0,b1)，畫誤差曲面用 */
+  rss(xs, ys, b0, b1) {
+    let r = 0;
+    for (let i = 0; i < xs.length; i++) r += (ys[i] - b0 - b1 * xs[i]) ** 2;
+    return r;
+  },
+  /* 可重現的偽隨機（固定種子，頁面重載結果一樣） */
+  lcg(seed) { let s = (seed >>> 0) || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; },
+  /* Box–Muller 標準常態 */
+  normal(rand) {
+    let u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  /* 標準常態 CDF（Abramowitz–Stegun 7.1.26 誤差函數近似） */
+  pnorm(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const p = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    return z >= 0 ? 1 - d * p : d * p;
+  },
+  dnorm(x, mu = 0, sd = 1) { const z = (x - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); },
+  quantile(sorted, q) {
+    const h = (sorted.length - 1) * q, lo = Math.floor(h);
+    return sorted[lo] + (h - lo) * ((sorted[Math.min(lo + 1, sorted.length - 1)]) - sorted[lo]);
+  },
+  seq(a, b, n) { return Array.from({ length: n }, (_, i) => a + (b - a) * i / (n - 1)); },
+};
+
+/* ============================================================
+   頁面骨架行為
+   ============================================================ */
+
+/* 浮動導覽 scroll-spy */
+(function setupNav() {
+  const nav = $('floatNav');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[data-target]'));
+  const sections = links.map(a => $(a.dataset.target)).filter(Boolean);
+  const missing = links.filter(a => !$(a.dataset.target)).map(a => a.dataset.target);
+  if (missing.length) console.warn('float-nav 的 data-target 找不到對應 section：', missing);
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) active = s.id;
+    links.forEach(a => {
+      const on = a.dataset.target === active;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
+  d.dataset.mj = '1';
+  HC.retype(d);
+}, true);
+
+/* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
+HC.initFlashcards = () => {
+  const grid = $('fcGrid');
+  if (!grid || typeof FLASHCARDS === 'undefined') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const render = cards => {
+    grid.innerHTML = cards.map(c =>
+      '<div class="fc-card"><div class="fc-inner">'
+      + '<div class="fc-face fc-front"><div>' + esc(c.front) + '</div><div class="fc-hint">CLICK TO FLIP</div></div>'
+      + '<div class="fc-face fc-back">' + esc(c.back) + '</div>'
+      + '</div></div>').join('');
+  };
+  render(FLASHCARDS);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.fc-card');
+    if (card) card.classList.toggle('flipped');
+  });
+  const on = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  /* 洗牌用固定種子的 Fisher–Yates，每按一次換一個種子 */
+  let shuffleSeed = 20260810;
+  on('fcShuffle', () => {
+    const rand = HC.stat.lcg(shuffleSeed++);
+    const a = FLASHCARDS.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    render(a);
+  });
+  on('fcUnflip', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')));
+  on('fcFlipAll', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.add('flipped')));
+};
+</script>
+<!-- GEN:END sharedjs -->
+<!-- PAGEJS:BEGIN -->
+<script>
+/* ===== resampling_methods 本頁元件（id 與全域一律用 w05 前綴） ===== */
+HC.ready(() => { /* TODO w05 元件 */ });
+HC.initFlashcards();
+</script>
+<!-- PAGEJS:END -->
+<!-- DATA:BEGIN -->
+<!-- DATA:END -->
+</body></html>
