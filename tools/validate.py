@@ -173,10 +173,11 @@ def check_page(p: P.Page):
         for suf in ("Options", "Feedback"):
             if f'id="{qid}{suf}"' not in src:
                 fail("QUIZ-TRIPLE", w, f"quizCheck('{qid}') 缺少 #{qid}{suf}")
-    for m in re.finditer(r'<div class="quiz-options"[^>]*id="([^"]+)Options"[^>]*>(.*?)</div>\s*\n?\s*<div class="quiz-feedback"',
-                         src, re.S):
+    # 選項區塊內有巢狀 </div>，所以用「到 #<qid>Feedback 為止」界定，不用第一個 </div>
+    for m in re.finditer(r'id="([^"]+)Options"(.*?)id="\1Feedback"', src, re.S):
         qid, block = m.group(1), m.group(2)
-        opts = re.findall(r'<div class="quiz-opt"([^>]*)>', block)
+        # data-fb 的值裡允許 <strong> 等標記，所以不能用 [^>]*；用 onclick 當結束錨點
+        opts = re.findall(r'<div class="quiz-opt"(.*?)onclick="quizCheck\(', block, re.S)
         if len(opts) != 3:
             fail("QUIZ-TRIPLE", w, f"#{qid} 有 {len(opts)} 個選項，應為 3")
         ncorrect = sum(1 for o in opts if 'data-correct="true"' in o)
@@ -185,7 +186,7 @@ def check_page(p: P.Page):
         for o in opts:
             if "data-correct=" not in o:
                 fail("QUIZ-TRIPLE", w, f"#{qid} 有選項缺 data-correct")
-            fb = re.search(r'data-fb="([^"]*)"', o)
+            fb = re.search(r'data-fb="(.*?)"\s', o, re.S)
             if not fb or not fb.group(1).strip():
                 fail("QUIZ-TRIPLE", w, f"#{qid} 有選項缺 data-fb（錯的選項也要寫錯在哪）")
 
@@ -208,9 +209,10 @@ def check_page(p: P.Page):
         if not i.startswith(pref):
             fail("ID-PREFIX", w, f"id=\"{i}\" 沒有 {pref} 前綴")
     js = pagejs(src)
-    for m in re.finditer(r"^\s*(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)", js, re.M):
+    # 只查真正的頂層宣告（第 0 欄）；函式內的區域變數不會相撞
+    for m in re.finditer(r"^(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)", js, re.M):
         name = m.group(1)
-        if name in SHARED_JS_NAMES or name.startswith(pref):
+        if name in SHARED_JS_NAMES or pref in name:
             continue
         fail("ID-PREFIX", w, f"本頁 JS 頂層宣告 `{name}` 沒有 {pref} 前綴")
 
@@ -258,8 +260,8 @@ def check_page(p: P.Page):
     for m in re.finditer(r"const\s+(FRAMES_\w+)\s*=\s*\{", src):
         name = m.group(1)
         seg = src[m.start():m.start() + 3000]
-        for key in ("src:", "seed:", "versions:", "gen:"):
-            if key not in seg:
+        for key in ("src", "seed", "versions", "gen"):
+            if f'"{key}"' not in seg and f"{key}:" not in seg:
                 fail("FRAMES-META", w, f"{name} 的 meta 缺 {key}")
 
     # GROUNDING

@@ -13,6 +13,7 @@ head、float-nav、hero、study-guide、TOC、每一節的標題列、chapter-na
   python3 tools/build_page.py linear_regression
   python3 tools/build_page.py --force        # 砍掉重建（會失去手寫內容，請先 commit）
 """
+import json
 import re
 import sys
 from pathlib import Path
@@ -141,9 +142,22 @@ def ex_head(p: P.Page) -> str:
   <div class="sol-links">{pills}</div>"""
 
 
+def data_count(kind: str, p: P.Page) -> int:
+    """data/<kind>_zh/ch<ISLP 章號>.json 的張數／題數；還沒寫就回 0。"""
+    f = ROOT / "data" / f"{kind}_zh" / f"ch{p.islp}.json"
+    if not f.exists():
+        return 0
+    try:
+        return len(json.loads(f.read_text(encoding="utf-8")))
+    except json.JSONDecodeError:
+        return 0
+
+
 def cards_block(p: P.Page) -> str:
+    n = data_count("flashcards", p)
+    badge = f"課程題庫 · {n} 張" if n else "課程題庫 · 待注入"
     return f"""  <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 待注入</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">{badge}</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 {p.islp} 章，正面是中文術語（附英文原名）。
   先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
   <div class="fc-controls">
@@ -152,6 +166,14 @@ def cards_block(p: P.Page) -> str:
     <button id="fcUnflip">全部翻回</button>
   </div>
   <div class="fc-grid" id="fcGrid"></div>"""
+
+
+def bankquiz_head(p: P.Page) -> str:
+    n = data_count("questions", p)
+    badge = f"課程題庫 ch{p.islp} · {n} 題" if n else "課程題庫 · 待注入"
+    return (f'  <div class="section-number">QUIZ · 自我檢測</div>\n'
+            f'  <h2>本章自我檢測 <span class="sec-badge">{badge}</span></h2>\n'
+            f'  <p>這些題目取自課程題庫，只給對錯與說明，不計分。答錯就回到對應章節重讀。</p>')
 
 
 def chapternav(p: P.Page) -> str:
@@ -193,10 +215,7 @@ def render_new(p: P.Page) -> str:
                          f'  <h2>{p.plain}速查表 <span class="sec-badge">{p.islp_label}</span></h2>')
                      + "\n  <!-- 比較表、重點回顧、.ver-note 寫在這裡 -->")
         elif s.id == "bankquiz":
-            inner = (gen(f"sec:{s.id}",
-                         '  <div class="section-number">QUIZ · 自我檢測</div>\n'
-                         f'  <h2>本章自我檢測 <span class="sec-badge">課程題庫 · 待注入</span></h2>')
-                     + '\n  <div id="bqBox"></div>')
+            inner = gen(f"sec:{s.id}", bankquiz_head(p)) + '\n  <div id="bqBox"></div>'
         else:
             inner = gen(f"sec:{s.id}", sec_head(p, s, number)) + "\n" + stub_body(p, s)
         parts.append(f'<section id="{s.id}">\n{inner}\n</section>')
@@ -227,7 +246,7 @@ def refresh(p: P.Page, src: str):
                                       f'  <h2>{p.plain}速查表 '
                                       f'<span class="sec-badge">{p.islp_label}</span></h2>')
         elif s.id == "bankquiz":
-            continue          # 標題由 inject_data.py 依題數重寫
+            regions[f"sec:{s.id}"] = bankquiz_head(p)
         else:
             regions[f"sec:{s.id}"] = sec_head(p, s, number)
 

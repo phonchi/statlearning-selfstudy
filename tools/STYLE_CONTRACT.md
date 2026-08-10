@@ -1,0 +1,179 @@
+# 撰寫契約
+
+由 pilot 頁 `resampling_methods.html` 凍結。寫任何一章之前先讀完這份，
+寫完必須 `tools/validate.py --page <stem>` 與 `node tools/browser_check.js <stem>` 都全綠。
+
+**唯一的參考範例：`tools/enrich/enrich_resampling.py`。** 有疑問就照它做。
+
+---
+
+## 0. 工作流程（一定照這個順序）
+
+```bash
+# 1) 讀來源（都在 data/source_index/，不要憑印象寫）
+cat data/source_index/deck_NN.tsv        # 講義大綱 → 決定 PART 清單與順序
+less data/source_index/lab_chN.md        # lab 的程式碼與實跑輸出（逐字抄用）
+grep -P "^N\t" data/source_index/islp_chapters.tsv   # 該章的 PDF 頁範圍
+pdftotext -f <pdf_from> -l <pdf_to> -layout ~/statslearning/ISLP_website.pdf -
+
+# 2) 需要圖表資料就寫產生器，用 pinned 環境跑
+conda run -n m524 python tools/frames/gen_<page>.py
+
+# 3) 寫 tools/enrich/enrich_<page>.py，然後
+python3 tools/enrich/enrich_<page>.py
+python3 tools/inject_data.py <stem>
+python3 tools/validate.py --page <stem>
+node tools/browser_check.js <stem>
+```
+
+**不要手改 `.html`。** 內容寫在 `tools/enrich/enrich_<page>.py`，骨架由 `tools/build_page.py` 管。
+`<!-- GEN:BEGIN … -->` 區段動了 validator 會失敗。
+
+---
+
+## 1. 出處紀律（grounded）
+
+| 規則 | 為什麼 |
+|---|---|
+| 每個 `<h2>` 至少一個 `.sec-badge`，格式必須是 `ISLP §x.y` / `ESL §x.y` / `講義 NN · p.a–b` / `課程題庫 …` | 學生要能回頭對照；徽章由 `pages.py` 產生，不要在內文自己加 |
+| 每張 `.deck-extra` 一定要 `.dx-src`，內容是 `<code>ChNN-…-zh.ipynb</code> · 儲存格 k` | 可機器檢查 |
+| `.expected-out` 一律 `lab_output(CH, cell)` 逐字取，**不要自己打字、不要重跑** | 本機環境與課程環境不同；notebook 裡已經是老師本人跑的結果 |
+| 程式碼一律 `lab_code(CH, cell)` 取，或至少能對回某一格 | 同上 |
+| 自己產生的圖表資料一定放 `FRAMES_w<NN>*`，`meta` 要有 `src` / `seed` / `versions` / `gen` | 任何數字都要能重生與 diff |
+| 引用課本圖要指名（`ISLP 圖 5.2 右`），**絕不嵌原圖**（repo 不放任何圖檔） | 版權；也逼我們從資料重畫 |
+| REF 區放一次 `ver_note()` | 記錄環境版本 |
+
+`lab_output()` 找不到輸出會直接報錯——這是刻意的。該格沒存輸出就別引用它，改寫產生器自己算並在 `meta.note` 說明。
+
+---
+
+## 2. 命名（validator 強制）
+
+- **`w<NN>` 前綴**：`NN` 是站內序號（`pages.py` 的 `n`，零補兩位）。頁面裡**每一個** `id`、
+  每一個頂層 JS 宣告都要含這個前綴。69 個元件共用同一個全域命名空間，前綴是唯一的防撞機制。
+  - 例外（不需前綴）：quiz id `q[A-Z]…`、deck-extra 錨點 `dx-…`、骨架 id
+    （`fcGrid` `fcShuffle` `fcFlipAll` `fcUnflip` `bqBox` `floatNav` `top`）、section id。
+  - 函式內的區域變數不必加前綴（只查第 0 欄的宣告）。
+- **quiz id**：`q` + 大寫開頭的短名（`qVal` `qLoo` `qEx1`）。`lib.quiz()` 會自動產生
+  `<id>Options` / `<id>Feedback` 與 `onclick`，不要自己拼。
+- **deck-extra 錨點**：`<h3 id="dx-短名">`，2–5 個字元。
+
+---
+
+## 3. MathJax 四條鐵律
+
+1. **LaTeX 只放靜態 HTML。任何 JS 字串裡不得出現 `$`**（validator 會抓）。
+2. 寫入含數學的 `innerHTML` 之後立刻 `HC.retype(el)`。
+3. `.status-banner` 的旁白**不放數學**，用 Unicode：`β̂ σ² R² ε Σ x̄ α̂ λ ρ ≈ ≤ ×`。
+   這是最熱的 innerHTML 路徑，免得每次都要 retype。
+4. Chart.js 的軸標籤是 canvas 繪製的，**不可能**放 LaTeX，同樣用 Unicode。
+
+在 Python f-string 裡寫 LaTeX：`\\` 要寫成 `\\\\`，`{` `}` 要寫成 `{{` `}}`。
+`\\text{{第 }} i \\text{{ 筆}}` ← 注意每個大括號都要成對加倍。
+
+`.qa-item`（`<details>`）裡的數學靠 shared.js 的 `toggle` 委派事件在首次展開時重排，
+不需要自己處理。
+
+---
+
+## 4. 每一節的固定順序
+
+```
+PART 內部：
+  1. 1–2 段導入散文（第二人稱、直接、口語一點）
+  2. info(...)          一句話重點；警告用 info(..., "warm")
+  3. $$…$$              行間公式（靜態 HTML）
+  4. viz(...)           互動元件：stage → .status-banner → .controls-bar ＋ .side-panel
+  5. qa(...)            觀念釐清 Q&A（0–2 則）
+  6. card(...)          .deck-extra 講義完整實作 + 預期輸出
+  7. quiz(...)          三選一自測（每節至少一個）
+  8. table(...)         需要時的比較表
+```
+
+**EX 區**：4 個 `quiz()`，`.quiz-label` 用 `EXERCISE n · ISLP N.4 第 m 題`，題號要真
+（去 `pdftotext` 讀該章習題確認）。解答 pill 排由 `build_page.py` 產生，不要自己寫。
+
+**REF 區**：2–3 個比較表 + 「三個一定要記住的觀念」`info()` + `ver_note()`。
+
+**CARDS 區**：整段由 `build_page.py` 產生。你只要寫 `data/flashcards_zh/chN.json`。
+
+---
+
+## 5. 元件（widget）規則
+
+- **每頁 6–9 個**，其中 Chart.js 約三分之一、手寫 SVG 約三分之二。
+- **`.viz-panel` 的解剖結構不可變**：stage → `.status-banner` → `.controls-bar`。
+- 按鈕一律用變體：`.btn .btn-play`（▶ 開始）、`.btn .btn-step`（→ 單步）、
+  `.btn .btn-reset`（重置）、`.btn .btn-toggle`。
+- **SVG 元件的初始化一律放在 `HC.ready()` 外面。** Chart.js 從 CDN 載不到時 `HC.ready()`
+  不會執行；SVG 元件放進去會跟著死掉，就白費了單檔自足的設計。
+  `HC.line/bar/scatter` 在 Chart 未載入時本來就安全地回傳 null。
+- **SVG 的 `viewBox` 寬度統一用 620**（`HC.svg` 的預設）。自己 `setAttribute('viewBox', …)`
+  時也要用 620——viewBox 窄而元素被拉寬，字會跟著等比放大。
+- **Player 的 reset frame 要防守**。`i = -1` 之類的哨兵值不要拿去索引陣列，
+  否則會畫出 `x1="NaN"`（pilot 犯過這個錯）。
+- `.chart-fallback` 的文字要寫**該圖的一句話結論**，不要只寫「圖表載入失敗」——
+  CDN 掛掉時教學主張還要活著。
+
+### live 還是 baked
+
+> **數字必須跟權威來源對上 → baked；重點是機制本身 → live。**
+
+Baked（任一成立）：(a) 要重現 ISLP／ESL／講義／lab 的圖或數字且要對到小數位；
+(b) 忠實配適需要無法用 50 行 JS 重寫的套件（glmnet 路徑、`SVC` 軟邊界、`scipy` linkage、
+GAM、平滑樣條 GCV、RF、大規模 GBDT）；(c) 每 frame 超過 2000 次運算或 n > 500。
+
+其餘一律 live。「拖動它、看它反應」這種連續互動只要有閉式解就**必須** live。
+Hybrid 最好：烘焙老師的資料，即時重算上層（`w04thr` 就是這樣）。
+
+`HC.stat` 已經有 `ols` `rss` `mean` `variance` `sd` `lcg` `normal` `pnorm` `dnorm`
+`quantile` `seq`——不要重寫。隨機一律用 `HC.stat.lcg(固定種子)`，
+**不要用 `Math.random()`**（頁面重載結果會變，學生對不上你的說明）。
+
+---
+
+## 6. 文字
+
+- 繁體中文，第二人稱，直接、口語一點。可以說「這個數字是假的」「不要往下跳」。
+- 全形標點 `，。：；「」（）`；`｜` 只用在 `.big-formula`；`·` 當標籤分隔。
+- 術語第一次出現寫**中文（English）**，識別字放 `<code>`。
+- **禁止中國用語**：軟件→軟體、函數（可）／函式（可）但同頁一致、缺省→預設、
+  信息→資訊、數據（可）但偏好資料、算法→演算法、優化→最佳化／優化（統計脈絡可）、
+  歸一化→正規化、標籤（可）、隊列→佇列、內存→記憶體、字符→字元、
+  默認→預設、複雜度（可）、擬合（可）／配適（可）但同頁一致。
+- Emoji 只當標籤前綴：📌 📑 📓 📖 📗 🏠 🔗 ▶ 🔀。
+- 每個 quiz 的**錯選項也要寫清楚錯在哪**——那是真正的教學內容，不是敷衍。
+  格式：先說「不對」，再說錯誤的想法哪裡合理、實際上錯在哪。
+
+### 30 詞術語表（同一頁內用詞要一致）
+
+迴歸 · 分類 · 變異數 · 標準差 · 標準誤 · 常態分佈 · 期望值 · 偏差 · 變異 ·
+過度配適 · 配適 · 殘差 · 槓桿值 · 共線性 · 交叉驗證 · 折 · 重抽樣 · 自助法 ·
+正則化 · 收縮 · 稀疏 · 調整參數 · 超參數 · 決策邊界 · 混淆矩陣 · 靈敏度 ·
+特異度 · 主成分 · 負荷量 · 分群 · 樣條 · 節點 · 平滑 · 集成 · 提升 · 袋外樣本
+
+---
+
+## 7. 尺寸與預算
+
+| 項目 | 目標 |
+|---|---|
+| 單頁 | 130–240 KB（>300 KB validator 會警告） |
+| PART 數 | 照 `pages.py`，不要自己增減 |
+| 元件 | 6–9 個 |
+| `.quiz-box` | 每 PART 一個 + EX 區 4 個 |
+| Q&A | 3–4 則（第 3 章 6 則） |
+| `.deck-extra` | 8–12 張 |
+| 詞彙卡 | 20–28 張 |
+
+---
+
+## 8. 不要重複 pilot 犯過的錯
+
+1. `HC.ready()` 裡放 SVG 初始化 → CDN 掛掉整組元件死掉。
+2. Player 的 reset frame 用 `i = -1` 去索引陣列 → SVG 屬性 NaN。
+3. SVG `viewBox` 寬度不是 620 → 字被等比放大。
+4. reset 狀態顯示「第 0 折」→ 哨兵值要另外處理顯示文字。
+5. `.pseudo-code` 與行間公式在窄螢幕撐爆版面 → 已在 `stats.css` 用
+   `overflow-x:auto` 與 `mjx-container[display="true"]` 修掉，不要覆蓋掉。
+6. `HC.initFlashcards()` 不要寫在 PAGEJS 裡——`inject_data.py` 會在資料之後呼叫。

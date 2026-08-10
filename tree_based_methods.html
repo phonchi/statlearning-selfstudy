@@ -458,11 +458,22 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
 .strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
 
+/* ---- 長內容自己橫向滾動，頁面本體絕不橫向滾動 ---- */
+/* 程式碼行不換行（.line{white-space:pre}），所以區塊自己要能滑 */
+.pseudo-code{overflow-x:auto;}
+/* MathJax 的行間公式在窄螢幕會撐爆版面，包一層可滑動 */
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding-bottom:.25rem;}
+mjx-container[display="true"]::-webkit-scrollbar{height:5px;}
+.expected-out pre{overflow-x:auto;}
+.strip{overflow-x:auto;}
+
 /* ---- 手機版 ---- */
 @media(max-width:700px){
   .chart-wrap{height:250px;}
   .chart-wrap.tall{height:300px;}
   .qa-a{padding-left:1rem;}
+  .viz-svg{min-width:0;}
+  .big-formula{font-size:.85rem;word-break:break-word;}
 }
 
 /* ---- 尊重使用者的減少動態偏好 ---- */
@@ -656,6 +667,7 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 <!-- GEN:BEGIN sec:bankquiz -->
   <div class="section-number">QUIZ · 自我檢測</div>
   <h2>本章自我檢測 <span class="sec-badge">課程題庫 · 待注入</span></h2>
+  <p>這些題目取自課程題庫，只給對錯與說明，不計分。答錯就回到對應章節重讀。</p>
 <!-- GEN:END sec:bankquiz -->
   <div id="bqBox"></div>
 </section>
