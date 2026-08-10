@@ -22,12 +22,20 @@ CHARTJS_SRI = "sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJeme
 
 BOOK_ISLP = "https://www.statlearning.com/"
 BOOK_ESL = "https://hastie.su.domains/ElemStatLearn/"
-SOL_LINKS = [
-    ("🔗 ISLP 解答（botlnec）", "https://botlnec.github.io/islp/sols/chapter{ch}/exercise1"),
-    ("🔗 ISLP 解答（Mohamed-Badry）",
-     "https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch{ch:02d}.ipynb"),
-    ("🔗 ESL 解答（YuhangZhou88）", "https://yuhangzhou88.github.io/ESL_Solution/"),
-]
+def sol_links(ch: int):
+    """該章實際存在的解答連結。已逐一 HEAD 驗證過覆蓋範圍：
+    botlnec 只有第 2–9 章；Mohamed-Badry 只有第 2–13 章；
+    ISLP 第 1 章本來就沒有課後習題，所以兩邊都沒有。"""
+    out = []
+    if 2 <= ch <= 9:
+        out.append(("🔗 ISLP 解答（botlnec）",
+                    f"https://botlnec.github.io/islp/sols/chapter{ch}/exercise1"))
+    if 2 <= ch <= 13:
+        out.append(("🔗 ISLP 解答（Mohamed-Badry）",
+                    "https://github.com/Mohamed-Badry/islp-solutions/blob/main/"
+                    f"Exercises_ch{ch:02d}.ipynb"))
+    out.append(("🔗 ESL 解答（YuhangZhou88）", "https://yuhangzhou88.github.io/ESL_Solution/"))
+    return out
 
 # 產生 frames 用的環境（conda env m524）。與課程 packages.txt 對齊之處與差異都記在這裡。
 ENV_NOTE = ("numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · "

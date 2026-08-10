@@ -132,13 +132,20 @@ def stub_body(p: P.Page, s: P.Sec) -> str:
 
 
 def ex_head(p: P.Page) -> str:
-    pills = "".join(
-        f'<a href="{u.format(ch=p.islp)}" target="_blank" rel="noopener">{t}</a>'
-        for t, u in P.SOL_LINKS)
+    links = P.sol_links(p.islp)
+    pills = "".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>' for t, u in links)
+    # ISLP 第 1 章沒有課後習題，所以這一頁的練習改成概念自測
+    if p.islp == 1:
+        return f"""  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：概念自測 <span class="sec-badge">ISLP Ch.1</span></h2>
+  <p>ISLP 第 1 章沒有課後習題，所以這幾題是照本章觀念設計的。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。第 2 章開始就有課本習題可以對答案了。</p>
+  <div class="sol-links">{pills}</div>"""
+    n_site = len(links)
     return f"""  <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：ISLP 第 {p.islp} 章精選題 <span class="sec-badge">ISLP §{p.islp}.4 習題</span></h2>
   <p>下面幾題取自 ISLP 第 {p.islp} 章課後習題，題號都對得回課本。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面三個站。</p>
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面{n_site}個站。</p>
   <div class="sol-links">{pills}</div>"""
 
 
