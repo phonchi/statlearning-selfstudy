@@ -266,16 +266,22 @@ def check_page(p: P.Page):
                 fail("FRAMES-META", w, f"{name} 的 meta 缺 {key}")
 
     # GROUNDING
-    for m in re.finditer(r'<div class="deck-extra"', src):
-        seg = src[m.start():m.start() + 6000]
-        if 'class="dx-src"' not in seg:
-            fail("GROUNDING", w, ".deck-extra 缺 .dx-src 出處標記")
+    # 用「切到下一張卡為止」而不是固定字元視窗：長輸出會把 .dx-src 推到視窗外
+    chunks = src.split('<div class="deck-extra"')[1:]
+    for i, seg in enumerate(chunks):
+        if 'class="dx-src"' not in seg.split('<div class="deck-extra"')[0]:
+            lab = re.search(r'class="dx-label">(.*?)<', seg)
+            fail("GROUNDING", w,
+                 f".deck-extra 缺 .dx-src 出處標記（第 {i + 1} 張"
+                 f"{'：' + lab.group(1) if lab else ''}）")
     lab = SRC_INDEX / f"lab_ch{p.islp}.md"
     labtext = lab.read_text(encoding="utf-8") if lab.exists() else ""
     for m in re.finditer(r'<div class="expected-out">.*?<pre>(.*?)</pre>', src, re.S):
         body = re.sub(r"<[^>]+>", "", m.group(1))
-        body = (body.replace("&lt;", "<").replace("&gt;", ">")
-                    .replace("&quot;", '"').replace("&amp;", "&")).strip()
+        for a, b in (("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'),
+                     ("&#x27;", "'"), ("&#39;", "'"), ("&amp;", "&")):
+            body = body.replace(a, b)
+        body = body.strip()
         head = next((ln.strip() for ln in body.splitlines() if ln.strip()), "")
         if head and labtext and head not in labtext:
             warn("GROUNDING", w, f"預期輸出的首行在 lab_ch{p.islp}.md 找不到：「{head[:60]}」")

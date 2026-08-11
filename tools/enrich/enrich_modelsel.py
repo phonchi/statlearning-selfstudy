@@ -295,4 +295,976 @@ BODIES["criteria"] = f"""
         "只有 Cp 是測試 MSE 的無偏估計，BIC 不是——BIC 是從後驗機率近似來的，它刻意罰得更重以便挑出「正確的」模型而不是「預測最準的」模型。")])}
 """
 
-# @@REST@@
+# ── P03 用 CV 選模型 + one-SE ──────────────────────────────────────────
+BODIES["onese"] = f"""
+  <p>Cp、AIC、BIC 都需要估 $\\hat\\sigma^2$，而在 p 接近 n 的時候那個估計本身就不可靠。
+  交叉驗證不需要 $\\hat\\sigma^2$、不需要知道自由度、也不需要假設模型是對的——
+  它<strong>直接估測試誤差</strong>。所以只要算得動，CV 是首選。</p>
+
+  <p>做法就是第 5 章那一套，只是把「模型」換成「模型大小」：對每個大小 k，
+  在每一折的訓練部分做子集選擇、在驗證折上算誤差。
+  <strong>注意選變數這件事必須關在折裡面</strong>——這正是第 5 章 P06 講的那個錯誤。</p>
+
+{info("one-standard-error 規則", '''CV 誤差本身有抽樣變異。Credit 上的 CV 曲線在大小 4 到 8 之間幾乎是平的，
+  差異遠小於誤差棒。這時候硬選最低點沒有道理，因為那個「最低」很可能只是運氣。<br><br>
+  <strong>規則：先找到 CV 誤差最小的模型，算出它的標準誤；然後在「CV 誤差落在
+  最小值 ＋ 一個標準誤」以內的所有模型裡，選最簡單的那個。</strong><br><br>
+  Credit 資料上 CV 選 6 個變數，one-SE 規則選 <strong>4 個</strong>——
+  少兩個變數，預測能力在統計上分不出差別。上一節那張圖的橘色線就是 10-fold CV 誤差，
+  大圓點是它的最低點。''')}
+
+{card("講義 06 · 用 GridSearchCV 選調整參數", lab_code(CH, 134), lab_output(CH, 134),
+      src=src("134"),
+      note="<code>Pipeline</code> 是關鍵：把標準化包進去，"
+           "<code>GridSearchCV</code> 就會在每一折的訓練部分重新 fit scaler，"
+           "而不是用全部資料的平均與標準差。這一步做錯，CV 誤差會偏低而且不會報錯。")}
+
+{qa("觀念釐清", [
+    ("Q：既然 CV 最好，為什麼還要教 Cp、AIC、BIC？",
+     "<p>三個理由。第一，算力：最佳子集有 $2^p$ 個模型，每個都跑 k-fold 是 $k \\cdot 2^p$ 次配適；"
+     "而 Cp 只要一次配適加一個修正項。第二，這三個準則會出現在<strong>別人的論文與報表</strong>裡，"
+     "你得看得懂。第三，它們解釋了「懲罰複雜度」這個想法的來源——"
+     "AIC 從 KL 散度來、BIC 從後驗機率來，各有各的目標。</p>"
+     "<p>但如果你只是要挑一個模型來預測，而且資料量算得動：用 CV。</p>"),
+    ("Q：one-SE 規則會不會選出「太簡單」的模型？",
+     "<p>會，而且那是刻意的。它的立場是：<strong>在預測能力分不出差別時，偏好簡單</strong>。</p>"
+     "<p>這個偏好有實際理由——變數少的模型更好解釋、需要蒐集的資料更少、"
+     "上線後更不容易因為某個變數的定義改變而壞掉。如果你的目標純粹是最小化預測誤差"
+     "而完全不在意這些，那就選最低點；但要記得那個「最低」在下一份資料上很可能換人。</p>"),
+])}
+
+{quiz("qOse", "QUIZ · one-SE 規則",
+      "CV 誤差在模型大小 4、5、6、7 上分別是 54100、53900、53800、53850，"
+      "而最小值的標準誤是 6000。one-SE 規則會選哪一個？",
+      [(True, "4 個變數，因為 54100 落在 53800 ＋ 6000 = 59800 以內，而它是這些之中最簡單的",
+        "對。門檻是「最小值 ＋ 一個 SE」，所有低於門檻的模型都算「一樣好」，然後取最簡單的。這裡四個全部低於門檻，所以選 4。"),
+       (False, "6 個變數，因為 53800 是最小的",
+        "那是直接選最低點，不是 one-SE 規則。one-SE 的整個用意就是承認 53800 與 54100 的差距（300）遠小於雜訊（SE = 6000），硬選最低點是在追雜訊。"),
+       (False, "5 個變數，因為它在 4 和 6 之間取折衷",
+        "one-SE 規則沒有「取折衷」這個步驟。它是明確的兩步：算門檻、取門檻內最簡單的。")])}
+"""
+
+# ── P04 Ridge ─────────────────────────────────────────────────────────
+BODIES["ridge"] = f"""
+  <p>子集選擇是離散的：一個變數要嘛在、要嘛不在。這讓它<strong>變異很大</strong>——
+  資料動一點，選出來的變數就換一批。另一條路是留下全部變數，但<strong>把係數往零壓</strong>。</p>
+
+  <p>Ridge 在原本的 RSS 上加一個 L2 懲罰：</p>
+
+  $$\\sum_{{i=1}}^{{n}}\\left(y_i - \\beta_0 - \\sum_{{j=1}}^{{p}}\\beta_j x_{{ij}}\\right)^2
+    + \\lambda \\sum_{{j=1}}^{{p}} \\beta_j^2
+    \\;=\\; \\mathrm{{RSS}} + \\lambda \\|\\beta\\|_2^2$$
+
+  <p>$\\lambda = 0$ 就是最小平方；$\\lambda \\to \\infty$ 所有係數趨近 0。
+  注意<strong>截距 $\\beta_0$ 不罰</strong>——罰它等於在乎你把 y 的原點放在哪裡。</p>
+
+{viz(chart("w06ridgeChart", "tall", "。此圖的重點：λ 變大時所有係數一起往零收縮，但沒有任何一個變成剛好 0。")
+     + "\n" + chart("w06bvChart", "", "。此圖的重點：λ 增加時變異快速下降、偏差緩慢上升，測試 MSE 因此先降後升。"),
+     [info_card("怎麼看上圖",
+                'x 軸可以切換 log λ 與 ‖β̂ᴿ‖₂ ⁄ ‖β̂‖₂（相對收縮量）。'
+                '<strong>每條線是一個變數的係數。</strong>注意它們一起往中線靠，'
+                '但到最右邊仍然沒有任何一條落在 0 上。', "圖 6.4"),
+      rows_card("目前的 λ",
+                [("λ", "—", "w06ridgeLam"), ("‖β̂ᴿ‖₂ ⁄ ‖β̂‖₂", "—", "w06ridgeRatio"),
+                 ("非零係數", "—", "w06ridgeNz")]),
+      info_card("下圖：偏差–變異",
+                '模擬資料上把測試 MSE 拆成偏差²、變異、不可縮減誤差。'
+                '變異從 59.1 掉到 0.2，偏差² 從 0.4 升到 17.6——'
+                '<strong>中間有一段 λ 讓總和比最小平方（λ→0）更低</strong>，'
+                '這就是 Ridge 划算的地方。', "圖 6.5")],
+     "w06ridgeStatus", "拖動滑桿看係數怎麼收縮。",
+     '<label class="slider-label" style="margin-right:.4rem;">log λ</label>'
+     '<input type="range" id="w06ridgeSl" min="0" max="39" step="1" value="20" '
+     'oninput="w06ridgeMove()" style="flex:1 1 140px;max-width:220px;min-width:0;">'
+     '<button class="btn btn-toggle" onclick="w06ridgeAxis()">切換 x 軸</button>')}
+
+{card("講義 06 · Ridge 與係數的 L2 範數",
+      lab_code(CH, 122) + "\n\n" + lab_code(CH, 124), lab_output(CH, 124), src=src("122、124"),
+      note="<code>ElasticNet</code> 的 <code>l1_ratio=0</code> 就是純 Ridge。"
+           "係數的 L2 範數會隨 λ 單調下降——這個數字就是上圖 x 軸的分子。")}
+
+{card("講義 06 · 用 RidgeCV 選 λ", lab_code(CH, 144), lab_output(CH, 144), src=src("144、145"),
+      note="<code>RidgeCV</code> 把「掃 λ ＋ 交叉驗證」包成一步。"
+           "注意 <code>alphas</code> 要給一整排值，而且照慣例是<strong>由大到小</strong>掃，"
+           "因為暖啟動（warm start）從收縮較重的解開始比較快收斂。")}
+
+{info("Ridge 之前一定要標準化", '''懲罰項 $\\sum \\beta_j^2$ 對<strong>單位敏感</strong>。
+  同一個變數用「元」還是「千元」為單位，最小平方的預測完全一樣（係數等比例調整），
+  但 Ridge 不是——係數變大 1000 倍，懲罰項就變大 10⁶ 倍，這個變數會被壓得特別兇。<br><br>
+  所以標準做法是先把每個 $x_j$ 標準化成標準差 1 再配適。<code>scikit-learn</code> 的解法是
+  <code>Pipeline([('scaler', StandardScaler()), ('ridge', Ridge())])</code>，
+  順便解決了 CV 的洩漏問題。''', "warm")}
+
+{quiz("qRidge", "QUIZ · Ridge",
+      "把某個預測變數的單位從「元」改成「千元」（數值除以 1000）。Ridge 的預測會變嗎？",
+      [(True, "會變，因為 L2 懲罰對單位敏感——這正是為什麼要先標準化",
+        "對。係數會變成 1000 倍，懲罰項變成 10⁶ 倍，這個變數於是被壓得特別兇，整個解就不同了。最小平方沒有這個問題。"),
+       (False, "不會，因為線性模型對預測變數的線性變換不變",
+        "對<strong>最小平方</strong>成立（係數等比例調整、預測完全相同），但 Ridge 多了一個懲罰項，那一項不會隨著係數等比例縮放而抵消。"),
+       (False, "不會，因為 scikit-learn 會自動標準化",
+        "<code>Ridge</code> 預設<strong>不會</strong>標準化（早期版本的 <code>normalize</code> 參數已經移除）。你得自己包 <code>StandardScaler</code>。")])}
+"""
+
+# ── P05 Lasso ─────────────────────────────────────────────────────────
+BODIES["lasso"] = f"""
+  <p>Ridge 的缺點是：它留下全部 p 個變數。p = 500 的時候你得到 500 個很小但不為零的係數，
+  模型一點也不好解釋。Lasso 把 L2 換成 <strong>L1</strong>：</p>
+
+  $$\\mathrm{{RSS}} + \\lambda \\sum_{{j=1}}^{{p}} |\\beta_j|
+    \\;=\\; \\mathrm{{RSS}} + \\lambda \\|\\beta\\|_1$$
+
+  <p>只差一個平方，行為完全不同：<strong>λ 夠大時 Lasso 會把一部分係數壓成剛好 0</strong>，
+  於是它同時做了收縮與變數選擇。這種解叫做<strong>稀疏</strong>（sparse）。</p>
+
+  <h3 id="dx-geom">為什麼 L1 會歸零、L2 不會</h3>
+  <p>把兩者寫成等價的約束型式（$s$ 是預算，跟 $\\lambda$ 一對一對應）：</p>
+
+  $$\\min_{{\\beta}} \\mathrm{{RSS}} \\quad \\text{{s.t.}} \\quad
+    \\|\\beta\\|_1 \\le s \\;\\;(\\text{{Lasso，菱形}})
+    \\qquad\\text{{或}}\\qquad
+    \\|\\beta\\|_2^2 \\le s \\;\\;(\\text{{Ridge，圓}})$$
+
+  <p>RSS 的等高線是以 $\\hat\\beta^{{\\mathrm{{OLS}}}}$ 為中心的同心橢圓。解就是
+  <strong>橢圓第一次碰到約束區域的那一點</strong>。菱形有<em>尖角</em>而且尖角剛好落在座標軸上，
+  所以碰撞很容易發生在尖角——那裡有一個座標是 0。圓沒有尖角，碰到座標軸是機率 0 的事。</p>
+
+{viz(svg("w06geomSvg", 380),
+     [info_card("動手玩",
+                '拖動滑桿縮小預算 s，看解怎麼被推出去。切換 L1／L2 比較兩者的接觸點：'
+                '<strong>L1 的解常常「卡」在尖角上（某個係數變成剛好 0），'
+                'L2 的解只是變小、方向幾乎不變。</strong>', "圖 6.7"),
+      rows_card("這個 s 之下的解",
+                [("預算 s", "—", "w06geomS"), ("β₁", "—", "w06geomB1"),
+                 ("β₂", "—", "w06geomB2"), ("有幾個剛好是 0", "—", "w06geomNz"),
+                 ("RSS", "—", "w06geomRss")]),
+      info_card("看不到尖角效應？",
+                '把 s 調到 1.5 以下，並注意橢圓的傾斜方向。'
+                'β̂ 的兩個座標差得愈多，尖角效應愈明顯——'
+                '這也解釋了為什麼<strong>真實係數本來就稀疏</strong>時 Lasso 特別佔優勢。')],
+     "w06geomStatus", "紅色橢圓是 RSS 等高線，藍色區域是約束。解在兩者相切處。",
+     '<label class="slider-label" style="margin-right:.4rem;">預算 s</label>'
+     '<input type="range" id="w06geomSl" min="20" max="400" step="5" value="200" '
+     'oninput="w06geomMove()" style="flex:1 1 140px;max-width:200px;min-width:0;">'
+     '<button class="btn btn-toggle" id="w06geomBtn" onclick="w06geomToggle()">切換為 L2（Ridge）</button>')}
+
+{viz(chart("w06lassoChart", "tall", "。此圖的重點：λ 變大時係數一個一個變成剛好 0，最後只剩幾個變數存活。"),
+     [info_card("怎麼看",
+                '跟 Ridge 那張圖同樣的畫法，但這裡的線會<strong>真的碰到 0 並停在 0</strong>。'
+                '右側清單是在目前這個 λ 之下還沒被歸零的變數。', "圖 6.6"),
+      rows_card("目前的 λ",
+                [("λ", "—", "w06lassoLam"), ("非零係數", "—", "w06lassoNz"),
+                 ("CV 選出的 λ", "364.76", "w06lassoCv")]),
+      info_card("存活的變數",
+                '<div id="w06lassoVars" class="mono" style="font-size:.74rem;line-height:1.9;">—</div>')],
+     "w06lassoStatus", "拖動滑桿看變數一個一個被淘汰。",
+     '<label class="slider-label" style="margin-right:.4rem;">log λ</label>'
+     '<input type="range" id="w06lassoSl" min="0" max="39" step="1" value="24" '
+     'oninput="w06lassoMove()" style="flex:1 1 140px;max-width:220px;min-width:0;">'
+     '<button class="btn btn-reset" onclick="w06lassoCvJump()">跳到 CV 選出的 λ</button>')}
+
+{card("講義 06 · Lasso 與被歸零的係數",
+      lab_code(CH, 162) + "\n\n" + lab_code(CH, 172), lab_output(CH, 172), src=src("162、172"),
+      note="注意輸出裡有<strong>剛好等於 0</strong> 的係數——那不是「很小」，是真的 0。"
+           "這是 Lasso 跟 Ridge 最實際的差別：你可以直接說「這些變數被模型丟掉了」。")}
+
+{qa("觀念釐清", [
+    ("Q：Lasso 一定比 Ridge 好嗎？",
+     "<p>不一定，取決於<strong>真實的係數結構</strong>。</p>"
+     "<p>如果真的只有少數幾個變數有用（真實係數稀疏），Lasso 佔優勢——它能把沒用的丟掉，"
+     "省下估計它們所花的變異。如果<em>很多</em>變數都有小小的貢獻（係數密集），"
+     "Ridge 通常較好——Lasso 會硬把一些真的有用的變數歸零，付出偏差的代價。</p>"
+     "<p>而你事前並不知道是哪一種。實務作法是兩個都跑、用 CV 比較，"
+     "或直接用 elastic net（同時放 L1 與 L2 懲罰）讓資料自己決定混合比例。</p>"),
+    ("Q：Lasso 選出來的變數，可以說它們「顯著」嗎？",
+     "<p>不能。Lasso 的變數選擇沒有附帶 p 值，而且「先用資料選變數、再對選出來的變數做 t 檢定」"
+     "會嚴重高估顯著性——那是同一份資料用了兩次，跟第 5 章的 CV 誤用是同一個病。</p>"
+     "<p>要做選後推論（post-selection inference）需要專門的方法"
+     "（selective inference、debiased lasso 等），已經超出本課範圍。"
+     "實務上的誠實說法是：<strong>「在這個 λ 之下，Lasso 保留了這些變數」</strong>，"
+     "而不是「這些變數顯著」。</p>"),
+    ("Q：兩個高度相關的變數，Lasso 會怎麼處理？",
+     "<p>傾向<strong>隨機留一個、丟另一個</strong>——因為留一個就夠解釋，留兩個要多付一份 L1 懲罰。</p>"
+     "<p>問題是「留哪一個」很不穩定，資料動一點就換人。這在解釋上很危險："
+     "你可能報告「基因 A 重要、基因 B 不重要」，而重跑一次結論就反過來。</p>"
+     "<p>Ridge 相反，它會讓相關的變數<strong>平分</strong>係數。想要「同進同出」的行為，"
+     "elastic net 或 group lasso 是更合適的工具。</p>"),
+])}
+
+{quiz("qLasso", "QUIZ · Lasso 的幾何",
+      "為什麼 L1 約束區域（菱形）會讓解落在座標軸上，而 L2（圓）不會？",
+      [(True, "菱形的尖角剛好在座標軸上，橢圓等高線很容易先碰到尖角；圓處處平滑，碰到軸是機率 0 的事",
+        "對。這是 ISLP 圖 6.7 的全部內容。維度更高時 L1 是超菱形，尖角與各種低維的稜、面都落在「某些座標為 0」的子空間上，所以稀疏解更容易發生。"),
+       (False, "因為 L1 懲罰比 L2 懲罰強，把係數壓得更兇",
+        "強弱不是重點——λ 可以任意調。決定性的差別是<strong>形狀</strong>：有沒有尖角。同樣的收縮量下，L2 只是縮短向量，L1 會把它推到軸上。"),
+       (False, "因為 Lasso 用的是絕對值，絕對值函數在 0 沒有定義",
+        "絕對值在 0 是有定義的（等於 0），只是<em>不可微</em>。不可微確實是機制的一部分（次微分在 0 是一整個區間），但「沒有定義」是錯的說法。")])}
+"""
+
+# ── P06 怎麼選 λ ───────────────────────────────────────────────────────
+BODIES["lambda"] = f"""
+  <p>λ 是<strong>調整參數</strong>（tuning parameter），不是從資料估出來的參數。
+  選它的方法跟第 5 章選多項式次數完全一樣：<strong>掃一排候選值，用交叉驗證比較。</strong></p>
+
+  <ol>
+    <li>選一排 λ（通常是<strong>對數等距</strong>，例如從 10⁻² 到 10⁵ 取 100 個點）。</li>
+    <li>對每個 λ 做 k-fold CV，得到 CV 誤差。</li>
+    <li>選 CV 誤差最小的 λ，或用 one-SE 規則選一個更大（更收縮）的 λ。</li>
+    <li><strong>用全部資料在那個 λ 上重配一次</strong>，交出這個模型。</li>
+  </ol>
+
+  <p>Credit 資料上 Lasso 的 CV 選出 λ = <strong>364.76</strong>，
+  在那個 λ 之下 11 個變數全部還活著——這份資料的係數並不稀疏，
+  所以 Lasso 沒有真的丟掉東西。這是個誠實的結果，不是失敗：
+  <strong>Lasso 沒有義務一定要歸零。</strong></p>
+
+{info("為什麼用對數等距而不是等距", '''因為 λ 的作用是乘性的。從 1 到 2 的改變跟從 1000 到 1001
+  的改變完全不同量級——前者讓懲罰加倍，後者幾乎沒差。等距取樣會把幾乎全部的點浪費在
+  「懲罰太重、係數全被壓平」的那一端。<br><br>
+  <code>np.logspace(-2, 5, 100)</code> 或 <code>10**np.linspace(a, b, 100)</code>
+  才是對的做法。''')}
+
+{card("講義 06 · 用 ElasticNetCV 選 λ 並取最小 CV 誤差",
+      lab_code(CH, 168), lab_output(CH, 168), src=src("162、168"),
+      note="<code>mse_path_</code> 的形狀是（λ 個數 × 折數），"
+           "<code>.mean(1)</code> 先對折取平均、再取最小值，就是 CV 曲線的最低點。")}
+
+{quiz("qLam", "QUIZ · 選 λ",
+      "用 CV 選好 λ 之後，最終交出的模型應該是？",
+      [(True, "用全部資料、在選出的那個 λ 上重配一次的模型",
+        "對。CV 的角色是「選」，不是「產出」。每一折配出來的模型都只用了 (k−1)/k 的資料，把它們平均或任選一個都不對。"),
+       (False, "k 折各自配出來的模型的平均",
+        "係數的平均在線性模型上勉強可以定義，但那不是 CV 的用法，而且對非線性模型根本無法定義。CV 只回答「λ 該取多少」。"),
+       (False, "CV 誤差最小的那一折所配出來的模型",
+        "那一折之所以誤差最小，很可能只是它的驗證資料剛好比較好預測。挑「運氣最好的一折」是選擇偏差的典型例子。")])}
+"""
+
+# ── P07 PCR ───────────────────────────────────────────────────────────
+BODIES["pcr"] = f"""
+  <p>第三條路：<strong>不動變數，改換座標。</strong>先把 p 個相關的預測變數壓成
+  M 個互不相關的方向（M ≪ p），再對這 M 個方向做最小平方。</p>
+
+  <p>主成分迴歸（principal components regression, PCR）用的方向就是第 12 章的主成分：
+  第一主成分是 X 變異最大的方向，第二個是在跟第一個正交的條件下變異最大的方向，依此類推。</p>
+
+  $$Z_m = \\sum_{{j=1}}^{{p}} \\phi_{{jm}} X_j, \\qquad
+    y_i = \\theta_0 + \\sum_{{m=1}}^{{M}} \\theta_m z_{{im}} + \\varepsilon_i$$
+
+  <p>M 是調整參數，同樣用 CV 選。M = p 時 PCR 就退回最小平方（只是換了個座標）；
+  M 小的時候，被丟掉的那些低變異方向就是被收縮掉的部分。</p>
+
+{viz(svg("w06dirSvg", 340),
+     [info_card("PCA 方向 vs PLS 方向",
+                '拖動滑桿改變 y 對兩個 x 的依賴方向。'
+                '<span style="color:var(--accent2);font-weight:700;">藍線 PC1</span> '
+                '只看 X 的散佈，所以<strong>完全不動</strong>；'
+                '<span style="color:var(--accent);font-weight:700;">紅線 PLS1</span> '
+                '也看 y，所以會跟著轉。', "圖 6.14–6.15"),
+      rows_card("目前的方向",
+                [("y 的真實方向", "—", "w06dirTrue"), ("PC1 方向", "—", "w06dirPca"),
+                 ("PLS1 方向", "—", "w06dirPls"),
+                 ("PC1 與真實方向的夾角", "—", "w06dirAng")]),
+      info_card("這說明了什麼",
+                'PCR 的方向<strong>完全是非監督式的</strong>——它假設「X 變異大的方向也是跟 y 有關的方向」。'
+                '這個假設常常成立，但沒有保證。PLS 讓 y 參與挑方向，'
+                '所以在這個假設不成立時表現較好。')],
+     "w06dirStatus", "灰點是資料，兩條線分別是 PC1 與 PLS1 的方向。",
+     '<label class="slider-label" style="margin-right:.4rem;">y 的方向</label>'
+     '<input type="range" id="w06dirSl" min="0" max="180" step="3" value="20" '
+     'oninput="w06dirMove()" style="flex:1 1 140px;max-width:220px;min-width:0;">'
+     '<button class="btn btn-reset" onclick="w06dirReset()">重置</button>')}
+
+{card("講義 06 · 用 CV 選主成分個數 M",
+      lab_code(CH, 182), lab_output(CH, 182), src=src("180、182"),
+      note="<code>pca__n_components</code> 這種雙底線寫法是 <code>Pipeline</code> 的參數命名慣例："
+           "步驟名 ＋ <code>__</code> ＋ 該步驟的參數名。標準化同樣包在 pipeline 裡，"
+           "PCA <strong>必須</strong>在標準化之後做——不然變異數大的變數會主宰第一主成分。")}
+
+{card("講義 06 · 各主成分解釋了多少變異", lab_code(CH, 188), lab_output(CH, 188), src=src("188"),
+      note="<code>explained_variance_ratio_</code> 就是第 12 章的 PVE。"
+           "累加起來可以回答「留幾個主成分才夠」。")}
+
+{qa("觀念釐清", [
+    ("Q：PCR 算不算變數選擇？",
+     "<p>不算。每一個主成分都是<strong>全部 p 個原始變數的線性組合</strong>，"
+     "所以就算你只留 M = 2 個主成分，最終模型仍然用到了每一個原始變數。</p>"
+     "<p>這是 PCR 跟 Lasso 最重要的差別：Lasso 給你「這 5 個變數有用、其餘丟掉」；"
+     "PCR 給你「這 2 個方向有用」，而每個方向都攪拌了所有變數。"
+     "後者在解釋上通常更難——你得去看 loadings 才知道那個方向大致代表什麼。</p>"),
+    ("Q：PCR 之前為什麼一定要標準化？",
+     "<p>因為主成分是「變異最大的方向」，而變異數的大小完全取決於單位。</p>"
+     "<p>Credit 資料裡 <code>Limit</code> 的數值是幾千、<code>Cards</code> 是個位數。"
+     "不標準化的話，第一主成分幾乎就等於 <code>Limit</code> 本身——"
+     "不是因為它最重要，而是因為它的單位最大。第 12 章的 USArrests biplot 有更戲劇性的例子。</p>"),
+])}
+
+{quiz("qPcr", "QUIZ · PCR",
+      "PCR 用 M = 2 個主成分。最終模型用到了幾個原始預測變數？",
+      [(True, "全部 p 個，因為每個主成分都是所有原始變數的線性組合",
+        "對。PCR 不做變數選擇——這是它跟 Lasso 最重要的差別。它只是把 p 維壓進 M 維，沒有丟掉任何變數。"),
+       (False, "2 個，就是 loadings 最大的那兩個",
+        "M = 2 指的是<strong>主成分</strong>的個數，不是原始變數的個數。每個主成分的 loading 向量長度都是 p，而且通常每一項都不為零。"),
+       (False, "不確定，要看 CV 選出多少",
+        "CV 選的是 M（主成分個數）。不管 M 是多少，只要 M ≥ 1，用到的原始變數就是全部 p 個。")])}
+"""
+
+# ── P08 PLS ───────────────────────────────────────────────────────────
+BODIES["pls"] = f"""
+  <p>PCR 挑方向時<strong>完全沒看 y</strong>。這有點浪費——我們明明知道 y 是什麼。</p>
+
+  <p>偏最小平方（partial least squares, PLS）修掉這一點：第一個方向的權重直接取
+  $\\phi_{{j1}} \\propto$ 每個 $X_j$ 與 $y$ 的簡單線性迴歸係數，
+  也就是<strong>跟 y 相關性愈強的變數，權重愈大</strong>。
+  取完第一個方向後，把各變數對它迴歸取殘差，再在殘差上重複同樣的步驟得到第二個方向。</p>
+
+  <p>上一節那個元件就是在演這件事：拖滑桿改變 y 的方向，PLS1 跟著轉、PC1 不動。</p>
+
+{table(["", "方向怎麼挑", "有沒有用到 y", "做變數選擇嗎", "何時較好"],
+       [["PCR", "X 變異最大的方向", "沒有", "沒有", "X 的主要變異方向剛好跟 y 有關時"],
+        ["PLS", "跟 y 相關性最強的方向", "有", "沒有", "X 的大變異方向跟 y 無關時"],
+        ["Ridge", "不換座標，全部收縮", "有（配適時）", "沒有", "很多變數都有小貢獻"],
+        ["Lasso", "不換座標，部分歸零", "有（配適時）", "<strong>有</strong>", "真實係數稀疏"]])}
+
+  <p>實務上 PLS 的表現常常<strong>跟 PCR 差不多</strong>，有時還略差。原因是：
+  它雖然降低了偏差（方向跟 y 有關），但也增加了變異（方向是估出來的，而且用到了 y）。
+  ISLP §6.3.2 的結論就是這樣：PLS 沒有一致地贏過 PCR 或 Ridge。</p>
+
+{card("講義 06 · 用 CV 選 PLS 的成分個數", lab_code(CH, 194), lab_output(CH, 194), src=src("192、194"),
+      note="<code>PLSRegression</code> 的 <code>n_components</code> 跟 PCR 的 "
+           "<code>n_components</code> 是同一個角色的調整參數，一樣用 CV 選。"
+           "注意它預設 <code>scale=True</code>，已經幫你標準化了。")}
+
+{quiz("qPls", "QUIZ · PLS",
+      "PLS 相對於 PCR 的差別是什麼？",
+      [(True, "挑方向時用到了 y，所以方向會跟著 y 轉；但降維與不做變數選擇這兩點跟 PCR 一樣",
+        "對。這是「監督式降維」對「非監督式降維」。也因為方向是用 y 估出來的，PLS 的變異比 PCR 大，兩者實務上常打成平手。"),
+       (False, "PLS 會把不重要的變數歸零，所以比 PCR 好解釋",
+        "不會。歸零是 <strong>Lasso</strong> 的性質。PLS 的每個成分仍然是全部 p 個變數的線性組合。"),
+       (False, "PLS 不需要標準化，PCR 需要",
+        "兩者都需要，理由相同（方向的定義對單位敏感）。<code>PLSRegression</code> 只是預設 <code>scale=True</code> 幫你做了。")])}
+"""
+
+# ── P09 高維度 ─────────────────────────────────────────────────────────
+BODIES["highdim"] = f"""
+  <p>基因資料、文字資料、感測器資料常常是 <strong>p 遠大於 n</strong>：
+  幾萬個變數、幾百個樣本。這時候最小平方不只是「表現不好」，而是<strong>徹底失效</strong>。</p>
+
+  <p>當 p ≥ n 時，最小平方能找到一組係數<strong>完美通過每一個訓練點</strong>——
+  殘差全部是 0、R² 剛好等於 1。這不是模型好，而是自由度用完了：
+  n 個方程式、p ≥ n 個未知數，解不唯一而且必然過度配適。</p>
+
+{viz(chart("w06hdChart", "tall", "。此圖的重點：p 從 1 增到 n = 20 時訓練 R² 一路衝到 1，而測試 MSE 從 1.07 爆到 46.3。")
+     + "\n" + chart("w06curseChart", "", "。此圖的重點：加入完全無關的噪音變數只會讓測試誤差變差，從 1.34 升到 7.54。"),
+     [info_card("上圖在做什麼",
+                'n = 20 的模擬資料，<strong>只有第一個變數真的跟 y 有關</strong>，'
+                '其餘都是純噪音。x 軸是放進模型的變數個數。'
+                '訓練 R² 從 0.051 升到 <strong>1.000</strong>，測試 MSE 從 1.07 升到 '
+                '<strong>46.3</strong>。', "圖 6.22–6.23"),
+      rows_card("關鍵數字",
+                [("p = 1：訓練 R² ／ 測試 MSE", "0.051 ／ 1.07", "w06hdA"),
+                 ("p = 18：訓練 R² ／ 測試 MSE", "1.000 ／ 46.3", "w06hdB")]),
+      info_card("下圖：維度的詛咒",
+                'Lasso 在 p = 20、50、2000 個候選變數下的測試 MSE：'
+                '<strong>1.34 → 1.60 → 7.54</strong>。'
+                '真正有用的變數一直是那 <em>20</em> 個，多加進來的全是噪音——'
+                '但噪音也要花代價去排除。', "圖 6.24")],
+     "w06hdStatus", "純噪音變數愈多，訓練誤差愈好看、測試誤差愈糟。",
+     '<button class="btn btn-toggle" onclick="w06hdToggle()">切換訓練 R² ／ 訓練 MSE</button>')}
+
+{info("在高維度千萬不要相信這三個數字", '''<strong>1. 訓練資料上的 R²。</strong>
+  p 接近 n 時它必然接近 1，跟模型好壞完全無關。<br>
+  <strong>2. 訓練資料上的 RSS 或 MSE。</strong>同理，必然接近 0。<br>
+  <strong>3. 用同一份資料選完變數之後算出來的 p 值。</strong>
+  從幾萬個變數裡挑「最顯著」的，一定挑得到看起來很顯著的，那是多重比較，不是發現。<br><br>
+  唯一能信的是<strong>在完全沒參與過任何選擇的資料上</strong>算出來的誤差——
+  獨立的測試集，或誠實做的交叉驗證（第 5 章 P06）。''', "warm")}
+
+{qa("觀念釐清", [
+    ("Q：p > n 的時候「維度的詛咒」到底詛咒了什麼？",
+     "<p>詛咒的是<strong>額外的變數不是免費的</strong>。</p>"
+     "<p>直覺上多一個變數只會提供更多資訊，最壞也就是沒用。但實際上每個變數都要花"
+     "自由度去估它的係數，而估計本身帶進變異。一個跟 y 完全無關的變數，"
+     "它的係數估計值不會剛好是 0，而是一個隨機的小數字——那個隨機性直接進到預測裡。</p>"
+     "<p>下面那張圖就是這件事：真正有用的變數固定是 20 個，"
+     "把候選池從 20 擴到 2000 之後測試 MSE 從 1.34 升到 7.54。"
+     "<strong>雜訊不會互相抵消，它會累加。</strong></p>"),
+    ("Q：那高維度該用什麼？",
+     "<p>這一章的三類工具全部都是為此設計的："
+     "<strong>子集／逐步選擇</strong>（明確減少變數）、"
+     "<strong>收縮</strong>（Ridge 與 Lasso，Lasso 還順便選變數）、"
+     "<strong>降維</strong>（PCR 與 PLS）。它們的共同點是<em>降低變異，代價是接受一點偏差</em>。</p>"
+     "<p>在 p ≫ n 的場景，Lasso 與 elastic net 特別受歡迎，因為稀疏假設常常合理"
+     "（幾萬個基因裡真的有關的通常只有少數幾個），而且結果可以直接列出「這幾個變數」。</p>"),
+])}
+
+{quiz("qHd", "QUIZ · 高維度",
+      "n = 50、p = 500 的資料，用最小平方配適。訓練 R² 大約會是多少？",
+      [(True, "1.0，因為 p > n 時一定存在完美通過所有訓練點的解",
+        "對。這也是為什麼在高維度看訓練 R² 完全沒有意義——它跟模型好壞無關，只反映了自由度夠不夠用。"),
+       (False, "接近 0，因為 500 個變數大部分是噪音",
+        "方向剛好相反。噪音變數<strong>幫助</strong>模型記住訓練資料，那正是問題所在；所以訓練 R² 會很高。糟的是測試誤差。"),
+       (False, "無法計算，因為 XᵀX 不可逆",
+        "$X^\\top X$ 確實奇異，所以係數解<em>不唯一</em>——但仍然存在（用偽逆就得到一組），而且任何一組都達到 RSS = 0。「解不唯一」不等於「算不出來」。")])}
+"""
+
+# ── EX ────────────────────────────────────────────────────────────────
+BODIES["exercises"] = f"""
+{quiz("qEx1", "EXERCISE 1 · ISLP 6.5 第 1 題（b）",
+      "最佳子集、forward stepwise、backward stepwise 各自選出的「k 個變數的最佳模型」中，"
+      "<strong>測試</strong>誤差最低的會是哪一個？",
+      [(True, "不確定——三者都有可能，因為測試誤差要看運氣，而三者選出的模型未必相同",
+        "對。第 (a) 小題問的是<strong>訓練</strong> RSS，那個答案很確定（最佳子集必定最小或相等，因為它搜了全部）。但測試誤差是另一回事：搜得最廣不代表泛化最好，過度搜尋反而更容易挑到剛好貼合訓練資料的模型。"),
+       (False, "最佳子集，因為它搜遍所有可能的模型",
+        "這是第 (a) 小題「訓練 RSS」的答案。搜得廣保證訓練 RSS 較小，但那正是過度配適的定義——對測試誤差沒有保證。"),
+       (False, "forward stepwise，因為它的搜尋空間小所以變異低",
+        "變異較低是 forward stepwise 的<em>優點</em>，但這只是機率上的傾向，不是保證。題目問的是「一定會是哪一個」，答案是不確定。")])}
+
+{quiz("qEx2", "EXERCISE 2 · ISLP 6.5 第 2 題（a）",
+      "相對於最小平方，Lasso 的特性是？",
+      [(True, "彈性較低，因此當「變異的下降」大於「偏差的上升」時，預測準度會更好",
+        "對。這是課本要的標準答案句型。三個小題（Lasso／Ridge／非線性方法）的差別只在彈性是低還是高——Lasso 與 Ridge 都是<strong>降低</strong>彈性換取變異的下降。"),
+       (False, "彈性較高，因此當「偏差的下降」大於「變異的上升」時會更好",
+        "這是第 (c) 小題<strong>非線性方法</strong>的答案。Lasso 加了懲罰項，它的彈性比最小平方<em>低</em>，不是高。"),
+       (False, "彈性一樣，只是係數的解不同",
+        "不一樣。λ = 0 時兩者相同，但 λ > 0 時 Lasso 的解空間被約束住了（‖β‖₁ ≤ s），那就是彈性較低。")])}
+
+{quiz("qEx3", "EXERCISE 3 · ISLP 6.5 第 4 題",
+      "Ridge 的懲罰參數 λ 從 0 開始往上增加。<strong>訓練</strong> RSS 會怎麼變化？",
+      [(True, "單調上升",
+        "對。λ = 0 時就是最小平方，它<strong>定義上</strong>就是訓練 RSS 的最小值；任何約束都只會讓訓練 RSS 變大或不變。同一題還問了測試 RSS（先降後升的 U 型）、變異（單調下降）、偏差²（單調上升）、不可縮減誤差（不變）。"),
+       (False, "先下降再上升，呈 U 型",
+        "這是<strong>測試</strong> RSS 的形狀。訓練 RSS 沒有 U 型——它在 λ = 0 就已經是最小的了。"),
+       (False, "單調下降",
+        "方向相反。加懲罰只會讓「訓練 RSS 這個目標」被犧牲掉一部分，換取係數變小。")])}
+
+{quiz("qEx4", "EXERCISE 4 · ISLP 6.5 第 9 題",
+      "課本第 9 題在 <code>College</code> 資料上比較最小平方、Ridge、Lasso、PCR、PLS 的測試誤差。"
+      "預期會看到什麼？",
+      [(True, "五者的測試誤差常常很接近，Ridge 與 Lasso 略勝最小平方；沒有哪一個一致最好",
+        "對。這一題的教學意義就在這裡：這些方法不是「新的比舊的好」，而是各有適用場景。<code>College</code> 的 n 遠大於 p，最小平方本來就不太糟，所以收縮的好處有限。"),
+       (False, "PCR 與 PLS 明顯勝出，因為它們降了維",
+        "降維在 p 接近或超過 n 時才有明顯好處。<code>College</code> 是 n = 777、p = 17，最小平方毫無壓力，降維反而可能丟掉有用資訊。"),
+       (False, "Lasso 一定最好，因為它同時做收縮與變數選擇",
+        "Lasso 的優勢要在<strong>真實係數稀疏</strong>時才顯現。若很多變數都有小貢獻，把它們歸零反而引入偏差，Ridge 會較好。")])}
+"""
+
+# ── REF ───────────────────────────────────────────────────────────────
+BODIES["reference"] = f"""
+  <p>考前把這一頁掃過去就好。</p>
+
+  <h3>三類工具對照</h3>
+{table(["", "做什麼", "調整參數", "會歸零嗎", "算力", "何時最適合"],
+       [["最佳子集", "搜遍 2^p 個模型", "模型大小 k", "會（沒選就是 0）", "2^p，p &gt; 40 不可行", "p 很小"],
+        ["Forward／backward", "貪婪地一次加／減一個", "模型大小 k", "會", "1 ＋ p(p＋1)/2", "p 中等"],
+        ["Ridge（L2）", "全部係數一起收縮", "λ", "<strong>不會</strong>", "很快，有封閉解", "很多變數都有小貢獻"],
+        ["Lasso（L1）", "收縮 ＋ 部分歸零", "λ", "<strong>會</strong>", "很快（座標下降）", "真實係數稀疏"],
+        ["PCR", "換成 M 個非監督式方向", "M", "不會（用到全部變數）", "很快", "X 的大變異方向跟 y 有關"],
+        ["PLS", "換成 M 個監督式方向", "M", "不會", "很快", "X 的大變異方向跟 y 無關"]])}
+
+  <h3>Credit 資料上六個準則選出的模型大小</h3>
+{table(["準則", "選出的大小", "懲罰項", "備註"],
+       [["Cp", "6", "$+2d\\hat\\sigma^2$", "測試 MSE 的無偏估計"],
+        ["AIC", "6", "常態誤差下與 Cp 等價", "從 KL 散度來"],
+        ["BIC", "<strong>4</strong>", "$+\\log(n)\\,d\\hat\\sigma^2$", "n &gt; 7 時罰得比 Cp 重，偏好小模型"],
+        ["調整後 R²", "7", "分母帶 $n-d-1$", "罰得最輕，選最大的模型"],
+        ["10-fold CV", "6", "無（直接估測試誤差）", "不需要 $\\hat\\sigma^2$"],
+        ["CV ＋ one-SE", "<strong>4</strong>", "同上，再取門檻內最簡單的", "跟 BIC 一致"]])}
+  <p style="font-size:.82rem;color:var(--muted);">n = 400、p = 11、$\\hat\\sigma^2$ = 9760。
+  Cp 選 6 個、BIC 選 4 個、調整後 R² 選 7 個，與 ISLP 圖 6.2 的數字相符。
+  最佳子集與 forward stepwise 在大小 3 之後就開始選出不同的變數組合。</p>
+
+  <h3>公式速查</h3>
+{table(["名稱", "式子", "備註"],
+       [["Cp", "$\\frac{1}{n}(\\mathrm{RSS} + 2d\\hat\\sigma^2)$", "式 6.2"],
+        ["AIC", "$\\frac{1}{n\\hat\\sigma^2}(\\mathrm{RSS} + 2d\\hat\\sigma^2)$", "式 6.3，常態誤差下與 Cp 等價"],
+        ["BIC", "$\\frac{1}{n}(\\mathrm{RSS} + \\log(n)\\,d\\hat\\sigma^2)$", "式 6.3，$\\log n > 2$ 時罰得比 Cp 重"],
+        ["調整後 R²", "$1 - \\frac{\\mathrm{RSS}/(n-d-1)}{\\mathrm{TSS}/(n-1)}$", "式 6.4"],
+        ["Ridge", "$\\mathrm{RSS} + \\lambda\\sum_j \\beta_j^2$", "式 6.5，等價於 $\\|\\beta\\|_2^2 \\le s$"],
+        ["Lasso", "$\\mathrm{RSS} + \\lambda\\sum_j |\\beta_j|$", "式 6.7，等價於 $\\|\\beta\\|_1 \\le s$"],
+        ["主成分方向", "$Z_m = \\sum_j \\phi_{jm} X_j$", "式 6.16，$\\phi$ 由 X 的變異決定"]])}
+
+{info("四個一定要記住的觀念", '''<strong>1. 三條路：選變數、收縮係數、換座標。</strong>
+  共同點都是降低變異，代價是接受一點偏差。<br>
+  <strong>2. L1 會歸零、L2 不會，差別在形狀不在強弱。</strong>
+  菱形有尖角而尖角落在座標軸上；圓沒有。<br>
+  <strong>3. Ridge、Lasso、PCR、PLS 之前都必須標準化。</strong>
+  它們的目標函數對單位敏感，最小平方不是。<br>
+  <strong>4. 高維度時訓練 R² 必然接近 1，看它等於沒看。</strong>
+  只信沒參與過任何選擇的資料上算出來的誤差。''')}
+
+{ver_note()}
+"""
+
+# ══════════════════════════════════════════════════════════════════════
+PAGEJS = r"""
+/* ===== model_selection 本頁元件（id 與全域一律 w06 前綴）===== */
+
+const w06pal = ['#2c3e7a', '#c0392b', '#1a6b4a', '#8e44ad', '#f39c12', '#16a085',
+                '#d35400', '#2980b9', '#7f8c8d', '#c2185b', '#00838f'];
+
+/* ---------- P01 2^p 子集空間：規模比較 ---------- */
+function w06subsetCounts() {
+  const p = parseInt($('w06subsetP').value, 10);
+  const best = Math.pow(2, p), step = 1 + p * (p + 1) / 2;
+  $('w06subsetPv').textContent = String(p);
+  $('w06subsetP2').textContent = String(p);
+  $('w06subsetBest').textContent = best.toLocaleString('en-US');
+  $('w06subsetFwd').textContent = step.toLocaleString('en-US');
+  $('w06subsetRatio').textContent = HC.fmt(best / step, 1) + ' 倍';
+  // 對數尺度的橫條：等距畫會讓 p 小的時候完全看不見
+  const W = 620, H = 190;
+  const s = HC.svg('w06subsetSvg', { xd: [0, 1], yd: [0, 1], h: H, w: W,
+                                     pad: { l: 8, r: 8, t: 8, b: 8 } });
+  s.clear();
+  const g = s.layer('bars');
+  const maxLog = Math.log10(Math.pow(2, 20));
+  const rows = [['最佳子集 2ᵖ', best, 'var(--accent)'],
+                ['forward 1+p(p+1)/2', step, 'var(--accent3)']];
+  rows.forEach((row, i) => {
+    const y = 54 + i * 62;
+    const w = Math.max(4, (Math.log10(row[1]) / maxLog) * (W - 250));
+    s.add('rect', { x: 170, y: y, width: w, height: 30, rx: 5, fill: row[2] }, g);
+    const lab = s.add('text', { x: 162, y: y + 20, 'text-anchor': 'end', fill: 'var(--accent2)',
+                                style: "font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600" }, g);
+    lab.textContent = row[0];
+    const num = s.add('text', { x: 178 + w, y: y + 20, fill: 'var(--ink)',
+                                style: "font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700" }, g);
+    num.textContent = row[1].toLocaleString('en-US') + ' 個模型';
+  });
+  const cap = s.add('text', { x: 12, y: 22, class: 'axtitle' }, g);
+  cap.textContent = 'p = ' + p + ' 時要配適的模型數（橫條長度是對數尺度）';
+  const foot = s.add('text', { x: 12, y: H - 12, class: 'axlab' }, g);
+  foot.textContent = 'p = 20 時最佳子集是 1,048,576 個，forward 只要 211 個——差 4,969 倍';
+  setStatus('w06subsetStatus', 'p = ' + p + '：最佳子集 ' + best.toLocaleString('en-US')
+    + ' 個模型，forward stepwise ' + step + ' 個，差 ' + HC.fmt(best / step, 1)
+    + ' 倍。下面按「開始」看 forward 在真實的 Credit 資料上怎麼一步一步走。');
+}
+
+/* ---------- P01 Credit 4 變數格圖：forward 逐步走 ---------- */
+let w06latPlayer = null, w06latShowBest = true;
+function w06latBits(m) { return [0, 1, 2, 3].filter(b => (m >> b) & 1); }
+function w06latSize(m) { return w06latBits(m).length; }
+function w06latBestByK() {
+  const F = FRAMES_w06lat, out = [];
+  for (let k = 0; k <= 4; k++) {
+    let bm = -1;
+    for (let m = 0; m < 16; m++) {
+      if (w06latSize(m) !== k) continue;
+      if (bm < 0 || F.rss[m] < F.rss[bm]) bm = m;
+    }
+    out.push(bm);
+  }
+  return out;
+}
+function w06latFrames() {
+  const F = FRAMES_w06lat, best = w06latBestByK();
+  const frames = [];
+  let cur = 0;                                    // 空模型
+  for (let k = 0; k < 4; k++) {
+    const cands = [];
+    for (let b = 0; b < 4; b++) if (!((cur >> b) & 1)) cands.push(cur | (1 << b));
+    const pick = cands.reduce((a, m) => (F.rss[a] <= F.rss[m] ? a : m));
+    frames.push({ k: k + 1, cur: cur, cands: cands, pick: pick, best: best[k + 1],
+                  gap: F.rss[pick] - F.rss[best[k + 1]], line: k === 0 ? 1 : 3 });
+    cur = pick;
+  }
+  frames.push({ k: 4, cur: cur, cands: [], pick: cur, best: best[4], gap: 0, line: 5, done: true });
+  return frames;
+}
+function w06latApply(f) {
+  const F = FRAMES_w06lat, best = w06latBestByK();
+  const rssAll = F.rss.slice();
+  const lo = Math.min.apply(null, rssAll), hi = Math.max.apply(null, rssAll);
+  const svc = HC.svg('w06subsetLatSvg', { xd: [-0.4, 4.4], yd: [lo * 0.96, hi * 1.02],
+                                          h: 300, w: 620 });
+  svc.clear();
+  svc.grid(4, 4, { xtitle: '模型裡的變數個數', ytitle: '訓練 RSS（' + F.unit + '）',
+                   xdec: 0, ydec: 0 });
+  const g = svc.layer('lat');
+  // forward 走過的路
+  const path = [];
+  let c = 0;
+  path.push([0, F.rss[0]]);
+  for (let k = 0; k < 4; k++) {
+    const cands = [];
+    for (let b = 0; b < 4; b++) if (!((c >> b) & 1)) cands.push(c | (1 << b));
+    c = cands.reduce((a, m) => (F.rss[a] <= F.rss[m] ? a : m));
+    path.push([w06latSize(c), F.rss[c]]);
+    if (w06latSize(c) >= f.k && !f.done) break;
+  }
+  if (w06latShowBest) {
+    svc.poly(best.map((m, k) => [k, F.rss[m]]),
+             { cls: 'fit', stroke: 'var(--accent)', sw: 2.6 }, g);
+  }
+  svc.poly(path, { cls: 'fit', stroke: 'var(--accent3)', sw: 3, dash: '6 4' }, g);
+  for (let m = 0; m < 16; m++) {
+    const k = w06latSize(m);
+    const isCand = f.cands.indexOf(m) >= 0;
+    const isPick = m === f.pick;
+    const isBest = best[k] === m;
+    svc.dot(k, F.rss[m], {
+      r: isPick ? 7 : (isCand ? 5.5 : 3.6),
+      fill: isPick ? 'var(--accent3)' : (isCand ? 'var(--pt-held)'
+            : (isBest && w06latShowBest ? 'var(--accent)' : 'rgba(138,133,120,.5)')),
+      stroke: isPick || isCand ? '#fff' : null, sw: isPick || isCand ? 1.6 : null,
+    }, g);
+  }
+  const names = m => (m === 0 ? '∅' : w06latBits(m).map(b => FRAMES_w06lat.names[b]).join('+'));
+  $('w06latTry').textContent = f.cands.length
+    ? f.cands.map(m => FRAMES_w06lat.names[w06latBits(m).filter(
+        b => !((f.cur >> b) & 1))[0]]).join('、') : '（走完了）';
+  $('w06latPick').textContent = names(f.pick);
+  $('w06latBestSub').textContent = names(f.best);
+  $('w06latGap').textContent = f.pick === f.best ? '0（一樣）' : HC.fmt(f.gap, 3);
+  hlLine('w06subsetCode', f.line);
+  setStatus('w06latStatus', f.done
+    ? 'forward 走完四步：' + names(f.pick) + '。這條綠色虛線就是它的路徑；'
+      + '紅線是每個大小的真正最佳子集。兩者在大小 '
+      + FRAMES_w06lat.diverge.join('、') + ' 分歧——貪婪走法不保證找到最佳。'
+    : '第 ' + f.k + ' 步：在 ' + f.cands.length + ' 個候選裡挑 RSS 最小的 → '
+      + names(f.pick) + '。同大小的最佳子集是 ' + names(f.best)
+      + (f.pick === f.best ? '（剛好一樣）。' : '，<strong>forward 沒挑到它</strong>。'));
+}
+function w06latStart() {
+  w06latPlayer = new Player({ frames: w06latFrames(), apply: w06latApply });
+  w06latPlayer.reset(); w06latPlayer.play();
+}
+function w06latReset() {
+  if (w06latPlayer) w06latPlayer.stop();
+  w06latPlayer = new Player({ frames: w06latFrames(), apply: w06latApply });
+  w06latApply({ k: 0, cur: 0, cands: [], pick: 0, best: 0, gap: 0, line: null });
+  setStatus('w06latStatus', '按「開始」看 forward stepwise 在 Credit 的 4 個變數上怎麼走。');
+}
+function w06latToggleBest() { w06latShowBest = !w06latShowBest; if (w06latPlayer) w06latApply(w06latPlayer.frames[Math.max(0, w06latPlayer.i)]); }
+
+/* ---------- P02 五準則 ---------- */
+let w06critRaw = false;
+function w06critToggle() { w06critRaw = !w06critRaw; w06critDraw(); }
+function w06critDraw() {
+  const F = FRAMES_w06crit;
+  // 五個量的單位完全不同，預設各自正規化到 0–1（0 = 該準則最好）
+  // 注意資料鍵與 arg 鍵不同名：CV 的資料在 cvMean，最佳位置在 arg.cv
+  const spec = [['cp', 'cp', 'Cp', 'var(--accent2)', false],
+                ['aic', 'aic', 'AIC', 'var(--accent3)', false],
+                ['bic', 'bic', 'BIC', 'var(--accent)', false],
+                ['adjr2', 'adjr2', '調整後 R²', '#8e44ad', true],
+                ['cvMean', 'cv', '10-fold CV 誤差', '#f39c12', false]];
+  const norm = (arr, higherBetter) => {
+    const lo = Math.min.apply(null, arr), hi = Math.max.apply(null, arr);
+    if (hi === lo) return arr.map(() => 0);
+    return arr.map(v => higherBetter ? (hi - v) / (hi - lo) : (v - lo) / (hi - lo));
+  };
+  const shown = w06critRaw ? ['cp', 'bic', 'cvMean'] : spec.map(s => s[0]);
+  const ds = spec.filter(s => shown.indexOf(s[0]) >= 0).map(s => {
+    const raw = F[s[0]];
+    const data = w06critRaw ? raw : norm(raw, s[4]);
+    const bestIdx = F.arg[s[1]] - 1;
+    return { label: s[2], data: data, borderColor: s[3], backgroundColor: s[3],
+             borderWidth: 2.4, fill: false,
+             pointRadius: data.map((v, i) => (i === bestIdx ? 7 : 2.6)),
+             pointHoverRadius: data.map((v, i) => (i === bestIdx ? 9 : 5)) };
+  });
+  HC.line('w06critChart', { labels: F.sizes, datasets: ds }, {
+    scales: { x: { title: { display: true, text: '模型大小（變數個數）' } },
+              y: { title: { display: true,
+                            text: w06critRaw ? '原始值（MSE 單位）' : '正規化（0 = 該準則最好）' } } } },
+  );
+  const c = HC.get('w06critChart');
+  if (c) {
+    c.config.plugins = [HC.vline(F.arg.bic - 1, 'BIC 選 ' + F.arg.bic, 'var(--accent)'),
+                        HC.vline(F.arg.cp - 1, 'Cp 選 ' + F.arg.cp, 'var(--accent2)')];
+    c.update('none');
+  }
+  $('w06critCp').textContent = F.arg.cp + ' 個';
+  $('w06critAic').textContent = F.arg.aic + ' 個';
+  $('w06critBic').textContent = F.arg.bic + ' 個';
+  $('w06critAdj').textContent = F.arg.adjr2 + ' 個';
+  $('w06critCv').textContent = F.arg.cv + ' 個（one-SE 選 ' + F.arg.ose + ' 個）';
+  setStatus('w06critStatus', w06critRaw
+    ? '原始單位：只留下三個同為 MSE 單位的量（Cp、BIC、CV 誤差）才能公平比高低。'
+      + 'σ̂² = ' + F.sigma2 + '，n = ' + F.n + '。'
+    : '五條線各自正規化到 0–1，大圓點是各自的最佳位置。'
+      + 'Cp ' + F.arg.cp + '｜AIC ' + F.arg.aic + '｜BIC ' + F.arg.bic
+      + '｜調整後 R² ' + F.arg.adjr2 + '｜CV ' + F.arg.cv + '｜one-SE ' + F.arg.ose
+      + '——同一份資料，四種答案。');
+}
+
+/* ---------- P04 Ridge ---------- */
+let w06ridgeByRatio = false;
+function w06ridgeAxis() { w06ridgeByRatio = !w06ridgeByRatio; w06ridgeDraw(); }
+function w06ridgeDraw() {
+  const F = FRAMES_w06ridge;
+  const xs = w06ridgeByRatio ? F.l2ratio : F.lambdas.map(l => Math.log10(l));
+  HC.line('w06ridgeChart', {
+    labels: xs.map(v => HC.fmt(v, w06ridgeByRatio ? 2 : 1)),
+    datasets: F.names.map((nm, j) => ({ label: nm, data: F.coefs[j],
+      borderColor: w06pal[j % w06pal.length], borderWidth: 2, pointRadius: 0, fill: false })),
+  }, {
+    interaction: { mode: 'nearest', intersect: false },
+    plugins: { legend: { position: 'right', labels: { boxWidth: 8, font: { size: 10 } } } },
+    scales: { x: { title: { display: true, text: w06ridgeByRatio ? '‖β̂ᴿ‖₂ ⁄ ‖β̂‖₂' : 'log₁₀ λ' } },
+              y: { title: { display: true, text: '標準化後的係數' } } },
+  });
+  const c = HC.get('w06ridgeChart');
+  if (c) { c.config.plugins = [HC.hline(0, '', 'var(--muted)')]; c.update('none'); }
+  const bv = F.bv;
+  HC.line('w06bvChart', {
+    labels: bv.lambdas.map(l => HC.fmt(Math.log10(l), 1)),
+    datasets: [
+      { label: '偏差²', data: bv.bias2, borderColor: 'var(--accent)', borderWidth: 2.4,
+        pointRadius: 0, fill: false },
+      { label: '變異', data: bv.var, borderColor: 'var(--accent3)', borderWidth: 2.4,
+        pointRadius: 0, fill: false },
+      { label: '測試 MSE', data: bv.mse, borderColor: 'var(--accent2)', borderWidth: 3,
+        pointRadius: 0, fill: false },
+      { label: '不可縮減誤差', data: bv.lambdas.map(() => bv.irr), borderColor: 'var(--muted)',
+        borderWidth: 1.6, borderDash: [5, 4], pointRadius: 0, fill: false },
+    ],
+  }, { scales: { x: { title: { display: true, text: 'log₁₀ λ' } },
+                 y: { title: { display: true, text: '誤差' } } } });
+  w06ridgeMove();
+}
+function w06ridgeMove() {
+  const F = FRAMES_w06ridge, i = parseInt($('w06ridgeSl').value, 10);
+  const nz = F.coefs.filter(row => Math.abs(row[i]) > 1e-8).length;
+  $('w06ridgeLam').textContent = HC.fmt(F.lambdas[i], F.lambdas[i] < 10 ? 3 : 1);
+  $('w06ridgeRatio').textContent = HC.fmt(F.l2ratio[i], 4);
+  $('w06ridgeNz').textContent = nz + ' / ' + F.names.length;
+  setStatus('w06ridgeStatus', 'λ = ' + HC.fmt(F.lambdas[i], 2) + ' 時相對收縮量 '
+    + HC.fmt(F.l2ratio[i], 4) + '，非零係數 ' + nz + ' / ' + F.names.length
+    + '——就算收縮到只剩原本長度的 ' + HC.pct(F.l2ratio[i], 1)
+    + '，也沒有任何一個變成剛好 0。');
+}
+
+/* ---------- P05 L1 vs L2 幾何 ---------- */
+const w06geomBhat = [2.6, 1.4];
+const w06geomA = [[1.0, 0.62], [0.62, 0.75]];
+let w06geomL1 = true;
+function w06geomRss(b) {
+  const d0 = b[0] - w06geomBhat[0], d1 = b[1] - w06geomBhat[1];
+  return w06geomA[0][0] * d0 * d0 + 2 * w06geomA[0][1] * d0 * d1 + w06geomA[1][1] * d1 * d1;
+}
+function w06geomSolve(s) {
+  const norm = w06geomL1 ? Math.abs(w06geomBhat[0]) + Math.abs(w06geomBhat[1])
+                         : Math.hypot(w06geomBhat[0], w06geomBhat[1]);
+  if (norm <= s) return w06geomBhat.slice();
+  let best = null, bestV = Infinity;
+  for (let t = 0; t < 1440; t++) {
+    const th = t / 1440 * 2 * Math.PI;
+    const co = Math.cos(th), si = Math.sin(th);
+    const k = w06geomL1 ? s / (Math.abs(co) + Math.abs(si)) : s;
+    const b = [k * co, k * si];
+    const v = w06geomRss(b);
+    if (v < bestV) { bestV = v; best = b; }
+  }
+  return best;
+}
+function w06geomToggle() {
+  w06geomL1 = !w06geomL1;
+  $('w06geomBtn').textContent = w06geomL1 ? '切換為 L2（Ridge）' : '切換為 L1（Lasso）';
+  w06geomDraw();
+}
+function w06geomMove() { w06geomDraw(); }
+function w06geomDraw() {
+  const s = parseInt($('w06geomSl').value, 10) / 100;
+  const sol = w06geomSolve(s), solV = w06geomRss(sol);
+  const svc = HC.svg('w06geomSvg', { xd: [-1.4, 3.8], yd: [-1.4, 3.0], h: 380, w: 620 });
+  svc.clear();
+  svc.grid(6, 5, { xtitle: 'β₁', ytitle: 'β₂', xdec: 1, ydec: 1 });
+  const g = svc.layer('geom');
+  if (w06geomL1) {
+    svc.add('polygon', { points: [[s, 0], [0, s], [-s, 0], [0, -s]]
+                           .map(q => svc.X(q[0]) + ',' + svc.Y(q[1])).join(' '),
+                         fill: 'rgba(44,62,122,.16)', stroke: 'var(--accent2)',
+                         'stroke-width': 2 }, g);
+  } else {
+    svc.add('ellipse', { cx: svc.X(0), cy: svc.Y(0),
+                         rx: Math.abs(svc.X(s) - svc.X(0)), ry: Math.abs(svc.Y(s) - svc.Y(0)),
+                         fill: 'rgba(44,62,122,.16)', stroke: 'var(--accent2)',
+                         'stroke-width': 2 }, g);
+  }
+  [0.25, 0.8, 1.8, 3.2, 5.0, solV].sort((a, b) => a - b).forEach(L => {
+    const pts = [];
+    for (let t = 0; t <= 96; t++) {
+      const th = t / 96 * 2 * Math.PI;
+      const u0 = Math.cos(th), u1 = Math.sin(th);
+      const q = w06geomA[0][0] * u0 * u0 + 2 * w06geomA[0][1] * u0 * u1 + w06geomA[1][1] * u1 * u1;
+      const r = Math.sqrt(L / q);
+      pts.push([w06geomBhat[0] + r * u0, w06geomBhat[1] + r * u1]);
+    }
+    const isSol = Math.abs(L - solV) < 1e-9;
+    svc.add('polygon', { points: pts.map(q => svc.X(q[0]) + ',' + svc.Y(q[1])).join(' '),
+                         fill: 'none', stroke: isSol ? 'var(--accent)' : 'rgba(192,57,43,.32)',
+                         'stroke-width': isSol ? 2.8 : 1.2 }, g);
+  });
+  svc.dot(w06geomBhat[0], w06geomBhat[1], { r: 5, fill: 'var(--accent)', stroke: '#fff', sw: 1.5 }, g);
+  svc.txt(w06geomBhat[0], w06geomBhat[1], 'β̂ (OLS)', { dy: -13, fill: 'var(--accent)' }, g);
+  svc.dot(sol[0], sol[1], { r: 6.5, fill: 'var(--accent3)', stroke: '#fff', sw: 2 }, g);
+  const zeros = sol.filter(v => Math.abs(v) < 5e-3).length;
+  svc.txt(sol[0], sol[1], zeros ? '解（有係數 = 0）' : '解', { dy: 21, fill: 'var(--accent3)' }, g);
+  $('w06geomS').textContent = HC.fmt(s, 2);
+  $('w06geomB1').textContent = HC.fmt(sol[0], 3);
+  $('w06geomB2').textContent = HC.fmt(sol[1], 3);
+  $('w06geomNz').textContent = String(zeros);
+  $('w06geomRss').textContent = HC.fmt(solV, 3);
+  setStatus('w06geomStatus', (w06geomL1 ? 'L1（Lasso）' : 'L2（Ridge）') + '，預算 s = '
+    + HC.fmt(s, 2) + ' → 解 (' + HC.fmt(sol[0], 3) + ', ' + HC.fmt(sol[1], 3) + ')。'
+    + (zeros ? '<strong>有 ' + zeros + ' 個係數剛好是 0。</strong>'
+             : '兩個係數都不是 0'
+               + (w06geomL1 ? '——把 s 再調小一點試試。' : '（L2 幾乎不會歸零）。')));
+}
+
+/* ---------- P05 Lasso 路徑 ---------- */
+function w06lassoDraw() {
+  const F = FRAMES_w06lasso;
+  HC.line('w06lassoChart', {
+    labels: F.lambdas.map(l => HC.fmt(Math.log10(l), 1)),
+    datasets: F.names.map((nm, j) => ({ label: nm, data: F.coefs[j],
+      borderColor: w06pal[j % w06pal.length], borderWidth: 2, pointRadius: 0, fill: false })),
+  }, {
+    interaction: { mode: 'nearest', intersect: false },
+    plugins: { legend: { position: 'right', labels: { boxWidth: 8, font: { size: 10 } } } },
+    scales: { x: { title: { display: true, text: 'log₁₀ λ' } },
+              y: { title: { display: true, text: '標準化後的係數' } } },
+  });
+  const c = HC.get('w06lassoChart');
+  if (c) { c.config.plugins = [HC.hline(0, '', 'var(--muted)')]; c.update('none'); }
+  w06lassoMove();
+}
+function w06lassoMove() {
+  const F = FRAMES_w06lasso, i = parseInt($('w06lassoSl').value, 10);
+  const alive = F.names.filter((nm, j) => Math.abs(F.coefs[j][i]) > 1e-8);
+  $('w06lassoLam').textContent = HC.fmt(F.lambdas[i], F.lambdas[i] < 10 ? 3 : 1);
+  $('w06lassoNz').textContent = F.nz[i] + ' / ' + F.names.length;
+  $('w06lassoVars').textContent = alive.length ? alive.join('、') : '（全部歸零）';
+  setStatus('w06lassoStatus', 'λ = ' + HC.fmt(F.lambdas[i], 2) + ' 時還有 ' + F.nz[i]
+    + ' 個非零係數。' + (F.nz[i] < F.names.length
+      ? '<strong>被歸零的係數是真的 0，不是很小。</strong>'
+      : '這個 λ 還不夠大，全部變數都活著。'));
+}
+function w06lassoCvJump() {
+  const F = FRAMES_w06lasso;
+  let bi = 0, bd = Infinity;
+  F.lambdas.forEach((l, i) => { const d = Math.abs(l - F.cvLambda); if (d < bd) { bd = d; bi = i; } });
+  $('w06lassoSl').value = String(bi);
+  w06lassoMove();
+  setStatus('w06lassoStatus', 'CV 選出的 λ = ' + F.cvLambda + '，在這個 λ 之下 '
+    + F.cvNz + ' / ' + F.names.length + ' 個變數全部還活著——'
+    + 'Credit 的係數並不稀疏，所以 Lasso 沒有真的丟掉東西。這是誠實的結果，不是失敗。');
+}
+
+/* ---------- P07 PCA 方向 vs PLS 方向 ---------- */
+const w06dirData = (() => {
+  const rand = HC.stat.lcg(606), a1 = [], a2 = [];
+  for (let i = 0; i < 90; i++) {
+    const u = HC.stat.normal(rand) * 1.9, v = HC.stat.normal(rand) * 0.55;
+    a1.push(u + 0.15 * v); a2.push(0.55 * u + v);
+  }
+  return { x1: a1, x2: a2 };
+})();
+const w06dirPcaTh = (() => {
+  const x1 = w06dirData.x1, x2 = w06dirData.x2;
+  const m1 = HC.stat.mean(x1), m2 = HC.stat.mean(x2);
+  let s11 = 0, s22 = 0, s12 = 0;
+  for (let i = 0; i < x1.length; i++) {
+    s11 += (x1[i] - m1) * (x1[i] - m1);
+    s22 += (x2[i] - m2) * (x2[i] - m2);
+    s12 += (x1[i] - m1) * (x2[i] - m2);
+  }
+  return 0.5 * Math.atan2(2 * s12, s11 - s22);
+})();
+function w06dirMove() { w06dirDraw(); }
+function w06dirReset() { $('w06dirSl').value = '20'; w06dirDraw(); }
+function w06dirDraw() {
+  const degTrue = parseInt($('w06dirSl').value, 10);
+  const thTrue = degTrue * Math.PI / 180;
+  const x1 = w06dirData.x1, x2 = w06dirData.x2;
+  const rand = HC.stat.lcg(1234);
+  const yv = x1.map((v, i) => Math.cos(thTrue) * v + Math.sin(thTrue) * x2[i]
+                              + 0.35 * HC.stat.normal(rand));
+  const my = HC.stat.mean(yv), m1 = HC.stat.mean(x1), m2 = HC.stat.mean(x2);
+  let c1 = 0, c2 = 0;
+  for (let i = 0; i < x1.length; i++) {
+    c1 += (x1[i] - m1) * (yv[i] - my); c2 += (x2[i] - m2) * (yv[i] - my);
+  }
+  const thPls = Math.atan2(c2, c1);
+  const svc = HC.svg('w06dirSvg', { xd: [-6, 6], yd: [-4, 4], h: 340, w: 620 });
+  svc.clear();
+  svc.grid(6, 4, { xtitle: 'x₁', ytitle: 'x₂', xdec: 0, ydec: 0 });
+  const g = svc.layer('dir');
+  x1.forEach((v, i) => svc.dot(v, x2[i], { r: 3, fill: 'rgba(138,133,120,.55)' }, g));
+  const ray = (th, color, dash) => {
+    const L = 5.4;
+    svc.seg(-L * Math.cos(th), -L * Math.sin(th), L * Math.cos(th), L * Math.sin(th),
+            { cls: 'fit', stroke: color, sw: 3, dash: dash }, g);
+  };
+  ray(thTrue, 'var(--fit-true)', '7 5');
+  ray(w06dirPcaTh, 'var(--accent2)', null);
+  ray(thPls, 'var(--accent)', null);
+  svc.txtPx(56, 18, '── PC1（只看 X）', { fill: 'var(--accent2)' }, g);
+  svc.txtPx(196, 18, '── PLS1（也看 y）', { fill: 'var(--accent)' }, g);
+  svc.txtPx(346, 18, '- - y 的真實方向', { fill: 'var(--fit-true)' }, g);
+  const deg = t => HC.fmt(((t * 180 / Math.PI) % 180 + 180) % 180, 1) + '°';
+  $('w06dirTrue').textContent = deg(thTrue);
+  $('w06dirPca').textContent = deg(w06dirPcaTh);
+  $('w06dirPls').textContent = deg(thPls);
+  const dd = Math.abs((((w06dirPcaTh - thTrue) * 180 / Math.PI) % 180 + 180) % 180);
+  $('w06dirAng').textContent = HC.fmt(Math.min(dd, 180 - dd), 1) + '°';
+  setStatus('w06dirStatus', 'y 的真實方向 ' + deg(thTrue) + '：PC1 仍在 ' + deg(w06dirPcaTh)
+    + '（沒動），PLS1 轉到 ' + deg(thPls) + '——PLS1 追著 y 跑，PC1 只看 X 的散佈。');
+}
+
+/* ---------- P09 高維度 ---------- */
+let w06hdR2 = true;
+function w06hdToggle() { w06hdR2 = !w06hdR2; w06hdDraw(); }
+function w06hdDraw() {
+  const F = FRAMES_w06hd;
+  HC.line('w06hdChart', {
+    labels: F.ps,
+    datasets: [
+      { label: w06hdR2 ? '訓練 R²' : '訓練 MSE', data: w06hdR2 ? F.trainR2 : F.trainMse,
+        borderColor: 'var(--accent3)', borderWidth: 2.6, pointRadius: 3, fill: false, yAxisID: 'y' },
+      { label: '測試 MSE', data: F.testMse, borderColor: 'var(--accent)',
+        borderWidth: 2.8, pointRadius: 3, fill: false, yAxisID: 'y1' },
+    ],
+  }, {
+    scales: {
+      x: { title: { display: true, text: '放進模型的變數個數 p（n = ' + F.n + '）' } },
+      y: { position: 'left', title: { display: true, text: w06hdR2 ? '訓練 R²' : '訓練 MSE' } },
+      y1: { position: 'right', title: { display: true, text: '測試 MSE' },
+            grid: { drawOnChartArea: false } },
+    },
+  });
+  const c = HC.get('w06hdChart');
+  if (c) { c.config.plugins = [HC.vline(F.n - 2, 'p = n')]; c.update('none'); }
+  const keys = Object.keys(F.curse);
+  HC.bar('w06curseChart', {
+    labels: keys.map(k => 'p = ' + k),
+    datasets: [{ label: 'Lasso 的測試 MSE', data: keys.map(k => F.curse[k].mse),
+                 backgroundColor: ['#1a6b4a', '#f39c12', '#c0392b'], borderRadius: 5 }],
+  }, { plugins: { legend: { display: false } },
+       scales: { y: { title: { display: true, text: '測試 MSE' }, beginAtZero: true } } });
+  setStatus('w06hdStatus', '真正有用的變數只有第一個，其餘全是噪音。p 從 1 加到 '
+    + F.ps[F.ps.length - 1] + ' 時訓練 R² 從 ' + F.trainR2[0] + ' 升到 '
+    + F.trainR2[F.trainR2.length - 1] + '，而測試 MSE 從 ' + F.testMse[0] + ' 爆到 '
+    + F.testMse[F.testMse.length - 1] + '。');
+}
+
+/* ---------- 啟動 ----------
+   SVG 元件一律放在 HC.ready() 外面：Chart.js 從 CDN 載不到時 HC.ready() 不會執行，
+   把 SVG 初始化放進去會讓手寫元件跟著死掉。 */
+w06subsetCounts();
+w06latReset();
+w06geomDraw();
+w06dirDraw();
+HC.ready(() => {
+  w06critDraw();
+  w06ridgeDraw();
+  w06lassoDraw();
+  w06hdDraw();
+});
+"""
+
+
+if __name__ == "__main__":
+    apply("model_selection", BODIES, PAGEJS, frames())
+

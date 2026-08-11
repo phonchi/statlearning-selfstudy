@@ -17,7 +17,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站：十�
 | 03 | [線性迴歸](linear_regression.html) | ISLP Ch.3／ESL §3.1–3.3 | 講義 03 | 8 節 · 9 元件 · 28 張卡 |
 | 04 | [分類](classification.html) | ISLP Ch.4／ESL §4.1–4.4 | 講義 04 | 8 節 · 7 元件 · 28 張卡 |
 | 05 | [重抽樣方法](resampling_methods.html) | ISLP Ch.5／ESL §7.1–7.4、7.10–7.11 | 講義 05 | 8 節 · 8 元件 · 23 張卡 |
-| 06 | [線性模型選擇與正則化](model_selection.html) | ISLP Ch.6／ESL §3.3–3.6、§7.1–7.7 | 講義 06 | 10 節 · 0 元件 · 0 張卡 |
+| 06 | [線性模型選擇與正則化](model_selection.html) | ISLP Ch.6／ESL §3.3–3.6、§7.1–7.7 | 講義 06 | 10 節 · 10 元件 · 27 張卡 |
 | 07 | [非監督式學習](unsupervised_learning.html) | ISLP Ch.12／ESL §13.1–13.3、§14.1–14.3、§14.5–14.9 | 講義 12 | 11 節 · 9 元件 · 30 張卡 |
 | 08 | [超越線性](beyond_linearity.html) | ISLP Ch.7／ESL §5.1–5.7、§6.1–6.3、§9.1 | 講義 07 | 9 節 · 12 元件 · 28 張卡 |
 | 09 | [樹狀方法與集成學習](tree_based_methods.html) | ISLP Ch.8／ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3 | 講義 08 | 11 節 · 0 元件 · 0 張卡 |
