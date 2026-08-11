@@ -243,6 +243,12 @@ def check_page(p: P.Page):
         fail("FORBIDDEN", w, "Chart.js 缺少或不符實算的 integrity")
     if re.search(r"<img\s", src):
         fail("FORBIDDEN", w, "出現 <img>：所有視覺都要是 inline SVG / canvas，不放圖檔")
+    # Chart.js 4 的 Config.prototype.plugins 只有 getter，建構後賦值會靜默失效
+    # （參考線畫不出來而且不報錯）。要設參考線一律用 HC.refs()。
+    js_nocomment = re.sub(r"/\*.*?\*/", "", pagejs(src), flags=re.S)
+    js_nocomment = re.sub(r"(?<![:/])//[^\n]*", "", js_nocomment)
+    if "config.plugins =" in js_nocomment:
+        fail("FORBIDDEN", w, "本頁 JS 有 `config.plugins =` 賦值——那是靜默失效的，改用 HC.refs()")
 
     # MATHJAX：數學不進 JS 字串；注入含數學的 innerHTML 要 retype
     for s, pos in js_strings(js):

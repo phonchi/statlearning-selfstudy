@@ -143,8 +143,8 @@ def ex_head(p: P.Page) -> str:
   <div class="sol-links">{pills}</div>"""
     n_site = len(links)
     return f"""  <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 {p.islp} 章精選題 <span class="sec-badge">ISLP §{p.islp}.4 習題</span></h2>
-  <p>下面幾題取自 ISLP 第 {p.islp} 章課後習題，題號都對得回課本。先自己想過再點選項；
+  <h2>動手驗證：ISLP 第 {p.islp} 章精選題 <span class="sec-badge">ISLP §{P.EX_SEC[p.islp]} 習題</span></h2>
+  <p>下面幾題取自 ISLP §{P.EX_SEC[p.islp]} 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面{n_site}個站。</p>
   <div class="sol-links">{pills}</div>"""
 

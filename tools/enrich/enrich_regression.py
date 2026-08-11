@@ -1436,10 +1436,7 @@ function w03sampHist() {
               y: { title: { display: true, text: '次數' }, ticks: { precision: 0 } } },
   });
   const c = HC.get('w03sampChart');
-  if (c) {
-    c.config.plugins = [HC.vline(HC.fmt(w03sampTrueB1, 2), '真值 3.00')];
-    c.update('none');
-  }
+  HC.refs(c, [HC.vline(HC.fmt(w03sampTrueB1, 2), '真值 3.00')]);
 }
 function w03sampOne() {
   const f = w03sampFit(w03sampB1.length);
@@ -1533,7 +1530,7 @@ function w03tfDraw() {
               x: { title: { display: true, text: '沒放進模型的變數畫成 0' } } },
   });
   const c = HC.get('w03tfChart');
-  if (c) { c.config.plugins = [HC.hline(1.97, '5% 顯著門檻 |t| ≈ 1.97')]; c.update('none'); }
+  HC.refs(c, [HC.hline(1.97, '5% 顯著門檻 |t| ≈ 1.97')]);
   if (!sub.vars.length) {
     setStatus('w03tfStatus', '一個變數都沒放：模型只剩截距 14.02（sales 的平均），'
       + 'R² = 0、RSE = 5.218、沒有 F 可以檢定。這是所有比較的起點。');
@@ -1624,7 +1621,7 @@ function w03diagDraw() {
               y: { title: { display: true, text: yt } } },
   });
   const c = HC.get('w03diagChart');
-  if (c && plugs.length) { c.config.plugins = plugs; c.update('none'); }
+  HC.refs(c, plugs);
   let mr = 0, ml = 0;
   for (let i = 0; i < P.n; i++) {
     if (Math.abs(st[i]) > mr) mr = Math.abs(st[i]);

@@ -820,7 +820,7 @@ function w05cvDraw() {
     plugins: { annotationless: false },
   });
   const c = HC.get('w05cvChart');
-  if (c) { c.config.plugins = [HC.vline(1, 'degree 2 之後就拉平')]; c.update('none'); }
+  HC.refs(c, [HC.vline(1, 'degree 2 之後就拉平')]);
   $('w05cvLoo').textContent = 'degree ' + F.degrees[best(F.loocv)] + '（' + HC.fmt(Math.min(...F.loocv), 2) + '）';
   $('w05cvKf').textContent = 'degree ' + F.degrees[best(F.kfold10)] + '（' + HC.fmt(Math.min(...F.kfold10), 2) + '）';
   const gap = Math.max(...F.degrees.map((_, i) => Math.abs(F.loocv[i] - F.kfold10[i])));
@@ -839,7 +839,7 @@ function w05misShow() {
     scales: { y: { min: 0, max: 0.6, title: { display: true, text: 'CV 錯誤率' } } },
   });
   const c = HC.get('w05misChart');
-  if (c) { c.config.plugins = [HC.hline(0.5, '誠實的答案 ≈ 0.5')]; c.update('none'); }
+  HC.refs(c, [HC.hline(0.5, '誠實的答案 ≈ 0.5')]);
   $('w05misWrong').textContent = HC.fmt(F.wrongErr, 3);
   $('w05misRight').textContent = HC.fmt(F.rightErr, 3);
   setStatus('w05misStatus', 'n = ' + F.n + '、p = ' + F.p + ' 的純噪音資料，挑 ' + F.kSel
@@ -990,7 +990,7 @@ function w05p632Run() {
                    title: { display: true, text: '至少被抽到一次的機率' } } },
   });
   const c = HC.get('w05p632Chart');
-  if (c) { c.config.plugins = [HC.hline(1 - Math.exp(-1), '1 − 1/e ≈ 0.6321')]; c.update('none'); }
+  HC.refs(c, [HC.hline(1 - Math.exp(-1), '1 − 1/e ≈ 0.6321')]);
   const at = n => HC.fmt(1 - Math.pow(1 - 1 / n, n), 4);
   $('w05p632n5').textContent = at(5);
   $('w05p632n20').textContent = at(20);

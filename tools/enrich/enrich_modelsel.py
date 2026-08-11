@@ -708,7 +708,7 @@ BODIES["highdim"] = f"""
 
 # ── EX ────────────────────────────────────────────────────────────────
 BODIES["exercises"] = f"""
-{quiz("qEx1", "EXERCISE 1 · ISLP 6.5 第 1 題（b）",
+{quiz("qEx1", "EXERCISE 1 · ISLP 6.6 第 1 題（b）",
       "最佳子集、forward stepwise、backward stepwise 各自選出的「k 個變數的最佳模型」中，"
       "<strong>測試</strong>誤差最低的會是哪一個？",
       [(True, "不確定——三者都有可能，因為測試誤差要看運氣，而三者選出的模型未必相同",
@@ -718,7 +718,7 @@ BODIES["exercises"] = f"""
        (False, "forward stepwise，因為它的搜尋空間小所以變異低",
         "變異較低是 forward stepwise 的<em>優點</em>，但這只是機率上的傾向，不是保證。題目問的是「一定會是哪一個」，答案是不確定。")])}
 
-{quiz("qEx2", "EXERCISE 2 · ISLP 6.5 第 2 題（a）",
+{quiz("qEx2", "EXERCISE 2 · ISLP 6.6 第 2 題（a）",
       "相對於最小平方，Lasso 的特性是？",
       [(True, "彈性較低，因此當「變異的下降」大於「偏差的上升」時，預測準度會更好",
         "對。這是課本要的標準答案句型。三個小題（Lasso／Ridge／非線性方法）的差別只在彈性是低還是高——Lasso 與 Ridge 都是<strong>降低</strong>彈性換取變異的下降。"),
@@ -727,7 +727,7 @@ BODIES["exercises"] = f"""
        (False, "彈性一樣，只是係數的解不同",
         "不一樣。λ = 0 時兩者相同，但 λ > 0 時 Lasso 的解空間被約束住了（‖β‖₁ ≤ s），那就是彈性較低。")])}
 
-{quiz("qEx3", "EXERCISE 3 · ISLP 6.5 第 4 題",
+{quiz("qEx3", "EXERCISE 3 · ISLP 6.6 第 4 題",
       "Ridge 的懲罰參數 λ 從 0 開始往上增加。<strong>訓練</strong> RSS 會怎麼變化？",
       [(True, "單調上升",
         "對。λ = 0 時就是最小平方，它<strong>定義上</strong>就是訓練 RSS 的最小值；任何約束都只會讓訓練 RSS 變大或不變。同一題還問了測試 RSS（先降後升的 U 型）、變異（單調下降）、偏差²（單調上升）、不可縮減誤差（不變）。"),
@@ -736,7 +736,7 @@ BODIES["exercises"] = f"""
        (False, "單調下降",
         "方向相反。加懲罰只會讓「訓練 RSS 這個目標」被犧牲掉一部分，換取係數變小。")])}
 
-{quiz("qEx4", "EXERCISE 4 · ISLP 6.5 第 9 題",
+{quiz("qEx4", "EXERCISE 4 · ISLP 6.6 第 9 題",
       "課本第 9 題在 <code>College</code> 資料上比較最小平方、Ridge、Lasso、PCR、PLS 的測試誤差。"
       "預期會看到什麼？",
       [(True, "五者的測試誤差常常很接近，Ridge 與 Lasso 略勝最小平方；沒有哪一個一致最好",
@@ -969,11 +969,8 @@ function w06critDraw() {
                             text: w06critRaw ? '原始值（MSE 單位）' : '正規化（0 = 該準則最好）' } } } },
   );
   const c = HC.get('w06critChart');
-  if (c) {
-    c.config.plugins = [HC.vline(F.arg.bic - 1, 'BIC 選 ' + F.arg.bic, 'var(--accent)'),
-                        HC.vline(F.arg.cp - 1, 'Cp 選 ' + F.arg.cp, 'var(--accent2)')];
-    c.update('none');
-  }
+  HC.refs(c, [HC.vline(F.arg.bic - 1, 'BIC 選 ' + F.arg.bic, 'var(--accent)'),
+                        HC.vline(F.arg.cp - 1, 'Cp 選 ' + F.arg.cp, 'var(--accent2)')]);
   $('w06critCp').textContent = F.arg.cp + ' 個';
   $('w06critAic').textContent = F.arg.aic + ' 個';
   $('w06critBic').textContent = F.arg.bic + ' 個';
@@ -1005,7 +1002,7 @@ function w06ridgeDraw() {
               y: { title: { display: true, text: '標準化後的係數' } } },
   });
   const c = HC.get('w06ridgeChart');
-  if (c) { c.config.plugins = [HC.hline(0, '', 'var(--muted)')]; c.update('none'); }
+  HC.refs(c, [HC.hline(0, '', 'var(--muted)')]);
   const bv = F.bv;
   HC.line('w06bvChart', {
     labels: bv.lambdas.map(l => HC.fmt(Math.log10(l), 1)),
@@ -1127,7 +1124,7 @@ function w06lassoDraw() {
               y: { title: { display: true, text: '標準化後的係數' } } },
   });
   const c = HC.get('w06lassoChart');
-  if (c) { c.config.plugins = [HC.hline(0, '', 'var(--muted)')]; c.update('none'); }
+  HC.refs(c, [HC.hline(0, '', 'var(--muted)')]);
   w06lassoMove();
 }
 function w06lassoMove() {
@@ -1235,7 +1232,7 @@ function w06hdDraw() {
     },
   });
   const c = HC.get('w06hdChart');
-  if (c) { c.config.plugins = [HC.vline(F.n - 2, 'p = n')]; c.update('none'); }
+  HC.refs(c, [HC.vline(F.n - 2, 'p = n')]);
   const keys = Object.keys(F.curse);
   HC.bar('w06curseChart', {
     labels: keys.map(k => 'p = ' + k),

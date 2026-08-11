@@ -359,6 +359,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .btn:hover{filter:brightness(1.12);}
 .btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
 
+/* ---- 修正 base.css：.status-banner 是深色底（--code-bg），
+       但 base.css 的 strong{color:var(--ink)} 是深墨色，疊上去幾乎看不見 ---- */
+.status-banner strong,.status-banner b{color:#fff;font-weight:700;}
+.status-banner code{background:rgba(255,255,255,.14);color:#ffe9a8;}
+
 /* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
 .qa-box{margin:1.4rem 0;}
 .qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
@@ -1487,35 +1492,35 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 6 章精選題 <span class="sec-badge">ISLP §6.4 習題</span></h2>
-  <p>下面幾題取自 ISLP 第 6 章課後習題，題號都對得回課本。先自己想過再點選項；
+  <h2>動手驗證：ISLP 第 6 章精選題 <span class="sec-badge">ISLP §6.6 習題</span></h2>
+  <p>下面幾題取自 ISLP §6.6 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter6/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch06.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 1 · ISLP 6.5 第 1 題（b）</div>
+  <div class="quiz-label">EXERCISE 1 · ISLP 6.6 第 1 題（b）</div>
   <p>最佳子集、forward stepwise、backward stepwise 各自選出的「k 個變數的最佳模型」中，<strong>測試</strong>誤差最低的會是哪一個？</p>
   <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。第 (a) 小題問的是<strong>訓練</strong> RSS，那個答案很確定（最佳子集必定最小或相等，因為它搜了全部）。但測試誤差是另一回事：搜得最廣不代表泛化最好，過度搜尋反而更容易挑到剛好貼合訓練資料的模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 不確定——三者都有可能，因為測試誤差要看運氣，而三者選出的模型未必相同</div><div class="quiz-opt" data-correct="false" data-fb="這是第 (a) 小題「訓練 RSS」的答案。搜得廣保證訓練 RSS 較小，但那正是過度配適的定義——對測試誤差沒有保證。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 最佳子集，因為它搜遍所有可能的模型</div><div class="quiz-opt" data-correct="false" data-fb="變異較低是 forward stepwise 的<em>優點</em>，但這只是機率上的傾向，不是保證。題目問的是「一定會是哪一個」，答案是不確定。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> forward stepwise，因為它的搜尋空間小所以變異低</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 2 · ISLP 6.5 第 2 題（a）</div>
+  <div class="quiz-label">EXERCISE 2 · ISLP 6.6 第 2 題（a）</div>
   <p>相對於最小平方，Lasso 的特性是？</p>
   <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。這是課本要的標準答案句型。三個小題（Lasso／Ridge／非線性方法）的差別只在彈性是低還是高——Lasso 與 Ridge 都是<strong>降低</strong>彈性換取變異的下降。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 彈性較低，因此當「變異的下降」大於「偏差的上升」時，預測準度會更好</div><div class="quiz-opt" data-correct="false" data-fb="這是第 (c) 小題<strong>非線性方法</strong>的答案。Lasso 加了懲罰項，它的彈性比最小平方<em>低</em>，不是高。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 彈性較高，因此當「偏差的下降」大於「變異的上升」時會更好</div><div class="quiz-opt" data-correct="false" data-fb="不一樣。λ = 0 時兩者相同，但 λ > 0 時 Lasso 的解空間被約束住了（‖β‖₁ ≤ s），那就是彈性較低。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 彈性一樣，只是係數的解不同</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 3 · ISLP 6.5 第 4 題</div>
+  <div class="quiz-label">EXERCISE 3 · ISLP 6.6 第 4 題</div>
   <p>Ridge 的懲罰參數 λ 從 0 開始往上增加。<strong>訓練</strong> RSS 會怎麼變化？</p>
   <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。λ = 0 時就是最小平方，它<strong>定義上</strong>就是訓練 RSS 的最小值；任何約束都只會讓訓練 RSS 變大或不變。同一題還問了測試 RSS（先降後升的 U 型）、變異（單調下降）、偏差²（單調上升）、不可縮減誤差（不變）。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 單調上升</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>測試</strong> RSS 的形狀。訓練 RSS 沒有 U 型——它在 λ = 0 就已經是最小的了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 先下降再上升，呈 U 型</div><div class="quiz-opt" data-correct="false" data-fb="方向相反。加懲罰只會讓「訓練 RSS 這個目標」被犧牲掉一部分，換取係數變小。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 單調下降</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 4 · ISLP 6.5 第 9 題</div>
+  <div class="quiz-label">EXERCISE 4 · ISLP 6.6 第 9 題</div>
   <p>課本第 9 題在 <code>College</code> 資料上比較最小平方、Ridge、Lasso、PCR、PLS 的測試誤差。預期會看到什麼？</p>
   <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。這一題的教學意義就在這裡：這些方法不是「新的比舊的好」，而是各有適用場景。<code>College</code> 的 n 遠大於 p，最小平方本來就不太糟，所以收縮的好處有限。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 五者的測試誤差常常很接近，Ridge 與 Lasso 略勝最小平方；沒有哪一個一致最好</div><div class="quiz-opt" data-correct="false" data-fb="降維在 p 接近或超過 n 時才有明顯好處。<code>College</code> 是 n = 777、p = 17，最小平方毫無壓力，降維反而可能丟掉有用資訊。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> PCR 與 PLS 明顯勝出，因為它們降了維</div><div class="quiz-opt" data-correct="false" data-fb="Lasso 的優勢要在<strong>真實係數稀疏</strong>時才顯現。若很多變數都有小貢獻，把它們歸零反而引入偏差，Ridge 會較好。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> Lasso 一定最好，因為它同時做收縮與變數選擇</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
@@ -1698,6 +1703,7 @@ HC.hasChart = () => typeof window.Chart !== 'undefined';
 HC.ready = fn => {
   const run = () => {
     if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
     try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
@@ -1772,64 +1778,98 @@ HC.update = (id, mutate) => {
   return c;
 };
 
-/* 自製 inline plugin：不需要下載 chartjs-plugin-annotation */
-HC.hline = (y, label, color) => ({
-  id: 'hline_' + y + '_' + (label || ''),
-  afterDatasetsDraw(chart) {
-    const { ctx, chartArea: ca, scales } = chart;
-    if (!scales.y) return;
-    const py = scales.y.getPixelForValue(y);
-    if (py < ca.top || py > ca.bottom) return;
-    ctx.save();
-    ctx.strokeStyle = color || HC.tok.muted;
-    ctx.lineWidth = 1.4; ctx.setLineDash([5, 4]);
-    ctx.beginPath(); ctx.moveTo(ca.left, py); ctx.lineTo(ca.right, py); ctx.stroke();
-    if (label) {
-      ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO;
-      ctx.fillStyle = color || HC.tok.muted; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-      ctx.fillText(label, ca.right - 4, py - 3);
-    }
-    ctx.restore();
-  },
-});
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
 
-HC.vline = (x, label, color) => ({
-  id: 'vline_' + x + '_' + (label || ''),
-  afterDatasetsDraw(chart) {
-    const { ctx, chartArea: ca, scales } = chart;
-    if (!scales.x) return;
-    const px = scales.x.getPixelForValue(x);
-    if (px < ca.left || px > ca.right) return;
-    ctx.save();
-    ctx.strokeStyle = color || HC.tok.accent;
-    ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
-    ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, ca.bottom); ctx.stroke();
-    if (label) {
-      ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO;
-      ctx.fillStyle = color || HC.tok.accent; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText(label, px + 4, ca.top + 2);
-    }
-    ctx.restore();
-  },
-});
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
 
-HC.vband = (x0, x1, fill, label) => ({
-  id: 'vband_' + x0 + '_' + x1,
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
   beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
     const { ctx, chartArea: ca, scales } = chart;
-    if (!scales.x) return;
-    const a = scales.x.getPixelForValue(x0), b = scales.x.getPixelForValue(x1);
-    ctx.save();
-    ctx.fillStyle = fill || 'rgba(44,62,122,.10)';
-    ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
-    if (label) {
-      ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(label, (a + b) / 2, ca.top + 2);
-    }
-    ctx.restore();
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
   },
-});
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
 
 /* ============================================================
    HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
@@ -2293,11 +2333,8 @@ function w06critDraw() {
                             text: w06critRaw ? '原始值（MSE 單位）' : '正規化（0 = 該準則最好）' } } } },
   );
   const c = HC.get('w06critChart');
-  if (c) {
-    c.config.plugins = [HC.vline(F.arg.bic - 1, 'BIC 選 ' + F.arg.bic, 'var(--accent)'),
-                        HC.vline(F.arg.cp - 1, 'Cp 選 ' + F.arg.cp, 'var(--accent2)')];
-    c.update('none');
-  }
+  HC.refs(c, [HC.vline(F.arg.bic - 1, 'BIC 選 ' + F.arg.bic, 'var(--accent)'),
+                        HC.vline(F.arg.cp - 1, 'Cp 選 ' + F.arg.cp, 'var(--accent2)')]);
   $('w06critCp').textContent = F.arg.cp + ' 個';
   $('w06critAic').textContent = F.arg.aic + ' 個';
   $('w06critBic').textContent = F.arg.bic + ' 個';
@@ -2329,7 +2366,7 @@ function w06ridgeDraw() {
               y: { title: { display: true, text: '標準化後的係數' } } },
   });
   const c = HC.get('w06ridgeChart');
-  if (c) { c.config.plugins = [HC.hline(0, '', 'var(--muted)')]; c.update('none'); }
+  HC.refs(c, [HC.hline(0, '', 'var(--muted)')]);
   const bv = F.bv;
   HC.line('w06bvChart', {
     labels: bv.lambdas.map(l => HC.fmt(Math.log10(l), 1)),
@@ -2451,7 +2488,7 @@ function w06lassoDraw() {
               y: { title: { display: true, text: '標準化後的係數' } } },
   });
   const c = HC.get('w06lassoChart');
-  if (c) { c.config.plugins = [HC.hline(0, '', 'var(--muted)')]; c.update('none'); }
+  HC.refs(c, [HC.hline(0, '', 'var(--muted)')]);
   w06lassoMove();
 }
 function w06lassoMove() {
@@ -2559,7 +2596,7 @@ function w06hdDraw() {
     },
   });
   const c = HC.get('w06hdChart');
-  if (c) { c.config.plugins = [HC.vline(F.n - 2, 'p = n')]; c.update('none'); }
+  HC.refs(c, [HC.vline(F.n - 2, 'p = n')]);
   const keys = Object.keys(F.curse);
   HC.bar('w06curseChart', {
     labels: keys.map(k => 'p = ' + k),

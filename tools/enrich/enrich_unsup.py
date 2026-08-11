@@ -1294,7 +1294,7 @@ function w07screeDraw() {
               y: { min: 0, max: 1.02, title: { display: true, text: '解釋的變異比例' } } },
   });
   const c = HC.get('w07screeChart');
-  if (c) { c.config.plugins = [HC.vline(M - 1, '留 M = ' + M)]; c.update('none'); }
+  HC.refs(c, [HC.vline(M - 1, '留 M = ' + M)]);
   const keep = F.cum[M - 1];
   $('w07screeM').textContent = String(M);
   $('w07screeKeep').textContent = HC.pct(keep, 1);

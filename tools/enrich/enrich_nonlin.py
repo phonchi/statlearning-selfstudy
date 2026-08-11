@@ -1361,10 +1361,7 @@ function w08natDraw() {
     },
   });
   const c = HC.get('w08natChart');
-  if (c) {
-    c.config.plugins = F.knots.map(k => HC.vline(k, 'ξ = ' + k, 'rgba(243,156,18,.85)'));
-    c.update('none');
-  }
+  HC.refs(c, F.knots.map(k => HC.vline(k, 'ξ = ' + k, 'rgba(243,156,18,.85)')));
   $('w08natDfC').textContent = String(F.cubic.df);
   $('w08natDfN').textContent = String(F.natural.df);
   $('w08natWl').textContent = HC.fmt(F.widthCubic[0], 1) + ' / ' + HC.fmt(F.widthNatural[0], 1);

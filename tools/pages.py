@@ -22,6 +22,13 @@ CHARTJS_SRI = "sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJeme
 
 BOOK_ISLP = "https://www.statlearning.com/"
 BOOK_ESL = "https://hastie.su.domains/ElemStatLearn/"
+# 各章課後習題的真實節號。實測自 ISLP PDF 的 "N.x Exercises" 標題——
+# 不要假設一律是 N.4，只有第 2、5、8 章剛好是（Ch3 是 3.7、Ch4 是 4.8、
+# Ch6 是 6.6、Ch7 是 7.9、Ch9 是 9.7、Ch12 是 12.6）。第 1 章沒有習題。
+EX_SEC = {2: "2.4", 3: "3.7", 4: "4.8", 5: "5.4", 6: "6.6",
+          7: "7.9", 8: "8.4", 9: "9.7", 12: "12.6"}
+
+
 def sol_links(ch: int):
     """該章實際存在的解答連結。已逐一 HEAD 驗證過覆蓋範圍：
     botlnec 只有第 2–9 章；Mohamed-Badry 只有第 2–13 章；

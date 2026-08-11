@@ -1140,10 +1140,7 @@ function w02bvDraw() {
     },
   });
   const c = HC.get('w02bvChart');
-  if (c) {
-    c.config.plugins = [HC.vline(s.argmin, '最低點 df = ' + F.dfs[s.argmin])];
-    c.update('none');
-  }
+  HC.refs(c, [HC.vline(s.argmin, '最低點 df = ' + F.dfs[s.argmin])]);
   $('w02bvScen').textContent = s.label;
   $('w02bvBest').textContent = String(F.dfs[s.argmin]);
   $('w02bvTot').textContent = HC.fmt(s.total[s.argmin], 3);
@@ -1245,10 +1242,7 @@ function w02kerrDraw() {
     },
   });
   const c = HC.get('w02kerrChart');
-  if (c) {
-    c.config.plugins = [HC.hline(F.bayesErr, 'Bayes 錯誤率 ' + HC.fmt(F.bayesErr, 4))];
-    c.update('none');
-  }
+  HC.refs(c, [HC.hline(F.bayesErr, 'Bayes 錯誤率 ' + HC.fmt(F.bayesErr, 4))]);
   const lo = Math.min(...F.test);
   $('w02kerrBest').textContent = String(F.bestK);
   $('w02kerrLow').textContent = HC.fmt(lo, 4);

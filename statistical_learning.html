@@ -359,6 +359,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .btn:hover{filter:brightness(1.12);}
 .btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
 
+/* ---- 修正 base.css：.status-banner 是深色底（--code-bg），
+       但 base.css 的 strong{color:var(--ink)} 是深墨色，疊上去幾乎看不見 ---- */
+.status-banner strong,.status-banner b{color:#fff;font-weight:700;}
+.status-banner code{background:rgba(255,255,255,.14);color:#ffe9a8;}
+
 /* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
 .qa-box{margin:1.4rem 0;}
 .qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
@@ -1313,7 +1318,7 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：ISLP 第 2 章精選題 <span class="sec-badge">ISLP §2.4 習題</span></h2>
-  <p>下面幾題取自 ISLP 第 2 章課後習題，題號都對得回課本。先自己想過再點選項；
+  <p>下面幾題取自 ISLP §2.4 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter2/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch02.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
@@ -1540,6 +1545,7 @@ HC.hasChart = () => typeof window.Chart !== 'undefined';
 HC.ready = fn => {
   const run = () => {
     if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
     try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
@@ -1614,64 +1620,98 @@ HC.update = (id, mutate) => {
   return c;
 };
 
-/* 自製 inline plugin：不需要下載 chartjs-plugin-annotation */
-HC.hline = (y, label, color) => ({
-  id: 'hline_' + y + '_' + (label || ''),
-  afterDatasetsDraw(chart) {
-    const { ctx, chartArea: ca, scales } = chart;
-    if (!scales.y) return;
-    const py = scales.y.getPixelForValue(y);
-    if (py < ca.top || py > ca.bottom) return;
-    ctx.save();
-    ctx.strokeStyle = color || HC.tok.muted;
-    ctx.lineWidth = 1.4; ctx.setLineDash([5, 4]);
-    ctx.beginPath(); ctx.moveTo(ca.left, py); ctx.lineTo(ca.right, py); ctx.stroke();
-    if (label) {
-      ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO;
-      ctx.fillStyle = color || HC.tok.muted; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-      ctx.fillText(label, ca.right - 4, py - 3);
-    }
-    ctx.restore();
-  },
-});
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
 
-HC.vline = (x, label, color) => ({
-  id: 'vline_' + x + '_' + (label || ''),
-  afterDatasetsDraw(chart) {
-    const { ctx, chartArea: ca, scales } = chart;
-    if (!scales.x) return;
-    const px = scales.x.getPixelForValue(x);
-    if (px < ca.left || px > ca.right) return;
-    ctx.save();
-    ctx.strokeStyle = color || HC.tok.accent;
-    ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
-    ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, ca.bottom); ctx.stroke();
-    if (label) {
-      ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO;
-      ctx.fillStyle = color || HC.tok.accent; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText(label, px + 4, ca.top + 2);
-    }
-    ctx.restore();
-  },
-});
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
 
-HC.vband = (x0, x1, fill, label) => ({
-  id: 'vband_' + x0 + '_' + x1,
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
   beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
     const { ctx, chartArea: ca, scales } = chart;
-    if (!scales.x) return;
-    const a = scales.x.getPixelForValue(x0), b = scales.x.getPixelForValue(x1);
-    ctx.save();
-    ctx.fillStyle = fill || 'rgba(44,62,122,.10)';
-    ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
-    if (label) {
-      ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(label, (a + b) / 2, ca.top + 2);
-    }
-    ctx.restore();
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
   },
-});
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
 
 /* ============================================================
    HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
@@ -2188,10 +2228,7 @@ function w02bvDraw() {
     },
   });
   const c = HC.get('w02bvChart');
-  if (c) {
-    c.config.plugins = [HC.vline(s.argmin, '最低點 df = ' + F.dfs[s.argmin])];
-    c.update('none');
-  }
+  HC.refs(c, [HC.vline(s.argmin, '最低點 df = ' + F.dfs[s.argmin])]);
   $('w02bvScen').textContent = s.label;
   $('w02bvBest').textContent = String(F.dfs[s.argmin]);
   $('w02bvTot').textContent = HC.fmt(s.total[s.argmin], 3);
@@ -2293,10 +2330,7 @@ function w02kerrDraw() {
     },
   });
   const c = HC.get('w02kerrChart');
-  if (c) {
-    c.config.plugins = [HC.hline(F.bayesErr, 'Bayes 錯誤率 ' + HC.fmt(F.bayesErr, 4))];
-    c.update('none');
-  }
+  HC.refs(c, [HC.hline(F.bayesErr, 'Bayes 錯誤率 ' + HC.fmt(F.bayesErr, 4))]);
   const lo = Math.min(...F.test);
   $('w02kerrBest').textContent = String(F.bestK);
   $('w02kerrLow').textContent = HC.fmt(lo, 4);
