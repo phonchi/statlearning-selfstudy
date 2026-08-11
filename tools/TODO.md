@@ -45,27 +45,32 @@ node    tools/browser_check.js <stem>
 （烘焙資料，用 pinned 環境 `conda run -n m524` 跑）＋ `data/flashcards_zh/chN.json`。
 `.html` 全部由工具產生，**不要手改**。
 
-## 上線清單
+## 已上線
 
-1. **建 GitHub repo 並上線**（目前只在本機）：
-   ```bash
-   gh repo create phonchi/statlearning-selfstudy --public \
-     --description "Interactive statistical learning self-study site (ISLP + NSYSU MATH524 companion)"
-   git remote add origin https://github.com/phonchi/statlearning-selfstudy.git
-   git push -u origin main
-   gh api -X POST repos/phonchi/statlearning-selfstudy/pages \
-     -f 'source[branch]=main' -f 'source[path]=/'
-   python3 tools/validate.py --net    # 上線後再驗一次（抓大小寫 bug）
-   ```
-   Repo 慣例（比照 `ds-python-selfstudy`）：public、default branch `main`、
-   **無 LICENSE、無 `_config.yml`**、根目錄有空的 `.nojekyll`、GitHub 的 Website 欄留空。
+- 自學站：https://phonchi.github.io/statlearning-selfstudy/ （repo `phonchi/statlearning-selfstudy`，
+  public、`main` / root、有 `.nojekyll`、無 LICENSE 無 `_config.yml`，比照 `ds-python-selfstudy`）
+- 課程網站 `nsysu-math524` 已加：`_data/previous_offering.yml` 的 Fall 2025 →
+  `nsysu-math524-2025`，以及 `materials.md` 的自學站連結
+- 封存站：https://phonchi.github.io/nsysu-math524-2025/
+- 上線後 `validate.py --net` 56 個外部連結全通；十頁互連在 GitHub Pages
+  （大小寫敏感）上也全部 200
 
-2. **在課程網站 `nsysu-math524` 的 `materials.md` 加一條連結**指向
-   `https://phonchi.github.io/statlearning-selfstudy/`。
-   `_data/previous_offering.yml` 加 Fall 2025 的改動已經改好在
-   `/tmp/.../scratchpad/m524-live`（若已被清掉就重新 clone 再改，只有兩行）。
+## 後續維護
 
-3. **對每頁散文跑 `speak-human-tw`** 檢查去 AI 味與中國用語。
+改內容一律改 `tools/enrich/enrich_<page>.py` 或 `data/*.json`，然後：
+
+```bash
+python3 tools/enrich/enrich_<page>.py     # 內容
+python3 tools/inject_data.py <stem>       # 詞彙卡／題庫
+python3 tools/build_page.py               # GEN 區段（改了 pages.py 或 template/ 就要全跑）
+python3 tools/build_index.py              # index.html 與 README 章節表
+python3 tools/validate.py --net           # 20 項具名檢查
+node    tools/browser_check.js            # 瀏覽器逐項（含手機版與 CDN 失效）
+```
+
+`.html` 是產物，**不要手改**——`build_page.py` 會用 sha256 比對 GEN 區段並報錯。
+
+還沒做的一件事：對每頁散文跑 `speak-human-tw` 檢查去 AI 味與中國用語。
 
 ## 還需要老師提供才能做的（跟自學站無關，屬課程網站）
 
