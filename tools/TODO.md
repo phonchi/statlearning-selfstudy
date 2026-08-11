@@ -1,6 +1,6 @@
 # 續作說明
 
-十章裡 **6 章已完成**、**4 章待完成**。基礎設施、風格契約、驗證器都已就緒且驗證過，
+十章裡 **7 章已完成**、**3 章待完成**。基礎設施、風格契約、驗證器都已就緒且驗證過，
 續作只需要照 `tools/STYLE_CONTRACT.md` 補內容。
 
 ## 狀態
@@ -11,9 +11,9 @@
 | `linear_regression`（ch3） | ✅ 完成 | 242 KB | 9 | 28 | 6 |
 | `classification`（ch4） | ✅ 完成 | 218 KB | 11 | 28 | 6 |
 | `resampling_methods`（ch5） | ✅ 完成（pilot） | 161 KB | 8 | 23 | — |
-| `unsupervised_learning`（ch12） | ✅ 完成 | 243 KB | 9 | 30 | — |
+| `model_selection`（ch6） | ✅ 完成 | 195 KB | 10 | 27 | — |
 | `beyond_linearity`（ch7） | ✅ 完成 | 241 KB | 12 | 28 | — |
-| `model_selection`（ch6） | ⚠️ 3/10 節 | 71 KB | — | 待寫 | — |
+| `unsupervised_learning`（ch12） | ✅ 完成 | 243 KB | 9 | 30 | — |
 | `tree_based_methods`（ch8） | ⬜ 骨架 | 73 KB | — | 待寫 | 待寫 |
 | `support_vector_machines`（ch9） | ⬜ 骨架 | 69 KB | — | 待寫 | — |
 | `introduction`（ch1） | ⬜ 骨架 | 70 KB | — | 待寫 | — |
@@ -41,20 +41,13 @@ python3 tools/validate.py --page <stem>
 node    tools/browser_check.js <stem>
 ```
 
-## 各章待做細節
+## 已完成七章的共同作法（新章照這個模式）
 
-### `model_selection`（ch6）— 進度最多，優先接手
-- `tools/enrich/enrich_modelsel.py` 已寫好 `prologue` / `subset` / `criteria` 三節，
-  檔尾有 `# @@REST@@` 標記接續點。**已寫的部分品質可以直接留用**
-  （Hitters 上調整後 R² 選 11 個變數、BIC 選 6 個；Credit 上 Cp 6 個、BIC 4 個，都是實算的）。
-- 還要寫的 7 節：`onese` `ridge` `lasso` `lambda` `pcr` `pls` `highdim`，加上
-  `exercises`（4 題，題號去 ISLP §6.5 讀）與 `reference`（比較表 + 重點 + `ver_note()`）。
-- `tools/frames/gen_modelsel.py` **已完成**，產生 `FRAMES_w06lat` `FRAMES_w06crit`
-  `FRAMES_w06ridge` `FRAMES_w06lasso` `FRAMES_w06hd` 五組資料。
-- 元件（前綴 w06）：`w06subset` 2^p 子集空間、`w06crit` 五準則同圖、
-  `w06ridge` Ridge 係數路徑、`w06l1geom` **L1 vs L2 幾何**（最重要）、
-  `w06lasso` Lasso 路徑與存活變數、`w06pcrpls` PCA 方向 vs PLS 方向、`w06hd` p 逼近 n。
-- 還要寫 `data/flashcards_zh/ch6.json`（24–28 張）。
+每章一支 `tools/enrich/enrich_<page>.py`（內容）＋ 一支 `tools/frames/gen_<page>.py`
+（烘焙資料，用 pinned 環境 `conda run -n m524` 跑）＋ `data/flashcards_zh/chN.json`。
+`.html` 全部由工具產生，**不要手改**。
+
+## 各章待做細節
 
 ### `tree_based_methods`（ch8）
 - 講義 08 有 80 頁，**集成學習那一週折進這一頁**（`12_ensemble.md` 本身沒有投影片）。
