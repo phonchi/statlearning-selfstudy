@@ -1198,5 +1198,28 @@ HC.initFlashcards();
 </script>
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
+<script>
+const BANKQUIZ = [{"topic":"探測","q":"測試","options":["a","b","c"],"answer":0,"why":["對","錯","錯"]}];
+/* ===== 題庫自我檢測引擎（資料在 BANKQUIZ） ===== */
+(() => {
+  const box = document.getElementById('bqBox');
+  if (!box || typeof BANKQUIZ === 'undefined' || !BANKQUIZ.length) return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  box.innerHTML = BANKQUIZ.map((q, i) => {
+    const opts = q.options.map((o, j) => {
+      const letter = 'ABCDE'[j];
+      return '<div class="quiz-opt" data-correct="' + (j === q.answer) + '" data-fb="'
+        + String(q.why[j] || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '" '
+        + 'onclick="quizCheck(\'bq' + i + '\', this)">'
+        + '<span class="opt-letter">(' + letter + ')</span> ' + q.options[j] + '</div>';
+    }).join('');
+    return '<div class="quiz-box"><div class="quiz-label">題庫 ' + (i + 1) + ' · '
+      + esc(q.topic || '') + '</div><p>' + q.q + '</p>'
+      + '<div class="quiz-options" id="bq' + i + 'Options">' + opts + '</div>'
+      + '<div class="quiz-feedback" id="bq' + i + 'Feedback"></div></div>';
+  }).join('\n');
+  HC.retype(box);
+})();
+</script>
 <!-- DATA:END -->
 </body></html>

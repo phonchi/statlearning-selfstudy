@@ -168,13 +168,14 @@ def check_page(p: P.Page):
             if not BADGE_RE.match(b):
                 fail("BADGE", w, f"徽章格式不合：「{b}」（h2「{title}」）")
 
-    # QUIZ-TRIPLE
-    for qid in sorted(set(re.findall(r"quizCheck\('([^']+)'", src))):
+    # QUIZ-TRIPLE（只掃 HTML；<script> 內的 JS 字串會有 id="bq' + i + 'Options" 這種樣子）
+    html_only = re.sub(r"<script\b.*?</script>", "", src, flags=re.S)
+    for qid in sorted(set(re.findall(r"quizCheck\('([^']+)'", html_only))):
         for suf in ("Options", "Feedback"):
-            if f'id="{qid}{suf}"' not in src:
+            if f'id="{qid}{suf}"' not in html_only:
                 fail("QUIZ-TRIPLE", w, f"quizCheck('{qid}') 缺少 #{qid}{suf}")
     # 選項區塊內有巢狀 </div>，所以用「到 #<qid>Feedback 為止」界定，不用第一個 </div>
-    for m in re.finditer(r'id="([^"]+)Options"(.*?)id="\1Feedback"', src, re.S):
+    for m in re.finditer(r'id="([^"]+)Options"(.*?)id="\1Feedback"', html_only, re.S):
         qid, block = m.group(1), m.group(2)
         # data-fb 的值裡允許 <strong> 等標記，所以不能用 [^>]*；用 onclick 當結束錨點
         opts = re.findall(r'<div class="quiz-opt"(.*?)onclick="quizCheck\(', block, re.S)
@@ -326,6 +327,34 @@ def check_flashcards():
             warn("FLASHCARD", f.name, f"{len(cards)} 張，建議 20–28 張")
 
 
+def check_questions():
+    for p in P.PAGES:
+        f = QUESTIONS / f"ch{p.islp}.json"
+        if not p.bankquiz:
+            continue
+        if not f.exists():
+            warn("BANKQUIZ", f.name, "這頁有題庫區但母檔尚未撰寫")
+            continue
+        try:
+            qs = json.loads(f.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as e:
+            fail("BANKQUIZ", f.name, f"JSON 解析失敗：{e}")
+            continue
+        for i, q in enumerate(qs):
+            for k in ("q", "options", "answer", "why"):
+                if k not in q:
+                    fail("BANKQUIZ", f.name, f"第 {i} 題缺 {k}")
+            if "options" not in q or "why" not in q:
+                continue
+            if len(q["options"]) != len(q["why"]):
+                fail("BANKQUIZ", f.name, f"第 {i} 題 options 與 why 長度不符")
+            if not isinstance(q.get("answer"), int) or not (0 <= q["answer"] < len(q["options"])):
+                fail("BANKQUIZ", f.name, f"第 {i} 題的 answer 不是合法索引")
+            for j, wy in enumerate(q["why"]):
+                if not str(wy).strip():
+                    fail("BANKQUIZ", f.name, f"第 {i} 題第 {j} 個選項沒寫為什麼")
+
+
 def check_index():
     f = ROOT / "index.html"
     if not f.exists():
@@ -401,6 +430,7 @@ def main(argv):
         check_page(p)
     if not only:
         check_flashcards()
+        check_questions()
         check_index()
         check_repo()
     if "--net" in argv:
