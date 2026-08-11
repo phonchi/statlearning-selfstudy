@@ -12,7 +12,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站：十�
 
 | # | 頁面 | 對應 | 講義 | 內容量 |
 |---|------|------|------|--------|
-| 01 | [統計學習導論](introduction.html) | ISLP Ch.1 | 講義 01 | 8 節 · 0 元件 · 0 張卡 |
+| 01 | [統計學習導論](introduction.html) | ISLP Ch.1 | 講義 01 | 8 節 · 4 元件 · 23 張卡 |
 | 02 | [統計學習的基本框架](statistical_learning.html) | ISLP Ch.2／ESL Ch.2 | 講義 02 | 7 節 · 8 元件 · 26 張卡 |
 | 03 | [線性迴歸](linear_regression.html) | ISLP Ch.3／ESL §3.1–3.3 | 講義 03 | 8 節 · 9 元件 · 28 張卡 |
 | 04 | [分類](classification.html) | ISLP Ch.4／ESL §4.1–4.4 | 講義 04 | 8 節 · 7 元件 · 28 張卡 |
