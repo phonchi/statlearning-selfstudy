@@ -1,0 +1,190 @@
+# 交接說明
+
+這份給接手維護的人（含未來的自己）。**先讀這份，再讀 [`tools/STYLE_CONTRACT.md`](tools/STYLE_CONTRACT.md)。**
+
+---
+
+## 1. 現狀
+
+十章全部完成並上線：**https://phonchi.github.io/statlearning-selfstudy/**
+
+| 頁面 | ISLP | 大小 | 圖表 | SVG 元件 | 詞彙卡 | 題庫 |
+|---|---|---|---|---|---|---|
+| `introduction` | Ch.1 | 155 KB | 1 | 3 | 23 | — |
+| `statistical_learning` | Ch.2 | 191 KB | 2 | 6 | 26 | — |
+| `linear_regression` | Ch.3 | 261 KB | 4 | 5 | 28 | 6 |
+| `classification` | Ch.4 | 218 KB | 2 | 5 | 28 | 6 |
+| `resampling_methods` | Ch.5 | 162 KB | 5 | 3 | 23 | — |
+| `model_selection` | Ch.6 | 204 KB | 6 | 4 | 27 | — |
+| `unsupervised_learning` | Ch.12 | 255 KB | 3 | 6 | 30 | — |
+| `beyond_linearity` | Ch.7 | 245 KB | 5 | 7 | 28 | — |
+| `tree_based_methods` | Ch.8 | 256 KB | 4 | 6 | 30 | 6 |
+| `support_vector_machines` | Ch.9 | 240 KB | 3 | 6 | 26 | — |
+
+合計 2.2 MB · 35 個 Chart.js 圖表 · 51 個手寫 SVG 元件 · 269 張詞彙卡 · 18 題題庫 · 約 115 個 quiz。
+
+章節順序是**授課順序**，不是 ISLP 章號順序——非監督式（Ch.12）排在超越線性（Ch.7）之前，
+集成學習那一週折進「樹狀方法與集成學習」。順序只由 [`tools/pages.py`](tools/pages.py) 承載。
+
+---
+
+## 2. 最重要的一件事：`.html` 全部是產物
+
+**不要手改任何 `.html`。** 它們由工具產生，`validate.py` 會用 sha256 比對 GEN 區段並報錯。
+
+| 你要改什麼 | 改哪個檔 |
+|---|---|
+| 某一節的文字、公式、quiz、Q&A、程式碼卡 | `tools/enrich/enrich_<page>.py` |
+| 圖表用的資料（數字） | `tools/frames/gen_<page>.py` |
+| 詞彙卡、題庫 | `data/flashcards_zh/chN.json`、`data/questions_zh/chN.json`（**N 是 ISLP 章號**） |
+| 章節順序、標題、徽章、prev/next、習題節號 | `tools/pages.py`（唯一真實來源） |
+| 樣式 | `tools/template/stats.css`（`base.css` 是沿用的共用系統，別動） |
+| 共用 JS（`HC.*`、`Player`、quiz、scroll-spy） | `tools/template/shared.js` |
+| landing page 與 README 的章節表 | 不用改，`tools/build_index.py` 會算出來 |
+
+改完一律跑這一串（改了 `pages.py` 或 `template/` 就不要加 `<stem>`，要全跑）：
+
+```bash
+cd ~/statlearning-selfstudy
+python3 tools/enrich/enrich_<page>.py     # 內容 → HTML（會順便重跑該章的 frames 產生器）
+python3 tools/inject_data.py <stem>       # 詞彙卡／題庫 → DATA 區段
+python3 tools/build_page.py               # GEN 區段（head/nav/TOC/標題列/chapter-nav/footer/shared.js）
+python3 tools/build_index.py              # index.html 與 README 章節表
+python3 tools/validate.py --net           # 19 項具名檢查
+node    tools/browser_check.js            # 瀏覽器逐項
+git add -A && git commit && git push      # Pages 會自動重建
+```
+
+`<stem>` 是頁面檔名去掉 `.html`；`enrich_*.py` 的檔名不一定等於 stem
+（例如 `enrich_nonlin.py` → `beyond_linearity`），對照表在 `tools/pages.py`。
+
+---
+
+## 3. 本機依賴（不在 repo 裡，換機器要重建）
+
+### 3.1 `m524` conda 環境 — 產生圖表資料用
+
+版本刻意對齊課程的 `packages.txt`，數字才可重現。
+
+```bash
+conda create -n m524 python=3.11 -y
+conda run -n m524 pip install numpy==1.24.4 pandas==2.3.2 scikit-learn==1.6.1 \
+  scipy==1.13.1 statsmodels==0.14.2 matplotlib==3.8.4 seaborn==0.13.2 \
+  ISLP==0.4.0 pygam==0.10.1
+```
+
+注意：`statsmodels` 課程環境是 0.13.2，但它在 Python 3.11 沒有 wheel，所以用 0.14.2
+（本課用到的 OLS／GLM 摘要沒有差異）。`load_data('USArrests')` 與 `load_data('Heart')`
+在 ISLP 0.4.0 會 `FileNotFoundError`——USArrests 要照 lab 用
+`statsmodels.datasets.get_rdataset('USArrests').data`。
+
+### 3.2 puppeteer + Chrome — 跑 `browser_check.js`
+
+裝在 repo 外面（repo 不放 `node_modules`）：
+
+```bash
+mkdir -p ~/.cache/selfstudy-node && cd ~/.cache/selfstudy-node
+npm init -y && npm i puppeteer-core
+npx puppeteer browsers install chrome
+```
+
+Chrome 版本不用寫死，`browser_check.js` 會抓 `~/.cache/puppeteer/chrome` 底下最新的。
+截圖會存在 `~/.cache/selfstudy-node/shots/`。
+
+### 3.3 素材來源
+
+`tools/paths.py` 用環境變數覆寫，預設值是：
+
+- `M524_COURSE` → `~/nsysu-math524-2025`（講義 PDF 與中文 lab notebook）
+  ：`gh repo clone phonchi/nsysu-math524-2025 ~/nsysu-math524-2025`
+- `M524_BOOKS` → `~/statslearning`（`ISLP_website.pdf`、`ESLII_print12.pdf`）
+
+還需要 `pdftotext`（poppler）。
+
+`data/source_index/` 是這些素材抽出來的索引，**已 commit**，所以平常維護不需要重跑。
+真要重建：`python3 tools/index_deck.py && python3 tools/index_book.py all && python3 tools/extract_lab.py`。
+
+---
+
+## 4. 兩道品質關卡
+
+### `tools/validate.py` — 19 項具名檢查（純 stdlib，不用裝東西）
+
+`STRUCT` 單例區塊 · `NAV-SYNC` 三處編號與 section 順序同步 · `ANCHOR` id 唯一且錨點可解析 ·
+`ORDER` cards 一定最後 · `BADGE` 每個 h2 至少一個合格徽章 · `QUIZ-TRIPLE` 三選一、
+恰好一個正解、**每個選項都要有 `data-fb`** · `DATA-L` `hlLine()` 對得上 `data-l` ·
+`ID-PREFIX` 每個 id 與頂層 JS 宣告都含 `w<NN>` · `GEN-REGION` sha256 比對 ·
+`FORBIDDEN`（無 polyfill.io／tailwind CDN、Chart.js 必須釘 4.5.1 + SRI、無 `<img>`、
+無圖檔、無 `config.plugins =` 賦值、Chart.js 顏色不可用 `var(--x)`）·
+`MATHJAX`（JS 字串內無 `$`、含數學的 innerHTML 附近要有 `HC.retype`）·
+`FRAMES-META` 烘焙資料要有 src/seed/versions/gen · `GROUNDING` 每張 `.deck-extra` 要有
+`.dx-src`、預期輸出要能在 lab 索引裡找到 · `INDEX-SYNC` 卡片與母檔數字一致 ·
+`FLASHCARD` / `BANKQUIZ` 母檔格式 · `SIZE` · `LINKS`（`--net`）。
+
+### `tools/browser_check.js` — 真的開瀏覽器
+
+console 無錯 · 按下每個按鈕、推每個滑桿與 select 到底 · 點每個 quiz 確認有回饋 ·
+翻詞彙卡／洗牌／全部翻面 · 每個 Chart.js canvas 要真的畫出來 · 每個 SVG 元件不能是空的 ·
+Q&A 展開後數學要排版 · **390×844 手機版頁面本體不得橫向滾動** ·
+**攔掉 cdn.jsdelivr.net 重載**（模擬 CDN 失效）：圖表要退回 `.chart-fallback`
+而手寫 SVG 元件必須仍然活著 · 全頁截圖。
+
+> **驗證不要只看「有沒有掛上」，要看截圖。** 參考線那個 bug 之所以活了八章，
+> 就是因為程式碼看起來對、console 也乾淨。用 Read 工具讀 PNG。
+
+---
+
+## 5. 內容出處紀律
+
+這是這個站最重要的性質，改內容時不要破壞：
+
+- `.deck-extra` 裡的程式碼與「預期輸出」一律用 `lab_code(CH, cell)` / `lab_output(CH, cell)`
+  **逐字取自課程 lab**，並用 `.dx-src` 標儲存格編號。**絕不重跑、絕不自己打數字**——
+  你的環境跟課程環境不同，而 notebook 裡已經是老師本人跑出來的結果。
+  `lab_output()` 找不到輸出會直接報錯，那是刻意的。
+- 自己算的圖表資料放在 `tools/frames/gen_*.py`，固定種子，`meta` 要有
+  `src` / `seed` / `versions` / `gen`，而且產生器的 stderr 會印一行自我對照
+  （例如 LOOCV degree 1 = 24.2315 對上 lab 儲存格 32 的 `np.float64(24.23151351792922)`）。
+- 引用課本圖只**指名**（「ISLP 圖 5.2 右」），**絕不嵌原圖**——repo 裡完全沒有圖檔，
+  每張圖都是從資料或參數重畫的。這同時解決了版權問題。
+
+---
+
+## 6. 已知的坑
+
+全部寫在 [`tools/STYLE_CONTRACT.md`](tools/STYLE_CONTRACT.md) §5 與 §8，這裡只列最會咬人的四個：
+
+1. **`chart.config.plugins = [...]` 靜默失效**（Chart.js 4 的 Config 只有 getter）。
+   參考線一律用 `HC.refs(id, [HC.vline(...), HC.hline(...)])`。validator 會擋。
+2. **Chart.js 顏色不能寫 `var(--x)`**，canvas 不認得，會靜默變黑。用 `HC.tok.*`。validator 會擋。
+3. **SVG 元件的初始化一律放在 `HC.ready()` 外面**，否則 Chart.js 載不到時它們會跟著死。
+4. **MathJax 的行間公式**要 `max-width:100%!important` **加上** `min-width:0!important`
+   才不會在窄螢幕撐爆版面（它的樣式表是 runtime 注入的，而 `\tag{}` 會設 inline `min-width`）。
+
+---
+
+## 7. 還沒做的事
+
+- **`speak-human-tw` 逐頁檢查**（去 AI 味與中國用語）。原計畫有這一步，因用量考量先擱下。
+  建議從散文最重的三頁開始：`linear_regression`、`model_selection`、`unsupervised_learning`。
+- 題庫（`bankquiz`）目前只有第 3、4、8 章。要加就寫 `data/questions_zh/chN.json`
+  並在 `pages.py` 把那一章的 `bankquiz=True`。
+- `data/questions_zh/` 的題目是四選一，`.quiz-box` 的是三選一——兩套引擎不同，這是刻意的
+  （題庫由 `inject_data.py` 在前端產生，不受 `QUIZ-TRIPLE` 檢查管）。
+
+---
+
+## 8. 相關 repo
+
+| repo | 是什麼 |
+|---|---|
+| `phonchi/nsysu-math524` | 課程網站（live，Fall 2026 待更新）。`materials.md` 已連到本站 |
+| `phonchi/nsysu-math524-2025` | Fall 2025 封存站。本站的「講義 PDF」與「中文 Lab」都指向這裡（凍結，連結不會爛） |
+| `phonchi/ds-python-selfstudy` 等 | 同系列的自學站。本站的設計系統沿用它的 `base.css` |
+
+**課程網站還需要老師決定的**（跟本站無關）：`course_semester` 改 Fall 2026、
+`_data/hw_policy.yml` 的 elearn 課程 ID（現為 Fall 2025 的 `20328`）、新學期助教、
+`_lectures/*.md` 的上課日期、要不要把 `Mid_term_2025.zip` 補進歷年期中考清單。
+
+封存站有 3 個改不動的舊網址：`01_Introduction.pdf` 內嵌 2 個、`01-06_Recap.pdf` 內嵌 1 個
+（PDF 二進位註解物件），會指向 live 站。除非重出投影片，否則接受它。

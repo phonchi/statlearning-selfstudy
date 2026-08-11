@@ -184,11 +184,13 @@ python3 tools/build_page.py        # 骨架與 GEN 區段（三處編號、prev/
 python3 tools/enrich/enrich_*.py   # 各章內容
 python3 tools/inject_data.py       # 詞彙卡與題庫（母檔在 data/）
 python3 tools/build_index.py       # 本檔與 index.html
-python3 tools/validate.py --net    # 17 項具名檢查
+python3 tools/validate.py --net    # 19 項具名檢查
 node tools/browser_check.js        # 瀏覽器逐項（含手機版與 CDN 失效）
 ```
 
-寫任何一章之前先讀 [`tools/STYLE_CONTRACT.md`](tools/STYLE_CONTRACT.md)。
+`.html` 全部是產物，**不要手改**——`validate.py` 會用 sha256 比對 GEN 區段並報錯。
+
+維護與交接說明看 [`HANDOFF.md`](HANDOFF.md)；撰寫規則看 [`tools/STYLE_CONTRACT.md`](tools/STYLE_CONTRACT.md)。
 """
 
 
