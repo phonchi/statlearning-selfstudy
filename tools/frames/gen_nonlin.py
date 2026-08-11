@@ -291,12 +291,13 @@ out = [
 ]
 print("\n".join(out))
 
+REF = f"{k(REF_AGE_DF)}|{k(REF_YEAR_DF)}"
 print(f"\n/* 檢查：degree 4 配適值 vs poly() 最大差 {POLY_MAXDIFF:.3e}（應該 ~1e-9）· "
       f"degree 1／4／15 的 CV MSE = {poly_cv[0]}／{poly_cv[3]}／{poly_cv[14]}"
       f"（訓練 {poly_train[0]}／{poly_train[3]}／{poly_train[14]}）· "
       f"立方樣條兩端信賴帶寬 {CUB_W} vs 自然樣條 {NAT_W} · "
       f"平滑樣條 df 檢核 {lam_dfchk} · gridsearch 選出 df={PICK['df']}（課本圖 7.8 的 LOOCV 是 6.8）· "
-      f"GAM 參考組 (5,5) R²={gam_grid['5.0|5.0']['r2']}、EDoF={gam_grid['5.0|5.0']['edof']}、"
-      f"GCV={gam_grid['5.0|5.0']['gcv']}、deviance={gam_grid['5.0|5.0']['dev']:.0f}"
+      f"GAM 參考組 ({k(REF_AGE_DF)},{k(REF_YEAR_DF)}) R²={gam_grid[REF]['r2']}、EDoF={gam_grid[REF]['edof']}、"
+      f"GCV={gam_grid[REF]['gcv']}、deviance={gam_grid[REF]['dev']:.0f}"
       f"（lab 儲存格 98 是 EDoF 12.9927／GCV 1246.1129／Pseudo R² 0.2928，"
       f"儲存格 96 的 gam_full deviance 是 3.693143e+06）*/", file=sys.stderr)

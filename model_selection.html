@@ -459,11 +459,26 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
 
 /* ---- 長內容自己橫向滾動，頁面本體絕不橫向滾動 ---- */
+/* 最後一道保險。該滑的東西（程式碼、公式、表格、圖表）下面都各自有 overflow-x:auto，
+   這一條只負責攔住漏網的幾十個 px——多半來自 MathJax 內部的 mjx-mtable，
+   那是它自己排版出來的盒子，我們沒有選擇器能乾淨地限制它。
+   用 clip 不用 hidden：clip 不會把 body 變成 scroll container，
+   position:fixed 的浮動導覽與 scroll-behavior:smooth 都不受影響。 */
+html,body{overflow-x:clip;}
 /* 程式碼行不換行（.line{white-space:pre}），所以區塊自己要能滑 */
 .pseudo-code{overflow-x:auto;}
-/* MathJax 的行間公式在窄螢幕會撐爆版面，包一層可滑動 */
-mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding-bottom:.25rem;}
-mjx-container[display="true"]::-webkit-scrollbar{height:5px;}
+/* MathJax 的行間公式在窄螢幕會撐爆版面，讓它自己可以橫向滑動。
+   注意 !important 是必要的：MathJax 3 是在 runtime 把自己的樣式表 append 到 <head>
+   最後面，比這個 inline <style> 晚，所以同權重的 max-width 會被它蓋掉。
+   帶 \tag{} 的公式更明顯——它會 render 成一個 mjx-mtable，寬度動輒 500–800px。 */
+/* min-width 也要蓋掉：MathJax 對帶 \tag{} 的公式會在 mjx-container 上設 inline
+   min-width（用來把式號推到右緣），min-width 的優先權高於 max-width，
+   所以只寫 max-width 完全沒用——容器還是會撐到 500–800px。 */
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding-bottom:.25rem;
+  max-width:100%!important;min-width:0!important;}
+mjx-container:not([display="true"]){max-width:100%;overflow-x:auto;overflow-y:hidden;}
+mjx-container::-webkit-scrollbar{height:5px;}
+mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px;}
 .expected-out pre{overflow-x:auto;}
 .strip{overflow-x:auto;}
 
@@ -474,6 +489,8 @@ mjx-container[display="true"]::-webkit-scrollbar{height:5px;}
   .qa-a{padding-left:1rem;}
   .viz-svg{min-width:0;}
   .big-formula{font-size:.85rem;word-break:break-word;}
+  /* 窄螢幕改成左靠：置中的公式一旦比容器寬，捲軸起點會落在被裁掉的左半邊 */
+  mjx-container[display="true"]{justify-content:flex-start!important;}
 }
 
 /* ---- 尊重使用者的減少動態偏好 ---- */
@@ -640,7 +657,7 @@ mjx-container[display="true"]::-webkit-scrollbar{height:5px;}
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：ISLP 第 6 章精選題 <span class="sec-badge">ISLP §6.4 習題</span></h2>
   <p>下面幾題取自 ISLP 第 6 章課後習題，題號都對得回課本。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面三個站。</p>
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter6/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch06.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
   <!-- 練習題 quiz-box 寫在這裡 -->

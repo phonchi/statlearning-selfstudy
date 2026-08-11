@@ -354,13 +354,13 @@ BODIES["splines"] = f"""
                 '剩下的 5 個就是單節點立方樣條的基底，K + 4 = 5。')],
      "w08knotStatus", "拖節點、切換連續性層級，看曲線從斷裂變平滑，同時看自由度從 8 掉到 5。",
      '<label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;">'
-     '<input type="radio" id="w08knotR0" name="w08knotLvl" value="0" onchange="w08knotSet(0)"> 不連續</label>'
+     '<input type="radio" id="w08knotLv0" name="w08knotLvl" value="0" onchange="w08knotSet(0)"> 不連續</label>'
      '<label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;">'
-     '<input type="radio" id="w08knotR1" name="w08knotLvl" value="1" onchange="w08knotSet(1)"> 連續</label>'
+     '<input type="radio" id="w08knotLv1" name="w08knotLvl" value="1" onchange="w08knotSet(1)"> 連續</label>'
      '<label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;">'
-     '<input type="radio" id="w08knotR2" name="w08knotLvl" value="2" onchange="w08knotSet(2)"> 一階導數連續</label>'
+     '<input type="radio" id="w08knotLv2" name="w08knotLvl" value="2" onchange="w08knotSet(2)"> 一階導數連續</label>'
      '<label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;">'
-     '<input type="radio" id="w08knotR3" name="w08knotLvl" value="3" checked onchange="w08knotSet(3)"> 二階導數連續</label>'
+     '<input type="radio" id="w08knotLv3" name="w08knotLvl" value="3" checked onchange="w08knotSet(3)"> 二階導數連續</label>'
      '<button class="btn btn-reset" onclick="w08knotReset()">重置（ξ = 50）</button>')}
 
   <p>那要怎麼真的把約束配進去？不必解限制式最小平方——<strong>換基底就好</strong>。
