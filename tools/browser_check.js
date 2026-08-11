@@ -18,14 +18,23 @@
 const path = require('path');
 const fs = require('fs');
 
-const SCRATCH = process.env.PPT_HOME
-  || '/tmp/claude-1000/-home-phonchi-statslearning/a66bde28-081c-4e48-ab81-6c6791815e77/scratchpad';
-const puppeteer = require(path.join(SCRATCH, 'node_modules', 'puppeteer-core'));
+// puppeteer-core 裝在 repo 外面（repo 不放 node_modules）：
+//   mkdir -p ~/.cache/selfstudy-node && cd ~/.cache/selfstudy-node
+//   npm init -y && npm i puppeteer-core && npx puppeteer browsers install chrome
+const PPT_HOME = process.env.PPT_HOME || path.join(process.env.HOME, '.cache/selfstudy-node');
+const puppeteer = require(path.join(PPT_HOME, 'node_modules', 'puppeteer-core'));
 
 const ROOT = path.resolve(__dirname, '..');
-const SHOT_DIR = process.env.SHOT_DIR || path.join(SCRATCH, 'shots');
-const CHROME = process.env.CHROME_PATH
-  || `${process.env.HOME}/.cache/puppeteer/chrome/linux-151.0.7922.71/chrome-linux64/chrome`;
+const SHOT_DIR = process.env.SHOT_DIR || path.join(PPT_HOME, 'shots');
+const CHROME = process.env.CHROME_PATH || (() => {
+  const base = path.join(process.env.HOME, '.cache/puppeteer/chrome');
+  const dirs = fs.existsSync(base) ? fs.readdirSync(base).sort() : [];
+  if (!dirs.length) {
+    console.error('找不到 Chrome。先跑：npx puppeteer browsers install chrome');
+    process.exit(2);
+  }
+  return path.join(base, dirs[dirs.length - 1], 'chrome-linux64', 'chrome');
+})();
 
 const PAGES = process.argv.slice(2).length
   ? process.argv.slice(2).map(s => s.replace(/\.html$/, ''))
