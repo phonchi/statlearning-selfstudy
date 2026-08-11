@@ -1007,13 +1007,13 @@ function w06ridgeDraw() {
   HC.line('w06bvChart', {
     labels: bv.lambdas.map(l => HC.fmt(Math.log10(l), 1)),
     datasets: [
-      { label: '偏差²', data: bv.bias2, borderColor: 'var(--accent)', borderWidth: 2.4,
+      { label: '偏差²', data: bv.bias2, borderColor: HC.tok.accent, borderWidth: 2.4,
         pointRadius: 0, fill: false },
-      { label: '變異', data: bv.var, borderColor: 'var(--accent3)', borderWidth: 2.4,
+      { label: '變異', data: bv.var, borderColor: HC.tok.accent3, borderWidth: 2.4,
         pointRadius: 0, fill: false },
-      { label: '測試 MSE', data: bv.mse, borderColor: 'var(--accent2)', borderWidth: 3,
+      { label: '測試 MSE', data: bv.mse, borderColor: HC.tok.accent2, borderWidth: 3,
         pointRadius: 0, fill: false },
-      { label: '不可縮減誤差', data: bv.lambdas.map(() => bv.irr), borderColor: 'var(--muted)',
+      { label: '不可縮減誤差', data: bv.lambdas.map(() => bv.irr), borderColor: HC.tok.muted,
         borderWidth: 1.6, borderDash: [5, 4], pointRadius: 0, fill: false },
     ],
   }, { scales: { x: { title: { display: true, text: 'log₁₀ λ' } },
@@ -1219,8 +1219,8 @@ function w06hdDraw() {
     labels: F.ps,
     datasets: [
       { label: w06hdR2 ? '訓練 R²' : '訓練 MSE', data: w06hdR2 ? F.trainR2 : F.trainMse,
-        borderColor: 'var(--accent3)', borderWidth: 2.6, pointRadius: 3, fill: false, yAxisID: 'y' },
-      { label: '測試 MSE', data: F.testMse, borderColor: 'var(--accent)',
+        borderColor: HC.tok.accent3, borderWidth: 2.6, pointRadius: 3, fill: false, yAxisID: 'y' },
+      { label: '測試 MSE', data: F.testMse, borderColor: HC.tok.accent,
         borderWidth: 2.8, pointRadius: 3, fill: false, yAxisID: 'y1' },
     ],
   }, {

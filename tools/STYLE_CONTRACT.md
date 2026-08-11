@@ -115,6 +115,21 @@ PART 內部：
 - `.chart-fallback` 的文字要寫**該圖的一句話結論**，不要只寫「圖表載入失敗」——
   CDN 掛掉時教學主張還要活著。
 
+### Chart.js 的三條硬規則（都是踩過才知道的）
+
+1. **參考線一律用 `HC.refs(chartId, [HC.vline(...), HC.hline(...)])`。**
+   Chart.js 4 的 `Config.prototype.plugins` 只有 getter 沒有 setter，所以
+   `chart.config.plugins = [...]` **靜默失效**——不報錯，線也不見。
+   全站八章 19 個呼叫點曾經全部無效。validator 的 FORBIDDEN 會攔下這個賦值。
+   `HC.vline/hline` 的第 4 個參數 `row` 可以把靠得近的標籤往下錯開一列。
+2. **顏色不要寫 `var(--x)`，要用 `HC.tok.*`。**
+   canvas 不認得 CSS 變數，傳進去會靜默變成黑色（第 6 章五條準則線曾經全黑）。
+   `HC.base` 現在會在建構前把顏色欄位解析掉，但仍然要寫 `HC.tok.accent2`——
+   validator 會擋 `borderColor: 'var(--…)'` 這種寫法。
+3. **markers 不要放進 `options.plugins.*`。** Chart.js 會對 plugin options 走一輪
+   key 解析，裡面有陣列時會對數字鍵呼叫 `.startsWith` 而爆掉。`HC.refs` 把它們掛在
+   `chart.$hcRef` 上，全域註冊的 plugin 不需要 options 就會啟用。
+
 ### live 還是 baked
 
 > **數字必須跟權威來源對上 → baked；重點是機制本身 → live。**
@@ -177,3 +192,11 @@ Hybrid 最好：烘焙老師的資料，即時重算上層（`w04thr` 就是這�
 5. `.pseudo-code` 與行間公式在窄螢幕撐爆版面 → 已在 `stats.css` 用
    `overflow-x:auto` 與 `mjx-container[display="true"]` 修掉，不要覆蓋掉。
 6. `HC.initFlashcards()` 不要寫在 PAGEJS 裡——`inject_data.py` 會在資料之後呼叫。
+7. **`.info-card .ic-title` 有 `text-transform:uppercase`**，會把小寫希臘字母與帶帽符號
+   變形（α→Α、p̂→P̂）。側欄卡的標題不要放這些符號，放進 `.ic-row` 的內容裡沒問題。
+8. **`.viz-svg .fit` 與 `.viz-svg .resid` 是 CSS 宣告，會蓋掉 SVG 的 `stroke` 呈現屬性。**
+   `HC.svg` 的 `poly`/`seg` 預設 `cls` 就是 `fit`/`resid`，所以要畫多色曲線時
+   必須自己傳一個 CSS 裡沒有定義的 class，否則顏色參數會被忽略。
+9. **驗證不要只看「有沒有掛上」，要看截圖。** 參考線那個 bug 之所以活了八章，
+   就是因為程式碼看起來對、也沒有錯誤訊息。`browser_check.js` 會存全頁截圖，
+   要真的用 Read 讀過。

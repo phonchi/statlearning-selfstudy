@@ -249,6 +249,11 @@ def check_page(p: P.Page):
     js_nocomment = re.sub(r"(?<![:/])//[^\n]*", "", js_nocomment)
     if "config.plugins =" in js_nocomment:
         fail("FORBIDDEN", w, "本頁 JS 有 `config.plugins =` 賦值——那是靜默失效的，改用 HC.refs()")
+    # canvas 不認得 var(--x)：Chart.js 的顏色欄位放 CSS 變數會靜默變黑，要用 HC.tok.*
+    bad_col = re.findall(r"(?:border|background|point[A-Za-z]*|hover[A-Za-z]*)Color:\s*'var\(--[^']+'",
+                         js_nocomment)
+    if bad_col:
+        fail("FORBIDDEN", w, f"Chart.js 顏色用了 CSS 變數（canvas 不認得，會變黑）：{sorted(set(bad_col))[:3]}")
 
     # MATHJAX：數學不進 JS 字串；注入含數學的 innerHTML 要 retype
     for s, pos in js_strings(js):

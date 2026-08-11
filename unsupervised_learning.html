@@ -1791,6 +1791,15 @@ HC.fmt = (v, d = 2) => {
 };
 HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
 
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
 /* ---------- Chart.js ---------- */
 HC.hasChart = () => typeof window.Chart !== 'undefined';
 
@@ -1843,7 +1852,26 @@ HC.base = (type, data, opts = {}) => {
     scales: { x: deep({}, axis), y: deep({}, axis) },
     elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
   };
-  return { type, data, options: deep(defaults, opts) };
+  const cfg = { type, data, options: deep(defaults, opts) };
+  // canvas 不認得 var(--x)：傳進去會靜默變成黑色（第 6 章五條準則線全黑就是這樣）。
+  // 這裡在建構前把所有顏色欄位解析成實際色值，讓這類 bug 不可能發生。
+  HC._resolveColors(cfg);
+  return cfg;
+};
+
+HC._COLOR_KEYS = ['borderColor', 'backgroundColor', 'pointBackgroundColor',
+                  'pointBorderColor', 'hoverBackgroundColor', 'hoverBorderColor', 'color'];
+HC._resolveColors = o => {
+  if (!o || typeof o !== 'object') return o;
+  if (Array.isArray(o)) { o.forEach(HC._resolveColors); return o; }
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'string' && HC._COLOR_KEYS.indexOf(k) >= 0) o[k] = HC.color(v);
+    else if (Array.isArray(v) && HC._COLOR_KEYS.indexOf(k) >= 0) {
+      o[k] = v.map(x => (typeof x === 'string' ? HC.color(x) : x));
+    } else if (v && typeof v === 'object') HC._resolveColors(v);
+  }
+  return o;
 };
 
 /* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
@@ -1882,14 +1910,6 @@ HC.update = (id, mutate) => {
    正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
    HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
 
-/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
-HC.color = c => {
-  if (!c) return null;
-  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
-  if (!m) return c;
-  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
-  return v || HC.tok.muted;
-};
 
 /* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
 HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
