@@ -6,25 +6,32 @@
 
 ## 1. 現狀
 
-十章全部完成並上線：**https://phonchi.github.io/statlearning-selfstudy/**
+十一章全部完成並上線：**https://phonchi.github.io/statlearning-selfstudy/**
 
 | 頁面 | ISLP | 大小 | 圖表 | SVG 元件 | 詞彙卡 | 題庫 |
 |---|---|---|---|---|---|---|
-| `introduction` | Ch.1 | 155 KB | 1 | 3 | 23 | — |
+| `introduction` | Ch.1 | 160 KB | 1 | 3 | 23 | — |
 | `statistical_learning` | Ch.2 | 191 KB | 2 | 6 | 26 | — |
 | `linear_regression` | Ch.3 | 261 KB | 4 | 5 | 28 | 6 |
 | `classification` | Ch.4 | 218 KB | 2 | 5 | 28 | 6 |
 | `resampling_methods` | Ch.5 | 162 KB | 5 | 3 | 23 | — |
-| `model_selection` | Ch.6 | 204 KB | 6 | 4 | 27 | — |
+| `model_selection` | Ch.6 | 205 KB | 6 | 4 | 27 | — |
 | `unsupervised_learning` | Ch.12 | 255 KB | 3 | 6 | 30 | — |
 | `beyond_linearity` | Ch.7 | 245 KB | 5 | 7 | 28 | — |
-| `tree_based_methods` | Ch.8 | 256 KB | 4 | 6 | 30 | 6 |
+| `tree_based_methods` | Ch.8 | 257 KB | 4 | 6 | 30 | 6 |
 | `support_vector_machines` | Ch.9 | 240 KB | 3 | 6 | 26 | — |
+| `deep_learning` | **Ch.10 · 補充** | 210 KB | 2 | 4 | 27 | — |
 
-合計 2.2 MB · 35 個 Chart.js 圖表 · 51 個手寫 SVG 元件 · 269 張詞彙卡 · 18 題題庫 · 約 115 個 quiz。
+合計 2.3 MB · 37 個 Chart.js 圖表 · 55 個手寫 SVG 元件 · 296 張詞彙卡 · 18 題題庫 · 約 125 個 quiz。
 
 章節順序是**授課順序**，不是 ISLP 章號順序——非監督式（Ch.12）排在超越線性（Ch.7）之前，
 集成學習那一週折進「樹狀方法與集成學習」。順序只由 [`tools/pages.py`](tools/pages.py) 承載。
+
+**第 11 頁是補充章。** 本課沒有教 ISLP 第 10 章（第 10 週的 `10_GAM.md` 是 GAM，屬第 7 章），
+所以那一章沒有講義 PDF、沒有中文 lab、沒有課程錄影。它的定位、出處與其他章不同，
+細節見 §5.1。「補充」兩個字不是寫死在標題裡的，由 `pages.py` 的 `plain`
+（`深度學習（補充）`）與 `islp_label`（`ISLP Ch.10 · 補充`）承載，
+一路帶到 index 卡片、TOC、chapter-nav、footer 與 README 五處。
 
 ---
 
@@ -98,11 +105,17 @@ Chrome 版本不用寫死，`browser_check.js` 會抓 `~/.cache/puppeteer/chrome
 - `M524_COURSE` → `~/nsysu-math524-2025`（講義 PDF 與中文 lab notebook）
   ：`gh repo clone phonchi/nsysu-math524-2025 ~/nsysu-math524-2025`
 - `M524_BOOKS` → `~/statslearning`（`ISLP_website.pdf`、`ESLII_print12.pdf`）
+- `M524_LAB_CACHE` → `~/.cache/selfstudy-labs`（官方 ISLP lab 的下載快取，只有第 10 章用，
+  會自己抓，不用預先準備；見 §5.1）
 
 還需要 `pdftotext`（poppler）。
 
 `data/source_index/` 是這些素材抽出來的索引，**已 commit**，所以平常維護不需要重跑。
 真要重建：`python3 tools/index_deck.py && python3 tools/index_book.py all && python3 tools/extract_lab.py`。
+
+`index_book.py` 有一張 `MANUAL` 補丁表：ESL 第 11 章（Neural Networks）的 verso 頁首
+只印章名、沒有「11.」前綴，自動偵測抓不到，重跑索引時整章會從 `esl_chapters.tsv` 消失。
+手改 tsv 會被下一次重跑蓋掉，所以釘在程式裡。
 
 ---
 
@@ -142,6 +155,31 @@ Q&A 展開後數學要排版 · **390×844 手機版頁面本體不得橫向滾�
   **逐字取自課程 lab**，並用 `.dx-src` 標儲存格編號。**絕不重跑、絕不自己打數字**——
   你的環境跟課程環境不同，而 notebook 裡已經是老師本人跑出來的結果。
   `lab_output()` 找不到輸出會直接報錯，那是刻意的。
+
+### 5.1 補充章（`deep_learning`）的出處為什麼不一樣
+
+本課沒有教 ISLP 第 10 章，所以 `data/source_index/` 裡沒有 `deck_10.tsv`、
+也沒有中文 lab。那一章改用**課本官方的英文 lab** 當出處：
+`intro-stat-learning/ISLP_labs` 的 `Ch10-deeplearning-lab.ipynb`（BSD 2-Clause），
+**釘 commit `6bf6160a3dd180c6651ba06655b453e81f91dc20`**——不釘的話上游一改，
+站上引用的儲存格編號就會錯位。
+
+`tools/extract_lab.py` 的 `OFFICIAL` 表管這件事：它會把 notebook 抓到
+`~/.cache/selfstudy-labs/`（**repo 不放 notebook**，那份有 600 KB 且含 base64 圖），
+再用同一個 `extract()` 產生 `data/source_index/lab_ch10.md`。只有這份 `.md` 進 repo。
+
+所以 `lab_code(10, cell)` / `lab_output(10, cell)` 照常運作，紀律一模一樣。
+**這一步不能省**：沒有 `lab_ch10.md` 時 `validate.py` 的 GROUNDING 第二段會因為
+`labtext` 是空字串而**整段靜默跳過，連 warn 都不會有**，`.expected-out` 等於零檢驗。
+
+兩個衍生的差異：官方 lab 的註解是英文，所以那一章的程式碼**不翻譯**，
+中文解說一律寫在卡片外面；`lib.ver_note()` 的文字寫死「逐字取自課程 lab notebook」
+對這一章是假話，REF 區改成手寫的 `<p class="ver-note">`。
+
+還有一件會咬人的事：**課本表格的數字跟官方 lab 跑出來的不一樣**
+（Hitters 的 MAE 課本是 254.7／252.3／257.4，lab 是 259.7／235.7／221.8；
+MNIST 錯誤率課本 1.8%，lab 3.8%），因為切分、epoch 數與套件版本都不同。
+頁面上兩組都標清楚是誰的，還拿這個落差當了一則 quiz。改內容時不要把它們混著講。
 - 自己算的圖表資料放在 `tools/frames/gen_*.py`，固定種子，`meta` 要有
   `src` / `seed` / `versions` / `gen`，而且產生器的 stderr 會印一行自我對照
   （例如 LOOCV degree 1 = 24.2315 對上 lab 儲存格 32 的 `np.float64(24.23151351792922)`）。
@@ -165,10 +203,21 @@ Q&A 展開後數學要排版 · **390×844 手機版頁面本體不得橫向滾�
 
 ## 7. 還沒做的事
 
-- **`speak-human-tw` 逐頁檢查**（去 AI 味與中國用語）。原計畫有這一步，因用量考量先擱下。
-  建議從散文最重的三頁開始：`linear_regression`、`model_selection`、`unsupervised_learning`。
+- ~~`speak-human-tw` 逐頁檢查~~ **已完成（十一頁全跑過）**。做了三件事，每一頁一個 commit：
+  - **破折號密度**是全站唯一嚴重的 AI 痕跡，原本每 169–249 字就一個，
+    skill 建議 300–500。降到每 274–456 字一次，語意沒動，只把不做事的破折號
+    降級成逗號或句號（`——但` → `，但`、`——這` → `。這` 這一類）。
+  - **`噪音` 統一成 `雜訊`**（43 處）。六個檔案原本兩種寫法混用，違反契約 §6 的「同頁一致」，
+    而且統計脈絡在台灣是用雜訊。
+  - 三處零星修正：`落地`→`實際導入`、`同一個算法`→`同一套演算法`、
+    `（假陽率, 真陽率）`的半形逗號、`第 7 題（b)(c)` 的全半形括號混用。
+
+  值得記下來的是**沒查到什麼**：套話（「值得注意的是」「綜上所述」）與立場真空
+  （「各有優缺點」「因人而異」）**全站零命中**，中國用語掃描的命中也幾乎都是誤判
+  （「演算法」含「算法」、「變數組合」含「數組」、「水平邊緣」是方向不是水準）。
+  這個站的散文本來就有主張、也沒有罐頭句。以後再跑只要盯破折號密度就好。
 - 題庫（`bankquiz`）目前只有第 3、4、8 章。要加就寫 `data/questions_zh/chN.json`
-  並在 `pages.py` 把那一章的 `bankquiz=True`。
+  並在 `pages.py` 把那一章的 `bankquiz=True`。第 10 章是補充章，沒有題庫。
 - `data/questions_zh/` 的題目是四選一，`.quiz-box` 的是三選一——兩套引擎不同，這是刻意的
   （題庫由 `inject_data.py` 在前端產生，不受 `QUIZ-TRIPLE` 檢查管）。
 
