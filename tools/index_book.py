@@ -24,6 +24,14 @@ VERSO = re.compile(r"^\s{0,6}(\d{1,3})\s{2,}(\S.*?)\s*$")   # 頁碼 + 章名
 RECTO = re.compile(r"^\s{2,}(\S.*?)\s{2,}(\d{1,3})\s*$")     # 節名 + 頁碼
 CHAP = re.compile(r"^(\d{1,2})\.\s+(.+)$")                   # "3. Linear Regression"
 
+# 課本排版例外，自動偵測抓不到，只能釘住。重跑索引時會被合併回去。
+# ESL 第 11 章的 verso 頁首只印「Neural Networks」，沒有「11.」前綴（其他章都有），
+# 所以 CHAP 比對不到、整章會從 esl_chapters.tsv 消失。頁碼實測自 pdftotext：
+# pdf 408 是章首頁（印刷 389），pdf 435 是最後一頁（印刷 416），pdf 436 起是第 12 章。
+MANUAL = {
+    "esl": {11: ("Neural Networks", 408, 435, 389, 416)},
+}
+
 
 def parse(pdf):
     out = subprocess.run(
@@ -94,6 +102,9 @@ def write(pdf, tag):
     dest.write_text("\n".join(body) + "\n", encoding="utf-8")
 
     ch = chapters(rows)
+    for n, (title, pf, pt, rf, rt) in MANUAL.get(tag, {}).items():
+        ch.setdefault(n, {"title": title, "pdf": [pf, pt], "printed": [rf, rt]})
+    ch = dict(sorted(ch.items()))
     cdest = SRC_INDEX / f"{tag}_chapters.tsv"
     cbody = ["# chapter\ttitle\tpdf_from\tpdf_to\tprinted_from\tprinted_to"]
     for n, e in ch.items():
