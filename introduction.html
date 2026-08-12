@@ -593,7 +593,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   你手上有沒有想預測的 y？y 是數字還是類別？你要的是準確度還是可解釋性？
   答案決定你該翻到哪一章。</p>
 
-  <p>下面這張地圖就是這門課的全貌。<strong>按條件過濾，看剩下哪幾章</strong>——
+  <p>下面這張地圖就是這門課的全貌。<strong>按條件過濾，看剩下哪幾章</strong>。
   每張卡片都直接連到那一章的頁面。現在還看不懂卡片上的名詞完全沒問題，
   這一節的目的只是讓你知道「這門課會給你哪些工具、什麼時候該拿哪一把」。</p>
 
@@ -608,7 +608,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼用這張地圖</div>
-      每個按鈕是一個條件。<strong>條件是「且」的關係</strong>——同時按下「監督式」與「分類」，就只剩下能做分類的章節。按第二次可以取消該條件。
+      每個按鈕是一個條件。<strong>條件是「且」的關係</strong>，同時按下「監督式」與「分類」，就只剩下能做分類的章節。按第二次可以取消該條件。
     </div>
     <div class="info-card">
       <div class="ic-title">目前的篩選</div>
@@ -626,7 +626,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>1. 分清監督式與非監督式。</strong>有 y 就是監督式，沒有 y 就是非監督式。<br>
   <strong>2. 分清迴歸與分類。</strong>y 是數字就是迴歸，y 是類別就是分類。<br>
   <strong>3. 分清預測與推論。</strong>你要「猜得準」還是「看懂關係」？這決定你選什麼模型。<br>
-  <strong>4. 認識符號與三份資料。</strong>n、p、Wage、Smarket、NCI60——後面每一章都會再遇到。
+  <strong>4. 認識符號與三份資料。</strong>n、p、Wage、Smarket、NCI60。後面每一章都會再遇到。
 </div>
 </section>
 <section id="supervised">
@@ -638,7 +638,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>整門課最大的分水嶺只有一個問題：<strong>你手上有沒有「答案」？</strong></p>
 
   <p><strong>監督式學習</strong>（supervised learning）：每一筆資料都有一個
-  你想預測的目標值 y。薪資、股價漲跌、房價、腫瘤是否為惡性——這些都有明確的答案，
+  你想預測的目標值 y。薪資、股價漲跌、房價、腫瘤是否為惡性。這些都有明確的答案，
   可以拿去對照模型猜得對不對。第 2 到 9 章全部是監督式。</p>
 
   <p><strong>非監督式學習</strong>（unsupervised learning）：只有 X，沒有 y。
@@ -666,14 +666,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <div class="qa-a"><p>現實中常見的情況是：<strong>少數資料有 y，大量資料只有 X</strong>。例如你有 100 萬張照片但只有 1000 張被標註過——標註很貴。半監督式學習就是設法同時用上這兩批資料。</p><p>本課不教（ISLP 也只在第 1 章提一句）。但值得知道它存在，因為實務上「資料很多、標註很少」幾乎是常態。</p></div>
   </details>
   <details class="qa-item"><summary>Q：分群（clustering）跟分類（classification）到底差在哪？名字很像。</summary>
-    <div class="qa-a"><p>差在<strong>類別是誰給的</strong>。</p><p><strong>分類</strong>是監督式：類別標籤本來就在資料裡（這封信是垃圾信、這個腫瘤是惡性），你要學的是「怎麼從 X 猜出那個既有的標籤」。</p><p><strong>分群</strong>是非監督式：<em>沒有</em>標籤，群是演算法自己劃出來的。劃完之後那些群叫什麼、有什麼意義，要靠你自己解讀。K-means 給你「第 1 群、第 2 群」，它不會告訴你第 1 群是「高消費客戶」——那是你看完之後自己命名的。</p></div>
+    <div class="qa-a"><p>差在<strong>類別是誰給的</strong>。</p><p><strong>分類</strong>是監督式：類別標籤本來就在資料裡（這封信是垃圾信、這個腫瘤是惡性），你要學的是「怎麼從 X 猜出那個既有的標籤」。</p><p><strong>分群</strong>是非監督式：<em>沒有</em>標籤，群是演算法自己劃出來的。劃完之後那些群叫什麼、有什麼意義，要靠你自己解讀。K-means 給你「第 1 群、第 2 群」，它不會告訴你第 1 群是「高消費客戶」。那是你看完之後自己命名的。</p></div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 監督式與非監督式</div>
   <p>醫院想從病歷資料裡「找出幾種還沒被命名的糖尿病亞型」。這是什麼問題？</p>
-  <div class="quiz-options" id="qSupOptions"><div class="quiz-opt" data-correct="true" data-fb="對。要找的東西本身還沒有標籤，這是分群／降維的地盤（第 12 章）。找出來之後怎麼命名、有沒有臨床意義，要靠醫師解讀——這正是非監督式沒有客觀對錯的意思。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(A)</span> 非監督式，因為「亞型」還不存在，沒有 y 可以對照</div><div class="quiz-opt" data-correct="false" data-fb="「最後會得到分組」不等於監督式。決定性的問題是<strong>訓練時有沒有正確答案可以對照</strong>；這裡沒有，所以不是分類而是分群。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(B)</span> 監督式分類，因為最後要把病人分到某個亞型</div><div class="quiz-opt" data-correct="false" data-fb="X 是數值跟這題無關。監督式與否看的是<strong>有沒有 y</strong>，不是 X 的型態。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(C)</span> 監督式迴歸，因為病歷裡有很多數值變數</div></div>
+  <div class="quiz-options" id="qSupOptions"><div class="quiz-opt" data-correct="true" data-fb="對。要找的東西本身還沒有標籤，這是分群／降維的地盤（第 12 章）。找出來之後怎麼命名、有沒有臨床意義，要靠醫師解讀。這正是非監督式沒有客觀對錯的意思。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(A)</span> 非監督式，因為「亞型」還不存在，沒有 y 可以對照</div><div class="quiz-opt" data-correct="false" data-fb="「最後會得到分組」不等於監督式。決定性的問題是<strong>訓練時有沒有正確答案可以對照</strong>；這裡沒有，所以不是分類而是分群。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(B)</span> 監督式分類，因為最後要把病人分到某個亞型</div><div class="quiz-opt" data-correct="false" data-fb="X 是數值跟這題無關。監督式與否看的是<strong>有沒有 y</strong>，不是 X 的型態。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(C)</span> 監督式迴歸，因為病歷裡有很多數值變數</div></div>
   <div class="quiz-feedback" id="qSupFeedback"></div>
 </div>
 </section>
@@ -704,7 +704,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="info-label">順序型類別是個灰色地帶</span>
   教育程度（國中以下 &lt; 高中 &lt; 大學 &lt; 研究所）
   是類別，但它<strong>有順序</strong>。硬編成 1、2、3、4 當數字做迴歸，
-  等於假設「高中到大學」跟「大學到研究所」的差距一樣大——那個假設通常不成立。<br><br>
+  等於假設「高中到大學」跟「大學到研究所」的差距一樣大。那個假設通常不成立。<br><br>
   本課的處理方式是當成類別（第 3 章的質性預測變數、第 4 章的多類別分類）。
   這一頁下面的 Wage 資料就有這個變數，你會看到它跟薪資的關係並不等距。
 </div>
@@ -712,7 +712,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 迴歸與分類</div>
   <p>預測「明天的降雨機率是幾 %」。這是迴歸還是分類？</p>
-  <div class="quiz-options" id="qRegClsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同一個現實問題可以包裝成兩種。實務上常見的做法是<strong>用分類模型輸出機率</strong>（邏輯斯迴歸就是這樣），再選一個閾值變成硬決策——第 4 章的閾值滑桿元件在演這件事。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(A)</span> 看你怎麼定義輸出——輸出機率值就是迴歸；輸出「會下／不會下」就是分類</div><div class="quiz-opt" data-correct="false" data-fb="只答對一半。輸出連續值確實是迴歸的形式，但這個問題的<em>原始</em> y 是「有沒有下雨」這個二元事件，用分類模型建模再輸出機率通常更自然也更準。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(B)</span> 一定是迴歸，因為機率是 0 到 1 之間的連續數值</div><div class="quiz-opt" data-correct="false" data-fb="也只答對一半。若你要回報的是機率而不是硬決策，那個輸出是連續的。關鍵在於<strong>你要交出什麼</strong>，不是現象本身有幾種狀態。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(C)</span> 一定是分類，因為下雨只有兩種可能</div></div>
+  <div class="quiz-options" id="qRegClsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同一個現實問題可以包裝成兩種。實務上常見的做法是<strong>用分類模型輸出機率</strong>（邏輯斯迴歸就是這樣），再選一個閾值變成硬決策。第 4 章的閾值滑桿元件在演這件事。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(A)</span> 看你怎麼定義輸出——輸出機率值就是迴歸；輸出「會下／不會下」就是分類</div><div class="quiz-opt" data-correct="false" data-fb="只答對一半。輸出連續值確實是迴歸的形式，但這個問題的<em>原始</em> y 是「有沒有下雨」這個二元事件，用分類模型建模再輸出機率通常更自然也更準。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(B)</span> 一定是迴歸，因為機率是 0 到 1 之間的連續數值</div><div class="quiz-opt" data-correct="false" data-fb="也只答對一半。若你要回報的是機率而不是硬決策，那個輸出是連續的。關鍵在於<strong>你要交出什麼</strong>，不是現象本身有幾種狀態。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(C)</span> 一定是分類，因為下雨只有兩種可能</div></div>
   <div class="quiz-feedback" id="qRegClsFeedback"></div>
 </div>
 </section>
@@ -726,7 +726,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>你要的是「猜得準」還是「看懂關係」？</strong></p>
 
   <p><strong>預測</strong>（prediction）：只在乎 $\hat y$ 準不準，
-  $\hat f$ 內部長什麼樣完全不重要——它可以是一座 500 棵樹的森林。</p>
+  $\hat f$ 內部長什麼樣完全不重要。它可以是一座 500 棵樹的森林。</p>
 
   <p><strong>推論</strong>（inference）：想知道<em>哪些</em> X 影響 y、影響<em>多大</em>、
   往<em>哪個方向</em>、這個影響<em>可不可信</em>。這時 $\hat f$ 必須看得懂，
@@ -764,7 +764,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：為什麼「準確度」與「可解釋性」常常要二選一？</summary>
-    <div class="qa-a"><p>因為讓模型變準的手段，多半就是讓它變複雜。</p><p>線性迴歸只有 p + 1 個係數，每一個都能講成一句人話：「其他條件不變下，X₁ 每增加 1 單位，y 平均增加 β₁」。隨機森林有 500 棵樹、每棵樹幾十個分裂點——它可能準得多，但你沒辦法把它翻譯成一句話。</p><p>第 2 章會把這個取捨畫成一張圖（彈性 vs 可解釋性），第 7 章的 GAM 則是刻意站在中間的折衷方案：允許每個變數各自彎曲，但保住「各變數的效果可以分開看」這件事。</p></div>
+    <div class="qa-a"><p>因為讓模型變準的手段，多半就是讓它變複雜。</p><p>線性迴歸只有 p + 1 個係數，每一個都能講成一句人話：「其他條件不變下，X₁ 每增加 1 單位，y 平均增加 β₁」。隨機森林有 500 棵樹、每棵樹幾十個分裂點。它可能準得多，但你沒辦法把它翻譯成一句話。</p><p>第 2 章會把這個取捨畫成一張圖（彈性 vs 可解釋性），第 7 章的 GAM 則是刻意站在中間的折衷方案：允許每個變數各自彎曲，但保住「各變數的效果可以分開看」這件事。</p></div>
   </details>
   <details class="qa-item"><summary>Q：如果只做預測，是不是完全不用管模型長什麼樣？</summary>
     <div class="qa-a"><p>理論上是，實務上不行，有三個現實理由。</p><p><strong>除錯</strong>：模型上線後表現變差，看不懂它你就查不出原因。<strong>信任</strong>：醫療、信貸、司法這些領域，法規常常要求你能解釋每一個決策。<strong>資料洩漏</strong>：如果某個變數的重要度高得不合常理，很可能是它偷偷含有答案（例如用「是否已理賠」預測「是否出車禍」）——看得懂模型才抓得到這種錯。</p></div>
@@ -830,7 +830,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 符號</div>
   <p>$x_{{3}}$（下標一個數字 3）指的是什麼？</p>
-  <div class="quiz-options" id="qNotaOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP 的約定是：下標一個數字＝第幾列（一個觀測值），粗體加下標 $\mathbf{x}_j$＝第幾行（一個變數）。兩者長度不同（p 對 n），弄反了整段推導都會錯。" onclick="quizCheck('qNota', this)"><span class="opt-letter">(A)</span> 第 3 個<strong>觀測值</strong>，是一個長度 p 的向量</div><div class="quiz-opt" data-correct="false" data-fb="那是 $\mathbf{x}_3$（粗體）。ISLP 用粗細來區分列與行——這在讀第 3、6 章的矩陣式子時很關鍵。" onclick="quizCheck('qNota', this)"><span class="opt-letter">(B)</span> 第 3 個<strong>變數</strong>，是一個長度 n 的向量</div><div class="quiz-opt" data-correct="false" data-fb="單一個數字要兩個下標：$x_{33}$。只有一個下標時指的是整列。" onclick="quizCheck('qNota', this)"><span class="opt-letter">(C)</span> X 矩陣第 3 列第 3 行的那個數字</div></div>
+  <div class="quiz-options" id="qNotaOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP 的約定是：下標一個數字＝第幾列（一個觀測值），粗體加下標 $\mathbf{x}_j$＝第幾行（一個變數）。兩者長度不同（p 對 n），弄反了整段推導都會錯。" onclick="quizCheck('qNota', this)"><span class="opt-letter">(A)</span> 第 3 個<strong>觀測值</strong>，是一個長度 p 的向量</div><div class="quiz-opt" data-correct="false" data-fb="那是 $\mathbf{x}_3$（粗體）。ISLP 用粗細來區分列與行。這在讀第 3、6 章的矩陣式子時很關鍵。" onclick="quizCheck('qNota', this)"><span class="opt-letter">(B)</span> 第 3 個<strong>變數</strong>，是一個長度 n 的向量</div><div class="quiz-opt" data-correct="false" data-fb="單一個數字要兩個下標：$x_{33}$。只有一個下標時指的是整列。" onclick="quizCheck('qNota', this)"><span class="opt-letter">(C)</span> X 矩陣第 3 列第 3 行的那個數字</div></div>
   <div class="quiz-feedback" id="qNotaFeedback"></div>
 </div>
 </section>
@@ -862,7 +862,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">三個面板 <span class="ic-badge">圖 1.1</span></div>
-      用按鈕切換。<strong>年齡</strong>那張是本課第一個「線性不夠用」的證據——所以才有第 7 章。<strong>年份</strong>那張的斜率是每年 +1.35 美元，線性配得不錯。<strong>教育</strong>那張是質性變數（第 3 章）。
+      用按鈕切換。<strong>年齡</strong>那張是本課第一個「線性不夠用」的證據，所以才有第 7 章。<strong>年份</strong>那張的斜率是每年 +1.35 美元，線性配得不錯。<strong>教育</strong>那張是質性變數（第 3 章）。
     </div>
     <div class="info-card">
       <div class="ic-title">Wage 的事實</div>
@@ -892,14 +892,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">Wage[Wage[<span class="str">&#x27;year&#x27;</span>] == <span class="num">2004</span>][<span class="str">&#x27;wage&#x27;</span>].mean()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(111.15999687022256)</pre></div>
-  <p class="dx-note">這個 <strong>111.16</strong> 就是上面側欄卡裡的數字——圖表的烘焙資料跟 lab 是同一份資料、同一個算法。</p>
+  <p class="dx-note">這個 <strong>111.16</strong> 就是上面側欄卡裡的數字。圖表的烘焙資料跟 lab 是同一份資料、同一套演算法。</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 148</span>
 </div>
 
   <h3 id="dx-smarket">Smarket：分類問題</h3>
   <p>2001–2005 年 S&amp;P 500 的每日報酬。y 是 <code>Direction</code>（Up / Down），
   所以是分類。ISLP 圖 1.2 的重點很反直覺：<strong>前幾天的報酬（Lag1–Lag5）
-  在漲日與跌日上的分佈幾乎一樣</strong>——也就是說，這件事非常難預測。</p>
+  在漲日與跌日上的分佈幾乎一樣</strong>，也就是說，這件事非常難預測。</p>
 
 <div class="viz-layout">
   <div>
@@ -946,12 +946,12 @@ Data columns (total 9 columns):
  8   Direction  1250 non-null   category
 dtypes: category(1), float64(7), int64(1)
 memory usage: 79.6 KB</pre></div>
-  <p class="dx-note"><code>Today</code> 是當天的報酬、<code>Direction</code> 是它的正負號——所以<strong>絕對不能</strong>把 <code>Today</code> 當預測變數（那就是答案本身）。這是最典型的資料洩漏。</p>
+  <p class="dx-note"><code>Today</code> 是當天的報酬、<code>Direction</code> 是它的正負號，所以<strong>絕對不能</strong>把 <code>Today</code> 當預測變數（那就是答案本身）。這是最典型的資料洩漏。</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 157、158</span>
 </div>
 
   <h3 id="dx-nci">NCI60：非監督式問題</h3>
-  <p>64 個癌症細胞株、每個測 6830 個基因的表現量。<strong>沒有 y</strong>——
+  <p>64 個癌症細胞株、每個測 6830 個基因的表現量。<strong>沒有 y</strong>。
   我們不是要預測什麼，而是想知道「這 64 個樣本會不會自己分成幾群」。
   ISLP 圖 1.4 把 6830 維壓到 2 維（第 12 章的主成分分析），
   結果同一種癌症的樣本確實傾向靠在一起。</p>
@@ -997,14 +997,14 @@ memory usage: 79.6 KB</pre></div>
     <div class="qa-a"><p>因為它示範了一個真實而重要的事實：<strong>不是所有問題都能被預測</strong>。</p><p>如果課本只用「配得很漂亮」的例子，你會學到一種危險的直覺——覺得只要方法夠好就一定能預測。金融市場的日報酬接近隨機漫步，這是被大量研究支持的結論，不是因為我們的模型不夠強。</p><p>更重要的是：<strong>在這種資料上，任何回報「正確率 70%」的模型都應該被懷疑</strong>。那通常意味著資料洩漏（例如不小心把 <code>Today</code> 放進了預測變數）。</p></div>
   </details>
   <details class="qa-item"><summary>Q：NCI60 的顏色既然事後才塗，那分析到底「對」了嗎？</summary>
-    <div class="qa-a"><p>這正是非監督式學習最尷尬也最有趣的地方。</p><p>這個例子裡我們<em>剛好</em>有標籤可以驗證，所以能說「PCA 抓到了真實的結構」。但在真正的非監督式應用裡你沒有標籤——所以你永遠無法確定看到的群是真的結構，還是只是雜訊排出來的花樣。</p><p>實務上的做法是找<strong>外部證據</strong>：這些群在別的變數上有沒有差異？換一種方法、換一批資料還在不在？如果換個隨機種子群就變了，那大概不是真的。</p></div>
+    <div class="qa-a"><p>這正是非監督式學習最尷尬也最有趣的地方。</p><p>這個例子裡我們<em>剛好</em>有標籤可以驗證，所以能說「PCA 抓到了真實的結構」。但在真正的非監督式應用裡你沒有標籤，所以你永遠無法確定看到的群是真的結構，還是只是雜訊排出來的花樣。</p><p>實務上的做法是找<strong>外部證據</strong>：這些群在別的變數上有沒有差異？換一種方法、換一批資料還在不在？如果換個隨機種子群就變了，那大概不是真的。</p></div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 三份資料</div>
   <p>同一份 Smarket 資料，如果把 <code>Today</code>（當天報酬）當成預測變數去猜 <code>Direction</code>（當天漲跌），正確率會是多少？</p>
-  <div class="quiz-options" id="qDataOptions"><div class="quiz-opt" data-correct="true" data-fb="對，而且這是實務上最常見的錯誤之一。任何近乎完美的正確率都該先懷疑洩漏，而不是慶祝。第 4 章跑這份資料時只用 Lag 與 Volume，正確率大約 50%。" onclick="quizCheck('qData', this)"><span class="opt-letter">(A)</span> 100%，因為 Direction 就是 Today 的正負號——這是資料洩漏，不是預測</div><div class="quiz-opt" data-correct="false" data-fb="那是<strong>只用 Lag 當預測變數</strong>時的答案。<code>Today</code> 不一樣——<code>Direction</code> 是直接從它算出來的。" onclick="quizCheck('qData', this)"><span class="opt-letter">(B)</span> 大約 50%，因為股市本來就難預測</div><div class="quiz-opt" data-correct="false" data-fb="不是「高度相關」，是<strong>完全等價</strong>：Direction = Up 若且唯若 Today > 0。所以正確率是 100%。" onclick="quizCheck('qData', this)"><span class="opt-letter">(C)</span> 大約 70%，因為當天報酬跟漲跌高度相關但不完全一致</div></div>
+  <div class="quiz-options" id="qDataOptions"><div class="quiz-opt" data-correct="true" data-fb="對，而且這是實務上最常見的錯誤之一。任何近乎完美的正確率都該先懷疑洩漏，而不是慶祝。第 4 章跑這份資料時只用 Lag 與 Volume，正確率大約 50%。" onclick="quizCheck('qData', this)"><span class="opt-letter">(A)</span> 100%，因為 Direction 就是 Today 的正負號。這是資料洩漏，不是預測</div><div class="quiz-opt" data-correct="false" data-fb="那是<strong>只用 Lag 當預測變數</strong>時的答案。<code>Today</code> 不一樣——<code>Direction</code> 是直接從它算出來的。" onclick="quizCheck('qData', this)"><span class="opt-letter">(B)</span> 大約 50%，因為股市本來就難預測</div><div class="quiz-opt" data-correct="false" data-fb="不是「高度相關」，是<strong>完全等價</strong>：Direction = Up 若且唯若 Today > 0。所以正確率是 100%。" onclick="quizCheck('qData', this)"><span class="opt-letter">(C)</span> 大約 70%，因為當天報酬跟漲跌高度相關但不完全一致</div></div>
   <div class="quiz-feedback" id="qDataFeedback"></div>
 </div>
 </section>
@@ -1014,12 +1014,12 @@ memory usage: 79.6 KB</pre></div>
   <h2>統計學習、機器學習、資料科學差在哪？ <span class="sec-badge">講義 01 · p.19–22</span></h2>
 <!-- GEN:END sec:slvsml -->
 
-  <p>「統計學習」、「機器學習」、「資料科學」、「人工智慧」——這些詞常常混用，
+  <p>「統計學習」、「機器學習」、「資料科學」、「人工智慧」。這些詞常常混用，
   但它們的重心確實不同。講義第 19–22 頁討論了這件事。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th></th><th>重心</th><th>典型問法</th><th>在意什麼</th></tr></thead>
-  <tbody><tr><td>統計學習</td><td>從資料推論母體</td><td>這個效果是真的嗎？多大？</td><td>不確定性、可解釋性、模型假設</td></tr><tr><td>機器學習</td><td>在新資料上表現好</td><td>預測誤差能壓到多低？</td><td>泛化能力、算力、可擴展性</td></tr><tr><td>資料科學</td><td>從問題到決策的整條流程</td><td>這個結論能支持什麼行動？</td><td>資料品質、溝通、落地</td></tr><tr><td>人工智慧</td><td>讓機器展現智慧行為</td><td>它能做這件事嗎？</td><td>能力邊界</td></tr></tbody>
+  <tbody><tr><td>統計學習</td><td>從資料推論母體</td><td>這個效果是真的嗎？多大？</td><td>不確定性、可解釋性、模型假設</td></tr><tr><td>機器學習</td><td>在新資料上表現好</td><td>預測誤差能壓到多低？</td><td>泛化能力、算力、可擴展性</td></tr><tr><td>資料科學</td><td>從問題到決策的整條流程</td><td>這個結論能支持什麼行動？</td><td>資料品質、溝通、實際導入</td></tr><tr><td>人工智慧</td><td>讓機器展現智慧行為</td><td>它能做這件事嗎？</td><td>能力邊界</td></tr></tbody>
 </table></div>
 
   <p>但這些界線在實務上非常模糊，而且愈來愈模糊。同一個隨機森林，
@@ -1076,21 +1076,21 @@ memory usage: 79.6 KB</pre></div>
   <strong>要在自己電腦上跑：</strong>裝 Anaconda 或 Miniconda，然後
   <code>pip install ISLP</code>（它會把 numpy、pandas、scikit-learn、statsmodels
   一起帶進來）。課程 repo 的 <code>packages.txt</code> 有完整的版本清單。<br><br>
-  <strong>版本不同數字會不一樣</strong>——這不是你做錯了。本站每頁的
+  <strong>版本不同數字會不一樣</strong>。這不是你做錯了。本站每頁的
   「預期輸出」都標了來源儲存格，就是為了讓你能對照。
 </div>
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：為什麼有兩套做迴歸的工具（scikit-learn 與 statsmodels）？</summary>
-    <div class="qa-a"><p>因為它們為不同目的設計，剛好對應這一頁 P03 講的預測與推論。</p><p><code>statsmodels</code> 給你完整的<strong>推論</strong>報表：係數、標準誤、t 值、p 值、信賴區間、F 檢定。第 3、4 章要的就是這些。</p><p><code>scikit-learn</code> 給你統一的<strong>預測</strong>介面：<code>fit</code> / <code>predict</code> / <code>score</code>，配上 <code>Pipeline</code> 與 <code>cross_validate</code>。它<em>刻意</em>不提供 p 值——因為在它的世界觀裡，模型好不好是用留出的資料驗證，不是用 p 值判斷。</p><p>第 5 章的 lab 會示範怎麼用 <code>ISLP</code> 的 <code>sklearn_sm()</code> 把 statsmodels 的模型包成 sklearn 介面，這樣就能拿去做交叉驗證。</p></div>
+    <div class="qa-a"><p>因為它們為不同目的設計，剛好對應這一頁 P03 講的預測與推論。</p><p><code>statsmodels</code> 給你完整的<strong>推論</strong>報表：係數、標準誤、t 值、p 值、信賴區間、F 檢定。第 3、4 章要的就是這些。</p><p><code>scikit-learn</code> 給你統一的<strong>預測</strong>介面：<code>fit</code> / <code>predict</code> / <code>score</code>，配上 <code>Pipeline</code> 與 <code>cross_validate</code>。它<em>刻意</em>不提供 p 值，因為在它的世界觀裡，模型好不好是用留出的資料驗證，不是用 p 值判斷。</p><p>第 5 章的 lab 會示範怎麼用 <code>ISLP</code> 的 <code>sklearn_sm()</code> 把 statsmodels 的模型包成 sklearn 介面，這樣就能拿去做交叉驗證。</p></div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 工具鏈</div>
   <p>你要報告「廣告支出對銷售額的影響有多大、可不可信」。該用哪個套件？</p>
-  <div class="quiz-options" id="qToolOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是推論問題，需要不確定性的量化。<code>statsmodels</code> 的 <code>summary()</code> 一次給你全部。" onclick="quizCheck('qTool', this)"><span class="opt-letter">(A)</span> <code>statsmodels</code>，因為你需要標準誤、信賴區間與 p 值</div><div class="quiz-opt" data-correct="false" data-fb="主流不等於適用。<code>scikit-learn</code> 刻意不提供 p 值與標準誤——它的設計目的是預測與交叉驗證，不是推論。" onclick="quizCheck('qTool', this)"><span class="opt-letter">(B)</span> <code>scikit-learn</code>，因為它是最主流的機器學習套件</div><div class="quiz-opt" data-correct="false" data-fb="自己算當然做得到（第 3 章會推導那些公式），但沒必要——<code>statsmodels</code> 已經把整份推論報表算好了，而且不容易出錯。" onclick="quizCheck('qTool', this)"><span class="opt-letter">(C)</span> 兩個都不行，要自己用 <code>numpy</code> 算矩陣公式</div></div>
+  <div class="quiz-options" id="qToolOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是推論問題，需要不確定性的量化。<code>statsmodels</code> 的 <code>summary()</code> 一次給你全部。" onclick="quizCheck('qTool', this)"><span class="opt-letter">(A)</span> <code>statsmodels</code>，因為你需要標準誤、信賴區間與 p 值</div><div class="quiz-opt" data-correct="false" data-fb="主流不等於適用。<code>scikit-learn</code> 刻意不提供 p 值與標準誤。它的設計目的是預測與交叉驗證，不是推論。" onclick="quizCheck('qTool', this)"><span class="opt-letter">(B)</span> <code>scikit-learn</code>，因為它是最主流的機器學習套件</div><div class="quiz-opt" data-correct="false" data-fb="自己算當然做得到（第 3 章會推導那些公式），但沒必要——<code>statsmodels</code> 已經把整份推論報表算好了，而且不容易出錯。" onclick="quizCheck('qTool', this)"><span class="opt-letter">(C)</span> 兩個都不行，要自己用 <code>numpy</code> 算矩陣公式</div></div>
   <div class="quiz-feedback" id="qToolFeedback"></div>
 </div>
 </section>
@@ -1106,7 +1106,7 @@ memory usage: 79.6 KB</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 分類問題的四個象限</div>
   <p>一家串流平台想「從觀看紀錄預測使用者下個月會不會退訂」。這在本課的地圖上是？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。有 y（退訂了沒有）＝監督式；y 是二元類別＝分類；平台最在意「抓得準不準」＝偏預測，所以彈性方法（隨機森林、GBDT）通常表現最好。若同時想知道「為什麼退訂」，那部分是推論，要另外用可解釋的模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 監督式、分類、偏預測 → 第 4 章（分類）與第 8、9 章（彈性方法）</div><div class="quiz-opt" data-correct="false" data-fb="「最後得到兩組」不等於非監督式。歷史資料裡<strong>已經知道</strong>誰退訂了，那就是 y，所以是監督式分類，不是分群。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 非監督式，因為要把使用者分成「會退訂」與「不會退訂」兩群</div><div class="quiz-opt" data-correct="false" data-fb="如果你要輸出機率，形式上確實是連續值——但原始的 y 是二元事件，標準做法是用分類模型（邏輯斯迴歸）輸出機率。歸類為分類問題才對得上第 4 章的工具。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 監督式、迴歸，因為要預測的是機率</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。有 y（退訂了沒有）＝監督式；y 是二元類別＝分類；平台最在意「抓得準不準」＝偏預測，所以彈性方法（隨機森林、GBDT）通常表現最好。若同時想知道「為什麼退訂」，那部分是推論，要另外用可解釋的模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 監督式、分類、偏預測 → 第 4 章（分類）與第 8、9 章（彈性方法）</div><div class="quiz-opt" data-correct="false" data-fb="「最後得到兩組」不等於非監督式。歷史資料裡<strong>已經知道</strong>誰退訂了，那就是 y，所以是監督式分類，不是分群。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 非監督式，因為要把使用者分成「會退訂」與「不會退訂」兩群</div><div class="quiz-opt" data-correct="false" data-fb="如果你要輸出機率，形式上確實是連續值，但原始的 y 是二元事件，標準做法是用分類模型（邏輯斯迴歸）輸出機率。歸類為分類問題才對得上第 4 章的工具。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 監督式、迴歸，因為要預測的是機率</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1162,7 +1162,7 @@ memory usage: 79.6 KB</pre></div>
   <strong>1. 有沒有 y 是最大的分水嶺。</strong>
   沒有 y 就沒有客觀對錯，這件事會一路影響到第 12 章怎麼驗證分群結果。<br>
   <strong>2. 預測與推論要的模型不一樣。</strong>
-  先問清楚自己要哪一個，再選方法——不要先選了隨機森林才發現老闆要的是 p 值。<br>
+  先問清楚自己要哪一個，再選方法。不要先選了隨機森林才發現老闆要的是 p 值。<br>
   <strong>3. 近乎完美的正確率幾乎都是資料洩漏。</strong>
   Smarket 的 <code>Today</code> 是課本給的示範，實務上這個坑更隱晦。
 </div>
