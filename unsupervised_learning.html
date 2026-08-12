@@ -664,7 +664,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>括號裡的東西就是第 i 筆資料投影到 $\phi_1$ 上的值，叫做<strong>得分</strong>（score）
   $z_{i1}$。因為資料置中過，得分的平均是 0，所以上式就是得分的樣本變異數。
-  <strong>負荷向量是新座標軸的方向，得分是每筆資料在新座標軸上的位置</strong>——這兩個詞不要混。</p>
+  <strong>負荷向量是新座標軸的方向，得分是每筆資料在新座標軸上的位置</strong>。這兩個詞不要混。</p>
 
   <p>下面這個元件就是把上面那個最佳化問題「用手轉一遍」：拖動角度，看投影後的變異數怎麼變。</p>
 
@@ -683,7 +683,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">怎麼玩</div>
-      拖那顆<strong>橘色的把手</strong>（或用滑桿）轉動灰色的投影軸。每個點會沿虛線垂直落到軸上，變成一個一維的數字。<strong>那些落點的變異數就是右上角那個數。</strong>轉到變異數最大的地方，元件會自動吸附並告訴你——那就是第一主成分。
+      拖那顆<strong>橘色的把手</strong>（或用滑桿）轉動灰色的投影軸。每個點會沿虛線垂直落到軸上，變成一個一維的數字。<strong>那些落點的變異數就是右上角那個數。</strong>轉到變異數最大的地方，元件會自動吸附並告訴你。那就是第一主成分。
     </div>
     <div class="info-card">
       <div class="ic-title">為什麼不是「距離最近」？ <span class="ic-badge">P03</span></div>
@@ -711,14 +711,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
        [-0.41818087, -0.1879856 ,  0.87280619,  0.16731864],
        [-0.34123273, -0.26814843, -0.37801579,  0.81777791],
        [-0.6492278 ,  0.74340748, -0.13387773, -0.08902432]])</pre></div>
-  <p class="dx-note"><code>components_</code> 的<strong>每一列</strong>是一個負荷向量。第一列 <code>[0.536, 0.583, 0.278, 0.543]</code> 在 Murder／Assault／Rape 上幾乎一樣重、UrbanPop 明顯較輕——所以 PC1 大致就是「整體暴力犯罪率」。第二列幾乎全押在 UrbanPop（0.873），那是「都市化程度」。注意 <code>PCA()</code> 預設只置中、不縮放，所以標準化要自己先做（第 19 格）。</p>
+  <p class="dx-note"><code>components_</code> 的<strong>每一列</strong>是一個負荷向量。第一列 <code>[0.536, 0.583, 0.278, 0.543]</code> 在 Murder／Assault／Rape 上幾乎一樣重、UrbanPop 明顯較輕，所以 PC1 大致就是「整體暴力犯罪率」。第二列幾乎全押在 UrbanPop（0.873），那是「都市化程度」。注意 <code>PCA()</code> 預設只置中、不縮放，所以標準化要自己先做（第 19 格）。</p>
   <span class="dx-src">來源：<code>Ch12-unsup-lab-zh.ipynb</code> · 儲存格 19、21、27、29</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 負荷量與得分</div>
   <p>USArrests 的 <code>pcaUS.components_</code> 是 4×4、<code>scores</code> 是 50×4。哪個描述正確？</p>
-  <div class="quiz-options" id="qPcOptions"><div class="quiz-opt" data-correct="true" data-fb="對。負荷向量的長度是變數個數 p，得分向量的長度是樣本數 n。所以 <code>components_</code> 是 4×4（4 個主成分 × 4 個變數），<code>scores</code> 是 50×4。" onclick="quizCheck('qPc', this)"><span class="opt-letter">(A)</span> components_ 的每一列是一個負荷向量（長度 p = 4），scores 的每一行是一個州的四個得分</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是 <code>scores</code> 的一行。<code>components_</code> 跟「州」完全無關——它只描述新座標軸的方向，換一批州、同樣四個變數，形狀還是 4×4。" onclick="quizCheck('qPc', this)"><span class="opt-letter">(B)</span> components_ 的每一列是一個州在四個主成分上的座標</div><div class="quiz-opt" data-correct="false" data-fb="不對。負荷量是<strong>整批資料共用</strong>的一組係數（座標軸只有一組），不是每筆資料一組。每筆資料各自不同的是得分。" onclick="quizCheck('qPc', this)"><span class="opt-letter">(C)</span> 兩者都是 50×4，因為 PCA 對每一筆資料各算一組負荷量</div></div>
+  <div class="quiz-options" id="qPcOptions"><div class="quiz-opt" data-correct="true" data-fb="對。負荷向量的長度是變數個數 p，得分向量的長度是樣本數 n。所以 <code>components_</code> 是 4×4（4 個主成分 × 4 個變數），<code>scores</code> 是 50×4。" onclick="quizCheck('qPc', this)"><span class="opt-letter">(A)</span> components_ 的每一列是一個負荷向量（長度 p = 4），scores 的每一行是一個州的四個得分</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是 <code>scores</code> 的一行。<code>components_</code> 跟「州」完全無關。它只描述新座標軸的方向，換一批州、同樣四個變數，形狀還是 4×4。" onclick="quizCheck('qPc', this)"><span class="opt-letter">(B)</span> components_ 的每一列是一個州在四個主成分上的座標</div><div class="quiz-opt" data-correct="false" data-fb="不對。負荷量是<strong>整批資料共用</strong>的一組係數（座標軸只有一組），不是每筆資料一組。每筆資料各自不同的是得分。" onclick="quizCheck('qPc', this)"><span class="opt-letter">(C)</span> 兩者都是 50×4，因為 PCA 對每一筆資料各算一組負荷量</div></div>
   <div class="quiz-feedback" id="qPcFeedback"></div>
 </div>
 </section>
@@ -787,7 +787,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">    ax.text(s_*pcaUS.components_[i,k],</span>
   <span class="line">            s_*pcaUS.components_[j,k],</span>
   <span class="line">            USArrests.columns[k])</span></div>
-  <p class="dx-note"><code>scikit-learn</code> 沒有內建 biplot，所以 lab 用 <code>ax.scatter</code> 畫得分、<code>ax.arrow</code> 畫負荷量，再用 <code>s_ = 2</code> 把箭頭放長一點（否則負荷量都在 ±1 以內，跟得分的尺度差太多，會縮成一小坨）。<strong>箭頭長度只是為了看得清楚，可以自己乘上任何常數。</strong><br>第 2 行與第 3 行把第二個主成分的得分與負荷量同時乘上 −1。同時翻兩邊，圖只是上下鏡射，任何結論都不變——這正是 P05 要講的符號不唯一。本頁的 biplot 直接用儲存格 29 那組負荷量，跟課本表 12.1 的數字逐位相同。</p>
+  <p class="dx-note"><code>scikit-learn</code> 沒有內建 biplot，所以 lab 用 <code>ax.scatter</code> 畫得分、<code>ax.arrow</code> 畫負荷量，再用 <code>s_ = 2</code> 把箭頭放長一點（否則負荷量都在 ±1 以內，跟得分的尺度差太多，會縮成一小坨）。<strong>箭頭長度只是為了看得清楚，可以自己乘上任何常數。</strong><br>第 2 行與第 3 行把第二個主成分的得分與負荷量同時乘上 −1。同時翻兩邊，圖只是上下鏡射，任何結論都不變。這正是 P05 要講的符號不唯一。本頁的 biplot 直接用儲存格 29 那組負荷量，跟課本表 12.1 的數字逐位相同。</p>
   <span class="dx-src">來源：<code>Ch12-unsup-lab-zh.ipynb</code> · 儲存格 31、33</span>
 </div>
 
@@ -805,7 +805,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:lowrank -->
 
   <p>到目前為止主成分的定義是「變異最大的方向」。現在換一個完全不同的角度看它，
-  結論會一模一樣——這件事很值得多花五分鐘。</p>
+  結論會一模一樣。這件事很值得多花五分鐘。</p>
 
   <p>第一主成分的負荷向量所定義的那條直線，是 p 維空間中<strong>離所有資料點平均平方距離最近</strong>
   的那條線。前兩個主成分張出的平面，是離所有資料點最近的那個平面（ISLP 圖 12.2 左）。
@@ -965,7 +965,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   最典型的是基因表現量：p 個基因都用同一種方法測、同一個單位，
   某些基因的變異大就是生物上的事實，把它縮成 1 反而是把訊息丟掉。
   lab 對 NCI60 還是做了 <code>StandardScaler()</code>，但也在旁邊註明
-  「這裡其實可以合理主張不要縮放」——這是判斷題，不是規則題。
+  「這裡其實可以合理主張不要縮放」。這是判斷題，不是規則題。
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1042,7 +1042,7 @@ dtype: float64</pre></div>
   $$\min_{A,B} \sum_{(i,j)\in\mathcal{O}}
     \Big( x_{ij} - \sum_{m=1}^{M} a_{im} b_{jm} \Big)^2$$
 
-  <p>$\mathcal{O}$ 是觀測到的位置集合。跟 P03 的式子唯一的差別就是求和範圍——
+  <p>$\mathcal{O}$ 是觀測到的位置集合。跟 P03 的式子唯一的差別就是求和範圍，
   但這一改就沒有封閉解了，只能迭代。</p>
 
 <div class="viz-layout">
@@ -1135,7 +1135,7 @@ Iteration: 6, MSS:0.381, Rel.Err 4.22e-06
 Iteration: 7, MSS:0.381, Rel.Err 7.65e-07
 Iteration: 8, MSS:0.381, Rel.Err 1.48e-07
 Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
-  <p class="dx-note">讀法：<code>low_rank(Xhat, M=1)</code> 是步驟 2(a)（用 SVD 取秩一近似）、<code>Xhat[ismiss] = Xapp[ismiss]</code> 是 2(b)（<strong>只覆蓋缺失格</strong>）、<code>mss</code> 是 2(c) 的目標函數。<br>MSS 從 0.395 掉到 0.381 就幾乎不動了，第 8 輪相對誤差跌破 <code>1e-7</code> 收工。注意分母用的是 <code>mss0</code> 而不是 <code>mss</code>——這樣收斂輪數就不會因為把整個 X 乘上一個常數而改變。<br>挖法也有講究：先隨機選 20 個州、每州再隨機挑一個變數，所以<strong>每一列至少留三個觀測值</strong>。整列都空的話，什麼方法都補不出來。</p>
+  <p class="dx-note">讀法：<code>low_rank(Xhat, M=1)</code> 是步驟 2(a)（用 SVD 取秩一近似）、<code>Xhat[ismiss] = Xapp[ismiss]</code> 是 2(b)（<strong>只覆蓋缺失格</strong>）、<code>mss</code> 是 2(c) 的目標函數。<br>MSS 從 0.395 掉到 0.381 就幾乎不動了，第 8 輪相對誤差跌破 <code>1e-7</code> 收工。注意分母用的是 <code>mss0</code> 而不是 <code>mss</code>。這樣收斂輪數就不會因為把整個 X 乘上一個常數而改變。<br>挖法也有講究：先隨機選 20 個州、每州再隨機挑一個變數，所以<strong>每一列至少留三個觀測值</strong>。整列都空的話，什麼方法都補不出來。</p>
   <span class="dx-src">來源：<code>Ch12-unsup-lab-zh.ipynb</code> · 儲存格 56、58、60、62、64</span>
 </div>
 
@@ -1151,7 +1151,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 矩陣補全</div>
   <p>演算法 12.1 的步驟 2(b) 只把<strong>缺失</strong>的格子換成低秩近似值，觀測到的格子保持原值。為什麼不乾脆全部換掉？</p>
-  <div class="quiz-options" id="qMcOptions"><div class="quiz-opt" data-correct="true" data-fb="對。目標函數（式 12.12）只在觀測格上算誤差，觀測格就是這個問題的「訓練資料」。全部換成低秩近似的話，迭代會收斂到一個跟原始資料無關的秩 M 矩陣。" onclick="quizCheck('qMc', this)"><span class="opt-letter">(A)</span> 觀測值是真實資料，是唯一的資訊來源；換掉它們就沒有東西可以把近似「拉住」了</div><div class="quiz-opt" data-correct="false" data-fb="不對，不是速度問題而是正確性問題。把觀測格也覆蓋掉，下一輪的 SVD 就是對「上一輪的秩 M 近似」做分解——它已經是秩 M 了，於是立刻「收斂」，但收斂到的東西沒有意義。" onclick="quizCheck('qMc', this)"><span class="opt-letter">(B)</span> 全部換掉在數學上也對，只是會多算幾輪比較慢</div><div class="quiz-opt" data-correct="false" data-fb="剛好相反：低秩近似在觀測格上<strong>也有</strong>誤差（那正是式 12.14 在算的東西）。如果沒有誤差，就不需要迭代了。" onclick="quizCheck('qMc', this)"><span class="opt-letter">(C)</span> 因為觀測格沒有誤差，低秩近似在那些位置一定完全等於原值</div></div>
+  <div class="quiz-options" id="qMcOptions"><div class="quiz-opt" data-correct="true" data-fb="對。目標函數（式 12.12）只在觀測格上算誤差，觀測格就是這個問題的「訓練資料」。全部換成低秩近似的話，迭代會收斂到一個跟原始資料無關的秩 M 矩陣。" onclick="quizCheck('qMc', this)"><span class="opt-letter">(A)</span> 觀測值是真實資料，是唯一的資訊來源；換掉它們就沒有東西可以把近似「拉住」了</div><div class="quiz-opt" data-correct="false" data-fb="不對，不是速度問題而是正確性問題。把觀測格也覆蓋掉，下一輪的 SVD 就是對「上一輪的秩 M 近似」做分解。它已經是秩 M 了，於是立刻「收斂」，但收斂到的東西沒有意義。" onclick="quizCheck('qMc', this)"><span class="opt-letter">(B)</span> 全部換掉在數學上也對，只是會多算幾輪比較慢</div><div class="quiz-opt" data-correct="false" data-fb="剛好相反：低秩近似在觀測格上<strong>也有</strong>誤差（那正是式 12.14 在算的東西）。如果沒有誤差，就不需要迭代了。" onclick="quizCheck('qMc', this)"><span class="opt-letter">(C)</span> 因為觀測格沒有誤差，低秩近似在那些位置一定完全等於原值</div></div>
   <div class="quiz-feedback" id="qMcFeedback"></div>
 </div>
 </section>
@@ -1214,7 +1214,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">重點在右邊那條曲線</div>
-      右邊畫的是群內平方和隨步數的變化。它<strong>只會往下，不會往上</strong>——這就是式 12.18 保證的事。曲線壓平就是收斂了。<br>但收斂到的是<strong>局部</strong>極小。按「換初始值」幾次，你會看到同樣的 K 收斂到不同的值（課本圖 12.9 在同一份資料上跑六次，得到三個不同的局部極小）。
+      右邊畫的是群內平方和隨步數的變化。它<strong>只會往下，不會往上</strong>。這就是式 12.18 保證的事。曲線壓平就是收斂了。<br>但收斂到的是<strong>局部</strong>極小。按「換初始值」幾次，你會看到同樣的 K 收斂到不同的值（課本圖 12.9 在同一份資料上跑六次，得到三個不同的局部極小）。
     </div>
   </div>
 </div>
@@ -1236,7 +1236,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <div class="expected-out"><span class="eo-tag">預期輸出（儲存格 107）</span><pre>array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
        0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
        1, 1, 1, 1, 1, 1], dtype=int32)</pre></div>
-  <p class="dx-note">資料是刻意造的：前 25 筆的平均被平移過，所以真的有兩群。<code>labels_</code> 幾乎完美地把前 25 與後 25 分開——但注意<strong>群的編號是任意的</strong>，0 與 1 交換不代表結果不同。這也是為什麼比較兩種分群結果要用 <code>pd.crosstab</code>，不能直接比對標籤。</p>
+  <p class="dx-note">資料是刻意造的：前 25 筆的平均被平移過，所以真的有兩群。<code>labels_</code> 幾乎完美地把前 25 與後 25 分開，但注意<strong>群的編號是任意的</strong>，0 與 1 交換不代表結果不同。這也是為什麼比較兩種分群結果要用 <code>pd.crosstab</code>，不能直接比對標籤。</p>
   <span class="dx-src">來源：<code>Ch12-unsup-lab-zh.ipynb</code> · 儲存格 103、105、107</span>
 </div>
 
@@ -1258,7 +1258,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：K-means 為什麼每次跑可能給不同答案？該怎麼辦？</summary>
-    <div class="qa-a"><p>因為演算法 12.2 的第 1 步是<strong>隨機</strong>指派。之後的每一步都只保證目標函數下降，不保證下降到全域最小——它會滑進離初始位置最近的那個「盆地」就停住。把 n 筆資料分成 K 群大約有 $K^n$ 種方式，要真的找到全域最小得全部列舉，這不可能，所以我們接受局部極小。</p><p>ISLP 圖 12.9 把同一份資料跑六次，得到三個不同的局部極小：目標函數 235.8（四次）、320.9、310.9。其中 235.8 明顯把三群分得最開。重點是：<strong>如果你只跑一次，剛好抽到 320.9 那組初值，程式不會告訴你有問題。</strong></p><p>標準做法就是<strong>多重初始化</strong>：跑很多組不同的初值，回報目標函數最小的那一次。<code>scikit-learn</code> 的 <code>n_init</code> 就是這件事（預設 10，lab 建議設 20 或 50）。另外一定要設 <code>random_state</code>——不是為了「挑一個好看的種子」，而是為了讓別人能重現你的數字。上面那張元件的「換初始值」按鈕，按幾次就會看到這個現象。</p></div>
+    <div class="qa-a"><p>因為演算法 12.2 的第 1 步是<strong>隨機</strong>指派。之後的每一步都只保證目標函數下降，不保證下降到全域最小。它會滑進離初始位置最近的那個「盆地」就停住。把 n 筆資料分成 K 群大約有 $K^n$ 種方式，要真的找到全域最小得全部列舉，這不可能，所以我們接受局部極小。</p><p>ISLP 圖 12.9 把同一份資料跑六次，得到三個不同的局部極小：目標函數 235.8（四次）、320.9、310.9。其中 235.8 明顯把三群分得最開。重點是：<strong>如果你只跑一次，剛好抽到 320.9 那組初值，程式不會告訴你有問題。</strong></p><p>標準做法就是<strong>多重初始化</strong>：跑很多組不同的初值，回報目標函數最小的那一次。<code>scikit-learn</code> 的 <code>n_init</code> 就是這件事（預設 10，lab 建議設 20 或 50）。另外一定要設 <code>random_state</code>——不是為了「挑一個好看的種子」，而是為了讓別人能重現你的數字。上面那張元件的「換初始值」按鈕，按幾次就會看到這個現象。</p></div>
   </details>
 </div>
 
@@ -1276,7 +1276,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <!-- GEN:END sec:hclust -->
 
   <p>K-means 有個明顯的麻煩：<strong>你得先決定 K</strong>。
-  階層式分群不必——它一次把 1 到 n 群的所有結果都算出來，畫成一棵樹，
+  階層式分群不必。它一次把 1 到 n 群的所有結果都算出來，畫成一棵樹，
   你要幾群就切在對應的高度。</p>
 
   <p>做法（凝聚式，agglomerative，也叫 bottom-up）簡單到不像演算法：</p>
@@ -1306,7 +1306,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 
   <p>剩下的問題是：兩<strong>群</strong>之間的相異度怎麼定？這叫做
   <strong>連結方式</strong>（linkage），四種常見的定義在下面那張表。
-  換 linkage，樹的形狀會整個變——這是這一節最重要的實驗。</p>
+  換 linkage，樹的形狀會整個變。這是這一節最重要的實驗。</p>
 
 <div class="viz-layout">
   <div>
@@ -1377,7 +1377,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 讀樹狀圖</div>
   <p>在一棵樹狀圖上，第 3 號與第 7 號葉子左右緊鄰，但它們所在的分支要到高度 8 才合併；第 3 號與第 20 號隔了很遠，卻在高度 2 就合併了。誰跟第 3 號比較相似？</p>
-  <div class="quiz-options" id="qHcOptions"><div class="quiz-opt" data-correct="true" data-fb="對。水平位置完全沒有意義——每個合併點的左右兩支都可以對調，n 個葉子有 2^(n−1) 種等價畫法。只有縱軸的高度帶資訊。" onclick="quizCheck('qHc', this)"><span class="opt-letter">(A)</span> 第 20 號，因為相似度看的是「第一次合併的高度」，2 比 8 低</div><div class="quiz-opt" data-correct="false" data-fb="這是最常見的誤讀。相鄰只是某一種排法的結果；ISLP 圖 12.12 就是專門用來打破這個直覺的例子。" onclick="quizCheck('qHc', this)"><span class="opt-letter">(B)</span> 第 7 號，因為在樹狀圖上相鄰代表被歸在同一個小群</div><div class="quiz-opt" data-correct="false" data-fb="不對。樹狀圖<strong>可以</strong>比較個別觀測值，方法就是看它們第一次合併的高度——那個高度正是兩群合併時的相異度。" onclick="quizCheck('qHc', this)"><span class="opt-letter">(C)</span> 看不出來，樹狀圖只能看群數，不能比較個別觀測值</div></div>
+  <div class="quiz-options" id="qHcOptions"><div class="quiz-opt" data-correct="true" data-fb="對。水平位置完全沒有意義。每個合併點的左右兩支都可以對調，n 個葉子有 2^(n−1) 種等價畫法。只有縱軸的高度帶資訊。" onclick="quizCheck('qHc', this)"><span class="opt-letter">(A)</span> 第 20 號，因為相似度看的是「第一次合併的高度」，2 比 8 低</div><div class="quiz-opt" data-correct="false" data-fb="這是最常見的誤讀。相鄰只是某一種排法的結果；ISLP 圖 12.12 就是專門用來打破這個直覺的例子。" onclick="quizCheck('qHc', this)"><span class="opt-letter">(B)</span> 第 7 號，因為在樹狀圖上相鄰代表被歸在同一個小群</div><div class="quiz-opt" data-correct="false" data-fb="不對。樹狀圖<strong>可以</strong>比較個別觀測值，方法就是看它們第一次合併的高度。那個高度正是兩群合併時的相異度。" onclick="quizCheck('qHc', this)"><span class="opt-letter">(C)</span> 看不出來，樹狀圖只能看群數，不能比較個別觀測值</div></div>
   <div class="quiz-feedback" id="qHcFeedback"></div>
 </div>
 </section>
@@ -1468,17 +1468,17 @@ HClust
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：分群結果「對不對」要怎麼判斷？沒有 y 的時候有沒有客觀標準？</summary>
-    <div class="qa-a"><p>沒有一個像測試誤差那樣的單一數字。原因很直接：測試誤差需要正確答案，而分群問題裡「正確的群」並不存在（如果存在，那就是分類問題了）。</p><p>常見的內部指標（silhouette、Calinski–Harabasz、gap statistic）能算，但它們量的是<strong>幾何上的緊密與分離</strong>，不是「這些群是不是真的」。一份純雜訊的資料照樣可以有不錯的 silhouette；反過來，兩個真實但形狀狹長交錯的子群，silhouette 會很難看。所以這些指標可以用來在同一個方法內部比較 K，不能用來宣告「分群成功」。</p><p>比較誠實的做法是三件事併用：<strong>（1）穩定性</strong>——換設定、抽子樣本重跑，看哪些群每次都在；<strong>（2）可解釋性</strong>——每一群能不能用領域語言講成一句話；<strong>（3）外部驗證</strong>——在獨立的新資料上重做一次，或對上事後才知道的標籤。ISLP 的結語值得抄下來：分群結果不該當成資料的絕對真相，而是<strong>形成科學假設的起點</strong>。</p></div>
+    <div class="qa-a"><p>沒有一個像測試誤差那樣的單一數字。原因很直接：測試誤差需要正確答案，而分群問題裡「正確的群」並不存在（如果存在，那就是分類問題了）。</p><p>常見的內部指標（silhouette、Calinski–Harabasz、gap statistic）能算，但它們量的是<strong>幾何上的緊密與分離</strong>，不是「這些群是不是真的」。一份純雜訊的資料照樣可以有不錯的 silhouette；反過來，兩個真實但形狀狹長交錯的子群，silhouette 會很難看。所以這些指標可以用來在同一個方法內部比較 K，不能用來宣告「分群成功」。</p><p>比較誠實的做法是三件事併用：<strong>（1）穩定性</strong>——換設定、抽子樣本重跑，看哪些群每次都在；<strong>（2）可解釋性</strong>。每一群能不能用領域語言講成一句話；<strong>（3）外部驗證</strong>——在獨立的新資料上重做一次，或對上事後才知道的標籤。ISLP 的結語值得抄下來：分群結果不該當成資料的絕對真相，而是<strong>形成科學假設的起點</strong>。</p></div>
   </details>
   <details class="qa-item"><summary>Q：PCA 與分群都在「找結構」，差在哪？</summary>
-    <div class="qa-a"><p>差在產出的東西是<strong>連續</strong>還是<strong>離散</strong>。PCA 給每一筆資料一組新的連續座標（得分），資料在低維空間裡還是一片雲；分群給每一筆資料一個離散的群編號，雲被切成幾塊。</p><p>對應的假設也不同。PCA 假設「大部分變異集中在少數幾個方向」，它不假設資料裡有子群——如果真的只有一片橢圓形的雲，PCA 照樣給你很有用的答案。分群則假設「資料由幾個同質的子群組成」，如果實際上是連續漸變的，切出來的界線就是人造的。</p><p>實務上兩者常常串起來用，而且順序有講究：<strong>先 PCA 再分群</strong>是很常見的做法（lab 儲存格 178 就對 NCI60 的前五個得分向量做階層式分群），理由是前幾個主成分可以看成資料的低雜訊版本。反過來也有用：分群完之後，用前兩個主成分的散佈圖把群畫出來，因為 p > 2 的時候你沒別的辦法看。</p></div>
+    <div class="qa-a"><p>差在產出的東西是<strong>連續</strong>還是<strong>離散</strong>。PCA 給每一筆資料一組新的連續座標（得分），資料在低維空間裡還是一片雲；分群給每一筆資料一個離散的群編號，雲被切成幾塊。</p><p>對應的假設也不同。PCA 假設「大部分變異集中在少數幾個方向」，它不假設資料裡有子群。如果真的只有一片橢圓形的雲，PCA 照樣給你很有用的答案。分群則假設「資料由幾個同質的子群組成」，如果實際上是連續漸變的，切出來的界線就是人造的。</p><p>實務上兩者常常串起來用，而且順序有講究：<strong>先 PCA 再分群</strong>是很常見的做法（lab 儲存格 178 就對 NCI60 的前五個得分向量做階層式分群），理由是前幾個主成分可以看成資料的低雜訊版本。反過來也有用：分群完之後，用前兩個主成分的散佈圖把群畫出來，因為 p > 2 的時候你沒別的辦法看。</p></div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 分群的實務決策</div>
   <p>資料裡有兩三個明顯的離群值（例如那位買 60 雙襪子的顧客）。對 K-means 與階層式分群，下面哪個處理方式最站得住腳？</p>
-  <div class="quiz-options" id="qPracOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP §12.4.3 明確提到這一點，並建議混合模型（K-means 的軟版本）。DBSCAN／HDBSCAN 也是一條路——它們把密度不足的點標成雜訊，不強迫入群。" onclick="quizCheck('qPrac', this)"><span class="opt-letter">(A)</span> 兩種方法都會被離群值扭曲，因為它們強迫每一點都進某一群；該先辨識並單獨處理，或改用允許「不屬於任何群」的方法</div><div class="quiz-opt" data-correct="false" data-fb="只有一半對。離群值確實常自己掛在樹的高處，但這會<strong>吃掉一個群的額度</strong>：切 3 群時可能得到「兩個離群值 + 全部其他人」，真正想看的結構反而被壓在一起。single linkage 更糟，離群值會把整棵樹拉成鏈狀。" onclick="quizCheck('qPrac', this)"><span class="opt-letter">(B)</span> 階層式分群不受影響，因為離群值會自己形成一個單獨的分支</div><div class="quiz-opt" data-correct="false" data-fb="不對。標準化調整的是各<strong>變數</strong>之間的相對權重，對某一<strong>筆觀測值</strong>離大家很遠這件事沒有幫助——60 雙襪子標準化之後還是離群，只是換了刻度。" onclick="quizCheck('qPrac', this)"><span class="opt-letter">(C)</span> 只要把資料標準化，離群值的影響就會被消掉</div></div>
+  <div class="quiz-options" id="qPracOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP §12.4.3 明確提到這一點，並建議混合模型（K-means 的軟版本）。DBSCAN／HDBSCAN 也是一條路。它們把密度不足的點標成雜訊，不強迫入群。" onclick="quizCheck('qPrac', this)"><span class="opt-letter">(A)</span> 兩種方法都會被離群值扭曲，因為它們強迫每一點都進某一群；該先辨識並單獨處理，或改用允許「不屬於任何群」的方法</div><div class="quiz-opt" data-correct="false" data-fb="只有一半對。離群值確實常自己掛在樹的高處，但這會<strong>吃掉一個群的額度</strong>：切 3 群時可能得到「兩個離群值 + 全部其他人」，真正想看的結構反而被壓在一起。single linkage 更糟，離群值會把整棵樹拉成鏈狀。" onclick="quizCheck('qPrac', this)"><span class="opt-letter">(B)</span> 階層式分群不受影響，因為離群值會自己形成一個單獨的分支</div><div class="quiz-opt" data-correct="false" data-fb="不對。標準化調整的是各<strong>變數</strong>之間的相對權重，對某一<strong>筆觀測值</strong>離大家很遠這件事沒有幫助——60 雙襪子標準化之後還是離群，只是換了刻度。" onclick="quizCheck('qPrac', this)"><span class="opt-letter">(C)</span> 只要把資料標準化，離群值的影響就會被消掉</div></div>
   <div class="quiz-feedback" id="qPracFeedback"></div>
 </div>
 </section>
@@ -1515,7 +1515,7 @@ HClust
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w07tsneChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：PCA 的線性投影把十個數字混在一起，t-SNE 則把它們分成清楚的團——但團的大小與團之間的距離都不能當真。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：PCA 的線性投影把十個數字混在一起，t-SNE 則把它們分成清楚的團，但團的大小與團之間的距離都不能當真。</div></div>
       </div>
       <div class="status-banner" id="w07tsneStatus"><span class="status-icon">›</span><span class="status-text">同一批 500 張手寫數字，換方法看嵌入結果怎麼變。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">方法</label><select id="w07tsneSel" class="mono" onchange="w07tsneSet()"><option value="pca" selected>PCA</option><option value="tsne5">t-SNE · perplexity 5</option><option value="tsne30">t-SNE · perplexity 30</option></select></div>
@@ -1543,7 +1543,7 @@ HClust
   它沒有 <code>transform()</code>（新資料無法投影到既有的嵌入上，
   <code>openTSNE</code> 之類的套件才另外提供近似做法），
   也不像 PCA 有負荷量可以解讀「這個方向由哪些變數組成」。<br>
-  要當前處理放進 pipeline，UMAP 比較合適——它有 <code>transform()</code>，
+  要當前處理放進 pipeline，UMAP 比較合適。它有 <code>transform()</code>，
   lab 儲存格 86–94 就示範了「先 UMAP 再分類」，
   而且 SVC 的正確率從 0.62 拉到 0.98。<strong>但那已經是監督式的評估了</strong>，
   能這樣調就是因為有 y 可以看。
@@ -1589,7 +1589,7 @@ HClust
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP §12.6 第 1 題（b）</div>
   <p>課本第 1 題要你先證明恆等式 12.18，再<strong>用它說明</strong>演算法 12.2 每一輪都讓目標函數 12.17 下降。這個論證的關鍵是什麼？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。平均是讓平方偏差最小的常數（這給了 2(a)），把點換到更近的群心只會讓自己那一項變小（這給了 2(b)）。兩步都不增，加上可能的指派只有有限多種，所以一定收斂。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 式 12.18 把「群內兩兩距離」換成「各點到群心的距離」，於是步驟 2(a) 取平均與步驟 2(b) 取最近，各自都在最小化那個和</div><div class="quiz-opt" data-correct="false" data-fb="前半句反了：收斂時就<strong>沒有</strong>點換群，那才是停止條件。而且目標函數不會降到 0（除非每群只剩一點）——它降到一個局部極小就停。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 因為每一輪都會有點換群，換群一定讓目標下降，所以會一直下降到 0</div><div class="quiz-opt" data-correct="false" data-fb="目標函數對「指派」這個離散變數並不凸，K-means 也不是梯度下降。它保證的只有<strong>局部</strong>極小——這正是要設 <code>n_init</code> 的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 因為 K-means 的目標函數是凸的，梯度下降保證收斂到全域最小</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。平均是讓平方偏差最小的常數（這給了 2(a)），把點換到更近的群心只會讓自己那一項變小（這給了 2(b)）。兩步都不增，加上可能的指派只有有限多種，所以一定收斂。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 式 12.18 把「群內兩兩距離」換成「各點到群心的距離」，於是步驟 2(a) 取平均與步驟 2(b) 取最近，各自都在最小化那個和</div><div class="quiz-opt" data-correct="false" data-fb="前半句反了：收斂時就<strong>沒有</strong>點換群，那才是停止條件。而且目標函數不會降到 0（除非每群只剩一點）。它降到一個局部極小就停。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 因為每一輪都會有點換群，換群一定讓目標下降，所以會一直下降到 0</div><div class="quiz-opt" data-correct="false" data-fb="目標函數對「指派」這個離散變數並不凸，K-means 也不是梯度下降。它保證的只有<strong>局部</strong>極小。這正是要設 <code>n_init</code> 的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 因為 K-means 的目標函數是凸的，梯度下降保證收斂到全域最小</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1603,7 +1603,7 @@ HClust
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP §12.6 第 5 題</div>
   <p>課本第 5 題：用圖 12.16 的三種尺度各跑一次 K = 2（襪子與電腦），分別預期看到什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。三個答案剛好對應「變異數最大的那個變數主宰歐氏距離」這一件事。本頁 P09 的元件把三種尺度都跑給你看了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 原始次數 → 由襪子決定；標準化 → 變成「有買電腦 / 沒買電腦」；花費金額 → 由電腦決定</div><div class="quiz-opt" data-correct="false" data-fb="不對。K-means 對<strong>整體</strong>的旋轉平移不變，但對<strong>逐變數</strong>乘不同常數<em>不</em>不變——那會改變各變數在距離裡的權重。會不變的是線性迴歸的配適值，不是 K-means。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 三種尺度會給同樣的分群，因為 K-means 對線性變換是不變的</div><div class="quiz-opt" data-correct="false" data-fb="方向剛好相反。標準化把兩個變數的變異數都設成 1，電腦是從「幾乎沒有影響」變成「影響力跟襪子相同」，不是消失。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 標準化之後電腦的影響會消失，因為 0/1 變數標準化後變異數變成 1 太小</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。三個答案剛好對應「變異數最大的那個變數主宰歐氏距離」這一件事。本頁 P09 的元件把三種尺度都跑給你看了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 原始次數 → 由襪子決定；標準化 → 變成「有買電腦 / 沒買電腦」；花費金額 → 由電腦決定</div><div class="quiz-opt" data-correct="false" data-fb="不對。K-means 對<strong>整體</strong>的旋轉平移不變，但對<strong>逐變數</strong>乘不同常數<em>不</em>不變。那會改變各變數在距離裡的權重。會不變的是線性迴歸的配適值，不是 K-means。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 三種尺度會給同樣的分群，因為 K-means 對線性變換是不變的</div><div class="quiz-opt" data-correct="false" data-fb="方向剛好相反。標準化把兩個變數的變異數都設成 1，電腦是從「幾乎沒有影響」變成「影響力跟襪子相同」，不是消失。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 標準化之後電腦的影響會消失，因為 0/1 變數標準化後變異數變成 1 太小</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -1648,7 +1648,7 @@ HClust
   <p style="font-size:.82rem;color:var(--muted);">負荷量與 lab 儲存格 29 的
   <code>components_</code> 逐位相同、PVE 與儲存格 39 的
   <code>explained_variance_ratio_</code> 相同。四個變數的原始變異數是
-  18.97 / 6945.17 / 209.52 / 87.73（儲存格 17）——所以標準化不是選項而是必要。</p>
+  18.97 / 6945.17 / 209.52 / 87.73（儲存格 17），所以標準化不是選項而是必要。</p>
 
 <div class="info-box">
   <span class="info-label">三個一定要記住的觀念</span>
