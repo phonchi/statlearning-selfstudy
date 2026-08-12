@@ -633,7 +633,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <tbody><tr><td>模型長相</td><td>一個斜面（連續、光滑）</td><td>一堆方塊（階梯、有稜角）</td></tr><tr><td>外插能力</td><td>有（可以往定義域外推）</td><td>沒有（葉的值是常數，出界就給邊界值）</td></tr><tr><td>類別變數</td><td>要做虛擬變數編碼</td><td>天生就會處理（把水準分兩堆）</td></tr><tr><td>變數尺度</td><td>要小心（正則化時必須標準化）</td><td>完全不受影響（只看大小順序）</td></tr><tr><td>交互作用</td><td>要自己乘出來</td><td>自動有（連續兩刀就是一個交互作用）</td></tr><tr><td>最大弱點</td><td>真實關係非線性時失手</td><td><strong>不穩定</strong>：資料動一點，樹就長成另一棵</td></tr></tbody>
 </table></div>
 
-  <p>最後那一列是這一整章後半的動機。單一棵樹的<strong>變異</strong>大得離譜——把訓練資料隨機切成兩半、
+  <p>最後那一列是這一整章後半的動機。單一棵樹的<strong>變異</strong>大得離譜。把訓練資料隨機切成兩半、
   各配一棵樹，兩棵樹可能完全不像。所以真正實用的做法從來不是「一棵樹」，
   而是<strong>種很多棵再合起來</strong>：bagging、random forest、boosting。
   這一頁的後六節就在講這件事。</p>
@@ -668,7 +668,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 樹在幹什麼</div>
   <p>一棵迴歸樹對落在同一個葉節點裡的兩個觀測值，會給出什麼預測？</p>
-  <div class="quiz-options" id="qWhatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這正是「階梯函數」的意思：同一塊方塊內部完全平坦。所以樹的預測值只有 M 種（M ＝ 葉子數），不管特徵怎麼變。" onclick="quizCheck('qWhat', this)"><span class="opt-letter">(A)</span> 完全相同的預測值，也就是該葉節點內訓練資料的平均</div><div class="quiz-opt" data-correct="false" data-fb="不對。這是<strong>線性模型</strong>的直覺：特徵動一點，預測就跟著動一點。樹不是這樣——只要沒有跨過任何一個切點，預測完全不動。" onclick="quizCheck('qWhat', this)"><span class="opt-letter">(B)</span> 不同的預測值，因為兩點的特徵值不同</div><div class="quiz-opt" data-correct="false" data-fb="這描述的是 <em>model tree</em>／MARS 那一類混合模型，不是 CART。標準的迴歸樹葉節點只放一個常數。" onclick="quizCheck('qWhat', this)"><span class="opt-letter">(C)</span> 先落在同一葉，再用該葉內的線性迴歸算出各自的預測</div></div>
+  <div class="quiz-options" id="qWhatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這正是「階梯函數」的意思：同一塊方塊內部完全平坦。所以樹的預測值只有 M 種（M ＝ 葉子數），不管特徵怎麼變。" onclick="quizCheck('qWhat', this)"><span class="opt-letter">(A)</span> 完全相同的預測值，也就是該葉節點內訓練資料的平均</div><div class="quiz-opt" data-correct="false" data-fb="不對。這是<strong>線性模型</strong>的直覺：特徵動一點，預測就跟著動一點。樹不是這樣，只要沒有跨過任何一個切點，預測完全不動。" onclick="quizCheck('qWhat', this)"><span class="opt-letter">(B)</span> 不同的預測值，因為兩點的特徵值不同</div><div class="quiz-opt" data-correct="false" data-fb="這描述的是 <em>model tree</em>／MARS 那一類混合模型，不是 CART。標準的迴歸樹葉節點只放一個常數。" onclick="quizCheck('qWhat', this)"><span class="opt-letter">(C)</span> 先落在同一葉，再用該葉內的線性迴歸算出各自的預測</div></div>
   <div class="quiz-feedback" id="qWhatFeedback"></div>
 </div>
 </section>
@@ -700,7 +700,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   不往前看。所以第一刀是「單獨看只切一刀時最好的那一刀」，
   <strong>不保證</strong>是「最終要切五刀時，第一刀該切哪裡」。<br>
   代價是可能錯過「這一刀本身沒什麼用，但切完之後下一刀超好」的組合。
-  好處是快到可以在幾毫秒內算完——這是能夠實用的唯一理由。
+  好處是快到可以在幾毫秒內算完。這是能夠實用的唯一理由。
   下一節的剪枝，正是為了補救貪婪的短視。
 </div>
 
@@ -737,7 +737,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <ul>
     <li><strong>每一刀都是軸平行的。</strong>切出來一定是長方形方塊，
-    不可能是斜的一刀——這是樹的表達能力上限，也是 PART 05 要比較的重點。</li>
+    不可能是斜的一刀。這是樹的表達能力上限，也是 PART 05 要比較的重點。</li>
     <li><strong>RSS 下降量一路遞減。</strong>前幾刀掉很多，後面愈切愈沒用。
     這條遞減曲線就是下一節「該切幾刀」的依據。</li>
     <li><strong>只要切得夠多，訓練 RSS 可以壓到 0。</strong>每個葉子只剩一個點時，
@@ -775,7 +775,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 遞迴二元分裂</div>
   <p>找第一刀時，演算法實際上比較了多少種可能？（p 個變數、n 筆資料）</p>
-  <div class="quiz-options" id="qGrowOptions"><div class="quiz-opt" data-correct="true" data-fb="對。切點只要試「排序後相鄰兩個值的中間」就夠了，因為切在同一個間隔內的任何位置，分組結果完全一樣。所以候選數是變數數乘上間隔數，算得非常快。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(A)</span> 大約 p × (n−1) 種：每個變數都試過所有相鄰觀測值之間的切點</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>理想</strong>的目標，但它的組合數隨 J 爆炸，算不完——這正是要退而求其次用貪婪法的原因。第一刀只考慮「切成兩塊」。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(B)</span> 所有可能的 J 塊分割，因為目標函數就是定義在整組方塊上的</div><div class="quiz-opt" data-correct="false" data-fb="不對。切點是被<strong>搜尋</strong>出來的，不是預先指定的。用中位數切是另一種演算法（例如某些 kd-tree），不是 CART。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(C)</span> 只有 p 種：每個變數用它的中位數當切點</div></div>
+  <div class="quiz-options" id="qGrowOptions"><div class="quiz-opt" data-correct="true" data-fb="對。切點只要試「排序後相鄰兩個值的中間」就夠了，因為切在同一個間隔內的任何位置，分組結果完全一樣。所以候選數是變數數乘上間隔數，算得非常快。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(A)</span> 大約 p × (n−1) 種：每個變數都試過所有相鄰觀測值之間的切點</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>理想</strong>的目標，但它的組合數隨 J 爆炸，算不完。這正是要退而求其次用貪婪法的原因。第一刀只考慮「切成兩塊」。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(B)</span> 所有可能的 J 塊分割，因為目標函數就是定義在整組方塊上的</div><div class="quiz-opt" data-correct="false" data-fb="不對。切點是被<strong>搜尋</strong>出來的，不是預先指定的。用中位數切是另一種演算法（例如某些 kd-tree），不是 CART。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(C)</span> 只有 p 種：每個變數用它的中位數當切點</div></div>
   <div class="quiz-feedback" id="qGrowFeedback"></div>
 </div>
 </section>
@@ -814,7 +814,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <code>cost_complexity_pruning_path()</code> 回傳的就是這條序列的斷點。
 </div>
 
-  <p>剩下的問題是 α 該取多少——這是第 5 章的老題目：<strong>用交叉驗證選</strong>。
+  <p>剩下的問題是 α 該取多少。這是第 5 章的老題目：<strong>用交叉驗證選</strong>。
   ISLP 演算法 8.1 把整套流程寫成四步：</p>
 
   <ol>
@@ -842,7 +842,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 8.5</span></div>
-      x 軸是剪完之後的葉子數（α 從右往左遞增），三條線分別是訓練、六折 CV、與測試 MSE。<strong>訓練那條一定單調下降</strong>——它不能當選擇依據。CV 那條才是可以拿來選的，虛線標的是 CV 選出來的葉子數。
+      x 軸是剪完之後的葉子數（α 從右往左遞增），三條線分別是訓練、六折 CV、與測試 MSE。<strong>訓練那條一定單調下降</strong>。它不能當選擇依據。CV 那條才是可以拿來選的，虛線標的是 CV 選出來的葉子數。
     </div>
     <div class="info-card">
       <div class="ic-title">跟課本比</div>
@@ -869,7 +869,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">best_ = grid.best_estimator_</span>
   <span class="line">np.mean((y_test - best_.predict(X_test))**<span class="num">2</span>)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(28.069857549754044)</pre></div>
-  <p class="dx-note">流程完全照演算法 8.1：先拿 <code>ccp_path.ccp_alphas</code> 當候選格點，再用 <code>GridSearchCV</code> 在五折上挑，最後 <code>refit=True</code> 用全部訓練資料重配。測試 MSE <strong>28.07</strong>，開根號約 5.30——也就是預測誤差大約在 5,300 美元的量級。</p>
+  <p class="dx-note">流程完全照演算法 8.1：先拿 <code>ccp_path.ccp_alphas</code> 當候選格點，再用 <code>GridSearchCV</code> 在五折上挑，最後 <code>refit=True</code> 用全部訓練資料重配。測試 MSE <strong>28.07</strong>，開根號約 5.30，也就是預測誤差大約在 5,300 美元的量級。</p>
   <span class="dx-src">來源：<code>Ch08-baggboost-lab-zh.ipynb</code> · 儲存格 57、59</span>
 </div>
 
@@ -918,7 +918,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   $$E = 1 - \max_k \hat p_{mk}$$
 
-  <p>$\hat p_{mk}$ 是第 $m$ 個節點裡屬於第 $k$ 類的比例。看起來很合理——
+  <p>$\hat p_{mk}$ 是第 $m$ 個節點裡屬於第 $k$ 類的比例。看起來很合理，
   <strong>但它不夠敏感，不適合當分裂準則</strong>。實務上用另外兩個：</p>
 
   $$G = \sum_{k=1}^{K} \hat p_{mk} (1 - \hat p_{mk}) \qquad\text{（Gini 指數）}$$
@@ -1012,7 +1012,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 |   |   |   |--- weights: [6.00, 0.00] class: 0
 |   |   |--- Income &gt;  46.00
 |   |   |   |--- weights: [5.00, 6.00] class: 1</pre></div>
-  <p class="dx-note">訓練正確率 0.79（儲存格 19），對應偏差 <code>log_loss</code> = <strong>0.4711</strong>（儲存格 21）——那正是 (8.7) 式的交叉熵。<code>show_weights=True</code> 印出的 <code>weights: [7.00, 3.00]</code> 就是該葉子裡 No／Yes 的筆數，拿它算 $\hat p_{{mk}}$ 就能自己驗算 Gini 與交叉熵。第一刀切在 <code>ShelveLoc[Good]</code>——貨架位置好不好最重要。</p>
+  <p class="dx-note">訓練正確率 0.79（儲存格 19），對應偏差 <code>log_loss</code> = <strong>0.4711</strong>（儲存格 21）。那正是 (8.7) 式的交叉熵。<code>show_weights=True</code> 印出的 <code>weights: [7.00, 3.00]</code> 就是該葉子裡 No／Yes 的筆數，拿它算 $\hat p_{{mk}}$ 就能自己驗算 Gini 與交叉熵。第一刀切在 <code>ShelveLoc[Good]</code>——貨架位置好不好最重要。</p>
   <span class="dx-src">來源：<code>Ch08-baggboost-lab-zh.ipynb</code> · 儲存格 15、17、29</span>
 </div>
 
@@ -1074,7 +1074,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </table></div>
 
   <p>最後那一項是後半章的引擎。「不穩定」用統計的話講就是<strong>變異很大</strong>，
-  而降變異最古典的手段就是<strong>平均</strong>——這正好是下三節的主題。</p>
+  而降變異最古典的手段就是<strong>平均</strong>。這正好是下三節的主題。</p>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 樹 vs 線性模型</div>
@@ -1103,7 +1103,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   $$P(\text{投票正確}) = \sum_{k > M/2} \binom{M}{k} p^k (1-p)^{M-k}$$
 
   <p>講義第 31 頁舉的例子：<strong>1000 個只有 51% 正確率的弱學習器</strong>，
-  多數投票之後可望達到 75% 的正確率。這個數字大得不像真的——下面自己算一次。</p>
+  多數投票之後可望達到 75% 的正確率。這個數字大得不像真的。下面自己算一次。</p>
 
 <div class="viz-layout">
   <div>
@@ -1189,7 +1189,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 投票與大數法則</div>
   <p>1000 個分類器各自的正確率都是 <strong>0.48</strong>，且彼此獨立。多數投票的正確率大約是多少？</p>
-  <div class="quiz-options" id="qVoteOptions"><div class="quiz-opt" data-correct="true" data-fb="對。大數法則對兩個方向一樣有效：p > 0.5 時投票趨近 1，p < 0.5 時趨近 0。0.48 × 1000 的期望是 480 票，過半要 501 票，機率極小。<strong>投票放大多數的傾向，不管那個傾向對不對。</strong>" onclick="quizCheck('qVote', this)"><span class="opt-letter">(A)</span> 接近 0，比單一個分類器差得多</div><div class="quiz-opt" data-correct="false" data-fb="不對。投票不是在平均正確率，是在算「過半」的機率。$\mathrm{Bin}(1000, 0.48)$ 超過 500 的機率遠低於 0.48。" onclick="quizCheck('qVote', this)"><span class="opt-letter">(B)</span> 還是 0.48 左右，投票不會改變平均正確率</div><div class="quiz-opt" data-correct="false" data-fb="不對。集成方法沒有「反轉」機制。如果你知道分類器系統性地答錯，把它的輸出取反就變成 0.52——但那是你自己動手，不是投票幫你做的。" onclick="quizCheck('qVote', this)"><span class="opt-letter">(C)</span> 接近 0.52，因為投票會把錯誤的方向反轉過來</div></div>
+  <div class="quiz-options" id="qVoteOptions"><div class="quiz-opt" data-correct="true" data-fb="對。大數法則對兩個方向一樣有效：p > 0.5 時投票趨近 1，p < 0.5 時趨近 0。0.48 × 1000 的期望是 480 票，過半要 501 票，機率極小。<strong>投票放大多數的傾向，不管那個傾向對不對。</strong>" onclick="quizCheck('qVote', this)"><span class="opt-letter">(A)</span> 接近 0，比單一個分類器差得多</div><div class="quiz-opt" data-correct="false" data-fb="不對。投票不是在平均正確率，是在算「過半」的機率。$\mathrm{Bin}(1000, 0.48)$ 超過 500 的機率遠低於 0.48。" onclick="quizCheck('qVote', this)"><span class="opt-letter">(B)</span> 還是 0.48 左右，投票不會改變平均正確率</div><div class="quiz-opt" data-correct="false" data-fb="不對。集成方法沒有「反轉」機制。如果你知道分類器系統性地答錯，把它的輸出取反就變成 0.52，但那是你自己動手，不是投票幫你做的。" onclick="quizCheck('qVote', this)"><span class="opt-letter">(C)</span> 接近 0.52，因為投票會把錯誤的方向反轉過來</div></div>
   <div class="quiz-feedback" id="qVoteFeedback"></div>
 </div>
 </section>
@@ -1204,7 +1204,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
   它們的平均 $\bar Z$ 的變異數是 $\sigma^2 / n$。</p>
 
   <p>所以理想的做法是：蒐集 $B$ 份獨立的訓練資料、各配一棵樹、把預測平均起來。
-  問題是我們只有一份資料。<strong>那就用 bootstrap 假造出 $B$ 份</strong>——
+  問題是我們只有一份資料。<strong>那就用 bootstrap 假造出 $B$ 份</strong>。
   這就是 <strong>bootstrap aggregation</strong>，簡稱 <strong>bagging</strong>：</p>
 
   $$\hat f_{\text{bag}}(x) = \frac{1}{B} \sum_{b=1}^{B} \hat f^{*b}(x)$$
@@ -1215,7 +1215,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
   <span class="info-label">bagging 的樹要長很深，而且不要剪枝</span>
   這一點跟前兩節的直覺剛好相反，
   但完全講得通：<br>
-  每棵樹都<strong>長到很深、不剪枝</strong>——所以每棵樹的<strong>偏差很小、變異很大</strong>。
+  每棵樹都<strong>長到很深、不剪枝</strong>，所以每棵樹的<strong>偏差很小、變異很大</strong>。
   然後平均 B 棵樹，把變異壓下來。<strong>偏差在平均的過程裡不會變</strong>
   （B 個無偏估計的平均還是無偏），所以我們用「降變異」換到了「保留低偏差」。<br>
   反過來如果每棵樹都剪成三個葉子，偏差大，平均一百棵之後偏差還是那麼大——
@@ -1281,7 +1281,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：Bagging 為什麼能降變異，卻幾乎不降偏差？</summary>
-    <div class="qa-a"><p>從公式看最清楚。設每棵樹的預測 $\hat f^{*b}(x)$ 期望值都是 $\mu(x)$、變異數都是 $\sigma^2(x)$、兩兩相關係數是 $\rho$。那麼平均的期望與變異是</p><p>$$\mathbb{E}\left[\hat f_{\text{bag}}(x)\right] = \mu(x), \qquad \mathrm{Var}\left[\hat f_{\text{bag}}(x)\right] = \frac{1-\rho}{B}\sigma^2(x) + \rho\, \sigma^2(x)$$</p><p><strong>期望值完全沒變</strong>——平均一堆同分佈的東西，期望還是那個期望，所以偏差 $\mu(x) - f(x)$ 一動也不動。變異數則被壓成兩項：第一項隨 B 變大而消失，第二項 $\rho \sigma^2$ <strong>不隨 B 消失</strong>。這第二項就是下一節 random forest 要對付的東西。</p><p>所以 bagging 的正確用法是：<strong>拿變異很大、偏差很小的東西去平均</strong>。長很深不剪枝的樹剛好就是這種東西——它把訓練資料配到幾乎完美（低偏差），但資料換一點就長成另一棵（高變異）。反過來，拿 bagging 去平均一堆線性迴歸幾乎沒有用：線性迴歸本來變異就小，沒什麼可壓的。</p></div>
+    <div class="qa-a"><p>從公式看最清楚。設每棵樹的預測 $\hat f^{*b}(x)$ 期望值都是 $\mu(x)$、變異數都是 $\sigma^2(x)$、兩兩相關係數是 $\rho$。那麼平均的期望與變異是</p><p>$$\mathbb{E}\left[\hat f_{\text{bag}}(x)\right] = \mu(x), \qquad \mathrm{Var}\left[\hat f_{\text{bag}}(x)\right] = \frac{1-\rho}{B}\sigma^2(x) + \rho\, \sigma^2(x)$$</p><p><strong>期望值完全沒變</strong>——平均一堆同分佈的東西，期望還是那個期望，所以偏差 $\mu(x) - f(x)$ 一動也不動。變異數則被壓成兩項：第一項隨 B 變大而消失，第二項 $\rho \sigma^2$ <strong>不隨 B 消失</strong>。這第二項就是下一節 random forest 要對付的東西。</p><p>所以 bagging 的正確用法是：<strong>拿變異很大、偏差很小的東西去平均</strong>。長很深不剪枝的樹剛好就是這種東西。它把訓練資料配到幾乎完美（低偏差），但資料換一點就長成另一棵（高變異）。反過來，拿 bagging 去平均一堆線性迴歸幾乎沒有用：線性迴歸本來變異就小，沒什麼可壓的。</p></div>
   </details>
   <details class="qa-item"><summary>Q：既然有 OOB 誤差，還需要交叉驗證嗎？</summary>
     <div class="qa-a"><p>估 bagging／random forest 本身的測試誤差時，OOB 就夠了，而且便宜太多：配一次模型就順手拿到，不必像 k-fold 那樣配 k 次。ISLP 說 B 夠大時 OOB 誤差<strong>幾乎等於 LOOCV 誤差</strong>。</p><p>要小心的是兩件事。第一，如果你用 OOB 誤差去<strong>挑超參數</strong>（例如挑 m、挑樹的深度），那被挑中的那組的 OOB 誤差就跟第 5 章講的一樣會偏低，不能再當誠實的測試誤差報出來。第二，OOB 只有在<strong>有 bootstrap 抽樣</strong>時才存在——boosting 沒有 bootstrap，所以沒有 OOB，只能用驗證集或 CV。</p></div>
@@ -1319,7 +1319,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
 
   <p>於是平均有 $(p-m)/p$ 比例的分裂<strong>根本看不到那個強變數</strong>，
   其他變數就有機會出頭。樹跟樹長得不一樣了，$\rho$ 掉下來，
-  第二項跟著縮小——這叫<strong>去相關</strong>（decorrelate）。
+  第二項跟著縮小。這叫<strong>去相關</strong>（decorrelate）。
   注意 $m = p$ 時 random forest 就<strong>退化成 bagging</strong>，
   所以 bagging 只是 random forest 的一個特例。</p>
 
@@ -1340,11 +1340,11 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 8.8／8.10</span></div>
-      x 軸是樹的棵數 B（前 B 棵的平均預測），y 軸是測試 MSE。右邊面板每一列同時列出<strong>該 m 的測試 MSE 與樹間平均相關 ρ</strong>。<strong>ρ 一定隨 m 變小而下降</strong>——那是去相關的直接證據；但誤差會不會跟著下降，要看資料。
+      x 軸是樹的棵數 B（前 B 棵的平均預測），y 軸是測試 MSE。右邊面板每一列同時列出<strong>該 m 的測試 MSE 與樹間平均相關 ρ</strong>。<strong>ρ 一定隨 m 變小而下降</strong>。那是去相關的直接證據；但誤差會不會跟著下降，要看資料。
     </div>
     <div class="info-card">
       <div class="ic-title">兩份資料為什麼結論不同</div>
-      <strong>Boston</strong>：只有 12 個變數、<code>lstat</code> 與 <code>rm</code> 真的最有用，硬是不給樹看它們只是自找麻煩——所以 m = p 最好。lab 的原話就是「隨機森林比 bagging 表現稍差」。<br><strong>模擬資料</strong>：30 個彼此相關的變數、其中 20 個都帶訊號，一個特別強——這正是 ISLP §8.2.2 描述的情境，這時 m ≈ √p 明顯贏。
+      <strong>Boston</strong>：只有 12 個變數、<code>lstat</code> 與 <code>rm</code> 真的最有用，硬是不給樹看它們只是自找麻煩，所以 m = p 最好。lab 的原話就是「隨機森林比 bagging 表現稍差」。<br><strong>模擬資料</strong>：30 個彼此相關的變數、其中 20 個都帶訊號，一個特別強。這正是 ISLP §8.2.2 描述的情境，這時 m ≈ √p 明顯贏。
     </div>
   </div>
 </div>
@@ -1389,7 +1389,7 @@ zn         0.002454</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Random Forest</div>
   <p>Random forest 每次分裂只從 m 個隨機挑出的變數裡選。這個 m 是怎麼抽的？</p>
-  <div class="quiz-options" id="qRfOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP 的原話是 <em>A fresh sample of m predictors is taken at each split</em>。如果整棵樹共用一組變數，那叫 random subspace（隨機子空間）法，多樣性來源不同、效果也不同。" onclick="quizCheck('qRf', this)"><span class="opt-letter">(A)</span> 每一次分裂都重新隨機抽 m 個變數，不是整棵樹共用一組</div><div class="quiz-opt" data-correct="false" data-fb="這是 <strong>random subspace</strong>／隨機子空間法，講義第 34 頁提過（跟 bagging 合用時叫 random patches）。它跟 random forest 是不同的東西——RF 的重抽發生在<strong>每一刀</strong>。" onclick="quizCheck('qRf', this)"><span class="opt-letter">(B)</span> 每棵樹開始前抽一次 m 個變數，整棵樹都只用這 m 個</div><div class="quiz-opt" data-correct="false" data-fb="剛好相反。如果每次都用最重要的 m 個，每棵樹又會長得一模一樣，$\rho$ 降不下來——那就白做了。<strong>隨機</strong>才是重點。" onclick="quizCheck('qRf', this)"><span class="opt-letter">(C)</span> 抽出重要度最高的 m 個變數，這樣樹才不會浪費分裂</div></div>
+  <div class="quiz-options" id="qRfOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP 的原話是 <em>A fresh sample of m predictors is taken at each split</em>。如果整棵樹共用一組變數，那叫 random subspace（隨機子空間）法，多樣性來源不同、效果也不同。" onclick="quizCheck('qRf', this)"><span class="opt-letter">(A)</span> 每一次分裂都重新隨機抽 m 個變數，不是整棵樹共用一組</div><div class="quiz-opt" data-correct="false" data-fb="這是 <strong>random subspace</strong>／隨機子空間法，講義第 34 頁提過（跟 bagging 合用時叫 random patches）。它跟 random forest 是不同的東西——RF 的重抽發生在<strong>每一刀</strong>。" onclick="quizCheck('qRf', this)"><span class="opt-letter">(B)</span> 每棵樹開始前抽一次 m 個變數，整棵樹都只用這 m 個</div><div class="quiz-opt" data-correct="false" data-fb="剛好相反。如果每次都用最重要的 m 個，每棵樹又會長得一模一樣，$\rho$ 降不下來。那就白做了。<strong>隨機</strong>才是重點。" onclick="quizCheck('qRf', this)"><span class="opt-letter">(C)</span> 抽出重要度最高的 m 個變數，這樣樹才不會浪費分裂</div></div>
   <div class="quiz-feedback" id="qRfFeedback"></div>
 </div>
 </section>
@@ -1445,7 +1445,7 @@ zn         0.002454</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">兩個面板</div>
-      <strong>上面</strong>是目前的配適 $\hat f$（橘線）疊在資料上。<strong>下面</strong>是目前的殘差 $r$，以及下一棵樹準備加上去的那個階梯（虛線）——注意它總是往殘差最偏的地方去。<br><strong>λ 調小</strong>：每一步只走一點點，需要更多棵樹，但配出來的曲線更平滑；<strong>λ 調到 1</strong>：幾步就衝過去，然後開始抖。
+      <strong>上面</strong>是目前的配適 $\hat f$（橘線）疊在資料上。<strong>下面</strong>是目前的殘差 $r$，以及下一棵樹準備加上去的那個階梯（虛線）。注意它總是往殘差最偏的地方去。<br><strong>λ 調小</strong>：每一步只走一點點，需要更多棵樹，但配出來的曲線更平滑；<strong>λ 調到 1</strong>：幾步就衝過去，然後開始抖。
     </div>
   </div>
 </div>
@@ -1455,7 +1455,7 @@ zn         0.002454</pre></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>參數</th><th>意思</th><th>典型值</th><th>調錯會怎樣</th></tr></thead>
-  <tbody><tr><td><strong>B</strong>（樹的棵數）</td><td>跑幾輪</td><td>由 CV 決定</td><td><strong>太大會過度配適</strong>（只是通常發生得很慢）。bagging 沒有這個問題</td></tr><tr><td><strong>λ</strong>（學習率／收縮）</td><td>每棵樹只採用 λ 倍</td><td>0.01 或 0.001</td><td>太小 → 需要非常大的 B；太大 → 幾步就衝過頭，開始配噪音</td></tr><tr><td><strong>d</strong>（每棵樹幾刀）</td><td>交互作用深度</td><td>常常 1 就夠</td><td>d = 1（stump）的集成是<strong>加法模型</strong>；d 愈大能抓愈高階的交互作用，也愈容易過度配適</td></tr></tbody>
+  <tbody><tr><td><strong>B</strong>（樹的棵數）</td><td>跑幾輪</td><td>由 CV 決定</td><td><strong>太大會過度配適</strong>（只是通常發生得很慢）。bagging 沒有這個問題</td></tr><tr><td><strong>λ</strong>（學習率／收縮）</td><td>每棵樹只採用 λ 倍</td><td>0.01 或 0.001</td><td>太小 → 需要非常大的 B；太大 → 幾步就衝過頭，開始配雜訊</td></tr><tr><td><strong>d</strong>（每棵樹幾刀）</td><td>交互作用深度</td><td>常常 1 就夠</td><td>d = 1（stump）的集成是<strong>加法模型</strong>；d 愈大能抓愈高階的交互作用，也愈容易過度配適</td></tr></tbody>
 </table></div>
 
   <p>$B$ 與 $\lambda$ 是綁在一起的：<strong>λ 砍十倍，B 大約要放大十倍</strong>。
@@ -1504,7 +1504,7 @@ zn         0.002454</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">為什麼 boosting 的樹要很淺 <span class="ic-badge">ISLP §8.2.3</span></div>
-      因為它<strong>降的是偏差不是變異</strong>。序列裡的每一棵只需要修掉一小塊誤差，所以 stump 就夠；樹長深了反而一步就把殘差配光，後面的樹只能開始配噪音。<br>這跟 bagging 剛好互補——bagging 要深樹低偏差，boosting 要淺樹低變異。
+      因為它<strong>降的是偏差不是變異</strong>。序列裡的每一棵只需要修掉一小塊誤差，所以 stump 就夠；樹長深了反而一步就把殘差配光，後面的樹只能開始配雜訊。<br>這跟 bagging 剛好互補——bagging 要深樹低偏差，boosting 要淺樹低變異。
     </div>
   </div>
 </div>
@@ -1529,7 +1529,7 @@ zn         0.002454</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：Bagging 與 Boosting 的根本差別是什麼？</summary>
-    <div class="qa-a"><p>三句話：<strong>並行 vs 序列、降變異 vs 降偏差、深樹 vs 淺樹。</strong>而第三點是前兩點的必然結果。</p><p><strong>Bagging 降變異。</strong>它平均一堆同分佈的估計，期望值不變（偏差不變）、變異被 $1/B$ 壓下去。既然偏差不會被改善，就必須讓每棵樹的偏差一開始就很低——所以樹要<strong>長很深、不剪枝</strong>。樹的高變異不是問題，那正是要被平均掉的東西。</p><p><strong>Boosting 降偏差。</strong>它把「還沒解釋掉的部分」（殘差／被放大權重的難樣本）交給下一棵樹，是一個逐步把偏差咬掉的過程。每一步只需要修一小塊，所以每棵樹<strong>只要很淺</strong>（ISLP 說 $d = 1$ 常常就夠）。反過來，如果第一棵樹就長很深，它會把殘差一次配光——包括噪音；後面 4999 棵就只剩噪音可配，而每一棵都在增加整體的變異。</p><p>由此還推得幾個實務差別：<strong>bagging／RF 的 B 不會過度配適</strong>（平均更多同分佈的東西只會更穩），所以 B 挑大一點就好；<strong>boosting 的 B 會過度配適</strong>，必須用 CV 或 early stopping 挑。而且 bagging 可以完全平行、boosting 天生序列（這正是 XGBoost 要花那麼多力氣在工程上加速的原因）。最後：bagging 有 bootstrap 所以有免費的 OOB 誤差，boosting 沒有 bootstrap，所以沒有 OOB。</p></div>
+    <div class="qa-a"><p>三句話：<strong>並行 vs 序列、降變異 vs 降偏差、深樹 vs 淺樹。</strong>而第三點是前兩點的必然結果。</p><p><strong>Bagging 降變異。</strong>它平均一堆同分佈的估計，期望值不變（偏差不變）、變異被 $1/B$ 壓下去。既然偏差不會被改善，就必須讓每棵樹的偏差一開始就很低，所以樹要<strong>長很深、不剪枝</strong>。樹的高變異不是問題，那正是要被平均掉的東西。</p><p><strong>Boosting 降偏差。</strong>它把「還沒解釋掉的部分」（殘差／被放大權重的難樣本）交給下一棵樹，是一個逐步把偏差咬掉的過程。每一步只需要修一小塊，所以每棵樹<strong>只要很淺</strong>（ISLP 說 $d = 1$ 常常就夠）。反過來，如果第一棵樹就長很深，它會把殘差一次配光——包括雜訊；後面 4999 棵就只剩雜訊可配，而每一棵都在增加整體的變異。</p><p>由此還推得幾個實務差別：<strong>bagging／RF 的 B 不會過度配適</strong>（平均更多同分佈的東西只會更穩），所以 B 挑大一點就好；<strong>boosting 的 B 會過度配適</strong>，必須用 CV 或 early stopping 挑。而且 bagging 可以完全平行、boosting 天生序列（這正是 XGBoost 要花那麼多力氣在工程上加速的原因）。最後：bagging 有 bootstrap 所以有免費的 OOB 誤差，boosting 沒有 bootstrap，所以沒有 OOB。</p></div>
   </details>
 </div>
 
@@ -1611,7 +1611,7 @@ zn         0.002454</pre></div>
   <span class="line">print(<span class="str">&#x27;Accuracy mean: %0.2f&#x27;</span> % (scores.mean()))</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Accuracy: [0.82 0.75 0.74 0.82 0.8 ]
 Accuracy mean: 0.79</pre></div>
-  <p class="dx-note">兩個細節值得學。① <strong>用 <code>StratifiedKFold</code> 而不是 <code>KFold</code></strong>：分類問題要保住每折的類別比例。② <strong>把 <code>kfold</code> 物件存下來重複用</strong>：後面所有 <code>GridSearchCV</code> 都吃同一組折，這樣「調參前 vs 調參後」的分數才可比——這正是第 5 章 PART 03 的規矩。</p>
+  <p class="dx-note">兩個細節值得學。① <strong>用 <code>StratifiedKFold</code> 而不是 <code>KFold</code></strong>：分類問題要保住每折的類別比例。② <strong>把 <code>kfold</code> 物件存下來重複用</strong>：後面所有 <code>GridSearchCV</code> 都吃同一組折，這樣「調參前 vs 調參後」的分數才可比。這正是第 5 章 PART 03 的規矩。</p>
   <span class="dx-src">來源：<code>Ch08-baggboost-lab-zh.ipynb</code> · 儲存格 119、123、124</span>
 </div>
 
@@ -1641,7 +1641,7 @@ Accuracy mean: 0.79</pre></div>
 [8]	validation_0-error:0.18421
 [9]	validation_0-error:0.18421
 Accuracy: 84.21%</pre></div>
-  <p class="dx-note"><code>early_stopping_rounds</code> <strong>不是超參數，是策略</strong>：設 <code>n_estimators=5000</code> 加上 <code>early_stopping_rounds=100</code>，連續 100 輪沒進步就停，等於讓演算法自己決定 B。這裡 10 輪就停了，測試正確率 84.21%。<strong>注意 <code>eval_set</code> 用的是測試集</strong>——這在教學程式碼裡很常見，但正式做法要另外切一份驗證集，否則 B 是照測試集挑的，報出來的 84.21% 就偏樂觀了。</p>
+  <p class="dx-note"><code>early_stopping_rounds</code> <strong>不是超參數，是策略</strong>：設 <code>n_estimators=5000</code> 加上 <code>early_stopping_rounds=100</code>，連續 100 輪沒進步就停，等於讓演算法自己決定 B。這裡 10 輪就停了，測試正確率 84.21%。<strong>注意 <code>eval_set</code> 用的是測試集</strong>。這在教學程式碼裡很常見，但正式做法要另外切一份驗證集，否則 B 是照測試集挑的，報出來的 84.21% 就偏樂觀了。</p>
   <span class="dx-src">來源：<code>Ch08-baggboost-lab-zh.ipynb</code> · 儲存格 162、164</span>
 </div>
 
@@ -1663,7 +1663,7 @@ Accuracy: 84.21%</pre></div>
 
   <h4 id="dx-vi">變數重要度：把可解釋性買回來一點</h4>
 
-  <p>單一棵樹最大的優點是可以畫出來給人看。集成之後這個優點就沒了——
+  <p>單一棵樹最大的優點是可以畫出來給人看。集成之後這個優點就沒了。
   你不可能把 500 棵樹貼在牆上。<strong>變數重要度</strong>（variable importance）
   是把可解釋性買回來一點點的標準做法：</p>
 
@@ -1707,7 +1707,7 @@ Accuracy: 84.21%</pre></div>
   三件常見的誤讀，每一件都會出事：<br>
   <strong>① 它不是因果效應。</strong>重要度高只表示「樹很愛用它來切」，
   跟「改變它會改變 y」是兩件事。<br>
-  <strong>② 它不帶方向。</strong>線性迴歸的係數有正負，重要度永遠是正的——
+  <strong>② 它不帶方向。</strong>線性迴歸的係數有正負，重要度永遠是正的。
   你不知道它是往上推還是往下壓（要方向請用 partial dependence 或 SHAP）。<br>
   <strong>③ 相關變數會互相稀釋。</strong>上面那張側欄卡講的就是這件事。
   所以「重要度排最後 → 可以刪掉」是危險的推論。
@@ -1718,7 +1718,7 @@ Accuracy: 84.21%</pre></div>
   <p>PART 06 的 voting 是用一個<strong>固定</strong>的規則（多數票、平均）去合併。
   <strong>Stacking</strong> 問了一個很自然的問題：<em>為什麼不訓練一個模型來做這件合併？</em></p>
 
-  <p>做法的關鍵在<strong>怎麼造合併器的訓練資料</strong>——這裡有一個必須避開的洩漏：</p>
+  <p>做法的關鍵在<strong>怎麼造合併器的訓練資料</strong>。這裡有一個必須避開的洩漏：</p>
 
   <ol>
     <li>對集成裡的每個成員模型，用<strong>交叉驗證</strong>產生
@@ -1789,7 +1789,7 @@ Accuracy: 0.81 (+/- 0.05) [StackingClassifier]</pre></div>
   <span class="line">yhat_test = bart_boston.predict(X_test.astype(np.float32))</span>
   <span class="line">np.mean((y_test - yhat_test)**<span class="num">2</span>)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(22.145009458109225)</pre></div>
-  <p class="dx-note">測試 MSE <strong>22.15</strong>，跟 random forest 的 20.04 同一個量級。<strong>注意 <code>burnin=5, ndraw=15</code> 小得離譜</strong>——那是為了讓課堂上跑得完，正式用要拉到 $L = 100$、$B = 1000$。儲存格 90 的 <code>variable_inclusion_</code> 是 BART 版的變數重要度：算每個變數在整組樹裡出現幾次，<code>lstat</code> 31.0、<code>rm</code> 29.8 最高，跟上面 random forest 的排名一致。</p>
+  <p class="dx-note">測試 MSE <strong>22.15</strong>，跟 random forest 的 20.04 同一個量級。<strong>注意 <code>burnin=5, ndraw=15</code> 小得離譜</strong>。那是為了讓課堂上跑得完，正式用要拉到 $L = 100$、$B = 1000$。儲存格 90 的 <code>variable_inclusion_</code> 是 BART 版的變數重要度：算每個變數在整組樹裡出現幾次，<code>lstat</code> 31.0、<code>rm</code> 29.8 最高，跟上面 random forest 的排名一致。</p>
   <span class="dx-src">來源：<code>Ch08-baggboost-lab-zh.ipynb</code> · 儲存格 86、88</span>
 </div>
 
@@ -1833,7 +1833,7 @@ Accuracy: 0.81 (+/- 0.05) [StackingClassifier]</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 8.4 第 7 題</div>
   <p>課本第 7 題要你在 <code>Boston</code> 上掃過一整片 <code>max_features</code>（m）與 <code>n_estimators</code>（B）的組合，畫成圖 8.10 那樣。預期會看到什麼？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度配適</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\sqrt{p}$ 只是預設值。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低</div><div class="quiz-opt" data-correct="false" data-fb="那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩——ISLP 的原話是 <em>random forests will not overfit if we increase B</em>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B</div><div class="quiz-opt" data-correct="false" data-fb="去相關確實會降低 ρ（本頁元件的側欄實測 0.82 → 0.68），但 m 變小同時讓<strong>每棵樹變差</strong>。變異數是 $\rho\sigma^2$ 的形式，兩個因子一降一升，不保證淨變小——Boston 就是反例。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> m 愈小曲線一定愈低，因為去相關永遠讓變異更小</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度配適</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\sqrt{p}$ 只是預設值。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低</div><div class="quiz-opt" data-correct="false" data-fb="那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 的原話是 <em>random forests will not overfit if we increase B</em>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B</div><div class="quiz-opt" data-correct="false" data-fb="去相關確實會降低 ρ（本頁元件的側欄實測 0.82 → 0.68），但 m 變小同時讓<strong>每棵樹變差</strong>。變異數是 $\rho\sigma^2$ 的形式，兩個因子一降一升，不保證淨變小——Boston 就是反例。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> m 愈小曲線一定愈低，因為去相關永遠讓變異更小</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1876,7 +1876,7 @@ Accuracy: 0.81 (+/- 0.05) [StackingClassifier]</pre></div>
   <span class="info-label">三個一定要記住的觀念</span>
   <strong>1. 樹的分裂用 Gini／交叉熵，不用錯誤率。</strong>
   因為錯誤率是折線、對純度的變化不敏感，會把「生出一個純葉子」的好刀報成「下降量 0」。<br>
-  <strong>2. Bagging 降變異、Boosting 降偏差——所以 bagging 的樹要很深，boosting 的樹要很淺。</strong>
+  <strong>2. Bagging 降變異、Boosting 降偏差，所以 bagging 的樹要很深，boosting 的樹要很淺。</strong>
   平均不會改變偏差，序列修正不需要深樹。順帶：bagging 的 B 不會過度配適，boosting 的會。<br>
   <strong>3. Random Forest 的 m 在壓 $\rho\sigma^2$ 裡的 $\rho$，代價是 $\sigma^2$ 變大。</strong>
   變數多又彼此相關時這筆交易划算；變數少又不可替代時（例如 Boston）就不划算。
