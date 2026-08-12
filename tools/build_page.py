@@ -84,13 +84,19 @@ def hero(p: P.Page) -> str:
 
 
 def studyguide(p: P.Page) -> str:
-    pills = [
-        (f"📑 講義 {p.deck_no} PDF", p.blob + p.deck.replace(" ", "%20")),
-        (f"📓 Ch{p.islp:02d} 中文 Lab", p.blob + p.lab.replace(" ", "%20")),
-    ]
-    for i, pl in enumerate(p.playlist.split(",")):
+    # 每個 pill 都要條件化：補充章（本課沒教的章節）沒有講義 PDF、沒有中文 lab、
+    # 也沒有課程錄影。空字串不會報錯，只會靜靜產生指到 GitHub 目錄頁的壞連結，
+    # 而且那個目錄頁 HTTP 200，所以 validate --net 也抓不到。
+    # playlist 尤其陰險："".split(",") 回的是 [""] 不是 []，會生出 ?list= 的空連結。
+    pills = []
+    if p.deck:
+        pills.append((f"📑 講義 {p.deck_no} PDF", p.blob + p.deck.replace(" ", "%20")))
+    if p.lab:
+        pills.append((f"📓 Ch{p.islp:02d} 中文 Lab", p.blob + p.lab.replace(" ", "%20")))
+    for i, pl in enumerate([x for x in p.playlist.split(",") if x]):
         label = "▶ 課程錄影" if i == 0 else f"▶ 課程錄影 {i + 1}"
         pills.append((label, f"https://www.youtube.com/playlist?list={pl}"))
+    pills.extend(p.extra_pills)
     pills.append(("📖 ISLP 原書", P.BOOK_ISLP))
     if p.esl_label:
         pills.append(("📗 ESL 原書", P.BOOK_ESL))
@@ -98,10 +104,15 @@ def studyguide(p: P.Page) -> str:
     links += '<a href="index.html">🏠 章節總覽</a>'
     esl_hint = ("標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。"
                 if any(s.eslx for s in p.secs) else "")
+    deck_bit = f"｜講義 {p.deck_no}" if p.deck else ""
+    step2 = ("<strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，"
+             "細節與完整推導請回講義與課本。" if p.deck else
+             "<strong>對照課本</strong>：每個 §徽章都標了 ISLP 節號，"
+             "細節與完整推導請回課本。")
     return f"""<div class="study-guide">
-  <div class="sg-title">📌 本頁使用方式（{p.islp_label}｜講義 {p.deck_no}）</div>
+  <div class="sg-title">📌 本頁使用方式（{p.islp_label}{deck_bit}）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
-  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
+  ② {step2}
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。{esl_hint}</p>
   <div class="sg-links">{links}</div>

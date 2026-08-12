@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """站台的唯一真實來源。
 
-十章的順序、標題、講義與 lab 對應、每一節的 id / 徽章都只寫在這裡。
+十一章的順序、標題、講義與 lab 對應、每一節的 id / 徽章都只寫在這裡。
 build_page.py 由此產生 float-nav、TOC、每節的 .section-number、chapter-nav、
 index.html 卡片與 README 章節表——所以三處編號不可能不同步。
 
@@ -26,7 +26,7 @@ BOOK_ESL = "https://hastie.su.domains/ElemStatLearn/"
 # 不要假設一律是 N.4，只有第 2、5、8 章剛好是（Ch3 是 3.7、Ch4 是 4.8、
 # Ch6 是 6.6、Ch7 是 7.9、Ch9 是 9.7、Ch12 是 12.6）。第 1 章沒有習題。
 EX_SEC = {2: "2.4", 3: "3.7", 4: "4.8", 5: "5.4", 6: "6.6",
-          7: "7.9", 8: "8.4", 9: "9.7", 12: "12.6"}
+          7: "7.9", 8: "8.4", 9: "9.7", 10: "10.10", 12: "12.6"}
 
 
 def sol_links(ch: int):
@@ -70,16 +70,19 @@ class Page:
     plain: str                 # 純文字標題（index 卡片、chapter-nav、README）
     subtitle: str
     formula: str               # .big-formula，｜分隔，只用 Unicode 不用 $
-    deck: str                  # 講義 PDF 檔名
+    deck: str                  # 講義 PDF 檔名（補充章沒有講義，留空字串）
     deck_pages: int
-    lab: str                   # lab notebook 檔名
+    lab: str                   # lab notebook 檔名（補充章沒有中文 lab，留空字串）
     islp: int                  # ISLP 章號（＝ data/*/chN.json 的 N）
     islp_label: str
     esl_label: str
-    playlist: str              # YouTube 課程錄影 playlist id（可多個，逗號分隔）
+    playlist: str              # YouTube 課程錄影 playlist id（可多個逗號分隔；沒有就留空）
     hero_svg: str              # hero 裝飾 SVG 的內容
     secs: list = field(default_factory=list)
     bankquiz: bool = False
+    # study-guide 上額外的連結 pill，[(標籤, 網址), ...]。補充章用它掛官方 lab；
+    # 既有章留空，studyguide() 的輸出 byte 不變。
+    extra_pills: list = field(default_factory=list)
 
     @property
     def deck_no(self) -> str:
@@ -205,7 +208,22 @@ def _svg_bias():
             '<path d="M152 176 V245"/></g>')
 
 
-# ── 十章 ────────────────────────────────────────────────────────────────
+def _svg_net():
+    """4 → 5 → 3 → 1 的前饋網路。層與層之間全連接，正好對上第 10 章的主角。"""
+    x1, x2, x3, x4 = 42, 128, 214, 288
+    l1, l2, l3 = [60, 110, 160, 210], [45, 90, 135, 180, 225], [85, 135, 185]
+    edges = "".join(f'<path d="M{x1} {a} L{x2} {b}"/>' for a in l1 for b in l2)
+    edges += "".join(f'<path d="M{x2} {a} L{x3} {b}"/>' for a in l2 for b in l3)
+    edges += "".join(f'<path d="M{x3} {a} L{x4} 135"/>' for a in l3)
+    nodes = "".join(f'<circle cx="{x1}" cy="{y}" r="9"/>' for y in l1)
+    nodes += "".join(f'<circle cx="{x2}" cy="{y}" r="9"/>' for y in l2)
+    nodes += "".join(f'<circle cx="{x3}" cy="{y}" r="9"/>' for y in l3)
+    nodes += f'<circle cx="{x4}" cy="135" r="11"/>'
+    return (f'<g stroke="#fff" stroke-width="1.5" fill="none" opacity=".35">{edges}</g>'
+            f'<g fill="#fff" opacity=".92">{nodes}</g>')
+
+
+# ── 十一章（前十章是授課順序，第 11 頁是課程沒教的補充章）──────────────────
 PAGES = [
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
@@ -489,6 +507,41 @@ PAGES = [
             Sec("multiclass", "多類別", "OVO 與 OVA：兩類的方法怎麼推廣", "ISLP §9.4|講義 09 · p.34–36"),
             Sec("vslogit", "與邏輯斯迴歸的關係", "兩個損失函數其實很像，差別在哪",
                 "ISLP §9.5|講義 09 · p.37–39"),
+        ],
+    ),
+    # ── 補充章：本課沒教 ISLP 第 10 章，所以沒有講義、沒有中文 lab、沒有課程錄影。
+    #    「補充」由 plain 與 islp_label 承載，會一路帶到 index 卡片、TOC、
+    #    chapter-nav、footer 與 README。出處改用課本官方的英文 lab（見
+    #    tools/extract_lab.py 的 OFFICIAL）。務必 append 不要插中間：n 同時是
+    #    頁面的 ID 前綴（w11），改動它等於要把後面每一章的 id 全部改名。
+    Page(
+        n=11, stem="deep_learning", slug="DEEP LEARNING", title_en="Deep Learning",
+        h1='<span class="orange">神經網路</span>：把非線性一層一層疊起來',
+        plain="深度學習（補充）",
+        subtitle="ISLP 第 10 章 — 本課未授課，補充自學",
+        formula="隱藏層｜ReLU｜softmax｜卷積與池化｜RNN｜反向傳播＋SGD｜dropout｜雙下降",
+        deck="", deck_pages=0, lab="",
+        islp=10, islp_label="ISLP Ch.10 · 補充", esl_label="ESL Ch.11",
+        playlist="",
+        extra_pills=[("📓 ISLP 官方 Lab",
+                      "https://github.com/intro-stat-learning/ISLP_labs/blob/"
+                      "6bf6160a3dd180c6651ba06655b453e81f91dc20/Ch10-deeplearning-lab.ipynb")],
+        hero_svg=_svg_net(),
+        secs=[
+            Sec("prologue", "先看它跟迴歸的關係", "神經網路不是新東西：從線性模型長出隱藏層",
+                "ISLP §10 開頭", kicker="PROLOGUE · 開場"),
+            Sec("single", "單層神經網路", "一層隱藏層：非線性怎麼進來的",
+                "ISLP §10.1|ESL §11.3"),
+            Sec("multi", "多層與 MNIST", "疊第二層之後：softmax 與 235,146 個參數",
+                "ISLP §10.2|ESL §11.4–11.6"),
+            Sec("cnn", "卷積神經網路", "把「哪裡」的資訊丟掉一部分：卷積與池化",
+                "ISLP §10.3"),
+            Sec("rnn", "文件分類與 RNN", "順序有意義的時候：詞袋不夠用",
+                "ISLP §10.4|ISLP §10.5"),
+            Sec("fitting", "怎麼配適", "反向傳播、SGD、dropout：非凸問題怎麼還是解得動",
+                "ISLP §10.7|ESL §11.4 · 進階"),
+            Sec("doubledesc", "雙下降與該不該用", "參數比樣本多還會變好？以及什麼時候該收手",
+                "ISLP §10.8|ISLP §10.6"),
         ],
     ),
 ]
