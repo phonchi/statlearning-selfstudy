@@ -592,7 +592,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:prologue -->
 
   <p>到目前為止的每一個模型都長成 $y = \beta_0 + \beta_1 x_1 + \cdots + \beta_p x_p$。
-  它好用、好解讀、推論工具齊全——但它假設「x 每增加一單位，y 就固定增加 $\beta$」。
+  它好用、好解讀、推論工具齊全，但它假設「x 每增加一單位，y 就固定增加 $\beta$」。
   真實世界很少這麼客氣。<code>Wage</code> 資料裡薪水隨年齡先升後降，
   用一條直線去配，你會得到一個「年齡愈大薪水愈高」的結論，然後在 60 歲那群人身上錯得很難看。</p>
 
@@ -600,7 +600,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   但那樣同時丟掉了「這個變數對 y 的影響長什麼樣」這種可以畫出來、可以講給人聽的東西。
   這一章走的是中間路線：<strong>把 x 換成一組事先選好的固定轉換</strong>
   $b_1(x), \ldots, b_K(x)$，模型對係數還是線性的。所以第 3 章那一整套
-  最小平方、標準誤、F 檢定，全部可以照用——只是預測變數換人了。</p>
+  最小平方、標準誤、F 檢定，全部可以照用，只是預測變數換人了。</p>
 
 <div class="info-box">
   <span class="info-label">六條路線，一個框架</span>
@@ -619,13 +619,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <tbody><tr><td>多項式</td><td>拉高次數 d</td><td>d（整數）</td><td><span class='worst'>很糟</span>，會暴衝</td><td>最省事，但 d &gt; 4 就別碰</td></tr><tr><td>階梯函數</td><td>多切幾段</td><td>切點數 K</td><td>還可以（常數）</td><td>沒有自然切點就會漏掉趨勢</td></tr><tr><td>立方樣條</td><td>多加節點</td><td>節點數 K（df = K+4）</td><td>偏糟，信賴帶會爆開</td><td>次數固定 3，靠節點取得彈性</td></tr><tr><td>自然樣條</td><td>多加節點</td><td>節點數 K（df = K+2）</td><td><span class='best'>好</span>，兩端是直線</td><td>同樣的彈性、更穩的兩端</td></tr><tr><td>平滑樣條</td><td>調 λ</td><td>有效自由度 df<sub>λ</sub>（連續）</td><td>好（兩端線性）</td><td>不必選節點，只要選 λ</td></tr><tr><td>局部迴歸</td><td>調鄰域大小</td><td>跨距 s</td><td>偏糟（單邊資料）</td><td>每次預測都要用到全部資料</td></tr></tbody>
 </table></div>
 
-  <p>這一章的講義有 54 頁，順序就是上面這張表。往下每一節都有一個可以拖、可以推的元件——
+  <p>這一章的講義有 54 頁，順序就是上面這張表。往下每一節都有一個可以拖、可以推的元件。
   <strong>先猜結果再按按鈕</strong>，猜錯的地方才是你真正學到東西的地方。</p>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 為什麼它還算線性模型</div>
   <p>把 <code>age</code>、<code>age²</code>、<code>age³</code>、<code>age⁴</code> 一起丟進迴歸，為什麼書上還說這是「一般的線性迴歸模型」？</p>
-  <div class="quiz-options" id="qNonOptions"><div class="quiz-opt" data-correct="true" data-fb="對。「線性」講的是「對參數線性」。第 3 章的最小平方、標準誤、F 檢定因此全部照用——這正是基底函數框架最值錢的地方。" onclick="quizCheck('qNon', this)"><span class="opt-letter">(A)</span> 因為模型對<strong>係數</strong>是線性的；x 的轉換是事先固定、已知的，只是換了預測變數</div><div class="quiz-opt" data-correct="false" data-fb="不對。四次多項式配出來明顯是彎的（ISLP 圖 7.1 左），一點都不像直線。「線性模型」跟「配出來的圖形是直線」是兩件不同的事。" onclick="quizCheck('qNon', this)"><span class="opt-letter">(B)</span> 因為配出來的曲線在資料範圍內仍然近似一條直線</div><div class="quiz-opt" data-correct="false" data-fb="不對。它們確實高度相關（所以實作上要用正交多項式或把 x 標準化），但那是<strong>數值穩定性</strong>的問題；模型仍然有 4 個獨立的參數。" onclick="quizCheck('qNon', this)"><span class="opt-letter">(C)</span> 因為 age² 與 age³ 跟 age 高度相關，實際上只有一個自由的預測變數</div></div>
+  <div class="quiz-options" id="qNonOptions"><div class="quiz-opt" data-correct="true" data-fb="對。「線性」講的是「對參數線性」。第 3 章的最小平方、標準誤、F 檢定因此全部照用。這正是基底函數框架最值錢的地方。" onclick="quizCheck('qNon', this)"><span class="opt-letter">(A)</span> 因為模型對<strong>係數</strong>是線性的；x 的轉換是事先固定、已知的，只是換了預測變數</div><div class="quiz-opt" data-correct="false" data-fb="不對。四次多項式配出來明顯是彎的（ISLP 圖 7.1 左），一點都不像直線。「線性模型」跟「配出來的圖形是直線」是兩件不同的事。" onclick="quizCheck('qNon', this)"><span class="opt-letter">(B)</span> 因為配出來的曲線在資料範圍內仍然近似一條直線</div><div class="quiz-opt" data-correct="false" data-fb="不對。它們確實高度相關（所以實作上要用正交多項式或把 x 標準化），但那是<strong>數值穩定性</strong>的問題；模型仍然有 4 個獨立的參數。" onclick="quizCheck('qNon', this)"><span class="opt-letter">(C)</span> 因為 age² 與 age³ 跟 age 高度相關，實際上只有一個自由的預測變數</div></div>
   <div class="quiz-feedback" id="qNonFeedback"></div>
 </div>
 </section>
@@ -642,7 +642,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>係數照樣用最小平方估。但注意：<strong>個別的 $\hat\beta_j$ 沒有解讀價值</strong>。
   lab 儲存格 14 配出來的 <code>447.07, −478.32, 125.52, −77.91</code>，
-  你沒辦法說「age 的二次項效果是 125.52」——這些數字還取決於用哪一組基底
+  你沒辦法說「age 的二次項效果是 125.52」。這些數字還取決於用哪一組基底
   （正交多項式 vs 原始冪次，係數完全不同，配出來的曲線一模一樣）。
   要看的是<strong>整條配適曲線</strong>，以及它的信賴帶。</p>
 
@@ -696,7 +696,7 @@ poly(age, degree=4)[0]  447.0679   39.915   11.201  0.000
 poly(age, degree=4)[1] -478.3158   39.915  -11.983  0.000
 poly(age, degree=4)[2]  125.5217   39.915    3.145  0.002
 poly(age, degree=4)[3]  -77.9112   39.915   -1.952  0.051</pre></div>
-  <p class="dx-note"><code>poly('age', degree=4)</code> 產生的是<strong>正交</strong>多項式基底，所以四個係數彼此不相關，t 檢定可以一個一個讀。最後一項的 p 值 0.051 剛好在邊界上——這就是「三次或四次都合理」的來源。</p>
+  <p class="dx-note"><code>poly('age', degree=4)</code> 產生的是<strong>正交</strong>多項式基底，所以四個係數彼此不相關，t 檢定可以一個一個讀。最後一項的 p 值 0.051 剛好在邊界上。這就是「三次或四次都合理」的來源。</p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 14</span>
 </div>
 
@@ -734,14 +734,14 @@ poly(age, degree=4)[0]  71.9642   26.133   2.754  0.006
 poly(age, degree=4)[1] -85.7729   35.929  -2.387  0.017
 poly(age, degree=4)[2]  34.1626   19.697   1.734  0.083
 poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
-  <p class="dx-note">同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，所以係數的標準誤很大、信賴帶很寬——尤其在 age 大的那一端。<strong>「樣本數夠大」要看的是關鍵事件的數量，不是總筆數。</strong></p>
+  <p class="dx-note">同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，所以係數的標準誤很大、信賴帶很寬，尤其在 age 大的那一端。<strong>「樣本數夠大」要看的是關鍵事件的數量，不是總筆數。</strong></p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 33</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 多項式的次數</div>
   <p>同一份 <code>Wage</code> 資料上，d 從 1 加到 15，訓練 MSE 一路從 1674 掉到 1585，但 10-fold CV MSE 在 d = 4 觸底（1596）之後回頭升到 1603。這說明什麼？</p>
-  <div class="quiz-options" id="qDegOptions"><div class="quiz-opt" data-correct="true" data-fb="對。訓練 MSE 必然單調下降（參數只增不減），CV MSE 才是測試誤差的估計。兩條線分岔的地方就是過度配適開始的地方。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(A)</span> d 超過 4 之後多出來的彈性只是在配噪音，所以測試誤差反而變差</div><div class="quiz-opt" data-correct="false" data-fb="不對，方向剛好反了。訓練 MSE 是<strong>系統性偏低</strong>的（第 5 章講過）；CV MSE 才是誠實的估計。而且 1596 → 1603 的上升是單調的，不像雜訊。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(B)</span> CV MSE 的估計本身有偏誤，所以它上升只是雜訊，該相信訓練 MSE</div><div class="quiz-opt" data-correct="false" data-fb="太強了。CV 只告訴你「在多項式這個模型族裡，d = 4 附近的複雜度最合適」。真實關係很可能根本不是多項式——後面的樣條與平滑樣條會用完全不同的基底配出差不多好的結果。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(C)</span> 說明 <code>Wage</code> 資料裡 age 與 wage 的真實關係是四次多項式</div></div>
+  <div class="quiz-options" id="qDegOptions"><div class="quiz-opt" data-correct="true" data-fb="對。訓練 MSE 必然單調下降（參數只增不減），CV MSE 才是測試誤差的估計。兩條線分岔的地方就是過度配適開始的地方。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(A)</span> d 超過 4 之後多出來的彈性只是在配雜訊，所以測試誤差反而變差</div><div class="quiz-opt" data-correct="false" data-fb="不對，方向剛好反了。訓練 MSE 是<strong>系統性偏低</strong>的（第 5 章講過）；CV MSE 才是誠實的估計。而且 1596 → 1603 的上升是單調的，不像雜訊。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(B)</span> CV MSE 的估計本身有偏誤，所以它上升只是雜訊，該相信訓練 MSE</div><div class="quiz-opt" data-correct="false" data-fb="太強了。CV 只告訴你「在多項式這個模型族裡，d = 4 附近的複雜度最合適」。真實關係很可能根本不是多項式。後面的樣條與平滑樣條會用完全不同的基底配出差不多好的結果。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(C)</span> 說明 <code>Wage</code> 資料裡 age 與 wage 的真實關係是四次多項式</div></div>
   <div class="quiz-feedback" id="qDegFeedback"></div>
 </div>
 </section>
@@ -768,7 +768,7 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   <span class="info-label">係數怎麼讀</span>
   因為每個 x 只落在一段裡，$\beta_0$ 就是<strong>第一段的平均 y</strong>，
   $\beta_j$ 是<strong>第 j+1 段相對於第一段的增量</strong>。
-  這也意味著：只有 x 一個變數時，<strong>每一段的配適值就是那一段的樣本平均</strong>——
+  這也意味著：只有 x 一個變數時，<strong>每一段的配適值就是那一段的樣本平均</strong>。
   下面的元件顯示的就是這個。<br>
   如果改成「保留全部 K+1 個指示變數、去掉截距」（lab 儲存格 39 的
   <code>pd.get_dummies()</code> 就是這樣），係數會直接變成各段的平均值。
@@ -841,7 +841,7 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   $$y_i = \beta_0 + \beta_1 b_1(x_i) + \beta_2 b_2(x_i) + \cdots
     + \beta_K b_K(x_i) + \varepsilon_i \tag{7.7}$$
 
-  <p>關鍵是 $b_1(\cdot), \ldots, b_K(\cdot)$ <strong>事先選定、固定、已知</strong>——
+  <p>關鍵是 $b_1(\cdot), \ldots, b_K(\cdot)$ <strong>事先選定、固定、已知</strong>。
   它們不含要估的參數。於是 (7.7) 就是一個以 $b_1(x_i), \ldots, b_K(x_i)$ 為預測變數的
   標準線性模型，最小平方、標準誤、F 檢定原封不動搬過來。</p>
 
@@ -857,7 +857,7 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
 
   <p>下面這個元件是本頁最重要的一個。左邊每一個核取鈕都是一個基底函數；
   你選哪幾個，下面就用<strong>那幾個</strong>去配。三個預設按鈕分別把選擇切成
-  「三次多項式」、「立方樣條」、「階梯函數」——<strong>你會看到它們只是勾選項不同而已</strong>。</p>
+  「三次多項式」、「立方樣條」、「階梯函數」。<strong>你會看到它們只是勾選項不同而已</strong>。</p>
 
 <div class="viz-layout">
   <div>
@@ -978,7 +978,7 @@ bs(age, df=3, degree=0)[2]  22.7814    2.087  10.917    0.0</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：為什麼三次樣條剛好要求到<strong>二階</strong>導數連續？多一階或少一階會怎樣？</summary>
-    <div class="qa-a"><p>先看少一階。只要求函數值與一階導數連續，二階導數可以跳——二階導數是「斜率變化的速度」，也就是曲率。曲率突然改變，人眼看得出來：曲線在節點附近會有一個「彈一下」的感覺。所以只到一階不夠。</p><p>再看多一階。三次多項式的三階導數是常數 $6d$；如果連三階導數也要求連續，那 $d$ 在節點兩側必須相同，二階導數又是 $2c + 6dx$，連續加上 $d$ 相同就迫使 $c$ 也相同…一路推下去，<strong>兩段會退化成同一個三次多項式</strong>——節點等於不存在，整條曲線變回全域三次多項式，彈性全部消失。所以三次的極限就是二階。</p><p>這也是「d 次樣條＝分段 d 次多項式 + 導數連續到 d−1 階」這個定義的來源：d−1 階是<strong>還能留下彈性的最高要求</strong>。書上還補了一句很實用的話：三階導數的不連續人眼幾乎偵測不到，所以立方樣條「看起來」就是平滑的——這就是為什麼實務上 degree 3 幾乎是唯一的選擇，更高次只是多花自由度，看起來沒有更平滑。</p></div>
+    <div class="qa-a"><p>先看少一階。只要求函數值與一階導數連續，二階導數可以跳——二階導數是「斜率變化的速度」，也就是曲率。曲率突然改變，人眼看得出來：曲線在節點附近會有一個「彈一下」的感覺。所以只到一階不夠。</p><p>再看多一階。三次多項式的三階導數是常數 $6d$；如果連三階導數也要求連續，那 $d$ 在節點兩側必須相同，二階導數又是 $2c + 6dx$，連續加上 $d$ 相同就迫使 $c$ 也相同…一路推下去，<strong>兩段會退化成同一個三次多項式</strong>——節點等於不存在，整條曲線變回全域三次多項式，彈性全部消失。所以三次的極限就是二階。</p><p>這也是「d 次樣條＝分段 d 次多項式 + 導數連續到 d−1 階」這個定義的來源：d−1 階是<strong>還能留下彈性的最高要求</strong>。書上還補了一句很實用的話：三階導數的不連續人眼幾乎偵測不到，所以立方樣條「看起來」就是平滑的。這就是為什麼實務上 degree 3 幾乎是唯一的選擇，更高次只是多花自由度，看起來沒有更平滑。</p></div>
   </details>
 </div>
 
@@ -1035,7 +1035,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
 
   <p>立方樣條看起來很漂亮，但有一個藏起來的問題：<strong>兩端的變異很大</strong>。
   在最小節點以左、最大節點以右，資料只從單邊來，三次多項式卻還有完整的四個自由度可以亂扭。
-  ISLP 圖 7.4 就在示範這件事——三個節點的立方樣條，兩端的信賴帶「appear fairly wild」。</p>
+  ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴帶「appear fairly wild」。</p>
 
   <p><strong>自然樣條</strong>（natural spline）的修法很直接：多加兩個邊界約束，
   <strong>要求函數在兩端的區域是線性的</strong>。線性只需要 2 個參數（截距 + 斜率），
@@ -1063,7 +1063,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
     </div>
     <div class="info-card">
       <div class="ic-title">代價是什麼</div>
-      自然樣條放棄了「兩端也可以彎」的能力。如果真實函數在邊界確實彎得厲害，自然樣條會配不出來（有偏差）。但邊界的資料本來就少，<strong>那裡的「彎」通常是噪音而不是訊號</strong>——所以這個交換在實務上幾乎總是划算的。
+      自然樣條放棄了「兩端也可以彎」的能力。如果真實函數在邊界確實彎得厲害，自然樣條會配不出來（有偏差）。但邊界的資料本來就少，<strong>那裡的「彎」通常是雜訊而不是訊號</strong>，所以這個交換在實務上幾乎總是划算的。
     </div>
   </div>
 </div>
@@ -1076,7 +1076,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：節點該放幾個？放哪裡？</summary>
-    <div class="qa-a"><p><strong>放哪裡：</strong>理論上該把節點放在「函數變化快」的地方，變化慢的地方少放。實務上幾乎沒人這樣做，因為你事先不知道哪裡變化快。標準做法是<strong>指定自由度，讓軟體把對應數量的節點放在資料的均勻分位數上</strong>——lab 儲存格 51 的 <code>BSpline(df=6)</code> 就自動選了 33.75、42.0、51.0，正好是 25%／50%／75% 分位數。用分位數而不是等距，好處是每一段的樣本數差不多，不會出現「某一段只有 3 個點」的情況。</p><p><strong>放幾個：</strong>用交叉驗證。ISLP 圖 7.6 對 <code>Wage</code> 掃了 df = 1 到 10 的10-fold CV MSE：自然樣條在 df = 3、立方樣條在 df = 4 就已經足夠，曲線之後就拉平了。做法跟第 5 章完全一樣——留一部分資料、配一個指定節點數的樣條、在留出的部分算誤差，換不同的 K 重複，選 CV 誤差最小的。</p><p>還有一個很務實的答案：§7.7 配多變數 GAM 時，每個變數都要選 df 就太麻煩了，所以<strong>實務上常常直接把所有項的 df 都定成 4</strong>，先跑起來再說。書上原話是「we typically adopt a more pragmatic approach」。</p></div>
+    <div class="qa-a"><p><strong>放哪裡：</strong>理論上該把節點放在「函數變化快」的地方，變化慢的地方少放。實務上幾乎沒人這樣做，因為你事先不知道哪裡變化快。標準做法是<strong>指定自由度，讓軟體把對應數量的節點放在資料的均勻分位數上</strong>。lab 儲存格 51 的 <code>BSpline(df=6)</code> 就自動選了 33.75、42.0、51.0，正好是 25%／50%／75% 分位數。用分位數而不是等距，好處是每一段的樣本數差不多，不會出現「某一段只有 3 個點」的情況。</p><p><strong>放幾個：</strong>用交叉驗證。ISLP 圖 7.6 對 <code>Wage</code> 掃了 df = 1 到 10 的10-fold CV MSE：自然樣條在 df = 3、立方樣條在 df = 4 就已經足夠，曲線之後就拉平了。做法跟第 5 章完全一樣——留一部分資料、配一個指定節點數的樣條、在留出的部分算誤差，換不同的 K 重複，選 CV 誤差最小的。</p><p>還有一個很務實的答案：§7.7 配多變數 GAM 時，每個變數都要選 df 就太麻煩了，所以<strong>實務上常常直接把所有項的 df 都定成 4</strong>，先跑起來再說。書上原話是「we typically adopt a more pragmatic approach」。</p></div>
   </details>
 </div>
 
@@ -1127,7 +1127,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   第一項是<strong>損失</strong>，逼 g 貼近資料；
   第二項是<strong>懲罰</strong>，逼 g 平滑。λ ≥ 0 是調整參數：<br>
   <strong>λ = 0：</strong>懲罰失效，g 會穿過每一個點（內插），RSS = 0，完全過度配適。<br>
-  <strong>λ → ∞：</strong>懲罰無限重，只有 $\int g''^2 = 0$ 的函數活得下來——
+  <strong>λ → ∞：</strong>懲罰無限重，只有 $\int g''^2 = 0$ 的函數活得下來，
   也就是<strong>直線</strong>。這時損失項退化成普通的線性最小平方，
   所以 g 就是那條最小平方直線。<br>
   中間的 λ 給你介於兩者之間的東西。<strong>λ 控制的就是偏差–變異取捨。</strong>
@@ -1135,7 +1135,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 
   <p>令人意外的是這個無限維最佳化有漂亮的解：使 (7.11) 最小的 g 是
   <strong>在每一個相異的 $x_1, \ldots, x_n$ 上都有節點的自然立方樣條</strong>。
-  但它不等於「拿全部 x 當節點去配自然樣條」——那樣一定過度配適；
+  但它不等於「拿全部 x 當節點去配自然樣條」。那樣一定過度配適；
   它是那個自然樣條的<strong>收縮版</strong>，收縮的程度由 λ 決定。</p>
 
   <p>既然每個點都是節點，名目上有 n 個參數。所以我們不用「參數個數」描述它的彈性，
@@ -1169,7 +1169,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 7.8</span></div>
-      灰點是 90 筆子樣本（背景），曲線是用<strong>全部 3000 筆</strong>配的平滑樣條。滑桿的刻度是有效自由度 df<sub>λ</sub>，不是 λ 本身——因為 df 才是人看得懂的尺度（λ = 5.2×10⁹ 對上 df = 2）。
+      灰點是 90 筆子樣本（背景），曲線是用<strong>全部 3000 筆</strong>配的平滑樣條。滑桿的刻度是有效自由度 df<sub>λ</sub>，不是 λ 本身，因為 df 才是人看得懂的尺度（λ = 5.2×10⁹ 對上 df = 2）。
     </div>
     <div class="info-card">
       <div class="ic-title">這個 df 的成績</div>
@@ -1177,7 +1177,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">gridsearch 選出來的是什麼</div>
-      <code>pygam</code> 的 <code>gridsearch()</code> 依 <strong>GCV</strong>（廣義交叉驗證）挑 λ，在這份資料上選出 λ = 251.19、df<sub>λ</sub> = <strong>5.64</strong>、GCV = 1596.88。課本圖 7.8 的 <strong>6.8</strong> 是用 LOOCV 挑的，兩者的準則不同、答案自然不會完全一樣——但都落在 5～7，<strong>結論一致：這份資料不需要 16 個自由度。</strong>
+      <code>pygam</code> 的 <code>gridsearch()</code> 依 <strong>GCV</strong>（廣義交叉驗證）挑 λ，在這份資料上選出 λ = 251.19、df<sub>λ</sub> = <strong>5.64</strong>、GCV = 1596.88。課本圖 7.8 的 <strong>6.8</strong> 是用 LOOCV 挑的，兩者的準則不同、答案自然不會完全一樣，但都落在 5～7，<strong>結論一致：這份資料不需要 16 個自由度。</strong>
     </div>
   </div>
 </div>
@@ -1185,7 +1185,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：「自由度」在這一章出現了三次，它們是同一回事嗎？</summary>
-    <div class="qa-a"><p><strong>不完全是。</strong>前兩個是同一回事，第三個是另一種東西。</p><p><strong>（1）多項式的次數 d、（2）樣條的 K + 4：</strong>這兩個都是<strong>老實的參數計數</strong>——你要估幾個 β，自由度就是幾。它們一定是整數，而且「d = 4」跟「3 個節點的立方樣條（df = 7）」都可以直接對應到設計矩陣有幾欄。第 3 章那套「殘差自由度 = n − p」照用。</p><p><strong>（3）平滑樣條的 $\mathrm{df}_\lambda$：</strong>這個不是參數計數。平滑樣條名目上有 n 個參數（每個 x 都是節點），但它們被懲罰項<strong>綁得死死的</strong>。所以我們改量「這個平滑器實際上用掉多少彈性」，定義成平滑矩陣的跡 $\sum_i \{S_\lambda\}_{ii}$。它是連續的（6.8、5.64 都合法），而且會隨 λ 連續變化。</p><p>把它們放在同一把尺上看是有道理的：$\mathrm{df}_\lambda = 5$ 的平滑樣條，彈性大約等於一個 5 個參數的迴歸樣條。這就是為什麼 <code>pygam</code> 提供 <code>approx_lam(X, term, df)</code> 讓你「用 df 指定 λ」——<strong>λ 沒有直覺，df 有</strong>。局部迴歸也可以這樣量：ISLP 圖 7.10 標了「span 0.2 相當於 16.4 個自由度、span 0.7 相當於 5.3 個」。</p></div>
+    <div class="qa-a"><p><strong>不完全是。</strong>前兩個是同一回事，第三個是另一種東西。</p><p><strong>（1）多項式的次數 d、（2）樣條的 K + 4：</strong>這兩個都是<strong>老實的參數計數</strong>。你要估幾個 β，自由度就是幾。它們一定是整數，而且「d = 4」跟「3 個節點的立方樣條（df = 7）」都可以直接對應到設計矩陣有幾欄。第 3 章那套「殘差自由度 = n − p」照用。</p><p><strong>（3）平滑樣條的 $\mathrm{df}_\lambda$：</strong>這個不是參數計數。平滑樣條名目上有 n 個參數（每個 x 都是節點），但它們被懲罰項<strong>綁得死死的</strong>。所以我們改量「這個平滑器實際上用掉多少彈性」，定義成平滑矩陣的跡 $\sum_i \{S_\lambda\}_{ii}$。它是連續的（6.8、5.64 都合法），而且會隨 λ 連續變化。</p><p>把它們放在同一把尺上看是有道理的：$\mathrm{df}_\lambda = 5$ 的平滑樣條，彈性大約等於一個 5 個參數的迴歸樣條。這就是為什麼 <code>pygam</code> 提供 <code>approx_lam(X, term, df)</code> 讓你「用 df 指定 λ」——<strong>λ 沒有直覺，df 有</strong>。局部迴歸也可以這樣量：ISLP 圖 7.10 標了「span 0.2 相當於 16.4 個自由度、span 0.7 相當於 5.3 個」。</p></div>
   </details>
 </div>
 
@@ -1198,14 +1198,14 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <span class="line">age_term.lam = lam_4</span>
   <span class="line">degrees_of_freedom(X_age, age_term)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(4.000000100000307)</pre></div>
-  <p class="dx-note"><code>approx_lam(X_age, age_term, 4)</code> 找出「讓有效自由度等於 4」的那個 λ，回代驗算得到 <code>4.000000100000307</code>。注意 lab 的說明：<strong>這個 df 包含平滑樣條那個沒有被懲罰的截距與線性項，所以下限是 2</strong>——這正好對上課本「λ → ∞ 時 df 降到 2」。所以 lab 儲存格 73 畫圖時用 <code>approx_lam(..., df+1)</code>，標籤上的 <code>df=1</code> 其實就是直線配適。<br>上面元件的滑桿刻度用的是 <code>degrees_of_freedom()</code> 的定義（含截距），所以最左邊是 2 而不是 0。</p>
+  <p class="dx-note"><code>approx_lam(X_age, age_term, 4)</code> 找出「讓有效自由度等於 4」的那個 λ，回代驗算得到 <code>4.000000100000307</code>。注意 lab 的說明：<strong>這個 df 包含平滑樣條那個沒有被懲罰的截距與線性項，所以下限是 2</strong>。這正好對上課本「λ → ∞ 時 df 降到 2」。所以 lab 儲存格 73 畫圖時用 <code>approx_lam(..., df+1)</code>，標籤上的 <code>df=1</code> 其實就是直線配適。<br>上面元件的滑桿刻度用的是 <code>degrees_of_freedom()</code> 的定義（含截距），所以最左邊是 2 而不是 0。</p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 71</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 平滑樣條的懲罰</div>
   <p>$\lambda \to \infty$ 時，(7.11) 的解 $\hat g$ 會變成什麼？</p>
-  <div class="quiz-options" id="qLamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。懲罰項迫使 $\int g''(t)^2 dt = 0$，也就是 g 必須是一次函數；在這個限制下最小化 RSS，就得到普通的最小平方直線。這時有效自由度是 2（截距 + 斜率）。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(A)</span> 最小平方<strong>直線</strong>——因為只有二階導數恆為 0 的函數才不被懲罰</div><div class="quiz-opt" data-correct="false" data-fb="不對，錯在懲罰的是<strong>二階</strong>導數不是一階。要求 $g' = 0$ 才會得到常數；$g'' = 0$ 允許固定的斜率。（ISLP §7.9 第 2 題就在玩這個：把懲罰換成 m 階導數，m = 1 才給常數。）" onclick="quizCheck('qLam', this)"><span class="opt-letter">(B)</span> 常數函數 $\hat g(x) = \bar y$——因為懲罰項要求函數完全不變化</div><div class="quiz-opt" data-correct="false" data-fb="話只對一半。解的<em>形式</em>確實永遠是那個自然立方樣條，但係數被 λ 收縮；λ → ∞ 時收縮到只剩線性部分，圖形就是一條直線。這一題問的是「長什麼樣」。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(C)</span> 在每個 xᵢ 上都有節點的自然立方樣條——因為解永遠是自然立方樹條</div></div>
+  <div class="quiz-options" id="qLamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。懲罰項迫使 $\int g''(t)^2 dt = 0$，也就是 g 必須是一次函數；在這個限制下最小化 RSS，就得到普通的最小平方直線。這時有效自由度是 2（截距 + 斜率）。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(A)</span> 最小平方<strong>直線</strong>，因為只有二階導數恆為 0 的函數才不被懲罰</div><div class="quiz-opt" data-correct="false" data-fb="不對，錯在懲罰的是<strong>二階</strong>導數不是一階。要求 $g' = 0$ 才會得到常數；$g'' = 0$ 允許固定的斜率。（ISLP §7.9 第 2 題就在玩這個：把懲罰換成 m 階導數，m = 1 才給常數。）" onclick="quizCheck('qLam', this)"><span class="opt-letter">(B)</span> 常數函數 $\hat g(x) = \bar y$，因為懲罰項要求函數完全不變化</div><div class="quiz-opt" data-correct="false" data-fb="話只對一半。解的<em>形式</em>確實永遠是那個自然立方樣條，但係數被 λ 收縮；λ → ∞ 時收縮到只剩線性部分，圖形就是一條直線。這一題問的是「長什麼樣」。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(C)</span> 在每個 xᵢ 上都有節點的自然立方樣條，因為解永遠是自然立方樹條</div></div>
   <div class="quiz-feedback" id="qLamFeedback"></div>
 </div>
 </section>
@@ -1233,7 +1233,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 
   <p>要做的選擇有三個：權重函數 K 怎麼定、第 3 步配常數／直線／二次、以及
   <strong>跨距</strong>（span）s 取多少。前兩個影響不大，
-  <strong>s 才是關鍵——它扮演的角色跟平滑樣條的 λ 一樣</strong>。
+  <strong>s 才是關鍵。它扮演的角色跟平滑樣條的 λ 一樣</strong>。
   s 小則鄰域窄、曲線抖；s 大則鄰域寬、接近全域配適。s 一樣可以用交叉驗證選。</p>
 
 <div class="viz-layout">
@@ -1275,7 +1275,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <p style="font-size:.82rem;color:var(--muted);">上表的 16.4 與 5.3 取自 ISLP 圖 7.10 的圖例
   （<code>Wage</code>，局部線性）。lab 儲存格 125 畫的是 span 0.2 與 0.5。
   <strong>注意上面元件是瀏覽器即時算的 tricube 加權最小平方，不含 <code>lowess()</code>
-  的穩健疊代（robustifying iterations），所以數字不會跟 lab 完全對上——
+  的穩健疊代（robustifying iterations），所以數字不會跟 lab 完全對上。
   它示範的是機制，不是重現套件的輸出。</strong></p>
 
   <h3 id="dx-low">講義完整實作：<code>statsmodels</code> 的 <code>lowess()</code></h3>
@@ -1332,9 +1332,9 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 
   <p>其中 education 是類別變數，$f_3$ 就是「每個層級一個常數」（虛擬變數）。
   如果 $f_1, f_2$ 用<strong>自然樣條</strong>，整個模型只是一個大號的線性迴歸
-  （基底矩陣橫向疊起來就好），<code>sm.OLS()</code> 一行配完——這是圖 7.11。
+  （基底矩陣橫向疊起來就好），<code>sm.OLS()</code> 一行配完。這是圖 7.11。
   如果用<strong>平滑樣條</strong>，最小平方就不夠了，要用
-  <strong>逆向配適</strong>（backfitting）——這是圖 7.12。</p>
+  <strong>逆向配適</strong>（backfitting）。這是圖 7.12。</p>
 
 <div class="info-box">
   <span class="info-label">逆向配適在做什麼</span>
@@ -1354,7 +1354,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
         <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。f̂(year)：薪水隨年份微幅上升，幾乎是直線（可能是通膨）。</div></div>
       </div>
       <div class="chart-wrap"><canvas id="w08gamAge"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。f̂(age)：中年最高，年輕與年長都低——這一項明顯需要非線性。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。f̂(age)：中年最高，年輕與年長都低。這一項明顯需要非線性。</div></div>
       </div>
       <div class="chart-wrap"><canvas id="w08gamEdu"></canvas>
         <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。f̂(education)：學歷愈高薪水愈高，五個層級各一個常數。</div></div>
@@ -1395,7 +1395,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
     + \cdots + f_p(X_p) \tag{7.18}$$
 
   <p>ISLP 圖 7.13 對 <code>Wage</code> 配 $I(\text{wage} > 250)$，
-  結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴帶大到看不出東西——
+  結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴帶大到看不出東西，
   因為<strong>那個層級裡一個高收入者都沒有</strong>（lab 儲存格 105 的交叉表：268 個人、0 個高收入者）。
   拿掉那群人重配就正常了（圖 7.14）。<strong>這是很典型的一課：
   模型爆掉的時候先去看列聯表，不要先怪演算法。</strong></p>
@@ -1403,7 +1403,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：GAM 保住了什麼、放棄了什麼？</summary>
-    <div class="qa-a"><p><strong>保住的是加法可解釋性。</strong>因為模型是 $\beta_0 + \sum_j f_j(x_j)$，每個變數的貢獻可以單獨畫出來、單獨解讀：「固定 age 與 education，wage 隨 year 微幅上升」這種句子講得出來，而且圖 7.11 那三張圖就是證據。線性模型的 $\beta_j$ 也有這個好處，但 GAM 不必假設那個關係是直線。額外的好處是每個 $f_j$ 的複雜度可以用自由度總結，一個數字就講完。</p><p><strong>放棄的是交互作用。</strong>加法性意味著「age 的效果」跟 education 是什麼無關。如果現實是「大學畢業的人薪水在 40 歲達到高峰，高中畢業的人在 30 歲」，GAM 抓不到——它只會給你一條平均起來的 $f_2(\text{age})$。</p><p>要補救有兩條路：手動加 $X_j \times X_k$ 這種乘積項，或者加二維的 $f_{jk}(X_j, X_k)$（用二維平滑器配，講義附錄的 thin-plate spline 就是這個）。但兩條路都要你<strong>事先知道哪一對變數有交互作用</strong>。如果你不知道、又有很多變數，那就該去第 8 章找隨機森林與提升法——它們自動抓交互作用，代價是失去這裡的可解釋性。書上的定位很準：<strong>GAM 是線性模型與完全無母數方法之間一個有用的折衷。</strong></p></div>
+    <div class="qa-a"><p><strong>保住的是加法可解釋性。</strong>因為模型是 $\beta_0 + \sum_j f_j(x_j)$，每個變數的貢獻可以單獨畫出來、單獨解讀：「固定 age 與 education，wage 隨 year 微幅上升」這種句子講得出來，而且圖 7.11 那三張圖就是證據。線性模型的 $\beta_j$ 也有這個好處，但 GAM 不必假設那個關係是直線。額外的好處是每個 $f_j$ 的複雜度可以用自由度總結，一個數字就講完。</p><p><strong>放棄的是交互作用。</strong>加法性意味著「age 的效果」跟 education 是什麼無關。如果現實是「大學畢業的人薪水在 40 歲達到高峰，高中畢業的人在 30 歲」，GAM 抓不到。它只會給你一條平均起來的 $f_2(\text{age})$。</p><p>要補救有兩條路：手動加 $X_j \times X_k$ 這種乘積項，或者加二維的 $f_{jk}(X_j, X_k)$（用二維平滑器配，講義附錄的 thin-plate spline 就是這個）。但兩條路都要你<strong>事先知道哪一對變數有交互作用</strong>。如果你不知道、又有很多變數，那就該去第 8 章找隨機森林與提升法。它們自動抓交互作用，代價是失去這裡的可解釋性。書上的定位很準：<strong>GAM 是線性模型與完全無母數方法之間一個有用的折衷。</strong></p></div>
   </details>
 </div>
 
@@ -1466,14 +1466,14 @@ Collaborate on a solution, and stay up to date at:
 github.com/dswah/pyGAM/issues/163 
 
   gam_full.summary()</pre></div>
-  <p class="dx-note">幾個要對的數字：<strong>Effective DoF 12.9927</strong>（age 5.1 + year 4.0 + education 4.0 + 截距）、<strong>GCV 1246.1129</strong>、<strong>Pseudo R² 0.2928</strong>——上面元件的「回到 lab 的設定」右側顯示的就是這三個數字，由 <code>tools/frames/gen_nonlin.py</code> 用同一組設定重算，對到小數第四位。<br>然後注意那三段警告。<code>pygam</code> 自己說：<strong>「平滑參數是估出來的時候，這裡的 p 值會比該有的小很多，不要拿它做推論」</strong>（<code>pyGAM</code> issue #163）。這是很好的示範——套件印給你的東西不代表你可以引用它。要檢定就用 lab 儲存格 96 的 <code>anova_gam()</code> 比巢狀模型。</p>
+  <p class="dx-note">幾個要對的數字：<strong>Effective DoF 12.9927</strong>（age 5.1 + year 4.0 + education 4.0 + 截距）、<strong>GCV 1246.1129</strong>、<strong>Pseudo R² 0.2928</strong>。上面元件的「回到 lab 的設定」右側顯示的就是這三個數字，由 <code>tools/frames/gen_nonlin.py</code> 用同一組設定重算，對到小數第四位。<br>然後注意那三段警告。<code>pygam</code> 自己說：<strong>「平滑參數是估出來的時候，這裡的 p 值會比該有的小很多，不要拿它做推論」</strong>（<code>pyGAM</code> issue #163）。這是很好的示範——套件印給你的東西不代表你可以引用它。要檢定就用 lab 儲存格 96 的 <code>anova_gam()</code> 比巢狀模型。</p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 98</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · GAM 的加法性</div>
   <p>如果真實情況是「大學畢業者的薪水在 40 歲達到高峰，高中畢業者在 30 歲」，(7.16) 這個 GAM 會發生什麼事？</p>
-  <div class="quiz-options" id="qGamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這就是 GAM 唯一的重大限制。要處理的話得手動加 age × education 的交互作用項，或改用第 8 章會自動抓交互作用的樹狀集成方法。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(A)</span> 抓不到——它只會給一條平均起來的 f̂(age)，因為加法性假設 age 的效果與 education 無關</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是把兩件事混在一起了。<strong>非線性</strong>講的是「單一變數的效果不是直線」；<strong>交互作用</strong>講的是「一個變數的效果會隨另一個變數改變」。GAM 給你前者，預設沒有後者。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(B)</span> 會抓到——因為 f̂(age) 是非線性的，非線性本身就包含了交互作用</div><div class="quiz-opt" data-correct="false" data-fb="不對。$f_3(\text{education})$ 只是每個層級一個<strong>常數位移</strong>，它把整條 age 曲線上下平移，不會改變曲線的形狀或峰值位置。要各層級各一條曲線，那已經是交互作用了。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(C)</span> 會抓到——因為 education 是類別變數，f̂₃ 會為每個層級各配一條 age 曲線</div></div>
+  <div class="quiz-options" id="qGamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這就是 GAM 唯一的重大限制。要處理的話得手動加 age × education 的交互作用項，或改用第 8 章會自動抓交互作用的樹狀集成方法。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(A)</span> 抓不到。它只會給一條平均起來的 f̂(age)，因為加法性假設 age 的效果與 education 無關</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是把兩件事混在一起了。<strong>非線性</strong>講的是「單一變數的效果不是直線」；<strong>交互作用</strong>講的是「一個變數的效果會隨另一個變數改變」。GAM 給你前者，預設沒有後者。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(B)</span> 會抓到，因為 f̂(age) 是非線性的，非線性本身就包含了交互作用</div><div class="quiz-opt" data-correct="false" data-fb="不對。$f_3(\text{education})$ 只是每個層級一個<strong>常數位移</strong>，它把整條 age 曲線上下平移，不會改變曲線的形狀或峰值位置。要各層級各一條曲線，那已經是交互作用了。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(C)</span> 會抓到，因為 education 是類別變數，f̂₃ 會為每個層級各配一條 age 曲線</div></div>
   <div class="quiz-feedback" id="qGamFeedback"></div>
 </div>
 </section>
@@ -1503,7 +1503,7 @@ github.com/dswah/pyGAM/issues/163
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 7.9 第 3 題</div>
   <p>第 3 題給基底 $b_1(X) = X$、$b_2(X) = (X-1)^2 I(X \ge 1)$，配出 $\hat\beta_0 = 1, \hat\beta_1 = 1, \hat\beta_2 = -2$，要你畫出 $X \in [-2, 2]$ 的曲線。下面哪個描述是對的？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。$X<1$ 時 $\hat Y = 1 + X$，從 $(-2,-1)$ 到 $(1,2)$。$X \ge 1$ 時 $\hat Y = 1 + X - 2(X-1)^2$；導數 $1 - 4(X-1)$ 在 $X=1$ 等於 1（跟左邊接得上），在 $X=1.25$ 歸零（極大值 2.125），$X=2$ 時 $\hat Y = 1$。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> $X < 1$ 是斜率 1 的直線（在 $X=1$ 到達 2）；$X \ge 1$ 變成開口向下的拋物線，在 $X = 1.25$ 到最高的 2.125，$X = 2$ 掉回 1；整條曲線的值與斜率在 $X=1$ 都連續</div><div class="quiz-opt" data-correct="false" data-fb="漏掉了極大值。$\hat\beta_2 < 0$ 確實讓拋物線開口向下，但頂點不在 $X=1$——導數在 $X=1$ 還是正的（等於 1），要到 $X=1.25$ 才轉負。所以曲線先升到 2.125 再降。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> $X \ge 1$ 時從 2 單調下降到 1，因為 $\hat\beta_2 = -2$ 是負的</div><div class="quiz-opt" data-correct="false" data-fb="不對。$(X-1)^2$ 這個因子在 $X=1$ 等於 0，把跳躍抹平了——而且它的一階導數 $2(X-1)$ 在 $X=1$ 也是 0，所以連斜率都連續。會跳的是像 $I(X \ge 1)$ 這種<em>沒有</em>乘上歸零因子的項。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 曲線在 $X = 1$ 有一個跳躍，因為指示函數 $I(X \ge 1)$ 在那裡開關</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。$X<1$ 時 $\hat Y = 1 + X$，從 $(-2,-1)$ 到 $(1,2)$。$X \ge 1$ 時 $\hat Y = 1 + X - 2(X-1)^2$；導數 $1 - 4(X-1)$ 在 $X=1$ 等於 1（跟左邊接得上），在 $X=1.25$ 歸零（極大值 2.125），$X=2$ 時 $\hat Y = 1$。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> $X < 1$ 是斜率 1 的直線（在 $X=1$ 到達 2）；$X \ge 1$ 變成開口向下的拋物線，在 $X = 1.25$ 到最高的 2.125，$X = 2$ 掉回 1；整條曲線的值與斜率在 $X=1$ 都連續</div><div class="quiz-opt" data-correct="false" data-fb="漏掉了極大值。$\hat\beta_2 < 0$ 確實讓拋物線開口向下，但頂點不在 $X=1$——導數在 $X=1$ 還是正的（等於 1），要到 $X=1.25$ 才轉負。所以曲線先升到 2.125 再降。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> $X \ge 1$ 時從 2 單調下降到 1，因為 $\hat\beta_2 = -2$ 是負的</div><div class="quiz-opt" data-correct="false" data-fb="不對。$(X-1)^2$ 這個因子在 $X=1$ 等於 0，把跳躍抹平了，而且它的一階導數 $2(X-1)$ 在 $X=1$ 也是 0，所以連斜率都連續。會跳的是像 $I(X \ge 1)$ 這種<em>沒有</em>乘上歸零因子的項。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 曲線在 $X = 1$ 有一個跳躍，因為指示函數 $I(X \ge 1)$ 在那裡開關</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -2665,7 +2665,7 @@ function w08lamDraw() {
   setStatus('w08lamStatus', 'df = ' + HC.fmt(df, 1) + ' 對應 λ = ' + F.lams[key]
     + '，GCV = ' + HC.fmt(F.gcv[key], 2) + '。'
     + (df <= 2.5 ? 'df = 2 就是那條最小平方直線——λ 大到把所有彎曲都罰掉了。'
-       : df >= 15 ? '抖得離譜：λ 幾乎歸零，曲線開始追噪音。'
+       : df >= 15 ? '抖得離譜：λ 幾乎歸零，曲線開始追雜訊。'
        : '這個刻度上 GCV 最低的是 df = ' + HC.fmt(best, 1)
          + '，gridsearch 連續搜出來的是 ' + F.pick.df + '。'));
 }
