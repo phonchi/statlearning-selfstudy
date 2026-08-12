@@ -600,7 +600,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   （怎麼估、估得準不準、配得好不好），再推到「多個 x 一起放進來」，
   最後看這個模型什麼時候會壞掉、什麼時候該換工具。線性迴歸是 1805 年的東西，
   但它幾乎是所有現代方法的骨架：第 6 章在它上面加懲罰項、第 7 章換掉基底函數、
-  第 4 章把它套進連結函數——<strong>這一章沒學牢，後面每一章都會卡</strong>。</p>
+  第 4 章把它套進連結函數。<strong>這一章沒學牢，後面每一章都會卡</strong>。</p>
 
 <div class="info-box">
   <span class="info-label">開場先記住這四個問題</span>
@@ -627,7 +627,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   它跟 sales 的關聯是顯著的（<em>t</em> = 3.30、p = 0.00115）。
   可是把 TV 與 radio 一起放進模型，它的係數變成 −0.001、<em>t</em> = −0.18，
   完全不顯著。<strong>資料沒有變，模型變了，結論就翻了。</strong>
-  為什麼？答案在 P04 的 Q&amp;A——這也是老師 FAQ 的第 4 題。
+  為什麼？答案在 P04 的 Q&amp;A。這也是老師 FAQ 的第 4 題。
 </div>
 
 <div class="quiz-box">
@@ -721,7 +721,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖</div>
-      紅點是最小平方解（碗底），橢圓上的標籤是 RSS 相對於最小值的倍數。推滑桿讓橘點離開碗底，<strong>看它跨過幾條等高線</strong>——同時上面那張圖會出現一條綠色虛線，那就是這組係數畫出來的線。橢圓是<strong>斜的</strong>：β₀ 猜大一點時 β₁ 要猜小一點才補得回來，這就是 β̂₀ 與 β̂₁ 負相關的意思。
+      紅點是最小平方解（碗底），橢圓上的標籤是 RSS 相對於最小值的倍數。推滑桿讓橘點離開碗底，<strong>看它跨過幾條等高線</strong>，同時上面那張圖會出現一條綠色虛線，那就是這組係數畫出來的線。橢圓是<strong>斜的</strong>：β₀ 猜大一點時 β₁ 要猜小一點才補得回來，這就是 β̂₀ 與 β̂₁ 負相關的意思。
     </div>
     <div class="info-card">
       <div class="ic-title">課本的版本 <span class="ic-badge">ISLP 圖 3.2</span></div>
@@ -733,10 +733,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：誤差曲面（error surface）到底是什麼？為什麼線性迴歸不用梯度下降？</summary>
-    <div class="qa-a"><p>把損失函數看成<strong>參數</strong>的函數，畫出來就是誤差曲面。座標軸不是資料的 x 與 y，而是 β₀ 與 β₁；曲面的高度是「用這組參數時的 RSS」。等高線上的每一點 RSS 相同，最佳化就是從某個起點往下走到最低點。</p><p>線性迴歸的 RSS 是 β 的<strong>凸二次函數</strong>——上面那條精確式子就是證據——所以它只有一個最低點，而且對 β 微分等於零後是一組<strong>線性</strong>方程（正規方程 $X^\top X\beta = X^\top y$）。既然線性方程有封閉解 $\hat\beta = (X^\top X)^{-1}X^\top y$，就沒有必要用梯度下降一步一步爬。</p><p>那什麼時候才需要迭代？① 損失函數不是二次式（邏輯斯迴歸、SVM、神經網路）；② n 或 p 太大，$X^\top X$ 這個 $p \times p$ 矩陣算不動或存不下；③ 加了不可微的懲罰項（lasso，第 6 章）。這時候才輪到梯度下降、牛頓法、座標下降上場。</p></div>
+    <div class="qa-a"><p>把損失函數看成<strong>參數</strong>的函數，畫出來就是誤差曲面。座標軸不是資料的 x 與 y，而是 β₀ 與 β₁；曲面的高度是「用這組參數時的 RSS」。等高線上的每一點 RSS 相同，最佳化就是從某個起點往下走到最低點。</p><p>線性迴歸的 RSS 是 β 的<strong>凸二次函數</strong>。上面那條精確式子就是證據，所以它只有一個最低點，而且對 β 微分等於零後是一組<strong>線性</strong>方程（正規方程 $X^\top X\beta = X^\top y$）。既然線性方程有封閉解 $\hat\beta = (X^\top X)^{-1}X^\top y$，就沒有必要用梯度下降一步一步爬。</p><p>那什麼時候才需要迭代？① 損失函數不是二次式（邏輯斯迴歸、SVM、神經網路）；② n 或 p 太大，$X^\top X$ 這個 $p \times p$ 矩陣算不動或存不下；③ 加了不可微的懲罰項（lasso，第 6 章）。這時候才輪到梯度下降、牛頓法、座標下降上場。</p></div>
   </details>
   <details class="qa-item"><summary>Q：迴歸裡的 X 到底是隨機變數還是常數？</summary>
-    <div class="qa-a"><p>看情境，而且兩種寫法的結論幾乎一樣。</p><p><strong>實驗設計</strong>裡 x 是我們自己設定的（施肥 0、5、10 公斤），把它當常數很自然，模型寫成 $Y \sim N(\beta_0+\beta_1 X,\ \sigma^2)$。<strong>觀察性研究</strong>裡 x 是跟著樣本一起抽到的（某個市場剛好花了 230.1 千美元），它本來就是隨機的，這時模型要寫成條件分佈 $Y \mid X \sim N(\beta_0+\beta_1 X,\ \sigma^2)$。</p><p>為什麼結論一樣？因為我們關心的一直是<strong>條件期望</strong> $E[Y \mid X]$——在均方誤差下它就是最好的預測。所有的推論（SE、t、F）都是「固定住觀測到的那組 x」之後做的，也就是條件在 X 上。所以課本裡 SE 的公式長得跟「x 是常數」一樣，並不代表課本認為 x 不隨機，而是代表那些式子都是條件式的。</p><p>差別會在哪裡冒出來？當你想推廣到「新的 x 分佈」時。訓練資料的 x 集中在 0–300，硬要拿去預測 x = 1000 的市場，模型沒有任何資訊支撐——這叫外推（extrapolation），跟 x 是不是隨機無關，但正是因為 x 有它自己的分佈，這件事才需要被提醒。</p></div>
+    <div class="qa-a"><p>看情境，而且兩種寫法的結論幾乎一樣。</p><p><strong>實驗設計</strong>裡 x 是我們自己設定的（施肥 0、5、10 公斤），把它當常數很自然，模型寫成 $Y \sim N(\beta_0+\beta_1 X,\ \sigma^2)$。<strong>觀察性研究</strong>裡 x 是跟著樣本一起抽到的（某個市場剛好花了 230.1 千美元），它本來就是隨機的，這時模型要寫成條件分佈 $Y \mid X \sim N(\beta_0+\beta_1 X,\ \sigma^2)$。</p><p>為什麼結論一樣？因為我們關心的一直是<strong>條件期望</strong> $E[Y \mid X]$——在均方誤差下它就是最好的預測。所有的推論（SE、t、F）都是「固定住觀測到的那組 x」之後做的，也就是條件在 X 上。所以課本裡 SE 的公式長得跟「x 是常數」一樣，並不代表課本認為 x 不隨機，而是代表那些式子都是條件式的。</p><p>差別會在哪裡冒出來？當你想推廣到「新的 x 分佈」時。訓練資料的 x 集中在 0–300，硬要拿去預測 x = 1000 的市場，模型沒有任何資訊支撐。這叫外推（extrapolation），跟 x 是不是隨機無關，但正是因為 x 有它自己的分佈，這件事才需要被提醒。</p></div>
   </details>
 </div>
 
@@ -858,7 +858,7 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 
   <p>它衡量「β̂₁ 離 0 有幾個標準誤」。$H_0$ 成立時 t 服從自由度 n − 2 的 t 分佈，
   n 大於約 30 之後跟標準常態幾乎一樣，所以 <strong>|t| 超過大約 2 就對應 5% 的顯著水準</strong>。
-  p 值是「假設 $H_0$ 為真，看到這麼極端或更極端的 t 的機率」——
+  p 值是「假設 $H_0$ 為真，看到這麼極端或更極端的 t 的機率」。
   注意它<strong>不是</strong>「$H_0$ 為真的機率」。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -872,7 +872,7 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：線性迴歸的 LINE 假設，到底假設了什麼？</summary>
-    <div class="qa-a"><p><strong>L</strong>inearity、<strong>I</strong>ndependence、<strong>N</strong>ormality、<strong>E</strong>qual variance——四個字首拼成 LINE，好記，但更重要的是知道<strong>哪一條壞掉會傷到什麼</strong>。</p><p><strong>L（線性）</strong>：$E[Y \mid X] = \beta_0+\beta_1X$ 這個形狀是對的。壞掉的話係數本身就沒有意義了——這是唯一會傷到「估計」的假設，所以殘差圖是必看的（P06 第 1 個問題）。</p><p><strong>I（獨立）</strong>：誤差項彼此不相關。壞掉時 SE 會被<strong>低估</strong>，於是 t 太大、p 值太小、信賴區間太窄——你會對一個其實很不確定的結論過度自信。時間序列與空間資料最常犯（P06 第 2 個問題）。</p><p><strong>N（常態）</strong>：誤差服從常態分佈。<strong>估計完全不需要它</strong>——最小平方解是純代數；它只用在「t 統計量真的服從 t 分佈」這件事上。而且 n 大時中央極限定理會幫忙，所以這是四條裡最不必緊張的一條。</p><p><strong>E（等變異）</strong>：所有誤差有共同的 σ²。壞掉時估計仍無偏，但 SE 的公式失準（有些點被過度信任），檢定與區間都不可靠（P06 第 3 個問題）。</p><p>一句話總結：<strong>L 壞了係數就錯；I 與 E 壞了係數還對，但不確定性的度量錯了；N 壞了而 n 又大，通常沒事。</strong></p></div>
+    <div class="qa-a"><p><strong>L</strong>inearity、<strong>I</strong>ndependence、<strong>N</strong>ormality、<strong>E</strong>qual variance。四個字首拼成 LINE，好記，但更重要的是知道<strong>哪一條壞掉會傷到什麼</strong>。</p><p><strong>L（線性）</strong>：$E[Y \mid X] = \beta_0+\beta_1X$ 這個形狀是對的。壞掉的話係數本身就沒有意義了。這是唯一會傷到「估計」的假設，所以殘差圖是必看的（P06 第 1 個問題）。</p><p><strong>I（獨立）</strong>：誤差項彼此不相關。壞掉時 SE 會被<strong>低估</strong>，於是 t 太大、p 值太小、信賴區間太窄。你會對一個其實很不確定的結論過度自信。時間序列與空間資料最常犯（P06 第 2 個問題）。</p><p><strong>N（常態）</strong>：誤差服從常態分佈。<strong>估計完全不需要它</strong>——最小平方解是純代數；它只用在「t 統計量真的服從 t 分佈」這件事上。而且 n 大時中央極限定理會幫忙，所以這是四條裡最不必緊張的一條。</p><p><strong>E（等變異）</strong>：所有誤差有共同的 σ²。壞掉時估計仍無偏，但 SE 的公式失準（有些點被過度信任），檢定與區間都不可靠（P06 第 3 個問題）。</p><p>一句話總結：<strong>L 壞了係數就錯；I 與 E 壞了係數還對，但不確定性的度量錯了；N 壞了而 n 又大，通常沒事。</strong></p></div>
   </details>
 </div>
 
@@ -933,7 +933,7 @@ Notes:
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 標準誤</div>
   <p>同一份資料，你把預測變數 x 的單位從「元」換成「千元」（也就是全部除以 1000）。β̂₁ 與它的 <em>t</em> 統計量會怎麼變？</p>
-  <div class="quiz-options" id="qSeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。單位換算只是把 x 乘上一個常數，配適值、殘差、RSS 一個都沒動，所以 R² 與 RSE 也不變。β̂₁ 與 SE(β̂₁) 同比例放大，比值 t 就被消掉了——<strong>顯著性不會因為換單位而改變</strong>，這也是為什麼不能靠「係數大小」判斷變數重不重要。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(A)</span> β̂₁ 變成 1000 倍，SE(β̂₁) 也變成 1000 倍，<em>t</em> 完全不變</div><div class="quiz-opt" data-correct="false" data-fb="不對。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)²，分母裡的 x 也跟著縮小 1000 倍，所以 Σ(xᵢ−x̄)² 縮小 10⁶ 倍、SE 放大 1000 倍。SE 不可能不動。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(B)</span> β̂₁ 變成 1000 倍，SE 不變，所以 <em>t</em> 也變成 1000 倍</div><div class="quiz-opt" data-correct="false" data-fb="只有<strong>無單位</strong>的量（t、p、R²）免疫。有單位的量（β̂₁、SE、信賴區間的端點）一定會跟著單位變——它們的單位是「y 的單位 ÷ x 的單位」。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(C)</span> 兩個都不變，因為線性迴歸對單位免疫</div></div>
+  <div class="quiz-options" id="qSeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。單位換算只是把 x 乘上一個常數，配適值、殘差、RSS 一個都沒動，所以 R² 與 RSE 也不變。β̂₁ 與 SE(β̂₁) 同比例放大，比值 t 就被消掉了——<strong>顯著性不會因為換單位而改變</strong>，這也是為什麼不能靠「係數大小」判斷變數重不重要。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(A)</span> β̂₁ 變成 1000 倍，SE(β̂₁) 也變成 1000 倍，<em>t</em> 完全不變</div><div class="quiz-opt" data-correct="false" data-fb="不對。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)²，分母裡的 x 也跟著縮小 1000 倍，所以 Σ(xᵢ−x̄)² 縮小 10⁶ 倍、SE 放大 1000 倍。SE 不可能不動。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(B)</span> β̂₁ 變成 1000 倍，SE 不變，所以 <em>t</em> 也變成 1000 倍</div><div class="quiz-opt" data-correct="false" data-fb="只有<strong>無單位</strong>的量（t、p、R²）免疫。有單位的量（β̂₁、SE、信賴區間的端點）一定會跟著單位變。它們的單位是「y 的單位 ÷ x 的單位」。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(C)</span> 兩個都不變，因為線性迴歸對單位免疫</div></div>
   <div class="quiz-feedback" id="qSeFeedback"></div>
 </div>
 </section>
@@ -1035,7 +1035,7 @@ MSE : 38.48296722989415</pre></div>
     \left(y_i - \hat\beta_0 - \hat\beta_1 x_{i1} - \cdots
     - \hat\beta_p x_{ip}\right)^2$$
 
-  <p>寫成矩陣就是一行——這也是本頁標題那條式子：</p>
+  <p>寫成矩陣就是一行。這也是本頁標題那條式子：</p>
 
   $$\hat\beta = (X^\top X)^{-1} X^\top y$$
 
@@ -1052,7 +1052,7 @@ MSE : 38.48296722989415</pre></div>
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w03tfChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：TV 與 radio 的 |t| 都在 20 以上，newspaper 只有 0.18——但把 radio 拿掉，newspaper 的 |t| 會跳到 4.35。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：TV 與 radio 的 |t| 都在 20 以上，newspaper 只有 0.18，但把 radio 拿掉，newspaper 的 |t| 會跳到 4.35。</div></div>
       </div>
       <div class="status-banner" id="w03tfStatus"><span class="status-icon">›</span><span class="status-text">三個都放進模型時：TV 與 radio 的 t 值極大，newspaper 只有 −0.18。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" id="w03tfBtnTV" onclick="w03tfToggle(0)">TV</button><button class="btn btn-toggle" id="w03tfBtnRadio" onclick="w03tfToggle(1)">radio</button><button class="btn btn-toggle" id="w03tfBtnNews" onclick="w03tfToggle(2)">newspaper</button><button class="btn btn-reset" onclick="w03tfReset()">三個都放回去</button></div>
@@ -1065,7 +1065,7 @@ MSE : 38.48296722989415</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">非做不可的兩個實驗</div>
-      <strong>① 只留 <code>newspaper</code>：</strong>|t| = 3.30，顯著。<strong>② 留 <code>newspaper</code> + <code>TV</code>：</strong>|t| = 4.35，更顯著！<strong>③ 三個都放：</strong>|t| = 0.18，完全不顯著。關鍵在 <code>radio</code>——把它放進來，newspaper 就失業了。為什麼？看下面的相關矩陣與 Q&amp;A。
+      <strong>① 只留 <code>newspaper</code>：</strong>|t| = 3.30，顯著。<strong>② 留 <code>newspaper</code> + <code>TV</code>：</strong>|t| = 4.35，更顯著！<strong>③ 三個都放：</strong>|t| = 0.18，完全不顯著。關鍵在 <code>radio</code>。把它放進來，newspaper 就失業了。為什麼？看下面的相關矩陣與 Q&amp;A。
     </div>
     <div class="info-card">
       <div class="ic-title">三個媒體與 sales 的相關係數 <span class="ic-badge">ISLP 表 3.5</span></div>
@@ -1132,7 +1132,7 @@ rad         0.2894    0.067   4.325  0.000
 tax        -0.0127    0.004  -3.337  0.001
 ptratio    -0.9375    0.132  -7.091  0.000
 lstat      -0.5520    0.051 -10.897  0.000</pre></div>
-  <p class="dx-note">同一個 <code>age</code>，<em>t</em> 從 2.826 掉到 <strong>0.271</strong>、p 從 0.005 變成 0.787——這就是上面 Q&amp;A 講的現象在 lab 裡的實例，跟 Advertising 的 newspaper 是同一個病。<code>indus</code>（p = 0.829）也是。lab 的儲存格 79 接著示範怎麼用 <code>Boston.columns.drop(['medv','age'])</code> 把 <code>age</code> 拿掉重配，拿掉之後 <code>lstat</code> 的 <em>t</em> 從 −10.897 變成 −11.483，SE 從 0.051 縮到 0.048——變數少一個，剩下的反而估得更準。</p>
+  <p class="dx-note">同一個 <code>age</code>，<em>t</em> 從 2.826 掉到 <strong>0.271</strong>、p 從 0.005 變成 0.787。這就是上面 Q&amp;A 講的現象在 lab 裡的實例，跟 Advertising 的 newspaper 是同一個病。<code>indus</code>（p = 0.829）也是。lab 的儲存格 79 接著示範怎麼用 <code>Boston.columns.drop(['medv','age'])</code> 把 <code>age</code> 拿掉重配，拿掉之後 <code>lstat</code> 的 <em>t</em> 從 −10.897 變成 −11.483，SE 從 0.051 縮到 0.048——變數少一個，剩下的反而估得更準。</p>
   <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 75、77</span>
 </div>
 
@@ -1163,7 +1163,7 @@ lstat      -0.5520    0.051 -10.897  0.000</pre></div>
   <p>於是 β₀ 是「非學生的平均」、β₁ 是「學生比非學生多出來的部分」。
   <strong>k 個水準只要 k − 1 欄</strong>；沒有分到欄的那個水準叫<strong>基準水準</strong>
   （baseline），截距代表它。為什麼不給每個水準都一欄？
-  因為 k 欄加起來恆等於 1，會跟截距完全共線，矩陣就不可逆了——
+  因為 k 欄加起來恆等於 1，會跟截距完全共線，矩陣就不可逆了。
   這叫虛擬變數陷阱（dummy variable trap）。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1218,7 +1218,7 @@ lstat      -0.5520    0.051 -10.897  0.000</pre></div>
   <tbody><tr><td>截距</td><td>6.7502</td><td>0.2479</td><td>27.23</td><td>&lt; 0.0001</td></tr><tr><td><code>TV</code></td><td>0.0191</td><td>0.0015</td><td>12.70</td><td>&lt; 0.0001</td></tr><tr><td><code>radio</code></td><td>0.0289</td><td>0.0089</td><td>3.24</td><td>0.0014</td></tr><tr><td><code>TV×radio</code></td><td>0.0011</td><td>0.0001</td><td>20.73</td><td>&lt; 0.0001</td></tr></tbody>
 </table></div>
   <p style="font-size:.82rem;color:var(--muted);">R² 從 89.7%（只有主效果）跳到
-  <strong>96.8%</strong>。換個算法更有感：加法模型配完後<em>剩下</em>的變異裡，
+  <strong>96.8%</strong>。換個方式算更有感：加法模型配完後<em>剩下</em>的變異裡，
   有 (96.8 − 89.7)/(100 − 89.7) ≈ <strong>69%</strong> 被這一個乘積項解釋掉了。
   係數的解讀是「TV 預算每多 1000 美元，銷售量增加 (19 + 1.1 × radio) 單位」——
   <strong>廣播花得愈多，電視廣告愈有效</strong>。這就是綜效。</p>
@@ -1302,7 +1302,7 @@ Price:Age           0.0001    0.000   0.801  0.424</pre></div>
 </table></div>
 
   <p>問題 1 到 5 全部靠<strong>四張診斷圖</strong>看。下面這個元件把五組資料
-  （一組乾淨的、四組各有一種病徵）跟四張圖交叉組合起來——
+  （一組乾淨的、四組各有一種病徵）跟四張圖交叉組合起來。
   <strong>先切資料再切圖，把每一種病徵長什麼樣記進眼睛裡</strong>：</p>
 
 <div class="viz-layout">
@@ -1318,7 +1318,7 @@ Price:Age           0.0001    0.000   0.801  0.424</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">四張圖各看什麼</div>
-      <strong>① 殘差 vs 配適值：</strong>最重要的一張。應該是一團沒有結構的雲，紅線（分箱平均）應該貼著 0。有 U 形＝非線性，有漏斗＝異質變異。<br><strong>② Q-Q 圖：</strong>學生化殘差的分位數對常態分位數。貼著 45 度線＝常態；兩端翹起＝厚尾（有離群值）。<br><strong>③ scale-location：</strong>看 √|學生化殘差| 有沒有隨配適值上升，專門抓異質變異。<br><strong>④ 殘差 vs 槓桿值：</strong>右上／右下角的點最危險——同時是離群值又是高槓桿點。
+      <strong>① 殘差 vs 配適值：</strong>最重要的一張。應該是一團沒有結構的雲，紅線（分箱平均）應該貼著 0。有 U 形＝非線性，有漏斗＝異質變異。<br><strong>② Q-Q 圖：</strong>學生化殘差的分位數對常態分位數。貼著 45 度線＝常態；兩端翹起＝厚尾（有離群值）。<br><strong>③ scale-location：</strong>看 √|學生化殘差| 有沒有隨配適值上升，專門抓異質變異。<br><strong>④ 殘差 vs 槓桿值：</strong>右上／右下角的點最危險，同時是離群值又是高槓桿點。
     </div>
     <div class="info-card">
       <div class="ic-title">這一組資料的診斷數字</div>
@@ -1352,7 +1352,7 @@ Price:Age           0.0001    0.000   0.801  0.424</pre></div>
   <span class="info-label">最危險的組合是「離群值 ＋ 高槓桿」</span>
   只是離群值（y 怪、x 正常）：它會推高 RSE、
   拉低 R²，但因為槓桿小，對係數的影響有限。<br>
-  只是高槓桿（x 怪、但落在趨勢上）：它其實幫忙——把 x 的範圍拉開會<strong>降低</strong>
+  只是高槓桿（x 怪、但落在趨勢上）：它其實幫忙。把 x 的範圍拉開會<strong>降低</strong>
   SE(β̂₁)。<br>
   兩個同時發生（ISLP 圖 3.13 的第 41 筆）：<strong>一個點就能把整條線扳過去</strong>，
   而且因為槓桿高、殘差被壓小，它在原始殘差圖上還不一定顯眼。
@@ -1493,7 +1493,7 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w03knnChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：真實關係是直線時線性迴歸大勝；愈彎 KNN 愈有優勢；但變數一多（p ≥ 4），KNN 就迅速輸掉——這是維度詛咒。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：真實關係是直線時線性迴歸大勝；愈彎 KNN 愈有優勢；但變數一多（p ≥ 4），KNN 就迅速輸掉。這是維度詛咒。</div></div>
       </div>
       <div class="status-banner" id="w03knnStatus"><span class="status-icon">›</span><span class="status-text">按三個按鈕切換視角。先猜「真相是直線時誰贏」，再看答案。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w03knnView(0)">① 真實形狀</button><button class="btn btn-toggle" onclick="w03knnView(1)">② K 的取捨</button><button class="btn btn-toggle" onclick="w03knnView(2)">③ 維度 p</button></div>
@@ -1510,7 +1510,7 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">課本的結論 <span class="ic-badge">ISLP §3.5</span></div>
-      <strong>「KNN 至少不會比線性迴歸差太多，可能好很多」——這句話只在 p 很小時成立。</strong>ISLP 圖 3.20：真相明顯非線性時，p = 1 或 2 時 KNN 贏，p = 3 打成平手，<strong>p ≥ 4 之後線性迴歸反過來贏</strong>，而且 KNN 的 MSE 是十倍級地爆掉。原因是 50 筆資料撒進 20 維空間之後，任何一點的「最近鄰」其實都離得很遠。
+      <strong>「KNN 至少不會比線性迴歸差太多，可能好很多」。這句話只在 p 很小時成立。</strong>ISLP 圖 3.20：真相明顯非線性時，p = 1 或 2 時 KNN 贏，p = 3 打成平手，<strong>p ≥ 4 之後線性迴歸反過來贏</strong>，而且 KNN 的 MSE 是十倍級地爆掉。原因是 50 筆資料撒進 20 維空間之後，任何一點的「最近鄰」其實都離得很遠。
     </div>
   </div>
 </div>
