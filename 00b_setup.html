@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<!-- GEN:BEGIN head -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="環境安裝 — Setup 互動自學頁。課前準備 B — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
+<title>環境安裝 — Setup Interactive（Python）</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+        integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+  --node-white:#ffffff;--node-gray:#bdc3c7;--node-black:#34495e;
+  --node-current:#f39c12;--node-found:#16a085;--node-start:#9b59b6;
+  --edge-default:#95a5a6;--edge-tree:#27ae60;--edge-explore:#f39c12;--edge-mst:#1a6b4a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.9;font-size:17px;}
+
+/* Hero */
+.hero{min-height:62vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:860px;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:.04em;line-height:1.3;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero h1 .purple{color:#bb8fce;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.2rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.05rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Hero mini-graph illustration */
+.hero-graph{position:absolute;right:5%;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;}
+@media(max-width:900px){.hero-graph{display:none;}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+strong{color:var(--ink);}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:34px;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+
+/* Graph SVG canvas */
+.graph-canvas{position:relative;width:100%;height:380px;background:#fafafa;border-radius:8px;overflow:hidden;border:1px solid #ececec;}
+.graph-canvas svg{width:100%;height:100%;display:block;}
+
+/* SVG elements styles */
+.graph-edge{stroke:var(--edge-default);stroke-width:2;fill:none;transition:stroke .25s, stroke-width .25s;}
+.graph-edge.tree{stroke:var(--edge-tree);stroke-width:3.5;}
+.graph-edge.exploring{stroke:var(--edge-explore);stroke-width:3.5;stroke-dasharray:5 4;animation:dash 1s linear infinite;}
+.graph-edge.mst{stroke:var(--edge-mst);stroke-width:4;}
+.graph-edge.path{stroke:var(--accent);stroke-width:4;}
+.graph-edge.dotted{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 4;}
+@keyframes dash{to{stroke-dashoffset:-18;}}
+
+.edge-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;fill:var(--ink);pointer-events:none;}
+.edge-label-bg{fill:#fafafa;stroke:#ececec;stroke-width:1;}
+
+.graph-node{cursor:pointer;}
+.graph-node circle{fill:var(--node-white);stroke:var(--ink);stroke-width:2;transition:fill .25s, stroke .25s, r .2s;}
+.graph-node.gray circle{fill:var(--node-gray);}
+.graph-node.black circle{fill:var(--node-black);stroke:var(--node-black);}
+.graph-node.current circle{fill:var(--node-current);stroke:#d68910;stroke-width:3;}
+.graph-node.start circle{fill:var(--node-start);stroke:#7d3c98;stroke-width:3;}
+.graph-node.found circle{fill:var(--node-found);stroke:#117a65;stroke-width:3;}
+.graph-node.in-mst circle{fill:#82e0aa;stroke:var(--accent3);stroke-width:3;}
+.graph-node text.node-key{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.graph-node.black text.node-key{fill:#fff;}
+.graph-node.current text.node-key{fill:#fff;}
+.graph-node.start text.node-key{fill:#fff;}
+.graph-node.found text.node-key{fill:#fff;}
+.graph-node text.node-meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent);text-anchor:middle;pointer-events:none;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.btn-toggle{background:var(--accent2);color:#fff;}
+.btn-toggle:hover{background:#1f2e5f;}
+.btn-toggle.off{background:#bbb;color:#555;}
+.btn-shuffle{background:#8e44ad;color:#fff;}
+.btn-shuffle:hover{background:#6c3485;}
+
+/* Slider row */
+.slider-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;background:var(--paper);border-radius:8px;margin-bottom:.5rem;}
+.slider-row .slider-label{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent2);font-weight:600;min-width:60px;}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent3);height:5px;cursor:pointer;}
+.slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;min-width:60px;text-align:right;}
+
+/* Side panel */
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+.info-card .ic-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.83rem;padding:.2rem 0;}
+.info-card .ic-label{color:var(--muted);}
+.info-card .ic-value{color:var(--ink);font-weight:600;}
+.info-card .ic-value.highlight{color:var(--accent);}
+.info-card .ic-value.big{font-size:1.4rem;color:var(--accent2);}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;}
+.stat-tile{background:var(--paper);border-radius:8px;padding:.5rem .7rem;text-align:center;}
+.stat-tile .stat-label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+.stat-tile .stat-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--accent2);}
+
+/* Queue / Stack / PQ visualization */
+.ds-display{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--paper);border-radius:6px;padding:.5rem .7rem;min-height:36px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;border:1px dashed var(--card-border);}
+.ds-display .ds-empty{color:var(--muted);font-style:italic;}
+.ds-item{background:var(--accent2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:600;}
+.ds-item.front{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.top{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.pq{background:var(--accent3);}
+.ds-item.pq.min{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-arrow{color:var(--muted);}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid var(--node-current);padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+.pseudo-code .str{color:#f1fa8c;}
+
+/* Adjacency table */
+.adj-display{margin:.5rem 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.adj-matrix{border-collapse:collapse;margin:.5rem auto;}
+.adj-matrix td,.adj-matrix th{border:1px solid var(--card-border);padding:6px 10px;text-align:center;min-width:34px;background:#fff;}
+.adj-matrix th{background:var(--accent2);color:#fff;font-weight:700;}
+.adj-matrix td.zero{color:#ccc;}
+.adj-matrix td.nonzero{background:#eafaf1;color:var(--accent3);font-weight:700;}
+.adj-matrix td.highlight{background:#fff3cd;}
+.adj-list{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:.7rem 1rem;}
+.adj-list .adj-row{padding:3px 0;border-bottom:1px dashed var(--card-border);}
+.adj-list .adj-row:last-child{border-bottom:none;}
+.adj-list .adj-key{color:var(--accent);font-weight:700;display:inline-block;min-width:32px;}
+.adj-list .adj-arrow{color:var(--muted);margin:0 6px;}
+.adj-list .adj-neighbor{background:#eef2ff;color:var(--accent2);padding:1px 8px;border-radius:4px;margin:1px 3px;display:inline-block;font-weight:600;}
+
+/* Chess board for Knight's tour */
+.chess-board{display:grid;background:#fff;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin:.5rem auto;width:fit-content;}
+.chess-cell{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;position:relative;transition:background .2s;}
+.chess-cell.light{background:#f0d9b5;color:#666;}
+.chess-cell.dark{background:#b58863;color:#fff;}
+.chess-cell.visited{background:#27ae60 !important;color:#fff;}
+.chess-cell.current{background:#f39c12 !important;color:#fff;box-shadow:inset 0 0 0 3px #d68910;}
+.chess-cell.start{background:#9b59b6 !important;color:#fff;}
+.chess-cell .knight{font-size:1.4em;line-height:1;}
+.chess-cell .step-num{font-size:.7em;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box.purple{background:#f4ecf7;border-color:#8e44ad;}
+.info-box.purple .info-label{background:#8e44ad;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+.pill-gray{background:rgba(0,0,0,.06);color:var(--muted);border:1px solid rgba(0,0,0,.12);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+.legend-item{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .5rem;background:var(--paper);border-radius:5px;}
+.legend-item .lg-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);}
+.legend-item .lg-edge{width:18px;height:3px;border-radius:2px;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0;}
+.quiz-opt{display:flex;align-items:center;gap:.6rem;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;font-size:.86rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-letter{font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.wrong{background:#fef5e7;border-color:var(--accent);}
+.quiz-opt.wrong .opt-letter{color:var(--accent);}
+.quiz-feedback{margin-top:.7rem;padding:.7rem 1rem;border-radius:8px;font-size:.88rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#eafaf1;color:var(--accent3);border-left:4px solid var(--accent3);}
+.quiz-feedback.wrong{background:#fef5e7;color:var(--accent);border-left:4px solid var(--accent);}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:30px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+
+/* Distance / table inside graph viz */
+.vert-table{margin-top:.6rem;width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.vert-table th,.vert-table td{padding:4px 6px;text-align:center;border:1px solid var(--card-border);}
+.vert-table th{background:var(--accent2);color:#fff;font-weight:600;font-size:.74rem;}
+.vert-table td.tcell-current{background:#fff3cd;font-weight:700;color:var(--accent);}
+.vert-table td.tcell-done{background:#eafaf1;color:var(--accent3);}
+.vert-table td.tcell-inf{color:#ccc;}
+.sec-badge{font-size:.6em;color:var(--muted);border:1px solid var(--card-border);background:var(--card);padding:2px 10px;border-radius:999px;vertical-align:middle;margin-left:.6rem;font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.02em;white-space:nowrap;}
+
+/* Phase 8 shared widgets */
+.bs-stack{display:flex;flex-direction:column-reverse;align-items:center;gap:4px;min-height:180px;justify-content:flex-start;padding:.6rem;}
+.bs-item{width:110px;text-align:center;padding:.4rem .6rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.bs-hl{background:#f39c12;}
+.bs-toplabel,.bq-label{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.bq-row{display:flex;align-items:center;gap:6px;min-height:64px;flex-wrap:wrap;padding:.4rem;}
+.bq-item{min-width:52px;text-align:center;padding:.45rem .5rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.char-strip{display:flex;gap:3px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;padding:.4rem 0;}
+.char-cell{min-width:30px;text-align:center;padding:.35rem .25rem;border:1px solid var(--card-border);border-radius:5px;background:var(--card);}
+.char-cur{background:#f39c12;color:#fff;border-color:#f39c12;}
+.char-done{background:#e8f5ec;color:#1a6b4a;border-color:#bfe3cd;}
+.char-bad{background:#c0392b;color:#fff;border-color:#c0392b;}
+.token-out{display:flex;gap:4px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;min-height:40px;padding:.3rem 0;}
+.tok{padding:.3rem .55rem;border-radius:5px;background:#2c3e7a;color:#fff;font-weight:600;}
+.tok-op{background:#8e44ad;}
+.tok-new{outline:3px solid #f39c12;}
+.mono{font-family:'JetBrains Mono',monospace;}
+/* ===== 網站化附加樣式（study-guide / flashcards / chapter-nav）===== */
+.study-guide{background:var(--card);border:1px solid var(--card-border);border-left:5px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:0 0 2.2rem;}
+.study-guide .sg-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:1.5px;color:var(--accent3);margin-bottom:.5rem;}
+.study-guide p{font-size:.92rem;margin-bottom:.5rem;}
+.study-guide .sg-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+.study-guide .sg-links a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:var(--accent2);border:1px solid var(--card-border);border-radius:999px;padding:.3rem .85rem;text-decoration:none;transition:all .2s;}
+.study-guide .sg-links a:hover{background:var(--accent2);color:#fff;}
+.fc-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.fc-controls button{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:1px solid var(--card-border);cursor:pointer;background:var(--card);color:var(--ink);transition:all .2s;}
+.fc-controls button:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.fc-card{perspective:900px;height:170px;cursor:pointer;}
+.fc-card .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-card .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.fc-card .fc-front{background:linear-gradient(150deg,var(--accent2),var(--ink));color:#fff;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.fc-card .fc-front .fc-hint{font-size:.62rem;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.fc-card .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:2.5rem 0 1rem;}
+.chapter-nav a{display:block;border:1px solid var(--card-border);border-radius:12px;padding:.8rem 1.1rem;text-decoration:none;color:var(--ink);background:var(--card);transition:all .2s;}
+.chapter-nav a:hover{border-color:var(--accent2);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:.2rem;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.95rem;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+.chapter-nav a.home{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+@media(max-width:700px){.chapter-nav{grid-template-columns:1fr;}}
+/* ===== 講義範例卡 ===== */
+.deck-extra{margin:1.2rem 0;}
+.deck-extra .dx-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--accent3);margin-bottom:.4rem;}
+.deck-extra .dx-note{font-size:.9rem;margin-top:.6rem;}
+.expected-out{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);border-radius:0 8px 8px 0;padding:.5rem .9rem;margin-top:.5rem;}
+.expected-out .eo-tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--accent3);display:block;margin-bottom:.2rem;}
+.expected-out pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.55;white-space:pre-wrap;margin:0;}
+.warn-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem;}
+.warn-box b{color:var(--accent);}
+
+/* ============================================================
+   統計學習自學站附加樣式
+   base.css 是從資料結構自學站沿用的共用設計系統，維持不動；
+   這個區塊是統計學習需要的新元件與兩處修正，append-only。
+   ============================================================ */
+
+/* 統計視覺化用的色票（base.css 的 --node-* / --edge-* 保留不動） */
+:root {
+  --pt-train:#2c3e7a;      /* 訓練樣本 */
+  --pt-test:#c0392b;       /* 測試樣本 */
+  --pt-held:#f39c12;       /* 被留作驗證的樣本 */
+  --pt-a:#2c3e7a;          /* 類別 A */
+  --pt-b:#c0392b;          /* 類別 B */
+  --pt-c:#1a6b4a;          /* 類別 C */
+  --fit-line:#c0392b;      /* 配適線／決策邊界 */
+  --fit-true:#1a6b4a;      /* 真實函數／Bayes 邊界 */
+  --resid:#8e44ad;         /* 殘差線段 */
+  --band:rgba(44,62,122,.13);   /* 信賴帶 */
+  --regionA:rgba(44,62,122,.13);
+  --regionB:rgba(192,57,43,.13);
+  --regionC:rgba(26,107,74,.13);
+  --grid-line:#e8e2d6;
+}
+
+/* ---- 修正 base.css：裸 .btn 沒有 background，會變成瀏覽器預設灰 ---- */
+.btn{background:var(--accent2);color:#fff;}
+.btn:hover{filter:brightness(1.12);}
+.btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
+
+/* ---- 修正 base.css：.status-banner 是深色底（--code-bg），
+       但 base.css 的 strong{color:var(--ink)} 是深墨色，疊上去幾乎看不見 ---- */
+.status-banner strong,.status-banner b{color:#fff;font-weight:700;}
+.status-banner code{background:rgba(255,255,255,.14);color:#ffe9a8;}
+
+/* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
+.qa-box{margin:1.4rem 0;}
+.qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;color:var(--accent);margin-bottom:.6rem;}
+.qa-item{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--accent2);
+  border-radius:8px;margin-bottom:.6rem;overflow:hidden;}
+.qa-item>summary{cursor:pointer;padding:.75rem 1rem;font-weight:500;color:var(--accent2);
+  list-style:none;display:flex;gap:.5rem;align-items:baseline;transition:background .15s;}
+.qa-item>summary::-webkit-details-marker{display:none;}
+.qa-item>summary::before{content:'▸';color:var(--accent);flex:none;transition:transform .15s;}
+.qa-item[open]>summary::before{transform:rotate(90deg);}
+.qa-item>summary:hover{background:var(--highlight);}
+.qa-item[open]>summary{border-bottom:1px solid var(--card-border);}
+.qa-a{padding:.9rem 1rem 1rem 1.9rem;font-size:.95rem;}
+.qa-a p{margin-bottom:.7rem;}
+.qa-a p:last-child{margin-bottom:0;}
+.qa-a ul,.qa-a ol{margin:.4rem 0 .7rem 1.2rem;}
+.qa-a li{margin-bottom:.3rem;}
+
+/* ---- 出處標記：可機器檢查的 grounding ---- */
+.dx-src{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--muted);margin-top:.5rem;letter-spacing:.02em;}
+.dx-src a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+
+/* ---- Chart.js 畫布容器 + 離線退路 ---- */
+.chart-wrap{position:relative;width:100%;height:300px;background:#fafafa;border-radius:8px;
+  border:1px solid #ececec;padding:.4rem;}
+.chart-wrap.tall{height:380px;}
+.chart-wrap.square{height:330px;max-width:360px;margin:0 auto;}
+.chart-wrap canvas{display:block;width:100%!important;height:100%!important;}
+.chart-fallback{position:absolute;inset:.4rem;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1.2rem;font-size:.86rem;line-height:1.7;color:var(--muted);
+  background:var(--card);border-radius:6px;}
+.chart-wrap.ready .chart-fallback{display:none;}
+.chart-fallback b{display:block;color:var(--accent2);margin-bottom:.4rem;font-size:.9rem;}
+
+/* ---- 混淆矩陣（是表格，不是圖表） ---- */
+.cm-table{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.82rem;margin:.6rem 0;}
+.cm-table th,.cm-table td{border:1px solid var(--card-border);padding:.45rem .7rem;text-align:center;}
+.cm-table thead th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);}
+.cm-table tbody th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);
+  text-align:right;font-weight:600;}
+.cm-table .cm-tp{background:rgba(26,107,74,.14);font-weight:700;}
+.cm-table .cm-tn{background:rgba(26,107,74,.08);font-weight:700;}
+.cm-table .cm-fp{background:rgba(192,57,43,.12);}
+.cm-table .cm-fn{background:rgba(192,57,43,.18);font-weight:700;}
+.cm-note{font-size:.8rem;color:var(--muted);}
+
+/* ---- ESL 進階：可略過的標記 ---- */
+.eslx{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+  letter-spacing:.1em;color:#fff;background:#8e44ad;padding:.1rem .45rem;border-radius:3px;
+  margin-left:.5rem;vertical-align:.1em;}
+.skip-note{font-size:.82rem;color:var(--muted);margin:-.4rem 0 1rem;}
+
+/* ---- 環境版本註記 ---- */
+.ver-note{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;color:var(--muted);
+  background:var(--paper);border:1px dashed var(--card-border);border-radius:6px;
+  padding:.6rem .9rem;margin-top:1.2rem;}
+
+/* ---- 解答連結 pill 排 ---- */
+.sol-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+.sol-links a{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:600;
+  color:var(--accent2);background:var(--card);border:1px solid var(--card-border);
+  border-radius:999px;padding:.35rem .8rem;text-decoration:none;transition:all .15s;}
+.sol-links a:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* ---- 資料點圖例（SVG 元件共用） ---- */
+.viz-legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.5rem;font-size:.78rem;color:var(--muted);}
+.viz-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.viz-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;}
+.viz-legend i.sq{border-radius:2px;}
+.viz-legend i.ln{width:18px;height:0;border-top:3px solid;border-radius:0;}
+
+/* ---- SVG 元件共用樣式 ---- */
+.viz-svg{width:100%;display:block;background:#fafafa;border-radius:8px;border:1px solid #ececec;}
+.viz-svg .ax{stroke:var(--muted);stroke-width:1;}
+.viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
+.viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .dot{stroke:#fff;stroke-width:1;}
+.viz-svg .dot.drag{cursor:grab;}
+.viz-svg .dot.drag:active{cursor:grabbing;}
+.viz-svg .fit{stroke:var(--fit-line);stroke-width:2.5;fill:none;}
+.viz-svg .truef{stroke:var(--fit-true);stroke-width:2;fill:none;stroke-dasharray:6 4;}
+.viz-svg .resid{stroke:var(--resid);stroke-width:1.2;stroke-dasharray:2 2;}
+.viz-svg .band{fill:var(--band);stroke:none;}
+.viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
+.viz-svg text{user-select:none;}
+
+/* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
+.strip .cell{width:20px;height:20px;border-radius:3px;background:var(--card);
+  border:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;}
+.strip .cell.train{background:var(--pt-train);border-color:var(--pt-train);color:#fff;}
+.strip .cell.held{background:var(--pt-held);border-color:#d68910;color:#fff;font-weight:700;}
+.strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
+
+/* ---- 長內容自己橫向滾動，頁面本體絕不橫向滾動 ---- */
+/* 最後一道保險。該滑的東西（程式碼、公式、表格、圖表）下面都各自有 overflow-x:auto，
+   這一條只負責攔住漏網的幾十個 px——多半來自 MathJax 內部的 mjx-mtable，
+   那是它自己排版出來的盒子，我們沒有選擇器能乾淨地限制它。
+   用 clip 不用 hidden：clip 不會把 body 變成 scroll container，
+   position:fixed 的浮動導覽與 scroll-behavior:smooth 都不受影響。 */
+html,body{overflow-x:clip;}
+/* 程式碼行不換行（.line{white-space:pre}），所以區塊自己要能滑 */
+.pseudo-code{overflow-x:auto;}
+/* MathJax 的行間公式在窄螢幕會撐爆版面，讓它自己可以橫向滑動。
+   注意 !important 是必要的：MathJax 3 是在 runtime 把自己的樣式表 append 到 <head>
+   最後面，比這個 inline <style> 晚，所以同權重的 max-width 會被它蓋掉。
+   帶 \tag{} 的公式更明顯——它會 render 成一個 mjx-mtable，寬度動輒 500–800px。 */
+/* min-width 也要蓋掉：MathJax 對帶 \tag{} 的公式會在 mjx-container 上設 inline
+   min-width（用來把式號推到右緣），min-width 的優先權高於 max-width，
+   所以只寫 max-width 完全沒用——容器還是會撐到 500–800px。 */
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding-bottom:.25rem;
+  max-width:100%!important;min-width:0!important;}
+mjx-container:not([display="true"]){max-width:100%;overflow-x:auto;overflow-y:hidden;}
+mjx-container::-webkit-scrollbar{height:5px;}
+mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px;}
+.expected-out pre{overflow-x:auto;}
+.strip{overflow-x:auto;}
+
+/* ---- 手機版 ---- */
+@media(max-width:700px){
+  .chart-wrap{height:250px;}
+  .chart-wrap.tall{height:300px;}
+  .qa-a{padding-left:1rem;}
+  .viz-svg{min-width:0;}
+  .big-formula{font-size:.85rem;word-break:break-word;}
+  /* 窄螢幕改成左靠：置中的公式一旦比容器寬，捲軸起點會落在被裁掉的左半邊 */
+  mjx-container[display="true"]{justify-content:flex-start!important;}
+}
+
+/* ---- 尊重使用者的減少動態偏好 ---- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;}
+}
+
+/* ---- 列印：隱藏浮動導覽與控制列，深色區塊轉淺 ---- */
+@media print{
+  .float-nav,.controls-bar,.hero-grid,.hero-graph,.scroll-hint,.fc-controls{display:none!important;}
+  .hero{min-height:auto;background:#fff!important;color:var(--ink)!important;padding:1.5rem 0;}
+  .hero h1,.hero .subtitle{color:var(--ink)!important;}
+  .hero .big-formula{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--card-border)!important;}
+  .pseudo-code,.status-banner{background:var(--paper)!important;color:var(--ink)!important;}
+  .pseudo-code .kw,.pseudo-code .fn,.pseudo-code .str,.pseudo-code .num,.pseudo-code .com{color:var(--ink)!important;}
+  .qa-item{break-inside:avoid;}
+  .qa-item>summary::before{content:'';}
+  .qa-a{display:block!important;}
+  section{break-after:auto;border-bottom:none;}
+  a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
+}
+</style>
+</head>
+<!-- GEN:END head -->
+<body>
+<!-- GEN:BEGIN floatnav -->
+<nav class="float-nav" id="floatNav" aria-label="章節導覽">
+  <div class="fn-title">章節導覽</div>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">先能跑，再談其他</span></a>
+  <a href="#colab" data-target="colab"><span class="fn-num">P01</span><span class="fn-name">Colab 工作流</span></a>
+  <a href="#imports" data-target="imports"><span class="fn-num">P02</span><span class="fn-name">imports 那一格</span></a>
+  <a href="#data" data-target="data"><span class="fn-num">P03</span><span class="fn-name">資料放哪裡</span></a>
+  <a href="#local" data-target="local"><span class="fn-num">P04</span><span class="fn-name">本機安裝</span></a>
+  <a href="#trouble" data-target="trouble"><span class="fn-num">P05</span><span class="fn-name">跑不動的時候</span></a>
+  <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
+  <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
+</nav>
+<!-- GEN:END floatnav -->
+<!-- GEN:BEGIN hero -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+<g fill="#fff" opacity=".8"><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(0 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(45 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(90 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(135 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(180 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(225 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(270 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(315 167 140)"/><circle cx="167" cy="140" r="58"/></g><circle cx="167" cy="140" r="28" fill="#2b3a67" opacity=".9"/><g stroke="#fff" stroke-width="4" fill="none" opacity=".9"><path d="M250 96 l 16 16 l 30 -32"/><path d="M250 156 l 16 16 l 30 -32"/><path d="M250 216 l 16 16 l 30 -32"/></g>
+  </svg>
+  <div class="hero-content">
+    <h1>把<span class="blue">環境</span>準備好：三分鐘上手</h1>
+    <div class="subtitle">課前準備 B — 選讀，不列入評分</div>
+    <div class="big-formula">Colab 開了就能跑｜%pip install ISLP｜imports 一格｜掛 Drive 讀資料｜本機 conda 對齊版本｜儲存格亂序執行是最常見的假故障</div>
+    <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
+  </div>
+</div>
+<!-- GEN:END hero -->
+<div class="container">
+<!-- GEN:BEGIN studyguide -->
+<div class="study-guide">
+  <div class="sg-title">📌 本頁使用方式（先備 · 環境）</div>
+  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
+  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+</div>
+<!-- GEN:END studyguide -->
+<!-- GEN:BEGIN toc -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · 內容目錄</div>
+  <div class="toc-grid">
+    <a href="#prologue"><span class="toc-num">P00</span>先能跑，再談其他</a>
+    <a href="#colab"><span class="toc-num">P01</span>Colab 工作流</a>
+    <a href="#imports"><span class="toc-num">P02</span>imports 那一格</a>
+    <a href="#data"><span class="toc-num">P03</span>資料放哪裡</a>
+    <a href="#local"><span class="toc-num">P04</span>本機安裝</a>
+    <a href="#trouble"><span class="toc-num">P05</span>跑不動的時候</a>
+    <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
+    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
+  </div>
+</div>
+<!-- GEN:END toc -->
+<section id="prologue">
+<!-- GEN:BEGIN sec:prologue -->
+  <div class="section-number">PROLOGUE · 開場</div>
+  <h2>三分鐘從零到跑出第一張圖 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–5</span></h2>
+<!-- GEN:END sec:prologue -->
+
+  <p>環境這件事有一個常見的誤區：想先把最完整的設定弄好，再開始學。
+  結果是花了一個下午裝東西，一行統計程式都還沒跑過。
+  <strong>順序反過來</strong>——先用三分鐘在瀏覽器裡跑出第一張圖，
+  等你確定要長期用了，再回來做本機安裝。</p>
+
+<div class="info-box">
+  <span class="info-label">三分鐘版本</span>
+  ① 開 <a href="https://colab.research.google.com/" target="_blank" rel="noopener">Colab</a>；② 新增一個 notebook；③ 第一格貼 <code>%pip install ISLP</code> 按執行；④ 第二格貼課程 lab 的 imports；⑤ 開始跑。就這樣。
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w13pathSvg" height="320"></svg>
+      <div class="status-banner" id="w13paStatus"><span class="status-icon">›</span><span class="status-text">三條路，先看它們各自的代價。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13paSet(0)">① Colab（推薦）</button><button class="btn btn-toggle" onclick="w13paSet(1)">② 本機 conda</button><button class="btn btn-toggle" onclick="w13paSet(2)">③ 本機 pip + venv</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">三條路，先選最上面那條</div>
+      按按鈕比較三種環境。第一次上手<strong>一律選 Colab</strong>，它零安裝而且跟課程 lab 的環境最接近。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這一條路</div>
+      <div class="ic-row"><span class="ic-label">要花多久</span><span class="ic-value" id="w13paTime">—</span></div><div class="ic-row"><span class="ic-label">好處</span><span class="ic-value" id="w13paPro">—</span></div><div class="ic-row"><span class="ic-label">代價</span><span class="ic-value" id="w13paCon">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">為什麼不建議一開始就裝本機</div>
+      本機安裝會遇到的問題（權限、路徑、版本衝突）跟統計學習一點關係都沒有，但它們很會消耗你的耐心。<strong>把耐心留給真正的課程內容。</strong>
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">裝課程用的套件</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">%pip install ISLP</span></div>
+  <p class="dx-note"><code>%pip</code> 開頭的百分比符號是 Jupyter 的魔術指令，意思是「裝到<strong>這個 notebook 正在用的</strong> Python 裡」——比在終端機打 <code>pip install</code> 保險。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 3</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">ISLP 會順便裝一整套相依</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">%pip install ISLP</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Collecting ISLP
+  Downloading ISLP-0.4.0-py3-none-any.whl.metadata (7.0 kB)
+Requirement already satisfied: numpy&gt;=1.7.1 in /usr/local/lib/python3.12/dist-packages (from ISLP) (2.0.2)
+Requirement already satisfied: scipy&gt;=0.9 in /usr/local/lib/python3.12/dist-packages (from ISLP) (1.16.1)
+Requirement already satisfied: pandas&gt;=0.20 in /usr/local/lib/python3.12/dist-packages (from ISLP) (2.2.2)
+Requirement already satisfied: lxml in /usr/local/lib/python3.12/dist-packages (from ISLP) (5.4.0)
+Requirement already satisfied: scikit-learn&gt;=1.2 in /usr/local/lib/python3.12/dist-packages (from ISLP) (1.6.1)
+Requirement already satisfied: joblib in /usr/local/lib/python3.12/dist-packages (from ISLP) (1.5.2)
+Requirement already satisfied: statsmodels&gt;=0.13 in /usr/local/lib/python3.12/dist-packages (from ISLP) (0.14.5)
+Collecting lifelines (from ISLP)
+  Downloading lifelines-0.30.0-py3-none-any.whl.metadata (3.2 kB)
+Collecting pygam (from ISLP)
+  Downloading pygam-0.10.1-py3-none-any.whl.metadata (9.7 kB)
+Requirement already satisfied: torch in /usr/local/lib/python3.12/dist-packages (from ISLP) (2.8.0+cu126)
+Collecting pytorch-lightning (from ISLP)
+  Downloading pytorch_lightning-2.5.5-py3-none-any.whl.metadata (20 kB)
+Collecting torchmetrics (from ISLP)
+  Downloading torchmetrics-1.8.2-py3-none-any.whl.metadata (22 kB)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas&gt;=0.20-&gt;ISLP) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas&gt;=0.20-&gt;ISLP) (2025.2)
+Requirement already satisfied: tzdata&gt;=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas&gt;=0.20-&gt;ISLP) (2025.2)
+Requirement already satisfied: threadpoolctl&gt;=3.1.0 in /usr/local/lib/python3.12/dist-packages (from scikit-learn&gt;=1.2-&gt;ISLP) (3.6.0)
+Requirement already satisfied: patsy&gt;=0.5.6 in /usr/local/lib/python3.12/dist-packages (from statsmodels&gt;=0.13-&gt;ISLP) (1.0.1)
+Requirement already satisfied: packaging&gt;=21.3 in /usr/local/lib/python3.12/dist-packages (from statsmodels&gt;=0.13-&gt;ISLP) (25.0)
+Requirement already satisfied: matplotlib&gt;=3.0 in /usr/local/lib/python3.12/dist-packages (from lifelines-&gt;ISLP) (3.10.0)
+Requirement already satisfied: autograd&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from lifelines-&gt;ISLP) (1.8.0)
+Collecting autograd-gamma&gt;=0.3 (from lifelines-&gt;ISLP)
+  Downloading autograd-gamma-0.5.0.tar.gz (4.0 kB)
+  Preparing metadata (setup.py) ... [?25l[?25hdone
+Collecting formulaic&gt;=0.2.2 (from lifelines-&gt;ISLP)
+  Downloading formulaic-1.2.0-py3-none-any.whl.metadata (7.0 kB)
+Requirement already satisfied: progressbar2&lt;5,&gt;=4.2.0 in /usr/local/lib/python3.12/dist-packages (from pygam-&gt;ISLP) (4.5.0)
+Requirement already satisfied: tqdm&gt;=4.57.0 in /usr/local/lib/python3.12/dist-packages (from pytorch-lightning-&gt;ISLP) (4.67.1)
+Requirement already satisfied: PyYAML&gt;5.4 in /usr/local/lib/python3.12/dist-packages (from pytorch-lightning-&gt;ISLP) (6.0.2)
+Requirement already satisfied: fsspec&gt;=2022.5.0 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (2025.3.0)
+Requirement already satisfied: typing-extensions&gt;4.5.0 in /usr/local/lib/python3.12/dist-packages (from pytorch-lightning-&gt;ISLP) (4.15.0)
+Collecting lightning-utilities&gt;=0.10.0 (from pytorch-lightning-&gt;ISLP)
+  Downloading lightning_utilities-0.15.2-py3-none-any.whl.metadata (5.7 kB)
+Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.19.1)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (75.2.0)
+Requirement already satisfied: sympy&gt;=1.13.3 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (1.13.3)
+Requirement already satisfied: networkx in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.5)
+Requirement already satisfied: jinja2 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.1.6)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.77)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.77)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.6.80 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.80)
+Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (9.10.2.21)
+Requirement already satisfied: nvidia-cublas-cu12==12.6.4.1 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.4.1)
+Requirement already satisfied: nvidia-cufft-cu12==11.3.0.4 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (11.3.0.4)
+Requirement already satisfied: nvidia-curand-cu12==10.3.7.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (10.3.7.77)
+Requirement already satisfied: nvidia-cusolver-cu12==11.7.1.2 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (11.7.1.2)
+Requirement already satisfied: nvidia-cusparse-cu12==12.5.4.2 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.5.4.2)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (0.7.1)
+Requirement already satisfied: nvidia-nccl-cu12==2.27.3 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (2.27.3)
+Requirement already satisfied: nvidia-nvtx-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.77)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.6.85 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.85)
+Requirement already satisfied: nvidia-cufile-cu12==1.11.1.6 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (1.11.1.6)
+Requirement already satisfied: triton==3.4.0 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.4.0)
+Collecting interface-meta&gt;=1.2.0 (from formulaic&gt;=0.2.2-&gt;lifelines-&gt;ISLP)
+  Downloading interface_meta-1.3.0-py3-none-any.whl.metadata (6.7 kB)
+Requirement already satisfied: narwhals&gt;=1.17 in /usr/local/lib/python3.12/dist-packages (from formulaic&gt;=0.2.2-&gt;lifelines-&gt;ISLP) (2.3.0)
+Requirement already satisfied: wrapt&gt;=1.0 in /usr/local/lib/python3.12/dist-packages (from formulaic&gt;=0.2.2-&gt;lifelines-&gt;ISLP) (1.17.3)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (3.12.15)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (1.3.3)
+Requirement already satisfied: cycler&gt;=0.10 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (4.59.2)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (1.4.9)
+Requirement already satisfied: pillow&gt;=8 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (11.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (3.2.3)
+Requirement already satisfied: python-utils&gt;=3.8.1 in /usr/local/lib/python3.12/dist-packages (from progressbar2&lt;5,&gt;=4.2.0-&gt;pygam-&gt;ISLP) (3.9.1)
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=0.20-&gt;ISLP) (1.17.0)
+Requirement already satisfied: mpmath&lt;1.4,&gt;=1.1.0 in /usr/local/lib/python3.12/dist-packages (from sympy&gt;=1.13.3-&gt;torch-&gt;ISLP) (1.3.0)
+Requirement already satisfied: MarkupSafe&gt;=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2-&gt;torch-&gt;ISLP) (3.0.2)
+Requirement already satisfied: aiohappyeyeballs&gt;=2.5.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (2.6.1)
+Requirement already satisfied: aiosignal&gt;=1.4.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (1.4.0)
+Requirement already satisfied: attrs&gt;=17.3.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (25.3.0)
+Requirement already satisfied: frozenlist&gt;=1.1.1 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (1.7.0)
+Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (6.6.4)
+Requirement already satisfied: propcache&gt;=0.2.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (0.3.2)
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.17.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (1.20.1)
+Requirement already satisfied: idna&gt;=2.0 in /usr/local/lib/python3.12/dist-packages (from yarl&lt;2.0,&gt;=1.17.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (3.10)
+Downloading ISLP-0.4.0-py3-none-any.whl (3.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 23.8 MB/s eta 0:00:00
+[?25hDownloading lifelines-0.30.0-py3-none-any.whl (349 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 349.3/349.3 kB 33.8 MB/s eta 0:00:00
+[?25hDownloading pygam-0.10.1-py3-none-any.whl (80 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.2/80.2 kB 10.1 MB/s eta 0:00:00
+[?25hDownloading pytorch_lightning-2.5.5-py3-none-any.whl (832 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 832.4/832.4 kB 51.8 MB/s eta 0:00:00
+[?25hDownloading torchmetrics-1.8.2-py3-none-any.whl (983 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 983.2/983.2 kB 58.8 MB/s eta 0:00:00
+[?25hDownloading formulaic-1.2.0-py3-none-any.whl (117 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 117.2/117.2 kB 15.1 MB/s eta 0:00:00
+[?25hDownloading lightning_utilities-0.15.2-py3-none-any.whl (29 kB)
+Downloading interface_meta-1.3.0-py3-none-any.whl (14 kB)
+Building wheels for collected packages: autograd-gamma
+  Building wheel for autograd-gamma (setup.py) ... [?25l[?25hdone
+  Created wheel for autograd-gamma: filename=autograd_gamma-0.5.0-py3-none-any.whl size=4030 sha256=e83a92da55e75c46943e5e8343f5777f801f985bb6b70c5e2c7340a3f03c6b07
+  Stored in directory: /root/.cache/pip/wheels/50/37/21/0a719b9d89c635e89ff24bd93b862882ad675279552013b2fb
+Successfully built autograd-gamma
+Installing collected packages: lightning-utilities, interface-meta, autograd-gamma, pygam, formulaic, torchmetrics, lifelines, pytorch-lightning, ISLP
+Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface-meta-1.3.0 lifelines-0.30.0 lightning-utilities-0.15.2 pygam-0.10.1 pytorch-lightning-2.5.5 torchmetrics-1.8.2</pre></div>
+  <p class="dx-note">輸出很長，因為 numpy、pandas、scikit-learn、statsmodels 都是它的相依。裝完 Colab 可能會叫你重啟執行階段，照做。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 8</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 00 · 自我檢測</div>
+  <p>你第一次要跑課程的 lab，手邊只有一台學校的公用電腦。最合理的做法是？</p>
+  <div class="quiz-options" id="qPathOptions"><div class="quiz-opt" data-correct="true" data-fb="對。公用電腦多半沒有安裝權限，而且你也不會想把環境留在別人的機器上。Colab 把環境放在雲端，換一台電腦照樣接得上。" onclick="quizCheck('qPath', this)"><span class="opt-letter">(A)</span> 用 Colab，登入自己的 Google 帳號</div><div class="quiz-opt" data-correct="false" data-fb="多半裝不了（沒有管理員權限），就算裝得了，下次換一台又要重來。" onclick="quizCheck('qPath', this)"><span class="opt-letter">(B)</span> 在公用電腦上裝 Anaconda</div><div class="quiz-opt" data-correct="false" data-fb="在跑過第一張圖之前，你還不知道自己需要什麼規格。先用免費的把課上完。" onclick="quizCheck('qPath', this)"><span class="opt-letter">(C)</span> 先買一台自己的電腦</div></div>
+  <div class="quiz-feedback" id="qPathFeedback"></div>
+</div>
+</section>
+<section id="colab">
+<!-- GEN:BEGIN sec:colab -->
+  <div class="section-number">PART 01 · Colab 工作流</div>
+  <h2>開瀏覽器就有，但關掉就沒了 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–4</span></h2>
+<!-- GEN:END sec:colab -->
+
+  <p>Colab 是跑在 Google 機器上的 Jupyter notebook。它的好處是零安裝、有免費 GPU；
+  代價是<strong>執行階段（runtime）會被回收</strong>——閒置太久或關掉分頁之後，
+  你裝的套件與記憶體裡的變數都會消失，程式碼本身則存在你的 Drive 裡不會掉。</p>
+
+<div class="info-box warm">
+  <span class="info-label">最常見的一個誤會</span>
+  「我明明裝過 ISLP 了，怎麼又說找不到？」——因為那是<strong>上一個執行階段</strong>裝的。重新連線之後要再跑一次 <code>%pip install ISLP</code>。把它留在 notebook 的第一格，就不會忘。
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">Colab 上的加速選項</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">%load_ext cudf.pandas</span>
+  <span class="line">%load_ext cuml.accel</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>cuML: Accelerator installed.</pre></div>
+  <p class="dx-note">這兩行是課程 lab 拿來開 GPU 加速的（<code>cudf</code> 加速 pandas、<code>cuml</code> 加速 scikit-learn）。本機沒有 NVIDIA 顯卡的話會失敗，<strong>刪掉這兩行照樣能跑</strong>，只是慢一點。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 4</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w13cellSvg" height="340"></svg>
+      <div class="status-banner" id="w13clStatus"><span class="status-icon">›</span><span class="status-text">先按「由上到下」，再按「亂序執行」。</span></div>
+      <div class="controls-bar"><button class="btn btn-play" onclick="w13clRun(0)">▶ 由上到下</button><button class="btn btn-step" onclick="w13clRun(1)">亂序執行</button><button class="btn btn-reset" onclick="w13clReset()">重啟並全部重跑</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">按亂序執行看看</div>
+      notebook 的儲存格<strong>可以照任何順序執行</strong>，而且左邊的編號記錄的是「第幾次執行」不是「第幾格」。按「亂序執行」，看變數變成什麼。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">執行順序</span><span class="ic-value" id="w13clOrder">—</span></div><div class="ic-row"><span class="ic-label">x 的值</span><span class="ic-value" id="w13clX">—</span></div><div class="ic-row"><span class="ic-label">結果對不對</span><span class="ic-value" id="w13clOk">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">怎麼避免</div>
+      定期<strong>重啟執行階段並全部重跑</strong>（Colab：執行階段 → 重新啟動並全部執行）。交作業之前一定要做一次——你不會想交出一份只有你自己那台機器跑得出來的東西。
+    </div>
+  </div>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>Colab 的東西</th><th>會不會留下</th></tr></thead>
+  <tbody><tr><td>程式碼與文字（notebook 本身）</td><td>✓ 存在你的 Google Drive</td></tr><tr><td><code>%pip install</code> 裝的套件</td><td>✗ 執行階段結束就沒了</td></tr><tr><td>變數與載入的資料</td><td>✗ 同上</td></tr><tr><td><code>/content/</code> 底下自己存的檔案</td><td>✗ 同上</td></tr><tr><td>掛載的 Google Drive 裡的檔案</td><td>✓ 那是你的雲端硬碟</td></tr></tbody>
+</table></div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 01 · 自我檢測</div>
+  <p>你昨天在 Colab 跑得好好的 notebook，今天打開第一格就報 <code>ModuleNotFoundError: No module named 'ISLP'</code>。為什麼？</p>
+  <div class="quiz-options" id="qColabOptions"><div class="quiz-opt" data-correct="true" data-fb="對。Colab 的環境是暫時的。把 <code>%pip install ISLP</code> 留在第一格，每次重新連線先跑它就好。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(A)</span> 執行階段被回收了，套件要重裝</div><div class="quiz-opt" data-correct="false" data-fb="notebook 存在 Drive 裡不會壞。報錯的是<strong>環境</strong>不是檔案。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(B)</span> notebook 檔案壞掉了</div><div class="quiz-opt" data-correct="false" data-fb="在懷疑套件之前先懷疑環境——後者的機率高一萬倍。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(C)</span> ISLP 這個套件被下架了</div></div>
+  <div class="quiz-feedback" id="qColabFeedback"></div>
+</div>
+</section>
+<section id="imports">
+<!-- GEN:BEGIN sec:imports -->
+  <div class="section-number">PART 02 · imports 那一格</div>
+  <h2>每一份 lab 的第一格都長一樣，而且要先跑 <span class="sec-badge">課程 Lab Ch2 · 儲存格 3–8</span></h2>
+<!-- GEN:END sec:imports -->
+
+  <p>每一份課程 lab 的第一格都長得差不多：把要用的套件全部 import 進來。
+  這一格<strong>一定要先跑</strong>，不然後面每一格都會報 <code>NameError</code>。</p>
+
+<div class="deck-extra">
+  <div class="dx-label">課程 lab 的 imports（第 2 章）</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 本 Notebook 使用的匯入（imports）</span></span>
+  <span class="line"><span class="kw">import</span> os  <span class="com"># 檔案與環境變數/路徑處理</span></span>
+  <span class="line"><span class="kw">import</span> numpy <span class="kw">as</span> np  <span class="com"># 數值運算與陣列處理</span></span>
+  <span class="line"><span class="kw">import</span> pandas <span class="kw">as</span> pd  <span class="com"># 資料表格與資料處理</span></span>
+  <span class="line"><span class="kw">from</span> matplotlib.pyplot <span class="kw">import</span> subplots  <span class="com"># 建立子圖與繪圖版面</span></span>
+  <span class="line"><span class="kw">try</span>:</span>
+  <span class="line">    <span class="kw">from</span> google.colab <span class="kw">import</span> drive  <span class="com"># Colab：掛載 Google Drive</span></span>
+  <span class="line"><span class="kw">except</span> Exception:</span>
+  <span class="line">    drive = <span class="num">None</span>  <span class="com"># 非 Colab 環境</span></span></div>
+  <p class="dx-note">注意最後那段 <code>try / except</code>：<code>google.colab</code> 只有在 Colab 上才有，本機跑的時候讓它安靜地把 <code>drive</code> 設成 None 就好。<strong>這是 try/except 的正確用法</strong>——你知道會發生什麼錯、也知道怎麼處理。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 3</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">第 1 章的 imports</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 本 Notebook 使用的匯入（imports）</span></span>
+  <span class="line"><span class="kw">import</span> os  <span class="com"># 檔案與環境變數/路徑處理</span></span>
+  <span class="line"><span class="kw">import</span> numpy <span class="kw">as</span> np  <span class="com"># 數值運算與陣列處理</span></span>
+  <span class="line"><span class="kw">import</span> pandas <span class="kw">as</span> pd  <span class="com"># 資料表格與資料處理</span></span>
+  <span class="line"><span class="kw">import</span> matplotlib <span class="kw">as</span> mpl  <span class="com"># Matplotlib 設定與後端</span></span>
+  <span class="line"><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt  <span class="com"># 繪圖指令與樣式</span></span>
+  <span class="line"><span class="kw">import</span> seaborn <span class="kw">as</span> sns  <span class="com"># 統計視覺化</span></span>
+  <span class="line"><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> scale  <span class="com"># 特徵標準化</span></span>
+  <span class="line"><span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> PCA  <span class="com"># 主成分分析 (PCA)</span></span>
+  <span class="line"><span class="kw">from</span> sklearn.discriminant_analysis <span class="kw">import</span> QuadraticDiscriminantAnalysis  <span class="com"># 二次判別分析 (QDA)</span></span>
+  <span class="line"><span class="kw">from</span> ISLP <span class="kw">import</span> load_data <span class="com"># ISLP 書籍資料集載入</span></span>
+  <span class="line"><span class="kw">try</span>:</span>
+  <span class="line">    <span class="kw">from</span> google.colab <span class="kw">import</span> drive  <span class="com"># Colab：存取 Google Drive</span></span>
+  <span class="line"><span class="kw">except</span> Exception:</span>
+  <span class="line">    drive = <span class="num">None</span>  <span class="com"># 非 Colab 環境</span></span></div>
+  <p class="dx-note">每個 import 後面都有一句中文註解，說明那個套件負責什麼。先掃過一遍，之後看到 <code>sns.</code> 或 <code>sm.</code> 開頭就知道是誰。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 5</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w13impSvg" height="320"></svg>
+      <div class="status-banner" id="w13imStatus"><span class="status-icon">›</span><span class="status-text">六個套件，各管一塊。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13imSet(0)">numpy</button><button class="btn btn-toggle" onclick="w13imSet(1)">pandas</button><button class="btn btn-toggle" onclick="w13imSet(2)">matplotlib</button><button class="btn btn-toggle" onclick="w13imSet(3)">seaborn</button><button class="btn btn-toggle" onclick="w13imSet(4)">statsmodels</button><button class="btn btn-toggle" onclick="w13imSet(5)">scikit-learn</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">點名字看它管什麼</div>
+      課程用到的六個主要套件。按按鈕看它負責什麼、以及本站哪一頁在講它。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這個套件</div>
+      <div class="ic-row"><span class="ic-label">慣用簡稱</span><span class="ic-value" id="w13imAlias">—</span></div><div class="ic-row"><span class="ic-label">負責什麼</span><span class="ic-value" id="w13imWhat">—</span></div><div class="ic-row"><span class="ic-label">哪一頁在講</span><span class="ic-value" id="w13imWhere">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">為什麼都用同一個簡稱</div>
+      <code>np</code>、<code>pd</code>、<code>sns</code>、<code>sm</code> 是整個社群的慣例。照著用，別人（跟 AI）才看得懂你的程式碼，你也看得懂網路上找到的範例。
+    </div>
+  </div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 02 · 自我檢測</div>
+  <p>你跳過第一格直接跑第三格，得到 <code>NameError: name 'np' is not defined</code>。該怎麼辦？</p>
+  <div class="quiz-options" id="qImpOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>np</code> 是 <code>import numpy as np</code> 建立的名字，那一格沒跑，這個名字就不存在。NameError 十次有九次是「某一格沒跑」。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(A)</span> 回去把第一格跑一次</div><div class="quiz-opt" data-correct="false" data-fb="套件裝得好好的，只是<strong>還沒 import</strong>。重裝不會建立 <code>np</code> 這個名字。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(B)</span> 重新安裝 numpy</div><div class="quiz-opt" data-correct="false" data-fb="那要先 <code>import numpy</code>。而且改了之後跟課程 lab 的寫法就不一致了。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(C)</span> 把 np 改成 numpy</div></div>
+  <div class="quiz-feedback" id="qImpFeedback"></div>
+</div>
+</section>
+<section id="data">
+<!-- GEN:BEGIN sec:data -->
+  <div class="section-number">PART 03 · 資料放哪裡</div>
+  <h2>掛 Drive、或直接讀網址 <span class="sec-badge">課程 Lab Ch2 · 儲存格 183–187</span></h2>
+<!-- GEN:END sec:data -->
+
+  <p>課程 lab 的資料放在你自己的 Google Drive 裡。流程是三步：
+  掛載 Drive → 設一個 <code>DATA_PATH</code> → 用 <code>pd.read_csv</code> 讀。</p>
+
+<div class="deck-extra">
+  <div class="dx-label">掛載 Drive</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">drive.mount(<span class="str">&#x27;/content/drive&#x27;</span>)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Mounted at /content/drive</pre></div>
+  <p class="dx-note">第一次會跳出授權視窗，選你的 Google 帳號按同意。掛好之後 Drive 就出現在 <code>/content/drive/MyDrive/</code> 底下。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 183</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">設一個路徑變數</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># Replace DATA_PATH with your path</span></span>
+  <span class="line">DATA_PATH = <span class="str">&quot;/content/drive/MyDrive/00_Statistical_learning/Lab/Data/&quot;</span></span></div>
+  <p class="dx-note"><strong>這一行要改成你自己的路徑。</strong>把路徑存成變數而不是每次都打全長，換資料夾時只要改一個地方。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 184</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">讀進來</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto = pd.read_csv(os.path.join(DATA_PATH,<span class="str">&#x27;Auto.csv&#x27;</span>))</span>
+  <span class="line">Auto</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>     Unnamed: 0   mpg  cylinders  displacement  horsepower  weight  \
+0             1  18.0          8         307.0         130    3504   
+1             2  15.0          8         350.0         165    3693   
+2             3  18.0          8         318.0         150    3436   
+3             4  16.0          8         304.0         150    3433   
+4             5  17.0          8         302.0         140    3449   
+..          ...   ...        ...           ...         ...     ...   
+387         393  27.0          4         140.0          86    2790   
+388         394  44.0          4          97.0          52    2130   
+389         395  32.0          4         135.0          84    2295   
+390         396  28.0          4         120.0          79    2625   
+391         397  31.0          4         119.0          82    2720   
+
+     acceleration  year  origin                       name  
+0            12.0    70       1  chevrolet chevelle malibu  
+1            11.5    70       1          buick skylark 320  
+2            11.0    70       1         plymouth satellite  
+3            12.0    70       1              amc rebel sst  
+4            10.5    70       1                ford torino  
+..            ...   ...     ...                        ...  
+387          15.6    82       1            ford mustang gl  
+388          24.6    82       2                  vw pickup  
+389          11.6    82       1              dodge rampage  
+390          18.6    82       1                ford ranger  
+391          19.4    82       1                 chevy s-10  
+
+[392 rows x 10 columns]</pre></div>
+  <p class="dx-note"><code>os.path.join</code> 幫你處理斜線，比自己用加號接字串保險（Windows 與 Linux 的斜線方向不同）。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 185</span>
+</div>
+
+<div class="info-box warm">
+  <span class="info-label">讀檔的參數決定你後面有多痛</span>
+  同一份 Auto 資料，<code>Auto.csv</code> 與 <code>Auto.data</code> 要用不同的參數讀，而且後者需要 <code>na_values=['?']</code>，不然 horsepower 整欄會變成字串。細節在 <a href="p4_pandas.html#na">P4 的遺漏值那一節</a>。
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 03 · 自我檢測</div>
+  <p><code>FileNotFoundError: /content/drive/MyDrive/Lab/Data/Auto.csv</code>。最可能的原因是？</p>
+  <div class="quiz-options" id="qDataOptions"><div class="quiz-opt" data-correct="true" data-fb="對。lab 裡那一行是老師的路徑，你的 Drive 結構多半不一樣。在 Colab 左側的檔案窗格點開資料夾，右鍵可以複製正確的路徑。" onclick="quizCheck('qData', this)"><span class="opt-letter">(A)</span> DATA_PATH 沒改成你自己的資料夾位置</div><div class="quiz-opt" data-correct="false" data-fb="有可能，但掛載失敗會在 <code>drive.mount</code> 那一格就報錯，而不是等到讀檔。" onclick="quizCheck('qData', this)"><span class="opt-letter">(B)</span> Drive 掛載失敗</div><div class="quiz-opt" data-correct="false" data-fb="格式不對是 <code>ParserError</code> 或讀出奇怪的欄，<code>FileNotFoundError</code> 講的是<strong>檔案不在那裡</strong>。" onclick="quizCheck('qData', this)"><span class="opt-letter">(C)</span> 檔案格式不對</div></div>
+  <div class="quiz-feedback" id="qDataFeedback"></div>
+</div>
+</section>
+<section id="local">
+<!-- GEN:BEGIN sec:local -->
+  <div class="section-number">PART 04 · 本機安裝</div>
+  <h2>要長期用就自己開一個 conda 環境 <span class="sec-badge">conda 文件 · 環境管理</span></h2>
+<!-- GEN:END sec:local -->
+
+  <p>確定要長期用了再做這一步。本機安裝的唯一理由是<strong>你想控制版本</strong>——
+  讓自己跑出來的數字跟課程 lab 一致。做法是開一個獨立的 conda 環境，
+  把版本釘在課程用的那一組。</p>
+
+<div class="info-box">
+  <span class="info-label">本站的圖表就是這樣產生的</span>
+  環境版本：numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。本站每一張自己算的圖都在這個環境下用固定種子跑出來，所以任何人都能重生同樣的數字。
+</div>
+
+<div class="pseudo-code">
+<span class="line"><span class="com"># 開一個獨立的環境，Python 版本也釘住</span></span>
+<span class="line">conda create -n m524 python=<span class="num">3.11</span> -y</span>
+<span class="line"> </span>
+<span class="line"><span class="com"># 裝課程用的套件（版本對齊課程的 packages.txt）</span></span>
+<span class="line">conda run -n m524 pip install numpy==<span class="num">1.24.4</span> pandas==<span class="num">2.3.2</span> \</span>
+<span class="line">  scikit-learn==<span class="num">1.6.1</span> scipy==<span class="num">1.13.1</span> statsmodels==<span class="num">0.14.2</span> \</span>
+<span class="line">  matplotlib==<span class="num">3.8.4</span> seaborn==<span class="num">0.13.2</span> ISLP==<span class="num">0.4.0</span></span>
+<span class="line"> </span>
+<span class="line"><span class="com"># 讓 Jupyter 看得到這個環境</span></span>
+<span class="line">conda run -n m524 pip install jupyterlab ipykernel</span>
+<span class="line">conda run -n m524 python -m ipykernel install --user --name m524</span></div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w13envSvg" height="320"></svg>
+      <div class="status-banner" id="w13enStatus"><span class="status-icon">›</span><span class="status-text">先看「全部裝在一起」會怎樣。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13enSet(0)">全部裝在 base</button><button class="btn btn-toggle" onclick="w13enSet(1)">各自獨立的環境</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">為什麼要獨立的環境</div>
+      按按鈕看「全部裝在同一個環境」會發生什麼事。兩個專案要求不同版本的同一個套件時，後裝的會蓋掉先裝的。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">情境</span><span class="ic-value" id="w13enCase">—</span></div><div class="ic-row"><span class="ic-label">課程專案</span><span class="ic-value" id="w13enA">—</span></div><div class="ic-row"><span class="ic-label">另一個專案</span><span class="ic-value" id="w13enB">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">kernel 沒選對是最常見的假故障</div>
+      環境開好了、套件也裝了，但 Jupyter 左上角選的還是 base。症狀是「明明裝過了卻說找不到」。先看右上角顯示的 kernel 名稱是不是 m524。
+    </div>
+  </div>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w13cmdSvg" height="300"></svg>
+      <div class="status-banner" id="w13cmStatus"><span class="status-icon">›</span><span class="status-text">四個步驟，照順序做。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13cmSet(0)">① 建立環境</button><button class="btn btn-toggle" onclick="w13cmSet(1)">② 裝套件</button><button class="btn btn-toggle" onclick="w13cmSet(2)">③ 註冊 kernel</button><button class="btn btn-toggle" onclick="w13cmSet(3)">④ 每次使用</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">按選項組指令</div>
+      選你的情況，下面會組出該打的那一行。四個選項組合出來的指令都不一樣——這也是為什麼直接抄別人的指令常常不管用。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">組出來的指令</div>
+      <div class="ic-row"><span class="ic-label">步驟</span><span class="ic-value" id="w13cmStep">建立環境</span></div><div class="ic-row"><span class="ic-label">指令</span><span class="ic-value" id="w13cmCmd">conda create -n m524 python=3.11 -y</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">順序有意義</div>
+      建立 → 裝套件 → 註冊 kernel → 每次使用前 activate。跳過第三步的話 Jupyter 看不到這個環境，你就會遇到「明明裝了卻找不到」。
+    </div>
+  </div>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>情境</th><th>建議</th></tr></thead>
+  <tbody><tr><td>第一次上手、只想跑 lab</td><td>Colab</td></tr><tr><td>想長期用、要跟課程數字一致</td><td>conda 環境（上面那段指令）</td></tr><tr><td>電腦空間很小</td><td>pip + venv（不裝 Anaconda，省 3–5 GB）</td></tr><tr><td>要用 GPU</td><td>Colab（本機要 NVIDIA 顯卡加 CUDA，很麻煩）</td></tr><tr><td>交作業前的最後檢查</td><td><b>重啟 kernel 並全部重跑一次</b></td></tr></tbody>
+</table></div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 04 · 自我檢測</div>
+  <p>你在終端機 <code>pip install ISLP</code> 裝好了，但 Jupyter 裡還是 <code>ModuleNotFoundError</code>。最可能的原因？</p>
+  <div class="quiz-options" id="qLocalOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是最常見的假故障。在 notebook 裡跑 <code>%pip install ISLP</code>（前面加百分比符號），它會裝到<strong>當前 kernel</strong> 的 Python 裡，直接避開這個問題。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(A)</span> Jupyter 用的 kernel 不是你剛剛裝套件的那個環境</div><div class="quiz-opt" data-correct="false" data-fb="重開沒有用——問題不是快取，是<strong>裝到了另一個 Python</strong>。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(B)</span> 要重開電腦</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 是純 Python 套件，跨平台。先檢查環境，再懷疑套件。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(C)</span> ISLP 不支援你的作業系統</div></div>
+  <div class="quiz-feedback" id="qLocalFeedback"></div>
+</div>
+</section>
+<section id="trouble">
+<!-- GEN:BEGIN sec:trouble -->
+  <div class="section-number">PART 05 · 跑不動的時候</div>
+  <h2>四種最常見的假故障，各自怎麼修 <span class="sec-badge">Python 文件 · 例外</span></h2>
+<!-- GEN:END sec:trouble -->
+
+  <p>環境的問題有八成是同樣的四種。這一節把它們列出來，
+  每一種都給「症狀 → 原因 → 怎麼修」。學會這四種，你以後遇到的環境問題會少一大半。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w13fixSvg" height="320"></svg>
+      <div class="status-banner" id="w13fxStatus"><span class="status-icon">›</span><span class="status-text">四種症狀，各自的解法。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13fxSet(0)">ModuleNotFoundError</button><button class="btn btn-toggle" onclick="w13fxSet(1)">NameError</button><button class="btn btn-toggle" onclick="w13fxSet(2)">FileNotFoundError</button><button class="btn btn-toggle" onclick="w13fxSet(3)">結果跟同學不一樣</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">點症狀看解法</div>
+      四種最常見的假故障。它們的共同點是：<strong>程式碼沒有錯</strong>，錯的是環境或執行順序。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這一種</div>
+      <div class="ic-row"><span class="ic-label">症狀</span><span class="ic-value" id="w13fxSym">—</span></div><div class="ic-row"><span class="ic-label">真正的原因</span><span class="ic-value" id="w13fxWhy">—</span></div><div class="ic-row"><span class="ic-label">怎麼修</span><span class="ic-value" id="w13fxFix">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">一個萬用的第一步</div>
+      <strong>重啟 kernel 並從第一格全部重跑。</strong>這一步能解掉的問題比你想像的多——因為它同時消除了「亂序執行」與「殘留變數」這兩個最常見的干擾。
+    </div>
+  </div>
+</div>
+
+<div class="qa-box">
+  <div class="qa-head">還是跑不動的話</div>
+  <details class="qa-item"><summary>問人之前先做這三件事</summary>
+    <div class="qa-a">① <strong>重啟並全部重跑</strong>；② 把<strong>完整的錯誤訊息最後一行</strong>複製起來；③ 確認是哪一格出錯、那一格用到哪些變數。做完這三件事，八成的問題你自己就解掉了；剩下的兩成，別人也才幫得上忙。</div>
+  </details>
+  <details class="qa-item"><summary>可以直接把錯誤訊息丟給 AI 嗎？</summary>
+    <div class="qa-a">可以，而且通常很有用——環境問題正是 AI 最擅長的那一類（有標準答案、可驗證）。但要把<strong>完整的錯誤訊息</strong>與<strong>你實際跑的那一格</strong>都給它，不要只說「我的程式跑不動」。為什麼統計結果就不能這樣信它，見 <a href="00a_why_code.html">00A</a>。</div>
+  </details>
+</div>
+
+<div class="info-box">
+  <span class="info-label">交作業之前一定要做的一件事</span>
+  <strong>重啟執行階段 → 從第一格全部重跑 → 確認每一格都有輸出而且沒有紅色錯誤。</strong>你不會想交出一份「只有我這台機器、而且只有照某個特定順序跑才對」的作業。
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 05 · 自我檢測</div>
+  <p>同一份 notebook，你跑出來的 MSE 是 25.57，同學是 23.80。程式碼一模一樣。為什麼？</p>
+  <div class="quiz-options" id="qFixOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>train_test_split</code> 與自助法都有隨機性，沒有固定 <code>random_state</code> 或 <code>seed</code> 就會每次不同。細節見 <a href=&quot;p3_numpy.html#rand&quot;>P3 的亂數那一節</a>。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(A)</span> 切分或重抽樣的隨機性，其中一邊沒有固定種子</div><div class="quiz-opt" data-correct="false" data-fb="有可能造成小數點後幾位的差異，但 25.57 對 23.80 差太多了，這種量級的差異幾乎一定是隨機性。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(B)</span> 你們的套件版本不同</div><div class="quiz-opt" data-correct="false" data-fb="程式碼一樣的話，「算錯」的機率遠低於「隨機性」。先查最可能的原因。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(C)</span> 其中一個人算錯了</div></div>
+  <div class="quiz-feedback" id="qFixFeedback"></div>
+</div>
+
+<div class="info-box purple">
+  <span class="info-label">🔗 接下來讀什麼</span>
+  環境好了就可以開始了。沒寫過程式的話從 <a href="p1_python_basics.html">P1 Python 基礎</a> 開始；寫過但沒碰過資料科學套件的，直接跳到 <a href="p3_numpy.html">P3 NumPy</a>。想先知道「AI 都會了為什麼還要學」，看 <a href="00a_why_code.html">00A</a>。
+</div>
+</section>
+<section id="exercises">
+<!-- GEN:BEGIN sec:exercises -->
+  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
+  程式碼卡在自己的環境跑一次。</p>
+  <div class="sol-links"><a href="https://colab.research.google.com/" target="_blank" rel="noopener">🔗 Google Colab</a><a href="https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html" target="_blank" rel="noopener">🔗 conda 環境管理</a><a href="https://islp.readthedocs.io/" target="_blank" rel="noopener">🔗 ISLP 套件</a></div>
+<!-- GEN:END sec:exercises -->
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 1 · 裝套件</div>
+  <p>在 Colab 的儲存格裡裝套件，該用哪一個？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。百分比開頭的魔術指令會裝到<strong>當前 kernel</strong> 的 Python 裡，不會裝錯環境。課程 lab 用的就是這個寫法。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>%pip install ISLP</code></div><div class="quiz-opt" data-correct="false" data-fb="驚嘆號是「丟給系統的 shell 跑」，在 Colab 上多半也會成功，但在本機的多環境情況下可能裝到別的 Python 去。<code>%pip</code> 比較保險。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>!pip install ISLP</code></div><div class="quiz-opt" data-correct="false" data-fb="import 是「使用已經裝好的套件」，它不會去下載任何東西。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>import ISLP</code></div></div>
+  <div class="quiz-feedback" id="qEx1Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 2 · 執行順序</div>
+  <p>notebook 左邊的 <code>[7]</code> 代表什麼？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="不是。編號跟位置無關——你可以把第 20 格拉到最上面，它的編號不會變。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 這是第 7 個儲存格</div><div class="quiz-opt" data-correct="true" data-fb="對。所以編號如果不是由上到下遞增，就代表你曾經亂序執行過，此時的變數狀態可能跟「從頭跑一次」不一樣。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 這一格是這個 kernel 的第 7 次執行</div><div class="quiz-opt" data-correct="false" data-fb="執行時間會顯示在儲存格下方，不是那個中括號。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 這一格跑了 7 秒</div></div>
+  <div class="quiz-feedback" id="qEx2Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 3 · 版本</div>
+  <p>為什麼本站要把套件版本釘死（numpy 1.24.4、pandas 2.3.2…）？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。版本一改，某些預設值與演算法細節就可能不同，數字就對不上課程 lab 了。可重現性是這門課的基本紀律。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 讓任何人重跑都能得到同一組數字</div><div class="quiz-opt" data-correct="false" data-fb="沒有這個假設。釘版本是為了<strong>一致</strong>，不是因為新版不好。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 新版本有 bug</div><div class="quiz-opt" data-correct="false" data-fb="跟速度無關。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 舊版本比較快</div></div>
+  <div class="quiz-feedback" id="qEx3Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 4 · 假故障</div>
+  <p>你在本機的 conda 環境裝好了全部套件，但 Jupyter 裡 import 還是失敗。第一件要檢查的事是？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。kernel 選錯是最常見的假故障：你裝在 m524，Jupyter 卻用 base 在跑。在 notebook 裡跑 <code>import sys; print(sys.executable)</code> 就知道當前用的是哪一個 Python。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> Jupyter 右上角顯示的 kernel 是不是那個環境</div><div class="quiz-opt" data-correct="false" data-fb="最貴的一步，而且多半沒用。先看便宜的證據。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 重裝 Anaconda</div><div class="quiz-opt" data-correct="false" data-fb="可以繞過問題，但你不會學到怎麼修——而且下次還會遇到。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 改用 Colab</div></div>
+  <div class="quiz-feedback" id="qEx4Feedback"></div>
+</div>
+</section>
+<section id="reference">
+<!-- GEN:BEGIN sec:reference -->
+  <div class="section-number">REFERENCE · 總覽</div>
+  <h2>環境安裝速查表 <span class="sec-badge">先備 · 環境</span></h2>
+<!-- GEN:END sec:reference -->
+
+  <p>三張速查表。跑不動的時候回來看第二張。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>環境</th><th>花多久</th><th>適合誰</th><th>注意</th></tr></thead>
+  <tbody><tr><td>Colab</td><td>3 分鐘</td><td>第一次上手、公用電腦</td><td>執行階段會回收，套件要重裝</td></tr><tr><td>conda 環境</td><td>20 分鐘</td><td>長期使用、要跟課程數字一致</td><td>記得選對 kernel</td></tr><tr><td>pip + venv</td><td>10 分鐘</td><td>電腦空間小</td><td>自己管 Python 版本</td></tr><tr><td>本機 base 環境</td><td>—</td><td><b>不建議</b></td><td>遲早會版本衝突</td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>症狀</th><th>真正的原因</th><th>怎麼修</th></tr></thead>
+  <tbody><tr><td><code>ModuleNotFoundError</code></td><td>沒裝，或裝到別的環境</td><td><code>%pip install X</code>；檢查 kernel</td></tr><tr><td><code>NameError</code></td><td>某一格沒跑（多半是 imports）</td><td>從第一格重跑</td></tr><tr><td><code>FileNotFoundError</code></td><td>路徑不對或 Drive 沒掛</td><td>在檔案窗格複製正確路徑</td></tr><tr><td>結果跟同學不同</td><td>沒固定種子</td><td><code>random_state=0</code>、<code>seed=0</code></td></tr><tr><td>改了程式卻沒變</td><td>改完沒重跑那一格</td><td>重啟並全部重跑</td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>交作業前的檢查</th><th>為什麼</th></tr></thead>
+  <tbody><tr><td>重啟 kernel</td><td>清掉殘留的變數</td></tr><tr><td>從第一格全部重跑</td><td>確認不依賴亂序執行</td></tr><tr><td>每一格都有輸出、沒有紅色錯誤</td><td>確認別人打開也跑得動</td></tr><tr><td>固定所有種子</td><td>確認別人跑得出同樣的數字</td></tr><tr><td>DATA_PATH 有註明要改</td><td>別人的 Drive 結構跟你不同</td></tr></tbody>
+</table></div>
+
+<div class="info-box">
+  <span class="info-label">三個一定要記住的觀念</span>
+  <strong>1. 先能跑，再談其他。</strong>第一次上手用 Colab，把耐心留給課程內容而不是安裝問題。<br><strong>2. 八成的「壞掉」其實是環境或執行順序。</strong>萬用第一步：重啟 kernel 並全部重跑。<br><strong>3. 交作業前一定要從頭重跑一次。</strong>不然你交的是「只有你那台機器跑得出來」的東西。
+</div>
+
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 24 張</span></h2>
+  <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
+  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  <div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div>
+<!-- GEN:END sec:cards -->
+</section>
+<!-- GEN:BEGIN chapternav -->
+<div class="chapter-nav"><a class="prev" href="00a_why_code.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">為什麼還要自己寫統計程式</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="p1_python_basics.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">Python 基礎</div></a></div>
+<!-- GEN:END chapternav -->
+</div>
+<!-- GEN:BEGIN footer -->
+<footer>
+  互動式環境安裝教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
+</footer>
+<!-- GEN:END footer -->
+<!-- GEN:BEGIN sharedjs -->
+<script>
+/* ============================================================
+   統計學習自學站共用函式庫
+   由 tools/build_page.py 內嵌到每一頁，十頁完全一致。
+   規則：LaTeX 一律放靜態 HTML，這裡的字串不放 $…$；
+        寫入含數學的 innerHTML 之後要呼叫 HC.retype(el)。
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- MathJax：注入後的內容不會自動排版 ---------- */
+const HC = {};
+HC.retype = el => {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
+  }
+};
+
+/* ---------- quiz ---------- */
+function quizCheck(quizId, optEl) {
+  const isCorrect = optEl.dataset.correct === 'true';
+  optEl.parentElement.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'wrong'));
+  optEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = $(quizId + 'Feedback');
+  if (!fb) { console.error('quizCheck: 找不到 #' + quizId + 'Feedback'); return; }
+  fb.classList.remove('correct', 'wrong');
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> ') + (optEl.dataset.fb || '');
+  HC.retype(fb);
+}
+
+/* ---------- 程式碼行高亮 ---------- */
+function hlLine(rootId, n) {
+  const root = $(rootId);
+  if (!root) return;
+  root.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+  if (n != null) {
+    const line = root.querySelector('.line[data-l="' + n + '"]');
+    if (line) line.classList.add('active');
+  }
+}
+
+/* ---------- 逐步播放器：frames = [{...}]，apply(frame) 負責渲染 ---------- */
+class Player {
+  constructor({ frames, apply, delayInput, onDone, onIndex }) {
+    this.frames = frames; this.apply = apply;
+    this.delayInput = delayInput; this.i = -1; this.timer = null;
+    this.onDone = onDone || (() => {});
+    this.onIndex = onIndex || (() => {});
+  }
+  get delay() { return this.delayInput ? parseInt(this.delayInput.value, 10) : 700; }
+  step() {
+    if (this.i + 1 >= this.frames.length) { this.stop(); this.onDone(); return false; }
+    this.i += 1; this.apply(this.frames[this.i], this.i); this.onIndex(this.i); return true;
+  }
+  play() {
+    this.stop();
+    const tick = () => { if (this.step()) this.timer = setTimeout(tick, this.delay); };
+    tick();
+  }
+  stop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+  get playing() { return this.timer !== null; }
+  reset() { this.stop(); this.i = -1; if (this.frames.length) { this.apply(this.frames[0], 0); this.i = 0; } }
+  seek(i) { this.stop(); this.i = Math.max(0, Math.min(i, this.frames.length - 1)); this.apply(this.frames[this.i], this.i); this.onIndex(this.i); }
+}
+HC.Player = Player;
+
+/* ---------- 旁白列 ---------- */
+function setStatus(id, html) {
+  const el = $(id); if (!el) return;
+  const t = el.querySelector('.status-text');
+  if (t) t.innerHTML = html;
+}
+
+/* ============================================================
+   HC：圖表與 SVG 共用 API
+   ============================================================ */
+
+/* 設計 token（讀 CSS 變數，樣式改一處就好） */
+HC.tok = (() => {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue('--' + n).trim();
+  return {
+    ink: g('ink'), paper: g('paper'), accent: g('accent'), accent2: g('accent2'),
+    accent3: g('accent3'), muted: g('muted'), card: g('card'), cardBorder: g('card-border'),
+    grid: g('grid-line') || g('card-border'),
+    train: g('pt-train'), test: g('pt-test'), held: g('pt-held'),
+    a: g('pt-a'), b: g('pt-b'), c: g('pt-c'),
+    fit: g('fit-line'), truef: g('fit-true'), resid: g('resid'),
+  };
+})();
+
+HC.MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+/* 數字格式：固定小數位，去掉負零 */
+HC.fmt = (v, d = 2) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const s = Number(v).toFixed(d);
+  return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s;
+};
+HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
+
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* ---------- Chart.js ---------- */
+HC.hasChart = () => typeof window.Chart !== 'undefined';
+
+/* Chart.js 載入失敗時不要拋錯：讓 .chart-fallback 留在畫面上 */
+HC.ready = fn => {
+  const run = () => {
+    if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
+    try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+};
+
+HC._charts = new Map();
+
+/* 房子的 Chart.js 預設值 */
+HC.base = (type, data, opts = {}) => {
+  const t = HC.tok;
+  const axis = {
+    grid: { color: t.grid, drawTicks: false },
+    border: { color: t.muted },
+    ticks: { font: { family: HC.MONO, size: 11 }, color: t.muted, padding: 6 },
+    title: { font: { family: HC.MONO, size: 11, weight: '600' }, color: t.accent2 },
+  };
+  const deep = (a, b) => {
+    const o = Array.isArray(b) ? b.slice() : Object.assign({}, a);
+    if (Array.isArray(b)) return o;
+    for (const k of Object.keys(b || {})) {
+      o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]))
+        ? deep(a && a[k] ? a[k] : {}, b[k]) : b[k];
+    }
+    return o;
+  };
+  const defaults = {
+    responsive: true, maintainAspectRatio: false, devicePixelRatio: 2,
+    animation: { duration: 250 },
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 6, right: 10, bottom: 2, left: 2 } },
+    plugins: {
+      legend: {
+        display: true, position: 'top', align: 'end',
+        labels: { boxWidth: 10, boxHeight: 10, font: { family: HC.MONO, size: 11 }, color: t.ink, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,46,.92)', titleFont: { family: HC.MONO, size: 11 },
+        bodyFont: { family: HC.MONO, size: 11 }, padding: 8, cornerRadius: 6, displayColors: true,
+      },
+    },
+    scales: { x: deep({}, axis), y: deep({}, axis) },
+    elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
+  };
+  const cfg = { type, data, options: deep(defaults, opts) };
+  // canvas 不認得 var(--x)：傳進去會靜默變成黑色（第 6 章五條準則線全黑就是這樣）。
+  // 這裡在建構前把所有顏色欄位解析成實際色值，讓這類 bug 不可能發生。
+  HC._resolveColors(cfg);
+  return cfg;
+};
+
+HC._COLOR_KEYS = ['borderColor', 'backgroundColor', 'pointBackgroundColor',
+                  'pointBorderColor', 'hoverBackgroundColor', 'hoverBorderColor', 'color'];
+HC._resolveColors = o => {
+  if (!o || typeof o !== 'object') return o;
+  if (Array.isArray(o)) { o.forEach(HC._resolveColors); return o; }
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'string' && HC._COLOR_KEYS.indexOf(k) >= 0) o[k] = HC.color(v);
+    else if (Array.isArray(v) && HC._COLOR_KEYS.indexOf(k) >= 0) {
+      o[k] = v.map(x => (typeof x === 'string' ? HC.color(x) : x));
+    } else if (v && typeof v === 'object') HC._resolveColors(v);
+  }
+  return o;
+};
+
+/* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
+HC.chart = (canvasId, type, data, opts) => {
+  if (!HC.hasChart()) return null;
+  const cv = $(canvasId);
+  if (!cv) { console.error('HC.chart: 找不到 canvas #' + canvasId); return null; }
+  const old = HC._charts.get(canvasId);
+  if (old) old.destroy();
+  const c = new window.Chart(cv, HC.base(type, data, opts));
+  HC._charts.set(canvasId, c);
+  const wrap = cv.closest('.chart-wrap');
+  if (wrap) wrap.classList.add('ready');
+  return c;
+};
+HC.line = (id, data, opts) => HC.chart(id, 'line', data, opts);
+HC.scatter = (id, data, opts) => HC.chart(id, 'scatter', data, opts);
+HC.bar = (id, data, opts) => HC.chart(id, 'bar', data, opts);
+HC.get = id => HC._charts.get(id);
+
+/* 就地改資料再重畫，不重建 chart（滑桿連續拖動時比較順） */
+HC.update = (id, mutate) => {
+  const c = HC._charts.get(id);
+  if (!c) return null;
+  mutate(c);
+  c.update('none');
+  return c;
+};
+
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
+
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
+
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
+  beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
+  },
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
+
+/* ============================================================
+   HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
+   用法：const s = HC.svg('w03dragSvg', {xd:[0,10], yd:[0,30]});
+        s.grid(5,5); s.dot(x, y, {cls:'dot', fill:HC.tok.train});
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+
+HC.svg = (id, o = {}) => {
+  const host = $(id);
+  if (!host) { console.error('HC.svg: 找不到 #' + id); return null; }
+  const W = o.w || 620, H = o.h || 340;
+  const pad = Object.assign({ l: 46, r: 14, t: 14, b: 34 }, o.pad || {});
+  let el = host;
+  if (host.tagName.toLowerCase() !== 'svg') {
+    el = host.querySelector('svg');
+    if (!el) { el = document.createElementNS(NS, 'svg'); el.setAttribute('class', 'viz-svg'); host.appendChild(el); }
+  }
+  el.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  if (!el.getAttribute('height')) el.setAttribute('height', String(H));
+
+  const s = {
+    el, W, H, pad,
+    xd: (o.xd || [0, 1]).slice(), yd: (o.yd || [0, 1]).slice(),
+    get iw() { return W - pad.l - pad.r; },
+    get ih() { return H - pad.t - pad.b; },
+  };
+  s.domain = (xd, yd) => { if (xd) s.xd = xd.slice(); if (yd) s.yd = yd.slice(); return s; };
+  s.X = v => pad.l + (v - s.xd[0]) / (s.xd[1] - s.xd[0]) * s.iw;
+  s.Y = v => pad.t + s.ih - (v - s.yd[0]) / (s.yd[1] - s.yd[0]) * s.ih;
+  s.ix = px => s.xd[0] + (px - pad.l) / s.iw * (s.xd[1] - s.xd[0]);
+  s.iy = py => s.yd[0] + (pad.t + s.ih - py) / s.ih * (s.yd[1] - s.yd[0]);
+
+  /* client 座標 → viewBox 座標（縮放與 CSS 尺寸都會被吸收） */
+  s.toView = ev => {
+    const r = el.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    const cy = ev.clientY !== undefined ? ev.clientY : (ev.touches && ev.touches[0].clientY);
+    return { px: (cx - r.left) / r.width * W, py: (cy - r.top) / r.height * H };
+  };
+  s.toData = ev => { const p = s.toView(ev); return { x: s.ix(p.px), y: s.iy(p.py) }; };
+
+  s.add = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k of Object.keys(attrs)) {
+      if (attrs[k] === null || attrs[k] === undefined) continue;
+      n.setAttribute(k === 'cls' ? 'class' : k, String(attrs[k]));
+    }
+    (parent || el).appendChild(n);
+    return n;
+  };
+  /* 分層：只清掉自己那層，底圖不用重畫 */
+  s.layer = name => {
+    let g = el.querySelector('g[data-layer="' + name + '"]');
+    if (!g) { g = s.add('g', { 'data-layer': name }); }
+    return g;
+  };
+  s.clearLayer = name => { const g = s.layer(name); while (g.firstChild) g.removeChild(g.firstChild); return g; };
+  s.clear = () => { while (el.firstChild) el.removeChild(el.firstChild); return s; };
+
+  /* 座標軸 + 格線 + 刻度標籤 */
+  s.grid = (nx = 5, ny = 5, opt = {}) => {
+    const g = s.clearLayer('grid');
+    const fx = opt.xfmt || (v => HC.fmt(v, opt.xdec ?? 0));
+    const fy = opt.yfmt || (v => HC.fmt(v, opt.ydec ?? 0));
+    for (let i = 0; i <= nx; i++) {
+      const v = s.xd[0] + (s.xd[1] - s.xd[0]) * i / nx, x = s.X(v);
+      s.add('line', { cls: 'gridl', x1: x, y1: pad.t, x2: x, y2: pad.t + s.ih }, g);
+      s.add('text', { cls: 'axlab', x: x, y: pad.t + s.ih + 14, 'text-anchor': 'middle' }, g).textContent = fx(v);
+    }
+    for (let i = 0; i <= ny; i++) {
+      const v = s.yd[0] + (s.yd[1] - s.yd[0]) * i / ny, y = s.Y(v);
+      s.add('line', { cls: 'gridl', x1: pad.l, y1: y, x2: pad.l + s.iw, y2: y }, g);
+      s.add('text', { cls: 'axlab', x: pad.l - 6, y: y + 3.5, 'text-anchor': 'end' }, g).textContent = fy(v);
+    }
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t + s.ih, x2: pad.l + s.iw, y2: pad.t + s.ih }, g);
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + s.ih }, g);
+    if (opt.xtitle) s.add('text', { cls: 'axtitle', x: pad.l + s.iw / 2, y: H - 4, 'text-anchor': 'middle' }, g).textContent = opt.xtitle;
+    if (opt.ytitle) {
+      const t = s.add('text', { cls: 'axtitle', x: 0, y: 0, 'text-anchor': 'middle', transform: 'translate(11,' + (pad.t + s.ih / 2) + ') rotate(-90)' }, g);
+      t.textContent = opt.ytitle;
+    }
+    return s;
+  };
+
+  s.dot = (x, y, a = {}, parent) => s.add('circle', {
+    cls: a.cls || 'dot', cx: s.X(x), cy: s.Y(y), r: a.r ?? 4,
+    fill: a.fill || HC.tok.accent2, stroke: a.stroke, 'stroke-width': a.sw,
+    opacity: a.opacity, 'data-i': a.i,
+  }, parent);
+
+  s.poly = (pts, a = {}, parent) => s.add('polyline', {
+    cls: a.cls || 'fit', points: pts.map(p => s.X(p[0]) + ',' + s.Y(p[1])).join(' '),
+    stroke: a.stroke, 'stroke-width': a.sw, fill: 'none', 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.area = (pts, a = {}, parent) => {
+    const up = pts.map(p => s.X(p[0]) + ',' + s.Y(p[1]));
+    const dn = pts.slice().reverse().map(p => s.X(p[0]) + ',' + s.Y(p[2]));
+    return s.add('polygon', { cls: a.cls || 'band', points: up.concat(dn).join(' '), fill: a.fill }, parent);
+  };
+
+  s.seg = (x1, y1, x2, y2, a = {}, parent) => s.add('line', {
+    cls: a.cls || 'resid', x1: s.X(x1), y1: s.Y(y1), x2: s.X(x2), y2: s.Y(y2),
+    stroke: a.stroke, 'stroke-width': a.sw, 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.box = (x0, y0, x1, y1, a = {}, parent) => s.add('rect', {
+    x: Math.min(s.X(x0), s.X(x1)), y: Math.min(s.Y(y0), s.Y(y1)),
+    width: Math.abs(s.X(x1) - s.X(x0)), height: Math.abs(s.Y(y1) - s.Y(y0)),
+    fill: a.fill || 'none', stroke: a.stroke, 'stroke-width': a.sw, cls: a.cls, rx: a.rx,
+  }, parent);
+
+  s.txt = (x, y, str, a = {}, parent) => {
+    const n = s.add('text', {
+      cls: a.cls || 'vlab', x: s.X(x) + (a.dx || 0), y: s.Y(y) + (a.dy || 0),
+      'text-anchor': a.anchor || 'middle', fill: a.fill,
+    }, parent);
+    n.textContent = str;
+    return n;
+  };
+  /* 用 viewBox 像素座標直接放字（圖例、標題用） */
+  s.txtPx = (px, py, str, a = {}, parent) => {
+    const n = s.add('text', { cls: a.cls || 'axlab', x: px, y: py, 'text-anchor': a.anchor || 'start', fill: a.fill }, parent);
+    n.textContent = str;
+    return n;
+  };
+  return s;
+};
+
+/* 拖曳：pointer + touch，回呼收到資料座標；會夾在定義域內 */
+HC.drag = (node, svc, onMove, opts = {}) => {
+  const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
+  const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
+  let active = false;
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  };
+  const move = ev => {
+    if (!active) return;
+    const d = svc.toData(ev);
+    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    ev.preventDefault();
+  };
+  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  node.addEventListener('pointerdown', start);
+  node.addEventListener('pointermove', move);
+  node.addEventListener('pointerup', end);
+  node.addEventListener('pointercancel', end);
+  node.style.touchAction = 'none';
+  return () => {
+    node.removeEventListener('pointerdown', start);
+    node.removeEventListener('pointermove', move);
+    node.removeEventListener('pointerup', end);
+    node.removeEventListener('pointercancel', end);
+  };
+};
+
+/* ---------- 統計小工具（各頁元件共用，避免各自重寫） ---------- */
+HC.stat = {
+  mean: a => a.reduce((s, v) => s + v, 0) / a.length,
+  variance(a) { const m = this.mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); },
+  sd(a) { return Math.sqrt(this.variance(a)); },
+  /* 簡單線性迴歸：回傳 b0, b1, rss, tss, r2, se(b0), se(b1), t 值 */
+  ols(xs, ys) {
+    const n = xs.length, mx = this.mean(xs), my = this.mean(ys);
+    let sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sxx += (xs[i] - mx) ** 2; sxy += (xs[i] - mx) * (ys[i] - my); }
+    const b1 = sxx === 0 ? 0 : sxy / sxx, b0 = my - b1 * mx;
+    let rss = 0, tss = 0;
+    for (let i = 0; i < n; i++) { rss += (ys[i] - b0 - b1 * xs[i]) ** 2; tss += (ys[i] - my) ** 2; }
+    const df = n - 2;
+    const s2 = df > 0 ? rss / df : NaN;
+    const seB1 = sxx > 0 ? Math.sqrt(s2 / sxx) : NaN;
+    const seB0 = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+    return {
+      b0, b1, rss, tss, n, df, rse: Math.sqrt(s2),
+      r2: tss === 0 ? NaN : 1 - rss / tss,
+      seB0, seB1, tB0: b0 / seB0, tB1: b1 / seB1,
+    };
+  },
+  /* RSS(b0,b1)，畫誤差曲面用 */
+  rss(xs, ys, b0, b1) {
+    let r = 0;
+    for (let i = 0; i < xs.length; i++) r += (ys[i] - b0 - b1 * xs[i]) ** 2;
+    return r;
+  },
+  /* 可重現的偽隨機（固定種子，頁面重載結果一樣） */
+  lcg(seed) { let s = (seed >>> 0) || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; },
+  /* Box–Muller 標準常態 */
+  normal(rand) {
+    let u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  /* 標準常態 CDF（Abramowitz–Stegun 7.1.26 誤差函數近似） */
+  pnorm(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const p = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    return z >= 0 ? 1 - d * p : d * p;
+  },
+  dnorm(x, mu = 0, sd = 1) { const z = (x - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); },
+  quantile(sorted, q) {
+    const h = (sorted.length - 1) * q, lo = Math.floor(h);
+    return sorted[lo] + (h - lo) * ((sorted[Math.min(lo + 1, sorted.length - 1)]) - sorted[lo]);
+  },
+  seq(a, b, n) { return Array.from({ length: n }, (_, i) => a + (b - a) * i / (n - 1)); },
+};
+
+/* ============================================================
+   頁面骨架行為
+   ============================================================ */
+
+/* 浮動導覽 scroll-spy */
+(function setupNav() {
+  const nav = $('floatNav');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[data-target]'));
+  const sections = links.map(a => $(a.dataset.target)).filter(Boolean);
+  const missing = links.filter(a => !$(a.dataset.target)).map(a => a.dataset.target);
+  if (missing.length) console.warn('float-nav 的 data-target 找不到對應 section：', missing);
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) active = s.id;
+    links.forEach(a => {
+      const on = a.dataset.target === active;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
+  d.dataset.mj = '1';
+  HC.retype(d);
+}, true);
+
+/* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
+HC.initFlashcards = () => {
+  const grid = $('fcGrid');
+  if (!grid || typeof FLASHCARDS === 'undefined') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const render = cards => {
+    grid.innerHTML = cards.map(c =>
+      '<div class="fc-card"><div class="fc-inner">'
+      + '<div class="fc-face fc-front"><div>' + esc(c.front) + '</div><div class="fc-hint">CLICK TO FLIP</div></div>'
+      + '<div class="fc-face fc-back">' + esc(c.back) + '</div>'
+      + '</div></div>').join('');
+  };
+  render(FLASHCARDS);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.fc-card');
+    if (card) card.classList.toggle('flipped');
+  });
+  const on = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  /* 洗牌用固定種子的 Fisher–Yates，每按一次換一個種子 */
+  let shuffleSeed = 20260810;
+  on('fcShuffle', () => {
+    const rand = HC.stat.lcg(shuffleSeed++);
+    const a = FLASHCARDS.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    render(a);
+  });
+  on('fcUnflip', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')));
+  on('fcFlipAll', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.add('flipped')));
+};
+</script>
+<!-- GEN:END sharedjs -->
+<!-- PAGEJS:BEGIN -->
+<script>
+/* ═══ w13pa 三條路 ═══ */
+const w13paS = HC.svg('w13pathSvg', {h: 320});
+const w13paCases = [
+  {t: '3 分鐘', pro: '零安裝、有免費 GPU、換電腦也接得上',
+   con: '執行階段會回收，套件要重裝', note: '第一次上手一律選這條。'},
+  {t: '20 分鐘', pro: '版本可以釘死，數字跟課程 lab 一致',
+   con: '要下載 1 GB、佔 5 GB 空間', note: '確定要長期用了再做。'},
+  {t: '10 分鐘', pro: '不用裝 Anaconda，省 3–5 GB',
+   con: 'Python 版本要自己管', note: '電腦空間小的時候的折衷。'}
+];
+let w13paI = 0;
+function w13paDraw() {
+  const g = w13paS.clearLayer('main');
+  const names = ['① Colab', '② 本機 conda', '③ pip + venv'];
+  names.forEach((nm, i) => {
+    const on = i === w13paI;
+    const y = 66 + i * 78;
+    w13paS.add('rect', {x: 40, y: y, width: 540, height: 62, rx: 9,
+                        fill: on ? (i === 0 ? HC.tok.accent2 : HC.tok.accent) : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
+                        opacity: on ? 0.95 : 0.45}, g);
+    const t = w13paS.add('text', {x: 62, y: y + 27, cls: 'axtitle',
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = nm;
+    const u = w13paS.add('text', {x: 62, y: y + 49, cls: 'axlab',
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    u.textContent = w13paCases[i].t + '　·　' + w13paCases[i].pro;
+    if (i === 0) {
+      const b = w13paS.add('text', {x: 556, y: y + 27, 'text-anchor': 'end', cls: 'axlab',
+                                    fill: on ? HC.tok.paper : HC.tok.accent2}, g);
+      b.textContent = '推薦';
+    }
+  });
+  const c = w13paCases[w13paI];
+  document.getElementById('w13paTime').textContent = c.t;
+  document.getElementById('w13paPro').textContent = c.pro;
+  document.getElementById('w13paCon').textContent = c.con;
+  setStatus('w13paStatus', c.note);
+}
+function w13paSet(i) { w13paI = i; w13paDraw(); }
+if (w13paS) w13paDraw();
+
+/* ═══ w13cl 儲存格執行順序 ═══ */
+const w13clS = HC.svg('w13cellSvg', {h: 340});
+const w13clCells = [
+  {code: 'x = 10', eff: 10},
+  {code: 'x = x * 2', eff: null},
+  {code: 'print(x)', eff: null}
+];
+let w13clOrder = [], w13clMode = -1;
+function w13clDraw() {
+  const g = w13clS.clearLayer('main');
+  let x = null;
+  const seen = [];
+  w13clOrder.forEach(i => {
+    seen.push(i);
+    if (i === 0) x = 10;
+    else if (i === 1) x = (x === null ? null : x * 2);
+  });
+  w13clCells.forEach((c, i) => {
+    const pos = w13clOrder.indexOf(i);
+    const on = pos >= 0;
+    w13clS.add('rect', {x: 96, y: 78 + i * 62, width: 340, height: 46, rx: 6,
+                        fill: on ? HC.tok.accent2 : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                        opacity: on ? 0.95 : 0.45}, g);
+    const t = w13clS.add('text', {x: 116, y: 107 + i * 62, cls: 'vlab',
+                                  'font-family': HC.MONO,
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = c.code;
+    const n = w13clS.add('text', {x: 82, y: 107 + i * 62, 'text-anchor': 'end', cls: 'axlab',
+                                  'font-family': HC.MONO}, g);
+    n.textContent = on ? '[' + (pos + 1) + ']' : '[ ]';
+  });
+  const ok = w13clMode === 0;
+  w13clS.txtPx(310, 296, w13clMode < 0 ? '還沒執行'
+               : (ok ? 'print 印出 20 ✓' : (x === null ? 'NameError：x 還不存在 ✗'
+                                                       : 'print 印出 ' + x + '（跟預期不同）✗')),
+               {cls: 'axtitle', anchor: 'middle',
+                fill: w13clMode < 0 ? HC.tok.muted : (ok ? HC.tok.accent2 : HC.tok.resid)}, g);
+  document.getElementById('w13clOrder').textContent = w13clOrder.length
+    ? w13clOrder.map(i => i + 1).join(' → ') : '—';
+  document.getElementById('w13clX').textContent = x === null ? '（不存在）' : String(x);
+  document.getElementById('w13clOk').textContent = w13clMode < 0 ? '—' : (ok ? '對 ✓' : '錯 ✗');
+  setStatus('w13clStatus', w13clMode < 0 ? '先按「由上到下」。'
+            : (ok ? '由上到下跑，結果是 20 —— 這才是你寫程式時心裡想的順序。'
+                  : '亂序執行之後，同樣三格給出<b>不同的結果</b>。左邊的編號會出賣你。'));
+}
+function w13clRun(m) {
+  w13clMode = m;
+  w13clOrder = m === 0 ? [0, 1, 2] : [1, 0, 2];
+  w13clDraw();
+}
+function w13clReset() { w13clMode = -1; w13clOrder = []; w13clDraw(); }
+if (w13clS) w13clDraw();
+
+/* ═══ w13im 六個套件 ═══ */
+const w13imS = HC.svg('w13impSvg', {h: 320});
+const w13imCases = [
+  {n: 'numpy', a: 'np', w: '陣列與數值運算', p: 'P3'},
+  {n: 'pandas', a: 'pd', w: '資料表：讀檔、選取、分組', p: 'P4'},
+  {n: 'matplotlib', a: 'plt', w: '畫圖的底層：Figure 與 Axes', p: 'P5'},
+  {n: 'seaborn', a: 'sns', w: '統計圖的高階介面', p: 'P5'},
+  {n: 'statsmodels', a: 'sm', w: '係數、標準誤、p 值', p: 'P6'},
+  {n: 'scikit-learn', a: 'sklearn', w: 'fit / predict / 交叉驗證', p: 'P6'}
+];
+let w13imI = 0;
+function w13imDraw() {
+  const g = w13imS.clearLayer('main');
+  w13imCases.forEach((c, i) => {
+    const on = i === w13imI;
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = 52 + col * 272, y = 74 + row * 74;
+    w13imS.add('rect', {x: x, y: y, width: 250, height: 58, rx: 8,
+                        fill: on ? HC.tok.accent2 : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.5,
+                        opacity: on ? 0.95 : 0.5}, g);
+    const t = w13imS.add('text', {x: x + 16, y: y + 26, cls: 'vlab', 'font-family': HC.MONO,
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = c.n;
+    const u = w13imS.add('text', {x: x + 16, y: y + 46, cls: 'axlab',
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    u.textContent = 'as ' + c.a + '　·　' + c.w;
+  });
+  const c = w13imCases[w13imI];
+  document.getElementById('w13imAlias').textContent = c.a;
+  document.getElementById('w13imWhat').textContent = c.w;
+  document.getElementById('w13imWhere').textContent = '先備 ' + c.p;
+  setStatus('w13imStatus', c.n + ' 負責' + c.w + '，本站在 <b>' + c.p + '</b> 講它。');
+}
+function w13imSet(i) { w13imI = i; w13imDraw(); }
+if (w13imS) w13imDraw();
+
+/* ═══ w13en 環境隔離 ═══ */
+const w13enS = HC.svg('w13envSvg', {h: 320});
+let w13enI = 0;
+function w13enDraw() {
+  const g = w13enS.clearLayer('main');
+  const shared = w13enI === 0;
+  if (shared) {
+    w13enS.add('rect', {x: 150, y: 86, width: 320, height: 130, rx: 10,
+                        fill: HC.tok.resid, opacity: 0.18,
+                        stroke: HC.tok.resid, 'stroke-width': 2}, g);
+    w13enS.txtPx(310, 112, 'base 環境（大家共用）',
+                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
+    w13enS.add('rect', {x: 186, y: 130, width: 248, height: 44, rx: 6,
+                        fill: HC.tok.resid, opacity: 0.9}, g);
+    const t = w13enS.add('text', {x: 310, y: 158, 'text-anchor': 'middle', cls: 'vlab',
+                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
+    t.textContent = 'pandas 2.3.2';
+    w13enS.txtPx(310, 246, '另一個專案裝了 pandas 1.5，就把它蓋掉了',
+                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
+  } else {
+    [['m524（課程）', 'pandas 2.3.2', HC.tok.accent2, 40],
+     ['other（別的專案）', 'pandas 1.5.3', HC.tok.accent, 330]].forEach(e => {
+      w13enS.add('rect', {x: e[3], y: 86, width: 250, height: 130, rx: 10,
+                          fill: e[2], opacity: 0.16, stroke: e[2], 'stroke-width': 2}, g);
+      const t = w13enS.add('text', {x: e[3] + 125, y: 112, 'text-anchor': 'middle',
+                                    cls: 'axtitle', fill: e[2]}, g);
+      t.textContent = e[0];
+      w13enS.add('rect', {x: e[3] + 24, y: 130, width: 202, height: 44, rx: 6,
+                          fill: e[2], opacity: 0.9}, g);
+      const u = w13enS.add('text', {x: e[3] + 125, y: 158, 'text-anchor': 'middle',
+                                    cls: 'vlab', 'font-family': HC.MONO,
+                                    fill: HC.tok.paper}, g);
+      u.textContent = e[1];
+    });
+    w13enS.txtPx(310, 246, '兩個版本共存，互不干擾',
+                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
+  }
+  document.getElementById('w13enCase').textContent = shared ? '全部裝在 base' : '各自獨立';
+  document.getElementById('w13enA').textContent = shared ? 'pandas 被蓋成 1.5.3' : 'pandas 2.3.2 ✓';
+  document.getElementById('w13enB').textContent = shared ? 'pandas 1.5.3' : 'pandas 1.5.3 ✓';
+  setStatus('w13enStatus', shared
+    ? '後裝的蓋掉先裝的 —— 於是課程 lab 的數字就對不上了。'
+    : '每個專案一個環境，版本各自釘死。<b>這就是 conda 環境的全部意義。</b>');
+}
+function w13enSet(i) { w13enI = i; w13enDraw(); }
+if (w13enS) w13enDraw();
+
+/* ═══ w13cm conda 指令組裝器 ═══ */
+const w13cmS = HC.svg('w13cmdSvg', {h: 300});
+const w13cmCases = [
+  {s: '建立環境', c: 'conda create -n m524 python=3.11 -y',
+   note: '<code>-n</code> 是環境名字，<code>python=3.11</code> 連 Python 版本一起釘住。'},
+  {s: '裝套件', c: 'conda run -n m524 pip install numpy==1.24.4 pandas==2.3.2 ISLP==0.4.0',
+   note: '用 <code>==</code> 釘版本。完整清單見上面那段程式碼。'},
+  {s: '註冊 kernel', c: 'conda run -n m524 python -m ipykernel install --user --name m524',
+   note: '<b>這一步最常被跳過</b>，跳過的話 Jupyter 的 kernel 選單裡看不到它。'},
+  {s: '每次使用', c: 'conda activate m524',
+   note: '開新的終端機都要做一次。Jupyter 那邊則是在右上角選 kernel。'}
+];
+let w13cmI = 0;
+function w13cmDraw() {
+  const g = w13cmS.clearLayer('main');
+  w13cmCases.forEach((c, i) => {
+    const on = i === w13cmI;
+    const x = 40 + i * 138;
+    w13cmS.add('rect', {x: x, y: 62, width: 124, height: 46, rx: 7,
+                        fill: on ? HC.tok.accent2 : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                        opacity: on ? 0.95 : 0.5}, g);
+    const t = w13cmS.add('text', {x: x + 62, y: 90, 'text-anchor': 'middle', cls: 'axlab',
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = (i + 1) + '. ' + c.s;
+    if (i < 3) {
+      w13cmS.add('path', {d: 'M' + (x + 128) + ' 85 H ' + (x + 172),
+                          stroke: HC.tok.cardBorder, 'stroke-width': 2}, g);
+      w13cmS.add('path', {d: 'M' + (x + 176) + ' 85 l -8 -5 v 10 z',
+                          fill: HC.tok.cardBorder}, g);
+    }
+  });
+  const c = w13cmCases[w13cmI];
+  w13cmS.add('rect', {x: 40, y: 140, width: 540, height: 62, rx: 8,
+                      fill: HC.tok.ink, opacity: 0.92}, g);
+  const parts = c.c.match(/.{1,62}(\s|$)/g) || [c.c];
+  parts.slice(0, 2).forEach((ln, i) => {
+    const t = w13cmS.add('text', {x: 58, y: 168 + i * 22, cls: 'vlab',
+                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
+    t.textContent = ln.trim();
+  });
+  w13cmS.txtPx(310, 240, '在終端機打這一行', {cls: 'axlab', anchor: 'middle'}, g);
+  document.getElementById('w13cmStep').textContent = c.s;
+  document.getElementById('w13cmCmd').textContent = c.c;
+  setStatus('w13cmStatus', c.note);
+}
+function w13cmSet(i) { w13cmI = i; w13cmDraw(); }
+if (w13cmS) w13cmDraw();
+
+/* ═══ w13fx 四種假故障 ═══ */
+const w13fxS = HC.svg('w13fixSvg', {h: 320});
+const w13fxCases = [
+  {s: 'ModuleNotFoundError', w: '沒裝，或裝到了另一個環境',
+   f: '%pip install X；檢查 kernel 是哪一個'},
+  {s: 'NameError', w: '某一格沒跑（十次有九次是 imports 那一格）', f: '從第一格重跑'},
+  {s: 'FileNotFoundError', w: '路徑不對，或 Drive 沒掛', f: '在檔案窗格複製正確的路徑'},
+  {s: '結果跟同學不一樣', w: '切分或重抽樣沒有固定種子',
+   f: 'random_state=0、seed=0，然後兩邊都重跑'}
+];
+let w13fxI = 0;
+function w13fxDraw() {
+  const g = w13fxS.clearLayer('main');
+  w13fxCases.forEach((c, i) => {
+    const on = i === w13fxI;
+    const y = 68 + i * 58;
+    w13fxS.add('rect', {x: 40, y: y, width: 540, height: 46, rx: 7,
+                        fill: on ? HC.tok.accent : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                        opacity: on ? 0.95 : 0.45}, g);
+    const t = w13fxS.add('text', {x: 60, y: y + 21, cls: 'vlab', 'font-family': HC.MONO,
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = c.s;
+    const u = w13fxS.add('text', {x: 60, y: y + 38, cls: 'axlab',
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    u.textContent = on ? '→ ' + c.f : c.w;
+  });
+  w13fxS.txtPx(310, 300, '萬用第一步：重啟 kernel 並從第一格全部重跑',
+               {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
+  const c = w13fxCases[w13fxI];
+  document.getElementById('w13fxSym').textContent = c.s;
+  document.getElementById('w13fxWhy').textContent = c.w;
+  document.getElementById('w13fxFix').textContent = c.f;
+  setStatus('w13fxStatus', c.s + '：' + c.w + '。');
+}
+function w13fxSet(i) { w13fxI = i; w13fxDraw(); }
+if (w13fxS) w13fxDraw();
+</script>
+<!-- PAGEJS:END -->
+<!-- DATA:BEGIN -->
+<script>
+const FLASHCARDS = [{"front":"雲端筆記本（Colab）","back":"跑在 Google 機器上的 Jupyter notebook。零安裝、有免費 GPU、換電腦也接得上。第一次上手一律選它。"},{"front":"執行階段（Runtime）","back":"Colab 幫你開的那台虛擬機。閒置太久或關掉分頁就會被回收，<b>裝的套件與記憶體裡的變數都會消失</b>，程式碼本身存在 Drive 裡不會掉。"},{"front":"魔術指令（Magic Command）","back":"以 <code>%</code> 開頭的 Jupyter 指令。<code>%pip install X</code> 會裝到<b>當前 kernel</b> 的 Python 裡，比在終端機打 pip 保險。"},{"front":"核心（Kernel）","back":"實際執行你程式碼的那個 Python 行程。<b>kernel 選錯是最常見的假故障</b>——你裝在 m524，Jupyter 卻用 base 在跑。"},{"front":"儲存格編號（Cell Number）","back":"左邊的 <code>[7]</code> 是「這個 kernel 的第 7 次執行」，<b>不是第 7 格</b>。編號不是由上到下遞增，就代表你亂序執行過。"},{"front":"亂序執行（Out-of-order Execution）","back":"notebook 可以照任何順序跑儲存格，於是變數狀態可能跟「從頭跑一次」不同。交作業前一定要重啟並全部重跑。"},{"front":"重啟並全部重跑（Restart and Run All）","back":"解環境問題的萬用第一步。它同時消除了「亂序執行」與「殘留變數」這兩個最常見的干擾。"},{"front":"匯入（import）","back":"把已經裝好的套件拿進來用，並建立慣用簡稱。<code>import numpy as np</code> 沒跑，<code>np</code> 這個名字就不存在。"},{"front":"慣用簡稱（Alias）","back":"<code>np</code>／<code>pd</code>／<code>plt</code>／<code>sns</code>／<code>sm</code> 是整個社群的慣例。照著用，別人與 AI 才看得懂你的程式碼。"},{"front":"ISLP 套件","back":"課本的配套套件，提供 <code>load_data</code>、<code>MS</code>、<code>summarize</code> 等工具。裝它會順便裝上 numpy、pandas、scikit-learn、statsmodels。"},{"front":"掛載雲端硬碟（drive.mount）","back":"把你的 Google Drive 接到 Colab 的檔案系統，之後 <code>/content/drive/MyDrive/</code> 底下就是你的雲端硬碟。第一次會跳授權視窗。"},{"front":"資料路徑變數（DATA_PATH）","back":"把資料夾位置存成一個變數而不是每次打全長。<b>課程 lab 裡那一行是老師的路徑，你一定要改成自己的。</b>"},{"front":"路徑組合（os.path.join）","back":"幫你處理斜線方向，比自己用加號接字串保險（Windows 與 Linux 的斜線不同）。"},{"front":"虛擬環境（Virtual Environment）","back":"把一個專案的套件裝在獨立的一份 Python 裡。沒有它的話，另一個專案裝了不同版本就會把你的蓋掉。"},{"front":"conda 環境","back":"<code>conda create -n m524 python=3.11</code>。連 Python 版本都能釘住，是本站產生圖表用的方式。"},{"front":"釘版本（Version Pinning）","back":"<code>pandas==2.3.2</code> 這種寫法。目的是<b>一致</b>不是「新版不好」——版本一改，某些預設值與演算法細節就可能不同，數字就對不上了。"},{"front":"套件相依（Dependency）","back":"一個套件需要的其他套件。裝 ISLP 會連帶裝一整串，所以輸出很長。相依之間版本衝突正是要用獨立環境的原因。"},{"front":"找不到模組（ModuleNotFoundError）","back":"沒裝，或裝到了另一個環境。先 <code>%pip install X</code>，再檢查 kernel 是哪一個。"},{"front":"名字未定義（NameError）","back":"十次有九次是「某一格沒跑」，尤其是 imports 那一格。解法就是從第一格重跑。"},{"front":"找不到檔案（FileNotFoundError）","back":"路徑不對或 Drive 沒掛。在 Colab 左側的檔案窗格點開資料夾、右鍵複製正確路徑最快。"},{"front":"隨機種子（random_state／seed）","back":"切分與重抽樣都有隨機性。沒固定種子的話，你跟同學跑出來的數字就會不一樣——而且兩邊都沒錯。"},{"front":"GPU 加速（cudf／cuml）","back":"課程 lab 開頭那兩行 <code>%load_ext</code> 是 Colab 上的 GPU 加速。<b>沒有 NVIDIA 顯卡就刪掉那兩行</b>，其餘照樣能跑，只是慢一點。"},{"front":"例外處理的正確用法（try／except）","back":"課程 lab 用 <code>try: from google.colab import drive / except:</code> 處理「Colab 才有這個套件」。你知道會發生什麼錯、也知道怎麼處理，才該用它。"},{"front":"可重現的交件（Reproducible Submission）","back":"重啟 kernel → 從第一格全部重跑 → 每格都有輸出且無紅字 → 種子都固定。做完這四件才交，不然你交的是只有自己機器跑得出來的東西。"}];
+HC.initFlashcards();
+</script>
+<!-- DATA:END -->
+</body></html>

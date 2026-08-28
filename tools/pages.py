@@ -316,6 +316,34 @@ def _svg_flow():
             '<circle cx="180" cy="252" r="13"/></g>')
 
 
+def _svg_gear():
+    """課前準備 00B：一個齒輪與一個核取清單。"""
+    teeth = "".join(
+        f'<rect x="{158 + 0}" y="{40}" width="18" height="26" rx="3" '
+        f'transform="rotate({i * 45} 167 140)"/>' for i in range(8))
+    return (f'<g fill="#fff" opacity=".8">{teeth}'
+            '<circle cx="167" cy="140" r="58"/></g>'
+            '<circle cx="167" cy="140" r="28" fill="#2b3a67" opacity=".9"/>'
+            '<g stroke="#fff" stroke-width="4" fill="none" opacity=".9">'
+            '<path d="M250 96 l 16 16 l 30 -32"/>'
+            '<path d="M250 156 l 16 16 l 30 -32"/>'
+            '<path d="M250 216 l 16 16 l 30 -32"/></g>')
+
+
+def _svg_spark():
+    """課前準備 00A：一顆腦與一個問號。"""
+    return ('<g stroke="#fff" stroke-width="3.5" fill="none" opacity=".85">'
+            '<path d="M120 96 C 96 96, 84 118, 92 138 C 76 152, 84 180, 106 184 '
+            'C 110 206, 142 212, 156 196 L 156 96 Z"/>'
+            '<path d="M156 96 C 180 96, 192 118, 184 138 C 200 152, 192 180, 170 184 '
+            'C 166 206, 156 208, 156 196"/>'
+            '<path d="M124 128 h 22 M132 158 h 20 M170 128 h 14"/></g>'
+            '<g fill="#fff" opacity=".92">'
+            '<path d="M248 108 c 0 -18 30 -18 30 0 c 0 14 -15 12 -15 28 h -12 '
+            'c 0 -22 15 -18 15 -28 c 0 -8 -18 -8 -18 0 z"/>'
+            '<circle cx="257" cy="156" r="7"/></g>')
+
+
 PAGES = [
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
@@ -637,6 +665,64 @@ PAGES = [
         ],
     ),
     # ── 先備入口層（kind="prep"，n=12 起）────────────────────────────────
+    Page(
+        n=12, stem="00a_why_code", slug="WHY CODE", title_en="Why Write Code",
+        h1='AI 都會算了，<span class="orange">我為什麼還要學</span>？',
+        plain="為什麼還要自己寫統計程式",
+        subtitle="課前準備 A — 選讀，不列入評分",
+        formula="自動化偏誤｜跨模態不一致｜AI 讀圖會讀錯｜可重現性｜固定種子｜驗證迴圈｜你要練的是判斷力",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · 為什麼寫程式", esl_label="",
+        playlist="",
+        hero_svg=_svg_spark(),
+        kind="prep", data_key="prep_00a_why_code", src_labs=(1, 2),
+        ex_links=[("🔗 本站章節總覽", "index.html"),
+                  ("🔗 ISLP 原書", BOOK_ISLP)],
+        secs=[
+            Sec("prologue", "你已經有 AI 了", "那還學這門課幹嘛？先把問題問對",
+                "AI-Stats §11", kicker="PROLOGUE · 開場"),
+            Sec("bias", "自動化偏誤", "答案排版得越好看，你越不會去查",
+                "AI-Stats §11"),
+            Sec("crossmodal", "AI 讀圖會讀錯", "同一份資料，表、圖與文字摘要說法不一樣",
+                "AI-Stats §11"),
+            Sec("verify", "驗證迴圈", "拿到一個答案之後，你能做的五件事",
+                "課程 Lab Ch1 · 儲存格 31–38"),
+            Sec("repro", "可重現性", "沒有種子的結果，連你自己都重現不了",
+                "課程 Lab Ch2 · 儲存格 80–84"),
+            Sec("you", "你要練的其實是什麼", "不是打字，是判斷「這個數字能不能信」",
+                "先備 · 學習路線"),
+        ],
+    ),
+    Page(
+        n=13, stem="00b_setup", slug="SETUP", title_en="Setup",
+        h1='把<span class="blue">環境</span>準備好：三分鐘上手',
+        plain="環境安裝",
+        subtitle="課前準備 B — 選讀，不列入評分",
+        formula="Colab 開了就能跑｜%pip install ISLP｜imports 一格｜掛 Drive 讀資料｜本機 conda 對齊版本｜儲存格亂序執行是最常見的假故障",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · 環境", esl_label="",
+        playlist="",
+        hero_svg=_svg_gear(),
+        kind="prep", data_key="prep_00b_setup", src_labs=(1, 2),
+        ex_links=[("🔗 Google Colab", "https://colab.research.google.com/"),
+                  ("🔗 conda 環境管理",
+                   "https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html"),
+                  ("🔗 ISLP 套件", "https://islp.readthedocs.io/")],
+        secs=[
+            Sec("prologue", "先能跑，再談其他", "三分鐘從零到跑出第一張圖",
+                "課程 Lab Ch1 · 儲存格 3–5", kicker="PROLOGUE · 開場"),
+            Sec("colab", "Colab 工作流", "開瀏覽器就有，但關掉就沒了",
+                "課程 Lab Ch1 · 儲存格 3–4"),
+            Sec("imports", "imports 那一格", "每一份 lab 的第一格都長一樣，而且要先跑",
+                "課程 Lab Ch2 · 儲存格 3–8"),
+            Sec("data", "資料放哪裡", "掛 Drive、或直接讀網址",
+                "課程 Lab Ch2 · 儲存格 183–187"),
+            Sec("local", "本機安裝", "要長期用就自己開一個 conda 環境",
+                "conda 文件 · 環境管理"),
+            Sec("trouble", "跑不動的時候", "四種最常見的假故障，各自怎麼修",
+                "Python 文件 · 例外"),
+        ],
+    ),
     Page(
         n=14, stem="p1_python_basics", slug="PYTHON BASICS", title_en="Python Basics",
         h1='看得懂一段<span class="blue">統計程式</span>：Python 基礎',

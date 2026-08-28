@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Python 基礎 — Python Basics 互動自學頁。先備知識 P1 — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
-<title>Python 基礎 — Python Basics Interactive（Python）</title>
+<meta name="description" content="為什麼還要自己寫統計程式 — Why Write Code 互動自學頁。課前準備 A — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
+<title>為什麼還要自己寫統計程式 — Why Write Code Interactive（Python）</title>
 <script>
   MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
              options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
@@ -526,12 +526,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN floatnav -->
 <nav class="float-nav" id="floatNav" aria-label="章節導覽">
   <div class="fn-title">章節導覽</div>
-  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">第一行程式</span></a>
-  <a href="#var" data-target="var"><span class="fn-num">P01</span><span class="fn-name">變數與型別</span></a>
-  <a href="#list" data-target="list"><span class="fn-num">P02</span><span class="fn-name">串列</span></a>
-  <a href="#slice" data-target="slice"><span class="fn-num">P03</span><span class="fn-name">切片</span></a>
-  <a href="#dict" data-target="dict"><span class="fn-num">P04</span><span class="fn-name">字典</span></a>
-  <a href="#str" data-target="str"><span class="fn-num">P05</span><span class="fn-name">字串與格式化</span></a>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">你已經有 AI 了</span></a>
+  <a href="#bias" data-target="bias"><span class="fn-num">P01</span><span class="fn-name">自動化偏誤</span></a>
+  <a href="#crossmodal" data-target="crossmodal"><span class="fn-num">P02</span><span class="fn-name">AI 讀圖會讀錯</span></a>
+  <a href="#verify" data-target="verify"><span class="fn-num">P03</span><span class="fn-name">驗證迴圈</span></a>
+  <a href="#repro" data-target="repro"><span class="fn-num">P04</span><span class="fn-name">可重現性</span></a>
+  <a href="#you" data-target="you"><span class="fn-num">P05</span><span class="fn-name">你要練的其實是什麼</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
   <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
@@ -542,12 +542,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="hero" id="top">
   <div class="hero-grid"></div>
   <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
-<g fill="#fff" opacity=".62"><rect x="46" y="54" width="210" height="14" rx="7"/><rect x="66" y="84" width="150" height="14" rx="7"/><rect x="66" y="114" width="176" height="14" rx="7"/><rect x="46" y="144" width="128" height="14" rx="7"/><rect x="46" y="174" width="232" height="14" rx="7"/><rect x="66" y="204" width="168" height="14" rx="7"/></g><g fill="#fff" opacity=".9"><rect x="46" y="234" width="96" height="14" rx="7"/></g><g stroke="#fff" stroke-width="3" opacity=".5"><path d="M30 40 V262"/></g>
+<g stroke="#fff" stroke-width="3.5" fill="none" opacity=".85"><path d="M120 96 C 96 96, 84 118, 92 138 C 76 152, 84 180, 106 184 C 110 206, 142 212, 156 196 L 156 96 Z"/><path d="M156 96 C 180 96, 192 118, 184 138 C 200 152, 192 180, 170 184 C 166 206, 156 208, 156 196"/><path d="M124 128 h 22 M132 158 h 20 M170 128 h 14"/></g><g fill="#fff" opacity=".92"><path d="M248 108 c 0 -18 30 -18 30 0 c 0 14 -15 12 -15 28 h -12 c 0 -22 15 -18 15 -28 c 0 -8 -18 -8 -18 0 z"/><circle cx="257" cy="156" r="7"/></g>
   </svg>
   <div class="hero-content">
-    <h1>看得懂一段<span class="blue">統計程式</span>：Python 基礎</h1>
-    <div class="subtitle">先備知識 P1 — 選讀，不列入評分</div>
-    <div class="big-formula">變數是名牌不是盒子｜int float str bool｜串列與索引｜切片含頭不含尾｜字典是鍵值對｜f-string 與 format</div>
+    <h1>AI 都會算了，<span class="orange">我為什麼還要學</span>？</h1>
+    <div class="subtitle">課前準備 A — 選讀，不列入評分</div>
+    <div class="big-formula">自動化偏誤｜跨模態不一致｜AI 讀圖會讀錯｜可重現性｜固定種子｜驗證迴圈｜你要練的是判斷力</div>
     <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
   </div>
 </div>
@@ -555,7 +555,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="container">
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
-  <div class="sg-title">📌 本頁使用方式（先備 · Python 基礎）</div>
+  <div class="sg-title">📌 本頁使用方式（先備 · 為什麼寫程式）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
@@ -567,12 +567,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="toc">
   <div class="toc-title">CONTENTS · 內容目錄</div>
   <div class="toc-grid">
-    <a href="#prologue"><span class="toc-num">P00</span>第一行程式</a>
-    <a href="#var"><span class="toc-num">P01</span>變數與型別</a>
-    <a href="#list"><span class="toc-num">P02</span>串列</a>
-    <a href="#slice"><span class="toc-num">P03</span>切片</a>
-    <a href="#dict"><span class="toc-num">P04</span>字典</a>
-    <a href="#str"><span class="toc-num">P05</span>字串與格式化</a>
+    <a href="#prologue"><span class="toc-num">P00</span>你已經有 AI 了</a>
+    <a href="#bias"><span class="toc-num">P01</span>自動化偏誤</a>
+    <a href="#crossmodal"><span class="toc-num">P02</span>AI 讀圖會讀錯</a>
+    <a href="#verify"><span class="toc-num">P03</span>驗證迴圈</a>
+    <a href="#repro"><span class="toc-num">P04</span>可重現性</a>
+    <a href="#you"><span class="toc-num">P05</span>你要練的其實是什麼</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
     <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
@@ -582,410 +582,380 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>先讓一段課程 lab 的程式碼變得看得懂 <span class="sec-badge">課程 Lab Ch2 · 儲存格 12–18</span></h2>
+  <h2>那還學這門課幹嘛？先把問題問對 <span class="sec-badge">AI-Stats §11</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>這一頁假設你完全沒寫過程式。目標很具體：讀完之後，
-  你能看懂課程 lab 裡那些一行一行的東西在做什麼——不是會寫，是<strong>看得懂</strong>。
-  會寫是後面幾頁的事。</p>
+  <p>先把話講開：現在的 AI 確實寫得出這門課大部分的程式碼。你貼一句
+  「幫我用 Auto 資料配一個 mpg 對 horsepower 的迴歸並畫殘差圖」，
+  它三秒就給你一段能跑的東西。這是真的，不用假裝不是。</p>
+
+  <p>所以問題不是「AI 會不會」，而是<strong>「它給你的那個答案，你憑什麼判斷對不對」</strong>。
+  這一頁講的就是這件事——而且不是精神喊話，是幾個具體、可以驗證的失效模式。</p>
 
 <div class="info-box">
-  <span class="info-label">Python 只做三件事</span>
-  ① <strong>算</strong>一個值；② 把值<strong>取個名字</strong>存起來；③ 把值<strong>丟給某個函式</strong>處理。課程 lab 裡每一行都是這三件事的組合，沒有第四種。
+  <span class="info-label">這一頁的立場</span>
+  <strong>該用就用。</strong>環境問題、語法問題、「這個函式的參數是什麼」，問 AI 又快又準。真正需要你自己判斷的是另一類問題：<strong>這個數字能不能拿去下結論。</strong>
 </div>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <svg class="viz-svg" id="w14readSvg" height="320"></svg>
-      <div class="status-banner" id="w14rdStatus"><span class="status-icon">›</span><span class="status-text">按「單步」一行一行拆。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w14rdStep()">→ 單步</button><button class="btn btn-play" onclick="w14rdPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w14rdReset()">重置</button></div>
+      <svg class="viz-svg" id="w12anchorSvg" height="340"></svg>
+      <div class="status-banner" id="w12anStatus"><span class="status-icon">›</span><span class="status-text">先拖滑桿估一個數字，再按「看 AI 的答案」。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w12anGuess(-1)">估低一點</button><button class="btn btn-step" onclick="w12anGuess(1)">估高一點</button><button class="btn btn-play" onclick="w12anReveal()">▶ 看 AI 的答案</button><button class="btn btn-toggle" onclick="w12anTruth()">揭曉真實值</button><button class="btn btn-reset" onclick="w12anReset()">重置</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">一行一行拆</div>
-      按「單步」把一段真的 lab 程式碼拆開，看每一行分別在做上面三件事的哪一件。
+      <div class="ic-title">先自己估一次</div>
+      拖滑桿估「1980 年後出廠的車，平均 mpg 大概多少」。估完按「看 AI 的答案」，然後<strong>再估一次</strong>。最後才揭曉真實值。
     </div>
     <div class="info-card">
-      <div class="ic-title">這一行</div>
-      <div class="ic-row"><span class="ic-label">在做什麼</span><span class="ic-value" id="w14rdWhat">—</span></div><div class="ic-row"><span class="ic-label">屬於哪一類</span><span class="ic-value" id="w14rdKind">—</span></div><div class="ic-row"><span class="ic-label">結果是什麼</span><span class="ic-value" id="w14rdVal">—</span></div>
+      <div class="ic-title">你的兩次估計</div>
+      <div class="ic-row"><span class="ic-label">第一次</span><span class="ic-value" id="w12anFirst">—</span></div><div class="ic-row"><span class="ic-label">看過 AI 之後</span><span class="ic-value" id="w12anSecond">—</span></div><div class="ic-row"><span class="ic-label">被拉動了多少</span><span class="ic-value" id="w12anShift">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">看不懂就唸出來</div>
-      <code>x = [3, 4, 5]</code> 唸成「把一個裝了 3、4、5 的串列，取名叫 x」。程式碼是可以用中文唸的，唸得出來多半就懂了。
+      <div class="ic-title">這在測什麼</div>
+      測的是<strong>錨定</strong>：一個看起來很有自信的數字會把你的判斷拉過去，即使你本來估得比較準。這不是意志力問題，是人類判斷的固定特性——所以要靠<strong>流程</strong>去對抗，不是靠「我會小心」。
     </div>
   </div>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">印出一行字</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">print(<span class="str">&#x27;fit a model with&#x27;</span>, <span class="num">11</span>, <span class="str">&#x27;variables&#x27;</span>)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>fit a model with 11 variables</pre></div>
-  <p class="dx-note"><code>print</code> 是一個函式，括號裡是要給它的東西，用逗號分開的話它會自動加空白。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 12</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">算術</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="num">3</span> + <span class="num">5</span></span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>8</pre></div>
-  <p class="dx-note">Jupyter 的儲存格會自動顯示<strong>最後一行的值</strong>，所以不寫 print 也看得到。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 16</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">字串相加是接起來</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="str">&quot;hello&quot;</span> + <span class="str">&quot;</span> <span class="str">&quot;</span> + <span class="str">&quot;world&quot;</span></span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>&#x27;hello world&#x27;</pre></div>
-  <p class="dx-note">加號對數字是相加、對字串是串接。這種「同一個符號、不同型別不同意思」的設計在 P3 的串列與陣列還會再遇到一次。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 18</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 00 · 自我檢測</div>
-  <p><code>print('MSE =', 25.57)</code> 會印出什麼？</p>
-  <div class="quiz-options" id="qFirstOptions"><div class="quiz-opt" data-correct="true" data-fb="對。逗號分開的東西會被依序印出來，中間自動補一個空白。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(A)</span> <code>MSE = 25.57</code></div><div class="quiz-opt" data-correct="false" data-fb="少了空白。<code>print</code> 用逗號分隔時預設會插入一個空白。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(B)</span> <code>MSE =25.57</code></div><div class="quiz-opt" data-correct="false" data-fb="那是你把整個括號當成一個東西印出來的樣子。<code>print</code> 會把括號裡的每一項各自印出，不會印括號本身。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(C)</span> <code>('MSE =', 25.57)</code></div></div>
-  <div class="quiz-feedback" id="qFirstFeedback"></div>
+  <p>下面哪一種問題，交給 AI 最划算？</p>
+  <div class="quiz-options" id="qWhyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這類問題有標準答案、而且你可以<strong>馬上驗證</strong>（跑一次看 dtypes）。AI 在這裡幾乎沒有風險。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(A)</span> 「pandas 的 read_csv 要怎麼把 ? 當成遺漏值？」</div><div class="quiz-opt" data-correct="false" data-fb="這需要知道資料怎麼收的、假設成不成立、多重比較有沒有處理——而 AI 看不到這些。它會給你一個很有自信的答案，但那個自信不是來自你的資料。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(B)</span> 「這兩組的差異顯著嗎？」</div><div class="quiz-opt" data-correct="false" data-fb="R² 0.95 可能是過度配適、可能是資料洩漏、也可能只是這個領域本來就好預測。沒有看過你的流程的人（或 AI）沒辦法回答這個問題。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(C)</span> 「我的模型 R² 是 0.95，可以發表了嗎？」</div></div>
+  <div class="quiz-feedback" id="qWhyFeedback"></div>
 </div>
 </section>
-<section id="var">
-<!-- GEN:BEGIN sec:var -->
-  <div class="section-number">PART 01 · 變數與型別</div>
-  <h2>變數是貼在資料上的名牌，不是裝資料的盒子 <span class="sec-badge">課程 Lab Ch2 · 儲存格 16–23</span></h2>
-<!-- GEN:END sec:var -->
+<section id="bias">
+<!-- GEN:BEGIN sec:bias -->
+  <div class="section-number">PART 01 · 自動化偏誤</div>
+  <h2>答案排版得越好看，你越不會去查 <span class="sec-badge">AI-Stats §11</span></h2>
+<!-- GEN:END sec:bias -->
 
-  <p>變數不是盒子。<code>x = [3, 4, 5]</code> 這一行做的事是：先做出一個串列，
-  然後把 <strong>x 這個名牌貼上去</strong>。同一個東西可以貼很多張名牌——
-  這件事在 P3 講陣列的「檢視」時會變成一個真的會咬人的問題。</p>
+  <p>第一個失效模式叫<strong>自動化偏誤</strong>（automation bias）：
+  對機器產出的答案給予比對人類答案更高的信任。
+  它最狡猾的地方在於——<strong>答案排版得越整齊、語氣越肯定，你越不會去查</strong>。</p>
+
+<div class="info-box warm">
+  <span class="info-label">為什麼特別危險</span>
+  同樣一句「這兩組差異顯著」，同學講你會追問「你用什麼檢定」，AI 講你會直接複製到報告裡。但 AI 沒有比同學更了解你的資料——它甚至沒看過你的資料。
+</div>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <svg class="viz-svg" id="w14varSvg" height="320"></svg>
-      <div class="status-banner" id="w14vaStatus"><span class="status-icon">›</span><span class="status-text">先猜按下「改內容」之後 x 會變成什麼。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w14vaAlias()">再貼一張名牌 y = x</button><button class="btn btn-step" onclick="w14vaMut()">改內容 y[0] = 99</button><button class="btn btn-reset" onclick="w14vaReset()">重置</button></div>
+      <svg class="viz-svg" id="w12biasSvg" height="320"></svg>
+      <div class="status-banner" id="w12biStatus"><span class="status-icon">›</span><span class="status-text">同一句話，三個來源。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w12biSet(0)">同學說的</button><button class="btn btn-toggle" onclick="w12biSet(1)">AI 說的</button><button class="btn btn-toggle" onclick="w12biSet(2)">你自己算的</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">名牌不是盒子</div>
-      按「再貼一張名牌」，兩個名字會指到<strong>同一個</strong>串列。接著按「改內容」，你會看到兩個名字看到的東西一起變了。
+      <div class="ic-title">同一句話，兩個來源</div>
+      按按鈕切換這句話是誰說的，看你心裡的「要不要查證」有沒有不一樣。誠實一點——多數人是有的。
     </div>
     <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">x 看到的</span><span class="ic-value" id="w14vaX">[3, 4, 5]</span></div><div class="ic-row"><span class="ic-label">y 看到的</span><span class="ic-value" id="w14vaY">（還沒有 y）</span></div><div class="ic-row"><span class="ic-label">它們是同一個嗎</span><span class="ic-value" id="w14vaSame">—</span></div>
+      <div class="ic-title">這個主張</div>
+      <div class="ic-row"><span class="ic-label">誰說的</span><span class="ic-value" id="w12biWho">—</span></div><div class="ic-row"><span class="ic-label">你會去查嗎</span><span class="ic-value" id="w12biCheck">—</span></div><div class="ic-row"><span class="ic-label">實際上該做什麼</span><span class="ic-value" id="w12biDo">回到資料驗證</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">數字與字串不會有這個問題</div>
-      整數與字串是<strong>不可變</strong>的，<code>a = 3; b = a; b = 4</code> 之後 a 還是 3。會被就地改掉的只有串列、字典這種可變的東西。
+      <div class="ic-title">流程比意志力可靠</div>
+      對抗自動化偏誤的方法不是「我會保持懷疑」，而是<strong>把驗證變成固定動作</strong>：任何一個數字進到報告之前，先問「我能不能自己重算一次」。
     </div>
   </div>
 </div>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>型別</th><th>長什麼樣</th><th>在這門課裡是什麼</th></tr></thead>
-  <tbody><tr><td><code>int</code></td><td><code>392</code></td><td>樣本數 n、變數個數 p、折數 k</td></tr><tr><td><code>float</code></td><td><code>25.5739</code></td><td>MSE、係數、p 值——幾乎所有統計量</td></tr><tr><td><code>str</code></td><td><code>'lstat'</code></td><td>欄名、檔名、圖的標題</td></tr><tr><td><code>bool</code></td><td><code>True</code> / <code>False</code></td><td>條件的結果，布林遮罩的元素</td></tr><tr><td><code>list</code></td><td><code>[3, 4, 5]</code></td><td>一組欄名、一組要試的參數</td></tr><tr><td><code>dict</code></td><td><code>{'R2': 0.54}</code></td><td>一組具名的結果</td></tr></tbody>
-</table></div>
-
-<div class="info-box warm">
-  <span class="info-label">整數除法會咬人</span>
-  <code>7 / 2</code> 給 <code>3.5</code>（浮點數），<code>7 // 2</code> 給 <code>3</code>（整數，直接砍掉小數）。算折數或索引時用得到後者，算統計量千萬不要用錯。
+<div class="deck-extra">
+  <div class="dx-label">最便宜的驗證動作</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
+  <span class="line">df.describe()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              A         B         C         D
+count  6.000000  6.000000  6.000000  6.000000
+mean  -0.291225 -0.842656  0.365341  0.328874
+std    0.594509  0.608525  0.743696  1.030710
+min   -1.060077 -1.592677 -0.604842 -1.500806
+25%   -0.729352 -1.048671 -0.115877  0.231760
+50%   -0.253499 -0.988057  0.350348  0.462902
+75%    0.091032 -0.738359  0.771784  0.679955
+max    0.501820  0.236859  1.455216  1.641228</pre></div>
+  <p class="dx-note"><code>describe()</code> 一行就能戳破一半的錯誤主張：範圍不合理、count 比列數少（有遺漏值）、標準差是 0（整欄同一個值）。<strong>問任何進階問題之前，先看過這張表。</strong></p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 36</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
-  <p><code>a = [1, 2]</code>、<code>b = a</code>、<code>b.append(3)</code>。現在 <code>a</code> 是什麼？</p>
-  <div class="quiz-options" id="qVarOptions"><div class="quiz-opt" data-correct="false" data-fb="<code>b = a</code> 沒有複製任何東西，它只是<strong>多貼一張名牌</strong>。要複製得寫 <code>b = a.copy()</code>。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(A)</span> <code>[1, 2]</code>，因為 b 是複製的</div><div class="quiz-opt" data-correct="true" data-fb="對。這是初學最常見的意外，而且在資料前處理時特別危險——你以為在改暫存變數，其實動到了原始資料。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(B)</span> <code>[1, 2, 3]</code>，因為兩個名字指的是同一個串列</div><div class="quiz-opt" data-correct="false" data-fb="不會。一個東西可以有很多個名字，它們平起平坐，沒有誰取代誰。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(C)</span> 會報錯，a 已經被 b 取代了</div></div>
-  <div class="quiz-feedback" id="qVarFeedback"></div>
+  <p>AI 給你一段分析，結論寫得很肯定、格式也很整齊。你該做的第一件事是？</p>
+  <div class="quiz-options" id="qBiasOptions"><div class="quiz-opt" data-correct="false" data-fb="會有幫助，但這是在<strong>文字層面</strong>檢查。說得通的錯誤結論很多，光讀文字抓不出來。" onclick="quizCheck('qBias', this)"><span class="opt-letter">(A)</span> 看它的說法有沒有邏輯漏洞</div><div class="quiz-opt" data-correct="true" data-fb="對。這是唯一能真正確認的方式，而且通常只要一兩行程式碼——這也正是你需要看得懂那一兩行的理由。" onclick="quizCheck('qBias', this)"><span class="opt-letter">(B)</span> 回到資料，自己把關鍵那個數字算一次</div><div class="quiz-opt" data-correct="false" data-fb="兩個模型可能犯同一類錯（訓練資料重疊、同樣的統計誤解）。一致不等於正確。" onclick="quizCheck('qBias', this)"><span class="opt-letter">(C)</span> 問另一個 AI 看看說法一不一致</div></div>
+  <div class="quiz-feedback" id="qBiasFeedback"></div>
 </div>
 </section>
-<section id="list">
-<!-- GEN:BEGIN sec:list -->
-  <div class="section-number">PART 02 · 串列</div>
-  <h2>一排有順序的東西，從 0 開始數 <span class="sec-badge">課程 Lab Ch2 · 儲存格 21–23</span></h2>
-<!-- GEN:END sec:list -->
+<section id="crossmodal">
+<!-- GEN:BEGIN sec:crossmodal -->
+  <div class="section-number">PART 02 · AI 讀圖會讀錯</div>
+  <h2>同一份資料，表、圖與文字摘要說法不一樣 <span class="sec-badge">AI-Stats §11</span></h2>
+<!-- GEN:END sec:crossmodal -->
 
-  <p>串列是<strong>有順序</strong>的一排東西，用中括號寫，從 <strong>0</strong> 開始數。
-  課程 lab 裡最常見的用法是「一組欄名」與「一組要試的參數」。</p>
+  <p>第二個失效模式更具體：<strong>跨模態不一致</strong>（cross-modal inconsistency）——
+  同一份資料用表、圖、文字三種形式呈現時，AI 對它們的解讀可能互相矛盾。
+  最常見的是<strong>讀圖</strong>：它會很肯定地說出一個從圖上根本讀不出來的區間。</p>
 
-<div class="deck-extra">
-  <div class="dx-label">做一個串列</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">x = [<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]</span>
-  <span class="line">x</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[3, 4, 5]</pre></div>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 21</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">串列相加是接起來，不是逐元素相加</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">y = [<span class="num">4</span>, <span class="num">9</span>, <span class="num">7</span>]</span>
-  <span class="line">x + y</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[3, 4, 5, 4, 9, 7]</pre></div>
-  <p class="dx-note">輸出有六個元素。要逐元素相加得用 NumPy 陣列——那是 P3 的第一節。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 23</span>
+<div class="info-box warm">
+  <span class="info-label">這不是罕見的失誤</span>
+  參考書第 11 章舉的例子裡，AI 描述一張密度圖時把最密集的區間講錯了一整格。文字讀起來完全合理，只是跟圖不符——<strong>而且沒有任何警訊</strong>。下面我們用課程的 Auto 資料重演同一件事。
 </div>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <svg class="viz-svg" id="w14idxSvg" height="300"></svg>
-      <div class="status-banner" id="w14ixStatus"><span class="status-icon">›</span><span class="status-text">按左右看每一個位置的索引。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w14ixMove(-1)">← 左</button><button class="btn btn-step" onclick="w14ixMove(1)">右 →</button><button class="btn btn-reset" onclick="w14ixReset()">重置</button></div>
+      <svg class="viz-svg" id="w12readSvg" height="340"></svg>
+      <div class="status-banner" id="w12rdStatus"><span class="status-icon">›</span><span class="status-text">先讀那段描述，再自己找真正的最密區間。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w12rdMove(-1)">標記左移</button><button class="btn btn-step" onclick="w12rdMove(1)">標記右移</button><button class="btn btn-toggle" onclick="w12rdShowAi()">顯示 AI 說的區間</button><button class="btn btn-reset" onclick="w12rdReset()">重置</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">為什麼從 0 開始</div>
-      把索引想成「離開頭有多遠」：第一個元素離開頭 0 步。這個想法在下一節的切片會變得很重要。
+      <div class="ic-title">你來當裁判</div>
+      下面是 Auto 資料的 horsepower 分布（頁面當場算的）。旁邊那段「AI 的描述」是我們寫的，模仿真實會犯的那種錯。拖兩個標記，標出「AI 說的最密區間」與「真實的最密區間」。
     </div>
     <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">索引</span><span class="ic-value" id="w14ixI">0</span></div><div class="ic-row"><span class="ic-label">取到的值</span><span class="ic-value" id="w14ixV">'mpg'</span></div><div class="ic-row"><span class="ic-label">負的索引</span><span class="ic-value" id="w14ixN">-5</span></div>
+      <div class="ic-title">兩個區間各有幾筆</div>
+      <div class="ic-row"><span class="ic-label">AI 說的區間</span><span class="ic-value" id="w12rdAi">—</span></div><div class="ic-row"><span class="ic-label">你標的區間</span><span class="ic-value" id="w12rdYou">—</span></div><div class="ic-row"><span class="ic-label">差幾筆</span><span class="ic-value" id="w12rdDiff">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">負的索引從後面數</div>
-      <code>-1</code> 是最後一個、<code>-2</code> 是倒數第二個。要拿最後一欄寫 <code>cols[-1]</code>，不用先算長度再減一。
+      <div class="ic-title">為什麼會這樣</div>
+      AI 看圖是把像素轉成描述，中間沒有「回去數一次」的步驟。它的說法聽起來有多確定，跟它有多正確<strong>完全無關</strong>。
+    </div>
+  </div>
+</div>
+
+<div class="info-box">
+  <span class="info-label">AI 的描述（我們寫的，模仿真實會犯的錯）</span>
+  「這份資料的馬力主要集中在 <strong>140 到 180</strong> 之間，呈現單峰的常態分布，少數高馬力的車形成右尾。」<br>——語氣很肯定、術語也用對了。問題是<strong>那個區間是錯的</strong>，而且「常態分布」這個描述也需要驗證，不是看一眼就能宣稱的。
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">回到資料，自己數一次</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">np.unique(Auto[<span class="str">&#x27;horsepower&#x27;</span>])</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([&#x27;100.0&#x27;, &#x27;102.0&#x27;, &#x27;103.0&#x27;, &#x27;105.0&#x27;, &#x27;107.0&#x27;, &#x27;108.0&#x27;, &#x27;110.0&#x27;,
+       &#x27;112.0&#x27;, &#x27;113.0&#x27;, &#x27;115.0&#x27;, &#x27;116.0&#x27;, &#x27;120.0&#x27;, &#x27;122.0&#x27;, &#x27;125.0&#x27;,
+       &#x27;129.0&#x27;, &#x27;130.0&#x27;, &#x27;132.0&#x27;, &#x27;133.0&#x27;, &#x27;135.0&#x27;, &#x27;137.0&#x27;, &#x27;138.0&#x27;,
+       &#x27;139.0&#x27;, &#x27;140.0&#x27;, &#x27;142.0&#x27;, &#x27;145.0&#x27;, &#x27;148.0&#x27;, &#x27;149.0&#x27;, &#x27;150.0&#x27;,
+       &#x27;152.0&#x27;, &#x27;153.0&#x27;, &#x27;155.0&#x27;, &#x27;158.0&#x27;, &#x27;160.0&#x27;, &#x27;165.0&#x27;, &#x27;167.0&#x27;,
+       &#x27;170.0&#x27;, &#x27;175.0&#x27;, &#x27;180.0&#x27;, &#x27;190.0&#x27;, &#x27;193.0&#x27;, &#x27;198.0&#x27;, &#x27;200.0&#x27;,
+       &#x27;208.0&#x27;, &#x27;210.0&#x27;, &#x27;215.0&#x27;, &#x27;220.0&#x27;, &#x27;225.0&#x27;, &#x27;230.0&#x27;, &#x27;46.00&#x27;,
+       &#x27;48.00&#x27;, &#x27;49.00&#x27;, &#x27;52.00&#x27;, &#x27;53.00&#x27;, &#x27;54.00&#x27;, &#x27;58.00&#x27;, &#x27;60.00&#x27;,
+       &#x27;61.00&#x27;, &#x27;62.00&#x27;, &#x27;63.00&#x27;, &#x27;64.00&#x27;, &#x27;65.00&#x27;, &#x27;66.00&#x27;, &#x27;67.00&#x27;,
+       &#x27;68.00&#x27;, &#x27;69.00&#x27;, &#x27;70.00&#x27;, &#x27;71.00&#x27;, &#x27;72.00&#x27;, &#x27;74.00&#x27;, &#x27;75.00&#x27;,
+       &#x27;76.00&#x27;, &#x27;77.00&#x27;, &#x27;78.00&#x27;, &#x27;79.00&#x27;, &#x27;80.00&#x27;, &#x27;81.00&#x27;, &#x27;82.00&#x27;,
+       &#x27;83.00&#x27;, &#x27;84.00&#x27;, &#x27;85.00&#x27;, &#x27;86.00&#x27;, &#x27;87.00&#x27;, &#x27;88.00&#x27;, &#x27;89.00&#x27;,
+       &#x27;90.00&#x27;, &#x27;91.00&#x27;, &#x27;92.00&#x27;, &#x27;93.00&#x27;, &#x27;94.00&#x27;, &#x27;95.00&#x27;, &#x27;96.00&#x27;,
+       &#x27;97.00&#x27;, &#x27;98.00&#x27;, &#x27;?&#x27;], dtype=object)</pre></div>
+  <p class="dx-note">這一格提醒了另一件事：課程 lab 裡的 horsepower <strong>一開始根本不是數字</strong>（混了一個 <code>?</code>）。AI 對著一張畫錯的圖描述得再流暢，也還是錯的。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 192</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 02 · 自我檢測</div>
+  <p>AI 對一張圖的描述，和你自己算出來的數字對不上。最可能的解釋是？</p>
+  <div class="quiz-options" id="qCrossOptions"><div class="quiz-opt" data-correct="true" data-fb="對。讀圖是把像素轉成描述，中間沒有回去核對數字的步驟。遇到不一致，<strong>以你自己算的為準</strong>。" onclick="quizCheck('qCross', this)"><span class="opt-letter">(A)</span> 它讀圖讀錯了——這是已知且常見的失效模式</div><div class="quiz-opt" data-correct="false" data-fb="當然要檢查，但別預設「機器比較不會錯」——這正是自動化偏誤的定義。兩邊都查，然後<strong>以能重現的那一邊為準</strong>。" onclick="quizCheck('qCross', this)"><span class="opt-letter">(B)</span> 你的程式碼寫錯了</div><div class="quiz-opt" data-correct="false" data-fb="有可能，但那也是你能自己驗證的事（回去看資料）。重點仍然是：<strong>能重算的才算數</strong>。" onclick="quizCheck('qCross', this)"><span class="opt-letter">(C)</span> 圖畫錯了</div></div>
+  <div class="quiz-feedback" id="qCrossFeedback"></div>
+</div>
+</section>
+<section id="verify">
+<!-- GEN:BEGIN sec:verify -->
+  <div class="section-number">PART 03 · 驗證迴圈</div>
+  <h2>拿到一個答案之後，你能做的五件事 <span class="sec-badge">課程 Lab Ch1 · 儲存格 31–38</span></h2>
+<!-- GEN:END sec:verify -->
+
+  <p>講完兩個失效模式，接下來是解法。解法不是「不要用 AI」，而是
+  <strong>把它的輸出當成假設而不是結論</strong>，然後跑一個固定的驗證迴圈。
+  這個迴圈只有五步，而且每一步都很便宜。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w12loopSvg" height="340"></svg>
+      <div class="status-banner" id="w12vfStatus"><span class="status-icon">›</span><span class="status-text">按「單步」走一次驗證迴圈。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w12vfStep()">→ 單步</button><button class="btn btn-play" onclick="w12vfPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w12vfReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">五個步驟</div>
+      按「單步」走一次。注意這五步<strong>沒有一步需要你自己想出答案</strong>——它們只要求你會跑幾行程式碼、並且知道要看什麼。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這一步</div>
+      <div class="ic-row"><span class="ic-label">步驟</span><span class="ic-value" id="w12vfStep">0 / 5</span></div><div class="ic-row"><span class="ic-label">要做什麼</span><span class="ic-value" id="w12vfWhat">—</span></div><div class="ic-row"><span class="ic-label">本站哪一頁教</span><span class="ic-value" id="w12vfWhere">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">為什麼這是「你要學的東西」</div>
+      這五步全部需要看得懂並且改得動程式碼。所以這門課要練的不是打字，是<strong>把一個主張變成可以驗證的東西</strong>——那正是統計學這門學問本身在做的事。
     </div>
   </div>
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>你想做的事</th><th>寫法</th></tr></thead>
-  <tbody><tr><td>拿第一個</td><td><code>cols[0]</code></td></tr><tr><td>拿最後一個</td><td><code>cols[-1]</code></td></tr><tr><td>有幾個</td><td><code>len(cols)</code></td></tr><tr><td>加一個到最後</td><td><code>cols.append('mpg')</code></td></tr><tr><td>接上另一個串列</td><td><code>cols + other</code> 或 <code>cols.extend(other)</code></td></tr><tr><td>在不在裡面</td><td><code>'mpg' in cols</code></td></tr><tr><td>複製一份</td><td><code>cols.copy()</code></td></tr></tbody>
+  <thead><tr><th>步驟</th><th>具體要做的事</th><th>本站哪一頁</th></tr></thead>
+  <tbody><tr><td>① 看資料</td><td><code>shape</code>、<code>dtypes</code>、<code>describe()</code></td><td><a href="p4_pandas.html#view">P4</a></td></tr><tr><td>② 重算關鍵數字</td><td>把那個主張的數字自己算一次</td><td><a href="p3_numpy.html#agg">P3</a>、<a href="p4_pandas.html#group">P4</a></td></tr><tr><td>③ 畫一張圖</td><td>數字對得上不代表形狀對</td><td><a href="p5_visualization.html">P5</a></td></tr><tr><td>④ 檢查假設與流程</td><td>有沒有資料洩漏？評估用的是沒看過的資料嗎？</td><td><a href="p6_modeling_api.html#cv">P6</a></td></tr><tr><td>⑤ 記下來</td><td>固定種子、記下版本，讓別人重現得出來</td><td><a href="00b_setup.html">00B</a></td></tr></tbody>
 </table></div>
 
-<div class="quiz-box">
-  <div class="quiz-label">PART 02 · 自我檢測</div>
-  <p><code>cols = ['mpg', 'weight', 'year']</code>，<code>cols[-1]</code> 是什麼？</p>
-  <div class="quiz-options" id="qListOptions"><div class="quiz-opt" data-correct="true" data-fb="對。負的索引從後面數，<code>-1</code> 就是最後一個。這比 <code>cols[len(cols)-1]</code> 好讀多了。" onclick="quizCheck('qList', this)"><span class="opt-letter">(A)</span> <code>'year'</code></div><div class="quiz-opt" data-correct="false" data-fb="Python 的負索引是合法的，而且很常用。（NumPy 陣列與 pandas 的 <code>iloc</code> 也支援。）" onclick="quizCheck('qList', this)"><span class="opt-letter">(B)</span> 會報錯，索引不能是負的</div><div class="quiz-opt" data-correct="false" data-fb="那是 <code>cols[0]</code>。負索引是從<strong>右邊</strong>數起。" onclick="quizCheck('qList', this)"><span class="opt-letter">(C)</span> <code>'mpg'</code></div></div>
-  <div class="quiz-feedback" id="qListFeedback"></div>
-</div>
-</section>
-<section id="slice">
-<!-- GEN:BEGIN sec:slice -->
-  <div class="section-number">PART 03 · 切片</div>
-  <h2>起:迄:步長，而且<strong>迄不包含</strong> <span class="sec-badge">課程 Lab Ch2 · 儲存格 132–134</span></h2>
-<!-- GEN:END sec:slice -->
-
-  <p>切片是 <code>起:迄:步長</code>，而且<strong>迄不包含</strong>。
-  這個「不包含」讓很多人第一次用就錯，但它有個好處：
-  <code>a[:3]</code> 加 <code>a[3:]</code> 剛好就是整個 a，中間不會重疊也不會漏。</p>
-
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w14slSvg" height="320"></svg>
-      <div class="status-banner" id="w14slStatus"><span class="status-icon">›</span><span class="status-text">先猜 s[3:6] 會取到哪三個字。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w14slMove(0,-1)">起點 −</button><button class="btn btn-step" onclick="w14slMove(0,1)">起點 +</button><button class="btn btn-step" onclick="w14slMove(1,-1)">終點 −</button><button class="btn btn-step" onclick="w14slMove(1,1)">終點 +</button><button class="btn btn-toggle" onclick="w14slStepTog()">步長 1 ⇄ 2</button><button class="btn btn-reset" onclick="w14slReset()">重置</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">拖端點</div>
-      按按鈕改起點、終點與步長，上面會標出被取到的字元。注意<strong>終點那一格永遠是灰的</strong>——它不包含在內。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">寫法</span><span class="ic-value" id="w14slExpr">s[3:6]</span></div><div class="ic-row"><span class="ic-label">取到</span><span class="ic-value" id="w14slVal">'lo '</span></div><div class="ic-row"><span class="ic-label">長度</span><span class="ic-value" id="w14slLen">3</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">同一套規則到處都是</div>
-      字串、串列、NumPy 陣列、pandas 的 <code>iloc</code> 用的都是這一套。唯一的例外是 pandas 的 <code>loc</code>——它用名字，所以<strong>含尾</strong>（P4 會講）。
-    </div>
-  </div>
-</div>
-
 <div class="deck-extra">
-  <div class="dx-label">字串也能切</div>
+  <div class="dx-label">第一步永遠是這個</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="str">&quot;hello world&quot;</span>[<span class="num">3</span>:<span class="num">6</span>]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>&#x27;lo &#x27;</pre></div>
-  <p class="dx-note">從第 3 個字元開始、取到第 6 個之前——三個字元，其中一個是空白。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 132</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">slice 物件是同一件事的另一種寫法</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="str">&quot;hello world&quot;</span>[slice(<span class="num">3</span>,<span class="num">6</span>)]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>&#x27;lo &#x27;</pre></div>
-  <p class="dx-note"><code>[3:6]</code> 只是 <code>[slice(3,6)]</code> 的語法糖。知道這件事之後，「為什麼可以把切片存成變數」就不奇怪了。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 134</span>
+  <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
+  <span class="line">df.head() <span class="com"># Get the first 5 rows of data</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
+2025-09-01 -0.397297 -1.061537  1.455216  0.632237
+2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
+2025-09-03  0.501820 -0.662466  0.146713  0.293567
+2025-09-04 -1.060077 -1.010073  0.553983  0.211157
+2025-09-05 -0.109702  0.236859 -0.203407  0.695861</pre></div>
+  <p class="dx-note">看前五列。欄名對不對、有沒有整欄空白、數字的量級合不合理——三秒鐘就能排除掉一大類的錯。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 31</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
-  <p><code>a = [0,1,2,3,4,5]</code>，<code>a[1:4]</code> 有幾個元素？</p>
-  <div class="quiz-options" id="qSliceOptions"><div class="quiz-opt" data-correct="true" data-fb="對。長度是 <code>迄 − 起</code> = 4 − 1 = 3。「迄不包含」讓算長度變得很簡單，這是它的好處。" onclick="quizCheck('qSlice', this)"><span class="opt-letter">(A)</span> 3 個：1、2、3</div><div class="quiz-opt" data-correct="false" data-fb="把終點也算進去了。<code>a[1:4]</code> 取到索引 3 為止，不含 4。" onclick="quizCheck('qSlice', this)"><span class="opt-letter">(B)</span> 4 個：1、2、3、4</div><div class="quiz-opt" data-correct="false" data-fb="少算了一個。起點<strong>是</strong>包含的，只有終點不包含。" onclick="quizCheck('qSlice', this)"><span class="opt-letter">(C)</span> 2 個：1、2</div></div>
-  <div class="quiz-feedback" id="qSliceFeedback"></div>
+  <p>AI 告訴你「加上這五個交互作用項之後 R² 從 0.54 提升到 0.91」。你先做什麼？</p>
+  <div class="quiz-options" id="qVerifyOptions"><div class="quiz-opt" data-correct="false" data-fb="R² 隨著變數增加<strong>一定</strong>會上升，這不是模型變好的證據。" onclick="quizCheck('qVerify', this)"><span class="opt-letter">(A)</span> 把這五項加進報告的模型</div><div class="quiz-opt" data-correct="true" data-fb="對。訓練 R² 上升可能只是過度配適。切出測試集或用交叉驗證看一次，才知道它有沒有真的變好——這正是 <a href=&quot;p6_modeling_api.html#split&quot;>P6</a> 與第 5 章的主題。" onclick="quizCheck('qVerify', this)"><span class="opt-letter">(B)</span> 在沒看過的資料上評估一次</div><div class="quiz-opt" data-correct="false" data-fb="會有幫助，但五個檢定就有多重比較的問題，而且顯著不等於預測得更好。先做最直接的那一步：<strong>在沒看過的資料上試</strong>。" onclick="quizCheck('qVerify', this)"><span class="opt-letter">(C)</span> 檢查那五個交互作用有沒有統計顯著</div></div>
+  <div class="quiz-feedback" id="qVerifyFeedback"></div>
 </div>
 </section>
-<section id="dict">
-<!-- GEN:BEGIN sec:dict -->
-  <div class="section-number">PART 04 · 字典</div>
-  <h2>用名字取值，而不是用位置 <span class="sec-badge">課程 Lab Ch1 · 儲存格 19–26</span></h2>
-<!-- GEN:END sec:dict -->
+<section id="repro">
+<!-- GEN:BEGIN sec:repro -->
+  <div class="section-number">PART 04 · 可重現性</div>
+  <h2>沒有種子的結果，連你自己都重現不了 <span class="sec-badge">課程 Lab Ch2 · 儲存格 80–84</span></h2>
+<!-- GEN:END sec:repro -->
 
-  <p>串列用位置取值，字典用<strong>名字</strong>取值。統計程式裡幾乎所有「一組具名的結果」
-  都是字典：模型的評分、欄名對應到型別、參數名稱對應到值。</p>
+  <p>驗證迴圈的最後一步是「記下來」，它值得單獨講。
+  統計分析跟一般程式最大的差別是<strong>裡面有隨機性</strong>：
+  切分、重抽樣、隨機森林抽變數。沒有固定種子的話，
+  <strong>連你自己明天都重現不了今天的結果</strong>。</p>
 
 <div class="deck-extra">
-  <div class="dx-label">用字典建一個 Series</div>
+  <div class="dx-label">沒固定種子：跑兩次不一樣</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">sdata = {<span class="str">&quot;Ohio&quot;</span>: <span class="num">35000</span>, <span class="str">&quot;Texas&quot;</span>: <span class="num">71000</span>, <span class="str">&quot;Oregon&quot;</span>: <span class="num">16000</span>, <span class="str">&quot;Utah&quot;</span>: <span class="num">5000</span>}</span>
-  <span class="line">s3 = pd.Series(sdata)</span>
-  <span class="line">s3</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Ohio      35000
-Texas     71000
-Oregon    16000
-Utah       5000
-dtype: int64</pre></div>
-  <p class="dx-note">鍵變成索引、值變成資料——pandas 直接吃字典，因為兩者的結構本來就一樣。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 19</span>
+  <span class="line">print(np.random.normal(scale=<span class="num">5</span>, size=<span class="num">2</span>))</span>
+  <span class="line">print(np.random.normal(scale=<span class="num">5</span>, size=<span class="num">2</span>))</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[9.78166034 7.77407713]
+[-1.41427653 -4.97598078]</pre></div>
+  <p class="dx-note">同一行跑兩次，四個數字完全不同。寫報告的時候這是災難——你沒辦法說明「我的 0.24 是怎麼來的」。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 80</span>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">用字典建一整張表</div>
+  <div class="dx-label">固定種子：兩個產生器逐位相同</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">data = {<span class="str">&quot;state&quot;</span>: [<span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Nevada&quot;</span>, <span class="str">&quot;Nevada&quot;</span>, <span class="str">&quot;Nevada&quot;</span>],</span>
-  <span class="line">        <span class="str">&quot;year&quot;</span>: [<span class="num">2000</span>, <span class="num">2001</span>, <span class="num">2002</span>, <span class="num">2001</span>, <span class="num">2002</span>, <span class="num">2003</span>],</span>
-  <span class="line">        <span class="str">&quot;pop&quot;</span>: [<span class="num">1.5</span>, <span class="num">1.7</span>, <span class="num">3.6</span>, <span class="num">2.4</span>, <span class="num">2.9</span>, <span class="num">3.2</span>]}</span>
-  <span class="line">frame = pd.DataFrame(data)</span>
-  <span class="line">frame</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>    state  year  pop
-0    Ohio  2000  1.5
-1    Ohio  2001  1.7
-2    Ohio  2002  3.6
-3  Nevada  2001  2.4
-4  Nevada  2002  2.9
-5  Nevada  2003  3.2</pre></div>
-  <p class="dx-note">這次每一個值是一個<strong>串列</strong>，於是每一個鍵變成一欄。課程 lab 建示範資料幾乎都用這個寫法。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 26</span>
+  <span class="line">rng = np.random.default_rng(<span class="num">1303</span>)</span>
+  <span class="line">print(rng.normal(scale=<span class="num">5</span>, size=<span class="num">2</span>))</span>
+  <span class="line">rng2 = np.random.default_rng(<span class="num">1303</span>)</span>
+  <span class="line">print(rng2.normal(scale=<span class="num">5</span>, size=<span class="num">2</span>))</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[ 4.09482632 -1.07485605]
+[ 4.09482632 -1.07485605]</pre></div>
+  <p class="dx-note"><code>default_rng(1303)</code> 開兩次，抽出來一模一樣。本站每一張自己算的圖都是這樣產生的，所以任何人拿到程式碼都能重生同樣的數字。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 82</span>
 </div>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <svg class="viz-svg" id="w14dcSvg" height="300"></svg>
-      <div class="status-banner" id="w14dcStatus"><span class="status-icon">›</span><span class="status-text">同一件事，兩種資料結構。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w14dcSet(0)">拿 R²</button><button class="btn btn-toggle" onclick="w14dcSet(1)">拿 MSE</button><button class="btn btn-toggle" onclick="w14dcSet(2)">多加一項</button></div>
+      <svg class="viz-svg" id="w12seedSvg" height="320"></svg>
+      <div class="status-banner" id="w12sdStatus"><span class="status-icon">›</span><span class="status-text">先看固定種子的版本，再關掉。</span></div>
+      <div class="controls-bar"><button class="btn btn-play" onclick="w12sdRun()">▶ 再跑四次</button><button class="btn btn-toggle" id="w12sdBtn" onclick="w12sdTog()">種子：固定</button><button class="btn btn-reset" onclick="w12sdReset()">重置</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">兩種取值方式</div>
-      左邊是串列（用位置），右邊是字典（用名字）。按按鈕看同一個查詢在兩邊怎麼寫，以及為什麼字典比較不會出錯。
+      <div class="ic-title">開關種子看看</div>
+      同一段模擬跑四次。固定種子時四條線完全重疊；關掉之後每次都不一樣——<strong>而且每一次都「看起來很合理」</strong>。
     </div>
     <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">要拿什麼</span><span class="ic-value" id="w14dcWant">—</span></div><div class="ic-row"><span class="ic-label">串列寫法</span><span class="ic-value" id="w14dcList">—</span></div><div class="ic-row"><span class="ic-label">字典寫法</span><span class="ic-value" id="w14dcDict">—</span></div>
+      <div class="ic-title">四次的結果</div>
+      <div class="ic-row"><span class="ic-label">種子</span><span class="ic-value" id="w12sdSeed">固定（1303）</span></div><div class="ic-row"><span class="ic-label">四次的估計值</span><span class="ic-value" id="w12sdVals">—</span></div><div class="ic-row"><span class="ic-label">最大差距</span><span class="ic-value" id="w12sdRange">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">鍵不存在會怎樣</div>
-      <code>d['沒有這個鍵']</code> 會拋 <code>KeyError</code>。不確定在不在就用 <code>d.get('鍵', 預設值)</code>——找不到時回傳預設值而不是報錯。
+      <div class="ic-title">可重現不等於正確</div>
+      固定種子只保證「別人跑得出同樣的數字」，不保證那個數字是對的。但<strong>不可重現的結果連討論都沒辦法討論</strong>——它是所有其他檢查的前提。
     </div>
   </div>
 </div>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>你想做的事</th><th>寫法</th></tr></thead>
-  <tbody><tr><td>取值</td><td><code>d['R2']</code></td></tr><tr><td>安全取值</td><td><code>d.get('R2', 0)</code></td></tr><tr><td>新增或覆寫</td><td><code>d['MSE'] = 38.5</code></td></tr><tr><td>鍵在不在</td><td><code>'R2' in d</code></td></tr><tr><td>所有鍵／所有值</td><td><code>d.keys()</code> / <code>d.values()</code></td></tr><tr><td>一次拿鍵和值</td><td><code>for k, v in d.items():</code></td></tr></tbody>
-</table></div>
-
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
-  <details class="qa-item"><summary>字典的鍵可以是什麼？</summary>
-    <div class="qa-a">不可變的東西都可以：字串、數字、tuple。<strong>串列不行</strong>，因為它會變，變了之後就找不回原來的位置。實務上九成的鍵是字串。</div>
+  <details class="qa-item"><summary>固定種子會不會讓結果「作弊」？</summary>
+    <div class="qa-a">不會。種子只決定<strong>抽到哪一組隨機樣本</strong>，不影響方法本身的性質。真正該擔心的是<strong>挑種子</strong>——試十個種子挑結果最好看的那個，那才是作弊。所以要先定種子再跑，不是跑完再挑。</div>
   </details>
-  <details class="qa-item"><summary>字典有順序嗎？</summary>
-    <div class="qa-a">Python 3.7 之後，字典會<strong>記住插入的順序</strong>，所以 <code>for k in d</code> 的順序是可預期的。但不要依賴它做排序——要排序就明確寫 <code>sorted(d)</code>。</div>
+  <details class="qa-item"><summary>那怎麼知道結果穩不穩定？</summary>
+    <div class="qa-a">換幾個種子各跑一次，看結果晃動多大。課程 lab 的 <code>ShuffleSplit(n_splits=10)</code> 就是在做這件事——它同時報告平均與標準差，後者才是重點。細節見 <a href="p6_modeling_api.html#cv">P6</a>。</div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
-  <p><code>scores = {{'R2': 0.54}}</code>，執行 <code>scores['MSE']</code> 會怎樣？</p>
-  <div class="quiz-options" id="qDictOptions"><div class="quiz-opt" data-correct="true" data-fb="對。鍵不存在就報錯，不會給你 <code>None</code>。想要「找不到就給預設值」得寫 <code>scores.get('MSE', 0)</code>。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(A)</span> 拋 <code>KeyError</code></div><div class="quiz-opt" data-correct="false" data-fb="那是 <code>.get()</code> 的行為。直接用中括號取值找不到時會報錯——這是刻意的，免得你把打錯的欄名一路帶下去。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(B)</span> 回傳 <code>None</code></div><div class="quiz-opt" data-correct="false" data-fb="讀取不會建立。<code>scores['MSE'] = 38.5</code> 這種<strong>賦值</strong>才會。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(C)</span> 自動建一個空的 MSE 項目</div></div>
-  <div class="quiz-feedback" id="qDictFeedback"></div>
+  <p>你跑了十個種子，其中一個的測試 MSE 特別低。報告裡該寫哪一個？</p>
+  <div class="quiz-options" id="qReproOptions"><div class="quiz-opt" data-correct="false" data-fb="這是挑種子，等於用測試集調參數。「能達到」跟「平均能達到」是兩回事，前者對新資料沒有意義。" onclick="quizCheck('qRepro', this)"><span class="opt-letter">(A)</span> 最低的那一個，那是模型能達到的最佳表現</div><div class="quiz-opt" data-correct="true" data-fb="對。標準差告訴讀者「這個數字能晃多少」，沒有它的話，兩個模型差 0.5 到底算不算差別根本無從判斷。" onclick="quizCheck('qRepro', this)"><span class="opt-letter">(B)</span> 十個的平均，並且把標準差一起寫出來</div><div class="quiz-opt" data-correct="false" data-fb="單一個結果沒有偏見，但也沒有告訴你不確定性。既然已經跑了十個，就把資訊用完。" onclick="quizCheck('qRepro', this)"><span class="opt-letter">(C)</span> 第一個跑的那個，因為它最沒有偏見</div></div>
+  <div class="quiz-feedback" id="qReproFeedback"></div>
 </div>
 </section>
-<section id="str">
-<!-- GEN:BEGIN sec:str -->
-  <div class="section-number">PART 05 · 字串與格式化</div>
-  <h2>把數字變成人看得懂的一行字 <span class="sec-badge">課程 Lab Ch2 · 儲存格 236–244</span></h2>
-<!-- GEN:END sec:str -->
+<section id="you">
+<!-- GEN:BEGIN sec:you -->
+  <div class="section-number">PART 05 · 你要練的其實是什麼</div>
+  <h2>不是打字，是判斷「這個數字能不能信」 <span class="sec-badge">先備 · 學習路線</span></h2>
+<!-- GEN:END sec:you -->
 
-  <p>最後一件事：把數字變成人看得懂的一行字。統計程式的輸出幾乎都要格式化——
-  「MSE 是 25.573878189684412」沒有人想讀，你要的是「MSE 是 25.57」。</p>
+  <p>把前面串起來：AI 很會產出<strong>看起來對的東西</strong>，
+  而你要練的是判斷<strong>哪些是真的對</strong>。這件事需要三種能力，
+  剛好就是這門課的三塊內容。</p>
 
-<div class="deck-extra">
-  <div class="dx-label">format 與格式規格</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="kw">for</span> col <span class="kw">in</span> D.columns:</span>
-  <span class="line">    template = <span class="str">&#x27;Column &quot;{0}&quot; has {1:.2%} missing values&#x27;</span></span>
-  <span class="line">    print(template.format(col,</span>
-  <span class="line">          np.isnan(D[col]).mean()))</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Column &quot;food&quot; has 16.54% missing values
-Column &quot;bar&quot; has 25.98% missing values
-Column &quot;pickle&quot; has 29.13% missing values
-Column &quot;snack&quot; has 21.26% missing values
-Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
-  <p class="dx-note"><code>{{1:.2%}}</code> 的意思是「第 1 個引數，用百分比、小數兩位」。所以 0.1654 印出來是 16.54%。這一格同時示範了迴圈與格式化。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 244</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">迴圈裡的格式化</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">total = <span class="num">0</span></span>
-  <span class="line"><span class="kw">for</span> value <span class="kw">in</span> [<span class="num">3</span>,<span class="num">2</span>,<span class="num">19</span>]:</span>
-  <span class="line">    total += value</span>
-  <span class="line">print(<span class="str">&#x27;Total is: {0}&#x27;</span>.format(total))</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Total is: 24</pre></div>
-  <p class="dx-note"><code>{{0}}</code> 是「第 0 個引數」。現在更常見的寫法是 f-string：<code>f'Total is: {{total}}'</code>，兩種都會遇到。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 236</span>
-</div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>你需要的能力</th><th>為什麼</th><th>在哪裡練</th></tr></thead>
+  <tbody><tr><td>看得懂並改得動幾行程式碼</td><td>驗證迴圈的每一步都要跑程式碼；不會改就只能相信別人</td><td><a href="p1_python_basics.html">P1</a>–<a href="p6_modeling_api.html">P6</a></td></tr><tr><td>知道一個統計主張要滿足什麼條件才成立</td><td>「顯著」「相關」「準確」各有前提，AI 不會替你檢查</td><td>正課第 <a href="linear_regression.html">3</a>–<a href="classification.html">4</a> 章</td></tr><tr><td>知道評估要用沒看過的資料</td><td>這是整套機器學習最容易被繞過、也最致命的一條</td><td>正課第 <a href="resampling_methods.html">5</a>–<a href="model_selection.html">6</a> 章</td></tr></tbody>
+</table></div>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <svg class="viz-svg" id="w14fmtSvg" height="300"></svg>
-      <div class="status-banner" id="w14fmStatus"><span class="status-icon">›</span><span class="status-text">同一個數字，五種格式。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w14fmSet(0)">{:.2f}</button><button class="btn btn-toggle" onclick="w14fmSet(1)">{:.4f}</button><button class="btn btn-toggle" onclick="w14fmSet(2)">{:.2%}</button><button class="btn btn-toggle" onclick="w14fmSet(3)">{:.3e}</button><button class="btn btn-toggle" onclick="w14fmSet(4)">{:>10.2f}</button></div>
+      <svg class="viz-svg" id="w12mapSvg" height="340"></svg>
+      <div class="status-banner" id="w12mpStatus"><span class="status-icon">›</span><span class="status-text">兩條路線，看哪一條是你。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w12mpSet(0)">完全沒寫過程式</button><button class="btn btn-toggle" onclick="w12mpSet(1)">寫過程式，沒碰過資料科學</button><button class="btn btn-toggle" onclick="w12mpSet(2)">兩者都會，直接進正課</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">改格式規格看結果</div>
-      同一個數字 <code>25.573878</code>，換不同的格式規格。按按鈕看每一種的輸出。
+      <div class="ic-title">這個站怎麼讀</div>
+      按按鈕看兩條路線。沒寫過程式的走完整路線；寫過但沒碰過資料科學套件的可以跳過前兩頁。
     </div>
     <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">格式規格</span><span class="ic-value" id="w14fmSpec">{:.2f}</span></div><div class="ic-row"><span class="ic-label">輸出</span><span class="ic-value" id="w14fmOut">25.57</span></div><div class="ic-row"><span class="ic-label">什麼時候用</span><span class="ic-value" id="w14fmWhen">報告統計量</span></div>
+      <div class="ic-title">這條路線</div>
+      <div class="ic-row"><span class="ic-label">適合誰</span><span class="ic-value" id="w12mpWho">—</span></div><div class="ic-row"><span class="ic-label">順序</span><span class="ic-value" id="w12mpOrder">—</span></div><div class="ic-row"><span class="ic-label">大概要多久</span><span class="ic-value" id="w12mpTime">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">f-string 是現在的預設寫法</div>
-      <code>f'MSE = {{mse:.2f}}'</code> 把變數直接寫在字串裡，冒號後面接的格式規格跟 <code>format</code> 完全一樣。本站的程式碼卡兩種都會出現，因為課程 lab 兩種都用。
+      <div class="ic-title">先備頁是選讀</div>
+      它們不列入評分，也不是課程的一部分。但如果你在正課的第一份 lab 就卡在「這行在幹嘛」，回來讀完會省下更多時間。
     </div>
   </div>
 </div>
 
+<div class="info-box">
+  <span class="info-label">最後一句</span>
+  這門課不是在跟 AI 比誰寫得快——那個比賽你不會贏，也不需要贏。它在練的是另一件事：<strong>當一個數字擺在你面前，你有沒有辦法判斷它站不站得住腳</strong>。這件事目前還沒有東西可以外包。
+</div>
+
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
-  <p><code>'{{:.2%}}'.format(0.1654)</code> 會印出什麼？</p>
-  <div class="quiz-options" id="qStrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。百分比格式會<strong>先乘 100 再加百分號</strong>，所以不要自己再乘一次。lab 儲存格 244 算遺漏比例就是用這個。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(A)</span> <code>16.54%</code></div><div class="quiz-opt" data-correct="false" data-fb="格式規格 <code>%</code> 會自己乘 100。如果你先乘了 100 再用 <code>:.2%</code>，就會多乘一次變成 1654%。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(B)</span> <code>0.17%</code></div><div class="quiz-opt" data-correct="false" data-fb="小數兩位是<strong>乘 100 之後</strong>才算的。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(C)</span> <code>0.1654%</code></div></div>
-  <div class="quiz-feedback" id="qStrFeedback"></div>
+  <p>這門課練完之後，你跟「只會叫 AI 寫程式的人」最大的差別是什麼？</p>
+  <div class="quiz-options" id="qYouOptions"><div class="quiz-opt" data-correct="false" data-fb="不會，而且這也不重要。" onclick="quizCheck('qYou', this)"><span class="opt-letter">(A)</span> 你打字比較快</div><div class="quiz-opt" data-correct="true" data-fb="對。產出程式碼的成本已經趨近於零，<strong>審查的價值因此變高了</strong>。這門課練的是審查那一半。" onclick="quizCheck('qYou', this)"><span class="opt-letter">(B)</span> 你能判斷一個統計結果站不站得住腳，並且自己驗證</div><div class="quiz-opt" data-correct="false" data-fb="恰恰相反——你會用得更多也更放心，因為你查得動它。" onclick="quizCheck('qYou', this)"><span class="opt-letter">(C)</span> 你不需要用 AI</div></div>
+  <div class="quiz-feedback" id="qYouFeedback"></div>
 </div>
 
 <div class="info-box purple">
-  <span class="info-label">🔗 這在本站哪一章會用到</span>
-  每一章的程式碼卡都在用這一頁的東西：串列裝欄名、字典裝評分、格式化把數字印成報告要的樣子。下一步是 <a href="p2_flow_functions.html">P2 流程與函式</a>，之後才是 <a href="p3_numpy.html">P3 NumPy</a>。
+  <span class="info-label">🔗 接下來讀什麼</span>
+  環境還沒好就先去 <a href="00b_setup.html">00B 環境安裝</a>（三分鐘）。沒寫過程式從 <a href="p1_python_basics.html">P1</a> 開始；寫過的直接跳 <a href="p3_numpy.html">P3 NumPy</a>。想直接進正課就從 <a href="introduction.html">第 1 章 統計學習導論</a> 開始。
 </div>
 </section>
 <section id="exercises">
@@ -995,66 +965,66 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
   <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
   程式碼卡在自己的環境跑一次。</p>
-  <div class="sol-links"><a href="https://docs.python.org/zh-tw/3/tutorial/" target="_blank" rel="noopener">🔗 Python 官方教學（中文）</a><a href="https://docs.python.org/zh-tw/3/library/stdtypes.html" target="_blank" rel="noopener">🔗 內建型別</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch02 中文 Lab</a></div>
+  <div class="sol-links"><a href="index.html" target="_blank" rel="noopener">🔗 本站章節總覽</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">🔗 ISLP 原書</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 1 · 名牌與盒子</div>
-  <p><code>a = [1,2,3]</code>、<code>b = a[:]</code>、<code>b[0] = 99</code>。<code>a[0]</code> 是？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。整段切片 <code>[:]</code> 會產生新的串列，跟 <code>b = a</code> 完全不同。這是最短的複製寫法。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>1</code>，因為 <code>a[:]</code> 是一份新的複本</div><div class="quiz-opt" data-correct="false" data-fb="那是 <code>b = a</code> 的情況。加了 <code>[:]</code> 就是切片，切片會產生新的串列。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>99</code>，b 只是 a 的另一個名字</div><div class="quiz-opt" data-correct="false" data-fb="<code>a[:]</code> 是完全合法的寫法，取的是「從頭到尾」。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 會報錯</div></div>
+  <div class="quiz-label">EXERCISE 1 · 找出不能信的地方</div>
+  <p>AI 說：「這兩個變數的相關係數是 0.87，所以 X 造成了 Y 的變化。」問題在哪？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。相關係數再高也不能推論方向與因果，而且它可能被一個離群值撐起來（見 <a href=&quot;p5_visualization.html&quot;>P5</a>）。至少要先畫一張散佈圖。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 相關不等於因果，而且它也沒說 0.87 是怎麼算的</div><div class="quiz-opt" data-correct="false" data-fb="沒有這種門檻。「多高算高」完全取決於領域與問題。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 0.87 不夠高，要 0.95 以上才算相關</div><div class="quiz-opt" data-correct="false" data-fb="換一個係數不會解決因果的問題。方法選擇是次要的，那個「所以」才是真正的錯。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 應該要用 Spearman 相關係數</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 2 · 索引</div>
-  <p><code>cols = ['mpg','cyl','hp','wt','year']</code>。想拿中間三個（cyl、hp、wt），怎麼寫？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="不用。<code>cols[1:4]</code> 已經是 cyl、hp、wt 三個了，多加 <code>cols[4]</code> 會把 year 也拿進來。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> <code>cols[1:4:1]</code> 之外還要加 <code>cols[4]</code></div><div class="quiz-opt" data-correct="true" data-fb="對。起點 1（cyl）、終點 4 不包含（所以停在 wt）。「迄不包含」讓長度剛好是 4−1=3。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> <code>cols[1:4]</code></div><div class="quiz-opt" data-correct="false" data-fb="只拿到兩個（cyl、hp）。終點要寫 4 才會包含索引 3 的 wt。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> <code>cols[1:3]</code></div></div>
+  <div class="quiz-label">EXERCISE 2 · 找出不能信的地方</div>
+  <p>AI 說：「模型在測試集上的準確率是 99%，表現非常好。」你要先問什麼？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。如果 99% 的樣本都是同一類，「全部猜多數類」也有 99%。另外要確認前處理是不是在切分之後才做的（見 <a href=&quot;p6_modeling_api.html#cv&quot;>P6 的資料洩漏</a>）。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 類別是不是極度不平衡，以及測試集有沒有被污染</div><div class="quiz-opt" data-correct="false" data-fb="有些問題本來就好預測。先問<strong>可驗證的問題</strong>，不要先下結論。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 99% 太高了，一定是造假</div><div class="quiz-opt" data-correct="false" data-fb="換指標是後面的事。先確認這個 99% 是怎麼來的。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 應該改用 F1 分數</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 3 · 字典</div>
-  <p>你想記錄三個模型的 MSE，之後要能用模型名字查。該用什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="能動，但沒辦法用迴圈處理，也沒辦法「用名字查」——你得記得哪個數字對應哪個模型。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 三個變數 <code>mse1</code>、<code>mse2</code>、<code>mse3</code></div><div class="quiz-opt" data-correct="true" data-fb="對。名字直接當鍵，之後 <code>for name, mse in d.items()</code> 就能一次處理完，印報告也方便。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 一個字典 <code>{{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}}</code></div><div class="quiz-opt" data-correct="false" data-fb="串列能存值但存不了名字，你得另外記「第 0 個是 linear」——那正是字典要解決的問題。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 一個串列 <code>[25.57, 22.22, 22.67]</code></div></div>
+  <div class="quiz-label">EXERCISE 3 · 找出不能信的地方</div>
+  <p>AI 說：「p 值是 0.001，所以這個變數的效果很大。」問題在哪？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。樣本夠大時，一個實務上可以忽略的效果也會有很小的 p 值。要談大小得看係數本身（見 <a href=&quot;p6_modeling_api.html#summary&quot;>P6</a>）。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> p 值小講的是「不是 0」很有把握，跟效果大小無關</div><div class="quiz-opt" data-correct="false" data-fb="0.001 比 0.05 小，是更強的證據——這個選項把方向搞反了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> p 值應該要小於 0.05 才算顯著，0.001 太小了</div><div class="quiz-opt" data-correct="false" data-fb="這正是最常見的誤解。p 值衡量的是證據強度，不是效果大小。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 沒問題，p 值就是用來衡量效果大小的</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 4 · 格式化</div>
-  <p>MSE 是 25.573878189684412，你想在報告裡印成兩位小數。哪一個寫法對？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。用 <code>'{{:.2f}}'.format(mse)</code> 也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>f'MSE = {{mse:.2f}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="<code>round</code> 不給第二個引數的話會四捨五入到整數，變成 26。而且它改的是<strong>數值</strong>，格式化改的只是顯示——後者比較安全。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>f'MSE = {{round(mse)}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="少了那個點。<code>2f</code> 的 2 會被當成<strong>總寬度</strong>不是小數位數，結果會印出全部的小數。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>f'MSE = {{mse:2f}}'</code></div></div>
+  <div class="quiz-label">EXERCISE 4 · 找出不能信的地方</div>
+  <p>AI 幫你把整份資料標準化之後才切訓練測試集，並回報測試 MSE。問題在哪？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。這個測試 MSE 會偏樂觀，它已經不是 out-of-sample 的估計了。正確做法是把 scaler 與模型包成 Pipeline（見 <a href=&quot;p6_modeling_api.html#cv&quot;>P6</a>）。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 資料洩漏：標準化的參數用到了測試集的資訊</div><div class="quiz-opt" data-correct="false" data-fb="標準化只是平移與縮放，不改變分布的形狀；而且第 6 章的收縮方法非做不可。問題出在<strong>順序</strong>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 標準化會改變資料的分布，不應該做</div><div class="quiz-opt" data-correct="false" data-fb="換哪一種都一樣會洩漏。錯的是順序，不是選哪個轉換器。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 應該用 MinMaxScaler 而不是 StandardScaler</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">REFERENCE · 總覽</div>
-  <h2>Python 基礎速查表 <span class="sec-badge">先備 · Python 基礎</span></h2>
+  <h2>為什麼還要自己寫統計程式速查表 <span class="sec-badge">先備 · 為什麼寫程式</span></h2>
 <!-- GEN:END sec:reference -->
 
-  <p>三張速查表。忘了就回來看。</p>
+  <p>三張表：什麼時候該信 AI、驗證迴圈、以及這個站怎麼讀。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>你想做的事</th><th>串列</th><th>字典</th></tr></thead>
-  <tbody><tr><td>取一個</td><td><code>a[0]</code>（位置）</td><td><code>d['R2']</code>（名字）</td></tr><tr><td>安全地取</td><td>先 <code>if len(a) &gt; 0</code></td><td><code>d.get('R2', 0)</code></td></tr><tr><td>加一個</td><td><code>a.append(x)</code></td><td><code>d['新鍵'] = x</code></td></tr><tr><td>有幾個</td><td><code>len(a)</code></td><td><code>len(d)</code></td></tr><tr><td>走過每一個</td><td><code>for x in a:</code></td><td><code>for k, v in d.items():</code></td></tr><tr><td>在不在</td><td><code>x in a</code>（比值）</td><td><code>k in d</code>（比<b>鍵</b>）</td></tr><tr><td>複製</td><td><code>a.copy()</code> 或 <code>a[:]</code></td><td><code>d.copy()</code></td></tr></tbody>
+  <thead><tr><th>這類問題</th><th>交給 AI 划不划算</th><th>為什麼</th></tr></thead>
+  <tbody><tr><td>語法、函式參數、環境錯誤</td><td>✓ 很划算</td><td>有標準答案，而且你能<b>馬上驗證</b></td></tr><tr><td>「這段程式碼在做什麼」</td><td>✓ 划算</td><td>讀懂之後你自己能核對</td></tr><tr><td>「幫我寫一個做 X 的函式」</td><td>△ 可以，但要看得懂再用</td><td>能跑不等於做的是你要的事</td></tr><tr><td>「這個結果顯著嗎」</td><td>✗ 不划算</td><td>它沒看過你的資料，也不知道假設成不成立</td></tr><tr><td>「這張圖告訴我們什麼」</td><td>✗ 不划算</td><td>讀圖是已知的失效模式，會很肯定地說錯</td></tr><tr><td>「這個模型可以上線了嗎」</td><td>✗ 不划算</td><td>牽涉流程、洩漏、族群差異——這些只有你知道</td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>切片</th><th>意思</th></tr></thead>
-  <tbody><tr><td><code>a[2:5]</code></td><td>索引 2、3、4（<b>不含 5</b>）</td></tr><tr><td><code>a[:3]</code></td><td>從頭到索引 2</td></tr><tr><td><code>a[3:]</code></td><td>從索引 3 到最後</td></tr><tr><td><code>a[:]</code></td><td>整個，而且是<b>新的一份</b></td></tr><tr><td><code>a[::2]</code></td><td>每隔一個取一次</td></tr><tr><td><code>a[-1]</code></td><td>最後一個</td></tr><tr><td><code>a[::-1]</code></td><td>整個反過來</td></tr></tbody>
+  <thead><tr><th>驗證迴圈</th><th>一行程式碼版本</th></tr></thead>
+  <tbody><tr><td>① 看資料</td><td><code>df.shape</code>、<code>df.dtypes</code>、<code>df.describe()</code></td></tr><tr><td>② 重算關鍵數字</td><td><code>df.groupby(k)[v].mean()</code> 之類</td></tr><tr><td>③ 畫一張圖</td><td><code>sns.histplot(...)</code> 或 <code>sns.scatterplot(...)</code></td></tr><tr><td>④ 檢查流程</td><td>前處理在切分之後嗎？評估用沒看過的資料嗎？</td></tr><tr><td>⑤ 記下來</td><td><code>random_state=0</code>、記下套件版本</td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>格式規格</th><th>0.1654 印出來</th><th>什麼時候用</th></tr></thead>
-  <tbody><tr><td><code>{{:.2f}}</code></td><td>0.17</td><td>一般統計量</td></tr><tr><td><code>{{:.4f}}</code></td><td>0.1654</td><td>係數、p 值</td></tr><tr><td><code>{{:.2%}}</code></td><td>16.54%</td><td>比例、遺漏率</td></tr><tr><td><code>{{:.3e}}</code></td><td>1.654e-01</td><td>非常大或非常小的數</td></tr><tr><td><code>{{:>10.2f}}</code></td><td>　　　　　0.17</td><td>對齊成一欄</td></tr></tbody>
+  <thead><tr><th>你的情況</th><th>建議路線</th></tr></thead>
+  <tbody><tr><td>完全沒寫過程式</td><td>00B → P1 → P2 → P3 → P4 → P5 → P6 → 正課第 1 章</td></tr><tr><td>寫過程式，沒碰過資料科學套件</td><td>00B → P3 → P4 → P5 → P6 → 正課第 1 章</td></tr><tr><td>兩者都熟</td><td>直接進正課，遇到卡住再回來查</td></tr></tbody>
 </table></div>
 
 <div class="info-box">
   <span class="info-label">三個一定要記住的觀念</span>
-  <strong>1. 變數是名牌，不是盒子。</strong><code>b = a</code> 只是多貼一張名牌，改 b 會動到 a。<br><strong>2. 索引從 0 開始，切片的迄不包含。</strong>所以 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a。<br><strong>3. 串列用位置、字典用名字。</strong>有名字的東西就用字典，不要用「我記得第 2 個是 MSE」。
+  <strong>1. 自動化偏誤是預設值。</strong>排版整齊、語氣肯定的答案，你天生就比較不會去查——靠流程對抗，不要靠意志力。<br><strong>2. AI 讀圖會很肯定地說錯。</strong>遇到它的描述跟你算的對不上，以<strong>能重現的那一邊</strong>為準。<br><strong>3. 你要練的是審查，不是打字。</strong>產出的成本趨近於零，判斷「這個數字站不站得住腳」的價值因此變高了。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch01）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1071,12 +1041,12 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
-<div class="chapter-nav"><a class="prev" href="00b_setup.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">環境安裝</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="p2_flow_functions.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">流程與函式</div></a></div>
+<div class="chapter-nav"><span></span><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="00b_setup.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">環境安裝</div></a></div>
 <!-- GEN:END chapternav -->
 </div>
 <!-- GEN:BEGIN footer -->
 <footer>
-  互動式Python 基礎教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
+  互動式為什麼還要自己寫統計程式教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
   <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
 </footer>
 <!-- GEN:END footer -->
@@ -1659,287 +1629,311 @@ HC.initFlashcards = () => {
 <!-- GEN:END sharedjs -->
 <!-- PAGEJS:BEGIN -->
 <script>
-/* 共用：畫一排格子 */
-function w14cells(s, g, items, opt) {
-  const cw = opt.cw || 74, x0 = opt.x0, y = opt.y;
-  items.forEach((v, i) => {
-    const on = opt.on ? opt.on(i) : false;
-    s.add('rect', {x: x0 + i * cw, y: y, width: cw - 6, height: 38, rx: 5,
-                   fill: on ? HC.tok.accent2 : HC.tok.card,
-                   stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                   opacity: on ? 1 : 0.55}, g);
-    const t = s.add('text', {x: x0 + i * cw + (cw - 6) / 2, y: y + 25,
-                             'text-anchor': 'middle', cls: 'vlab',
-                             'font-family': HC.MONO,
-                             fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = String(v);
-    if (opt.idx) {
-      const n = s.add('text', {x: x0 + i * cw + (cw - 6) / 2, y: y - 8,
-                               'text-anchor': 'middle', cls: 'axlab'}, g);
-      n.textContent = String(i);
-    }
-  });
-}
+/* 這一頁用的 Auto 馬力資料：固定種子當場產生，形狀模仿真實的 Auto 分布
+   （右偏、主峰在 70–110）。不是任何一份真實資料，重點是機制。 */
+const w12hp = (() => {
+  const rand = HC.stat.lcg(524), out = [];
+  for (let i = 0; i < 240; i++) out.push(78 + Math.abs(HC.stat.normal(rand)) * 16);
+  for (let i = 0; i < 100; i++) out.push(120 + HC.stat.normal(rand) * 26);
+  for (let i = 0; i < 52; i++) out.push(175 + Math.abs(HC.stat.normal(rand)) * 22);
+  return out.map(v => Math.max(46, Math.min(230, v)));
+})();
+function w12count(lo, hi) { return w12hp.filter(v => v >= lo && v < hi).length; }
 
-/* ═══ w14rd 一行一行拆 ═══ */
-const w14rdS = HC.svg('w14readSvg', {h: 320});
-const w14rdLines = [
-  {code: "x = [3, 4, 5]", what: '做一個串列，取名叫 x', kind: '② 取名字', val: '[3, 4, 5]'},
-  {code: "y = [4, 9, 7]", what: '再做一個串列，取名叫 y', kind: '② 取名字', val: '[4, 9, 7]'},
-  {code: "x + y", what: '把兩個串列接起來', kind: '① 算一個值', val: '[3, 4, 5, 4, 9, 7]'},
-  {code: "print('total', 24)", what: '把東西交給 print 顯示', kind: '③ 丟給函式', val: 'total 24'}
+/* ═══ w12an 錨定實驗 ═══ */
+const w12anS = HC.svg('w12anchorSvg', {h: 340});
+const w12Truth = 30.4, w12AiSays = 24.8;
+let w12anG = 27.0, w12anPhase = 0, w12anFirst = null, w12anSecond = null;
+function w12anDraw() {
+  const s = w12anS;
+  s.domain([18, 40], [0, 1]);
+  const g = s.clearLayer('main');
+  s.grid(5, 1, {xtitle: '平均 mpg 的估計', ydec: 0});
+  const bar = (v, y, col, label) => {
+    s.add('circle', {cx: s.X(v), cy: y, r: 11, fill: col}, g);
+    const t = s.add('text', {x: s.X(v), y: y - 20, 'text-anchor': 'middle', cls: 'axlab',
+                             fill: col}, g);
+    t.textContent = label + ' ' + HC.fmt(v, 1);
+  };
+  bar(w12anG, 120, HC.tok.accent2, '你的估計');
+  if (w12anFirst !== null) bar(w12anFirst, 176, HC.tok.muted, '第一次');
+  if (w12anPhase >= 1) bar(w12AiSays, 220, HC.tok.accent, 'AI 說');
+  if (w12anPhase >= 2) bar(w12Truth, 264, HC.tok.resid, '真實值');
+  s.txtPx(310, 44, w12anPhase === 0 ? '先自己估一個數字'
+          : (w12anPhase === 1 ? '現在再估一次' : '揭曉'),
+          {cls: 'axtitle', anchor: 'middle'}, g);
+  document.getElementById('w12anFirst').textContent =
+    w12anFirst === null ? '—' : HC.fmt(w12anFirst, 1);
+  document.getElementById('w12anSecond').textContent =
+    w12anSecond === null ? '—' : HC.fmt(w12anSecond, 1);
+  document.getElementById('w12anShift').textContent =
+    (w12anFirst !== null && w12anSecond !== null)
+      ? HC.fmt(w12anSecond - w12anFirst, 1) : '—';
+  setStatus('w12anStatus', w12anPhase === 0
+    ? '拖到你覺得合理的位置，然後按「看 AI 的答案」。'
+    : (w12anPhase === 1
+       ? 'AI 說 24.8。<b>再估一次</b>——然後看你有沒有被拉過去。'
+       : '真實值是 30.4。AI 的 24.8 偏低，而多數人的第二次估計會往它靠。'));
+}
+function w12anGuess(d) {
+  w12anG = Math.max(18, Math.min(40, w12anG + d * 0.6));
+  if (w12anPhase >= 1) w12anSecond = w12anG;
+  w12anDraw();
+}
+function w12anReveal() {
+  if (w12anPhase === 0) { w12anFirst = w12anG; w12anPhase = 1; w12anSecond = w12anG; }
+  w12anDraw();
+}
+function w12anTruth() { if (w12anPhase >= 1) w12anPhase = 2; w12anDraw(); }
+function w12anReset() {
+  w12anG = 27.0; w12anPhase = 0; w12anFirst = null; w12anSecond = null; w12anDraw();
+}
+if (w12anS) w12anDraw();
+
+/* ═══ w12bi 自動化偏誤 ═══ */
+const w12biS = HC.svg('w12biasSvg', {h: 320});
+const w12biCases = [
+  {who: '同學', check: '多半會追問「你用什麼檢定」', col: 'muted',
+   note: '你會追問來源與方法 —— 這是<b>健康</b>的反應。'},
+  {who: 'AI', check: '多半直接用了', col: 'resid',
+   note: '同樣一句話，換成 AI 講，追問的比例明顯下降。<b>這就是自動化偏誤。</b>'},
+  {who: '你自己算的', check: '你知道每一步怎麼來的', col: 'accent2',
+   note: '唯一你真的知道前提成不成立的來源 —— 代價是你得看得懂那幾行。'}
 ];
-let w14rdI = -1, w14rdTimer = null;
-function w14rdDraw() {
-  const g = w14rdS.clearLayer('main');
-  w14rdLines.forEach((ln, i) => {
-    const on = i === w14rdI;
-    w14rdS.add('rect', {x: 40, y: 58 + i * 54, width: 400, height: 42, rx: 6,
-                        fill: on ? HC.tok.accent : HC.tok.card,
+let w12biI = 0;
+function w12biDraw() {
+  const g = w12biS.clearLayer('main');
+  const c = w12biCases[w12biI];
+  const col = HC.tok[c.col] || HC.tok.muted;
+  w12biS.add('rect', {x: 60, y: 84, width: 500, height: 76, rx: 10,
+                      fill: HC.tok.card, stroke: col, 'stroke-width': 2.4}, g);
+  const t = w12biS.add('text', {x: 310, y: 120, 'text-anchor': 'middle', cls: 'axtitle'}, g);
+  t.textContent = '「這兩組的差異是顯著的。」';
+  const u = w12biS.add('text', {x: 310, y: 146, 'text-anchor': 'middle', cls: 'axlab'}, g);
+  u.textContent = '—— ' + c.who + '說';
+  w12biCases.forEach((cc, i) => {
+    const on = i === w12biI;
+    const x = 60 + i * 172;
+    w12biS.add('rect', {x: x, y: 196, width: 156, height: 54, rx: 8,
+                        fill: on ? (HC.tok[cc.col] || HC.tok.muted) : HC.tok.card,
                         stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
                         opacity: on ? 0.95 : 0.5}, g);
-    const t = w14rdS.add('text', {x: 58, y: 85 + i * 54, cls: 'vlab',
-                                  'font-family': HC.MONO,
+    const tt = w12biS.add('text', {x: x + 78, y: 220, 'text-anchor': 'middle', cls: 'axtitle',
+                                   fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    tt.textContent = cc.who;
+    const uu = w12biS.add('text', {x: x + 78, y: 240, 'text-anchor': 'middle', cls: 'axlab',
+                                   fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    uu.textContent = i === 1 ? '追問的比例最低' : (i === 0 ? '會追問' : '你知道全部');
+  });
+  document.getElementById('w12biWho').textContent = c.who;
+  document.getElementById('w12biCheck').textContent = c.check;
+  setStatus('w12biStatus', c.note);
+}
+function w12biSet(i) { w12biI = i; w12biDraw(); }
+if (w12biS) w12biDraw();
+
+/* ═══ w12rd 讀圖對照器（本頁招牌）═══ */
+const w12rdS = HC.svg('w12readSvg', {h: 340});
+const w12BinW = 20, w12Lo = 40, w12Hi = 240;
+let w12rdPos = 60, w12rdShow = false;
+function w12rdDraw() {
+  const s = w12rdS;
+  const nb = (w12Hi - w12Lo) / w12BinW;
+  const counts = [];
+  for (let i = 0; i < nb; i++) counts.push(w12count(w12Lo + i * w12BinW,
+                                                    w12Lo + (i + 1) * w12BinW));
+  const mx = Math.max.apply(null, counts);
+  s.domain([w12Lo, w12Hi], [0, mx * 1.18]);
+  const g = s.clearLayer('main');
+  s.grid(5, 4, {xtitle: 'horsepower', ytitle: '筆數'});
+  counts.forEach((c, i) => {
+    const x0 = w12Lo + i * w12BinW;
+    const inYou = x0 >= w12rdPos && x0 < w12rdPos + 40;
+    const inAi = w12rdShow && x0 >= 140 && x0 < 180;
+    s.add('rect', {x: s.X(x0) + 1, y: s.Y(c), width: s.X(x0 + w12BinW) - s.X(x0) - 2,
+                   height: s.Y(0) - s.Y(c),
+                   fill: inYou ? HC.tok.accent2 : (inAi ? HC.tok.resid : HC.tok.muted),
+                   opacity: inYou || inAi ? 0.95 : 0.55}, g);
+  });
+  const youN = w12count(w12rdPos, w12rdPos + 40);
+  const aiN = w12count(140, 180);
+  s.add('rect', {x: s.X(w12rdPos), y: s.Y(mx * 1.15), width: s.X(w12rdPos + 40) - s.X(w12rdPos),
+                 height: 6, fill: HC.tok.accent2, rx: 3}, g);
+  s.txt(w12rdPos + 20, mx * 1.15, '你標的', {cls: 'vlab', dy: -8, fill: HC.tok.accent2}, g);
+  if (w12rdShow) {
+    s.add('rect', {x: s.X(140), y: s.Y(mx * 1.05), width: s.X(180) - s.X(140),
+                   height: 6, fill: HC.tok.resid, rx: 3}, g);
+    s.txt(160, mx * 1.05, 'AI 說的 140–180', {cls: 'vlab', dy: -8, fill: HC.tok.resid}, g);
+  }
+  document.getElementById('w12rdAi').textContent = w12rdShow ? aiN + ' 筆' : '（先自己找）';
+  document.getElementById('w12rdYou').textContent =
+    w12rdPos + '–' + (w12rdPos + 40) + '：' + youN + ' 筆';
+  document.getElementById('w12rdDiff').textContent =
+    w12rdShow ? (youN - aiN) + ' 筆' : '—';
+  setStatus('w12rdStatus', w12rdShow
+    ? 'AI 說的 140–180 只有 <b>' + aiN + '</b> 筆，你標的區間有 <b>' + youN
+      + '</b> 筆。<b>它把最密的區間講錯了整整一段。</b>'
+    : '拖標記找最密的 40 單位區間，找到再按「顯示 AI 說的區間」。');
+}
+function w12rdMove(d) {
+  w12rdPos = Math.max(w12Lo, Math.min(w12Hi - 40, w12rdPos + d * 20));
+  w12rdDraw();
+}
+function w12rdShowAi() { w12rdShow = true; w12rdDraw(); }
+function w12rdReset() { w12rdPos = 60; w12rdShow = false; w12rdDraw(); }
+if (w12rdS) w12rdDraw();
+
+/* ═══ w12vf 驗證迴圈 ═══ */
+const w12vfS = HC.svg('w12loopSvg', {h: 340});
+const w12vfSteps = [
+  {w: '看資料：shape、dtypes、describe()', p: 'P4 pandas'},
+  {w: '重算關鍵數字：把那個主張自己算一次', p: 'P3 NumPy／P4 pandas'},
+  {w: '畫一張圖：數字對得上不代表形狀對', p: 'P5 視覺化'},
+  {w: '檢查假設與流程：有沒有資料洩漏', p: 'P6 建模 API'},
+  {w: '記下來：固定種子、記下版本', p: '00B 環境安裝'}
+];
+let w12vfI = 0, w12vfTimer = null;
+function w12vfDraw() {
+  const g = w12vfS.clearLayer('main');
+  const cx = 310, cy = 176, r = 108;
+  w12vfS.add('circle', {cx: cx, cy: cy, r: r, fill: 'none',
+                        stroke: HC.tok.cardBorder, 'stroke-width': 2,
+                        'stroke-dasharray': '6 6'}, g);
+  w12vfSteps.forEach((st, i) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / 5;
+    const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+    const on = i < w12vfI;
+    const cur = i === w12vfI - 1;
+    w12vfS.add('circle', {cx: x, cy: y, r: 26,
+                          fill: on ? (cur ? HC.tok.accent : HC.tok.accent2) : HC.tok.card,
+                          stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
+                          opacity: on ? 0.95 : 0.5}, g);
+    const t = w12vfS.add('text', {x: x, y: y + 6, 'text-anchor': 'middle', cls: 'axtitle',
                                   fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = ln.code;
-    if (on) {
-      const v = w14rdS.add('text', {x: 462, y: 85 + i * 54, cls: 'vlab',
-                                    'font-family': HC.MONO, fill: HC.tok.accent2}, g);
-      v.textContent = '→ ' + ln.val;
+    t.textContent = String(i + 1);
+    const lx = cx + (r + 68) * Math.cos(a), ly = cy + (r + 68) * Math.sin(a);
+    const u = w12vfS.add('text', {x: lx, y: ly + 4, 'text-anchor': 'middle', cls: 'axlab',
+                                  fill: on ? HC.tok.ink : HC.tok.muted}, g);
+    u.textContent = ['看資料', '重算', '畫圖', '檢查流程', '記下來'][i];
+  });
+  w12vfS.txtPx(cx, cy + 4, w12vfI === 0 ? 'AI 的輸出' : (w12vfI >= 5 ? '可以下結論了' : '驗證中'),
+               {cls: 'axtitle', anchor: 'middle'}, g);
+  const st = w12vfSteps[Math.max(0, w12vfI - 1)];
+  document.getElementById('w12vfStep').textContent = w12vfI + ' / 5';
+  document.getElementById('w12vfWhat').textContent = w12vfI === 0 ? '—' : st.w;
+  document.getElementById('w12vfWhere').textContent = w12vfI === 0 ? '—' : st.p;
+  setStatus('w12vfStatus', w12vfI === 0
+    ? '把 AI 的輸出當成<b>假設</b>，不是結論。按「單步」開始驗證。'
+    : (w12vfI >= 5 ? '五步走完，這個數字現在<b>可以拿去下結論</b>了。' : st.w + '。'));
+}
+function w12vfStep() { w12vfI = Math.min(5, w12vfI + 1); w12vfDraw(); }
+function w12vfReset() {
+  if (w12vfTimer) { clearTimeout(w12vfTimer); w12vfTimer = null; }
+  w12vfI = 0; w12vfDraw();
+}
+function w12vfPlay() {
+  w12vfReset();
+  const tick = () => {
+    if (w12vfI >= 5) { w12vfTimer = null; return; }
+    w12vfStep();
+    w12vfTimer = setTimeout(tick, 850);
+  };
+  w12vfTimer = setTimeout(tick, 400);
+}
+if (w12vfS) w12vfDraw();
+
+/* ═══ w12sd 種子 ═══ */
+const w12sdS = HC.svg('w12seedSvg', {h: 320});
+let w12sdFixed = true, w12sdRuns = 0;
+function w12sdSample(k) {
+  const seed = w12sdFixed ? 1303 : (1303 + (w12sdRuns * 4 + k) * 7919);
+  const rand = HC.stat.lcg(seed);
+  const out = [];
+  for (let i = 0; i < 40; i++) out.push(HC.stat.normal(rand));
+  return HC.stat.mean(out);
+}
+function w12sdDraw() {
+  const s = w12sdS;
+  s.domain([-0.6, 0.6], [0, 5]);
+  const g = s.clearLayer('main');
+  s.grid(4, 1, {xtitle: '四次模擬各自估到的平均', ydec: 0, xdec: 1});
+  const vals = [0, 1, 2, 3].map(k => w12sdSample(k));
+  vals.forEach((v, k) => {
+    const y = 4 - k;
+    s.add('line', {x1: s.X(v), y1: s.Y(y - 0.35), x2: s.X(v), y2: s.Y(y + 0.35),
+                   stroke: w12sdFixed ? HC.tok.accent2 : HC.tok.resid, 'stroke-width': 3.4}, g);
+    s.txt(v, y, '第 ' + (k + 1) + ' 次', {cls: 'vlab', dy: -14,
+                                          fill: w12sdFixed ? HC.tok.accent2 : HC.tok.resid}, g);
+  });
+  const rng = Math.max.apply(null, vals) - Math.min.apply(null, vals);
+  document.getElementById('w12sdSeed').textContent = w12sdFixed ? '固定（1303）' : '沒有固定';
+  document.getElementById('w12sdVals').textContent = vals.map(v => HC.fmt(v, 3)).join('、');
+  document.getElementById('w12sdRange').textContent = HC.fmt(rng, 3);
+  setStatus('w12sdStatus', w12sdFixed
+    ? '四次<b>完全重疊</b>——因為它們用的是同一個種子。再按「再跑四次」也一樣。'
+    : '四次各自不同，最大差距 <b>' + HC.fmt(rng, 3)
+      + '</b>。每一次看起來都很合理，但你沒辦法說明自己那個數字是怎麼來的。');
+}
+function w12sdTog() {
+  w12sdFixed = !w12sdFixed;
+  document.getElementById('w12sdBtn').textContent = '種子：' + (w12sdFixed ? '固定' : '沒有');
+  w12sdDraw();
+}
+function w12sdRun() { w12sdRuns += 1; w12sdDraw(); }
+function w12sdReset() {
+  w12sdFixed = true; w12sdRuns = 0;
+  document.getElementById('w12sdBtn').textContent = '種子：固定';
+  w12sdDraw();
+}
+if (w12sdS) w12sdDraw();
+
+/* ═══ w12mp 學習路線 ═══ */
+const w12mpS = HC.svg('w12mapSvg', {h: 340});
+const w12mpCases = [
+  {who: '完全沒寫過程式', order: ['00B', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', '正課'],
+   time: '先備頁約 6–8 小時'},
+  {who: '寫過程式，沒碰過資料科學套件', order: ['00B', 'P3', 'P4', 'P5', 'P6', '正課'],
+   time: '先備頁約 4 小時'},
+  {who: '兩者都熟', order: ['正課'], time: '直接開始'}
+];
+let w12mpI = 0;
+function w12mpDraw() {
+  const g = w12mpS.clearLayer('main');
+  const c = w12mpCases[w12mpI];
+  const all = ['00B', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', '正課'];
+  const cw = 66;
+  const x0 = 310 - all.length * cw / 2;
+  all.forEach((nm, i) => {
+    const on = c.order.indexOf(nm) >= 0;
+    const last = nm === '正課';
+    w12mpS.add('rect', {x: x0 + i * cw, y: 130, width: cw - 10, height: 56, rx: 8,
+                        fill: on ? (last ? HC.tok.accent : HC.tok.accent2) : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.5,
+                        opacity: on ? 0.95 : 0.35}, g);
+    const t = w12mpS.add('text', {x: x0 + i * cw + (cw - 10) / 2, y: 164,
+                                  'text-anchor': 'middle', cls: 'axtitle',
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = nm;
+    if (i < all.length - 1 && on && c.order.indexOf(all[i + 1]) >= 0) {
+      w12mpS.add('path', {d: 'M' + (x0 + i * cw + cw - 8) + ' 158 H ' + (x0 + (i + 1) * cw - 2),
+                          stroke: HC.tok.accent2, 'stroke-width': 2.2}, g);
     }
   });
-  const ln = w14rdLines[Math.max(0, w14rdI)];
-  document.getElementById('w14rdWhat').textContent = w14rdI < 0 ? '—' : ln.what;
-  document.getElementById('w14rdKind').textContent = w14rdI < 0 ? '—' : ln.kind;
-  document.getElementById('w14rdVal').textContent = w14rdI < 0 ? '—' : ln.val;
-  setStatus('w14rdStatus', w14rdI < 0 ? '按「單步」一行一行拆。'
-            : '這一行在' + ln.what + '（' + ln.kind + '）。');
+  w12mpS.txtPx(310, 76, c.who, {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent}, g);
+  w12mpS.txtPx(310, 232, c.order.join(' → '), {cls: 'axlab', anchor: 'middle'}, g);
+  w12mpS.txtPx(310, 262, c.time, {cls: 'axlab', anchor: 'middle'}, g);
+  document.getElementById('w12mpWho').textContent = c.who;
+  document.getElementById('w12mpOrder').textContent = c.order.join(' → ');
+  document.getElementById('w12mpTime').textContent = c.time;
+  setStatus('w12mpStatus', c.who + '：' + c.order.join(' → ') + '。');
 }
-function w14rdStep() { w14rdI = Math.min(w14rdLines.length - 1, w14rdI + 1); w14rdDraw(); }
-function w14rdReset() {
-  if (w14rdTimer) { clearTimeout(w14rdTimer); w14rdTimer = null; }
-  w14rdI = -1; w14rdDraw();
-}
-function w14rdPlay() {
-  w14rdReset();
-  const tick = () => {
-    if (w14rdI >= w14rdLines.length - 1) { w14rdTimer = null; return; }
-    w14rdStep();
-    w14rdTimer = setTimeout(tick, 900);
-  };
-  w14rdTimer = setTimeout(tick, 400);
-}
-if (w14rdS) w14rdDraw();
-
-/* ═══ w14va 名牌不是盒子 ═══ */
-const w14vaS = HC.svg('w14varSvg', {h: 320});
-let w14vaHasY = false, w14vaVals = [3, 4, 5];
-function w14vaDraw() {
-  const g = w14vaS.clearLayer('main');
-  w14cells(w14vaS, g, w14vaVals, {x0: 220, y: 130, cw: 76});
-  w14vaS.add('rect', {x: 206, y: 116, width: 3 * 76 + 8, height: 66, rx: 8,
-                      fill: 'none', stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
-                      'stroke-dasharray': '5 4'}, g);
-  w14vaS.txtPx(310, 200, '記憶體裡的那一個串列', {cls: 'axlab', anchor: 'middle'}, g);
-  const tag = (label, y, col) => {
-    w14vaS.add('rect', {x: 60, y: y, width: 78, height: 34, rx: 6, fill: col}, g);
-    const t = w14vaS.add('text', {x: 99, y: y + 23, 'text-anchor': 'middle', cls: 'vlab',
-                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
-    t.textContent = label;
-    w14vaS.add('path', {d: 'M138 ' + (y + 17) + ' H 200', stroke: col,
-                        'stroke-width': 2.4, fill: 'none'}, g);
-    w14vaS.add('path', {d: 'M206 ' + (y + 17) + ' l -10 -6 v 12 z', fill: col}, g);
-  };
-  tag('x', 92, HC.tok.accent2);
-  if (w14vaHasY) tag('y', 168, HC.tok.accent);
-  document.getElementById('w14vaX').textContent = '[' + w14vaVals.join(', ') + ']';
-  document.getElementById('w14vaY').textContent = w14vaHasY
-    ? '[' + w14vaVals.join(', ') + ']' : '（還沒有 y）';
-  document.getElementById('w14vaSame').textContent = w14vaHasY ? '是，同一個' : '—';
-  setStatus('w14vaStatus', w14vaVals[0] === 99
-    ? '改的是 y[0]，但 <b>x 也變了</b> —— 因為它們指的本來就是同一個串列。'
-    : (w14vaHasY ? '兩張名牌貼在同一個串列上。接著按「改內容」。'
-                 : '一個串列，一張名牌。按「再貼一張名牌」。'));
-}
-function w14vaAlias() { w14vaHasY = true; w14vaDraw(); }
-function w14vaMut() {
-  if (!w14vaHasY) { w14vaHasY = true; }
-  w14vaVals = [99, 4, 5]; w14vaDraw();
-}
-function w14vaReset() { w14vaHasY = false; w14vaVals = [3, 4, 5]; w14vaDraw(); }
-if (w14vaS) w14vaDraw();
-
-/* ═══ w14ix 索引 ═══ */
-const w14ixS = HC.svg('w14idxSvg', {h: 300});
-const w14ixCols = ['mpg', 'cyl', 'hp', 'wt', 'year'];
-let w14ixI = 0;
-function w14ixDraw() {
-  const g = w14ixS.clearLayer('main');
-  w14cells(w14ixS, g, w14ixCols, {x0: 62, y: 110, cw: 100, idx: true,
-                                  on: i => i === w14ixI});
-  w14ixCols.forEach((v, i) => {
-    const n = w14ixS.add('text', {x: 62 + i * 100 + 47, y: 176, 'text-anchor': 'middle',
-                                  cls: 'axlab', fill: HC.tok.muted}, g);
-    n.textContent = String(i - w14ixCols.length);
-  });
-  w14ixS.txtPx(310, 66, "cols = ['mpg', 'cyl', 'hp', 'wt', 'year']",
-               {cls: 'axtitle', anchor: 'middle'}, g);
-  w14ixS.txtPx(310, 210, '上面是正的索引，下面是負的索引',
-               {cls: 'axlab', anchor: 'middle'}, g);
-  document.getElementById('w14ixI').textContent = String(w14ixI);
-  document.getElementById('w14ixV').textContent = "'" + w14ixCols[w14ixI] + "'";
-  document.getElementById('w14ixN').textContent = String(w14ixI - w14ixCols.length);
-  setStatus('w14ixStatus', 'cols[' + w14ixI + '] 與 cols['
-            + (w14ixI - w14ixCols.length) + '] 都是 <b>' + w14ixCols[w14ixI] + '</b>。');
-}
-function w14ixMove(d) {
-  w14ixI = Math.max(0, Math.min(w14ixCols.length - 1, w14ixI + d));
-  w14ixDraw();
-}
-function w14ixReset() { w14ixI = 0; w14ixDraw(); }
-if (w14ixS) w14ixDraw();
-
-/* ═══ w14sl 切片尺規（本頁招牌）═══ */
-const w14slS = HC.svg('w14slSvg', {h: 320});
-const w14slStr = 'hello world';
-let w14slA = 3, w14slB = 6, w14slStep2 = false;
-function w14slDraw() {
-  const g = w14slS.clearLayer('main');
-  const chars = w14slStr.split('');
-  const st = w14slStep2 ? 2 : 1;
-  const taken = [];
-  for (let i = w14slA; i < w14slB; i += st) taken.push(i);
-  const cw = 48, x0 = 310 - chars.length * cw / 2;
-  chars.forEach((ch, i) => {
-    const on = taken.indexOf(i) >= 0;
-    const isEnd = i === w14slB;
-    w14slS.add('rect', {x: x0 + i * cw, y: 122, width: cw - 5, height: 44, rx: 5,
-                        fill: on ? HC.tok.accent2 : (isEnd ? HC.tok.muted : HC.tok.card),
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 1 : (isEnd ? 0.75 : 0.5)}, g);
-    const t = w14slS.add('text', {x: x0 + i * cw + (cw - 5) / 2, y: 152,
-                                  'text-anchor': 'middle', cls: 'vlab',
-                                  'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = ch === ' ' ? '␣' : ch;
-    const n = w14slS.add('text', {x: x0 + i * cw + (cw - 5) / 2, y: 112,
-                                  'text-anchor': 'middle', cls: 'axlab'}, g);
-    n.textContent = String(i);
-  });
-  const mark = (i, label, col) => {
-    const x = x0 + i * cw;
-    w14slS.add('path', {d: 'M' + x + ' 178 V 202', stroke: col, 'stroke-width': 2.6}, g);
-    const t = w14slS.add('text', {x: x, y: 220, 'text-anchor': 'middle', cls: 'axtitle',
-                                  fill: col}, g);
-    t.textContent = label;
-  };
-  mark(w14slA, '起 ' + w14slA, HC.tok.accent2);
-  mark(w14slB, '迄 ' + w14slB + '（不含）', HC.tok.resid);
-  const expr = 's[' + w14slA + ':' + w14slB + (w14slStep2 ? ':2' : '') + ']';
-  const val = taken.map(i => chars[i]).join('');
-  w14slS.txtPx(310, 70, "s = 'hello world'", {cls: 'axtitle', anchor: 'middle'}, g);
-  document.getElementById('w14slExpr').textContent = expr;
-  document.getElementById('w14slVal').textContent = "'" + val + "'";
-  document.getElementById('w14slLen').textContent = String(taken.length);
-  setStatus('w14slStatus', expr + ' 取到 <b>' + taken.length
-            + '</b> 個字元。灰色那一格是<b>迄</b>，永遠不會被取到。');
-}
-function w14slMove(which, d) {
-  if (which === 0) w14slA = Math.max(0, Math.min(w14slB, w14slA + d));
-  else w14slB = Math.max(w14slA, Math.min(w14slStr.length, w14slB + d));
-  w14slDraw();
-}
-function w14slStepTog() { w14slStep2 = !w14slStep2; w14slDraw(); }
-function w14slReset() { w14slA = 3; w14slB = 6; w14slStep2 = false; w14slDraw(); }
-if (w14slS) w14slDraw();
-
-/* ═══ w14dc 串列 vs 字典 ═══ */
-const w14dcS = HC.svg('w14dcSvg', {h: 300});
-const w14dcCases = [
-  {want: 'R²', list: "scores[0]", dict: "scores['R2']", hit: 0},
-  {want: 'MSE', list: "scores[2]", dict: "scores['MSE']", hit: 2},
-  {want: '多加一項', list: "scores.append(0.31)", dict: "scores['MAE'] = 0.31", hit: -1}
-];
-let w14dcI = 0;
-function w14dcDraw() {
-  const g = w14dcS.clearLayer('main');
-  const c = w14dcCases[w14dcI];
-  const vals = ['0.544', '0.544', '38.48'];
-  const keys = ['R2', 'Ex.Var', 'MSE'];
-  w14dcS.txtPx(150, 62, '串列（用位置）', {cls: 'axtitle', anchor: 'middle'}, g);
-  vals.forEach((v, i) => {
-    const on = c.hit === i;
-    w14dcS.add('rect', {x: 60, y: 84 + i * 52, width: 180, height: 42, rx: 5,
-                        fill: on ? HC.tok.accent2 : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 1 : 0.5}, g);
-    const t = w14dcS.add('text', {x: 150, y: 111 + i * 52, 'text-anchor': 'middle',
-                                  cls: 'vlab', 'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = '[' + i + '] ' + v;
-  });
-  w14dcS.txtPx(450, 62, '字典（用名字）', {cls: 'axtitle', anchor: 'middle'}, g);
-  keys.forEach((k, i) => {
-    const on = c.hit === i;
-    w14dcS.add('rect', {x: 340, y: 84 + i * 52, width: 220, height: 42, rx: 5,
-                        fill: on ? HC.tok.accent : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 1 : 0.5}, g);
-    const t = w14dcS.add('text', {x: 450, y: 111 + i * 52, 'text-anchor': 'middle',
-                                  cls: 'vlab', 'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = "'" + k + "': " + vals[i];
-  });
-  document.getElementById('w14dcWant').textContent = c.want;
-  document.getElementById('w14dcList').textContent = c.list;
-  document.getElementById('w14dcDict').textContent = c.dict;
-  setStatus('w14dcStatus', w14dcI === 2
-    ? '加東西兩邊都容易，差別在<b>你之後怎麼找回來</b>。'
-    : '要拿 ' + c.want + '：串列得記得它在第 ' + c.hit + ' 個，字典直接寫名字。');
-}
-function w14dcSet(i) { w14dcI = i; w14dcDraw(); }
-if (w14dcS) w14dcDraw();
-
-/* ═══ w14fm 格式規格 ═══ */
-const w14fmS = HC.svg('w14fmtSvg', {h: 300});
-const w14fmCases = [
-  {spec: '{:.2f}', out: '25.57', when: '報告統計量'},
-  {spec: '{:.4f}', out: '25.5739', when: '係數、p 值'},
-  {spec: '{:.2%}', out: '2557.39%', when: '比例（先乘 100）'},
-  {spec: '{:.3e}', out: '2.557e+01', when: '非常大或非常小的數'},
-  {spec: '{:>10.2f}', out: '␣␣␣␣␣25.57', when: '對齊成一欄'}
-];
-let w14fmI = 0;
-function w14fmDraw() {
-  const g = w14fmS.clearLayer('main');
-  const c = w14fmCases[w14fmI];
-  w14fmS.txtPx(310, 76, '25.573878', {cls: 'axtitle', anchor: 'middle'}, g);
-  w14fmS.add('path', {d: 'M310 92 V 128', stroke: HC.tok.accent, 'stroke-width': 2.4}, g);
-  w14fmS.add('path', {d: 'M310 134 l -7 -11 h 14 z', fill: HC.tok.accent}, g);
-  w14fmS.add('rect', {x: 190, y: 138, width: 240, height: 44, rx: 6,
-                      fill: HC.tok.accent, opacity: 0.9}, g);
-  const t = w14fmS.add('text', {x: 310, y: 166, 'text-anchor': 'middle', cls: 'vlab',
-                                'font-family': HC.MONO, fill: HC.tok.paper}, g);
-  t.textContent = c.spec;
-  w14fmS.add('path', {d: 'M310 186 V 216', stroke: HC.tok.accent2, 'stroke-width': 2.4}, g);
-  w14fmS.add('path', {d: 'M310 222 l -7 -11 h 14 z', fill: HC.tok.accent2}, g);
-  w14fmS.add('rect', {x: 170, y: 226, width: 280, height: 46, rx: 6,
-                      fill: HC.tok.accent2, opacity: 0.92}, g);
-  const o = w14fmS.add('text', {x: 310, y: 256, 'text-anchor': 'middle', cls: 'vlab',
-                                'font-family': HC.MONO, fill: HC.tok.paper}, g);
-  o.textContent = c.out;
-  document.getElementById('w14fmSpec').textContent = c.spec;
-  document.getElementById('w14fmOut').textContent = c.out;
-  document.getElementById('w14fmWhen').textContent = c.when;
-  setStatus('w14fmStatus', c.spec + ' → <b>' + c.out + '</b>（' + c.when + '）。');
-}
-function w14fmSet(i) { w14fmI = i; w14fmDraw(); }
-if (w14fmS) w14fmDraw();
+function w12mpSet(i) { w12mpI = i; w12mpDraw(); }
+if (w12mpS) w12mpDraw();
 </script>
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"直譯器（Interpreter）","back":"一行一行讀你的程式碼並執行的東西。Jupyter 的每一個儲存格都是丟給它跑，而且會自動顯示<b>最後一行的值</b>，所以不寫 print 也看得到結果。"},{"front":"變數（Variable）","back":"貼在資料上的<b>名牌</b>，不是裝資料的盒子。<code>b = a</code> 只是多貼一張名牌，兩個名字指的是同一個東西。"},{"front":"賦值（Assignment）","back":"<code>x = [3, 4, 5]</code>：先做出右邊那個東西，再把左邊的名字貼上去。等號不是數學的等於，是「取名字」。"},{"front":"別名（Alias）","back":"同一個物件有兩個以上的名字。改其中一個會影響全部——這是資料前處理最常見的意外，要複製得明講 <code>.copy()</code>。"},{"front":"不可變（Immutable）","back":"整數、浮點數、字串、tuple 不能被就地修改，所以它們沒有別名的問題。串列與字典是可變的，才要小心。"},{"front":"整數（int）","back":"沒有小數的數。樣本數 n、變數個數 p、折數 k 都是它。<code>7 // 2</code> 是整數除法，直接砍掉小數。"},{"front":"浮點數（float）","back":"有小數的數。MSE、係數、p 值幾乎都是。<code>7 / 2</code> 給的就是浮點數 3.5。"},{"front":"字串（str）","back":"用引號包起來的文字。欄名、檔名、圖的標題都是。加號對字串是<b>接起來</b>，不是相加。"},{"front":"布林（bool）","back":"只有 <code>True</code> 與 <code>False</code>。條件的結果是它，P3 的布林遮罩整排都是它。"},{"front":"串列（list）","back":"有順序的一排東西，用中括號寫，從 <b>0</b> 開始數。常拿來裝一組欄名或一組要試的參數。"},{"front":"索引（Index）","back":"串列裡的位置。想成「離開頭有多遠」——第一個離開頭 0 步，所以從 0 開始。"},{"front":"負索引（Negative Index）","back":"從後面數起：<code>-1</code> 是最後一個、<code>-2</code> 是倒數第二。比 <code>a[len(a)-1]</code> 好讀。"},{"front":"切片（Slice）","back":"<code>起:迄:步長</code>，而且<b>迄不包含</b>。好處是 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a，不重疊也不漏。"},{"front":"整段切片（a[:]）","back":"從頭到尾，而且會產生<b>新的一份</b>。跟 <code>b = a</code> 完全不同——後者只是多貼名牌。"},{"front":"字典（dict）","back":"鍵值對的集合，用<b>名字</b>取值而不是位置。統計程式裡所有「一組具名的結果」都是它。"},{"front":"鍵（Key）","back":"字典裡用來查值的名字。必須是不可變的東西（字串、數字、tuple），串列不行。實務上九成是字串。"},{"front":"KeyError","back":"字典裡沒有那個鍵時拋的錯。這是刻意的設計，免得你把打錯的欄名一路帶下去。想要預設值就用 <code>d.get(鍵, 預設)</code>。"},{"front":"安全取值（get）","back":"<code>d.get('R2', 0)</code>：找得到就給值，找不到給預設值而不是報錯。"},{"front":"函式呼叫（Function Call）","back":"名字後面加括號，括號裡是要給它的東西。<code>print(x)</code>、<code>len(a)</code>、<code>sm.OLS(y, X)</code> 都是。"},{"front":"格式化（Formatting）","back":"把數字變成人看得懂的字串。<code>f'MSE = {mse:.2f}'</code> 或 <code>'{:.2f}'.format(mse)</code>，冒號後面是格式規格。"},{"front":"格式規格（Format Spec）","back":"冒號後面那一段。<code>.2f</code> 是小數兩位、<code>.2%</code> 是百分比（<b>會自己乘 100</b>）、<code>.3e</code> 是科學記號、<code>&gt;10</code> 是靠右對齊到寬度 10。"},{"front":"f-string","back":"字串前面加 <code>f</code>，就能把變數直接寫在大括號裡：<code>f'n = {n}'</code>。現在的預設寫法，格式規格跟 <code>format</code> 完全一樣。"},{"front":"整數除法（//）","back":"<code>7 // 2</code> 給 3，直接砍掉小數。算折數或索引時用，算統計量千萬別用錯。"},{"front":"Jupyter 儲存格（Cell）","back":"一小塊可以單獨執行的程式碼。它會顯示最後一行的值。<b>執行順序由你決定，不是由上到下</b>——亂序執行會造成很難查的狀態污染。"}];
+const FLASHCARDS = [{"front":"自動化偏誤（Automation Bias）","back":"對機器產出的答案給予比對人類答案更高的信任。最狡猾的地方是：<b>答案排版得越整齊、語氣越肯定，你越不會去查</b>。"},{"front":"跨模態不一致（Cross-modal Inconsistency）","back":"同一份資料用表、圖、文字三種形式呈現時，AI 的解讀互相矛盾。最常見的是讀圖——它會很肯定地說出一個圖上讀不出來的區間。"},{"front":"錨定效應（Anchoring）","back":"一個看起來有自信的數字會把你的判斷拉過去，即使你本來估得比較準。靠流程對抗，不要靠「我會小心」。"},{"front":"幻覺（Hallucination）","back":"模型產生看起來合理但實際上不存在或不正確的內容。在統計脈絡裡它常表現成「一個很有把握的錯誤數字」。"},{"front":"可重現性（Reproducibility）","back":"別人照你的程式碼跑能得到同一組數字。需要三件事：固定種子、記下套件版本、資料來源可追。<b>不可重現的結果連討論都沒辦法討論。</b>"},{"front":"隨機種子（Seed）","back":"決定亂數序列的起點。固定它，同一段程式每次跑出一模一樣的結果。<b>先定種子再跑</b>，不是跑完再挑。"},{"front":"挑種子（Seed Hacking）","back":"試很多種子、挑結果最好看的那一個回報。這是作弊；正確做法是跑多次並回報平均<b>與標準差</b>。"},{"front":"驗證迴圈（Verification Loop）","back":"看資料 → 重算關鍵數字 → 畫一張圖 → 檢查假設與流程 → 記下來。五步都很便宜，但每一步都需要你看得懂並改得動程式碼。"},{"front":"相關不等於因果（Correlation ≠ Causation）","back":"相關係數再高也不能推論方向與因果，而且它可能被一個離群值撐起來。看到「所以 X 造成 Y」就要停下來。"},{"front":"p 值的誤讀（p-value Misuse）","back":"p 值小只代表「係數不是 0」很有把握，<b>跟效果大小無關</b>。樣本夠大時，可忽略的效果也會有很小的 p 值。"},{"front":"類別不平衡（Class Imbalance）","back":"99% 的準確率在 99% 樣本屬於同一類時毫無意義——「全部猜多數類」也有 99%。看到高準確率先問各類各有幾筆。"},{"front":"資料洩漏（Data Leakage）","back":"測試資料的資訊透過某個步驟進到訓練流程。先對整份資料標準化再切分是最典型的一種，結果是你報告的分數其實不是 out-of-sample。"},{"front":"過度配適（Overfitting）","back":"模型把訓練資料的雜訊也學了進去。徵狀是訓練分數遠高於測試分數。加變數只會更嚴重。"},{"front":"R² 會虛高（Inflated R²）","back":"R² 隨著變數增加<b>一定</b>會上升，所以「加了五項之後 R² 從 0.54 變 0.91」不是模型變好的證據。要在沒看過的資料上評估。"},{"front":"摘要統計的盲點（Summary Statistics）","back":"平均、標準差、相關係數都一樣的兩份資料，畫出來可以完全不同。<b>先畫圖再算數字。</b>"},{"front":"五數摘要（describe）","back":"最便宜的驗證動作。一行就能戳破一半的錯誤主張：範圍不合理、count 比列數少（有遺漏值）、標準差是 0。"},{"front":"以能重現的一邊為準（Reproducible Wins）","back":"AI 的描述跟你自己算的對不上時的判準。不是「誰比較權威」，是<b>誰的說法可以被重新算一次</b>。"},{"front":"AI 適合的問題（Verifiable Questions）","back":"有標準答案、而且你能馬上驗證的：語法、函式參數、環境錯誤、「這段程式碼在做什麼」。這類問題交給它幾乎沒有風險。"},{"front":"AI 不適合的問題（Judgment Questions）","back":"需要知道資料怎麼收的、假設成不成立、流程有沒有洩漏的：「顯著嗎」「可以上線嗎」「這張圖告訴我們什麼」。它沒看過你的資料。"},{"front":"審查的價值（Value of Review）","back":"產出程式碼的成本趨近於零之後，判斷「這個數字站不站得住腳」的價值就變高了。這門課練的是後面這一半。"},{"front":"把輸出當假設（Output as Hypothesis）","back":"AI 給的不是結論，是一個待驗證的假設。這個心態上的轉換，比任何提示技巧都重要。"},{"front":"評估要用沒看過的資料（Out-of-sample）","back":"整套機器學習最容易被繞過、也最致命的一條。訓練分數再好看都不算數。"},{"front":"不確定性（Uncertainty）","back":"一個估計值旁邊沒有標準誤或標準差時，你無法判斷兩個數字的差異算不算差異。回報平均一定要連同它的晃動範圍。"},{"front":"沉默的錯（Silent Error）","back":"程式跑完了、有數字、但數字是錯的。AI 產出的錯誤幾乎都屬於這一類——它不會報錯，只會很流暢地錯下去。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->
