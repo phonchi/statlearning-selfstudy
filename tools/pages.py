@@ -84,6 +84,19 @@ class Page:
     # 既有章留空，studyguide() 的輸出 byte 不變。
     extra_pills: list = field(default_factory=list)
 
+    # ── 先備入口層（n=12 起）用的欄位。全部有預設值，既有十一章的 Page(...) 字面值
+    #    一字不動，GEN 區段 byte 不變。─────────────────────────────────────
+    kind: str = "core"          # "core"＝正課十一章；"prep"＝課前準備與先備知識
+    data_key: str = ""          # 詞彙卡／題庫的檔名鍵；空字串→沿用 ch{islp}
+    src_labs: tuple = ()        # 本頁允許引用的 lab 章號，如 (2, 1)；空→(islp,)
+    ex_links: list = field(default_factory=list)   # prep 頁 EX 區的 pill（官方文件）
+    nav_next: str = ""          # 覆寫 chapter-nav 的下一頁 stem（prep 末頁接回正課）
+
+    @property
+    def dkey(self) -> str:
+        """data/*_zh/<dkey>.json 的檔名鍵。正課沿用 ISLP 章號，先備頁自訂。"""
+        return self.data_key or f"ch{self.islp}"
+
     @property
     def deck_no(self) -> str:
         return self.deck.split("_")[0]
@@ -545,6 +558,10 @@ PAGES = [
         ],
     ),
 ]
+# ⚠️ 只能 append，永遠不要在中間插頁。
+# w<NN> 的 NN 就是這裡的 n（validate.py 的 ID-PREFIX 檢查），十一支 enrich 腳本裡
+# 寫死了 w01–w11；中間插一頁會讓後面每一頁的前綴位移，整批元件的 id 與 JS 宣告全部失效。
+# 先備入口層從 n=12 起跳，正是為了避開這件事。
 
 BY_STEM = {p.stem: p for p in PAGES}
 BY_N = {p.n: p for p in PAGES}
@@ -568,8 +585,20 @@ def tokens(page: Page):
 
 
 def neighbours(page: Page):
-    prev = BY_N.get(page.n - 1)
-    nxt = BY_N.get(page.n + 1)
+    """chapter-nav 的前後鄰居。
+
+    在**同 kind 的頁面**裡依 n 排序後取前後，不要用 n±1：
+    1. 先備入口層是另一條獨立的閱讀線，不該讓正課第 11 章長出「下一章」
+       （那會改到它的 chapternav GEN 區段 sha256）。
+    2. 分期實作時 n 會有洞（先寫 16 再寫 12），排序法不受影響。
+    正課 n=1–11 連續，排序法的輸出與舊的 n±1 完全相同。
+    """
+    fam = sorted((q for q in PAGES if q.kind == page.kind), key=lambda q: q.n)
+    i = fam.index(page)
+    prev = fam[i - 1] if i > 0 else None
+    nxt = fam[i + 1] if i + 1 < len(fam) else None
+    if nxt is None and page.nav_next:
+        nxt = BY_STEM.get(page.nav_next)
     return prev, nxt
 
 

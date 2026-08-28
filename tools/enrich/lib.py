@@ -156,8 +156,24 @@ def svg(sid, height=340):
     return f'      <svg class="viz-svg" id="{sid}" height="{height}"></svg>'
 
 
-def ver_note():
+def ver_note(labs=()):
+    """REF 區的環境版本註記。
+
+    labs 給先備頁用：一頁會引用多份 lab，把它們列出來。不給就是舊行為，
+    輸出字串與過去逐字相同（正課十一章的 GEN 之外內容不會變）。
+    """
     import pages as P
-    return (f'<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；'
+    src = ("課程 lab notebook" if not labs else
+           "課程 lab notebook（" + "、".join(f"Ch{c:02d}" for c in labs) + "）")
+    return (f'<p class="ver-note">本頁「預期輸出」逐字取自{src}（老師在課程環境實跑）；'
             f'圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 {P.ENV_NOTE}。'
             f'每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>')
+
+
+def hook(title, body):
+    """「這在本站哪一章會用到」的掛鉤方框。
+
+    用既有的 .info-box.purple，不新增任何 CSS——base.css 被整份塞進每頁的 head
+    GEN 區段，動它一個 byte 就會讓十一章的 sha256 全部失效。
+    """
+    return info(f"🔗 {title}", body, "purple")

@@ -105,10 +105,15 @@ def studyguide(p: P.Page) -> str:
     esl_hint = ("標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。"
                 if any(s.eslx for s in p.secs) else "")
     deck_bit = f"｜講義 {p.deck_no}" if p.deck else ""
-    step2 = ("<strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，"
-             "細節與完整推導請回講義與課本。" if p.deck else
-             "<strong>對照課本</strong>：每個 §徽章都標了 ISLP 節號，"
-             "細節與完整推導請回課本。")
+    if p.kind == "prep":
+        step2 = ("<strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab "
+                 "的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。")
+    elif p.deck:
+        step2 = ("<strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，"
+                 "細節與完整推導請回講義與課本。")
+    else:
+        step2 = ("<strong>對照課本</strong>：每個 §徽章都標了 ISLP 節號，"
+                 "細節與完整推導請回課本。")
     return f"""<div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（{p.islp_label}{deck_bit}）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
@@ -142,7 +147,22 @@ def stub_body(p: P.Page, s: P.Sec) -> str:
     return f'  <p class="skip-note">TODO 待撰寫：{s.short}（{s.badge}）</p>'
 
 
+def prep_ex_head(p: P.Page) -> str:
+    """先備頁的 EX 區。先備頁沒有課本習題，題目照本頁觀念自訂，
+    pill 排改掛官方文件（Page.ex_links）而不是 ISLP 解答站。"""
+    pills = "".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>'
+                    for t, u in p.ex_links)
+    return f"""  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
+  程式碼卡在自己的環境跑一次。</p>
+  <div class="sol-links">{pills}</div>"""
+
+
 def ex_head(p: P.Page) -> str:
+    if p.kind == "prep":
+        return prep_ex_head(p)
     links = P.sol_links(p.islp)
     pills = "".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>' for t, u in links)
     # ISLP 第 1 章沒有課後習題，所以這一頁的練習改成概念自測
@@ -161,8 +181,11 @@ def ex_head(p: P.Page) -> str:
 
 
 def data_count(kind: str, p: P.Page) -> int:
-    """data/<kind>_zh/ch<ISLP 章號>.json 的張數／題數；還沒寫就回 0。"""
-    f = ROOT / "data" / f"{kind}_zh" / f"ch{p.islp}.json"
+    """data/<kind>_zh/<p.dkey>.json 的張數／題數；還沒寫就回 0。
+
+    正課的 dkey 是 ch<ISLP 章號>，先備頁自訂（先備頁沒有 ISLP 章號可用）。
+    """
+    f = ROOT / "data" / f"{kind}_zh" / f"{p.dkey}.json"
     if not f.exists():
         return 0
     try:
@@ -174,9 +197,11 @@ def data_count(kind: str, p: P.Page) -> int:
 def cards_block(p: P.Page) -> str:
     n = data_count("flashcards", p)
     badge = f"課程題庫 · {n} 張" if n else "課程題庫 · 待注入"
+    src = ("本頁引用的課程 lab" if p.kind == "prep"
+           else f"本章講義與 ISLP 第 {p.islp} 章")
     return f"""  <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">{badge}</span></h2>
-  <p>詞彙卡取自本章講義與 ISLP 第 {p.islp} 章，正面是中文術語（附英文原名）。
+  <p>詞彙卡取自{src}，正面是中文術語（附英文原名）。
   先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
@@ -188,7 +213,7 @@ def cards_block(p: P.Page) -> str:
 
 def bankquiz_head(p: P.Page) -> str:
     n = data_count("questions", p)
-    badge = f"課程題庫 ch{p.islp} · {n} 題" if n else "課程題庫 · 待注入"
+    badge = f"課程題庫 {p.dkey} · {n} 題" if n else "課程題庫 · 待注入"
     return (f'  <div class="section-number">QUIZ · 自我檢測</div>\n'
             f'  <h2>本章自我檢測 <span class="sec-badge">{badge}</span></h2>\n'
             f'  <p>這些題目取自課程題庫，只給對錯與說明，不計分。答錯就回到對應章節重讀。</p>')
@@ -207,8 +232,12 @@ def chapternav(p: P.Page) -> str:
 
 def footer(p: P.Page) -> str:
     book = "An Introduction to Statistical Learning with Applications in Python (ISLP)"
+    if p.kind == "prep":
+        base = "基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件"
+    else:
+        base = f"基於 {book} 第 {p.islp} 章與 NSYSU MATH524 課程講義"
     return f"""<footer>
-  互動式{p.plain}教學 · 基於 {book} 第 {p.islp} 章與 NSYSU MATH524 課程講義<br>
+  互動式{p.plain}教學 · {base}<br>
   <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
 </footer>"""
 

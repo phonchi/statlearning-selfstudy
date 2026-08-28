@@ -58,9 +58,28 @@ def build_html():
                  "             random_state=0)\n"
                  "# 交叉驗證估預測誤差\n"
                  "# bootstrap 估不確定性")
-    cards = "\n".join(card(p) for p in P.PAGES)
-    total_cards = sum(B.data_count("flashcards", p) for p in P.PAGES)
-    total_widgets = sum(counts(p)[3] for p in P.PAGES)
+    core = [q for q in P.PAGES if q.kind == "core"]
+    prep = [q for q in P.PAGES if q.kind == "prep"]
+    cards = "\n".join(card(q) for q in core)
+    total_cards = sum(B.data_count("flashcards", q) for q in core)
+    total_widgets = sum(counts(q)[3] for q in core)
+    # 先備入口層自成一區，折在正課下方。一頁都還沒寫時整區不輸出，
+    # index.html 的 byte 與舊版完全相同。
+    prep_block = ""
+    if prep:
+        prep_cards = "\n".join(card(q) for q in prep)
+        prep_widgets = sum(counts(q)[3] for q in prep)
+        prep_block = f"""
+
+  <section id="prep">
+    <h2>先備入口 · Python 起步</h2>
+    <p>沒寫過 Python，或只會一點點？這幾頁把正課會用到的語法與套件先講一遍，
+    程式碼全部取自課程 lab notebook。選讀，不列入評分。
+    共 {{len(prep)}} 頁、{{prep_widgets}} 個互動元件。</p>
+    <div class="ch-grid">
+{{prep_cards}}
+    </div>
+  </section>"""
 
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -105,11 +124,11 @@ def build_html():
   <section>
     <h2>章節（依授課順序）</h2>
     <p>順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
-    共 {len(P.PAGES)} 章、{total_widgets} 個互動元件、{total_cards} 張詞彙卡。</p>
+    共 {len(core)} 章、{total_widgets} 個互動元件、{total_cards} 張詞彙卡。</p>
     <div class="ch-grid">
 {cards}
     </div>
-  </section>
+  </section>{prep_block}
 
   <section>
     <h2>配套資源</h2>
@@ -141,7 +160,7 @@ def build_html():
 
 def build_readme():
     rows = []
-    for p in P.PAGES:
+    for p in [q for q in P.PAGES if q.kind == "core"]:
         parts, cards, qs, widgets = counts(p)
         對應 = p.islp_label + (f"／{p.esl_label}" if p.esl_label else "")
         講義 = f"講義 {p.deck_no}" if p.deck else "—"     # 補充章沒有講義

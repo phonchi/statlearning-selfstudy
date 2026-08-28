@@ -47,7 +47,7 @@ def inject(p: P.Page) -> str:
     src = dest.read_text(encoding="utf-8")
     blocks, msg = [], []
 
-    fc = FLASHCARDS / f"ch{p.islp}.json"
+    fc = FLASHCARDS / f"{p.dkey}.json"
     if fc.exists():
         cards = json.loads(fc.read_text(encoding="utf-8"))
         blocks.append("<script>\nconst FLASHCARDS = "
@@ -56,7 +56,7 @@ def inject(p: P.Page) -> str:
         msg.append(f"{len(cards)} 張詞彙卡")
 
     if p.bankquiz:
-        qf = QUESTIONS / f"ch{p.islp}.json"
+        qf = QUESTIONS / f"{p.dkey}.json"
         if qf.exists():
             qs = json.loads(qf.read_text(encoding="utf-8"))
             blocks.append("<script>\nconst BANKQUIZ = "

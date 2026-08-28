@@ -46,7 +46,17 @@ SKELETON_IDS = {"floatNav", "top", "fcGrid", "fcShuffle", "fcFlipAll", "fcUnflip
 # XML 命名空間 URI 不是網路請求，不受 https-only 規則管
 NS_URIS = ("http://www.w3.org/",)
 
-BADGE_RE = re.compile(r"^(ISLP §|ISLP Ch\.|ESL §|ESL Ch\.|講義 \d[\d_]* · p\.|課程題庫)")
+# 先備入口層的四個徽章前綴是追加的（正則只會變寬鬆，對正課十一章零影響）：
+#   課程 Lab ChN · 儲存格 k   ← 可機器驗證，check_prep_grounding 會核對儲存格存不存在
+#   <套件> 文件 · …           ← lab 裡沒有的語法點才用
+#   先備 · …                  ← islp_label 與 EX 徽章
+#   AI-Stats §N               ← 只指名參考書概念，不引用其內容
+BADGE_RE = re.compile(
+    r"^(ISLP §|ISLP Ch\.|ESL §|ESL Ch\.|講義 \d[\d_]* · p\.|課程題庫"
+    r"|課程 Lab Ch\d+ · "
+    r"|(?:Python|NumPy|pandas|Matplotlib|seaborn|SciPy|statsmodels|scikit-learn"
+    r"|Colab|conda) 文件 · "
+    r"|先備 · |AI-Stats §)")
 
 
 class Ids(HTMLParser):
@@ -285,8 +295,18 @@ def check_page(p: P.Page):
             fail("GROUNDING", w,
                  f".deck-extra 缺 .dx-src 出處標記（第 {i + 1} 張"
                  f"{'：' + lab.group(1) if lab else ''}）")
-    lab = SRC_INDEX / f"lab_ch{p.islp}.md"
-    labtext = lab.read_text(encoding="utf-8") if lab.exists() else ""
+    # 來源 lab 可以有多份（先備頁一頁會引用 lab_ch1 與 lab_ch2）。
+    # 檔案不存在一律 fail —— 舊版是靜默跳過，等於整段檢查無聲失效。
+    src_chs = p.src_labs or (p.islp,)
+    parts = []
+    for ch in src_chs:
+        lab = SRC_INDEX / f"lab_ch{ch}.md"
+        if not lab.exists():
+            fail("GROUNDING", w, f"來源索引 {lab.name} 不存在（跑 tools/extract_lab.py）")
+            continue
+        parts.append(lab.read_text(encoding="utf-8"))
+    labtext = "\n".join(parts)
+    labs_note = "／".join(f"lab_ch{c}.md" for c in src_chs)
     for m in re.finditer(r'<div class="expected-out">.*?<pre>(.*?)</pre>', src, re.S):
         body = re.sub(r"<[^>]+>", "", m.group(1))
         for a, b in (("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'),
@@ -295,9 +315,14 @@ def check_page(p: P.Page):
         body = body.strip()
         head = next((ln.strip() for ln in body.splitlines() if ln.strip()), "")
         if head and labtext and head not in labtext:
-            warn("GROUNDING", w, f"預期輸出的首行在 lab_ch{p.islp}.md 找不到：「{head[:60]}」")
+            warn("GROUNDING", w, f"預期輸出的首行在 {labs_note} 找不到：「{head[:60]}」")
     if not re.search(r'class="ver-note"', src):
         warn("GROUNDING", w, "REF 區缺 .ver-note 環境版本註記")
+
+    # GROUNDING-PREP：先備頁的出處要求比正課更硬（fail 等級）。
+    # 整段被 kind=="prep" 包住，正課十一章一行都不會執行，所以不可能製造新的 warn。
+    if p.kind == "prep":
+        check_prep_grounding(p, w, src, labtext)
 
     # SIZE
     kb = dest.stat().st_size / 1024
@@ -310,10 +335,93 @@ def check_page(p: P.Page):
         warn("TODO", w, f"還有 {n_todo} 處 TODO")
 
 
+# ── 先備入口層的出處檢查 ────────────────────────────────────────────────
+DX_SRC_RE = re.compile(r'class="dx-src">來源：<code>Ch(\d+)-[^<]*\.ipynb</code> · 儲存格 ([^<]+)')
+CELL_RE = re.compile(r"\d+")
+PREP_BADGE_RE = re.compile(r"課程 Lab Ch(\d+) · 儲存格 ([^<]+)")
+
+
+def _lab_cells(ch: int) -> dict:
+    """lab_chN.md 的 {儲存格編號: 該格的輸出（沒有輸出就是 None）}。"""
+    f = SRC_INDEX / f"lab_ch{ch}.md"
+    if not f.exists():
+        return {}
+    text = f.read_text(encoding="utf-8")
+    out = {}
+    for m in re.finditer(r"^## 儲存格 (\d+) \[code\]\n(.*?)(?=^## 儲存格 |\Z)",
+                         text, re.S | re.M):
+        o = re.search(r"\*\*輸出\*\*\n\n```\n(.*?)\n```", m.group(2), re.S)
+        out[int(m.group(1))] = o.group(1) if o else None
+    return out
+
+
+def _unescape(t: str) -> str:
+    for a, b in (("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'),
+                 ("&#x27;", "'"), ("&#39;", "'"), ("&amp;", "&")):
+        t = t.replace(a, b)
+    return t
+
+
+def check_prep_grounding(p, w, src, labtext):
+    """先備頁專用（fail 等級）。正課頁不會走到這裡。
+
+    1. 每張 .deck-extra 的 .dx-src 要能解析成「ChNN 某個 lab · 儲存格 k」，
+       章號必須在 Page.src_labs 裡，儲存格必須真的存在於該 lab。
+    2. 有 .expected-out 的卡，內容必須逐字等於該格的實跑輸出（不是「首行找得到」）。
+    3. 一頁至少要有一張 lab 引用卡，否則這一頁等於沒有出處。
+    4. 「課程 Lab ChN · 儲存格 k」徽章所指的儲存格也要存在——徽章從自由文字
+       升級成可驗證的交叉引用。
+    """
+    cells = {ch: _lab_cells(ch) for ch in (p.src_labs or (p.islp,))}
+    n_cited = 0
+    for i, seg in enumerate(src.split('<div class="deck-extra"')[1:]):
+        seg = seg.split('<div class="deck-extra"')[0]
+        m = DX_SRC_RE.search(seg)
+        if not m:
+            if 'class="dx-src"' in seg:
+                fail("GROUNDING-PREP", w,
+                     f"第 {i + 1} 張 .deck-extra 的 .dx-src 不符文法"
+                     "（要「來源：<code>ChNN-….ipynb</code> · 儲存格 k」）")
+            continue
+        ch = int(m.group(1))
+        ks = [int(x) for x in CELL_RE.findall(m.group(2))]
+        if ch not in cells:
+            fail("GROUNDING-PREP", w,
+                 f"第 {i + 1} 張引用 Ch{ch:02d}，但它不在 Page.src_labs={p.src_labs}")
+            continue
+        missing = [k for k in ks if k not in cells[ch]]
+        if missing:
+            fail("GROUNDING-PREP", w,
+                 f"第 {i + 1} 張引用 lab_ch{ch}.md 不存在的儲存格 {missing}")
+            continue
+        n_cited += 1
+        eo = re.search(r'<div class="expected-out">.*?<pre>(.*?)</pre>', seg, re.S)
+        if eo:
+            got = _unescape(re.sub(r"<[^>]+>", "", eo.group(1))).rstrip()
+            want = [cells[ch][k].rstrip() for k in ks if cells[ch].get(k) is not None]
+            if not want:
+                fail("GROUNDING-PREP", w,
+                     f"第 {i + 1} 張有預期輸出，但 lab_ch{ch}.md 儲存格 {ks} 沒存輸出")
+            elif got not in want:
+                fail("GROUNDING-PREP", w,
+                     f"第 {i + 1} 張的預期輸出與 lab_ch{ch}.md 儲存格 {ks} 不逐字相同")
+    if not n_cited:
+        fail("GROUNDING-PREP", w, "整頁沒有任何引用課程 lab 的 .deck-extra")
+    for m in PREP_BADGE_RE.finditer(src):
+        ch = int(m.group(1))
+        if ch not in cells:
+            fail("GROUNDING-PREP", w, f"徽章指向 Ch{ch:02d}，但它不在 Page.src_labs")
+            continue
+        bad = [k for k in (int(x) for x in CELL_RE.findall(m.group(2)))
+               if k not in cells[ch]]
+        if bad:
+            fail("GROUNDING-PREP", w, f"徽章指向 lab_ch{ch}.md 不存在的儲存格 {bad}")
+
+
 # ── 全站檢查 ────────────────────────────────────────────────────────────
 def check_flashcards():
     for p in P.PAGES:
-        f = FLASHCARDS / f"ch{p.islp}.json"
+        f = FLASHCARDS / f"{p.dkey}.json"
         if not f.exists():
             warn("FLASHCARD", f.name, "尚未撰寫")
             continue
@@ -346,7 +454,7 @@ def check_flashcards():
 
 def check_questions():
     for p in P.PAGES:
-        f = QUESTIONS / f"ch{p.islp}.json"
+        f = QUESTIONS / f"{p.dkey}.json"
         if not p.bankquiz:
             continue
         if not f.exists():
@@ -386,14 +494,14 @@ def check_index():
         if not (ROOT / href).exists():
             fail("INDEX-SYNC", "index.html", f"卡片指向不存在的 {href}")
     for p in P.PAGES:
-        fc = FLASHCARDS / f"ch{p.islp}.json"
+        fc = FLASHCARDS / f"{p.dkey}.json"
         if not fc.exists():
             continue
         n = len(json.loads(fc.read_text(encoding="utf-8")))
         m = re.search(re.escape(p.file) + r'".*?class="ch-meta">([^<]*)', src, re.S)
         if m and f"{n} 張詞彙卡" not in m.group(1):
             fail("INDEX-SYNC", "index.html",
-                 f"{p.file} 的 .ch-meta「{m.group(1)}」與 ch{p.islp}.json 的 {n} 張不符")
+                 f"{p.file} 的 .ch-meta「{m.group(1)}」與 {p.dkey}.json 的 {n} 張不符")
 
 
 def check_repo():
@@ -405,6 +513,10 @@ def check_repo():
     for f in ROOT.rglob("*"):
         if f.is_file() and f.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}:
             fail("FORBIDDEN", "repo", f"出現圖檔 {f.relative_to(ROOT)}：所有視覺都要 inline")
+        # 素材不進 repo：教科書 PDF 放 ~/statslearning，notebook 只留 data/source_index/ 的 .md
+        if f.is_file() and f.suffix.lower() in {".pdf", ".ipynb"}:
+            fail("FORBIDDEN", "repo",
+                 f"出現素材檔 {f.relative_to(ROOT)}：PDF／notebook 放 repo 外（見 .gitignore）")
 
 
 def check_links(base=None):
