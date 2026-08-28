@@ -86,7 +86,7 @@ def build_html():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：十一章互動教材，每節都能動手操作、預測、驗證。NSYSU MATH524 課程配套。">
+<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：十一章互動教材，另有九頁 Python 先備入口，每節都能動手操作、預測、驗證。NSYSU MATH524 課程配套。">
 <title>統計學習 × Python 互動自學網站 — NSYSU MATH524</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -111,7 +111,9 @@ def build_html():
       <div class="lb-title">📌 建議學習迴圈（每一章都照這個節奏）</div>
       <p>這個網站是課程講義的互動版配套：<strong>講義給完整程式與推導，這裡給你「動手驗證直覺」的空間。</strong>
       每頁的 §徽章都標了 ISLP 節號與講義頁碼，方便左右對照；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
-      最後一章標了「補充」——本課沒有教 ISLP 第 10 章，那一頁的出處改用課本官方的英文 lab，其餘規格相同。</p>
+      最後一章標了「補充」——本課沒有教 ISLP 第 10 章，那一頁的出處改用課本官方的英文 lab，其餘規格相同。<br>
+      <strong>沒寫過 Python，或只會一點點？</strong>下面還有一區<a href="#prep">先備入口</a>：
+      兩章課前準備加七頁 Python 與套件，程式碼一樣逐字取自課程 lab。選讀，不列入評分。</p>
       <div class="loop-steps">
         <div class="step"><b>① READ &amp; PLAY</b>逐節閱讀，動手操作互動元件：先預測結果，再按按鈕驗證。</div>
         <div class="step"><b>② CROSS-CHECK</b>對照講義 PDF 與 ISLP 原文，把完整程式看懂、抄一遍、跑一遍。</div>
@@ -167,10 +169,17 @@ def build_readme():
         rows.append(f"| {p.n:02d} | [{p.plain}]({p.file}) | {對應} | {講義} | "
                     f"{parts} 節 · {widgets} 元件 · {cards} 張卡 |")
     table = "\n".join(rows)
+    prep_rows = []
+    for q in [x for x in P.PAGES if x.kind == "prep"]:
+        parts, cards, _qs, widgets = counts(q)
+        prep_rows.append(f"| {q.n - 11} | [{q.plain}]({q.file}) | {q.islp_label} | "
+                         f"{parts} 節 · {widgets} 元件 · {cards} 張卡 |")
+    prep_table = "\n".join(prep_rows)
     return f"""# 統計學習 × Python 互動自學網站
 
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站：十一章互動教材，
 每一節都能動手操作、預測、驗證，配上每節 quiz、觀念釐清 Q&A、關鍵詞彙卡與 REF 速查表。
+另有九頁**先備入口**（兩章課前準備 ＋ Python 與資料科學套件），給沒寫過程式的人先讀。
 
 - 線上閱讀：{P.SITE_URL}
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python]({P.BOOK_ISLP})
@@ -185,6 +194,18 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站：十�
 
 順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
 集成學習那一週折進「樹狀方法與集成學習」。
+
+## 先備入口（選讀，不列入評分）
+
+沒寫過 Python，或只會一點點？這幾頁把正課會用到的語法與套件先講一遍。
+程式碼一樣逐字取自課程 lab notebook。
+
+| # | 頁面 | 對應 | 內容量 |
+|---|------|------|--------|
+{prep_table}
+
+建議路線：完全沒寫過程式走 00B → P1 → … → P6；
+寫過但沒碰過資料科學套件的，00B → P3 → P4 → P5 → P6。
 
 ## 內容出處
 

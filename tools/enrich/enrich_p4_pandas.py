@@ -35,7 +35,7 @@ BODIES = {}
 
 # ── PROLOGUE Series 與 DataFrame ───────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>NumPy 的陣列只有數字，沒有欄名。真實資料不是這樣——你會想說「取 mpg 那一欄」，
+  <p>NumPy 的陣列只有數字，沒有欄名。真實資料不是這樣。你會想說「取 mpg 那一欄」，
   而不是「取第 3 欄」。pandas 就是在陣列上面加了一層<strong>標籤</strong>：
   一維的叫 Series，二維的叫 DataFrame。</p>
 
@@ -109,7 +109,7 @@ BODIES["view"] = f"""
       src=S(1, 31, 32), note="<code>head()</code> 預設五列，<code>tail(3)</code> 給最後三列。")}
 
 {card("五數摘要", C(1, 36), O(1, 36), src=S(1, 36),
-      note="<code>count</code> 那一列很有用——它<strong>不算遺漏值</strong>，"
+      note="<code>count</code> 那一列很有用。它<strong>不算遺漏值</strong>，"
            "所以某一欄的 count 比別欄少，就代表那欄有 NaN。")}
 
 {card("形狀", C(1, 38), O(1, 38), src=S(1, 38),
@@ -203,7 +203,7 @@ BODIES["select"] = f"""
 # ── P03 遺漏值 ─────────────────────────────────────────────────────────
 BODIES["na"] = f"""
   <p>這一節講一個真實故事。課程 lab 讀進 <code>Auto</code> 之後，
-  <code>horsepower</code> 那一欄<strong>整欄是字串</strong>——因為原始檔用 <code>?</code>
+  <code>horsepower</code> 那一欄<strong>整欄是字串</strong>，因為原始檔用 <code>?</code>
   代表遺漏，pandas 看到問號就把整欄當成文字。這種錯誤不會報錯，只會讓你後面算出來的東西全錯。</p>
 
 {viz(svg("w17naSvg", 340),
@@ -223,12 +223,12 @@ BODIES["na"] = f"""
      '<button class="btn btn-reset" onclick="w17naReset()">重置</button>')}
 
 {card("找出兇手", C(2, 192), O(2, 192), src=S(2, 192),
-      note="全部是<strong>帶引號的字串</strong>——輸出末尾就會看到那個 "
+      note="全部是<strong>帶引號的字串</strong>，輸出末尾就會看到那個 "
            "<code>'?'</code>。整欄因此被讀成 object。")}
 
 {card("讀檔時就宣告哪些字算遺漏", C(2, 195), O(2, 195), src=S(2, 195),
       note="加上 <code>na_values=['?']</code> 之後，"
-           "<code>sum()</code> 才算得出數字——那個 <code>np.float64</code> 就是證據。")}
+           "<code>sum()</code> 才算得出數字。那個 <code>np.float64</code> 就是證據。")}
 
 {card("dropna：397 變成 392", C(2, 197) + "\n" + C(2, 199), f"{O(2, 197)}\n{O(2, 199)}",
       src=S(2, 197, 199),
@@ -343,7 +343,7 @@ BODIES["join"] = f"""
                  ("已接上的列數", "0", "w17catRows")]),
       info_card("axis=1 呢",
                 "沿欄接：列索引要對得起來，接完欄變多。"
-                "對不起來的位置會填 NaN——這是最容易產生意外遺漏值的操作。")],
+                "對不起來的位置會填 NaN。這是最容易產生意外遺漏值的操作。")],
      "w17catStatus", "按「單步」把三塊接回去。",
      '<button class="btn btn-step" onclick="w17catStep()">→ 單步</button>'
      '<button class="btn btn-reset" onclick="w17catReset()">重置</button>')}
@@ -377,7 +377,7 @@ BODIES["exercises"] = f"""
       "某個 CSV 用 <code>NA</code> 與 <code>-999</code> 兩種方式表示遺漏。最好的處理時機是？",
       [(True, "讀檔時寫 <code>na_values=['NA', -999]</code>",
         "對。一次講清楚，之後每一次重跑都一致。"
-        "Auto 那個 <code>?</code> 的教訓就是這個——讀進來之後才補救，"
+        "Auto 那個 <code>?</code> 的教訓就是這個，讀進來之後才補救，"
         "很容易漏掉某些欄。"),
        (False, "讀完之後用 <code>replace</code> 換掉",
         "能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。"

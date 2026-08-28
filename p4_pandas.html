@@ -585,7 +585,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>一欄是 Series，一張表是 DataFrame <span class="sec-badge">課程 Lab Ch1 · 儲存格 17–28</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>NumPy 的陣列只有數字，沒有欄名。真實資料不是這樣——你會想說「取 mpg 那一欄」，
+  <p>NumPy 的陣列只有數字，沒有欄名。真實資料不是這樣。你會想說「取 mpg 那一欄」，
   而不是「取第 3 欄」。pandas 就是在陣列上面加了一層<strong>標籤</strong>：
   一維的叫 Series，二維的叫 DataFrame。</p>
 
@@ -738,7 +738,7 @@ min   -1.060077 -1.592677 -0.604842 -1.500806
 50%   -0.253499 -0.988057  0.350348  0.462902
 75%    0.091032 -0.738359  0.771784  0.679955
 max    0.501820  0.236859  1.455216  1.641228</pre></div>
-  <p class="dx-note"><code>count</code> 那一列很有用——它<strong>不算遺漏值</strong>，所以某一欄的 count 比別欄少，就代表那欄有 NaN。</p>
+  <p class="dx-note"><code>count</code> 那一列很有用。它<strong>不算遺漏值</strong>，所以某一欄的 count 比別欄少，就代表那欄有 NaN。</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 36</span>
 </div>
 
@@ -880,7 +880,7 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
 <!-- GEN:END sec:na -->
 
   <p>這一節講一個真實故事。課程 lab 讀進 <code>Auto</code> 之後，
-  <code>horsepower</code> 那一欄<strong>整欄是字串</strong>——因為原始檔用 <code>?</code>
+  <code>horsepower</code> 那一欄<strong>整欄是字串</strong>，因為原始檔用 <code>?</code>
   代表遺漏，pandas 看到問號就把整欄當成文字。這種錯誤不會報錯，只會讓你後面算出來的東西全錯。</p>
 
 <div class="viz-layout">
@@ -925,7 +925,7 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
        &#x27;83.00&#x27;, &#x27;84.00&#x27;, &#x27;85.00&#x27;, &#x27;86.00&#x27;, &#x27;87.00&#x27;, &#x27;88.00&#x27;, &#x27;89.00&#x27;,
        &#x27;90.00&#x27;, &#x27;91.00&#x27;, &#x27;92.00&#x27;, &#x27;93.00&#x27;, &#x27;94.00&#x27;, &#x27;95.00&#x27;, &#x27;96.00&#x27;,
        &#x27;97.00&#x27;, &#x27;98.00&#x27;, &#x27;?&#x27;], dtype=object)</pre></div>
-  <p class="dx-note">全部是<strong>帶引號的字串</strong>——輸出末尾就會看到那個 <code>'?'</code>。整欄因此被讀成 object。</p>
+  <p class="dx-note">全部是<strong>帶引號的字串</strong>，輸出末尾就會看到那個 <code>'?'</code>。整欄因此被讀成 object。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 192</span>
 </div>
 
@@ -937,7 +937,7 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
   <span class="line">                   sep=<span class="str">r&quot;\s+&quot;</span>)</span>
   <span class="line">Auto[<span class="str">&#x27;horsepower&#x27;</span>].sum()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(40952.0)</pre></div>
-  <p class="dx-note">加上 <code>na_values=['?']</code> 之後，<code>sum()</code> 才算得出數字——那個 <code>np.float64</code> 就是證據。</p>
+  <p class="dx-note">加上 <code>na_values=['?']</code> 之後，<code>sum()</code> 才算得出數字。那個 <code>np.float64</code> 就是證據。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 195</span>
 </div>
 
@@ -1146,7 +1146,7 @@ foo -2.740490  0.700964</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">axis=1 呢</div>
-      沿欄接：列索引要對得起來，接完欄變多。對不起來的位置會填 NaN——這是最容易產生意外遺漏值的操作。
+      沿欄接：列索引要對得起來，接完欄變多。對不起來的位置會填 NaN。這是最容易產生意外遺漏值的操作。
     </div>
   </div>
 </div>
@@ -1181,7 +1181,7 @@ foo -2.740490  0.700964</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 讀檔</div>
   <p>某個 CSV 用 <code>NA</code> 與 <code>-999</code> 兩種方式表示遺漏。最好的處理時機是？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。一次講清楚，之後每一次重跑都一致。Auto 那個 <code>?</code> 的教訓就是這個——讀進來之後才補救，很容易漏掉某些欄。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 讀檔時寫 <code>na_values=['NA', -999]</code></div><div class="quiz-opt" data-correct="false" data-fb="能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。更糟的是別人重跑你的程式碼時可能漏掉這一步。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 讀完之後用 <code>replace</code> 換掉</div><div class="quiz-opt" data-correct="false" data-fb="太晚了。<code>dropna</code> 只認得 NaN——<code>-999</code> 在它眼裡是一個正常的數字，會被留下來一路算進模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 建模前再用 <code>dropna()</code> 一次處理</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。一次講清楚，之後每一次重跑都一致。Auto 那個 <code>?</code> 的教訓就是這個，讀進來之後才補救，很容易漏掉某些欄。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 讀檔時寫 <code>na_values=['NA', -999]</code></div><div class="quiz-opt" data-correct="false" data-fb="能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。更糟的是別人重跑你的程式碼時可能漏掉這一步。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 讀完之後用 <code>replace</code> 換掉</div><div class="quiz-opt" data-correct="false" data-fb="太晚了。<code>dropna</code> 只認得 NaN——<code>-999</code> 在它眼裡是一個正常的數字，會被留下來一路算進模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 建模前再用 <code>dropna()</code> 一次處理</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 

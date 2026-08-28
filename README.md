@@ -2,6 +2,7 @@
 
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站：十一章互動教材，
 每一節都能動手操作、預測、驗證，配上每節 quiz、觀念釐清 Q&A、關鍵詞彙卡與 REF 速查表。
+另有九頁**先備入口**（兩章課前準備 ＋ Python 與資料科學套件），給沒寫過程式的人先讀。
 
 - 線上閱讀：https://phonchi.github.io/statlearning-selfstudy/
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python](https://www.statlearning.com/)
@@ -26,6 +27,26 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站：十�
 
 順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
 集成學習那一週折進「樹狀方法與集成學習」。
+
+## 先備入口（選讀，不列入評分）
+
+沒寫過 Python，或只會一點點？這幾頁把正課會用到的語法與套件先講一遍。
+程式碼一樣逐字取自課程 lab notebook。
+
+| # | 頁面 | 對應 | 內容量 |
+|---|------|------|--------|
+| 1 | [為什麼還要自己寫統計程式](00a_why_code.html) | 先備 · 為什麼寫程式 | 6 節 · 6 元件 · 24 張卡 |
+| 2 | [環境安裝](00b_setup.html) | 先備 · 環境 | 6 節 · 6 元件 · 24 張卡 |
+| 3 | [Python 基礎](p1_python_basics.html) | 先備 · Python 基礎 | 6 節 · 6 元件 · 24 張卡 |
+| 4 | [流程與函式](p2_flow_functions.html) | 先備 · 流程與函式 | 6 節 · 6 元件 · 25 張卡 |
+| 5 | [NumPy 陣列](p3_numpy.html) | 先備 · NumPy 陣列 | 8 節 · 7 元件 · 26 張卡 |
+| 6 | [pandas 資料框](p4_pandas.html) | 先備 · pandas 資料框 | 6 節 · 7 元件 · 25 張卡 |
+| 7 | [視覺化](p5_visualization.html) | 先備 · 視覺化 | 6 節 · 7 元件 · 24 張卡 |
+| 8 | [建模 API](p6_modeling_api.html) | 先備 · 建模 API | 6 節 · 6 元件 · 25 張卡 |
+| 9 | [AI 協作](p7_ai_assisted.html) | 先備 · AI 協作 | 6 節 · 6 元件 · 24 張卡 |
+
+建議路線：完全沒寫過程式走 00B → P1 → … → P6；
+寫過但沒碰過資料科學套件的，00B → P3 → P4 → P5 → P6。
 
 ## 內容出處
 

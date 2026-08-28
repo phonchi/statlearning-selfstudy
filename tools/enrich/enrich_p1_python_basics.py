@@ -36,7 +36,7 @@ BODIES = {}
 # ── PROLOGUE 第一行程式 ────────────────────────────────────────────────
 BODIES["prologue"] = f"""
   <p>這一頁假設你完全沒寫過程式。目標很具體：讀完之後，
-  你能看懂課程 lab 裡那些一行一行的東西在做什麼——不是會寫，是<strong>看得懂</strong>。
+  你能看懂課程 lab 裡那些一行一行的東西在做什麼，不是會寫，是<strong>看得懂</strong>。
   會寫是後面幾頁的事。</p>
 
 {info("Python 只做三件事", "① <strong>算</strong>一個值；② 把值<strong>取個名字</strong>存起來；"
@@ -105,7 +105,7 @@ BODIES["var"] = f"""
 
 {table(["型別", "長什麼樣", "在這門課裡是什麼"],
        [["<code>int</code>", "<code>392</code>", "樣本數 n、變數個數 p、折數 k"],
-        ["<code>float</code>", "<code>25.5739</code>", "MSE、係數、p 值——幾乎所有統計量"],
+        ["<code>float</code>", "<code>25.5739</code>", "MSE、係數、p 值，幾乎所有統計量"],
         ["<code>str</code>", "<code>'lstat'</code>", "欄名、檔名、圖的標題"],
         ["<code>bool</code>", "<code>True</code> / <code>False</code>", "條件的結果，布林遮罩的元素"],
         ["<code>list</code>", "<code>[3, 4, 5]</code>", "一組欄名、一組要試的參數"],
@@ -137,7 +137,7 @@ BODIES["list"] = f"""
 {card("做一個串列", C(2, 21), O(2, 21), src=S(2, 21))}
 
 {card("串列相加是接起來，不是逐元素相加", C(2, 23), O(2, 23), src=S(2, 23),
-      note="輸出有六個元素。要逐元素相加得用 NumPy 陣列——那是 P3 的第一節。")}
+      note="輸出有六個元素。要逐元素相加得用 NumPy 陣列。那是 P3 的第一節。")}
 
 {viz(svg("w14idxSvg", 300),
      [info_card("為什麼從 0 開始",
@@ -186,7 +186,7 @@ BODIES["slice"] = f"""
 {viz(svg("w14slSvg", 320),
      [info_card("拖端點",
                 "按按鈕改起點、終點與步長，上面會標出被取到的字元。"
-                "注意<strong>終點那一格永遠是灰的</strong>——它不包含在內。"),
+                "注意<strong>終點那一格永遠是灰的</strong>。它不包含在內。"),
       rows_card("目前",
                 [("寫法", "s[3:6]", "w14slExpr"),
                  ("取到", "'lo '", "w14slVal"),
@@ -204,7 +204,7 @@ BODIES["slice"] = f"""
      '<button class="btn btn-reset" onclick="w14slReset()">重置</button>')}
 
 {card("字串也能切", C(2, 132), O(2, 132), src=S(2, 132),
-      note="從第 3 個字元開始、取到第 6 個之前——三個字元，其中一個是空白。")}
+      note="從第 3 個字元開始、取到第 6 個之前，三個字元，其中一個是空白。")}
 
 {card("slice 物件是同一件事的另一種寫法", C(2, 134), O(2, 134), src=S(2, 134),
       note="<code>[3:6]</code> 只是 <code>[slice(3,6)]</code> 的語法糖。"
@@ -227,7 +227,7 @@ BODIES["dict"] = f"""
   都是字典：模型的評分、欄名對應到型別、參數名稱對應到值。</p>
 
 {card("用字典建一個 Series", C(1, 19), O(1, 19), src=S(1, 19),
-      note="鍵變成索引、值變成資料——pandas 直接吃字典，因為兩者的結構本來就一樣。")}
+      note="鍵變成索引、值變成資料。pandas 直接吃字典，因為兩者的結構本來就一樣。")}
 
 {card("用字典建一整張表", C(1, 26), O(1, 26), src=S(1, 26),
       note="這次每一個值是一個<strong>串列</strong>，於是每一個鍵變成一欄。"
@@ -266,7 +266,7 @@ BODIES["dict"] = f"""
     ("字典有順序嗎？",
      "Python 3.7 之後，字典會<strong>記住插入的順序</strong>，"
      "所以 <code>for k in d</code> 的順序是可預期的。"
-     "但不要依賴它做排序——要排序就明確寫 <code>sorted(d)</code>。"),
+     "但不要依賴它做排序，要排序就明確寫 <code>sorted(d)</code>。"),
 ])}
 
 {quiz("qDict", "PART 04 · 自我檢測",

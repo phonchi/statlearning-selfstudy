@@ -815,14 +815,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>);</span>
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：KDE 密度圖</span></span>
   <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;time&quot;</span>, multiple=<span class="str">&quot;stack&quot;</span>);</span></div>
-  <p class="dx-note"><code>kdeplot</code> 把每個點換成一個小鐘形再加起來，所以它<strong>一定是平滑的</strong>——那個平滑是你給的假設，不是資料本身。（產生的是圖，沒有文字輸出可對照。）</p>
+  <p class="dx-note"><code>kdeplot</code> 把每個點換成一個小鐘形再加起來，所以它<strong>一定是平滑的</strong>。那個平滑是你給的假設，不是資料本身。（產生的是圖，沒有文字輸出可對照。）</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 110、111</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p>同一份資料，bins=5 看起來是一個峰，bins=30 看起來是兩個峰。你該怎麼辦？</p>
-  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="這就是本節警告的事。「漂亮」不是判準——你是在挑一個支持自己想法的圖。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖是提出假設的工具，不是證據本身。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
+  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="這就是本節警告的事。「漂亮」不是判準。你是在挑一個支持自己想法的圖。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖是提出假設的工具，不是證據本身。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
   <div class="quiz-feedback" id="qDistFeedback"></div>
 </div>
 </section>
@@ -867,7 +867,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips); <span class="com"># Semicolon is intended to suppress text representation</span></span>
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, style=<span class="str">&quot;smoker&quot;</span>, data=tips); <span class="com"># you can use a different marker style for each class</span></span></div>
-  <p class="dx-note"><code>hue</code> 與 <code>style</code> 同時用同一個變數，是為了在黑白列印時也分得出來——這個習慣值得學。（產生的是圖，沒有文字輸出可對照。）</p>
+  <p class="dx-note"><code>hue</code> 與 <code>style</code> 同時用同一個變數，是為了在黑白列印時也分得出來。這個習慣值得學。（產生的是圖，沒有文字輸出可對照。）</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 91、93</span>
 </div>
 
@@ -886,7 +886,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：折線圖</span></span>
   <span class="line">fmri = sns.load_dataset(<span class="str">&quot;fmri&quot;</span>)</span>
   <span class="line">sns.lineplot(x=<span class="str">&quot;timepoint&quot;</span>, y=<span class="str">&quot;signal&quot;</span>, hue=<span class="str">&quot;event&quot;</span>, style=<span class="str">&quot;event&quot;</span>, markers=<span class="num">True</span>, dashes=<span class="num">False</span>, data=fmri);</span></div>
-  <p class="dx-note"><code>lineplot</code> 對同一個 x 有多筆資料時，會自動畫平均與 95% 信賴帶——那條帶子是 bootstrap 算出來的，第 5 章會講它怎麼來的。（產生的是圖，沒有文字輸出可對照。）</p>
+  <p class="dx-note"><code>lineplot</code> 對同一個 x 有多筆資料時，會自動畫平均與 95% 信賴帶。那條帶子是 bootstrap 算出來的，第 5 章會講它怎麼來的。（產生的是圖，沒有文字輸出可對照。）</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 102</span>
 </div>
 
@@ -960,7 +960,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">ax = sns.barplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span>
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>, kind=<span class="str">&quot;bar&quot;</span>, data=tips);</span></div>
-  <p class="dx-note"><code>barplot</code> 的長條高度是<strong>平均</strong>，上面那條細線是 bootstrap 信賴區間——不是標準差。（產生的是圖，沒有文字輸出可對照。）</p>
+  <p class="dx-note"><code>barplot</code> 的長條高度是<strong>平均</strong>，上面那條細線是 bootstrap 信賴區間，不是標準差。（產生的是圖，沒有文字輸出可對照。）</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 124、125</span>
 </div>
 
@@ -1006,7 +1006,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:model -->
 
   <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
-  這是統計圖跟一般商業圖表最大的差別——你不只在描述資料，還在展示一個模型對不對。</p>
+  這是統計圖跟一般商業圖表最大的差別。你不只在描述資料，還在展示一個模型對不對。</p>
 
 <div class="viz-layout">
   <div>
@@ -1094,7 +1094,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 選圖</div>
   <p>你要呈現「三個地區（origin）的 mpg 分布，並讓讀者看得出有沒有離群值」。該畫什麼？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="<code>barplot</code> 只給平均與信賴區間，<strong>離群值完全看不到</strong>——它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。盒鬚圖是唯一會把離群值單獨畫成點的類別圖。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="<code>barplot</code> 只給平均與信賴區間，<strong>離群值完全看不到</strong>。它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。盒鬚圖是唯一會把離群值單獨畫成點的類別圖。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1878,7 +1878,7 @@ function w18bnDraw() {
     ? '頻寬 ' + HC.fmt(Math.max(0.15, w18bnK / 20), 2) : String(w18bnK);
   document.getElementById('w18bnPeaks').textContent = peaks + ' 個峰';
   setStatus('w18bnStatus', peaks >= 2
-    ? '看得到 <b>' + peaks + '</b> 個峰——這份資料本來就是兩群造出來的。'
+    ? '看得到 <b>' + peaks + '</b> 個峰。這份資料本來就是兩群造出來的。'
     : '只看得到 <b>' + peaks + '</b> 個峰：參數把真正的兩群<b>糊掉了</b>。');
 }
 function w18bnStep(d) { w18bnK = Math.max(4, Math.min(40, w18bnK + d)); w18bnDraw(); }

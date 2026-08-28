@@ -2,7 +2,7 @@
 """00b_setup.html（課前準備 B · 環境安裝）完整自學充實。冪等。
 
 內容依據：課程 lab 每一份的前幾格（%pip install ISLP、imports、掛 Drive）。
-以 Colab 為主、本機 conda 為輔——因為第一次上手最重要的是「先能跑」。
+以 Colab 為主、本機 conda 為輔，因為第一次上手最重要的是「先能跑」。
 
 版本清單一律引用 pages.ENV_NOTE，不要在內文自己抄一份。
 """
@@ -90,7 +90,7 @@ BODIES["colab"] = f"""
   你裝的套件與記憶體裡的變數都會消失，程式碼本身則存在你的 Drive 裡不會掉。</p>
 
 {info("最常見的一個誤會", "「我明明裝過 ISLP 了，怎麼又說找不到？」"
-      "——因為那是<strong>上一個執行階段</strong>裝的。"
+      "，因為那是<strong>上一個執行階段</strong>裝的。"
       "重新連線之後要再跑一次 <code>%pip install ISLP</code>。"
       "把它留在 notebook 的第一格，就不會忘。", "warm")}
 
@@ -111,7 +111,7 @@ BODIES["colab"] = f"""
       info_card("怎麼避免",
                 "定期<strong>重啟執行階段並全部重跑</strong>"
                 "（Colab：執行階段 → 重新啟動並全部執行）。"
-                "交作業之前一定要做一次——你不會想交出一份只有你自己那台機器跑得出來的東西。")],
+                "交作業之前一定要做一次。你不會想交出一份只有你自己那台機器跑得出來的東西。")],
      "w13clStatus", "先按「由上到下」，再按「亂序執行」。",
      '<button class="btn btn-play" onclick="w13clRun(0)">▶ 由上到下</button>'
      '<button class="btn btn-step" onclick="w13clRun(1)">亂序執行</button>'
@@ -133,7 +133,7 @@ BODIES["colab"] = f"""
        (False, "notebook 檔案壞掉了",
         "notebook 存在 Drive 裡不會壞。報錯的是<strong>環境</strong>不是檔案。"),
        (False, "ISLP 這個套件被下架了",
-        "在懷疑套件之前先懷疑環境——後者的機率高一萬倍。")])}
+        "在懷疑套件之前先懷疑環境，後者的機率高一萬倍。")])}
 """
 
 # ── P02 imports 那一格 ────────────────────────────────────────────────
@@ -145,7 +145,7 @@ BODIES["imports"] = f"""
       note="注意最後那段 <code>try / except</code>："
            "<code>google.colab</code> 只有在 Colab 上才有，"
            "本機跑的時候讓它安靜地把 <code>drive</code> 設成 None 就好。"
-           "<strong>這是 try/except 的正確用法</strong>——你知道會發生什麼錯、也知道怎麼處理。")}
+           "<strong>這是 try/except 的正確用法</strong>。你知道會發生什麼錯、也知道怎麼處理。")}
 
 {card("第 1 章的 imports", C(1, 5), src=S(1, 5),
       note="每個 import 後面都有一句中文註解，說明那個套件負責什麼。"
@@ -261,7 +261,7 @@ conda run -n m524 python -m ipykernel install --user --name m524''')}
 {viz(svg("w13cmdSvg", 300),
      [info_card("按選項組指令",
                 "選你的情況，下面會組出該打的那一行。"
-                "四個選項組合出來的指令都不一樣——這也是為什麼直接抄別人的指令常常不管用。"),
+                "四個選項組合出來的指令都不一樣。這也是為什麼直接抄別人的指令常常不管用。"),
       rows_card("組出來的指令",
                 [("步驟", "建立環境", "w13cmStep"),
                  ("指令", "conda create -n m524 python=3.11 -y", "w13cmCmd")]),
@@ -310,7 +310,7 @@ BODIES["trouble"] = f"""
                  ("怎麼修", "—", "w13fxFix")]),
       info_card("一個萬用的第一步",
                 "<strong>重啟 kernel 並從第一格全部重跑。</strong>"
-                "這一步能解掉的問題比你想像的多——因為它同時消除了"
+                "這一步能解掉的問題比你想像的多，因為它同時消除了"
                 "「亂序執行」與「殘留變數」這兩個最常見的干擾。")],
      "w13fxStatus", "四種症狀，各自的解法。",
      '<button class="btn btn-toggle" onclick="w13fxSet(0)">ModuleNotFoundError</button>'
@@ -373,7 +373,7 @@ BODIES["exercises"] = f"""
 {quiz("qEx2", "EXERCISE 2 · 執行順序",
       "notebook 左邊的 <code>[7]</code> 代表什麼？",
       [(False, "這是第 7 個儲存格",
-        "不是。編號跟位置無關——你可以把第 20 格拉到最上面，它的編號不會變。"),
+        "不是。編號跟位置無關。你可以把第 20 格拉到最上面，它的編號不會變。"),
        (True, "這一格是這個 kernel 的第 7 次執行",
         "對。所以編號如果不是由上到下遞增，就代表你曾經亂序執行過，"
         "此時的變數狀態可能跟「從頭跑一次」不一樣。"),
@@ -400,7 +400,7 @@ BODIES["exercises"] = f"""
        (False, "重裝 Anaconda",
         "最貴的一步，而且多半沒用。先看便宜的證據。"),
        (False, "改用 Colab",
-        "可以繞過問題，但你不會學到怎麼修——而且下次還會遇到。")])}
+        "可以繞過問題，但你不會學到怎麼修，而且下次還會遇到。")])}
 """
 
 # ── REF 總覽 ────────────────────────────────────────────────────────────

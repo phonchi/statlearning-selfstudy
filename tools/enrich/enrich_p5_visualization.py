@@ -184,12 +184,12 @@ BODIES["dist"] = f"""
 
 {card("密度圖", C(1, 110, 111), src=S(1, 110, 111),
       note="<code>kdeplot</code> 把每個點換成一個小鐘形再加起來，"
-           "所以它<strong>一定是平滑的</strong>——那個平滑是你給的假設，不是資料本身。" + FIG_NOTE)}
+           "所以它<strong>一定是平滑的</strong>。那個平滑是你給的假設，不是資料本身。" + FIG_NOTE)}
 
 {quiz("qDist", "PART 02 · 自我檢測",
       "同一份資料，bins=5 看起來是一個峰，bins=30 看起來是兩個峰。你該怎麼辦？",
       [(False, "選看起來比較漂亮的那一張放進報告",
-        "這就是本節警告的事。「漂亮」不是判準——你是在挑一個支持自己想法的圖。"),
+        "這就是本節警告的事。「漂亮」不是判準。你是在挑一個支持自己想法的圖。"),
        (True, "兩張都看，再回頭問「有沒有理由相信這兩群真的存在」",
         "對。圖是提出假設的工具，不是證據本身。"
         "如果兩群對應到某個真實的分類（例如吸菸與不吸菸），"
@@ -226,7 +226,7 @@ BODIES["rel"] = f"""
 
 {card("散佈圖，以及把第三個變數塞進去", C(1, 91, 93), src=S(1, 91, 93),
       note="<code>hue</code> 與 <code>style</code> 同時用同一個變數，"
-           "是為了在黑白列印時也分得出來——這個習慣值得學。" + FIG_NOTE)}
+           "是為了在黑白列印時也分得出來。這個習慣值得學。" + FIG_NOTE)}
 
 {card("用點的大小表示第三個變數", C(1, 95), src=S(1, 95),
       note="<code>sizes=(15, 200)</code> 明確指定最小與最大的點徑。"
@@ -234,7 +234,7 @@ BODIES["rel"] = f"""
 
 {card("折線圖與信賴帶", C(1, 102), src=S(1, 102),
       note="<code>lineplot</code> 對同一個 x 有多筆資料時，"
-           "會自動畫平均與 95% 信賴帶——那條帶子是 bootstrap 算出來的，"
+           "會自動畫平均與 95% 信賴帶。那條帶子是 bootstrap 算出來的，"
            "第 5 章會講它怎麼來的。" + FIG_NOTE)}
 
 {card("joint 與 pair", C(1, 114, 117), src=S(1, 114, 117),
@@ -283,7 +283,7 @@ BODIES["cat"] = f"""
 
 {card("長條圖：看平均與不確定性", C(1, 124, 125), src=S(1, 124, 125),
       note="<code>barplot</code> 的長條高度是<strong>平均</strong>，"
-           "上面那條細線是 bootstrap 信賴區間——不是標準差。" + FIG_NOTE)}
+           "上面那條細線是 bootstrap 信賴區間，不是標準差。" + FIG_NOTE)}
 
 {card("計數圖：看筆數", C(1, 127), src=S(1, 127),
       note="<code>countplot</code> 只數筆數，跟 <code>value_counts()</code> 是同一件事的圖版。" + FIG_NOTE)}
@@ -319,7 +319,7 @@ BODIES["cat"] = f"""
 # ── P05 把模型畫進圖裡 ─────────────────────────────────────────────────
 BODIES["model"] = f"""
   <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
-  這是統計圖跟一般商業圖表最大的差別——你不只在描述資料，還在展示一個模型對不對。</p>
+  這是統計圖跟一般商業圖表最大的差別。你不只在描述資料，還在展示一個模型對不對。</p>
 
 {viz(svg("w18corrSvg", 340),
      [info_card("熱圖在講什麼",
@@ -382,7 +382,7 @@ BODIES["exercises"] = f"""
       "你要呈現「三個地區（origin）的 mpg 分布，並讓讀者看得出有沒有離群值」。該畫什麼？",
       [(False, "<code>barplot</code>，三根長條比高低",
         "<code>barplot</code> 只給平均與信賴區間，"
-        "<strong>離群值完全看不到</strong>——它們被平均掉了。"),
+        "<strong>離群值完全看不到</strong>。它們被平均掉了。"),
        (True, "<code>boxplot</code>（或加上 <code>stripplot</code> 疊點）",
         "對。盒鬚圖是唯一會把離群值單獨畫成點的類別圖。"
         "組數少、樣本不多的時候再疊一層原始點更誠實。"),
@@ -589,7 +589,7 @@ function w18bnDraw() {
     ? '頻寬 ' + HC.fmt(Math.max(0.15, w18bnK / 20), 2) : String(w18bnK);
   document.getElementById('w18bnPeaks').textContent = peaks + ' 個峰';
   setStatus('w18bnStatus', peaks >= 2
-    ? '看得到 <b>' + peaks + '</b> 個峰——這份資料本來就是兩群造出來的。'
+    ? '看得到 <b>' + peaks + '</b> 個峰。這份資料本來就是兩群造出來的。'
     : '只看得到 <b>' + peaks + '</b> 個峰：參數把真正的兩群<b>糊掉了</b>。');
 }
 function w18bnStep(d) { w18bnK = Math.max(4, Math.min(40, w18bnK + d)); w18bnDraw(); }

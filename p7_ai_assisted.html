@@ -710,7 +710,7 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p>你要問 AI 關於 Auto 資料的問題。最值得先貼給它的是什麼？</p>
-  <div class="quiz-options" id="qCtxOptions"><div class="quiz-opt" data-correct="true" data-fb="對。欄名、型別、量級一次到位，而且只要兩行。特別是 dtypes——它能讓 AI 發現 horsepower 是字串這件事。" onclick="quizCheck('qCtx', this)"><span class="opt-letter">(A)</span> <code>df.head()</code> 與 <code>df.dtypes</code> 的輸出</div><div class="quiz-opt" data-correct="false" data-fb="太長，而且多數模型會截斷；重點資訊（欄名、型別）反而被淹沒。抽樣幾列就夠了。" onclick="quizCheck('qCtx', this)"><span class="opt-letter">(B)</span> 整份資料的 CSV</div><div class="quiz-opt" data-correct="false" data-fb="它會「想像」出一份合理但跟你手上不同的資料，然後給你在那份想像資料上正確的建議。" onclick="quizCheck('qCtx', this)"><span class="opt-letter">(C)</span> 你的分析目標就好，資料它會自己想像</div></div>
+  <div class="quiz-options" id="qCtxOptions"><div class="quiz-opt" data-correct="true" data-fb="對。欄名、型別、量級一次到位，而且只要兩行。特別是 dtypes。它能讓 AI 發現 horsepower 是字串這件事。" onclick="quizCheck('qCtx', this)"><span class="opt-letter">(A)</span> <code>df.head()</code> 與 <code>df.dtypes</code> 的輸出</div><div class="quiz-opt" data-correct="false" data-fb="太長，而且多數模型會截斷；重點資訊（欄名、型別）反而被淹沒。抽樣幾列就夠了。" onclick="quizCheck('qCtx', this)"><span class="opt-letter">(B)</span> 整份資料的 CSV</div><div class="quiz-opt" data-correct="false" data-fb="它會「想像」出一份合理但跟你手上不同的資料，然後給你在那份想像資料上正確的建議。" onclick="quizCheck('qCtx', this)"><span class="opt-letter">(C)</span> 你的分析目標就好，資料它會自己想像</div></div>
   <div class="quiz-feedback" id="qCtxFeedback"></div>
 </div>
 </section>
@@ -756,7 +756,7 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p>AI 說：「lstat 是顯著的，所以它是最重要的預測變數。」問題在哪？</p>
-  <div class="quiz-options" id="qTermOptions"><div class="quiz-opt" data-correct="true" data-fb="對。顯著講的是「係數不是 0」很有把握（跟樣本數有關），預測重要性講的是「拿掉它預測會變差多少」。一個變數可以非常顯著但對預測幾乎沒有貢獻。" onclick="quizCheck('qTerm', this)"><span class="opt-letter">(A)</span> 把統計顯著性當成預測重要性，這是兩件事</div><div class="quiz-opt" data-correct="false" data-fb="這正是最常見的誤解，也是這一節存在的理由。" onclick="quizCheck('qTerm', this)"><span class="opt-letter">(B)</span> 沒問題，顯著的變數就是重要的變數</div><div class="quiz-opt" data-correct="false" data-fb="用詞精確一點有幫助，但問題不在措辭，在那個「<strong>所以</strong>」——那是一個站不住腳的推論。" onclick="quizCheck('qTerm', this)"><span class="opt-letter">(C)</span> 應該說「統計上顯著」比較嚴謹</div></div>
+  <div class="quiz-options" id="qTermOptions"><div class="quiz-opt" data-correct="true" data-fb="對。顯著講的是「係數不是 0」很有把握（跟樣本數有關），預測重要性講的是「拿掉它預測會變差多少」。一個變數可以非常顯著但對預測幾乎沒有貢獻。" onclick="quizCheck('qTerm', this)"><span class="opt-letter">(A)</span> 把統計顯著性當成預測重要性，這是兩件事</div><div class="quiz-opt" data-correct="false" data-fb="這正是最常見的誤解，也是這一節存在的理由。" onclick="quizCheck('qTerm', this)"><span class="opt-letter">(B)</span> 沒問題，顯著的變數就是重要的變數</div><div class="quiz-opt" data-correct="false" data-fb="用詞精確一點有幫助，但問題不在措辭，在那個「<strong>所以</strong>」。那是一個站不住腳的推論。" onclick="quizCheck('qTerm', this)"><span class="opt-letter">(C)</span> 應該說「統計上顯著」比較嚴謹</div></div>
   <div class="quiz-feedback" id="qTermFeedback"></div>
 </div>
 </section>
@@ -862,7 +862,7 @@ dtype: float64</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">沒過的話怎麼辦</div>
-      任何一項沒過，<strong>不是把那段丟掉，而是回去問清楚</strong>。「你這裡的標準化是在切分之前還是之後做的？」——這種追問通常會讓它自己修正。
+      任何一項沒過，<strong>不是把那段丟掉，而是回去問清楚</strong>。「你這裡的標準化是在切分之前還是之後做的？」。這種追問通常會讓它自己修正。
     </div>
   </div>
 </div>
@@ -936,7 +936,7 @@ dtype: float64</pre></div>
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w20expChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：AI 列出的五個候選解釋，逐一回到資料檢查之後，只有兩個站得住腳——這正是它該扮演的角色。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：AI 列出的五個候選解釋，逐一回到資料檢查之後，只有兩個站得住腳。這正是它該扮演的角色。</div></div>
       </div>
       <div class="status-banner" id="w20exStatus"><span class="status-icon">›</span><span class="status-text">按「檢查下一個」逐一驗證五個候選解釋。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w20exStep()">→ 檢查下一個</button><button class="btn btn-reset" onclick="w20exReset()">重置</button></div>
@@ -966,7 +966,7 @@ dtype: float64</pre></div>
 <div class="qa-box">
   <div class="qa-head">最後兩個問題</div>
   <details class="qa-item"><summary>那我到底該花多少時間學程式？</summary>
-    <div class="qa-a">夠用就好，而這門課的「夠用」比你想的低：看得懂 lab 的每一行、改得動參數、跑得出圖、算得出一個統計量。先備頁的六頁就是為這個標準寫的。剩下的時間應該花在<strong>統計本身</strong>——那才是 AI 幫不上忙的部分。</div>
+    <div class="qa-a">夠用就好，而這門課的「夠用」比你想的低：看得懂 lab 的每一行、改得動參數、跑得出圖、算得出一個統計量。先備頁的六頁就是為這個標準寫的。剩下的時間應該花在<strong>統計本身</strong>。那才是 AI 幫不上忙的部分。</div>
   </details>
   <details class="qa-item"><summary>AI 進步了之後，這一頁會不會過時？</summary>
     <div class="qa-a">讀圖與算數字的部分會愈來愈準，這是好事。但「這個模型該不該上線」「這個差異在實務上重不重要」「這份資料能不能代表我要推論的族群」——這些問題的答案<strong>不在資料裡</strong>，它不可能替你回答。驗證清單的價值不會因為模型變強而消失。</div>
@@ -997,7 +997,7 @@ dtype: float64</pre></div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 改寫提問</div>
-  <p>「幫我看看這個模型好不好」——這個問題最缺的是什麼？</p>
+  <p>「幫我看看這個模型好不好」。這個問題最缺的是什麼？</p>
   <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。三種目標會導向完全不同的評估方式與結論。先把「好」定義清楚，問題才有答案。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 「好」的定義：預測準？可解釋？還是穩定？</div><div class="quiz-opt" data-correct="false" data-fb="當然要給，但就算給了，它還是不知道你要的是哪一種「好」。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 模型的程式碼</div><div class="quiz-opt" data-correct="false" data-fb="有幫助，但不是最缺的。目標不明確的話，給再多資料細節也沒用。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 資料的筆數</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>

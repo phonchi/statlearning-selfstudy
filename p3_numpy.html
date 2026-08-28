@@ -591,7 +591,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>統計程式從頭到尾都在做同一件事：<strong>對一整排數字做同一個運算</strong>。
   算殘差是每一筆都減掉配適值，算標準化是每一筆都減平均再除標準差。
-  Python 內建的串列（list）做不到這件事——它的 <code>+</code> 是「接起來」，不是「加起來」。</p>
+  Python 內建的串列（list）做不到這件事。它的 <code>+</code> 是「接起來」，不是「加起來」。</p>
 
 <div class="info-box">
   <span class="info-label">一句話</span>
@@ -617,7 +617,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">為什麼串列要這樣設計</div>
-      串列裝的東西可以是任何型別——數字、字串、另一個串列混在一起都行，所以「相加」對它沒有意義，只能定義成串接。陣列規定<strong>整塊都是同一個型別</strong>，才談得上逐元素運算。
+      串列裝的東西可以是任何型別，數字、字串、另一個串列混在一起都行，所以「相加」對它沒有意義，只能定義成串接。陣列規定<strong>整塊都是同一個型別</strong>，才談得上逐元素運算。
     </div>
   </div>
 </div>
@@ -630,7 +630,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">y = [<span class="num">4</span>, <span class="num">9</span>, <span class="num">7</span>]</span>
   <span class="line">x + y</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[3, 4, 5, 4, 9, 7]</pre></div>
-  <p class="dx-note">注意輸出是 <code>[3, 4, 5, 4, 9, 7]</code>——六個元素，不是三個。</p>
+  <p class="dx-note">注意輸出是 <code>[3, 4, 5, 4, 9, 7]</code>，六個元素，不是三個。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 21、23</span>
 </div>
 
@@ -808,7 +808,7 @@ x after we modify top left element of x_reshape:
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p><code>x = np.array([1,2,3,4,5,6])</code>、<code>y = x.reshape((2,3))</code>，接著執行 <code>y[0,0] = 99</code>。<code>x[0]</code> 現在是多少？</p>
-  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="false" data-fb="這正是 lab 那一格要示範的陷阱。<code>reshape</code> 回傳的是<strong>同一塊資料的檢視</strong>，不是複本。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 還是 1，y 是新的陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。要切斷連結得寫 <code>y = x.reshape((2,3)).copy()</code>。在資料前處理時這個坑很常見：你以為在改暫存變數，其實動到了原始資料。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 99，因為 y 跟 x 共用同一塊資料</div><div class="quiz-opt" data-correct="false" data-fb="view 是可以寫入的——它就是拿來讓你原地修改的。唯讀的 view 要另外設 <code>flags.writeable = False</code>。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 會報錯，view 不能改</div></div>
+  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="false" data-fb="這正是 lab 那一格要示範的陷阱。<code>reshape</code> 回傳的是<strong>同一塊資料的檢視</strong>，不是複本。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 還是 1，y 是新的陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。要切斷連結得寫 <code>y = x.reshape((2,3)).copy()</code>。在資料前處理時這個坑很常見：你以為在改暫存變數，其實動到了原始資料。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 99，因為 y 跟 x 共用同一塊資料</div><div class="quiz-opt" data-correct="false" data-fb="view 是可以寫入的。它就是拿來讓你原地修改的。唯讀的 view 要另外設 <code>flags.writeable = False</code>。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 會報錯，view 不能改</div></div>
   <div class="quiz-feedback" id="qViewFeedback"></div>
 </div>
 
@@ -923,7 +923,7 @@ array([[ 4,  6,  7],
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
   <p>想從 <code>A</code> 取出「第 0、2 列」與「第 1、3 欄」交叉的 2×2 子矩陣，下列哪一個<strong>不會</strong>給你想要的東西？</p>
-  <div class="quiz-options" id="qFancyOptions"><div class="quiz-opt" data-correct="false" data-fb="這個是對的。<code>np.ix_</code> 的用途就是把兩組索引展開成交叉。" onclick="quizCheck('qFancy', this)"><span class="opt-letter">(A)</span> <code>A[np.ix_([0,2],[1,3])]</code></div><div class="quiz-opt" data-correct="false" data-fb="這個也是對的。先挑列得到 2×4，再挑欄得到 2×2，只是多產生一個中間陣列。" onclick="quizCheck('qFancy', this)"><span class="opt-letter">(B)</span> <code>A[[0,2]][:,[1,3]]</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個不行——它是本節的陷阱。兩個串列會被逐位配對成 (0,1) 與 (2,3)，只拿到兩個數字，shape 是 <code>(2,)</code> 不是 <code>(2,2)</code>。" onclick="quizCheck('qFancy', this)"><span class="opt-letter">(C)</span> <code>A[[0,2],[1,3]]</code></div></div>
+  <div class="quiz-options" id="qFancyOptions"><div class="quiz-opt" data-correct="false" data-fb="這個是對的。<code>np.ix_</code> 的用途就是把兩組索引展開成交叉。" onclick="quizCheck('qFancy', this)"><span class="opt-letter">(A)</span> <code>A[np.ix_([0,2],[1,3])]</code></div><div class="quiz-opt" data-correct="false" data-fb="這個也是對的。先挑列得到 2×4，再挑欄得到 2×2，只是多產生一個中間陣列。" onclick="quizCheck('qFancy', this)"><span class="opt-letter">(B)</span> <code>A[[0,2]][:,[1,3]]</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個不行。它是本節的陷阱。兩個串列會被逐位配對成 (0,1) 與 (2,3)，只拿到兩個數字，shape 是 <code>(2,)</code> 不是 <code>(2,2)</code>。" onclick="quizCheck('qFancy', this)"><span class="opt-letter">(C)</span> <code>A[[0,2],[1,3]]</code></div></div>
   <div class="quiz-feedback" id="qFancyFeedback"></div>
 </div>
 </section>
@@ -935,7 +935,7 @@ array([[ 4,  6,  7],
 
   <p>統計程式裡挑資料，九成不是靠位置，是靠<strong>條件</strong>：
   「馬力大於 150 的那些車」「訓練集的那些列」。做法是先算出一排 True／False，
-  再拿它去索引——這排布林值的長度必須跟那一維一樣長。</p>
+  再拿它去索引。這排布林值的長度必須跟那一維一樣長。</p>
 
 <div class="info-box warm">
   <span class="info-label">布林索引與整數索引不一樣</span>
@@ -1116,7 +1116,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">變異數的三種算法會一致</div>
+  <div class="dx-label">變異數的三種寫法會一致</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">rng = np.random.default_rng(<span class="num">3</span>)</span>
   <span class="line">y = rng.standard_normal(<span class="num">10</span>)</span>
@@ -1126,7 +1126,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
 (np.float64(2.7243406406465125),
  np.float64(2.7243406406465125),
  np.float64(2.7243406406465125))</pre></div>
-  <p class="dx-note"><code>np.var</code> 預設除以 n（不是 n−1），所以它跟<code>np.mean((y - y.mean())**2)</code> 完全相同。要不偏估計得寫 <code>np.var(y, ddof=1)</code>——第 2 章會再遇到這件事。</p>
+  <p class="dx-note"><code>np.var</code> 預設除以 n（不是 n−1），所以它跟<code>np.mean((y - y.mean())**2)</code> 完全相同。要不偏估計得寫 <code>np.var(y, ddof=1)</code>。第 2 章會再遇到這件事。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 84、85</span>
 </div>
 
@@ -1155,7 +1155,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
        [ 0.0915167 ,  0.67010435, -2.82816231],
        [ 1.02130682, -0.95964476, -1.66861984]])
 array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
-  <p class="dx-note">X 是 (10, 3)，摺掉列之後剩三個數字——每一欄一個平均。</p>
+  <p class="dx-note">X 是 (10, 3)，摺掉列之後剩三個數字，每一欄一個平均。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 89、91</span>
 </div>
 
@@ -1172,7 +1172,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 06 · 自我檢測</div>
   <p><code>X.shape</code> 是 <code>(10, 3)</code>，<code>X.sum(axis=1).shape</code> 是什麼？</p>
-  <div class="quiz-options" id="qAxisOptions"><div class="quiz-opt" data-correct="false" data-fb="那是 <code>axis=0</code> 的結果。<code>axis=1</code> 摺掉的是<strong>欄</strong>，剩下的是列的數量。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(A)</span> <code>(3,)</code></div><div class="quiz-opt" data-correct="true" data-fb="對。axis=1 把每一列的三個數字加起來，十列就得到十個數字。口訣：axis 指的是被摺掉的那一維。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(B)</span> <code>(10,)</code></div><div class="quiz-opt" data-correct="false" data-fb="不完全對——要加 <code>keepdims=True</code> 才會是 <code>(10,1)</code>。不加的話那一維會直接消失，得到 <code>(10,)</code>。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(C)</span> <code>(10, 1)</code></div></div>
+  <div class="quiz-options" id="qAxisOptions"><div class="quiz-opt" data-correct="false" data-fb="那是 <code>axis=0</code> 的結果。<code>axis=1</code> 摺掉的是<strong>欄</strong>，剩下的是列的數量。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(A)</span> <code>(3,)</code></div><div class="quiz-opt" data-correct="true" data-fb="對。axis=1 把每一列的三個數字加起來，十列就得到十個數字。口訣：axis 指的是被摺掉的那一維。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(B)</span> <code>(10,)</code></div><div class="quiz-opt" data-correct="false" data-fb="不完全對，要加 <code>keepdims=True</code> 才會是 <code>(10,1)</code>。不加的話那一維會直接消失，得到 <code>(10,)</code>。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(C)</span> <code>(10, 1)</code></div></div>
   <div class="quiz-feedback" id="qAxisFeedback"></div>
 </div>
 
@@ -1188,7 +1188,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 <!-- GEN:END sec:rand -->
 
   <p>這門課後面每一章都要模擬：自助法重抽、交叉驗證切分、隨機森林抽變數。
-  只要用到亂數，就一定要<strong>固定種子</strong>——否則你今天的圖跟明天的圖不一樣，
+  只要用到亂數，就一定要<strong>固定種子</strong>，否則你今天的圖跟明天的圖不一樣，
   跟同學的也不一樣，討論就無從討論起。</p>
 
 <div class="info-box">
@@ -1259,7 +1259,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 07 · 自我檢測</div>
   <p>你在報告裡寫「自助法 1000 次估出的標準誤是 0.24」，但助教跑出 0.26。最可能的原因是？</p>
-  <div class="quiz-options" id="qSeedOptions"><div class="quiz-opt" data-correct="false" data-fb="不太可能。自助法是很成熟的做法，先懷疑自己的重現性設定，再懷疑演算法——這個順序在除錯時幾乎永遠是對的。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(A)</span> 自助法本身有 bug</div><div class="quiz-opt" data-correct="true" data-fb="對。自助法的估計本身就有隨機性，B=1000 的蒙地卡羅誤差足以造成這種差距。寫 <code>rng = np.random.default_rng(0)</code> 並在報告裡註明種子，別人才重現得出來。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(B)</span> 沒有固定種子，兩次抽到的重抽樣本不同</div><div class="quiz-opt" data-correct="false" data-fb="樣本數影響的是估計的精確度，不是「同一份資料跑兩次結果不同」。這裡的差異來自重抽的隨機性，不是資料量。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(C)</span> 樣本數不夠大</div></div>
+  <div class="quiz-options" id="qSeedOptions"><div class="quiz-opt" data-correct="false" data-fb="不太可能。自助法是很成熟的做法，先懷疑自己的重現性設定，再懷疑演算法。這個順序在除錯時幾乎永遠是對的。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(A)</span> 自助法本身有 bug</div><div class="quiz-opt" data-correct="true" data-fb="對。自助法的估計本身就有隨機性，B=1000 的蒙地卡羅誤差足以造成這種差距。寫 <code>rng = np.random.default_rng(0)</code> 並在報告裡註明種子，別人才重現得出來。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(B)</span> 沒有固定種子，兩次抽到的重抽樣本不同</div><div class="quiz-opt" data-correct="false" data-fb="樣本數影響的是估計的精確度，不是「同一份資料跑兩次結果不同」。這裡的差異來自重抽的隨機性，不是資料量。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(C)</span> 樣本數不夠大</div></div>
   <div class="quiz-feedback" id="qSeedFeedback"></div>
 </div>
 </section>
@@ -1283,7 +1283,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · 花式索引</div>
   <p><code>A[[0,1,2],[0,1,2]]</code> 拿到的是什麼？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="這是最常見的誤解。要子矩陣得用 <code>np.ix_</code> 或 <code>A[[0,1,2]][:,[0,1,2]]</code>。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 左上角 3×3 的子矩陣</div><div class="quiz-opt" data-correct="true" data-fb="對。兩個串列被逐位配對成 (0,0)、(1,1)、(2,2)，所以拿到的是對角線，shape 是 <code>(3,)</code>。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 對角線上的三個數字</div><div class="quiz-opt" data-correct="false" data-fb="不會報錯——長度一樣就合法。長度不一樣才會像 lab 儲存格 152 那樣拋 <code>shape mismatch</code>。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 會報錯，兩個串列不能同時給</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="這是最常見的誤解。要子矩陣得用 <code>np.ix_</code> 或 <code>A[[0,1,2]][:,[0,1,2]]</code>。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 左上角 3×3 的子矩陣</div><div class="quiz-opt" data-correct="true" data-fb="對。兩個串列被逐位配對成 (0,0)、(1,1)、(2,2)，所以拿到的是對角線，shape 是 <code>(3,)</code>。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 對角線上的三個數字</div><div class="quiz-opt" data-correct="false" data-fb="不會報錯，長度一樣就合法。長度不一樣才會像 lab 儲存格 152 那樣拋 <code>shape mismatch</code>。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 會報錯，兩個串列不能同時給</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 

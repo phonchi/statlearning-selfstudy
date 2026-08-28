@@ -707,7 +707,7 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 1        1.0   9.14
 2        1.0   4.03
 3        1.0   2.94</pre></div>
-  <p class="dx-note">輸出跟上一節手工做的 X 完全一樣——差別是 <code>MS</code> 會記得規格，之後可以對新資料重放一次。</p>
+  <p class="dx-note">輸出跟上一節手工做的 X 完全一樣，差別是 <code>MS</code> 會記得規格，之後可以對新資料重放一次。</p>
   <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 30、32</span>
 </div>
 
@@ -738,7 +738,7 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p>一個有 4 個類別的變數 <code>region</code> 放進迴歸，X 會多出幾欄？</p>
-  <div class="quiz-options" id="qDesignOptions"><div class="quiz-opt" data-correct="false" data-fb="會多出共線性——四欄加起來永遠等於截距那一欄，矩陣就不滿秩了。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(A)</span> 4 欄，每個類別一欄</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫虛擬變數編碼，被留下來當基準的那一類叫參考組，其他三欄的係數都是「相對於參考組」的差。第 3 章會詳細講。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(B)</span> 3 欄，其中一個類別當基準</div><div class="quiz-opt" data-correct="false" data-fb="這樣等於宣稱類別之間有等距的順序關係——「region 3 比 region 1 多兩單位」是沒有意義的敘述。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(C)</span> 1 欄，把類別編成 0、1、2、3</div></div>
+  <div class="quiz-options" id="qDesignOptions"><div class="quiz-opt" data-correct="false" data-fb="會多出共線性，四欄加起來永遠等於截距那一欄，矩陣就不滿秩了。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(A)</span> 4 欄，每個類別一欄</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫虛擬變數編碼，被留下來當基準的那一類叫參考組，其他三欄的係數都是「相對於參考組」的差。第 3 章會詳細講。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(B)</span> 3 欄，其中一個類別當基準</div><div class="quiz-opt" data-correct="false" data-fb="這樣等於宣稱類別之間有等距的順序關係——「region 3 比 region 1 多兩單位」是沒有意義的敘述。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(C)</span> 1 欄，把類別編成 0、1、2、3</div></div>
   <div class="quiz-feedback" id="qDesignFeedback"></div>
 </div>
 </section>
@@ -808,7 +808,7 @@ dtype: float64</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p>兩個模型的 lstat 係數都是 −0.95，但 A 的標準誤是 0.04、B 是 0.60。這代表什麼？</p>
-  <div class="quiz-options" id="qSummaryOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同樣的點估計、不同的精確度。B 的 95% 信賴區間大約是 −0.95 ± 1.2，涵蓋了 0——也就是說 B 甚至不能排除「沒有效果」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(A)</span> 兩者估到的效果一樣大，但 B 的估計不確定得多</div><div class="quiz-opt" data-correct="false" data-fb="效果的大小是 <code>coef</code> 這一欄，兩者都是 −0.95，一樣大。標準誤講的是「這個 −0.95 有多可信」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(B)</span> B 的效果比較小</div><div class="quiz-opt" data-correct="false" data-fb="配適好壞要看 R² 或殘差圖。標準誤大通常是樣本少、或這個變數跟其他變數共線——那是另一回事。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(C)</span> B 的模型配適得比較差</div></div>
+  <div class="quiz-options" id="qSummaryOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同樣的點估計、不同的精確度。B 的 95% 信賴區間大約是 −0.95 ± 1.2，涵蓋了 0，也就是說 B 甚至不能排除「沒有效果」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(A)</span> 兩者估到的效果一樣大，但 B 的估計不確定得多</div><div class="quiz-opt" data-correct="false" data-fb="效果的大小是 <code>coef</code> 這一欄，兩者都是 −0.95，一樣大。標準誤講的是「這個 −0.95 有多可信」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(B)</span> B 的效果比較小</div><div class="quiz-opt" data-correct="false" data-fb="配適好壞要看 R² 或殘差圖。標準誤大通常是樣本少、或這個變數跟其他變數共線。那是另一回事。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(C)</span> B 的模型配適得比較差</div></div>
   <div class="quiz-feedback" id="qSummaryFeedback"></div>
 </div>
 </section>
@@ -819,7 +819,7 @@ dtype: float64</pre></div>
 <!-- GEN:END sec:skl -->
 
   <p>scikit-learn 的整個設計就是一句話：<strong>每一個模型都長一樣</strong>。
-  線性迴歸、隨機森林、支持向量機——都是
+  線性迴歸、隨機森林、支持向量機，都是
   <code>fit(X, y)</code> 學參數、<code>predict(X)</code> 給預測、<code>score</code> 算分數。
   換模型只要換建構子那一行，後面完全不用改。</p>
 
@@ -834,7 +834,7 @@ dtype: float64</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">三個動詞</div>
-      按「單步」看資料怎麼流過去。注意 <code>fit</code> 是<strong>唯一</strong>會看 y 的一步——之後的 <code>predict</code> 只吃 X。
+      按「單步」看資料怎麼流過去。注意 <code>fit</code> 是<strong>唯一</strong>會看 y 的一步。之後的 <code>predict</code> 只吃 X。
     </div>
     <div class="info-card">
       <div class="ic-title">目前</div>
@@ -862,7 +862,7 @@ dtype: float64</pre></div>
   <span class="line"><span class="com"># summary</span></span>
   <span class="line">ols_sl.intercept_, ols_sl.coef_</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(np.float64(34.5538408793831), array([-0.95004935]))</pre></div>
-  <p class="dx-note">輸出是 <code>(intercept_, coef_)</code>：34.5538408793831 與 −0.95004935。<strong>跟 statsmodels 的 34.5538 與 −0.9500 是同一組數字。</strong>另外注意 <code>reshape(-1, 1)</code>——sklearn 要的 X 一律是二維。</p>
+  <p class="dx-note">輸出是 <code>(intercept_, coef_)</code>：34.5538408793831 與 −0.95004935。<strong>跟 statsmodels 的 34.5538 與 −0.9500 是同一組數字。</strong>另外注意 <code>reshape(-1, 1)</code>。sklearn 要的 X 一律是二維。</p>
   <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 110</span>
 </div>
 
@@ -932,7 +932,7 @@ MSE : 38.48296722989415</pre></div>
   <span class="line">valid_pred = results.predict(X_valid)</span>
   <span class="line">np.mean((y_valid - valid_pred)**<span class="num">2</span>)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(25.57387818968441)</pre></div>
-  <p class="dx-note">25.57——比訓練資料上的分數誠實。這個數字後面會一直出現。</p>
+  <p class="dx-note">25.57，比訓練資料上的分數誠實。這個數字後面會一直出現。</p>
   <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 20</span>
 </div>
 
@@ -953,7 +953,7 @@ The RMSE is: 5.0571</pre></div>
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w19cvChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：驗證集的 MSE 從一次式的 25.57 降到二次式的 22.22，三次式反而略升到 22.67——複雜度不是越高越好。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：驗證集的 MSE 從一次式的 25.57 降到二次式的 22.22，三次式反而略升到 22.67，複雜度不是越高越好。</div></div>
       </div>
       <div class="status-banner" id="w19cvStatus"><span class="status-icon">›</span><span class="status-text">驗證集 MSE：二次式最低，三次式沒有更好。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19cvSet(0)">驗證集 MSE</button><button class="btn btn-toggle" onclick="w19cvSet(1)">加上 LOOCV</button></div>
@@ -1085,7 +1085,7 @@ The RMSE is: 5.0571</pre></div>
     <div class="qa-a">不是。交叉驗證是在<strong>訓練資料內部</strong>切來切去，用來選模型與調參數；測試集是最後才動一次的、完全獨立的一份，用來報告最終效能。拿測試集去選模型，等於把它變成訓練資料的一部分。</div>
   </details>
   <details class="qa-item"><summary>為什麼 LOOCV 的結果沒有標準差？</summary>
-    <div class="qa-a">因為它<strong>沒有隨機性</strong>——每一筆各當一次驗證集，切法只有一種。k 折就不同了，切法隨機，所以 lab 才會用 <code>ShuffleSplit(n_splits=10)</code> 看它的平均與標準差。</div>
+    <div class="qa-a">因為它<strong>沒有隨機性</strong>。每一筆各當一次驗證集，切法只有一種。k 折就不同了，切法隨機，所以 lab 才會用 <code>ShuffleSplit(n_splits=10)</code> 看它的平均與標準差。</div>
   </details>
 </div>
 
@@ -1121,7 +1121,7 @@ The RMSE is: 5.0571</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · 截距</div>
   <p><code>sm.OLS(y, Boston[['lstat']]).fit()</code> 少做了一件事。少了什麼？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。<code>sm.OLS</code> 不會自動加截距，要自己放一欄全 1（或用 <code>MS()</code>／<code>sm.add_constant</code>）。lab 儲存格 22 那一欄 <code>intercept</code> 就是在做這件事。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 沒有截距欄，配出來的是一條過原點的線</div><div class="quiz-opt" data-correct="false" data-fb="線性迴歸不需要標準化——標準化不改變配適，只改變係數的單位。（第 6 章的收縮方法才非標準化不可。）" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 沒有標準化 lstat</div><div class="quiz-opt" data-correct="false" data-fb="<code>sm.OLS</code> 的簽名就是 <code>(y, X)</code>，順序是對的。倒是 sklearn 的 <code>fit(X, y)</code> 反過來，兩套要記清楚。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> y 應該放後面</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。<code>sm.OLS</code> 不會自動加截距，要自己放一欄全 1（或用 <code>MS()</code>／<code>sm.add_constant</code>）。lab 儲存格 22 那一欄 <code>intercept</code> 就是在做這件事。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 沒有截距欄，配出來的是一條過原點的線</div><div class="quiz-opt" data-correct="false" data-fb="線性迴歸不需要標準化，標準化不改變配適，只改變係數的單位。（第 6 章的收縮方法才非標準化不可。）" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 沒有標準化 lstat</div><div class="quiz-opt" data-correct="false" data-fb="<code>sm.OLS</code> 的簽名就是 <code>(y, X)</code>，順序是對的。倒是 sklearn 的 <code>fit(X, y)</code> 反過來，兩套要記清楚。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> y 應該放後面</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
@@ -1164,7 +1164,7 @@ The RMSE is: 5.0571</pre></div>
 
 <div class="info-box">
   <span class="info-label">三個一定要記住的觀念</span>
-  <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，你報告的 out-of-sample 分數就是假的——用 Pipeline 讓自己想犯錯都難。
+  <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，你報告的 out-of-sample 分數就是假的，用 Pipeline 讓自己想犯錯都難。
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch03、Ch05）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>

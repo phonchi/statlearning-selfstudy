@@ -675,7 +675,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="info-box warm">
   <span class="info-label">一句話講完差別</span>
-  <code>and</code> 一次只能判斷<strong>一個</strong>真假值；<code>&amp;</code> 是<strong>逐元素</strong>做「且」，一整排一起算。選資料的時候永遠是後者——而且<strong>每個條件都要用括號包起來</strong>，因為 <code>&amp;</code> 的優先順序比 <code>&gt;</code> 高。
+  <code>and</code> 一次只能判斷<strong>一個</strong>真假值；<code>&amp;</code> 是<strong>逐元素</strong>做「且」，一整排一起算。選資料的時候永遠是後者，而且<strong>每個條件都要用括號包起來</strong>，因為 <code>&amp;</code> 的優先順序比 <code>&gt;</code> 高。
 </div>
 
 <div class="viz-layout">
@@ -813,7 +813,7 @@ dodge charger 2.2                  2370.0       1
 vw pickup                          2130.0       2
 dodge rampage                      2295.0       1
 chevy s-10                         2720.0       1</pre></div>
-  <p class="dx-note">注意<strong>兩個條件各自都有括號</strong>。另外這裡用了 <code>lambda df:</code>——它讓你在鏈式操作中間也能引用「當下這張表」。</p>
+  <p class="dx-note">注意<strong>兩個條件各自都有括號</strong>。另外這裡用了 <code>lambda df:</code>。它讓你在鏈式操作中間也能引用「當下這張表」。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 230</span>
 </div>
 
@@ -890,7 +890,7 @@ ford ranger            2625.0       1</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p><code>Auto[(Auto['year'] &gt; 80) and (Auto['mpg'] &gt; 30)]</code> 會發生什麼？</p>
-  <div class="quiz-options" id="qCondOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>and</code> 想知道「左邊整體是真還是假」，但左邊是 392 個真假值，Python 不知道該算成什麼，所以拋 <code>ValueError: The truth value of a Series is ambiguous</code>。改用 <code>&amp;amp;</code> 就對了。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(A)</span> 報錯：一整排真假值沒辦法縮成單一個真或假</div><div class="quiz-opt" data-correct="false" data-fb="不一樣。<code>and</code> 是純 Python 的邏輯運算，它不做逐元素的事。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(B)</span> 正常執行，跟用 <code>&amp;</code> 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會悄悄忽略——它會直接報錯。這其實是好事，沉默的錯才可怕。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(C)</span> 只會用到第一個條件</div></div>
+  <div class="quiz-options" id="qCondOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>and</code> 想知道「左邊整體是真還是假」，但左邊是 392 個真假值，Python 不知道該算成什麼，所以拋 <code>ValueError: The truth value of a Series is ambiguous</code>。改用 <code>&amp;amp;</code> 就對了。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(A)</span> 報錯：一整排真假值沒辦法縮成單一個真或假</div><div class="quiz-opt" data-correct="false" data-fb="不一樣。<code>and</code> 是純 Python 的邏輯運算，它不做逐元素的事。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(B)</span> 正常執行，跟用 <code>&amp;</code> 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會悄悄忽略。它會直接報錯。這其實是好事，沉默的錯才可怕。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(C)</span> 只會用到第一個條件</div></div>
   <div class="quiz-feedback" id="qCondFeedback"></div>
 </div>
 </section>
@@ -1036,7 +1036,7 @@ ford ranger            2625.0       1</pre></div>
   <span class="line">   test_pred = results.predict(X_test)</span>
   <span class="line"> </span>
   <span class="line">   <span class="kw">return</span> np.mean((y_test - test_pred)**<span class="num">2</span>)</span></div>
-  <p class="dx-note">四個參數、四個步驟、一個回傳值。注意它<strong>只用參數傳進來的東西</strong>，不去讀外面的全域變數——這叫「沒有副作用」，是好函式的特徵。</p>
+  <p class="dx-note">四個參數、四個步驟、一個回傳值。注意它<strong>只用參數傳進來的東西</strong>，不去讀外面的全域變數。這叫「沒有副作用」，是好函式的特徵。</p>
   <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 24</span>
 </div>
 
@@ -1134,7 +1134,7 @@ ford ranger            2625.0       1</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p><code>def add(x, acc=[]):</code> 這樣寫有什麼問題？</p>
-  <div class="quiz-options" id="qScopeOptions"><div class="quiz-opt" data-correct="false" data-fb="看起來像，但那個空串列<strong>只在定義函式時建立一次</strong>。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(A)</span> 沒問題，這樣預設就是空串列</div><div class="quiz-opt" data-correct="true" data-fb="對。第一次呼叫加了一個元素，第二次呼叫看到的預設值就不是空的了。正確寫法是 <code>acc=None</code>，再在函式裡建立新的。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(B)</span> 那個串列所有呼叫共用，會越積越多</div><div class="quiz-opt" data-correct="false" data-fb="語法上完全合法，不會報錯——這正是它危險的地方。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(C)</span> 串列不能當預設值，會報錯</div></div>
+  <div class="quiz-options" id="qScopeOptions"><div class="quiz-opt" data-correct="false" data-fb="看起來像，但那個空串列<strong>只在定義函式時建立一次</strong>。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(A)</span> 沒問題，這樣預設就是空串列</div><div class="quiz-opt" data-correct="true" data-fb="對。第一次呼叫加了一個元素，第二次呼叫看到的預設值就不是空的了。正確寫法是 <code>acc=None</code>，再在函式裡建立新的。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(B)</span> 那個串列所有呼叫共用，會越積越多</div><div class="quiz-opt" data-correct="false" data-fb="語法上完全合法，不會報錯。這正是它危險的地方。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(C)</span> 串列不能當預設值，會報錯</div></div>
   <div class="quiz-feedback" id="qScopeFeedback"></div>
 </div>
 </section>
@@ -1153,7 +1153,7 @@ ford ranger            2625.0       1</pre></div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">A[[<span class="num">1</span>,<span class="num">3</span>],[<span class="num">0</span>,<span class="num">2</span>,<span class="num">3</span>]]</span></div>
   <div class="expected-out"><span class="eo-tag">錯誤訊息</span><pre>IndexError: shape mismatch: indexing arrays could not be broadcast together with shapes (2,) (3,)</pre></div>
-  <p class="dx-note">最後一行說得很清楚：<code>shape mismatch</code>，兩個索引陣列的形狀 (2,) 與 (3,) 沒辦法一起廣播。看到 shape 就知道要去印 shape——這是 P3 的第一課。</p>
+  <p class="dx-note">最後一行說得很清楚：<code>shape mismatch</code>，兩個索引陣列的形狀 (2,) 與 (3,) 沒辦法一起廣播。看到 shape 就知道要去印 shape。這是 P3 的第一課。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 152</span>
 </div>
 
@@ -1244,7 +1244,7 @@ ford ranger            2625.0       1</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 錯誤訊息</div>
   <p>你看到 <code>KeyError: 'horsepower'</code>。第一件該做的事是？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="那只是把錯誤藏起來，欄還是拿不到，後面照樣錯——而且變成沉默的錯。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 改用 <code>try / except</code> 把它包起來</div><div class="quiz-opt" data-correct="true" data-fb="對。KeyError 的意思就是「這個鍵不存在」，多半是打錯字、大小寫不同、或前面某一步把欄改名了。看一眼實際的欄名通常五秒就解決。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 印 <code>df.columns</code> 看實際的欄名</div><div class="quiz-opt" data-correct="false" data-fb="在確認欄名之前就換資料，是最貴的一步。先看最便宜的證據。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 重新下載資料</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="那只是把錯誤藏起來，欄還是拿不到，後面照樣錯，而且變成沉默的錯。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 改用 <code>try / except</code> 把它包起來</div><div class="quiz-opt" data-correct="true" data-fb="對。KeyError 的意思就是「這個鍵不存在」，多半是打錯字、大小寫不同、或前面某一步把欄改名了。看一眼實際的欄名通常五秒就解決。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 印 <code>df.columns</code> 看實際的欄名</div><div class="quiz-opt" data-correct="false" data-fb="在確認欄名之前就換資料，是最貴的一步。先看最便宜的證據。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 重新下載資料</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1929,7 +1929,7 @@ function w15whyDraw() {
   document.getElementById('w15whyEdits').textContent = w15whyEdited
     ? (copy ? '複製整段第 4 份（8 行）' : '改一個數字（1 個字）') : '—';
   setStatus('w15whyStatus', w15whyEdited
-    ? (copy ? '要多試一個次數，得<b>再複製一整段</b>——而且四份都要記得同步維護。'
+    ? (copy ? '要多試一個次數，得<b>再複製一整段</b>，而且四份都要記得同步維護。'
             : '要多試一個次數，只改 <b>range 的那個數字</b>。')
     : (copy ? '三份幾乎一樣的程式碼，三個各自會出錯的地方。'
             : '一份邏輯，一個迴圈。錯只會錯在一個地方。'));
