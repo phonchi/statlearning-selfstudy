@@ -200,3 +200,100 @@ Hybrid 最好：烘焙老師的資料，即時重算上層（`w04thr` 就是這�
 9. **驗證不要只看「有沒有掛上」，要看截圖。** 參考線那個 bug 之所以活了八章，
    就是因為程式碼看起來對、也沒有錯誤訊息。`browser_check.js` 會存全頁截圖，
    要真的用 Read 讀過。
+
+---
+
+## 9. 先備入口層（`kind="prep"`）增補條款
+
+由 pilot 頁 `p3_numpy.html`（n=16）凍結。**這一節只適用於 `pages.py` 裡 `kind="prep"` 的頁面**，
+正課十一章完全不受影響。
+
+### 9.1 出處：只引用課程 lab，不新建來源
+
+課程 lab 本身就是 Python 教材——`lab_ch2.md` 的「實驗：Python 入門」（儲存格 21–176）
+涵蓋 list／ndarray／索引／布林索引／字串格式化／for 迴圈，`lab_ch1.md` 涵蓋 pandas 與
+seaborn 的整套用法，`lab_ch5.md`／`lab_ch6.md` 有自訂函式與預設引數。所以：
+
+| 情況 | 做法 |
+|---|---|
+| 能對回 lab | `card(label, C(k), O(k), src=S(k))`，`.dx-src` 標儲存格 |
+| lab 有程式碼但沒存輸出（繪圖格） | `card(..., output=None, note=…)`，`.dx-src` 照標 |
+| lab 完全沒有 | **不要做成 `.deck-extra`**。改用行內 `hl()` 片段，不宣稱有實跑輸出，該節徽章掛 `<套件> 文件 · …` |
+
+**一張卡可以併好幾格**（lab 常把一件事拆成連續幾格）。`.expected-out` 允許的形式只有兩種：
+某一格的輸出，或這些格**依引用順序串接**——兩種都是逐字。`check_prep_grounding` 會逐字比對，
+不符就 FAIL。不要自己打字，不要重跑。
+
+在 enrich 腳本頂端定義三個小工具，其他先備頁照抄：
+
+```python
+CH = 2
+LAB = "Ch02-statlearn-lab-zh.ipynb"
+def C(*ks): return "\n".join(lab_code(CH, k) for k in ks)
+def O(k):   return lab_output(CH, k)
+def S(*ks): return f'<code>{LAB}</code> · 儲存格 ' + "、".join(str(k) for k in ks)
+```
+
+### 9.2 徽章
+
+`BADGE_RE` 為先備頁追加了四個前綴，**其中第一個是可機器驗證的**：
+
+| 徽章 | 用在哪 | 會不會被驗 |
+|---|---|---|
+| `課程 Lab ChN · 儲存格 k` 或 `… 儲存格 a–b` | 節標題的主要徽章 | **會**，儲存格必須真的存在於 `lab_chN.md` |
+| `Python／NumPy／pandas／Matplotlib／seaborn／SciPy／statsmodels／scikit-learn／Colab／conda 文件 · …` | lab 沒有的語法點 | 否 |
+| `先備 · …` | `islp_label`、EX 區徽章 | 否 |
+| `AI-Stats §N` | 只指名參考書概念，**不引用其文字、圖與數字** | 否 |
+
+引用的章號必須列在 `Page.src_labs` 裡，否則 FAIL。
+
+### 9.3 Page 的登記
+
+```python
+Page(n=16, stem="p3_numpy", …,
+     islp=0, islp_label="先備 · NumPy 陣列", esl_label="",
+     deck="", deck_pages=0, lab="", playlist="",
+     kind="prep", data_key="prep_p3_numpy", src_labs=(2, 1),
+     ex_links=[("🔗 官方文件", "…")],
+     secs=[…])
+```
+
+- **n 只能往後加**，永遠不要在中間插頁（`w<NN>` 前綴由 n 決定）。
+- `islp=0`：先備頁沒有 ISLP 章號。`data_key` 因此必填，不然詞彙卡會去撞 `ch0.json`。
+- `bankquiz=False`：每節一個 quiz ＋ EX 四題已足夠，不另開題庫。
+- `nav_next` 只有先備層最後一頁要填，用來接回 `introduction`。
+
+### 9.4 元件
+
+**每頁 6–9 個，其中 live SVG 佔 5–7 個、Chart.js 最多 1–2 個**——比正課的「Chart.js 約三分之一」
+低，因為先備頁要講的是<em>機制</em>（執行流程、記憶體別名、廣播對齊、groupby 拆分套用合併、
+pipeline 資料流），不是要重現誰的數字。判準仍照 §5：數字要對上權威來源才 baked。
+
+其餘規則與正課完全相同，特別是這三條：SVG 初始化放在 `HC.ready()` 外面、
+`viewBox` 寬度 620、隨機一律 `HC.stat.lcg(固定種子)`。
+
+`HC.stat.normal(rand)` **回傳一個數字**，不是產生器——寫 `out.push(HC.stat.normal(rand))`，
+不要 `const nrm = HC.stat.normal(rand)` 再呼叫它（pilot 犯過，browser_check 抓到）。
+
+### 9.5 掛鉤方框
+
+每頁至少一個 `hook(標題, 內容)`，說明「這在本站哪一章會用到」並連到正課的具體錨點。
+它內部就是既有的 `.info-box.purple`，**不要為它新增 CSS**——`base.css` 被整份塞進每頁的
+head GEN 區段，動它一個 byte 十一章的 sha256 全部失效。
+
+### 9.6 文字
+
+錯選項的回饋**不要自己開頭寫「不對」**，引擎已經會印「不對 ✗」（正解則是「正確 ✓」＋「對。」）。
+其餘照 §6。
+
+### 9.7 每頁完成的檢查
+
+```bash
+python3 tools/enrich/enrich_<page>.py
+python3 tools/inject_data.py <stem>
+python3 tools/build_page.py      # 十一章必須全印「無變化」
+python3 tools/build_index.py
+python3 tools/validate.py        # 全站 0 失敗
+node tools/browser_check.js <stem>
+# 然後用 Read 真的看截圖（§8.9）
+```

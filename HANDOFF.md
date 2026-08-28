@@ -8,6 +8,11 @@
 
 十一章全部完成並上線：**https://phonchi.github.io/statlearning-selfstudy/**
 
+2026-08 起多了一層**先備入口**（`kind="prep"`，n=12 起），給沒寫過 Python 的人先讀。
+規劃九頁（兩章課前準備 ＋ 七頁 Python 與套件），目前完成 `p3_numpy`。
+它跟正課的差別、以及工具鏈為它做了哪些擴充，全部寫在 §9；撰寫規格在
+[`tools/STYLE_CONTRACT.md`](tools/STYLE_CONTRACT.md) §9。
+
 | 頁面 | ISLP | 大小 | 圖表 | SVG 元件 | 詞彙卡 | 題庫 |
 |---|---|---|---|---|---|---|
 | `introduction` | Ch.1 | 160 KB | 1 | 3 | 23 | — |
@@ -237,3 +242,78 @@ MNIST 錯誤率課本 1.8%，lab 3.8%），因為切分、epoch 數與套件版�
 
 封存站有 3 個改不動的舊網址：`01_Introduction.pdf` 內嵌 2 個、`01-06_Recap.pdf` 內嵌 1 個
 （PDF 二進位註解物件），會指向 live 站。除非重出投影片，否則接受它。
+
+
+---
+
+## 9. 先備入口層（2026-08 新增）
+
+### 9.1 它是什麼
+
+正課十一章預設你已經會 Python。先備入口層補的就是這一段：
+
+| n | stem | 狀態 |
+|---|---|---|
+| 12 | `00a_why_code`（為什麼還要自己寫統計程式） | 待寫 |
+| 13 | `00b_setup`（環境安裝，Colab 為主） | 待寫 |
+| 14 | `p1_python_basics` | 待寫 |
+| 15 | `p2_flow_functions` | 待寫 |
+| **16** | **`p3_numpy`** | **完成（pilot，規格由它凍結）** |
+| 17 | `p4_pandas` | 待寫 |
+| 18 | `p5_visualization` | 待寫 |
+| 19 | `p6_modeling_api`（statsmodels 與 sklearn） | 待寫 |
+| 20 | `p7_ai_assisted`（用 AI 協助統計分析而不被坑） | 待寫 |
+
+規格與正課相同（每頁 6–9 元件、20–28 詞彙卡、每節一個 quiz、EX 四題），
+差別只在元件配比偏向手寫 SVG，以及出處來源不同（見 9.3）。
+
+### 9.2 工具鏈為它做了什麼（commit `494d293`）
+
+`Page` 多了五個有預設值的欄位，既有十一章的字面值一字未動：
+
+| 欄位 | 用途 |
+|---|---|
+| `kind` | `"core"`／`"prep"`。分流 EX 區、footer、cards、study-guide 四處文案 |
+| `data_key` | 詞彙卡／題庫的檔名鍵。先備頁 `islp=0`，**沒有它會去撞 `ch0.json`** |
+| `src_labs` | 本頁允許引用的 lab 章號。GROUNDING 對這組檔案的聯集比對 |
+| `ex_links` | EX 區的 pill（官方文件），取代正課的 ISLP 解答站 |
+| `nav_next` | 先備層最後一頁用來接回 `introduction` |
+
+**`neighbours()` 也改了，這一條最容易踩。** 舊版是 `BY_N.get(n±1)`，只要註冊 n=12，
+`deep_learning`（n=11）就會長出「下一章」，它的 `chapternav` GEN 區段 sha256 立刻改變。
+現在是「同 `kind` 依 `n` 排序取前後」——正課 n=1–11 連續，輸出與舊版逐 byte 相同。
+
+`validate.py` 這邊：`BADGE_RE` 追加四個前綴、GROUNDING 的來源改成聯集、
+**來源索引不存在從「靜默跳過」改成 `fail()`**（§5.1 警告過的那個坑，順手填了），
+另加 `check_prep_grounding()`——fail 等級，整段被 `kind=="prep"` 包住，正課一行都不會執行。
+
+### 9.3 出處：先備頁不需要新來源
+
+課程 lab 本身就是 Python 教材。`lab_ch2.md` 儲存格 21–176 那一整段標題就叫
+「實驗：Python 入門」，涵蓋 list／ndarray／索引與子矩陣／布林索引／字串格式化／for 迴圈；
+`lab_ch1.md` 的 181 格是完整的 pandas 與 seaborn 用法。所以先備頁照樣走
+`lab_code()`／`lab_output()` 逐字引用，**不新建任何外部來源**。
+
+這也順便解掉了授權問題：規劃時參考的
+`gedeck/ai-assisted-statistics-for-data-scientists` 是 **GPL-3.0**，
+它的 notebook 程式碼一行都不能進這個 repo。參考書
+《AI-Assisted Statistics for Data Scientists》(O'Reilly 2026) 只提供概念與章節架構，
+用 `AI-Stats §N` 徽章指名，不搬文字、圖與數字。書的 PDF 放 `~/statslearning/`，
+`.gitignore` 已擋 `*.pdf`，`check_repo` 也會擋。
+
+`check_prep_grounding` 對 `.dx-src` 的要求比正課硬：儲存格必須真的存在於該 `lab_chN.md`、
+`.expected-out` 必須**逐字等於**該格輸出（或所引數格依序串接）、一頁至少一張 lab 引用卡、
+`課程 Lab ChN · 儲存格 k` 徽章所指的儲存格也要存在。
+
+### 9.4 index 與 README
+
+`build_index.py` 把 core 與 prep 拆成兩區，先備區折在正課下方。
+**一頁 prep 都沒有時整區不輸出**，所以 Phase 0 那次 commit 的 `index.html` 與舊版逐 byte 相同。
+
+### 9.5 寫下一頁的時候
+
+先讀 `tools/STYLE_CONTRACT.md` §9，再抄 `tools/enrich/enrich_p3_numpy.py` 的骨架
+（頂端那三個小工具 `C()`／`O()`／`S()` 直接照抄，只換 `CH` 與 `LAB`）。
+**n 只能往後加**，中間插頁會讓 `w<NN>` 前綴整批位移。
+
+已知還沒做的：`p3_numpy` 的廣播元件在 stage 上緣留白偏多（不影響閱讀，沒動）。
