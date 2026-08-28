@@ -276,6 +276,20 @@ def _svg_chart():
             '<path d="M34 214 H330"/><path d="M34 214 V40"/></g>')
 
 
+def _svg_pipe():
+    """先備 P6：資料流過三個方塊。"""
+    boxes = "".join(f'<rect x="{34 + i * 106}" y="112" width="86" height="52" rx="8"/>'
+                    for i in range(3))
+    arrows = "".join(f'<path d="M{124 + i * 106} 138 H{136 + i * 106}"/>' for i in range(2))
+    return (f'<g fill="#fff" opacity=".78">{boxes}</g>'
+            f'<g stroke="#fff" stroke-width="3.5" opacity=".9">{arrows}</g>'
+            '<g stroke="#fff" stroke-width="3" fill="none" opacity=".7">'
+            '<path d="M356 138 H392"/><path d="M392 138 l-12 -8 v16 z" fill="#fff"/></g>'
+            '<g fill="#fff" opacity=".5">'
+            '<circle cx="60" cy="70" r="7"/><circle cx="88" cy="58" r="7"/>'
+            '<circle cx="116" cy="76" r="7"/></g>')
+
+
 PAGES = [
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
@@ -692,6 +706,38 @@ PAGES = [
                 "課程 Lab Ch1 · 儲存格 120–130"),
             Sec("model", "把模型畫進圖裡", "regplot 與相關係數熱圖",
                 "課程 Lab Ch1 · 儲存格 133–138"),
+        ],
+    ),
+    Page(
+        n=19, stem="p6_modeling_api", slug="MODELING API", title_en="Modeling APIs",
+        h1='兩套 <span class="orange">API</span>、兩種目的：statsmodels 與 scikit-learn',
+        plain="建模 API",
+        subtitle="先備知識 P6 — 選讀，不列入評分",
+        formula="MS 設計矩陣｜sm.OLS(y, X).fit()｜summarize 的四欄｜fit-predict-score｜train_test_split｜cross_validate｜先切分再標準化",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · 建模 API", esl_label="",
+        playlist="",
+        hero_svg=_svg_pipe(),
+        kind="prep", data_key="prep_p6_modeling_api", src_labs=(3, 5),
+        ex_links=[("🔗 statsmodels 快速入門",
+                   "https://www.statsmodels.org/stable/gettingstarted.html"),
+                  ("🔗 scikit-learn 估計器介面",
+                   "https://scikit-learn.org/stable/developers/develop.html"),
+                  ("📓 Ch03 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                   "static_files/presentations/Ch03-linreg-lab-zh.ipynb")],
+        secs=[
+            Sec("prologue", "兩套 API 的分工", "要看係數用 statsmodels，要做預測用 scikit-learn",
+                "課程 Lab Ch3 · 儲存格 22–26", kicker="PROLOGUE · 開場"),
+            Sec("design", "設計矩陣", "模型看到的不是資料框，是一個矩陣 X",
+                "課程 Lab Ch3 · 儲存格 30–39"),
+            Sec("summary", "讀 summary 表", "四個欄位：係數、標準誤、t 值、p 值",
+                "課程 Lab Ch3 · 儲存格 35–37"),
+            Sec("skl", "scikit-learn 的三個動詞", "fit、predict、score：每個模型都長一樣",
+                "課程 Lab Ch3 · 儲存格 110–114"),
+            Sec("split", "切分訓練與測試", "在同一份資料上評估自己，一定會太樂觀",
+                "課程 Lab Ch5 · 儲存格 16–26"),
+            Sec("cv", "交叉驗證與資料洩漏", "先切分再轉換，順序反了整套評估就作廢",
+                "課程 Lab Ch5 · 儲存格 34–46"),
         ],
     ),
 ]

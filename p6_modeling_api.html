@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="視覺化 — Visualization 互動自學頁。先備知識 P5 — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
-<title>視覺化 — Visualization Interactive（Python）</title>
+<meta name="description" content="建模 API — Modeling APIs 互動自學頁。先備知識 P6 — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
+<title>建模 API — Modeling APIs Interactive（Python）</title>
 <script>
   MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
              options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
@@ -526,12 +526,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN floatnav -->
 <nav class="float-nav" id="floatNav" aria-label="章節導覽">
   <div class="fn-title">章節導覽</div>
-  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">為什麼要先畫圖</span></a>
-  <a href="#anat" data-target="anat"><span class="fn-num">P01</span><span class="fn-name">Figure 與 Axes</span></a>
-  <a href="#dist" data-target="dist"><span class="fn-num">P02</span><span class="fn-name">看一個變數的分布</span></a>
-  <a href="#rel" data-target="rel"><span class="fn-num">P03</span><span class="fn-name">看兩個變數的關係</span></a>
-  <a href="#cat" data-target="cat"><span class="fn-num">P04</span><span class="fn-name">類別變數的圖</span></a>
-  <a href="#model" data-target="model"><span class="fn-num">P05</span><span class="fn-name">把模型畫進圖裡</span></a>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">兩套 API 的分工</span></a>
+  <a href="#design" data-target="design"><span class="fn-num">P01</span><span class="fn-name">設計矩陣</span></a>
+  <a href="#summary" data-target="summary"><span class="fn-num">P02</span><span class="fn-name">讀 summary 表</span></a>
+  <a href="#skl" data-target="skl"><span class="fn-num">P03</span><span class="fn-name">scikit-learn 的三個動詞</span></a>
+  <a href="#split" data-target="split"><span class="fn-num">P04</span><span class="fn-name">切分訓練與測試</span></a>
+  <a href="#cv" data-target="cv"><span class="fn-num">P05</span><span class="fn-name">交叉驗證與資料洩漏</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
   <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
@@ -542,12 +542,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="hero" id="top">
   <div class="hero-grid"></div>
   <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
-<g fill="#fff" opacity=".55"><rect x="44" y="150" width="34" height="60" rx="3"/><rect x="90" y="114" width="34" height="96" rx="3"/><rect x="136" y="72" width="34" height="138" rx="3"/><rect x="182" y="40" width="34" height="170" rx="3"/><rect x="228" y="78" width="34" height="132" rx="3"/><rect x="274" y="122" width="34" height="88" rx="3"/></g><path d="M44 176 C 110 150, 150 92, 200 66 S 280 78, 316 118" stroke="#fff" stroke-width="3.5" fill="none" opacity=".95"/><g stroke="#fff" stroke-width="3" opacity=".8"><path d="M34 214 H330"/><path d="M34 214 V40"/></g>
+<g fill="#fff" opacity=".78"><rect x="34" y="112" width="86" height="52" rx="8"/><rect x="140" y="112" width="86" height="52" rx="8"/><rect x="246" y="112" width="86" height="52" rx="8"/></g><g stroke="#fff" stroke-width="3.5" opacity=".9"><path d="M124 138 H136"/><path d="M230 138 H242"/></g><g stroke="#fff" stroke-width="3" fill="none" opacity=".7"><path d="M356 138 H392"/><path d="M392 138 l-12 -8 v16 z" fill="#fff"/></g><g fill="#fff" opacity=".5"><circle cx="60" cy="70" r="7"/><circle cx="88" cy="58" r="7"/><circle cx="116" cy="76" r="7"/></g>
   </svg>
   <div class="hero-content">
-    <h1>先<span class="blue">畫</span>再算：matplotlib 與 seaborn</h1>
-    <div class="subtitle">先備知識 P5 — 選讀，不列入評分</div>
-    <div class="big-formula">Figure 與 Axes｜subplots 網格｜histplot 的 bins｜kdeplot 的頻寬｜relplot 與 catplot｜regplot｜heatmap｜截斷的 y 軸會說謊</div>
+    <h1>兩套 <span class="orange">API</span>、兩種目的：statsmodels 與 scikit-learn</h1>
+    <div class="subtitle">先備知識 P6 — 選讀，不列入評分</div>
+    <div class="big-formula">MS 設計矩陣｜sm.OLS(y, X).fit()｜summarize 的四欄｜fit-predict-score｜train_test_split｜cross_validate｜先切分再標準化</div>
     <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
   </div>
 </div>
@@ -555,7 +555,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="container">
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
-  <div class="sg-title">📌 本頁使用方式（先備 · 視覺化）</div>
+  <div class="sg-title">📌 本頁使用方式（先備 · 建模 API）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
@@ -567,12 +567,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="toc">
   <div class="toc-title">CONTENTS · 內容目錄</div>
   <div class="toc-grid">
-    <a href="#prologue"><span class="toc-num">P00</span>為什麼要先畫圖</a>
-    <a href="#anat"><span class="toc-num">P01</span>Figure 與 Axes</a>
-    <a href="#dist"><span class="toc-num">P02</span>看一個變數的分布</a>
-    <a href="#rel"><span class="toc-num">P03</span>看兩個變數的關係</a>
-    <a href="#cat"><span class="toc-num">P04</span>類別變數的圖</a>
-    <a href="#model"><span class="toc-num">P05</span>把模型畫進圖裡</a>
+    <a href="#prologue"><span class="toc-num">P00</span>兩套 API 的分工</a>
+    <a href="#design"><span class="toc-num">P01</span>設計矩陣</a>
+    <a href="#summary"><span class="toc-num">P02</span>讀 summary 表</a>
+    <a href="#skl"><span class="toc-num">P03</span>scikit-learn 的三個動詞</a>
+    <a href="#split"><span class="toc-num">P04</span>切分訓練與測試</a>
+    <a href="#cv"><span class="toc-num">P05</span>交叉驗證與資料洩漏</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
     <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
@@ -582,503 +582,523 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>摘要統計一樣，圖可以完全不一樣 <span class="sec-badge">課程 Lab Ch1 · 儲存格 88</span></h2>
+  <h2>要看係數用 statsmodels，要做預測用 scikit-learn <span class="sec-badge">課程 Lab Ch3 · 儲存格 22–26</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>統計課教你算平均、標準差、相關係數。這些數字很有用，但它們<strong>會漏掉形狀</strong>。
-  三組資料可以有幾乎一樣的平均、標準差與相關係數，畫出來卻完全不同——
-  其中一組是直線關係、一組是曲線、一組只是被一個離群值拉出來的假相關。</p>
+  <p>Python 做統計建模有兩套主流工具，這門課兩套都會用到。它們算的東西常常一模一樣，
+  但<strong>回答的問題不同</strong>：statsmodels 給你係數、標準誤與 p 值，
+  是為了讓你<em>解釋</em>；scikit-learn 給你 <code>fit</code>／<code>predict</code>／
+  <code>score</code>，是為了讓你<em>預測</em>並且評估得誠實。</p>
 
 <div class="info-box">
-  <span class="info-label">一句話</span>
-  <strong>先畫圖，再算數字。</strong>圖告訴你「這份資料長什麼樣」，數字告訴你「有多強」——順序反過來很容易被騙。
+  <span class="info-label">這一頁最值得記住的一件事</span>
+  同一個模型在兩套 API 底下<strong>係數完全一樣</strong>——課程 lab 裡 statsmodels 給 34.5538 與 −0.9500，sklearn 給 34.5538408793831 與 −0.95004935，對 lstat = 5、10、15 的預測值逐位相同。所以「選哪一套」不是精度問題，是<strong>你要什麼輸出</strong>的問題。
 </div>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <div class="chart-wrap"><canvas id="w18sameChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：三組資料的平均與相關係數幾乎相同，但一組是直線、一組是曲線、一組只有一個離群值在撐。</div></div>
-      </div>
-      <div class="status-banner" id="w18smStatus"><span class="status-icon">›</span><span class="status-text">三組資料，摘要統計幾乎相同。先看數字，再按按鈕看形狀。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18smSet(0)">① 直線關係</button><button class="btn btn-toggle" onclick="w18smSet(1)">② 曲線關係</button><button class="btn btn-toggle" onclick="w18smSet(2)">③ 一個離群值撐出來的</button></div>
+      <svg class="viz-svg" id="w19apiSvg" height="340"></svg>
+      <div class="status-banner" id="w19apiStatus"><span class="status-icon">›</span><span class="status-text">四個步驟，看兩套 API 各自怎麼寫。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w19apiSet(0)">① 準備 X</button><button class="btn btn-toggle" onclick="w19apiSet(1)">② 配適</button><button class="btn btn-toggle" onclick="w19apiSet(2)">③ 看結果</button><button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">按按鈕換一組</div>
-      三組資料的<strong>平均、標準差、相關係數都幾乎一樣</strong>，但形狀完全不同。只看數字的話，你會以為它們是同一回事。
+      <div class="ic-title">按按鈕比較</div>
+      同一件事在兩套 API 的寫法。注意 statsmodels 要你<strong>自己</strong>把截距欄放進 X，sklearn 則是用 <code>fit_intercept=True</code> 幫你處理。
     </div>
     <div class="info-card">
-      <div class="ic-title">這一組的摘要統計</div>
-      <div class="ic-row"><span class="ic-label">x 平均</span><span class="ic-value" id="w18smMx">—</span></div><div class="ic-row"><span class="ic-label">y 平均</span><span class="ic-value" id="w18smMy">—</span></div><div class="ic-row"><span class="ic-label">相關係數 r</span><span class="ic-value" id="w18smR">—</span></div>
+      <div class="ic-title">這一步</div>
+      <div class="ic-row"><span class="ic-label">statsmodels</span><span class="ic-value" id="w19apiSm">—</span></div><div class="ic-row"><span class="ic-label">scikit-learn</span><span class="ic-value" id="w19apiSk">—</span></div><div class="ic-row"><span class="ic-label">差在哪</span><span class="ic-value" id="w19apiWhy">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">這些點哪裡來的</div>
-      頁面用固定種子當場算出來的（<code>HC.stat.lcg</code>），不是任何一份真實資料——重點是機制，所以用 live 而不是烘焙。重新整理頁面會得到完全一樣的三組點。
+      <div class="ic-title">什麼時候用哪一套</div>
+      要<strong>報告係數與顯著性</strong>（第 3、4 章）→ statsmodels。<br>要<strong>比較模型、做交叉驗證、串前處理</strong>（第 5、6 章之後）→ scikit-learn。<br>兩者可以混用：課程 lab 就用 <code>sklearn_sm</code> 把 statsmodels 的模型包成 sklearn 的估計器，好丟進 <code>cross_validate</code>。
     </div>
   </div>
 </div>
 
-<div class="info-box">
-  <span class="info-label">這一頁的程式碼卡為什麼沒有「預期輸出」</span>
-  繪圖的儲存格在 notebook 裡存下來的是圖，不是文字，所以下面的程式碼卡多半只有程式碼、沒有預期輸出。圖本身的行為改由每一節的互動元件重現——<strong>那些元件是頁面當場算的，不是課程圖的截圖</strong>（本站 repo 不放任何圖檔）。
+<div class="deck-extra">
+  <div class="dx-label">statsmodels：截距要自己放進 X</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">X = pd.DataFrame({<span class="str">&#x27;intercept&#x27;</span>: np.ones(Boston.shape[<span class="num">0</span>]),</span>
+  <span class="line">                  <span class="str">&#x27;lstat&#x27;</span>: Boston[<span class="str">&#x27;lstat&#x27;</span>]})</span>
+  <span class="line">X[:<span class="num">4</span>]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>   intercept  lstat
+0        1.0   4.98
+1        1.0   9.14
+2        1.0   4.03
+3        1.0   2.94</pre></div>
+  <p class="dx-note">那一欄全是 1 的 <code>intercept</code> 不是裝飾——<code>sm.OLS</code> <strong>不會</strong>自動加截距，忘了就是配一條過原點的線。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 22</span>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">這一頁用的資料：tips</div>
+  <div class="dx-label">配適之後的係數表</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 檢視資料基本資訊/摘要；載入範例資料集</span></span>
-  <span class="line">tips = sns.load_dataset(<span class="str">&quot;tips&quot;</span>)</span>
-  <span class="line">print(tips.shape)</span>
-  <span class="line">tips.head()</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(244, 7)
-   total_bill   tip     sex smoker  day    time  size
-0       16.99  1.01  Female     No  Sun  Dinner     2
-1       10.34  1.66    Male     No  Sun  Dinner     3
-2       21.01  3.50    Male     No  Sun  Dinner     3
-3       23.68  3.31    Male     No  Sun  Dinner     2
-4       24.59  3.61  Female     No  Sun  Dinner     4</pre></div>
-  <p class="dx-note">244 筆餐廳帳單。<code>total_bill</code> 與 <code>tip</code> 是數值，<code>day</code>、<code>sex</code>、<code>smoker</code> 是類別——這兩種型別要配不同的圖。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 88</span>
+  <span class="line">summarize(results)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              coef  std err       t  P&gt;|t|
+intercept  34.5538    0.563  61.415    0.0
+lstat      -0.9500    0.039 -24.528    0.0</pre></div>
+  <p class="dx-note">四個欄位：係數、標準誤、t 值、p 值。下一節逐欄拆開講。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 26</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 00 · 自我檢測</div>
-  <p>兩份資料的相關係數都是 0.82。可以推論什麼？</p>
-  <div class="quiz-options" id="qSameOptions"><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數只量「線性關係有多強」，它看不出曲線、看不出離群值、也看不出資料是不是分成兩群。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(A)</span> 兩份資料的散佈圖會很像</div><div class="quiz-opt" data-correct="true" data-fb="對。所以拿到資料的第一個動作是畫圖，不是算相關係數。第 3 章講迴歸診斷時會再看到同一件事：殘差圖比 R² 誠實。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(B)</span> 只知道兩者的線性關係強度接近，形狀可能完全不同</div><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數跟斜率是兩回事——斜率還取決於兩個變數的標準差比例。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(C)</span> 兩份資料的迴歸線斜率一樣</div></div>
-  <div class="quiz-feedback" id="qSameFeedback"></div>
+  <p>你要在論文裡報告「每增加一個百分點的 lstat，medv 平均下降多少，這個估計有多確定」。該用哪一套？</p>
+  <div class="quiz-options" id="qApiOptions"><div class="quiz-opt" data-correct="true" data-fb="對。你要的是<strong>係數與它的標準誤</strong>，而 sklearn 的 <code>LinearRegression</code> 只給 <code>coef_</code>，沒有標準誤、沒有 p 值、沒有信賴區間。" onclick="quizCheck('qApi', this)"><span class="opt-letter">(A)</span> statsmodels</div><div class="quiz-opt" data-correct="false" data-fb="新舊不是判準。sklearn 刻意不提供推論用的統計量——它的設計目標是預測與模型選擇，不是推論。" onclick="quizCheck('qApi', this)"><span class="opt-letter">(B)</span> scikit-learn，因為它比較新</div><div class="quiz-opt" data-correct="false" data-fb="係數確實一樣，但<strong>「有多確定」那一半 sklearn 沒有給</strong>。題目問的正是那一半。" onclick="quizCheck('qApi', this)"><span class="opt-letter">(C)</span> 兩套都可以，反正係數一樣</div></div>
+  <div class="quiz-feedback" id="qApiFeedback"></div>
 </div>
 </section>
-<section id="anat">
-<!-- GEN:BEGIN sec:anat -->
-  <div class="section-number">PART 01 · Figure 與 Axes</div>
-  <h2>一張圖的解剖：Figure 是畫布，Axes 才是座標系 <span class="sec-badge">課程 Lab Ch2 · 儲存格 96–114</span></h2>
-<!-- GEN:END sec:anat -->
+<section id="design">
+<!-- GEN:BEGIN sec:design -->
+  <div class="section-number">PART 01 · 設計矩陣</div>
+  <h2>模型看到的不是資料框，是一個矩陣 X <span class="sec-badge">課程 Lab Ch3 · 儲存格 30–39</span></h2>
+<!-- GEN:END sec:design -->
 
-  <p>matplotlib 的物件有兩層，搞混這兩層是所有「為什麼我的設定沒有生效」的根源：
-  <strong>Figure 是整張畫布</strong>（大小、存檔、標題），
-  <strong>Axes 是裡面的一個座標系</strong>（畫點、設軸範圍、加圖例）。
-  一張 Figure 可以有很多個 Axes。</p>
+  <p>模型看到的從來不是你的資料框，而是一個矩陣 <strong>X</strong>：
+  第一欄通常是全 1 的截距，後面每一欄是一個預測變數。
+  類別變數要先展開成 0／1 的欄，交互作用要先乘起來變成新的一欄。
+  <code>MS()</code>（ModelSpec）就是幫你做這件事的。</p>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <svg class="viz-svg" id="w18anatSvg" height="320"></svg>
-      <div class="status-banner" id="w18anStatus"><span class="status-icon">›</span><span class="status-text">先分清楚哪一層是哪一層，之後查文件會快很多。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18anSet(0)">Figure</button><button class="btn btn-toggle" onclick="w18anSet(1)">Axes</button><button class="btn btn-toggle" onclick="w18anSet(2)">Axis（軸）</button><button class="btn btn-toggle" onclick="w18anSet(3)">Artist（點、線、字）</button></div>
+      <svg class="viz-svg" id="w19dsgSvg" height="340"></svg>
+      <div class="status-banner" id="w19dsStatus"><span class="status-icon">›</span><span class="status-text">先猜加了交互作用之後 X 有幾欄，再按按鈕。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w19dsSet(0)">MS([&quot;lstat&quot;])</button><button class="btn btn-toggle" onclick="w19dsSet(1)">加 age</button><button class="btn btn-toggle" onclick="w19dsSet(2)">加交互作用</button><button class="btn btn-toggle" onclick="w19dsSet(3)">類別變數展開</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">點名字看它管什麼</div>
-      按按鈕，對應的部分會亮起來，右邊會顯示「這一層負責什麼」與「動它的方法叫什麼」。
+      <div class="ic-title">按按鈕看它怎麼展開</div>
+      從一個資料框開始，看 <code>MS([...])</code> 一步步把它變成 X。類別變數與交互作用都是在這一層處理掉的。
     </div>
     <div class="info-card">
       <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">物件</span><span class="ic-value" id="w18anObj">Figure</span></div><div class="ic-row"><span class="ic-label">負責什麼</span><span class="ic-value" id="w18anWhat">整張畫布</span></div><div class="ic-row"><span class="ic-label">常用方法</span><span class="ic-value" id="w18anHow">set_size_inches、savefig</span></div>
+      <div class="ic-row"><span class="ic-label">設定</span><span class="ic-value" id="w19dsSpec">MS(['lstat'])</span></div><div class="ic-row"><span class="ic-label">X 的欄</span><span class="ic-value" id="w19dsCols">intercept, lstat</span></div><div class="ic-row"><span class="ic-label">X 的 shape</span><span class="ic-value" id="w19dsShape">(506, 2)</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">為什麼 seaborn 有時候回 Figure、有時候回 Axes</div>
-      名字結尾是 <code>plot</code> 的多半回 Axes（<code>histplot</code>、<code>regplot</code>）；<code>relplot</code>、<code>catplot</code>、<code>lmplot</code> 這種會自己開一張新 Figure（叫 figure-level）。要塞進自己的 subplots 就得挑前者。
+      <div class="ic-title">fit_transform 與 transform</div>
+      <code>fit_transform</code> 在<strong>訓練資料</strong>上學會「有哪些欄、類別有哪幾種」；之後對新資料一律用 <code>transform</code>，不要再 fit 一次——不然兩邊的欄可能對不起來。這條規矩在最後一節會變成關鍵。
     </div>
   </div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">subplots 一次給你兩個東西</div>
+  <div class="dx-label">MS 幫你把資料框變成 X</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
-  <span class="line">x = rng.standard_normal(<span class="num">100</span>)</span>
-  <span class="line">y = rng.standard_normal(<span class="num">100</span>)</span>
-  <span class="line">ax.plot(x, y);</span></div>
-  <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 96</span>
+  <span class="line">design = MS([<span class="str">&#x27;lstat&#x27;</span>])</span>
+  <span class="line">design = design.fit(Boston)</span>
+  <span class="line">X = design.transform(Boston)</span>
+  <span class="line">X[:<span class="num">4</span>]</span>
+  <span class="line">design = MS([<span class="str">&#x27;lstat&#x27;</span>])</span>
+  <span class="line">X = design.fit_transform(Boston)</span>
+  <span class="line">X[:<span class="num">4</span>]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>   intercept  lstat
+0        1.0   4.98
+1        1.0   9.14
+2        1.0   4.03
+3        1.0   2.94
+   intercept  lstat
+0        1.0   4.98
+1        1.0   9.14
+2        1.0   4.03
+3        1.0   2.94</pre></div>
+  <p class="dx-note">輸出跟上一節手工做的 X 完全一樣——差別是 <code>MS</code> 會記得規格，之後可以對新資料重放一次。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 30、32</span>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">散佈圖與軸標籤</div>
+  <div class="dx-label">對新資料要用 transform</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
-  <span class="line">ax.scatter(x, y, marker=<span class="str">&#x27;o&#x27;</span>)</span></div>
-  <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 105</span>
-</div>
-
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w18gridSvg" height="300"></svg>
-      <div class="status-banner" id="w18gdStatus"><span class="status-icon">›</span><span class="status-text">點任一格，看它的索引。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w18gdNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18gdReset()">重置</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">axes 是一個二維陣列</div>
-      <code>subplots(nrows=2, ncols=3)</code> 回傳的 <code>axes</code> 是一個 <strong>(2, 3) 的 NumPy 陣列</strong>。點格子看它的索引——就是 P3 講的二維索引。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">目前選到</div>
-      <div class="ic-row"><span class="ic-label">索引</span><span class="ic-value" id="w18gdIdx">axes[0, 0]</span></div><div class="ic-row"><span class="ic-label">在第幾列第幾欄</span><span class="ic-value" id="w18gdPos">第 0 列、第 0 欄</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">常見錯誤</div>
-      <code>nrows=1</code> 時 <code>axes</code> 會退化成一維，<code>axes[0, 1]</code> 就會報錯。要一致就寫 <code>subplots(1, 3, squeeze=False)</code>。
-    </div>
-  </div>
+  <span class="line">new_df = pd.DataFrame({<span class="str">&#x27;lstat&#x27;</span>:[<span class="num">5</span>, <span class="num">10</span>, <span class="num">15</span>]})</span>
+  <span class="line">newX = design.transform(new_df)</span>
+  <span class="line">newX</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>   intercept  lstat
+0        1.0      5
+1        1.0     10
+2        1.0     15</pre></div>
+  <p class="dx-note">三筆新的 lstat 值，經過同一個 <code>design</code> 之後自動長出 intercept 欄。<strong>這就是為什麼要保留那個物件。</strong></p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 39</span>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">2×3 的子圖網格</div>
+  <div class="dx-label">預測值</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">fig, axes = subplots(nrows=<span class="num">2</span>,</span>
-  <span class="line">                     ncols=<span class="num">3</span>,</span>
-  <span class="line">                     figsize=(<span class="num">15</span>, <span class="num">5</span>))</span>
-  <span class="line">axes[<span class="num">0</span>,<span class="num">1</span>].plot(x, y, <span class="str">&#x27;o&#x27;</span>)</span>
-  <span class="line">axes[<span class="num">1</span>,<span class="num">2</span>].scatter(x, y, marker=<span class="str">&#x27;+&#x27;</span>)</span>
-  <span class="line">fig</span></div>
-  <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 112、114</span>
+  <span class="line">new_predictions = results.get_prediction(newX)</span>
+  <span class="line">new_predictions.predicted_mean</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([29.80359411, 25.05334734, 20.30310057])</pre></div>
+  <p class="dx-note">lstat = 5、10、15 對應的預測 medv。記住這三個數字，下一節 sklearn 會算出<strong>逐位相同</strong>的結果。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 41</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
-  <p>你用 <code>sns.relplot(...)</code> 畫完圖，接著寫 <code>ax.set_xlim([0, 10])</code>，卻沒有任何效果。最可能的原因是？</p>
-  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，它不會畫到你手上那個 <code>ax</code> 上。要控制軸就改用 <code>scatterplot</code> 這種 axes-level 的函式並傳 <code>ax=ax</code>。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。問題不在支不支援，在你設到了<strong>另一個 Axes</strong> 上。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
-  <div class="quiz-feedback" id="qAnatFeedback"></div>
+  <p>一個有 4 個類別的變數 <code>region</code> 放進迴歸，X 會多出幾欄？</p>
+  <div class="quiz-options" id="qDesignOptions"><div class="quiz-opt" data-correct="false" data-fb="會多出共線性——四欄加起來永遠等於截距那一欄，矩陣就不滿秩了。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(A)</span> 4 欄，每個類別一欄</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫虛擬變數編碼，被留下來當基準的那一類叫參考組，其他三欄的係數都是「相對於參考組」的差。第 3 章會詳細講。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(B)</span> 3 欄，其中一個類別當基準</div><div class="quiz-opt" data-correct="false" data-fb="這樣等於宣稱類別之間有等距的順序關係——「region 3 比 region 1 多兩單位」是沒有意義的敘述。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(C)</span> 1 欄，把類別編成 0、1、2、3</div></div>
+  <div class="quiz-feedback" id="qDesignFeedback"></div>
 </div>
 </section>
-<section id="dist">
-<!-- GEN:BEGIN sec:dist -->
-  <div class="section-number">PART 02 · 看一個變數的分布</div>
-  <h2>直方圖的 bins 與密度圖的頻寬會改變你的結論 <span class="sec-badge">課程 Lab Ch1 · 儲存格 105–111</span></h2>
-<!-- GEN:END sec:dist -->
+<section id="summary">
+<!-- GEN:BEGIN sec:summary -->
+  <div class="section-number">PART 02 · 讀 summary 表</div>
+  <h2>四個欄位：係數、標準誤、t 值、p 值 <span class="sec-badge">課程 Lab Ch3 · 儲存格 35–37</span></h2>
+<!-- GEN:END sec:summary -->
 
-  <p>看一個變數的分布有兩種標準做法：直方圖與密度圖。兩者都有一個<strong>你必須自己決定的參數</strong>——
-  直方圖是 bins（切幾格），密度圖是頻寬（平滑多少）。這個參數不是細節，
-  它可以讓同一份資料看起來有兩個峰或只有一個。</p>
-
-<div class="info-box warm">
-  <span class="info-label">這是本頁最重要的一件事</span>
-  <strong>調參數之前先想好你要回答什麼問題。</strong>想看「有沒有兩群」就把 bins 調細一點；想看「大致集中在哪」就調粗一點。調到「圖看起來最漂亮」為止，是在騙自己。
-</div>
+  <p><code>summarize(results)</code> 給你四個欄位。很多人只看最後一欄的 p 值，
+  這是最浪費的讀法——<strong>係數告訴你效果多大，標準誤告訴你這個估計多穩</strong>，
+  p 值只是這兩者的比值換算出來的。</p>
 
 <div class="viz-layout">
   <div>
     <div class="viz-panel">
-      <svg class="viz-svg" id="w18binsSvg" height="340"></svg>
-      <div class="status-banner" id="w18bnStatus"><span class="status-icon">›</span><span class="status-text">先猜這份資料有幾個峰，再把 bins 從 4 拉到 40。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w18bnStep(-4)">參數 −</button><button class="btn btn-step" onclick="w18bnStep(4)">參數 +</button><button class="btn btn-toggle" onclick="w18bnMode()">切換：直方圖 ⇄ 密度圖</button><button class="btn btn-reset" onclick="w18bnReset()">重置</button></div>
+      <svg class="viz-svg" id="w19smSvg" height="320"></svg>
+      <div class="status-banner" id="w19smStatus"><span class="status-icon">›</span><span class="status-text">四個欄位，一個一個看。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w19smSet(0)">coef</button><button class="btn btn-toggle" onclick="w19smSet(1)">std err</button><button class="btn btn-toggle" onclick="w19smSet(2)">t</button><button class="btn btn-toggle" onclick="w19smSet(3)">P&gt;|t|</button></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">拖 bins，看結論怎麼變</div>
-      同一份資料（固定種子產生，實際上是<strong>兩個峰</strong>）。bins 太少會把兩個峰糊成一個，太多會讓雜訊看起來像結構。
+      <div class="ic-title">點欄位看它的意思</div>
+      按按鈕切換，被選到的欄會亮起來，右邊解釋它在講什麼、以及看到什麼樣的值要警覺。
     </div>
     <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">模式</span><span class="ic-value" id="w18bnMode">直方圖</span></div><div class="ic-row"><span class="ic-label">bins / 頻寬</span><span class="ic-value" id="w18bnParam">10</span></div><div class="ic-row"><span class="ic-label">你會看到幾個峰</span><span class="ic-value" id="w18bnPeaks">—</span></div>
+      <div class="ic-title">這一欄</div>
+      <div class="ic-row"><span class="ic-label">欄位</span><span class="ic-value" id="w19smCol">coef</span></div><div class="ic-row"><span class="ic-label">在講什麼</span><span class="ic-value" id="w19smWhat">效果的大小與方向</span></div><div class="ic-row"><span class="ic-label">警訊</span><span class="ic-value" id="w19smWarn">符號跟預期相反</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">密度圖也一樣</div>
-      切到「密度圖」模式，改的是<strong>頻寬</strong>。頻寬大＝平滑＝可能糊掉真的結構；頻寬小＝每個點都戳出一根。兩者是同一個取捨換了個名字。
+      <div class="ic-title">t 值怎麼來的</div>
+      <code>t = coef / std err</code>。lstat 那一列是 −0.9500 ÷ 0.039 ≈ −24.5，跟表上的 −24.528 對得起來。所以四個欄位其實只有前兩個是獨立的資訊。
     </div>
   </div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">最基本的直方圖</div>
+  <div class="dx-label">只要係數的話</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集</span></span>
-  <span class="line">sns.displot(x=<span class="str">&quot;total_bill&quot;</span>, data = tips); <span class="com">#check parameter bins and binwidth</span></span></div>
-  <p class="dx-note">lab 的註解就提醒了 <code>bins</code> 這個參數。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 105</span>
+  <span class="line">results.params</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept    34.553841
+lstat        -0.950049
+dtype: float64</pre></div>
+  <p class="dx-note"><code>results.params</code> 回傳一個 Series，索引是欄名。要拿單一個係數就 <code>results.params['lstat']</code>。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 37</span>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">依類別分色與堆疊</div>
+  <div class="dx-label">完整的 summary</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：直方圖</span></span>
-  <span class="line">sns.histplot(data=tips, x=<span class="str">&quot;day&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>); <span class="com"># By default, the different histograms are “layered” on top of each other and, in some cases, they may be difficult to distinguish.</span></span>
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：直方圖</span></span>
-  <span class="line">sns.histplot(data=tips, x=<span class="str">&quot;day&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>, multiple=<span class="str">&quot;dodge&quot;</span>, shrink=<span class="num">.8</span>);</span></div>
-  <p class="dx-note"><code>hue</code> 分色、<code>multiple='stack'</code> 疊起來。分色看得出各組的形狀，堆疊看得出總量——兩種問題。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 106、107</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">密度圖</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：KDE 密度圖</span></span>
-  <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>);</span>
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：KDE 密度圖</span></span>
-  <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;time&quot;</span>, multiple=<span class="str">&quot;stack&quot;</span>);</span></div>
-  <p class="dx-note"><code>kdeplot</code> 把每個點換成一個小鐘形再加起來，所以它<strong>一定是平滑的</strong>——那個平滑是你給的假設，不是資料本身。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 110、111</span>
-</div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 02 · 自我檢測</div>
-  <p>同一份資料，bins=5 看起來是一個峰，bins=30 看起來是兩個峰。你該怎麼辦？</p>
-  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="這就是本節警告的事。「漂亮」不是判準——你是在挑一個支持自己想法的圖。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖是提出假設的工具，不是證據本身。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
-  <div class="quiz-feedback" id="qDistFeedback"></div>
-</div>
-</section>
-<section id="rel">
-<!-- GEN:BEGIN sec:rel -->
-  <div class="section-number">PART 03 · 看兩個變數的關係</div>
-  <h2>散佈圖、折線圖、joint 與 pair <span class="sec-badge">課程 Lab Ch1 · 儲存格 91–117</span></h2>
-<!-- GEN:END sec:rel -->
-
-  <p>兩個變數的關係圖幾乎都是散佈圖的變形。seaborn 幫你做的事是
-  <strong>用顏色、大小、分面把第三、第四個變數也塞進同一張圖</strong>——
-  <code>hue</code>、<code>size</code>、<code>col</code> 這三個參數值得記起來。</p>
-
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w18pickSvg" height="340"></svg>
-      <div class="status-banner" id="w18pkStatus"><span class="status-icon">›</span><span class="status-text">選 x 與 y 的型別。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18pkSet(0)">數值 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(1)">類別 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(2)">類別 × 類別</button><button class="btn btn-toggle" onclick="w18pkSet(3)">單一數值</button><button class="btn btn-toggle" onclick="w18pkSet(4)">時間 × 數值</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">先問變數型別</div>
-      選 x 與 y 各是什麼型別，右邊會給建議的圖與對應的 seaborn 函式。這張決策樹涵蓋 lab 裡出現過的每一種圖。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">建議</div>
-      <div class="ic-row"><span class="ic-label">圖型</span><span class="ic-value" id="w18pkKind">—</span></div><div class="ic-row"><span class="ic-label">函式</span><span class="ic-value" id="w18pkFn">—</span></div><div class="ic-row"><span class="ic-label">它在回答什麼</span><span class="ic-value" id="w18pkQ">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">第三個變數怎麼辦</div>
-      <code>hue=</code> 用顏色、<code>size=</code> 用點的大小、<code>col=</code> 拆成好幾張小圖。超過兩個額外變數的話，多半該畫好幾張圖而不是硬塞。
-    </div>
-  </div>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">散佈圖，以及把第三個變數塞進去</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># Scatterplot</span></span>
-  <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips); <span class="com"># Semicolon is intended to suppress text representation</span></span>
-  <span class="line"><span class="com"># 載入範例資料集</span></span>
-  <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, style=<span class="str">&quot;smoker&quot;</span>, data=tips); <span class="com"># you can use a different marker style for each class</span></span></div>
-  <p class="dx-note"><code>hue</code> 與 <code>style</code> 同時用同一個變數，是為了在黑白列印時也分得出來——這個習慣值得學。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 91、93</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">用點的大小表示第三個變數</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集</span></span>
-  <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, size=<span class="str">&quot;size&quot;</span>, sizes=(<span class="num">15</span>, <span class="num">200</span>), data=tips); <span class="com">#size rather than colors</span></span></div>
-  <p class="dx-note"><code>sizes=(15, 200)</code> 明確指定最小與最大的點徑。不指定的話預設範圍很窄，看不出差別。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 95</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">折線圖與信賴帶</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：折線圖</span></span>
-  <span class="line">fmri = sns.load_dataset(<span class="str">&quot;fmri&quot;</span>)</span>
-  <span class="line">sns.lineplot(x=<span class="str">&quot;timepoint&quot;</span>, y=<span class="str">&quot;signal&quot;</span>, hue=<span class="str">&quot;event&quot;</span>, style=<span class="str">&quot;event&quot;</span>, markers=<span class="num">True</span>, dashes=<span class="num">False</span>, data=fmri);</span></div>
-  <p class="dx-note"><code>lineplot</code> 對同一個 x 有多筆資料時，會自動畫平均與 95% 信賴帶——那條帶子是 bootstrap 算出來的，第 5 章會講它怎麼來的。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 102</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">joint 與 pair</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：Joint 分布圖</span></span>
-  <span class="line">sns.jointplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span>
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：變數成對關係圖</span></span>
-  <span class="line">sns.pairplot(tips);</span></div>
-  <p class="dx-note"><code>pairplot</code> 是探索階段最划算的一張圖：所有數值欄兩兩配對，一眼看完。欄多的時候會很慢，先挑幾欄再畫。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 114、117</span>
-</div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 03 · 自我檢測</div>
-  <p>你想看「小費金額與帳單金額的關係，並區分吸菸與否」。最直接的寫法是？</p>
-  <div class="quiz-options" id="qRelOptions"><div class="quiz-opt" data-correct="true" data-fb="對。兩個數值變數用散佈圖，第三個類別變數用 <code>hue</code> 上色。lab 儲存格 93 就是這一行。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(A)</span> <code>sns.relplot(x='total_bill', y='tip', hue='smoker', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="這張圖只看得到吸菸與否對小費的影響，<strong>total_bill 不見了</strong>——而它才是最主要的解釋變數。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(B)</span> <code>sns.catplot(x='smoker', y='tip', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="可以（那就是 <code>col='smoker'</code>），但要比較兩組時疊在同一張圖上用顏色分比較容易看出差異。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(C)</span> 畫兩張散佈圖，一張吸菸一張不吸菸</div></div>
-  <div class="quiz-feedback" id="qRelFeedback"></div>
-</div>
-</section>
-<section id="cat">
-<!-- GEN:BEGIN sec:cat -->
-  <div class="section-number">PART 04 · 類別變數的圖</div>
-  <h2>盒鬚圖、長條圖、計數圖：各自在講什麼 <span class="sec-badge">課程 Lab Ch1 · 儲存格 120–130</span></h2>
-<!-- GEN:END sec:cat -->
-
-  <p>類別變數的圖最容易被誤讀，因為它們看起來都像長條，但講的事情差很多：
-  <strong>countplot 講「有幾筆」、barplot 講「平均是多少」、boxplot 講「分布長怎樣」</strong>。
-  三種被混用的後果是很嚴重的。</p>
-
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w18misSvg" height="340"></svg>
-      <div class="status-banner" id="w18msStatus"><span class="status-icon">›</span><span class="status-text">先看左邊，再按「截斷 y 軸」。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18msSet(0)">y 軸從 0 開始</button><button class="btn btn-toggle" onclick="w18msSet(1)">截斷 y 軸</button><button class="btn btn-toggle" onclick="w18msSet(2)">改用盒鬚圖</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">同一份資料，兩種畫法</div>
-      左邊是誠實的版本（y 軸從 0 開始），右邊是截斷 y 軸的版本。按按鈕切換，看「差距」怎麼被放大成三倍。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">兩組的真實數字</div>
-      <div class="ic-row"><span class="ic-label">A 組平均</span><span class="ic-value" id="w18msA">2.98</span></div><div class="ic-row"><span class="ic-label">B 組平均</span><span class="ic-value" id="w18msB">3.26</span></div><div class="ic-row"><span class="ic-label">看起來差幾倍</span><span class="ic-value" id="w18msRatio">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">什麼時候可以截斷</div>
-      當零沒有意義時（例如體溫、年份）截斷是合理的，但要<strong>明確標出來</strong>。長條圖用長度編碼數量，截斷等於把長度的意義弄壞，所以特別不該截。
-    </div>
-  </div>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">盒鬚圖：看分布</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集</span></span>
-  <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, kind=<span class="str">&quot;box&quot;</span>, data=tips);</span>
-  <span class="line"><span class="com"># 載入範例資料集</span></span>
-  <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, kind=<span class="str">&quot;box&quot;</span>, data=tips); <span class="com"># When adding a hue semantic, the box for each level of the semantic variable is moved along the categorical axis so they don’t overlap:b</span></span></div>
-  <p class="dx-note">盒子是四分位距、線是中位數、鬚是 1.5 倍 IQR 內的極值，外面的點是離群值。<strong>它是唯一一種會告訴你「有沒有離群值」的類別圖。</strong>（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 120、121</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">長條圖：看平均與不確定性</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：長條圖</span></span>
-  <span class="line">ax = sns.barplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span>
-  <span class="line"><span class="com"># 載入範例資料集</span></span>
-  <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>, kind=<span class="str">&quot;bar&quot;</span>, data=tips);</span></div>
-  <p class="dx-note"><code>barplot</code> 的長條高度是<strong>平均</strong>，上面那條細線是 bootstrap 信賴區間——不是標準差。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 124、125</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">計數圖：看筆數</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：計數長條圖</span></span>
-  <span class="line">sns.countplot(x=<span class="str">&quot;smoker&quot;</span>, data=tips); <span class="com">#simply count the number</span></span></div>
-  <p class="dx-note"><code>countplot</code> 只數筆數，跟 <code>value_counts()</code> 是同一件事的圖版。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 127</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">點估計圖：專門用來比較</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：點估計圖</span></span>
-  <span class="line">sns.pointplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips, errorbar=(<span class="str">&#x27;ci&#x27;</span>, <span class="num">68</span>));</span></div>
-  <p class="dx-note">把長條換成一個點加誤差線。要比較好幾組的平均時，點比長條清楚——長條的面積會搶掉注意力。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 130</span>
-</div>
-
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>圖</th><th>高度／位置代表什麼</th><th>適合回答</th></tr></thead>
-  <tbody><tr><td><code>countplot</code></td><td>筆數</td><td>哪一類最多？有沒有哪一類樣本太少？</td></tr><tr><td><code>barplot</code></td><td>平均（＋信賴區間）</td><td>各組的平均差多少？差得有多確定？</td></tr><tr><td><code>boxplot</code></td><td>中位數與四分位距</td><td>分布形狀？有沒有離群值？</td></tr><tr><td><code>pointplot</code></td><td>平均（＋誤差線）</td><td>多組平均之間的<b>比較</b>與趨勢</td></tr></tbody>
-</table></div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 04 · 自我檢測</div>
-  <p>一張 <code>barplot</code> 顯示週四的小費比週五高。你還需要知道什麼才能下結論？</p>
-  <div class="quiz-options" id="qCatOptions"><div class="quiz-opt" data-correct="false" data-fb="長條的高度是<strong>平均</strong>。兩組平均有差，不代表這個差站得住腳。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(A)</span> 不用，長條比較高就是比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。<code>barplot</code> 預設會畫 bootstrap 信賴區間，重疊很多就代表這個差可能只是抽樣的隨機性。另外週五如果只有 19 筆，那條線會很長——樣本數要一起看。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(B)</span> 兩組各有幾筆、以及誤差線有沒有重疊</div><div class="quiz-opt" data-correct="false" data-fb="標準差講的是個別觀測的分散程度，不是<strong>平均</strong>的不確定性。後者是標準誤，跟樣本數有關。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(C)</span> 只要看兩組的標準差</div></div>
-  <div class="quiz-feedback" id="qCatFeedback"></div>
-</div>
-
-<div class="info-box purple">
-  <span class="info-label">🔗 這在本站哪一章會用到</span>
-  第 12 章的主成分分析要看雙標圖（biplot）、分群要看樹狀圖，都是這一節的延伸；第 3 章的殘差圖更是整章的診斷主力。<a href="unsupervised_learning.html#pca">→ 非監督式學習 · 主成分分析</a>
-</div>
-</section>
-<section id="model">
-<!-- GEN:BEGIN sec:model -->
-  <div class="section-number">PART 05 · 把模型畫進圖裡</div>
-  <h2>regplot 與相關係數熱圖 <span class="sec-badge">課程 Lab Ch1 · 儲存格 133–138</span></h2>
-<!-- GEN:END sec:model -->
-
-  <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
-  這是統計圖跟一般商業圖表最大的差別——你不只在描述資料，還在展示一個模型對不對。</p>
-
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w18corrSvg" height="340"></svg>
-      <div class="status-banner" id="w18crStatus"><span class="status-icon">›</span><span class="status-text">點格子看那一對變數的相關係數。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w18crNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18crReset()">重置</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">熱圖在講什麼</div>
-      點任一格，右邊顯示那一對變數的相關係數與它的意思。對角線一定是 1（自己跟自己）。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">目前選到</div>
-      <div class="ic-row"><span class="ic-label">變數對</span><span class="ic-value" id="w18crPair">—</span></div><div class="ic-row"><span class="ic-label">相關係數</span><span class="ic-value" id="w18crVal">—</span></div><div class="ic-row"><span class="ic-label">怎麼讀</span><span class="ic-value" id="w18crRead">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">熱圖的陷阱</div>
-      顏色會讓「0.3 與 0.5」看起來差很多、「0.85 與 0.9」看起來差不多，端看色階怎麼設。<strong>要下結論就回去看數字</strong>，熱圖是用來快速找候選的。
-    </div>
-  </div>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">散佈圖加迴歸線</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸散佈圖</span></span>
-  <span class="line">sns.regplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span></div>
-  <p class="dx-note"><code>regplot</code> 直接配一條最小平方直線並畫出 95% 信賴帶。那條帶子是<strong>對迴歸線的不確定性</strong>，不是預測區間——第 3 章會分清楚這兩者。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 133</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">依類別分別配適</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸關係圖</span></span>
-  <span class="line">tips[<span class="str">&quot;big_tip&quot;</span>] = (tips.tip / tips.total_bill) &gt; <span class="num">.15</span></span>
-  <span class="line">sns.lmplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;big_tip&quot;</span>, data=tips,</span>
-  <span class="line">           logistic=<span class="num">True</span>, y_jitter=<span class="num">.03</span>);</span>
-  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸關係圖</span></span>
-  <span class="line">sns.lmplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, col=<span class="str">&quot;time&quot;</span>, data=tips);</span></div>
-  <p class="dx-note"><code>lmplot</code> 加 <code>hue</code> 會<strong>每一組各配一條線</strong>。兩條線的斜率明顯不同，就是交互作用的視覺證據。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 135、136</span>
-</div>
-
-<div class="deck-extra">
-  <div class="dx-label">相關係數熱圖</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 相關係數/相關矩陣；載入範例資料集</span></span>
-  <span class="line">corr = tips.corr(numeric_only=<span class="num">True</span>)</span>
-  <span class="line">sns.heatmap(corr);</span></div>
-  <p class="dx-note"><code>tips.corr(numeric_only=True)</code> 先算矩陣，<code>heatmap</code> 只負責上色。共線性的初步檢查常從這裡開始。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 138</span>
+  <span class="line">print(results.summary())</span></div>
+  <p class="dx-note">這一格印出來很長（含 R²、F 統計量、殘差診斷），這裡不列，自己在 lab 裡跑一次看。四個核心欄位就是上面那張表。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 35</span>
 </div>
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
-  <details class="qa-item"><summary><code>regplot</code> 幫我配了線，是不是就等於做了迴歸分析？</summary>
-    <div class="qa-a">不是。它只給你一條線與一條帶子，<strong>沒有係數、沒有 p 值、沒有診斷</strong>。要那些東西得用 statsmodels（P6 會講）。<code>regplot</code> 的用途是「先看看有沒有線性關係」。</div>
+  <details class="qa-item"><summary>p 值 0.000 是不是代表這個變數很重要？</summary>
+    <div class="qa-a">不是。p 值小只代表<strong>「係數不是 0」這件事很有把握</strong>，跟效果大不大無關。樣本夠大時，一個實務上可以忽略的效果也會有很小的 p 值。要談重要性要看係數本身的大小，以及它在你的問題裡代表什麼。</div>
   </details>
-  <details class="qa-item"><summary>熱圖看到兩個變數相關 0.9，該怎麼辦？</summary>
-    <div class="qa-a">先想它們是不是本來就在量同一件事（例如 <code>weight</code> 與 <code>displacement</code>）。真的要放進同一個迴歸模型的話，第 3 章的共線性與第 6 章的收縮方法就是在處理這件事。</div>
+  <details class="qa-item"><summary>標準誤跟標準差差在哪？</summary>
+    <div class="qa-a">標準差量的是<strong>個別觀測</strong>的分散程度；標準誤量的是<strong>估計量</strong>（例如這個係數）的分散程度。樣本變大時標準差不會變小，標準誤會。第 5 章的自助法就是在估標準誤。</div>
+  </details>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 02 · 自我檢測</div>
+  <p>兩個模型的 lstat 係數都是 −0.95，但 A 的標準誤是 0.04、B 是 0.60。這代表什麼？</p>
+  <div class="quiz-options" id="qSummaryOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同樣的點估計、不同的精確度。B 的 95% 信賴區間大約是 −0.95 ± 1.2，涵蓋了 0——也就是說 B 甚至不能排除「沒有效果」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(A)</span> 兩者估到的效果一樣大，但 B 的估計不確定得多</div><div class="quiz-opt" data-correct="false" data-fb="效果的大小是 <code>coef</code> 這一欄，兩者都是 −0.95，一樣大。標準誤講的是「這個 −0.95 有多可信」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(B)</span> B 的效果比較小</div><div class="quiz-opt" data-correct="false" data-fb="配適好壞要看 R² 或殘差圖。標準誤大通常是樣本少、或這個變數跟其他變數共線——那是另一回事。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(C)</span> B 的模型配適得比較差</div></div>
+  <div class="quiz-feedback" id="qSummaryFeedback"></div>
+</div>
+</section>
+<section id="skl">
+<!-- GEN:BEGIN sec:skl -->
+  <div class="section-number">PART 03 · scikit-learn 的三個動詞</div>
+  <h2>fit、predict、score：每個模型都長一樣 <span class="sec-badge">課程 Lab Ch3 · 儲存格 110–114</span></h2>
+<!-- GEN:END sec:skl -->
+
+  <p>scikit-learn 的整個設計就是一句話：<strong>每一個模型都長一樣</strong>。
+  線性迴歸、隨機森林、支持向量機——都是
+  <code>fit(X, y)</code> 學參數、<code>predict(X)</code> 給預測、<code>score</code> 算分數。
+  換模型只要換建構子那一行，後面完全不用改。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w19flowSvg" height="340"></svg>
+      <div class="status-banner" id="w19flStatus"><span class="status-icon">›</span><span class="status-text">按「單步」走一次 fit → predict → score。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w19flStep()">→ 單步</button><button class="btn btn-play" onclick="w19flPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w19flReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">三個動詞</div>
+      按「單步」看資料怎麼流過去。注意 <code>fit</code> 是<strong>唯一</strong>會看 y 的一步——之後的 <code>predict</code> 只吃 X。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">步驟</span><span class="ic-value" id="w19flStep">0 / 3</span></div><div class="ic-row"><span class="ic-label">這一步做什麼</span><span class="ic-value" id="w19flWhat">—</span></div><div class="ic-row"><span class="ic-label">學到的東西存在哪</span><span class="ic-value" id="w19flWhere">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">結尾有底線的屬性</div>
+      <code>coef_</code>、<code>intercept_</code>、<code>classes_</code>——sklearn 的慣例是<strong>「配適之後才存在」的屬性結尾加底線</strong>。看到 <code>NotFittedError</code> 就是你還沒 fit 就想用它們。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">同一個模型的 sklearn 版本</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># ols model with intercept</span></span>
+  <span class="line">ols_sl = linear_model.LinearRegression(fit_intercept=<span class="num">True</span>)</span>
+  <span class="line"> </span>
+  <span class="line"><span class="com"># fitted ols model (.values.reshape(-1, 1) is required for single predictor?)</span></span>
+  <span class="line">x_train = Boston.lstat.values.reshape(-<span class="num">1</span>, <span class="num">1</span>)</span>
+  <span class="line">y_true =  Boston.medv</span>
+  <span class="line">ols_sl.fit(x_train, y_true)</span>
+  <span class="line"> </span>
+  <span class="line">y_pred = ols_sl.predict(x_train)</span>
+  <span class="line"><span class="com"># summary</span></span>
+  <span class="line">ols_sl.intercept_, ols_sl.coef_</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(np.float64(34.5538408793831), array([-0.95004935]))</pre></div>
+  <p class="dx-note">輸出是 <code>(intercept_, coef_)</code>：34.5538408793831 與 −0.95004935。<strong>跟 statsmodels 的 34.5538 與 −0.9500 是同一組數字。</strong>另外注意 <code>reshape(-1, 1)</code>——sklearn 要的 X 一律是二維。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 110</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">評分</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">ols_sl_summary = {<span class="str">&#x27;R2&#x27;</span>: r2_score(y_true, y_pred),</span>
+  <span class="line">                  <span class="str">&#x27;Ex. Var&#x27;</span>: explained_variance_score(y_true, y_pred),</span>
+  <span class="line">                  <span class="str">&#x27;MSE&#x27;</span>: mean_squared_error(y_true, y_pred)}</span>
+  <span class="line"> </span>
+  <span class="line"><span class="kw">for</span> k, v <span class="kw">in</span> ols_sl_summary.items():</span>
+  <span class="line">    print(k, <span class="str">&#x27;:&#x27;</span>, v)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>R2 : 0.5441462975864797
+Ex. Var : 0.5441462975864798
+MSE : 38.48296722989415</pre></div>
+  <p class="dx-note">R² 0.544 與 MSE 38.48。這裡算的是<strong>訓練資料</strong>上的分數，所以一定偏樂觀——下一節就在講這件事。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 113</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">預測新資料</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># out-of-sample 預測s</span></span>
+  <span class="line">ols_sl.predict(np.array([<span class="num">5</span>, <span class="num">10</span>, <span class="num">15</span>]).reshape(-<span class="num">1</span>, <span class="num">1</span>))</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([29.80359411, 25.05334734, 20.30310057])</pre></div>
+  <p class="dx-note">跟 statsmodels 的 <code>get_prediction</code> 給出<strong>逐位相同</strong>的三個數字。兩套 API 算的是同一件事。</p>
+  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 114</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 03 · 自我檢測</div>
+  <p><code>model.fit(X_train, y_train)</code> 之後要在測試集評估，正確的寫法是？</p>
+  <div class="quiz-options" id="qSklOptions"><div class="quiz-opt" data-correct="false" data-fb="這樣是<strong>重新訓練</strong>一個模型，不是評估。測試集一旦被 fit 過就再也不是測試集了。" onclick="quizCheck('qSkl', this)"><span class="opt-letter">(A)</span> <code>model.fit(X_test, y_test)</code> 再看分數</div><div class="quiz-opt" data-correct="true" data-fb="對。<code>score</code> 只是拿已經學好的參數去預測再算分數，不會改動模型。同理 <code>predict</code> 也不會。" onclick="quizCheck('qSkl', this)"><span class="opt-letter">(B)</span> <code>model.score(X_test, y_test)</code></div><div class="quiz-opt" data-correct="false" data-fb="<code>fit_transform</code> 是轉換器（scaler、PCA）的方法，估計器沒有它；而且對測試資料 fit 正是最後一節要講的資料洩漏。" onclick="quizCheck('qSkl', this)"><span class="opt-letter">(C)</span> <code>model.fit_transform(X_test)</code></div></div>
+  <div class="quiz-feedback" id="qSklFeedback"></div>
+</div>
+</section>
+<section id="split">
+<!-- GEN:BEGIN sec:split -->
+  <div class="section-number">PART 04 · 切分訓練與測試</div>
+  <h2>在同一份資料上評估自己，一定會太樂觀 <span class="sec-badge">課程 Lab Ch5 · 儲存格 16–26</span></h2>
+<!-- GEN:END sec:split -->
+
+  <p>上一節的 R² 0.544 是<strong>拿訓練資料自己考自己</strong>算出來的，
+  一定偏樂觀。模型可以把訓練資料背下來，那個分數不代表它對沒看過的資料有用。
+  解法是把資料切成兩份：一份學、一份考。</p>
+
+<div class="info-box warm">
+  <span class="info-label">這是整門課的分水嶺</span>
+  第 2 章的訓練 MSE 對測試 MSE、第 5 章的交叉驗證、第 6 章的模型選擇，全部建立在這一句上：<strong>評估要用模型沒看過的資料</strong>。
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">切一刀</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto_train, Auto_valid = train_test_split(Auto,</span>
+  <span class="line">                                         test_size=<span class="num">196</span>,</span>
+  <span class="line">                                         random_state=rng)</span></div>
+  <p class="dx-note"><code>random_state=0</code> 固定切法。不固定的話你今天的 MSE 跟明天的不一樣，就沒辦法比較模型了。</p>
+  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 16</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">在驗證集上算 MSE</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">X_valid = hp_mm.transform(Auto_valid)</span>
+  <span class="line">y_valid = Auto_valid[<span class="str">&#x27;mpg&#x27;</span>]</span>
+  <span class="line">valid_pred = results.predict(X_valid)</span>
+  <span class="line">np.mean((y_valid - valid_pred)**<span class="num">2</span>)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(25.57387818968441)</pre></div>
+  <p class="dx-note">25.57——比訓練資料上的分數誠實。這個數字後面會一直出現。</p>
+  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 20</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">三種常見的誤差指標</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">print(<span class="str">&quot;The MAE is: {:.5}&quot;</span>.format(metrics.mean_absolute_error(y_valid, valid_pred)))  <span class="com"># (True, Predict)</span></span>
+  <span class="line">print(<span class="str">&quot;The MSE is: {:.5}&quot;</span>.format(metrics.mean_squared_error(y_valid, valid_pred)))</span>
+  <span class="line">print(<span class="str">&quot;The RMSE is: {:.5}&quot;</span>.format(np.sqrt( metrics.mean_squared_error(y_valid, valid_pred))))</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>The MAE is: 3.9907
+The MSE is: 25.574
+The RMSE is: 5.0571</pre></div>
+  <p class="dx-note">MAE 3.99、MSE 25.57、RMSE 5.06。RMSE 跟 y 同單位（每加侖英里），比 MSE 好解釋；MAE 對離群值比較不敏感。</p>
+  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 22</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <div class="chart-wrap"><canvas id="w19cvChart"></canvas>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：驗證集的 MSE 從一次式的 25.57 降到二次式的 22.22，三次式反而略升到 22.67——複雜度不是越高越好。</div></div>
+      </div>
+      <div class="status-banner" id="w19cvStatus"><span class="status-icon">›</span><span class="status-text">驗證集 MSE：二次式最低，三次式沒有更好。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w19cvSet(0)">驗證集 MSE</button><button class="btn btn-toggle" onclick="w19cvSet(1)">加上 LOOCV</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">三個多項式次數</div>
+      同一份資料、同一個切法，只改多項式的次數。二次式明顯比一次式好，三次式沒有再進步——<strong>這就是第 5、6 章在找的那個轉折點</strong>。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這些數字</div>
+      <div class="ic-row"><span class="ic-label">degree 1</span><span class="ic-value" id="w19cv1">25.5739</span></div><div class="ic-row"><span class="ic-label">degree 2</span><span class="ic-value" id="w19cv2">22.2180</span></div><div class="ic-row"><span class="ic-label">degree 3</span><span class="ic-value" id="w19cv3">22.6677</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">單一次切分的問題</div>
+      換一個 <code>random_state</code>，這三個數字都會變。lab 儲存格 28 就示範了換切法之後結果不同——所以才需要交叉驗證，下一節講。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">三個次數的驗證誤差</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">MSE = np.zeros(<span class="num">3</span>)</span>
+  <span class="line"><span class="kw">for</span> idx, degree <span class="kw">in</span> enumerate(range(<span class="num">1</span>, <span class="num">4</span>)):</span>
+  <span class="line">    MSE[idx] = evalMSE([poly(<span class="str">&#x27;horsepower&#x27;</span>, degree)],</span>
+  <span class="line">                       <span class="str">&#x27;mpg&#x27;</span>,</span>
+  <span class="line">                       Auto_train,</span>
+  <span class="line">                       Auto_valid)</span>
+  <span class="line">MSE</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([25.57387819, 22.21802005, 22.66767544])</pre></div>
+  <p class="dx-note">上面那張圖的三個數字就是這一格的輸出，逐字取用。</p>
+  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 26</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 04 · 自我檢測</div>
+  <p>訓練集 R² 是 0.95、測試集 R² 是 0.42。最合理的判斷是？</p>
+  <div class="quiz-options" id="qSplitOptions"><div class="quiz-opt" data-correct="true" data-fb="對。它把訓練資料的雜訊也學了進去，換一份資料就失效。第 2 章的偏差—變異取捨、第 6 章的收縮方法都在處理這件事。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(A)</span> 模型過度配適了訓練資料</div><div class="quiz-opt" data-correct="false" data-fb="換到看得順眼為止就等於把測試集當訓練集用。測試集只能<strong>看一次</strong>，看多了它就失去意義。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(B)</span> 測試集有問題，應該換一個</div><div class="quiz-opt" data-correct="false" data-fb="方向反了。訓練分數遠高於測試分數是<strong>太複雜</strong>的徵狀，加變數只會更嚴重。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(C)</span> 模型還不夠複雜，應該加更多變數</div></div>
+  <div class="quiz-feedback" id="qSplitFeedback"></div>
+</div>
+</section>
+<section id="cv">
+<!-- GEN:BEGIN sec:cv -->
+  <div class="section-number">PART 05 · 交叉驗證與資料洩漏</div>
+  <h2>先切分再轉換，順序反了整套評估就作廢 <span class="sec-badge">課程 Lab Ch5 · 儲存格 34–46</span></h2>
+<!-- GEN:END sec:cv -->
+
+  <p>單切一刀有兩個問題：只用了一部分資料訓練，而且結果會隨著切法跳動。
+  交叉驗證把資料輪流當驗證集，每一筆都當過一次，結果穩定得多。
+  但用它之前得先弄清楚一件事——<strong>前處理要在切分的哪一邊做</strong>。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w19leakSvg" height="340"></svg>
+      <div class="status-banner" id="w19lkStatus"><span class="status-icon">›</span><span class="status-text">先猜哪一條會給出比較好看（但假的）分數。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w19lkSet(0)">先標準化再切分 ✗</button><button class="btn btn-toggle" onclick="w19lkSet(1)">先切分再標準化 ✓</button><button class="btn btn-step" onclick="w19lkStep()">→ 單步</button><button class="btn btn-reset" onclick="w19lkReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">兩條路，一條是錯的</div>
+      左邊：先標準化整份資料、再切分。右邊：先切分、只用訓練集學標準化的參數。按「單步」看差別在哪一步發生。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">路線</span><span class="ic-value" id="w19lkPath">—</span></div><div class="ic-row"><span class="ic-label">標準化用到了誰的資訊</span><span class="ic-value" id="w19lkInfo">—</span></div><div class="ic-row"><span class="ic-label">測試分數</span><span class="ic-value" id="w19lkScore">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">為什麼這叫洩漏</div>
+      先標準化的話，訓練集的每一筆都間接知道了測試集的平均與標準差。模型因此在測試集上表現得比實際好——<strong>你以為的 out-of-sample 其實不是</strong>。Pipeline 的存在就是為了讓這件事不可能發生。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">留一交叉驗證</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">reg = LinearRegression()</span>
+  <span class="line"> </span>
+  <span class="line"><span class="com"># Use MSE as the scoring metric</span></span>
+  <span class="line">scoring = metrics.make_scorer(metrics.mean_squared_error)</span>
+  <span class="line"><span class="com"># Cross validation iterators</span></span>
+  <span class="line">cv = LeaveOneOut()</span>
+  <span class="line">cv_results = cross_validate(reg,</span>
+  <span class="line">                            X.horsepower.to_numpy().reshape(-<span class="num">1</span>,<span class="num">1</span>),</span>
+  <span class="line">                            Y.to_numpy(),</span>
+  <span class="line">                            scoring=scoring,</span>
+  <span class="line">                            cv=cv</span>
+  <span class="line">                            )</span>
+  <span class="line">cv_err = np.mean(cv_results[<span class="str">&#x27;test_score&#x27;</span>])</span>
+  <span class="line">cv_err</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(24.231513517929226)</pre></div>
+  <p class="dx-note">24.2315。每一筆各當一次驗證集，所以只有一個數字、沒有隨機性——但要配適 n 次，資料大的時候很貴。</p>
+  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 34</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">重複切分：看平均，也看標準差</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">validation = ShuffleSplit(n_splits=<span class="num">10</span>,</span>
+  <span class="line">                          test_size=<span class="num">196</span>,</span>
+  <span class="line">                          random_state=<span class="num">0</span>)</span>
+  <span class="line">results = cross_validate(hp_model,</span>
+  <span class="line">                         Auto.drop([<span class="str">&#x27;mpg&#x27;</span>], axis=<span class="num">1</span>),</span>
+  <span class="line">                         Auto[<span class="str">&#x27;mpg&#x27;</span>],</span>
+  <span class="line">                         cv=validation)</span>
+  <span class="line">results[<span class="str">&#x27;test_score&#x27;</span>].mean(), results[<span class="str">&#x27;test_score&#x27;</span>].std()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(np.float64(23.802232661034168), np.float64(1.4218450941091842))</pre></div>
+  <p class="dx-note">平均 23.80、標準差 1.42。<strong>那個 1.42 才是重點</strong>：它告訴你單切一刀的結果可以晃動多少，兩個模型的 MSE 差 0.5 根本不算差別。</p>
+  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 46</span>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>順序</th><th>標準化用到了什麼</th><th>測試分數</th><th>對不對</th></tr></thead>
+  <tbody><tr><td>先標準化 → 再切分</td><td>全部資料的平均與標準差（含測試集）</td><td>偏樂觀</td><td>✗ 洩漏</td></tr><tr><td>先切分 → 用訓練集 fit、對測試集 transform</td><td>只有訓練集</td><td>誠實</td><td>✓</td></tr><tr><td><code>Pipeline</code> ＋ <code>cross_validate</code></td><td>每一折各自的訓練部分</td><td>誠實</td><td>✓ 最推薦</td></tr></tbody>
+</table></div>
+
+<div class="info-box">
+  <span class="info-label">Pipeline 是紀律，不是語法糖</span>
+  把 <code>StandardScaler</code> 與模型包成 <code>Pipeline</code> 之後丟進 <code>cross_validate</code>，sklearn 會<strong>在每一折內部</strong>重新 fit 那個 scaler。你想犯錯都犯不了。第 6 章的收縮方法一定要標準化，那時這件事就從「好習慣」變成「非做不可」。
+</div>
+
+<div class="qa-box">
+  <div class="qa-head">觀念釐清</div>
+  <details class="qa-item"><summary>交叉驗證跟測試集是不是同一件事？</summary>
+    <div class="qa-a">不是。交叉驗證是在<strong>訓練資料內部</strong>切來切去，用來選模型與調參數；測試集是最後才動一次的、完全獨立的一份，用來報告最終效能。拿測試集去選模型，等於把它變成訓練資料的一部分。</div>
+  </details>
+  <details class="qa-item"><summary>為什麼 LOOCV 的結果沒有標準差？</summary>
+    <div class="qa-a">因為它<strong>沒有隨機性</strong>——每一筆各當一次驗證集，切法只有一種。k 折就不同了，切法隨機，所以 lab 才會用 <code>ShuffleSplit(n_splits=10)</code> 看它的平均與標準差。</div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
-  <p><code>lmplot</code> 加了 <code>hue='smoker'</code> 之後，兩組的迴歸線斜率明顯不同。這在暗示什麼？</p>
-  <div class="quiz-options" id="qModelOptions"><div class="quiz-opt" data-correct="false" data-fb="斜率不同講的不是「誰比較高」（那是截距與整體位置的事），而是「<strong>帳單每增加一元，小費增加多少</strong>」在兩組之間不一樣。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(A)</span> 吸菸者的小費比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。斜率隨另一個變數改變，正是交互作用的定義。第 3 章會教怎麼在模型裡寫出來（<code>total_bill * smoker</code>），並檢定它是不是真的。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(B)</span> 帳單對小費的效果在兩組之間不同，可能有交互作用</div><div class="quiz-opt" data-correct="false" data-fb="離群值會影響斜率，但「兩組斜率不同」本身不是離群值的證據。要看離群值該畫盒鬚圖或殘差圖。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(C)</span> 資料裡有離群值</div></div>
-  <div class="quiz-feedback" id="qModelFeedback"></div>
+  <p>你先對整份資料做 <code>StandardScaler().fit_transform(X)</code>，再 <code>train_test_split</code>，最後回報測試 MSE。這個數字有什麼問題？</p>
+  <div class="quiz-options" id="qCvOptions"><div class="quiz-opt" data-correct="false" data-fb="會有問題。重點不是排序，是<strong>那個數字不再是 out-of-sample 的估計</strong>。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(A)</span> 沒問題，標準化不會改變模型的排序</div><div class="quiz-opt" data-correct="true" data-fb="對。測試集的平均與標準差已經透過 scaler 進到訓練流程裡了。正確做法是把 scaler 與模型包成 <code>Pipeline</code>，讓每一折自己 fit 自己的 scaler。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(B)</span> 它偏樂觀，因為標準化的參數用到了測試集的資訊</div><div class="quiz-opt" data-correct="false" data-fb="換哪一種 scaler 都一樣。問題出在<strong>順序</strong>，不是選哪個轉換器。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(C)</span> 應該改用 MinMaxScaler</div></div>
+  <div class="quiz-feedback" id="qCvFeedback"></div>
+</div>
+
+<div class="info-box purple">
+  <span class="info-label">🔗 這在本站哪一章會用到</span>
+  第 5 章整章都在講交叉驗證與自助法，第 6 章用交叉驗證挑收縮的強度 λ，第 8 章調樹的深度也是同一套。<a href="resampling_methods.html#cv">→ 重抽樣方法 · 交叉驗證</a>
 </div>
 </section>
 <section id="exercises">
@@ -1088,71 +1108,71 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
   程式碼卡在自己的環境跑一次。</p>
-  <div class="sol-links"><a href="https://seaborn.pydata.org/tutorial.html" target="_blank" rel="noopener">🔗 seaborn 教學</a><a href="https://matplotlib.org/stable/users/explain/quick_start.html" target="_blank" rel="noopener">🔗 Matplotlib 快速入門</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
+  <div class="sol-links"><a href="https://www.statsmodels.org/stable/gettingstarted.html" target="_blank" rel="noopener">🔗 statsmodels 快速入門</a><a href="https://scikit-learn.org/stable/developers/develop.html" target="_blank" rel="noopener">🔗 scikit-learn 估計器介面</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch03 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 1 · 選圖</div>
-  <p>你要呈現「三個地區（origin）的 mpg 分布，並讓讀者看得出有沒有離群值」。該畫什麼？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="<code>barplot</code> 只給平均與信賴區間，<strong>離群值完全看不到</strong>——它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。盒鬚圖是唯一會把離群值單獨畫成點的類別圖。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
+  <div class="quiz-label">EXERCISE 1 · 選工具</div>
+  <p>你要比較五個模型並挑一個，中間需要標準化與多項式展開。該用哪一套？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。要比較模型就需要一致的評估流程，這正是 sklearn 的設計目的。Pipeline 還順便擋掉了資料洩漏。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> scikit-learn，把前處理與模型包成 Pipeline 再交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="那些統計量在「比較五個模型」這件事上幫不上忙，而且 statsmodels 沒有 Pipeline 與 <code>cross_validate</code>。選定模型之後再用它報告係數是合理的。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> statsmodels，因為它給的統計量比較完整</div><div class="quiz-opt" data-correct="false" data-fb="彈性換來的是每一次都要自己記得「先切分再轉換」。Pipeline 存在的理由就是讓你不必依賴記憶力。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 手寫迴圈，最有彈性</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 2 · bins</div>
-  <p>把 bins 從 10 調到 60 之後，直方圖出現很多小峰。最合理的解讀是？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。bins 越細，每一格的樣本越少，隨機起伏就越明顯。要判斷是不是真的結構，就用 <code>hue</code> 拿一個候選的分類變數去驗。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 多半是抽樣雜訊，除非那些峰對應到某個真實的分類</div><div class="quiz-opt" data-correct="false" data-fb="細的 bins 幾乎一定會生出更多峰，這是它的數學性質，不是資料的性質。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 資料真的有很多群，應該用 60 這張</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 資料有問題，應該重新收集</div></div>
+  <div class="quiz-label">EXERCISE 2 · 截距</div>
+  <p><code>sm.OLS(y, Boston[['lstat']]).fit()</code> 少做了一件事。少了什麼？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。<code>sm.OLS</code> 不會自動加截距，要自己放一欄全 1（或用 <code>MS()</code>／<code>sm.add_constant</code>）。lab 儲存格 22 那一欄 <code>intercept</code> 就是在做這件事。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 沒有截距欄，配出來的是一條過原點的線</div><div class="quiz-opt" data-correct="false" data-fb="線性迴歸不需要標準化——標準化不改變配適，只改變係數的單位。（第 6 章的收縮方法才非標準化不可。）" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 沒有標準化 lstat</div><div class="quiz-opt" data-correct="false" data-fb="<code>sm.OLS</code> 的簽名就是 <code>(y, X)</code>，順序是對的。倒是 sklearn 的 <code>fit(X, y)</code> 反過來，兩套要記清楚。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> y 應該放後面</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 3 · 圖表誠實度</div>
-  <p>一張長條圖的 y 軸從 2.9 開始，讓 2.98 與 3.26 看起來差三倍。這張圖錯在哪？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="「方便觀察」跟「誤導」的界線就在這裡。長條圖用<strong>長度</strong>編碼數值，截斷之後長度的比例不再對應數值的比例。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 沒錯，只是放大了差異方便觀察</div><div class="quiz-opt" data-correct="true" data-fb="對。真的要放大差異，改用點估計圖（<code>pointplot</code>）——點的位置不隱含「從零開始」的承諾，截斷是可以接受的，而且要在圖上標明。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 長條圖用長度表示數量，截斷 y 軸會破壞長度的意義</div><div class="quiz-opt" data-correct="false" data-fb="對數是給跨數量級的資料用的。2.98 與 3.26 差不到 10%，取對數只會更難讀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 應該把 y 軸改成對數尺度</div></div>
+  <div class="quiz-label">EXERCISE 3 · 誤差的不確定性</div>
+  <p>模型 A 的十折 CV MSE 是 23.8（標準差 1.4），模型 B 是 23.4（標準差 1.5）。結論是？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="差距 0.4 遠小於兩者各自的標準差。這個差很可能只是切分的隨機性。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> B 比較好，選 B</div><div class="quiz-opt" data-correct="true" data-fb="對。差距被不確定性淹沒的時候，就用簡單性、可解釋性或計算成本來決定——第 6 章的一倍標準誤法則正是這個想法的正式版。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 兩者在這份資料上分不出高下，改用其他理由來選</div><div class="quiz-opt" data-correct="false" data-fb="折數變多會讓每一折的訓練集更大、估計的變異更小，但也更貴，而且不會讓兩個本來就很接近的模型突然分出勝負。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 增加折數到 50 折再比一次</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 4 · figure-level 與 axes-level</div>
-  <p>你想把四張 seaborn 圖排成 2×2 放進同一張 Figure。下列哪一個函式<strong>做不到</strong>？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。名字結尾是 <code>plot</code> 的多半是 axes-level，接受 <code>ax=</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，根本不吃 <code>ax=</code> 參數。要散佈圖就改用 <code>sns.scatterplot</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
+  <div class="quiz-label">EXERCISE 4 · 洩漏</div>
+  <p>下列哪一個做法<strong>不會</strong>造成資料洩漏？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="會洩漏。挑變數也是一種學習，用到測試部分的資訊就已經洩漏了。變數選擇要放進 Pipeline，跟著每一折一起做。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 用全部資料算相關係數，挑出前十個變數，再切分做交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="會洩漏。中位數是從整份資料算的，測試部分的資訊進到了訓練流程。<code>SimpleImputer</code> 放進 Pipeline 就沒事。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 用全部資料的中位數填補遺漏值，再切分</div><div class="quiz-opt" data-correct="true" data-fb="對，這是正確的順序。<code>fit</code> 只看訓練集，<code>transform</code> 對兩邊都用同一組參數。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 先切分，再用訓練集的平均與標準差去 transform 測試集</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">REFERENCE · 總覽</div>
-  <h2>視覺化速查表 <span class="sec-badge">先備 · 視覺化</span></h2>
+  <h2>建模 API速查表 <span class="sec-badge">先備 · 建模 API</span></h2>
 <!-- GEN:END sec:reference -->
 
-  <p>選圖速查表。先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。</p>
+  <p>兩套 API 的對照表，以及最後那條不能違反的順序。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>x 的型別</th><th>y 的型別</th><th>圖</th><th>seaborn</th></tr></thead>
-  <tbody><tr><td>數值</td><td>數值</td><td>散佈圖</td><td><code>scatterplot</code> / <code>relplot</code></td></tr><tr><td>數值</td><td>數值（有序、每個 x 多筆）</td><td>折線圖＋信賴帶</td><td><code>lineplot</code></td></tr><tr><td>數值</td><td>數值（要看模型）</td><td>散佈圖＋迴歸線</td><td><code>regplot</code> / <code>lmplot</code></td></tr><tr><td>數值</td><td>—</td><td>直方圖／密度圖</td><td><code>histplot</code> / <code>kdeplot</code></td></tr><tr><td>類別</td><td>數值</td><td>盒鬚圖／長條圖／點估計圖</td><td><code>catplot(kind=…)</code></td></tr><tr><td>類別</td><td>—</td><td>計數圖</td><td><code>countplot</code></td></tr><tr><td>類別</td><td>類別</td><td>計數的交叉表＋熱圖</td><td><code>heatmap</code></td></tr><tr><td>多個數值欄</td><td>—</td><td>成對關係圖／相關熱圖</td><td><code>pairplot</code> / <code>heatmap</code></td></tr></tbody>
+  <thead><tr><th>你要做的事</th><th>statsmodels</th><th>scikit-learn</th></tr></thead>
+  <tbody><tr><td>準備 X</td><td><code>MS([...]).fit_transform(df)</code>（截距要自己有）</td><td><code>X.values.reshape(-1,1)</code>；截距用 <code>fit_intercept=True</code></td></tr><tr><td>配適</td><td><code>sm.OLS(y, X).fit()</code></td><td><code>model.fit(X, y)</code></td></tr><tr><td>看係數</td><td><code>summarize(results)</code>、<code>results.params</code></td><td><code>model.coef_</code>、<code>model.intercept_</code></td></tr><tr><td>標準誤與 p 值</td><td>有</td><td><b>沒有</b></td></tr><tr><td>預測</td><td><code>results.get_prediction(newX)</code></td><td><code>model.predict(X)</code></td></tr><tr><td>評分</td><td><code>results.rsquared</code></td><td><code>model.score(X, y)</code></td></tr><tr><td>交叉驗證</td><td>包成 <code>sklearn_sm</code> 才有</td><td><code>cross_validate</code></td></tr><tr><td>串前處理</td><td>沒有</td><td><code>Pipeline</code></td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>figure-level（自己開 Figure）</th><th>axes-level（可以傳 ax=）</th></tr></thead>
-  <tbody><tr><td><code>relplot</code></td><td><code>scatterplot</code>、<code>lineplot</code></td></tr><tr><td><code>catplot</code></td><td><code>boxplot</code>、<code>barplot</code>、<code>countplot</code>、<code>pointplot</code></td></tr><tr><td><code>displot</code></td><td><code>histplot</code>、<code>kdeplot</code></td></tr><tr><td><code>lmplot</code>、<code>jointplot</code>、<code>pairplot</code></td><td><code>regplot</code>、<code>heatmap</code></td></tr></tbody>
+  <thead><tr><th>估計器（Estimator）</th><th>轉換器（Transformer）</th></tr></thead>
+  <tbody><tr><td><code>fit(X, y)</code> — 學參數</td><td><code>fit(X)</code> — 學轉換的參數</td></tr><tr><td><code>predict(X)</code> — 給預測</td><td><code>transform(X)</code> — 套用轉換</td></tr><tr><td><code>score(X, y)</code> — 算分數</td><td><code>fit_transform(X)</code> — 兩步合一</td></tr><tr><td>例：LinearRegression、LogisticRegression</td><td>例：StandardScaler、PCA、SimpleImputer</td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>參數</th><th>做什麼</th><th>什麼時候用</th></tr></thead>
-  <tbody><tr><td><code>hue=</code></td><td>用顏色分第三個變數</td><td>組數 ≤ 5、要疊在同一張圖比較</td></tr><tr><td><code>style=</code></td><td>用標記形狀分</td><td>要黑白列印時搭配 hue 一起用</td></tr><tr><td><code>size=</code></td><td>用點的大小分</td><td>第三個變數是數值且範圍大</td></tr><tr><td><code>col=</code> / <code>row=</code></td><td>拆成好幾張小圖</td><td>組數多、疊起來會糊</td></tr></tbody>
+  <thead><tr><th>誤差指標</th><th>公式的意思</th><th>什麼時候用</th></tr></thead>
+  <tbody><tr><td>MAE</td><td>平均絕對誤差</td><td>對離群值不敏感；跟 y 同單位</td></tr><tr><td>MSE</td><td>平均平方誤差</td><td>數學上好處理，整門課的預設</td></tr><tr><td>RMSE</td><td>MSE 開根號</td><td>跟 y 同單位，最好解釋</td></tr><tr><td>R²</td><td>被解釋的變異比例</td><td>跟其他模型比較時方便，但會隨變數增加而虛高</td></tr></tbody>
 </table></div>
 
 <div class="info-box">
   <span class="info-label">三個一定要記住的觀念</span>
-  <strong>1. 先畫圖再算數字。</strong>摘要統計會漏掉形狀，相關係數一樣的兩份資料可以長得完全不同。<br><strong>2. bins 與頻寬是你的假設，不是資料的性質。</strong>調參數之前先想好要回答什麼問題。<br><strong>3. countplot 講筆數、barplot 講平均、boxplot 講分布。</strong>三種長條講三件事，不要混用。
+  <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，你報告的 out-of-sample 分數就是假的——用 Pipeline 讓自己想犯錯都難。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch03、Ch05）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 24 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 25 張</span></h2>
   <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
   先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
   <div class="fc-controls">
@@ -1164,12 +1184,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
-<div class="chapter-nav"><a class="prev" href="p4_pandas.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">pandas 資料框</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="p6_modeling_api.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">建模 API</div></a></div>
+<div class="chapter-nav"><a class="prev" href="p5_visualization.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">視覺化</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><span></span></div>
 <!-- GEN:END chapternav -->
 </div>
 <!-- GEN:BEGIN footer -->
 <footer>
-  互動式視覺化教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
+  互動式建模 API教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
   <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
 </footer>
 <!-- GEN:END footer -->
@@ -1752,352 +1772,347 @@ HC.initFlashcards = () => {
 <!-- GEN:END sharedjs -->
 <!-- PAGEJS:BEGIN -->
 <script>
-/* ═══ w18an Figure / Axes 解剖 ═══ */
-const w18anS = HC.svg('w18anatSvg', {h: 320});
-const w18anCases = [
-  {o: 'Figure', w: '整張畫布：大小、存檔、總標題', h: 'set_size_inches、savefig、suptitle',
-   note: '一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。'},
-  {o: 'Axes', w: '一個座標系：資料真正被畫進去的地方', h: 'plot、scatter、set_xlim、legend',
-   note: '你 99% 的時間都在跟它打交道。seaborn 的 ax= 參數指的就是它。'},
-  {o: 'Axis（軸）', w: '單一根軸的刻度與標籤', h: 'set_xlabel、set_xticks',
-   note: '注意 Axes（座標系）與 Axis（軸）差一個字母，是兩個不同的東西。'},
-  {o: 'Artist', w: '畫上去的每一個東西：點、線、文字', h: 'set_color、set_alpha',
-   note: 'plot() 回傳的就是一串 Artist，抓住它就能事後改樣式。'}
-];
-let w18anI = 0;
-function w18anDraw() {
-  const g = w18anS.clearLayer('main');
-  const c = w18anCases[w18anI];
-  const on = (k, col) => (w18anI === k ? col : HC.tok.card);
-  w18anS.add('rect', {x: 60, y: 50, width: 500, height: 230, rx: 8,
-                      fill: on(0, HC.tok.accent), opacity: w18anI === 0 ? 0.35 : 0.12,
-                      stroke: w18anI === 0 ? HC.tok.accent : HC.tok.cardBorder,
-                      'stroke-width': w18anI === 0 ? 3 : 1.5}, g);
-  w18anS.txtPx(70, 44, 'Figure', {cls: 'axtitle',
-                                  fill: w18anI === 0 ? HC.tok.accent : HC.tok.muted}, g);
-  w18anS.add('rect', {x: 110, y: 78, width: 400, height: 176, rx: 6,
-                      fill: on(1, HC.tok.accent2), opacity: w18anI === 1 ? 0.35 : 0.12,
-                      stroke: w18anI === 1 ? HC.tok.accent2 : HC.tok.cardBorder,
-                      'stroke-width': w18anI === 1 ? 3 : 1.5}, g);
-  w18anS.txtPx(120, 96, 'Axes', {cls: 'axtitle',
-                                 fill: w18anI === 1 ? HC.tok.accent2 : HC.tok.muted}, g);
-  const axc = w18anI === 2 ? HC.tok.accent : HC.tok.muted;
-  w18anS.add('path', {d: 'M150 230 H470', stroke: axc,
-                      'stroke-width': w18anI === 2 ? 4 : 2}, g);
-  w18anS.add('path', {d: 'M150 230 V110', stroke: axc,
-                      'stroke-width': w18anI === 2 ? 4 : 2}, g);
-  [[190, 200], [240, 176], [292, 186], [340, 148], [396, 132], [440, 150]].forEach(pt => {
-    w18anS.add('circle', {cx: pt[0], cy: pt[1], r: w18anI === 3 ? 7 : 5,
-                          fill: w18anI === 3 ? HC.tok.accent : HC.tok.muted,
-                          opacity: w18anI === 3 ? 1 : 0.55}, g);
-  });
-  document.getElementById('w18anObj').textContent = c.o;
-  document.getElementById('w18anWhat').textContent = c.w;
-  document.getElementById('w18anHow').textContent = c.h;
-  setStatus('w18anStatus', c.note);
+/* 共用：畫一個方塊 */
+function w19box(s, g, x, y, w, h, label, fill, sub) {
+  s.add('rect', {x: x, y: y, width: w, height: h, rx: 7, fill: fill,
+                 stroke: HC.tok.cardBorder, 'stroke-width': 1.5}, g);
+  const t = s.add('text', {x: x + w / 2, y: y + (sub ? h / 2 - 2 : h / 2 + 5),
+                           'text-anchor': 'middle', cls: 'vlab',
+                           'font-family': HC.MONO, fill: HC.tok.paper}, g);
+  t.textContent = label;
+  if (sub) {
+    const u = s.add('text', {x: x + w / 2, y: y + h / 2 + 16, 'text-anchor': 'middle',
+                             cls: 'axlab', fill: HC.tok.paper}, g);
+    u.textContent = sub;
+  }
 }
-function w18anSet(i) { w18anI = i; w18anDraw(); }
-if (w18anS) w18anDraw();
+function w19arrow(s, g, x1, y, x2, col) {
+  s.add('path', {d: 'M' + x1 + ' ' + y + ' H ' + (x2 - 9), stroke: col || HC.tok.ink,
+                 'stroke-width': 2.4, fill: 'none'}, g);
+  s.add('path', {d: 'M' + x2 + ' ' + y + ' l -10 -6 v 12 z', fill: col || HC.tok.ink}, g);
+}
 
-/* ═══ w18gd subplots 網格 ═══ */
-const w18gdS = HC.svg('w18gridSvg', {h: 300});
-let w18gdI = 0;
-function w18gdDraw() {
-  const g = w18gdS.clearLayer('main');
-  const cw = 158, chh = 96, x0 = 60, y0 = 70;
-  for (let r = 0; r < 2; r++) {
-    for (let c = 0; c < 3; c++) {
-      const k = r * 3 + c, on = k === w18gdI;
-      w18gdS.add('rect', {x: x0 + c * cw, y: y0 + r * chh, width: cw - 14, height: chh - 14,
-                          rx: 6, fill: on ? HC.tok.accent2 : HC.tok.card,
-                          stroke: HC.tok.cardBorder, 'stroke-width': 1.5,
+/* ═══ w19api 兩套 API 對照 ═══ */
+const w19apiS = HC.svg('w19apiSvg', {h: 340});
+const w19apiCases = [
+  {sm: "X = MS(['lstat']).fit_transform(Boston)", sk: "x = Boston.lstat.values.reshape(-1, 1)",
+   why: 'statsmodels 的 X 要含截距欄；sklearn 要二維陣列，截距另外設'},
+  {sm: 'results = sm.OLS(y, X).fit()', sk: 'model.fit(x, y)',
+   why: '注意引數順序相反：OLS(y, X) 對上 fit(X, y)'},
+  {sm: 'summarize(results)', sk: 'model.coef_、model.intercept_',
+   why: 'statsmodels 多給標準誤、t 值與 p 值；sklearn 只有係數'},
+  {sm: 'results.get_prediction(newX)', sk: 'model.predict(new_x)',
+   why: '兩邊的預測值逐位相同：29.80359411、25.05334734、20.30310057'}
+];
+let w19apiI = 0;
+function w19apiDraw() {
+  const g = w19apiS.clearLayer('main');
+  const c = w19apiCases[w19apiI];
+  const names = ['① 準備 X', '② 配適', '③ 看結果', '④ 預測'];
+  w19apiS.txtPx(24, 34, names[w19apiI], {cls: 'axtitle', fill: HC.tok.accent}, g);
+  ['statsmodels', 'scikit-learn'].forEach((nm, i) => {
+    const y = 66 + i * 118;
+    w19apiS.add('rect', {x: 34, y: y, width: 552, height: 96, rx: 8,
+                         fill: i === 0 ? HC.tok.accent : HC.tok.accent2, opacity: 0.14,
+                         stroke: i === 0 ? HC.tok.accent : HC.tok.accent2,
+                         'stroke-width': 2}, g);
+    const t = w19apiS.add('text', {x: 48, y: y + 24, cls: 'axtitle',
+                                   fill: i === 0 ? HC.tok.accent : HC.tok.accent2}, g);
+    t.textContent = nm;
+    const code = w19apiS.add('text', {x: 48, y: y + 62, cls: 'vlab',
+                                      'font-family': HC.MONO}, g);
+    code.textContent = i === 0 ? c.sm : c.sk;
+  });
+  document.getElementById('w19apiSm').textContent = c.sm;
+  document.getElementById('w19apiSk').textContent = c.sk;
+  document.getElementById('w19apiWhy').textContent = c.why;
+  setStatus('w19apiStatus', c.why + '。');
+}
+function w19apiSet(i) { w19apiI = i; w19apiDraw(); }
+if (w19apiS) w19apiDraw();
+
+/* ═══ w19ds 設計矩陣 ═══ */
+const w19dsS = HC.svg('w19dsgSvg', {h: 340});
+const w19dsCases = [
+  {spec: "MS(['lstat'])", cols: ['intercept', 'lstat'], shape: '(506, 2)',
+   note: '一個預測變數，加上全 1 的截距欄。'},
+  {spec: "MS(['lstat', 'age'])", cols: ['intercept', 'lstat', 'age'], shape: '(506, 3)',
+   note: '多一個變數就多一欄。'},
+  {spec: "MS(['lstat', 'age', ('lstat','age')])",
+   cols: ['intercept', 'lstat', 'age', 'lstat:age'], shape: '(506, 4)',
+   note: '交互作用是<b>兩欄相乘出來的新一欄</b>，不是什麼特別的機制。'},
+  {spec: "MS(['region'])（4 個類別）",
+   cols: ['intercept', 'region[B]', 'region[C]', 'region[D]'], shape: '(506, 4)',
+   note: '4 個類別展開成 <b>3</b> 欄，A 當基準——4 欄會跟截距共線。'}
+];
+let w19dsI = 0;
+function w19dsDraw() {
+  const g = w19dsS.clearLayer('main');
+  const c = w19dsCases[w19dsI];
+  const cw = Math.min(126, 520 / c.cols.length);
+  const x0 = 310 - c.cols.length * cw / 2;
+  c.cols.forEach((nm, j) => {
+    w19dsS.add('rect', {x: x0 + j * cw, y: 96, width: cw - 6, height: 30, rx: 4,
+                        fill: nm === 'intercept' ? HC.tok.muted
+                              : (nm.indexOf(':') >= 0 ? HC.tok.accent : HC.tok.accent2),
+                        opacity: 0.9}, g);
+    const t = w19dsS.add('text', {x: x0 + j * cw + (cw - 6) / 2, y: 116,
+                                  'text-anchor': 'middle', cls: 'axlab',
+                                  fill: HC.tok.paper}, g);
+    t.textContent = nm;
+    for (let r = 0; r < 4; r++) {
+      w19dsS.add('rect', {x: x0 + j * cw, y: 132 + r * 32, width: cw - 6, height: 28,
+                          rx: 3, fill: HC.tok.card, stroke: HC.tok.cardBorder,
+                          'stroke-width': 1.1, opacity: 0.7}, g);
+      const v = w19dsS.add('text', {x: x0 + j * cw + (cw - 6) / 2, y: 151 + r * 32,
+                                    'text-anchor': 'middle', cls: 'vlab',
+                                    'font-family': HC.MONO, fill: HC.tok.muted}, g);
+      v.textContent = nm === 'intercept' ? '1.0'
+        : (nm.indexOf('region') === 0 ? (r === 1 ? '1' : '0') : '…');
+    }
+  });
+  w19dsS.txtPx(24, 34, c.spec, {cls: 'axtitle', fill: HC.tok.accent}, g);
+  w19dsS.txtPx(310, 284, 'X 的每一欄都是模型的一個參數', {cls: 'axlab', anchor: 'middle'}, g);
+  document.getElementById('w19dsSpec').textContent = c.spec;
+  document.getElementById('w19dsCols').textContent = c.cols.join(', ');
+  document.getElementById('w19dsShape').textContent = c.shape;
+  setStatus('w19dsStatus', c.note);
+}
+function w19dsSet(i) { w19dsI = i; w19dsDraw(); }
+if (w19dsS) w19dsDraw();
+
+/* ═══ w19sm summary 四欄 ═══ */
+const w19smS = HC.svg('w19smSvg', {h: 320});
+const w19smCols = ['coef', 'std err', 't', 'P>|t|'];
+const w19smRows = [['intercept', '34.5538', '0.563', '61.415', '0.0'],
+                   ['lstat', '-0.9500', '0.039', '-24.528', '0.0']];
+const w19smInfo = [
+  {w: '效果的大小與方向', n: '符號跟預期相反、或大到不合理',
+   note: 'lstat 每多 1，medv 平均少 0.95（千美元）。這是你真正要報告的東西。'},
+  {w: '這個係數估得多穩', n: '大到讓信賴區間涵蓋 0',
+   note: '樣本變大、或變數之間不共線時，標準誤會變小。'},
+  {w: '係數是標準誤的幾倍', n: '絕對值小於 2',
+   note: 't = coef / std err：−0.9500 ÷ 0.039 ≈ −24.5，跟表上對得起來。'},
+  {w: '「係數其實是 0」的話有多難得到這個結果', n: '不要只看這一欄',
+   note: 'p 值小只代表「不是 0」很有把握，<b>跟效果大不大無關</b>。'}
+];
+let w19smI = 0;
+function w19smDraw() {
+  const g = w19smS.clearLayer('main');
+  const cw = 104, x0 = 148, y0 = 92;
+  w19smCols.forEach((nm, j) => {
+    const on = j === w19smI;
+    w19smS.add('rect', {x: x0 + j * cw, y: y0, width: cw - 6, height: 32, rx: 4,
+                        fill: on ? HC.tok.accent : HC.tok.muted, opacity: on ? 1 : 0.55}, g);
+    const t = w19smS.add('text', {x: x0 + j * cw + (cw - 6) / 2, y: y0 + 21,
+                                  'text-anchor': 'middle', cls: 'vlab',
+                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
+    t.textContent = nm;
+  });
+  w19smRows.forEach((r, i) => {
+    const rl = w19smS.add('text', {x: x0 - 12, y: y0 + 58 + i * 40, 'text-anchor': 'end',
+                                   cls: 'vlab', 'font-family': HC.MONO}, g);
+    rl.textContent = r[0];
+    r.slice(1).forEach((v, j) => {
+      const on = j === w19smI;
+      w19smS.add('rect', {x: x0 + j * cw, y: y0 + 38 + i * 40, width: cw - 6, height: 30,
+                          rx: 3, fill: on ? HC.tok.accent2 : HC.tok.card,
+                          stroke: HC.tok.cardBorder, 'stroke-width': 1.2,
                           opacity: on ? 0.95 : 0.5}, g);
-      const t = w18gdS.add('text', {x: x0 + c * cw + (cw - 14) / 2,
-                                    y: y0 + r * chh + (chh - 14) / 2 + 6,
+      const t = w19smS.add('text', {x: x0 + j * cw + (cw - 6) / 2, y: y0 + 58 + i * 40,
                                     'text-anchor': 'middle', cls: 'vlab',
                                     'font-family': HC.MONO,
                                     fill: on ? HC.tok.paper : HC.tok.muted}, g);
-      t.textContent = 'axes[' + r + ',' + c + ']';
-    }
-  }
-  w18gdS.txtPx(24, 40, 'subplots(nrows=2, ncols=3)', {cls: 'axtitle'}, g);
-  const r = Math.floor(w18gdI / 3), c = w18gdI % 3;
-  document.getElementById('w18gdIdx').textContent = 'axes[' + r + ', ' + c + ']';
-  document.getElementById('w18gdPos').textContent = '第 ' + r + ' 列、第 ' + c + ' 欄';
-  setStatus('w18gdStatus', 'axes 是一個 <b>(2, 3)</b> 的 NumPy 陣列，索引法跟 P3 完全一樣。');
-}
-function w18gdNext() { w18gdI = (w18gdI + 1) % 6; w18gdDraw(); }
-function w18gdReset() { w18gdI = 0; w18gdDraw(); }
-if (w18gdS) w18gdDraw();
-
-/* ═══ w18bn bins 與頻寬（本頁招牌）═══ */
-const w18bnS = HC.svg('w18binsSvg', {h: 340});
-const w18bnData = (() => {
-  /* 固定種子的雙峰資料：60 筆在 3 附近、60 筆在 8 附近 */
-  const rand = HC.stat.lcg(20260828), out = [];
-  for (let i = 0; i < 60; i++) out.push(3 + HC.stat.normal(rand) * 0.9);
-  for (let i = 0; i < 60; i++) out.push(8 + HC.stat.normal(rand) * 1.1);
-  return out;
-})();
-let w18bnK = 10, w18bnKde = false;
-function w18bnDraw() {
-  const s = w18bnS;
-  s.domain([0, 12], [0, 1]);
-  const g = s.clearLayer('main');
-  const lo = 0, hi = 12;
-  let peaks = 0;
-  if (!w18bnKde) {
-    const k = w18bnK, counts = new Array(k).fill(0);
-    w18bnData.forEach(v => {
-      const j = Math.max(0, Math.min(k - 1, Math.floor((v - lo) / (hi - lo) * k)));
-      counts[j] += 1;
+      t.textContent = v;
     });
-    const mx = Math.max.apply(null, counts) || 1;
-    s.domain([0, 12], [0, mx * 1.15]);
-    s.grid(6, 4, {xtitle: '值', ytitle: '次數'});
-    counts.forEach((c, j) => {
-      const x0 = lo + (hi - lo) * j / k, x1 = lo + (hi - lo) * (j + 1) / k;
-      s.add('rect', {x: s.X(x0) + 1, y: s.Y(c), width: Math.max(1, s.X(x1) - s.X(x0) - 2),
-                     height: s.Y(0) - s.Y(c), fill: HC.tok.accent2, opacity: 0.9}, g);
-      if (c > (counts[j - 1] || 0) && c > (counts[j + 1] || 0) && c >= mx * 0.35) peaks += 1;
-    });
-  } else {
-    const bw = Math.max(0.15, w18bnK / 20);
-    const xs = HC.stat.seq(lo, hi, 120);
-    const ys = xs.map(x => HC.stat.mean(w18bnData.map(v => HC.stat.dnorm(x, v, bw))));
-    const mx = Math.max.apply(null, ys) || 1;
-    s.domain([0, 12], [0, mx * 1.15]);
-    s.grid(6, 4, {xtitle: '值', ytitle: '密度', ydec: 2});
-    s.poly(xs.map((x, i) => [x, ys[i]]), {cls: 'kdeline', stroke: HC.tok.accent2, sw: 3}, g);
-    for (let i = 1; i < ys.length - 1; i++) {
-      if (ys[i] > ys[i - 1] && ys[i] > ys[i + 1] && ys[i] >= mx * 0.35) peaks += 1;
-    }
-  }
-  document.getElementById('w18bnMode').textContent = w18bnKde ? '密度圖' : '直方圖';
-  document.getElementById('w18bnParam').textContent = w18bnKde
-    ? '頻寬 ' + HC.fmt(Math.max(0.15, w18bnK / 20), 2) : String(w18bnK);
-  document.getElementById('w18bnPeaks').textContent = peaks + ' 個峰';
-  setStatus('w18bnStatus', peaks >= 2
-    ? '看得到 <b>' + peaks + '</b> 個峰——這份資料本來就是兩群造出來的。'
-    : '只看得到 <b>' + peaks + '</b> 個峰：參數把真正的兩群<b>糊掉了</b>。');
+  });
+  w19smS.txtPx(24, 40, 'summarize(results)', {cls: 'axtitle'}, g);
+  const c = w19smInfo[w19smI];
+  document.getElementById('w19smCol').textContent = w19smCols[w19smI];
+  document.getElementById('w19smWhat').textContent = c.w;
+  document.getElementById('w19smWarn').textContent = c.n;
+  setStatus('w19smStatus', c.note);
 }
-function w18bnStep(d) { w18bnK = Math.max(4, Math.min(40, w18bnK + d)); w18bnDraw(); }
-function w18bnMode() { w18bnKde = !w18bnKde; w18bnDraw(); }
-function w18bnReset() { w18bnK = 10; w18bnKde = false; w18bnDraw(); }
-if (w18bnS) w18bnDraw();
+function w19smSet(i) { w19smI = i; w19smDraw(); }
+if (w19smS) w19smDraw();
 
-/* ═══ w18pk 圖型選擇決策樹 ═══ */
-const w18pkS = HC.svg('w18pickSvg', {h: 340});
-const w18pkCases = [
-  {k: '散佈圖', f: 'scatterplot / relplot', q: '兩個數值變數之間有沒有關係、什麼形狀',
-   draw: 'scatter'},
-  {k: '盒鬚圖／長條圖／點估計圖', f: 'catplot(kind="box"/"bar"/"point")',
-   q: '各組的分布或平均差多少', draw: 'box'},
-  {k: '計數的交叉表＋熱圖', f: 'heatmap(pd.crosstab(...))',
-   q: '兩個類別變數的組合各有幾筆', draw: 'heat'},
-  {k: '直方圖／密度圖', f: 'histplot / kdeplot', q: '這個變數的分布長什麼樣', draw: 'hist'},
-  {k: '折線圖＋信賴帶', f: 'lineplot', q: '隨時間怎麼變、變化有多確定', draw: 'line'}
+/* ═══ w19fl fit / predict / score（本頁招牌之一）═══ */
+const w19flS = HC.svg('w19flowSvg', {h: 340});
+const w19flSteps = [
+  {w: '還沒開始', where: '—', note: '模型剛建構出來，coef_ 還不存在。'},
+  {w: 'fit(X, y)：唯一會看 y 的一步', where: 'model.coef_、model.intercept_',
+   note: '學到的參數存在<b>結尾有底線</b>的屬性裡。'},
+  {w: 'predict(X_new)：只吃 X', where: '回傳一個預測值陣列',
+   note: '不會改動模型，也不需要 y —— 真實世界裡本來就沒有 y。'},
+  {w: 'score(X, y)：拿預測跟真值比', where: '回傳一個數字（迴歸預設是 R²）',
+   note: '用<b>測試</b>資料呼叫它才有意義。'}
 ];
-let w18pkI = 0;
-function w18pkDraw() {
-  const s = w18pkS;
-  s.domain([0, 10], [0, 10]);
-  const g = s.clearLayer('main');
-  const c = w18pkCases[w18pkI];
-  s.grid(5, 5, {});
-  const rand = HC.stat.lcg(7);
-  if (c.draw === 'scatter') {
-    for (let i = 0; i < 40; i++) {
-      const x = rand() * 9 + 0.5;
-      s.dot(x, Math.max(0.4, Math.min(9.6, x * 0.8 + HC.stat.normal(rand) * 1.2)),
-            {r: 4, fill: HC.tok.accent2}, g);
-    }
-  } else if (c.draw === 'box') {
-    [[2, 3, 5, 7], [5, 4.2, 6, 8], [8, 2.6, 4.4, 6.4]].forEach(b => {
-      s.box(b[0] - 0.7, b[1], b[0] + 0.7, b[3],
-            {fill: HC.tok.accent2, stroke: HC.tok.ink, sw: 1.5, rx: 3}, g);
-      s.seg(b[0] - 0.7, b[2], b[0] + 0.7, b[2], {cls: 'med', stroke: HC.tok.paper, sw: 3}, g);
-    });
-  } else if (c.draw === 'heat') {
-    for (let r = 0; r < 3; r++) {
-      for (let k = 0; k < 3; k++) {
-        s.box(1 + k * 2.6, 1 + r * 2.6, 3.4 + k * 2.6, 3.4 + r * 2.6,
-              {fill: HC.tok.accent2, rx: 3}, g).setAttribute('opacity',
-                String(0.25 + 0.22 * ((r * 3 + k) % 4)));
-      }
-    }
-  } else if (c.draw === 'hist') {
-    [1.2, 2.6, 4.8, 7.4, 8.6, 6.2, 3.4, 1.6].forEach((h, i) => {
-      s.box(0.6 + i * 1.15, 0, 1.65 + i * 1.15, h,
-            {fill: HC.tok.accent2, rx: 2}, g);
-    });
-  } else {
-    const pts = HC.stat.seq(0.4, 9.6, 40).map(x => [x, 5 + 2.6 * Math.sin(x / 1.6)]);
-    s.area(pts.map(p => [p[0], p[1] + 0.9, p[1] - 0.9]),
-           {fill: HC.tok.accent2, cls: 'bandx'}, g).setAttribute('opacity', '0.25');
-    s.poly(pts, {cls: 'lineq', stroke: HC.tok.accent2, sw: 3}, g);
+let w19flI = 0, w19flTimer = null;
+function w19flDraw() {
+  const g = w19flS.clearLayer('main');
+  const st = w19flI;
+  const act = (k) => (st === k ? HC.tok.accent : HC.tok.muted);
+  w19box(w19flS, g, 40, 60, 118, 58, 'X_train', st >= 1 ? HC.tok.accent2 : HC.tok.muted);
+  w19box(w19flS, g, 40, 136, 118, 58, 'y_train', st >= 1 ? HC.tok.accent2 : HC.tok.muted);
+  w19box(w19flS, g, 246, 98, 130, 58, 'model', act(1), st >= 1 ? 'coef_ 已學到' : '尚未配適');
+  if (st >= 1) {
+    w19arrow(w19flS, g, 162, 89, 242, HC.tok.accent2);
+    w19arrow(w19flS, g, 162, 165, 242, HC.tok.accent2);
+    w19flS.txtPx(202, 78, 'fit', {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent}, g);
   }
-  document.getElementById('w18pkKind').textContent = c.k;
-  document.getElementById('w18pkFn').textContent = c.f;
-  document.getElementById('w18pkQ').textContent = c.q;
-  setStatus('w18pkStatus', '建議：<b>' + c.k + '</b>（' + c.f + '）。');
-}
-function w18pkSet(i) { w18pkI = i; w18pkDraw(); }
-if (w18pkS) w18pkDraw();
-
-/* ═══ w18ms 截斷 y 軸 ═══ */
-const w18msS = HC.svg('w18misSvg', {h: 340});
-const w18msVals = [2.98, 3.26];
-let w18msI = 0;
-function w18msDraw() {
-  const s = w18msS;
-  const g = s.clearLayer('main');
-  if (w18msI === 2) {
-    s.domain([0, 3], [0, 6]);
-    s.grid(3, 6, {ytitle: '小費', ydec: 0});
-    [[1, 1.4, 2.4, 3.0, 4.2, 5.6], [2, 1.6, 2.7, 3.3, 4.6, 6.1]].forEach((b, i) => {
-      s.box(b[0] - 0.28, b[2], b[0] + 0.28, b[4],
-            {fill: i === 0 ? HC.tok.accent2 : HC.tok.accent, stroke: HC.tok.ink,
-             sw: 1.5, rx: 3}, g);
-      s.seg(b[0] - 0.28, b[3], b[0] + 0.28, b[3], {cls: 'medx', stroke: HC.tok.paper, sw: 3}, g);
-      s.seg(b[0], b[1], b[0], b[2], {cls: 'whx', stroke: HC.tok.ink, sw: 1.5}, g);
-      s.seg(b[0], b[4], b[0], b[5], {cls: 'whx', stroke: HC.tok.ink, sw: 1.5}, g);
-      s.txt(b[0], -0.35, i === 0 ? 'A 組' : 'B 組', {cls: 'axlab'}, g);
-    });
-    document.getElementById('w18msRatio').textContent = '看得到重疊';
-    setStatus('w18msStatus', '盒鬚圖：兩組的分布<b>大幅重疊</b>——'
-              + '長條圖的「差距」其實被個體差異淹沒了。');
-    return;
+  if (st >= 2) {
+    w19box(w19flS, g, 40, 232, 118, 52, 'X_new', HC.tok.accent2);
+    w19arrow(w19flS, g, 162, 258, 242, HC.tok.accent2);
+    w19arrow(w19flS, g, 312, 162, 312, HC.tok.accent);
+    w19box(w19flS, g, 452, 98, 128, 58, 'y_pred', act(2));
+    w19arrow(w19flS, g, 382, 127, 448, HC.tok.accent);
+    w19flS.txtPx(415, 116, 'predict', {cls: 'axtitle', anchor: 'middle',
+                                       fill: HC.tok.accent}, g);
   }
-  const y0 = w18msI === 0 ? 0 : 2.9;
-  s.domain([0, 3], [y0, 3.4]);
-  s.grid(3, 5, {ytitle: '平均小費', ydec: 2});
-  w18msVals.forEach((v, i) => {
-    s.box(i + 0.72, y0, i + 1.28, v,
-          {fill: i === 0 ? HC.tok.accent2 : HC.tok.accent, rx: 3}, g);
-    s.txt(i + 1, y0 + (3.4 - y0) * 0.03, i === 0 ? 'A 組' : 'B 組',
-          {cls: 'axlab', dy: 16}, g);
-  });
-  const hA = w18msVals[0] - y0, hB = w18msVals[1] - y0;
-  document.getElementById('w18msRatio').textContent =
-    w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（假的）';
-  setStatus('w18msStatus', w18msI === 0
-    ? 'y 軸從 0 開始：兩根長條幾乎一樣高，差距約 <b>9%</b>。'
-    : '同樣的兩個數字，截斷之後看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>——數字沒變，圖說謊了。');
-}
-function w18msSet(i) { w18msI = i; w18msDraw(); }
-if (w18msS) w18msDraw();
-
-/* ═══ w18cr 相關係數熱圖 ═══ */
-const w18crS = HC.svg('w18corrSvg', {h: 340});
-const w18crNames = ['total_bill', 'tip', 'size'];
-const w18crM = [[1.00, 0.68, 0.60], [0.68, 1.00, 0.49], [0.60, 0.49, 1.00]];
-let w18crI = 1;
-function w18crRead(v) {
-  if (v >= 0.99) return '自己跟自己，一定是 1';
-  if (v >= 0.6) return '中等偏強的正相關';
-  if (v >= 0.3) return '中等的正相關';
-  return '弱相關';
-}
-function w18crDraw() {
-  const g = w18crS.clearLayer('main');
-  const cell = 82, x0 = 190, y0 = 78;
-  const r0 = Math.floor(w18crI / 3), c0 = w18crI % 3;
-  for (let r = 0; r < 3; r++) {
-    for (let c = 0; c < 3; c++) {
-      const v = w18crM[r][c], on = (r === r0 && c === c0);
-      w18crS.add('rect', {x: x0 + c * cell, y: y0 + r * cell, width: cell - 4,
-                          height: cell - 4, rx: 4, fill: HC.tok.accent2,
-                          opacity: 0.15 + 0.8 * v,
-                          stroke: on ? HC.tok.ink : 'none', 'stroke-width': on ? 3 : 0}, g);
-      const t = w18crS.add('text', {x: x0 + c * cell + (cell - 4) / 2,
-                                    y: y0 + r * cell + (cell - 4) / 2 + 5,
-                                    'text-anchor': 'middle', cls: 'vlab',
-                                    'font-family': HC.MONO,
-                                    fill: v > 0.6 ? HC.tok.paper : HC.tok.ink}, g);
-      t.textContent = HC.fmt(v, 2);
-    }
-    const rl = w18crS.add('text', {x: x0 - 12, y: y0 + r * cell + (cell - 4) / 2 + 5,
-                                   'text-anchor': 'end', cls: 'axlab'}, g);
-    rl.textContent = w18crNames[r];
-    const cl = w18crS.add('text', {x: x0 + r * cell + (cell - 4) / 2, y: y0 - 12,
-                                   'text-anchor': 'middle', cls: 'axlab'}, g);
-    cl.textContent = w18crNames[r];
+  if (st >= 3) {
+    w19box(w19flS, g, 452, 232, 128, 52, 'score', HC.tok.accent);
+    w19arrow(w19flS, g, 516, 162, 516, HC.tok.accent);
+    w19flS.txtPx(516, 200, 'y_pred vs y_true', {cls: 'axlab', anchor: 'middle'}, g);
   }
-  w18crS.txtPx(24, 40, 'sns.heatmap(tips.corr(numeric_only=True))', {cls: 'axtitle'}, g);
-  const v = w18crM[r0][c0];
-  document.getElementById('w18crPair').textContent = w18crNames[r0] + ' × ' + w18crNames[c0];
-  document.getElementById('w18crVal').textContent = HC.fmt(v, 2);
-  document.getElementById('w18crRead').textContent = w18crRead(v);
-  setStatus('w18crStatus', w18crNames[r0] + ' 與 ' + w18crNames[c0]
-            + ' 的相關係數是 <b>' + HC.fmt(v, 2) + '</b>：' + w18crRead(v) + '。');
+  const s = w19flSteps[st];
+  document.getElementById('w19flStep').textContent = st + ' / 3';
+  document.getElementById('w19flWhat').textContent = s.w;
+  document.getElementById('w19flWhere').textContent = s.where;
+  setStatus('w19flStatus', s.note);
 }
-function w18crNext() { w18crI = (w18crI + 1) % 9; w18crDraw(); }
-function w18crReset() { w18crI = 1; w18crDraw(); }
-if (w18crS) w18crDraw();
+function w19flStep() { w19flI = Math.min(3, w19flI + 1); w19flDraw(); }
+function w19flReset() {
+  if (w19flTimer) { clearTimeout(w19flTimer); w19flTimer = null; }
+  w19flI = 0; w19flDraw();
+}
+function w19flPlay() {
+  w19flReset();
+  const tick = () => {
+    if (w19flI >= 3) { w19flTimer = null; return; }
+    w19flStep();
+    w19flTimer = setTimeout(tick, 950);
+  };
+  w19flTimer = setTimeout(tick, 500);
+}
+if (w19flS) w19flDraw();
 
-/* ═══ w18sm 摘要統計一樣、形狀不同（Chart.js）═══ */
-function w18smMake(kind) {
-  const rand = HC.stat.lcg(kind === 0 ? 11 : (kind === 1 ? 22 : 33));
-  const pts = [];
-  if (kind === 0) {
-    for (let i = 0; i < 30; i++) {
-      const x = 4 + rand() * 10;
-      pts.push({x: x, y: 3 + 0.5 * x + HC.stat.normal(rand) * 1.2});
+/* ═══ w19lk 資料洩漏對照（本頁招牌之二）═══ */
+const w19lkS = HC.svg('w19leakSvg', {h: 340});
+let w19lkPath = 0, w19lkI = 0;
+function w19lkDraw() {
+  const g = w19lkS.clearLayer('main');
+  const bad = w19lkPath === 0;
+  const st = w19lkI;
+  const col = bad ? HC.tok.resid : HC.tok.accent2;
+  w19lkS.txtPx(24, 34, bad ? '先標準化 → 再切分（錯）' : '先切分 → 再標準化（對）',
+               {cls: 'axtitle', fill: bad ? HC.tok.resid : HC.tok.accent2}, g);
+  w19box(w19lkS, g, 40, 74, 132, 54, '全部資料', HC.tok.muted);
+  if (st === 0) {
+    /* 還沒開始走的時候畫出後面幾步的輪廓，免得整個 stage 空著 */
+    const ghost = (x, y, w, h, label) => {
+      w19lkS.add('rect', {x: x, y: y, width: w, height: h, rx: 7, fill: 'none',
+                          stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
+                          'stroke-dasharray': '6 5'}, g);
+      const t = w19lkS.add('text', {x: x + w / 2, y: y + h / 2 + 5,
+                                    'text-anchor': 'middle', cls: 'axlab',
+                                    fill: HC.tok.muted}, g);
+      t.textContent = label;
+    };
+    if (bad) {
+      ghost(248, 74, 150, 54, 'StandardScaler');
+      ghost(456, 46, 124, 48, '訓練');
+      ghost(456, 106, 124, 48, '測試');
+    } else {
+      ghost(244, 46, 118, 48, '訓練');
+      ghost(244, 106, 118, 48, '測試');
+      ghost(428, 42, 152, 56, 'scaler.fit');
+      ghost(428, 106, 152, 52, 'transform');
     }
-  } else if (kind === 1) {
-    for (let i = 0; i < 30; i++) {
-      const x = 4 + rand() * 10;
-      pts.push({x: x, y: 3 + 1.9 * x - 0.078 * x * x + HC.stat.normal(rand) * 0.5});
+    w19lkS.txtPx(310, 250, '按「單步」開始', {cls: 'axlab', anchor: 'middle'}, g);
+  }
+  if (bad) {
+    if (st >= 1) {
+      w19arrow(w19lkS, g, 176, 101, 244, col);
+      w19box(w19lkS, g, 248, 74, 150, 54, 'StandardScaler', col, 'fit 了全部');
+    }
+    if (st >= 2) {
+      w19arrow(w19lkS, g, 402, 101, 452, col);
+      w19box(w19lkS, g, 456, 46, 124, 48, '訓練', HC.tok.accent2);
+      w19box(w19lkS, g, 456, 106, 124, 48, '測試', col);
+      w19lkS.txtPx(518, 176, '測試集的平均已經', {cls: 'axlab', anchor: 'middle',
+                                                fill: HC.tok.resid}, g);
+      w19lkS.txtPx(518, 194, '進到訓練流程裡了', {cls: 'axlab', anchor: 'middle',
+                                                fill: HC.tok.resid}, g);
+    }
+    if (st >= 3) {
+      w19lkS.txtPx(310, 250, '測試 MSE 22.9 —— 比真實情況好看，但這個數字沒有意義',
+                   {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
     }
   } else {
-    for (let i = 0; i < 29; i++) {
-      const x = 4 + rand() * 5;
-      pts.push({x: x, y: 7.6 + HC.stat.normal(rand) * 1.1});
+    if (st >= 1) {
+      w19arrow(w19lkS, g, 176, 101, 240, col);
+      w19box(w19lkS, g, 244, 46, 118, 48, '訓練', HC.tok.accent2);
+      w19box(w19lkS, g, 244, 106, 118, 48, '測試', HC.tok.muted);
     }
-    pts.push({x: 17.5, y: 15.5});
+    if (st >= 2) {
+      w19arrow(w19lkS, g, 366, 70, 424, col);
+      w19box(w19lkS, g, 428, 42, 152, 56, 'scaler.fit', col, '只看訓練集');
+      w19arrow(w19lkS, g, 366, 130, 424, HC.tok.muted);
+      w19box(w19lkS, g, 428, 106, 152, 52, 'transform', HC.tok.muted, '沿用訓練的參數');
+    }
+    if (st >= 3) {
+      w19lkS.txtPx(310, 250, '測試 MSE 25.6 —— 難看一點，但它是真的',
+                   {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
+      w19lkS.txtPx(310, 282, 'Pipeline 會在每一折自動做這件事，讓你想犯錯都難',
+                   {cls: 'axlab', anchor: 'middle'}, g);
+    }
   }
-  return pts;
+  document.getElementById('w19lkPath').textContent = bad ? '先標準化再切分 ✗' : '先切分再標準化 ✓';
+  document.getElementById('w19lkInfo').textContent =
+    st >= 2 ? (bad ? '全部資料（含測試集）' : '只有訓練集') : '—';
+  document.getElementById('w19lkScore').textContent =
+    st >= 3 ? (bad ? '22.9（假的）' : '25.6（真的）') : '—';
+  setStatus('w19lkStatus', st === 0
+    ? '按「單步」看資料怎麼流。'
+    : (bad ? '注意 scaler 是在<b>切分之前</b> fit 的 —— 它看過測試集了。'
+           : 'scaler 只在訓練集上 fit，測試集只被 transform。'));
 }
-let w18smI = 0;
-function w18smDraw() {
-  const pts = w18smMake(w18smI);
-  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
-  const r = (() => {
-    const mx = HC.stat.mean(xs), my = HC.stat.mean(ys);
-    let sxy = 0, sx = 0, sy = 0;
-    for (let i = 0; i < xs.length; i++) {
-      sxy += (xs[i] - mx) * (ys[i] - my);
-      sx += (xs[i] - mx) ** 2; sy += (ys[i] - my) ** 2;
-    }
-    return sxy / Math.sqrt(sx * sy);
-  })();
-  document.getElementById('w18smMx').textContent = HC.fmt(HC.stat.mean(xs), 2);
-  document.getElementById('w18smMy').textContent = HC.fmt(HC.stat.mean(ys), 2);
-  document.getElementById('w18smR').textContent = HC.fmt(r, 2);
-  const names = ['直線關係', '曲線關係', '一個離群值撐出來的'];
-  setStatus('w18smStatus', '第 ' + (w18smI + 1) + ' 組（' + names[w18smI]
-            + '）：x̄ ≈ ' + HC.fmt(HC.stat.mean(xs), 1) + '、ȳ ≈ '
-            + HC.fmt(HC.stat.mean(ys), 1) + '、r ≈ ' + HC.fmt(r, 2) + '。');
+function w19lkSet(i) { w19lkPath = i; w19lkI = 0; w19lkDraw(); }
+function w19lkStep() { w19lkI = Math.min(3, w19lkI + 1); w19lkDraw(); }
+function w19lkReset() { w19lkI = 0; w19lkDraw(); }
+if (w19lkS) w19lkDraw();
+
+/* ═══ w19cv 驗證誤差（數字逐字取自 lab 儲存格 26 與 34）═══ */
+const w19cvVal = [25.57387819, 22.21802005, 22.66767544];
+const w19cvLoo = 24.231513517929226;
+let w19cvMode = 0;
+function w19cvDraw() {
   if (!HC.hasChart()) return;
-  const c = HC.get('w18sameChart');
-  if (c) { c.data.datasets[0].data = pts; c.update(); return; }
-  HC.scatter('w18sameChart', {
-    datasets: [{label: '觀測值', data: pts, backgroundColor: HC.tok.accent2,
-                pointRadius: 5}]
-  }, {
-    scales: {x: {title: {display: true, text: 'x'}, min: 0, max: 20},
-             y: {title: {display: true, text: 'y'}, min: 0, max: 18}},
-    plugins: {legend: {display: false}}
-  });
+  const ds = [{label: '單次切分的驗證 MSE', data: w19cvVal,
+               backgroundColor: HC.tok.accent2, borderWidth: 0}];
+  if (w19cvMode === 1) {
+    ds.push({label: 'LOOCV（degree 1）', data: [w19cvLoo, null, null],
+             backgroundColor: HC.tok.accent, borderWidth: 0});
+  }
+  const c = HC.get('w19cvChart');
+  if (c) { c.data.datasets = ds; c.update(); } else {
+    HC.bar('w19cvChart', {labels: ['degree 1', 'degree 2', 'degree 3'], datasets: ds}, {
+      scales: {x: {title: {display: true, text: '多項式次數'}},
+               y: {title: {display: true, text: 'MSE'}, min: 20, max: 27}},
+      plugins: {legend: {display: true}}
+    });
+  }
+  setStatus('w19cvStatus', w19cvMode === 0
+    ? '二次式 22.22 明顯低於一次式 25.57，三次式 22.67 沒有再進步。'
+    : 'LOOCV 對 degree 1 給 24.23，跟單次切分的 25.57 不一樣 —— <b>切法會影響結論</b>。');
 }
-function w18smSet(i) { w18smI = i; w18smDraw(); }
-HC.ready(() => { w18smDraw(); });
+function w19cvSet(i) { w19cvMode = i; w19cvDraw(); }
+HC.ready(() => { w19cvDraw(); });
 </script>
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"畫布（Figure）","back":"整張圖的最外層：大小、存檔、總標題都歸它管。一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。"},{"front":"座標系（Axes）","back":"資料真正被畫進去的地方。你 99% 的時間都在跟它打交道，seaborn 的 <code>ax=</code> 指的就是它。注意它跟 Axis（單一根軸）差一個字母。"},{"front":"子圖網格（subplots）","back":"<code>subplots(nrows=2, ncols=3)</code> 回傳一個 Figure 與一個 <b>(2,3) 的 NumPy 陣列</b>。索引法跟一般二維陣列一樣。"},{"front":"圖層級函式（Figure-level）","back":"<code>relplot</code>、<code>catplot</code>、<code>lmplot</code>、<code>displot</code>、<code>jointplot</code>、<code>pairplot</code>。它們會自己開一張新 Figure，<b>不吃 <code>ax=</code></b>。"},{"front":"座標系層級函式（Axes-level）","back":"<code>scatterplot</code>、<code>histplot</code>、<code>boxplot</code>、<code>regplot</code> 等。接受 <code>ax=</code>，可以塞進自己的 subplots 網格。"},{"front":"直方圖（Histogram）","back":"把值切成幾格再數每格幾筆。<b>bins 是你的選擇，不是資料的性質</b>——太少會糊掉真的結構，太多會讓雜訊看起來像結構。"},{"front":"核密度估計（KDE）","back":"把每個點換成一個小鐘形再加起來，所以結果<b>一定是平滑的</b>。那個平滑是你給的假設。頻寬就是直方圖 bins 的另一個化身。"},{"front":"頻寬（Bandwidth）","back":"KDE 的平滑程度。大＝平滑＝可能糊掉真結構；小＝每個點戳出一根。跟 bins 是同一個取捨。"},{"front":"散佈圖（Scatterplot）","back":"兩個數值變數的標準圖。統計分析的第一張圖幾乎都是它——它會告訴你關係是直線、曲線、還是根本沒有。"},{"front":"色相參數（hue）","back":"用顏色把第三個變數塞進同一張圖。組數 ≤ 5 時最有效；再多就該用 <code>col=</code> 拆成小圖。"},{"front":"分面參數（col／row）","back":"把資料按某個類別拆成好幾張小圖並排。組數多、疊起來會糊的時候用它。"},{"front":"成對關係圖（pairplot）","back":"所有數值欄兩兩配對畫一格，對角線放各自的分布。探索階段最划算的一張圖，但欄多時會很慢。"},{"front":"盒鬚圖（Boxplot）","back":"盒子是四分位距、中線是中位數、鬚到 1.5 倍 IQR、外面的點是離群值。<b>唯一會把離群值單獨畫出來的類別圖。</b>"},{"front":"長條圖（Barplot）","back":"長條高度是各組的<b>平均</b>，上面那條細線是 bootstrap 信賴區間，不是標準差。看到它要先問「每組幾筆」。"},{"front":"計數圖（Countplot）","back":"只數每一類有幾筆，等於 <code>value_counts()</code> 的圖版。跟 barplot 完全是兩回事。"},{"front":"點估計圖（Pointplot）","back":"把長條換成一個點加誤差線。要比較好幾組平均時比長條清楚，而且截斷 y 軸是可以接受的。"},{"front":"截斷的 y 軸（Truncated Axis）","back":"長條圖用<b>長度</b>編碼數值，y 軸不從 0 開始會讓長度的比例不再對應數值的比例，9% 的差可以看起來像三倍。要放大差異就改用點估計圖並標明。"},{"front":"迴歸散佈圖（regplot）","back":"散佈圖加一條最小平方線與 95% 信賴帶。那條帶子是<b>對迴歸線的不確定性</b>，不是預測區間。它不給係數也不給 p 值。"},{"front":"分組迴歸圖（lmplot）","back":"加 <code>hue</code> 之後每一組各配一條線。<b>兩條線的斜率明顯不同就是交互作用的視覺證據。</b>"},{"front":"相關係數熱圖（Heatmap）","back":"把 <code>df.corr()</code> 的矩陣上色。用來快速找候選，<b>下結論要回去看數字</b>——顏色的對比取決於色階怎麼設。"},{"front":"折線圖與信賴帶（lineplot）","back":"同一個 x 有多筆資料時，<code>lineplot</code> 會畫平均與 95% 信賴帶，那條帶子是 bootstrap 算的。"},{"front":"摘要統計的盲點（Summary Statistics）","back":"平均、標準差、相關係數都一樣的兩份資料，散佈圖可以完全不同：一組直線、一組曲線、一組只是被離群值拉出來的假相關。所以<b>先畫圖再算數字</b>。"},{"front":"離群值（Outlier）","back":"遠離其他觀測的點。它可以單獨把相關係數從 0 拉到 0.8，也可以主宰一條迴歸線。盒鬚圖與殘差圖是最快發現它的兩張圖。"},{"front":"圖型選擇（Chart Choice）","back":"先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"}];
+const FLASHCARDS = [{"front":"設計矩陣（Design Matrix）","back":"模型真正看到的東西：第一欄通常是全 1 的截距，後面每一欄是一個預測變數。類別變數與交互作用都在這一層被展開成數字欄。"},{"front":"模型規格（ModelSpec, MS）","back":"ISLP 提供的設計矩陣建構器。<code>MS(['lstat']).fit_transform(df)</code> 會自動加上截距欄，而且記得規格，之後可以對新資料 <code>transform</code> 重放一次。"},{"front":"截距（Intercept）","back":"<code>sm.OLS</code> <b>不會</b>自動加。忘了放那一欄全 1，配出來的就是一條被迫過原點的線。sklearn 則是用 <code>fit_intercept=True</code> 處理。"},{"front":"係數（coef）","back":"summary 表的第一欄：效果的大小與方向。lstat 的 −0.9500 是「lstat 每多 1，medv 平均少 0.95」。這才是你要報告的東西。"},{"front":"標準誤（Standard Error）","back":"估計量本身的分散程度，不是個別觀測的分散程度（那是標準差）。樣本變大時標準誤會變小，標準差不會。"},{"front":"t 值（t-statistic）","back":"<code>coef / std err</code>，也就是「係數是標準誤的幾倍」。lstat 的 −0.9500 ÷ 0.039 ≈ −24.5。所以 summary 的四欄裡只有前兩欄是獨立資訊。"},{"front":"p 值（p-value）","back":"「係數其實是 0」的話有多難得到這個結果。它小只代表「不是 0」很有把握，<b>跟效果大不大無關</b>——樣本夠大時可忽略的效果也會有很小的 p 值。"},{"front":"虛擬變數編碼（Dummy Coding）","back":"k 個類別展開成 <b>k−1</b> 欄，留一個當參考組。展成 k 欄會跟截距共線，矩陣不滿秩。其他欄的係數都是「相對於參考組」的差。"},{"front":"估計器（Estimator）","back":"scikit-learn 裡會學參數的物件：<code>fit(X, y)</code>、<code>predict(X)</code>、<code>score(X, y)</code>。換模型只要換建構子那一行。"},{"front":"轉換器（Transformer）","back":"只做資料轉換的物件：<code>fit(X)</code> 學參數、<code>transform(X)</code> 套用、<code>fit_transform</code> 兩步合一。StandardScaler、PCA、SimpleImputer 都是。"},{"front":"結尾底線屬性（Trailing Underscore）","back":"sklearn 的慣例：<code>coef_</code>、<code>intercept_</code>、<code>classes_</code> 這種結尾有底線的屬性，代表<b>配適之後才存在</b>。沒 fit 就用會拋 NotFittedError。"},{"front":"引數順序（Argument Order）","back":"<code>sm.OLS(y, X)</code> 是 y 在前，<code>model.fit(X, y)</code> 是 X 在前。兩套 API 剛好相反，這是最常打錯的一行。"},{"front":"訓練與測試切分（train_test_split）","back":"一份學、一份考。<code>random_state</code> 一定要固定，不然今天的 MSE 跟明天的不一樣，模型就沒得比。"},{"front":"樂觀偏誤（Optimistic Bias）","back":"在訓練資料上評估自己一定會太好看，因為模型可以把雜訊也背下來。整門課的評估紀律都建立在「用沒看過的資料」這一句上。"},{"front":"平均絕對誤差（MAE）","back":"誤差取絕對值再平均。跟 y 同單位，而且對離群值比 MSE 不敏感。"},{"front":"均方誤差（MSE）","back":"誤差平方再平均。數學上好處理（可微、可分解成偏差與變異），是整門課的預設指標。"},{"front":"均方根誤差（RMSE）","back":"MSE 開根號，回到 y 的單位。要跟別人解釋「大概差多少」時最好用。"},{"front":"決定係數（R²）","back":"被模型解釋掉的變異比例。方便比較，但會隨著變數增加而虛高——第 6 章的調整後 R² 與資訊準則就是在修這件事。"},{"front":"交叉驗證（Cross-Validation）","back":"把訓練資料輪流當驗證集，每一筆都當過一次。比單切一刀穩定，而且用到了全部資料。它是在<b>訓練資料內部</b>做的，不是測試集。"},{"front":"留一交叉驗證（LOOCV）","back":"每一筆各當一次驗證集。沒有隨機性（切法只有一種），所以沒有標準差；代價是要配適 n 次。"},{"front":"重複切分（ShuffleSplit）","back":"隨機切很多次再看平均與標準差。那個標準差很重要——它告訴你單切一刀的結果能晃動多少，兩個模型差 0.5 可能根本不算差別。"},{"front":"資料洩漏（Data Leakage）","back":"測試資料的資訊透過某個步驟進到訓練流程裡。先對整份資料標準化再切分是最典型的一種，結果是你報告的 out-of-sample 分數其實不是。"},{"front":"管線（Pipeline）","back":"把前處理與模型串成一個估計器。丟進 <code>cross_validate</code> 之後，sklearn 會在<b>每一折內部</b>重新 fit 那些轉換器——你想犯錯都犯不了。"},{"front":"先切分再轉換（Fit on Train Only）","back":"<code>fit</code> 只看訓練集，<code>transform</code> 對兩邊都用同一組參數。順序反了，整套評估就作廢。這是本頁唯一不能違反的規矩。"},{"front":"sklearn_sm 包裝器","back":"ISLP 提供的轉接頭，把 statsmodels 的模型包成 sklearn 的估計器，好丟進 <code>cross_validate</code>。兩套 API 是可以混用的。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->
