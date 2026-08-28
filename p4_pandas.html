@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<!-- GEN:BEGIN head -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="pandas 資料框 — pandas DataFrames 互動自學頁。先備知識 P4 — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
+<title>pandas 資料框 — pandas DataFrames Interactive（Python）</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+        integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+  --node-white:#ffffff;--node-gray:#bdc3c7;--node-black:#34495e;
+  --node-current:#f39c12;--node-found:#16a085;--node-start:#9b59b6;
+  --edge-default:#95a5a6;--edge-tree:#27ae60;--edge-explore:#f39c12;--edge-mst:#1a6b4a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.9;font-size:17px;}
+
+/* Hero */
+.hero{min-height:62vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:860px;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:.04em;line-height:1.3;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero h1 .purple{color:#bb8fce;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.2rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.05rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Hero mini-graph illustration */
+.hero-graph{position:absolute;right:5%;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;}
+@media(max-width:900px){.hero-graph{display:none;}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+strong{color:var(--ink);}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:34px;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+
+/* Graph SVG canvas */
+.graph-canvas{position:relative;width:100%;height:380px;background:#fafafa;border-radius:8px;overflow:hidden;border:1px solid #ececec;}
+.graph-canvas svg{width:100%;height:100%;display:block;}
+
+/* SVG elements styles */
+.graph-edge{stroke:var(--edge-default);stroke-width:2;fill:none;transition:stroke .25s, stroke-width .25s;}
+.graph-edge.tree{stroke:var(--edge-tree);stroke-width:3.5;}
+.graph-edge.exploring{stroke:var(--edge-explore);stroke-width:3.5;stroke-dasharray:5 4;animation:dash 1s linear infinite;}
+.graph-edge.mst{stroke:var(--edge-mst);stroke-width:4;}
+.graph-edge.path{stroke:var(--accent);stroke-width:4;}
+.graph-edge.dotted{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 4;}
+@keyframes dash{to{stroke-dashoffset:-18;}}
+
+.edge-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;fill:var(--ink);pointer-events:none;}
+.edge-label-bg{fill:#fafafa;stroke:#ececec;stroke-width:1;}
+
+.graph-node{cursor:pointer;}
+.graph-node circle{fill:var(--node-white);stroke:var(--ink);stroke-width:2;transition:fill .25s, stroke .25s, r .2s;}
+.graph-node.gray circle{fill:var(--node-gray);}
+.graph-node.black circle{fill:var(--node-black);stroke:var(--node-black);}
+.graph-node.current circle{fill:var(--node-current);stroke:#d68910;stroke-width:3;}
+.graph-node.start circle{fill:var(--node-start);stroke:#7d3c98;stroke-width:3;}
+.graph-node.found circle{fill:var(--node-found);stroke:#117a65;stroke-width:3;}
+.graph-node.in-mst circle{fill:#82e0aa;stroke:var(--accent3);stroke-width:3;}
+.graph-node text.node-key{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.graph-node.black text.node-key{fill:#fff;}
+.graph-node.current text.node-key{fill:#fff;}
+.graph-node.start text.node-key{fill:#fff;}
+.graph-node.found text.node-key{fill:#fff;}
+.graph-node text.node-meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent);text-anchor:middle;pointer-events:none;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.btn-toggle{background:var(--accent2);color:#fff;}
+.btn-toggle:hover{background:#1f2e5f;}
+.btn-toggle.off{background:#bbb;color:#555;}
+.btn-shuffle{background:#8e44ad;color:#fff;}
+.btn-shuffle:hover{background:#6c3485;}
+
+/* Slider row */
+.slider-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;background:var(--paper);border-radius:8px;margin-bottom:.5rem;}
+.slider-row .slider-label{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent2);font-weight:600;min-width:60px;}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent3);height:5px;cursor:pointer;}
+.slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;min-width:60px;text-align:right;}
+
+/* Side panel */
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+.info-card .ic-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.83rem;padding:.2rem 0;}
+.info-card .ic-label{color:var(--muted);}
+.info-card .ic-value{color:var(--ink);font-weight:600;}
+.info-card .ic-value.highlight{color:var(--accent);}
+.info-card .ic-value.big{font-size:1.4rem;color:var(--accent2);}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;}
+.stat-tile{background:var(--paper);border-radius:8px;padding:.5rem .7rem;text-align:center;}
+.stat-tile .stat-label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+.stat-tile .stat-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--accent2);}
+
+/* Queue / Stack / PQ visualization */
+.ds-display{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--paper);border-radius:6px;padding:.5rem .7rem;min-height:36px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;border:1px dashed var(--card-border);}
+.ds-display .ds-empty{color:var(--muted);font-style:italic;}
+.ds-item{background:var(--accent2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:600;}
+.ds-item.front{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.top{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.pq{background:var(--accent3);}
+.ds-item.pq.min{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-arrow{color:var(--muted);}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid var(--node-current);padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+.pseudo-code .str{color:#f1fa8c;}
+
+/* Adjacency table */
+.adj-display{margin:.5rem 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.adj-matrix{border-collapse:collapse;margin:.5rem auto;}
+.adj-matrix td,.adj-matrix th{border:1px solid var(--card-border);padding:6px 10px;text-align:center;min-width:34px;background:#fff;}
+.adj-matrix th{background:var(--accent2);color:#fff;font-weight:700;}
+.adj-matrix td.zero{color:#ccc;}
+.adj-matrix td.nonzero{background:#eafaf1;color:var(--accent3);font-weight:700;}
+.adj-matrix td.highlight{background:#fff3cd;}
+.adj-list{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:.7rem 1rem;}
+.adj-list .adj-row{padding:3px 0;border-bottom:1px dashed var(--card-border);}
+.adj-list .adj-row:last-child{border-bottom:none;}
+.adj-list .adj-key{color:var(--accent);font-weight:700;display:inline-block;min-width:32px;}
+.adj-list .adj-arrow{color:var(--muted);margin:0 6px;}
+.adj-list .adj-neighbor{background:#eef2ff;color:var(--accent2);padding:1px 8px;border-radius:4px;margin:1px 3px;display:inline-block;font-weight:600;}
+
+/* Chess board for Knight's tour */
+.chess-board{display:grid;background:#fff;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin:.5rem auto;width:fit-content;}
+.chess-cell{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;position:relative;transition:background .2s;}
+.chess-cell.light{background:#f0d9b5;color:#666;}
+.chess-cell.dark{background:#b58863;color:#fff;}
+.chess-cell.visited{background:#27ae60 !important;color:#fff;}
+.chess-cell.current{background:#f39c12 !important;color:#fff;box-shadow:inset 0 0 0 3px #d68910;}
+.chess-cell.start{background:#9b59b6 !important;color:#fff;}
+.chess-cell .knight{font-size:1.4em;line-height:1;}
+.chess-cell .step-num{font-size:.7em;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box.purple{background:#f4ecf7;border-color:#8e44ad;}
+.info-box.purple .info-label{background:#8e44ad;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+.pill-gray{background:rgba(0,0,0,.06);color:var(--muted);border:1px solid rgba(0,0,0,.12);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+.legend-item{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .5rem;background:var(--paper);border-radius:5px;}
+.legend-item .lg-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);}
+.legend-item .lg-edge{width:18px;height:3px;border-radius:2px;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0;}
+.quiz-opt{display:flex;align-items:center;gap:.6rem;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;font-size:.86rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-letter{font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.wrong{background:#fef5e7;border-color:var(--accent);}
+.quiz-opt.wrong .opt-letter{color:var(--accent);}
+.quiz-feedback{margin-top:.7rem;padding:.7rem 1rem;border-radius:8px;font-size:.88rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#eafaf1;color:var(--accent3);border-left:4px solid var(--accent3);}
+.quiz-feedback.wrong{background:#fef5e7;color:var(--accent);border-left:4px solid var(--accent);}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:30px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+
+/* Distance / table inside graph viz */
+.vert-table{margin-top:.6rem;width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.vert-table th,.vert-table td{padding:4px 6px;text-align:center;border:1px solid var(--card-border);}
+.vert-table th{background:var(--accent2);color:#fff;font-weight:600;font-size:.74rem;}
+.vert-table td.tcell-current{background:#fff3cd;font-weight:700;color:var(--accent);}
+.vert-table td.tcell-done{background:#eafaf1;color:var(--accent3);}
+.vert-table td.tcell-inf{color:#ccc;}
+.sec-badge{font-size:.6em;color:var(--muted);border:1px solid var(--card-border);background:var(--card);padding:2px 10px;border-radius:999px;vertical-align:middle;margin-left:.6rem;font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.02em;white-space:nowrap;}
+
+/* Phase 8 shared widgets */
+.bs-stack{display:flex;flex-direction:column-reverse;align-items:center;gap:4px;min-height:180px;justify-content:flex-start;padding:.6rem;}
+.bs-item{width:110px;text-align:center;padding:.4rem .6rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.bs-hl{background:#f39c12;}
+.bs-toplabel,.bq-label{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.bq-row{display:flex;align-items:center;gap:6px;min-height:64px;flex-wrap:wrap;padding:.4rem;}
+.bq-item{min-width:52px;text-align:center;padding:.45rem .5rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.char-strip{display:flex;gap:3px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;padding:.4rem 0;}
+.char-cell{min-width:30px;text-align:center;padding:.35rem .25rem;border:1px solid var(--card-border);border-radius:5px;background:var(--card);}
+.char-cur{background:#f39c12;color:#fff;border-color:#f39c12;}
+.char-done{background:#e8f5ec;color:#1a6b4a;border-color:#bfe3cd;}
+.char-bad{background:#c0392b;color:#fff;border-color:#c0392b;}
+.token-out{display:flex;gap:4px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;min-height:40px;padding:.3rem 0;}
+.tok{padding:.3rem .55rem;border-radius:5px;background:#2c3e7a;color:#fff;font-weight:600;}
+.tok-op{background:#8e44ad;}
+.tok-new{outline:3px solid #f39c12;}
+.mono{font-family:'JetBrains Mono',monospace;}
+/* ===== 網站化附加樣式（study-guide / flashcards / chapter-nav）===== */
+.study-guide{background:var(--card);border:1px solid var(--card-border);border-left:5px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:0 0 2.2rem;}
+.study-guide .sg-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:1.5px;color:var(--accent3);margin-bottom:.5rem;}
+.study-guide p{font-size:.92rem;margin-bottom:.5rem;}
+.study-guide .sg-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+.study-guide .sg-links a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:var(--accent2);border:1px solid var(--card-border);border-radius:999px;padding:.3rem .85rem;text-decoration:none;transition:all .2s;}
+.study-guide .sg-links a:hover{background:var(--accent2);color:#fff;}
+.fc-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.fc-controls button{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:1px solid var(--card-border);cursor:pointer;background:var(--card);color:var(--ink);transition:all .2s;}
+.fc-controls button:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.fc-card{perspective:900px;height:170px;cursor:pointer;}
+.fc-card .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-card .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.fc-card .fc-front{background:linear-gradient(150deg,var(--accent2),var(--ink));color:#fff;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.fc-card .fc-front .fc-hint{font-size:.62rem;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.fc-card .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:2.5rem 0 1rem;}
+.chapter-nav a{display:block;border:1px solid var(--card-border);border-radius:12px;padding:.8rem 1.1rem;text-decoration:none;color:var(--ink);background:var(--card);transition:all .2s;}
+.chapter-nav a:hover{border-color:var(--accent2);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:.2rem;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.95rem;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+.chapter-nav a.home{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+@media(max-width:700px){.chapter-nav{grid-template-columns:1fr;}}
+/* ===== 講義範例卡 ===== */
+.deck-extra{margin:1.2rem 0;}
+.deck-extra .dx-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--accent3);margin-bottom:.4rem;}
+.deck-extra .dx-note{font-size:.9rem;margin-top:.6rem;}
+.expected-out{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);border-radius:0 8px 8px 0;padding:.5rem .9rem;margin-top:.5rem;}
+.expected-out .eo-tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--accent3);display:block;margin-bottom:.2rem;}
+.expected-out pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.55;white-space:pre-wrap;margin:0;}
+.warn-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem;}
+.warn-box b{color:var(--accent);}
+
+/* ============================================================
+   統計學習自學站附加樣式
+   base.css 是從資料結構自學站沿用的共用設計系統，維持不動；
+   這個區塊是統計學習需要的新元件與兩處修正，append-only。
+   ============================================================ */
+
+/* 統計視覺化用的色票（base.css 的 --node-* / --edge-* 保留不動） */
+:root {
+  --pt-train:#2c3e7a;      /* 訓練樣本 */
+  --pt-test:#c0392b;       /* 測試樣本 */
+  --pt-held:#f39c12;       /* 被留作驗證的樣本 */
+  --pt-a:#2c3e7a;          /* 類別 A */
+  --pt-b:#c0392b;          /* 類別 B */
+  --pt-c:#1a6b4a;          /* 類別 C */
+  --fit-line:#c0392b;      /* 配適線／決策邊界 */
+  --fit-true:#1a6b4a;      /* 真實函數／Bayes 邊界 */
+  --resid:#8e44ad;         /* 殘差線段 */
+  --band:rgba(44,62,122,.13);   /* 信賴帶 */
+  --regionA:rgba(44,62,122,.13);
+  --regionB:rgba(192,57,43,.13);
+  --regionC:rgba(26,107,74,.13);
+  --grid-line:#e8e2d6;
+}
+
+/* ---- 修正 base.css：裸 .btn 沒有 background，會變成瀏覽器預設灰 ---- */
+.btn{background:var(--accent2);color:#fff;}
+.btn:hover{filter:brightness(1.12);}
+.btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
+
+/* ---- 修正 base.css：.status-banner 是深色底（--code-bg），
+       但 base.css 的 strong{color:var(--ink)} 是深墨色，疊上去幾乎看不見 ---- */
+.status-banner strong,.status-banner b{color:#fff;font-weight:700;}
+.status-banner code{background:rgba(255,255,255,.14);color:#ffe9a8;}
+
+/* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
+.qa-box{margin:1.4rem 0;}
+.qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;color:var(--accent);margin-bottom:.6rem;}
+.qa-item{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--accent2);
+  border-radius:8px;margin-bottom:.6rem;overflow:hidden;}
+.qa-item>summary{cursor:pointer;padding:.75rem 1rem;font-weight:500;color:var(--accent2);
+  list-style:none;display:flex;gap:.5rem;align-items:baseline;transition:background .15s;}
+.qa-item>summary::-webkit-details-marker{display:none;}
+.qa-item>summary::before{content:'▸';color:var(--accent);flex:none;transition:transform .15s;}
+.qa-item[open]>summary::before{transform:rotate(90deg);}
+.qa-item>summary:hover{background:var(--highlight);}
+.qa-item[open]>summary{border-bottom:1px solid var(--card-border);}
+.qa-a{padding:.9rem 1rem 1rem 1.9rem;font-size:.95rem;}
+.qa-a p{margin-bottom:.7rem;}
+.qa-a p:last-child{margin-bottom:0;}
+.qa-a ul,.qa-a ol{margin:.4rem 0 .7rem 1.2rem;}
+.qa-a li{margin-bottom:.3rem;}
+
+/* ---- 出處標記：可機器檢查的 grounding ---- */
+.dx-src{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--muted);margin-top:.5rem;letter-spacing:.02em;}
+.dx-src a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+
+/* ---- Chart.js 畫布容器 + 離線退路 ---- */
+.chart-wrap{position:relative;width:100%;height:300px;background:#fafafa;border-radius:8px;
+  border:1px solid #ececec;padding:.4rem;}
+.chart-wrap.tall{height:380px;}
+.chart-wrap.square{height:330px;max-width:360px;margin:0 auto;}
+.chart-wrap canvas{display:block;width:100%!important;height:100%!important;}
+.chart-fallback{position:absolute;inset:.4rem;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1.2rem;font-size:.86rem;line-height:1.7;color:var(--muted);
+  background:var(--card);border-radius:6px;}
+.chart-wrap.ready .chart-fallback{display:none;}
+.chart-fallback b{display:block;color:var(--accent2);margin-bottom:.4rem;font-size:.9rem;}
+
+/* ---- 混淆矩陣（是表格，不是圖表） ---- */
+.cm-table{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.82rem;margin:.6rem 0;}
+.cm-table th,.cm-table td{border:1px solid var(--card-border);padding:.45rem .7rem;text-align:center;}
+.cm-table thead th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);}
+.cm-table tbody th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);
+  text-align:right;font-weight:600;}
+.cm-table .cm-tp{background:rgba(26,107,74,.14);font-weight:700;}
+.cm-table .cm-tn{background:rgba(26,107,74,.08);font-weight:700;}
+.cm-table .cm-fp{background:rgba(192,57,43,.12);}
+.cm-table .cm-fn{background:rgba(192,57,43,.18);font-weight:700;}
+.cm-note{font-size:.8rem;color:var(--muted);}
+
+/* ---- ESL 進階：可略過的標記 ---- */
+.eslx{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+  letter-spacing:.1em;color:#fff;background:#8e44ad;padding:.1rem .45rem;border-radius:3px;
+  margin-left:.5rem;vertical-align:.1em;}
+.skip-note{font-size:.82rem;color:var(--muted);margin:-.4rem 0 1rem;}
+
+/* ---- 環境版本註記 ---- */
+.ver-note{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;color:var(--muted);
+  background:var(--paper);border:1px dashed var(--card-border);border-radius:6px;
+  padding:.6rem .9rem;margin-top:1.2rem;}
+
+/* ---- 解答連結 pill 排 ---- */
+.sol-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+.sol-links a{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:600;
+  color:var(--accent2);background:var(--card);border:1px solid var(--card-border);
+  border-radius:999px;padding:.35rem .8rem;text-decoration:none;transition:all .15s;}
+.sol-links a:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* ---- 資料點圖例（SVG 元件共用） ---- */
+.viz-legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.5rem;font-size:.78rem;color:var(--muted);}
+.viz-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.viz-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;}
+.viz-legend i.sq{border-radius:2px;}
+.viz-legend i.ln{width:18px;height:0;border-top:3px solid;border-radius:0;}
+
+/* ---- SVG 元件共用樣式 ---- */
+.viz-svg{width:100%;display:block;background:#fafafa;border-radius:8px;border:1px solid #ececec;}
+.viz-svg .ax{stroke:var(--muted);stroke-width:1;}
+.viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
+.viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .dot{stroke:#fff;stroke-width:1;}
+.viz-svg .dot.drag{cursor:grab;}
+.viz-svg .dot.drag:active{cursor:grabbing;}
+.viz-svg .fit{stroke:var(--fit-line);stroke-width:2.5;fill:none;}
+.viz-svg .truef{stroke:var(--fit-true);stroke-width:2;fill:none;stroke-dasharray:6 4;}
+.viz-svg .resid{stroke:var(--resid);stroke-width:1.2;stroke-dasharray:2 2;}
+.viz-svg .band{fill:var(--band);stroke:none;}
+.viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
+.viz-svg text{user-select:none;}
+
+/* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
+.strip .cell{width:20px;height:20px;border-radius:3px;background:var(--card);
+  border:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;}
+.strip .cell.train{background:var(--pt-train);border-color:var(--pt-train);color:#fff;}
+.strip .cell.held{background:var(--pt-held);border-color:#d68910;color:#fff;font-weight:700;}
+.strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
+
+/* ---- 長內容自己橫向滾動，頁面本體絕不橫向滾動 ---- */
+/* 最後一道保險。該滑的東西（程式碼、公式、表格、圖表）下面都各自有 overflow-x:auto，
+   這一條只負責攔住漏網的幾十個 px——多半來自 MathJax 內部的 mjx-mtable，
+   那是它自己排版出來的盒子，我們沒有選擇器能乾淨地限制它。
+   用 clip 不用 hidden：clip 不會把 body 變成 scroll container，
+   position:fixed 的浮動導覽與 scroll-behavior:smooth 都不受影響。 */
+html,body{overflow-x:clip;}
+/* 程式碼行不換行（.line{white-space:pre}），所以區塊自己要能滑 */
+.pseudo-code{overflow-x:auto;}
+/* MathJax 的行間公式在窄螢幕會撐爆版面，讓它自己可以橫向滑動。
+   注意 !important 是必要的：MathJax 3 是在 runtime 把自己的樣式表 append 到 <head>
+   最後面，比這個 inline <style> 晚，所以同權重的 max-width 會被它蓋掉。
+   帶 \tag{} 的公式更明顯——它會 render 成一個 mjx-mtable，寬度動輒 500–800px。 */
+/* min-width 也要蓋掉：MathJax 對帶 \tag{} 的公式會在 mjx-container 上設 inline
+   min-width（用來把式號推到右緣），min-width 的優先權高於 max-width，
+   所以只寫 max-width 完全沒用——容器還是會撐到 500–800px。 */
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding-bottom:.25rem;
+  max-width:100%!important;min-width:0!important;}
+mjx-container:not([display="true"]){max-width:100%;overflow-x:auto;overflow-y:hidden;}
+mjx-container::-webkit-scrollbar{height:5px;}
+mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px;}
+.expected-out pre{overflow-x:auto;}
+.strip{overflow-x:auto;}
+
+/* ---- 手機版 ---- */
+@media(max-width:700px){
+  .chart-wrap{height:250px;}
+  .chart-wrap.tall{height:300px;}
+  .qa-a{padding-left:1rem;}
+  .viz-svg{min-width:0;}
+  .big-formula{font-size:.85rem;word-break:break-word;}
+  /* 窄螢幕改成左靠：置中的公式一旦比容器寬，捲軸起點會落在被裁掉的左半邊 */
+  mjx-container[display="true"]{justify-content:flex-start!important;}
+}
+
+/* ---- 尊重使用者的減少動態偏好 ---- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;}
+}
+
+/* ---- 列印：隱藏浮動導覽與控制列，深色區塊轉淺 ---- */
+@media print{
+  .float-nav,.controls-bar,.hero-grid,.hero-graph,.scroll-hint,.fc-controls{display:none!important;}
+  .hero{min-height:auto;background:#fff!important;color:var(--ink)!important;padding:1.5rem 0;}
+  .hero h1,.hero .subtitle{color:var(--ink)!important;}
+  .hero .big-formula{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--card-border)!important;}
+  .pseudo-code,.status-banner{background:var(--paper)!important;color:var(--ink)!important;}
+  .pseudo-code .kw,.pseudo-code .fn,.pseudo-code .str,.pseudo-code .num,.pseudo-code .com{color:var(--ink)!important;}
+  .qa-item{break-inside:avoid;}
+  .qa-item>summary::before{content:'';}
+  .qa-a{display:block!important;}
+  section{break-after:auto;border-bottom:none;}
+  a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
+}
+</style>
+</head>
+<!-- GEN:END head -->
+<body>
+<!-- GEN:BEGIN floatnav -->
+<nav class="float-nav" id="floatNav" aria-label="章節導覽">
+  <div class="fn-title">章節導覽</div>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">Series 與 DataFrame</span></a>
+  <a href="#view" data-target="view"><span class="fn-num">P01</span><span class="fn-name">先看，再算</span></a>
+  <a href="#select" data-target="select"><span class="fn-num">P02</span><span class="fn-name">選取列與欄</span></a>
+  <a href="#na" data-target="na"><span class="fn-num">P03</span><span class="fn-name">遺漏值</span></a>
+  <a href="#group" data-target="group"><span class="fn-num">P04</span><span class="fn-name">分組彙總</span></a>
+  <a href="#join" data-target="join"><span class="fn-num">P05</span><span class="fn-name">串接與讀寫</span></a>
+  <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
+  <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
+</nav>
+<!-- GEN:END floatnav -->
+<!-- GEN:BEGIN hero -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+<g fill="#fff" opacity=".9"><rect x="40" y="46" width="64" height="26" rx="4"/><rect x="112" y="46" width="64" height="26" rx="4"/><rect x="184" y="46" width="64" height="26" rx="4"/><rect x="256" y="46" width="64" height="26" rx="4"/></g><g fill="#fff" opacity=".26"><rect x="40" y="80" width="64" height="24" rx="3"/><rect x="112" y="80" width="64" height="24" rx="3"/><rect x="184" y="80" width="64" height="24" rx="3"/><rect x="256" y="80" width="64" height="24" rx="3"/><rect x="40" y="112" width="64" height="24" rx="3"/><rect x="112" y="112" width="64" height="24" rx="3"/><rect x="184" y="112" width="64" height="24" rx="3"/><rect x="256" y="112" width="64" height="24" rx="3"/><rect x="40" y="144" width="64" height="24" rx="3"/><rect x="112" y="144" width="64" height="24" rx="3"/><rect x="184" y="144" width="64" height="24" rx="3"/><rect x="256" y="144" width="64" height="24" rx="3"/><rect x="40" y="176" width="64" height="24" rx="3"/><rect x="112" y="176" width="64" height="24" rx="3"/><rect x="184" y="176" width="64" height="24" rx="3"/><rect x="256" y="176" width="64" height="24" rx="3"/><rect x="40" y="208" width="64" height="24" rx="3"/><rect x="112" y="208" width="64" height="24" rx="3"/><rect x="184" y="208" width="64" height="24" rx="3"/><rect x="256" y="208" width="64" height="24" rx="3"/></g><g fill="#fff" opacity=".85"><rect x="184" y="80" width="64" height="24" rx="3"/><rect x="184" y="112" width="64" height="24" rx="3"/><rect x="184" y="144" width="64" height="24" rx="3"/><rect x="184" y="176" width="64" height="24" rx="3"/><rect x="184" y="208" width="64" height="24" rx="3"/></g>
+  </svg>
+  <div class="hero-content">
+    <h1>一張表就是一次<span class="orange">分析</span>：pandas</h1>
+    <div class="subtitle">先備知識 P4 — 選讀，不列入評分</div>
+    <div class="big-formula">Series 與 DataFrame｜head describe shape｜loc 靠名字 iloc 靠位置｜? 要在讀檔時就處理｜dropna 397→392｜groupby 拆分-套用-合併｜concat</div>
+    <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
+  </div>
+</div>
+<!-- GEN:END hero -->
+<div class="container">
+<!-- GEN:BEGIN studyguide -->
+<div class="study-guide">
+  <div class="sg-title">📌 本頁使用方式（先備 · pandas 資料框）</div>
+  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
+  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+</div>
+<!-- GEN:END studyguide -->
+<!-- GEN:BEGIN toc -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · 內容目錄</div>
+  <div class="toc-grid">
+    <a href="#prologue"><span class="toc-num">P00</span>Series 與 DataFrame</a>
+    <a href="#view"><span class="toc-num">P01</span>先看，再算</a>
+    <a href="#select"><span class="toc-num">P02</span>選取列與欄</a>
+    <a href="#na"><span class="toc-num">P03</span>遺漏值</a>
+    <a href="#group"><span class="toc-num">P04</span>分組彙總</a>
+    <a href="#join"><span class="toc-num">P05</span>串接與讀寫</a>
+    <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
+    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
+  </div>
+</div>
+<!-- GEN:END toc -->
+<section id="prologue">
+<!-- GEN:BEGIN sec:prologue -->
+  <div class="section-number">PROLOGUE · 開場</div>
+  <h2>一欄是 Series，一張表是 DataFrame <span class="sec-badge">課程 Lab Ch1 · 儲存格 17–28</span></h2>
+<!-- GEN:END sec:prologue -->
+
+  <p>NumPy 的陣列只有數字，沒有欄名。真實資料不是這樣——你會想說「取 mpg 那一欄」，
+  而不是「取第 3 欄」。pandas 就是在陣列上面加了一層<strong>標籤</strong>：
+  一維的叫 Series，二維的叫 DataFrame。</p>
+
+<div class="info-box">
+  <span class="info-label">一句話</span>
+  <strong>Series ≈ 有索引的一維陣列</strong>，<strong>DataFrame ≈ 共用同一個索引的一疊 Series</strong>。底下算數字的還是 NumPy。
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w17serSvg" height="320"></svg>
+      <div class="status-banner" id="w17serStatus"><span class="status-icon">›</span><span class="status-text">從字典開始，看它怎麼變成 Series 再變成 DataFrame。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w17serSet(0)">Python 字典</button><button class="btn btn-toggle" onclick="w17serSet(1)">Series</button><button class="btn btn-toggle" onclick="w17serSet(2)">DataFrame</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">三種東西的關係</div>
+      按按鈕切換。字典的鍵變成索引、值變成資料；幾個 Series 疊起來、共用同一個索引，就是 DataFrame。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">型別</span><span class="ic-value" id="w17serType">Series</span></div><div class="ic-row"><span class="ic-label">索引</span><span class="ic-value" id="w17serIdx">d b a c</span></div><div class="ic-row"><span class="ic-label">dtype</span><span class="ic-value" id="w17serDtype">int64</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">每一欄可以是不同型別</div>
+      DataFrame 的 <code>dtypes</code> 是<strong>逐欄</strong>的：state 是 object、year 是 int64、pop 是 float64。這一點跟 NumPy 陣列不同——陣列整塊只能有一個型別。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">自訂索引的 Series</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">s2 = pd.Series([<span class="num">4</span>, <span class="num">7</span>, -<span class="num">5</span>, <span class="num">3</span>], index=[<span class="str">&quot;d&quot;</span>, <span class="str">&quot;b&quot;</span>, <span class="str">&quot;a&quot;</span>, <span class="str">&quot;c&quot;</span>])</span>
+  <span class="line">s2</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>d    4
+b    7
+a   -5
+c    3
+dtype: int64</pre></div>
+  <p class="dx-note">左邊那一排 <code>d b a c</code> 是索引，不是資料。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 17</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">用字典建 DataFrame</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">data = {<span class="str">&quot;state&quot;</span>: [<span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Nevada&quot;</span>, <span class="str">&quot;Nevada&quot;</span>, <span class="str">&quot;Nevada&quot;</span>],</span>
+  <span class="line">        <span class="str">&quot;year&quot;</span>: [<span class="num">2000</span>, <span class="num">2001</span>, <span class="num">2002</span>, <span class="num">2001</span>, <span class="num">2002</span>, <span class="num">2003</span>],</span>
+  <span class="line">        <span class="str">&quot;pop&quot;</span>: [<span class="num">1.5</span>, <span class="num">1.7</span>, <span class="num">3.6</span>, <span class="num">2.4</span>, <span class="num">2.9</span>, <span class="num">3.2</span>]}</span>
+  <span class="line">frame = pd.DataFrame(data)</span>
+  <span class="line">frame</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>    state  year  pop
+0    Ohio  2000  1.5
+1    Ohio  2001  1.7
+2    Ohio  2002  3.6
+3  Nevada  2001  2.4
+4  Nevada  2002  2.9
+5  Nevada  2003  3.2</pre></div>
+  <p class="dx-note">鍵變成欄名，值變成那一欄的內容。列索引沒指定時就是 0、1、2…</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 26</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">每一欄各自的型別</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">frame.dtypes</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>state     object
+year       int64
+pop      float64
+dtype: object</pre></div>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 28</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 00 · 自我檢測</div>
+  <p><code>frame['pop']</code> 拿到的是什麼？</p>
+  <div class="quiz-options" id="qSerOptions"><div class="quiz-opt" data-correct="false" data-fb="很接近但不精確。底下確實是 NumPy 陣列，但你拿到的是包了一層索引的 <strong>Series</strong>。要真的拿陣列得再 <code>.to_numpy()</code>。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(A)</span> 一個 NumPy 陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。這就是為什麼 <code>frame['pop'] &amp;gt; 2</code> 的結果也帶索引，可以直接拿回去索引原本的表。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(B)</span> 一個 Series，帶著原本的列索引</div><div class="quiz-opt" data-correct="false" data-fb="不是。用單一個字串取欄拿到的是 Series；要拿只有一欄的 DataFrame 得寫 <code>frame[['pop']]</code>（雙層中括號）。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(C)</span> 一個 DataFrame，只有一欄</div></div>
+  <div class="quiz-feedback" id="qSerFeedback"></div>
+</div>
+</section>
+<section id="view">
+<!-- GEN:BEGIN sec:view -->
+  <div class="section-number">PART 01 · 先看，再算</div>
+  <h2>拿到資料的前五分鐘：head、describe、shape <span class="sec-badge">課程 Lab Ch1 · 儲存格 31–38</span></h2>
+<!-- GEN:END sec:view -->
+
+  <p>拿到一份沒看過的資料，前五分鐘不要急著建模。先跑這四行：
+  <code>shape</code> 看有多大、<code>head()</code> 看長什麼樣、
+  <code>describe()</code> 看數值範圍合不合理、<code>dtypes</code> 看有沒有欄被讀成字串。
+  第四項最常出事，下一節會看到。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w17peekSvg" height="300"></svg>
+      <div class="status-banner" id="w17peekStatus"><span class="status-icon">›</span><span class="status-text">四行指令，按順序看過一遍。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w17peekSet(0)">df.shape</button><button class="btn btn-toggle" onclick="w17peekSet(1)">df.head()</button><button class="btn btn-toggle" onclick="w17peekSet(2)">df.dtypes</button><button class="btn btn-toggle" onclick="w17peekSet(3)">df.describe()</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">四行指令各自告訴你什麼</div>
+      按按鈕，看每一行揭露的是哪一塊資訊。四個都看完才算「認識」了這份資料。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這一行告訴你</div>
+      <div class="ic-row"><span class="ic-label">指令</span><span class="ic-value" id="w17peekCmd">df.shape</span></div><div class="ic-row"><span class="ic-label">揭露什麼</span><span class="ic-value" id="w17peekWhat">資料有多大</span></div><div class="ic-row"><span class="ic-label">看到什麼要警覺</span><span class="ic-value" id="w17peekWarn">列數比預期少很多</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">順序有意義</div>
+      先 <code>shape</code> 再 <code>dtypes</code>——型別錯了的話，後面 <code>describe()</code> 的數字全部不能信。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">看前幾列與後幾列</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
+  <span class="line">df.head() <span class="com"># Get the first 5 rows of data</span></span>
+  <span class="line">df.tail(<span class="num">3</span>) <span class="com"># Get the last 3 rows of data</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
+2025-09-01 -0.397297 -1.061537  1.455216  0.632237
+2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
+2025-09-03  0.501820 -0.662466  0.146713  0.293567
+2025-09-04 -1.060077 -1.010073  0.553983  0.211157
+2025-09-05 -0.109702  0.236859 -0.203407  0.695861
+                   A         B         C         D
+2025-09-04 -1.060077 -1.010073  0.553983  0.211157
+2025-09-05 -0.109702  0.236859 -0.203407  0.695861
+2025-09-06  0.157943 -0.966041  0.844384  1.641228</pre></div>
+  <p class="dx-note"><code>head()</code> 預設五列，<code>tail(3)</code> 給最後三列。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 31、32</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">五數摘要</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
+  <span class="line">df.describe()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              A         B         C         D
+count  6.000000  6.000000  6.000000  6.000000
+mean  -0.291225 -0.842656  0.365341  0.328874
+std    0.594509  0.608525  0.743696  1.030710
+min   -1.060077 -1.592677 -0.604842 -1.500806
+25%   -0.729352 -1.048671 -0.115877  0.231760
+50%   -0.253499 -0.988057  0.350348  0.462902
+75%    0.091032 -0.738359  0.771784  0.679955
+max    0.501820  0.236859  1.455216  1.641228</pre></div>
+  <p class="dx-note"><code>count</code> 那一列很有用——它<strong>不算遺漏值</strong>，所以某一欄的 count 比別欄少，就代表那欄有 NaN。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 36</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">形狀</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">df.shape</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(6, 4)</pre></div>
+  <p class="dx-note">跟 NumPy 一樣是 <code>(列數, 欄數)</code>。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 38</span>
+</div>
+
+<div class="qa-box">
+  <div class="qa-head">觀念釐清</div>
+  <details class="qa-item"><summary><code>describe()</code> 為什麼漏掉某些欄？</summary>
+    <div class="qa-a">它預設只算數值欄。如果你期待的欄沒出現，那一欄多半被讀成了字串（object）——這正是下一節 Auto 的 horsepower 會遇到的事。加 <code>describe(include='all')</code> 可以連類別欄一起看。</div>
+  </details>
+  <details class="qa-item"><summary><code>count</code> 跟 <code>len(df)</code> 差在哪？</summary>
+    <div class="qa-a"><code>len(df)</code> 是列數，<code>count</code> 是<strong>非遺漏</strong>的個數。兩個數字不一樣，就代表那一欄有 NaN。這是最快的遺漏值偵測法。</div>
+  </details>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 01 · 自我檢測</div>
+  <p><code>df.describe()</code> 的輸出裡，某一欄的 <code>count</code> 是 380，但 <code>df.shape</code> 是 <code>(392, 9)</code>。這代表什麼？</p>
+  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>count</code> 只算非 NaN 的個數，392 − 380 = 12。這是最快發現遺漏值的方式，比一欄一欄 <code>isna().sum()</code> 快。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 那一欄有 12 個遺漏值</div><div class="quiz-opt" data-correct="false" data-fb="不會。<code>shape</code> 是實際的列數，不受遺漏值影響。兩個數字不一致本身就是資訊，不是錯誤。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 資料只有 380 列，shape 印錯了</div><div class="quiz-opt" data-correct="false" data-fb="重複值不影響 <code>count</code>。要看重複得用 <code>duplicated()</code> 或 <code>value_counts()</code>。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 那一欄有 12 個重複值</div></div>
+  <div class="quiz-feedback" id="qViewFeedback"></div>
+</div>
+</section>
+<section id="select">
+<!-- GEN:BEGIN sec:select -->
+  <div class="section-number">PART 02 · 選取列與欄</div>
+  <h2><code>loc</code> 靠名字、<code>iloc</code> 靠位置 <span class="sec-badge">課程 Lab Ch1 · 儲存格 45–56</span></h2>
+<!-- GEN:END sec:select -->
+
+  <p>pandas 有兩套選取語法，混用是新手最大的痛苦來源。規則其實只有一句：
+  <strong><code>loc</code> 靠名字、<code>iloc</code> 靠位置</strong>。
+  剩下的差別都是從這一句推出來的。</p>
+
+<div class="info-box warm">
+  <span class="info-label">最容易咬人的一條</span>
+  <code>loc</code> 的切片<strong>包含</strong>結尾，<code>iloc</code> 不包含。<code>df.loc['a':'c']</code> 會拿到 c，<code>df.iloc[0:3]</code> 只拿到 0、1、2。因為名字沒有「下一個」可言，含頭不含尾對它沒有意義。
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w17selSvg" height="340"></svg>
+      <div class="status-banner" id="w17selStatus"><span class="status-icon">›</span><span class="status-text">先猜哪幾格會亮，再按。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w17selSet(0)">df[&quot;A&quot;]</button><button class="btn btn-toggle" onclick="w17selSet(1)">df[0:3]</button><button class="btn btn-toggle" onclick="w17selSet(2)">df.loc[:, [&quot;A&quot;,&quot;C&quot;]]</button><button class="btn btn-toggle" onclick="w17selSet(3)">df.iloc[3]</button><button class="btn btn-toggle" onclick="w17selSet(4)">df[df[&quot;A&quot;]&gt;0]</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">按按鈕比較</div>
+      同一張表、四種寫法。亮起來的是被選到的格子，下面會顯示這個寫法拿到的是 DataFrame 還是 Series。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">寫法</span><span class="ic-value" id="w17selExpr">df[\'A\']</span></div><div class="ic-row"><span class="ic-label">拿到的型別</span><span class="ic-value" id="w17selType">Series</span></div><div class="ic-row"><span class="ic-label">形狀</span><span class="ic-value" id="w17selShape">(6,)</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">那 df[…] 直接寫呢</div>
+      <code>df['A']</code> 取的是<strong>欄</strong>，但 <code>df[0:3]</code> 取的是<strong>列</strong>——同一個中括號，兩種意思。這就是為什麼建議一律用 <code>loc</code>／<code>iloc</code> 寫清楚。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">取一欄與取幾列</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">df[<span class="str">&quot;A&quot;</span>]</span>
+  <span class="line">df[<span class="num">0</span>:<span class="num">3</span>] <span class="com"># df[&quot;20250901&quot;:&quot;20250903&quot;] also works</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>2025-09-01   -0.397297
+2025-09-02   -0.840037
+2025-09-03    0.501820
+2025-09-04   -1.060077
+2025-09-05   -0.109702
+2025-09-06    0.157943
+Freq: D, Name: A, dtype: float64
+                   A         B         C         D
+2025-09-01 -0.397297 -1.061537  1.455216  0.632237
+2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
+2025-09-03  0.501820 -0.662466  0.146713  0.293567</pre></div>
+  <p class="dx-note">注意兩者的差別：<code>df['A']</code> 給 Series，<code>df[0:3]</code> 給 DataFrame。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 45、47</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">loc 指名字、iloc 指位置</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 欄位選取與資料清理/轉換</span></span>
+  <span class="line">df.loc[:, [<span class="str">&quot;A&quot;</span>, <span class="str">&quot;C&quot;</span>]] <span class="com"># Fancy indexing in the second dimension</span></span>
+  <span class="line"><span class="com"># 欄位選取與資料清理/轉換</span></span>
+  <span class="line">df.iloc[<span class="num">3</span>]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         C
+2025-09-01 -0.397297  1.455216
+2025-09-02 -0.840037 -0.604842
+2025-09-03  0.501820  0.146713
+2025-09-04 -1.060077  0.553983
+2025-09-05 -0.109702 -0.203407
+2025-09-06  0.157943  0.844384
+A   -1.060077
+B   -1.010073
+C    0.553983
+D    0.211157
+Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
+  <p class="dx-note"><code>df.iloc[3]</code> 拿一整列，回來的是 Series——那一列的欄名變成了它的索引。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 50、53</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">用條件選列</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">df[df[<span class="str">&quot;A&quot;</span>] &gt; <span class="num">0</span>]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
+2025-09-03  0.501820 -0.662466  0.146713  0.293567
+2025-09-06  0.157943 -0.966041  0.844384  1.641228</pre></div>
+  <p class="dx-note">裡面的 <code>df['A'] &gt; 0</code> 就是 P3 講的布林遮罩，只是現在它帶著索引。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 56</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 02 · 自我檢測</div>
+  <p><code>df.loc['b':'d']</code> 與 <code>df.iloc[1:3]</code>，哪一個的敘述正確？</p>
+  <div class="quiz-options" id="qSelOptions"><div class="quiz-opt" data-correct="false" data-fb="只對了一半。<code>iloc</code> 確實不含結尾，但 <code>loc</code> 是<strong>含</strong>的。" onclick="quizCheck('qSel', this)"><span class="opt-letter">(A)</span> 兩個都不包含結尾</div><div class="quiz-opt" data-correct="true" data-fb="對。<code>loc</code> 用名字，名字沒有「下一個」的概念，所以含頭含尾；<code>iloc</code> 用位置，跟 Python 切片一致，含頭不含尾。" onclick="quizCheck('qSel', this)"><span class="opt-letter">(B)</span> <code>loc</code> 會拿到 d，<code>iloc</code> 只拿到位置 1 和 2</div><div class="quiz-opt" data-correct="false" data-fb="不是。<code>iloc</code> 就是一般的位置切片，<code>df.iloc[1:3]</code> 只有兩列。" onclick="quizCheck('qSel', this)"><span class="opt-letter">(C)</span> 兩個都包含結尾</div></div>
+  <div class="quiz-feedback" id="qSelFeedback"></div>
+</div>
+
+<div class="info-box purple">
+  <span class="info-label">🔗 這在本站哪一章會用到</span>
+  第 3 章把類別變數放進迴歸、第 4 章切出訓練與測試集，用的都是這一節的選取語法。<a href="linear_regression.html#qualitative">→ 線性迴歸 · 類別型預測變數</a>
+</div>
+</section>
+<section id="na">
+<!-- GEN:BEGIN sec:na -->
+  <div class="section-number">PART 03 · 遺漏值</div>
+  <h2>Auto 的 horsepower 為什麼是字串？397 筆怎麼變成 392 筆 <span class="sec-badge">課程 Lab Ch2 · 儲存格 185–199</span></h2>
+<!-- GEN:END sec:na -->
+
+  <p>這一節講一個真實故事。課程 lab 讀進 <code>Auto</code> 之後，
+  <code>horsepower</code> 那一欄<strong>整欄是字串</strong>——因為原始檔用 <code>?</code>
+  代表遺漏，pandas 看到問號就把整欄當成文字。這種錯誤不會報錯，只會讓你後面算出來的東西全錯。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w17naSvg" height="340"></svg>
+      <div class="status-banner" id="w17naStatus"><span class="status-icon">›</span><span class="status-text">按「單步」看整件事怎麼發生、怎麼修。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w17naStep()">→ 單步</button><button class="btn btn-reset" onclick="w17naReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">四個步驟</div>
+      按「單步」走一次：發現整欄是字串 → 找出兇手是 <code>?</code> → 在<strong>讀檔時</strong>就宣告它是遺漏 → 決定要不要 dropna。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">步驟</span><span class="ic-value" id="w17naStep">0 / 4</span></div><div class="ic-row"><span class="ic-label">horsepower 的型別</span><span class="ic-value" id="w17naType">object（字串）</span></div><div class="ic-row"><span class="ic-label">列數</span><span class="ic-value" id="w17naRows">397</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">為什麼要在讀檔時處理</div>
+      讀進來之後才發現，你得自己寫 <code>replace</code> 再 <code>astype(float)</code>，很容易漏掉某些欄。<code>na_values=['?']</code> 一次解決，而且下次重跑也不會忘。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">找出兇手</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">np.unique(Auto[<span class="str">&#x27;horsepower&#x27;</span>])</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([&#x27;100.0&#x27;, &#x27;102.0&#x27;, &#x27;103.0&#x27;, &#x27;105.0&#x27;, &#x27;107.0&#x27;, &#x27;108.0&#x27;, &#x27;110.0&#x27;,
+       &#x27;112.0&#x27;, &#x27;113.0&#x27;, &#x27;115.0&#x27;, &#x27;116.0&#x27;, &#x27;120.0&#x27;, &#x27;122.0&#x27;, &#x27;125.0&#x27;,
+       &#x27;129.0&#x27;, &#x27;130.0&#x27;, &#x27;132.0&#x27;, &#x27;133.0&#x27;, &#x27;135.0&#x27;, &#x27;137.0&#x27;, &#x27;138.0&#x27;,
+       &#x27;139.0&#x27;, &#x27;140.0&#x27;, &#x27;142.0&#x27;, &#x27;145.0&#x27;, &#x27;148.0&#x27;, &#x27;149.0&#x27;, &#x27;150.0&#x27;,
+       &#x27;152.0&#x27;, &#x27;153.0&#x27;, &#x27;155.0&#x27;, &#x27;158.0&#x27;, &#x27;160.0&#x27;, &#x27;165.0&#x27;, &#x27;167.0&#x27;,
+       &#x27;170.0&#x27;, &#x27;175.0&#x27;, &#x27;180.0&#x27;, &#x27;190.0&#x27;, &#x27;193.0&#x27;, &#x27;198.0&#x27;, &#x27;200.0&#x27;,
+       &#x27;208.0&#x27;, &#x27;210.0&#x27;, &#x27;215.0&#x27;, &#x27;220.0&#x27;, &#x27;225.0&#x27;, &#x27;230.0&#x27;, &#x27;46.00&#x27;,
+       &#x27;48.00&#x27;, &#x27;49.00&#x27;, &#x27;52.00&#x27;, &#x27;53.00&#x27;, &#x27;54.00&#x27;, &#x27;58.00&#x27;, &#x27;60.00&#x27;,
+       &#x27;61.00&#x27;, &#x27;62.00&#x27;, &#x27;63.00&#x27;, &#x27;64.00&#x27;, &#x27;65.00&#x27;, &#x27;66.00&#x27;, &#x27;67.00&#x27;,
+       &#x27;68.00&#x27;, &#x27;69.00&#x27;, &#x27;70.00&#x27;, &#x27;71.00&#x27;, &#x27;72.00&#x27;, &#x27;74.00&#x27;, &#x27;75.00&#x27;,
+       &#x27;76.00&#x27;, &#x27;77.00&#x27;, &#x27;78.00&#x27;, &#x27;79.00&#x27;, &#x27;80.00&#x27;, &#x27;81.00&#x27;, &#x27;82.00&#x27;,
+       &#x27;83.00&#x27;, &#x27;84.00&#x27;, &#x27;85.00&#x27;, &#x27;86.00&#x27;, &#x27;87.00&#x27;, &#x27;88.00&#x27;, &#x27;89.00&#x27;,
+       &#x27;90.00&#x27;, &#x27;91.00&#x27;, &#x27;92.00&#x27;, &#x27;93.00&#x27;, &#x27;94.00&#x27;, &#x27;95.00&#x27;, &#x27;96.00&#x27;,
+       &#x27;97.00&#x27;, &#x27;98.00&#x27;, &#x27;?&#x27;], dtype=object)</pre></div>
+  <p class="dx-note">全部是<strong>帶引號的字串</strong>——輸出末尾就會看到那個 <code>'?'</code>。整欄因此被讀成 object。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 192</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">讀檔時就宣告哪些字算遺漏</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto = pd.read_csv(os.path.join(DATA_PATH,<span class="str">&#x27;Auto.data&#x27;</span>),</span>
+  <span class="line">                   na_values=[<span class="str">&#x27;?&#x27;</span>],</span>
+  <span class="line">                   sep=<span class="str">r&quot;\s+&quot;</span>)</span>
+  <span class="line">Auto[<span class="str">&#x27;horsepower&#x27;</span>].sum()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(40952.0)</pre></div>
+  <p class="dx-note">加上 <code>na_values=['?']</code> 之後，<code>sum()</code> 才算得出數字——那個 <code>np.float64</code> 就是證據。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 195</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">dropna：397 變成 392</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto.shape</span>
+  <span class="line">Auto_new = Auto.dropna()</span>
+  <span class="line">Auto_new.shape</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(397, 9)
+(392, 9)</pre></div>
+  <p class="dx-note">整門課後面用的 <code>Auto</code> 都是這 392 筆。你在課本裡看到的 n=392 就是從這裡來的。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 197、199</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">reindex 也會生出 NaN</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 欄位選取與資料清理/轉換；排序/重建索引</span></span>
+  <span class="line">obj2 = obj.reindex([<span class="str">&quot;a&quot;</span>, <span class="str">&quot;b&quot;</span>, <span class="str">&quot;c&quot;</span>, <span class="str">&quot;d&quot;</span>, <span class="str">&quot;e&quot;</span>]) <span class="com"># Reindexing allows you to change/add/delete the index on a specified axis. This returns a copy of the data.</span></span>
+  <span class="line">obj2  <span class="com"># pandas primarily uses the value np.nan to represent missing data. It is by default not included in computations. Check dropna(), fillna() and isna()</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>a   -5.3
+b    7.2
+c    3.6
+d    4.5
+e    NaN
+dtype: float64</pre></div>
+  <p class="dx-note">索引裡多了一個 <code>e</code>，原本沒有這一筆，pandas 就填 NaN。遺漏值不是只有讀檔會產生。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 61</span>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>做法</th><th>什麼時候用</th><th>風險</th></tr></thead>
+  <tbody><tr><td><code>na_values=[…]</code>（讀檔時）</td><td>原始檔用特殊符號表示遺漏</td><td>幾乎沒有，應該是預設動作</td></tr><tr><td><code>dropna()</code></td><td>遺漏很少、而且看起來是隨機遺漏</td><td>遺漏不是隨機時會產生偏差</td></tr><tr><td><code>fillna(中位數)</code></td><td>想保留樣本數</td><td>低估變異、稀釋相關性</td></tr><tr><td>當成一個類別（缺失指示變數）</td><td>「有沒有填」本身帶資訊</td><td>多一個參數</td></tr></tbody>
+</table></div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 03 · 自我檢測</div>
+  <p><code>Auto['horsepower'].mean()</code> 在<strong>沒有</strong>加 <code>na_values=['?']</code> 的情況下會發生什麼？</p>
+  <div class="quiz-options" id="qNaOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不知道 <code>?</code> 是遺漏，它只看到一欄字串。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(A)</span> 自動忽略問號，算出正確的平均</div><div class="quiz-opt" data-correct="true" data-fb="對。這是最危險的一種錯誤——<strong>你以為在算平均，其實那一欄根本不是數字</strong>。所以拿到資料先看 <code>dtypes</code>。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(B)</span> 報錯或算出無意義的結果，因為整欄是字串</div><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不會擅自把字串轉成數字，它的選擇是把整欄保持成 object。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(C)</span> 把問號當成 0 來算</div></div>
+  <div class="quiz-feedback" id="qNaFeedback"></div>
+</div>
+</section>
+<section id="group">
+<!-- GEN:BEGIN sec:group -->
+  <div class="section-number">PART 04 · 分組彙總</div>
+  <h2>拆分 → 套用 → 合併：groupby 的三個動作 <span class="sec-badge">課程 Lab Ch1 · 儲存格 76–78</span></h2>
+<!-- GEN:END sec:group -->
+
+  <p><code>groupby</code> 是 pandas 最有價值的一個動作，而它其實是三件事連在一起：
+  <strong>拆分</strong>（照某一欄的值把列分堆）→ <strong>套用</strong>（每一堆各算一次）→
+  <strong>合併</strong>（把結果疊回一張表）。看懂這三步，所有變形都是同一件事。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w17grpSvg" height="340"></svg>
+      <div class="status-banner" id="w17grpStatus"><span class="status-icon">›</span><span class="status-text">按「單步」把 groupby 拆成三個動作看。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w17grpStep()">→ 單步</button><button class="btn btn-play" onclick="w17grpPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w17grpReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">三個動作</div>
+      按「單步」看拆分、套用、合併。注意<strong>分組的鍵會變成新的索引</strong>——這就是為什麼結果只剩兩列。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">步驟</span><span class="ic-value" id="w17grpStep">0 / 3</span></div><div class="ic-row"><span class="ic-label">組數</span><span class="ic-value" id="w17grpN">—</span></div><div class="ic-row"><span class="ic-label">結果形狀</span><span class="ic-value" id="w17grpShape">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">numeric_only=True 是什麼</div>
+      有些欄是字串，加總沒有意義。<code>sum(numeric_only=True)</code> 明講「只算數值欄」，不寫的話新版 pandas 會警告。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">先數一數每一類有幾筆</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 分組彙總/類別計數</span></span>
+  <span class="line">df[<span class="str">&#x27;A&#x27;</span>].value_counts()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>A
+foo    5
+bar    3
+Name: count, dtype: int64</pre></div>
+  <p class="dx-note"><code>value_counts()</code> 是拿到類別欄的第一個動作。某一類只有兩三筆的話，後面做分類會很吃力。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 76</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">拆分 → 套用 → 合併</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 分組彙總/類別計數</span></span>
+  <span class="line">df.groupby(<span class="str">&quot;A&quot;</span>).sum(numeric_only=<span class="num">True</span>)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>            C         D
+A                      
+bar  1.747047  2.499340
+foo -2.740490  0.700964</pre></div>
+  <p class="dx-note"><code>A</code> 從一般的欄變成了<strong>索引</strong>，所以輸出裡它單獨一行、下面是 bar 與 foo。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 78</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <div class="chart-wrap"><canvas id="w17grpChart"></canvas>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：foo 那一組的 C 欄總和是負的、bar 是正的——分組之後兩組的方向相反。</div></div>
+      </div>
+      <div class="status-banner" id="w17grpStatus2"><span class="status-icon">›</span><span class="status-text">bar 與 foo 兩組在 C 欄的方向相反。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w17grpCol(&quot;C&quot;)">看 C 欄</button><button class="btn btn-toggle" onclick="w17grpCol(&quot;D&quot;)">看 D 欄</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">同一份結果換一種看法</div>
+      上面那張表的四個數字畫成長條圖。分組彙總之後<strong>先畫圖再下結論</strong>，數字表很容易看漏正負號。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這些數字哪裡來的</div>
+      逐字取自 lab 儲存格 78 的輸出，沒有重跑。本站所有圖表的數字都可以這樣追回來源。
+    </div>
+  </div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 04 · 自我檢測</div>
+  <p><code>df.groupby('A').sum()</code> 之後，欄 <code>A</code> 跑去哪了？</p>
+  <div class="quiz-options" id="qGrpOptions"><div class="quiz-opt" data-correct="false" data-fb="不是。分組之後 <code>A</code> 不再是一般的欄。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(A)</span> 還在，只是移到最後一欄</div><div class="quiz-opt" data-correct="true" data-fb="對。所以要把它變回一般的欄得寫 <code>.reset_index()</code>，或一開始就寫 <code>groupby('A', as_index=False)</code>。很多「欄名找不到」的錯誤都出在這裡。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(B)</span> 變成結果的索引</div><div class="quiz-opt" data-correct="false" data-fb="不對。它沒有被加總，是因為它是<strong>分組的鍵</strong>，不是被當成資料處理。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(C)</span> 被刪掉了，因為字串不能加總</div></div>
+  <div class="quiz-feedback" id="qGrpFeedback"></div>
+</div>
+</section>
+<section id="join">
+<!-- GEN:BEGIN sec:join -->
+  <div class="section-number">PART 05 · 串接與讀寫</div>
+  <h2>concat 把切開的表接回去；讀檔的參數決定後面有多痛 <span class="sec-badge">課程 Lab Ch1 · 儲存格 71–72</span></h2>
+<!-- GEN:END sec:join -->
+
+  <p>最後兩件雜事：把切開的表接回去，以及讀檔。讀檔看起來最無聊，
+  但上一節那個 <code>?</code> 的災難就是讀檔沒設好造成的——
+  <strong>讀檔的參數決定你後面有多痛</strong>。</p>
+
+<div class="deck-extra">
+  <div class="dx-label">切成三塊再接回去</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">pieces = [df[:<span class="num">2</span>], df[<span class="num">2</span>:<span class="num">4</span>], df[<span class="num">4</span>:]]</span>
+  <span class="line">pieces, type(pieces[<span class="num">0</span>])</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>([                   A         B         C         D
+  2025-09-01 -0.397297 -1.061537  1.455216  0.632237
+  2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806,
+                     A         B         C         D
+  2025-09-03  0.501820 -0.662466  0.146713  0.293567
+  2025-09-04 -1.060077 -1.010073  0.553983  0.211157,
+                     A         B         C         D
+  2025-09-05 -0.109702  0.236859 -0.203407  0.695861
+  2025-09-06  0.157943 -0.966041  0.844384  1.641228],
+ pandas.core.frame.DataFrame)</pre></div>
+  <p class="dx-note">切片給的是三個 DataFrame，裝在一個串列裡。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 71</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">concat 沿著列接起來</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 資料表合併/串接</span></span>
+  <span class="line">pd.concat(pieces) <span class="com"># Adding a column to a DataFrame is relatively fast. However, adding a row requires a copy, and may be expensive.</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
+2025-09-01 -0.397297 -1.061537  1.455216  0.632237
+2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
+2025-09-03  0.501820 -0.662466  0.146713  0.293567
+2025-09-04 -1.060077 -1.010073  0.553983  0.211157
+2025-09-05 -0.109702  0.236859 -0.203407  0.695861
+2025-09-06  0.157943 -0.966041  0.844384  1.641228</pre></div>
+  <p class="dx-note">接回去之後跟原本一模一樣。注意註解裡那句話：<strong>加一欄很快，加一列要複製整張表</strong>——所以不要在迴圈裡一列一列 append。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 72</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">讀檔的參數才是重點</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto = pd.read_csv(os.path.join(DATA_PATH,<span class="str">&#x27;Auto.data&#x27;</span>),</span>
+  <span class="line">                   na_values=[<span class="str">&#x27;?&#x27;</span>],</span>
+  <span class="line">                   sep=<span class="str">r&quot;\s+&quot;</span>)</span>
+  <span class="line">Auto[<span class="str">&#x27;horsepower&#x27;</span>].sum()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(40952.0)</pre></div>
+  <p class="dx-note"><code>sep=r&quot;\s+&quot;</code> 是「一個以上的空白當分隔」，<code>na_values</code> 是「這些字算遺漏」。這一行寫對，後面少掉一整輪除錯。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 195</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w17catSvg" height="320"></svg>
+      <div class="status-banner" id="w17catStatus"><span class="status-icon">›</span><span class="status-text">按「單步」把三塊接回去。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w17catStep()">→ 單步</button><button class="btn btn-reset" onclick="w17catReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">疊回去</div>
+      三塊各自是完整的 DataFrame，欄名一樣，<code>concat</code> 沿著<strong>列</strong>把它們接起來。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">步驟</span><span class="ic-value" id="w17catStep">0 / 3</span></div><div class="ic-row"><span class="ic-label">已接上的列數</span><span class="ic-value" id="w17catRows">0</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">axis=1 呢</div>
+      沿欄接：列索引要對得起來，接完欄變多。對不起來的位置會填 NaN——這是最容易產生意外遺漏值的操作。
+    </div>
+  </div>
+</div>
+
+<div class="qa-box">
+  <div class="qa-head">觀念釐清</div>
+  <details class="qa-item"><summary><code>concat</code> 跟 <code>merge</code> 差在哪？</summary>
+    <div class="qa-a"><code>concat</code> 是<strong>疊</strong>：形狀相容就沿著某個軸接起來，預設沿列（axis=0）。<code>merge</code> 是<strong>對</strong>：照某個鍵把兩張表配對，像 SQL 的 join。本課的 lab 主要用 concat，但實務上 merge 更常見。</div>
+  </details>
+  <details class="qa-item"><summary>為什麼不要在迴圈裡一列一列加？</summary>
+    <div class="qa-a">DataFrame 的欄是連續存放的，加一列等於整張表複製一次。一萬列就複製一萬次。正確做法是把每一塊放進 Python 串列，最後 <code>pd.concat(串列)</code> 一次接完。</div>
+  </details>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 05 · 自我檢測</div>
+  <p>你要把 500 個小 DataFrame 合成一張大表。哪一種寫法對？</p>
+  <div class="quiz-options" id="qJoinOptions"><div class="quiz-opt" data-correct="false" data-fb="能跑，但每一輪都複製整張大表，500 次下來會慢得離譜。這是很經典的效能陷阱。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(A)</span> 在 for 迴圈裡 <code>big = pd.concat([big, small])</code></div><div class="quiz-opt" data-correct="true" data-fb="對。只複製一次。lab 儲存格 71–72 示範的就是這個形式：先做出 <code>pieces</code> 這個串列，再一次 concat。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(B)</span> 全部收進一個串列，最後 <code>pd.concat(串列)</code> 一次接完</div><div class="quiz-opt" data-correct="false" data-fb="<code>merge</code> 是照鍵配對，不是疊起來，用在這裡是錯的工具。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(C)</span> 用 <code>merge</code> 兩兩合併</div></div>
+  <div class="quiz-feedback" id="qJoinFeedback"></div>
+</div>
+</section>
+<section id="exercises">
+<!-- GEN:BEGIN sec:exercises -->
+  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
+  程式碼卡在自己的環境跑一次。</p>
+  <div class="sol-links"><a href="https://pandas.pydata.org/docs/user_guide/10min.html" target="_blank" rel="noopener">🔗 pandas 十分鐘入門</a><a href="https://pandas.pydata.org/docs/user_guide/indexing.html" target="_blank" rel="noopener">🔗 索引與選取資料</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
+<!-- GEN:END sec:exercises -->
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 1 · 讀檔</div>
+  <p>某個 CSV 用 <code>NA</code> 與 <code>-999</code> 兩種方式表示遺漏。最好的處理時機是？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。一次講清楚，之後每一次重跑都一致。Auto 那個 <code>?</code> 的教訓就是這個——讀進來之後才補救，很容易漏掉某些欄。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 讀檔時寫 <code>na_values=['NA', -999]</code></div><div class="quiz-opt" data-correct="false" data-fb="能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。更糟的是別人重跑你的程式碼時可能漏掉這一步。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 讀完之後用 <code>replace</code> 換掉</div><div class="quiz-opt" data-correct="false" data-fb="太晚了。<code>dropna</code> 只認得 NaN——<code>-999</code> 在它眼裡是一個正常的數字，會被留下來一路算進模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 建模前再用 <code>dropna()</code> 一次處理</div></div>
+  <div class="quiz-feedback" id="qEx1Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 2 · loc 與 iloc</div>
+  <p><code>df</code> 的索引是日期。想拿「第 3 到第 5 列」，正確的寫法是？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="會出事。索引是日期，<code>loc</code> 會去找名字叫 <code>3</code> 的那一列，找不到就報錯（或在某些舊版本悄悄退回位置解讀，更可怕）。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> <code>df.loc[3:5]</code></div><div class="quiz-opt" data-correct="true" data-fb="對。要用位置就用 <code>iloc</code>；而且「第 3 到第 5 列」換成 0 起算的位置是 2、3、4，所以是 <code>2:5</code>。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> <code>df.iloc[2:5]</code></div><div class="quiz-opt" data-correct="false" data-fb="這個確實會被解讀成位置切片，但只拿到兩列（位置 3、4），而且<strong>同一個中括號在取欄時又是另一個意思</strong>，容易誤讀。寫 <code>iloc</code> 比較清楚。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> <code>df[3:5]</code></div></div>
+  <div class="quiz-feedback" id="qEx2Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 3 · groupby</div>
+  <p>想得到「每個 <code>origin</code> 的平均 <code>mpg</code>」，而且結果要是一張有 <code>origin</code> 欄的普通表，怎麼寫？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="算出來的數字是對的，但 <code>origin</code> 變成了索引，不是一般的欄——題目要的是「有 origin 欄的普通表」。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> <code>Auto.groupby('origin')['mpg'].mean()</code></div><div class="quiz-opt" data-correct="true" data-fb="對。<code>as_index=False</code>（或事後 <code>.reset_index()</code>）會把分組的鍵留成一般的欄。畫圖或再 merge 時都需要這個形式。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> <code>Auto.groupby('origin', as_index=False)['mpg'].mean()</code></div><div class="quiz-opt" data-correct="false" data-fb="這是把兩欄各自平均，完全沒有分組——會得到「origin 的平均值」這種沒有意義的數字。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> <code>Auto[['origin', 'mpg']].mean()</code></div></div>
+  <div class="quiz-feedback" id="qEx3Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 4 · 遺漏值的影響</div>
+  <p>一份資料的收入欄有 20% 遺漏，而遺漏的多半是高收入的人。直接 <code>dropna()</code> 會怎樣？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="樣本變小只是表面。真正的問題是<strong>剩下的樣本不再代表原本的母體</strong>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 沒關係，只是樣本變小</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫非隨機遺漏。<code>dropna</code> 的前提是「遺漏跟你關心的變數無關」，這裡明顯不成立。至少要加一個「有沒有填」的指示變數，把這件事本身當資訊。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 剩下的樣本會系統性低估收入</div><div class="quiz-opt" data-correct="false" data-fb="不會。<code>dropna</code> 就只是刪掉，沒有任何統計上的補償。怎麼處理是你的判斷，不是套件的。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> pandas 會自動加權補償</div></div>
+  <div class="quiz-feedback" id="qEx4Feedback"></div>
+</div>
+</section>
+<section id="reference">
+<!-- GEN:BEGIN sec:reference -->
+  <div class="section-number">REFERENCE · 總覽</div>
+  <h2>pandas 資料框速查表 <span class="sec-badge">先備 · pandas 資料框</span></h2>
+<!-- GEN:END sec:reference -->
+
+  <p>三張速查表。第一張是最常查的。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>你想做的事</th><th>寫法</th><th>拿到什麼</th></tr></thead>
+  <tbody><tr><td>取一欄</td><td><code>df['A']</code></td><td>Series</td></tr><tr><td>取一欄但要 DataFrame</td><td><code>df[['A']]</code></td><td>DataFrame（一欄）</td></tr><tr><td>取幾欄</td><td><code>df.loc[:, ['A','C']]</code></td><td>DataFrame</td></tr><tr><td>取一列（照位置）</td><td><code>df.iloc[3]</code></td><td>Series（欄名變索引）</td></tr><tr><td>取幾列（照位置）</td><td><code>df.iloc[1:4]</code></td><td>DataFrame，不含第 4</td></tr><tr><td>取幾列（照名字）</td><td><code>df.loc['a':'c']</code></td><td>DataFrame，<b>含</b> c</td></tr><tr><td>用條件選列</td><td><code>df[df['A'] &gt; 0]</code></td><td>DataFrame</td></tr><tr><td>某一格</td><td><code>df.loc['a', 'A']</code></td><td>純量</td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>拿到新資料的前五分鐘</th><th>看什麼</th></tr></thead>
+  <tbody><tr><td><code>df.shape</code></td><td>列數欄數跟預期一樣嗎</td></tr><tr><td><code>df.head()</code></td><td>欄名對嗎、有沒有整欄空白</td></tr><tr><td><code>df.dtypes</code></td><td><b>該是數字的欄有沒有變成 object</b></td></tr><tr><td><code>df.describe()</code></td><td>範圍合理嗎；count 比列數少就是有 NaN</td></tr><tr><td><code>df['類別欄'].value_counts()</code></td><td>有沒有哪一類只有兩三筆</td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>groupby 的三個動作</th><th>發生什麼</th></tr></thead>
+  <tbody><tr><td>拆分（split）</td><td>照鍵的值把列分成幾堆</td></tr><tr><td>套用（apply）</td><td>每一堆各算一次彙總函式</td></tr><tr><td>合併（combine）</td><td>把結果疊成一張表，<b>鍵變成索引</b></td></tr></tbody>
+</table></div>
+
+<div class="info-box">
+  <span class="info-label">三個一定要記住的觀念</span>
+  <strong>1. 拿到資料先看 <code>dtypes</code>。</strong>該是數字的欄變成 object，代表原始檔裡有非數字的東西（例如 Auto 的 <code>?</code>）。<br><strong>2. <code>loc</code> 靠名字、<code>iloc</code> 靠位置；<code>loc</code> 的切片含尾。</strong><br><strong>3. groupby 之後鍵會變成索引。</strong>要它留在欄裡就 <code>as_index=False</code> 或 <code>reset_index()</code>。
+</div>
+
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 25 張</span></h2>
+  <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
+  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  <div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div>
+<!-- GEN:END sec:cards -->
+</section>
+<!-- GEN:BEGIN chapternav -->
+<div class="chapter-nav"><a class="prev" href="p3_numpy.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">NumPy 陣列</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><span></span></div>
+<!-- GEN:END chapternav -->
+</div>
+<!-- GEN:BEGIN footer -->
+<footer>
+  互動式pandas 資料框教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
+</footer>
+<!-- GEN:END footer -->
+<!-- GEN:BEGIN sharedjs -->
+<script>
+/* ============================================================
+   統計學習自學站共用函式庫
+   由 tools/build_page.py 內嵌到每一頁，十頁完全一致。
+   規則：LaTeX 一律放靜態 HTML，這裡的字串不放 $…$；
+        寫入含數學的 innerHTML 之後要呼叫 HC.retype(el)。
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- MathJax：注入後的內容不會自動排版 ---------- */
+const HC = {};
+HC.retype = el => {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
+  }
+};
+
+/* ---------- quiz ---------- */
+function quizCheck(quizId, optEl) {
+  const isCorrect = optEl.dataset.correct === 'true';
+  optEl.parentElement.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'wrong'));
+  optEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = $(quizId + 'Feedback');
+  if (!fb) { console.error('quizCheck: 找不到 #' + quizId + 'Feedback'); return; }
+  fb.classList.remove('correct', 'wrong');
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> ') + (optEl.dataset.fb || '');
+  HC.retype(fb);
+}
+
+/* ---------- 程式碼行高亮 ---------- */
+function hlLine(rootId, n) {
+  const root = $(rootId);
+  if (!root) return;
+  root.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+  if (n != null) {
+    const line = root.querySelector('.line[data-l="' + n + '"]');
+    if (line) line.classList.add('active');
+  }
+}
+
+/* ---------- 逐步播放器：frames = [{...}]，apply(frame) 負責渲染 ---------- */
+class Player {
+  constructor({ frames, apply, delayInput, onDone, onIndex }) {
+    this.frames = frames; this.apply = apply;
+    this.delayInput = delayInput; this.i = -1; this.timer = null;
+    this.onDone = onDone || (() => {});
+    this.onIndex = onIndex || (() => {});
+  }
+  get delay() { return this.delayInput ? parseInt(this.delayInput.value, 10) : 700; }
+  step() {
+    if (this.i + 1 >= this.frames.length) { this.stop(); this.onDone(); return false; }
+    this.i += 1; this.apply(this.frames[this.i], this.i); this.onIndex(this.i); return true;
+  }
+  play() {
+    this.stop();
+    const tick = () => { if (this.step()) this.timer = setTimeout(tick, this.delay); };
+    tick();
+  }
+  stop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+  get playing() { return this.timer !== null; }
+  reset() { this.stop(); this.i = -1; if (this.frames.length) { this.apply(this.frames[0], 0); this.i = 0; } }
+  seek(i) { this.stop(); this.i = Math.max(0, Math.min(i, this.frames.length - 1)); this.apply(this.frames[this.i], this.i); this.onIndex(this.i); }
+}
+HC.Player = Player;
+
+/* ---------- 旁白列 ---------- */
+function setStatus(id, html) {
+  const el = $(id); if (!el) return;
+  const t = el.querySelector('.status-text');
+  if (t) t.innerHTML = html;
+}
+
+/* ============================================================
+   HC：圖表與 SVG 共用 API
+   ============================================================ */
+
+/* 設計 token（讀 CSS 變數，樣式改一處就好） */
+HC.tok = (() => {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue('--' + n).trim();
+  return {
+    ink: g('ink'), paper: g('paper'), accent: g('accent'), accent2: g('accent2'),
+    accent3: g('accent3'), muted: g('muted'), card: g('card'), cardBorder: g('card-border'),
+    grid: g('grid-line') || g('card-border'),
+    train: g('pt-train'), test: g('pt-test'), held: g('pt-held'),
+    a: g('pt-a'), b: g('pt-b'), c: g('pt-c'),
+    fit: g('fit-line'), truef: g('fit-true'), resid: g('resid'),
+  };
+})();
+
+HC.MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+/* 數字格式：固定小數位，去掉負零 */
+HC.fmt = (v, d = 2) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const s = Number(v).toFixed(d);
+  return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s;
+};
+HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
+
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* ---------- Chart.js ---------- */
+HC.hasChart = () => typeof window.Chart !== 'undefined';
+
+/* Chart.js 載入失敗時不要拋錯：讓 .chart-fallback 留在畫面上 */
+HC.ready = fn => {
+  const run = () => {
+    if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
+    try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+};
+
+HC._charts = new Map();
+
+/* 房子的 Chart.js 預設值 */
+HC.base = (type, data, opts = {}) => {
+  const t = HC.tok;
+  const axis = {
+    grid: { color: t.grid, drawTicks: false },
+    border: { color: t.muted },
+    ticks: { font: { family: HC.MONO, size: 11 }, color: t.muted, padding: 6 },
+    title: { font: { family: HC.MONO, size: 11, weight: '600' }, color: t.accent2 },
+  };
+  const deep = (a, b) => {
+    const o = Array.isArray(b) ? b.slice() : Object.assign({}, a);
+    if (Array.isArray(b)) return o;
+    for (const k of Object.keys(b || {})) {
+      o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]))
+        ? deep(a && a[k] ? a[k] : {}, b[k]) : b[k];
+    }
+    return o;
+  };
+  const defaults = {
+    responsive: true, maintainAspectRatio: false, devicePixelRatio: 2,
+    animation: { duration: 250 },
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 6, right: 10, bottom: 2, left: 2 } },
+    plugins: {
+      legend: {
+        display: true, position: 'top', align: 'end',
+        labels: { boxWidth: 10, boxHeight: 10, font: { family: HC.MONO, size: 11 }, color: t.ink, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,46,.92)', titleFont: { family: HC.MONO, size: 11 },
+        bodyFont: { family: HC.MONO, size: 11 }, padding: 8, cornerRadius: 6, displayColors: true,
+      },
+    },
+    scales: { x: deep({}, axis), y: deep({}, axis) },
+    elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
+  };
+  const cfg = { type, data, options: deep(defaults, opts) };
+  // canvas 不認得 var(--x)：傳進去會靜默變成黑色（第 6 章五條準則線全黑就是這樣）。
+  // 這裡在建構前把所有顏色欄位解析成實際色值，讓這類 bug 不可能發生。
+  HC._resolveColors(cfg);
+  return cfg;
+};
+
+HC._COLOR_KEYS = ['borderColor', 'backgroundColor', 'pointBackgroundColor',
+                  'pointBorderColor', 'hoverBackgroundColor', 'hoverBorderColor', 'color'];
+HC._resolveColors = o => {
+  if (!o || typeof o !== 'object') return o;
+  if (Array.isArray(o)) { o.forEach(HC._resolveColors); return o; }
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'string' && HC._COLOR_KEYS.indexOf(k) >= 0) o[k] = HC.color(v);
+    else if (Array.isArray(v) && HC._COLOR_KEYS.indexOf(k) >= 0) {
+      o[k] = v.map(x => (typeof x === 'string' ? HC.color(x) : x));
+    } else if (v && typeof v === 'object') HC._resolveColors(v);
+  }
+  return o;
+};
+
+/* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
+HC.chart = (canvasId, type, data, opts) => {
+  if (!HC.hasChart()) return null;
+  const cv = $(canvasId);
+  if (!cv) { console.error('HC.chart: 找不到 canvas #' + canvasId); return null; }
+  const old = HC._charts.get(canvasId);
+  if (old) old.destroy();
+  const c = new window.Chart(cv, HC.base(type, data, opts));
+  HC._charts.set(canvasId, c);
+  const wrap = cv.closest('.chart-wrap');
+  if (wrap) wrap.classList.add('ready');
+  return c;
+};
+HC.line = (id, data, opts) => HC.chart(id, 'line', data, opts);
+HC.scatter = (id, data, opts) => HC.chart(id, 'scatter', data, opts);
+HC.bar = (id, data, opts) => HC.chart(id, 'bar', data, opts);
+HC.get = id => HC._charts.get(id);
+
+/* 就地改資料再重畫，不重建 chart（滑桿連續拖動時比較順） */
+HC.update = (id, mutate) => {
+  const c = HC._charts.get(id);
+  if (!c) return null;
+  mutate(c);
+  c.update('none');
+  return c;
+};
+
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
+
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
+
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
+  beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
+  },
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
+
+/* ============================================================
+   HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
+   用法：const s = HC.svg('w03dragSvg', {xd:[0,10], yd:[0,30]});
+        s.grid(5,5); s.dot(x, y, {cls:'dot', fill:HC.tok.train});
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+
+HC.svg = (id, o = {}) => {
+  const host = $(id);
+  if (!host) { console.error('HC.svg: 找不到 #' + id); return null; }
+  const W = o.w || 620, H = o.h || 340;
+  const pad = Object.assign({ l: 46, r: 14, t: 14, b: 34 }, o.pad || {});
+  let el = host;
+  if (host.tagName.toLowerCase() !== 'svg') {
+    el = host.querySelector('svg');
+    if (!el) { el = document.createElementNS(NS, 'svg'); el.setAttribute('class', 'viz-svg'); host.appendChild(el); }
+  }
+  el.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  if (!el.getAttribute('height')) el.setAttribute('height', String(H));
+
+  const s = {
+    el, W, H, pad,
+    xd: (o.xd || [0, 1]).slice(), yd: (o.yd || [0, 1]).slice(),
+    get iw() { return W - pad.l - pad.r; },
+    get ih() { return H - pad.t - pad.b; },
+  };
+  s.domain = (xd, yd) => { if (xd) s.xd = xd.slice(); if (yd) s.yd = yd.slice(); return s; };
+  s.X = v => pad.l + (v - s.xd[0]) / (s.xd[1] - s.xd[0]) * s.iw;
+  s.Y = v => pad.t + s.ih - (v - s.yd[0]) / (s.yd[1] - s.yd[0]) * s.ih;
+  s.ix = px => s.xd[0] + (px - pad.l) / s.iw * (s.xd[1] - s.xd[0]);
+  s.iy = py => s.yd[0] + (pad.t + s.ih - py) / s.ih * (s.yd[1] - s.yd[0]);
+
+  /* client 座標 → viewBox 座標（縮放與 CSS 尺寸都會被吸收） */
+  s.toView = ev => {
+    const r = el.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    const cy = ev.clientY !== undefined ? ev.clientY : (ev.touches && ev.touches[0].clientY);
+    return { px: (cx - r.left) / r.width * W, py: (cy - r.top) / r.height * H };
+  };
+  s.toData = ev => { const p = s.toView(ev); return { x: s.ix(p.px), y: s.iy(p.py) }; };
+
+  s.add = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k of Object.keys(attrs)) {
+      if (attrs[k] === null || attrs[k] === undefined) continue;
+      n.setAttribute(k === 'cls' ? 'class' : k, String(attrs[k]));
+    }
+    (parent || el).appendChild(n);
+    return n;
+  };
+  /* 分層：只清掉自己那層，底圖不用重畫 */
+  s.layer = name => {
+    let g = el.querySelector('g[data-layer="' + name + '"]');
+    if (!g) { g = s.add('g', { 'data-layer': name }); }
+    return g;
+  };
+  s.clearLayer = name => { const g = s.layer(name); while (g.firstChild) g.removeChild(g.firstChild); return g; };
+  s.clear = () => { while (el.firstChild) el.removeChild(el.firstChild); return s; };
+
+  /* 座標軸 + 格線 + 刻度標籤 */
+  s.grid = (nx = 5, ny = 5, opt = {}) => {
+    const g = s.clearLayer('grid');
+    const fx = opt.xfmt || (v => HC.fmt(v, opt.xdec ?? 0));
+    const fy = opt.yfmt || (v => HC.fmt(v, opt.ydec ?? 0));
+    for (let i = 0; i <= nx; i++) {
+      const v = s.xd[0] + (s.xd[1] - s.xd[0]) * i / nx, x = s.X(v);
+      s.add('line', { cls: 'gridl', x1: x, y1: pad.t, x2: x, y2: pad.t + s.ih }, g);
+      s.add('text', { cls: 'axlab', x: x, y: pad.t + s.ih + 14, 'text-anchor': 'middle' }, g).textContent = fx(v);
+    }
+    for (let i = 0; i <= ny; i++) {
+      const v = s.yd[0] + (s.yd[1] - s.yd[0]) * i / ny, y = s.Y(v);
+      s.add('line', { cls: 'gridl', x1: pad.l, y1: y, x2: pad.l + s.iw, y2: y }, g);
+      s.add('text', { cls: 'axlab', x: pad.l - 6, y: y + 3.5, 'text-anchor': 'end' }, g).textContent = fy(v);
+    }
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t + s.ih, x2: pad.l + s.iw, y2: pad.t + s.ih }, g);
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + s.ih }, g);
+    if (opt.xtitle) s.add('text', { cls: 'axtitle', x: pad.l + s.iw / 2, y: H - 4, 'text-anchor': 'middle' }, g).textContent = opt.xtitle;
+    if (opt.ytitle) {
+      const t = s.add('text', { cls: 'axtitle', x: 0, y: 0, 'text-anchor': 'middle', transform: 'translate(11,' + (pad.t + s.ih / 2) + ') rotate(-90)' }, g);
+      t.textContent = opt.ytitle;
+    }
+    return s;
+  };
+
+  s.dot = (x, y, a = {}, parent) => s.add('circle', {
+    cls: a.cls || 'dot', cx: s.X(x), cy: s.Y(y), r: a.r ?? 4,
+    fill: a.fill || HC.tok.accent2, stroke: a.stroke, 'stroke-width': a.sw,
+    opacity: a.opacity, 'data-i': a.i,
+  }, parent);
+
+  s.poly = (pts, a = {}, parent) => s.add('polyline', {
+    cls: a.cls || 'fit', points: pts.map(p => s.X(p[0]) + ',' + s.Y(p[1])).join(' '),
+    stroke: a.stroke, 'stroke-width': a.sw, fill: 'none', 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.area = (pts, a = {}, parent) => {
+    const up = pts.map(p => s.X(p[0]) + ',' + s.Y(p[1]));
+    const dn = pts.slice().reverse().map(p => s.X(p[0]) + ',' + s.Y(p[2]));
+    return s.add('polygon', { cls: a.cls || 'band', points: up.concat(dn).join(' '), fill: a.fill }, parent);
+  };
+
+  s.seg = (x1, y1, x2, y2, a = {}, parent) => s.add('line', {
+    cls: a.cls || 'resid', x1: s.X(x1), y1: s.Y(y1), x2: s.X(x2), y2: s.Y(y2),
+    stroke: a.stroke, 'stroke-width': a.sw, 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.box = (x0, y0, x1, y1, a = {}, parent) => s.add('rect', {
+    x: Math.min(s.X(x0), s.X(x1)), y: Math.min(s.Y(y0), s.Y(y1)),
+    width: Math.abs(s.X(x1) - s.X(x0)), height: Math.abs(s.Y(y1) - s.Y(y0)),
+    fill: a.fill || 'none', stroke: a.stroke, 'stroke-width': a.sw, cls: a.cls, rx: a.rx,
+  }, parent);
+
+  s.txt = (x, y, str, a = {}, parent) => {
+    const n = s.add('text', {
+      cls: a.cls || 'vlab', x: s.X(x) + (a.dx || 0), y: s.Y(y) + (a.dy || 0),
+      'text-anchor': a.anchor || 'middle', fill: a.fill,
+    }, parent);
+    n.textContent = str;
+    return n;
+  };
+  /* 用 viewBox 像素座標直接放字（圖例、標題用） */
+  s.txtPx = (px, py, str, a = {}, parent) => {
+    const n = s.add('text', { cls: a.cls || 'axlab', x: px, y: py, 'text-anchor': a.anchor || 'start', fill: a.fill }, parent);
+    n.textContent = str;
+    return n;
+  };
+  return s;
+};
+
+/* 拖曳：pointer + touch，回呼收到資料座標；會夾在定義域內 */
+HC.drag = (node, svc, onMove, opts = {}) => {
+  const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
+  const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
+  let active = false;
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  };
+  const move = ev => {
+    if (!active) return;
+    const d = svc.toData(ev);
+    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    ev.preventDefault();
+  };
+  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  node.addEventListener('pointerdown', start);
+  node.addEventListener('pointermove', move);
+  node.addEventListener('pointerup', end);
+  node.addEventListener('pointercancel', end);
+  node.style.touchAction = 'none';
+  return () => {
+    node.removeEventListener('pointerdown', start);
+    node.removeEventListener('pointermove', move);
+    node.removeEventListener('pointerup', end);
+    node.removeEventListener('pointercancel', end);
+  };
+};
+
+/* ---------- 統計小工具（各頁元件共用，避免各自重寫） ---------- */
+HC.stat = {
+  mean: a => a.reduce((s, v) => s + v, 0) / a.length,
+  variance(a) { const m = this.mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); },
+  sd(a) { return Math.sqrt(this.variance(a)); },
+  /* 簡單線性迴歸：回傳 b0, b1, rss, tss, r2, se(b0), se(b1), t 值 */
+  ols(xs, ys) {
+    const n = xs.length, mx = this.mean(xs), my = this.mean(ys);
+    let sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sxx += (xs[i] - mx) ** 2; sxy += (xs[i] - mx) * (ys[i] - my); }
+    const b1 = sxx === 0 ? 0 : sxy / sxx, b0 = my - b1 * mx;
+    let rss = 0, tss = 0;
+    for (let i = 0; i < n; i++) { rss += (ys[i] - b0 - b1 * xs[i]) ** 2; tss += (ys[i] - my) ** 2; }
+    const df = n - 2;
+    const s2 = df > 0 ? rss / df : NaN;
+    const seB1 = sxx > 0 ? Math.sqrt(s2 / sxx) : NaN;
+    const seB0 = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+    return {
+      b0, b1, rss, tss, n, df, rse: Math.sqrt(s2),
+      r2: tss === 0 ? NaN : 1 - rss / tss,
+      seB0, seB1, tB0: b0 / seB0, tB1: b1 / seB1,
+    };
+  },
+  /* RSS(b0,b1)，畫誤差曲面用 */
+  rss(xs, ys, b0, b1) {
+    let r = 0;
+    for (let i = 0; i < xs.length; i++) r += (ys[i] - b0 - b1 * xs[i]) ** 2;
+    return r;
+  },
+  /* 可重現的偽隨機（固定種子，頁面重載結果一樣） */
+  lcg(seed) { let s = (seed >>> 0) || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; },
+  /* Box–Muller 標準常態 */
+  normal(rand) {
+    let u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  /* 標準常態 CDF（Abramowitz–Stegun 7.1.26 誤差函數近似） */
+  pnorm(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const p = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    return z >= 0 ? 1 - d * p : d * p;
+  },
+  dnorm(x, mu = 0, sd = 1) { const z = (x - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); },
+  quantile(sorted, q) {
+    const h = (sorted.length - 1) * q, lo = Math.floor(h);
+    return sorted[lo] + (h - lo) * ((sorted[Math.min(lo + 1, sorted.length - 1)]) - sorted[lo]);
+  },
+  seq(a, b, n) { return Array.from({ length: n }, (_, i) => a + (b - a) * i / (n - 1)); },
+};
+
+/* ============================================================
+   頁面骨架行為
+   ============================================================ */
+
+/* 浮動導覽 scroll-spy */
+(function setupNav() {
+  const nav = $('floatNav');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[data-target]'));
+  const sections = links.map(a => $(a.dataset.target)).filter(Boolean);
+  const missing = links.filter(a => !$(a.dataset.target)).map(a => a.dataset.target);
+  if (missing.length) console.warn('float-nav 的 data-target 找不到對應 section：', missing);
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) active = s.id;
+    links.forEach(a => {
+      const on = a.dataset.target === active;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
+  d.dataset.mj = '1';
+  HC.retype(d);
+}, true);
+
+/* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
+HC.initFlashcards = () => {
+  const grid = $('fcGrid');
+  if (!grid || typeof FLASHCARDS === 'undefined') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const render = cards => {
+    grid.innerHTML = cards.map(c =>
+      '<div class="fc-card"><div class="fc-inner">'
+      + '<div class="fc-face fc-front"><div>' + esc(c.front) + '</div><div class="fc-hint">CLICK TO FLIP</div></div>'
+      + '<div class="fc-face fc-back">' + esc(c.back) + '</div>'
+      + '</div></div>').join('');
+  };
+  render(FLASHCARDS);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.fc-card');
+    if (card) card.classList.toggle('flipped');
+  });
+  const on = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  /* 洗牌用固定種子的 Fisher–Yates，每按一次換一個種子 */
+  let shuffleSeed = 20260810;
+  on('fcShuffle', () => {
+    const rand = HC.stat.lcg(shuffleSeed++);
+    const a = FLASHCARDS.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    render(a);
+  });
+  on('fcUnflip', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')));
+  on('fcFlipAll', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.add('flipped')));
+};
+</script>
+<!-- GEN:END sharedjs -->
+<!-- PAGEJS:BEGIN -->
+<script>
+/* 這一頁共用的小工具：畫一張表 */
+function w17grid(s, g, opt) {
+  const cols = opt.cols, rows = opt.rows, x0 = opt.x0, y0 = opt.y0;
+  const cw = opt.cw || 82, chh = opt.chh || 30;
+  cols.forEach((c, j) => {
+    s.add('rect', {x: x0 + j * cw, y: y0, width: cw - 5, height: chh - 5, rx: 4,
+                   fill: HC.tok.accent, opacity: 0.85}, g);
+    const t = s.add('text', {x: x0 + j * cw + (cw - 5) / 2, y: y0 + 18,
+                             'text-anchor': 'middle', cls: 'vlab',
+                             'font-family': HC.MONO, fill: HC.tok.paper}, g);
+    t.textContent = c;
+  });
+  rows.forEach((r, i) => {
+    if (opt.index) {
+      const it = s.add('text', {x: x0 - 10, y: y0 + (i + 1) * chh + 18,
+                                'text-anchor': 'end', cls: 'axlab'}, g);
+      it.textContent = opt.index[i];
+    }
+    r.forEach((v, j) => {
+      const on = opt.sel ? opt.sel(i, j) : false;
+      s.add('rect', {x: x0 + j * cw, y: y0 + (i + 1) * chh, width: cw - 5,
+                     height: chh - 5, rx: 3,
+                     fill: on ? HC.tok.accent2 : HC.tok.card,
+                     stroke: HC.tok.cardBorder, 'stroke-width': 1.2,
+                     opacity: on ? 1 : 0.5}, g);
+      const t = s.add('text', {x: x0 + j * cw + (cw - 5) / 2, y: y0 + (i + 1) * chh + 18,
+                               'text-anchor': 'middle', cls: 'vlab',
+                               'font-family': HC.MONO,
+                               fill: on ? HC.tok.paper : HC.tok.muted}, g);
+      t.textContent = v;
+    });
+  });
+}
+
+/* ═══ w17ser 字典 → Series → DataFrame ═══ */
+const w17serS = HC.svg('w17serSvg', {h: 320});
+let w17serM = 0;
+function w17serDraw() {
+  const g = w17serS.clearLayer('main');
+  if (w17serM === 0) {
+    w17serS.txtPx(24, 34, '{"d": 4, "b": 7, "a": -5, "c": 3}', {cls: 'axtitle'}, g);
+    ['d: 4', 'b: 7', 'a: -5', 'c: 3'].forEach((t, i) => {
+      w17serS.add('rect', {x: 200, y: 70 + i * 50, width: 200, height: 38, rx: 6,
+                           fill: HC.tok.card, stroke: HC.tok.cardBorder,
+                           'stroke-width': 1.4}, g);
+      const n = w17serS.add('text', {x: 300, y: 94 + i * 50, 'text-anchor': 'middle',
+                                     cls: 'vlab', 'font-family': HC.MONO}, g);
+      n.textContent = t;
+    });
+    document.getElementById('w17serType').textContent = 'dict';
+    document.getElementById('w17serIdx').textContent = '（鍵）';
+    document.getElementById('w17serDtype').textContent = '—';
+    setStatus('w17serStatus', '字典：鍵與值成對，但<b>沒有順序上的意義</b>，也不能做向量運算。');
+  } else if (w17serM === 1) {
+    w17grid(w17serS, g, {cols: ['值'], rows: [['4'], ['7'], ['-5'], ['3']],
+                         index: ['d', 'b', 'a', 'c'], x0: 250, y0: 60, cw: 110});
+    w17serS.txtPx(24, 34, 'pd.Series([4, 7, -5, 3], index=["d","b","a","c"])',
+                  {cls: 'axtitle'}, g);
+    document.getElementById('w17serType').textContent = 'Series';
+    document.getElementById('w17serIdx').textContent = 'd b a c';
+    document.getElementById('w17serDtype').textContent = 'int64';
+    setStatus('w17serStatus', 'Series：一排數字 <b>加上一排索引</b>，可以逐元素運算。');
+  } else {
+    w17grid(w17serS, g, {cols: ['state', 'year', 'pop'],
+                         rows: [['Ohio', '2000', '1.5'], ['Ohio', '2001', '1.7'],
+                                ['Ohio', '2002', '3.6'], ['Nevada', '2001', '2.4']],
+                         index: ['0', '1', '2', '3'], x0: 190, y0: 60, cw: 100});
+    w17serS.txtPx(24, 34, 'pd.DataFrame(data)', {cls: 'axtitle'}, g);
+    document.getElementById('w17serType').textContent = 'DataFrame';
+    document.getElementById('w17serIdx').textContent = '0 1 2 3 …';
+    document.getElementById('w17serDtype').textContent = 'object / int64 / float64';
+    setStatus('w17serStatus', 'DataFrame：幾個 Series 共用同一排索引，<b>每欄可以不同型別</b>。');
+  }
+}
+function w17serSet(m) { w17serM = m; w17serDraw(); }
+if (w17serS) w17serDraw();
+
+/* ═══ w17peek 前五分鐘四行指令 ═══ */
+const w17peekS = HC.svg('w17peekSvg', {h: 300});
+const w17peekCases = [
+  {cmd: 'df.shape', what: '資料有多大', warn: '列數比預期少很多',
+   sel: () => false, note: '(6, 4) —— 六列四欄。'},
+  {cmd: 'df.head()', what: '長什麼樣、欄名對不對', warn: '整欄空白、欄名錯位',
+   sel: (i) => i < 3, note: '預設看前五列。'},
+  {cmd: 'df.dtypes', what: '每一欄是什麼型別', warn: '該是數字的欄變成 object',
+   sel: (i, j) => j === 0, note: '這一行最重要——型別錯了後面全錯。'},
+  {cmd: 'df.describe()', what: '範圍與遺漏', warn: 'count 比列數少',
+   sel: () => true, note: 'count 那一列不算 NaN。'}
+];
+let w17peekI = 0;
+function w17peekDraw() {
+  const g = w17peekS.clearLayer('main');
+  const c = w17peekCases[w17peekI];
+  w17grid(w17peekS, g, {cols: ['A', 'B', 'C', 'D'],
+                        rows: [['-0.40', '-1.06', '1.46', '0.63'],
+                               ['-0.84', '-1.59', '-0.60', '-1.50'],
+                               ['0.50', '-0.66', '0.15', '0.29'],
+                               ['-1.06', '-1.01', '0.55', '0.21'],
+                               ['-0.11', '0.24', '-0.20', '0.70']],
+                        index: ['09-01', '09-02', '09-03', '09-04', '09-05'],
+                        x0: 190, y0: 56, cw: 88, sel: c.sel});
+  w17peekS.txtPx(24, 34, c.cmd, {cls: 'axtitle', fill: HC.tok.accent}, g);
+  document.getElementById('w17peekCmd').textContent = c.cmd;
+  document.getElementById('w17peekWhat').textContent = c.what;
+  document.getElementById('w17peekWarn').textContent = c.warn;
+  setStatus('w17peekStatus', c.note);
+}
+function w17peekSet(i) { w17peekI = i; w17peekDraw(); }
+if (w17peekS) w17peekDraw();
+
+/* ═══ w17sel loc vs iloc（本頁招牌）═══ */
+const w17selS = HC.svg('w17selSvg', {h: 340});
+const w17selCases = [
+  {e: 'df["A"]', t: 'Series', sh: '(6,)', sel: (i, j) => j === 0,
+   note: '中括號給字串 → 取<b>欄</b>，回傳 Series。'},
+  {e: 'df[0:3]', t: 'DataFrame', sh: '(3, 4)', sel: (i) => i < 3,
+   note: '同一個中括號給切片 → 取<b>列</b>。這就是為什麼建議一律寫 loc／iloc。'},
+  {e: 'df.loc[:, ["A","C"]]', t: 'DataFrame', sh: '(6, 2)', sel: (i, j) => j === 0 || j === 2,
+   note: 'loc 的第二個位置給欄<b>名字</b>。'},
+  {e: 'df.iloc[3]', t: 'Series', sh: '(4,)', sel: (i) => i === 3,
+   note: 'iloc 給<b>位置</b>；拿一整列回來，欄名變成它的索引。'},
+  {e: 'df[df["A"] > 0]', t: 'DataFrame', sh: '(2, 4)', sel: (i) => i === 2 || i === 5,
+   note: '布林遮罩：A 欄大於 0 的那兩列（09-03 與 09-06）。'}
+];
+let w17selI = 0;
+function w17selDraw() {
+  const g = w17selS.clearLayer('main');
+  const c = w17selCases[w17selI];
+  w17grid(w17selS, g, {cols: ['A', 'B', 'C', 'D'],
+                       rows: [['-0.40', '-1.06', '1.46', '0.63'],
+                              ['-0.84', '-1.59', '-0.60', '-1.50'],
+                              ['0.50', '-0.66', '0.15', '0.29'],
+                              ['-1.06', '-1.01', '0.55', '0.21'],
+                              ['-0.11', '0.24', '-0.20', '0.70'],
+                              ['0.16', '-0.97', '0.84', '1.64']],
+                       index: ['09-01', '09-02', '09-03', '09-04', '09-05', '09-06'],
+                       x0: 190, y0: 56, cw: 88, sel: c.sel});
+  w17selS.txtPx(24, 34, c.e, {cls: 'axtitle', fill: HC.tok.accent}, g);
+  document.getElementById('w17selExpr').textContent = c.e;
+  document.getElementById('w17selType').textContent = c.t;
+  document.getElementById('w17selShape').textContent = c.sh;
+  setStatus('w17selStatus', c.note);
+}
+function w17selSet(i) { w17selI = i; w17selDraw(); }
+if (w17selS) w17selDraw();
+
+/* ═══ w17na Auto 的遺漏值 ═══ */
+const w17naS = HC.svg('w17naSvg', {h: 340});
+const w17naSteps = [
+  {t: 'object（字串）', r: '397', title: '讀進來，看起來很正常',
+   note: '<code>Auto.shape</code> 是 (397, 9)，欄名也都對。看不出問題。'},
+  {t: 'object（字串）', r: '397', title: '① dtypes：horsepower 是 object',
+   note: '該是數字的欄變成字串 —— <b>這一步是唯一的預警</b>。'},
+  {t: 'object（字串）', r: '397', title: '② np.unique 找出兇手：那個 ?',
+   note: '整欄的值都帶引號，而且裡面混了一個 <code>?</code>。'},
+  {t: 'float64', r: '397', title: '③ 讀檔時就宣告 na_values=["?"]',
+   note: '型別變成 float64，問號變成 NaN。<b>現在才算讀對了。</b>'},
+  {t: 'float64', r: '392', title: '④ dropna()：397 → 392',
+   note: '課本裡的 n=392 就是從這裡來的。'}
+];
+let w17naI = 0;
+function w17naDraw() {
+  const g = w17naS.clearLayer('main');
+  const st = w17naSteps[w17naI];
+  const vals = ['130', '165', '150', w17naI >= 3 ? 'NaN' : '?', '140', '198'];
+  const bad = w17naI >= 1 && w17naI <= 2;
+  vals.forEach((v, i) => {
+    if (w17naI >= 4 && v === 'NaN') return;
+    const y = 96 + i * 36;
+    const isq = (v === '?' || v === 'NaN');
+    w17naS.add('rect', {x: 230, y: y, width: 160, height: 30, rx: 4,
+                        fill: isq ? (w17naI >= 3 ? HC.tok.muted : HC.tok.resid) : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.3,
+                        opacity: isq ? 0.95 : 0.6}, g);
+    const t = w17naS.add('text', {x: 310, y: y + 20, 'text-anchor': 'middle', cls: 'vlab',
+                                  'font-family': HC.MONO,
+                                  fill: isq ? HC.tok.paper : HC.tok.ink}, g);
+    t.textContent = (w17naI <= 2 ? "'" + v + "'" : v);
+  });
+  w17naS.txtPx(24, 34, st.title, {cls: 'axtitle', fill: bad ? HC.tok.resid : HC.tok.accent}, g);
+  w17naS.txtPx(310, 76, 'horsepower', {cls: 'axlab', anchor: 'middle'}, g);
+  document.getElementById('w17naStep').textContent = w17naI + ' / 4';
+  document.getElementById('w17naType').textContent = st.t;
+  document.getElementById('w17naRows').textContent = st.r;
+  setStatus('w17naStatus', st.note);
+}
+function w17naStep() { w17naI = Math.min(4, w17naI + 1); w17naDraw(); }
+function w17naReset() { w17naI = 0; w17naDraw(); }
+if (w17naS) w17naDraw();
+
+/* ═══ w17grp groupby 拆分-套用-合併（本頁招牌）═══ */
+const w17grpS = HC.svg('w17grpSvg', {h: 340});
+const w17grpRows = [
+  {a: 'foo', c: 0.47, d: 0.11}, {a: 'bar', c: 0.62, d: 0.94},
+  {a: 'foo', c: -1.20, d: 0.33}, {a: 'bar', c: 0.51, d: 0.78},
+  {a: 'foo', c: -0.85, d: 0.09}, {a: 'bar', c: 0.62, d: 0.78},
+  {a: 'foo', c: -0.73, d: 0.05}, {a: 'foo', c: -0.43, d: 0.11}
+];
+let w17grpI = 0, w17grpTimer = null;
+function w17grpDraw() {
+  const g = w17grpS.clearLayer('main');
+  const st = w17grpI;
+  const cw = 74, chh = 30;
+  const drawRow = (r, x, y, on) => {
+    [r.a, HC.fmt(r.c, 2), HC.fmt(r.d, 2)].forEach((v, j) => {
+      w17grpS.add('rect', {x: x + j * cw, y: y, width: cw - 5, height: chh - 5, rx: 3,
+                           fill: on ? (r.a === 'foo' ? HC.tok.accent2 : HC.tok.accent)
+                                    : HC.tok.card,
+                           stroke: HC.tok.cardBorder, 'stroke-width': 1.2,
+                           opacity: on ? 0.95 : 0.5}, g);
+      const t = w17grpS.add('text', {x: x + j * cw + (cw - 5) / 2, y: y + 18,
+                                     'text-anchor': 'middle', cls: 'vlab',
+                                     'font-family': HC.MONO,
+                                     fill: on ? HC.tok.paper : HC.tok.muted}, g);
+      t.textContent = v;
+    });
+  };
+  if (st === 0) {
+    w17grpS.txtPx(24, 34, '原始的表（A 是分組的鍵）', {cls: 'axtitle'}, g);
+    w17grpRows.forEach((r, i) => drawRow(r, 210, 60 + i * chh, false));
+  } else if (st === 1) {
+    w17grpS.txtPx(24, 34, '① 拆分：照 A 的值分成兩堆', {cls: 'axtitle', fill: HC.tok.accent}, g);
+    let yf = 60, yb = 60;
+    w17grpRows.forEach(r => {
+      if (r.a === 'foo') { drawRow(r, 78, yf, true); yf += chh; }
+      else { drawRow(r, 352, yb, true); yb += chh; }
+    });
+    w17grpS.txtPx(78, 52, 'foo', {cls: 'axlab', anchor: 'start'}, g);
+    w17grpS.txtPx(352, 52, 'bar', {cls: 'axlab', anchor: 'start'}, g);
+  } else if (st === 2) {
+    w17grpS.txtPx(24, 34, '② 套用：每一堆各加總一次', {cls: 'axtitle', fill: HC.tok.accent}, g);
+    let yf = 60, yb = 60;
+    w17grpRows.forEach(r => {
+      if (r.a === 'foo') { drawRow(r, 78, yf, true); yf += chh; }
+      else { drawRow(r, 352, yb, true); yb += chh; }
+    });
+    w17grpS.add('line', {x1: 84, y1: yf + 4, x2: 84 + 3 * cw - 10, y2: yf + 4,
+                         stroke: HC.tok.ink, 'stroke-width': 2}, g);
+    w17grpS.add('line', {x1: 358, y1: yb + 4, x2: 358 + 3 * cw - 10, y2: yb + 4,
+                         stroke: HC.tok.ink, 'stroke-width': 2}, g);
+    drawRow({a: 'foo', c: -2.740490, d: 0.700964}, 78, yf + 10, true);
+    drawRow({a: 'bar', c: 1.747047, d: 2.499340}, 352, yb + 10, true);
+  } else {
+    w17grpS.txtPx(24, 34, '③ 合併：疊成一張表，A 變成索引',
+                  {cls: 'axtitle', fill: HC.tok.accent}, g);
+    ['', 'C', 'D'].forEach((c, j) => {
+      const t = w17grpS.add('text', {x: 220 + j * 110 + 50, y: 96, 'text-anchor': 'middle',
+                                     cls: 'axtitle'}, g);
+      t.textContent = c;
+    });
+    [['bar', '1.747047', '2.499340'], ['foo', '-2.740490', '0.700964']].forEach((r, i) => {
+      r.forEach((v, j) => {
+        const on = j > 0;
+        w17grpS.add('rect', {x: 220 + j * 110, y: 110 + i * 40, width: 100, height: 32, rx: 4,
+                             fill: on ? HC.tok.accent2 : 'none',
+                             stroke: on ? HC.tok.cardBorder : 'none', 'stroke-width': 1.2}, g);
+        const t = w17grpS.add('text', {x: 220 + j * 110 + 50, y: 132 + i * 40,
+                                       'text-anchor': 'middle', cls: 'vlab',
+                                       'font-family': HC.MONO,
+                                       fill: on ? HC.tok.paper : HC.tok.ink}, g);
+        t.textContent = v;
+      });
+    });
+    w17grpS.txtPx(310, 212, 'A 已經不是一般的欄了，它是索引',
+                  {cls: 'axlab', anchor: 'middle'}, g);
+  }
+  const names = ['原始的表', '拆分 split', '套用 apply', '合併 combine'];
+  document.getElementById('w17grpStep').textContent = w17grpI + ' / 3';
+  document.getElementById('w17grpN').textContent = w17grpI >= 1 ? '2 組（foo、bar）' : '—';
+  document.getElementById('w17grpShape').textContent = w17grpI >= 3 ? '(2, 2)' : '—';
+  setStatus('w17grpStatus', names[w17grpI] + (w17grpI === 3
+    ? '：<b>八列變成兩列</b>，分組的鍵成了索引。' : '。'));
+}
+function w17grpStep() { w17grpI = Math.min(3, w17grpI + 1); w17grpDraw(); }
+function w17grpReset() {
+  if (w17grpTimer) { clearTimeout(w17grpTimer); w17grpTimer = null; }
+  w17grpI = 0; w17grpDraw();
+}
+function w17grpPlay() {
+  w17grpReset();
+  const tick = () => {
+    if (w17grpI >= 3) { w17grpTimer = null; return; }
+    w17grpStep();
+    w17grpTimer = setTimeout(tick, 900);
+  };
+  w17grpTimer = setTimeout(tick, 500);
+}
+if (w17grpS) w17grpDraw();
+
+/* ═══ w17cat concat 疊回去 ═══ */
+const w17catS = HC.svg('w17catSvg', {h: 320});
+let w17catI = 0;
+function w17catDraw() {
+  const g = w17catS.clearLayer('main');
+  const pieces = [[['09-01'], ['09-02']], [['09-03'], ['09-04']], [['09-05'], ['09-06']]];
+  const cols = [HC.tok.accent2, HC.tok.accent, HC.tok.accent3];
+  let placed = 0;
+  pieces.forEach((pc, pi) => {
+    const merged = pi < w17catI;
+    pc.forEach((r, ri) => {
+      const x = merged ? 250 : 90 + pi * 160;
+      const y = merged ? 70 + placed * 36 : 90 + ri * 36;
+      w17catS.add('rect', {x: x, y: y, width: 130, height: 30, rx: 4,
+                           fill: cols[pi], opacity: merged ? 0.95 : 0.55}, g);
+      const t = w17catS.add('text', {x: x + 65, y: y + 20, 'text-anchor': 'middle',
+                                     cls: 'vlab', 'font-family': HC.MONO,
+                                     fill: HC.tok.paper}, g);
+      t.textContent = r[0];
+      if (merged) placed += 1;
+    });
+    if (!merged) {
+      const lb = w17catS.add('text', {x: 90 + pi * 160 + 65, y: 80, 'text-anchor': 'middle',
+                                      cls: 'axlab'}, g);
+      lb.textContent = 'pieces[' + pi + ']';
+    }
+  });
+  w17catS.txtPx(24, 34, w17catI === 0 ? 'pieces = [df[:2], df[2:4], df[4:]]'
+                                      : 'pd.concat(pieces)',
+                {cls: 'axtitle', fill: HC.tok.accent}, g);
+  document.getElementById('w17catStep').textContent = w17catI + ' / 3';
+  document.getElementById('w17catRows').textContent = String(w17catI * 2);
+  setStatus('w17catStatus', w17catI === 3
+    ? '六列全部接回去了，跟原本的 df 一模一樣。'
+    : '沿著<b>列</b>接：欄名要一樣，列直接往下疊。');
+}
+function w17catStep() { w17catI = Math.min(3, w17catI + 1); w17catDraw(); }
+function w17catReset() { w17catI = 0; w17catDraw(); }
+if (w17catS) w17catDraw();
+
+/* ═══ w17grpChart 分組結果（數字逐字取自 lab 儲存格 78）═══ */
+const w17grpBaked = {C: [1.747047, -2.740490], D: [2.499340, 0.700964]};
+let w17grpColCur = 'C';
+function w17grpChartDraw() {
+  if (!HC.hasChart()) return;
+  const vals = w17grpBaked[w17grpColCur];
+  const c = HC.get('w17grpChart');
+  if (c) {
+    c.data.datasets[0].data = vals;
+    c.data.datasets[0].label = w17grpColCur + ' 欄的總和';
+    c.update();
+  } else {
+    HC.bar('w17grpChart', {
+      labels: ['bar', 'foo'],
+      datasets: [{label: w17grpColCur + ' 欄的總和', data: vals,
+                  backgroundColor: [HC.tok.accent, HC.tok.accent2], borderWidth: 0}]
+    }, {
+      scales: {x: {title: {display: true, text: '分組鍵 A'}},
+               y: {title: {display: true, text: '總和'}}},
+      plugins: {legend: {display: false}}
+    });
+  }
+  setStatus('w17grpStatus2', w17grpColCur === 'C'
+    ? 'C 欄：bar 是正的、foo 是負的 —— <b>方向相反</b>，合起來看會互相抵消。'
+    : 'D 欄：兩組同號，bar 大約是 foo 的三倍半。');
+}
+function w17grpCol(k) { w17grpColCur = k; w17grpChartDraw(); }
+HC.ready(() => { w17grpChartDraw(); });
+</script>
+<!-- PAGEJS:END -->
+<!-- DATA:BEGIN -->
+<script>
+const FLASHCARDS = [{"front":"序列（Series）","back":"有索引的一維資料。可以想成「一個 NumPy 陣列 ＋ 一排標籤」。<code>df['A']</code> 拿到的就是它。"},{"front":"資料框（DataFrame）","back":"共用同一排索引的一疊 Series。每一欄可以是不同型別，這一點跟 NumPy 陣列不同。"},{"front":"索引（Index）","back":"Series 與 DataFrame 的列標籤。它讓兩個物件相加時會<b>照標籤對齊</b>，而不是照位置。"},{"front":"逐欄型別（dtypes）","back":"逐欄的型別。拿到資料的第一個動作就是看它——該是數字的欄變成 <code>object</code>，代表原始檔裡混了非數字的東西。"},{"front":"物件型別（object dtype）","back":"pandas 用來裝字串（或混合型別）的 dtype。數值欄變成 object 幾乎一定是讀檔沒設好，例如 Auto 的 <code>horsepower</code> 混了 <code>?</code>。"},{"front":"看頭尾（head／tail）","back":"看前幾列／後幾列。<code>head()</code> 預設五列。用來確認欄名對不對、有沒有整欄空白。"},{"front":"五數摘要（describe）","back":"數值欄的五數摘要。<code>count</code> 那一列<b>不算遺漏值</b>，所以 count 比列數少就是有 NaN。"},{"front":"依名字選取（loc）","back":"照<b>名字</b>選取。切片<b>包含</b>結尾——<code>df.loc['a':'c']</code> 會拿到 c，因為名字沒有「下一個」可言。"},{"front":"依位置選取（iloc）","back":"照<b>位置</b>選取。切片跟一般 Python 一樣含頭不含尾。索引是日期或字串時，要用位置就一定要用它。"},{"front":"鏈式索引（Chained Indexing）","back":"<code>df[df.A &gt; 0]['B'] = 1</code> 這種連續兩層的寫法。第一層可能給你複本，改了不會反映到原表，pandas 會發 <code>SettingWithCopyWarning</code>。用單一個 <code>loc</code> 寫完整。"},{"front":"布林遮罩選列（Boolean Masking）","back":"<code>df[df['A'] &gt; 0]</code>。裡面的比較是向量化的，結果是一排帶索引的 True／False，長度跟原表一樣。"},{"front":"遺漏值（NaN）","back":"pandas 表示遺漏值的方式（<code>np.nan</code>）。彙總函式預設會跳過它，所以 <code>count</code> 跟列數會不一致。"},{"front":"讀檔時宣告遺漏（na_values）","back":"<code>read_csv</code> 的參數，宣告哪些字串算遺漏。<code>na_values=['?']</code> 是 Auto 那個災難的正確解法——<b>在讀檔時就處理</b>，不要事後補救。"},{"front":"刪除含遺漏的列（dropna）","back":"刪掉含遺漏值的列。Auto 從 397 筆變成 392 筆就是它做的。前提是遺漏跟你關心的變數無關，否則會產生偏差。"},{"front":"非隨機遺漏","back":"遺漏本身跟變數的值有關（例如高收入的人比較不願意填收入）。這時 <code>dropna()</code> 會讓剩下的樣本系統性偏掉，要考慮改用缺失指示變數。"},{"front":"換索引（reindex）","back":"換一組索引。原本沒有的標籤會補成 NaN——遺漏值不是只有讀檔會產生。"},{"front":"分組彙總（groupby）","back":"三個動作連在一起：<b>拆分</b>（照鍵分堆）→ <b>套用</b>（每堆各算一次）→ <b>合併</b>（疊回一張表）。看懂這三步，所有變形都是同一件事。"},{"front":"鍵留在欄裡（as_index=False）","back":"groupby 之後<b>不要</b>把分組的鍵變成索引。不加的話鍵會變成索引，之後畫圖或 merge 會找不到那個欄名。事後 <code>reset_index()</code> 也可以。"},{"front":"類別計數（value_counts）","back":"數每一類各有幾筆。拿到類別欄的第一個動作——某一類只有兩三筆的話，後面做分類會很吃力。"},{"front":"只算數值欄（numeric_only）","back":"彙總時只算數值欄。表裡有字串欄卻要 <code>sum()</code> 時要加，不然新版 pandas 會警告。"},{"front":"串接（concat）","back":"<b>疊</b>：形狀相容就沿著某個軸接起來，預設沿列。把切開的三塊接回去用它。"},{"front":"配對合併（merge）","back":"<b>對</b>：照某個鍵把兩張表配對，像 SQL 的 join。跟 concat 是不同的動作，別混用。"},{"front":"逐列附加的效能陷阱（Row-wise Append）","back":"DataFrame 的欄是連續存放的，加一列等於整張表複製一次。正確做法是把每一塊收進 Python 串列，最後 <code>pd.concat(串列)</code> 一次接完。"},{"front":"空白分隔（sep=r\"\\s+\"）","back":"read_csv 的分隔符設定：一個以上的空白都算分隔。Auto.data 那種用空白對齊的檔案要靠它。"},{"front":"還原成陣列（to_numpy）","back":"把 Series 或 DataFrame 剝掉標籤，還原成 NumPy 陣列。要丟進 scikit-learn 之前常會用到。"}];
+HC.initFlashcards();
+</script>
+<!-- DATA:END -->
+</body></html>

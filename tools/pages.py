@@ -252,6 +252,19 @@ def _svg_net():
 
 
 # ── 十一章（前十章是授課順序，第 11 頁是課程沒教的補充章）──────────────────
+def _svg_table():
+    """先備 P4：一張表，表頭與一個欄位被選中。"""
+    head = "".join(f'<rect x="{40 + c * 72}" y="46" width="64" height="26" rx="4"/>'
+                   for c in range(4))
+    body = "".join(f'<rect x="{40 + c * 72}" y="{80 + r * 32}" width="64" height="24" rx="3"/>'
+                   for r in range(5) for c in range(4))
+    col = "".join(f'<rect x="{40 + 2 * 72}" y="{80 + r * 32}" width="64" height="24" rx="3"/>'
+                  for r in range(5))
+    return (f'<g fill="#fff" opacity=".9">{head}</g>'
+            f'<g fill="#fff" opacity=".26">{body}</g>'
+            f'<g fill="#fff" opacity=".85">{col}</g>')
+
+
 PAGES = [
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
@@ -605,6 +618,38 @@ PAGES = [
                 "課程 Lab Ch2 · 儲存格 85–93"),
             Sec("rand", "亂數與模擬", "default_rng(種子)：讓別人跑得出跟你一樣的結果",
                 "課程 Lab Ch2 · 儲存格 74–84"),
+        ],
+    ),
+    Page(
+        n=17, stem="p4_pandas", slug="PANDAS", title_en="pandas DataFrames",
+        h1='一張表就是一次<span class="orange">分析</span>：pandas',
+        plain="pandas 資料框",
+        subtitle="先備知識 P4 — 選讀，不列入評分",
+        formula="Series 與 DataFrame｜head describe shape｜loc 靠名字 iloc 靠位置｜? 要在讀檔時就處理｜dropna 397→392｜groupby 拆分-套用-合併｜concat",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · pandas 資料框", esl_label="",
+        playlist="",
+        hero_svg=_svg_table(),
+        kind="prep", data_key="prep_p4_pandas", src_labs=(1, 2),
+        ex_links=[("🔗 pandas 十分鐘入門",
+                   "https://pandas.pydata.org/docs/user_guide/10min.html"),
+                  ("🔗 索引與選取資料",
+                   "https://pandas.pydata.org/docs/user_guide/indexing.html"),
+                  ("📓 Ch01 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                   "static_files/presentations/Ch01-lab-zh.ipynb")],
+        secs=[
+            Sec("prologue", "Series 與 DataFrame", "一欄是 Series，一張表是 DataFrame",
+                "課程 Lab Ch1 · 儲存格 17–28", kicker="PROLOGUE · 開場"),
+            Sec("view", "先看，再算", "拿到資料的前五分鐘：head、describe、shape",
+                "課程 Lab Ch1 · 儲存格 31–38"),
+            Sec("select", "選取列與欄", "<code>loc</code> 靠名字、<code>iloc</code> 靠位置",
+                "課程 Lab Ch1 · 儲存格 45–56"),
+            Sec("na", "遺漏值", "Auto 的 horsepower 為什麼是字串？397 筆怎麼變成 392 筆",
+                "課程 Lab Ch2 · 儲存格 185–199"),
+            Sec("group", "分組彙總", "拆分 → 套用 → 合併：groupby 的三個動作",
+                "課程 Lab Ch1 · 儲存格 76–78"),
+            Sec("join", "串接與讀寫", "concat 把切開的表接回去；讀檔的參數決定後面有多痛",
+                "課程 Lab Ch1 · 儲存格 71–72"),
         ],
     ),
 ]
