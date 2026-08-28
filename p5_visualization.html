@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<!-- GEN:BEGIN head -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="視覺化 — Visualization 互動自學頁。先備知識 P5 — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
+<title>視覺化 — Visualization Interactive（Python）</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+        integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+  --node-white:#ffffff;--node-gray:#bdc3c7;--node-black:#34495e;
+  --node-current:#f39c12;--node-found:#16a085;--node-start:#9b59b6;
+  --edge-default:#95a5a6;--edge-tree:#27ae60;--edge-explore:#f39c12;--edge-mst:#1a6b4a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.9;font-size:17px;}
+
+/* Hero */
+.hero{min-height:62vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:860px;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:.04em;line-height:1.3;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero h1 .purple{color:#bb8fce;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.2rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.05rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Hero mini-graph illustration */
+.hero-graph{position:absolute;right:5%;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;}
+@media(max-width:900px){.hero-graph{display:none;}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+strong{color:var(--ink);}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:34px;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+
+/* Graph SVG canvas */
+.graph-canvas{position:relative;width:100%;height:380px;background:#fafafa;border-radius:8px;overflow:hidden;border:1px solid #ececec;}
+.graph-canvas svg{width:100%;height:100%;display:block;}
+
+/* SVG elements styles */
+.graph-edge{stroke:var(--edge-default);stroke-width:2;fill:none;transition:stroke .25s, stroke-width .25s;}
+.graph-edge.tree{stroke:var(--edge-tree);stroke-width:3.5;}
+.graph-edge.exploring{stroke:var(--edge-explore);stroke-width:3.5;stroke-dasharray:5 4;animation:dash 1s linear infinite;}
+.graph-edge.mst{stroke:var(--edge-mst);stroke-width:4;}
+.graph-edge.path{stroke:var(--accent);stroke-width:4;}
+.graph-edge.dotted{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 4;}
+@keyframes dash{to{stroke-dashoffset:-18;}}
+
+.edge-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;fill:var(--ink);pointer-events:none;}
+.edge-label-bg{fill:#fafafa;stroke:#ececec;stroke-width:1;}
+
+.graph-node{cursor:pointer;}
+.graph-node circle{fill:var(--node-white);stroke:var(--ink);stroke-width:2;transition:fill .25s, stroke .25s, r .2s;}
+.graph-node.gray circle{fill:var(--node-gray);}
+.graph-node.black circle{fill:var(--node-black);stroke:var(--node-black);}
+.graph-node.current circle{fill:var(--node-current);stroke:#d68910;stroke-width:3;}
+.graph-node.start circle{fill:var(--node-start);stroke:#7d3c98;stroke-width:3;}
+.graph-node.found circle{fill:var(--node-found);stroke:#117a65;stroke-width:3;}
+.graph-node.in-mst circle{fill:#82e0aa;stroke:var(--accent3);stroke-width:3;}
+.graph-node text.node-key{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.graph-node.black text.node-key{fill:#fff;}
+.graph-node.current text.node-key{fill:#fff;}
+.graph-node.start text.node-key{fill:#fff;}
+.graph-node.found text.node-key{fill:#fff;}
+.graph-node text.node-meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent);text-anchor:middle;pointer-events:none;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.btn-toggle{background:var(--accent2);color:#fff;}
+.btn-toggle:hover{background:#1f2e5f;}
+.btn-toggle.off{background:#bbb;color:#555;}
+.btn-shuffle{background:#8e44ad;color:#fff;}
+.btn-shuffle:hover{background:#6c3485;}
+
+/* Slider row */
+.slider-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;background:var(--paper);border-radius:8px;margin-bottom:.5rem;}
+.slider-row .slider-label{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent2);font-weight:600;min-width:60px;}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent3);height:5px;cursor:pointer;}
+.slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;min-width:60px;text-align:right;}
+
+/* Side panel */
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+.info-card .ic-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.83rem;padding:.2rem 0;}
+.info-card .ic-label{color:var(--muted);}
+.info-card .ic-value{color:var(--ink);font-weight:600;}
+.info-card .ic-value.highlight{color:var(--accent);}
+.info-card .ic-value.big{font-size:1.4rem;color:var(--accent2);}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;}
+.stat-tile{background:var(--paper);border-radius:8px;padding:.5rem .7rem;text-align:center;}
+.stat-tile .stat-label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+.stat-tile .stat-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--accent2);}
+
+/* Queue / Stack / PQ visualization */
+.ds-display{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--paper);border-radius:6px;padding:.5rem .7rem;min-height:36px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;border:1px dashed var(--card-border);}
+.ds-display .ds-empty{color:var(--muted);font-style:italic;}
+.ds-item{background:var(--accent2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:600;}
+.ds-item.front{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.top{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.pq{background:var(--accent3);}
+.ds-item.pq.min{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-arrow{color:var(--muted);}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid var(--node-current);padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+.pseudo-code .str{color:#f1fa8c;}
+
+/* Adjacency table */
+.adj-display{margin:.5rem 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.adj-matrix{border-collapse:collapse;margin:.5rem auto;}
+.adj-matrix td,.adj-matrix th{border:1px solid var(--card-border);padding:6px 10px;text-align:center;min-width:34px;background:#fff;}
+.adj-matrix th{background:var(--accent2);color:#fff;font-weight:700;}
+.adj-matrix td.zero{color:#ccc;}
+.adj-matrix td.nonzero{background:#eafaf1;color:var(--accent3);font-weight:700;}
+.adj-matrix td.highlight{background:#fff3cd;}
+.adj-list{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:.7rem 1rem;}
+.adj-list .adj-row{padding:3px 0;border-bottom:1px dashed var(--card-border);}
+.adj-list .adj-row:last-child{border-bottom:none;}
+.adj-list .adj-key{color:var(--accent);font-weight:700;display:inline-block;min-width:32px;}
+.adj-list .adj-arrow{color:var(--muted);margin:0 6px;}
+.adj-list .adj-neighbor{background:#eef2ff;color:var(--accent2);padding:1px 8px;border-radius:4px;margin:1px 3px;display:inline-block;font-weight:600;}
+
+/* Chess board for Knight's tour */
+.chess-board{display:grid;background:#fff;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin:.5rem auto;width:fit-content;}
+.chess-cell{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;position:relative;transition:background .2s;}
+.chess-cell.light{background:#f0d9b5;color:#666;}
+.chess-cell.dark{background:#b58863;color:#fff;}
+.chess-cell.visited{background:#27ae60 !important;color:#fff;}
+.chess-cell.current{background:#f39c12 !important;color:#fff;box-shadow:inset 0 0 0 3px #d68910;}
+.chess-cell.start{background:#9b59b6 !important;color:#fff;}
+.chess-cell .knight{font-size:1.4em;line-height:1;}
+.chess-cell .step-num{font-size:.7em;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box.purple{background:#f4ecf7;border-color:#8e44ad;}
+.info-box.purple .info-label{background:#8e44ad;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+.pill-gray{background:rgba(0,0,0,.06);color:var(--muted);border:1px solid rgba(0,0,0,.12);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+.legend-item{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .5rem;background:var(--paper);border-radius:5px;}
+.legend-item .lg-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);}
+.legend-item .lg-edge{width:18px;height:3px;border-radius:2px;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0;}
+.quiz-opt{display:flex;align-items:center;gap:.6rem;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;font-size:.86rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-letter{font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.wrong{background:#fef5e7;border-color:var(--accent);}
+.quiz-opt.wrong .opt-letter{color:var(--accent);}
+.quiz-feedback{margin-top:.7rem;padding:.7rem 1rem;border-radius:8px;font-size:.88rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#eafaf1;color:var(--accent3);border-left:4px solid var(--accent3);}
+.quiz-feedback.wrong{background:#fef5e7;color:var(--accent);border-left:4px solid var(--accent);}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:30px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+
+/* Distance / table inside graph viz */
+.vert-table{margin-top:.6rem;width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.vert-table th,.vert-table td{padding:4px 6px;text-align:center;border:1px solid var(--card-border);}
+.vert-table th{background:var(--accent2);color:#fff;font-weight:600;font-size:.74rem;}
+.vert-table td.tcell-current{background:#fff3cd;font-weight:700;color:var(--accent);}
+.vert-table td.tcell-done{background:#eafaf1;color:var(--accent3);}
+.vert-table td.tcell-inf{color:#ccc;}
+.sec-badge{font-size:.6em;color:var(--muted);border:1px solid var(--card-border);background:var(--card);padding:2px 10px;border-radius:999px;vertical-align:middle;margin-left:.6rem;font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.02em;white-space:nowrap;}
+
+/* Phase 8 shared widgets */
+.bs-stack{display:flex;flex-direction:column-reverse;align-items:center;gap:4px;min-height:180px;justify-content:flex-start;padding:.6rem;}
+.bs-item{width:110px;text-align:center;padding:.4rem .6rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.bs-hl{background:#f39c12;}
+.bs-toplabel,.bq-label{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.bq-row{display:flex;align-items:center;gap:6px;min-height:64px;flex-wrap:wrap;padding:.4rem;}
+.bq-item{min-width:52px;text-align:center;padding:.45rem .5rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.char-strip{display:flex;gap:3px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;padding:.4rem 0;}
+.char-cell{min-width:30px;text-align:center;padding:.35rem .25rem;border:1px solid var(--card-border);border-radius:5px;background:var(--card);}
+.char-cur{background:#f39c12;color:#fff;border-color:#f39c12;}
+.char-done{background:#e8f5ec;color:#1a6b4a;border-color:#bfe3cd;}
+.char-bad{background:#c0392b;color:#fff;border-color:#c0392b;}
+.token-out{display:flex;gap:4px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;min-height:40px;padding:.3rem 0;}
+.tok{padding:.3rem .55rem;border-radius:5px;background:#2c3e7a;color:#fff;font-weight:600;}
+.tok-op{background:#8e44ad;}
+.tok-new{outline:3px solid #f39c12;}
+.mono{font-family:'JetBrains Mono',monospace;}
+/* ===== 網站化附加樣式（study-guide / flashcards / chapter-nav）===== */
+.study-guide{background:var(--card);border:1px solid var(--card-border);border-left:5px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:0 0 2.2rem;}
+.study-guide .sg-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:1.5px;color:var(--accent3);margin-bottom:.5rem;}
+.study-guide p{font-size:.92rem;margin-bottom:.5rem;}
+.study-guide .sg-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+.study-guide .sg-links a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:var(--accent2);border:1px solid var(--card-border);border-radius:999px;padding:.3rem .85rem;text-decoration:none;transition:all .2s;}
+.study-guide .sg-links a:hover{background:var(--accent2);color:#fff;}
+.fc-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.fc-controls button{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:1px solid var(--card-border);cursor:pointer;background:var(--card);color:var(--ink);transition:all .2s;}
+.fc-controls button:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.fc-card{perspective:900px;height:170px;cursor:pointer;}
+.fc-card .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-card .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.fc-card .fc-front{background:linear-gradient(150deg,var(--accent2),var(--ink));color:#fff;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.fc-card .fc-front .fc-hint{font-size:.62rem;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.fc-card .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:2.5rem 0 1rem;}
+.chapter-nav a{display:block;border:1px solid var(--card-border);border-radius:12px;padding:.8rem 1.1rem;text-decoration:none;color:var(--ink);background:var(--card);transition:all .2s;}
+.chapter-nav a:hover{border-color:var(--accent2);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:.2rem;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.95rem;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+.chapter-nav a.home{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+@media(max-width:700px){.chapter-nav{grid-template-columns:1fr;}}
+/* ===== 講義範例卡 ===== */
+.deck-extra{margin:1.2rem 0;}
+.deck-extra .dx-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--accent3);margin-bottom:.4rem;}
+.deck-extra .dx-note{font-size:.9rem;margin-top:.6rem;}
+.expected-out{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);border-radius:0 8px 8px 0;padding:.5rem .9rem;margin-top:.5rem;}
+.expected-out .eo-tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--accent3);display:block;margin-bottom:.2rem;}
+.expected-out pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.55;white-space:pre-wrap;margin:0;}
+.warn-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem;}
+.warn-box b{color:var(--accent);}
+
+/* ============================================================
+   統計學習自學站附加樣式
+   base.css 是從資料結構自學站沿用的共用設計系統，維持不動；
+   這個區塊是統計學習需要的新元件與兩處修正，append-only。
+   ============================================================ */
+
+/* 統計視覺化用的色票（base.css 的 --node-* / --edge-* 保留不動） */
+:root {
+  --pt-train:#2c3e7a;      /* 訓練樣本 */
+  --pt-test:#c0392b;       /* 測試樣本 */
+  --pt-held:#f39c12;       /* 被留作驗證的樣本 */
+  --pt-a:#2c3e7a;          /* 類別 A */
+  --pt-b:#c0392b;          /* 類別 B */
+  --pt-c:#1a6b4a;          /* 類別 C */
+  --fit-line:#c0392b;      /* 配適線／決策邊界 */
+  --fit-true:#1a6b4a;      /* 真實函數／Bayes 邊界 */
+  --resid:#8e44ad;         /* 殘差線段 */
+  --band:rgba(44,62,122,.13);   /* 信賴帶 */
+  --regionA:rgba(44,62,122,.13);
+  --regionB:rgba(192,57,43,.13);
+  --regionC:rgba(26,107,74,.13);
+  --grid-line:#e8e2d6;
+}
+
+/* ---- 修正 base.css：裸 .btn 沒有 background，會變成瀏覽器預設灰 ---- */
+.btn{background:var(--accent2);color:#fff;}
+.btn:hover{filter:brightness(1.12);}
+.btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
+
+/* ---- 修正 base.css：.status-banner 是深色底（--code-bg），
+       但 base.css 的 strong{color:var(--ink)} 是深墨色，疊上去幾乎看不見 ---- */
+.status-banner strong,.status-banner b{color:#fff;font-weight:700;}
+.status-banner code{background:rgba(255,255,255,.14);color:#ffe9a8;}
+
+/* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
+.qa-box{margin:1.4rem 0;}
+.qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;color:var(--accent);margin-bottom:.6rem;}
+.qa-item{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--accent2);
+  border-radius:8px;margin-bottom:.6rem;overflow:hidden;}
+.qa-item>summary{cursor:pointer;padding:.75rem 1rem;font-weight:500;color:var(--accent2);
+  list-style:none;display:flex;gap:.5rem;align-items:baseline;transition:background .15s;}
+.qa-item>summary::-webkit-details-marker{display:none;}
+.qa-item>summary::before{content:'▸';color:var(--accent);flex:none;transition:transform .15s;}
+.qa-item[open]>summary::before{transform:rotate(90deg);}
+.qa-item>summary:hover{background:var(--highlight);}
+.qa-item[open]>summary{border-bottom:1px solid var(--card-border);}
+.qa-a{padding:.9rem 1rem 1rem 1.9rem;font-size:.95rem;}
+.qa-a p{margin-bottom:.7rem;}
+.qa-a p:last-child{margin-bottom:0;}
+.qa-a ul,.qa-a ol{margin:.4rem 0 .7rem 1.2rem;}
+.qa-a li{margin-bottom:.3rem;}
+
+/* ---- 出處標記：可機器檢查的 grounding ---- */
+.dx-src{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--muted);margin-top:.5rem;letter-spacing:.02em;}
+.dx-src a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+
+/* ---- Chart.js 畫布容器 + 離線退路 ---- */
+.chart-wrap{position:relative;width:100%;height:300px;background:#fafafa;border-radius:8px;
+  border:1px solid #ececec;padding:.4rem;}
+.chart-wrap.tall{height:380px;}
+.chart-wrap.square{height:330px;max-width:360px;margin:0 auto;}
+.chart-wrap canvas{display:block;width:100%!important;height:100%!important;}
+.chart-fallback{position:absolute;inset:.4rem;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1.2rem;font-size:.86rem;line-height:1.7;color:var(--muted);
+  background:var(--card);border-radius:6px;}
+.chart-wrap.ready .chart-fallback{display:none;}
+.chart-fallback b{display:block;color:var(--accent2);margin-bottom:.4rem;font-size:.9rem;}
+
+/* ---- 混淆矩陣（是表格，不是圖表） ---- */
+.cm-table{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.82rem;margin:.6rem 0;}
+.cm-table th,.cm-table td{border:1px solid var(--card-border);padding:.45rem .7rem;text-align:center;}
+.cm-table thead th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);}
+.cm-table tbody th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);
+  text-align:right;font-weight:600;}
+.cm-table .cm-tp{background:rgba(26,107,74,.14);font-weight:700;}
+.cm-table .cm-tn{background:rgba(26,107,74,.08);font-weight:700;}
+.cm-table .cm-fp{background:rgba(192,57,43,.12);}
+.cm-table .cm-fn{background:rgba(192,57,43,.18);font-weight:700;}
+.cm-note{font-size:.8rem;color:var(--muted);}
+
+/* ---- ESL 進階：可略過的標記 ---- */
+.eslx{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+  letter-spacing:.1em;color:#fff;background:#8e44ad;padding:.1rem .45rem;border-radius:3px;
+  margin-left:.5rem;vertical-align:.1em;}
+.skip-note{font-size:.82rem;color:var(--muted);margin:-.4rem 0 1rem;}
+
+/* ---- 環境版本註記 ---- */
+.ver-note{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;color:var(--muted);
+  background:var(--paper);border:1px dashed var(--card-border);border-radius:6px;
+  padding:.6rem .9rem;margin-top:1.2rem;}
+
+/* ---- 解答連結 pill 排 ---- */
+.sol-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+.sol-links a{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:600;
+  color:var(--accent2);background:var(--card);border:1px solid var(--card-border);
+  border-radius:999px;padding:.35rem .8rem;text-decoration:none;transition:all .15s;}
+.sol-links a:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* ---- 資料點圖例（SVG 元件共用） ---- */
+.viz-legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.5rem;font-size:.78rem;color:var(--muted);}
+.viz-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.viz-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;}
+.viz-legend i.sq{border-radius:2px;}
+.viz-legend i.ln{width:18px;height:0;border-top:3px solid;border-radius:0;}
+
+/* ---- SVG 元件共用樣式 ---- */
+.viz-svg{width:100%;display:block;background:#fafafa;border-radius:8px;border:1px solid #ececec;}
+.viz-svg .ax{stroke:var(--muted);stroke-width:1;}
+.viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
+.viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .dot{stroke:#fff;stroke-width:1;}
+.viz-svg .dot.drag{cursor:grab;}
+.viz-svg .dot.drag:active{cursor:grabbing;}
+.viz-svg .fit{stroke:var(--fit-line);stroke-width:2.5;fill:none;}
+.viz-svg .truef{stroke:var(--fit-true);stroke-width:2;fill:none;stroke-dasharray:6 4;}
+.viz-svg .resid{stroke:var(--resid);stroke-width:1.2;stroke-dasharray:2 2;}
+.viz-svg .band{fill:var(--band);stroke:none;}
+.viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
+.viz-svg text{user-select:none;}
+
+/* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
+.strip .cell{width:20px;height:20px;border-radius:3px;background:var(--card);
+  border:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;}
+.strip .cell.train{background:var(--pt-train);border-color:var(--pt-train);color:#fff;}
+.strip .cell.held{background:var(--pt-held);border-color:#d68910;color:#fff;font-weight:700;}
+.strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
+
+/* ---- 長內容自己橫向滾動，頁面本體絕不橫向滾動 ---- */
+/* 最後一道保險。該滑的東西（程式碼、公式、表格、圖表）下面都各自有 overflow-x:auto，
+   這一條只負責攔住漏網的幾十個 px——多半來自 MathJax 內部的 mjx-mtable，
+   那是它自己排版出來的盒子，我們沒有選擇器能乾淨地限制它。
+   用 clip 不用 hidden：clip 不會把 body 變成 scroll container，
+   position:fixed 的浮動導覽與 scroll-behavior:smooth 都不受影響。 */
+html,body{overflow-x:clip;}
+/* 程式碼行不換行（.line{white-space:pre}），所以區塊自己要能滑 */
+.pseudo-code{overflow-x:auto;}
+/* MathJax 的行間公式在窄螢幕會撐爆版面，讓它自己可以橫向滑動。
+   注意 !important 是必要的：MathJax 3 是在 runtime 把自己的樣式表 append 到 <head>
+   最後面，比這個 inline <style> 晚，所以同權重的 max-width 會被它蓋掉。
+   帶 \tag{} 的公式更明顯——它會 render 成一個 mjx-mtable，寬度動輒 500–800px。 */
+/* min-width 也要蓋掉：MathJax 對帶 \tag{} 的公式會在 mjx-container 上設 inline
+   min-width（用來把式號推到右緣），min-width 的優先權高於 max-width，
+   所以只寫 max-width 完全沒用——容器還是會撐到 500–800px。 */
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding-bottom:.25rem;
+  max-width:100%!important;min-width:0!important;}
+mjx-container:not([display="true"]){max-width:100%;overflow-x:auto;overflow-y:hidden;}
+mjx-container::-webkit-scrollbar{height:5px;}
+mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px;}
+.expected-out pre{overflow-x:auto;}
+.strip{overflow-x:auto;}
+
+/* ---- 手機版 ---- */
+@media(max-width:700px){
+  .chart-wrap{height:250px;}
+  .chart-wrap.tall{height:300px;}
+  .qa-a{padding-left:1rem;}
+  .viz-svg{min-width:0;}
+  .big-formula{font-size:.85rem;word-break:break-word;}
+  /* 窄螢幕改成左靠：置中的公式一旦比容器寬，捲軸起點會落在被裁掉的左半邊 */
+  mjx-container[display="true"]{justify-content:flex-start!important;}
+}
+
+/* ---- 尊重使用者的減少動態偏好 ---- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;}
+}
+
+/* ---- 列印：隱藏浮動導覽與控制列，深色區塊轉淺 ---- */
+@media print{
+  .float-nav,.controls-bar,.hero-grid,.hero-graph,.scroll-hint,.fc-controls{display:none!important;}
+  .hero{min-height:auto;background:#fff!important;color:var(--ink)!important;padding:1.5rem 0;}
+  .hero h1,.hero .subtitle{color:var(--ink)!important;}
+  .hero .big-formula{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--card-border)!important;}
+  .pseudo-code,.status-banner{background:var(--paper)!important;color:var(--ink)!important;}
+  .pseudo-code .kw,.pseudo-code .fn,.pseudo-code .str,.pseudo-code .num,.pseudo-code .com{color:var(--ink)!important;}
+  .qa-item{break-inside:avoid;}
+  .qa-item>summary::before{content:'';}
+  .qa-a{display:block!important;}
+  section{break-after:auto;border-bottom:none;}
+  a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
+}
+</style>
+</head>
+<!-- GEN:END head -->
+<body>
+<!-- GEN:BEGIN floatnav -->
+<nav class="float-nav" id="floatNav" aria-label="章節導覽">
+  <div class="fn-title">章節導覽</div>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">為什麼要先畫圖</span></a>
+  <a href="#anat" data-target="anat"><span class="fn-num">P01</span><span class="fn-name">Figure 與 Axes</span></a>
+  <a href="#dist" data-target="dist"><span class="fn-num">P02</span><span class="fn-name">看一個變數的分布</span></a>
+  <a href="#rel" data-target="rel"><span class="fn-num">P03</span><span class="fn-name">看兩個變數的關係</span></a>
+  <a href="#cat" data-target="cat"><span class="fn-num">P04</span><span class="fn-name">類別變數的圖</span></a>
+  <a href="#model" data-target="model"><span class="fn-num">P05</span><span class="fn-name">把模型畫進圖裡</span></a>
+  <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
+  <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
+</nav>
+<!-- GEN:END floatnav -->
+<!-- GEN:BEGIN hero -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+<g fill="#fff" opacity=".55"><rect x="44" y="150" width="34" height="60" rx="3"/><rect x="90" y="114" width="34" height="96" rx="3"/><rect x="136" y="72" width="34" height="138" rx="3"/><rect x="182" y="40" width="34" height="170" rx="3"/><rect x="228" y="78" width="34" height="132" rx="3"/><rect x="274" y="122" width="34" height="88" rx="3"/></g><path d="M44 176 C 110 150, 150 92, 200 66 S 280 78, 316 118" stroke="#fff" stroke-width="3.5" fill="none" opacity=".95"/><g stroke="#fff" stroke-width="3" opacity=".8"><path d="M34 214 H330"/><path d="M34 214 V40"/></g>
+  </svg>
+  <div class="hero-content">
+    <h1>先<span class="blue">畫</span>再算：matplotlib 與 seaborn</h1>
+    <div class="subtitle">先備知識 P5 — 選讀，不列入評分</div>
+    <div class="big-formula">Figure 與 Axes｜subplots 網格｜histplot 的 bins｜kdeplot 的頻寬｜relplot 與 catplot｜regplot｜heatmap｜截斷的 y 軸會說謊</div>
+    <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
+  </div>
+</div>
+<!-- GEN:END hero -->
+<div class="container">
+<!-- GEN:BEGIN studyguide -->
+<div class="study-guide">
+  <div class="sg-title">📌 本頁使用方式（先備 · 視覺化）</div>
+  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
+  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+</div>
+<!-- GEN:END studyguide -->
+<!-- GEN:BEGIN toc -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · 內容目錄</div>
+  <div class="toc-grid">
+    <a href="#prologue"><span class="toc-num">P00</span>為什麼要先畫圖</a>
+    <a href="#anat"><span class="toc-num">P01</span>Figure 與 Axes</a>
+    <a href="#dist"><span class="toc-num">P02</span>看一個變數的分布</a>
+    <a href="#rel"><span class="toc-num">P03</span>看兩個變數的關係</a>
+    <a href="#cat"><span class="toc-num">P04</span>類別變數的圖</a>
+    <a href="#model"><span class="toc-num">P05</span>把模型畫進圖裡</a>
+    <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
+    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
+  </div>
+</div>
+<!-- GEN:END toc -->
+<section id="prologue">
+<!-- GEN:BEGIN sec:prologue -->
+  <div class="section-number">PROLOGUE · 開場</div>
+  <h2>摘要統計一樣，圖可以完全不一樣 <span class="sec-badge">課程 Lab Ch1 · 儲存格 88</span></h2>
+<!-- GEN:END sec:prologue -->
+
+  <p>統計課教你算平均、標準差、相關係數。這些數字很有用，但它們<strong>會漏掉形狀</strong>。
+  三組資料可以有幾乎一樣的平均、標準差與相關係數，畫出來卻完全不同——
+  其中一組是直線關係、一組是曲線、一組只是被一個離群值拉出來的假相關。</p>
+
+<div class="info-box">
+  <span class="info-label">一句話</span>
+  <strong>先畫圖，再算數字。</strong>圖告訴你「這份資料長什麼樣」，數字告訴你「有多強」——順序反過來很容易被騙。
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <div class="chart-wrap"><canvas id="w18sameChart"></canvas>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：三組資料的平均與相關係數幾乎相同，但一組是直線、一組是曲線、一組只有一個離群值在撐。</div></div>
+      </div>
+      <div class="status-banner" id="w18smStatus"><span class="status-icon">›</span><span class="status-text">三組資料，摘要統計幾乎相同。先看數字，再按按鈕看形狀。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18smSet(0)">① 直線關係</button><button class="btn btn-toggle" onclick="w18smSet(1)">② 曲線關係</button><button class="btn btn-toggle" onclick="w18smSet(2)">③ 一個離群值撐出來的</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">按按鈕換一組</div>
+      三組資料的<strong>平均、標準差、相關係數都幾乎一樣</strong>，但形狀完全不同。只看數字的話，你會以為它們是同一回事。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這一組的摘要統計</div>
+      <div class="ic-row"><span class="ic-label">x 平均</span><span class="ic-value" id="w18smMx">—</span></div><div class="ic-row"><span class="ic-label">y 平均</span><span class="ic-value" id="w18smMy">—</span></div><div class="ic-row"><span class="ic-label">相關係數 r</span><span class="ic-value" id="w18smR">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這些點哪裡來的</div>
+      頁面用固定種子當場算出來的（<code>HC.stat.lcg</code>），不是任何一份真實資料——重點是機制，所以用 live 而不是烘焙。重新整理頁面會得到完全一樣的三組點。
+    </div>
+  </div>
+</div>
+
+<div class="info-box">
+  <span class="info-label">這一頁的程式碼卡為什麼沒有「預期輸出」</span>
+  繪圖的儲存格在 notebook 裡存下來的是圖，不是文字，所以下面的程式碼卡多半只有程式碼、沒有預期輸出。圖本身的行為改由每一節的互動元件重現——<strong>那些元件是頁面當場算的，不是課程圖的截圖</strong>（本站 repo 不放任何圖檔）。
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">這一頁用的資料：tips</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 檢視資料基本資訊/摘要；載入範例資料集</span></span>
+  <span class="line">tips = sns.load_dataset(<span class="str">&quot;tips&quot;</span>)</span>
+  <span class="line">print(tips.shape)</span>
+  <span class="line">tips.head()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(244, 7)
+   total_bill   tip     sex smoker  day    time  size
+0       16.99  1.01  Female     No  Sun  Dinner     2
+1       10.34  1.66    Male     No  Sun  Dinner     3
+2       21.01  3.50    Male     No  Sun  Dinner     3
+3       23.68  3.31    Male     No  Sun  Dinner     2
+4       24.59  3.61  Female     No  Sun  Dinner     4</pre></div>
+  <p class="dx-note">244 筆餐廳帳單。<code>total_bill</code> 與 <code>tip</code> 是數值，<code>day</code>、<code>sex</code>、<code>smoker</code> 是類別——這兩種型別要配不同的圖。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 88</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 00 · 自我檢測</div>
+  <p>兩份資料的相關係數都是 0.82。可以推論什麼？</p>
+  <div class="quiz-options" id="qSameOptions"><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數只量「線性關係有多強」，它看不出曲線、看不出離群值、也看不出資料是不是分成兩群。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(A)</span> 兩份資料的散佈圖會很像</div><div class="quiz-opt" data-correct="true" data-fb="對。所以拿到資料的第一個動作是畫圖，不是算相關係數。第 3 章講迴歸診斷時會再看到同一件事：殘差圖比 R² 誠實。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(B)</span> 只知道兩者的線性關係強度接近，形狀可能完全不同</div><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數跟斜率是兩回事——斜率還取決於兩個變數的標準差比例。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(C)</span> 兩份資料的迴歸線斜率一樣</div></div>
+  <div class="quiz-feedback" id="qSameFeedback"></div>
+</div>
+</section>
+<section id="anat">
+<!-- GEN:BEGIN sec:anat -->
+  <div class="section-number">PART 01 · Figure 與 Axes</div>
+  <h2>一張圖的解剖：Figure 是畫布，Axes 才是座標系 <span class="sec-badge">課程 Lab Ch2 · 儲存格 96–114</span></h2>
+<!-- GEN:END sec:anat -->
+
+  <p>matplotlib 的物件有兩層，搞混這兩層是所有「為什麼我的設定沒有生效」的根源：
+  <strong>Figure 是整張畫布</strong>（大小、存檔、標題），
+  <strong>Axes 是裡面的一個座標系</strong>（畫點、設軸範圍、加圖例）。
+  一張 Figure 可以有很多個 Axes。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w18anatSvg" height="320"></svg>
+      <div class="status-banner" id="w18anStatus"><span class="status-icon">›</span><span class="status-text">先分清楚哪一層是哪一層，之後查文件會快很多。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18anSet(0)">Figure</button><button class="btn btn-toggle" onclick="w18anSet(1)">Axes</button><button class="btn btn-toggle" onclick="w18anSet(2)">Axis（軸）</button><button class="btn btn-toggle" onclick="w18anSet(3)">Artist（點、線、字）</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">點名字看它管什麼</div>
+      按按鈕，對應的部分會亮起來，右邊會顯示「這一層負責什麼」與「動它的方法叫什麼」。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">物件</span><span class="ic-value" id="w18anObj">Figure</span></div><div class="ic-row"><span class="ic-label">負責什麼</span><span class="ic-value" id="w18anWhat">整張畫布</span></div><div class="ic-row"><span class="ic-label">常用方法</span><span class="ic-value" id="w18anHow">set_size_inches、savefig</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">為什麼 seaborn 有時候回 Figure、有時候回 Axes</div>
+      名字結尾是 <code>plot</code> 的多半回 Axes（<code>histplot</code>、<code>regplot</code>）；<code>relplot</code>、<code>catplot</code>、<code>lmplot</code> 這種會自己開一張新 Figure（叫 figure-level）。要塞進自己的 subplots 就得挑前者。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">subplots 一次給你兩個東西</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
+  <span class="line">x = rng.standard_normal(<span class="num">100</span>)</span>
+  <span class="line">y = rng.standard_normal(<span class="num">100</span>)</span>
+  <span class="line">ax.plot(x, y);</span></div>
+  <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 96</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">散佈圖與軸標籤</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
+  <span class="line">ax.scatter(x, y, marker=<span class="str">&#x27;o&#x27;</span>)</span></div>
+  <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 105</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w18gridSvg" height="300"></svg>
+      <div class="status-banner" id="w18gdStatus"><span class="status-icon">›</span><span class="status-text">點任一格，看它的索引。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w18gdNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18gdReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">axes 是一個二維陣列</div>
+      <code>subplots(nrows=2, ncols=3)</code> 回傳的 <code>axes</code> 是一個 <strong>(2, 3) 的 NumPy 陣列</strong>。點格子看它的索引——就是 P3 講的二維索引。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前選到</div>
+      <div class="ic-row"><span class="ic-label">索引</span><span class="ic-value" id="w18gdIdx">axes[0, 0]</span></div><div class="ic-row"><span class="ic-label">在第幾列第幾欄</span><span class="ic-value" id="w18gdPos">第 0 列、第 0 欄</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">常見錯誤</div>
+      <code>nrows=1</code> 時 <code>axes</code> 會退化成一維，<code>axes[0, 1]</code> 就會報錯。要一致就寫 <code>subplots(1, 3, squeeze=False)</code>。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">2×3 的子圖網格</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">fig, axes = subplots(nrows=<span class="num">2</span>,</span>
+  <span class="line">                     ncols=<span class="num">3</span>,</span>
+  <span class="line">                     figsize=(<span class="num">15</span>, <span class="num">5</span>))</span>
+  <span class="line">axes[<span class="num">0</span>,<span class="num">1</span>].plot(x, y, <span class="str">&#x27;o&#x27;</span>)</span>
+  <span class="line">axes[<span class="num">1</span>,<span class="num">2</span>].scatter(x, y, marker=<span class="str">&#x27;+&#x27;</span>)</span>
+  <span class="line">fig</span></div>
+  <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 112、114</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 01 · 自我檢測</div>
+  <p>你用 <code>sns.relplot(...)</code> 畫完圖，接著寫 <code>ax.set_xlim([0, 10])</code>，卻沒有任何效果。最可能的原因是？</p>
+  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，它不會畫到你手上那個 <code>ax</code> 上。要控制軸就改用 <code>scatterplot</code> 這種 axes-level 的函式並傳 <code>ax=ax</code>。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。問題不在支不支援，在你設到了<strong>另一個 Axes</strong> 上。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
+  <div class="quiz-feedback" id="qAnatFeedback"></div>
+</div>
+</section>
+<section id="dist">
+<!-- GEN:BEGIN sec:dist -->
+  <div class="section-number">PART 02 · 看一個變數的分布</div>
+  <h2>直方圖的 bins 與密度圖的頻寬會改變你的結論 <span class="sec-badge">課程 Lab Ch1 · 儲存格 105–111</span></h2>
+<!-- GEN:END sec:dist -->
+
+  <p>看一個變數的分布有兩種標準做法：直方圖與密度圖。兩者都有一個<strong>你必須自己決定的參數</strong>——
+  直方圖是 bins（切幾格），密度圖是頻寬（平滑多少）。這個參數不是細節，
+  它可以讓同一份資料看起來有兩個峰或只有一個。</p>
+
+<div class="info-box warm">
+  <span class="info-label">這是本頁最重要的一件事</span>
+  <strong>調參數之前先想好你要回答什麼問題。</strong>想看「有沒有兩群」就把 bins 調細一點；想看「大致集中在哪」就調粗一點。調到「圖看起來最漂亮」為止，是在騙自己。
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w18binsSvg" height="340"></svg>
+      <div class="status-banner" id="w18bnStatus"><span class="status-icon">›</span><span class="status-text">先猜這份資料有幾個峰，再把 bins 從 4 拉到 40。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w18bnStep(-4)">參數 −</button><button class="btn btn-step" onclick="w18bnStep(4)">參數 +</button><button class="btn btn-toggle" onclick="w18bnMode()">切換：直方圖 ⇄ 密度圖</button><button class="btn btn-reset" onclick="w18bnReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">拖 bins，看結論怎麼變</div>
+      同一份資料（固定種子產生，實際上是<strong>兩個峰</strong>）。bins 太少會把兩個峰糊成一個，太多會讓雜訊看起來像結構。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">模式</span><span class="ic-value" id="w18bnMode">直方圖</span></div><div class="ic-row"><span class="ic-label">bins / 頻寬</span><span class="ic-value" id="w18bnParam">10</span></div><div class="ic-row"><span class="ic-label">你會看到幾個峰</span><span class="ic-value" id="w18bnPeaks">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">密度圖也一樣</div>
+      切到「密度圖」模式，改的是<strong>頻寬</strong>。頻寬大＝平滑＝可能糊掉真的結構；頻寬小＝每個點都戳出一根。兩者是同一個取捨換了個名字。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">最基本的直方圖</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集</span></span>
+  <span class="line">sns.displot(x=<span class="str">&quot;total_bill&quot;</span>, data = tips); <span class="com">#check parameter bins and binwidth</span></span></div>
+  <p class="dx-note">lab 的註解就提醒了 <code>bins</code> 這個參數。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 105</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">依類別分色與堆疊</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：直方圖</span></span>
+  <span class="line">sns.histplot(data=tips, x=<span class="str">&quot;day&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>); <span class="com"># By default, the different histograms are “layered” on top of each other and, in some cases, they may be difficult to distinguish.</span></span>
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：直方圖</span></span>
+  <span class="line">sns.histplot(data=tips, x=<span class="str">&quot;day&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>, multiple=<span class="str">&quot;dodge&quot;</span>, shrink=<span class="num">.8</span>);</span></div>
+  <p class="dx-note"><code>hue</code> 分色、<code>multiple='stack'</code> 疊起來。分色看得出各組的形狀，堆疊看得出總量——兩種問題。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 106、107</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">密度圖</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：KDE 密度圖</span></span>
+  <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>);</span>
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：KDE 密度圖</span></span>
+  <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;time&quot;</span>, multiple=<span class="str">&quot;stack&quot;</span>);</span></div>
+  <p class="dx-note"><code>kdeplot</code> 把每個點換成一個小鐘形再加起來，所以它<strong>一定是平滑的</strong>——那個平滑是你給的假設，不是資料本身。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 110、111</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 02 · 自我檢測</div>
+  <p>同一份資料，bins=5 看起來是一個峰，bins=30 看起來是兩個峰。你該怎麼辦？</p>
+  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="這就是本節警告的事。「漂亮」不是判準——你是在挑一個支持自己想法的圖。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖是提出假設的工具，不是證據本身。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
+  <div class="quiz-feedback" id="qDistFeedback"></div>
+</div>
+</section>
+<section id="rel">
+<!-- GEN:BEGIN sec:rel -->
+  <div class="section-number">PART 03 · 看兩個變數的關係</div>
+  <h2>散佈圖、折線圖、joint 與 pair <span class="sec-badge">課程 Lab Ch1 · 儲存格 91–117</span></h2>
+<!-- GEN:END sec:rel -->
+
+  <p>兩個變數的關係圖幾乎都是散佈圖的變形。seaborn 幫你做的事是
+  <strong>用顏色、大小、分面把第三、第四個變數也塞進同一張圖</strong>——
+  <code>hue</code>、<code>size</code>、<code>col</code> 這三個參數值得記起來。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w18pickSvg" height="340"></svg>
+      <div class="status-banner" id="w18pkStatus"><span class="status-icon">›</span><span class="status-text">選 x 與 y 的型別。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18pkSet(0)">數值 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(1)">類別 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(2)">類別 × 類別</button><button class="btn btn-toggle" onclick="w18pkSet(3)">單一數值</button><button class="btn btn-toggle" onclick="w18pkSet(4)">時間 × 數值</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">先問變數型別</div>
+      選 x 與 y 各是什麼型別，右邊會給建議的圖與對應的 seaborn 函式。這張決策樹涵蓋 lab 裡出現過的每一種圖。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">建議</div>
+      <div class="ic-row"><span class="ic-label">圖型</span><span class="ic-value" id="w18pkKind">—</span></div><div class="ic-row"><span class="ic-label">函式</span><span class="ic-value" id="w18pkFn">—</span></div><div class="ic-row"><span class="ic-label">它在回答什麼</span><span class="ic-value" id="w18pkQ">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">第三個變數怎麼辦</div>
+      <code>hue=</code> 用顏色、<code>size=</code> 用點的大小、<code>col=</code> 拆成好幾張小圖。超過兩個額外變數的話，多半該畫好幾張圖而不是硬塞。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">散佈圖，以及把第三個變數塞進去</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># Scatterplot</span></span>
+  <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips); <span class="com"># Semicolon is intended to suppress text representation</span></span>
+  <span class="line"><span class="com"># 載入範例資料集</span></span>
+  <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, style=<span class="str">&quot;smoker&quot;</span>, data=tips); <span class="com"># you can use a different marker style for each class</span></span></div>
+  <p class="dx-note"><code>hue</code> 與 <code>style</code> 同時用同一個變數，是為了在黑白列印時也分得出來——這個習慣值得學。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 91、93</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">用點的大小表示第三個變數</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集</span></span>
+  <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, size=<span class="str">&quot;size&quot;</span>, sizes=(<span class="num">15</span>, <span class="num">200</span>), data=tips); <span class="com">#size rather than colors</span></span></div>
+  <p class="dx-note"><code>sizes=(15, 200)</code> 明確指定最小與最大的點徑。不指定的話預設範圍很窄，看不出差別。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 95</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">折線圖與信賴帶</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：折線圖</span></span>
+  <span class="line">fmri = sns.load_dataset(<span class="str">&quot;fmri&quot;</span>)</span>
+  <span class="line">sns.lineplot(x=<span class="str">&quot;timepoint&quot;</span>, y=<span class="str">&quot;signal&quot;</span>, hue=<span class="str">&quot;event&quot;</span>, style=<span class="str">&quot;event&quot;</span>, markers=<span class="num">True</span>, dashes=<span class="num">False</span>, data=fmri);</span></div>
+  <p class="dx-note"><code>lineplot</code> 對同一個 x 有多筆資料時，會自動畫平均與 95% 信賴帶——那條帶子是 bootstrap 算出來的，第 5 章會講它怎麼來的。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 102</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">joint 與 pair</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：Joint 分布圖</span></span>
+  <span class="line">sns.jointplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span>
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：變數成對關係圖</span></span>
+  <span class="line">sns.pairplot(tips);</span></div>
+  <p class="dx-note"><code>pairplot</code> 是探索階段最划算的一張圖：所有數值欄兩兩配對，一眼看完。欄多的時候會很慢，先挑幾欄再畫。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 114、117</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 03 · 自我檢測</div>
+  <p>你想看「小費金額與帳單金額的關係，並區分吸菸與否」。最直接的寫法是？</p>
+  <div class="quiz-options" id="qRelOptions"><div class="quiz-opt" data-correct="true" data-fb="對。兩個數值變數用散佈圖，第三個類別變數用 <code>hue</code> 上色。lab 儲存格 93 就是這一行。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(A)</span> <code>sns.relplot(x='total_bill', y='tip', hue='smoker', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="這張圖只看得到吸菸與否對小費的影響，<strong>total_bill 不見了</strong>——而它才是最主要的解釋變數。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(B)</span> <code>sns.catplot(x='smoker', y='tip', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="可以（那就是 <code>col='smoker'</code>），但要比較兩組時疊在同一張圖上用顏色分比較容易看出差異。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(C)</span> 畫兩張散佈圖，一張吸菸一張不吸菸</div></div>
+  <div class="quiz-feedback" id="qRelFeedback"></div>
+</div>
+</section>
+<section id="cat">
+<!-- GEN:BEGIN sec:cat -->
+  <div class="section-number">PART 04 · 類別變數的圖</div>
+  <h2>盒鬚圖、長條圖、計數圖：各自在講什麼 <span class="sec-badge">課程 Lab Ch1 · 儲存格 120–130</span></h2>
+<!-- GEN:END sec:cat -->
+
+  <p>類別變數的圖最容易被誤讀，因為它們看起來都像長條，但講的事情差很多：
+  <strong>countplot 講「有幾筆」、barplot 講「平均是多少」、boxplot 講「分布長怎樣」</strong>。
+  三種被混用的後果是很嚴重的。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w18misSvg" height="340"></svg>
+      <div class="status-banner" id="w18msStatus"><span class="status-icon">›</span><span class="status-text">先看左邊，再按「截斷 y 軸」。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18msSet(0)">y 軸從 0 開始</button><button class="btn btn-toggle" onclick="w18msSet(1)">截斷 y 軸</button><button class="btn btn-toggle" onclick="w18msSet(2)">改用盒鬚圖</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">同一份資料，兩種畫法</div>
+      左邊是誠實的版本（y 軸從 0 開始），右邊是截斷 y 軸的版本。按按鈕切換，看「差距」怎麼被放大成三倍。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">兩組的真實數字</div>
+      <div class="ic-row"><span class="ic-label">A 組平均</span><span class="ic-value" id="w18msA">2.98</span></div><div class="ic-row"><span class="ic-label">B 組平均</span><span class="ic-value" id="w18msB">3.26</span></div><div class="ic-row"><span class="ic-label">看起來差幾倍</span><span class="ic-value" id="w18msRatio">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">什麼時候可以截斷</div>
+      當零沒有意義時（例如體溫、年份）截斷是合理的，但要<strong>明確標出來</strong>。長條圖用長度編碼數量，截斷等於把長度的意義弄壞，所以特別不該截。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">盒鬚圖：看分布</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集</span></span>
+  <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, kind=<span class="str">&quot;box&quot;</span>, data=tips);</span>
+  <span class="line"><span class="com"># 載入範例資料集</span></span>
+  <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, kind=<span class="str">&quot;box&quot;</span>, data=tips); <span class="com"># When adding a hue semantic, the box for each level of the semantic variable is moved along the categorical axis so they don’t overlap:b</span></span></div>
+  <p class="dx-note">盒子是四分位距、線是中位數、鬚是 1.5 倍 IQR 內的極值，外面的點是離群值。<strong>它是唯一一種會告訴你「有沒有離群值」的類別圖。</strong>（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 120、121</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">長條圖：看平均與不確定性</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：長條圖</span></span>
+  <span class="line">ax = sns.barplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span>
+  <span class="line"><span class="com"># 載入範例資料集</span></span>
+  <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>, kind=<span class="str">&quot;bar&quot;</span>, data=tips);</span></div>
+  <p class="dx-note"><code>barplot</code> 的長條高度是<strong>平均</strong>，上面那條細線是 bootstrap 信賴區間——不是標準差。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 124、125</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">計數圖：看筆數</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：計數長條圖</span></span>
+  <span class="line">sns.countplot(x=<span class="str">&quot;smoker&quot;</span>, data=tips); <span class="com">#simply count the number</span></span></div>
+  <p class="dx-note"><code>countplot</code> 只數筆數，跟 <code>value_counts()</code> 是同一件事的圖版。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 127</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">點估計圖：專門用來比較</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：點估計圖</span></span>
+  <span class="line">sns.pointplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips, errorbar=(<span class="str">&#x27;ci&#x27;</span>, <span class="num">68</span>));</span></div>
+  <p class="dx-note">把長條換成一個點加誤差線。要比較好幾組的平均時，點比長條清楚——長條的面積會搶掉注意力。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 130</span>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>圖</th><th>高度／位置代表什麼</th><th>適合回答</th></tr></thead>
+  <tbody><tr><td><code>countplot</code></td><td>筆數</td><td>哪一類最多？有沒有哪一類樣本太少？</td></tr><tr><td><code>barplot</code></td><td>平均（＋信賴區間）</td><td>各組的平均差多少？差得有多確定？</td></tr><tr><td><code>boxplot</code></td><td>中位數與四分位距</td><td>分布形狀？有沒有離群值？</td></tr><tr><td><code>pointplot</code></td><td>平均（＋誤差線）</td><td>多組平均之間的<b>比較</b>與趨勢</td></tr></tbody>
+</table></div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 04 · 自我檢測</div>
+  <p>一張 <code>barplot</code> 顯示週四的小費比週五高。你還需要知道什麼才能下結論？</p>
+  <div class="quiz-options" id="qCatOptions"><div class="quiz-opt" data-correct="false" data-fb="長條的高度是<strong>平均</strong>。兩組平均有差，不代表這個差站得住腳。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(A)</span> 不用，長條比較高就是比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。<code>barplot</code> 預設會畫 bootstrap 信賴區間，重疊很多就代表這個差可能只是抽樣的隨機性。另外週五如果只有 19 筆，那條線會很長——樣本數要一起看。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(B)</span> 兩組各有幾筆、以及誤差線有沒有重疊</div><div class="quiz-opt" data-correct="false" data-fb="標準差講的是個別觀測的分散程度，不是<strong>平均</strong>的不確定性。後者是標準誤，跟樣本數有關。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(C)</span> 只要看兩組的標準差</div></div>
+  <div class="quiz-feedback" id="qCatFeedback"></div>
+</div>
+
+<div class="info-box purple">
+  <span class="info-label">🔗 這在本站哪一章會用到</span>
+  第 12 章的主成分分析要看雙標圖（biplot）、分群要看樹狀圖，都是這一節的延伸；第 3 章的殘差圖更是整章的診斷主力。<a href="unsupervised_learning.html#pca">→ 非監督式學習 · 主成分分析</a>
+</div>
+</section>
+<section id="model">
+<!-- GEN:BEGIN sec:model -->
+  <div class="section-number">PART 05 · 把模型畫進圖裡</div>
+  <h2>regplot 與相關係數熱圖 <span class="sec-badge">課程 Lab Ch1 · 儲存格 133–138</span></h2>
+<!-- GEN:END sec:model -->
+
+  <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
+  這是統計圖跟一般商業圖表最大的差別——你不只在描述資料，還在展示一個模型對不對。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w18corrSvg" height="340"></svg>
+      <div class="status-banner" id="w18crStatus"><span class="status-icon">›</span><span class="status-text">點格子看那一對變數的相關係數。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w18crNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18crReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">熱圖在講什麼</div>
+      點任一格，右邊顯示那一對變數的相關係數與它的意思。對角線一定是 1（自己跟自己）。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前選到</div>
+      <div class="ic-row"><span class="ic-label">變數對</span><span class="ic-value" id="w18crPair">—</span></div><div class="ic-row"><span class="ic-label">相關係數</span><span class="ic-value" id="w18crVal">—</span></div><div class="ic-row"><span class="ic-label">怎麼讀</span><span class="ic-value" id="w18crRead">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">熱圖的陷阱</div>
+      顏色會讓「0.3 與 0.5」看起來差很多、「0.85 與 0.9」看起來差不多，端看色階怎麼設。<strong>要下結論就回去看數字</strong>，熱圖是用來快速找候選的。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">散佈圖加迴歸線</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸散佈圖</span></span>
+  <span class="line">sns.regplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span></div>
+  <p class="dx-note"><code>regplot</code> 直接配一條最小平方直線並畫出 95% 信賴帶。那條帶子是<strong>對迴歸線的不確定性</strong>，不是預測區間——第 3 章會分清楚這兩者。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 133</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">依類別分別配適</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸關係圖</span></span>
+  <span class="line">tips[<span class="str">&quot;big_tip&quot;</span>] = (tips.tip / tips.total_bill) &gt; <span class="num">.15</span></span>
+  <span class="line">sns.lmplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;big_tip&quot;</span>, data=tips,</span>
+  <span class="line">           logistic=<span class="num">True</span>, y_jitter=<span class="num">.03</span>);</span>
+  <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸關係圖</span></span>
+  <span class="line">sns.lmplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, col=<span class="str">&quot;time&quot;</span>, data=tips);</span></div>
+  <p class="dx-note"><code>lmplot</code> 加 <code>hue</code> 會<strong>每一組各配一條線</strong>。兩條線的斜率明顯不同，就是交互作用的視覺證據。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 135、136</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">相關係數熱圖</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 相關係數/相關矩陣；載入範例資料集</span></span>
+  <span class="line">corr = tips.corr(numeric_only=<span class="num">True</span>)</span>
+  <span class="line">sns.heatmap(corr);</span></div>
+  <p class="dx-note"><code>tips.corr(numeric_only=True)</code> 先算矩陣，<code>heatmap</code> 只負責上色。共線性的初步檢查常從這裡開始。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 138</span>
+</div>
+
+<div class="qa-box">
+  <div class="qa-head">觀念釐清</div>
+  <details class="qa-item"><summary><code>regplot</code> 幫我配了線，是不是就等於做了迴歸分析？</summary>
+    <div class="qa-a">不是。它只給你一條線與一條帶子，<strong>沒有係數、沒有 p 值、沒有診斷</strong>。要那些東西得用 statsmodels（P6 會講）。<code>regplot</code> 的用途是「先看看有沒有線性關係」。</div>
+  </details>
+  <details class="qa-item"><summary>熱圖看到兩個變數相關 0.9，該怎麼辦？</summary>
+    <div class="qa-a">先想它們是不是本來就在量同一件事（例如 <code>weight</code> 與 <code>displacement</code>）。真的要放進同一個迴歸模型的話，第 3 章的共線性與第 6 章的收縮方法就是在處理這件事。</div>
+  </details>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 05 · 自我檢測</div>
+  <p><code>lmplot</code> 加了 <code>hue='smoker'</code> 之後，兩組的迴歸線斜率明顯不同。這在暗示什麼？</p>
+  <div class="quiz-options" id="qModelOptions"><div class="quiz-opt" data-correct="false" data-fb="斜率不同講的不是「誰比較高」（那是截距與整體位置的事），而是「<strong>帳單每增加一元，小費增加多少</strong>」在兩組之間不一樣。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(A)</span> 吸菸者的小費比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。斜率隨另一個變數改變，正是交互作用的定義。第 3 章會教怎麼在模型裡寫出來（<code>total_bill * smoker</code>），並檢定它是不是真的。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(B)</span> 帳單對小費的效果在兩組之間不同，可能有交互作用</div><div class="quiz-opt" data-correct="false" data-fb="離群值會影響斜率，但「兩組斜率不同」本身不是離群值的證據。要看離群值該畫盒鬚圖或殘差圖。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(C)</span> 資料裡有離群值</div></div>
+  <div class="quiz-feedback" id="qModelFeedback"></div>
+</div>
+</section>
+<section id="exercises">
+<!-- GEN:BEGIN sec:exercises -->
+  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
+  程式碼卡在自己的環境跑一次。</p>
+  <div class="sol-links"><a href="https://seaborn.pydata.org/tutorial.html" target="_blank" rel="noopener">🔗 seaborn 教學</a><a href="https://matplotlib.org/stable/users/explain/quick_start.html" target="_blank" rel="noopener">🔗 Matplotlib 快速入門</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
+<!-- GEN:END sec:exercises -->
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 1 · 選圖</div>
+  <p>你要呈現「三個地區（origin）的 mpg 分布，並讓讀者看得出有沒有離群值」。該畫什麼？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="<code>barplot</code> 只給平均與信賴區間，<strong>離群值完全看不到</strong>——它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。盒鬚圖是唯一會把離群值單獨畫成點的類別圖。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
+  <div class="quiz-feedback" id="qEx1Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 2 · bins</div>
+  <p>把 bins 從 10 調到 60 之後，直方圖出現很多小峰。最合理的解讀是？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。bins 越細，每一格的樣本越少，隨機起伏就越明顯。要判斷是不是真的結構，就用 <code>hue</code> 拿一個候選的分類變數去驗。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 多半是抽樣雜訊，除非那些峰對應到某個真實的分類</div><div class="quiz-opt" data-correct="false" data-fb="細的 bins 幾乎一定會生出更多峰，這是它的數學性質，不是資料的性質。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 資料真的有很多群，應該用 60 這張</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 資料有問題，應該重新收集</div></div>
+  <div class="quiz-feedback" id="qEx2Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 3 · 圖表誠實度</div>
+  <p>一張長條圖的 y 軸從 2.9 開始，讓 2.98 與 3.26 看起來差三倍。這張圖錯在哪？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="「方便觀察」跟「誤導」的界線就在這裡。長條圖用<strong>長度</strong>編碼數值，截斷之後長度的比例不再對應數值的比例。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 沒錯，只是放大了差異方便觀察</div><div class="quiz-opt" data-correct="true" data-fb="對。真的要放大差異，改用點估計圖（<code>pointplot</code>）——點的位置不隱含「從零開始」的承諾，截斷是可以接受的，而且要在圖上標明。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 長條圖用長度表示數量，截斷 y 軸會破壞長度的意義</div><div class="quiz-opt" data-correct="false" data-fb="對數是給跨數量級的資料用的。2.98 與 3.26 差不到 10%，取對數只會更難讀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 應該把 y 軸改成對數尺度</div></div>
+  <div class="quiz-feedback" id="qEx3Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 4 · figure-level 與 axes-level</div>
+  <p>你想把四張 seaborn 圖排成 2×2 放進同一張 Figure。下列哪一個函式<strong>做不到</strong>？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。名字結尾是 <code>plot</code> 的多半是 axes-level，接受 <code>ax=</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，根本不吃 <code>ax=</code> 參數。要散佈圖就改用 <code>sns.scatterplot</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
+  <div class="quiz-feedback" id="qEx4Feedback"></div>
+</div>
+</section>
+<section id="reference">
+<!-- GEN:BEGIN sec:reference -->
+  <div class="section-number">REFERENCE · 總覽</div>
+  <h2>視覺化速查表 <span class="sec-badge">先備 · 視覺化</span></h2>
+<!-- GEN:END sec:reference -->
+
+  <p>選圖速查表。先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>x 的型別</th><th>y 的型別</th><th>圖</th><th>seaborn</th></tr></thead>
+  <tbody><tr><td>數值</td><td>數值</td><td>散佈圖</td><td><code>scatterplot</code> / <code>relplot</code></td></tr><tr><td>數值</td><td>數值（有序、每個 x 多筆）</td><td>折線圖＋信賴帶</td><td><code>lineplot</code></td></tr><tr><td>數值</td><td>數值（要看模型）</td><td>散佈圖＋迴歸線</td><td><code>regplot</code> / <code>lmplot</code></td></tr><tr><td>數值</td><td>—</td><td>直方圖／密度圖</td><td><code>histplot</code> / <code>kdeplot</code></td></tr><tr><td>類別</td><td>數值</td><td>盒鬚圖／長條圖／點估計圖</td><td><code>catplot(kind=…)</code></td></tr><tr><td>類別</td><td>—</td><td>計數圖</td><td><code>countplot</code></td></tr><tr><td>類別</td><td>類別</td><td>計數的交叉表＋熱圖</td><td><code>heatmap</code></td></tr><tr><td>多個數值欄</td><td>—</td><td>成對關係圖／相關熱圖</td><td><code>pairplot</code> / <code>heatmap</code></td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>figure-level（自己開 Figure）</th><th>axes-level（可以傳 ax=）</th></tr></thead>
+  <tbody><tr><td><code>relplot</code></td><td><code>scatterplot</code>、<code>lineplot</code></td></tr><tr><td><code>catplot</code></td><td><code>boxplot</code>、<code>barplot</code>、<code>countplot</code>、<code>pointplot</code></td></tr><tr><td><code>displot</code></td><td><code>histplot</code>、<code>kdeplot</code></td></tr><tr><td><code>lmplot</code>、<code>jointplot</code>、<code>pairplot</code></td><td><code>regplot</code>、<code>heatmap</code></td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>參數</th><th>做什麼</th><th>什麼時候用</th></tr></thead>
+  <tbody><tr><td><code>hue=</code></td><td>用顏色分第三個變數</td><td>組數 ≤ 5、要疊在同一張圖比較</td></tr><tr><td><code>style=</code></td><td>用標記形狀分</td><td>要黑白列印時搭配 hue 一起用</td></tr><tr><td><code>size=</code></td><td>用點的大小分</td><td>第三個變數是數值且範圍大</td></tr><tr><td><code>col=</code> / <code>row=</code></td><td>拆成好幾張小圖</td><td>組數多、疊起來會糊</td></tr></tbody>
+</table></div>
+
+<div class="info-box">
+  <span class="info-label">三個一定要記住的觀念</span>
+  <strong>1. 先畫圖再算數字。</strong>摘要統計會漏掉形狀，相關係數一樣的兩份資料可以長得完全不同。<br><strong>2. bins 與頻寬是你的假設，不是資料的性質。</strong>調參數之前先想好要回答什麼問題。<br><strong>3. countplot 講筆數、barplot 講平均、boxplot 講分布。</strong>三種長條講三件事，不要混用。
+</div>
+
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 24 張</span></h2>
+  <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
+  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  <div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div>
+<!-- GEN:END sec:cards -->
+</section>
+<!-- GEN:BEGIN chapternav -->
+<div class="chapter-nav"><a class="prev" href="p4_pandas.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">pandas 資料框</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><span></span></div>
+<!-- GEN:END chapternav -->
+</div>
+<!-- GEN:BEGIN footer -->
+<footer>
+  互動式視覺化教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
+</footer>
+<!-- GEN:END footer -->
+<!-- GEN:BEGIN sharedjs -->
+<script>
+/* ============================================================
+   統計學習自學站共用函式庫
+   由 tools/build_page.py 內嵌到每一頁，十頁完全一致。
+   規則：LaTeX 一律放靜態 HTML，這裡的字串不放 $…$；
+        寫入含數學的 innerHTML 之後要呼叫 HC.retype(el)。
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- MathJax：注入後的內容不會自動排版 ---------- */
+const HC = {};
+HC.retype = el => {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
+  }
+};
+
+/* ---------- quiz ---------- */
+function quizCheck(quizId, optEl) {
+  const isCorrect = optEl.dataset.correct === 'true';
+  optEl.parentElement.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'wrong'));
+  optEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = $(quizId + 'Feedback');
+  if (!fb) { console.error('quizCheck: 找不到 #' + quizId + 'Feedback'); return; }
+  fb.classList.remove('correct', 'wrong');
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> ') + (optEl.dataset.fb || '');
+  HC.retype(fb);
+}
+
+/* ---------- 程式碼行高亮 ---------- */
+function hlLine(rootId, n) {
+  const root = $(rootId);
+  if (!root) return;
+  root.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+  if (n != null) {
+    const line = root.querySelector('.line[data-l="' + n + '"]');
+    if (line) line.classList.add('active');
+  }
+}
+
+/* ---------- 逐步播放器：frames = [{...}]，apply(frame) 負責渲染 ---------- */
+class Player {
+  constructor({ frames, apply, delayInput, onDone, onIndex }) {
+    this.frames = frames; this.apply = apply;
+    this.delayInput = delayInput; this.i = -1; this.timer = null;
+    this.onDone = onDone || (() => {});
+    this.onIndex = onIndex || (() => {});
+  }
+  get delay() { return this.delayInput ? parseInt(this.delayInput.value, 10) : 700; }
+  step() {
+    if (this.i + 1 >= this.frames.length) { this.stop(); this.onDone(); return false; }
+    this.i += 1; this.apply(this.frames[this.i], this.i); this.onIndex(this.i); return true;
+  }
+  play() {
+    this.stop();
+    const tick = () => { if (this.step()) this.timer = setTimeout(tick, this.delay); };
+    tick();
+  }
+  stop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+  get playing() { return this.timer !== null; }
+  reset() { this.stop(); this.i = -1; if (this.frames.length) { this.apply(this.frames[0], 0); this.i = 0; } }
+  seek(i) { this.stop(); this.i = Math.max(0, Math.min(i, this.frames.length - 1)); this.apply(this.frames[this.i], this.i); this.onIndex(this.i); }
+}
+HC.Player = Player;
+
+/* ---------- 旁白列 ---------- */
+function setStatus(id, html) {
+  const el = $(id); if (!el) return;
+  const t = el.querySelector('.status-text');
+  if (t) t.innerHTML = html;
+}
+
+/* ============================================================
+   HC：圖表與 SVG 共用 API
+   ============================================================ */
+
+/* 設計 token（讀 CSS 變數，樣式改一處就好） */
+HC.tok = (() => {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue('--' + n).trim();
+  return {
+    ink: g('ink'), paper: g('paper'), accent: g('accent'), accent2: g('accent2'),
+    accent3: g('accent3'), muted: g('muted'), card: g('card'), cardBorder: g('card-border'),
+    grid: g('grid-line') || g('card-border'),
+    train: g('pt-train'), test: g('pt-test'), held: g('pt-held'),
+    a: g('pt-a'), b: g('pt-b'), c: g('pt-c'),
+    fit: g('fit-line'), truef: g('fit-true'), resid: g('resid'),
+  };
+})();
+
+HC.MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+/* 數字格式：固定小數位，去掉負零 */
+HC.fmt = (v, d = 2) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const s = Number(v).toFixed(d);
+  return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s;
+};
+HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
+
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* ---------- Chart.js ---------- */
+HC.hasChart = () => typeof window.Chart !== 'undefined';
+
+/* Chart.js 載入失敗時不要拋錯：讓 .chart-fallback 留在畫面上 */
+HC.ready = fn => {
+  const run = () => {
+    if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
+    try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+};
+
+HC._charts = new Map();
+
+/* 房子的 Chart.js 預設值 */
+HC.base = (type, data, opts = {}) => {
+  const t = HC.tok;
+  const axis = {
+    grid: { color: t.grid, drawTicks: false },
+    border: { color: t.muted },
+    ticks: { font: { family: HC.MONO, size: 11 }, color: t.muted, padding: 6 },
+    title: { font: { family: HC.MONO, size: 11, weight: '600' }, color: t.accent2 },
+  };
+  const deep = (a, b) => {
+    const o = Array.isArray(b) ? b.slice() : Object.assign({}, a);
+    if (Array.isArray(b)) return o;
+    for (const k of Object.keys(b || {})) {
+      o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]))
+        ? deep(a && a[k] ? a[k] : {}, b[k]) : b[k];
+    }
+    return o;
+  };
+  const defaults = {
+    responsive: true, maintainAspectRatio: false, devicePixelRatio: 2,
+    animation: { duration: 250 },
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 6, right: 10, bottom: 2, left: 2 } },
+    plugins: {
+      legend: {
+        display: true, position: 'top', align: 'end',
+        labels: { boxWidth: 10, boxHeight: 10, font: { family: HC.MONO, size: 11 }, color: t.ink, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,46,.92)', titleFont: { family: HC.MONO, size: 11 },
+        bodyFont: { family: HC.MONO, size: 11 }, padding: 8, cornerRadius: 6, displayColors: true,
+      },
+    },
+    scales: { x: deep({}, axis), y: deep({}, axis) },
+    elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
+  };
+  const cfg = { type, data, options: deep(defaults, opts) };
+  // canvas 不認得 var(--x)：傳進去會靜默變成黑色（第 6 章五條準則線全黑就是這樣）。
+  // 這裡在建構前把所有顏色欄位解析成實際色值，讓這類 bug 不可能發生。
+  HC._resolveColors(cfg);
+  return cfg;
+};
+
+HC._COLOR_KEYS = ['borderColor', 'backgroundColor', 'pointBackgroundColor',
+                  'pointBorderColor', 'hoverBackgroundColor', 'hoverBorderColor', 'color'];
+HC._resolveColors = o => {
+  if (!o || typeof o !== 'object') return o;
+  if (Array.isArray(o)) { o.forEach(HC._resolveColors); return o; }
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'string' && HC._COLOR_KEYS.indexOf(k) >= 0) o[k] = HC.color(v);
+    else if (Array.isArray(v) && HC._COLOR_KEYS.indexOf(k) >= 0) {
+      o[k] = v.map(x => (typeof x === 'string' ? HC.color(x) : x));
+    } else if (v && typeof v === 'object') HC._resolveColors(v);
+  }
+  return o;
+};
+
+/* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
+HC.chart = (canvasId, type, data, opts) => {
+  if (!HC.hasChart()) return null;
+  const cv = $(canvasId);
+  if (!cv) { console.error('HC.chart: 找不到 canvas #' + canvasId); return null; }
+  const old = HC._charts.get(canvasId);
+  if (old) old.destroy();
+  const c = new window.Chart(cv, HC.base(type, data, opts));
+  HC._charts.set(canvasId, c);
+  const wrap = cv.closest('.chart-wrap');
+  if (wrap) wrap.classList.add('ready');
+  return c;
+};
+HC.line = (id, data, opts) => HC.chart(id, 'line', data, opts);
+HC.scatter = (id, data, opts) => HC.chart(id, 'scatter', data, opts);
+HC.bar = (id, data, opts) => HC.chart(id, 'bar', data, opts);
+HC.get = id => HC._charts.get(id);
+
+/* 就地改資料再重畫，不重建 chart（滑桿連續拖動時比較順） */
+HC.update = (id, mutate) => {
+  const c = HC._charts.get(id);
+  if (!c) return null;
+  mutate(c);
+  c.update('none');
+  return c;
+};
+
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
+
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
+
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
+  beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
+  },
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
+
+/* ============================================================
+   HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
+   用法：const s = HC.svg('w03dragSvg', {xd:[0,10], yd:[0,30]});
+        s.grid(5,5); s.dot(x, y, {cls:'dot', fill:HC.tok.train});
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+
+HC.svg = (id, o = {}) => {
+  const host = $(id);
+  if (!host) { console.error('HC.svg: 找不到 #' + id); return null; }
+  const W = o.w || 620, H = o.h || 340;
+  const pad = Object.assign({ l: 46, r: 14, t: 14, b: 34 }, o.pad || {});
+  let el = host;
+  if (host.tagName.toLowerCase() !== 'svg') {
+    el = host.querySelector('svg');
+    if (!el) { el = document.createElementNS(NS, 'svg'); el.setAttribute('class', 'viz-svg'); host.appendChild(el); }
+  }
+  el.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  if (!el.getAttribute('height')) el.setAttribute('height', String(H));
+
+  const s = {
+    el, W, H, pad,
+    xd: (o.xd || [0, 1]).slice(), yd: (o.yd || [0, 1]).slice(),
+    get iw() { return W - pad.l - pad.r; },
+    get ih() { return H - pad.t - pad.b; },
+  };
+  s.domain = (xd, yd) => { if (xd) s.xd = xd.slice(); if (yd) s.yd = yd.slice(); return s; };
+  s.X = v => pad.l + (v - s.xd[0]) / (s.xd[1] - s.xd[0]) * s.iw;
+  s.Y = v => pad.t + s.ih - (v - s.yd[0]) / (s.yd[1] - s.yd[0]) * s.ih;
+  s.ix = px => s.xd[0] + (px - pad.l) / s.iw * (s.xd[1] - s.xd[0]);
+  s.iy = py => s.yd[0] + (pad.t + s.ih - py) / s.ih * (s.yd[1] - s.yd[0]);
+
+  /* client 座標 → viewBox 座標（縮放與 CSS 尺寸都會被吸收） */
+  s.toView = ev => {
+    const r = el.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    const cy = ev.clientY !== undefined ? ev.clientY : (ev.touches && ev.touches[0].clientY);
+    return { px: (cx - r.left) / r.width * W, py: (cy - r.top) / r.height * H };
+  };
+  s.toData = ev => { const p = s.toView(ev); return { x: s.ix(p.px), y: s.iy(p.py) }; };
+
+  s.add = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k of Object.keys(attrs)) {
+      if (attrs[k] === null || attrs[k] === undefined) continue;
+      n.setAttribute(k === 'cls' ? 'class' : k, String(attrs[k]));
+    }
+    (parent || el).appendChild(n);
+    return n;
+  };
+  /* 分層：只清掉自己那層，底圖不用重畫 */
+  s.layer = name => {
+    let g = el.querySelector('g[data-layer="' + name + '"]');
+    if (!g) { g = s.add('g', { 'data-layer': name }); }
+    return g;
+  };
+  s.clearLayer = name => { const g = s.layer(name); while (g.firstChild) g.removeChild(g.firstChild); return g; };
+  s.clear = () => { while (el.firstChild) el.removeChild(el.firstChild); return s; };
+
+  /* 座標軸 + 格線 + 刻度標籤 */
+  s.grid = (nx = 5, ny = 5, opt = {}) => {
+    const g = s.clearLayer('grid');
+    const fx = opt.xfmt || (v => HC.fmt(v, opt.xdec ?? 0));
+    const fy = opt.yfmt || (v => HC.fmt(v, opt.ydec ?? 0));
+    for (let i = 0; i <= nx; i++) {
+      const v = s.xd[0] + (s.xd[1] - s.xd[0]) * i / nx, x = s.X(v);
+      s.add('line', { cls: 'gridl', x1: x, y1: pad.t, x2: x, y2: pad.t + s.ih }, g);
+      s.add('text', { cls: 'axlab', x: x, y: pad.t + s.ih + 14, 'text-anchor': 'middle' }, g).textContent = fx(v);
+    }
+    for (let i = 0; i <= ny; i++) {
+      const v = s.yd[0] + (s.yd[1] - s.yd[0]) * i / ny, y = s.Y(v);
+      s.add('line', { cls: 'gridl', x1: pad.l, y1: y, x2: pad.l + s.iw, y2: y }, g);
+      s.add('text', { cls: 'axlab', x: pad.l - 6, y: y + 3.5, 'text-anchor': 'end' }, g).textContent = fy(v);
+    }
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t + s.ih, x2: pad.l + s.iw, y2: pad.t + s.ih }, g);
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + s.ih }, g);
+    if (opt.xtitle) s.add('text', { cls: 'axtitle', x: pad.l + s.iw / 2, y: H - 4, 'text-anchor': 'middle' }, g).textContent = opt.xtitle;
+    if (opt.ytitle) {
+      const t = s.add('text', { cls: 'axtitle', x: 0, y: 0, 'text-anchor': 'middle', transform: 'translate(11,' + (pad.t + s.ih / 2) + ') rotate(-90)' }, g);
+      t.textContent = opt.ytitle;
+    }
+    return s;
+  };
+
+  s.dot = (x, y, a = {}, parent) => s.add('circle', {
+    cls: a.cls || 'dot', cx: s.X(x), cy: s.Y(y), r: a.r ?? 4,
+    fill: a.fill || HC.tok.accent2, stroke: a.stroke, 'stroke-width': a.sw,
+    opacity: a.opacity, 'data-i': a.i,
+  }, parent);
+
+  s.poly = (pts, a = {}, parent) => s.add('polyline', {
+    cls: a.cls || 'fit', points: pts.map(p => s.X(p[0]) + ',' + s.Y(p[1])).join(' '),
+    stroke: a.stroke, 'stroke-width': a.sw, fill: 'none', 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.area = (pts, a = {}, parent) => {
+    const up = pts.map(p => s.X(p[0]) + ',' + s.Y(p[1]));
+    const dn = pts.slice().reverse().map(p => s.X(p[0]) + ',' + s.Y(p[2]));
+    return s.add('polygon', { cls: a.cls || 'band', points: up.concat(dn).join(' '), fill: a.fill }, parent);
+  };
+
+  s.seg = (x1, y1, x2, y2, a = {}, parent) => s.add('line', {
+    cls: a.cls || 'resid', x1: s.X(x1), y1: s.Y(y1), x2: s.X(x2), y2: s.Y(y2),
+    stroke: a.stroke, 'stroke-width': a.sw, 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.box = (x0, y0, x1, y1, a = {}, parent) => s.add('rect', {
+    x: Math.min(s.X(x0), s.X(x1)), y: Math.min(s.Y(y0), s.Y(y1)),
+    width: Math.abs(s.X(x1) - s.X(x0)), height: Math.abs(s.Y(y1) - s.Y(y0)),
+    fill: a.fill || 'none', stroke: a.stroke, 'stroke-width': a.sw, cls: a.cls, rx: a.rx,
+  }, parent);
+
+  s.txt = (x, y, str, a = {}, parent) => {
+    const n = s.add('text', {
+      cls: a.cls || 'vlab', x: s.X(x) + (a.dx || 0), y: s.Y(y) + (a.dy || 0),
+      'text-anchor': a.anchor || 'middle', fill: a.fill,
+    }, parent);
+    n.textContent = str;
+    return n;
+  };
+  /* 用 viewBox 像素座標直接放字（圖例、標題用） */
+  s.txtPx = (px, py, str, a = {}, parent) => {
+    const n = s.add('text', { cls: a.cls || 'axlab', x: px, y: py, 'text-anchor': a.anchor || 'start', fill: a.fill }, parent);
+    n.textContent = str;
+    return n;
+  };
+  return s;
+};
+
+/* 拖曳：pointer + touch，回呼收到資料座標；會夾在定義域內 */
+HC.drag = (node, svc, onMove, opts = {}) => {
+  const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
+  const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
+  let active = false;
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  };
+  const move = ev => {
+    if (!active) return;
+    const d = svc.toData(ev);
+    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    ev.preventDefault();
+  };
+  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  node.addEventListener('pointerdown', start);
+  node.addEventListener('pointermove', move);
+  node.addEventListener('pointerup', end);
+  node.addEventListener('pointercancel', end);
+  node.style.touchAction = 'none';
+  return () => {
+    node.removeEventListener('pointerdown', start);
+    node.removeEventListener('pointermove', move);
+    node.removeEventListener('pointerup', end);
+    node.removeEventListener('pointercancel', end);
+  };
+};
+
+/* ---------- 統計小工具（各頁元件共用，避免各自重寫） ---------- */
+HC.stat = {
+  mean: a => a.reduce((s, v) => s + v, 0) / a.length,
+  variance(a) { const m = this.mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); },
+  sd(a) { return Math.sqrt(this.variance(a)); },
+  /* 簡單線性迴歸：回傳 b0, b1, rss, tss, r2, se(b0), se(b1), t 值 */
+  ols(xs, ys) {
+    const n = xs.length, mx = this.mean(xs), my = this.mean(ys);
+    let sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sxx += (xs[i] - mx) ** 2; sxy += (xs[i] - mx) * (ys[i] - my); }
+    const b1 = sxx === 0 ? 0 : sxy / sxx, b0 = my - b1 * mx;
+    let rss = 0, tss = 0;
+    for (let i = 0; i < n; i++) { rss += (ys[i] - b0 - b1 * xs[i]) ** 2; tss += (ys[i] - my) ** 2; }
+    const df = n - 2;
+    const s2 = df > 0 ? rss / df : NaN;
+    const seB1 = sxx > 0 ? Math.sqrt(s2 / sxx) : NaN;
+    const seB0 = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+    return {
+      b0, b1, rss, tss, n, df, rse: Math.sqrt(s2),
+      r2: tss === 0 ? NaN : 1 - rss / tss,
+      seB0, seB1, tB0: b0 / seB0, tB1: b1 / seB1,
+    };
+  },
+  /* RSS(b0,b1)，畫誤差曲面用 */
+  rss(xs, ys, b0, b1) {
+    let r = 0;
+    for (let i = 0; i < xs.length; i++) r += (ys[i] - b0 - b1 * xs[i]) ** 2;
+    return r;
+  },
+  /* 可重現的偽隨機（固定種子，頁面重載結果一樣） */
+  lcg(seed) { let s = (seed >>> 0) || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; },
+  /* Box–Muller 標準常態 */
+  normal(rand) {
+    let u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  /* 標準常態 CDF（Abramowitz–Stegun 7.1.26 誤差函數近似） */
+  pnorm(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const p = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    return z >= 0 ? 1 - d * p : d * p;
+  },
+  dnorm(x, mu = 0, sd = 1) { const z = (x - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); },
+  quantile(sorted, q) {
+    const h = (sorted.length - 1) * q, lo = Math.floor(h);
+    return sorted[lo] + (h - lo) * ((sorted[Math.min(lo + 1, sorted.length - 1)]) - sorted[lo]);
+  },
+  seq(a, b, n) { return Array.from({ length: n }, (_, i) => a + (b - a) * i / (n - 1)); },
+};
+
+/* ============================================================
+   頁面骨架行為
+   ============================================================ */
+
+/* 浮動導覽 scroll-spy */
+(function setupNav() {
+  const nav = $('floatNav');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[data-target]'));
+  const sections = links.map(a => $(a.dataset.target)).filter(Boolean);
+  const missing = links.filter(a => !$(a.dataset.target)).map(a => a.dataset.target);
+  if (missing.length) console.warn('float-nav 的 data-target 找不到對應 section：', missing);
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) active = s.id;
+    links.forEach(a => {
+      const on = a.dataset.target === active;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
+  d.dataset.mj = '1';
+  HC.retype(d);
+}, true);
+
+/* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
+HC.initFlashcards = () => {
+  const grid = $('fcGrid');
+  if (!grid || typeof FLASHCARDS === 'undefined') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const render = cards => {
+    grid.innerHTML = cards.map(c =>
+      '<div class="fc-card"><div class="fc-inner">'
+      + '<div class="fc-face fc-front"><div>' + esc(c.front) + '</div><div class="fc-hint">CLICK TO FLIP</div></div>'
+      + '<div class="fc-face fc-back">' + esc(c.back) + '</div>'
+      + '</div></div>').join('');
+  };
+  render(FLASHCARDS);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.fc-card');
+    if (card) card.classList.toggle('flipped');
+  });
+  const on = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  /* 洗牌用固定種子的 Fisher–Yates，每按一次換一個種子 */
+  let shuffleSeed = 20260810;
+  on('fcShuffle', () => {
+    const rand = HC.stat.lcg(shuffleSeed++);
+    const a = FLASHCARDS.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    render(a);
+  });
+  on('fcUnflip', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')));
+  on('fcFlipAll', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.add('flipped')));
+};
+</script>
+<!-- GEN:END sharedjs -->
+<!-- PAGEJS:BEGIN -->
+<script>
+/* ═══ w18an Figure / Axes 解剖 ═══ */
+const w18anS = HC.svg('w18anatSvg', {h: 320});
+const w18anCases = [
+  {o: 'Figure', w: '整張畫布：大小、存檔、總標題', h: 'set_size_inches、savefig、suptitle',
+   note: '一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。'},
+  {o: 'Axes', w: '一個座標系：資料真正被畫進去的地方', h: 'plot、scatter、set_xlim、legend',
+   note: '你 99% 的時間都在跟它打交道。seaborn 的 ax= 參數指的就是它。'},
+  {o: 'Axis（軸）', w: '單一根軸的刻度與標籤', h: 'set_xlabel、set_xticks',
+   note: '注意 Axes（座標系）與 Axis（軸）差一個字母，是兩個不同的東西。'},
+  {o: 'Artist', w: '畫上去的每一個東西：點、線、文字', h: 'set_color、set_alpha',
+   note: 'plot() 回傳的就是一串 Artist，抓住它就能事後改樣式。'}
+];
+let w18anI = 0;
+function w18anDraw() {
+  const g = w18anS.clearLayer('main');
+  const c = w18anCases[w18anI];
+  const on = (k, col) => (w18anI === k ? col : HC.tok.card);
+  w18anS.add('rect', {x: 60, y: 50, width: 500, height: 230, rx: 8,
+                      fill: on(0, HC.tok.accent), opacity: w18anI === 0 ? 0.35 : 0.12,
+                      stroke: w18anI === 0 ? HC.tok.accent : HC.tok.cardBorder,
+                      'stroke-width': w18anI === 0 ? 3 : 1.5}, g);
+  w18anS.txtPx(70, 44, 'Figure', {cls: 'axtitle',
+                                  fill: w18anI === 0 ? HC.tok.accent : HC.tok.muted}, g);
+  w18anS.add('rect', {x: 110, y: 78, width: 400, height: 176, rx: 6,
+                      fill: on(1, HC.tok.accent2), opacity: w18anI === 1 ? 0.35 : 0.12,
+                      stroke: w18anI === 1 ? HC.tok.accent2 : HC.tok.cardBorder,
+                      'stroke-width': w18anI === 1 ? 3 : 1.5}, g);
+  w18anS.txtPx(120, 96, 'Axes', {cls: 'axtitle',
+                                 fill: w18anI === 1 ? HC.tok.accent2 : HC.tok.muted}, g);
+  const axc = w18anI === 2 ? HC.tok.accent : HC.tok.muted;
+  w18anS.add('path', {d: 'M150 230 H470', stroke: axc,
+                      'stroke-width': w18anI === 2 ? 4 : 2}, g);
+  w18anS.add('path', {d: 'M150 230 V110', stroke: axc,
+                      'stroke-width': w18anI === 2 ? 4 : 2}, g);
+  [[190, 200], [240, 176], [292, 186], [340, 148], [396, 132], [440, 150]].forEach(pt => {
+    w18anS.add('circle', {cx: pt[0], cy: pt[1], r: w18anI === 3 ? 7 : 5,
+                          fill: w18anI === 3 ? HC.tok.accent : HC.tok.muted,
+                          opacity: w18anI === 3 ? 1 : 0.55}, g);
+  });
+  document.getElementById('w18anObj').textContent = c.o;
+  document.getElementById('w18anWhat').textContent = c.w;
+  document.getElementById('w18anHow').textContent = c.h;
+  setStatus('w18anStatus', c.note);
+}
+function w18anSet(i) { w18anI = i; w18anDraw(); }
+if (w18anS) w18anDraw();
+
+/* ═══ w18gd subplots 網格 ═══ */
+const w18gdS = HC.svg('w18gridSvg', {h: 300});
+let w18gdI = 0;
+function w18gdDraw() {
+  const g = w18gdS.clearLayer('main');
+  const cw = 158, chh = 96, x0 = 60, y0 = 70;
+  for (let r = 0; r < 2; r++) {
+    for (let c = 0; c < 3; c++) {
+      const k = r * 3 + c, on = k === w18gdI;
+      w18gdS.add('rect', {x: x0 + c * cw, y: y0 + r * chh, width: cw - 14, height: chh - 14,
+                          rx: 6, fill: on ? HC.tok.accent2 : HC.tok.card,
+                          stroke: HC.tok.cardBorder, 'stroke-width': 1.5,
+                          opacity: on ? 0.95 : 0.5}, g);
+      const t = w18gdS.add('text', {x: x0 + c * cw + (cw - 14) / 2,
+                                    y: y0 + r * chh + (chh - 14) / 2 + 6,
+                                    'text-anchor': 'middle', cls: 'vlab',
+                                    'font-family': HC.MONO,
+                                    fill: on ? HC.tok.paper : HC.tok.muted}, g);
+      t.textContent = 'axes[' + r + ',' + c + ']';
+    }
+  }
+  w18gdS.txtPx(24, 40, 'subplots(nrows=2, ncols=3)', {cls: 'axtitle'}, g);
+  const r = Math.floor(w18gdI / 3), c = w18gdI % 3;
+  document.getElementById('w18gdIdx').textContent = 'axes[' + r + ', ' + c + ']';
+  document.getElementById('w18gdPos').textContent = '第 ' + r + ' 列、第 ' + c + ' 欄';
+  setStatus('w18gdStatus', 'axes 是一個 <b>(2, 3)</b> 的 NumPy 陣列，索引法跟 P3 完全一樣。');
+}
+function w18gdNext() { w18gdI = (w18gdI + 1) % 6; w18gdDraw(); }
+function w18gdReset() { w18gdI = 0; w18gdDraw(); }
+if (w18gdS) w18gdDraw();
+
+/* ═══ w18bn bins 與頻寬（本頁招牌）═══ */
+const w18bnS = HC.svg('w18binsSvg', {h: 340});
+const w18bnData = (() => {
+  /* 固定種子的雙峰資料：60 筆在 3 附近、60 筆在 8 附近 */
+  const rand = HC.stat.lcg(20260828), out = [];
+  for (let i = 0; i < 60; i++) out.push(3 + HC.stat.normal(rand) * 0.9);
+  for (let i = 0; i < 60; i++) out.push(8 + HC.stat.normal(rand) * 1.1);
+  return out;
+})();
+let w18bnK = 10, w18bnKde = false;
+function w18bnDraw() {
+  const s = w18bnS;
+  s.domain([0, 12], [0, 1]);
+  const g = s.clearLayer('main');
+  const lo = 0, hi = 12;
+  let peaks = 0;
+  if (!w18bnKde) {
+    const k = w18bnK, counts = new Array(k).fill(0);
+    w18bnData.forEach(v => {
+      const j = Math.max(0, Math.min(k - 1, Math.floor((v - lo) / (hi - lo) * k)));
+      counts[j] += 1;
+    });
+    const mx = Math.max.apply(null, counts) || 1;
+    s.domain([0, 12], [0, mx * 1.15]);
+    s.grid(6, 4, {xtitle: '值', ytitle: '次數'});
+    counts.forEach((c, j) => {
+      const x0 = lo + (hi - lo) * j / k, x1 = lo + (hi - lo) * (j + 1) / k;
+      s.add('rect', {x: s.X(x0) + 1, y: s.Y(c), width: Math.max(1, s.X(x1) - s.X(x0) - 2),
+                     height: s.Y(0) - s.Y(c), fill: HC.tok.accent2, opacity: 0.9}, g);
+      if (c > (counts[j - 1] || 0) && c > (counts[j + 1] || 0) && c >= mx * 0.35) peaks += 1;
+    });
+  } else {
+    const bw = Math.max(0.15, w18bnK / 20);
+    const xs = HC.stat.seq(lo, hi, 120);
+    const ys = xs.map(x => HC.stat.mean(w18bnData.map(v => HC.stat.dnorm(x, v, bw))));
+    const mx = Math.max.apply(null, ys) || 1;
+    s.domain([0, 12], [0, mx * 1.15]);
+    s.grid(6, 4, {xtitle: '值', ytitle: '密度', ydec: 2});
+    s.poly(xs.map((x, i) => [x, ys[i]]), {cls: 'kdeline', stroke: HC.tok.accent2, sw: 3}, g);
+    for (let i = 1; i < ys.length - 1; i++) {
+      if (ys[i] > ys[i - 1] && ys[i] > ys[i + 1] && ys[i] >= mx * 0.35) peaks += 1;
+    }
+  }
+  document.getElementById('w18bnMode').textContent = w18bnKde ? '密度圖' : '直方圖';
+  document.getElementById('w18bnParam').textContent = w18bnKde
+    ? '頻寬 ' + HC.fmt(Math.max(0.15, w18bnK / 20), 2) : String(w18bnK);
+  document.getElementById('w18bnPeaks').textContent = peaks + ' 個峰';
+  setStatus('w18bnStatus', peaks >= 2
+    ? '看得到 <b>' + peaks + '</b> 個峰——這份資料本來就是兩群造出來的。'
+    : '只看得到 <b>' + peaks + '</b> 個峰：參數把真正的兩群<b>糊掉了</b>。');
+}
+function w18bnStep(d) { w18bnK = Math.max(4, Math.min(40, w18bnK + d)); w18bnDraw(); }
+function w18bnMode() { w18bnKde = !w18bnKde; w18bnDraw(); }
+function w18bnReset() { w18bnK = 10; w18bnKde = false; w18bnDraw(); }
+if (w18bnS) w18bnDraw();
+
+/* ═══ w18pk 圖型選擇決策樹 ═══ */
+const w18pkS = HC.svg('w18pickSvg', {h: 340});
+const w18pkCases = [
+  {k: '散佈圖', f: 'scatterplot / relplot', q: '兩個數值變數之間有沒有關係、什麼形狀',
+   draw: 'scatter'},
+  {k: '盒鬚圖／長條圖／點估計圖', f: 'catplot(kind="box"/"bar"/"point")',
+   q: '各組的分布或平均差多少', draw: 'box'},
+  {k: '計數的交叉表＋熱圖', f: 'heatmap(pd.crosstab(...))',
+   q: '兩個類別變數的組合各有幾筆', draw: 'heat'},
+  {k: '直方圖／密度圖', f: 'histplot / kdeplot', q: '這個變數的分布長什麼樣', draw: 'hist'},
+  {k: '折線圖＋信賴帶', f: 'lineplot', q: '隨時間怎麼變、變化有多確定', draw: 'line'}
+];
+let w18pkI = 0;
+function w18pkDraw() {
+  const s = w18pkS;
+  s.domain([0, 10], [0, 10]);
+  const g = s.clearLayer('main');
+  const c = w18pkCases[w18pkI];
+  s.grid(5, 5, {});
+  const rand = HC.stat.lcg(7);
+  if (c.draw === 'scatter') {
+    for (let i = 0; i < 40; i++) {
+      const x = rand() * 9 + 0.5;
+      s.dot(x, Math.max(0.4, Math.min(9.6, x * 0.8 + HC.stat.normal(rand) * 1.2)),
+            {r: 4, fill: HC.tok.accent2}, g);
+    }
+  } else if (c.draw === 'box') {
+    [[2, 3, 5, 7], [5, 4.2, 6, 8], [8, 2.6, 4.4, 6.4]].forEach(b => {
+      s.box(b[0] - 0.7, b[1], b[0] + 0.7, b[3],
+            {fill: HC.tok.accent2, stroke: HC.tok.ink, sw: 1.5, rx: 3}, g);
+      s.seg(b[0] - 0.7, b[2], b[0] + 0.7, b[2], {cls: 'med', stroke: HC.tok.paper, sw: 3}, g);
+    });
+  } else if (c.draw === 'heat') {
+    for (let r = 0; r < 3; r++) {
+      for (let k = 0; k < 3; k++) {
+        s.box(1 + k * 2.6, 1 + r * 2.6, 3.4 + k * 2.6, 3.4 + r * 2.6,
+              {fill: HC.tok.accent2, rx: 3}, g).setAttribute('opacity',
+                String(0.25 + 0.22 * ((r * 3 + k) % 4)));
+      }
+    }
+  } else if (c.draw === 'hist') {
+    [1.2, 2.6, 4.8, 7.4, 8.6, 6.2, 3.4, 1.6].forEach((h, i) => {
+      s.box(0.6 + i * 1.15, 0, 1.65 + i * 1.15, h,
+            {fill: HC.tok.accent2, rx: 2}, g);
+    });
+  } else {
+    const pts = HC.stat.seq(0.4, 9.6, 40).map(x => [x, 5 + 2.6 * Math.sin(x / 1.6)]);
+    s.area(pts.map(p => [p[0], p[1] + 0.9, p[1] - 0.9]),
+           {fill: HC.tok.accent2, cls: 'bandx'}, g).setAttribute('opacity', '0.25');
+    s.poly(pts, {cls: 'lineq', stroke: HC.tok.accent2, sw: 3}, g);
+  }
+  document.getElementById('w18pkKind').textContent = c.k;
+  document.getElementById('w18pkFn').textContent = c.f;
+  document.getElementById('w18pkQ').textContent = c.q;
+  setStatus('w18pkStatus', '建議：<b>' + c.k + '</b>（' + c.f + '）。');
+}
+function w18pkSet(i) { w18pkI = i; w18pkDraw(); }
+if (w18pkS) w18pkDraw();
+
+/* ═══ w18ms 截斷 y 軸 ═══ */
+const w18msS = HC.svg('w18misSvg', {h: 340});
+const w18msVals = [2.98, 3.26];
+let w18msI = 0;
+function w18msDraw() {
+  const s = w18msS;
+  const g = s.clearLayer('main');
+  if (w18msI === 2) {
+    s.domain([0, 3], [0, 6]);
+    s.grid(3, 6, {ytitle: '小費', ydec: 0});
+    [[1, 1.4, 2.4, 3.0, 4.2, 5.6], [2, 1.6, 2.7, 3.3, 4.6, 6.1]].forEach((b, i) => {
+      s.box(b[0] - 0.28, b[2], b[0] + 0.28, b[4],
+            {fill: i === 0 ? HC.tok.accent2 : HC.tok.accent, stroke: HC.tok.ink,
+             sw: 1.5, rx: 3}, g);
+      s.seg(b[0] - 0.28, b[3], b[0] + 0.28, b[3], {cls: 'medx', stroke: HC.tok.paper, sw: 3}, g);
+      s.seg(b[0], b[1], b[0], b[2], {cls: 'whx', stroke: HC.tok.ink, sw: 1.5}, g);
+      s.seg(b[0], b[4], b[0], b[5], {cls: 'whx', stroke: HC.tok.ink, sw: 1.5}, g);
+      s.txt(b[0], -0.35, i === 0 ? 'A 組' : 'B 組', {cls: 'axlab'}, g);
+    });
+    document.getElementById('w18msRatio').textContent = '看得到重疊';
+    setStatus('w18msStatus', '盒鬚圖：兩組的分布<b>大幅重疊</b>——'
+              + '長條圖的「差距」其實被個體差異淹沒了。');
+    return;
+  }
+  const y0 = w18msI === 0 ? 0 : 2.9;
+  s.domain([0, 3], [y0, 3.4]);
+  s.grid(3, 5, {ytitle: '平均小費', ydec: 2});
+  w18msVals.forEach((v, i) => {
+    s.box(i + 0.72, y0, i + 1.28, v,
+          {fill: i === 0 ? HC.tok.accent2 : HC.tok.accent, rx: 3}, g);
+    s.txt(i + 1, y0 + (3.4 - y0) * 0.03, i === 0 ? 'A 組' : 'B 組',
+          {cls: 'axlab', dy: 16}, g);
+  });
+  const hA = w18msVals[0] - y0, hB = w18msVals[1] - y0;
+  document.getElementById('w18msRatio').textContent =
+    w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（假的）';
+  setStatus('w18msStatus', w18msI === 0
+    ? 'y 軸從 0 開始：兩根長條幾乎一樣高，差距約 <b>9%</b>。'
+    : '同樣的兩個數字，截斷之後看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>——數字沒變，圖說謊了。');
+}
+function w18msSet(i) { w18msI = i; w18msDraw(); }
+if (w18msS) w18msDraw();
+
+/* ═══ w18cr 相關係數熱圖 ═══ */
+const w18crS = HC.svg('w18corrSvg', {h: 340});
+const w18crNames = ['total_bill', 'tip', 'size'];
+const w18crM = [[1.00, 0.68, 0.60], [0.68, 1.00, 0.49], [0.60, 0.49, 1.00]];
+let w18crI = 1;
+function w18crRead(v) {
+  if (v >= 0.99) return '自己跟自己，一定是 1';
+  if (v >= 0.6) return '中等偏強的正相關';
+  if (v >= 0.3) return '中等的正相關';
+  return '弱相關';
+}
+function w18crDraw() {
+  const g = w18crS.clearLayer('main');
+  const cell = 82, x0 = 190, y0 = 78;
+  const r0 = Math.floor(w18crI / 3), c0 = w18crI % 3;
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      const v = w18crM[r][c], on = (r === r0 && c === c0);
+      w18crS.add('rect', {x: x0 + c * cell, y: y0 + r * cell, width: cell - 4,
+                          height: cell - 4, rx: 4, fill: HC.tok.accent2,
+                          opacity: 0.15 + 0.8 * v,
+                          stroke: on ? HC.tok.ink : 'none', 'stroke-width': on ? 3 : 0}, g);
+      const t = w18crS.add('text', {x: x0 + c * cell + (cell - 4) / 2,
+                                    y: y0 + r * cell + (cell - 4) / 2 + 5,
+                                    'text-anchor': 'middle', cls: 'vlab',
+                                    'font-family': HC.MONO,
+                                    fill: v > 0.6 ? HC.tok.paper : HC.tok.ink}, g);
+      t.textContent = HC.fmt(v, 2);
+    }
+    const rl = w18crS.add('text', {x: x0 - 12, y: y0 + r * cell + (cell - 4) / 2 + 5,
+                                   'text-anchor': 'end', cls: 'axlab'}, g);
+    rl.textContent = w18crNames[r];
+    const cl = w18crS.add('text', {x: x0 + r * cell + (cell - 4) / 2, y: y0 - 12,
+                                   'text-anchor': 'middle', cls: 'axlab'}, g);
+    cl.textContent = w18crNames[r];
+  }
+  w18crS.txtPx(24, 40, 'sns.heatmap(tips.corr(numeric_only=True))', {cls: 'axtitle'}, g);
+  const v = w18crM[r0][c0];
+  document.getElementById('w18crPair').textContent = w18crNames[r0] + ' × ' + w18crNames[c0];
+  document.getElementById('w18crVal').textContent = HC.fmt(v, 2);
+  document.getElementById('w18crRead').textContent = w18crRead(v);
+  setStatus('w18crStatus', w18crNames[r0] + ' 與 ' + w18crNames[c0]
+            + ' 的相關係數是 <b>' + HC.fmt(v, 2) + '</b>：' + w18crRead(v) + '。');
+}
+function w18crNext() { w18crI = (w18crI + 1) % 9; w18crDraw(); }
+function w18crReset() { w18crI = 1; w18crDraw(); }
+if (w18crS) w18crDraw();
+
+/* ═══ w18sm 摘要統計一樣、形狀不同（Chart.js）═══ */
+function w18smMake(kind) {
+  const rand = HC.stat.lcg(kind === 0 ? 11 : (kind === 1 ? 22 : 33));
+  const pts = [];
+  if (kind === 0) {
+    for (let i = 0; i < 30; i++) {
+      const x = 4 + rand() * 10;
+      pts.push({x: x, y: 3 + 0.5 * x + HC.stat.normal(rand) * 1.2});
+    }
+  } else if (kind === 1) {
+    for (let i = 0; i < 30; i++) {
+      const x = 4 + rand() * 10;
+      pts.push({x: x, y: 3 + 1.9 * x - 0.078 * x * x + HC.stat.normal(rand) * 0.5});
+    }
+  } else {
+    for (let i = 0; i < 29; i++) {
+      const x = 4 + rand() * 5;
+      pts.push({x: x, y: 7.6 + HC.stat.normal(rand) * 1.1});
+    }
+    pts.push({x: 17.5, y: 15.5});
+  }
+  return pts;
+}
+let w18smI = 0;
+function w18smDraw() {
+  const pts = w18smMake(w18smI);
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const r = (() => {
+    const mx = HC.stat.mean(xs), my = HC.stat.mean(ys);
+    let sxy = 0, sx = 0, sy = 0;
+    for (let i = 0; i < xs.length; i++) {
+      sxy += (xs[i] - mx) * (ys[i] - my);
+      sx += (xs[i] - mx) ** 2; sy += (ys[i] - my) ** 2;
+    }
+    return sxy / Math.sqrt(sx * sy);
+  })();
+  document.getElementById('w18smMx').textContent = HC.fmt(HC.stat.mean(xs), 2);
+  document.getElementById('w18smMy').textContent = HC.fmt(HC.stat.mean(ys), 2);
+  document.getElementById('w18smR').textContent = HC.fmt(r, 2);
+  const names = ['直線關係', '曲線關係', '一個離群值撐出來的'];
+  setStatus('w18smStatus', '第 ' + (w18smI + 1) + ' 組（' + names[w18smI]
+            + '）：x̄ ≈ ' + HC.fmt(HC.stat.mean(xs), 1) + '、ȳ ≈ '
+            + HC.fmt(HC.stat.mean(ys), 1) + '、r ≈ ' + HC.fmt(r, 2) + '。');
+  if (!HC.hasChart()) return;
+  const c = HC.get('w18sameChart');
+  if (c) { c.data.datasets[0].data = pts; c.update(); return; }
+  HC.scatter('w18sameChart', {
+    datasets: [{label: '觀測值', data: pts, backgroundColor: HC.tok.accent2,
+                pointRadius: 5}]
+  }, {
+    scales: {x: {title: {display: true, text: 'x'}, min: 0, max: 20},
+             y: {title: {display: true, text: 'y'}, min: 0, max: 18}},
+    plugins: {legend: {display: false}}
+  });
+}
+function w18smSet(i) { w18smI = i; w18smDraw(); }
+HC.ready(() => { w18smDraw(); });
+</script>
+<!-- PAGEJS:END -->
+<!-- DATA:BEGIN -->
+<script>
+const FLASHCARDS = [{"front":"畫布（Figure）","back":"整張圖的最外層：大小、存檔、總標題都歸它管。一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。"},{"front":"座標系（Axes）","back":"資料真正被畫進去的地方。你 99% 的時間都在跟它打交道，seaborn 的 <code>ax=</code> 指的就是它。注意它跟 Axis（單一根軸）差一個字母。"},{"front":"子圖網格（subplots）","back":"<code>subplots(nrows=2, ncols=3)</code> 回傳一個 Figure 與一個 <b>(2,3) 的 NumPy 陣列</b>。索引法跟一般二維陣列一樣。"},{"front":"圖層級函式（Figure-level）","back":"<code>relplot</code>、<code>catplot</code>、<code>lmplot</code>、<code>displot</code>、<code>jointplot</code>、<code>pairplot</code>。它們會自己開一張新 Figure，<b>不吃 <code>ax=</code></b>。"},{"front":"座標系層級函式（Axes-level）","back":"<code>scatterplot</code>、<code>histplot</code>、<code>boxplot</code>、<code>regplot</code> 等。接受 <code>ax=</code>，可以塞進自己的 subplots 網格。"},{"front":"直方圖（Histogram）","back":"把值切成幾格再數每格幾筆。<b>bins 是你的選擇，不是資料的性質</b>——太少會糊掉真的結構，太多會讓雜訊看起來像結構。"},{"front":"核密度估計（KDE）","back":"把每個點換成一個小鐘形再加起來，所以結果<b>一定是平滑的</b>。那個平滑是你給的假設。頻寬就是直方圖 bins 的另一個化身。"},{"front":"頻寬（Bandwidth）","back":"KDE 的平滑程度。大＝平滑＝可能糊掉真結構；小＝每個點戳出一根。跟 bins 是同一個取捨。"},{"front":"散佈圖（Scatterplot）","back":"兩個數值變數的標準圖。統計分析的第一張圖幾乎都是它——它會告訴你關係是直線、曲線、還是根本沒有。"},{"front":"色相參數（hue）","back":"用顏色把第三個變數塞進同一張圖。組數 ≤ 5 時最有效；再多就該用 <code>col=</code> 拆成小圖。"},{"front":"分面參數（col／row）","back":"把資料按某個類別拆成好幾張小圖並排。組數多、疊起來會糊的時候用它。"},{"front":"成對關係圖（pairplot）","back":"所有數值欄兩兩配對畫一格，對角線放各自的分布。探索階段最划算的一張圖，但欄多時會很慢。"},{"front":"盒鬚圖（Boxplot）","back":"盒子是四分位距、中線是中位數、鬚到 1.5 倍 IQR、外面的點是離群值。<b>唯一會把離群值單獨畫出來的類別圖。</b>"},{"front":"長條圖（Barplot）","back":"長條高度是各組的<b>平均</b>，上面那條細線是 bootstrap 信賴區間，不是標準差。看到它要先問「每組幾筆」。"},{"front":"計數圖（Countplot）","back":"只數每一類有幾筆，等於 <code>value_counts()</code> 的圖版。跟 barplot 完全是兩回事。"},{"front":"點估計圖（Pointplot）","back":"把長條換成一個點加誤差線。要比較好幾組平均時比長條清楚，而且截斷 y 軸是可以接受的。"},{"front":"截斷的 y 軸（Truncated Axis）","back":"長條圖用<b>長度</b>編碼數值，y 軸不從 0 開始會讓長度的比例不再對應數值的比例，9% 的差可以看起來像三倍。要放大差異就改用點估計圖並標明。"},{"front":"迴歸散佈圖（regplot）","back":"散佈圖加一條最小平方線與 95% 信賴帶。那條帶子是<b>對迴歸線的不確定性</b>，不是預測區間。它不給係數也不給 p 值。"},{"front":"分組迴歸圖（lmplot）","back":"加 <code>hue</code> 之後每一組各配一條線。<b>兩條線的斜率明顯不同就是交互作用的視覺證據。</b>"},{"front":"相關係數熱圖（Heatmap）","back":"把 <code>df.corr()</code> 的矩陣上色。用來快速找候選，<b>下結論要回去看數字</b>——顏色的對比取決於色階怎麼設。"},{"front":"折線圖與信賴帶（lineplot）","back":"同一個 x 有多筆資料時，<code>lineplot</code> 會畫平均與 95% 信賴帶，那條帶子是 bootstrap 算的。"},{"front":"摘要統計的盲點（Summary Statistics）","back":"平均、標準差、相關係數都一樣的兩份資料，散佈圖可以完全不同：一組直線、一組曲線、一組只是被離群值拉出來的假相關。所以<b>先畫圖再算數字</b>。"},{"front":"離群值（Outlier）","back":"遠離其他觀測的點。它可以單獨把相關係數從 0 拉到 0.8，也可以主宰一條迴歸線。盒鬚圖與殘差圖是最快發現它的兩張圖。"},{"front":"圖型選擇（Chart Choice）","back":"先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"}];
+HC.initFlashcards();
+</script>
+<!-- DATA:END -->
+</body></html>

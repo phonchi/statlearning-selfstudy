@@ -265,6 +265,17 @@ def _svg_table():
             f'<g fill="#fff" opacity=".85">{col}</g>')
 
 
+def _svg_chart():
+    """先備 P5：一組長條與一條曲線。"""
+    bars = "".join(f'<rect x="{44 + i * 46}" y="{210 - h}" width="34" height="{h}" rx="3"/>'
+                   for i, h in enumerate([60, 96, 138, 170, 132, 88]))
+    return (f'<g fill="#fff" opacity=".55">{bars}</g>'
+            '<path d="M44 176 C 110 150, 150 92, 200 66 S 280 78, 316 118" '
+            'stroke="#fff" stroke-width="3.5" fill="none" opacity=".95"/>'
+            '<g stroke="#fff" stroke-width="3" opacity=".8">'
+            '<path d="M34 214 H330"/><path d="M34 214 V40"/></g>')
+
+
 PAGES = [
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
@@ -650,6 +661,37 @@ PAGES = [
                 "課程 Lab Ch1 · 儲存格 76–78"),
             Sec("join", "串接與讀寫", "concat 把切開的表接回去；讀檔的參數決定後面有多痛",
                 "課程 Lab Ch1 · 儲存格 71–72"),
+        ],
+    ),
+    Page(
+        n=18, stem="p5_visualization", slug="VISUALIZATION", title_en="Visualization",
+        h1='先<span class="blue">畫</span>再算：matplotlib 與 seaborn',
+        plain="視覺化",
+        subtitle="先備知識 P5 — 選讀，不列入評分",
+        formula="Figure 與 Axes｜subplots 網格｜histplot 的 bins｜kdeplot 的頻寬｜relplot 與 catplot｜regplot｜heatmap｜截斷的 y 軸會說謊",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · 視覺化", esl_label="",
+        playlist="",
+        hero_svg=_svg_chart(),
+        kind="prep", data_key="prep_p5_visualization", src_labs=(1, 2),
+        ex_links=[("🔗 seaborn 教學", "https://seaborn.pydata.org/tutorial.html"),
+                  ("🔗 Matplotlib 快速入門",
+                   "https://matplotlib.org/stable/users/explain/quick_start.html"),
+                  ("📓 Ch01 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                   "static_files/presentations/Ch01-lab-zh.ipynb")],
+        secs=[
+            Sec("prologue", "為什麼要先畫圖", "摘要統計一樣，圖可以完全不一樣",
+                "課程 Lab Ch1 · 儲存格 88", kicker="PROLOGUE · 開場"),
+            Sec("anat", "Figure 與 Axes", "一張圖的解剖：Figure 是畫布，Axes 才是座標系",
+                "課程 Lab Ch2 · 儲存格 96–114"),
+            Sec("dist", "看一個變數的分布", "直方圖的 bins 與密度圖的頻寬會改變你的結論",
+                "課程 Lab Ch1 · 儲存格 105–111"),
+            Sec("rel", "看兩個變數的關係", "散佈圖、折線圖、joint 與 pair",
+                "課程 Lab Ch1 · 儲存格 91–117"),
+            Sec("cat", "類別變數的圖", "盒鬚圖、長條圖、計數圖：各自在講什麼",
+                "課程 Lab Ch1 · 儲存格 120–130"),
+            Sec("model", "把模型畫進圖裡", "regplot 與相關係數熱圖",
+                "課程 Lab Ch1 · 儲存格 133–138"),
         ],
     ),
 ]
