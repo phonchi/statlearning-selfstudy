@@ -373,7 +373,8 @@ BODIES["cv"] = f"""
 {hook("這在本站哪一章會用到",
       '第 5 章整章都在講交叉驗證與自助法，第 6 章用交叉驗證挑收縮的強度 λ，'
       '第 8 章調樹的深度也是同一套。'
-      '<a href="resampling_methods.html#cv">→ 重抽樣方法 · 交叉驗證</a>')}
+      '<a href="resampling_methods.html#kfold">→ 重抽樣方法 · k 折交叉驗證</a>　'
+      '<a href="resampling_methods.html#cvwrong">→ 同一章的「先用全資料選特徵再 CV」</a>')}
 """
 
 # ── EX 練習 ─────────────────────────────────────────────────────────────
