@@ -344,6 +344,20 @@ def _svg_spark():
             '<circle cx="257" cy="156" r="7"/></g>')
 
 
+def _svg_dialog():
+    """先備 P7：兩個對話框，一個被打勾、一個被畫叉。"""
+    return ('<g fill="#fff" opacity=".8">'
+            '<path d="M40 60 h 180 a 8 8 0 0 1 8 8 v 56 a 8 8 0 0 1 -8 8 h -140 '
+            'l -24 22 v -22 h -16 a 8 8 0 0 1 -8 -8 v -56 a 8 8 0 0 1 8 -8 z"/></g>'
+            '<g fill="#fff" opacity=".55">'
+            '<path d="M120 168 h 180 a 8 8 0 0 1 8 8 v 56 a 8 8 0 0 1 -8 8 h -16 '
+            'l -24 22 v -22 h -140 a 8 8 0 0 1 -8 -8 v -56 a 8 8 0 0 1 8 -8 z"/></g>'
+            '<g stroke="#2b3a67" stroke-width="5" fill="none" stroke-linecap="round">'
+            '<path d="M74 92 l 14 14 l 28 -30"/></g>'
+            '<g stroke="#2b3a67" stroke-width="5" fill="none" stroke-linecap="round">'
+            '<path d="M244 190 l 30 30 M274 190 l -30 30"/></g>')
+
+
 PAGES = [
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
@@ -911,6 +925,35 @@ PAGES = [
                 "課程 Lab Ch5 · 儲存格 16–26"),
             Sec("cv", "交叉驗證與資料洩漏", "先切分再轉換，順序反了整套評估就作廢",
                 "課程 Lab Ch5 · 儲存格 34–46"),
+        ],
+    ),
+    Page(
+        n=20, stem="p7_ai_assisted", slug="AI ASSISTED", title_en="AI-Assisted Analysis",
+        h1='用 <span class="orange">AI</span> 做統計分析而不被坑',
+        plain="AI 協作",
+        subtitle="先備知識 P7 — 選讀，不列入評分",
+        formula="給脈絡再提問｜資料字典｜術語有兩種意思｜讀 summary 的常見誤讀｜跨模態一致性｜驗證清單｜留下可重現的紀錄",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · AI 協作", esl_label="",
+        playlist="",
+        hero_svg=_svg_dialog(),
+        kind="prep", data_key="prep_p7_ai_assisted", src_labs=(1, 3, 5),
+        nav_next="introduction",
+        ex_links=[("🔗 本站章節總覽", "index.html"),
+                  ("🔗 為什麼還要自己寫", "00a_why_code.html")],
+        secs=[
+            Sec("prologue", "問法決定答案品質", "同一個問題，三種問法，三種可用程度",
+                "AI-Stats §11", kicker="PROLOGUE · 開場"),
+            Sec("context", "給脈絡", "資料字典與前五列：讓它看到你看到的東西",
+                "課程 Lab Ch1 · 儲存格 26–36"),
+            Sec("terms", "術語有兩種意思", "同一個詞在統計與機器學習裡指不同的事",
+                "AI-Stats §11"),
+            Sec("summary", "讀 summary 的常見誤讀", "四個欄位，四種被講錯的方式",
+                "課程 Lab Ch3 · 儲存格 26–37"),
+            Sec("check", "驗證清單", "把 AI 的輸出變成可以核對的東西",
+                "課程 Lab Ch5 · 儲存格 34–46"),
+            Sec("explore", "拿它來探索", "AI 最有價值的用法：產生候選，不是給結論",
+                "AI-Stats §11"),
         ],
     ),
 ]
