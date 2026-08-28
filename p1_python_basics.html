@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<!-- GEN:BEGIN head -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Python 基礎 — Python Basics 互動自學頁。先備知識 P1 — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
+<title>Python 基礎 — Python Basics Interactive（Python）</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+        integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+  --node-white:#ffffff;--node-gray:#bdc3c7;--node-black:#34495e;
+  --node-current:#f39c12;--node-found:#16a085;--node-start:#9b59b6;
+  --edge-default:#95a5a6;--edge-tree:#27ae60;--edge-explore:#f39c12;--edge-mst:#1a6b4a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.9;font-size:17px;}
+
+/* Hero */
+.hero{min-height:62vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:860px;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:.04em;line-height:1.3;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero h1 .purple{color:#bb8fce;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.2rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.05rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Hero mini-graph illustration */
+.hero-graph{position:absolute;right:5%;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;}
+@media(max-width:900px){.hero-graph{display:none;}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+strong{color:var(--ink);}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:34px;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+
+/* Graph SVG canvas */
+.graph-canvas{position:relative;width:100%;height:380px;background:#fafafa;border-radius:8px;overflow:hidden;border:1px solid #ececec;}
+.graph-canvas svg{width:100%;height:100%;display:block;}
+
+/* SVG elements styles */
+.graph-edge{stroke:var(--edge-default);stroke-width:2;fill:none;transition:stroke .25s, stroke-width .25s;}
+.graph-edge.tree{stroke:var(--edge-tree);stroke-width:3.5;}
+.graph-edge.exploring{stroke:var(--edge-explore);stroke-width:3.5;stroke-dasharray:5 4;animation:dash 1s linear infinite;}
+.graph-edge.mst{stroke:var(--edge-mst);stroke-width:4;}
+.graph-edge.path{stroke:var(--accent);stroke-width:4;}
+.graph-edge.dotted{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 4;}
+@keyframes dash{to{stroke-dashoffset:-18;}}
+
+.edge-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;fill:var(--ink);pointer-events:none;}
+.edge-label-bg{fill:#fafafa;stroke:#ececec;stroke-width:1;}
+
+.graph-node{cursor:pointer;}
+.graph-node circle{fill:var(--node-white);stroke:var(--ink);stroke-width:2;transition:fill .25s, stroke .25s, r .2s;}
+.graph-node.gray circle{fill:var(--node-gray);}
+.graph-node.black circle{fill:var(--node-black);stroke:var(--node-black);}
+.graph-node.current circle{fill:var(--node-current);stroke:#d68910;stroke-width:3;}
+.graph-node.start circle{fill:var(--node-start);stroke:#7d3c98;stroke-width:3;}
+.graph-node.found circle{fill:var(--node-found);stroke:#117a65;stroke-width:3;}
+.graph-node.in-mst circle{fill:#82e0aa;stroke:var(--accent3);stroke-width:3;}
+.graph-node text.node-key{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.graph-node.black text.node-key{fill:#fff;}
+.graph-node.current text.node-key{fill:#fff;}
+.graph-node.start text.node-key{fill:#fff;}
+.graph-node.found text.node-key{fill:#fff;}
+.graph-node text.node-meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent);text-anchor:middle;pointer-events:none;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.btn-toggle{background:var(--accent2);color:#fff;}
+.btn-toggle:hover{background:#1f2e5f;}
+.btn-toggle.off{background:#bbb;color:#555;}
+.btn-shuffle{background:#8e44ad;color:#fff;}
+.btn-shuffle:hover{background:#6c3485;}
+
+/* Slider row */
+.slider-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;background:var(--paper);border-radius:8px;margin-bottom:.5rem;}
+.slider-row .slider-label{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent2);font-weight:600;min-width:60px;}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent3);height:5px;cursor:pointer;}
+.slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;min-width:60px;text-align:right;}
+
+/* Side panel */
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+.info-card .ic-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.83rem;padding:.2rem 0;}
+.info-card .ic-label{color:var(--muted);}
+.info-card .ic-value{color:var(--ink);font-weight:600;}
+.info-card .ic-value.highlight{color:var(--accent);}
+.info-card .ic-value.big{font-size:1.4rem;color:var(--accent2);}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;}
+.stat-tile{background:var(--paper);border-radius:8px;padding:.5rem .7rem;text-align:center;}
+.stat-tile .stat-label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+.stat-tile .stat-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--accent2);}
+
+/* Queue / Stack / PQ visualization */
+.ds-display{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--paper);border-radius:6px;padding:.5rem .7rem;min-height:36px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;border:1px dashed var(--card-border);}
+.ds-display .ds-empty{color:var(--muted);font-style:italic;}
+.ds-item{background:var(--accent2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:600;}
+.ds-item.front{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.top{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.pq{background:var(--accent3);}
+.ds-item.pq.min{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-arrow{color:var(--muted);}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid var(--node-current);padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+.pseudo-code .str{color:#f1fa8c;}
+
+/* Adjacency table */
+.adj-display{margin:.5rem 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.adj-matrix{border-collapse:collapse;margin:.5rem auto;}
+.adj-matrix td,.adj-matrix th{border:1px solid var(--card-border);padding:6px 10px;text-align:center;min-width:34px;background:#fff;}
+.adj-matrix th{background:var(--accent2);color:#fff;font-weight:700;}
+.adj-matrix td.zero{color:#ccc;}
+.adj-matrix td.nonzero{background:#eafaf1;color:var(--accent3);font-weight:700;}
+.adj-matrix td.highlight{background:#fff3cd;}
+.adj-list{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:.7rem 1rem;}
+.adj-list .adj-row{padding:3px 0;border-bottom:1px dashed var(--card-border);}
+.adj-list .adj-row:last-child{border-bottom:none;}
+.adj-list .adj-key{color:var(--accent);font-weight:700;display:inline-block;min-width:32px;}
+.adj-list .adj-arrow{color:var(--muted);margin:0 6px;}
+.adj-list .adj-neighbor{background:#eef2ff;color:var(--accent2);padding:1px 8px;border-radius:4px;margin:1px 3px;display:inline-block;font-weight:600;}
+
+/* Chess board for Knight's tour */
+.chess-board{display:grid;background:#fff;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin:.5rem auto;width:fit-content;}
+.chess-cell{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;position:relative;transition:background .2s;}
+.chess-cell.light{background:#f0d9b5;color:#666;}
+.chess-cell.dark{background:#b58863;color:#fff;}
+.chess-cell.visited{background:#27ae60 !important;color:#fff;}
+.chess-cell.current{background:#f39c12 !important;color:#fff;box-shadow:inset 0 0 0 3px #d68910;}
+.chess-cell.start{background:#9b59b6 !important;color:#fff;}
+.chess-cell .knight{font-size:1.4em;line-height:1;}
+.chess-cell .step-num{font-size:.7em;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box.purple{background:#f4ecf7;border-color:#8e44ad;}
+.info-box.purple .info-label{background:#8e44ad;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+.pill-gray{background:rgba(0,0,0,.06);color:var(--muted);border:1px solid rgba(0,0,0,.12);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+.legend-item{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .5rem;background:var(--paper);border-radius:5px;}
+.legend-item .lg-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);}
+.legend-item .lg-edge{width:18px;height:3px;border-radius:2px;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0;}
+.quiz-opt{display:flex;align-items:center;gap:.6rem;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;font-size:.86rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-letter{font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.wrong{background:#fef5e7;border-color:var(--accent);}
+.quiz-opt.wrong .opt-letter{color:var(--accent);}
+.quiz-feedback{margin-top:.7rem;padding:.7rem 1rem;border-radius:8px;font-size:.88rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#eafaf1;color:var(--accent3);border-left:4px solid var(--accent3);}
+.quiz-feedback.wrong{background:#fef5e7;color:var(--accent);border-left:4px solid var(--accent);}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:30px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+
+/* Distance / table inside graph viz */
+.vert-table{margin-top:.6rem;width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.vert-table th,.vert-table td{padding:4px 6px;text-align:center;border:1px solid var(--card-border);}
+.vert-table th{background:var(--accent2);color:#fff;font-weight:600;font-size:.74rem;}
+.vert-table td.tcell-current{background:#fff3cd;font-weight:700;color:var(--accent);}
+.vert-table td.tcell-done{background:#eafaf1;color:var(--accent3);}
+.vert-table td.tcell-inf{color:#ccc;}
+.sec-badge{font-size:.6em;color:var(--muted);border:1px solid var(--card-border);background:var(--card);padding:2px 10px;border-radius:999px;vertical-align:middle;margin-left:.6rem;font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.02em;white-space:nowrap;}
+
+/* Phase 8 shared widgets */
+.bs-stack{display:flex;flex-direction:column-reverse;align-items:center;gap:4px;min-height:180px;justify-content:flex-start;padding:.6rem;}
+.bs-item{width:110px;text-align:center;padding:.4rem .6rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.bs-hl{background:#f39c12;}
+.bs-toplabel,.bq-label{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.bq-row{display:flex;align-items:center;gap:6px;min-height:64px;flex-wrap:wrap;padding:.4rem;}
+.bq-item{min-width:52px;text-align:center;padding:.45rem .5rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.char-strip{display:flex;gap:3px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;padding:.4rem 0;}
+.char-cell{min-width:30px;text-align:center;padding:.35rem .25rem;border:1px solid var(--card-border);border-radius:5px;background:var(--card);}
+.char-cur{background:#f39c12;color:#fff;border-color:#f39c12;}
+.char-done{background:#e8f5ec;color:#1a6b4a;border-color:#bfe3cd;}
+.char-bad{background:#c0392b;color:#fff;border-color:#c0392b;}
+.token-out{display:flex;gap:4px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;min-height:40px;padding:.3rem 0;}
+.tok{padding:.3rem .55rem;border-radius:5px;background:#2c3e7a;color:#fff;font-weight:600;}
+.tok-op{background:#8e44ad;}
+.tok-new{outline:3px solid #f39c12;}
+.mono{font-family:'JetBrains Mono',monospace;}
+/* ===== 網站化附加樣式（study-guide / flashcards / chapter-nav）===== */
+.study-guide{background:var(--card);border:1px solid var(--card-border);border-left:5px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:0 0 2.2rem;}
+.study-guide .sg-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:1.5px;color:var(--accent3);margin-bottom:.5rem;}
+.study-guide p{font-size:.92rem;margin-bottom:.5rem;}
+.study-guide .sg-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+.study-guide .sg-links a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:var(--accent2);border:1px solid var(--card-border);border-radius:999px;padding:.3rem .85rem;text-decoration:none;transition:all .2s;}
+.study-guide .sg-links a:hover{background:var(--accent2);color:#fff;}
+.fc-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.fc-controls button{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:1px solid var(--card-border);cursor:pointer;background:var(--card);color:var(--ink);transition:all .2s;}
+.fc-controls button:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.fc-card{perspective:900px;height:170px;cursor:pointer;}
+.fc-card .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-card .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.fc-card .fc-front{background:linear-gradient(150deg,var(--accent2),var(--ink));color:#fff;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.fc-card .fc-front .fc-hint{font-size:.62rem;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.fc-card .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:2.5rem 0 1rem;}
+.chapter-nav a{display:block;border:1px solid var(--card-border);border-radius:12px;padding:.8rem 1.1rem;text-decoration:none;color:var(--ink);background:var(--card);transition:all .2s;}
+.chapter-nav a:hover{border-color:var(--accent2);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:.2rem;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.95rem;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+.chapter-nav a.home{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+@media(max-width:700px){.chapter-nav{grid-template-columns:1fr;}}
+/* ===== 講義範例卡 ===== */
+.deck-extra{margin:1.2rem 0;}
+.deck-extra .dx-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--accent3);margin-bottom:.4rem;}
+.deck-extra .dx-note{font-size:.9rem;margin-top:.6rem;}
+.expected-out{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);border-radius:0 8px 8px 0;padding:.5rem .9rem;margin-top:.5rem;}
+.expected-out .eo-tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--accent3);display:block;margin-bottom:.2rem;}
+.expected-out pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.55;white-space:pre-wrap;margin:0;}
+.warn-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem;}
+.warn-box b{color:var(--accent);}
+
+/* ============================================================
+   統計學習自學站附加樣式
+   base.css 是從資料結構自學站沿用的共用設計系統，維持不動；
+   這個區塊是統計學習需要的新元件與兩處修正，append-only。
+   ============================================================ */
+
+/* 統計視覺化用的色票（base.css 的 --node-* / --edge-* 保留不動） */
+:root {
+  --pt-train:#2c3e7a;      /* 訓練樣本 */
+  --pt-test:#c0392b;       /* 測試樣本 */
+  --pt-held:#f39c12;       /* 被留作驗證的樣本 */
+  --pt-a:#2c3e7a;          /* 類別 A */
+  --pt-b:#c0392b;          /* 類別 B */
+  --pt-c:#1a6b4a;          /* 類別 C */
+  --fit-line:#c0392b;      /* 配適線／決策邊界 */
+  --fit-true:#1a6b4a;      /* 真實函數／Bayes 邊界 */
+  --resid:#8e44ad;         /* 殘差線段 */
+  --band:rgba(44,62,122,.13);   /* 信賴帶 */
+  --regionA:rgba(44,62,122,.13);
+  --regionB:rgba(192,57,43,.13);
+  --regionC:rgba(26,107,74,.13);
+  --grid-line:#e8e2d6;
+}
+
+/* ---- 修正 base.css：裸 .btn 沒有 background，會變成瀏覽器預設灰 ---- */
+.btn{background:var(--accent2);color:#fff;}
+.btn:hover{filter:brightness(1.12);}
+.btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
+
+/* ---- 修正 base.css：.status-banner 是深色底（--code-bg），
+       但 base.css 的 strong{color:var(--ink)} 是深墨色，疊上去幾乎看不見 ---- */
+.status-banner strong,.status-banner b{color:#fff;font-weight:700;}
+.status-banner code{background:rgba(255,255,255,.14);color:#ffe9a8;}
+
+/* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
+.qa-box{margin:1.4rem 0;}
+.qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;color:var(--accent);margin-bottom:.6rem;}
+.qa-item{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--accent2);
+  border-radius:8px;margin-bottom:.6rem;overflow:hidden;}
+.qa-item>summary{cursor:pointer;padding:.75rem 1rem;font-weight:500;color:var(--accent2);
+  list-style:none;display:flex;gap:.5rem;align-items:baseline;transition:background .15s;}
+.qa-item>summary::-webkit-details-marker{display:none;}
+.qa-item>summary::before{content:'▸';color:var(--accent);flex:none;transition:transform .15s;}
+.qa-item[open]>summary::before{transform:rotate(90deg);}
+.qa-item>summary:hover{background:var(--highlight);}
+.qa-item[open]>summary{border-bottom:1px solid var(--card-border);}
+.qa-a{padding:.9rem 1rem 1rem 1.9rem;font-size:.95rem;}
+.qa-a p{margin-bottom:.7rem;}
+.qa-a p:last-child{margin-bottom:0;}
+.qa-a ul,.qa-a ol{margin:.4rem 0 .7rem 1.2rem;}
+.qa-a li{margin-bottom:.3rem;}
+
+/* ---- 出處標記：可機器檢查的 grounding ---- */
+.dx-src{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--muted);margin-top:.5rem;letter-spacing:.02em;}
+.dx-src a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+
+/* ---- Chart.js 畫布容器 + 離線退路 ---- */
+.chart-wrap{position:relative;width:100%;height:300px;background:#fafafa;border-radius:8px;
+  border:1px solid #ececec;padding:.4rem;}
+.chart-wrap.tall{height:380px;}
+.chart-wrap.square{height:330px;max-width:360px;margin:0 auto;}
+.chart-wrap canvas{display:block;width:100%!important;height:100%!important;}
+.chart-fallback{position:absolute;inset:.4rem;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1.2rem;font-size:.86rem;line-height:1.7;color:var(--muted);
+  background:var(--card);border-radius:6px;}
+.chart-wrap.ready .chart-fallback{display:none;}
+.chart-fallback b{display:block;color:var(--accent2);margin-bottom:.4rem;font-size:.9rem;}
+
+/* ---- 混淆矩陣（是表格，不是圖表） ---- */
+.cm-table{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.82rem;margin:.6rem 0;}
+.cm-table th,.cm-table td{border:1px solid var(--card-border);padding:.45rem .7rem;text-align:center;}
+.cm-table thead th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);}
+.cm-table tbody th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);
+  text-align:right;font-weight:600;}
+.cm-table .cm-tp{background:rgba(26,107,74,.14);font-weight:700;}
+.cm-table .cm-tn{background:rgba(26,107,74,.08);font-weight:700;}
+.cm-table .cm-fp{background:rgba(192,57,43,.12);}
+.cm-table .cm-fn{background:rgba(192,57,43,.18);font-weight:700;}
+.cm-note{font-size:.8rem;color:var(--muted);}
+
+/* ---- ESL 進階：可略過的標記 ---- */
+.eslx{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+  letter-spacing:.1em;color:#fff;background:#8e44ad;padding:.1rem .45rem;border-radius:3px;
+  margin-left:.5rem;vertical-align:.1em;}
+.skip-note{font-size:.82rem;color:var(--muted);margin:-.4rem 0 1rem;}
+
+/* ---- 環境版本註記 ---- */
+.ver-note{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;color:var(--muted);
+  background:var(--paper);border:1px dashed var(--card-border);border-radius:6px;
+  padding:.6rem .9rem;margin-top:1.2rem;}
+
+/* ---- 解答連結 pill 排 ---- */
+.sol-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+.sol-links a{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:600;
+  color:var(--accent2);background:var(--card);border:1px solid var(--card-border);
+  border-radius:999px;padding:.35rem .8rem;text-decoration:none;transition:all .15s;}
+.sol-links a:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* ---- 資料點圖例（SVG 元件共用） ---- */
+.viz-legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.5rem;font-size:.78rem;color:var(--muted);}
+.viz-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.viz-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;}
+.viz-legend i.sq{border-radius:2px;}
+.viz-legend i.ln{width:18px;height:0;border-top:3px solid;border-radius:0;}
+
+/* ---- SVG 元件共用樣式 ---- */
+.viz-svg{width:100%;display:block;background:#fafafa;border-radius:8px;border:1px solid #ececec;}
+.viz-svg .ax{stroke:var(--muted);stroke-width:1;}
+.viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
+.viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .dot{stroke:#fff;stroke-width:1;}
+.viz-svg .dot.drag{cursor:grab;}
+.viz-svg .dot.drag:active{cursor:grabbing;}
+.viz-svg .fit{stroke:var(--fit-line);stroke-width:2.5;fill:none;}
+.viz-svg .truef{stroke:var(--fit-true);stroke-width:2;fill:none;stroke-dasharray:6 4;}
+.viz-svg .resid{stroke:var(--resid);stroke-width:1.2;stroke-dasharray:2 2;}
+.viz-svg .band{fill:var(--band);stroke:none;}
+.viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
+.viz-svg text{user-select:none;}
+
+/* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
+.strip .cell{width:20px;height:20px;border-radius:3px;background:var(--card);
+  border:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;}
+.strip .cell.train{background:var(--pt-train);border-color:var(--pt-train);color:#fff;}
+.strip .cell.held{background:var(--pt-held);border-color:#d68910;color:#fff;font-weight:700;}
+.strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
+
+/* ---- 長內容自己橫向滾動，頁面本體絕不橫向滾動 ---- */
+/* 最後一道保險。該滑的東西（程式碼、公式、表格、圖表）下面都各自有 overflow-x:auto，
+   這一條只負責攔住漏網的幾十個 px——多半來自 MathJax 內部的 mjx-mtable，
+   那是它自己排版出來的盒子，我們沒有選擇器能乾淨地限制它。
+   用 clip 不用 hidden：clip 不會把 body 變成 scroll container，
+   position:fixed 的浮動導覽與 scroll-behavior:smooth 都不受影響。 */
+html,body{overflow-x:clip;}
+/* 程式碼行不換行（.line{white-space:pre}），所以區塊自己要能滑 */
+.pseudo-code{overflow-x:auto;}
+/* MathJax 的行間公式在窄螢幕會撐爆版面，讓它自己可以橫向滑動。
+   注意 !important 是必要的：MathJax 3 是在 runtime 把自己的樣式表 append 到 <head>
+   最後面，比這個 inline <style> 晚，所以同權重的 max-width 會被它蓋掉。
+   帶 \tag{} 的公式更明顯——它會 render 成一個 mjx-mtable，寬度動輒 500–800px。 */
+/* min-width 也要蓋掉：MathJax 對帶 \tag{} 的公式會在 mjx-container 上設 inline
+   min-width（用來把式號推到右緣），min-width 的優先權高於 max-width，
+   所以只寫 max-width 完全沒用——容器還是會撐到 500–800px。 */
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding-bottom:.25rem;
+  max-width:100%!important;min-width:0!important;}
+mjx-container:not([display="true"]){max-width:100%;overflow-x:auto;overflow-y:hidden;}
+mjx-container::-webkit-scrollbar{height:5px;}
+mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px;}
+.expected-out pre{overflow-x:auto;}
+.strip{overflow-x:auto;}
+
+/* ---- 手機版 ---- */
+@media(max-width:700px){
+  .chart-wrap{height:250px;}
+  .chart-wrap.tall{height:300px;}
+  .qa-a{padding-left:1rem;}
+  .viz-svg{min-width:0;}
+  .big-formula{font-size:.85rem;word-break:break-word;}
+  /* 窄螢幕改成左靠：置中的公式一旦比容器寬，捲軸起點會落在被裁掉的左半邊 */
+  mjx-container[display="true"]{justify-content:flex-start!important;}
+}
+
+/* ---- 尊重使用者的減少動態偏好 ---- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;}
+}
+
+/* ---- 列印：隱藏浮動導覽與控制列，深色區塊轉淺 ---- */
+@media print{
+  .float-nav,.controls-bar,.hero-grid,.hero-graph,.scroll-hint,.fc-controls{display:none!important;}
+  .hero{min-height:auto;background:#fff!important;color:var(--ink)!important;padding:1.5rem 0;}
+  .hero h1,.hero .subtitle{color:var(--ink)!important;}
+  .hero .big-formula{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--card-border)!important;}
+  .pseudo-code,.status-banner{background:var(--paper)!important;color:var(--ink)!important;}
+  .pseudo-code .kw,.pseudo-code .fn,.pseudo-code .str,.pseudo-code .num,.pseudo-code .com{color:var(--ink)!important;}
+  .qa-item{break-inside:avoid;}
+  .qa-item>summary::before{content:'';}
+  .qa-a{display:block!important;}
+  section{break-after:auto;border-bottom:none;}
+  a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
+}
+</style>
+</head>
+<!-- GEN:END head -->
+<body>
+<!-- GEN:BEGIN floatnav -->
+<nav class="float-nav" id="floatNav" aria-label="章節導覽">
+  <div class="fn-title">章節導覽</div>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">第一行程式</span></a>
+  <a href="#var" data-target="var"><span class="fn-num">P01</span><span class="fn-name">變數與型別</span></a>
+  <a href="#list" data-target="list"><span class="fn-num">P02</span><span class="fn-name">串列</span></a>
+  <a href="#slice" data-target="slice"><span class="fn-num">P03</span><span class="fn-name">切片</span></a>
+  <a href="#dict" data-target="dict"><span class="fn-num">P04</span><span class="fn-name">字典</span></a>
+  <a href="#str" data-target="str"><span class="fn-num">P05</span><span class="fn-name">字串與格式化</span></a>
+  <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
+  <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
+</nav>
+<!-- GEN:END floatnav -->
+<!-- GEN:BEGIN hero -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+<g fill="#fff" opacity=".62"><rect x="46" y="54" width="210" height="14" rx="7"/><rect x="66" y="84" width="150" height="14" rx="7"/><rect x="66" y="114" width="176" height="14" rx="7"/><rect x="46" y="144" width="128" height="14" rx="7"/><rect x="46" y="174" width="232" height="14" rx="7"/><rect x="66" y="204" width="168" height="14" rx="7"/></g><g fill="#fff" opacity=".9"><rect x="46" y="234" width="96" height="14" rx="7"/></g><g stroke="#fff" stroke-width="3" opacity=".5"><path d="M30 40 V262"/></g>
+  </svg>
+  <div class="hero-content">
+    <h1>看得懂一段<span class="blue">統計程式</span>：Python 基礎</h1>
+    <div class="subtitle">先備知識 P1 — 選讀，不列入評分</div>
+    <div class="big-formula">變數是名牌不是盒子｜int float str bool｜串列與索引｜切片含頭不含尾｜字典是鍵值對｜f-string 與 format</div>
+    <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
+  </div>
+</div>
+<!-- GEN:END hero -->
+<div class="container">
+<!-- GEN:BEGIN studyguide -->
+<div class="study-guide">
+  <div class="sg-title">📌 本頁使用方式（先備 · Python 基礎）</div>
+  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
+  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+</div>
+<!-- GEN:END studyguide -->
+<!-- GEN:BEGIN toc -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · 內容目錄</div>
+  <div class="toc-grid">
+    <a href="#prologue"><span class="toc-num">P00</span>第一行程式</a>
+    <a href="#var"><span class="toc-num">P01</span>變數與型別</a>
+    <a href="#list"><span class="toc-num">P02</span>串列</a>
+    <a href="#slice"><span class="toc-num">P03</span>切片</a>
+    <a href="#dict"><span class="toc-num">P04</span>字典</a>
+    <a href="#str"><span class="toc-num">P05</span>字串與格式化</a>
+    <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
+    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
+  </div>
+</div>
+<!-- GEN:END toc -->
+<section id="prologue">
+<!-- GEN:BEGIN sec:prologue -->
+  <div class="section-number">PROLOGUE · 開場</div>
+  <h2>先讓一段課程 lab 的程式碼變得看得懂 <span class="sec-badge">課程 Lab Ch2 · 儲存格 12–18</span></h2>
+<!-- GEN:END sec:prologue -->
+
+  <p>這一頁假設你完全沒寫過程式。目標很具體：讀完之後，
+  你能看懂課程 lab 裡那些一行一行的東西在做什麼——不是會寫，是<strong>看得懂</strong>。
+  會寫是後面幾頁的事。</p>
+
+<div class="info-box">
+  <span class="info-label">Python 只做三件事</span>
+  ① <strong>算</strong>一個值；② 把值<strong>取個名字</strong>存起來；③ 把值<strong>丟給某個函式</strong>處理。課程 lab 裡每一行都是這三件事的組合，沒有第四種。
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w14readSvg" height="320"></svg>
+      <div class="status-banner" id="w14rdStatus"><span class="status-icon">›</span><span class="status-text">按「單步」一行一行拆。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w14rdStep()">→ 單步</button><button class="btn btn-play" onclick="w14rdPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w14rdReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">一行一行拆</div>
+      按「單步」把一段真的 lab 程式碼拆開，看每一行分別在做上面三件事的哪一件。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">這一行</div>
+      <div class="ic-row"><span class="ic-label">在做什麼</span><span class="ic-value" id="w14rdWhat">—</span></div><div class="ic-row"><span class="ic-label">屬於哪一類</span><span class="ic-value" id="w14rdKind">—</span></div><div class="ic-row"><span class="ic-label">結果是什麼</span><span class="ic-value" id="w14rdVal">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">看不懂就唸出來</div>
+      <code>x = [3, 4, 5]</code> 唸成「把一個裝了 3、4、5 的串列，取名叫 x」。程式碼是可以用中文唸的，唸得出來多半就懂了。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">印出一行字</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">print(<span class="str">&#x27;fit a model with&#x27;</span>, <span class="num">11</span>, <span class="str">&#x27;variables&#x27;</span>)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>fit a model with 11 variables</pre></div>
+  <p class="dx-note"><code>print</code> 是一個函式，括號裡是要給它的東西，用逗號分開的話它會自動加空白。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 12</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">算術</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="num">3</span> + <span class="num">5</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>8</pre></div>
+  <p class="dx-note">Jupyter 的儲存格會自動顯示<strong>最後一行的值</strong>，所以不寫 print 也看得到。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 16</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">字串相加是接起來</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="str">&quot;hello&quot;</span> + <span class="str">&quot;</span> <span class="str">&quot;</span> + <span class="str">&quot;world&quot;</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>&#x27;hello world&#x27;</pre></div>
+  <p class="dx-note">加號對數字是相加、對字串是串接。這種「同一個符號、不同型別不同意思」的設計在 P3 的串列與陣列還會再遇到一次。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 18</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 00 · 自我檢測</div>
+  <p><code>print('MSE =', 25.57)</code> 會印出什麼？</p>
+  <div class="quiz-options" id="qFirstOptions"><div class="quiz-opt" data-correct="true" data-fb="對。逗號分開的東西會被依序印出來，中間自動補一個空白。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(A)</span> <code>MSE = 25.57</code></div><div class="quiz-opt" data-correct="false" data-fb="少了空白。<code>print</code> 用逗號分隔時預設會插入一個空白。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(B)</span> <code>MSE =25.57</code></div><div class="quiz-opt" data-correct="false" data-fb="那是你把整個括號當成一個東西印出來的樣子。<code>print</code> 會把括號裡的每一項各自印出，不會印括號本身。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(C)</span> <code>('MSE =', 25.57)</code></div></div>
+  <div class="quiz-feedback" id="qFirstFeedback"></div>
+</div>
+</section>
+<section id="var">
+<!-- GEN:BEGIN sec:var -->
+  <div class="section-number">PART 01 · 變數與型別</div>
+  <h2>變數是貼在資料上的名牌，不是裝資料的盒子 <span class="sec-badge">課程 Lab Ch2 · 儲存格 16–23</span></h2>
+<!-- GEN:END sec:var -->
+
+  <p>變數不是盒子。<code>x = [3, 4, 5]</code> 這一行做的事是：先做出一個串列，
+  然後把 <strong>x 這個名牌貼上去</strong>。同一個東西可以貼很多張名牌——
+  這件事在 P3 講陣列的「檢視」時會變成一個真的會咬人的問題。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w14varSvg" height="320"></svg>
+      <div class="status-banner" id="w14vaStatus"><span class="status-icon">›</span><span class="status-text">先猜按下「改內容」之後 x 會變成什麼。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w14vaAlias()">再貼一張名牌 y = x</button><button class="btn btn-step" onclick="w14vaMut()">改內容 y[0] = 99</button><button class="btn btn-reset" onclick="w14vaReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">名牌不是盒子</div>
+      按「再貼一張名牌」，兩個名字會指到<strong>同一個</strong>串列。接著按「改內容」，你會看到兩個名字看到的東西一起變了。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">x 看到的</span><span class="ic-value" id="w14vaX">[3, 4, 5]</span></div><div class="ic-row"><span class="ic-label">y 看到的</span><span class="ic-value" id="w14vaY">（還沒有 y）</span></div><div class="ic-row"><span class="ic-label">它們是同一個嗎</span><span class="ic-value" id="w14vaSame">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">數字與字串不會有這個問題</div>
+      整數與字串是<strong>不可變</strong>的，<code>a = 3; b = a; b = 4</code> 之後 a 還是 3。會被就地改掉的只有串列、字典這種可變的東西。
+    </div>
+  </div>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>型別</th><th>長什麼樣</th><th>在這門課裡是什麼</th></tr></thead>
+  <tbody><tr><td><code>int</code></td><td><code>392</code></td><td>樣本數 n、變數個數 p、折數 k</td></tr><tr><td><code>float</code></td><td><code>25.5739</code></td><td>MSE、係數、p 值——幾乎所有統計量</td></tr><tr><td><code>str</code></td><td><code>'lstat'</code></td><td>欄名、檔名、圖的標題</td></tr><tr><td><code>bool</code></td><td><code>True</code> / <code>False</code></td><td>條件的結果，布林遮罩的元素</td></tr><tr><td><code>list</code></td><td><code>[3, 4, 5]</code></td><td>一組欄名、一組要試的參數</td></tr><tr><td><code>dict</code></td><td><code>{'R2': 0.54}</code></td><td>一組具名的結果</td></tr></tbody>
+</table></div>
+
+<div class="info-box warm">
+  <span class="info-label">整數除法會咬人</span>
+  <code>7 / 2</code> 給 <code>3.5</code>（浮點數），<code>7 // 2</code> 給 <code>3</code>（整數，直接砍掉小數）。算折數或索引時用得到後者，算統計量千萬不要用錯。
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 01 · 自我檢測</div>
+  <p><code>a = [1, 2]</code>、<code>b = a</code>、<code>b.append(3)</code>。現在 <code>a</code> 是什麼？</p>
+  <div class="quiz-options" id="qVarOptions"><div class="quiz-opt" data-correct="false" data-fb="<code>b = a</code> 沒有複製任何東西，它只是<strong>多貼一張名牌</strong>。要複製得寫 <code>b = a.copy()</code>。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(A)</span> <code>[1, 2]</code>，因為 b 是複製的</div><div class="quiz-opt" data-correct="true" data-fb="對。這是初學最常見的意外，而且在資料前處理時特別危險——你以為在改暫存變數，其實動到了原始資料。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(B)</span> <code>[1, 2, 3]</code>，因為兩個名字指的是同一個串列</div><div class="quiz-opt" data-correct="false" data-fb="不會。一個東西可以有很多個名字，它們平起平坐，沒有誰取代誰。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(C)</span> 會報錯，a 已經被 b 取代了</div></div>
+  <div class="quiz-feedback" id="qVarFeedback"></div>
+</div>
+</section>
+<section id="list">
+<!-- GEN:BEGIN sec:list -->
+  <div class="section-number">PART 02 · 串列</div>
+  <h2>一排有順序的東西，從 0 開始數 <span class="sec-badge">課程 Lab Ch2 · 儲存格 21–23</span></h2>
+<!-- GEN:END sec:list -->
+
+  <p>串列是<strong>有順序</strong>的一排東西，用中括號寫，從 <strong>0</strong> 開始數。
+  課程 lab 裡最常見的用法是「一組欄名」與「一組要試的參數」。</p>
+
+<div class="deck-extra">
+  <div class="dx-label">做一個串列</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">x = [<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]</span>
+  <span class="line">x</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[3, 4, 5]</pre></div>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 21</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">串列相加是接起來，不是逐元素相加</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">y = [<span class="num">4</span>, <span class="num">9</span>, <span class="num">7</span>]</span>
+  <span class="line">x + y</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[3, 4, 5, 4, 9, 7]</pre></div>
+  <p class="dx-note">輸出有六個元素。要逐元素相加得用 NumPy 陣列——那是 P3 的第一節。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 23</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w14idxSvg" height="300"></svg>
+      <div class="status-banner" id="w14ixStatus"><span class="status-icon">›</span><span class="status-text">按左右看每一個位置的索引。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w14ixMove(-1)">← 左</button><button class="btn btn-step" onclick="w14ixMove(1)">右 →</button><button class="btn btn-reset" onclick="w14ixReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">為什麼從 0 開始</div>
+      把索引想成「離開頭有多遠」：第一個元素離開頭 0 步。這個想法在下一節的切片會變得很重要。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">索引</span><span class="ic-value" id="w14ixI">0</span></div><div class="ic-row"><span class="ic-label">取到的值</span><span class="ic-value" id="w14ixV">'mpg'</span></div><div class="ic-row"><span class="ic-label">負的索引</span><span class="ic-value" id="w14ixN">-5</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">負的索引從後面數</div>
+      <code>-1</code> 是最後一個、<code>-2</code> 是倒數第二個。要拿最後一欄寫 <code>cols[-1]</code>，不用先算長度再減一。
+    </div>
+  </div>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>你想做的事</th><th>寫法</th></tr></thead>
+  <tbody><tr><td>拿第一個</td><td><code>cols[0]</code></td></tr><tr><td>拿最後一個</td><td><code>cols[-1]</code></td></tr><tr><td>有幾個</td><td><code>len(cols)</code></td></tr><tr><td>加一個到最後</td><td><code>cols.append('mpg')</code></td></tr><tr><td>接上另一個串列</td><td><code>cols + other</code> 或 <code>cols.extend(other)</code></td></tr><tr><td>在不在裡面</td><td><code>'mpg' in cols</code></td></tr><tr><td>複製一份</td><td><code>cols.copy()</code></td></tr></tbody>
+</table></div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 02 · 自我檢測</div>
+  <p><code>cols = ['mpg', 'weight', 'year']</code>，<code>cols[-1]</code> 是什麼？</p>
+  <div class="quiz-options" id="qListOptions"><div class="quiz-opt" data-correct="true" data-fb="對。負的索引從後面數，<code>-1</code> 就是最後一個。這比 <code>cols[len(cols)-1]</code> 好讀多了。" onclick="quizCheck('qList', this)"><span class="opt-letter">(A)</span> <code>'year'</code></div><div class="quiz-opt" data-correct="false" data-fb="Python 的負索引是合法的，而且很常用。（NumPy 陣列與 pandas 的 <code>iloc</code> 也支援。）" onclick="quizCheck('qList', this)"><span class="opt-letter">(B)</span> 會報錯，索引不能是負的</div><div class="quiz-opt" data-correct="false" data-fb="那是 <code>cols[0]</code>。負索引是從<strong>右邊</strong>數起。" onclick="quizCheck('qList', this)"><span class="opt-letter">(C)</span> <code>'mpg'</code></div></div>
+  <div class="quiz-feedback" id="qListFeedback"></div>
+</div>
+</section>
+<section id="slice">
+<!-- GEN:BEGIN sec:slice -->
+  <div class="section-number">PART 03 · 切片</div>
+  <h2>起:迄:步長，而且<strong>迄不包含</strong> <span class="sec-badge">課程 Lab Ch2 · 儲存格 132–134</span></h2>
+<!-- GEN:END sec:slice -->
+
+  <p>切片是 <code>起:迄:步長</code>，而且<strong>迄不包含</strong>。
+  這個「不包含」讓很多人第一次用就錯，但它有個好處：
+  <code>a[:3]</code> 加 <code>a[3:]</code> 剛好就是整個 a，中間不會重疊也不會漏。</p>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w14slSvg" height="320"></svg>
+      <div class="status-banner" id="w14slStatus"><span class="status-icon">›</span><span class="status-text">先猜 s[3:6] 會取到哪三個字。</span></div>
+      <div class="controls-bar"><button class="btn btn-step" onclick="w14slMove(0,-1)">起點 −</button><button class="btn btn-step" onclick="w14slMove(0,1)">起點 +</button><button class="btn btn-step" onclick="w14slMove(1,-1)">終點 −</button><button class="btn btn-step" onclick="w14slMove(1,1)">終點 +</button><button class="btn btn-toggle" onclick="w14slStepTog()">步長 1 ⇄ 2</button><button class="btn btn-reset" onclick="w14slReset()">重置</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">拖端點</div>
+      按按鈕改起點、終點與步長，上面會標出被取到的字元。注意<strong>終點那一格永遠是灰的</strong>——它不包含在內。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">寫法</span><span class="ic-value" id="w14slExpr">s[3:6]</span></div><div class="ic-row"><span class="ic-label">取到</span><span class="ic-value" id="w14slVal">'lo '</span></div><div class="ic-row"><span class="ic-label">長度</span><span class="ic-value" id="w14slLen">3</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">同一套規則到處都是</div>
+      字串、串列、NumPy 陣列、pandas 的 <code>iloc</code> 用的都是這一套。唯一的例外是 pandas 的 <code>loc</code>——它用名字，所以<strong>含尾</strong>（P4 會講）。
+    </div>
+  </div>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">字串也能切</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="str">&quot;hello world&quot;</span>[<span class="num">3</span>:<span class="num">6</span>]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>&#x27;lo &#x27;</pre></div>
+  <p class="dx-note">從第 3 個字元開始、取到第 6 個之前——三個字元，其中一個是空白。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 132</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">slice 物件是同一件事的另一種寫法</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="str">&quot;hello world&quot;</span>[slice(<span class="num">3</span>,<span class="num">6</span>)]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>&#x27;lo &#x27;</pre></div>
+  <p class="dx-note"><code>[3:6]</code> 只是 <code>[slice(3,6)]</code> 的語法糖。知道這件事之後，「為什麼可以把切片存成變數」就不奇怪了。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 134</span>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 03 · 自我檢測</div>
+  <p><code>a = [0,1,2,3,4,5]</code>，<code>a[1:4]</code> 有幾個元素？</p>
+  <div class="quiz-options" id="qSliceOptions"><div class="quiz-opt" data-correct="true" data-fb="對。長度是 <code>迄 − 起</code> = 4 − 1 = 3。「迄不包含」讓算長度變得很簡單，這是它的好處。" onclick="quizCheck('qSlice', this)"><span class="opt-letter">(A)</span> 3 個：1、2、3</div><div class="quiz-opt" data-correct="false" data-fb="把終點也算進去了。<code>a[1:4]</code> 取到索引 3 為止，不含 4。" onclick="quizCheck('qSlice', this)"><span class="opt-letter">(B)</span> 4 個：1、2、3、4</div><div class="quiz-opt" data-correct="false" data-fb="少算了一個。起點<strong>是</strong>包含的，只有終點不包含。" onclick="quizCheck('qSlice', this)"><span class="opt-letter">(C)</span> 2 個：1、2</div></div>
+  <div class="quiz-feedback" id="qSliceFeedback"></div>
+</div>
+</section>
+<section id="dict">
+<!-- GEN:BEGIN sec:dict -->
+  <div class="section-number">PART 04 · 字典</div>
+  <h2>用名字取值，而不是用位置 <span class="sec-badge">課程 Lab Ch1 · 儲存格 19–26</span></h2>
+<!-- GEN:END sec:dict -->
+
+  <p>串列用位置取值，字典用<strong>名字</strong>取值。統計程式裡幾乎所有「一組具名的結果」
+  都是字典：模型的評分、欄名對應到型別、參數名稱對應到值。</p>
+
+<div class="deck-extra">
+  <div class="dx-label">用字典建一個 Series</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">sdata = {<span class="str">&quot;Ohio&quot;</span>: <span class="num">35000</span>, <span class="str">&quot;Texas&quot;</span>: <span class="num">71000</span>, <span class="str">&quot;Oregon&quot;</span>: <span class="num">16000</span>, <span class="str">&quot;Utah&quot;</span>: <span class="num">5000</span>}</span>
+  <span class="line">s3 = pd.Series(sdata)</span>
+  <span class="line">s3</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Ohio      35000
+Texas     71000
+Oregon    16000
+Utah       5000
+dtype: int64</pre></div>
+  <p class="dx-note">鍵變成索引、值變成資料——pandas 直接吃字典，因為兩者的結構本來就一樣。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 19</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">用字典建一整張表</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">data = {<span class="str">&quot;state&quot;</span>: [<span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Ohio&quot;</span>, <span class="str">&quot;Nevada&quot;</span>, <span class="str">&quot;Nevada&quot;</span>, <span class="str">&quot;Nevada&quot;</span>],</span>
+  <span class="line">        <span class="str">&quot;year&quot;</span>: [<span class="num">2000</span>, <span class="num">2001</span>, <span class="num">2002</span>, <span class="num">2001</span>, <span class="num">2002</span>, <span class="num">2003</span>],</span>
+  <span class="line">        <span class="str">&quot;pop&quot;</span>: [<span class="num">1.5</span>, <span class="num">1.7</span>, <span class="num">3.6</span>, <span class="num">2.4</span>, <span class="num">2.9</span>, <span class="num">3.2</span>]}</span>
+  <span class="line">frame = pd.DataFrame(data)</span>
+  <span class="line">frame</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>    state  year  pop
+0    Ohio  2000  1.5
+1    Ohio  2001  1.7
+2    Ohio  2002  3.6
+3  Nevada  2001  2.4
+4  Nevada  2002  2.9
+5  Nevada  2003  3.2</pre></div>
+  <p class="dx-note">這次每一個值是一個<strong>串列</strong>，於是每一個鍵變成一欄。課程 lab 建示範資料幾乎都用這個寫法。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 26</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w14dcSvg" height="300"></svg>
+      <div class="status-banner" id="w14dcStatus"><span class="status-icon">›</span><span class="status-text">同一件事，兩種資料結構。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w14dcSet(0)">拿 R²</button><button class="btn btn-toggle" onclick="w14dcSet(1)">拿 MSE</button><button class="btn btn-toggle" onclick="w14dcSet(2)">多加一項</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">兩種取值方式</div>
+      左邊是串列（用位置），右邊是字典（用名字）。按按鈕看同一個查詢在兩邊怎麼寫，以及為什麼字典比較不會出錯。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">要拿什麼</span><span class="ic-value" id="w14dcWant">—</span></div><div class="ic-row"><span class="ic-label">串列寫法</span><span class="ic-value" id="w14dcList">—</span></div><div class="ic-row"><span class="ic-label">字典寫法</span><span class="ic-value" id="w14dcDict">—</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">鍵不存在會怎樣</div>
+      <code>d['沒有這個鍵']</code> 會拋 <code>KeyError</code>。不確定在不在就用 <code>d.get('鍵', 預設值)</code>——找不到時回傳預設值而不是報錯。
+    </div>
+  </div>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>你想做的事</th><th>寫法</th></tr></thead>
+  <tbody><tr><td>取值</td><td><code>d['R2']</code></td></tr><tr><td>安全取值</td><td><code>d.get('R2', 0)</code></td></tr><tr><td>新增或覆寫</td><td><code>d['MSE'] = 38.5</code></td></tr><tr><td>鍵在不在</td><td><code>'R2' in d</code></td></tr><tr><td>所有鍵／所有值</td><td><code>d.keys()</code> / <code>d.values()</code></td></tr><tr><td>一次拿鍵和值</td><td><code>for k, v in d.items():</code></td></tr></tbody>
+</table></div>
+
+<div class="qa-box">
+  <div class="qa-head">觀念釐清</div>
+  <details class="qa-item"><summary>字典的鍵可以是什麼？</summary>
+    <div class="qa-a">不可變的東西都可以：字串、數字、tuple。<strong>串列不行</strong>，因為它會變，變了之後就找不回原來的位置。實務上九成的鍵是字串。</div>
+  </details>
+  <details class="qa-item"><summary>字典有順序嗎？</summary>
+    <div class="qa-a">Python 3.7 之後，字典會<strong>記住插入的順序</strong>，所以 <code>for k in d</code> 的順序是可預期的。但不要依賴它做排序——要排序就明確寫 <code>sorted(d)</code>。</div>
+  </details>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 04 · 自我檢測</div>
+  <p><code>scores = {{'R2': 0.54}}</code>，執行 <code>scores['MSE']</code> 會怎樣？</p>
+  <div class="quiz-options" id="qDictOptions"><div class="quiz-opt" data-correct="true" data-fb="對。鍵不存在就報錯，不會給你 <code>None</code>。想要「找不到就給預設值」得寫 <code>scores.get('MSE', 0)</code>。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(A)</span> 拋 <code>KeyError</code></div><div class="quiz-opt" data-correct="false" data-fb="那是 <code>.get()</code> 的行為。直接用中括號取值找不到時會報錯——這是刻意的，免得你把打錯的欄名一路帶下去。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(B)</span> 回傳 <code>None</code></div><div class="quiz-opt" data-correct="false" data-fb="讀取不會建立。<code>scores['MSE'] = 38.5</code> 這種<strong>賦值</strong>才會。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(C)</span> 自動建一個空的 MSE 項目</div></div>
+  <div class="quiz-feedback" id="qDictFeedback"></div>
+</div>
+</section>
+<section id="str">
+<!-- GEN:BEGIN sec:str -->
+  <div class="section-number">PART 05 · 字串與格式化</div>
+  <h2>把數字變成人看得懂的一行字 <span class="sec-badge">課程 Lab Ch2 · 儲存格 236–244</span></h2>
+<!-- GEN:END sec:str -->
+
+  <p>最後一件事：把數字變成人看得懂的一行字。統計程式的輸出幾乎都要格式化——
+  「MSE 是 25.573878189684412」沒有人想讀，你要的是「MSE 是 25.57」。</p>
+
+<div class="deck-extra">
+  <div class="dx-label">format 與格式規格</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="kw">for</span> col <span class="kw">in</span> D.columns:</span>
+  <span class="line">    template = <span class="str">&#x27;Column &quot;{0}&quot; has {1:.2%} missing values&#x27;</span></span>
+  <span class="line">    print(template.format(col,</span>
+  <span class="line">          np.isnan(D[col]).mean()))</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Column &quot;food&quot; has 16.54% missing values
+Column &quot;bar&quot; has 25.98% missing values
+Column &quot;pickle&quot; has 29.13% missing values
+Column &quot;snack&quot; has 21.26% missing values
+Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
+  <p class="dx-note"><code>{{1:.2%}}</code> 的意思是「第 1 個引數，用百分比、小數兩位」。所以 0.1654 印出來是 16.54%。這一格同時示範了迴圈與格式化。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 244</span>
+</div>
+
+<div class="deck-extra">
+  <div class="dx-label">迴圈裡的格式化</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">total = <span class="num">0</span></span>
+  <span class="line"><span class="kw">for</span> value <span class="kw">in</span> [<span class="num">3</span>,<span class="num">2</span>,<span class="num">19</span>]:</span>
+  <span class="line">    total += value</span>
+  <span class="line">print(<span class="str">&#x27;Total is: {0}&#x27;</span>.format(total))</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Total is: 24</pre></div>
+  <p class="dx-note"><code>{{0}}</code> 是「第 0 個引數」。現在更常見的寫法是 f-string：<code>f'Total is: {{total}}'</code>，兩種都會遇到。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 236</span>
+</div>
+
+<div class="viz-layout">
+  <div>
+    <div class="viz-panel">
+      <svg class="viz-svg" id="w14fmtSvg" height="300"></svg>
+      <div class="status-banner" id="w14fmStatus"><span class="status-icon">›</span><span class="status-text">同一個數字，五種格式。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w14fmSet(0)">{:.2f}</button><button class="btn btn-toggle" onclick="w14fmSet(1)">{:.4f}</button><button class="btn btn-toggle" onclick="w14fmSet(2)">{:.2%}</button><button class="btn btn-toggle" onclick="w14fmSet(3)">{:.3e}</button><button class="btn btn-toggle" onclick="w14fmSet(4)">{:>10.2f}</button></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">改格式規格看結果</div>
+      同一個數字 <code>25.573878</code>，換不同的格式規格。按按鈕看每一種的輸出。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前</div>
+      <div class="ic-row"><span class="ic-label">格式規格</span><span class="ic-value" id="w14fmSpec">{:.2f}</span></div><div class="ic-row"><span class="ic-label">輸出</span><span class="ic-value" id="w14fmOut">25.57</span></div><div class="ic-row"><span class="ic-label">什麼時候用</span><span class="ic-value" id="w14fmWhen">報告統計量</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">f-string 是現在的預設寫法</div>
+      <code>f'MSE = {{mse:.2f}}'</code> 把變數直接寫在字串裡，冒號後面接的格式規格跟 <code>format</code> 完全一樣。本站的程式碼卡兩種都會出現，因為課程 lab 兩種都用。
+    </div>
+  </div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 05 · 自我檢測</div>
+  <p><code>'{{:.2%}}'.format(0.1654)</code> 會印出什麼？</p>
+  <div class="quiz-options" id="qStrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。百分比格式會<strong>先乘 100 再加百分號</strong>，所以不要自己再乘一次。lab 儲存格 244 算遺漏比例就是用這個。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(A)</span> <code>16.54%</code></div><div class="quiz-opt" data-correct="false" data-fb="格式規格 <code>%</code> 會自己乘 100。如果你先乘了 100 再用 <code>:.2%</code>，就會多乘一次變成 1654%。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(B)</span> <code>0.17%</code></div><div class="quiz-opt" data-correct="false" data-fb="小數兩位是<strong>乘 100 之後</strong>才算的。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(C)</span> <code>0.1654%</code></div></div>
+  <div class="quiz-feedback" id="qStrFeedback"></div>
+</div>
+
+<div class="info-box purple">
+  <span class="info-label">🔗 這在本站哪一章會用到</span>
+  每一章的程式碼卡都在用這一頁的東西：串列裝欄名、字典裝評分、格式化把數字印成報告要的樣子。下一步是 <a href="p2_flow_functions.html">P2 流程與函式</a>，之後才是 <a href="p3_numpy.html">P3 NumPy</a>。
+</div>
+</section>
+<section id="exercises">
+<!-- GEN:BEGIN sec:exercises -->
+  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
+  程式碼卡在自己的環境跑一次。</p>
+  <div class="sol-links"><a href="https://docs.python.org/zh-tw/3/tutorial/" target="_blank" rel="noopener">🔗 Python 官方教學（中文）</a><a href="https://docs.python.org/zh-tw/3/library/stdtypes.html" target="_blank" rel="noopener">🔗 內建型別</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch02 中文 Lab</a></div>
+<!-- GEN:END sec:exercises -->
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 1 · 名牌與盒子</div>
+  <p><code>a = [1,2,3]</code>、<code>b = a[:]</code>、<code>b[0] = 99</code>。<code>a[0]</code> 是？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。整段切片 <code>[:]</code> 會產生新的串列，跟 <code>b = a</code> 完全不同。這是最短的複製寫法。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>1</code>，因為 <code>a[:]</code> 是一份新的複本</div><div class="quiz-opt" data-correct="false" data-fb="那是 <code>b = a</code> 的情況。加了 <code>[:]</code> 就是切片，切片會產生新的串列。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>99</code>，b 只是 a 的另一個名字</div><div class="quiz-opt" data-correct="false" data-fb="<code>a[:]</code> 是完全合法的寫法，取的是「從頭到尾」。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 會報錯</div></div>
+  <div class="quiz-feedback" id="qEx1Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 2 · 索引</div>
+  <p><code>cols = ['mpg','cyl','hp','wt','year']</code>。想拿中間三個（cyl、hp、wt），怎麼寫？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="不用。<code>cols[1:4]</code> 已經是 cyl、hp、wt 三個了，多加 <code>cols[4]</code> 會把 year 也拿進來。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> <code>cols[1:4:1]</code> 之外還要加 <code>cols[4]</code></div><div class="quiz-opt" data-correct="true" data-fb="對。起點 1（cyl）、終點 4 不包含（所以停在 wt）。「迄不包含」讓長度剛好是 4−1=3。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> <code>cols[1:4]</code></div><div class="quiz-opt" data-correct="false" data-fb="只拿到兩個（cyl、hp）。終點要寫 4 才會包含索引 3 的 wt。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> <code>cols[1:3]</code></div></div>
+  <div class="quiz-feedback" id="qEx2Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 3 · 字典</div>
+  <p>你想記錄三個模型的 MSE，之後要能用模型名字查。該用什麼？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="能動，但沒辦法用迴圈處理，也沒辦法「用名字查」——你得記得哪個數字對應哪個模型。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 三個變數 <code>mse1</code>、<code>mse2</code>、<code>mse3</code></div><div class="quiz-opt" data-correct="true" data-fb="對。名字直接當鍵，之後 <code>for name, mse in d.items()</code> 就能一次處理完，印報告也方便。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 一個字典 <code>{{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}}</code></div><div class="quiz-opt" data-correct="false" data-fb="串列能存值但存不了名字，你得另外記「第 0 個是 linear」——那正是字典要解決的問題。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 一個串列 <code>[25.57, 22.22, 22.67]</code></div></div>
+  <div class="quiz-feedback" id="qEx3Feedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 4 · 格式化</div>
+  <p>MSE 是 25.573878189684412，你想在報告裡印成兩位小數。哪一個寫法對？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。用 <code>'{{:.2f}}'.format(mse)</code> 也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>f'MSE = {{mse:.2f}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="<code>round</code> 不給第二個引數的話會四捨五入到整數，變成 26。而且它改的是<strong>數值</strong>，格式化改的只是顯示——後者比較安全。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>f'MSE = {{round(mse)}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="少了那個點。<code>2f</code> 的 2 會被當成<strong>總寬度</strong>不是小數位數，結果會印出全部的小數。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>f'MSE = {{mse:2f}}'</code></div></div>
+  <div class="quiz-feedback" id="qEx4Feedback"></div>
+</div>
+</section>
+<section id="reference">
+<!-- GEN:BEGIN sec:reference -->
+  <div class="section-number">REFERENCE · 總覽</div>
+  <h2>Python 基礎速查表 <span class="sec-badge">先備 · Python 基礎</span></h2>
+<!-- GEN:END sec:reference -->
+
+  <p>三張速查表。忘了就回來看。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>你想做的事</th><th>串列</th><th>字典</th></tr></thead>
+  <tbody><tr><td>取一個</td><td><code>a[0]</code>（位置）</td><td><code>d['R2']</code>（名字）</td></tr><tr><td>安全地取</td><td>先 <code>if len(a) &gt; 0</code></td><td><code>d.get('R2', 0)</code></td></tr><tr><td>加一個</td><td><code>a.append(x)</code></td><td><code>d['新鍵'] = x</code></td></tr><tr><td>有幾個</td><td><code>len(a)</code></td><td><code>len(d)</code></td></tr><tr><td>走過每一個</td><td><code>for x in a:</code></td><td><code>for k, v in d.items():</code></td></tr><tr><td>在不在</td><td><code>x in a</code>（比值）</td><td><code>k in d</code>（比<b>鍵</b>）</td></tr><tr><td>複製</td><td><code>a.copy()</code> 或 <code>a[:]</code></td><td><code>d.copy()</code></td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>切片</th><th>意思</th></tr></thead>
+  <tbody><tr><td><code>a[2:5]</code></td><td>索引 2、3、4（<b>不含 5</b>）</td></tr><tr><td><code>a[:3]</code></td><td>從頭到索引 2</td></tr><tr><td><code>a[3:]</code></td><td>從索引 3 到最後</td></tr><tr><td><code>a[:]</code></td><td>整個，而且是<b>新的一份</b></td></tr><tr><td><code>a[::2]</code></td><td>每隔一個取一次</td></tr><tr><td><code>a[-1]</code></td><td>最後一個</td></tr><tr><td><code>a[::-1]</code></td><td>整個反過來</td></tr></tbody>
+</table></div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>格式規格</th><th>0.1654 印出來</th><th>什麼時候用</th></tr></thead>
+  <tbody><tr><td><code>{{:.2f}}</code></td><td>0.17</td><td>一般統計量</td></tr><tr><td><code>{{:.4f}}</code></td><td>0.1654</td><td>係數、p 值</td></tr><tr><td><code>{{:.2%}}</code></td><td>16.54%</td><td>比例、遺漏率</td></tr><tr><td><code>{{:.3e}}</code></td><td>1.654e-01</td><td>非常大或非常小的數</td></tr><tr><td><code>{{:>10.2f}}</code></td><td>　　　　　0.17</td><td>對齊成一欄</td></tr></tbody>
+</table></div>
+
+<div class="info-box">
+  <span class="info-label">三個一定要記住的觀念</span>
+  <strong>1. 變數是名牌，不是盒子。</strong><code>b = a</code> 只是多貼一張名牌，改 b 會動到 a。<br><strong>2. 索引從 0 開始，切片的迄不包含。</strong>所以 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a。<br><strong>3. 串列用位置、字典用名字。</strong>有名字的東西就用字典，不要用「我記得第 2 個是 MSE」。
+</div>
+
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch01）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 待注入</span></h2>
+  <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
+  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  <div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div>
+<!-- GEN:END sec:cards -->
+</section>
+<!-- GEN:BEGIN chapternav -->
+<div class="chapter-nav"><span></span><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="p2_flow_functions.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">流程與函式</div></a></div>
+<!-- GEN:END chapternav -->
+</div>
+<!-- GEN:BEGIN footer -->
+<footer>
+  互動式Python 基礎教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
+</footer>
+<!-- GEN:END footer -->
+<!-- GEN:BEGIN sharedjs -->
+<script>
+/* ============================================================
+   統計學習自學站共用函式庫
+   由 tools/build_page.py 內嵌到每一頁，十頁完全一致。
+   規則：LaTeX 一律放靜態 HTML，這裡的字串不放 $…$；
+        寫入含數學的 innerHTML 之後要呼叫 HC.retype(el)。
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- MathJax：注入後的內容不會自動排版 ---------- */
+const HC = {};
+HC.retype = el => {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
+  }
+};
+
+/* ---------- quiz ---------- */
+function quizCheck(quizId, optEl) {
+  const isCorrect = optEl.dataset.correct === 'true';
+  optEl.parentElement.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'wrong'));
+  optEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = $(quizId + 'Feedback');
+  if (!fb) { console.error('quizCheck: 找不到 #' + quizId + 'Feedback'); return; }
+  fb.classList.remove('correct', 'wrong');
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> ') + (optEl.dataset.fb || '');
+  HC.retype(fb);
+}
+
+/* ---------- 程式碼行高亮 ---------- */
+function hlLine(rootId, n) {
+  const root = $(rootId);
+  if (!root) return;
+  root.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+  if (n != null) {
+    const line = root.querySelector('.line[data-l="' + n + '"]');
+    if (line) line.classList.add('active');
+  }
+}
+
+/* ---------- 逐步播放器：frames = [{...}]，apply(frame) 負責渲染 ---------- */
+class Player {
+  constructor({ frames, apply, delayInput, onDone, onIndex }) {
+    this.frames = frames; this.apply = apply;
+    this.delayInput = delayInput; this.i = -1; this.timer = null;
+    this.onDone = onDone || (() => {});
+    this.onIndex = onIndex || (() => {});
+  }
+  get delay() { return this.delayInput ? parseInt(this.delayInput.value, 10) : 700; }
+  step() {
+    if (this.i + 1 >= this.frames.length) { this.stop(); this.onDone(); return false; }
+    this.i += 1; this.apply(this.frames[this.i], this.i); this.onIndex(this.i); return true;
+  }
+  play() {
+    this.stop();
+    const tick = () => { if (this.step()) this.timer = setTimeout(tick, this.delay); };
+    tick();
+  }
+  stop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+  get playing() { return this.timer !== null; }
+  reset() { this.stop(); this.i = -1; if (this.frames.length) { this.apply(this.frames[0], 0); this.i = 0; } }
+  seek(i) { this.stop(); this.i = Math.max(0, Math.min(i, this.frames.length - 1)); this.apply(this.frames[this.i], this.i); this.onIndex(this.i); }
+}
+HC.Player = Player;
+
+/* ---------- 旁白列 ---------- */
+function setStatus(id, html) {
+  const el = $(id); if (!el) return;
+  const t = el.querySelector('.status-text');
+  if (t) t.innerHTML = html;
+}
+
+/* ============================================================
+   HC：圖表與 SVG 共用 API
+   ============================================================ */
+
+/* 設計 token（讀 CSS 變數，樣式改一處就好） */
+HC.tok = (() => {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue('--' + n).trim();
+  return {
+    ink: g('ink'), paper: g('paper'), accent: g('accent'), accent2: g('accent2'),
+    accent3: g('accent3'), muted: g('muted'), card: g('card'), cardBorder: g('card-border'),
+    grid: g('grid-line') || g('card-border'),
+    train: g('pt-train'), test: g('pt-test'), held: g('pt-held'),
+    a: g('pt-a'), b: g('pt-b'), c: g('pt-c'),
+    fit: g('fit-line'), truef: g('fit-true'), resid: g('resid'),
+  };
+})();
+
+HC.MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+/* 數字格式：固定小數位，去掉負零 */
+HC.fmt = (v, d = 2) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const s = Number(v).toFixed(d);
+  return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s;
+};
+HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
+
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* ---------- Chart.js ---------- */
+HC.hasChart = () => typeof window.Chart !== 'undefined';
+
+/* Chart.js 載入失敗時不要拋錯：讓 .chart-fallback 留在畫面上 */
+HC.ready = fn => {
+  const run = () => {
+    if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
+    try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+};
+
+HC._charts = new Map();
+
+/* 房子的 Chart.js 預設值 */
+HC.base = (type, data, opts = {}) => {
+  const t = HC.tok;
+  const axis = {
+    grid: { color: t.grid, drawTicks: false },
+    border: { color: t.muted },
+    ticks: { font: { family: HC.MONO, size: 11 }, color: t.muted, padding: 6 },
+    title: { font: { family: HC.MONO, size: 11, weight: '600' }, color: t.accent2 },
+  };
+  const deep = (a, b) => {
+    const o = Array.isArray(b) ? b.slice() : Object.assign({}, a);
+    if (Array.isArray(b)) return o;
+    for (const k of Object.keys(b || {})) {
+      o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]))
+        ? deep(a && a[k] ? a[k] : {}, b[k]) : b[k];
+    }
+    return o;
+  };
+  const defaults = {
+    responsive: true, maintainAspectRatio: false, devicePixelRatio: 2,
+    animation: { duration: 250 },
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 6, right: 10, bottom: 2, left: 2 } },
+    plugins: {
+      legend: {
+        display: true, position: 'top', align: 'end',
+        labels: { boxWidth: 10, boxHeight: 10, font: { family: HC.MONO, size: 11 }, color: t.ink, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,46,.92)', titleFont: { family: HC.MONO, size: 11 },
+        bodyFont: { family: HC.MONO, size: 11 }, padding: 8, cornerRadius: 6, displayColors: true,
+      },
+    },
+    scales: { x: deep({}, axis), y: deep({}, axis) },
+    elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
+  };
+  const cfg = { type, data, options: deep(defaults, opts) };
+  // canvas 不認得 var(--x)：傳進去會靜默變成黑色（第 6 章五條準則線全黑就是這樣）。
+  // 這裡在建構前把所有顏色欄位解析成實際色值，讓這類 bug 不可能發生。
+  HC._resolveColors(cfg);
+  return cfg;
+};
+
+HC._COLOR_KEYS = ['borderColor', 'backgroundColor', 'pointBackgroundColor',
+                  'pointBorderColor', 'hoverBackgroundColor', 'hoverBorderColor', 'color'];
+HC._resolveColors = o => {
+  if (!o || typeof o !== 'object') return o;
+  if (Array.isArray(o)) { o.forEach(HC._resolveColors); return o; }
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'string' && HC._COLOR_KEYS.indexOf(k) >= 0) o[k] = HC.color(v);
+    else if (Array.isArray(v) && HC._COLOR_KEYS.indexOf(k) >= 0) {
+      o[k] = v.map(x => (typeof x === 'string' ? HC.color(x) : x));
+    } else if (v && typeof v === 'object') HC._resolveColors(v);
+  }
+  return o;
+};
+
+/* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
+HC.chart = (canvasId, type, data, opts) => {
+  if (!HC.hasChart()) return null;
+  const cv = $(canvasId);
+  if (!cv) { console.error('HC.chart: 找不到 canvas #' + canvasId); return null; }
+  const old = HC._charts.get(canvasId);
+  if (old) old.destroy();
+  const c = new window.Chart(cv, HC.base(type, data, opts));
+  HC._charts.set(canvasId, c);
+  const wrap = cv.closest('.chart-wrap');
+  if (wrap) wrap.classList.add('ready');
+  return c;
+};
+HC.line = (id, data, opts) => HC.chart(id, 'line', data, opts);
+HC.scatter = (id, data, opts) => HC.chart(id, 'scatter', data, opts);
+HC.bar = (id, data, opts) => HC.chart(id, 'bar', data, opts);
+HC.get = id => HC._charts.get(id);
+
+/* 就地改資料再重畫，不重建 chart（滑桿連續拖動時比較順） */
+HC.update = (id, mutate) => {
+  const c = HC._charts.get(id);
+  if (!c) return null;
+  mutate(c);
+  c.update('none');
+  return c;
+};
+
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
+
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
+
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
+  beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
+  },
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
+
+/* ============================================================
+   HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
+   用法：const s = HC.svg('w03dragSvg', {xd:[0,10], yd:[0,30]});
+        s.grid(5,5); s.dot(x, y, {cls:'dot', fill:HC.tok.train});
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+
+HC.svg = (id, o = {}) => {
+  const host = $(id);
+  if (!host) { console.error('HC.svg: 找不到 #' + id); return null; }
+  const W = o.w || 620, H = o.h || 340;
+  const pad = Object.assign({ l: 46, r: 14, t: 14, b: 34 }, o.pad || {});
+  let el = host;
+  if (host.tagName.toLowerCase() !== 'svg') {
+    el = host.querySelector('svg');
+    if (!el) { el = document.createElementNS(NS, 'svg'); el.setAttribute('class', 'viz-svg'); host.appendChild(el); }
+  }
+  el.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  if (!el.getAttribute('height')) el.setAttribute('height', String(H));
+
+  const s = {
+    el, W, H, pad,
+    xd: (o.xd || [0, 1]).slice(), yd: (o.yd || [0, 1]).slice(),
+    get iw() { return W - pad.l - pad.r; },
+    get ih() { return H - pad.t - pad.b; },
+  };
+  s.domain = (xd, yd) => { if (xd) s.xd = xd.slice(); if (yd) s.yd = yd.slice(); return s; };
+  s.X = v => pad.l + (v - s.xd[0]) / (s.xd[1] - s.xd[0]) * s.iw;
+  s.Y = v => pad.t + s.ih - (v - s.yd[0]) / (s.yd[1] - s.yd[0]) * s.ih;
+  s.ix = px => s.xd[0] + (px - pad.l) / s.iw * (s.xd[1] - s.xd[0]);
+  s.iy = py => s.yd[0] + (pad.t + s.ih - py) / s.ih * (s.yd[1] - s.yd[0]);
+
+  /* client 座標 → viewBox 座標（縮放與 CSS 尺寸都會被吸收） */
+  s.toView = ev => {
+    const r = el.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    const cy = ev.clientY !== undefined ? ev.clientY : (ev.touches && ev.touches[0].clientY);
+    return { px: (cx - r.left) / r.width * W, py: (cy - r.top) / r.height * H };
+  };
+  s.toData = ev => { const p = s.toView(ev); return { x: s.ix(p.px), y: s.iy(p.py) }; };
+
+  s.add = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k of Object.keys(attrs)) {
+      if (attrs[k] === null || attrs[k] === undefined) continue;
+      n.setAttribute(k === 'cls' ? 'class' : k, String(attrs[k]));
+    }
+    (parent || el).appendChild(n);
+    return n;
+  };
+  /* 分層：只清掉自己那層，底圖不用重畫 */
+  s.layer = name => {
+    let g = el.querySelector('g[data-layer="' + name + '"]');
+    if (!g) { g = s.add('g', { 'data-layer': name }); }
+    return g;
+  };
+  s.clearLayer = name => { const g = s.layer(name); while (g.firstChild) g.removeChild(g.firstChild); return g; };
+  s.clear = () => { while (el.firstChild) el.removeChild(el.firstChild); return s; };
+
+  /* 座標軸 + 格線 + 刻度標籤 */
+  s.grid = (nx = 5, ny = 5, opt = {}) => {
+    const g = s.clearLayer('grid');
+    const fx = opt.xfmt || (v => HC.fmt(v, opt.xdec ?? 0));
+    const fy = opt.yfmt || (v => HC.fmt(v, opt.ydec ?? 0));
+    for (let i = 0; i <= nx; i++) {
+      const v = s.xd[0] + (s.xd[1] - s.xd[0]) * i / nx, x = s.X(v);
+      s.add('line', { cls: 'gridl', x1: x, y1: pad.t, x2: x, y2: pad.t + s.ih }, g);
+      s.add('text', { cls: 'axlab', x: x, y: pad.t + s.ih + 14, 'text-anchor': 'middle' }, g).textContent = fx(v);
+    }
+    for (let i = 0; i <= ny; i++) {
+      const v = s.yd[0] + (s.yd[1] - s.yd[0]) * i / ny, y = s.Y(v);
+      s.add('line', { cls: 'gridl', x1: pad.l, y1: y, x2: pad.l + s.iw, y2: y }, g);
+      s.add('text', { cls: 'axlab', x: pad.l - 6, y: y + 3.5, 'text-anchor': 'end' }, g).textContent = fy(v);
+    }
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t + s.ih, x2: pad.l + s.iw, y2: pad.t + s.ih }, g);
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + s.ih }, g);
+    if (opt.xtitle) s.add('text', { cls: 'axtitle', x: pad.l + s.iw / 2, y: H - 4, 'text-anchor': 'middle' }, g).textContent = opt.xtitle;
+    if (opt.ytitle) {
+      const t = s.add('text', { cls: 'axtitle', x: 0, y: 0, 'text-anchor': 'middle', transform: 'translate(11,' + (pad.t + s.ih / 2) + ') rotate(-90)' }, g);
+      t.textContent = opt.ytitle;
+    }
+    return s;
+  };
+
+  s.dot = (x, y, a = {}, parent) => s.add('circle', {
+    cls: a.cls || 'dot', cx: s.X(x), cy: s.Y(y), r: a.r ?? 4,
+    fill: a.fill || HC.tok.accent2, stroke: a.stroke, 'stroke-width': a.sw,
+    opacity: a.opacity, 'data-i': a.i,
+  }, parent);
+
+  s.poly = (pts, a = {}, parent) => s.add('polyline', {
+    cls: a.cls || 'fit', points: pts.map(p => s.X(p[0]) + ',' + s.Y(p[1])).join(' '),
+    stroke: a.stroke, 'stroke-width': a.sw, fill: 'none', 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.area = (pts, a = {}, parent) => {
+    const up = pts.map(p => s.X(p[0]) + ',' + s.Y(p[1]));
+    const dn = pts.slice().reverse().map(p => s.X(p[0]) + ',' + s.Y(p[2]));
+    return s.add('polygon', { cls: a.cls || 'band', points: up.concat(dn).join(' '), fill: a.fill }, parent);
+  };
+
+  s.seg = (x1, y1, x2, y2, a = {}, parent) => s.add('line', {
+    cls: a.cls || 'resid', x1: s.X(x1), y1: s.Y(y1), x2: s.X(x2), y2: s.Y(y2),
+    stroke: a.stroke, 'stroke-width': a.sw, 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.box = (x0, y0, x1, y1, a = {}, parent) => s.add('rect', {
+    x: Math.min(s.X(x0), s.X(x1)), y: Math.min(s.Y(y0), s.Y(y1)),
+    width: Math.abs(s.X(x1) - s.X(x0)), height: Math.abs(s.Y(y1) - s.Y(y0)),
+    fill: a.fill || 'none', stroke: a.stroke, 'stroke-width': a.sw, cls: a.cls, rx: a.rx,
+  }, parent);
+
+  s.txt = (x, y, str, a = {}, parent) => {
+    const n = s.add('text', {
+      cls: a.cls || 'vlab', x: s.X(x) + (a.dx || 0), y: s.Y(y) + (a.dy || 0),
+      'text-anchor': a.anchor || 'middle', fill: a.fill,
+    }, parent);
+    n.textContent = str;
+    return n;
+  };
+  /* 用 viewBox 像素座標直接放字（圖例、標題用） */
+  s.txtPx = (px, py, str, a = {}, parent) => {
+    const n = s.add('text', { cls: a.cls || 'axlab', x: px, y: py, 'text-anchor': a.anchor || 'start', fill: a.fill }, parent);
+    n.textContent = str;
+    return n;
+  };
+  return s;
+};
+
+/* 拖曳：pointer + touch，回呼收到資料座標；會夾在定義域內 */
+HC.drag = (node, svc, onMove, opts = {}) => {
+  const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
+  const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
+  let active = false;
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  };
+  const move = ev => {
+    if (!active) return;
+    const d = svc.toData(ev);
+    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    ev.preventDefault();
+  };
+  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  node.addEventListener('pointerdown', start);
+  node.addEventListener('pointermove', move);
+  node.addEventListener('pointerup', end);
+  node.addEventListener('pointercancel', end);
+  node.style.touchAction = 'none';
+  return () => {
+    node.removeEventListener('pointerdown', start);
+    node.removeEventListener('pointermove', move);
+    node.removeEventListener('pointerup', end);
+    node.removeEventListener('pointercancel', end);
+  };
+};
+
+/* ---------- 統計小工具（各頁元件共用，避免各自重寫） ---------- */
+HC.stat = {
+  mean: a => a.reduce((s, v) => s + v, 0) / a.length,
+  variance(a) { const m = this.mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); },
+  sd(a) { return Math.sqrt(this.variance(a)); },
+  /* 簡單線性迴歸：回傳 b0, b1, rss, tss, r2, se(b0), se(b1), t 值 */
+  ols(xs, ys) {
+    const n = xs.length, mx = this.mean(xs), my = this.mean(ys);
+    let sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sxx += (xs[i] - mx) ** 2; sxy += (xs[i] - mx) * (ys[i] - my); }
+    const b1 = sxx === 0 ? 0 : sxy / sxx, b0 = my - b1 * mx;
+    let rss = 0, tss = 0;
+    for (let i = 0; i < n; i++) { rss += (ys[i] - b0 - b1 * xs[i]) ** 2; tss += (ys[i] - my) ** 2; }
+    const df = n - 2;
+    const s2 = df > 0 ? rss / df : NaN;
+    const seB1 = sxx > 0 ? Math.sqrt(s2 / sxx) : NaN;
+    const seB0 = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+    return {
+      b0, b1, rss, tss, n, df, rse: Math.sqrt(s2),
+      r2: tss === 0 ? NaN : 1 - rss / tss,
+      seB0, seB1, tB0: b0 / seB0, tB1: b1 / seB1,
+    };
+  },
+  /* RSS(b0,b1)，畫誤差曲面用 */
+  rss(xs, ys, b0, b1) {
+    let r = 0;
+    for (let i = 0; i < xs.length; i++) r += (ys[i] - b0 - b1 * xs[i]) ** 2;
+    return r;
+  },
+  /* 可重現的偽隨機（固定種子，頁面重載結果一樣） */
+  lcg(seed) { let s = (seed >>> 0) || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; },
+  /* Box–Muller 標準常態 */
+  normal(rand) {
+    let u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  /* 標準常態 CDF（Abramowitz–Stegun 7.1.26 誤差函數近似） */
+  pnorm(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const p = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    return z >= 0 ? 1 - d * p : d * p;
+  },
+  dnorm(x, mu = 0, sd = 1) { const z = (x - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); },
+  quantile(sorted, q) {
+    const h = (sorted.length - 1) * q, lo = Math.floor(h);
+    return sorted[lo] + (h - lo) * ((sorted[Math.min(lo + 1, sorted.length - 1)]) - sorted[lo]);
+  },
+  seq(a, b, n) { return Array.from({ length: n }, (_, i) => a + (b - a) * i / (n - 1)); },
+};
+
+/* ============================================================
+   頁面骨架行為
+   ============================================================ */
+
+/* 浮動導覽 scroll-spy */
+(function setupNav() {
+  const nav = $('floatNav');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[data-target]'));
+  const sections = links.map(a => $(a.dataset.target)).filter(Boolean);
+  const missing = links.filter(a => !$(a.dataset.target)).map(a => a.dataset.target);
+  if (missing.length) console.warn('float-nav 的 data-target 找不到對應 section：', missing);
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) active = s.id;
+    links.forEach(a => {
+      const on = a.dataset.target === active;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
+  d.dataset.mj = '1';
+  HC.retype(d);
+}, true);
+
+/* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
+HC.initFlashcards = () => {
+  const grid = $('fcGrid');
+  if (!grid || typeof FLASHCARDS === 'undefined') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const render = cards => {
+    grid.innerHTML = cards.map(c =>
+      '<div class="fc-card"><div class="fc-inner">'
+      + '<div class="fc-face fc-front"><div>' + esc(c.front) + '</div><div class="fc-hint">CLICK TO FLIP</div></div>'
+      + '<div class="fc-face fc-back">' + esc(c.back) + '</div>'
+      + '</div></div>').join('');
+  };
+  render(FLASHCARDS);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.fc-card');
+    if (card) card.classList.toggle('flipped');
+  });
+  const on = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  /* 洗牌用固定種子的 Fisher–Yates，每按一次換一個種子 */
+  let shuffleSeed = 20260810;
+  on('fcShuffle', () => {
+    const rand = HC.stat.lcg(shuffleSeed++);
+    const a = FLASHCARDS.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    render(a);
+  });
+  on('fcUnflip', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')));
+  on('fcFlipAll', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.add('flipped')));
+};
+</script>
+<!-- GEN:END sharedjs -->
+<!-- PAGEJS:BEGIN -->
+<script>
+/* 共用：畫一排格子 */
+function w14cells(s, g, items, opt) {
+  const cw = opt.cw || 74, x0 = opt.x0, y = opt.y;
+  items.forEach((v, i) => {
+    const on = opt.on ? opt.on(i) : false;
+    s.add('rect', {x: x0 + i * cw, y: y, width: cw - 6, height: 38, rx: 5,
+                   fill: on ? HC.tok.accent2 : HC.tok.card,
+                   stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                   opacity: on ? 1 : 0.55}, g);
+    const t = s.add('text', {x: x0 + i * cw + (cw - 6) / 2, y: y + 25,
+                             'text-anchor': 'middle', cls: 'vlab',
+                             'font-family': HC.MONO,
+                             fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = String(v);
+    if (opt.idx) {
+      const n = s.add('text', {x: x0 + i * cw + (cw - 6) / 2, y: y - 8,
+                               'text-anchor': 'middle', cls: 'axlab'}, g);
+      n.textContent = String(i);
+    }
+  });
+}
+
+/* ═══ w14rd 一行一行拆 ═══ */
+const w14rdS = HC.svg('w14readSvg', {h: 320});
+const w14rdLines = [
+  {code: "x = [3, 4, 5]", what: '做一個串列，取名叫 x', kind: '② 取名字', val: '[3, 4, 5]'},
+  {code: "y = [4, 9, 7]", what: '再做一個串列，取名叫 y', kind: '② 取名字', val: '[4, 9, 7]'},
+  {code: "x + y", what: '把兩個串列接起來', kind: '① 算一個值', val: '[3, 4, 5, 4, 9, 7]'},
+  {code: "print('total', 24)", what: '把東西交給 print 顯示', kind: '③ 丟給函式', val: 'total 24'}
+];
+let w14rdI = -1, w14rdTimer = null;
+function w14rdDraw() {
+  const g = w14rdS.clearLayer('main');
+  w14rdLines.forEach((ln, i) => {
+    const on = i === w14rdI;
+    w14rdS.add('rect', {x: 40, y: 58 + i * 54, width: 400, height: 42, rx: 6,
+                        fill: on ? HC.tok.accent : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                        opacity: on ? 0.95 : 0.5}, g);
+    const t = w14rdS.add('text', {x: 58, y: 85 + i * 54, cls: 'vlab',
+                                  'font-family': HC.MONO,
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = ln.code;
+    if (on) {
+      const v = w14rdS.add('text', {x: 462, y: 85 + i * 54, cls: 'vlab',
+                                    'font-family': HC.MONO, fill: HC.tok.accent2}, g);
+      v.textContent = '→ ' + ln.val;
+    }
+  });
+  const ln = w14rdLines[Math.max(0, w14rdI)];
+  document.getElementById('w14rdWhat').textContent = w14rdI < 0 ? '—' : ln.what;
+  document.getElementById('w14rdKind').textContent = w14rdI < 0 ? '—' : ln.kind;
+  document.getElementById('w14rdVal').textContent = w14rdI < 0 ? '—' : ln.val;
+  setStatus('w14rdStatus', w14rdI < 0 ? '按「單步」一行一行拆。'
+            : '這一行在' + ln.what + '（' + ln.kind + '）。');
+}
+function w14rdStep() { w14rdI = Math.min(w14rdLines.length - 1, w14rdI + 1); w14rdDraw(); }
+function w14rdReset() {
+  if (w14rdTimer) { clearTimeout(w14rdTimer); w14rdTimer = null; }
+  w14rdI = -1; w14rdDraw();
+}
+function w14rdPlay() {
+  w14rdReset();
+  const tick = () => {
+    if (w14rdI >= w14rdLines.length - 1) { w14rdTimer = null; return; }
+    w14rdStep();
+    w14rdTimer = setTimeout(tick, 900);
+  };
+  w14rdTimer = setTimeout(tick, 400);
+}
+if (w14rdS) w14rdDraw();
+
+/* ═══ w14va 名牌不是盒子 ═══ */
+const w14vaS = HC.svg('w14varSvg', {h: 320});
+let w14vaHasY = false, w14vaVals = [3, 4, 5];
+function w14vaDraw() {
+  const g = w14vaS.clearLayer('main');
+  w14cells(w14vaS, g, w14vaVals, {x0: 220, y: 130, cw: 76});
+  w14vaS.add('rect', {x: 206, y: 116, width: 3 * 76 + 8, height: 66, rx: 8,
+                      fill: 'none', stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
+                      'stroke-dasharray': '5 4'}, g);
+  w14vaS.txtPx(310, 200, '記憶體裡的那一個串列', {cls: 'axlab', anchor: 'middle'}, g);
+  const tag = (label, y, col) => {
+    w14vaS.add('rect', {x: 60, y: y, width: 78, height: 34, rx: 6, fill: col}, g);
+    const t = w14vaS.add('text', {x: 99, y: y + 23, 'text-anchor': 'middle', cls: 'vlab',
+                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
+    t.textContent = label;
+    w14vaS.add('path', {d: 'M138 ' + (y + 17) + ' H 200', stroke: col,
+                        'stroke-width': 2.4, fill: 'none'}, g);
+    w14vaS.add('path', {d: 'M206 ' + (y + 17) + ' l -10 -6 v 12 z', fill: col}, g);
+  };
+  tag('x', 92, HC.tok.accent2);
+  if (w14vaHasY) tag('y', 168, HC.tok.accent);
+  document.getElementById('w14vaX').textContent = '[' + w14vaVals.join(', ') + ']';
+  document.getElementById('w14vaY').textContent = w14vaHasY
+    ? '[' + w14vaVals.join(', ') + ']' : '（還沒有 y）';
+  document.getElementById('w14vaSame').textContent = w14vaHasY ? '是，同一個' : '—';
+  setStatus('w14vaStatus', w14vaVals[0] === 99
+    ? '改的是 y[0]，但 <b>x 也變了</b> —— 因為它們指的本來就是同一個串列。'
+    : (w14vaHasY ? '兩張名牌貼在同一個串列上。接著按「改內容」。'
+                 : '一個串列，一張名牌。按「再貼一張名牌」。'));
+}
+function w14vaAlias() { w14vaHasY = true; w14vaDraw(); }
+function w14vaMut() {
+  if (!w14vaHasY) { w14vaHasY = true; }
+  w14vaVals = [99, 4, 5]; w14vaDraw();
+}
+function w14vaReset() { w14vaHasY = false; w14vaVals = [3, 4, 5]; w14vaDraw(); }
+if (w14vaS) w14vaDraw();
+
+/* ═══ w14ix 索引 ═══ */
+const w14ixS = HC.svg('w14idxSvg', {h: 300});
+const w14ixCols = ['mpg', 'cyl', 'hp', 'wt', 'year'];
+let w14ixI = 0;
+function w14ixDraw() {
+  const g = w14ixS.clearLayer('main');
+  w14cells(w14ixS, g, w14ixCols, {x0: 62, y: 110, cw: 100, idx: true,
+                                  on: i => i === w14ixI});
+  w14ixCols.forEach((v, i) => {
+    const n = w14ixS.add('text', {x: 62 + i * 100 + 47, y: 176, 'text-anchor': 'middle',
+                                  cls: 'axlab', fill: HC.tok.muted}, g);
+    n.textContent = String(i - w14ixCols.length);
+  });
+  w14ixS.txtPx(310, 66, "cols = ['mpg', 'cyl', 'hp', 'wt', 'year']",
+               {cls: 'axtitle', anchor: 'middle'}, g);
+  w14ixS.txtPx(310, 210, '上面是正的索引，下面是負的索引',
+               {cls: 'axlab', anchor: 'middle'}, g);
+  document.getElementById('w14ixI').textContent = String(w14ixI);
+  document.getElementById('w14ixV').textContent = "'" + w14ixCols[w14ixI] + "'";
+  document.getElementById('w14ixN').textContent = String(w14ixI - w14ixCols.length);
+  setStatus('w14ixStatus', 'cols[' + w14ixI + '] 與 cols['
+            + (w14ixI - w14ixCols.length) + '] 都是 <b>' + w14ixCols[w14ixI] + '</b>。');
+}
+function w14ixMove(d) {
+  w14ixI = Math.max(0, Math.min(w14ixCols.length - 1, w14ixI + d));
+  w14ixDraw();
+}
+function w14ixReset() { w14ixI = 0; w14ixDraw(); }
+if (w14ixS) w14ixDraw();
+
+/* ═══ w14sl 切片尺規（本頁招牌）═══ */
+const w14slS = HC.svg('w14slSvg', {h: 320});
+const w14slStr = 'hello world';
+let w14slA = 3, w14slB = 6, w14slStep2 = false;
+function w14slDraw() {
+  const g = w14slS.clearLayer('main');
+  const chars = w14slStr.split('');
+  const st = w14slStep2 ? 2 : 1;
+  const taken = [];
+  for (let i = w14slA; i < w14slB; i += st) taken.push(i);
+  const cw = 48, x0 = 310 - chars.length * cw / 2;
+  chars.forEach((ch, i) => {
+    const on = taken.indexOf(i) >= 0;
+    const isEnd = i === w14slB;
+    w14slS.add('rect', {x: x0 + i * cw, y: 122, width: cw - 5, height: 44, rx: 5,
+                        fill: on ? HC.tok.accent2 : (isEnd ? HC.tok.muted : HC.tok.card),
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                        opacity: on ? 1 : (isEnd ? 0.75 : 0.5)}, g);
+    const t = w14slS.add('text', {x: x0 + i * cw + (cw - 5) / 2, y: 152,
+                                  'text-anchor': 'middle', cls: 'vlab',
+                                  'font-family': HC.MONO,
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = ch === ' ' ? '␣' : ch;
+    const n = w14slS.add('text', {x: x0 + i * cw + (cw - 5) / 2, y: 112,
+                                  'text-anchor': 'middle', cls: 'axlab'}, g);
+    n.textContent = String(i);
+  });
+  const mark = (i, label, col) => {
+    const x = x0 + i * cw;
+    w14slS.add('path', {d: 'M' + x + ' 178 V 202', stroke: col, 'stroke-width': 2.6}, g);
+    const t = w14slS.add('text', {x: x, y: 220, 'text-anchor': 'middle', cls: 'axtitle',
+                                  fill: col}, g);
+    t.textContent = label;
+  };
+  mark(w14slA, '起 ' + w14slA, HC.tok.accent2);
+  mark(w14slB, '迄 ' + w14slB + '（不含）', HC.tok.resid);
+  const expr = 's[' + w14slA + ':' + w14slB + (w14slStep2 ? ':2' : '') + ']';
+  const val = taken.map(i => chars[i]).join('');
+  w14slS.txtPx(310, 70, "s = 'hello world'", {cls: 'axtitle', anchor: 'middle'}, g);
+  document.getElementById('w14slExpr').textContent = expr;
+  document.getElementById('w14slVal').textContent = "'" + val + "'";
+  document.getElementById('w14slLen').textContent = String(taken.length);
+  setStatus('w14slStatus', expr + ' 取到 <b>' + taken.length
+            + '</b> 個字元。灰色那一格是<b>迄</b>，永遠不會被取到。');
+}
+function w14slMove(which, d) {
+  if (which === 0) w14slA = Math.max(0, Math.min(w14slB, w14slA + d));
+  else w14slB = Math.max(w14slA, Math.min(w14slStr.length, w14slB + d));
+  w14slDraw();
+}
+function w14slStepTog() { w14slStep2 = !w14slStep2; w14slDraw(); }
+function w14slReset() { w14slA = 3; w14slB = 6; w14slStep2 = false; w14slDraw(); }
+if (w14slS) w14slDraw();
+
+/* ═══ w14dc 串列 vs 字典 ═══ */
+const w14dcS = HC.svg('w14dcSvg', {h: 300});
+const w14dcCases = [
+  {want: 'R²', list: "scores[0]", dict: "scores['R2']", hit: 0},
+  {want: 'MSE', list: "scores[2]", dict: "scores['MSE']", hit: 2},
+  {want: '多加一項', list: "scores.append(0.31)", dict: "scores['MAE'] = 0.31", hit: -1}
+];
+let w14dcI = 0;
+function w14dcDraw() {
+  const g = w14dcS.clearLayer('main');
+  const c = w14dcCases[w14dcI];
+  const vals = ['0.544', '0.544', '38.48'];
+  const keys = ['R2', 'Ex.Var', 'MSE'];
+  w14dcS.txtPx(150, 62, '串列（用位置）', {cls: 'axtitle', anchor: 'middle'}, g);
+  vals.forEach((v, i) => {
+    const on = c.hit === i;
+    w14dcS.add('rect', {x: 60, y: 84 + i * 52, width: 180, height: 42, rx: 5,
+                        fill: on ? HC.tok.accent2 : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                        opacity: on ? 1 : 0.5}, g);
+    const t = w14dcS.add('text', {x: 150, y: 111 + i * 52, 'text-anchor': 'middle',
+                                  cls: 'vlab', 'font-family': HC.MONO,
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = '[' + i + '] ' + v;
+  });
+  w14dcS.txtPx(450, 62, '字典（用名字）', {cls: 'axtitle', anchor: 'middle'}, g);
+  keys.forEach((k, i) => {
+    const on = c.hit === i;
+    w14dcS.add('rect', {x: 340, y: 84 + i * 52, width: 220, height: 42, rx: 5,
+                        fill: on ? HC.tok.accent : HC.tok.card,
+                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
+                        opacity: on ? 1 : 0.5}, g);
+    const t = w14dcS.add('text', {x: 450, y: 111 + i * 52, 'text-anchor': 'middle',
+                                  cls: 'vlab', 'font-family': HC.MONO,
+                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
+    t.textContent = "'" + k + "': " + vals[i];
+  });
+  document.getElementById('w14dcWant').textContent = c.want;
+  document.getElementById('w14dcList').textContent = c.list;
+  document.getElementById('w14dcDict').textContent = c.dict;
+  setStatus('w14dcStatus', w14dcI === 2
+    ? '加東西兩邊都容易，差別在<b>你之後怎麼找回來</b>。'
+    : '要拿 ' + c.want + '：串列得記得它在第 ' + c.hit + ' 個，字典直接寫名字。');
+}
+function w14dcSet(i) { w14dcI = i; w14dcDraw(); }
+if (w14dcS) w14dcDraw();
+
+/* ═══ w14fm 格式規格 ═══ */
+const w14fmS = HC.svg('w14fmtSvg', {h: 300});
+const w14fmCases = [
+  {spec: '{:.2f}', out: '25.57', when: '報告統計量'},
+  {spec: '{:.4f}', out: '25.5739', when: '係數、p 值'},
+  {spec: '{:.2%}', out: '2557.39%', when: '比例（先乘 100）'},
+  {spec: '{:.3e}', out: '2.557e+01', when: '非常大或非常小的數'},
+  {spec: '{:>10.2f}', out: '␣␣␣␣␣25.57', when: '對齊成一欄'}
+];
+let w14fmI = 0;
+function w14fmDraw() {
+  const g = w14fmS.clearLayer('main');
+  const c = w14fmCases[w14fmI];
+  w14fmS.txtPx(310, 76, '25.573878', {cls: 'axtitle', anchor: 'middle'}, g);
+  w14fmS.add('path', {d: 'M310 92 V 128', stroke: HC.tok.accent, 'stroke-width': 2.4}, g);
+  w14fmS.add('path', {d: 'M310 134 l -7 -11 h 14 z', fill: HC.tok.accent}, g);
+  w14fmS.add('rect', {x: 190, y: 138, width: 240, height: 44, rx: 6,
+                      fill: HC.tok.accent, opacity: 0.9}, g);
+  const t = w14fmS.add('text', {x: 310, y: 166, 'text-anchor': 'middle', cls: 'vlab',
+                                'font-family': HC.MONO, fill: HC.tok.paper}, g);
+  t.textContent = c.spec;
+  w14fmS.add('path', {d: 'M310 186 V 216', stroke: HC.tok.accent2, 'stroke-width': 2.4}, g);
+  w14fmS.add('path', {d: 'M310 222 l -7 -11 h 14 z', fill: HC.tok.accent2}, g);
+  w14fmS.add('rect', {x: 170, y: 226, width: 280, height: 46, rx: 6,
+                      fill: HC.tok.accent2, opacity: 0.92}, g);
+  const o = w14fmS.add('text', {x: 310, y: 256, 'text-anchor': 'middle', cls: 'vlab',
+                                'font-family': HC.MONO, fill: HC.tok.paper}, g);
+  o.textContent = c.out;
+  document.getElementById('w14fmSpec').textContent = c.spec;
+  document.getElementById('w14fmOut').textContent = c.out;
+  document.getElementById('w14fmWhen').textContent = c.when;
+  setStatus('w14fmStatus', c.spec + ' → <b>' + c.out + '</b>（' + c.when + '）。');
+}
+function w14fmSet(i) { w14fmI = i; w14fmDraw(); }
+if (w14fmS) w14fmDraw();
+</script>
+<!-- PAGEJS:END -->
+<!-- DATA:BEGIN -->
+<script>
+const FLASHCARDS = [{"front":"直譯器（Interpreter）","back":"一行一行讀你的程式碼並執行的東西。Jupyter 的每一個儲存格都是丟給它跑，而且會自動顯示<b>最後一行的值</b>，所以不寫 print 也看得到結果。"},{"front":"變數（Variable）","back":"貼在資料上的<b>名牌</b>，不是裝資料的盒子。<code>b = a</code> 只是多貼一張名牌，兩個名字指的是同一個東西。"},{"front":"賦值（Assignment）","back":"<code>x = [3, 4, 5]</code>：先做出右邊那個東西，再把左邊的名字貼上去。等號不是數學的等於，是「取名字」。"},{"front":"別名（Alias）","back":"同一個物件有兩個以上的名字。改其中一個會影響全部——這是資料前處理最常見的意外，要複製得明講 <code>.copy()</code>。"},{"front":"不可變（Immutable）","back":"整數、浮點數、字串、tuple 不能被就地修改，所以它們沒有別名的問題。串列與字典是可變的，才要小心。"},{"front":"整數（int）","back":"沒有小數的數。樣本數 n、變數個數 p、折數 k 都是它。<code>7 // 2</code> 是整數除法，直接砍掉小數。"},{"front":"浮點數（float）","back":"有小數的數。MSE、係數、p 值幾乎都是。<code>7 / 2</code> 給的就是浮點數 3.5。"},{"front":"字串（str）","back":"用引號包起來的文字。欄名、檔名、圖的標題都是。加號對字串是<b>接起來</b>，不是相加。"},{"front":"布林（bool）","back":"只有 <code>True</code> 與 <code>False</code>。條件的結果是它，P3 的布林遮罩整排都是它。"},{"front":"串列（list）","back":"有順序的一排東西，用中括號寫，從 <b>0</b> 開始數。常拿來裝一組欄名或一組要試的參數。"},{"front":"索引（Index）","back":"串列裡的位置。想成「離開頭有多遠」——第一個離開頭 0 步，所以從 0 開始。"},{"front":"負索引（Negative Index）","back":"從後面數起：<code>-1</code> 是最後一個、<code>-2</code> 是倒數第二。比 <code>a[len(a)-1]</code> 好讀。"},{"front":"切片（Slice）","back":"<code>起:迄:步長</code>，而且<b>迄不包含</b>。好處是 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a，不重疊也不漏。"},{"front":"整段切片（a[:]）","back":"從頭到尾，而且會產生<b>新的一份</b>。跟 <code>b = a</code> 完全不同——後者只是多貼名牌。"},{"front":"字典（dict）","back":"鍵值對的集合，用<b>名字</b>取值而不是位置。統計程式裡所有「一組具名的結果」都是它。"},{"front":"鍵（Key）","back":"字典裡用來查值的名字。必須是不可變的東西（字串、數字、tuple），串列不行。實務上九成是字串。"},{"front":"KeyError","back":"字典裡沒有那個鍵時拋的錯。這是刻意的設計，免得你把打錯的欄名一路帶下去。想要預設值就用 <code>d.get(鍵, 預設)</code>。"},{"front":"安全取值（get）","back":"<code>d.get('R2', 0)</code>：找得到就給值，找不到給預設值而不是報錯。"},{"front":"函式呼叫（Function Call）","back":"名字後面加括號，括號裡是要給它的東西。<code>print(x)</code>、<code>len(a)</code>、<code>sm.OLS(y, X)</code> 都是。"},{"front":"格式化（Formatting）","back":"把數字變成人看得懂的字串。<code>f'MSE = {mse:.2f}'</code> 或 <code>'{:.2f}'.format(mse)</code>，冒號後面是格式規格。"},{"front":"格式規格（Format Spec）","back":"冒號後面那一段。<code>.2f</code> 是小數兩位、<code>.2%</code> 是百分比（<b>會自己乘 100</b>）、<code>.3e</code> 是科學記號、<code>&gt;10</code> 是靠右對齊到寬度 10。"},{"front":"f-string","back":"字串前面加 <code>f</code>，就能把變數直接寫在大括號裡：<code>f'n = {n}'</code>。現在的預設寫法，格式規格跟 <code>format</code> 完全一樣。"},{"front":"整數除法（//）","back":"<code>7 // 2</code> 給 3，直接砍掉小數。算折數或索引時用，算統計量千萬別用錯。"},{"front":"Jupyter 儲存格（Cell）","back":"一小塊可以單獨執行的程式碼。它會顯示最後一行的值。<b>執行順序由你決定，不是由上到下</b>——亂序執行會造成很難查的狀態污染。"}];
+HC.initFlashcards();
+</script>
+<!-- DATA:END -->
+</body></html>

@@ -290,6 +290,32 @@ def _svg_pipe():
             '<circle cx="116" cy="76" r="7"/></g>')
 
 
+def _svg_code():
+    """先備 P1：幾行長短不一的程式碼。"""
+    lines = [(46, 210), (66, 150), (66, 176), (46, 128), (46, 232), (66, 168)]
+    rows = "".join(
+        f'<rect x="{x}" y="{54 + i * 30}" width="{w}" height="14" rx="7"/>'
+        for i, (x, w) in enumerate(lines))
+    return (f'<g fill="#fff" opacity=".62">{rows}</g>'
+            '<g fill="#fff" opacity=".9">'
+            '<rect x="46" y="234" width="96" height="14" rx="7"/></g>'
+            '<g stroke="#fff" stroke-width="3" opacity=".5">'
+            '<path d="M30 40 V262"/></g>')
+
+
+def _svg_flow():
+    """先備 P2：一個判斷、兩條分支、一個迴圈。"""
+    return ('<g stroke="#fff" stroke-width="3" fill="none" opacity=".85">'
+            '<path d="M180 46 V78"/><path d="M120 108 H80 V160"/>'
+            '<path d="M240 108 H280 V160"/><path d="M180 138 V240"/>'
+            '<path d="M80 190 H280 V190"/></g>'
+            '<g fill="#fff" opacity=".9">'
+            '<path d="M180 78 L240 108 L180 138 L120 108 Z"/>'
+            '<rect x="52" y="160" width="56" height="30" rx="5"/>'
+            '<rect x="252" y="160" width="56" height="30" rx="5"/>'
+            '<circle cx="180" cy="252" r="13"/></g>')
+
+
 PAGES = [
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
@@ -612,6 +638,67 @@ PAGES = [
     ),
     # ── 先備入口層（kind="prep"，n=12 起）────────────────────────────────
     Page(
+        n=14, stem="p1_python_basics", slug="PYTHON BASICS", title_en="Python Basics",
+        h1='看得懂一段<span class="blue">統計程式</span>：Python 基礎',
+        plain="Python 基礎",
+        subtitle="先備知識 P1 — 選讀，不列入評分",
+        formula="變數是名牌不是盒子｜int float str bool｜串列與索引｜切片含頭不含尾｜字典是鍵值對｜f-string 與 format",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · Python 基礎", esl_label="",
+        playlist="",
+        hero_svg=_svg_code(),
+        kind="prep", data_key="prep_p1_python_basics", src_labs=(2, 1),
+        ex_links=[("🔗 Python 官方教學（中文）", "https://docs.python.org/zh-tw/3/tutorial/"),
+                  ("🔗 內建型別", "https://docs.python.org/zh-tw/3/library/stdtypes.html"),
+                  ("📓 Ch02 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                   "static_files/presentations/Ch02-statlearn-lab-zh.ipynb")],
+        secs=[
+            Sec("prologue", "第一行程式", "先讓一段課程 lab 的程式碼變得看得懂",
+                "課程 Lab Ch2 · 儲存格 12–18", kicker="PROLOGUE · 開場"),
+            Sec("var", "變數與型別", "變數是貼在資料上的名牌，不是裝資料的盒子",
+                "課程 Lab Ch2 · 儲存格 16–23"),
+            Sec("list", "串列", "一排有順序的東西，從 0 開始數",
+                "課程 Lab Ch2 · 儲存格 21–23"),
+            Sec("slice", "切片", "起:迄:步長，而且<strong>迄不包含</strong>",
+                "課程 Lab Ch2 · 儲存格 132–134"),
+            Sec("dict", "字典", "用名字取值，而不是用位置",
+                "課程 Lab Ch1 · 儲存格 19–26"),
+            Sec("str", "字串與格式化", "把數字變成人看得懂的一行字",
+                "課程 Lab Ch2 · 儲存格 236–244"),
+        ],
+    ),
+    Page(
+        n=15, stem="p2_flow_functions", slug="FLOW & FUNCTIONS", title_en="Flow and Functions",
+        h1='讓程式<span class="orange">重複</span>與<span class="blue">分岔</span>：流程與函式',
+        plain="流程與函式",
+        subtitle="先備知識 P2 — 選讀，不列入評分",
+        formula="if elif else｜& 與 and 不一樣｜for 與 zip｜def 與 return｜預設引數｜作用域｜讀懂 traceback",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · 流程與函式", esl_label="",
+        playlist="",
+        hero_svg=_svg_flow(),
+        kind="prep", data_key="prep_p2_flow_functions", src_labs=(2, 5),
+        ex_links=[("🔗 Python 控制流程",
+                   "https://docs.python.org/zh-tw/3/tutorial/controlflow.html"),
+                  ("🔗 例外處理", "https://docs.python.org/zh-tw/3/tutorial/errors.html"),
+                  ("📓 Ch05 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                   "static_files/presentations/Ch05-resample-lab-zh.ipynb")],
+        secs=[
+            Sec("prologue", "為什麼要寫函式", "同一段程式碼貼三次，就是三個等著出錯的地方",
+                "課程 Lab Ch5 · 儲存格 24–26", kicker="PROLOGUE · 開場"),
+            Sec("cond", "條件與布林", "<code>&amp;</code> 與 <code>and</code> 不是同一回事",
+                "課程 Lab Ch2 · 儲存格 226–232"),
+            Sec("loop", "迴圈", "for、range 與 zip：把同一件事做很多次",
+                "課程 Lab Ch2 · 儲存格 236–240"),
+            Sec("func", "函式", "def、參數、return：把一段流程封起來",
+                "課程 Lab Ch5 · 儲存格 24–26"),
+            Sec("scope", "預設引數與作用域", "函式裡看得到外面，外面看不到裡面",
+                "課程 Lab Ch5 · 儲存格 59–61"),
+            Sec("err", "讀懂錯誤訊息", "traceback 要從<strong>最後一行</strong>開始讀",
+                "課程 Lab Ch2 · 儲存格 152"),
+        ],
+    ),
+    Page(
         n=16, stem="p3_numpy", slug="NUMPY", title_en="NumPy Arrays",
         h1='把資料裝進<span class="blue">陣列</span>：NumPy',
         plain="NumPy 陣列",
@@ -741,10 +828,12 @@ PAGES = [
         ],
     ),
 ]
-# ⚠️ 只能 append，永遠不要在中間插頁。
+# ⚠️ 既有頁面的 n 一旦定了就不能改。
 # w<NN> 的 NN 就是這裡的 n（validate.py 的 ID-PREFIX 檢查），十一支 enrich 腳本裡
 # 寫死了 w01–w11；中間插一頁會讓後面每一頁的前綴位移，整批元件的 id 與 JS 宣告全部失效。
 # 先備入口層從 n=12 起跳，正是為了避開這件事。
+# 補寫先備層還沒寫的頁（例如先寫 16 再補 14）是安全的——那不會動到任何既有頁的 n。
+# 但字面值要照 n 由小到大排，因為 index 與 README 的順序就是這個列表的順序。
 
 BY_STEM = {p.stem: p for p in PAGES}
 BY_N = {p.n: p for p in PAGES}

@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+<!-- GEN:BEGIN head -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：十一章互動教材，每節都能動手操作、預測、驗證。NSYSU MATH524 課程配套。">
-<title>統計學習 × Python 互動自學網站 — NSYSU MATH524</title>
+<meta name="description" content="流程與函式 — Flow and Functions 互動自學頁。先備知識 P2 — 選讀，不列入評分。NSYSU MATH524 統計學習與資料探勘。">
+<title>流程與函式 — Flow and Functions Interactive（Python）</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+        integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
 <style>
 :root {
   --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
@@ -511,227 +519,734 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   section{break-after:auto;border-bottom:none;}
   a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
 }
-
-/* index.html 專用（章節總覽）。base.css 提供 token、hero、container、footer。 */
-
-.hero-code{position:absolute;right:4%;top:50%;transform:translateY(-50%);opacity:.09;
-  pointer-events:none;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.7;
-  color:#fff;white-space:pre;text-align:left;}
-@media(max-width:1000px){.hero-code{display:none;}}
-
-.loop-box{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);
-  border-radius:12px;padding:1.3rem 1.6rem;box-shadow:0 2px 10px rgba(0,0,0,.04);}
-.lb-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:1.05rem;color:var(--accent2);
-  margin-bottom:.6rem;}
-.loop-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin-top:1rem;}
-.loop-steps .step{background:var(--paper);border:1px solid var(--card-border);border-radius:9px;
-  padding:.75rem .9rem;font-size:.88rem;line-height:1.8;}
-.loop-steps .step b{display:block;font-family:'JetBrains Mono',monospace;font-size:.7rem;
-  letter-spacing:.1em;color:var(--accent3);margin-bottom:.3rem;}
-
-.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
-.ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
-  border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
-  box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .18s,box-shadow .18s,border-color .18s;
-  position:relative;overflow:hidden;}
-.ch-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent2);
-  opacity:.55;transition:opacity .18s;}
-.ch-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.09);
-  border-color:var(--accent2);}
-.ch-card:hover::before{opacity:1;}
-.ch-num{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.14em;
-  color:var(--accent3);display:block;margin-bottom:.45rem;}
-.ch-card h3{font-family:'Noto Serif TC',serif;font-size:1.06rem;font-weight:700;color:var(--ink);
-  margin:0 0 .5rem;line-height:1.5;}
-.ch-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:600;
-  color:var(--accent2);background:rgba(44,62,122,.08);border-radius:4px;padding:.12rem .45rem;
-  margin-bottom:.5rem;}
-.ch-meta{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);line-height:1.7;}
-
-.res-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:1.2rem;}
-.res-card{background:var(--card);border:1px solid var(--card-border);border-radius:11px;
-  padding:1rem 1.15rem;font-size:.88rem;line-height:1.8;}
-.res-card b{display:block;color:var(--accent2);font-size:.95rem;margin-bottom:.35rem;}
-.res-card a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);}
-.res-card a:hover{background:var(--highlight);}
 </style>
 </head>
+<!-- GEN:END head -->
 <body>
+<!-- GEN:BEGIN floatnav -->
+<nav class="float-nav" id="floatNav" aria-label="章節導覽">
+  <div class="fn-title">章節導覽</div>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">為什麼要寫函式</span></a>
+  <a href="#cond" data-target="cond"><span class="fn-num">P01</span><span class="fn-name">條件與布林</span></a>
+  <a href="#loop" data-target="loop"><span class="fn-num">P02</span><span class="fn-name">迴圈</span></a>
+  <a href="#func" data-target="func"><span class="fn-num">P03</span><span class="fn-name">函式</span></a>
+  <a href="#scope" data-target="scope"><span class="fn-num">P04</span><span class="fn-name">預設引數與作用域</span></a>
+  <a href="#err" data-target="err"><span class="fn-num">P05</span><span class="fn-name">讀懂錯誤訊息</span></a>
+  <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
+  <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
+</nav>
+<!-- GEN:END floatnav -->
+<!-- GEN:BEGIN hero -->
 <div class="hero" id="top">
   <div class="hero-grid"></div>
-  <div class="hero-code">from ISLP import load_data
-from sklearn.model_selection import KFold
-
-Auto = load_data('Auto')
-cv   = KFold(10, shuffle=True,
-             random_state=0)
-# 交叉驗證估預測誤差
-# bootstrap 估不確定性</div>
+  <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+<g stroke="#fff" stroke-width="3" fill="none" opacity=".85"><path d="M180 46 V78"/><path d="M120 108 H80 V160"/><path d="M240 108 H280 V160"/><path d="M180 138 V240"/><path d="M80 190 H280 V190"/></g><g fill="#fff" opacity=".9"><path d="M180 78 L240 108 L180 138 L120 108 Z"/><rect x="52" y="160" width="56" height="30" rx="5"/><rect x="252" y="160" width="56" height="30" rx="5"/><circle cx="180" cy="252" r="13"/></g>
+  </svg>
   <div class="hero-content">
-    <h1>統計學習 <span class="green">×</span> <span class="blue">Python</span><br>互動自學網站</h1>
-    <div class="subtitle">NSYSU MATH524 統計學習與資料探勘 · 依 ISLP 與課程講義編寫</div>
-    <div class="big-formula">迴歸｜分類｜重抽樣｜模型選擇｜非監督式｜樣條與 GAM｜樹與集成｜SVM｜深度學習</div>
-    <div class="scroll-hint">選一章開始<span>↓</span></div>
+    <h1>讓程式<span class="orange">重複</span>與<span class="blue">分岔</span>：流程與函式</h1>
+    <div class="subtitle">先備知識 P2 — 選讀，不列入評分</div>
+    <div class="big-formula">if elif else｜& 與 and 不一樣｜for 與 zip｜def 與 return｜預設引數｜作用域｜讀懂 traceback</div>
+    <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
   </div>
 </div>
-
+<!-- GEN:END hero -->
 <div class="container">
-  <section>
-    <div class="loop-box">
-      <div class="lb-title">📌 建議學習迴圈（每一章都照這個節奏）</div>
-      <p>這個網站是課程講義的互動版配套：<strong>講義給完整程式與推導，這裡給你「動手驗證直覺」的空間。</strong>
-      每頁的 §徽章都標了 ISLP 節號與講義頁碼，方便左右對照；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
-      最後一章標了「補充」——本課沒有教 ISLP 第 10 章，那一頁的出處改用課本官方的英文 lab，其餘規格相同。</p>
-      <div class="loop-steps">
-        <div class="step"><b>① READ &amp; PLAY</b>逐節閱讀，動手操作互動元件：先預測結果，再按按鈕驗證。</div>
-        <div class="step"><b>② CROSS-CHECK</b>對照講義 PDF 與 ISLP 原文，把完整程式看懂、抄一遍、跑一遍。</div>
-        <div class="step"><b>③ QUIZ</b>每節 quiz 立刻自測：答錯就回頭重讀該節，不要往下跳。</div>
-        <div class="step"><b>④ FLASHCARDS &amp; REF</b>翻完詞彙卡、掃過 REF 速查表，能不看答案講出定義才算過關。</div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>章節（依授課順序）</h2>
-    <p>順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
-    共 11 章、92 個互動元件、296 張詞彙卡。</p>
-    <div class="ch-grid">
-      <a class="ch-card" href="introduction.html">
-        <span class="ch-num">01 · INTRODUCTION</span>
-        <h3>統計學習導論</h3>
-        <span class="ch-badge">ISLP Ch.1</span>
-        <div class="ch-meta">8 節 · 4 個互動元件 · 每節 quiz · 23 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="statistical_learning.html">
-        <span class="ch-num">02 · STATISTICAL LEARNING</span>
-        <h3>統計學習的基本框架</h3>
-        <span class="ch-badge">ISLP Ch.2 ／ ESL Ch.2</span>
-        <div class="ch-meta">7 節 · 8 個互動元件 · 每節 quiz · 26 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="linear_regression.html">
-        <span class="ch-num">03 · LINEAR REGRESSION</span>
-        <h3>線性迴歸</h3>
-        <span class="ch-badge">ISLP Ch.3 ／ ESL §3.1–3.3</span>
-        <div class="ch-meta">8 節 · 9 個互動元件 · 題庫自測 6 題 · 28 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="classification.html">
-        <span class="ch-num">04 · CLASSIFICATION</span>
-        <h3>分類</h3>
-        <span class="ch-badge">ISLP Ch.4 ／ ESL §4.1–4.4</span>
-        <div class="ch-meta">8 節 · 7 個互動元件 · 題庫自測 6 題 · 28 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="resampling_methods.html">
-        <span class="ch-num">05 · RESAMPLING</span>
-        <h3>重抽樣方法</h3>
-        <span class="ch-badge">ISLP Ch.5 ／ ESL §7.1–7.4、7.10–7.11</span>
-        <div class="ch-meta">8 節 · 8 個互動元件 · 每節 quiz · 23 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="model_selection.html">
-        <span class="ch-num">06 · MODEL SELECTION</span>
-        <h3>線性模型選擇與正則化</h3>
-        <span class="ch-badge">ISLP Ch.6 ／ ESL §3.3–3.6、§7.1–7.7</span>
-        <div class="ch-meta">10 節 · 10 個互動元件 · 每節 quiz · 27 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="unsupervised_learning.html">
-        <span class="ch-num">07 · UNSUPERVISED</span>
-        <h3>非監督式學習</h3>
-        <span class="ch-badge">ISLP Ch.12 ／ ESL §13.1–13.3、§14.1–14.3、§14.5–14.9</span>
-        <div class="ch-meta">11 節 · 9 個互動元件 · 每節 quiz · 30 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="beyond_linearity.html">
-        <span class="ch-num">08 · BEYOND LINEARITY</span>
-        <h3>超越線性</h3>
-        <span class="ch-badge">ISLP Ch.7 ／ ESL §5.1–5.7、§6.1–6.3、§9.1</span>
-        <div class="ch-meta">9 節 · 12 個互動元件 · 每節 quiz · 28 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="tree_based_methods.html">
-        <span class="ch-num">09 · TREES & ENSEMBLES</span>
-        <h3>樹狀方法與集成學習</h3>
-        <span class="ch-badge">ISLP Ch.8 ／ ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3</span>
-        <div class="ch-meta">11 節 · 10 個互動元件 · 題庫自測 6 題 · 30 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="support_vector_machines.html">
-        <span class="ch-num">10 · SVM</span>
-        <h3>支持向量機</h3>
-        <span class="ch-badge">ISLP Ch.9 ／ ESL §6.6–6.9、§12.1–12.3</span>
-        <div class="ch-meta">7 節 · 9 個互動元件 · 每節 quiz · 26 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="deep_learning.html">
-        <span class="ch-num">11 · DEEP LEARNING</span>
-        <h3>深度學習（補充）</h3>
-        <span class="ch-badge">ISLP Ch.10 · 補充 ／ ESL Ch.11</span>
-        <div class="ch-meta">7 節 · 6 個互動元件 · 每節 quiz · 27 張詞彙卡</div>
-      </a>
-    </div>
-  </section>
-
-  <section id="prep">
-    <h2>先備入口 · Python 起步</h2>
-    <p>沒寫過 Python，或只會一點點？這幾頁把正課會用到的語法與套件先講一遍，
-    程式碼全部取自課程 lab notebook。選讀，不列入評分。
-    共 6 頁、33 個互動元件。</p>
-    <div class="ch-grid">
-      <a class="ch-card" href="p1_python_basics.html">
-        <span class="ch-num">14 · PYTHON BASICS</span>
-        <h3>Python 基礎</h3>
-        <span class="ch-badge">先備 · Python 基礎</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="p2_flow_functions.html">
-        <span class="ch-num">15 · FLOW & FUNCTIONS</span>
-        <h3>流程與函式</h3>
-        <span class="ch-badge">先備 · 流程與函式</span>
-        <div class="ch-meta">6 節 · 每節 quiz · 詞彙卡待補</div>
-      </a>
-      <a class="ch-card" href="p3_numpy.html">
-        <span class="ch-num">16 · NUMPY</span>
-        <h3>NumPy 陣列</h3>
-        <span class="ch-badge">先備 · NumPy 陣列</span>
-        <div class="ch-meta">8 節 · 7 個互動元件 · 每節 quiz · 26 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="p4_pandas.html">
-        <span class="ch-num">17 · PANDAS</span>
-        <h3>pandas 資料框</h3>
-        <span class="ch-badge">先備 · pandas 資料框</span>
-        <div class="ch-meta">6 節 · 7 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="p5_visualization.html">
-        <span class="ch-num">18 · VISUALIZATION</span>
-        <h3>視覺化</h3>
-        <span class="ch-badge">先備 · 視覺化</span>
-        <div class="ch-meta">6 節 · 7 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="p6_modeling_api.html">
-        <span class="ch-num">19 · MODELING API</span>
-        <h3>建模 API</h3>
-        <span class="ch-badge">先備 · 建模 API</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
-      </a>
-    </div>
-  </section>
-
-  <section>
-    <h2>配套資源</h2>
-    <div class="res-list">
-      <div class="res-card"><b>📖 教科書 ISLP</b>An Introduction to Statistical Learning with
-      Applications in Python（James、Witten、Hastie、Tibshirani、Taylor）。頁上的 §徽章都對應此書節號。<br>
-      <a href="https://www.statlearning.com/" target="_blank" rel="noopener">statlearning.com（可免費下載）</a></div>
-      <div class="res-card"><b>📗 進階參考 ESL</b>The Elements of Statistical Learning。
-      標「ESL 進階」的段落對應這本，課堂沒細講，第一輪可略過。<br>
-      <a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">hastie.su.domains/ElemStatLearn</a></div>
-      <div class="res-card"><b>📑 課程講義與 Lab</b>每章「講義 PDF」與「中文 Lab」都連到課程 repo 的
-      投影片與 notebook，是本站內容的完整版來源。<br>
-      <a href="https://github.com/phonchi/nsysu-math524-2025" target="_blank" rel="noopener">nsysu-math524-2025</a></div>
-      <div class="res-card"><b>🔗 習題解答</b>課本課後習題的參考解答，EX 區每章都有連結。<br>
-      <a href="https://botlnec.github.io/islp/" target="_blank" rel="noopener">botlnec.github.io/islp</a> ·
-      <a href="https://github.com/Mohamed-Badry/islp-solutions" target="_blank" rel="noopener">islp-solutions</a> ·
-      <a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">ESL_Solution</a></div>
-    </div>
-  </section>
+<!-- GEN:BEGIN studyguide -->
+<div class="study-guide">
+  <div class="sg-title">📌 本頁使用方式（先備 · 流程與函式）</div>
+  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
+  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
-
+<!-- GEN:END studyguide -->
+<!-- GEN:BEGIN toc -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · 內容目錄</div>
+  <div class="toc-grid">
+    <a href="#prologue"><span class="toc-num">P00</span>為什麼要寫函式</a>
+    <a href="#cond"><span class="toc-num">P01</span>條件與布林</a>
+    <a href="#loop"><span class="toc-num">P02</span>迴圈</a>
+    <a href="#func"><span class="toc-num">P03</span>函式</a>
+    <a href="#scope"><span class="toc-num">P04</span>預設引數與作用域</a>
+    <a href="#err"><span class="toc-num">P05</span>讀懂錯誤訊息</a>
+    <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
+    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
+  </div>
+</div>
+<!-- GEN:END toc -->
+<section id="prologue">
+<!-- GEN:BEGIN sec:prologue -->
+  <div class="section-number">PROLOGUE · 開場</div>
+  <h2>同一段程式碼貼三次，就是三個等著出錯的地方 <span class="sec-badge">課程 Lab Ch5 · 儲存格 24–26</span></h2>
+<!-- GEN:END sec:prologue -->
+  <p class="skip-note">TODO 待撰寫：為什麼要寫函式（課程 Lab Ch5 · 儲存格 24–26）</p>
+</section>
+<section id="cond">
+<!-- GEN:BEGIN sec:cond -->
+  <div class="section-number">PART 01 · 條件與布林</div>
+  <h2><code>&amp;</code> 與 <code>and</code> 不是同一回事 <span class="sec-badge">課程 Lab Ch2 · 儲存格 226–232</span></h2>
+<!-- GEN:END sec:cond -->
+  <p class="skip-note">TODO 待撰寫：條件與布林（課程 Lab Ch2 · 儲存格 226–232）</p>
+</section>
+<section id="loop">
+<!-- GEN:BEGIN sec:loop -->
+  <div class="section-number">PART 02 · 迴圈</div>
+  <h2>for、range 與 zip：把同一件事做很多次 <span class="sec-badge">課程 Lab Ch2 · 儲存格 236–240</span></h2>
+<!-- GEN:END sec:loop -->
+  <p class="skip-note">TODO 待撰寫：迴圈（課程 Lab Ch2 · 儲存格 236–240）</p>
+</section>
+<section id="func">
+<!-- GEN:BEGIN sec:func -->
+  <div class="section-number">PART 03 · 函式</div>
+  <h2>def、參數、return：把一段流程封起來 <span class="sec-badge">課程 Lab Ch5 · 儲存格 24–26</span></h2>
+<!-- GEN:END sec:func -->
+  <p class="skip-note">TODO 待撰寫：函式（課程 Lab Ch5 · 儲存格 24–26）</p>
+</section>
+<section id="scope">
+<!-- GEN:BEGIN sec:scope -->
+  <div class="section-number">PART 04 · 預設引數與作用域</div>
+  <h2>函式裡看得到外面，外面看不到裡面 <span class="sec-badge">課程 Lab Ch5 · 儲存格 59–61</span></h2>
+<!-- GEN:END sec:scope -->
+  <p class="skip-note">TODO 待撰寫：預設引數與作用域（課程 Lab Ch5 · 儲存格 59–61）</p>
+</section>
+<section id="err">
+<!-- GEN:BEGIN sec:err -->
+  <div class="section-number">PART 05 · 讀懂錯誤訊息</div>
+  <h2>traceback 要從<strong>最後一行</strong>開始讀 <span class="sec-badge">課程 Lab Ch2 · 儲存格 152</span></h2>
+<!-- GEN:END sec:err -->
+  <p class="skip-note">TODO 待撰寫：讀懂錯誤訊息（課程 Lab Ch2 · 儲存格 152）</p>
+</section>
+<section id="exercises">
+<!-- GEN:BEGIN sec:exercises -->
+  <div class="section-number">EXERCISES · 練習</div>
+  <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
+  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
+  程式碼卡在自己的環境跑一次。</p>
+  <div class="sol-links"><a href="https://docs.python.org/zh-tw/3/tutorial/controlflow.html" target="_blank" rel="noopener">🔗 Python 控制流程</a><a href="https://docs.python.org/zh-tw/3/tutorial/errors.html" target="_blank" rel="noopener">🔗 例外處理</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch05 中文 Lab</a></div>
+<!-- GEN:END sec:exercises -->
+  <!-- 練習題 quiz-box 寫在這裡 -->
+</section>
+<section id="reference">
+<!-- GEN:BEGIN sec:reference -->
+  <div class="section-number">REFERENCE · 總覽</div>
+  <h2>流程與函式速查表 <span class="sec-badge">先備 · 流程與函式</span></h2>
+<!-- GEN:END sec:reference -->
+  <!-- 比較表、重點回顧、.ver-note 寫在這裡 -->
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 待注入</span></h2>
+  <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
+  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  <div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div>
+<!-- GEN:END sec:cards -->
+</section>
+<!-- GEN:BEGIN chapternav -->
+<div class="chapter-nav"><a class="prev" href="p1_python_basics.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">Python 基礎</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="p3_numpy.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">NumPy 陣列</div></a></div>
+<!-- GEN:END chapternav -->
+</div>
+<!-- GEN:BEGIN footer -->
 <footer>
-  統計學習 × Python 互動自學網站 · 依 ISLP 教科書與 NSYSU MATH524 課程講義編寫<br>
-  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Interactive Statistical Learning Self-Study · NSYSU</span>
+  互動式流程與函式教學 · 基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件<br>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
 </footer>
+<!-- GEN:END footer -->
+<!-- GEN:BEGIN sharedjs -->
+<script>
+/* ============================================================
+   統計學習自學站共用函式庫
+   由 tools/build_page.py 內嵌到每一頁，十頁完全一致。
+   規則：LaTeX 一律放靜態 HTML，這裡的字串不放 $…$；
+        寫入含數學的 innerHTML 之後要呼叫 HC.retype(el)。
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- MathJax：注入後的內容不會自動排版 ---------- */
+const HC = {};
+HC.retype = el => {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
+  }
+};
+
+/* ---------- quiz ---------- */
+function quizCheck(quizId, optEl) {
+  const isCorrect = optEl.dataset.correct === 'true';
+  optEl.parentElement.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'wrong'));
+  optEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = $(quizId + 'Feedback');
+  if (!fb) { console.error('quizCheck: 找不到 #' + quizId + 'Feedback'); return; }
+  fb.classList.remove('correct', 'wrong');
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> ') + (optEl.dataset.fb || '');
+  HC.retype(fb);
+}
+
+/* ---------- 程式碼行高亮 ---------- */
+function hlLine(rootId, n) {
+  const root = $(rootId);
+  if (!root) return;
+  root.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+  if (n != null) {
+    const line = root.querySelector('.line[data-l="' + n + '"]');
+    if (line) line.classList.add('active');
+  }
+}
+
+/* ---------- 逐步播放器：frames = [{...}]，apply(frame) 負責渲染 ---------- */
+class Player {
+  constructor({ frames, apply, delayInput, onDone, onIndex }) {
+    this.frames = frames; this.apply = apply;
+    this.delayInput = delayInput; this.i = -1; this.timer = null;
+    this.onDone = onDone || (() => {});
+    this.onIndex = onIndex || (() => {});
+  }
+  get delay() { return this.delayInput ? parseInt(this.delayInput.value, 10) : 700; }
+  step() {
+    if (this.i + 1 >= this.frames.length) { this.stop(); this.onDone(); return false; }
+    this.i += 1; this.apply(this.frames[this.i], this.i); this.onIndex(this.i); return true;
+  }
+  play() {
+    this.stop();
+    const tick = () => { if (this.step()) this.timer = setTimeout(tick, this.delay); };
+    tick();
+  }
+  stop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+  get playing() { return this.timer !== null; }
+  reset() { this.stop(); this.i = -1; if (this.frames.length) { this.apply(this.frames[0], 0); this.i = 0; } }
+  seek(i) { this.stop(); this.i = Math.max(0, Math.min(i, this.frames.length - 1)); this.apply(this.frames[this.i], this.i); this.onIndex(this.i); }
+}
+HC.Player = Player;
+
+/* ---------- 旁白列 ---------- */
+function setStatus(id, html) {
+  const el = $(id); if (!el) return;
+  const t = el.querySelector('.status-text');
+  if (t) t.innerHTML = html;
+}
+
+/* ============================================================
+   HC：圖表與 SVG 共用 API
+   ============================================================ */
+
+/* 設計 token（讀 CSS 變數，樣式改一處就好） */
+HC.tok = (() => {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue('--' + n).trim();
+  return {
+    ink: g('ink'), paper: g('paper'), accent: g('accent'), accent2: g('accent2'),
+    accent3: g('accent3'), muted: g('muted'), card: g('card'), cardBorder: g('card-border'),
+    grid: g('grid-line') || g('card-border'),
+    train: g('pt-train'), test: g('pt-test'), held: g('pt-held'),
+    a: g('pt-a'), b: g('pt-b'), c: g('pt-c'),
+    fit: g('fit-line'), truef: g('fit-true'), resid: g('resid'),
+  };
+})();
+
+HC.MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+/* 數字格式：固定小數位，去掉負零 */
+HC.fmt = (v, d = 2) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const s = Number(v).toFixed(d);
+  return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s;
+};
+HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
+
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* ---------- Chart.js ---------- */
+HC.hasChart = () => typeof window.Chart !== 'undefined';
+
+/* Chart.js 載入失敗時不要拋錯：讓 .chart-fallback 留在畫面上 */
+HC.ready = fn => {
+  const run = () => {
+    if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
+    try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+};
+
+HC._charts = new Map();
+
+/* 房子的 Chart.js 預設值 */
+HC.base = (type, data, opts = {}) => {
+  const t = HC.tok;
+  const axis = {
+    grid: { color: t.grid, drawTicks: false },
+    border: { color: t.muted },
+    ticks: { font: { family: HC.MONO, size: 11 }, color: t.muted, padding: 6 },
+    title: { font: { family: HC.MONO, size: 11, weight: '600' }, color: t.accent2 },
+  };
+  const deep = (a, b) => {
+    const o = Array.isArray(b) ? b.slice() : Object.assign({}, a);
+    if (Array.isArray(b)) return o;
+    for (const k of Object.keys(b || {})) {
+      o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]))
+        ? deep(a && a[k] ? a[k] : {}, b[k]) : b[k];
+    }
+    return o;
+  };
+  const defaults = {
+    responsive: true, maintainAspectRatio: false, devicePixelRatio: 2,
+    animation: { duration: 250 },
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 6, right: 10, bottom: 2, left: 2 } },
+    plugins: {
+      legend: {
+        display: true, position: 'top', align: 'end',
+        labels: { boxWidth: 10, boxHeight: 10, font: { family: HC.MONO, size: 11 }, color: t.ink, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,46,.92)', titleFont: { family: HC.MONO, size: 11 },
+        bodyFont: { family: HC.MONO, size: 11 }, padding: 8, cornerRadius: 6, displayColors: true,
+      },
+    },
+    scales: { x: deep({}, axis), y: deep({}, axis) },
+    elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
+  };
+  const cfg = { type, data, options: deep(defaults, opts) };
+  // canvas 不認得 var(--x)：傳進去會靜默變成黑色（第 6 章五條準則線全黑就是這樣）。
+  // 這裡在建構前把所有顏色欄位解析成實際色值，讓這類 bug 不可能發生。
+  HC._resolveColors(cfg);
+  return cfg;
+};
+
+HC._COLOR_KEYS = ['borderColor', 'backgroundColor', 'pointBackgroundColor',
+                  'pointBorderColor', 'hoverBackgroundColor', 'hoverBorderColor', 'color'];
+HC._resolveColors = o => {
+  if (!o || typeof o !== 'object') return o;
+  if (Array.isArray(o)) { o.forEach(HC._resolveColors); return o; }
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'string' && HC._COLOR_KEYS.indexOf(k) >= 0) o[k] = HC.color(v);
+    else if (Array.isArray(v) && HC._COLOR_KEYS.indexOf(k) >= 0) {
+      o[k] = v.map(x => (typeof x === 'string' ? HC.color(x) : x));
+    } else if (v && typeof v === 'object') HC._resolveColors(v);
+  }
+  return o;
+};
+
+/* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
+HC.chart = (canvasId, type, data, opts) => {
+  if (!HC.hasChart()) return null;
+  const cv = $(canvasId);
+  if (!cv) { console.error('HC.chart: 找不到 canvas #' + canvasId); return null; }
+  const old = HC._charts.get(canvasId);
+  if (old) old.destroy();
+  const c = new window.Chart(cv, HC.base(type, data, opts));
+  HC._charts.set(canvasId, c);
+  const wrap = cv.closest('.chart-wrap');
+  if (wrap) wrap.classList.add('ready');
+  return c;
+};
+HC.line = (id, data, opts) => HC.chart(id, 'line', data, opts);
+HC.scatter = (id, data, opts) => HC.chart(id, 'scatter', data, opts);
+HC.bar = (id, data, opts) => HC.chart(id, 'bar', data, opts);
+HC.get = id => HC._charts.get(id);
+
+/* 就地改資料再重畫，不重建 chart（滑桿連續拖動時比較順） */
+HC.update = (id, mutate) => {
+  const c = HC._charts.get(id);
+  if (!c) return null;
+  mutate(c);
+  c.update('none');
+  return c;
+};
+
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
+
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
+
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
+  beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
+  },
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
+
+/* ============================================================
+   HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
+   用法：const s = HC.svg('w03dragSvg', {xd:[0,10], yd:[0,30]});
+        s.grid(5,5); s.dot(x, y, {cls:'dot', fill:HC.tok.train});
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+
+HC.svg = (id, o = {}) => {
+  const host = $(id);
+  if (!host) { console.error('HC.svg: 找不到 #' + id); return null; }
+  const W = o.w || 620, H = o.h || 340;
+  const pad = Object.assign({ l: 46, r: 14, t: 14, b: 34 }, o.pad || {});
+  let el = host;
+  if (host.tagName.toLowerCase() !== 'svg') {
+    el = host.querySelector('svg');
+    if (!el) { el = document.createElementNS(NS, 'svg'); el.setAttribute('class', 'viz-svg'); host.appendChild(el); }
+  }
+  el.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  if (!el.getAttribute('height')) el.setAttribute('height', String(H));
+
+  const s = {
+    el, W, H, pad,
+    xd: (o.xd || [0, 1]).slice(), yd: (o.yd || [0, 1]).slice(),
+    get iw() { return W - pad.l - pad.r; },
+    get ih() { return H - pad.t - pad.b; },
+  };
+  s.domain = (xd, yd) => { if (xd) s.xd = xd.slice(); if (yd) s.yd = yd.slice(); return s; };
+  s.X = v => pad.l + (v - s.xd[0]) / (s.xd[1] - s.xd[0]) * s.iw;
+  s.Y = v => pad.t + s.ih - (v - s.yd[0]) / (s.yd[1] - s.yd[0]) * s.ih;
+  s.ix = px => s.xd[0] + (px - pad.l) / s.iw * (s.xd[1] - s.xd[0]);
+  s.iy = py => s.yd[0] + (pad.t + s.ih - py) / s.ih * (s.yd[1] - s.yd[0]);
+
+  /* client 座標 → viewBox 座標（縮放與 CSS 尺寸都會被吸收） */
+  s.toView = ev => {
+    const r = el.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    const cy = ev.clientY !== undefined ? ev.clientY : (ev.touches && ev.touches[0].clientY);
+    return { px: (cx - r.left) / r.width * W, py: (cy - r.top) / r.height * H };
+  };
+  s.toData = ev => { const p = s.toView(ev); return { x: s.ix(p.px), y: s.iy(p.py) }; };
+
+  s.add = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k of Object.keys(attrs)) {
+      if (attrs[k] === null || attrs[k] === undefined) continue;
+      n.setAttribute(k === 'cls' ? 'class' : k, String(attrs[k]));
+    }
+    (parent || el).appendChild(n);
+    return n;
+  };
+  /* 分層：只清掉自己那層，底圖不用重畫 */
+  s.layer = name => {
+    let g = el.querySelector('g[data-layer="' + name + '"]');
+    if (!g) { g = s.add('g', { 'data-layer': name }); }
+    return g;
+  };
+  s.clearLayer = name => { const g = s.layer(name); while (g.firstChild) g.removeChild(g.firstChild); return g; };
+  s.clear = () => { while (el.firstChild) el.removeChild(el.firstChild); return s; };
+
+  /* 座標軸 + 格線 + 刻度標籤 */
+  s.grid = (nx = 5, ny = 5, opt = {}) => {
+    const g = s.clearLayer('grid');
+    const fx = opt.xfmt || (v => HC.fmt(v, opt.xdec ?? 0));
+    const fy = opt.yfmt || (v => HC.fmt(v, opt.ydec ?? 0));
+    for (let i = 0; i <= nx; i++) {
+      const v = s.xd[0] + (s.xd[1] - s.xd[0]) * i / nx, x = s.X(v);
+      s.add('line', { cls: 'gridl', x1: x, y1: pad.t, x2: x, y2: pad.t + s.ih }, g);
+      s.add('text', { cls: 'axlab', x: x, y: pad.t + s.ih + 14, 'text-anchor': 'middle' }, g).textContent = fx(v);
+    }
+    for (let i = 0; i <= ny; i++) {
+      const v = s.yd[0] + (s.yd[1] - s.yd[0]) * i / ny, y = s.Y(v);
+      s.add('line', { cls: 'gridl', x1: pad.l, y1: y, x2: pad.l + s.iw, y2: y }, g);
+      s.add('text', { cls: 'axlab', x: pad.l - 6, y: y + 3.5, 'text-anchor': 'end' }, g).textContent = fy(v);
+    }
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t + s.ih, x2: pad.l + s.iw, y2: pad.t + s.ih }, g);
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + s.ih }, g);
+    if (opt.xtitle) s.add('text', { cls: 'axtitle', x: pad.l + s.iw / 2, y: H - 4, 'text-anchor': 'middle' }, g).textContent = opt.xtitle;
+    if (opt.ytitle) {
+      const t = s.add('text', { cls: 'axtitle', x: 0, y: 0, 'text-anchor': 'middle', transform: 'translate(11,' + (pad.t + s.ih / 2) + ') rotate(-90)' }, g);
+      t.textContent = opt.ytitle;
+    }
+    return s;
+  };
+
+  s.dot = (x, y, a = {}, parent) => s.add('circle', {
+    cls: a.cls || 'dot', cx: s.X(x), cy: s.Y(y), r: a.r ?? 4,
+    fill: a.fill || HC.tok.accent2, stroke: a.stroke, 'stroke-width': a.sw,
+    opacity: a.opacity, 'data-i': a.i,
+  }, parent);
+
+  s.poly = (pts, a = {}, parent) => s.add('polyline', {
+    cls: a.cls || 'fit', points: pts.map(p => s.X(p[0]) + ',' + s.Y(p[1])).join(' '),
+    stroke: a.stroke, 'stroke-width': a.sw, fill: 'none', 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.area = (pts, a = {}, parent) => {
+    const up = pts.map(p => s.X(p[0]) + ',' + s.Y(p[1]));
+    const dn = pts.slice().reverse().map(p => s.X(p[0]) + ',' + s.Y(p[2]));
+    return s.add('polygon', { cls: a.cls || 'band', points: up.concat(dn).join(' '), fill: a.fill }, parent);
+  };
+
+  s.seg = (x1, y1, x2, y2, a = {}, parent) => s.add('line', {
+    cls: a.cls || 'resid', x1: s.X(x1), y1: s.Y(y1), x2: s.X(x2), y2: s.Y(y2),
+    stroke: a.stroke, 'stroke-width': a.sw, 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.box = (x0, y0, x1, y1, a = {}, parent) => s.add('rect', {
+    x: Math.min(s.X(x0), s.X(x1)), y: Math.min(s.Y(y0), s.Y(y1)),
+    width: Math.abs(s.X(x1) - s.X(x0)), height: Math.abs(s.Y(y1) - s.Y(y0)),
+    fill: a.fill || 'none', stroke: a.stroke, 'stroke-width': a.sw, cls: a.cls, rx: a.rx,
+  }, parent);
+
+  s.txt = (x, y, str, a = {}, parent) => {
+    const n = s.add('text', {
+      cls: a.cls || 'vlab', x: s.X(x) + (a.dx || 0), y: s.Y(y) + (a.dy || 0),
+      'text-anchor': a.anchor || 'middle', fill: a.fill,
+    }, parent);
+    n.textContent = str;
+    return n;
+  };
+  /* 用 viewBox 像素座標直接放字（圖例、標題用） */
+  s.txtPx = (px, py, str, a = {}, parent) => {
+    const n = s.add('text', { cls: a.cls || 'axlab', x: px, y: py, 'text-anchor': a.anchor || 'start', fill: a.fill }, parent);
+    n.textContent = str;
+    return n;
+  };
+  return s;
+};
+
+/* 拖曳：pointer + touch，回呼收到資料座標；會夾在定義域內 */
+HC.drag = (node, svc, onMove, opts = {}) => {
+  const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
+  const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
+  let active = false;
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  };
+  const move = ev => {
+    if (!active) return;
+    const d = svc.toData(ev);
+    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    ev.preventDefault();
+  };
+  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  node.addEventListener('pointerdown', start);
+  node.addEventListener('pointermove', move);
+  node.addEventListener('pointerup', end);
+  node.addEventListener('pointercancel', end);
+  node.style.touchAction = 'none';
+  return () => {
+    node.removeEventListener('pointerdown', start);
+    node.removeEventListener('pointermove', move);
+    node.removeEventListener('pointerup', end);
+    node.removeEventListener('pointercancel', end);
+  };
+};
+
+/* ---------- 統計小工具（各頁元件共用，避免各自重寫） ---------- */
+HC.stat = {
+  mean: a => a.reduce((s, v) => s + v, 0) / a.length,
+  variance(a) { const m = this.mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); },
+  sd(a) { return Math.sqrt(this.variance(a)); },
+  /* 簡單線性迴歸：回傳 b0, b1, rss, tss, r2, se(b0), se(b1), t 值 */
+  ols(xs, ys) {
+    const n = xs.length, mx = this.mean(xs), my = this.mean(ys);
+    let sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sxx += (xs[i] - mx) ** 2; sxy += (xs[i] - mx) * (ys[i] - my); }
+    const b1 = sxx === 0 ? 0 : sxy / sxx, b0 = my - b1 * mx;
+    let rss = 0, tss = 0;
+    for (let i = 0; i < n; i++) { rss += (ys[i] - b0 - b1 * xs[i]) ** 2; tss += (ys[i] - my) ** 2; }
+    const df = n - 2;
+    const s2 = df > 0 ? rss / df : NaN;
+    const seB1 = sxx > 0 ? Math.sqrt(s2 / sxx) : NaN;
+    const seB0 = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+    return {
+      b0, b1, rss, tss, n, df, rse: Math.sqrt(s2),
+      r2: tss === 0 ? NaN : 1 - rss / tss,
+      seB0, seB1, tB0: b0 / seB0, tB1: b1 / seB1,
+    };
+  },
+  /* RSS(b0,b1)，畫誤差曲面用 */
+  rss(xs, ys, b0, b1) {
+    let r = 0;
+    for (let i = 0; i < xs.length; i++) r += (ys[i] - b0 - b1 * xs[i]) ** 2;
+    return r;
+  },
+  /* 可重現的偽隨機（固定種子，頁面重載結果一樣） */
+  lcg(seed) { let s = (seed >>> 0) || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; },
+  /* Box–Muller 標準常態 */
+  normal(rand) {
+    let u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  /* 標準常態 CDF（Abramowitz–Stegun 7.1.26 誤差函數近似） */
+  pnorm(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const p = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    return z >= 0 ? 1 - d * p : d * p;
+  },
+  dnorm(x, mu = 0, sd = 1) { const z = (x - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); },
+  quantile(sorted, q) {
+    const h = (sorted.length - 1) * q, lo = Math.floor(h);
+    return sorted[lo] + (h - lo) * ((sorted[Math.min(lo + 1, sorted.length - 1)]) - sorted[lo]);
+  },
+  seq(a, b, n) { return Array.from({ length: n }, (_, i) => a + (b - a) * i / (n - 1)); },
+};
+
+/* ============================================================
+   頁面骨架行為
+   ============================================================ */
+
+/* 浮動導覽 scroll-spy */
+(function setupNav() {
+  const nav = $('floatNav');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[data-target]'));
+  const sections = links.map(a => $(a.dataset.target)).filter(Boolean);
+  const missing = links.filter(a => !$(a.dataset.target)).map(a => a.dataset.target);
+  if (missing.length) console.warn('float-nav 的 data-target 找不到對應 section：', missing);
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) active = s.id;
+    links.forEach(a => {
+      const on = a.dataset.target === active;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
+  d.dataset.mj = '1';
+  HC.retype(d);
+}, true);
+
+/* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
+HC.initFlashcards = () => {
+  const grid = $('fcGrid');
+  if (!grid || typeof FLASHCARDS === 'undefined') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const render = cards => {
+    grid.innerHTML = cards.map(c =>
+      '<div class="fc-card"><div class="fc-inner">'
+      + '<div class="fc-face fc-front"><div>' + esc(c.front) + '</div><div class="fc-hint">CLICK TO FLIP</div></div>'
+      + '<div class="fc-face fc-back">' + esc(c.back) + '</div>'
+      + '</div></div>').join('');
+  };
+  render(FLASHCARDS);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.fc-card');
+    if (card) card.classList.toggle('flipped');
+  });
+  const on = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  /* 洗牌用固定種子的 Fisher–Yates，每按一次換一個種子 */
+  let shuffleSeed = 20260810;
+  on('fcShuffle', () => {
+    const rand = HC.stat.lcg(shuffleSeed++);
+    const a = FLASHCARDS.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    render(a);
+  });
+  on('fcUnflip', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')));
+  on('fcFlipAll', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.add('flipped')));
+};
+</script>
+<!-- GEN:END sharedjs -->
+<!-- PAGEJS:BEGIN -->
+<script>
+/* ===== p2_flow_functions 本頁元件（id 與全域一律用 w15 前綴） ===== */
+HC.ready(() => { /* TODO w15 元件 */ });
+HC.initFlashcards();
+</script>
+<!-- PAGEJS:END -->
+<!-- DATA:BEGIN -->
+<!-- DATA:END -->
 </body></html>
