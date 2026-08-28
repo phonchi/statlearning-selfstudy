@@ -75,9 +75,9 @@ def build_html():
     <h2>先備入口 · Python 起步</h2>
     <p>沒寫過 Python，或只會一點點？這幾頁把正課會用到的語法與套件先講一遍，
     程式碼全部取自課程 lab notebook。選讀，不列入評分。
-    共 {{len(prep)}} 頁、{{prep_widgets}} 個互動元件。</p>
+    共 {len(prep)} 頁、{prep_widgets} 個互動元件。</p>
     <div class="ch-grid">
-{{prep_cards}}
+{prep_cards}
     </div>
   </section>"""
 

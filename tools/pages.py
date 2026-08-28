@@ -111,6 +111,21 @@ class Page:
 
 
 # ── hero 裝飾 SVG（各章一個，opacity 由 CSS 給，≤900px 隱藏）─────────────
+
+def _svg_grid():
+    """先備 P3：一塊 4×4 的陣列，右下角被切出一個子矩陣。"""
+    cells = "".join(
+        f'<rect x="{40 + c * 58}" y="{50 + r * 42}" width="50" height="34" rx="4"/>'
+        for r in range(4) for c in range(4))
+    hi = "".join(
+        f'<rect x="{40 + c * 58}" y="{50 + r * 42}" width="50" height="34" rx="4"/>'
+        for r in (1, 3) for c in (0, 2))
+    return (f'<g fill="#fff" opacity=".28">{cells}</g>'
+            f'<g fill="#fff" opacity=".95">{hi}</g>'
+            '<g stroke="#fff" stroke-width="3" fill="none" opacity=".8">'
+            '<path d="M26 40 H26 V228 H26"/><path d="M20 40 H32"/><path d="M20 228 H32"/></g>')
+
+
 def _svg_scatter():
     pts = [(30, 210), (58, 190), (72, 200), (95, 168), (118, 172), (140, 148),
            (162, 136), (185, 142), (208, 112), (230, 100), (252, 96), (275, 74)]
@@ -555,6 +570,41 @@ PAGES = [
                 "ISLP §10.7|ESL §11.4 · 進階"),
             Sec("doubledesc", "雙下降與該不該用", "參數比樣本多還會變好？以及什麼時候該收手",
                 "ISLP §10.8|ISLP §10.6"),
+        ],
+    ),
+    # ── 先備入口層（kind="prep"，n=12 起）────────────────────────────────
+    Page(
+        n=16, stem="p3_numpy", slug="NUMPY", title_en="NumPy Arrays",
+        h1='把資料裝進<span class="blue">陣列</span>：NumPy',
+        plain="NumPy 陣列",
+        subtitle="先備知識 P3 — 選讀，不列入評分",
+        formula="ndarray｜shape 與 ndim｜reshape 是檢視不是複製｜布林索引｜廣播｜axis=0 是往下摺｜default_rng(種子)",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="先備 · NumPy 陣列", esl_label="",
+        playlist="",
+        hero_svg=_svg_grid(),
+        kind="prep", data_key="prep_p3_numpy", src_labs=(2, 1),
+        ex_links=[("🔗 NumPy 官方教學", "https://numpy.org/doc/stable/user/absolute_beginners.html"),
+                  ("🔗 NumPy 廣播規則", "https://numpy.org/doc/stable/user/basics.broadcasting.html"),
+                  ("📓 Ch02 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                   "static_files/presentations/Ch02-statlearn-lab-zh.ipynb")],
+        secs=[
+            Sec("prologue", "為什麼不用串列", "串列加串列是接起來，陣列加陣列才是逐元素相加",
+                "課程 Lab Ch2 · 儲存格 21–34", kicker="PROLOGUE · 開場"),
+            Sec("create", "建立陣列與 shape", "ndim、dtype、shape：一個陣列的三個身分證欄位",
+                "課程 Lab Ch2 · 儲存格 36–48"),
+            Sec("reshape", "reshape 與轉置", "reshape 給的是<strong>同一塊資料的另一種看法</strong>",
+                "課程 Lab Ch2 · 儲存格 50–66"),
+            Sec("index", "索引、切片與子矩陣", "A[[1,3],[0,2]] 為什麼不是你以為的那四格",
+                "課程 Lab Ch2 · 儲存格 138–158"),
+            Sec("bool", "布林索引", "用一排 True／False 挑列：統計程式最常見的選取法",
+                "課程 Lab Ch2 · 儲存格 162–176"),
+            Sec("bcast", "廣播", "形狀不一樣也能相加：右對齊、補 1、拉伸",
+                "NumPy 文件 · 廣播規則|課程 Lab Ch2 · 儲存格 68–72"),
+            Sec("agg", "彙總與 axis", "axis=0 是往下摺、axis=1 是往右摺",
+                "課程 Lab Ch2 · 儲存格 85–93"),
+            Sec("rand", "亂數與模擬", "default_rng(種子)：讓別人跑得出跟你一樣的結果",
+                "課程 Lab Ch2 · 儲存格 74–84"),
         ],
     ),
 ]

@@ -398,7 +398,11 @@ def check_prep_grounding(p, w, src, labtext):
         eo = re.search(r'<div class="expected-out">.*?<pre>(.*?)</pre>', seg, re.S)
         if eo:
             got = _unescape(re.sub(r"<[^>]+>", "", eo.group(1))).rstrip()
-            want = [cells[ch][k].rstrip() for k in ks if cells[ch].get(k) is not None]
+            outs = [cells[ch][k].rstrip() for k in ks if cells[ch].get(k) is not None]
+            # 一張卡可以併好幾格（lab 把一件事拆成連續幾格時很常見）。
+            # 允許的形式只有兩種：某一格的輸出，或這些格依引用順序串接——
+            # 兩種都還是逐字，沒有放寬「不准自己打字」這條。
+            want = outs + (["\n".join(outs)] if len(outs) > 1 else [])
             if not want:
                 fail("GROUNDING-PREP", w,
                      f"第 {i + 1} 張有預期輸出，但 lab_ch{ch}.md 儲存格 {ks} 沒存輸出")
