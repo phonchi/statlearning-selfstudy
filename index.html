@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、十一章互動教材、六頁 Python 先備知識附錄，每節都能動手操作、預測、驗證。NSYSU MATH524 課程配套。">
+<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、十一章教材、六頁 Python 先備知識附錄，以例子、自測與必要的互動驗證觀念。NSYSU MATH524 課程配套。">
 <title>統計學習 × Python 互動自學網站 — NSYSU MATH524</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -439,6 +439,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -508,10 +513,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -584,7 +586,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -611,7 +614,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -633,7 +637,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -693,7 +698,7 @@ cv   = KFold(10, shuffle=True,
       <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（一小時，不需要程式基礎）；
       <strong>沒寫過 Python？</strong>正課讀到卡住就翻<a href="#appendix">附錄</a>。兩區都是選讀，不列入評分。</p>
       <div class="loop-steps">
-        <div class="step"><b>① READ &amp; PLAY</b>逐節閱讀，動手操作互動元件：先預測結果，再按按鈕驗證。</div>
+        <div class="step"><b>① READ &amp; CHECK</b>逐節閱讀；遇到互動元件時，先預測結果，再操作驗證。</div>
         <div class="step"><b>② CROSS-CHECK</b>對照講義 PDF 與 ISLP 原文，把完整程式看懂、抄一遍、跑一遍。</div>
         <div class="step"><b>③ QUIZ</b>每節 quiz 立刻自測：答錯就回頭重讀該節，不要往下跳。</div>
         <div class="step"><b>④ FLASHCARDS &amp; REF</b>翻完詞彙卡、掃過 REF 速查表，能不看答案講出定義才算過關。</div>
@@ -706,7 +711,7 @@ cv   = KFold(10, shuffle=True,
     <p>三頁，讀完大概一小時。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
     把環境弄好、再學會怎麼跟 AI 協作而不把判斷外包。
     這三頁不需要任何程式基礎，選讀，不列入評分。
-    共 3 頁、6 個互動元件。</p>
+    共 3 頁、1 個視覺區塊。</p>
     <div class="ch-grid">
       <a class="ch-card" href="00a_why_code.html">
         <span class="ch-num">01 · LEARNING WITH AI</span>
@@ -718,7 +723,7 @@ cv   = KFold(10, shuffle=True,
         <span class="ch-num">02 · SETUP</span>
         <h3>環境安裝</h3>
         <span class="ch-badge">課前 · 環境安裝</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 1 個視覺區塊 · 每節 quiz · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="00c_ai_assisted.html">
         <span class="ch-num">03 · AI-ASSISTED STATISTICS</span>
@@ -732,73 +737,73 @@ cv   = KFold(10, shuffle=True,
   <section id="core">
     <h2>正課 · 十一章</h2>
     <p>順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
-    共 11 章、92 個互動元件、296 張詞彙卡。</p>
+    共 11 章、66 個視覺區塊、296 張詞彙卡。</p>
     <div class="ch-grid">
       <a class="ch-card" href="introduction.html">
         <span class="ch-num">01 · INTRODUCTION</span>
         <h3>統計學習導論</h3>
         <span class="ch-badge">ISLP Ch.1</span>
-        <div class="ch-meta">8 節 · 4 個互動元件 · 每節 quiz · 23 張詞彙卡</div>
+        <div class="ch-meta">8 節 · 4 個視覺區塊 · 每節 quiz · 23 張詞彙卡</div>
       </a>
       <a class="ch-card" href="statistical_learning.html">
         <span class="ch-num">02 · STATISTICAL LEARNING</span>
         <h3>統計學習的基本框架</h3>
         <span class="ch-badge">ISLP Ch.2 ／ ESL Ch.2</span>
-        <div class="ch-meta">7 節 · 8 個互動元件 · 每節 quiz · 26 張詞彙卡</div>
+        <div class="ch-meta">7 節 · 5 個視覺區塊 · 每節 quiz · 26 張詞彙卡</div>
       </a>
       <a class="ch-card" href="linear_regression.html">
         <span class="ch-num">03 · LINEAR REGRESSION</span>
         <h3>線性迴歸</h3>
         <span class="ch-badge">ISLP Ch.3 ／ ESL §3.1–3.3</span>
-        <div class="ch-meta">8 節 · 9 個互動元件 · 題庫自測 6 題 · 28 張詞彙卡</div>
+        <div class="ch-meta">8 節 · 6 個視覺區塊 · 題庫自測 6 題 · 28 張詞彙卡</div>
       </a>
       <a class="ch-card" href="classification.html">
         <span class="ch-num">04 · CLASSIFICATION</span>
         <h3>分類</h3>
         <span class="ch-badge">ISLP Ch.4 ／ ESL §4.1–4.4</span>
-        <div class="ch-meta">8 節 · 7 個互動元件 · 題庫自測 6 題 · 28 張詞彙卡</div>
+        <div class="ch-meta">8 節 · 5 個視覺區塊 · 題庫自測 6 題 · 28 張詞彙卡</div>
       </a>
       <a class="ch-card" href="resampling_methods.html">
         <span class="ch-num">05 · RESAMPLING</span>
         <h3>重抽樣方法</h3>
         <span class="ch-badge">ISLP Ch.5 ／ ESL §7.1–7.4、7.10–7.11</span>
-        <div class="ch-meta">8 節 · 8 個互動元件 · 每節 quiz · 23 張詞彙卡</div>
+        <div class="ch-meta">8 節 · 4 個視覺區塊 · 每節 quiz · 23 張詞彙卡</div>
       </a>
       <a class="ch-card" href="model_selection.html">
         <span class="ch-num">06 · MODEL SELECTION</span>
         <h3>線性模型選擇與正則化</h3>
         <span class="ch-badge">ISLP Ch.6 ／ ESL §3.3–3.6、§7.1–7.7</span>
-        <div class="ch-meta">10 節 · 10 個互動元件 · 每節 quiz · 27 張詞彙卡</div>
+        <div class="ch-meta">10 節 · 6 個視覺區塊 · 每節 quiz · 27 張詞彙卡</div>
       </a>
       <a class="ch-card" href="unsupervised_learning.html">
         <span class="ch-num">07 · UNSUPERVISED</span>
         <h3>非監督式學習</h3>
         <span class="ch-badge">ISLP Ch.12 ／ ESL §13.1–13.3、§14.1–14.3、§14.5–14.9</span>
-        <div class="ch-meta">11 節 · 9 個互動元件 · 每節 quiz · 30 張詞彙卡</div>
+        <div class="ch-meta">11 節 · 8 個視覺區塊 · 每節 quiz · 30 張詞彙卡</div>
       </a>
       <a class="ch-card" href="beyond_linearity.html">
         <span class="ch-num">08 · BEYOND LINEARITY</span>
         <h3>超越線性</h3>
         <span class="ch-badge">ISLP Ch.7 ／ ESL §5.1–5.7、§6.1–6.3、§9.1</span>
-        <div class="ch-meta">9 節 · 12 個互動元件 · 每節 quiz · 28 張詞彙卡</div>
+        <div class="ch-meta">9 節 · 8 個視覺區塊 · 每節 quiz · 28 張詞彙卡</div>
       </a>
       <a class="ch-card" href="tree_based_methods.html">
         <span class="ch-num">09 · TREES & ENSEMBLES</span>
         <h3>樹狀方法與集成學習</h3>
         <span class="ch-badge">ISLP Ch.8 ／ ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3</span>
-        <div class="ch-meta">11 節 · 10 個互動元件 · 題庫自測 6 題 · 30 張詞彙卡</div>
+        <div class="ch-meta">11 節 · 9 個視覺區塊 · 題庫自測 6 題 · 30 張詞彙卡</div>
       </a>
       <a class="ch-card" href="support_vector_machines.html">
         <span class="ch-num">10 · SVM</span>
         <h3>支持向量機</h3>
         <span class="ch-badge">ISLP Ch.9 ／ ESL §6.6–6.9、§12.1–12.3</span>
-        <div class="ch-meta">7 節 · 9 個互動元件 · 每節 quiz · 26 張詞彙卡</div>
+        <div class="ch-meta">7 節 · 6 個視覺區塊 · 每節 quiz · 26 張詞彙卡</div>
       </a>
       <a class="ch-card" href="deep_learning.html">
         <span class="ch-num">11 · DEEP LEARNING</span>
         <h3>深度學習（補充）</h3>
         <span class="ch-badge">ISLP Ch.10 · 補充 ／ ESL Ch.11</span>
-        <div class="ch-meta">7 節 · 6 個互動元件 · 每節 quiz · 27 張詞彙卡</div>
+        <div class="ch-meta">7 節 · 5 個視覺區塊 · 每節 quiz · 27 張詞彙卡</div>
       </a>
     </div>
   </section>
@@ -808,43 +813,43 @@ cv   = KFold(10, shuffle=True,
     <p>沒寫過 Python，或只會一點點？這六頁把正課會用到的語法與套件講一遍，
     程式碼全部逐字取自課程 lab notebook。<strong>查閱用</strong>——
     正課讀到卡住再回來翻，不必先讀完。選讀，不列入評分。
-    共 6 頁、39 個互動元件。</p>
+    共 6 頁、39 個視覺區塊。</p>
     <div class="ch-grid">
       <a class="ch-card" href="p1_python_basics.html">
         <span class="ch-num">01 · PYTHON BASICS</span>
         <h3>Python 基礎</h3>
         <span class="ch-badge">先備 · Python 基礎</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節 quiz · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p2_flow_functions.html">
         <span class="ch-num">02 · FLOW & FUNCTIONS</span>
         <h3>流程與函式</h3>
         <span class="ch-badge">先備 · 流程與函式</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節 quiz · 25 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p3_numpy.html">
         <span class="ch-num">03 · NUMPY</span>
         <h3>NumPy 陣列</h3>
         <span class="ch-badge">先備 · NumPy 陣列</span>
-        <div class="ch-meta">8 節 · 7 個互動元件 · 每節 quiz · 26 張詞彙卡</div>
+        <div class="ch-meta">8 節 · 7 個視覺區塊 · 每節 quiz · 26 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p4_pandas.html">
         <span class="ch-num">04 · PANDAS</span>
         <h3>pandas 資料框</h3>
         <span class="ch-badge">先備 · pandas 資料框</span>
-        <div class="ch-meta">6 節 · 7 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 7 個視覺區塊 · 每節 quiz · 25 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p5_visualization.html">
         <span class="ch-num">05 · VISUALIZATION</span>
         <h3>視覺化</h3>
         <span class="ch-badge">先備 · 視覺化</span>
-        <div class="ch-meta">6 節 · 7 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 7 個視覺區塊 · 每節 quiz · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p6_modeling_api.html">
         <span class="ch-num">06 · MODELING API</span>
         <h3>建模 API</h3>
         <span class="ch-badge">先備 · 建模 API</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節 quiz · 25 張詞彙卡</div>
       </a>
     </div>
   </section>

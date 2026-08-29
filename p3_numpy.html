@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -685,7 +690,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · NumPy 陣列）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -725,12 +730,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   串列的 <code>+</code> 是串接，陣列的 <code>+</code> 是逐元素相加。這一個差別就是你需要 NumPy 的全部理由。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16listArrSvg" height="300"></svg>
       <div class="status-banner" id="w16laStatus"><span class="status-icon">›</span><span class="status-text">按「切換」看同一組數字在兩種容器裡的行為。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w16laTog()">切換：串列 ⇄ 陣列</button><button class="btn btn-reset" onclick="w16laReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 list 與 ndarray 加法結果重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -848,12 +854,13 @@ dtype(&#x27;int64&#x27;)
   六個數字排成一排，或排成兩列三欄，底下是同一塊。這件事不知道的話，
   之後改了一個變數卻發現另一個也跟著變，會找很久。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16reshapeSvg" height="320"></svg>
       <div class="status-banner" id="w16rsStatus"><span class="status-icon">›</span><span class="status-text">選一個形狀，看六個數字怎麼被重新分行。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16rsSet(1,6)">(6,)</button><button class="btn btn-toggle" onclick="w16rsSet(2,3)">(2, 3)</button><button class="btn btn-toggle" onclick="w16rsSet(3,2)">(3, 2)</button><button class="btn btn-toggle" onclick="w16rsSet(6,1)">(6, 1)</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 reshape/view 範例重繪；六個數值共享同一資料順序。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -954,12 +961,13 @@ x after we modify top left element of x_reshape:
   <em>「糟糕——發生了什麼？」</em>，因為 <code>A[[1,3],[0,2]]</code> 拿到的
   <strong>不是</strong> 第 1、3 列與第 0、2 欄交叉的那個 2×2 子矩陣。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16idxSvg" height="340"></svg>
       <div class="status-banner" id="w16idxStatus"><span class="status-icon">›</span><span class="status-text">先自己猜哪幾格會亮，再按按鈕。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16idxSet(0)">A</button><button class="btn btn-toggle" onclick="w16idxSet(1)">A[[1,3]]</button><button class="btn btn-toggle" onclick="w16idxSet(2)">A[:,[0,2]]</button><button class="btn btn-toggle" onclick="w16idxSet(3)">A[[1,3],[0,2]]</button><button class="btn btn-toggle" onclick="w16idxSet(4)">np.ix_([1,3],[0,2])</button><button class="btn btn-toggle" onclick="w16idxSet(5)">A[1:4:2,0:3:2]</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 4×4 陣列、花式索引與 np.ix_ 結果重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1069,12 +1077,13 @@ array([[ 4,  6,  7],
   <code>A[np.array([0,1,0,1])]</code> 是<strong>整數</strong>索引，意思是「第 0、1、0、1 列」，會拿到四列而且有重複；<code>A[np.array([False,True,False,True])]</code> 才是布林索引，拿到兩列。長得很像，結果差很多。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16maskSvg" height="320"></svg>
       <div class="status-banner" id="w16maskStatus"><span class="status-icon">›</span><span class="status-text">拖動門檻線，看遮罩怎麼變。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w16maskStep(-2)">門檻 −2</button><button class="btn btn-step" onclick="w16maskStep(2)">門檻 +2</button><button class="btn btn-reset" onclick="w16maskReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>自訂八個數值，用來呈現 Ch02 lab 所用的逐列布林遮罩規則。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1155,12 +1164,13 @@ array([[ 4,  5,  6,  7],
   ① <strong>右對齊</strong>兩個 shape；② 缺的維度<strong>補 1</strong>；③ 長度是 1 的維度<strong>拉伸</strong>到對方的長度。任何一維兩邊既不相等、也沒有一邊是 1，就報錯。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16bcastSvg" height="340"></svg>
       <div class="status-banner" id="w16bcStatus"><span class="status-icon">›</span><span class="status-text">選一組 shape，再按單步。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16bcCase(0)">(10,3) 與 (3,)</button><button class="btn btn-toggle" onclick="w16bcCase(1)">(10,3) 與 (10,1)</button><button class="btn btn-toggle" onclick="w16bcCase(2)">(10,3) 與 (10,)　✗</button><button class="btn btn-step" onclick="w16bcStep()">→ 單步</button><button class="btn btn-reset" onclick="w16bcReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>自訂 shape 範例，依 NumPy 廣播規則計算相容性。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1218,12 +1228,13 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
   <strong>axis 指的是「被摺掉」的那一維</strong>。
   <code>X.mean(0)</code> 摺掉第 0 維（列），剩下每一欄一個平均。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16axisSvg" height="320"></svg>
       <div class="status-banner" id="w16axStatus"><span class="status-icon">›</span><span class="status-text">先猜結果的 shape，再按按鈕。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16axSet(0)">axis=0（往下摺）</button><button class="btn btn-toggle" onclick="w16axSet(1)">axis=1（往右摺）</button><button class="btn btn-toggle" onclick="w16axSet(2)">不給 axis（全摺）</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 (10,3) 陣列與 axis 平均範例重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1323,7 +1334,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
   <code>np.random.normal(...)</code> 用的是全域狀態，誰在哪裡呼叫都會動到它。新版建議自己開一個產生器：<code>rng = np.random.default_rng(1303)</code>，之後都用 <code>rng.</code> 開頭。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w16randChart"></canvas>
@@ -1331,6 +1342,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
       </div>
       <div class="status-banner" id="w16rdStatus"><span class="status-icon">›</span><span class="status-text">先固定種子按兩次重抽，再取消固定按兩次。</span></div>
       <div class="controls-bar"><button class="btn btn-play" onclick="w16rdDraw()">▶ 重抽一次</button><button class="btn btn-toggle" id="w16rdSeedBtn" onclick="w16rdSeedTog()">固定種子：開</button><button class="btn btn-step" onclick="w16rdSize()">切換 n：50 ⇄ 500</button><button class="btn btn-reset" onclick="w16rdReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>瀏覽器端常態抽樣；固定種子模式可重現，統計量由當次樣本即時計算。</div>
     </div>
   </div>
   <div class="side-panel">

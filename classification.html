@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -686,7 +691,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.4｜講義 04）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
@@ -743,12 +748,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   得到 −0.036——<strong>負的機率</strong>。ISLP 圖 4.2 左圖畫的就是這件事。
   右圖換成邏輯斯迴歸，整條曲線就乖乖待在 0 與 1 之間。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w04whySvg" height="330"></svg>
       <div class="status-banner" id="w04whyStatus"><span class="status-icon">›</span><span class="status-text">拖滑桿選一個 balance，右邊會同時給出兩個模型的預測機率。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04whyBal">balance</label><input type="range" id="w04whyBal" min="0" max="2650" step="25" value="1000" oninput="w04whyMove()"><span class="slider-val" id="w04whyBalV">1000</span></div><button class="btn btn-step" onclick="w04whyJump(300)">→ 跳到 balance = 300</button><button class="btn btn-toggle" onclick="w04whyToggle()">切換：只看邏輯斯</button><button class="btn btn-reset" onclick="w04whyReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>ISLP Default；對照課本圖 4.2</div>
     </div>
   </div>
   <div class="side-panel">
@@ -816,13 +822,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>3. z 統計量就是第 3 章的 t 統計量。</strong>β̂ 除以它的標準誤，大到某個程度就拒絕 β = 0。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="book-redraw">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w04shapeSvg" height="250"></svg>
       <svg class="viz-svg" id="w04shapeSvg2" height="220"></svg>
       <div class="status-banner" id="w04shapeStatus"><span class="status-icon">›</span><span class="status-text">推兩個滑桿看 S 曲線怎麼動；下面那條 log-odds 永遠是直線。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04shapeB0">β₀</label><input type="range" id="w04shapeB0" min="-8" max="8" step="0.2" value="-1" oninput="w04shapeDraw()"><span class="slider-val" id="w04shapeB0V">-1</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04shapeB1">β₁</label><input type="range" id="w04shapeB1" min="-3" max="3" step="0.05" value="0.8" oninput="w04shapeDraw()"><span class="slider-val" id="w04shapeB1V">0.8</span></div><button class="btn btn-reset" onclick="w04shapeReset()">重置</button></div>
+      <div class="viz-source"><span>講義／課本重繪</span>依邏輯斯函數與 logit 定義直接計算</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1041,12 +1048,13 @@ Up           76  106</pre></div>
   <p>把 x 分到 $\delta_k(x)$ 最大的那一類。<strong>δ 是 x 的一次式</strong>。這就是名字裡「線性」的來源。
   兩類且 $\pi_1 = \pi_2$ 時，邊界剛好落在兩個平均數的中點 $(\mu_1 + \mu_2)/2$。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="book-redraw">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w04lda1Svg" height="320"></svg>
       <div class="status-banner" id="w04lda1Status"><span class="status-icon">›</span><span class="status-text">推 μ 與 σ 的滑桿看兩個常態密度怎麼動，虛線是決策邊界。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1M1">μ₁</label><input type="range" id="w04lda1M1" min="-4" max="1" step="0.1" value="-1.25" oninput="w04lda1Draw()"><span class="slider-val" id="w04lda1M1V">-1.25</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1M2">μ₂</label><input type="range" id="w04lda1M2" min="-1" max="4" step="0.1" value="1.25" oninput="w04lda1Draw()"><span class="slider-val" id="w04lda1M2V">1.25</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1S1">σ₁</label><input type="range" id="w04lda1S1" min="0.4" max="2.5" step="0.05" value="1" oninput="w04lda1Draw()"><span class="slider-val" id="w04lda1S1V">1</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1S2">σ₂</label><input type="range" id="w04lda1S2" min="0.4" max="2.5" step="0.05" value="1" oninput="w04lda1Draw()"><span class="slider-val" id="w04lda1S2V">1</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1P1">π₁</label><input type="range" id="w04lda1P1" min="0.05" max="0.95" step="0.05" value="0.5" oninput="w04lda1Draw()"><span class="slider-val" id="w04lda1P1V">0.5</span></div><button class="btn btn-toggle" onclick="w04lda1Toggle()">允許不同 σ（QDA）</button><button class="btn btn-reset" onclick="w04lda1Reset()">重置</button></div>
+      <div class="viz-source"><span>講義／課本重繪</span>依講義圖 4.4 的一維常態判別模型重繪</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1153,26 +1161,27 @@ Up           76  106</pre></div>
   右圖兩類的相關係數一個 +0.7 一個 −0.7，真實邊界是彎的，QDA 贏。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w04lda2Svg" height="360"></svg>
       <div class="status-banner" id="w04lda2Status"><span class="status-icon">›</span><span class="status-text">切換共用／各自共變異數，看邊界從直線變成二次曲線。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda2R1">ρ₁</label><input type="range" id="w04lda2R1" min="-0.9" max="0.9" step="0.05" value="0.7" oninput="w04lda2Draw()"><span class="slider-val" id="w04lda2R1V">0.7</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda2R2">ρ₂</label><input type="range" id="w04lda2R2" min="-0.9" max="0.9" step="0.05" value="0.7" oninput="w04lda2Draw()"><span class="slider-val" id="w04lda2R2V">0.7</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda2D">μ 位移</label><input type="range" id="w04lda2D" min="0.6" max="2.4" step="0.1" value="1.4" oninput="w04lda2Draw()"><span class="slider-val" id="w04lda2DV">1.4</span></div><button class="btn btn-toggle" onclick="w04lda2Toggle()">切換 LDA ↔ QDA</button><button class="btn btn-reset" onclick="w04lda2Reset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子同一資料；只切換 LDA／QDA 分類規則</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">目前的設定</div>
-      <div class="ic-row"><span class="ic-label">模式</span><span class="ic-value" id="w04lda2Mode">LDA（共用 Σ）</span></div><div class="ic-row"><span class="ic-label">ρ₁（藍類）</span><span class="ic-value" id="w04lda2R1T">0.70</span></div><div class="ic-row"><span class="ic-label">ρ₂（紅類）</span><span class="ic-value" id="w04lda2R2T">0.70</span></div><div class="ic-row"><span class="ic-label">邊界的形狀</span><span class="ic-value" id="w04lda2Shape">—</span></div><div class="ic-row"><span class="ic-label">訓練錯誤（60 點）</span><span class="ic-value" id="w04lda2Err">—</span></div>
+      <div class="ic-row"><span class="ic-label">模式</span><span class="ic-value" id="w04lda2Mode">LDA（共用 Σ）</span></div><div class="ic-row"><span class="ic-label">ρ₁（藍類）</span><span class="ic-value" id="w04lda2R1T">0.70</span></div><div class="ic-row"><span class="ic-label">ρ₂（紅類）</span><span class="ic-value" id="w04lda2R2T">0.70</span></div><div class="ic-row"><span class="ic-label">邊界的形狀</span><span class="ic-value" id="w04lda2Shape">—</span></div><div class="ic-row"><span class="ic-label">獨立測試錯誤（4000 點）</span><span class="ic-value" id="w04lda2Err">—</span></div>
     </div>
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 4.9</span></div>
-      兩個橢圓是各類含 95% 機率的等高線，點是各類 30 筆抽樣。<span style="color:var(--fit-line);font-weight:700;">紅線</span>是目前模式的決策邊界，<span style="color:var(--muted);font-weight:700;">灰虛線</span>永遠是 LDA 的線性邊界，留在那裡當對照。<strong>把 ρ₁ 與 ρ₂ 調成一樣，紅線會壓在灰線上</strong>，因為 Σ₁ = Σ₂ 時 QDA 退化成 LDA。
+      兩個橢圓是各類含 95% 機率的等高線，點是各類固定的 30 筆抽樣。<span style="color:var(--fit-line);font-weight:700;">紅線</span>是目前模式的決策邊界，<span style="color:var(--muted);font-weight:700;">灰虛線</span>永遠是 LDA 的線性邊界，留在那裡當對照。<strong>把 ρ₁ 與 ρ₂ 調成一樣，紅線會壓在灰線上</strong>，因為 Σ₁ = Σ₂ 時 QDA 退化成 LDA。
     </div>
     <div class="info-card">
       <div class="ic-title">為什麼 QDA 的邊界會是圓錐曲線</div>
-      $\delta_1(x) - \delta_2(x) = 0$ 是 x 的二次式，所以邊界是雙曲線、橢圓或拋物線之一（退化時是直線）。把 ρ₁ 與 ρ₂ 拉到正負兩端，你會看到邊界彎成兩支。<strong>那不是 bug，二次曲線本來就可以有兩支。</strong>
+      $\delta_1(x) - \delta_2(x) = 0$ 是 x 的二次式，所以邊界是雙曲線、橢圓或拋物線之一（退化時是直線）。把 ρ₁ 與 ρ₂ 拉到正負兩端，你會看到邊界彎成兩支。<strong>切換 LDA／QDA 時資料點不會改變</strong>；只改用來分類同一批資料的規則。
     </div>
   </div>
 </div>
@@ -1278,7 +1287,7 @@ Up           82  121</pre></div>
   代價是誤報從 23 升到 <strong>235</strong>，總錯誤率從 2.75% 微升到 3.73%。
   <strong>對信用卡公司，這是划算的交易。</strong>自己動一下滑桿看看：</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
 <div style="overflow-x:auto;">
@@ -1297,6 +1306,7 @@ Up           82  121</pre></div>
       </div>
       <div class="status-banner" id="w04thrStatus"><span class="status-icon">›</span><span class="status-text">拖動閾值：混淆矩陣、四個指標與 ROC 上的紅點會同步重算。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04thrSlider">閾值</label><input type="range" id="w04thrSlider" min="0" max="1" step="0.005" value="0.5" oninput="w04thrMove()"><span class="slider-val" id="w04thrSliderV">0.5</span></div><button class="btn btn-step" onclick="w04thrSet(0.5)">→ 回到 0.5</button><button class="btn btn-step" onclick="w04thrSet(0.2)">→ 調到 0.2</button><button class="btn btn-reset" onclick="w04thrReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>ISLP Default；對照表 4.4–4.5 與圖 4.8</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1423,63 +1433,9 @@ Yes         20    9</pre></div>
   <p>KNN 是唯一完全在框架外的：它不寫任何 log-odds 的式子，直接看鄰居投票。
   代價是（a）需要 n ≫ p，（b）不告訴你哪個變數重要。</p>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <div class="chart-wrap square"><canvas id="w04rocChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：在 Default 上，邏輯斯／LDA／QDA 的 ROC 幾乎完全重疊（AUC 0.9495–0.9496），Naive Bayes 略低（0.9447）——理論上的等價關係在實測上真的看得到。</div></div>
-      </div>
-      <div class="status-banner" id="w04rocStatus"><span class="status-icon">›</span><span class="status-text">四個方法在同一份 Default 資料、同一組預測變數上的 ROC 疊圖。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w04rocZoom(true)">放大左上角</button><button class="btn btn-reset" onclick="w04rocZoom(false)">看整張 0–1</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">AUC（Default，balance + student）</div>
-      <div class="ic-row"><span class="ic-label">邏輯斯迴歸</span><span class="ic-value" id="w04rocA1">—</span></div><div class="ic-row"><span class="ic-label">LDA</span><span class="ic-value" id="w04rocA2">—</span></div><div class="ic-row"><span class="ic-label">QDA</span><span class="ic-value" id="w04rocA3">—</span></div><div class="ic-row"><span class="ic-label">Naive Bayes</span><span class="ic-value" id="w04rocA4">—</span></div><div class="ic-row"><span class="ic-label">隨機猜</span><span class="ic-value" id="w04rocA0">0.5000</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">為什麼四條幾乎疊在一起 <span class="ic-badge">圖 4.8</span></div>
-      因為這份資料只有兩個預測變數、n = 10000，而 <code>balance</code> 對 <code>default</code> 的訊號非常強。<strong>訊號夠強時，模型假設的差別就淹沒在訊號裡</strong>。式 4.32 又保證 LDA 與邏輯斯的邊界形式相同，兩條當然重疊。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">不要因此結論「方法都差不多」</div>
-      ISLP 圖 4.11／4.12 用六個模擬情境示範：換掉資料的產生方式，排名就會重排。<strong>「哪個方法好」是資料的性質，不是方法的性質。</strong>按「放大左上角」看四條線在高靈敏度區真正分開的地方。
-    </div>
-  </div>
-</div>
-
-  <h3>選方法的六個情境</h3>
-  <p>下面六個情境改寫自 ISLP §4.5.2 的模擬與 lab 的實際資料。
-  先自己想再點。每個選項都會告訴你它為什麼合理、又為什麼不是最好的答案。</p>
-
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-<div id="w04pickStage" style="background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:1rem 1.1rem;min-height:190px;">
-        <div class="dx-label" id="w04pickNo">情境 1 / 6</div>
-        <p id="w04pickQ" style="margin-bottom:.6rem;">—</p>
-        <p id="w04pickFb" style="margin-bottom:0;font-size:.92rem;color:var(--muted);">按下面任一個方法看看拆解。</p>
-      </div>
-      <div class="status-banner" id="w04pickStatus"><span class="status-icon">›</span><span class="status-text">讀完情境後點一個方法，右邊會記你答對幾題。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w04pickAns(0)">邏輯斯</button><button class="btn btn-toggle" onclick="w04pickAns(1)">LDA</button><button class="btn btn-toggle" onclick="w04pickAns(2)">QDA</button><button class="btn btn-toggle" onclick="w04pickAns(3)">Naive Bayes</button><button class="btn btn-toggle" onclick="w04pickAns(4)">KNN</button><button class="btn btn-step" onclick="w04pickNext()">→ 下一個情境</button><button class="btn btn-reset" onclick="w04pickReset()">重置</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">進度</div>
-      <div class="ic-row"><span class="ic-label">目前情境</span><span class="ic-value" id="w04pickIdx">1 / 6</span></div><div class="ic-row"><span class="ic-label">答對</span><span class="ic-value" id="w04pickHit">0</span></div><div class="ic-row"><span class="ic-label">已作答</span><span class="ic-value" id="w04pickDone">0 / 6</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">這一組要練的判斷</div>
-      <strong>1. 邊界是直的還是彎的？</strong>直的 → LDA／邏輯斯；彎的 → QDA／Naive Bayes／KNN。<br><strong>2. n 相對 p 夠不夠大？</strong>不夠 → 選參數少的。<br><strong>3. 各類內的 X 像不像常態？</strong>不像 → 邏輯斯或 Naive Bayes。<br><strong>4. 變數之間獨立嗎？</strong>近似獨立 → Naive Bayes 大賺；明顯相關 → 它會很慘。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">沒有萬用解</div>
-      ISLP §4.5.2 的結論：<strong>六個情境沒有任何一個方法全勝。</strong>這也是第 5 章交叉驗證存在的理由——與其猜哪個方法適合，不如量出來。
-    </div>
-  </div>
-</div>
+  <p>Default 上四個方法的 AUC 幾乎相同；上面的閾值元件已經完整呈現 ROC 與 AUC，
+  這裡不再疊一張幾乎重合的 ROC 圖。方法選擇也不能靠固定情境配答案；應把候選方法放進
+  同一個重抽樣流程，以未見資料的表現與問題的錯誤成本裁決。</p>
 
   <h3 id="dx-knn">講義完整實作：KNN，唯一的無母數方法</h3>
 <div class="deck-extra">
@@ -2317,7 +2273,6 @@ HC.initFlashcards = () => {
 /* ===== 烘焙資料（tools/frames/gen_classification.py，固定種子）===== */
 const FRAMES_w04why = {"meta":{"src":"ISLP Default（ISLP 圖 4.2、表 4.1、表 4.3）","seed":"rug 用 np.random.default_rng(20260810) 分層抽 70 + 170 筆","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_classification.py","note":"邏輯斯係數 -10.6513 / 0.0055 與 ISLP 表 4.1 的 −10.6513 / 0.0055 相符；線性配適在 balance < 579 會給負機率，要到 balance ≈ 8279 才超過 1，已經在資料範圍（最大 2654）之外"},"n":10000,"rate":0.0333,"lin":{"b0":-0.075192,"b1":0.000129872},"logit":{"b0":-10.65133,"b1":0.00549892},"multi":{"b0":-10.869045,"balance":0.005737,"income":0.003033,"student":-0.646776},"zeroAt":579.0,"oneAt":8278.8,"balMax":2654.3,"pts":[[1722,0],[1189,0],[31,0],[779,0],[1775,1],[783,0],[1355,0],[1643,1],[1992,1],[1217,0],[786,0],[605,0],[1981,1],[767,0],[1182,0],[679,0],[566,0],[1532,1],[914,0],[988,0],[857,0],[95,0],[1237,0],[1244,1],[1753,1],[1964,1],[1467,0],[934,0],[833,0],[0,0],[661,0],[1471,0],[1682,0],[1546,0],[2123,1],[828,0],[837,0],[480,0],[1791,1],[1101,0],[1840,0],[712,0],[1033,0],[2010,1],[907,0],[1859,1],[1024,0],[774,0],[1790,1],[1749,1],[691,0],[1135,1],[2262,1],[1041,0],[1812,1],[652,0],[1155,0],[513,0],[1176,0],[437,0],[471,0],[653,0],[1443,0],[793,0],[0,0],[825,0],[548,0],[1011,0],[1154,0],[555,0],[13,0],[2387,1],[550,0],[1068,0],[377,0],[984,0],[2008,1],[1923,1],[669,0],[1475,1],[16,0],[379,0],[787,0],[1238,1],[949,0],[686,0],[336,0],[1400,0],[488,0],[44,0],[1804,1],[1168,0],[482,0],[901,0],[699,1],[1759,0],[294,0],[631,0],[695,0],[1308,0],[1236,0],[641,0],[1635,0],[1142,0],[1351,1],[0,0],[1155,0],[546,0],[1855,1],[1147,0],[819,0],[1200,0],[1550,1],[919,0],[366,0],[1463,0],[463,0],[1332,0],[970,0],[518,0],[1928,1],[1029,1],[682,0],[273,0],[1878,1],[1734,1],[1489,0],[866,0],[1711,1],[408,0],[1647,1],[845,0],[1102,1],[768,0],[1802,1],[0,0],[639,0],[924,0],[1191,0],[961,1],[1178,1],[1400,0],[2087,1],[697,0],[812,0],[639,0],[1408,1],[23,0],[283,0],[1263,0],[406,0],[544,0],[1572,1],[1315,0],[640,0],[1562,1],[1571,1],[1144,1],[2287,1],[1190,0],[177,0],[0,0],[1807,1],[915,0],[0,0],[1456,0],[1378,1],[344,0],[1186,0],[1150,0],[1393,1],[327,0],[1231,0],[772,0],[1622,1],[1099,1],[1127,0],[1022,0],[1563,0],[322,0],[553,0],[2039,1],[1794,0],[820,0],[112,0],[0,0],[490,0],[888,0],[1199,0],[1200,0],[489,0],[868,0],[908,0],[1202,0],[535,0],[519,0],[1223,0],[1804,1],[1656,1],[1013,1],[2025,1],[101,0],[1816,1],[139,0],[1114,0],[2049,1],[247,0],[1434,0],[2007,1],[1378,0],[1748,1],[1857,1],[1265,0],[549,0],[2095,1],[1538,1],[817,0],[1505,0],[912,0],[2074,1],[1826,1],[1659,1],[1726,1],[959,1],[51,0],[927,0],[819,0],[2129,1],[1189,0],[843,0],[492,0],[1916,0],[667,0],[280,0],[1976,1],[1070,0],[1067,0],[1974,1],[813,0],[1516,1]]};
 const FRAMES_w04thr = {"meta":{"src":"ISLP Default · LDA(balance, student)（ISLP 表 4.4、表 4.5、圖 4.7、圖 4.8）","seed":"無隨機性：LDA 是閉式解，直方圖是全部 10000 筆的後驗機率","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_classification.py","note":"直方圖每格寬 0.005，閾值只走 0.005 的倍數，所以 JS 累加出來的 2×2 表是精確值：閾值 0.5 得 9644/23/252/81（表 4.4）、閾值 0.2 得 9432/235/138/195（表 4.5）"},"n":10000,"nPos":333,"nNeg":9667,"nbins":200,"step":0.005,"histYes":[3,4,4,7,6,3,4,2,5,6,4,5,6,6,3,4,3,5,1,2,4,4,3,1,3,3,3,4,3,2,3,2,2,4,2,3,2,2,3,2,5,2,2,1,0,5,3,3,1,1,3,1,1,2,1,3,3,3,2,2,1,5,2,2,1,3,4,1,4,1,5,0,2,1,3,2,1,3,1,1,1,1,1,0,1,3,3,2,2,0,2,1,2,4,0,2,1,0,0,1,1,0,2,1,5,0,1,0,1,1,2,2,3,2,1,0,4,0,2,3,0,1,0,3,1,2,3,4,1,1,0,2,1,1,0,0,0,0,2,1,1,0,2,2,1,0,0,1,1,1,0,0,1,1,0,3,1,0,2,0,0,0,0,1,0,1,0,1,0,0,0,0,1,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0],"histNo":[5299,1173,606,413,294,229,167,143,113,106,93,82,72,68,44,42,42,33,38,34,34,23,18,28,13,18,24,17,20,13,18,16,17,15,6,14,16,6,11,14,12,9,8,11,5,8,9,8,10,7,7,8,7,9,4,2,5,3,2,4,5,0,3,3,5,0,4,1,7,5,6,4,3,2,0,1,1,2,3,2,0,1,0,2,1,1,0,1,2,2,3,0,1,1,0,0,1,1,0,0,1,0,1,1,0,1,1,0,1,1,0,0,1,0,1,2,0,0,1,2,0,0,0,0,1,0,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"auc":0.9496,"ref":{"t50":[9644,23,252,81],"t20":[9432,235,138,195]}};
-const FRAMES_w04roc = {"meta":{"src":"ISLP Default · 四方法都用 (balance, student) 配適（對應 ISLP 圖 4.8 與 §4.5）","seed":"無隨機性：四個模型都是在全部 10000 筆上配適，沒有重抽樣","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_classification.py","note":"LDA 的 AUC = 0.9496 與 ISLP §4.4.2 說的 0.95 相符。GaussianNB 把二元的 student 也當成常態，所以混淆矩陣（9618/49/238/95）與 ISLP 表 4.8 的 9621/46/244/89 略有差異"},"auc":{"logit":0.9495,"lda":0.9496,"qda":0.9495,"nb":0.9447},"curves":{"logit":[[0.0,0.0],[0.00041,0.05706],[0.00114,0.15916],[0.00166,0.1982],[0.00228,0.24024],[0.0029,0.26727],[0.00362,0.3033],[0.00434,0.32132],[0.00486,0.34835],[0.00631,0.37538],[0.00776,0.3964],[0.00848,0.42342],[0.00972,0.45345],[0.01086,0.46547],[0.012,0.4955],[0.01459,0.51351],[0.01676,0.52853],[0.01945,0.54955],[0.02234,0.56456],[0.02348,0.57958],[0.02586,0.5976],[0.02855,0.61261],[0.03155,0.62462],[0.03465,0.63964],[0.03714,0.65766],[0.03972,0.67267],[0.04262,0.68468],[0.04655,0.7027],[0.05048,0.71772],[0.05389,0.73273],[0.06031,0.75075],[0.07003,0.76577],[0.07614,0.78078],[0.07945,0.7958],[0.08627,0.81081],[0.09393,0.82583],[0.0991,0.84084],[0.10769,0.85886],[0.11689,0.87387],[0.12734,0.88589],[0.14617,0.9039],[0.17037,0.91892],[0.19892,0.93393],[0.22354,0.94595],[0.2401,0.96096],[0.3154,0.97598],[0.39981,0.99099],[1.0,1.0]],"lda":[[0.0,0.0],[0.00041,0.05405],[0.00093,0.15616],[0.00166,0.18919],[0.00228,0.23423],[0.00279,0.27628],[0.00372,0.3033],[0.00445,0.33033],[0.00517,0.36036],[0.00693,0.38138],[0.00797,0.3994],[0.0091,0.42943],[0.01045,0.45646],[0.01097,0.48048],[0.01355,0.5015],[0.01572,0.51652],[0.01831,0.53754],[0.02131,0.55556],[0.0239,0.57958],[0.02617,0.59459],[0.02793,0.60661],[0.03,0.62162],[0.03259,0.63664],[0.03548,0.64865],[0.03807,0.66366],[0.04158,0.67568],[0.0451,0.69069],[0.04883,0.71171],[0.05348,0.72372],[0.05948,0.74174],[0.06734,0.76276],[0.07293,0.77477],[0.07593,0.78979],[0.08245,0.8048],[0.08927,0.81982],[0.09527,0.83483],[0.10013,0.84685],[0.11544,0.86186],[0.11906,0.87688],[0.13262,0.88889],[0.14813,0.9039],[0.16479,0.91892],[0.19996,0.93093],[0.22065,0.94595],[0.23285,0.96096],[0.30806,0.97297],[0.39226,0.99099],[1.0,1.0]],"qda":[[0.0,0.0],[0.00052,0.07207],[0.00093,0.14414],[0.00186,0.1982],[0.00228,0.24324],[0.0031,0.26727],[0.00383,0.32432],[0.00528,0.35135],[0.00652,0.36637],[0.00765,0.39039],[0.00869,0.43844],[0.00993,0.45946],[0.01128,0.47447],[0.01252,0.49249],[0.01448,0.50751],[0.01655,0.51952],[0.018,0.54054],[0.01986,0.55255],[0.02328,0.57057],[0.02586,0.59159],[0.02772,0.60661],[0.03041,0.62462],[0.0331,0.63964],[0.0359,0.65465],[0.04055,0.66967],[0.04334,0.68468],[0.04665,0.6967],[0.04996,0.71471],[0.05462,0.72973],[0.06227,0.75075],[0.06734,0.76877],[0.07479,0.78078],[0.07841,0.7958],[0.08689,0.80781],[0.09248,0.82583],[0.09662,0.84084],[0.10644,0.85285],[0.11627,0.86787],[0.12227,0.87988],[0.13324,0.89489],[0.15475,0.90691],[0.1922,0.92192],[0.20068,0.93694],[0.22727,0.94895],[0.24341,0.96396],[0.32378,0.97598],[0.39723,0.99099],[1.0,1.0]],"nb":[[0.0,0.0],[0.00041,0.04805],[0.00124,0.11111],[0.00197,0.15916],[0.003,0.2042],[0.00414,0.23123],[0.00476,0.25826],[0.0059,0.31532],[0.00703,0.33333],[0.009,0.35435],[0.00993,0.37838],[0.01159,0.3964],[0.01262,0.42342],[0.01479,0.43844],[0.01593,0.45646],[0.01676,0.47147],[0.0181,0.4955],[0.01976,0.51351],[0.02121,0.54054],[0.02503,0.55856],[0.02772,0.58258],[0.03134,0.5976],[0.03745,0.61261],[0.03921,0.63664],[0.04169,0.65165],[0.04469,0.66667],[0.04945,0.68168],[0.05389,0.6997],[0.05679,0.71471],[0.06031,0.72973],[0.06248,0.74474],[0.06734,0.75976],[0.07541,0.77477],[0.07862,0.78979],[0.08524,0.8048],[0.09538,0.82583],[0.10675,0.84084],[0.11679,0.85586],[0.12982,0.87087],[0.14358,0.88589],[0.15351,0.9009],[0.16375,0.91592],[0.19686,0.93093],[0.23885,0.94595],[0.26782,0.96096],[0.3093,0.97598],[0.38957,0.99099],[1.0,1.0]]},"cm":{"logit":[9628,39,228,105],"lda":[9644,23,252,81],"qda":[9637,30,244,89],"nb":[9618,49,238,95]},"n":10000,"nPos":333};
 
 
 /* ===== classification 本頁元件（id 與全域一律 w04 前綴）===== */
@@ -2544,11 +2499,11 @@ function w04lda2Inv(S) {
   return { inv: [S[3] / d, -S[1] / d, -S[2] / d, S[0] / d], det: d };
 }
 /* 30 筆抽樣：用 Cholesky 把標準常態轉成指定的 Σ */
-function w04lda2Sample(mu, rho, seed) {
+function w04lda2Sample(mu, rho, seed, n) {
   const rand = HC.stat.lcg(seed), out = [];
   const r = Math.max(-0.985, Math.min(0.985, rho));
   const t = Math.sqrt(1 - r * r);
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < (n || 30); i++) {
     const z1 = HC.stat.normal(rand), z2 = HC.stat.normal(rand);
     out.push([mu[0] + z1, mu[1] + r * z1 + t * z2]);
   }
@@ -2620,32 +2575,35 @@ function w04lda2Draw() {
   } else if (linePts.length) {
     w04clip(s, linePts, { cls: 'fit', sw: 2.8 }, g);
   }
-  /* 橢圓與抽樣點 */
-  s.poly(w04lda2Ellipse(mu1, r1), { stroke: HC.tok.a, sw: 2.2, cls: 'ln' }, g);
-  s.poly(w04lda2Ellipse(mu2, r2), { stroke: HC.tok.b, sw: 2.2, cls: 'ln' }, g);
+  /* 資料分佈固定由輸入的 rho1/rho2 決定；切換模式只改分類規則。 */
+  s.poly(w04lda2Ellipse(mu1, r1i), { stroke: HC.tok.a, sw: 2.2, cls: 'ln' }, g);
+  s.poly(w04lda2Ellipse(mu2, r2i), { stroke: HC.tok.b, sw: 2.2, cls: 'ln' }, g);
   w04txt(s, s.pad.l + 8, s.pad.t + 14, '藍＝第 1 類（ρ₁）　紅＝第 2 類（ρ₂）　'
     + '灰虛線＝LDA 線性邊界', HC.tok.muted, g);
-  const p1 = w04lda2Sample(mu1, r1, 4041), p2 = w04lda2Sample(mu2, r2, 4042);
+  const p1 = w04lda2Sample(mu1, r1i, 4041), p2 = w04lda2Sample(mu2, r2i, 4042);
   p1.forEach(p => s.dot(p[0], p[1], { r: 3.4, fill: HC.tok.a, stroke: '#fff', sw: .9 }, g));
   p2.forEach(p => s.dot(p[0], p[1], { r: 3.4, fill: HC.tok.b, stroke: '#fff', sw: .9 }, g));
-  /* 60 個點的訓練錯誤（用目前模式的規則判） */
-  let bad = 0;
+  /* 顯示點只負責畫圖；錯誤率另用固定且獨立的 4000 個測試點。 */
   const rule = p => {
     if (w04lda2Qda) return Q(p[0], p[1]) > 0 ? 1 : 2;
     return (w1 * p[0] + w2 * p[1] - cc) > 0 ? 1 : 2;
   };
-  p1.forEach(p => { if (rule(p) !== 1) bad++; });
-  p2.forEach(p => { if (rule(p) !== 2) bad++; });
+  const t1 = w04lda2Sample(mu1, r1i, 14041, 2000);
+  const t2 = w04lda2Sample(mu2, r2i, 14042, 2000);
+  let bad = 0;
+  t1.forEach(p => { if (rule(p) !== 1) bad++; });
+  t2.forEach(p => { if (rule(p) !== 2) bad++; });
   w04tx('w04lda2Mode', w04lda2Qda ? 'QDA（各自 Σ）' : 'LDA（共用 Σ）');
-  w04tx('w04lda2R1T', HC.fmt(r1, 2));
-  w04tx('w04lda2R2T', HC.fmt(r2, 2));
+  w04tx('w04lda2R1T', HC.fmt(r1i, 2));
+  w04tx('w04lda2R2T', HC.fmt(r2i, 2));
   w04tx('w04lda2Shape', w04lda2Qda
     ? (Math.abs(r1i - r2i) < 1e-9 ? '二次式退化成直線' : '二次曲線') : '直線');
-  w04tx('w04lda2Err', bad + ' / 60（' + HC.pct(bad / 60, 1) + '）');
+  w04tx('w04lda2Err', bad + ' / 4000（' + HC.pct(bad / 4000, 1) + '）');
   setStatus('w04lda2Status', (w04lda2Qda ? 'QDA' : 'LDA') + ' 模式，ρ₁ = '
-    + HC.fmt(r1, 2) + '、ρ₂ = ' + HC.fmt(r2, 2) + '，邊界是'
+    + HC.fmt(r1i, 2) + '、ρ₂ = ' + HC.fmt(r2i, 2) + '，同一批 60 點上的邊界是'
     + (w04lda2Qda && Math.abs(r1i - r2i) > 1e-9 ? '二次曲線（紅）' : '直線')
-    + '，灰虛線是 LDA 的線性邊界。60 個抽樣點裡判錯 ' + bad + ' 個。');
+    + '，灰虛線是 LDA 的線性邊界。獨立 4000 個測試點的錯誤率為 '
+    + HC.pct(bad / 4000, 1) + '。');
 }
 function w04lda2Toggle() { w04lda2Qda = !w04lda2Qda; w04lda2Draw(); }
 function w04lda2Reset() {
@@ -2725,125 +2683,6 @@ function w04thrMove() {
 function w04thrSet(t) { $('w04thrSlider').value = String(t); w04thrMove(); }
 function w04thrReset() { w04thrSet(0.5); }
 
-/* ---------- P06 四方法 ROC 疊圖（Chart.js，baked）---------- */
-const w04rocNames = { logit: '邏輯斯迴歸', lda: 'LDA', qda: 'QDA', nb: 'Naive Bayes' };
-let w04rocZoomed = false;
-function w04rocFill() {
-  Object.keys(w04rocNames).forEach((k, i) => {
-    w04tx('w04rocA' + (i + 1), HC.fmt(FRAMES_w04roc.auc[k], 4));
-  });
-}
-function w04rocDraw() {
-  const F = FRAMES_w04roc;
-  const cols = { logit: HC.tok.accent2, lda: HC.tok.accent3, qda: HC.tok.accent, nb: '#8e44ad' };
-  const dash = { logit: [], lda: [7, 3], qda: [2, 3], nb: [11, 4] };
-  const wid = { logit: 3.4, lda: 2.2, qda: 2.2, nb: 2.2 };
-  const ds = Object.keys(w04rocNames).map(k => ({
-    label: w04rocNames[k] + '（AUC ' + HC.fmt(F.auc[k], 4) + '）',
-    data: F.curves[k].map(p => ({ x: p[0], y: p[1] })),
-    borderColor: cols[k], borderWidth: wid[k], borderDash: dash[k], pointRadius: 0, fill: false,
-  }));
-  ds.push({ label: '隨機猜', data: [{ x: 0, y: 0 }, { x: 1, y: 1 }], borderColor: HC.tok.muted,
-            borderWidth: 1.2, borderDash: [5, 4], pointRadius: 0, fill: false });
-  const hi = w04rocZoomed ? 0.3 : 1;
-  const lo = w04rocZoomed ? 0.7 : 0;
-  HC.line('w04rocChart', { datasets: ds }, {
-    interaction: { mode: 'nearest', intersect: false },
-    plugins: { legend: { labels: { boxWidth: 8, font: { family: HC.MONO, size: 10 } } } },
-    scales: {
-      x: { type: 'linear', min: 0, max: hi, title: { display: true, text: '假陽率 FPR' } },
-      y: { min: lo, max: 1, title: { display: true, text: '真陽率 TPR' } },
-    },
-  });
-  w04rocFill();
-}
-function w04rocZoom(on) {
-  w04rocZoomed = on;
-  w04rocDraw();
-  setStatus('w04rocStatus', on
-    ? '放大左上角（FPR 0–0.3、TPR 0.7–1）：四條線在高靈敏度區才真正分開，Naive Bayes 明顯落後。'
-    : '整張 0–1 的視野：四條幾乎完全重疊——訊號夠強時模型假設的差別看不出來。');
-}
-
-/* ---------- P06 選方法情境（live）---------- */
-const w04pickData = [
-  { q: '兩類、每類只有 20 筆訓練資料；兩個預測變數在各類內都近似常態，而且兩類的共變異數矩陣幾乎一樣。',
-    best: 1,
-    fb: ['邏輯斯迴歸在這裡也不差（邊界確實線性），但它沒用到「各類內近似常態」這個額外資訊；n 只有 40 時 LDA 的變異更小。',
-         '正解。這正是 LDA 的假設本身：常態 + 共用共變異數。ISLP 情境 1 裡 LDA 表現最好。',
-         '不對。共變異數幾乎一樣，QDA 要多估一個 Σ 卻換不到偏差的減少——純粹的變異。',
-         'Naive Bayes 只有在變數近似獨立時才划算；這裡沒說獨立，而且 n 小的問題 LDA 已經處理得更好。',
-         'KNN 在 n = 40、邊界又是線性的情況下最吃虧：付了無母數的變異，卻沒有彎曲的邊界可賺。'] },
-  { q: '兩類、每類 50 筆；真實邊界仍然是線性的，但兩個變數在各類內是重尾的 t 分佈（極端值不少），而且類內有強烈負相關。',
-    best: 0,
-    fb: ['正解。邊界線性所以要線性方法，但 t 分佈違反常態假設，LDA 的參數估計吃虧。ISLP 情境 3 裡邏輯斯贏過 LDA。',
-         '方向對（線性邊界）但被非常態拖累。LDA 的係數是從常態假設推出來的，重尾資料會讓 μ̂ 與 Σ̂ 不穩。',
-         '更糟。QDA 對非常態更敏感，ISLP 情境 3 裡它退化得最明顯。',
-         '最差。類內有強烈負相關，獨立假設被正面違反。',
-         'KNN 沒有分佈假設是優點，但邊界既然是線性的，它的彈性用不上，變異卻要照付。'] },
-  { q: '兩類、n 很大；第一類的兩個變數相關係數是 +0.5，第二類是 −0.5，各類內都是常態。',
-    best: 2,
-    fb: ['不行。兩類的共變異數不同 ⟹ 真實邊界是二次的，線性方法有系統性偏差，加多少資料都消不掉。',
-         '同樣不行。LDA 硬性假設 Σ 共用，這裡明顯不成立，會有無法消除的偏差。',
-         '正解。Σ₁ ≠ Σ₂ 正好是 QDA 的假設，而 n 很大讓多估的參數不成問題。ISLP 情境 4。',
-         '不好。兩類內部都明顯相關，獨立假設被違反。',
-         'KNN 可以配出彎的邊界，但這裡邊界剛好是二次的——QDA 用參數形式配同一條邊界，需要的樣本少得多。'] },
-  { q: 'p = 85 個預測變數、n 不到 6000（就是 lab 的 Caravan 資料），變數彼此近似獨立，正類只佔 6%。',
-    best: 3,
-    fb: ['邏輯斯迴歸可以跑（lab 就跑了），但 85 個變數上它需要正則化才穩；而且它沒有利用「近似獨立」。',
-         'LDA 要估 85 × 86 / 2 = 3655 個共變異數參數，n 不到 6000 撐不住。',
-         'QDA 更糟：要估兩倍的 3655 個，直接爆掉。',
-         '正解。p 大、變數近似獨立時 Naive Bayes 的偏差很小而變異極低——它只要估 2Kp 個數。',
-         'KNN 在 p = 85 時被維度詛咒（curse of dimensionality）打敗：「最近的鄰居」其實一點都不近。'] },
-  { q: '兩類、p = 2、n 非常大（每類幾千筆）；真實決策邊界高度彎曲，而且不是二次曲線。',
-    best: 4,
-    fb: ['線性邊界配不了高度彎曲的真實邊界，偏差消不掉。',
-         '同上，LDA 也只給線性邊界。',
-         'QDA 能彎，但只能彎成二次曲線。真實邊界「不是二次」時它仍有偏差。',
-         'Naive Bayes 可以彎（gₖⱼ 任意），但它是純加性的、沒有交互項，複雜邊界仍配不好。',
-         '正解。p 小、n 極大、邊界極彎，正是 KNN 的主場。但 K 要用交叉驗證挑——ISLP 情境 5 裡 KNN-1 是全場最差。'] },
-  { q: '兩類、每類只有 6 筆資料；各類的共變異數矩陣是對角的（變數獨立）但兩類不同。',
-    best: 3,
-    fb: ['Σ 不同 ⟹ 邊界非線性，邏輯斯迴歸有偏差；而且 n = 12 時它的估計非常不穩。',
-         'LDA 假設 Σ 共用，這裡不成立。',
-         'QDA 的假設對，但每類 6 筆要估一個完整的 Σ，變異太大——ISLP 情境 6 裡它輸給 Naive Bayes。',
-         '正解。對角 Σ 就是「類內獨立」，Naive Bayes 的假設完全成立，而它要估的參數最少。ISLP 情境 6。',
-         'n = 12 的 KNN 幾乎沒有鄰居可以看。'] },
-];
-let w04pickAt = 0;
-const w04pickState = w04pickData.map(() => -1);
-function w04pickShow() {
-  const d = w04pickData[w04pickAt], names = ['邏輯斯迴歸', 'LDA', 'QDA', 'Naive Bayes', 'KNN'];
-  w04tx('w04pickNo', '情境 ' + (w04pickAt + 1) + ' / ' + w04pickData.length);
-  w04tx('w04pickQ', d.q);
-  const a = w04pickState[w04pickAt];
-  const fb = $('w04pickFb');
-  if (a < 0) {
-    fb.textContent = '按下面任一個方法看看拆解。';
-    fb.style.color = 'var(--muted)';
-  } else {
-    fb.textContent = (a === d.best ? '✓ ' : '✗ ') + names[a] + '：' + d.fb[a]
-      + (a === d.best ? '' : '（建議答案：' + names[d.best] + '）');
-    fb.style.color = a === d.best ? 'var(--accent3)' : 'var(--accent)';
-  }
-  const hit = w04pickState.filter((v, i) => v === w04pickData[i].best).length;
-  const done = w04pickState.filter(v => v >= 0).length;
-  w04tx('w04pickIdx', (w04pickAt + 1) + ' / ' + w04pickData.length);
-  w04tx('w04pickHit', String(hit));
-  w04tx('w04pickDone', done + ' / ' + w04pickData.length);
-  setStatus('w04pickStatus', '第 ' + (w04pickAt + 1) + ' 個情境，已作答 ' + done + ' / '
-    + w04pickData.length + '，答對 ' + hit + ' 個。' + (a < 0 ? '點一個方法看拆解。'
-      : (a === w04pickData[w04pickAt].best ? '這一題對了，按「下一個情境」繼續。'
-        : '這一題選錯了，讀完拆解再按「下一個情境」。')));
-}
-function w04pickAns(k) { w04pickState[w04pickAt] = k; w04pickShow(); }
-function w04pickNext() { w04pickAt = (w04pickAt + 1) % w04pickData.length; w04pickShow(); }
-function w04pickReset() {
-  w04pickAt = 0;
-  for (let i = 0; i < w04pickState.length; i++) w04pickState[i] = -1;
-  w04pickShow();
-}
-
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。
    Chart.js 從 CDN 載不到時 HC.ready() 不會執行，若把 SVG 初始化放進去，
@@ -2858,12 +2697,9 @@ w04lda1Draw();
 w04lda2Setup();
 w04lda2Draw();
 w04thrApply(w04thrStats(0.5));
-w04rocFill();
-w04pickShow();
 HC.ready(() => {
   w04thrDrawRoc();
   w04thrApply(w04thrStats(parseFloat($('w04thrSlider').value)));
-  w04rocDraw();
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */

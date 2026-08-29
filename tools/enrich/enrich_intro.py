@@ -42,30 +42,9 @@ BODIES["prologue"] = f"""
   你手上有沒有想預測的 y？y 是數字還是類別？你要的是準確度還是可解釋性？
   答案決定你該翻到哪一章。</p>
 
-  <p>下面這張地圖就是這門課的全貌。<strong>按條件過濾，看剩下哪幾章</strong>。
-  每張卡片都直接連到那一章的頁面。現在還看不懂卡片上的名詞完全沒問題，
-  這一節的目的只是讓你知道「這門課會給你哪些工具、什麼時候該拿哪一把」。</p>
-
-{viz('      <div id="w01mapGrid" class="ch-grid" style="margin-top:0;"></div>',
-     [info_card("怎麼用這張地圖",
-                '每個按鈕是一個條件。<strong>條件是「且」的關係</strong>，'
-                '同時按下「監督式」與「分類」，就只剩下能做分類的章節。'
-                '按第二次可以取消該條件。'),
-      rows_card("目前的篩選",
-                [("條件", "（無，顯示全部）", "w01mapCond"),
-                 ("符合的章節", "—", "w01mapCount")]),
-      info_card("讀不懂名詞？",
-                '正常。這一節只是地圖，不是課程內容。'
-                '第 2 章開始才會真正解釋每一個詞。'
-                '你現在唯一需要記住的是：<strong>「有沒有 y」是最大的分水嶺</strong>。')],
-     "w01mapStatus", "按下方按鈕過濾，或直接點卡片跳到那一章。",
-     '<button class="btn btn-toggle" data-w01f="sup" onclick="w01mapTog(this)">監督式</button>'
-     '<button class="btn btn-toggle" data-w01f="unsup" onclick="w01mapTog(this)">非監督式</button>'
-     '<button class="btn btn-toggle" data-w01f="reg" onclick="w01mapTog(this)">迴歸</button>'
-     '<button class="btn btn-toggle" data-w01f="cls" onclick="w01mapTog(this)">分類</button>'
-     '<button class="btn btn-toggle" data-w01f="nonlin" onclick="w01mapTog(this)">非線性</button>'
-     '<button class="btn btn-toggle" data-w01f="interp" onclick="w01mapTog(this)">重視可解釋</button>'
-     '<button class="btn btn-reset" onclick="w01mapReset()">清除條件</button>')}
+  <p>這一章不先列一張可以篩選的課程地圖；那只是在重複網站導覽。
+  接下來直接用三個會真正影響分析選擇的問題組織內容：有沒有 y、y 是數字還是類別、
+  以及目標是預測還是推論。</p>
 
 {info("這一頁要做的四件事", '''<strong>1. 分清監督式與非監督式。</strong>有 y 就是監督式，沒有 y 就是非監督式。<br>
   <strong>2. 分清迴歸與分類。</strong>y 是數字就是迴歸，y 是類別就是分類。<br>
@@ -177,21 +156,6 @@ BODIES["predinfer"] = f"""
   往<em>哪個方向</em>、這個影響<em>可不可信</em>。這時 $\\hat f$ 必須看得懂，
   而且你需要標準誤與 p 值。</p>
 
-{viz('      <div id="w01piBox"></div>',
-     [info_card("怎麼玩",
-                '每題有一個實務情境，判斷它主要是<strong>預測</strong>還是<strong>推論</strong>。'
-                '選完會告訴你為什麼，以及這個判斷會把你導向哪一章。'),
-      rows_card("成績",
-                [("答對", "0 / 0", "w01piScore"), ("目前第幾題", "—", "w01piIdx")]),
-      info_card("界線不總是清楚",
-                '很多真實問題兩者都要——例如既想預測哪些客戶會流失，'
-                '<em>也</em>想知道為什麼。這時通常的做法是'
-                '<strong>用可解釋的模型做推論、用彈性的模型做預測</strong>，兩個一起交。')],
-     "w01piStatus", "按「下一題」開始。",
-     '<button class="btn btn-play" onclick="w01piPick(1)">這是預測</button>'
-     '<button class="btn btn-step" onclick="w01piPick(0)">這是推論</button>'
-     '<button class="btn btn-reset" onclick="w01piReset()">重新開始</button>')}
-
 {table(["", "預測", "推論"],
        [["在乎什麼", "$\\hat y$ 準不準", "$\\hat f$ 說了什麼"],
         ["模型可以是黑盒嗎", "可以", "<strong>不行</strong>"],
@@ -241,8 +205,7 @@ BODIES["notation"] = f"""
   \\end{{pmatrix}}$$
 
 {viz(svg("w01npSvg", 300),
-     [info_card("動手看",
-                '拖兩個滑桿改變 n 與 p。'
+     [info_card("怎麼看",
                 '<span style="color:var(--accent3);font-weight:700;">綠色一整列</span>是'
                 '一個觀測值 xᵢ（一個人、一天、一個州）；'
                 '<span style="color:var(--accent);font-weight:700;">紅色一整行</span>是'
@@ -254,14 +217,8 @@ BODIES["notation"] = f"""
                  ("xᵢ 的長度", "—", "w01npRow"), ("xⱼ 的長度", "—", "w01npCol")]),
       info_card("課程資料集的真實形狀",
                 '<div id="w01npSets" class="mono" style="font-size:.72rem;line-height:1.9;">—</div>')],
-     "w01npStatus", "拖滑桿看 n 與 p 怎麼決定資料表的形狀。",
-     '<label class="slider-label" style="margin-right:.4rem;">n</label>'
-     '<input type="range" id="w01npSlN" min="3" max="14" step="1" value="8" '
-     'oninput="w01npDraw()" style="flex:1 1 100px;max-width:150px;min-width:0;">'
-     '<label class="slider-label" style="margin:0 .4rem;">p</label>'
-     '<input type="range" id="w01npSlP" min="2" max="10" step="1" value="4" '
-     'oninput="w01npDraw()" style="flex:1 1 100px;max-width:150px;min-width:0;">'
-     '<button class="btn btn-reset" onclick="w01npReset()">重置</button>')}
+     "w01npStatus", "固定用 n = 8、p = 4 標出列、行與單一元素。", "",
+     provenance=("book-redraw", "依 ISLP 第 1 章的 n × p 記號重繪"))}
 
 {info("p ≫ n 會出大事", '''NCI60 資料是 <strong>64 × 6830</strong>——變數比觀測值多一百倍。
   這種「高維度」設定下，最小平方法能找到完美通過每一個訓練點的解，訓練 R² 剛好等於 1，
@@ -289,25 +246,24 @@ BODIES["datasets"] = f"""
   （不是直線）、對年份幾乎是<strong>緩慢的線性上升</strong>、對教育程度是
   <strong>單調但不等距</strong>的階梯。</p>
 
-{viz(chart("w01wageChart", "tall", "。此圖的重點：薪資對年齡先升後降（不是直線），對年份緩慢上升，對教育程度單調但不等距。"),
+{viz(chart("w01wageAge", "", "。年齡與薪資不是直線關係。") + "\n"
+     + chart("w01wageYear", "", "。年份的平均薪資呈緩慢上升。") + "\n"
+     + chart("w01wageEdu", "", "。教育程度的薪資差距不等距。"),
      [info_card("三個面板",
-                '用按鈕切換。<strong>年齡</strong>那張是本課第一個「線性不夠用」的證據，'
+                '三張圖依序呈現不同變數型態。<strong>年齡</strong>那張是本課第一個「線性不夠用」的證據，'
                 '所以才有第 7 章。<strong>年份</strong>那張的斜率是每年 +1.35 美元，'
                 '線性配得不錯。<strong>教育</strong>那張是質性變數（第 3 章）。', "圖 1.1"),
       rows_card("Wage 的事實",
                 [("n × p", "3000 × 11", "w01wageShape"),
                  ("2004 年的平均薪資", "111.16", "w01wage2004"),
-                 ("年份趨勢", "每年 +1.35", "w01wageTrend"),
-                 ("目前看的是", "年齡", "w01wageWhich")]),
+                 ("年份趨勢", "每年 +1.35", "w01wageTrend")]),
       info_card("為什麼薪資會在 60 歲後往下",
                 '不是「變老就變窮」。這是<strong>橫斷面</strong>資料：'
                 '60 歲那一群人跟 30 歲那一群人是<em>不同的人</em>。'
                 '高薪的人可能提早退休而離開樣本，留下的就偏低。'
                 '這種「相關不等於因果」的陷阱，推論時要特別小心。')],
-     "w01wageStatus", "切換三個面板看 Wage 的三種關係。",
-     '<button class="btn btn-play" onclick="w01wageShow(&#39;age&#39;)">年齡 vs 薪資</button>'
-     '<button class="btn btn-step" onclick="w01wageShow(&#39;year&#39;)">年份 vs 薪資</button>'
-     '<button class="btn btn-toggle" onclick="w01wageShow(&#39;edu&#39;)">教育 vs 薪資</button>')}
+     "w01wageStatus", "同時閱讀三個面板，不用按鈕切換才看得到證據。", "",
+     provenance=("course-data", "ISLP Wage；對照講義圖 1.1 與 Ch01 lab"))}
 
 {card("講義 01 · 載入 Wage 並看形狀", lab_code(CH, 146), lab_output(CH, 146), src=src("145、146"),
       note="11 個欄位裡 <code>wage</code> 是 y、<code>logwage</code> 是它的對數（別同時放進模型），"
@@ -337,8 +293,8 @@ BODIES["datasets"] = f"""
                 '這是<strong>誠實的例子</strong>。第 4 章會真的在這份資料上跑邏輯斯迴歸與 LDA，'
                 '正確率大約 50%——跟丟硬幣一樣。'
                 '知道「有些東西就是預測不了」，跟知道怎麼預測一樣重要。')],
-     "w01smStatus", "Lag1–Lag3 在漲日與跌日上的分佈。",
-     '<button class="btn btn-play" onclick="w01smDraw()">重畫</button>')}
+     "w01smStatus", "Lag1–Lag3 在漲日與跌日上的分佈。", "",
+     provenance=("course-data", "ISLP Smarket；對照講義圖 1.2 與 Ch01 lab"))}
 
 {card("講義 01 · Smarket 的欄位", lab_code(CH, 158), lab_output(CH, 158), src=src("157、158"),
       note="<code>Today</code> 是當天的報酬、<code>Direction</code> 是它的正負號，"
@@ -365,9 +321,8 @@ BODIES["datasets"] = f"""
       info_card("p ≫ n 的極端例子",
                 '6830 個變數、64 個樣本。任何需要 n &gt; p 的方法（例如最小平方）'
                 '在這裡直接失效。這也是為什麼降維在基因資料上這麼重要。')],
-     "w01nciStatus", "6830 個基因壓成 2 個主成分之後的樣子。",
-     '<button class="btn btn-play" onclick="w01nciDraw(true)">依型別上色</button>'
-     '<button class="btn btn-reset" onclick="w01nciDraw(false)">全部同色（模擬沒有標籤）</button>')}
+     "w01nciStatus", "位置只由基因表現量決定；型別顏色是在分析後加上。", "",
+     provenance=("course-data", "ISLP NCI60；對照講義圖 1.4 與 Ch01 lab"))}
 
 {card("講義 01 · NCI60 的結構", lab_code(CH, 164), lab_output(CH, 164), src=src("164"),
       note="它回傳一個 dict：<code>data</code> 是 64 × 6830 的表現量矩陣、"
@@ -572,141 +527,9 @@ BODIES["reference"] = f"""
 PAGEJS = r"""
 /* ===== introduction 本頁元件（id 與全域一律 w01 前綴）===== */
 
-/* ---------- P00 課程地圖 ----------
-   卡片直接連到其他九頁真實存在的 anchor，所以這一章要最後寫。 */
-const w01Chapters = [
-  { file: 'statistical_learning.html#irreducible', n: '02', name: '統計學習的基本框架',
-    note: 'Y = f(X) + ε · 偏差–變異拆解 · KNN',
-    tags: ['sup', 'reg', 'cls', 'interp'] },
-  { file: 'linear_regression.html#slr', n: '03', name: '線性迴歸',
-    note: '最小平方 · t 檢定與 F 檢定 · 交互作用 · 共線性',
-    tags: ['sup', 'reg', 'interp'] },
-  { file: 'classification.html#logistic', n: '04', name: '分類',
-    note: '邏輯斯迴歸 · LDA／QDA · 混淆矩陣與 ROC',
-    tags: ['sup', 'cls', 'interp'] },
-  { file: 'resampling_methods.html#validation', n: '05', name: '重抽樣方法',
-    note: '交叉驗證 · Bootstrap（每一章都要用）',
-    tags: ['sup', 'reg', 'cls', 'interp'] },
-  { file: 'model_selection.html#subset', n: '06', name: '模型選擇與正則化',
-    note: '子集選擇 · Ridge 與 Lasso · PCR／PLS · 高維度',
-    tags: ['sup', 'reg', 'interp'] },
-  { file: 'unsupervised_learning.html#pca', n: '07', name: '非監督式學習',
-    note: 'PCA · biplot · K-means · 階層式分群',
-    tags: ['unsup'] },
-  { file: 'beyond_linearity.html#poly', n: '08', name: '超越線性',
-    note: '多項式 · 樣條 · 平滑樣條 · 局部迴歸 · GAM',
-    tags: ['sup', 'reg', 'nonlin', 'interp'] },
-  { file: 'tree_based_methods.html#grow', n: '09', name: '樹狀方法與集成學習',
-    note: '決策樹 · Bagging · 隨機森林 · Boosting',
-    tags: ['sup', 'reg', 'cls', 'nonlin'] },
-  { file: 'support_vector_machines.html#maxmargin', n: '10', name: '支持向量機',
-    note: '最大邊界 · 軟邊界 C · 核技巧',
-    tags: ['sup', 'cls', 'nonlin'] },
-];
-const w01FilterName = { sup: '監督式', unsup: '非監督式', reg: '迴歸', cls: '分類',
-                        nonlin: '非線性', interp: '重視可解釋' };
-let w01Filters = [];
-function w01mapTog(btn) {
-  const f = btn.dataset.w01f;
-  const i = w01Filters.indexOf(f);
-  if (i >= 0) { w01Filters.splice(i, 1); btn.classList.add('off'); }
-  else { w01Filters.push(f); btn.classList.remove('off'); }
-  w01mapDraw();
-}
-function w01mapReset() {
-  w01Filters = [];
-  document.querySelectorAll('[data-w01f]').forEach(b => b.classList.remove('off'));
-  w01mapDraw();
-}
-function w01mapDraw() {
-  const keep = w01Chapters.filter(c => w01Filters.every(f => c.tags.indexOf(f) >= 0));
-  const grid = $('w01mapGrid');
-  grid.innerHTML = keep.map(c =>
-    '<a class="ch-card" href="' + c.file + '">'
-    + '<span class="ch-num">' + c.n + ' · ' + c.tags.map(t => w01FilterName[t]).join(' / ') + '</span>'
-    + '<h3>' + c.name + '</h3>'
-    + '<div class="ch-meta">' + c.note + '</div></a>').join('');
-  if (!keep.length) {
-    grid.innerHTML = '<p class="skip-note">沒有章節同時符合這些條件——'
-      + '例如「非監督式」與「分類」是互斥的（沒有 y 就沒有類別可以分）。</p>';
-  }
-  $('w01mapCond').textContent = w01Filters.length
-    ? w01Filters.map(f => w01FilterName[f]).join(' ＋ ') : '（無，顯示全部）';
-  $('w01mapCount').textContent = keep.length + ' / ' + w01Chapters.length + ' 章';
-  setStatus('w01mapStatus', w01Filters.length
-    ? '條件：' + w01Filters.map(f => w01FilterName[f]).join(' ＋ ')
-      + ' → 剩下 ' + keep.length + ' 章。點卡片直接跳過去。'
-    : '目前顯示全部 ' + w01Chapters.length + ' 章。按按鈕加條件（可以疊加）。');
-}
-
-/* ---------- P03 預測 vs 推論分流器 ---------- */
-const w01PiItems = [
-  { q: '銀行想判斷一筆刷卡交易是不是盜刷，好即時擋下來。', ans: 1,
-    why: '要的是「擋得準不準」，模型內部怎麼運作不影響決策品質——這是預測。實務上會用集成方法（第 8 章），因為它們在這種問題上最準。' },
-  { q: '藥廠想知道新藥讓血壓平均降了多少，以及這個估計的信賴區間。', ans: 0,
-    why: '要的是效果的大小與不確定性，必須看得懂模型並給標準誤——這是推論。第 3 章的工具。' },
-  { q: '電商想預測下個月的總營收，好安排庫存。', ans: 1,
-    why: '只要數字準，不需要解釋每個變數的貢獻——預測。' },
-  { q: '教育部想知道班級人數對學生成績的影響有多大，好決定要不要減班。', ans: 0,
-    why: '政策要靠這個係數的大小與可信度來訂，必須能解釋、必須有不確定性——推論。而且要非常小心因果的陷阱。' },
-  { q: '照片 App 要自動辨識照片裡有沒有貓。', ans: 1,
-    why: '純預測，而且模型（深度學習）本身完全是黑盒——沒人在意它靠哪幾個像素判斷。' },
-  { q: '房仲想知道「多一間衛浴」讓房價平均增加多少，好跟屋主解釋。', ans: 0,
-    why: '要跟人解釋一個具體的邊際效果，必須是可解釋模型的係數——推論。' },
-];
-let w01PiIdx = -1, w01PiRight = 0, w01PiDone = 0;
-function w01piRender(msg, cls) {
-  const box = $('w01piBox');
-  if (w01PiIdx < 0) {
-    box.innerHTML = '<p class="skip-note">按下方「這是預測」或「這是推論」開始作答，'
-      + '共 ' + w01PiItems.length + ' 題。</p>';
-    return;
-  }
-  const it = w01PiItems[w01PiIdx];
-  box.innerHTML = '<div class="quiz-box" style="margin:0;">'
-    + '<div class="quiz-label">情境 ' + (w01PiIdx + 1) + ' / ' + w01PiItems.length + '</div>'
-    + '<p>' + it.q + '</p>'
-    + (msg ? '<div class="quiz-feedback show ' + cls + '">' + msg + '</div>' : '')
-    + '</div>';
-}
-function w01piPick(v) {
-  if (w01PiIdx < 0) { w01PiIdx = 0; w01piRender('', ''); w01piStats(); return; }
-  const it = w01PiItems[w01PiIdx];
-  const ok = v === it.ans;
-  if (ok) w01PiRight++;
-  w01PiDone++;
-  w01piRender((ok ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> 這題是'
-    + (it.ans ? '<strong>預測</strong>。' : '<strong>推論</strong>。')) + it.why,
-    ok ? 'correct' : 'wrong');
-  w01piStats();
-  const next = w01PiIdx + 1;
-  setTimeout(() => {
-    if (next < w01PiItems.length) { w01PiIdx = next; w01piRender('', ''); w01piStats(); }
-    else {
-      $('w01piBox').innerHTML = '<div class="info-box green"><span class="info-label">做完了</span>'
-        + '答對 ' + w01PiRight + ' / ' + w01PiItems.length + '。'
-        + '要準就用彈性方法（第 8、9 章），要懂就用可解釋方法（第 3、4、7 章）。</div>';
-      setStatus('w01piStatus', '六題做完，答對 ' + w01PiRight + ' 題。按「重新開始」再來一輪。');
-    }
-  }, 2600);
-}
-function w01piStats() {
-  $('w01piScore').textContent = w01PiRight + ' / ' + w01PiDone;
-  $('w01piIdx').textContent = w01PiIdx < 0 ? '—' : (w01PiIdx + 1) + ' / ' + w01PiItems.length;
-  if (w01PiIdx >= 0) setStatus('w01piStatus', '判斷這個情境主要是預測還是推論，然後按對應的按鈕。');
-}
-function w01piReset() {
-  w01PiIdx = -1; w01PiRight = 0; w01PiDone = 0;
-  w01piRender('', ''); w01piStats();
-  setStatus('w01piStatus', '按「這是預測」或「這是推論」開始。');
-}
-
 /* ---------- P04 n × p 矩陣 ---------- */
-function w01npReset() {
-  $('w01npSlN').value = '8'; $('w01npSlP').value = '4'; w01npDraw();
-}
 function w01npDraw() {
-  const n = parseInt($('w01npSlN').value, 10), p = parseInt($('w01npSlP').value, 10);
+  const n = 8, p = 4;
   const W = 620, H = 300;
   const s = HC.svg('w01npSvg', { xd: [0, 1], yd: [0, 1], h: H, w: W,
                                  pad: { l: 8, r: 8, t: 8, b: 8 } });
@@ -756,68 +579,51 @@ function w01npDraw() {
     + '）——注意它們長度不同，紫色那格是兩者的交集 xᵢⱼ。');
 }
 
-/* ---------- P05 Wage 三面板 ---------- */
-let w01WageWhich = 'age';
-function w01wageShow(which) {
-  w01WageWhich = which;
+/* 三個 panel 同時出現，避免用切換按鈕把證據藏起來。 */
+function w01wageDrawAll() {
   const F = FRAMES_w01wage;
-  const names = { age: '年齡', year: '年份', edu: '教育程度' };
-  $('w01wageWhich').textContent = names[which];
-  if (which === 'age') {
-    HC.scatter('w01wageChart', {
-      datasets: [
-        { label: '個別觀測值（抽 600 點）', data: F.scatter.map(d => ({ x: d[0], y: d[1] })),
-          backgroundColor: 'rgba(138,133,120,.45)', pointRadius: 2.4, showLine: false },
-        { label: '分箱平均', data: F.ageCurve.map(d => ({ x: d[0], y: d[1] })),
-          borderColor: HC.tok.accent2, backgroundColor: HC.tok.accent2,
-          borderWidth: 3, pointRadius: 3.5, showLine: true, type: 'line' },
-      ],
-    }, {
-      scales: { x: { type: 'linear', title: { display: true, text: '年齡' } },
-                y: { title: { display: true, text: '薪資（千美元）' } } },
-    });
-    setStatus('w01wageStatus', '藍線是各年齡區間的平均薪資：從 18 歲一路升到 40–50 歲，'
-      + '之後<strong>往下走</strong>。這條曲線不是直線——第 7 章就是為了配這種形狀。');
-  } else if (which === 'year') {
-    const ys = F.yearMean.map(d => d[0]);
-    HC.line('w01wageChart', {
-      labels: ys,
-      datasets: [
-        { label: '各年的平均薪資', data: F.yearMean.map(d => d[1]),
-          borderColor: HC.tok.accent2, backgroundColor: HC.tok.accent2,
-          borderWidth: 3, pointRadius: 5, fill: false },
-        { label: '線性趨勢（每年 +' + HC.fmt(F.trend[1], 2) + '）',
-          data: ys.map(y => F.trend[0] + F.trend[1] * y),
-          borderColor: HC.tok.accent, borderWidth: 2, borderDash: [6, 4],
-          pointRadius: 0, fill: false },
-      ],
-    }, { scales: { x: { title: { display: true, text: '年份' } },
-                   y: { title: { display: true, text: '平均薪資（千美元）' } } } });
-    setStatus('w01wageStatus', '2003 到 2009 年平均薪資每年約增加 '
-      + HC.fmt(F.trend[1], 2) + ' 千美元，線性配得不錯——'
-      + '注意縱軸範圍很窄，這個上升幅度比年齡的效果小得多。');
-  } else {
-    HC.bar('w01wageChart', {
-      labels: F.eduBox.map(d => d.label),
-      datasets: [
-        { label: '中位數', data: F.eduBox.map(d => d.med),
-          backgroundColor: 'rgba(44,62,122,.75)', borderRadius: 5, order: 2 },
-        { label: '第 25–75 百分位（上緣）', data: F.eduBox.map(d => d.q3),
-          backgroundColor: 'rgba(44,62,122,.22)', borderRadius: 5, order: 3 },
-        { label: '平均', data: F.eduBox.map(d => d.mean), type: 'line',
-          borderColor: HC.tok.accent, backgroundColor: HC.tok.accent,
-          borderWidth: 2.6, pointRadius: 5, fill: false, order: 1 },
-      ],
-    }, {
-      scales: { x: { title: { display: true, text: '教育程度' } },
-                y: { title: { display: true, text: '薪資（千美元）' }, beginAtZero: true } },
-    });
-    const d = F.eduBox;
-    setStatus('w01wageStatus', '中位數從 ' + d[0].med + ' 升到 ' + d[4].med
-      + '，單調但<strong>不等距</strong>：高中→大學跳了 '
-      + HC.fmt(d[3].med - d[1].med, 1) + '，大學→研究所又跳了 '
-      + HC.fmt(d[4].med - d[3].med, 1) + '。這就是為什麼不該把它硬編成 1、2、3、4、5。');
-  }
+  HC.scatter('w01wageAge', {
+    datasets: [
+      { label: '個別觀測值（固定抽 600 點）',
+        data: F.scatter.map(d => ({ x: d[0], y: d[1] })),
+        backgroundColor: 'rgba(138,133,120,.45)', pointRadius: 2.2, showLine: false },
+      { label: '分箱平均', data: F.ageCurve.map(d => ({ x: d[0], y: d[1] })),
+        borderColor: HC.tok.accent2, backgroundColor: HC.tok.accent2,
+        borderWidth: 3, pointRadius: 3, showLine: true, type: 'line' },
+    ],
+  }, { scales: { x: { type: 'linear', title: { display: true, text: '年齡' } },
+                  y: { title: { display: true, text: '薪資（千美元）' } } } });
+
+  const ys = F.yearMean.map(d => d[0]);
+  HC.line('w01wageYear', {
+    labels: ys,
+    datasets: [
+      { label: '各年平均', data: F.yearMean.map(d => d[1]),
+        borderColor: HC.tok.accent2, backgroundColor: HC.tok.accent2,
+        borderWidth: 3, pointRadius: 4, fill: false },
+      { label: '線性趨勢', data: ys.map(y => F.trend[0] + F.trend[1] * y),
+        borderColor: HC.tok.accent, borderWidth: 2, borderDash: [6, 4],
+        pointRadius: 0, fill: false },
+    ],
+  }, { scales: { x: { title: { display: true, text: '年份' } },
+                  y: { title: { display: true, text: '平均薪資（千美元）' } } } });
+
+  HC.bar('w01wageEdu', {
+    labels: F.eduBox.map(d => d.label),
+    datasets: [
+      { label: '中位數', data: F.eduBox.map(d => d.med),
+        backgroundColor: 'rgba(44,62,122,.75)', borderRadius: 5 },
+      { label: '平均', data: F.eduBox.map(d => d.mean), type: 'line',
+        borderColor: HC.tok.accent, backgroundColor: HC.tok.accent,
+        borderWidth: 2.4, pointRadius: 4, fill: false },
+    ],
+  }, { scales: { x: { title: { display: true, text: '教育程度' } },
+                  y: { title: { display: true, text: '薪資（千美元）' }, beginAtZero: true } } });
+
+  $('w01wageShape').textContent = F.n + ' × 11';
+  $('w01wage2004').textContent = HC.fmt(F.mean2004, 2);
+  $('w01wageTrend').textContent = '每年 +' + HC.fmt(F.trend[1], 2);
+  setStatus('w01wageStatus', '左：年齡效果會彎；中：年份趨勢近似線性；右：教育程度是有序類別，但級距不等。');
 }
 
 /* ---------- P05 Smarket 箱形圖 ---------- */
@@ -897,13 +703,11 @@ function w01nciDraw(colored) {
 /* ---------- 啟動 ----------
    SVG 元件與純 DOM 元件一律放在 HC.ready() 外面：Chart.js 從 CDN 載不到時
    HC.ready() 不會執行，放進去會讓它們跟著死掉。 */
-w01mapDraw();
-w01piReset();
 w01npDraw();
 w01smDraw();
 w01nciDraw(true);
 HC.ready(() => {
-  w01wageShow('age');
+  w01wageDrawAll();
 });
 """
 

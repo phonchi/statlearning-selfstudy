@@ -115,15 +115,32 @@ def table(headers, rows, cls="cmp-table", fontsize=".85rem"):
             f"  <thead><tr>{th}</tr></thead>\n  <tbody>{tr}</tbody>\n</table></div>")
 
 
-def viz(stage, side_cards, status_id, status_text, controls):
-    """.viz-layout：stage → .status-banner → .controls-bar ＋右側 .info-card。"""
+PROVENANCE_LABELS = {
+    "course-data": "課程／lab 資料",
+    "book-redraw": "講義／課本重繪",
+    "simulation": "固定種子模擬",
+    "illustrative": "自訂概念示意",
+}
+
+
+def viz(stage, side_cards, status_id, status_text, controls, provenance):
+    """.viz-layout：stage → status → controls → provenance ＋右側說明。
+
+    provenance = (kind, detail)，kind 必須是 PROVENANCE_LABELS 的鍵。
+    """
     cards = "\n".join(side_cards)
-    return f"""<div class="viz-layout">
+    kind, detail = provenance
+    if kind not in PROVENANCE_LABELS:
+        raise ValueError(f"未知的視覺 provenance：{kind}")
+    attr = f' data-provenance="{kind}"'
+    source = (f'\n      <div class="viz-source"><span>{PROVENANCE_LABELS[kind]}</span>'
+              f'{detail}</div>')
+    return f"""<div class="viz-layout"{attr}>
   <div>
     <div class="viz-panel">
 {stage}
       <div class="status-banner" id="{status_id}"><span class="status-icon">›</span><span class="status-text">{status_text}</span></div>
-      <div class="controls-bar">{controls}</div>
+      <div class="controls-bar">{controls}</div>{source}
     </div>
   </div>
   <div class="side-panel">

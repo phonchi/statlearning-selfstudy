@@ -150,7 +150,8 @@ BODIES["single"] = f"""
      '<option value="id">恆等（退化成線性）</option></select>'
      + slider("w11fwdB1", "w₁₀", -4, 4, 0.1, 0, "w11fwdDraw()", "w11fwdB1v", "0.0",
               basis="1 1 190px", lw=30)
-     + '<button class="btn btn-reset" onclick="w11fwdReset()">重置</button>')}
+     + '<button class="btn btn-reset" onclick="w11fwdReset()">重置</button>',
+     provenance=("simulation", "固定未訓練權重；只示範 ISLP §10.1 的 forward pass。"))}
 
 {qa("觀念釐清", [
     ("Q：隱藏單元的個數 K 該怎麼選？",
@@ -277,7 +278,8 @@ BODIES["multi"] = f"""
             basis="1 1 190px", lw=26, vw=44)
      + slider("w11paramH2", "h₂", 8, 256, 8, 128, "w11paramDraw()", "w11paramH2v", "128",
               basis="1 1 190px", lw=26, vw=44)
-     + '<button class="btn btn-reset" onclick="w11paramReset()">回到 256／128</button>')}
+     + '<button class="btn btn-reset" onclick="w11paramReset()">回到 256／128</button>',
+     provenance=("book-redraw", "依 ISLP §10.2 的 MNIST 784–256–128–10 架構計算參數量。"))}
 
   <h3 id="dx-mn">官方 lab §10.9.2：MNIST 上的兩層網路</h3>
 
@@ -330,10 +332,9 @@ BODIES["cnn"] = f"""
 
 {viz(svg("w11convSvg", 420),
      [info_card("怎麼玩",
-                '按 ▶ 看 3×3 濾波器一格一格掃過 8×8 的輸入。'
-                '左邊是輸入（亮＝值大），中間高亮的方框是目前對齊的位置，'
-                '右邊是逐格長出來的特徵圖。掃完之後會再做一次 2×2 最大池化。'
-                '換濾波器看看：<strong>垂直邊緣</strong>那個只對左右明暗交界有反應。', "LIVE"),
+                '直接拖「列／行」選擇 3×3 濾波器目前對齊的位置。'
+                '左邊框線標出輸入視窗，右邊同步標出對應的特徵圖格子與內積。'
+                '換濾波器看看：<strong>垂直邊緣</strong>只對左右明暗交界有反應。', "LIVE"),
       rows_card("目前這一步",
                 [("濾波器", "垂直邊緣", "w11convK"),
                  ("對齊位置", "—", "w11convPos"),
@@ -345,16 +346,18 @@ BODIES["cnn"] = f"""
                 '3×3 濾波器不管掃 8×8 還是 1024×1024，都只有 9 個權重加 1 個偏置。'
                 '同樣的輸出如果用全連接層做，每個輸出單元都要自己一組權重，'
                 '那就是習題 4(d) 在算的東西。')],
-     "w11convSvgStatus", "按「開始」看濾波器掃過去，或用「單步」一格一格看。",
+     "w11convSvgStatus", "拖列與行，直接檢查任一卷積視窗和對應輸出。",
      '<label class="slider-label">濾波器</label>'
      '<select id="w11convSel" class="mono" onchange="w11convSetK()">'
      '<option value="vedge" selected>垂直邊緣</option>'
      '<option value="hedge">水平邊緣</option>'
      '<option value="blur">平均（模糊）</option>'
      '<option value="sharp">銳化</option></select>'
-     '<button class="btn btn-play" onclick="w11convStart()">▶ 開始</button>'
-     '<button class="btn btn-step" onclick="w11convStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w11convReset()">重置</button>')}
+     '<label class="slider-label">列</label><input id="w11convRow" type="range" min="1" max="6" value="1" oninput="w11convSelect()">'
+     '<label class="slider-label">行</label><input id="w11convCol" type="range" min="1" max="6" value="1" oninput="w11convSelect()">'
+     '<label class="slider-label"><input id="w11convPool" type="checkbox" onchange="w11convSelect()"> 顯示 2×2 最大池化</label>'
+     '<button class="btn btn-reset" onclick="w11convReset()">重置</button>',
+     provenance=("illustrative", "8×8 自訂影像與標準 3×3 濾波器；只示範卷積、共享權重與池化。"))}
 
 {qa("觀念釐清", [
     ("Q：池化為什麼要「丟掉資訊」？那不是壞事嗎？",
@@ -436,32 +439,20 @@ BODIES["rnn"] = f"""
   <p>W、U、b 在每個時間點都一樣。這跟 CNN 在空間上共享權重是同一個念頭，
   只是換成在時間上共享。序列多長都用同一組參數。</p>
 
-{viz(svg("w11seqSvg", 400),
-     [info_card("怎麼玩",
-                '同一句話，上面用詞袋處理、下面用 RNN 逐字讀。'
-                '按 ▶ 看 RNN 的隱藏狀態怎麼隨著讀到的詞更新。'
-                '用下拉選單把句子換成「語意被否定詞翻轉」的版本——'
-                '<strong>詞袋的向量幾乎沒變，RNN 的最終狀態卻跑到另一邊</strong>。', "LIVE"),
-      rows_card("目前讀到",
-                [("第幾個詞", "—", "w11seqStep"),
-                 ("這個詞", "—", "w11seqWord"),
-                 ("它的情感權重", "—", "w11seqW"),
-                 ("隱藏狀態 A", "—", "w11seqA"),
-                 ("讀完之後的判斷", "—", "w11seqOut"),
-                 ("詞袋的判斷", "—", "w11seqBow")]),
-      info_card("這個示範是簡化的",
-                '真正的 RNN 有 32 維的隱藏狀態、權重是學出來的；'
-                '這裡把隱藏狀態壓成一維、權重用手訂，只為了讓「狀態隨時間累積」'
-                '這件事看得見。官方 lab 用的是 LSTM，見下面的卡片。')],
-     "w11seqSvgStatus", "按「開始」讓 RNN 逐字讀這句話。注意否定詞出現時狀態怎麼轉向。",
-     '<label class="slider-label">句子</label>'
-     '<select id="w11seqSel" class="mono" onchange="w11seqSetS()">'
-     '<option value="0" selected>好看 · 劇本 · 扎實</option>'
-     '<option value="1">不 · 好看 · 劇本 · 鬆散</option>'
-     '<option value="2">說 · 好看 · 的 · 人 · 都 · 在 · 騙 · 人</option></select>'
-     '<button class="btn btn-play" onclick="w11seqStart()">▶ 開始</button>'
-     '<button class="btn btn-step" onclick="w11seqStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w11seqReset()">重置</button>')}
+{info("RNN 真正共享的是參數，不是手寫的詞語分數",
+      "每個時間點都套用同一組 <strong>W、U、b</strong>：目前輸入 Xℓ 與上一個狀態 Aℓ−1 "
+      "一起產生新狀態 Aℓ。權重必須從資料學出來；本站不再用人工指定的情感權重或"
+      "『遇到否定詞就翻轉』規則冒充 RNN 預測。", "purple")}
+
+{table(["時間", "讀入", "共用的更新", "保留下來的資訊"],
+       [["ℓ = 1", "X₁", "A₁ = g(WX₁ + UA₀ + b)", "第一個詞的脈絡"],
+        ["ℓ = 2", "X₂", "A₂ = g(WX₂ + UA₁ + b)", "X₁ 與 X₂ 的摘要"],
+        ["…", "…", "同一組 W、U、b", "狀態沿序列傳遞"],
+        ["ℓ = L", "X_L", "A_L = g(WX_L + UA_{L−1} + b)", "供最後輸出使用的序列摘要"]])}
+
+{info("黃金參考",
+      "這裡只解釋 ISLP §10.5 的 recurrence 結構；模型表現回到下面官方 lab 的 LSTM 與"
+      "詞袋實跑結果比較。公式說明架構，lab 數字才是這個任務的證據。")}
 
   <h3 id="dx-lstm">官方 lab §10.9.6：LSTM 與時間序列</h3>
 
@@ -537,7 +528,8 @@ BODIES["fitting"] = f"""
      + slider("w11gdRhos", "ρ", 0.02, 1.6, 0.02, 0.1, "w11gdSync()", "w11gdRhov", "0.10",
               basis="1 1 180px", lw=22, vw=44)
      + '<button class="btn btn-play" onclick="w11gdRun()">▶ 開始</button>'
-     '<button class="btn btn-reset" onclick="w11gdReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w11gdReset()">重置</button>',
+     provenance=("book-redraw", "依 ISLP Ch.10 習題 6 的 R(β)=sinβ+β/10 即時計算。"))}
 
 {info("三個讓它跑得動的技巧", '''<strong>反向傳播：</strong>用連鎖律由輸出往回逐層算梯度，
   重複利用前一層算好的中間量。它不是另一種演算法，只是把梯度算得夠便宜——
@@ -635,7 +627,8 @@ BODIES["doubledesc"] = f"""
                 '另外，訓練誤差在 d ≥ 20 之後<strong>真的是 0</strong>（10⁻²⁸ 量級），'
                 '但對數軸畫不出 0，所以藍線被壓在 10⁻⁵ 的底線上。')],
      "w11ddStatus", "紅線是測試誤差、藍線是訓練誤差。注意 d = 20 那根尖峰。",
-     _dd_controls)}
+     _dd_controls,
+     provenance=("simulation", "固定種子重跑 ISLP 圖 10.20／10.21 的設定；不是複製課本點。"))}
 
 {info("雙下降沒有推翻偏差–變異取捨", '''ISLP 把話講得很白：橫軸畫的是「基底函數的個數」，
   而那並沒有正確反映內插模型真正的彈性。d = 42 的最小範數樣條，
@@ -1063,7 +1056,7 @@ const w11convImg = (() => {
   }
   return g;
 })();
-let w11convSvc = null, w11convPlayer = null, w11convKey = 'vedge';
+let w11convSvc = null, w11convKey = 'vedge';
 const w11convOUT = 6;   // 8 − 3 + 1
 
 function w11convConv(kern) {
@@ -1144,15 +1137,16 @@ function w11convApply(f) {
   s.add('rect', { cls: 'w11win', x: IX + cc * CS, y: IY + rr * CS, width: 3 * CS, height: 3 * CS,
                   fill: 'none', stroke: 'var(--pt-held)', 'stroke-width': 3 }, gb);
 
-  // 特徵圖 6×6（只畫已經算完的格子）
+  // 特徵圖 6×6：完整顯示，並標出目前檢查的格子。
   for (let r = 0; r < w11convOUT; r++) {
     for (let c = 0; c < w11convOUT; c++) {
       const idx = r * w11convOUT + c;
-      const seen = idx <= done;
+      const selected = idx === done;
       s.add('rect', { cls: 'w11cc', x: FX + c * CS, y: FY + r * CS, width: CS, height: CS,
-                      fill: seen ? w11convDiv(fm[r][c], amax) : 'var(--card)',
-                      stroke: 'var(--card-border)', 'stroke-width': 0.6,
-                      opacity: seen ? 1 : 0.35, 'shape-rendering': 'crispEdges' }, gc);
+                      fill: w11convDiv(fm[r][c], amax),
+                      stroke: selected ? 'var(--accent)' : 'var(--card-border)',
+                      'stroke-width': selected ? 3 : 0.6,
+                      opacity: 1, 'shape-rendering': 'crispEdges' }, gc);
     }
   }
   s.add('rect', { cls: 'w11win', x: FX + cc * CS, y: FY + rr * CS, width: CS, height: CS,
@@ -1196,168 +1190,18 @@ function w11convApply(f) {
 }
 function w11convSetK() {
   w11convKey = $('w11convSel').value;
-  w11convReset();
+  w11convSelect();
 }
 function w11convReset() {
-  if (w11convPlayer) w11convPlayer.stop();
-  w11convPlayer = new Player({ frames: w11convFrames(), apply: w11convApply });
-  w11convPlayer.reset();
+  $('w11convRow').value = 1;
+  $('w11convCol').value = 1;
+  $('w11convPool').checked = false;
+  w11convSelect();
 }
-function w11convStart() {
-  w11convReset();
-  w11convPlayer.play();
-}
-function w11convStep() {
-  if (!w11convPlayer) w11convReset();
-  w11convPlayer.step();
-}
-
-/* ---------- P04 詞袋 vs 逐字讀 ---------- */
-const w11seqSents = [
-  { w: ['好看', '劇本', '扎實'], s: [1.2, 0.3, 1.0], neg: [0, 0, 0] },
-  { w: ['不', '好看', '劇本', '鬆散'], s: [0, 1.2, 0.3, -1.0], neg: [1, 0, 0, 0] },
-  { w: ['說', '好看', '的', '人', '都', '在', '騙', '人'],
-    s: [0, 1.2, 0, 0, 0, 0, -1.4, 0], neg: [0, 0, 0, 0, 0, 0, 0, 0] },
-];
-let w11seqSvc = null, w11seqPlayer = null, w11seqIdx = 0;
-
-function w11seqSetup() {
-  w11seqSvc = HC.svg('w11seqSvg', { h: 400 });
-  if (!w11seqSvc) return;
-  w11seqSvc.domain([0, 620], [0, 400]);
-  w11seqSvc.layer('box');
-  w11seqSvc.layer('bar');
-  w11seqSvc.layer('lab');
-}
-/* 極簡 RNN：A ← tanh(0.85·A + w)，遇到否定詞就把狀態反號。
-   真的 RNN 的權重是學出來的、狀態是 32 維；這裡壓成一維只為了讓「狀態隨時間累積」看得見。 */
-function w11seqRun(sent, upto) {
-  let a = 0;
-  const path = [0];
-  for (let i = 0; i <= upto && i < sent.w.length; i++) {
-    a = Math.tanh(0.85 * a + sent.s[i]);
-    if (sent.neg[i]) a = -a - 0.4;
-    path.push(a);
-  }
-  return path;
-}
-function w11seqFrames() {
-  const sent = w11seqSents[w11seqIdx];
-  const fr = [];
-  for (let i = -1; i < sent.w.length; i++) fr.push({ i: i });
-  return fr;
-}
-function w11seqApply(f) {
-  const s = w11seqSvc;
-  if (!s) return;
-  const sent = w11seqSents[w11seqIdx];
-  const n = sent.w.length;
-  const path = w11seqRun(sent, f.i);
-  const a = path[path.length - 1];
-  const bow = sent.s.reduce((p, v) => p + v, 0);
-
-  const gb = s.clearLayer('box'), gr = s.clearLayer('bar'), gl = s.clearLayer('lab');
-  const BW = Math.min(96, 520 / n), X0 = 50;
-
-  s.txtPx(X0, 40, '詞袋：把所有詞的權重直接加起來，順序完全沒用到', { cls: 'axtitle' }, gl);
-  s.txtPx(X0, 178, '遞迴網路：逐字讀，每一步更新同一個隱藏狀態 A', { cls: 'axtitle' }, gl);
-
-  for (let i = 0; i < n; i++) {
-    const x = X0 + i * BW;
-    const on = f.i >= i;
-    // 上排：詞袋（一開始就全部亮著，因為它沒有順序）
-    s.add('rect', { cls: 'w11wb', x: x, y: 54, width: BW - 8, height: 40, rx: 5,
-                    fill: sent.s[i] > 0 ? w11POS : (sent.s[i] < 0 ? w11NEG : 'var(--card)'),
-                    opacity: sent.s[i] === 0 ? 0.5 : 0.75,
-                    stroke: 'var(--card-border)', 'stroke-width': 1.5 }, gb);
-    s.add('text', { cls: 'w11ntxt', x: x + (BW - 8) / 2, y: 79, 'text-anchor': 'middle',
-                    'font-size': 13, fill: sent.s[i] === 0 ? 'var(--muted)' : '#fff' }, gl)
-      .textContent = sent.w[i];
-    // 下排：RNN（讀到才亮）
-    s.add('rect', { cls: 'w11wb', x: x, y: 192, width: BW - 8, height: 40, rx: 5,
-                    fill: on ? (sent.neg[i] ? 'var(--pt-held)'
-                      : (sent.s[i] > 0 ? w11POS : (sent.s[i] < 0 ? w11NEG : 'var(--card)')))
-                      : 'var(--card)',
-                    opacity: on ? (sent.s[i] === 0 && !sent.neg[i] ? 0.5 : 0.8) : 0.25,
-                    stroke: 'var(--card-border)', 'stroke-width': 1.5 }, gb);
-    s.add('text', { cls: 'w11ntxt', x: x + (BW - 8) / 2, y: 217, 'text-anchor': 'middle',
-                    'font-size': 13, opacity: on ? 1 : 0.35,
-                    fill: on && (sent.s[i] !== 0 || sent.neg[i]) ? '#fff' : 'var(--muted)' }, gl)
-      .textContent = sent.w[i];
-  }
-
-  // 隱藏狀態的折線。
-  // 只畫 A = 0 那一條線：這幾句的 tanh(總分) 都很接近 1，如果也畫 +1 的格線，
-  // 詞袋那條虛線就會正好疊在上面，兩條看起來像一條。±1 改成左邊的刻度字。
-  const yA = v => 316 - 42 * Math.max(-1.4, Math.min(1.4, v));
-  const RX = X0 + n * BW - 8;
-  s.txtPx(14, 250, '隱藏狀態 A：+1 偏正評、−1 偏負評', { cls: 'axtitle' }, gl);
-  s.add('line', { cls: 'w11axis', x1: X0, y1: yA(0), x2: RX, y2: yA(0),
-                  stroke: 'var(--muted)', 'stroke-width': 1.4, opacity: 0.6 }, gr);
-  [[1, '+1'], [0, '0'], [-1, '−1']].forEach(([v, t]) => {
-    s.add('text', { cls: 'w11ntxt', x: X0 - 8, y: yA(v) + 4, 'text-anchor': 'end',
-                    'font-size': 11, fill: 'var(--muted)' }, gl).textContent = t;
-  });
-  const pts = path.map((v, i) => [X0 + i * BW, yA(v)]);
-  if (pts.length > 1) {
-    s.add('polyline', { cls: 'w11path', points: pts.map(p => p[0] + ',' + p[1]).join(' '),
-                        fill: 'none', stroke: 'var(--accent2)', 'stroke-width': 3 }, gr);
-  }
-  pts.forEach((p, i) => {
-    s.add('circle', { cls: 'w11pt', cx: p[0], cy: p[1], r: i === pts.length - 1 ? 7 : 4.5,
-                      fill: 'var(--accent2)', stroke: '#fff', 'stroke-width': 1.6 }, gr);
-  });
-  // 詞袋的總分畫成一條水平參考線
-  const yb = yA(Math.tanh(bow));
-  s.add('line', { cls: 'w11bow', x1: X0, y1: yb, x2: RX, y2: yb,
-                  stroke: 'var(--fit-true)', 'stroke-width': 2.2,
-                  'stroke-dasharray': '6 4' }, gr);
-  s.add('text', { cls: 'w11ntxt', x: RX - 4, y: yb - 7, 'text-anchor': 'end',
-                  'font-size': 11, fill: 'var(--fit-true)' }, gl)
-    .textContent = '詞袋的總分（跟順序無關）';
-
-  const cur = f.i >= 0 && f.i < n ? f.i : null;
-  $('w11seqStep').textContent = cur === null ? '還沒開始' : (cur + 1) + ' / ' + n;
-  $('w11seqWord').textContent = cur === null ? '—' : sent.w[cur];
-  $('w11seqW').textContent = cur === null ? '—'
-    : (sent.neg[cur] ? '否定詞（把狀態翻面）' : HC.fmt(sent.s[cur], 2));
-  $('w11seqA').textContent = HC.fmt(a, 3);
-  $('w11seqOut').textContent = f.i >= n - 1 ? (a > 0 ? '正評' : '負評') : '（還沒讀完）';
-  $('w11seqBow').textContent = (bow > 0 ? '正評' : '負評') + '（總分 ' + HC.fmt(bow, 2) + '）';
-
-  if (f.i >= n - 1) {
-    const agree = (a > 0) === (bow > 0);
-    setStatus('w11seqSvgStatus',
-      '讀完了。遞迴網路的判斷是 <b>' + (a > 0 ? '正評' : '負評') + '</b>，詞袋是 <b>'
-      + (bow > 0 ? '正評' : '負評') + '</b>。'
-      + (agree ? '這一句兩邊看法一致——多數句子確實如此，所以詞袋才會意外地好用。'
-        : '<b>兩邊不一樣。</b>詞袋看到「好看」就加分，遞迴網路卻讀到了把它翻掉的那個詞。'));
-  } else if (cur === null) {
-    setStatus('w11seqSvgStatus', '按「開始」讓遞迴網路逐字讀。上排的詞袋一開始就全部攤開，'
-      + '因為它根本不管順序。');
-  } else {
-    setStatus('w11seqSvgStatus', '讀到第 ' + (cur + 1) + ' 個詞「' + sent.w[cur] + '」，'
-      + '隱藏狀態變成 ' + HC.fmt(a, 3) + '。'
-      + (sent.neg[cur] ? ' <b>這是否定詞，它把前面累積的狀態翻了面。</b>'
-        : ' 狀態帶著前面看過的東西往前走。'));
-  }
-}
-function w11seqSetS() {
-  w11seqIdx = parseInt($('w11seqSel').value, 10);
-  w11seqReset();
-}
-function w11seqReset() {
-  if (w11seqPlayer) w11seqPlayer.stop();
-  w11seqPlayer = new Player({ frames: w11seqFrames(), apply: w11seqApply });
-  w11seqPlayer.reset();
-}
-function w11seqStart() {
-  w11seqReset();
-  w11seqPlayer.play();
-}
-function w11seqStep() {
-  if (!w11seqPlayer) w11seqReset();
-  w11seqPlayer.step();
+function w11convSelect() {
+  const r = Number($('w11convRow').value) - 1;
+  const c = Number($('w11convCol').value) - 1;
+  w11convApply({i: r * w11convOUT + c, pool: $('w11convPool').checked});
 }
 
 /* ---------- P05 梯度下降（習題 6 的函數）----------
@@ -1539,8 +1383,6 @@ w11paramSetup();
 w11paramDraw();
 w11convSetup();
 w11convReset();
-w11seqSetup();
-w11seqReset();
 HC.ready(() => {
   w11gdSync();
   w11ddInit();

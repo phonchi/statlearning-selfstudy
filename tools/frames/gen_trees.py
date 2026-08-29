@@ -156,7 +156,8 @@ sim["singleTree"] = round(mse(ys_te, DecisionTreeRegressor(random_state=0)
 rf6 = RandomForestRegressor(max_features=6, random_state=0, n_jobs=-1).fit(Xb_tr, yb_tr)
 names = list(Boston.drop(columns=["medv"]).columns)
 imp = rf6.feature_importances_
-perm = permutation_importance(rf6, Xb_te, yb_te, n_repeats=30, random_state=0, n_jobs=-1)
+perm = permutation_importance(rf6, Xb_te, yb_te, n_repeats=30, random_state=0,
+                              scoring="r2", n_jobs=-1)
 
 order = np.argsort(-imp)
 vimp = {
@@ -193,7 +194,7 @@ print("\n".join([
     js("FRAMES_w09vimp", vimp,
        "ISLP Boston · RandomForestRegressor(max_features=6, random_state=0)"
        "（＝lab 儲存格 70／72 的同一個模型；Heart 不在 ISLP 0.4.0 裡，所以改用 Boston）",
-       "random_state=0；permutation_importance(n_repeats=30, random_state=0)",
+       "random_state=0；permutation_importance(scoring='r2', n_repeats=30, random_state=0)",
        f"不純度下降的第一名是 {vimp['names'][0]} = {vimp['impurity'][0]}"
        f"（lab 儲存格 72 是 lstat 0.356203）"),
 ]))

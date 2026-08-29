@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """由 tools/pages.py 與 data/ 產生 index.html 與 README.md 的章節表。冪等。
 
-卡片上的「N 節互動」「N 張詞彙卡」都是算出來的，不是手打的，
+卡片上的「N 節」「N 個視覺區塊」「N 張詞彙卡」都是算出來的，不是手打的，
 所以不可能跟實際頁面或母檔不一致。
 """
 import json
@@ -23,7 +23,7 @@ def counts(p: P.Page):
     widgets = 0
     if html.exists():
         s = html.read_text(encoding="utf-8")
-        widgets = len(re.findall(r'class="chart-wrap', s)) + len(re.findall(r'<svg class="viz-svg"', s))
+        widgets = len(re.findall(r'class="viz-layout"', s))
     return parts, cards, qs, widgets
 
 
@@ -31,7 +31,7 @@ def meta_line(p: P.Page):
     parts, cards, qs, widgets = counts(p)
     bits = [f"{parts} 節"]
     if widgets:
-        bits.append(f"{widgets} 個互動元件")
+        bits.append(f"{widgets} 個視覺區塊")
     bits.append(f"題庫自測 {qs} 題" if qs else "每節 quiz")
     bits.append(f"{cards} 張詞彙卡" if cards else "詞彙卡待補")
     return " · ".join(bits)
@@ -77,7 +77,7 @@ def build_html():
     <p>三頁，讀完大概一小時。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
     把環境弄好、再學會怎麼跟 AI 協作而不把判斷外包。
     這三頁不需要任何程式基礎，選讀，不列入評分。
-    共 {len(pre)} 頁、{pre_widgets} 個互動元件。</p>
+    共 {len(pre)} 頁、{pre_widgets} 個視覺區塊。</p>
     <div class="ch-grid">
 {pre_cards}
     </div>
@@ -96,7 +96,7 @@ def build_html():
     <p>沒寫過 Python，或只會一點點？這六頁把正課會用到的語法與套件講一遍，
     程式碼全部逐字取自課程 lab notebook。<strong>查閱用</strong>——
     正課讀到卡住再回來翻，不必先讀完。選讀，不列入評分。
-    共 {len(app)} 頁、{app_widgets} 個互動元件。</p>
+    共 {len(app)} 頁、{app_widgets} 個視覺區塊。</p>
     <div class="ch-grid">
 {app_cards}
     </div>
@@ -107,7 +107,7 @@ def build_html():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、十一章互動教材、六頁 Python 先備知識附錄，每節都能動手操作、預測、驗證。NSYSU MATH524 課程配套。">
+<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、十一章教材、六頁 Python 先備知識附錄，以例子、自測與必要的互動驗證觀念。NSYSU MATH524 課程配套。">
 <title>統計學習 × Python 互動自學網站 — NSYSU MATH524</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -136,7 +136,7 @@ def build_html():
       <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（一小時，不需要程式基礎）；
       <strong>沒寫過 Python？</strong>正課讀到卡住就翻<a href="#appendix">附錄</a>。兩區都是選讀，不列入評分。</p>
       <div class="loop-steps">
-        <div class="step"><b>① READ &amp; PLAY</b>逐節閱讀，動手操作互動元件：先預測結果，再按按鈕驗證。</div>
+        <div class="step"><b>① READ &amp; CHECK</b>逐節閱讀；遇到互動元件時，先預測結果，再操作驗證。</div>
         <div class="step"><b>② CROSS-CHECK</b>對照講義 PDF 與 ISLP 原文，把完整程式看懂、抄一遍、跑一遍。</div>
         <div class="step"><b>③ QUIZ</b>每節 quiz 立刻自測：答錯就回頭重讀該節，不要往下跳。</div>
         <div class="step"><b>④ FLASHCARDS &amp; REF</b>翻完詞彙卡、掃過 REF 速查表，能不看答案講出定義才算過關。</div>
@@ -147,7 +147,7 @@ def build_html():
 {pre_block}  <section id="core">
     <h2>正課 · 十一章</h2>
     <p>順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
-    共 {len(core)} 章、{total_widgets} 個互動元件、{total_cards} 張詞彙卡。</p>
+    共 {len(core)} 章、{total_widgets} 個視覺區塊、{total_cards} 張詞彙卡。</p>
     <div class="ch-grid">
 {cards}
     </div>
@@ -188,14 +188,14 @@ def build_readme():
         對應 = p.islp_label + (f"／{p.esl_label}" if p.esl_label else "")
         講義 = f"講義 {p.deck_no}" if p.deck else "—"     # 補充章沒有講義
         rows.append(f"| {p.n:02d} | [{p.plain}]({p.file}) | {對應} | {講義} | "
-                    f"{parts} 節 · {widgets} 元件 · {cards} 張卡 |")
+                    f"{parts} 節 · {widgets} 視覺區塊 · {cards} 張卡 |")
     table = "\n".join(rows)
 
     def side_table(grp):
         out = []
         for i, q in enumerate([x for x in P.PAGES if x.grp == grp], 1):
             parts, cards, _qs, widgets = counts(q)
-            widget_label = "動態元件" if q.stem in {"00a_why_code", "00c_ai_assisted"} else "元件"
+            widget_label = "視覺區塊"
             out.append(f"| {i} | [{q.plain}]({q.file}) | {q.islp_label} | "
                        f"{parts} 節 · {widgets} {widget_label} · {cards} 張卡 |")
         return "\n".join(out)
@@ -207,7 +207,7 @@ def build_readme():
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分成三區：
 
 1. **課前準備**（3 頁）——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
-2. **正課**（11 章）——每一節都能動手操作、預測、驗證，配上每節 quiz、觀念釐清 Q&A、
+2. **正課**（11 章）——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
    關鍵詞彙卡與 REF 速查表。
 3. **附錄：Python 先備知識**（6 頁）——正課會用到的語法與套件，查閱用。
 
@@ -252,6 +252,8 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 每頁的 §徽章都標了 ISLP 節號與講義頁碼。`.deck-extra` 卡片裡的程式碼與「預期輸出」
 **逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方的「來源」標了儲存格編號。
 圖表用的烘焙資料由 `tools/frames/` 在固定種子下產生，環境為 {P.ENV_NOTE}。
+每個正文視覺另標示它屬於課程資料、講義／課本重繪、固定種子模擬或自訂概念示意；
+自訂值不得解讀成課本或實證結果。
 
 第 11 頁「深度學習」是**補充章**——本課沒有教 ISLP 第 10 章，所以沒有講義也沒有中文 lab。
 那一章的程式碼與輸出改為逐字取自[課本官方的英文 lab](https://github.com/intro-stat-learning/ISLP_labs)
@@ -270,6 +272,7 @@ python3 tools/build_page.py        # 骨架與 GEN 區段（三處編號、prev/
 python3 tools/enrich/enrich_*.py   # 各章內容
 python3 tools/inject_data.py       # 詞彙卡與題庫（母檔在 data/）
 python3 tools/build_index.py       # 本檔與 index.html
+python3 tools/check_visual_claims.py  # 高風險視覺的來源與數值不變量
 python3 tools/validate.py --net    # 19 項具名檢查
 node tools/browser_check.js        # 瀏覽器逐項（含手機版與 CDN 失效）
 ```

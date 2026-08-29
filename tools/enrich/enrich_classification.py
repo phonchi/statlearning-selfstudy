@@ -89,7 +89,8 @@ BODIES["prologue"] = f"""
      slider("w04whyBal", "balance", 0, 2650, 25, 1000, "w04whyMove")
      + '<button class="btn btn-step" onclick="w04whyJump(300)">→ 跳到 balance = 300</button>'
      + '<button class="btn btn-toggle" onclick="w04whyToggle()">切換：只看邏輯斯</button>'
-     + '<button class="btn btn-reset" onclick="w04whyReset()">重置</button>')}
+     + '<button class="btn btn-reset" onclick="w04whyReset()">重置</button>',
+     provenance=("course-data", "ISLP Default；對照課本圖 4.2"))}
 
   <h3>三類的編碼實驗：換個順序，模型就換了</h3>
   <p>下面同一批急診病人，只是換了編碼順序。線性迴歸看到的是「數字」，
@@ -163,7 +164,8 @@ BODIES["logistic"] = f"""
      "w04shapeStatus", "推兩個滑桿看 S 曲線怎麼動；下面那條 log-odds 永遠是直線。",
      slider("w04shapeB0", "β₀", -8, 8, 0.2, -1, "w04shapeDraw")
      + slider("w04shapeB1", "β₁", -3, 3, 0.05, 0.8, "w04shapeDraw")
-     + '<button class="btn btn-reset" onclick="w04shapeReset()">重置</button>')}
+     + '<button class="btn btn-reset" onclick="w04shapeReset()">重置</button>',
+     provenance=("book-redraw", "依邏輯斯函數與 logit 定義直接計算"))}
 
 {qa("觀念釐清", [
     ("Q：邏輯斯迴歸的係數到底怎麼解讀？「balance 每多一元，違約機率增加 0.0055」對嗎？",
@@ -344,7 +346,8 @@ BODIES["lda"] = f"""
      + slider("w04lda1S2", "σ₂", 0.4, 2.5, 0.05, 1, "w04lda1Draw")
      + slider("w04lda1P1", "π₁", 0.05, 0.95, 0.05, 0.5, "w04lda1Draw")
      + '<button class="btn btn-toggle" onclick="w04lda1Toggle()">允許不同 σ（QDA）</button>'
-     + '<button class="btn btn-reset" onclick="w04lda1Reset()">重置</button>')}
+     + '<button class="btn btn-reset" onclick="w04lda1Reset()">重置</button>',
+     provenance=("book-redraw", "依講義圖 4.4 的一維常態判別模型重繪"))}
 
   <p>p &gt; 1 時把常態換成<strong>多變量常態</strong> $N(\\mu_k, \\Sigma)$，
   $\\mu_k$ 是各類自己的平均向量、$\\Sigma$ 是<strong>所有類共用</strong>的共變異數矩陣。
@@ -440,9 +443,9 @@ BODIES["qda"] = f"""
                  ("ρ₁（藍類）", "0.70", "w04lda2R1T"),
                  ("ρ₂（紅類）", "0.70", "w04lda2R2T"),
                  ("邊界的形狀", "—", "w04lda2Shape"),
-                 ("訓練錯誤（60 點）", "—", "w04lda2Err")]),
+                 ("獨立測試錯誤（4000 點）", "—", "w04lda2Err")]),
       info_card("怎麼看這張圖",
-                '兩個橢圓是各類含 95% 機率的等高線，點是各類 30 筆抽樣。'
+                '兩個橢圓是各類含 95% 機率的等高線，點是各類固定的 30 筆抽樣。'
                 '<span style="color:var(--fit-line);font-weight:700;">紅線</span>是目前模式的決策邊界，'
                 '<span style="color:var(--muted);font-weight:700;">灰虛線</span>永遠是 LDA 的線性邊界，'
                 '留在那裡當對照。<strong>把 ρ₁ 與 ρ₂ 調成一樣，紅線會壓在灰線上</strong>，'
@@ -451,13 +454,14 @@ BODIES["qda"] = f"""
                 '$\\delta_1(x) - \\delta_2(x) = 0$ 是 x 的二次式，'
                 '所以邊界是雙曲線、橢圓或拋物線之一（退化時是直線）。'
                 '把 ρ₁ 與 ρ₂ 拉到正負兩端，你會看到邊界彎成兩支。'
-                '<strong>那不是 bug，二次曲線本來就可以有兩支。</strong>')],
+                '<strong>切換 LDA／QDA 時資料點不會改變</strong>；只改用來分類同一批資料的規則。')],
      "w04lda2Status", "切換共用／各自共變異數，看邊界從直線變成二次曲線。",
      slider("w04lda2R1", "ρ₁", -0.9, 0.9, 0.05, 0.7, "w04lda2Draw")
      + slider("w04lda2R2", "ρ₂", -0.9, 0.9, 0.05, 0.7, "w04lda2Draw")
      + slider("w04lda2D", "μ 位移", 0.6, 2.4, 0.1, 1.4, "w04lda2Draw")
      + '<button class="btn btn-toggle" onclick="w04lda2Toggle()">切換 LDA ↔ QDA</button>'
-     + '<button class="btn btn-reset" onclick="w04lda2Reset()">重置</button>')}
+     + '<button class="btn btn-reset" onclick="w04lda2Reset()">重置</button>',
+     provenance=("simulation", "固定種子同一資料；只切換 LDA／QDA 分類規則"))}
 
   <h3>Naive Bayes：不猜分佈的形狀，改猜「互相獨立」</h3>
 
@@ -587,7 +591,8 @@ BODIES["threshold"] = f"""
      slider("w04thrSlider", "閾值", 0, 1, 0.005, 0.5, "w04thrMove")
      + '<button class="btn btn-step" onclick="w04thrSet(0.5)">→ 回到 0.5</button>'
      + '<button class="btn btn-step" onclick="w04thrSet(0.2)">→ 調到 0.2</button>'
-     + '<button class="btn btn-reset" onclick="w04thrReset()">重置</button>')}
+     + '<button class="btn btn-reset" onclick="w04thrReset()">重置</button>',
+     provenance=("course-data", "ISLP Default；對照表 4.4–4.5 與圖 4.8"))}
 
 {qa("觀念釐清", [
     ("Q：類別不平衡時，「準確率 99%」為什麼可能一文不值？該看什麼？",
@@ -662,14 +667,6 @@ BODIES["threshold"] = f"""
 """
 
 # ── P06 compare ───────────────────────────────────────────────────────
-_SCEN = ('<div id="w04pickStage" style="background:#fafafa;border:1px solid #ececec;'
-         'border-radius:8px;padding:1rem 1.1rem;min-height:190px;">\n'
-         '        <div class="dx-label" id="w04pickNo">情境 1 / 6</div>\n'
-         '        <p id="w04pickQ" style="margin-bottom:.6rem;">—</p>\n'
-         '        <p id="w04pickFb" style="margin-bottom:0;font-size:.92rem;color:var(--muted);">'
-         '按下面任一個方法看看拆解。</p>\n'
-         '      </div>')
-
 BODIES["compare"] = f"""
   <p>五個方法看起來各說各話，其實把它們統一寫成「相對於第 K 類的 log-odds」之後，
   差別就一目了然了。ISLP §4.5.1 做的就是這件事：</p>
@@ -700,51 +697,9 @@ BODIES["compare"] = f"""
   <p>KNN 是唯一完全在框架外的：它不寫任何 log-odds 的式子，直接看鄰居投票。
   代價是（a）需要 n ≫ p，（b）不告訴你哪個變數重要。</p>
 
-{viz(chart("w04rocChart", "square",
-           "。此圖的重點：在 Default 上，邏輯斯／LDA／QDA 的 ROC 幾乎完全重疊（AUC 0.9495–0.9496），"
-           "Naive Bayes 略低（0.9447）——理論上的等價關係在實測上真的看得到。"),
-     [rows_card("AUC（Default，balance + student）",
-                [("邏輯斯迴歸", "—", "w04rocA1"), ("LDA", "—", "w04rocA2"),
-                 ("QDA", "—", "w04rocA3"), ("Naive Bayes", "—", "w04rocA4"),
-                 ("隨機猜", "0.5000", "w04rocA0")]),
-      info_card("為什麼四條幾乎疊在一起",
-                '因為這份資料只有兩個預測變數、n = 10000，'
-                '而 <code>balance</code> 對 <code>default</code> 的訊號非常強。'
-                '<strong>訊號夠強時，模型假設的差別就淹沒在訊號裡</strong>。'
-                '式 4.32 又保證 LDA 與邏輯斯的邊界形式相同，兩條當然重疊。', "圖 4.8"),
-      info_card("不要因此結論「方法都差不多」",
-                'ISLP 圖 4.11／4.12 用六個模擬情境示範：換掉資料的產生方式，'
-                '排名就會重排。<strong>「哪個方法好」是資料的性質，不是方法的性質。</strong>'
-                '按「放大左上角」看四條線在高靈敏度區真正分開的地方。')],
-     "w04rocStatus", "四個方法在同一份 Default 資料、同一組預測變數上的 ROC 疊圖。",
-     '<button class="btn btn-toggle" onclick="w04rocZoom(true)">放大左上角</button>'
-     '<button class="btn btn-reset" onclick="w04rocZoom(false)">看整張 0–1</button>')}
-
-  <h3>選方法的六個情境</h3>
-  <p>下面六個情境改寫自 ISLP §4.5.2 的模擬與 lab 的實際資料。
-  先自己想再點。每個選項都會告訴你它為什麼合理、又為什麼不是最好的答案。</p>
-
-{viz(_SCEN,
-     [rows_card("進度",
-                [("目前情境", "1 / 6", "w04pickIdx"),
-                 ("答對", "0", "w04pickHit"),
-                 ("已作答", "0 / 6", "w04pickDone")]),
-      info_card("這一組要練的判斷",
-                '<strong>1. 邊界是直的還是彎的？</strong>直的 → LDA／邏輯斯；彎的 → QDA／Naive Bayes／KNN。<br>'
-                '<strong>2. n 相對 p 夠不夠大？</strong>不夠 → 選參數少的。<br>'
-                '<strong>3. 各類內的 X 像不像常態？</strong>不像 → 邏輯斯或 Naive Bayes。<br>'
-                '<strong>4. 變數之間獨立嗎？</strong>近似獨立 → Naive Bayes 大賺；明顯相關 → 它會很慘。'),
-      info_card("沒有萬用解",
-                'ISLP §4.5.2 的結論：<strong>六個情境沒有任何一個方法全勝。</strong>'
-                '這也是第 5 章交叉驗證存在的理由——與其猜哪個方法適合，不如量出來。')],
-     "w04pickStatus", "讀完情境後點一個方法，右邊會記你答對幾題。",
-     '<button class="btn btn-toggle" onclick="w04pickAns(0)">邏輯斯</button>'
-     '<button class="btn btn-toggle" onclick="w04pickAns(1)">LDA</button>'
-     '<button class="btn btn-toggle" onclick="w04pickAns(2)">QDA</button>'
-     '<button class="btn btn-toggle" onclick="w04pickAns(3)">Naive Bayes</button>'
-     '<button class="btn btn-toggle" onclick="w04pickAns(4)">KNN</button>'
-     '<button class="btn btn-step" onclick="w04pickNext()">→ 下一個情境</button>'
-     '<button class="btn btn-reset" onclick="w04pickReset()">重置</button>')}
+  <p>Default 上四個方法的 AUC 幾乎相同；上面的閾值元件已經完整呈現 ROC 與 AUC，
+  這裡不再疊一張幾乎重合的 ROC 圖。方法選擇也不能靠固定情境配答案；應把候選方法放進
+  同一個重抽樣流程，以未見資料的表現與問題的錯誤成本裁決。</p>
 
   <h3 id="dx-knn">講義完整實作：KNN，唯一的無母數方法</h3>
 {card("講義 04 · KNeighborsClassifier(n_neighbors=1)",
@@ -1246,11 +1201,11 @@ function w04lda2Inv(S) {
   return { inv: [S[3] / d, -S[1] / d, -S[2] / d, S[0] / d], det: d };
 }
 /* 30 筆抽樣：用 Cholesky 把標準常態轉成指定的 Σ */
-function w04lda2Sample(mu, rho, seed) {
+function w04lda2Sample(mu, rho, seed, n) {
   const rand = HC.stat.lcg(seed), out = [];
   const r = Math.max(-0.985, Math.min(0.985, rho));
   const t = Math.sqrt(1 - r * r);
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < (n || 30); i++) {
     const z1 = HC.stat.normal(rand), z2 = HC.stat.normal(rand);
     out.push([mu[0] + z1, mu[1] + r * z1 + t * z2]);
   }
@@ -1322,32 +1277,35 @@ function w04lda2Draw() {
   } else if (linePts.length) {
     w04clip(s, linePts, { cls: 'fit', sw: 2.8 }, g);
   }
-  /* 橢圓與抽樣點 */
-  s.poly(w04lda2Ellipse(mu1, r1), { stroke: HC.tok.a, sw: 2.2, cls: 'ln' }, g);
-  s.poly(w04lda2Ellipse(mu2, r2), { stroke: HC.tok.b, sw: 2.2, cls: 'ln' }, g);
+  /* 資料分佈固定由輸入的 rho1/rho2 決定；切換模式只改分類規則。 */
+  s.poly(w04lda2Ellipse(mu1, r1i), { stroke: HC.tok.a, sw: 2.2, cls: 'ln' }, g);
+  s.poly(w04lda2Ellipse(mu2, r2i), { stroke: HC.tok.b, sw: 2.2, cls: 'ln' }, g);
   w04txt(s, s.pad.l + 8, s.pad.t + 14, '藍＝第 1 類（ρ₁）　紅＝第 2 類（ρ₂）　'
     + '灰虛線＝LDA 線性邊界', HC.tok.muted, g);
-  const p1 = w04lda2Sample(mu1, r1, 4041), p2 = w04lda2Sample(mu2, r2, 4042);
+  const p1 = w04lda2Sample(mu1, r1i, 4041), p2 = w04lda2Sample(mu2, r2i, 4042);
   p1.forEach(p => s.dot(p[0], p[1], { r: 3.4, fill: HC.tok.a, stroke: '#fff', sw: .9 }, g));
   p2.forEach(p => s.dot(p[0], p[1], { r: 3.4, fill: HC.tok.b, stroke: '#fff', sw: .9 }, g));
-  /* 60 個點的訓練錯誤（用目前模式的規則判） */
-  let bad = 0;
+  /* 顯示點只負責畫圖；錯誤率另用固定且獨立的 4000 個測試點。 */
   const rule = p => {
     if (w04lda2Qda) return Q(p[0], p[1]) > 0 ? 1 : 2;
     return (w1 * p[0] + w2 * p[1] - cc) > 0 ? 1 : 2;
   };
-  p1.forEach(p => { if (rule(p) !== 1) bad++; });
-  p2.forEach(p => { if (rule(p) !== 2) bad++; });
+  const t1 = w04lda2Sample(mu1, r1i, 14041, 2000);
+  const t2 = w04lda2Sample(mu2, r2i, 14042, 2000);
+  let bad = 0;
+  t1.forEach(p => { if (rule(p) !== 1) bad++; });
+  t2.forEach(p => { if (rule(p) !== 2) bad++; });
   w04tx('w04lda2Mode', w04lda2Qda ? 'QDA（各自 Σ）' : 'LDA（共用 Σ）');
-  w04tx('w04lda2R1T', HC.fmt(r1, 2));
-  w04tx('w04lda2R2T', HC.fmt(r2, 2));
+  w04tx('w04lda2R1T', HC.fmt(r1i, 2));
+  w04tx('w04lda2R2T', HC.fmt(r2i, 2));
   w04tx('w04lda2Shape', w04lda2Qda
     ? (Math.abs(r1i - r2i) < 1e-9 ? '二次式退化成直線' : '二次曲線') : '直線');
-  w04tx('w04lda2Err', bad + ' / 60（' + HC.pct(bad / 60, 1) + '）');
+  w04tx('w04lda2Err', bad + ' / 4000（' + HC.pct(bad / 4000, 1) + '）');
   setStatus('w04lda2Status', (w04lda2Qda ? 'QDA' : 'LDA') + ' 模式，ρ₁ = '
-    + HC.fmt(r1, 2) + '、ρ₂ = ' + HC.fmt(r2, 2) + '，邊界是'
+    + HC.fmt(r1i, 2) + '、ρ₂ = ' + HC.fmt(r2i, 2) + '，同一批 60 點上的邊界是'
     + (w04lda2Qda && Math.abs(r1i - r2i) > 1e-9 ? '二次曲線（紅）' : '直線')
-    + '，灰虛線是 LDA 的線性邊界。60 個抽樣點裡判錯 ' + bad + ' 個。');
+    + '，灰虛線是 LDA 的線性邊界。獨立 4000 個測試點的錯誤率為 '
+    + HC.pct(bad / 4000, 1) + '。');
 }
 function w04lda2Toggle() { w04lda2Qda = !w04lda2Qda; w04lda2Draw(); }
 function w04lda2Reset() {
@@ -1427,125 +1385,6 @@ function w04thrMove() {
 function w04thrSet(t) { $('w04thrSlider').value = String(t); w04thrMove(); }
 function w04thrReset() { w04thrSet(0.5); }
 
-/* ---------- P06 四方法 ROC 疊圖（Chart.js，baked）---------- */
-const w04rocNames = { logit: '邏輯斯迴歸', lda: 'LDA', qda: 'QDA', nb: 'Naive Bayes' };
-let w04rocZoomed = false;
-function w04rocFill() {
-  Object.keys(w04rocNames).forEach((k, i) => {
-    w04tx('w04rocA' + (i + 1), HC.fmt(FRAMES_w04roc.auc[k], 4));
-  });
-}
-function w04rocDraw() {
-  const F = FRAMES_w04roc;
-  const cols = { logit: HC.tok.accent2, lda: HC.tok.accent3, qda: HC.tok.accent, nb: '#8e44ad' };
-  const dash = { logit: [], lda: [7, 3], qda: [2, 3], nb: [11, 4] };
-  const wid = { logit: 3.4, lda: 2.2, qda: 2.2, nb: 2.2 };
-  const ds = Object.keys(w04rocNames).map(k => ({
-    label: w04rocNames[k] + '（AUC ' + HC.fmt(F.auc[k], 4) + '）',
-    data: F.curves[k].map(p => ({ x: p[0], y: p[1] })),
-    borderColor: cols[k], borderWidth: wid[k], borderDash: dash[k], pointRadius: 0, fill: false,
-  }));
-  ds.push({ label: '隨機猜', data: [{ x: 0, y: 0 }, { x: 1, y: 1 }], borderColor: HC.tok.muted,
-            borderWidth: 1.2, borderDash: [5, 4], pointRadius: 0, fill: false });
-  const hi = w04rocZoomed ? 0.3 : 1;
-  const lo = w04rocZoomed ? 0.7 : 0;
-  HC.line('w04rocChart', { datasets: ds }, {
-    interaction: { mode: 'nearest', intersect: false },
-    plugins: { legend: { labels: { boxWidth: 8, font: { family: HC.MONO, size: 10 } } } },
-    scales: {
-      x: { type: 'linear', min: 0, max: hi, title: { display: true, text: '假陽率 FPR' } },
-      y: { min: lo, max: 1, title: { display: true, text: '真陽率 TPR' } },
-    },
-  });
-  w04rocFill();
-}
-function w04rocZoom(on) {
-  w04rocZoomed = on;
-  w04rocDraw();
-  setStatus('w04rocStatus', on
-    ? '放大左上角（FPR 0–0.3、TPR 0.7–1）：四條線在高靈敏度區才真正分開，Naive Bayes 明顯落後。'
-    : '整張 0–1 的視野：四條幾乎完全重疊——訊號夠強時模型假設的差別看不出來。');
-}
-
-/* ---------- P06 選方法情境（live）---------- */
-const w04pickData = [
-  { q: '兩類、每類只有 20 筆訓練資料；兩個預測變數在各類內都近似常態，而且兩類的共變異數矩陣幾乎一樣。',
-    best: 1,
-    fb: ['邏輯斯迴歸在這裡也不差（邊界確實線性），但它沒用到「各類內近似常態」這個額外資訊；n 只有 40 時 LDA 的變異更小。',
-         '正解。這正是 LDA 的假設本身：常態 + 共用共變異數。ISLP 情境 1 裡 LDA 表現最好。',
-         '不對。共變異數幾乎一樣，QDA 要多估一個 Σ 卻換不到偏差的減少——純粹的變異。',
-         'Naive Bayes 只有在變數近似獨立時才划算；這裡沒說獨立，而且 n 小的問題 LDA 已經處理得更好。',
-         'KNN 在 n = 40、邊界又是線性的情況下最吃虧：付了無母數的變異，卻沒有彎曲的邊界可賺。'] },
-  { q: '兩類、每類 50 筆；真實邊界仍然是線性的，但兩個變數在各類內是重尾的 t 分佈（極端值不少），而且類內有強烈負相關。',
-    best: 0,
-    fb: ['正解。邊界線性所以要線性方法，但 t 分佈違反常態假設，LDA 的參數估計吃虧。ISLP 情境 3 裡邏輯斯贏過 LDA。',
-         '方向對（線性邊界）但被非常態拖累。LDA 的係數是從常態假設推出來的，重尾資料會讓 μ̂ 與 Σ̂ 不穩。',
-         '更糟。QDA 對非常態更敏感，ISLP 情境 3 裡它退化得最明顯。',
-         '最差。類內有強烈負相關，獨立假設被正面違反。',
-         'KNN 沒有分佈假設是優點，但邊界既然是線性的，它的彈性用不上，變異卻要照付。'] },
-  { q: '兩類、n 很大；第一類的兩個變數相關係數是 +0.5，第二類是 −0.5，各類內都是常態。',
-    best: 2,
-    fb: ['不行。兩類的共變異數不同 ⟹ 真實邊界是二次的，線性方法有系統性偏差，加多少資料都消不掉。',
-         '同樣不行。LDA 硬性假設 Σ 共用，這裡明顯不成立，會有無法消除的偏差。',
-         '正解。Σ₁ ≠ Σ₂ 正好是 QDA 的假設，而 n 很大讓多估的參數不成問題。ISLP 情境 4。',
-         '不好。兩類內部都明顯相關，獨立假設被違反。',
-         'KNN 可以配出彎的邊界，但這裡邊界剛好是二次的——QDA 用參數形式配同一條邊界，需要的樣本少得多。'] },
-  { q: 'p = 85 個預測變數、n 不到 6000（就是 lab 的 Caravan 資料），變數彼此近似獨立，正類只佔 6%。',
-    best: 3,
-    fb: ['邏輯斯迴歸可以跑（lab 就跑了），但 85 個變數上它需要正則化才穩；而且它沒有利用「近似獨立」。',
-         'LDA 要估 85 × 86 / 2 = 3655 個共變異數參數，n 不到 6000 撐不住。',
-         'QDA 更糟：要估兩倍的 3655 個，直接爆掉。',
-         '正解。p 大、變數近似獨立時 Naive Bayes 的偏差很小而變異極低——它只要估 2Kp 個數。',
-         'KNN 在 p = 85 時被維度詛咒（curse of dimensionality）打敗：「最近的鄰居」其實一點都不近。'] },
-  { q: '兩類、p = 2、n 非常大（每類幾千筆）；真實決策邊界高度彎曲，而且不是二次曲線。',
-    best: 4,
-    fb: ['線性邊界配不了高度彎曲的真實邊界，偏差消不掉。',
-         '同上，LDA 也只給線性邊界。',
-         'QDA 能彎，但只能彎成二次曲線。真實邊界「不是二次」時它仍有偏差。',
-         'Naive Bayes 可以彎（gₖⱼ 任意），但它是純加性的、沒有交互項，複雜邊界仍配不好。',
-         '正解。p 小、n 極大、邊界極彎，正是 KNN 的主場。但 K 要用交叉驗證挑——ISLP 情境 5 裡 KNN-1 是全場最差。'] },
-  { q: '兩類、每類只有 6 筆資料；各類的共變異數矩陣是對角的（變數獨立）但兩類不同。',
-    best: 3,
-    fb: ['Σ 不同 ⟹ 邊界非線性，邏輯斯迴歸有偏差；而且 n = 12 時它的估計非常不穩。',
-         'LDA 假設 Σ 共用，這裡不成立。',
-         'QDA 的假設對，但每類 6 筆要估一個完整的 Σ，變異太大——ISLP 情境 6 裡它輸給 Naive Bayes。',
-         '正解。對角 Σ 就是「類內獨立」，Naive Bayes 的假設完全成立，而它要估的參數最少。ISLP 情境 6。',
-         'n = 12 的 KNN 幾乎沒有鄰居可以看。'] },
-];
-let w04pickAt = 0;
-const w04pickState = w04pickData.map(() => -1);
-function w04pickShow() {
-  const d = w04pickData[w04pickAt], names = ['邏輯斯迴歸', 'LDA', 'QDA', 'Naive Bayes', 'KNN'];
-  w04tx('w04pickNo', '情境 ' + (w04pickAt + 1) + ' / ' + w04pickData.length);
-  w04tx('w04pickQ', d.q);
-  const a = w04pickState[w04pickAt];
-  const fb = $('w04pickFb');
-  if (a < 0) {
-    fb.textContent = '按下面任一個方法看看拆解。';
-    fb.style.color = 'var(--muted)';
-  } else {
-    fb.textContent = (a === d.best ? '✓ ' : '✗ ') + names[a] + '：' + d.fb[a]
-      + (a === d.best ? '' : '（建議答案：' + names[d.best] + '）');
-    fb.style.color = a === d.best ? 'var(--accent3)' : 'var(--accent)';
-  }
-  const hit = w04pickState.filter((v, i) => v === w04pickData[i].best).length;
-  const done = w04pickState.filter(v => v >= 0).length;
-  w04tx('w04pickIdx', (w04pickAt + 1) + ' / ' + w04pickData.length);
-  w04tx('w04pickHit', String(hit));
-  w04tx('w04pickDone', done + ' / ' + w04pickData.length);
-  setStatus('w04pickStatus', '第 ' + (w04pickAt + 1) + ' 個情境，已作答 ' + done + ' / '
-    + w04pickData.length + '，答對 ' + hit + ' 個。' + (a < 0 ? '點一個方法看拆解。'
-      : (a === w04pickData[w04pickAt].best ? '這一題對了，按「下一個情境」繼續。'
-        : '這一題選錯了，讀完拆解再按「下一個情境」。')));
-}
-function w04pickAns(k) { w04pickState[w04pickAt] = k; w04pickShow(); }
-function w04pickNext() { w04pickAt = (w04pickAt + 1) % w04pickData.length; w04pickShow(); }
-function w04pickReset() {
-  w04pickAt = 0;
-  for (let i = 0; i < w04pickState.length; i++) w04pickState[i] = -1;
-  w04pickShow();
-}
-
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。
    Chart.js 從 CDN 載不到時 HC.ready() 不會執行，若把 SVG 初始化放進去，
@@ -1560,12 +1399,9 @@ w04lda1Draw();
 w04lda2Setup();
 w04lda2Draw();
 w04thrApply(w04thrStats(0.5));
-w04rocFill();
-w04pickShow();
 HC.ready(() => {
   w04thrDrawRoc();
   w04thrApply(w04thrStats(parseFloat($('w04thrSlider').value)));
-  w04rocDraw();
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */

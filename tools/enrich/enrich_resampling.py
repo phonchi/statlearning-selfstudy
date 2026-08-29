@@ -91,9 +91,8 @@ BODIES["validation"] = f"""
       info_card("結論",
                 '每一條都會告訴你「二次比一次好」。這個結論很穩。但如果你想引用一個'
                 '<strong>具體數字</strong>當測試 MSE，那個數字非常不可靠。')],
-     "w05valStatus", "按「顯示十次切分」看同一份資料在不同切法下的驗證 MSE。",
-     '<button class="btn btn-play" onclick="w05valToggle(true)">▶ 顯示十次切分</button>'
-     '<button class="btn btn-reset" onclick="w05valToggle(false)">只看平均</button>')}
+     "w05valStatus", "十條淡線是十種固定切分，粗線是平均。", "",
+     provenance=("course-data", "ISLP Auto；固定 random_state=0..9，對照圖 5.2"))}
 
   <h3 id="dx-val">講義完整實作：切一半、配模型、算驗證 MSE</h3>
 {card("講義 05 · 驗證集法（Auto，degree 1）", _val_code, _val_out,
@@ -146,23 +145,10 @@ BODIES["loocv"] = f"""
   每一輪都用了幾乎全部的資料（偏差很小），而且<strong>分割方式唯一</strong>——沒有隨機性，
   跑一百次都是同一個數字。</p>
 
-{viz(svg("w05looSvg", 300),
-     [info_card("虛擬碼", '<div class="pseudo-code" id="w05looCode" style="font-size:.74rem;">'
-                '<span class="line" data-l="1">total = 0</span>\n'
-                '<span class="line" data-l="2"><span class="kw">for</span> i <span class="kw">in</span> <span class="kw">range</span>(n):</span>\n'
-                '<span class="line" data-l="3">    留下第 i 筆，其餘訓練</span>\n'
-                '<span class="line" data-l="4">    total += (y[i] - 預測)**<span class="num">2</span></span>\n'
-                '<span class="line" data-l="5">CV = total / n</span></div>', "CODE"),
-      rows_card("目前進度",
-                [("第幾輪", "0 / 12", "w05looRound"), ("這輪的平方誤差", "—", "w05looErr"),
-                 ("累計平均 CV", "—", "w05looCV")]),
-      info_card("為什麼沒有隨機性",
-                '「留第 1 筆」「留第 2 筆」…「留第 n 筆」。這 n 種分割是<strong>枚舉</strong>出來的，'
-                '不是抽出來的。所以 LOOCV 沒有 <code>random_state</code> 可以調。')],
-     "w05looStatus", "按「開始」逐筆留一：橘色是這一輪被留下來驗證的點，虛線是用其餘 11 筆配出的迴歸線。",
-     '<button class="btn btn-play" onclick="w05looStart()">▶ 開始</button>'
-     '<button class="btn btn-step" onclick="w05looPlayer &amp;&amp; w05looPlayer.step()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w05looReset()">重置</button>')}
+{table(["輪次", "訓練資料", "驗證資料", "得到的量"],
+       [["i = 1, …, n", "除了第 i 筆以外的 n−1 筆", "第 i 筆",
+         "$(y_i-\\hat f^{(-i)}(x_i))^2$"],
+        ["最後", "—", "—", "把 n 個平方誤差平均成 $\\mathrm{CV}_{(n)}$"]])}
 
   <h3 id="dx-loo">講義完整實作：用 <code>cross_validate</code> 跑 LOOCV</h3>
 {card("講義 05 · LOOCV（Auto，degree 1）",
@@ -209,27 +195,10 @@ BODIES["kfold"] = f"""
 
   <p>LOOCV 其實就是 k = n 的特例。實務上 k 取 5 或 10——原因下一節講。</p>
 
-{viz(svg("w05foldSvg", 260),
-     [info_card("怎麼看",
-                '左邊用 20 顆球示意切法：<span style="color:var(--pt-held);font-weight:700;">橘色</span>'
-                '是這一輪被留下來驗證的那一折，深藍是訓練用的部分。'
-                '右邊是<strong>同一個 k 在 Auto（n = 392, degree 2）上真的跑出來</strong>的每折 MSE。'),
-      rows_card("這一輪",
-                [("k", "5", "w05foldK"), ("第幾折", "0 / 5", "w05foldRound"),
-                 ("訓練 / 驗證筆數", "—", "w05foldN"),
-                 ("這折的 MSE（Auto）", "—", "w05foldMse"),
-                 ("累計平均", "—", "w05foldAvg")]),
-      info_card("每折 MSE 差很多，這正常嗎",
-                '正常。上面五折的 MSE 從 13 跳到 24。每折只有 78 筆，'
-                '本來就不穩。<strong>CV 的價值在平均，不在單一折。</strong>')],
-     "w05foldStatus", "選 k 之後按「開始」，看每一折輪流當驗證集。",
-     '<label class="slider-label" style="margin-right:.4rem;">k =</label>'
-     '<select id="w05foldSel" class="mono" onchange="w05foldSetK()">'
-     '<option value="2">2</option><option value="5" selected>5</option>'
-     '<option value="10">10</option></select>'
-     '<button class="btn btn-play" onclick="w05foldStart()">▶ 開始</button>'
-     '<button class="btn btn-step" onclick="w05foldPlayer &amp;&amp; w05foldPlayer.step()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w05foldReset()">重置</button>')}
+{table(["方法", "每輪訓練", "每輪驗證", "輪數", "分割是否唯一"],
+       [["5-fold", "4/5 的資料", "1/5 的資料", "5", "否；需固定分割以公平比較模型"],
+        ["10-fold", "9/10 的資料", "1/10 的資料", "10", "否"],
+        ["LOOCV", "n−1 筆", "1 筆", "n", "是；等同 k=n"]])}
 
   <h3 id="dx-kf">講義完整實作：<code>KFold</code> 跑 10-fold</h3>
 {card("講義 05 · 10-fold CV（degree 1–5）", lab_code(CH, 41), None, src=src("41"),
@@ -274,8 +243,8 @@ BODIES["kbias"] = f"""
                 '不要只看「哪個 degree 的數字最小」。degree 5 的 CV 誤差是 19.03、degree 2 是 19.25，'
                 '差 0.2。這遠在雜訊範圍內。<strong>看的是曲線在哪裡「拉平」</strong>，'
                 '拉平之後就選最簡單的那個。')],
-     "w05cvStatus", "LOOCV 與 10-fold CV 在同一份 Auto 資料上的比較。",
-     '<button class="btn btn-toggle" onclick="w05cvToggleLog()">切換 y 軸縮放</button>')}
+     "w05cvStatus", "LOOCV 與 10-fold CV 在同一份 Auto 資料上的比較。", "",
+     provenance=("course-data", "ISLP Auto；依 Ch05 lab 的 LOOCV／10-fold 設定重算"))}
 
 {table(["k", "每輪訓練用", "偏差", "變異", "配模型次數", "評語"],
        [["2", "n/2", "最大（高估）", "最小", "2", "太粗，很少用"],
@@ -365,24 +334,25 @@ BODIES["cvwrong"] = f"""
   <p>問題在於「挑特徵」這一步<strong>看過了全部的 y</strong>，包含後來被當成驗證資料的那些。
   篩選本身就是模型訓練的一部分，它必須關在每一折裡面做。</p>
 
-{viz(chart("w05misChart", "square", "。此圖的重點：資料是純雜訊（y 與 X 完全獨立），正確做法給出約 0.5 的錯誤率，錯誤做法卻只有 0.26。"),
+{viz(chart("w05misChart", "square", "。此圖報告 100 次獨立純雜訊模擬的平均錯誤率；不以任何一次模擬當成一般效果。"),
      [info_card("這個模擬在做什麼",
                 'n = 50、p = 500 的<strong>純雜訊</strong>資料：y 是丟硬幣決定的，'
                 '跟每一個 X 都完全無關。所以任何誠實的方法都該回報「錯誤率約 50%，'
                 '這些特徵沒用」。', "ISLP §5.1.4"),
-      rows_card("兩種做法",
-                [("先選特徵再 CV（錯）", "—", "w05misWrong"),
-                 ("在每折內選特徵（對）", "—", "w05misRight"),
-                 ("誠實的答案應該是", "0.50", "w05misTruth")]),
+      rows_card("100 次獨立模擬",
+                [("錯誤流程｜平均", "—", "w05misWrong"),
+                 ("正確流程｜平均", "—", "w05misRight"),
+                 ("錯誤流程｜10–90%", "—", "w05misWrongRange"),
+                 ("正確流程｜10–90%", "—", "w05misRightRange")]),
       info_card("為什麼差這麼多",
                 '從 500 個純雜訊特徵裡挑「最相關的 10 個」，一定挑得到幾個'
                 '<em>剛好</em>跟這 50 筆 y 對得上的。那個「剛好」也包含了驗證折的 y——'
                 '模型於是在驗證資料上作弊。')],
-     "w05misStatus", "同一份純雜訊資料，兩種 CV 流程的結果。",
-     '<button class="btn btn-play" onclick="w05misShow()">▶ 顯示結果</button>')}
+     "w05misStatus", "100 份獨立純雜訊資料上的兩種 CV 流程。", "",
+     provenance=("simulation", "固定種子 100 次獨立模擬；對照講義 Cross-validation: right and wrong"))}
 
-{info("一句話原則", '''凡是<strong>用到 y 的步驟</strong>——特徵篩選、標準化的平均與標準差、
-  缺失值填補、過抽樣、目標編碼、PCA 降維——都必須<strong>關在每一折的訓練部分裡面做</strong>。
+{info("一句話原則", '''凡是<strong>會從資料估計任何參數的步驟</strong>——特徵篩選、標準化的平均與標準差、
+  缺失值填補、過抽樣、目標編碼、PCA 降維——都應<strong>關在每一折的訓練部分裡面做</strong>。
   在 <code>scikit-learn</code> 裡，把它們串成 <code>Pipeline</code> 再交給
   <code>cross_validate</code>，這件事就自動對了。''', "warm")}
 
@@ -427,25 +397,28 @@ BODIES["bootstrap"] = f"""
   當成一份「新」資料集，重算 $\\hat\\alpha^*$。重複 B 次，那 B 個 $\\hat\\alpha^*$ 的標準差
   就是 $\\mathrm{{SE}}(\\hat\\alpha)$ 的估計。不需要任何分佈假設，也不需要推導。</p>
 
-{viz(svg("w05bootSvg", 210) + "\n" + chart("w05bootChart", "", "。此圖的重點：1000 次 bootstrap 重抽算出的 α̂* 分佈，它的標準差 0.0912 就是 SE(α̂) 的估計。"),
+{viz('      <div id="w05bootSvg" class="info-box" style="font-family:var(--mono);font-size:.78rem;">'
+     '尚未重抽。按「抽一次」後會顯示 Portfolio 的抽樣索引摘要。</div>\n'
+     + chart("w05bootChart", "", "。圖中每一個值都是 Portfolio 的 α̂*，其標準差估計 SE(α̂)。"),
      [info_card("虛擬碼", '<div class="pseudo-code" id="w05bootCode" style="font-size:.74rem;">'
                 '<span class="line" data-l="1"><span class="kw">for</span> b <span class="kw">in</span> <span class="kw">range</span>(B):</span>\n'
                 '<span class="line" data-l="2">    idx = 有放回抽 n 個</span>\n'
                 '<span class="line" data-l="3">    θ*[b] = f(資料[idx])</span>\n'
                 '<span class="line" data-l="4">SE = std(θ*)</span></div>', "CODE"),
       rows_card("這一次重抽",
-                [("抽到的樣本", "—", "w05bootDraw"),
+                [("前 12 個抽樣索引", "—", "w05bootDraw"),
                  ("沒被抽到（OOB）", "—", "w05bootOob"),
-                 ("這次的樣本平均 θ̂*", "—", "w05bootStat"),
+                 ("這次的 α̂*", "—", "w05bootStat"),
                  ("累計 B", "0", "w05bootB"),
                  ("累計 SE", "—", "w05bootSE")]),
       info_card("Portfolio 的真實結果",
                 '用全部 100 筆算：α̂ = <strong>0.5758</strong>。跑 B = 1000 次 bootstrap 後，'
                 'SE(α̂) = <strong>0.0912</strong>。下面的 lab 卡片有逐字輸出。', "ISLP §5.2")],
-     "w05bootStatus", "按「單步」看一次有放回重抽：實心＝被抽到（可能重複），空心虛線＝這次沒被抽到。",
+     "w05bootStatus", "從 Portfolio 的 100 對 (X,Y) 有放回抽 100 對，再重算同一個 α̂。",
      '<button class="btn btn-step" onclick="w05bootDrawOne()">→ 抽一次</button>'
      '<button class="btn btn-play" onclick="w05bootMany()">▶ 連抽 200 次</button>'
-     '<button class="btn btn-reset" onclick="w05bootReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w05bootReset()">重置</button>',
+     provenance=("course-data", "ISLP Portfolio；與 Ch05 lab 的 α̂ 統計量一致"))}
 
   <h3 id="dx-boot">講義完整實作：<code>boot_SE()</code></h3>
 {card("講義 05 · α̂ 用全部 100 筆", lab_code(CH, 55), lab_output(CH, 55), src=src("53、55"),
@@ -471,18 +444,8 @@ BODIES["bootstrap"] = f"""
   它們對這一輪的模型來說是天然的驗證集。第 9 章的 bagging 與 random forest 就靠這招
   免費拿到測試誤差估計。</p>
 
-{viz(chart("w05p632Chart", "", "。此圖的重點：理論曲線 1−(1−1/n)ⁿ 從 n=2 的 0.75 很快收斂到 0.632，模擬點落在曲線上。"),
-     [info_card("怎麼看",
-                '藍線是理論值 $1-(1-1/n)^n$，紅點是每個 n 各跑 2000 次模擬的實測比例。'
-                '<strong>收斂得非常快</strong>：n = 20 就已經是 0.642 了。'),
-      rows_card("查表",
-                [("n = 5", "—", "w05p632n5"), ("n = 20", "—", "w05p632n20"),
-                 ("n = 100", "—", "w05p632n100"), ("極限 1 − 1/e", "0.6321", "w05p632lim")]),
-      info_card("這個 0.632 會再出現",
-                '第 9 章的 OOB 誤差、以及文獻裡的 .632 bootstrap 估計量，'
-                '都是從這個事實長出來的。')],
-     "w05p632Status", "有放回抽 n 次，某一筆至少被抽到一次的機率。",
-     '<button class="btn btn-play" onclick="w05p632Run()">▶ 跑模擬</button>')}
+{table(["n", "5", "20", "100", "n → ∞"],
+       [["$1-(1-1/n)^n$", "0.6723", "0.6415", "0.6340", "$1-e^{-1}=0.6321$"]])}
 
 {qa("觀念釐清", [
     ("Q：Bootstrap 可以用來估「預測誤差」嗎？",
@@ -639,164 +602,6 @@ function w05valDraw() {
   $('w05valMean').textContent = HC.fmt(col.reduce((s, v) => s + v, 0) / col.length, 2);
 }
 
-/* ---------- P02 LOOCV：逐筆留一（真的即時配線） ---------- */
-const w05looN = 12;
-const w05looData = (() => {
-  const rand = HC.stat.lcg(524), xs = [], ys = [];
-  for (let i = 0; i < w05looN; i++) {
-    const x = 1 + i * 0.75 + 0.18 * (rand() - 0.5);
-    xs.push(x); ys.push(2.1 + 1.35 * x + 1.5 * HC.stat.normal(rand));
-  }
-  return { xs, ys };
-})();
-let w05looPlayer = null, w05looSvc = null;
-function w05looSetup() {
-  const { xs, ys } = w05looData;
-  const pad = 1.2;
-  w05looSvc = HC.svg('w05looSvg', {
-    xd: [Math.min(...xs) - pad, Math.max(...xs) + pad],
-    yd: [Math.min(...ys) - pad, Math.max(...ys) + pad], h: 300,
-  });
-  w05looSvc.grid(5, 4, { xtitle: 'x', ytitle: 'y', xdec: 0, ydec: 0 });
-}
-function w05looFrames() {
-  const { xs, ys } = w05looData;
-  const frames = [];
-  let acc = 0;
-  for (let i = 0; i < w05looN; i++) {
-    const tx = xs.filter((_, j) => j !== i), ty = ys.filter((_, j) => j !== i);
-    const f = HC.stat.ols(tx, ty);
-    const pred = f.b0 + f.b1 * xs[i];
-    const err = (ys[i] - pred) ** 2;
-    acc += err;
-    frames.push({ i, b0: f.b0, b1: f.b1, pred, err, cv: acc / (i + 1), line: 3 });
-  }
-  frames.push({ i: -1, done: true, cv: acc / w05looN, line: 5 });
-  return frames;
-}
-function w05looApply(f) {
-  const { xs, ys } = w05looData, s = w05looSvc;
-  const g = s.clearLayer('pts');
-  if (!f.done && f.i >= 0) {
-    s.poly([[s.xd[0], f.b0 + f.b1 * s.xd[0]], [s.xd[1], f.b0 + f.b1 * s.xd[1]]],
-           { cls: 'truef' }, g);
-    s.seg(xs[f.i], ys[f.i], xs[f.i], f.pred, { cls: 'resid', sw: 2 }, g);
-  }
-  xs.forEach((x, j) => s.dot(x, ys[j], {
-    r: j === f.i ? 6.5 : 4.2,
-    fill: j === f.i ? HC.tok.held : HC.tok.train,
-    stroke: '#fff', sw: 1.2,
-  }, g));
-  hlLine('w05looCode', f.line);
-  if (f.done) {
-    $('w05looRound').textContent = w05looN + ' / ' + w05looN;
-    $('w05looErr').textContent = '—';
-    $('w05looCV').textContent = HC.fmt(f.cv, 3);
-    setStatus('w05looStatus', '十二輪跑完。CV 就是這 12 個平方誤差的平均：<strong>'
-      + HC.fmt(f.cv, 3) + '</strong>。整個過程沒有用到任何隨機數。');
-    return;
-  }
-  $('w05looRound').textContent = (f.i + 1) + ' / ' + w05looN;
-  $('w05looErr').textContent = HC.fmt(f.err, 3);
-  $('w05looCV').textContent = HC.fmt(f.cv, 3);
-  setStatus('w05looStatus', '第 ' + (f.i + 1) + ' 輪：留下橘色那一點，用其餘 '
-    + (w05looN - 1) + ' 點配線（虛線）。紫色線段是這一點的預測誤差，平方後 = '
-    + HC.fmt(f.err, 3) + '。');
-}
-function w05looStart() {
-  w05looPlayer = new Player({ frames: w05looFrames(), apply: w05looApply });
-  w05looPlayer.reset(); w05looPlayer.play();
-}
-function w05looReset() {
-  if (w05looPlayer) w05looPlayer.stop();
-  w05looPlayer = new Player({ frames: w05looFrames(), apply: w05looApply });
-  w05looApply({ i: -1, b0: 0, b1: 0, cv: 0, line: 1, done: false });
-  $('w05looRound').textContent = '0 / ' + w05looN;
-  $('w05looErr').textContent = '—'; $('w05looCV').textContent = '—';
-  setStatus('w05looStatus', '按「開始」逐筆留一。');
-}
-
-/* ---------- P03 k-fold：分割動畫器 ---------- */
-const w05foldNBalls = 20;
-let w05foldPlayer = null, w05foldK = 5;
-function w05foldAssign(k) {
-  const rand = HC.stat.lcg(2026), idx = [...Array(w05foldNBalls).keys()];
-  for (let i = idx.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]];
-  }
-  const fold = new Array(w05foldNBalls);
-  idx.forEach((b, pos) => { fold[b] = pos % k; });
-  return fold;
-}
-function w05foldSetK() {
-  w05foldK = parseInt($('w05foldSel').value, 10);
-  $('w05foldK').textContent = String(w05foldK);
-  w05foldReset();
-}
-function w05foldFrames() {
-  const k = w05foldK, fold = w05foldAssign(k);
-  const detail = FRAMES_w05fold.detail[String(k)] || [];
-  const frames = [];
-  let acc = 0;
-  for (let j = 0; j < k; j++) {
-    const d = detail[j] || { n_train: 0, n_held: 0, mse: NaN };
-    acc += d.mse;
-    frames.push({ j, fold, k, d, avg: acc / (j + 1) });
-  }
-  return frames;
-}
-function w05foldApply(f) {
-  const host = $('w05foldSvg');
-  const cell = 26, per = 10, gap = 5;
-  // viewBox 寬度固定 620（跟其他 SVG 元件一致），否則 SVG 被拉寬時字會跟著放大
-  const W = 620, H = 2 * cell + gap + 60;
-  const x0 = (W - (per * cell + (per - 1) * gap)) / 2;
-  host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-  while (host.firstChild) host.removeChild(host.firstChild);
-  const mk = (tag, a) => {
-    const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for (const key of Object.keys(a)) n.setAttribute(key, String(a[key]));
-    host.appendChild(n); return n;
-  };
-  for (let b = 0; b < w05foldNBalls; b++) {
-    const r = Math.floor(b / per), c = b % per;
-    const held = f.fold[b] === f.j;
-    mk('rect', {
-      x: x0 + c * (cell + gap), y: 34 + r * (cell + gap), width: cell, height: cell, rx: 5,
-      fill: held ? 'var(--pt-held)' : 'var(--pt-train)',
-      stroke: held ? '#d68910' : 'none', 'stroke-width': held ? 2.5 : 0,
-    });
-    const t = mk('text', {
-      x: x0 + c * (cell + gap) + cell / 2, y: 34 + r * (cell + gap) + cell / 2 + 4,
-      'text-anchor': 'middle', fill: '#fff',
-      style: "font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600",
-    });
-    t.textContent = String(f.fold[b] + 1);
-  }
-  const lab = mk('text', { x: x0, y: 22, class: 'axtitle' });
-  lab.textContent = f.j < 0
-    ? '20 顆球，數字是它被分到第幾折 · 按「開始」逐折驗證'
-    : '20 顆球，數字是它被分到第幾折 · 這一輪留下第 ' + (f.j + 1) + ' 折';
-  $('w05foldRound').textContent = (f.j + 1) + ' / ' + f.k;
-  $('w05foldN').textContent = f.d.n_train + ' / ' + f.d.n_held;
-  $('w05foldMse').textContent = HC.fmt(f.d.mse, 3);
-  $('w05foldAvg').textContent = HC.fmt(f.avg, 3);
-  setStatus('w05foldStatus', '第 ' + (f.j + 1) + ' 折當驗證集：Auto 上用 '
-    + f.d.n_train + ' 筆訓練、' + f.d.n_held + ' 筆驗證，這一折的 MSE = '
-    + HC.fmt(f.d.mse, 3) + '，累計平均 ' + HC.fmt(f.avg, 3) + '。');
-}
-function w05foldStart() {
-  w05foldPlayer = new Player({ frames: w05foldFrames(), apply: w05foldApply });
-  w05foldPlayer.reset(); w05foldPlayer.play();
-}
-function w05foldReset() {
-  if (w05foldPlayer) w05foldPlayer.stop();
-  w05foldPlayer = new Player({ frames: w05foldFrames(), apply: w05foldApply });
-  w05foldApply({ j: -1, fold: w05foldAssign(w05foldK), k: w05foldK,
-                 d: { n_train: '—', n_held: '—', mse: NaN }, avg: NaN });
-  setStatus('w05foldStatus', 'k = ' + w05foldK + '。按「開始」看每一折輪流當驗證集。');
-}
-
 /* ---------- P04 LOOCV vs 10-fold ---------- */
 let w05cvLog = false;
 function w05cvToggleLog() { w05cvLog = !w05cvLog; w05cvDraw(); }
@@ -832,7 +637,8 @@ function w05misShow() {
   const F = FRAMES_w05misuse;
   HC.bar('w05misChart', {
     labels: ['先選特徵再 CV（錯）', '在每折內選特徵（對）'],
-    datasets: [{ label: '5-fold CV 錯誤率', data: [F.wrongErr, F.rightErr],
+    datasets: [{ label: '100 次模擬的平均 5-fold CV 錯誤率',
+                 data: [F.wrong.mean, F.right.mean],
                  backgroundColor: [HC.tok.accent, HC.tok.accent3], borderRadius: 5 }],
   }, {
     plugins: { legend: { display: false } },
@@ -840,73 +646,55 @@ function w05misShow() {
   });
   const c = HC.get('w05misChart');
   HC.refs(c, [HC.hline(0.5, '誠實的答案 ≈ 0.5')]);
-  $('w05misWrong').textContent = HC.fmt(F.wrongErr, 3);
-  $('w05misRight').textContent = HC.fmt(F.rightErr, 3);
-  setStatus('w05misStatus', 'n = ' + F.n + '、p = ' + F.p + ' 的純雜訊資料，挑 ' + F.kSel
-    + ' 個特徵。錯的流程回報 ' + HC.fmt(F.wrongErr, 3) + '，對的流程回報 '
-    + HC.fmt(F.rightErr, 3) + '——只有後者誠實地說出「這些特徵沒用」。');
+  $('w05misWrong').textContent = HC.fmt(F.wrong.mean, 3);
+  $('w05misRight').textContent = HC.fmt(F.right.mean, 3);
+  $('w05misWrongRange').textContent = HC.fmt(F.wrong.q10, 2) + '–' + HC.fmt(F.wrong.q90, 2);
+  $('w05misRightRange').textContent = HC.fmt(F.right.q10, 2) + '–' + HC.fmt(F.right.q90, 2);
+  setStatus('w05misStatus', F.reps + ' 次獨立的 n = ' + F.n + '、p = ' + F.p
+    + ' 純雜訊模擬：錯誤流程平均回報 ' + HC.fmt(F.wrong.mean, 3)
+    + '，正確流程平均回報 ' + HC.fmt(F.right.mean, 3)
+    + '。單次結果會波動，因此不把某一次的差距當成固定效果量。');
 }
 
-/* ---------- P07 Bootstrap 抽樣器 ---------- */
-const w05bootBalls = [3, 8, 5, 12, 7, 2, 10, 6, 9, 4];
+/* ---------- P07 Bootstrap 抽樣器：全程使用 Portfolio 的 alpha_hat ---------- */
 let w05bootStats = [];
 function w05bootRand() {
   w05bootRand.seed = (w05bootRand.seed || 0) + 1;
   return HC.stat.lcg(20260810 + w05bootRand.seed * 7919);
 }
 function w05bootOne() {
-  const rand = w05bootRand(), n = w05bootBalls.length;
+  const F = FRAMES_w05boot, rand = w05bootRand(), n = F.n;
   const counts = new Array(n).fill(0), drawn = [];
   for (let i = 0; i < n; i++) {
-    const j = Math.floor(rand() * n); counts[j]++; drawn.push(w05bootBalls[j]);
+    const j = Math.floor(rand() * n); counts[j]++; drawn.push(j);
   }
-  return { counts, drawn, stat: drawn.reduce((s, v) => s + v, 0) / n };
+  const xs = drawn.map(i => F.x[i]), ys = drawn.map(i => F.y[i]);
+  const mx = HC.stat.mean(xs), my = HC.stat.mean(ys);
+  let sx = 0, sy = 0, sxy = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = xs[i] - mx, dy = ys[i] - my;
+    sx += dx * dx; sy += dy * dy; sxy += dx * dy;
+  }
+  const stat = (sy - sxy) / (sx + sy - 2 * sxy);
+  return { counts, drawn, stat };
 }
 function w05bootRender(d) {
   const host = $('w05bootSvg');
-  const cell = 30, gap = 6, n = w05bootBalls.length;
-  const W = n * cell + (n - 1) * gap + 40, H = 130;
-  host.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-  while (host.firstChild) host.removeChild(host.firstChild);
-  const mk = (tag, a, text) => {
-    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for (const k of Object.keys(a)) el.setAttribute(k, String(a[k]));
-    if (text !== undefined) el.textContent = text;
-    host.appendChild(el); return el;
-  };
-  mk('text', { x: 20, y: 18, class: 'axtitle' }, '原始 10 筆資料（數字是值，右上角是這次被抽中幾次）');
-  w05bootBalls.forEach((v, j) => {
-    const cx = 20 + j * (cell + gap), c = d ? d.counts[j] : 0;
-    const oob = d && c === 0;
-    mk('rect', { x: cx, y: 30, width: cell, height: cell, rx: 6,
-                 fill: oob ? 'none' : (d ? 'var(--accent3)' : 'var(--card)'),
-                 stroke: oob ? 'var(--accent)' : 'var(--card-border)',
-                 'stroke-width': oob ? 2.5 : 1,
-                 'stroke-dasharray': oob ? '4 3' : '' });
-    mk('text', { x: cx + cell / 2, y: 50, 'text-anchor': 'middle',
-                 fill: oob || !d ? 'var(--ink)' : '#fff',
-                 style: "font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700" },
-       String(v));
-    if (d && c > 1) {
-      mk('text', { x: cx + cell - 2, y: 28, 'text-anchor': 'end', fill: 'var(--accent)',
-                   style: "font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700" },
-         '×' + c);
-    }
-  });
-  if (d) {
-    mk('text', { x: 20, y: 82, class: 'axtitle' }, '這次抽到的 bootstrap 樣本');
-    mk('text', { x: 20, y: 102, class: 'axlab',
-                 style: "font-family:'JetBrains Mono',monospace;font-size:12px;fill:var(--ink)" },
-       '[' + d.drawn.join(', ') + ']');
-    const nOob = d.counts.filter(c => c === 0).length;
-    mk('text', { x: 20, y: 120, class: 'axlab' },
-       'OOB（虛線框）：' + nOob + ' / ' + w05bootBalls.length
-       + ' = ' + HC.pct(nOob / w05bootBalls.length, 0) + '，理論值 36.8%');
+  if (!d) {
+    host.textContent = '尚未重抽。按「抽一次」後會顯示 Portfolio 的抽樣索引摘要。';
+    return;
   }
+  const unique = d.counts.filter(c => c > 0).length;
+  const repeated = d.counts.filter(c => c > 1).length;
+  host.innerHTML = '<strong>這次的前 24 個索引：</strong> '
+    + d.drawn.slice(0, 24).join(', ') + ' …<br>'
+    + '<strong>不同原始觀測：</strong>' + unique + ' / ' + d.counts.length
+    + '　<strong>重複出現的觀測：</strong>' + repeated
+    + '　<strong>OOB：</strong>' + (d.counts.length - unique);
 }
 function w05bootHist() {
   if (!w05bootStats.length) return;
-  const lo = 3.5, hi = 9.5, bins = 20;
+  const lo = Math.min(...w05bootStats) - 0.01, hi = Math.max(...w05bootStats) + 0.01, bins = 20;
   const h = new Array(bins).fill(0);
   w05bootStats.forEach(v => {
     const b = Math.min(bins - 1, Math.max(0, Math.floor((v - lo) / (hi - lo) * bins)));
@@ -914,29 +702,28 @@ function w05bootHist() {
   });
   HC.bar('w05bootChart', {
     labels: h.map((_, i) => HC.fmt(lo + (hi - lo) * (i + 0.5) / bins, 1)),
-    datasets: [{ label: '樣本平均 θ̂* 的分佈', data: h,
+    datasets: [{ label: 'Portfolio α̂* 的分佈', data: h,
                  backgroundColor: 'rgba(44,62,122,.72)', borderRadius: 3 }],
   }, {
     plugins: { legend: { display: false } },
-    scales: { x: { title: { display: true, text: 'θ̂*（這次 bootstrap 樣本的平均）' } },
+    scales: { x: { title: { display: true, text: 'α̂*（這次 Portfolio bootstrap 樣本）' } },
               y: { title: { display: true, text: '次數' } } },
   });
 }
 function w05bootUpdate(d) {
   w05bootStats.push(d.stat);
-  const m = HC.stat.mean(w05bootStats);
-  $('w05bootDraw').textContent = '[' + d.drawn.join(',') + ']';
+  $('w05bootDraw').textContent = d.drawn.slice(0, 12).join(', ') + ' …';
   const nOob = d.counts.filter(c => c === 0).length;
-  $('w05bootOob').textContent = nOob + ' 筆（' + HC.pct(nOob / w05bootBalls.length, 0) + '）';
+  $('w05bootOob').textContent = nOob + ' 筆（' + HC.pct(nOob / d.counts.length, 0) + '）';
   $('w05bootStat').textContent = HC.fmt(d.stat, 3);
   $('w05bootB').textContent = String(w05bootStats.length);
   $('w05bootSE').textContent = w05bootStats.length > 1
     ? HC.fmt(HC.stat.sd(w05bootStats), 4) : '—';
   setStatus('w05bootStatus', '第 ' + w05bootStats.length + ' 次重抽：'
-    + nOob + ' 筆完全沒被抽到（虛線框），這次的樣本平均是 ' + HC.fmt(d.stat, 3)
+    + nOob + ' 筆完全沒被抽到，這次的 α̂* 是 ' + HC.fmt(d.stat, 4)
     + '。累計 ' + w05bootStats.length + ' 次的標準差 = '
     + (w05bootStats.length > 1 ? HC.fmt(HC.stat.sd(w05bootStats), 4) : '—')
-    + '（原始資料平均 ' + HC.fmt(m, 3) + '）。');
+    + '；原始 100 筆資料的 α̂ = ' + HC.fmt(FRAMES_w05boot.alphaHat, 4) + '。');
 }
 function w05bootDrawOne() {
   const d = w05bootOne(); w05bootRender(d); w05bootUpdate(d); w05bootHist();
@@ -960,59 +747,16 @@ function w05bootReset() {
   setStatus('w05bootStatus', '按「抽一次」看一次有放回重抽。');
 }
 
-/* ---------- P07 1−(1−1/n)^n → 0.632 ---------- */
-function w05p632Run() {
-  const ns = [2, 3, 4, 5, 7, 10, 15, 20, 30, 50, 75, 100, 150, 200];
-  const theory = ns.map(n => 1 - Math.pow(1 - 1 / n, n));
-  const rand = HC.stat.lcg(632);
-  const sim = ns.map(n => {
-    let hit = 0;
-    const reps = 2000;
-    for (let r = 0; r < reps; r++) {
-      let got = false;
-      for (let i = 0; i < n; i++) if (Math.floor(rand() * n) === 0) { got = true; break; }
-      if (got) hit++;
-    }
-    return hit / reps;
-  });
-  HC.line('w05p632Chart', {
-    labels: ns,
-    datasets: [
-      { label: '理論 1−(1−1/n)ⁿ', data: theory, borderColor: HC.tok.accent2,
-        borderWidth: 2.6, pointRadius: 0, fill: false },
-      { label: '模擬（每點 2000 次）', data: sim, borderColor: HC.tok.accent,
-        backgroundColor: HC.tok.accent, borderWidth: 0, pointRadius: 4,
-        showLine: false, fill: false },
-    ],
-  }, {
-    scales: { x: { title: { display: true, text: 'n' } },
-              y: { min: 0.6, max: 0.78,
-                   title: { display: true, text: '至少被抽到一次的機率' } } },
-  });
-  const c = HC.get('w05p632Chart');
-  HC.refs(c, [HC.hline(1 - Math.exp(-1), '1 − 1/e ≈ 0.6321')]);
-  const at = n => HC.fmt(1 - Math.pow(1 - 1 / n, n), 4);
-  $('w05p632n5').textContent = at(5);
-  $('w05p632n20').textContent = at(20);
-  $('w05p632n100').textContent = at(100);
-  setStatus('w05p632Status', '模擬點（紅）落在理論曲線（藍）上。n = 5 就已經是 '
-    + at(5) + '，n = 100 是 ' + at(100) + '，很快收斂到 0.6321。');
-}
-
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。
    Chart.js 從 CDN 載不到時 HC.ready() 不會執行，若把 SVG 初始化放進去，
    手寫的 SVG 元件會跟著一起死掉——那就白費了「單檔自足」的設計。
    HC.bar / HC.line 在 Chart 未載入時本來就安全地回傳 null。 */
-w05looSetup();
-w05looReset();
-w05foldReset();
 w05bootReset();
 HC.ready(() => {
   w05valDraw();
   w05cvDraw();
   w05misShow();
-  w05p632Run();
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */

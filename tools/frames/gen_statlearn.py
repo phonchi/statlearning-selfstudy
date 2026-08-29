@@ -3,12 +3,11 @@
 
 第 2 章的 lab（Ch02-statlearn-lab-zh.ipynb）是 Python 入門，沒有任何統計學習的
 數字可以抄，所以本頁所有圖表的資料都在這裡從模擬產生——固定種子、固定環境，
-可重生也可 diff。四組資料：
+可重生也可 diff。三組輸出資料：
 
   1. FRAMES_w02flex  ISLP 圖 2.9：同一組點的三種擬合 + 訓練／測試 MSE 曲線
   2. FRAMES_w02bv    ISLP 圖 2.12：偏差²、變異、Var(ε)、總測試 MSE（蒙地卡羅 M=300）
   3. FRAMES_w02knn   ISLP 圖 2.15–2.16：KNN 決策區域（K = 1/10/100）+ Bayes 邊界
-  4. FRAMES_w02kerr  ISLP 圖 2.17：訓練／測試錯誤率對 1/K
 
 彈性度一律用「樣條自由度 df」＝配適時估的參數個數（含截距）：
   df = 2/3/4 → 一次／二次／三次多項式
@@ -211,7 +210,7 @@ for i in range(FG - 1):
                 segs.append([round(pts[a][0], 3), round(pts[a][1], 3),
                              round(pts[b][0], 3), round(pts[b][1], 3)])
 
-# ══ 4. ISLP 圖 2.17：訓練／測試錯誤率對 1/K ═════════════════════════════
+# ══ 4. ISLP 圖 2.17 自我檢查（不輸出）：訓練／測試錯誤率對 1/K ═══════════
 KS = [1, 2, 3, 4, 5, 7, 10, 13, 17, 25, 35, 50, 70, 100, 150]
 ktrain, ktest = [], []
 for k in KS:
@@ -253,13 +252,6 @@ out = [
        "自行模擬的兩類高斯混合（對照 ISLP 圖 2.13／2.15／2.16）",
        "np.random.default_rng(11) 訓練、default_rng(77) 測試",
        "Bayes 邊界是 p(橘|x) = 0.5 的等高線，由 90×90 格點做 marching squares 取出"),
-    js("FRAMES_w02kerr",
-       {"ks": KS, "invk": [round(1 / k, 5) for k in KS],
-        "train": ktrain, "test": ktest,
-        "bayesErr": round(bayes_err, 4), "bestK": int(best_k)},
-       "同上那份模擬資料（對照 ISLP 圖 2.17）",
-       "np.random.default_rng(11) 訓練、default_rng(77) 測試",
-       "x 軸是 1/K：往右愈有彈性。訓練錯誤率在 K = 1 必定為 0"),
 ]
 print("\n".join(out))
 

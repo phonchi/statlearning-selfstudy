@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -683,7 +688,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · pandas 資料框）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -721,12 +726,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>Series ≈ 有索引的一維陣列</strong>，<strong>DataFrame ≈ 共用同一個索引的一疊 Series</strong>。底下算數字的還是 NumPy。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17serSvg" height="320"></svg>
       <div class="status-banner" id="w17serStatus"><span class="status-icon">›</span><span class="status-text">從字典開始，看它怎麼變成 Series 再變成 DataFrame。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17serSet(0)">Python 字典</button><button class="btn btn-toggle" onclick="w17serSet(1)">Series</button><button class="btn btn-toggle" onclick="w17serSet(2)">DataFrame</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的 Series 與 DataFrame 建構結果重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -807,12 +813,13 @@ dtype: object</pre></div>
   <code>describe()</code> 看數值範圍合不合理、<code>dtypes</code> 看有沒有欄被讀成字串。
   第四項最常出事，下一節會看到。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17peekSvg" height="300"></svg>
       <div class="status-banner" id="w17peekStatus"><span class="status-icon">›</span><span class="status-text">四行指令，按順序看過一遍。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17peekSet(0)">df.shape</button><button class="btn btn-toggle" onclick="w17peekSet(1)">df.head()</button><button class="btn btn-toggle" onclick="w17peekSet(2)">df.dtypes</button><button class="btn btn-toggle" onclick="w17peekSet(3)">df.describe()</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的資料檢視指令與輸出重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -910,12 +917,13 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div>
   <code>loc</code> 的切片<strong>包含</strong>結尾，<code>iloc</code> 不包含。<code>df.loc['a':'c']</code> 會拿到 c，<code>df.iloc[0:3]</code> 只拿到 0、1、2。因為名字沒有「下一個」可言，含頭不含尾對它沒有意義。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17selSvg" height="340"></svg>
       <div class="status-banner" id="w17selStatus"><span class="status-icon">›</span><span class="status-text">先猜哪幾格會亮，再按。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17selSet(0)">df[&quot;A&quot;]</button><button class="btn btn-toggle" onclick="w17selSet(1)">df[0:3]</button><button class="btn btn-toggle" onclick="w17selSet(2)">df.loc[:, [&quot;A&quot;,&quot;C&quot;]]</button><button class="btn btn-toggle" onclick="w17selSet(3)">df.iloc[3]</button><button class="btn btn-toggle" onclick="w17selSet(4)">df[df[&quot;A&quot;]&gt;0]</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的示範 DataFrame 與 loc／iloc 選取結果重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1010,12 +1018,13 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
   <code>horsepower</code> 那一欄<strong>整欄是字串</strong>，因為原始檔用 <code>?</code>
   代表遺漏，pandas 看到問號就把整欄當成文字。這種錯誤不會報錯，只會讓你後面算出來的東西全錯。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17naSvg" height="340"></svg>
       <div class="status-banner" id="w17naStatus"><span class="status-icon">›</span><span class="status-text">按「單步」看整件事怎麼發生、怎麼修。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w17naStep()">→ 單步</button><button class="btn btn-reset" onclick="w17naReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 Auto.data 讀檔、? 遺漏值與 397→392 列流程重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1118,12 +1127,13 @@ dtype: float64</pre></div>
   <strong>拆分</strong>（照某一欄的值把列分堆）→ <strong>套用</strong>（每一堆各算一次）→
   <strong>合併</strong>（把結果疊回一張表）。看懂這三步，所有變形都是同一件事。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17grpSvg" height="340"></svg>
       <div class="status-banner" id="w17grpStatus"><span class="status-icon">›</span><span class="status-text">按「單步」把 groupby 拆成三個動作看。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w17grpStep()">→ 單步</button><button class="btn btn-play" onclick="w17grpPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w17grpReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 儲存格 78 的 groupby 拆分、套用、合併流程重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1168,7 +1178,7 @@ foo -2.740490  0.700964</pre></div>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 78</span>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w17grpChart"></canvas>
@@ -1176,6 +1186,7 @@ foo -2.740490  0.700964</pre></div>
       </div>
       <div class="status-banner" id="w17grpStatus2"><span class="status-icon">›</span><span class="status-text">bar 與 foo 兩組在 C 欄的方向相反。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17grpCol(&quot;C&quot;)">看 C 欄</button><button class="btn btn-toggle" onclick="w17grpCol(&quot;D&quot;)">看 D 欄</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>圖中數值逐項取自 Ch01 lab 儲存格 78 的 groupby 輸出。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1254,12 +1265,13 @@ foo -2.740490  0.700964</pre></div>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 195</span>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17catSvg" height="320"></svg>
       <div class="status-banner" id="w17catStatus"><span class="status-icon">›</span><span class="status-text">按「單步」把三塊接回去。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w17catStep()">→ 單步</button><button class="btn btn-reset" onclick="w17catReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的 DataFrame 分塊與 concat 範例重繪。</div>
     </div>
   </div>
   <div class="side-panel">

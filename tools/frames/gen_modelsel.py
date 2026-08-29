@@ -4,16 +4,12 @@
 只有「需要一整條曲線」或「要對上課本圖」的圖才在這裡產生；凡是 lab 裡已經有
 輸出的數字，頁面上一律逐字抄 lab（lab_output()），不在這裡重算。
 
-四組資料：
+四組輸出資料：
   1. FRAMES_w06lat    Credit 取 4 個變數的完整子集格圖（16 個 RSS）
                       → 用真實資料證明 forward stepwise 會錯過最佳子集
-  2. FRAMES_w06crit   Credit 全部 2^11 個子集的最佳前緣 + 五個準則 + 10-fold CV
-                      → 對應 ISLP 圖 6.1／6.2／6.3（Cp 選 6、BIC 選 4、調整後 R² 選 7）
-  3. FRAMES_w06ridge  Credit 的 Ridge 係數路徑（ISLP 圖 6.4）
-                      ＋ p=45, n=50 模擬的 bias²／variance／test MSE（ISLP 圖 6.5）
-  4. FRAMES_w06lasso  Credit 的 Lasso 係數路徑與存活變數（ISLP 圖 6.6）
-  5. FRAMES_w06hd     p 逼近 n：訓練 R² → 1 而測試 MSE 爆炸（ISLP 圖 6.23）
-                      ＋ 維度詛咒：n=100、20 個訊號變數、p = 20／50／2000（ISLP 圖 6.24）
+  2. FRAMES_w06ridge  Credit 的 Ridge 係數路徑（ISLP 圖 6.4）
+  3. FRAMES_w06lasso  Credit 的 Lasso 係數路徑與存活變數（ISLP 圖 6.6）
+  4. FRAMES_w06hd     p 逼近 n：訓練 R² → 1 而測試 MSE 爆炸（ISLP 圖 6.23）
 
 跑法（用 pinned 環境，數字才可重現）：
   conda run -n m524 python tools/frames/gen_modelsel.py > /tmp/w06.js
@@ -95,7 +91,7 @@ for size in range(1, 5):
 LAT_DIVERGE = [s for s in range(1, 5) if _lat_fwd[s] != _lat_best[s][1]]
 assert LAT_DIVERGE == [3], f"格圖的分歧點變了：{LAT_DIVERGE}"
 
-# ── 2. 五準則：Credit 的最佳子集前緣 ────────────────────────────────────
+# ── 五準則自我檢查（不輸出）：Credit 的最佳子集前緣 ─────────────────────
 sigma2 = rss_of(XC, YC, list(range(PC))) / (NC - PC - 1)
 
 front = {}                                          # size → (rss, cols)
@@ -143,7 +139,7 @@ ARG["ose"] = int(next(k for k in sizes if cv_mean[k - 1] <= _lo))
 assert (ARG["cp"], ARG["bic"], ARG["adjr2"]) == (6, 4, 7), \
     f"與 ISLP 圖 6.2 不符：Cp={ARG['cp']} BIC={ARG['bic']} adjR2={ARG['adjr2']}"
 
-# ── 3. Ridge 係數路徑（ISLP 圖 6.4）＋ bias/variance（ISLP 圖 6.5）───────
+# ── 2. Ridge 係數路徑（輸出）＋ bias/variance 自我檢查（不輸出）─────────
 Xs = (XC - XC.mean(0)) / XC.std(0)                   # 標準化：懲罰項對單位敏感
 ols_full = LinearRegression().fit(Xs, YC)
 norm_ols2 = float(np.linalg.norm(ols_full.coef_))
@@ -173,7 +169,7 @@ bias2 = ((preds.mean(1) - f_true) ** 2).mean(1)
 varc = preds.var(1, ddof=1).mean(1)
 mse = bias2 + varc + sd_eps ** 2
 
-# ── 4. Lasso 係數路徑（ISLP 圖 6.6）────────────────────────────────────
+# ── 3. Lasso 係數路徑（ISLP 圖 6.6）────────────────────────────────────
 # sklearn 的 Lasso 目標是 (1/2n)·RSS + α‖β‖₁，課本式 6.7 是 RSS + λ‖β‖₁，
 # 所以 λ = 2n·α。頁面上標的都是 λ。
 lalphas, lcoefs, _ = lasso_path(Xs, YC - YC.mean(), n_alphas=40, eps=1e-4)
@@ -187,7 +183,7 @@ lcv = LassoCV(cv=kf, n_alphas=100, random_state=0).fit(Xs, YC)
 lcv_lam = 2 * NC * float(lcv.alpha_)
 lcv_nz = int((np.abs(lcv.coef_) > 1e-8).sum())
 
-# ── 5. p 逼近 n（ISLP 圖 6.23）──────────────────────────────────────────
+# ── 4. p 逼近 n（輸出）＋圖 6.24 維度詛咒自我檢查（不輸出）──────────────
 rng2 = np.random.default_rng(20260810)
 n_hd, reps_hd, ps_hd = 20, 400, list(range(1, 20))   # p = 19 時參數個數 = n，訓練誤差歸零
 tr_r2, tr_mse, te_mse = [], [], []
@@ -249,26 +245,13 @@ out = [
        "無隨機性（窮舉 2⁴ 個子集的最小平方 RSS）",
        f"forward stepwise 在大小 {LAT_DIVERGE} 上選到的子集與最佳子集不同"),
 
-    js("FRAMES_w06crit",
-       {"sizes": sizes, "n": NC, "p": PC, "sigma2": round(sigma2, 1),
-        "names": SHORT, **crit,
-        "cvMean": r3(cv_mean, 1), "cvSe": r3(cv_se, 1), "arg": ARG},
-       "ISLP Credit · 全部 2¹¹ 個子集窮舉（對應 ISLP 圖 6.1／6.2／6.3）",
-       "KFold(n_splits=10, shuffle=True, random_state=0)；每折內重跑最佳子集",
-       f"Cp 選 {ARG['cp']} 個、BIC 選 {ARG['bic']} 個、調整後 R² 選 {ARG['adjr2']} 個"
-       f"（與 ISLP 圖 6.2 相符）；CV 選 {ARG['cv']} 個，one-SE 規則選 {ARG['ose']} 個"),
-
     js("FRAMES_w06ridge",
        {"names": SHORT, "lambdas": r3(rlam, 4),
         "l2ratio": r3(r_l2ratio, 4),
         "coefs": [r3(rcoefs[:, j], 2) for j in range(PC)],
-        "olsNorm": round(norm_ols2, 2),
-        "bv": {"lambdas": r3(blam, 3), "bias2": r3(bias2, 3),
-               "var": r3(varc, 3), "mse": r3(mse, 3),
-               "irr": sd_eps ** 2, "n": n_sim, "p": p_sim, "reps": reps}},
-       "ISLP Credit 標準化後的 Ridge 係數路徑（ISLP 圖 6.4）"
-       "＋ p=45／n=50 模擬（ISLP 圖 6.5）",
-       "np.random.default_rng(6)，300 次重複",
+        "olsNorm": round(norm_ols2, 2)},
+       "ISLP Credit 標準化後的 Ridge 係數路徑（ISLP 圖 6.4）",
+       "無隨機性（資料與 lambda 網格固定）",
        "sklearn Ridge 的 alpha 就是式 6.5 的 λ（目標函數是 RSS + λ‖β‖²）"),
 
     js("FRAMES_w06lasso",
@@ -283,10 +266,9 @@ out = [
 
     js("FRAMES_w06hd",
        {"ps": ps_hd, "n": n_hd, "trainR2": tr_r2, "trainMse": tr_mse,
-        "testMse": te_mse, "reps": reps_hd, "curse": curse},
-       "純噪音模擬：n=20，加入 p 個與 y 完全無關的變數（ISLP 圖 6.23）"
-       "；curse 對應 ISLP 圖 6.24",
-       "np.random.default_rng(20260810) / default_rng(24)",
+        "testMse": te_mse, "reps": reps_hd},
+       "純噪音模擬：n=20，加入 p 個與 y 完全無關的變數（ISLP 圖 6.23）",
+       "np.random.default_rng(20260810)",
        "測試 MSE 取 400 次重複的中位數（p 接近 n 時偶爾會爆到極大值）"),
 ]
 print("\n".join(out))

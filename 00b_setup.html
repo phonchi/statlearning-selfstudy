@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -683,7 +688,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（課前 · 環境安裝）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -722,29 +727,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   ① 開 <a href="https://colab.research.google.com/" target="_blank" rel="noopener">Colab</a>；② 新增一個 notebook；③ 第一格貼 <code>%pip install ISLP</code> 按執行；④ 第二格貼課程 lab 的 imports；⑤ 開始跑。就這樣。
 </div>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w13pathSvg" height="320"></svg>
-      <div class="status-banner" id="w13paStatus"><span class="status-icon">›</span><span class="status-text">三條路，先看它們各自的代價。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13paSet(0)">① Colab（推薦）</button><button class="btn btn-toggle" onclick="w13paSet(1)">② 本機 conda</button><button class="btn btn-toggle" onclick="w13paSet(2)">③ 本機 pip + venv</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">三條路，先選最上面那條</div>
-      按按鈕比較三種環境。第一次上手<strong>一律選 Colab</strong>，它零安裝而且跟課程 lab 的環境最接近。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">這一條路</div>
-      <div class="ic-row"><span class="ic-label">要花多久</span><span class="ic-value" id="w13paTime">—</span></div><div class="ic-row"><span class="ic-label">好處</span><span class="ic-value" id="w13paPro">—</span></div><div class="ic-row"><span class="ic-label">代價</span><span class="ic-value" id="w13paCon">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">為什麼不建議一開始就裝本機</div>
-      本機安裝會遇到的問題（權限、路徑、版本衝突）跟統計學習一點關係都沒有，但它們很會消耗你的耐心。<strong>把耐心留給真正的課程內容。</strong>
-    </div>
-  </div>
-</div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>環境</th><th>啟動成本</th><th>適合情境</th><th>主要代價</th></tr></thead>
+  <tbody><tr><td><strong>Colab（第一次上手推薦）</strong></td><td>瀏覽器開啟即可使用</td><td>第一次跑 lab、公用電腦、需要臨時 GPU</td><td>執行階段會回收，套件需重裝</td></tr><tr><td>本機 conda</td><td>需安裝環境並註冊 kernel</td><td>長期使用、需要固定版本</td><td>要管理環境與 Jupyter kernel</td></tr><tr><td>本機 pip + venv</td><td>需自行準備 Python 與 venv</td><td>磁碟空間有限、熟悉 Python 環境</td><td>Python 與套件版本需自行管理</td></tr></tbody>
+</table></div>
 
 <div class="deck-extra">
   <div class="dx-label">裝課程用的套件</div>
@@ -755,112 +741,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">ISLP 會順便裝一整套相依</div>
+  <div class="dx-label">ISLP 會順便安裝相依套件</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">%pip install ISLP</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Collecting ISLP
-  Downloading ISLP-0.4.0-py3-none-any.whl.metadata (7.0 kB)
-Requirement already satisfied: numpy&gt;=1.7.1 in /usr/local/lib/python3.12/dist-packages (from ISLP) (2.0.2)
-Requirement already satisfied: scipy&gt;=0.9 in /usr/local/lib/python3.12/dist-packages (from ISLP) (1.16.1)
-Requirement already satisfied: pandas&gt;=0.20 in /usr/local/lib/python3.12/dist-packages (from ISLP) (2.2.2)
-Requirement already satisfied: lxml in /usr/local/lib/python3.12/dist-packages (from ISLP) (5.4.0)
-Requirement already satisfied: scikit-learn&gt;=1.2 in /usr/local/lib/python3.12/dist-packages (from ISLP) (1.6.1)
-Requirement already satisfied: joblib in /usr/local/lib/python3.12/dist-packages (from ISLP) (1.5.2)
-Requirement already satisfied: statsmodels&gt;=0.13 in /usr/local/lib/python3.12/dist-packages (from ISLP) (0.14.5)
-Collecting lifelines (from ISLP)
-  Downloading lifelines-0.30.0-py3-none-any.whl.metadata (3.2 kB)
-Collecting pygam (from ISLP)
-  Downloading pygam-0.10.1-py3-none-any.whl.metadata (9.7 kB)
-Requirement already satisfied: torch in /usr/local/lib/python3.12/dist-packages (from ISLP) (2.8.0+cu126)
-Collecting pytorch-lightning (from ISLP)
-  Downloading pytorch_lightning-2.5.5-py3-none-any.whl.metadata (20 kB)
-Collecting torchmetrics (from ISLP)
-  Downloading torchmetrics-1.8.2-py3-none-any.whl.metadata (22 kB)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas&gt;=0.20-&gt;ISLP) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas&gt;=0.20-&gt;ISLP) (2025.2)
-Requirement already satisfied: tzdata&gt;=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas&gt;=0.20-&gt;ISLP) (2025.2)
-Requirement already satisfied: threadpoolctl&gt;=3.1.0 in /usr/local/lib/python3.12/dist-packages (from scikit-learn&gt;=1.2-&gt;ISLP) (3.6.0)
-Requirement already satisfied: patsy&gt;=0.5.6 in /usr/local/lib/python3.12/dist-packages (from statsmodels&gt;=0.13-&gt;ISLP) (1.0.1)
-Requirement already satisfied: packaging&gt;=21.3 in /usr/local/lib/python3.12/dist-packages (from statsmodels&gt;=0.13-&gt;ISLP) (25.0)
-Requirement already satisfied: matplotlib&gt;=3.0 in /usr/local/lib/python3.12/dist-packages (from lifelines-&gt;ISLP) (3.10.0)
-Requirement already satisfied: autograd&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from lifelines-&gt;ISLP) (1.8.0)
-Collecting autograd-gamma&gt;=0.3 (from lifelines-&gt;ISLP)
-  Downloading autograd-gamma-0.5.0.tar.gz (4.0 kB)
-  Preparing metadata (setup.py) ... [?25l[?25hdone
-Collecting formulaic&gt;=0.2.2 (from lifelines-&gt;ISLP)
-  Downloading formulaic-1.2.0-py3-none-any.whl.metadata (7.0 kB)
-Requirement already satisfied: progressbar2&lt;5,&gt;=4.2.0 in /usr/local/lib/python3.12/dist-packages (from pygam-&gt;ISLP) (4.5.0)
-Requirement already satisfied: tqdm&gt;=4.57.0 in /usr/local/lib/python3.12/dist-packages (from pytorch-lightning-&gt;ISLP) (4.67.1)
-Requirement already satisfied: PyYAML&gt;5.4 in /usr/local/lib/python3.12/dist-packages (from pytorch-lightning-&gt;ISLP) (6.0.2)
-Requirement already satisfied: fsspec&gt;=2022.5.0 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (2025.3.0)
-Requirement already satisfied: typing-extensions&gt;4.5.0 in /usr/local/lib/python3.12/dist-packages (from pytorch-lightning-&gt;ISLP) (4.15.0)
-Collecting lightning-utilities&gt;=0.10.0 (from pytorch-lightning-&gt;ISLP)
-  Downloading lightning_utilities-0.15.2-py3-none-any.whl.metadata (5.7 kB)
-Requirement already satisfied: filelock in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.19.1)
-Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (75.2.0)
-Requirement already satisfied: sympy&gt;=1.13.3 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (1.13.3)
-Requirement already satisfied: networkx in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.5)
-Requirement already satisfied: jinja2 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.1.6)
-Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.77)
-Requirement already satisfied: nvidia-cuda-runtime-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.77)
-Requirement already satisfied: nvidia-cuda-cupti-cu12==12.6.80 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.80)
-Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (9.10.2.21)
-Requirement already satisfied: nvidia-cublas-cu12==12.6.4.1 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.4.1)
-Requirement already satisfied: nvidia-cufft-cu12==11.3.0.4 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (11.3.0.4)
-Requirement already satisfied: nvidia-curand-cu12==10.3.7.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (10.3.7.77)
-Requirement already satisfied: nvidia-cusolver-cu12==11.7.1.2 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (11.7.1.2)
-Requirement already satisfied: nvidia-cusparse-cu12==12.5.4.2 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.5.4.2)
-Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (0.7.1)
-Requirement already satisfied: nvidia-nccl-cu12==2.27.3 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (2.27.3)
-Requirement already satisfied: nvidia-nvtx-cu12==12.6.77 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.77)
-Requirement already satisfied: nvidia-nvjitlink-cu12==12.6.85 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (12.6.85)
-Requirement already satisfied: nvidia-cufile-cu12==1.11.1.6 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (1.11.1.6)
-Requirement already satisfied: triton==3.4.0 in /usr/local/lib/python3.12/dist-packages (from torch-&gt;ISLP) (3.4.0)
-Collecting interface-meta&gt;=1.2.0 (from formulaic&gt;=0.2.2-&gt;lifelines-&gt;ISLP)
-  Downloading interface_meta-1.3.0-py3-none-any.whl.metadata (6.7 kB)
-Requirement already satisfied: narwhals&gt;=1.17 in /usr/local/lib/python3.12/dist-packages (from formulaic&gt;=0.2.2-&gt;lifelines-&gt;ISLP) (2.3.0)
-Requirement already satisfied: wrapt&gt;=1.0 in /usr/local/lib/python3.12/dist-packages (from formulaic&gt;=0.2.2-&gt;lifelines-&gt;ISLP) (1.17.3)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (3.12.15)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (1.3.3)
-Requirement already satisfied: cycler&gt;=0.10 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (4.59.2)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (1.4.9)
-Requirement already satisfied: pillow&gt;=8 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (11.3.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib&gt;=3.0-&gt;lifelines-&gt;ISLP) (3.2.3)
-Requirement already satisfied: python-utils&gt;=3.8.1 in /usr/local/lib/python3.12/dist-packages (from progressbar2&lt;5,&gt;=4.2.0-&gt;pygam-&gt;ISLP) (3.9.1)
-Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=0.20-&gt;ISLP) (1.17.0)
-Requirement already satisfied: mpmath&lt;1.4,&gt;=1.1.0 in /usr/local/lib/python3.12/dist-packages (from sympy&gt;=1.13.3-&gt;torch-&gt;ISLP) (1.3.0)
-Requirement already satisfied: MarkupSafe&gt;=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2-&gt;torch-&gt;ISLP) (3.0.2)
-Requirement already satisfied: aiohappyeyeballs&gt;=2.5.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (2.6.1)
-Requirement already satisfied: aiosignal&gt;=1.4.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (1.4.0)
-Requirement already satisfied: attrs&gt;=17.3.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (25.3.0)
-Requirement already satisfied: frozenlist&gt;=1.1.1 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (1.7.0)
-Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (6.6.4)
-Requirement already satisfied: propcache&gt;=0.2.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (0.3.2)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.17.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (1.20.1)
-Requirement already satisfied: idna&gt;=2.0 in /usr/local/lib/python3.12/dist-packages (from yarl&lt;2.0,&gt;=1.17.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=2022.5.0-&gt;pytorch-lightning-&gt;ISLP) (3.10)
-Downloading ISLP-0.4.0-py3-none-any.whl (3.6 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 23.8 MB/s eta 0:00:00
-[?25hDownloading lifelines-0.30.0-py3-none-any.whl (349 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 349.3/349.3 kB 33.8 MB/s eta 0:00:00
-[?25hDownloading pygam-0.10.1-py3-none-any.whl (80 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.2/80.2 kB 10.1 MB/s eta 0:00:00
-[?25hDownloading pytorch_lightning-2.5.5-py3-none-any.whl (832 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 832.4/832.4 kB 51.8 MB/s eta 0:00:00
-[?25hDownloading torchmetrics-1.8.2-py3-none-any.whl (983 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 983.2/983.2 kB 58.8 MB/s eta 0:00:00
-[?25hDownloading formulaic-1.2.0-py3-none-any.whl (117 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 117.2/117.2 kB 15.1 MB/s eta 0:00:00
-[?25hDownloading lightning_utilities-0.15.2-py3-none-any.whl (29 kB)
-Downloading interface_meta-1.3.0-py3-none-any.whl (14 kB)
-Building wheels for collected packages: autograd-gamma
-  Building wheel for autograd-gamma (setup.py) ... [?25l[?25hdone
-  Created wheel for autograd-gamma: filename=autograd_gamma-0.5.0-py3-none-any.whl size=4030 sha256=e83a92da55e75c46943e5e8343f5777f801f985bb6b70c5e2c7340a3f03c6b07
-  Stored in directory: /root/.cache/pip/wheels/50/37/21/0a719b9d89c635e89ff24bd93b862882ad675279552013b2fb
-Successfully built autograd-gamma
-Installing collected packages: lightning-utilities, interface-meta, autograd-gamma, pygam, formulaic, torchmetrics, lifelines, pytorch-lightning, ISLP
-Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface-meta-1.3.0 lifelines-0.30.0 lightning-utilities-0.15.2 pygam-0.10.1 pytorch-lightning-2.5.5 torchmetrics-1.8.2</pre></div>
-  <p class="dx-note">輸出很長，因為 numpy、pandas、scikit-learn、statsmodels 都是它的相依。裝完 Colab 可能會叫你重啟執行階段，照做。</p>
+  <p class="dx-note">安裝輸出通常很長，沒有必要逐行閱讀。確認最後沒有紅色錯誤；若 Colab 要求重啟執行階段，照做即可。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 8</span>
 </div>
 
@@ -896,28 +780,29 @@ Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 4</span>
 </div>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w13cellSvg" height="340"></svg>
-      <div class="status-banner" id="w13clStatus"><span class="status-icon">›</span><span class="status-text">先按「由上到下」，再按「亂序執行」。</span></div>
-      <div class="controls-bar"><button class="btn btn-play" onclick="w13clRun(0)">▶ 由上到下</button><button class="btn btn-step" onclick="w13clRun(1)">亂序執行</button><button class="btn btn-reset" onclick="w13clReset()">重啟並全部重跑</button></div>
-    </div>
+<div class="viz-layout" data-provenance="illustrative">
+ <div><div class="viz-panel">
+  <p><strong>自己決定三格的執行順序。</strong>每按一次，就等於在 notebook 執行那一格；
+  左邊的 <code>[n]</code> 是執行次序，不是儲存格位置。</p>
+  <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>儲存格</th><th>程式</th><th>執行</th></tr></thead>
+  <tbody><tr><td><code id="w13clN0">[ ]</code></td><td><code>x = 10</code></td><td><button class="btn btn-step" onclick="w13clRun(0)">執行第 1 格</button></td></tr><tr><td><code id="w13clN1">[ ]</code></td><td><code>x = x * 2</code></td><td><button class="btn btn-step" onclick="w13clRun(1)">執行第 2 格</button></td></tr><tr><td><code id="w13clN2">[ ]</code></td><td><code>print(x)</code></td><td><button class="btn btn-step" onclick="w13clRun(2)">執行第 3 格</button></td></tr></tbody>
+</table></div>
+  <div class="status-banner" id="w13clStatus"><span class="status-icon">›</span>
+    <span class="status-text">請自行選一格開始；也可以故意先按第 2 或第 3 格。</span></div>
+  <div class="controls-bar">
+    <button class="btn btn-play" onclick="w13clTopDown()">▶ 由上到下全部執行</button>
+    <button class="btn btn-reset" onclick="w13clReset()">重啟執行階段</button>
   </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">按亂序執行看看</div>
-      notebook 的儲存格<strong>可以照任何順序執行</strong>，而且左邊的編號記錄的是「第幾次執行」不是「第幾格」。按「亂序執行」，看變數變成什麼。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">執行順序</span><span class="ic-value" id="w13clOrder">—</span></div><div class="ic-row"><span class="ic-label">x 的值</span><span class="ic-value" id="w13clX">—</span></div><div class="ic-row"><span class="ic-label">結果對不對</span><span class="ic-value" id="w13clOk">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">怎麼避免</div>
-      定期<strong>重啟執行階段並全部重跑</strong>（Colab：執行階段 → 重新啟動並全部執行）。交作業之前一定要做一次。你不會想交出一份只有你自己那台機器跑得出來的東西。
-    </div>
-  </div>
+  <div class="viz-source"><span>自訂概念示意</span>三格程式用來呈現 notebook 的狀態與執行順序；數值不是課程資料。</div>
+ </div></div>
+ <div class="side-panel">
+  <div class="info-card"><div class="ic-title">這個模擬器要看什麼</div>
+   同一格可以重跑，也可以跳著跑；所以 notebook 的結果取決於<strong>目前記憶體狀態</strong>，
+   不只取決於畫面上儲存格的位置。</div>
+  <div class="info-card"><div class="ic-title">交作業前</div>
+   重啟執行階段並由上到下全部執行，確認結果不依賴先前殘留的變數。</div>
+ </div>
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -979,29 +864,10 @@ Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 5</span>
 </div>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w13impSvg" height="320"></svg>
-      <div class="status-banner" id="w13imStatus"><span class="status-icon">›</span><span class="status-text">六個套件，各管一塊。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13imSet(0)">numpy</button><button class="btn btn-toggle" onclick="w13imSet(1)">pandas</button><button class="btn btn-toggle" onclick="w13imSet(2)">matplotlib</button><button class="btn btn-toggle" onclick="w13imSet(3)">seaborn</button><button class="btn btn-toggle" onclick="w13imSet(4)">statsmodels</button><button class="btn btn-toggle" onclick="w13imSet(5)">scikit-learn</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">點名字看它管什麼</div>
-      課程用到的六個主要套件。按按鈕看它負責什麼、以及本站哪一頁在講它。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">這個套件</div>
-      <div class="ic-row"><span class="ic-label">慣用簡稱</span><span class="ic-value" id="w13imAlias">—</span></div><div class="ic-row"><span class="ic-label">負責什麼</span><span class="ic-value" id="w13imWhat">—</span></div><div class="ic-row"><span class="ic-label">哪一頁在講</span><span class="ic-value" id="w13imWhere">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">為什麼都用同一個簡稱</div>
-      <code>np</code>、<code>pd</code>、<code>sns</code>、<code>sm</code> 是整個社群的慣例。照著用，別人（跟 AI）才看得懂你的程式碼，你也看得懂網路上找到的範例。
-    </div>
-  </div>
-</div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>套件</th><th>慣用簡稱</th><th>負責什麼</th><th>本站位置</th></tr></thead>
+  <tbody><tr><td>numpy</td><td><code>np</code></td><td>陣列與數值運算</td><td>P3</td></tr><tr><td>pandas</td><td><code>pd</code></td><td>資料表、選取與分組</td><td>P4</td></tr><tr><td>matplotlib</td><td><code>plt</code></td><td>Figure 與 Axes</td><td>P5</td></tr><tr><td>seaborn</td><td><code>sns</code></td><td>統計圖的高階介面</td><td>P5</td></tr><tr><td>statsmodels</td><td><code>sm</code></td><td>係數、標準誤與 p 值</td><td>P6</td></tr><tr><td>scikit-learn</td><td><code>sklearn</code></td><td>fit、predict 與交叉驗證</td><td>P6</td></tr></tbody>
+</table></div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
@@ -1113,52 +979,14 @@ Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface
 <span class="line">conda run -n m524 pip install jupyterlab ipykernel</span>
 <span class="line">conda run -n m524 python -m ipykernel install --user --name m524</span></div>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w13envSvg" height="320"></svg>
-      <div class="status-banner" id="w13enStatus"><span class="status-icon">›</span><span class="status-text">先看「全部裝在一起」會怎樣。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13enSet(0)">全部裝在 base</button><button class="btn btn-toggle" onclick="w13enSet(1)">各自獨立的環境</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">為什麼要獨立的環境</div>
-      按按鈕看「全部裝在同一個環境」會發生什麼事。兩個專案要求不同版本的同一個套件時，後裝的會蓋掉先裝的。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">情境</span><span class="ic-value" id="w13enCase">—</span></div><div class="ic-row"><span class="ic-label">課程專案</span><span class="ic-value" id="w13enA">—</span></div><div class="ic-row"><span class="ic-label">另一個專案</span><span class="ic-value" id="w13enB">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">kernel 沒選對是最常見的假故障</div>
-      環境開好了、套件也裝了，但 Jupyter 左上角選的還是 base。症狀是「明明裝過了卻說找不到」。先看右上角顯示的 kernel 名稱是不是 m524。
-    </div>
-  </div>
-</div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>做法</th><th>課程專案</th><th>另一個專案</th><th>結果</th></tr></thead>
+  <tbody><tr><td>全部裝在 base</td><td>需要 pandas 2.3.2</td><td>需要 pandas 1.5.3</td><td>同一環境只能留下其中一版，容易互相影響</td></tr><tr><td>各自建立環境</td><td>m524：pandas 2.3.2</td><td>other：pandas 1.5.3</td><td>兩個版本可以共存</td></tr></tbody>
+</table></div>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w13cmdSvg" height="300"></svg>
-      <div class="status-banner" id="w13cmStatus"><span class="status-icon">›</span><span class="status-text">四個步驟，照順序做。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13cmSet(0)">① 建立環境</button><button class="btn btn-toggle" onclick="w13cmSet(1)">② 裝套件</button><button class="btn btn-toggle" onclick="w13cmSet(2)">③ 註冊 kernel</button><button class="btn btn-toggle" onclick="w13cmSet(3)">④ 每次使用</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">按選項組指令</div>
-      選你的情況，下面會組出該打的那一行。四個選項組合出來的指令都不一樣。這也是為什麼直接抄別人的指令常常不管用。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">組出來的指令</div>
-      <div class="ic-row"><span class="ic-label">步驟</span><span class="ic-value" id="w13cmStep">建立環境</span></div><div class="ic-row"><span class="ic-label">指令</span><span class="ic-value" id="w13cmCmd">conda create -n m524 python=3.11 -y</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">順序有意義</div>
-      建立 → 裝套件 → 註冊 kernel → 每次使用前 activate。跳過第三步的話 Jupyter 看不到這個環境，你就會遇到「明明裝了卻找不到」。
-    </div>
-  </div>
+<div class="info-box">
+  <span class="info-label">四步驟的順序</span>
+  <strong>建立環境 → 安裝套件 → 註冊 kernel → 選擇／啟用環境。</strong>上面的命令區已給出可直接執行的精確指令；不需要另一個動畫重複播放。若 Jupyter 說找不到已安裝的套件，先用 <code>import sys; print(sys.executable)</code> 確認當前 kernel 使用哪一個 Python。
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1182,29 +1010,10 @@ Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface
   <p>環境的問題有八成是同樣的四種。這一節把它們列出來，
   每一種都給「症狀 → 原因 → 怎麼修」。學會這四種，你以後遇到的環境問題會少一大半。</p>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <svg class="viz-svg" id="w13fixSvg" height="320"></svg>
-      <div class="status-banner" id="w13fxStatus"><span class="status-icon">›</span><span class="status-text">四種症狀，各自的解法。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w13fxSet(0)">ModuleNotFoundError</button><button class="btn btn-toggle" onclick="w13fxSet(1)">NameError</button><button class="btn btn-toggle" onclick="w13fxSet(2)">FileNotFoundError</button><button class="btn btn-toggle" onclick="w13fxSet(3)">結果跟同學不一樣</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">點症狀看解法</div>
-      四種最常見的假故障。它們的共同點是：<strong>程式碼沒有錯</strong>，錯的是環境或執行順序。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">這一種</div>
-      <div class="ic-row"><span class="ic-label">症狀</span><span class="ic-value" id="w13fxSym">—</span></div><div class="ic-row"><span class="ic-label">真正的原因</span><span class="ic-value" id="w13fxWhy">—</span></div><div class="ic-row"><span class="ic-label">怎麼修</span><span class="ic-value" id="w13fxFix">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">一個萬用的第一步</div>
-      <strong>重啟 kernel 並從第一格全部重跑。</strong>這一步能解掉的問題比你想像的多，因為它同時消除了「亂序執行」與「殘留變數」這兩個最常見的干擾。
-    </div>
-  </div>
-</div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>症狀</th><th>先收集的證據</th><th>優先檢查</th></tr></thead>
+  <tbody><tr><td><code>ModuleNotFoundError</code></td><td><code>sys.executable</code> 與 kernel 名稱</td><td>套件是否裝在當前 kernel</td></tr><tr><td><code>NameError</code></td><td>變數第一次出現在哪一格、執行編號</td><td>imports 或建立變數的儲存格是否已執行</td></tr><tr><td><code>FileNotFoundError</code></td><td>錯誤中的完整路徑</td><td>Drive 是否掛載、<code>DATA_PATH</code> 是否指向自己的資料夾</td></tr><tr><td>數值結果不同</td><td>資料版本、前處理、套件版本、seed、完整重跑結果</td><td>先定位差異來源，不要只憑結果猜是 seed</td></tr></tbody>
+</table></div>
 
 <div class="qa-box">
   <div class="qa-head">還是跑不動的話</div>
@@ -1224,7 +1033,7 @@ Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
   <p>同一份 notebook，你跑出來的 MSE 是 25.57，同學是 23.80。程式碼一模一樣。為什麼？</p>
-  <div class="quiz-options" id="qFixOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>train_test_split</code> 與自助法都有隨機性，沒有固定 <code>random_state</code> 或 <code>seed</code> 就會每次不同。細節見 <a href=&quot;p3_numpy.html#rand&quot;>P3 的亂數那一節</a>。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(A)</span> 切分或重抽樣的隨機性，其中一邊沒有固定種子</div><div class="quiz-opt" data-correct="false" data-fb="有可能造成小數點後幾位的差異，但 25.57 對 23.80 差太多了，這種量級的差異幾乎一定是隨機性。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(B)</span> 你們的套件版本不同</div><div class="quiz-opt" data-correct="false" data-fb="程式碼一樣的話，「算錯」的機率遠低於「隨機性」。先查最可能的原因。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(C)</span> 其中一個人算錯了</div></div>
+  <div class="quiz-options" id="qFixOptions"><div class="quiz-opt" data-correct="true" data-fb="對。相同文字不保證相同執行狀態，也不代表讀到同一份資料。先做可重現的完整重跑，再逐項比對；若流程含隨機切分或重抽樣，才進一步檢查 <code>random_state</code> 或 <code>seed</code>。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(A)</span> 先從乾淨 kernel 全部重跑，再比資料、前處理、版本與 seed</div><div class="quiz-opt" data-correct="false" data-fb="seed 是常見原因，但不是唯一原因。資料版本、前處理、套件版本、kernel 與亂序執行都可能造成差異，不能只由兩個 MSE 反推原因。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(B)</span> 一定是其中一邊沒有固定 seed</div><div class="quiz-opt" data-correct="false" data-fb="平均不會找出差異來源。先確認兩邊其實在執行同一個分析。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(C)</span> 直接把兩人的 MSE 平均起來</div></div>
   <div class="quiz-feedback" id="qFixFeedback"></div>
 </div>
 
@@ -1286,7 +1095,7 @@ Successfully installed ISLP-0.4.0 autograd-gamma-0.5.0 formulaic-1.2.0 interface
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>症狀</th><th>真正的原因</th><th>怎麼修</th></tr></thead>
-  <tbody><tr><td><code>ModuleNotFoundError</code></td><td>沒裝，或裝到別的環境</td><td><code>%pip install X</code>；檢查 kernel</td></tr><tr><td><code>NameError</code></td><td>某一格沒跑（多半是 imports）</td><td>從第一格重跑</td></tr><tr><td><code>FileNotFoundError</code></td><td>路徑不對或 Drive 沒掛</td><td>在檔案窗格複製正確路徑</td></tr><tr><td>結果跟同學不同</td><td>沒固定種子</td><td><code>random_state=0</code>、<code>seed=0</code></td></tr><tr><td>改了程式卻沒變</td><td>改完沒重跑那一格</td><td>重啟並全部重跑</td></tr></tbody>
+  <tbody><tr><td><code>ModuleNotFoundError</code></td><td>沒裝，或裝到別的環境</td><td><code>%pip install X</code>；檢查 kernel</td></tr><tr><td><code>NameError</code></td><td>某一格沒跑（多半是 imports）</td><td>從第一格重跑</td></tr><tr><td><code>FileNotFoundError</code></td><td>路徑不對或 Drive 沒掛</td><td>在檔案窗格複製正確路徑</td></tr><tr><td>結果跟同學不同</td><td>資料、前處理、版本、seed 或執行狀態不同</td><td>乾淨重跑後逐項比對，不先武斷歸因</td></tr><tr><td>改了程式卻沒變</td><td>改完沒重跑那一格</td><td>重啟並全部重跑</td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1904,272 +1713,55 @@ HC.initFlashcards = () => {
 <!-- GEN:END sharedjs -->
 <!-- PAGEJS:BEGIN -->
 <script>
-/* ═══ w13pa 三條路 ═══ */
-const w13paS = HC.svg('w13pathSvg', {h: 320});
-const w13paCases = [
-  {t: '3 分鐘', pro: '零安裝、有免費 GPU、換電腦也接得上',
-   con: '執行階段會回收，套件要重裝', note: '第一次上手一律選這條。'},
-  {t: '20 分鐘', pro: '版本可以釘死，數字跟課程 lab 一致',
-   con: '要下載 1 GB、佔 5 GB 空間', note: '確定要長期用了再做。'},
-  {t: '10 分鐘', pro: '不用裝 Anaconda，省 3–5 GB',
-   con: 'Python 版本要自己管', note: '電腦空間小的時候的折衷。'}
-];
-let w13paI = 0;
-function w13paDraw() {
-  const g = w13paS.clearLayer('main');
-  const names = ['① Colab', '② 本機 conda', '③ pip + venv'];
-  names.forEach((nm, i) => {
-    const on = i === w13paI;
-    const y = 66 + i * 78;
-    w13paS.add('rect', {x: 40, y: y, width: 540, height: 62, rx: 9,
-                        fill: on ? (i === 0 ? HC.tok.accent2 : HC.tok.accent) : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
-                        opacity: on ? 0.95 : 0.45}, g);
-    const t = w13paS.add('text', {x: 62, y: y + 27, cls: 'axtitle',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = nm;
-    const u = w13paS.add('text', {x: 62, y: y + 49, cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    u.textContent = w13paCases[i].t + '　·　' + w13paCases[i].pro;
-    if (i === 0) {
-      const b = w13paS.add('text', {x: 556, y: y + 27, 'text-anchor': 'end', cls: 'axlab',
-                                    fill: on ? HC.tok.paper : HC.tok.accent2}, g);
-      b.textContent = '推薦';
+let w13clX;
+let w13clHasX = false;
+let w13clHistory = [];
+
+function w13clShow(message) {
+  ['w13clN0', 'w13clN1', 'w13clN2'].forEach((id, i) => {
+    const runs = w13clHistory
+      .map((cell, n) => cell === i ? n + 1 : null)
+      .filter(n => n !== null);
+    document.getElementById(id).textContent = runs.length ? '[' + runs[runs.length - 1] + ']' : '[ ]';
+  });
+  setStatus('w13clStatus', message + '<br><small>執行紀錄：' +
+    (w13clHistory.length ? w13clHistory.map(i => '第 ' + (i + 1) + ' 格').join(' → ') : '尚未執行') +
+    '；目前 x：' + (w13clHasX ? w13clX : '尚未定義') + '</small>');
+}
+
+function w13clRun(cell) {
+  w13clHistory.push(cell);
+  if (cell === 0) {
+    w13clX = 10;
+    w13clHasX = true;
+    w13clShow('執行 <code>x = 10</code>：現在 x 是 10。');
+  } else if (cell === 1) {
+    if (!w13clHasX) {
+      w13clShow('<code>NameError</code>：x 還不存在。這就是亂序執行時常見的狀態問題。');
+    } else {
+      w13clX *= 2;
+      w13clShow('執行 <code>x = x * 2</code>：現在 x 是 ' + w13clX + '。');
     }
-  });
-  const c = w13paCases[w13paI];
-  document.getElementById('w13paTime').textContent = c.t;
-  document.getElementById('w13paPro').textContent = c.pro;
-  document.getElementById('w13paCon').textContent = c.con;
-  setStatus('w13paStatus', c.note);
-}
-function w13paSet(i) { w13paI = i; w13paDraw(); }
-if (w13paS) w13paDraw();
-
-/* ═══ w13cl 儲存格執行順序 ═══ */
-const w13clS = HC.svg('w13cellSvg', {h: 340});
-const w13clCells = [
-  {code: 'x = 10', eff: 10},
-  {code: 'x = x * 2', eff: null},
-  {code: 'print(x)', eff: null}
-];
-let w13clOrder = [], w13clMode = -1;
-function w13clDraw() {
-  const g = w13clS.clearLayer('main');
-  let x = null;
-  const seen = [];
-  w13clOrder.forEach(i => {
-    seen.push(i);
-    if (i === 0) x = 10;
-    else if (i === 1) x = (x === null ? null : x * 2);
-  });
-  w13clCells.forEach((c, i) => {
-    const pos = w13clOrder.indexOf(i);
-    const on = pos >= 0;
-    w13clS.add('rect', {x: 96, y: 78 + i * 62, width: 340, height: 46, rx: 6,
-                        fill: on ? HC.tok.accent2 : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 0.95 : 0.45}, g);
-    const t = w13clS.add('text', {x: 116, y: 107 + i * 62, cls: 'vlab',
-                                  'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = c.code;
-    const n = w13clS.add('text', {x: 82, y: 107 + i * 62, 'text-anchor': 'end', cls: 'axlab',
-                                  'font-family': HC.MONO}, g);
-    n.textContent = on ? '[' + (pos + 1) + ']' : '[ ]';
-  });
-  const ok = w13clMode === 0;
-  w13clS.txtPx(310, 296, w13clMode < 0 ? '還沒執行'
-               : (ok ? 'print 印出 20 ✓' : (x === null ? 'NameError：x 還不存在 ✗'
-                                                       : 'print 印出 ' + x + '（跟預期不同）✗')),
-               {cls: 'axtitle', anchor: 'middle',
-                fill: w13clMode < 0 ? HC.tok.muted : (ok ? HC.tok.accent2 : HC.tok.resid)}, g);
-  document.getElementById('w13clOrder').textContent = w13clOrder.length
-    ? w13clOrder.map(i => i + 1).join(' → ') : '—';
-  document.getElementById('w13clX').textContent = x === null ? '（不存在）' : String(x);
-  document.getElementById('w13clOk').textContent = w13clMode < 0 ? '—' : (ok ? '對 ✓' : '錯 ✗');
-  setStatus('w13clStatus', w13clMode < 0 ? '先按「由上到下」。'
-            : (ok ? '由上到下跑，結果是 20 —— 這才是你寫程式時心裡想的順序。'
-                  : '亂序執行之後，同樣三格給出<b>不同的結果</b>。左邊的編號會出賣你。'));
-}
-function w13clRun(m) {
-  w13clMode = m;
-  w13clOrder = m === 0 ? [0, 1, 2] : [1, 0, 2];
-  w13clDraw();
-}
-function w13clReset() { w13clMode = -1; w13clOrder = []; w13clDraw(); }
-if (w13clS) w13clDraw();
-
-/* ═══ w13im 六個套件 ═══ */
-const w13imS = HC.svg('w13impSvg', {h: 320});
-const w13imCases = [
-  {n: 'numpy', a: 'np', w: '陣列與數值運算', p: 'P3'},
-  {n: 'pandas', a: 'pd', w: '資料表：讀檔、選取、分組', p: 'P4'},
-  {n: 'matplotlib', a: 'plt', w: '畫圖的底層：Figure 與 Axes', p: 'P5'},
-  {n: 'seaborn', a: 'sns', w: '統計圖的高階介面', p: 'P5'},
-  {n: 'statsmodels', a: 'sm', w: '係數、標準誤、p 值', p: 'P6'},
-  {n: 'scikit-learn', a: 'sklearn', w: 'fit / predict / 交叉驗證', p: 'P6'}
-];
-let w13imI = 0;
-function w13imDraw() {
-  const g = w13imS.clearLayer('main');
-  w13imCases.forEach((c, i) => {
-    const on = i === w13imI;
-    const col = i % 2, row = Math.floor(i / 2);
-    const x = 52 + col * 272, y = 74 + row * 74;
-    w13imS.add('rect', {x: x, y: y, width: 250, height: 58, rx: 8,
-                        fill: on ? HC.tok.accent2 : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.5,
-                        opacity: on ? 0.95 : 0.5}, g);
-    const t = w13imS.add('text', {x: x + 16, y: y + 26, cls: 'vlab', 'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = c.n;
-    const u = w13imS.add('text', {x: x + 16, y: y + 46, cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    u.textContent = 'as ' + c.a + '　·　' + c.w;
-  });
-  const c = w13imCases[w13imI];
-  document.getElementById('w13imAlias').textContent = c.a;
-  document.getElementById('w13imWhat').textContent = c.w;
-  document.getElementById('w13imWhere').textContent = '先備 ' + c.p;
-  setStatus('w13imStatus', c.n + ' 負責' + c.w + '，本站在 <b>' + c.p + '</b> 講它。');
-}
-function w13imSet(i) { w13imI = i; w13imDraw(); }
-if (w13imS) w13imDraw();
-
-/* ═══ w13en 環境隔離 ═══ */
-const w13enS = HC.svg('w13envSvg', {h: 320});
-let w13enI = 0;
-function w13enDraw() {
-  const g = w13enS.clearLayer('main');
-  const shared = w13enI === 0;
-  if (shared) {
-    w13enS.add('rect', {x: 150, y: 86, width: 320, height: 130, rx: 10,
-                        fill: HC.tok.resid, opacity: 0.18,
-                        stroke: HC.tok.resid, 'stroke-width': 2}, g);
-    w13enS.txtPx(310, 112, 'base 環境（大家共用）',
-                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
-    w13enS.add('rect', {x: 186, y: 130, width: 248, height: 44, rx: 6,
-                        fill: HC.tok.resid, opacity: 0.9}, g);
-    const t = w13enS.add('text', {x: 310, y: 158, 'text-anchor': 'middle', cls: 'vlab',
-                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
-    t.textContent = 'pandas 2.3.2';
-    w13enS.txtPx(310, 246, '另一個專案裝了 pandas 1.5，就把它蓋掉了',
-                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
+  } else if (!w13clHasX) {
+    w13clShow('<code>NameError</code>：print 找不到 x。');
   } else {
-    [['m524（課程）', 'pandas 2.3.2', HC.tok.accent2, 40],
-     ['other（別的專案）', 'pandas 1.5.3', HC.tok.accent, 330]].forEach(e => {
-      w13enS.add('rect', {x: e[3], y: 86, width: 250, height: 130, rx: 10,
-                          fill: e[2], opacity: 0.16, stroke: e[2], 'stroke-width': 2}, g);
-      const t = w13enS.add('text', {x: e[3] + 125, y: 112, 'text-anchor': 'middle',
-                                    cls: 'axtitle', fill: e[2]}, g);
-      t.textContent = e[0];
-      w13enS.add('rect', {x: e[3] + 24, y: 130, width: 202, height: 44, rx: 6,
-                          fill: e[2], opacity: 0.9}, g);
-      const u = w13enS.add('text', {x: e[3] + 125, y: 158, 'text-anchor': 'middle',
-                                    cls: 'vlab', 'font-family': HC.MONO,
-                                    fill: HC.tok.paper}, g);
-      u.textContent = e[1];
-    });
-    w13enS.txtPx(310, 246, '兩個版本共存，互不干擾',
-                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
+    w13clShow('<code>print(x)</code> 輸出 <strong>' + w13clX + '</strong>。同一格重跑時，結果取決於先前狀態。');
   }
-  document.getElementById('w13enCase').textContent = shared ? '全部裝在 base' : '各自獨立';
-  document.getElementById('w13enA').textContent = shared ? 'pandas 被蓋成 1.5.3' : 'pandas 2.3.2 ✓';
-  document.getElementById('w13enB').textContent = shared ? 'pandas 1.5.3' : 'pandas 1.5.3 ✓';
-  setStatus('w13enStatus', shared
-    ? '後裝的蓋掉先裝的 —— 於是課程 lab 的數字就對不上了。'
-    : '每個專案一個環境，版本各自釘死。<b>這就是 conda 環境的全部意義。</b>');
 }
-function w13enSet(i) { w13enI = i; w13enDraw(); }
-if (w13enS) w13enDraw();
 
-/* ═══ w13cm conda 指令組裝器 ═══ */
-const w13cmS = HC.svg('w13cmdSvg', {h: 300});
-const w13cmCases = [
-  {s: '建立環境', c: 'conda create -n m524 python=3.11 -y',
-   note: '<code>-n</code> 是環境名字，<code>python=3.11</code> 連 Python 版本一起釘住。'},
-  {s: '裝套件', c: 'conda run -n m524 pip install numpy==1.24.4 pandas==2.3.2 ISLP==0.4.0',
-   note: '用 <code>==</code> 釘版本。完整清單見上面那段程式碼。'},
-  {s: '註冊 kernel', c: 'conda run -n m524 python -m ipykernel install --user --name m524',
-   note: '<b>這一步最常被跳過</b>，跳過的話 Jupyter 的 kernel 選單裡看不到它。'},
-  {s: '每次使用', c: 'conda activate m524',
-   note: '開新的終端機都要做一次。Jupyter 那邊則是在右上角選 kernel。'}
-];
-let w13cmI = 0;
-function w13cmDraw() {
-  const g = w13cmS.clearLayer('main');
-  w13cmCases.forEach((c, i) => {
-    const on = i === w13cmI;
-    const x = 40 + i * 138;
-    w13cmS.add('rect', {x: x, y: 62, width: 124, height: 46, rx: 7,
-                        fill: on ? HC.tok.accent2 : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 0.95 : 0.5}, g);
-    const t = w13cmS.add('text', {x: x + 62, y: 90, 'text-anchor': 'middle', cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = (i + 1) + '. ' + c.s;
-    if (i < 3) {
-      w13cmS.add('path', {d: 'M' + (x + 128) + ' 85 H ' + (x + 172),
-                          stroke: HC.tok.cardBorder, 'stroke-width': 2}, g);
-      w13cmS.add('path', {d: 'M' + (x + 176) + ' 85 l -8 -5 v 10 z',
-                          fill: HC.tok.cardBorder}, g);
-    }
-  });
-  const c = w13cmCases[w13cmI];
-  w13cmS.add('rect', {x: 40, y: 140, width: 540, height: 62, rx: 8,
-                      fill: HC.tok.ink, opacity: 0.92}, g);
-  const parts = c.c.match(/.{1,62}(\s|$)/g) || [c.c];
-  parts.slice(0, 2).forEach((ln, i) => {
-    const t = w13cmS.add('text', {x: 58, y: 168 + i * 22, cls: 'vlab',
-                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
-    t.textContent = ln.trim();
-  });
-  w13cmS.txtPx(310, 240, '在終端機打這一行', {cls: 'axlab', anchor: 'middle'}, g);
-  document.getElementById('w13cmStep').textContent = c.s;
-  document.getElementById('w13cmCmd').textContent = c.c;
-  setStatus('w13cmStatus', c.note);
+function w13clReset() {
+  w13clX = undefined;
+  w13clHasX = false;
+  w13clHistory = [];
+  w13clShow('執行階段已重啟：變數與執行編號都已清空。');
 }
-function w13cmSet(i) { w13cmI = i; w13cmDraw(); }
-if (w13cmS) w13cmDraw();
 
-/* ═══ w13fx 四種假故障 ═══ */
-const w13fxS = HC.svg('w13fixSvg', {h: 320});
-const w13fxCases = [
-  {s: 'ModuleNotFoundError', w: '沒裝，或裝到了另一個環境',
-   f: '%pip install X；檢查 kernel 是哪一個'},
-  {s: 'NameError', w: '某一格沒跑（十次有九次是 imports 那一格）', f: '從第一格重跑'},
-  {s: 'FileNotFoundError', w: '路徑不對，或 Drive 沒掛', f: '在檔案窗格複製正確的路徑'},
-  {s: '結果跟同學不一樣', w: '切分或重抽樣沒有固定種子',
-   f: 'random_state=0、seed=0，然後兩邊都重跑'}
-];
-let w13fxI = 0;
-function w13fxDraw() {
-  const g = w13fxS.clearLayer('main');
-  w13fxCases.forEach((c, i) => {
-    const on = i === w13fxI;
-    const y = 68 + i * 58;
-    w13fxS.add('rect', {x: 40, y: y, width: 540, height: 46, rx: 7,
-                        fill: on ? HC.tok.accent : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 0.95 : 0.45}, g);
-    const t = w13fxS.add('text', {x: 60, y: y + 21, cls: 'vlab', 'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = c.s;
-    const u = w13fxS.add('text', {x: 60, y: y + 38, cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    u.textContent = on ? '→ ' + c.f : c.w;
-  });
-  w13fxS.txtPx(310, 300, '萬用第一步：重啟 kernel 並從第一格全部重跑',
-               {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
-  const c = w13fxCases[w13fxI];
-  document.getElementById('w13fxSym').textContent = c.s;
-  document.getElementById('w13fxWhy').textContent = c.w;
-  document.getElementById('w13fxFix').textContent = c.f;
-  setStatus('w13fxStatus', c.s + '：' + c.w + '。');
+function w13clTopDown() {
+  w13clReset();
+  w13clRun(0);
+  w13clRun(1);
+  w13clRun(2);
 }
-function w13fxSet(i) { w13fxI = i; w13fxDraw(); }
-if (w13fxS) w13fxDraw();
 </script>
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->

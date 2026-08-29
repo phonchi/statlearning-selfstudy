@@ -12,8 +12,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import pages as P  # noqa: E402
-from lib import (apply, card, hl, hook, info, info_card, lab_code,  # noqa: E402
-                 lab_output, qa, quiz, rows_card, svg, table, ver_note, viz)
+from lib import (apply, card, hl, hook, info, lab_code,  # noqa: E402
+                 lab_output, qa, quiz, table, ver_note)
 
 LAB1 = "Ch01-lab-zh.ipynb"
 LAB2 = "Ch02-statlearn-lab-zh.ipynb"
@@ -46,31 +46,22 @@ BODIES["prologue"] = f"""
       "<code>%pip install ISLP</code> 按執行；④ 第二格貼課程 lab 的 imports；"
       "⑤ 開始跑。就這樣。")}
 
-{viz(svg("w13pathSvg", 320),
-     [info_card("三條路，先選最上面那條",
-                "按按鈕比較三種環境。第一次上手<strong>一律選 Colab</strong>，"
-                "它零安裝而且跟課程 lab 的環境最接近。"),
-      rows_card("這一條路",
-                [("要花多久", "—", "w13paTime"),
-                 ("好處", "—", "w13paPro"),
-                 ("代價", "—", "w13paCon")]),
-      info_card("為什麼不建議一開始就裝本機",
-                "本機安裝會遇到的問題（權限、路徑、版本衝突）跟統計學習一點關係都沒有，"
-                "但它們很會消耗你的耐心。"
-                "<strong>把耐心留給真正的課程內容。</strong>")],
-     "w13paStatus", "三條路，先看它們各自的代價。",
-     '<button class="btn btn-toggle" onclick="w13paSet(0)">① Colab（推薦）</button>'
-     '<button class="btn btn-toggle" onclick="w13paSet(1)">② 本機 conda</button>'
-     '<button class="btn btn-toggle" onclick="w13paSet(2)">③ 本機 pip + venv</button>')}
+{table(["環境", "啟動成本", "適合情境", "主要代價"],
+       [["<strong>Colab（第一次上手推薦）</strong>", "瀏覽器開啟即可使用",
+         "第一次跑 lab、公用電腦、需要臨時 GPU", "執行階段會回收，套件需重裝"],
+        ["本機 conda", "需安裝環境並註冊 kernel", "長期使用、需要固定版本",
+         "要管理環境與 Jupyter kernel"],
+        ["本機 pip + venv", "需自行準備 Python 與 venv", "磁碟空間有限、熟悉 Python 環境",
+         "Python 與套件版本需自行管理"]])}
 
 {card("裝課程用的套件", C(1, 3), src=S(1, 3),
       note="<code>%pip</code> 開頭的百分比符號是 Jupyter 的魔術指令，"
            "意思是「裝到<strong>這個 notebook 正在用的</strong> Python 裡」——"
            "比在終端機打 <code>pip install</code> 保險。")}
 
-{card("ISLP 會順便裝一整套相依", C(2, 8), O(2, 8), src=S(2, 8),
-      note="輸出很長，因為 numpy、pandas、scikit-learn、statsmodels 都是它的相依。"
-           "裝完 Colab 可能會叫你重啟執行階段，照做。")}
+{card("ISLP 會順便安裝相依套件", C(2, 8), src=S(2, 8),
+      note="安裝輸出通常很長，沒有必要逐行閱讀。確認最後沒有紅色錯誤；"
+           "若 Colab 要求重啟執行階段，照做即可。")}
 
 {quiz("qPath", "PART 00 · 自我檢測",
       "你第一次要跑課程的 lab，手邊只有一台學校的公用電腦。最合理的做法是？",
@@ -99,23 +90,33 @@ BODIES["colab"] = f"""
            "<code>cuml</code> 加速 scikit-learn）。"
            "本機沒有 NVIDIA 顯卡的話會失敗，<strong>刪掉這兩行照樣能跑</strong>，只是慢一點。")}
 
-{viz(svg("w13cellSvg", 340),
-     [info_card("按亂序執行看看",
-                "notebook 的儲存格<strong>可以照任何順序執行</strong>，"
-                "而且左邊的編號記錄的是「第幾次執行」不是「第幾格」。"
-                "按「亂序執行」，看變數變成什麼。"),
-      rows_card("目前",
-                [("執行順序", "—", "w13clOrder"),
-                 ("x 的值", "—", "w13clX"),
-                 ("結果對不對", "—", "w13clOk")]),
-      info_card("怎麼避免",
-                "定期<strong>重啟執行階段並全部重跑</strong>"
-                "（Colab：執行階段 → 重新啟動並全部執行）。"
-                "交作業之前一定要做一次。你不會想交出一份只有你自己那台機器跑得出來的東西。")],
-     "w13clStatus", "先按「由上到下」，再按「亂序執行」。",
-     '<button class="btn btn-play" onclick="w13clRun(0)">▶ 由上到下</button>'
-     '<button class="btn btn-step" onclick="w13clRun(1)">亂序執行</button>'
-     '<button class="btn btn-reset" onclick="w13clReset()">重啟並全部重跑</button>')}
+<div class="viz-layout" data-provenance="illustrative">
+ <div><div class="viz-panel">
+  <p><strong>自己決定三格的執行順序。</strong>每按一次，就等於在 notebook 執行那一格；
+  左邊的 <code>[n]</code> 是執行次序，不是儲存格位置。</p>
+  {table(["儲存格", "程式", "執行"],
+         [["<code id=\"w13clN0\">[ ]</code>", "<code>x = 10</code>",
+           '<button class="btn btn-step" onclick="w13clRun(0)">執行第 1 格</button>'],
+          ["<code id=\"w13clN1\">[ ]</code>", "<code>x = x * 2</code>",
+           '<button class="btn btn-step" onclick="w13clRun(1)">執行第 2 格</button>'],
+          ["<code id=\"w13clN2\">[ ]</code>", "<code>print(x)</code>",
+           '<button class="btn btn-step" onclick="w13clRun(2)">執行第 3 格</button>']])}
+  <div class="status-banner" id="w13clStatus"><span class="status-icon">›</span>
+    <span class="status-text">請自行選一格開始；也可以故意先按第 2 或第 3 格。</span></div>
+  <div class="controls-bar">
+    <button class="btn btn-play" onclick="w13clTopDown()">▶ 由上到下全部執行</button>
+    <button class="btn btn-reset" onclick="w13clReset()">重啟執行階段</button>
+  </div>
+  <div class="viz-source"><span>自訂概念示意</span>三格程式用來呈現 notebook 的狀態與執行順序；數值不是課程資料。</div>
+ </div></div>
+ <div class="side-panel">
+  <div class="info-card"><div class="ic-title">這個模擬器要看什麼</div>
+   同一格可以重跑，也可以跳著跑；所以 notebook 的結果取決於<strong>目前記憶體狀態</strong>，
+   不只取決於畫面上儲存格的位置。</div>
+  <div class="info-card"><div class="ic-title">交作業前</div>
+   重啟執行階段並由上到下全部執行，確認結果不依賴先前殘留的變數。</div>
+ </div>
+</div>
 
 {table(["Colab 的東西", "會不會留下"],
        [["程式碼與文字（notebook 本身）", "✓ 存在你的 Google Drive"],
@@ -151,25 +152,13 @@ BODIES["imports"] = f"""
       note="每個 import 後面都有一句中文註解，說明那個套件負責什麼。"
            "先掃過一遍，之後看到 <code>sns.</code> 或 <code>sm.</code> 開頭就知道是誰。")}
 
-{viz(svg("w13impSvg", 320),
-     [info_card("點名字看它管什麼",
-                "課程用到的六個主要套件。按按鈕看它負責什麼、"
-                "以及本站哪一頁在講它。"),
-      rows_card("這個套件",
-                [("慣用簡稱", "—", "w13imAlias"),
-                 ("負責什麼", "—", "w13imWhat"),
-                 ("哪一頁在講", "—", "w13imWhere")]),
-      info_card("為什麼都用同一個簡稱",
-                "<code>np</code>、<code>pd</code>、<code>sns</code>、<code>sm</code> "
-                "是整個社群的慣例。照著用，別人（跟 AI）才看得懂你的程式碼，"
-                "你也看得懂網路上找到的範例。")],
-     "w13imStatus", "六個套件，各管一塊。",
-     '<button class="btn btn-toggle" onclick="w13imSet(0)">numpy</button>'
-     '<button class="btn btn-toggle" onclick="w13imSet(1)">pandas</button>'
-     '<button class="btn btn-toggle" onclick="w13imSet(2)">matplotlib</button>'
-     '<button class="btn btn-toggle" onclick="w13imSet(3)">seaborn</button>'
-     '<button class="btn btn-toggle" onclick="w13imSet(4)">statsmodels</button>'
-     '<button class="btn btn-toggle" onclick="w13imSet(5)">scikit-learn</button>')}
+{table(["套件", "慣用簡稱", "負責什麼", "本站位置"],
+       [["numpy", "<code>np</code>", "陣列與數值運算", "P3"],
+        ["pandas", "<code>pd</code>", "資料表、選取與分組", "P4"],
+        ["matplotlib", "<code>plt</code>", "Figure 與 Axes", "P5"],
+        ["seaborn", "<code>sns</code>", "統計圖的高階介面", "P5"],
+        ["statsmodels", "<code>sm</code>", "係數、標準誤與 p 值", "P6"],
+        ["scikit-learn", "<code>sklearn</code>", "fit、predict 與交叉驗證", "P6"]])}
 
 {quiz("qImp", "PART 02 · 自我檢測",
       "你跳過第一格直接跑第三格，得到 <code>NameError: name 'np' is not defined</code>。該怎麼辦？",
@@ -242,38 +231,17 @@ conda run -n m524 pip install numpy==1.24.4 pandas==2.3.2 \\
 conda run -n m524 pip install jupyterlab ipykernel
 conda run -n m524 python -m ipykernel install --user --name m524''')}
 
-{viz(svg("w13envSvg", 320),
-     [info_card("為什麼要獨立的環境",
-                "按按鈕看「全部裝在同一個環境」會發生什麼事。"
-                "兩個專案要求不同版本的同一個套件時，後裝的會蓋掉先裝的。"),
-      rows_card("目前",
-                [("情境", "—", "w13enCase"),
-                 ("課程專案", "—", "w13enA"),
-                 ("另一個專案", "—", "w13enB")]),
-      info_card("kernel 沒選對是最常見的假故障",
-                "環境開好了、套件也裝了，但 Jupyter 左上角選的還是 base。"
-                "症狀是「明明裝過了卻說找不到」。"
-                "先看右上角顯示的 kernel 名稱是不是 m524。")],
-     "w13enStatus", "先看「全部裝在一起」會怎樣。",
-     '<button class="btn btn-toggle" onclick="w13enSet(0)">全部裝在 base</button>'
-     '<button class="btn btn-toggle" onclick="w13enSet(1)">各自獨立的環境</button>')}
+{table(["做法", "課程專案", "另一個專案", "結果"],
+       [["全部裝在 base", "需要 pandas 2.3.2", "需要 pandas 1.5.3",
+         "同一環境只能留下其中一版，容易互相影響"],
+        ["各自建立環境", "m524：pandas 2.3.2", "other：pandas 1.5.3",
+         "兩個版本可以共存"]])}
 
-{viz(svg("w13cmdSvg", 300),
-     [info_card("按選項組指令",
-                "選你的情況，下面會組出該打的那一行。"
-                "四個選項組合出來的指令都不一樣。這也是為什麼直接抄別人的指令常常不管用。"),
-      rows_card("組出來的指令",
-                [("步驟", "建立環境", "w13cmStep"),
-                 ("指令", "conda create -n m524 python=3.11 -y", "w13cmCmd")]),
-      info_card("順序有意義",
-                "建立 → 裝套件 → 註冊 kernel → 每次使用前 activate。"
-                "跳過第三步的話 Jupyter 看不到這個環境，"
-                "你就會遇到「明明裝了卻找不到」。")],
-     "w13cmStatus", "四個步驟，照順序做。",
-     '<button class="btn btn-toggle" onclick="w13cmSet(0)">① 建立環境</button>'
-     '<button class="btn btn-toggle" onclick="w13cmSet(1)">② 裝套件</button>'
-     '<button class="btn btn-toggle" onclick="w13cmSet(2)">③ 註冊 kernel</button>'
-     '<button class="btn btn-toggle" onclick="w13cmSet(3)">④ 每次使用</button>')}
+{info("四步驟的順序",
+      "<strong>建立環境 → 安裝套件 → 註冊 kernel → 選擇／啟用環境。</strong>"
+      "上面的命令區已給出可直接執行的精確指令；不需要另一個動畫重複播放。"
+      "若 Jupyter 說找不到已安裝的套件，先用 <code>import sys; print(sys.executable)</code> "
+      "確認當前 kernel 使用哪一個 Python。")}
 
 {table(["情境", "建議"],
        [["第一次上手、只想跑 lab", "Colab"],
@@ -300,23 +268,15 @@ BODIES["trouble"] = f"""
   <p>環境的問題有八成是同樣的四種。這一節把它們列出來，
   每一種都給「症狀 → 原因 → 怎麼修」。學會這四種，你以後遇到的環境問題會少一大半。</p>
 
-{viz(svg("w13fixSvg", 320),
-     [info_card("點症狀看解法",
-                "四種最常見的假故障。它們的共同點是：<strong>程式碼沒有錯</strong>，"
-                "錯的是環境或執行順序。"),
-      rows_card("這一種",
-                [("症狀", "—", "w13fxSym"),
-                 ("真正的原因", "—", "w13fxWhy"),
-                 ("怎麼修", "—", "w13fxFix")]),
-      info_card("一個萬用的第一步",
-                "<strong>重啟 kernel 並從第一格全部重跑。</strong>"
-                "這一步能解掉的問題比你想像的多，因為它同時消除了"
-                "「亂序執行」與「殘留變數」這兩個最常見的干擾。")],
-     "w13fxStatus", "四種症狀，各自的解法。",
-     '<button class="btn btn-toggle" onclick="w13fxSet(0)">ModuleNotFoundError</button>'
-     '<button class="btn btn-toggle" onclick="w13fxSet(1)">NameError</button>'
-     '<button class="btn btn-toggle" onclick="w13fxSet(2)">FileNotFoundError</button>'
-     '<button class="btn btn-toggle" onclick="w13fxSet(3)">結果跟同學不一樣</button>')}
+{table(["症狀", "先收集的證據", "優先檢查"],
+       [["<code>ModuleNotFoundError</code>", "<code>sys.executable</code> 與 kernel 名稱",
+         "套件是否裝在當前 kernel"],
+        ["<code>NameError</code>", "變數第一次出現在哪一格、執行編號",
+         "imports 或建立變數的儲存格是否已執行"],
+        ["<code>FileNotFoundError</code>", "錯誤中的完整路徑",
+         "Drive 是否掛載、<code>DATA_PATH</code> 是否指向自己的資料夾"],
+        ["數值結果不同", "資料版本、前處理、套件版本、seed、完整重跑結果",
+         "先定位差異來源，不要只憑結果猜是 seed"]])}
 
 {qa("還是跑不動的話", [
     ("問人之前先做這三件事",
@@ -337,16 +297,15 @@ BODIES["trouble"] = f"""
 
 {quiz("qFix", "PART 05 · 自我檢測",
       "同一份 notebook，你跑出來的 MSE 是 25.57，同學是 23.80。程式碼一模一樣。為什麼？",
-      [(True, "切分或重抽樣的隨機性，其中一邊沒有固定種子",
-        "對。<code>train_test_split</code> 與自助法都有隨機性，"
-        "沒有固定 <code>random_state</code> 或 <code>seed</code> 就會每次不同。"
-        "細節見 <a href=\"p3_numpy.html#rand\">P3 的亂數那一節</a>。"),
-       (False, "你們的套件版本不同",
-        "有可能造成小數點後幾位的差異，但 25.57 對 23.80 差太多了，"
-        "這種量級的差異幾乎一定是隨機性。"),
-       (False, "其中一個人算錯了",
-        "程式碼一樣的話，「算錯」的機率遠低於「隨機性」。"
-        "先查最可能的原因。")])}
+      [(True, "先從乾淨 kernel 全部重跑，再比資料、前處理、版本與 seed",
+        "對。相同文字不保證相同執行狀態，也不代表讀到同一份資料。"
+        "先做可重現的完整重跑，再逐項比對；若流程含隨機切分或重抽樣，"
+        "才進一步檢查 <code>random_state</code> 或 <code>seed</code>。"),
+       (False, "一定是其中一邊沒有固定 seed",
+        "seed 是常見原因，但不是唯一原因。資料版本、前處理、套件版本、"
+        "kernel 與亂序執行都可能造成差異，不能只由兩個 MSE 反推原因。"),
+       (False, "直接把兩人的 MSE 平均起來",
+        "平均不會找出差異來源。先確認兩邊其實在執行同一個分析。")])}
 
 {hook("接下來讀什麼",
       '環境好了就可以開始了。沒寫過程式的話從 '
@@ -419,7 +378,8 @@ BODIES["reference"] = f"""
         ["<code>NameError</code>", "某一格沒跑（多半是 imports）", "從第一格重跑"],
         ["<code>FileNotFoundError</code>", "路徑不對或 Drive 沒掛",
          "在檔案窗格複製正確路徑"],
-        ["結果跟同學不同", "沒固定種子", "<code>random_state=0</code>、<code>seed=0</code>"],
+        ["結果跟同學不同", "資料、前處理、版本、seed 或執行狀態不同",
+         "乾淨重跑後逐項比對，不先武斷歸因"],
         ["改了程式卻沒變", "改完沒重跑那一格", "重啟並全部重跑"]])}
 
 {table(["交作業前的檢查", "為什麼"],
@@ -440,274 +400,57 @@ BODIES["reference"] = f"""
 {ver_note((1, 2))}
 """
 
-# ── 元件 JS ─────────────────────────────────────────────────────────────
+# ── 元件 JS：只保留 notebook 儲存格狀態模擬器 ─────────────────────────
 PAGEJS = r"""
-/* ═══ w13pa 三條路 ═══ */
-const w13paS = HC.svg('w13pathSvg', {h: 320});
-const w13paCases = [
-  {t: '3 分鐘', pro: '零安裝、有免費 GPU、換電腦也接得上',
-   con: '執行階段會回收，套件要重裝', note: '第一次上手一律選這條。'},
-  {t: '20 分鐘', pro: '版本可以釘死，數字跟課程 lab 一致',
-   con: '要下載 1 GB、佔 5 GB 空間', note: '確定要長期用了再做。'},
-  {t: '10 分鐘', pro: '不用裝 Anaconda，省 3–5 GB',
-   con: 'Python 版本要自己管', note: '電腦空間小的時候的折衷。'}
-];
-let w13paI = 0;
-function w13paDraw() {
-  const g = w13paS.clearLayer('main');
-  const names = ['① Colab', '② 本機 conda', '③ pip + venv'];
-  names.forEach((nm, i) => {
-    const on = i === w13paI;
-    const y = 66 + i * 78;
-    w13paS.add('rect', {x: 40, y: y, width: 540, height: 62, rx: 9,
-                        fill: on ? (i === 0 ? HC.tok.accent2 : HC.tok.accent) : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
-                        opacity: on ? 0.95 : 0.45}, g);
-    const t = w13paS.add('text', {x: 62, y: y + 27, cls: 'axtitle',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = nm;
-    const u = w13paS.add('text', {x: 62, y: y + 49, cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    u.textContent = w13paCases[i].t + '　·　' + w13paCases[i].pro;
-    if (i === 0) {
-      const b = w13paS.add('text', {x: 556, y: y + 27, 'text-anchor': 'end', cls: 'axlab',
-                                    fill: on ? HC.tok.paper : HC.tok.accent2}, g);
-      b.textContent = '推薦';
+let w13clX;
+let w13clHasX = false;
+let w13clHistory = [];
+
+function w13clShow(message) {
+  ['w13clN0', 'w13clN1', 'w13clN2'].forEach((id, i) => {
+    const runs = w13clHistory
+      .map((cell, n) => cell === i ? n + 1 : null)
+      .filter(n => n !== null);
+    document.getElementById(id).textContent = runs.length ? '[' + runs[runs.length - 1] + ']' : '[ ]';
+  });
+  setStatus('w13clStatus', message + '<br><small>執行紀錄：' +
+    (w13clHistory.length ? w13clHistory.map(i => '第 ' + (i + 1) + ' 格').join(' → ') : '尚未執行') +
+    '；目前 x：' + (w13clHasX ? w13clX : '尚未定義') + '</small>');
+}
+
+function w13clRun(cell) {
+  w13clHistory.push(cell);
+  if (cell === 0) {
+    w13clX = 10;
+    w13clHasX = true;
+    w13clShow('執行 <code>x = 10</code>：現在 x 是 10。');
+  } else if (cell === 1) {
+    if (!w13clHasX) {
+      w13clShow('<code>NameError</code>：x 還不存在。這就是亂序執行時常見的狀態問題。');
+    } else {
+      w13clX *= 2;
+      w13clShow('執行 <code>x = x * 2</code>：現在 x 是 ' + w13clX + '。');
     }
-  });
-  const c = w13paCases[w13paI];
-  document.getElementById('w13paTime').textContent = c.t;
-  document.getElementById('w13paPro').textContent = c.pro;
-  document.getElementById('w13paCon').textContent = c.con;
-  setStatus('w13paStatus', c.note);
-}
-function w13paSet(i) { w13paI = i; w13paDraw(); }
-if (w13paS) w13paDraw();
-
-/* ═══ w13cl 儲存格執行順序 ═══ */
-const w13clS = HC.svg('w13cellSvg', {h: 340});
-const w13clCells = [
-  {code: 'x = 10', eff: 10},
-  {code: 'x = x * 2', eff: null},
-  {code: 'print(x)', eff: null}
-];
-let w13clOrder = [], w13clMode = -1;
-function w13clDraw() {
-  const g = w13clS.clearLayer('main');
-  let x = null;
-  const seen = [];
-  w13clOrder.forEach(i => {
-    seen.push(i);
-    if (i === 0) x = 10;
-    else if (i === 1) x = (x === null ? null : x * 2);
-  });
-  w13clCells.forEach((c, i) => {
-    const pos = w13clOrder.indexOf(i);
-    const on = pos >= 0;
-    w13clS.add('rect', {x: 96, y: 78 + i * 62, width: 340, height: 46, rx: 6,
-                        fill: on ? HC.tok.accent2 : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 0.95 : 0.45}, g);
-    const t = w13clS.add('text', {x: 116, y: 107 + i * 62, cls: 'vlab',
-                                  'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = c.code;
-    const n = w13clS.add('text', {x: 82, y: 107 + i * 62, 'text-anchor': 'end', cls: 'axlab',
-                                  'font-family': HC.MONO}, g);
-    n.textContent = on ? '[' + (pos + 1) + ']' : '[ ]';
-  });
-  const ok = w13clMode === 0;
-  w13clS.txtPx(310, 296, w13clMode < 0 ? '還沒執行'
-               : (ok ? 'print 印出 20 ✓' : (x === null ? 'NameError：x 還不存在 ✗'
-                                                       : 'print 印出 ' + x + '（跟預期不同）✗')),
-               {cls: 'axtitle', anchor: 'middle',
-                fill: w13clMode < 0 ? HC.tok.muted : (ok ? HC.tok.accent2 : HC.tok.resid)}, g);
-  document.getElementById('w13clOrder').textContent = w13clOrder.length
-    ? w13clOrder.map(i => i + 1).join(' → ') : '—';
-  document.getElementById('w13clX').textContent = x === null ? '（不存在）' : String(x);
-  document.getElementById('w13clOk').textContent = w13clMode < 0 ? '—' : (ok ? '對 ✓' : '錯 ✗');
-  setStatus('w13clStatus', w13clMode < 0 ? '先按「由上到下」。'
-            : (ok ? '由上到下跑，結果是 20 —— 這才是你寫程式時心裡想的順序。'
-                  : '亂序執行之後，同樣三格給出<b>不同的結果</b>。左邊的編號會出賣你。'));
-}
-function w13clRun(m) {
-  w13clMode = m;
-  w13clOrder = m === 0 ? [0, 1, 2] : [1, 0, 2];
-  w13clDraw();
-}
-function w13clReset() { w13clMode = -1; w13clOrder = []; w13clDraw(); }
-if (w13clS) w13clDraw();
-
-/* ═══ w13im 六個套件 ═══ */
-const w13imS = HC.svg('w13impSvg', {h: 320});
-const w13imCases = [
-  {n: 'numpy', a: 'np', w: '陣列與數值運算', p: 'P3'},
-  {n: 'pandas', a: 'pd', w: '資料表：讀檔、選取、分組', p: 'P4'},
-  {n: 'matplotlib', a: 'plt', w: '畫圖的底層：Figure 與 Axes', p: 'P5'},
-  {n: 'seaborn', a: 'sns', w: '統計圖的高階介面', p: 'P5'},
-  {n: 'statsmodels', a: 'sm', w: '係數、標準誤、p 值', p: 'P6'},
-  {n: 'scikit-learn', a: 'sklearn', w: 'fit / predict / 交叉驗證', p: 'P6'}
-];
-let w13imI = 0;
-function w13imDraw() {
-  const g = w13imS.clearLayer('main');
-  w13imCases.forEach((c, i) => {
-    const on = i === w13imI;
-    const col = i % 2, row = Math.floor(i / 2);
-    const x = 52 + col * 272, y = 74 + row * 74;
-    w13imS.add('rect', {x: x, y: y, width: 250, height: 58, rx: 8,
-                        fill: on ? HC.tok.accent2 : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.5,
-                        opacity: on ? 0.95 : 0.5}, g);
-    const t = w13imS.add('text', {x: x + 16, y: y + 26, cls: 'vlab', 'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = c.n;
-    const u = w13imS.add('text', {x: x + 16, y: y + 46, cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    u.textContent = 'as ' + c.a + '　·　' + c.w;
-  });
-  const c = w13imCases[w13imI];
-  document.getElementById('w13imAlias').textContent = c.a;
-  document.getElementById('w13imWhat').textContent = c.w;
-  document.getElementById('w13imWhere').textContent = '先備 ' + c.p;
-  setStatus('w13imStatus', c.n + ' 負責' + c.w + '，本站在 <b>' + c.p + '</b> 講它。');
-}
-function w13imSet(i) { w13imI = i; w13imDraw(); }
-if (w13imS) w13imDraw();
-
-/* ═══ w13en 環境隔離 ═══ */
-const w13enS = HC.svg('w13envSvg', {h: 320});
-let w13enI = 0;
-function w13enDraw() {
-  const g = w13enS.clearLayer('main');
-  const shared = w13enI === 0;
-  if (shared) {
-    w13enS.add('rect', {x: 150, y: 86, width: 320, height: 130, rx: 10,
-                        fill: HC.tok.resid, opacity: 0.18,
-                        stroke: HC.tok.resid, 'stroke-width': 2}, g);
-    w13enS.txtPx(310, 112, 'base 環境（大家共用）',
-                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
-    w13enS.add('rect', {x: 186, y: 130, width: 248, height: 44, rx: 6,
-                        fill: HC.tok.resid, opacity: 0.9}, g);
-    const t = w13enS.add('text', {x: 310, y: 158, 'text-anchor': 'middle', cls: 'vlab',
-                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
-    t.textContent = 'pandas 2.3.2';
-    w13enS.txtPx(310, 246, '另一個專案裝了 pandas 1.5，就把它蓋掉了',
-                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
+  } else if (!w13clHasX) {
+    w13clShow('<code>NameError</code>：print 找不到 x。');
   } else {
-    [['m524（課程）', 'pandas 2.3.2', HC.tok.accent2, 40],
-     ['other（別的專案）', 'pandas 1.5.3', HC.tok.accent, 330]].forEach(e => {
-      w13enS.add('rect', {x: e[3], y: 86, width: 250, height: 130, rx: 10,
-                          fill: e[2], opacity: 0.16, stroke: e[2], 'stroke-width': 2}, g);
-      const t = w13enS.add('text', {x: e[3] + 125, y: 112, 'text-anchor': 'middle',
-                                    cls: 'axtitle', fill: e[2]}, g);
-      t.textContent = e[0];
-      w13enS.add('rect', {x: e[3] + 24, y: 130, width: 202, height: 44, rx: 6,
-                          fill: e[2], opacity: 0.9}, g);
-      const u = w13enS.add('text', {x: e[3] + 125, y: 158, 'text-anchor': 'middle',
-                                    cls: 'vlab', 'font-family': HC.MONO,
-                                    fill: HC.tok.paper}, g);
-      u.textContent = e[1];
-    });
-    w13enS.txtPx(310, 246, '兩個版本共存，互不干擾',
-                 {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
+    w13clShow('<code>print(x)</code> 輸出 <strong>' + w13clX + '</strong>。同一格重跑時，結果取決於先前狀態。');
   }
-  document.getElementById('w13enCase').textContent = shared ? '全部裝在 base' : '各自獨立';
-  document.getElementById('w13enA').textContent = shared ? 'pandas 被蓋成 1.5.3' : 'pandas 2.3.2 ✓';
-  document.getElementById('w13enB').textContent = shared ? 'pandas 1.5.3' : 'pandas 1.5.3 ✓';
-  setStatus('w13enStatus', shared
-    ? '後裝的蓋掉先裝的 —— 於是課程 lab 的數字就對不上了。'
-    : '每個專案一個環境，版本各自釘死。<b>這就是 conda 環境的全部意義。</b>');
 }
-function w13enSet(i) { w13enI = i; w13enDraw(); }
-if (w13enS) w13enDraw();
 
-/* ═══ w13cm conda 指令組裝器 ═══ */
-const w13cmS = HC.svg('w13cmdSvg', {h: 300});
-const w13cmCases = [
-  {s: '建立環境', c: 'conda create -n m524 python=3.11 -y',
-   note: '<code>-n</code> 是環境名字，<code>python=3.11</code> 連 Python 版本一起釘住。'},
-  {s: '裝套件', c: 'conda run -n m524 pip install numpy==1.24.4 pandas==2.3.2 ISLP==0.4.0',
-   note: '用 <code>==</code> 釘版本。完整清單見上面那段程式碼。'},
-  {s: '註冊 kernel', c: 'conda run -n m524 python -m ipykernel install --user --name m524',
-   note: '<b>這一步最常被跳過</b>，跳過的話 Jupyter 的 kernel 選單裡看不到它。'},
-  {s: '每次使用', c: 'conda activate m524',
-   note: '開新的終端機都要做一次。Jupyter 那邊則是在右上角選 kernel。'}
-];
-let w13cmI = 0;
-function w13cmDraw() {
-  const g = w13cmS.clearLayer('main');
-  w13cmCases.forEach((c, i) => {
-    const on = i === w13cmI;
-    const x = 40 + i * 138;
-    w13cmS.add('rect', {x: x, y: 62, width: 124, height: 46, rx: 7,
-                        fill: on ? HC.tok.accent2 : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 0.95 : 0.5}, g);
-    const t = w13cmS.add('text', {x: x + 62, y: 90, 'text-anchor': 'middle', cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = (i + 1) + '. ' + c.s;
-    if (i < 3) {
-      w13cmS.add('path', {d: 'M' + (x + 128) + ' 85 H ' + (x + 172),
-                          stroke: HC.tok.cardBorder, 'stroke-width': 2}, g);
-      w13cmS.add('path', {d: 'M' + (x + 176) + ' 85 l -8 -5 v 10 z',
-                          fill: HC.tok.cardBorder}, g);
-    }
-  });
-  const c = w13cmCases[w13cmI];
-  w13cmS.add('rect', {x: 40, y: 140, width: 540, height: 62, rx: 8,
-                      fill: HC.tok.ink, opacity: 0.92}, g);
-  const parts = c.c.match(/.{1,62}(\s|$)/g) || [c.c];
-  parts.slice(0, 2).forEach((ln, i) => {
-    const t = w13cmS.add('text', {x: 58, y: 168 + i * 22, cls: 'vlab',
-                                  'font-family': HC.MONO, fill: HC.tok.paper}, g);
-    t.textContent = ln.trim();
-  });
-  w13cmS.txtPx(310, 240, '在終端機打這一行', {cls: 'axlab', anchor: 'middle'}, g);
-  document.getElementById('w13cmStep').textContent = c.s;
-  document.getElementById('w13cmCmd').textContent = c.c;
-  setStatus('w13cmStatus', c.note);
+function w13clReset() {
+  w13clX = undefined;
+  w13clHasX = false;
+  w13clHistory = [];
+  w13clShow('執行階段已重啟：變數與執行編號都已清空。');
 }
-function w13cmSet(i) { w13cmI = i; w13cmDraw(); }
-if (w13cmS) w13cmDraw();
 
-/* ═══ w13fx 四種假故障 ═══ */
-const w13fxS = HC.svg('w13fixSvg', {h: 320});
-const w13fxCases = [
-  {s: 'ModuleNotFoundError', w: '沒裝，或裝到了另一個環境',
-   f: '%pip install X；檢查 kernel 是哪一個'},
-  {s: 'NameError', w: '某一格沒跑（十次有九次是 imports 那一格）', f: '從第一格重跑'},
-  {s: 'FileNotFoundError', w: '路徑不對，或 Drive 沒掛', f: '在檔案窗格複製正確的路徑'},
-  {s: '結果跟同學不一樣', w: '切分或重抽樣沒有固定種子',
-   f: 'random_state=0、seed=0，然後兩邊都重跑'}
-];
-let w13fxI = 0;
-function w13fxDraw() {
-  const g = w13fxS.clearLayer('main');
-  w13fxCases.forEach((c, i) => {
-    const on = i === w13fxI;
-    const y = 68 + i * 58;
-    w13fxS.add('rect', {x: 40, y: y, width: 540, height: 46, rx: 7,
-                        fill: on ? HC.tok.accent : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 0.95 : 0.45}, g);
-    const t = w13fxS.add('text', {x: 60, y: y + 21, cls: 'vlab', 'font-family': HC.MONO,
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = c.s;
-    const u = w13fxS.add('text', {x: 60, y: y + 38, cls: 'axlab',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    u.textContent = on ? '→ ' + c.f : c.w;
-  });
-  w13fxS.txtPx(310, 300, '萬用第一步：重啟 kernel 並從第一格全部重跑',
-               {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
-  const c = w13fxCases[w13fxI];
-  document.getElementById('w13fxSym').textContent = c.s;
-  document.getElementById('w13fxWhy').textContent = c.w;
-  document.getElementById('w13fxFix').textContent = c.f;
-  setStatus('w13fxStatus', c.s + '：' + c.w + '。');
+function w13clTopDown() {
+  w13clReset();
+  w13clRun(0);
+  w13clRun(1);
+  w13clRun(2);
 }
-function w13fxSet(i) { w13fxI = i; w13fxDraw(); }
-if (w13fxS) w13fxDraw();
 """
 
 apply("00b_setup", BODIES, PAGEJS)

@@ -22,7 +22,7 @@ import sys
 
 import numpy as np
 import sklearn.model_selection as skm
-from sklearn.datasets import make_blobs, make_circles
+from sklearn.datasets import make_circles
 from sklearn.svm import SVC
 
 VERSIONS = "numpy {} · pandas {} · scikit-learn {}".format(
@@ -116,10 +116,11 @@ best_C = float(gridC.best_params_["C"])
 Xtr, Xte, ytr, yte = skm.train_test_split(X200, y200, test_size=0.5, random_state=0)
 RBF_BB = bounds(X200, pad=0.8)
 RBF_CFG = [                                  # (C, gamma, 這一組在 lab 的出處)
-    (1, 0.5, "儲存格 67 交叉驗證選出的最佳組合"),
-    (1, 1, "儲存格 61"),
-    (1, 50, "儲存格 75 的 svm_flex"),
-    (100000, 1, "儲存格 65"),
+    (1, 0.5, "γ 比較；儲存格 67 交叉驗證選出的最佳組合"),
+    (1, 1, "γ／C 比較的共同基準；儲存格 61"),
+    (1, 50, "γ 比較；儲存格 75 的 svm_flex"),
+    (0.1, 1, "C 比較；固定 γ=1 的額外可重現配適"),
+    (100000, 1, "C 比較；儲存格 65"),
 ]
 rbf_frames = []
 for C, g, why in RBF_CFG:
@@ -176,30 +177,6 @@ kern = {
            "outer": [rd(v, 4) for v in np.sort((Xc[yc == 0] ** 2).sum(1))[[0, -1]]]},
 }
 
-# ── 5. 多類別：三類 blob，OVO 與 OVA 各自的線性 SVC 係數 ──────────────────
-# 不用 lab 儲存格 82 的三類資料：那份資料是環狀的非線性結構（lab 自己也用 RBF），
-# 線性的成對／一對其餘配適在上面沒有意義。這裡另外造一份分得開的三團。
-Xm, ym = make_blobs(n_samples=96, centers=[[-2.4, -1.5], [2.5, -1.3], [0.1, 2.7]],
-                    cluster_std=0.95, random_state=9)
-MC_BB = bounds(Xm, pad=0.9)
-ovo = []
-for a in range(3):
-    for b in range(a + 1, 3):
-        mask = np.isin(ym, [a, b])
-        m = SVC(C=1, kernel="linear").fit(Xm[mask], ym[mask])
-        ovo.append({"lo": a, "hi": b,                      # f > 0 → hi（classes_ 升冪）
-                    "w": [rd(v, 5) for v in m.coef_[0]], "b": rd(m.intercept_[0], 5),
-                    "nsv": int(m.support_.size)})
-ova = []
-for k in range(3):
-    m = SVC(C=1, kernel="linear").fit(Xm, (ym == k).astype(int))
-    ova.append({"k": k,                                    # f > 0 → 第 k 類
-                "w": [rd(v, 5) for v in m.coef_[0]], "b": rd(m.intercept_[0], 5),
-                "nsv": int(m.support_.size)})
-mc = {"pts": pts(Xm, ym), "bb": MC_BB, "ovo": ovo, "ova": ova,
-      "counts": [[3, 3, 3], [4, 6, 4], [10, 45, 10]]}      # K, OVO 個數 K(K−1)/2, OVA 個數 K
-
-
 # ── 輸出 ────────────────────────────────────────────────────────────────
 def js(name, obj, src, seed, note=""):
     meta = {"src": src, "seed": seed, "versions": VERSIONS, "gen": GEN}
@@ -223,6 +200,7 @@ out = [
        f"mean_test_score = {cv_acc}，最佳 C = {best_C}（與 lab 逐字相符）"),
     js("FRAMES_w10rbf", {"bb": RBF_BB, "n": NGRID,
                          "trainPts": pts(Xtr, ytr), "frames": rbf_frames,
+                         "gammaFrames": [0, 1, 2], "cFrames": [3, 1, 4],
                          "curve": rbf_curve, "best": rbf_best},
        f"{LAB} 儲存格 57／61／65／67／75，SVC(kernel='rbf')",
        "train_test_split(test_size=0.5, random_state=0)",
@@ -232,13 +210,6 @@ out = [
        f"{LAB} 儲存格 51–54，make_circles(100, factor=.1, noise=.1, random_state=0)",
        "random_state=0",
        f"Z 空間的線性超平面 w={kern['w']}、b={kern['b']}（lab 儲存格 52 逐字相符）"),
-    js("FRAMES_w10mc", {"n": NGRID, **mc},
-       "自造的三類 blob（make_blobs，固定中心與 cluster_std）；"
-       "各成對／一對其餘的邊界都是真的 SVC(kernel='linear', C=1) 配適，"
-       "投票與取最大則由前端即時算",
-       "make_blobs(random_state=9)",
-       "沒有沿用 lab 儲存格 82 的三類資料：那份是環狀非線性結構，"
-       "線性成對配適在上面沒有意義（lab 自己用的是 RBF）"),
 ]
 print("\n".join(out))
 

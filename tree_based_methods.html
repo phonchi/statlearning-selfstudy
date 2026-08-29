@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -689,7 +694,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.8｜講義 08）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
@@ -831,12 +836,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   下一節的剪枝，正是為了補救貪婪的短視。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w09growSvg" height="380"></svg>
       <div class="status-banner" id="w09growStatus"><span class="status-icon">›</span><span class="status-text">按「單步」切一刀：程式會掃過兩個變數的每個候選切點，挑 RSS 下降最多的那一個。</span></div>
       <div class="controls-bar"><button class="btn btn-play" onclick="w09growStart()">▶ 自動長</button><button class="btn btn-step" onclick="w09growPlayer &amp;&amp; w09growPlayer.step()">→ 單步</button><button class="btn btn-reset" onclick="w09growReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子合成四區塊資料；每一步分裂與 RSS 下降由瀏覽器即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -952,7 +958,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <li>回到完整訓練資料，交出對應 α̂ 的那棵子樹。</li>
   </ol>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w09pruneChart"></canvas>
@@ -960,6 +966,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       </div>
       <div class="status-banner" id="w09pruneStatus"><span class="status-icon">›</span><span class="status-text">拖動 α：α 愈大，樹被剪得愈小。看三條誤差線怎麼反應。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 300px;min-width:0;"><span class="slider-label">α</span><input type="range" id="w09pruneAlpha" min="0" max="10" step="1" value="3" oninput="w09pruneSet()" aria-label="α"><span class="slider-val" id="w09pruneAlphaVal">—</span></span><button class="btn btn-toggle" onclick="w09pruneJumpCv()">跳到 CV 選出的 α</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Boston 固定 train/test split；成本複雜度路徑與六折 CV 由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1055,12 +1062,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>兩個都在量<strong>節點純度</strong>（node purity）：所有 $\hat p_{mk}$ 都靠近 0 或 1 時值很小。
   兩者數值上非常接近，實務上選哪個幾乎沒差。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w09impSvg" height="330"></svg>
       <div class="status-banner" id="w09impStatus"><span class="status-icon">›</span><span class="status-text">拖動 p̂ 看三個不純度指標的值。注意錯誤率是折線、另兩個是曲線。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 280px;min-width:0;"><span class="slider-label">p̂</span><input type="range" id="w09impSl" min="0" max="100" step="1" value="50" oninput="w09impSet()" aria-label="p̂"><span class="slider-val" id="w09impSlVal">0.50</span></span><button class="btn btn-toggle" onclick="w09impToggle()">縮放交叉熵</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>依 ISLP 第 8 章與習題 8.4(3) 的節點不純度公式即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1232,7 +1240,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>講義第 31 頁舉的例子：<strong>1000 個只有 51% 正確率的弱學習器</strong>，
   多數投票之後可望達到 75% 的正確率。這個數字大得不像真的。下面自己算一次。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w09voteSvg" height="250"></svg>
@@ -1241,6 +1249,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       </div>
       <div class="status-banner" id="w09voteStatus"><span class="status-icon">›</span><span class="status-text">拖動 p 與 M：看多數投票的正確率怎麼變。p 拖到 0.5 以下會發生有趣的事。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 220px;min-width:0;"><span class="slider-label">p</span><input type="range" id="w09voteSlP" min="30" max="80" step="1" value="55" oninput="w09voteSet()" aria-label="p"><span class="slider-val" id="w09voteSlPVal">0.55</span></span><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">M</span><input type="range" id="w09voteSlM" min="1" max="201" step="2" value="15" oninput="w09voteSet()" aria-label="M"><span class="slider-val" id="w09voteSlMVal">15</span></span></div>
+      <div class="viz-source"><span>自訂概念示意</span>獨立弱分類器的二項尾機率為理論值；上方方塊為固定種子概念示意。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1359,12 +1368,13 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
   （這個 0.632／0.368 在<a href="resampling_methods.html#bootstrap">第 5 章 bootstrap</a>
   那一節推導過，回去對一下。）</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w09bagSvg" height="220"></svg>
       <div class="status-banner" id="w09bagStatus"><span class="status-icon">›</span><span class="status-text">按「長一棵樹」看一次有放回重抽：虛線框的球就是這棵樹的袋外樣本。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w09bagOne()">→ 長一棵樹</button><button class="btn btn-play" onclick="w09bagMany()">▶ 連長 200 棵</button><button class="btn btn-reset" onclick="w09bagReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>n=20 的固定種子 bootstrap 重抽；累計 OOB 比例與 1/e 理論值即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1450,7 +1460,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
   注意 $m = p$ 時 random forest 就<strong>退化成 bagging</strong>，
   所以 bagging 只是 random forest 的一個特例。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w09rfChart"></canvas>
@@ -1458,6 +1468,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
       </div>
       <div class="status-banner" id="w09rfStatus"><span class="status-icon">›</span><span class="status-text">換資料集看 m 的效果。注意兩份資料給出相反的結論。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">資料</label><select id="w09rfSel" class="mono" onchange="w09rfDraw()"><option value="boston" selected>Boston（p = 12，lab 的同一份切分）</option><option value="sim">模擬：1 強 ＋ 20 中，30 個變數彼此相關</option></select></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Boston 曲線對照 Ch08 lab；第二個選項為固定種子 524 的相關特徵模擬，兩者均由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1549,12 +1560,13 @@ zn         0.002454</pre></div>
   ISLP 的說法是 <strong>boosting 學得很慢</strong>（learns slowly）——
   而在統計學習裡，學得慢的方法往往表現得好。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w09gbSvg" height="400"></svg>
-      <div class="status-banner" id="w09gbStatus"><span class="status-icon">›</span><span class="status-text">按「單步」加一棵淺樹：它配的是目前的殘差，然後乘上 λ 加進配適裡。</span></div>
-      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">λ</span><input type="range" id="w09gbSlLam" min="5" max="100" step="5" value="35" oninput="w09gbSetLam()" aria-label="λ"><span class="slider-val" id="w09gbSlLamVal">0.35</span></span><label class="slider-label" style="margin:0 .3rem;">深度 d</label><select id="w09gbSel" class="mono" onchange="w09gbSetDepth()"><option value="1" selected>1（stump）</option><option value="2">2</option></select><button class="btn btn-play" onclick="w09gbStart()">▶ 開始</button><button class="btn btn-step" onclick="w09gbPlayer &amp;&amp; w09gbPlayer.step()">→ 單步</button><button class="btn btn-reset" onclick="w09gbReset()">重置</button></div>
+      <div class="status-banner" id="w09gbStatus"><span class="status-icon">›</span><span class="status-text">直接調 B 看第 b 棵樹後的配適與殘差；自動播放只是可選總覽。</span></div>
+      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">λ</span><input type="range" id="w09gbSlLam" min="5" max="100" step="5" value="35" oninput="w09gbSetLam()" aria-label="λ"><span class="slider-val" id="w09gbSlLamVal">0.35</span></span><span class="slider-row" style="margin-bottom:0;flex:1 1 180px;min-width:0;"><span class="slider-label">B</span><input type="range" id="w09gbSlB" min="0" max="40" step="1" value="0" oninput="w09gbSetB()" aria-label="B"><span class="slider-val" id="w09gbSlBVal">0</span></span><label class="slider-label" style="margin:0 .3rem;">深度 d</label><select id="w09gbSel" class="mono" onchange="w09gbSetDepth()"><option value="1" selected>1（stump）</option><option value="2">2</option></select><button class="btn btn-play" onclick="w09gbStart()">▶ 自動播放（可選）</button><button class="btn btn-reset" onclick="w09gbReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子 52408 的非線性迴歸模擬；淺樹、殘差與提升序列由瀏覽器即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1608,12 +1620,13 @@ zn         0.002454</pre></div>
   $\eta = 1$（<code>scikit-learn</code> 的 SAMME）重新加權更兇，在小樣本上容易讓權重
   幾輪就集中到少數幾點上。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w09adaSvg" height="320"></svg>
       <div class="status-banner" id="w09adaStatus"><span class="status-icon">›</span><span class="status-text">按「單步」跑一輪 AdaBoost：看答錯的點怎麼變大，切點怎麼被逼著移動。</span></div>
       <div class="controls-bar"><button class="btn btn-play" onclick="w09adaStart()">▶ 開始</button><button class="btn btn-step" onclick="w09adaPlayer &amp;&amp; w09adaPlayer.step()">→ 單步</button><button class="btn btn-reset" onclick="w09adaReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>16 點固定分類示意；權重、stump 與 AdaBoost 輪次依頁面公式即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1803,14 +1816,15 @@ Accuracy: 84.21%</pre></div>
   最重要的三個是 <code>Thal</code>、<code>Ca</code>、<code>ChestPain</code>。
   下面用 lab 的 Boston 例子重畫（<code>Heart</code> 不在 <code>ISLP 0.4.0</code> 裡）：</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w09vimpChart"></canvas>
         <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：lstat 與 rm 兩個變數就吃掉近 70% 的不純度下降總量，其餘十個變數加起來還不到三分之一。</div></div>
       </div>
       <div class="status-banner" id="w09vimpStatus"><span class="status-icon">›</span><span class="status-text">換一種重要度的定義，看排名會不會變。</span></div>
-      <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">重要度</label><select id="w09vimpSel" class="mono" onchange="w09vimpDraw()"><option value="impurity" selected>不純度下降（feature_importances_）</option><option value="permutation">Permutation（測試集上打亂）</option></select></div>
+      <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">重要度</label><select id="w09vimpSel" class="mono" onchange="w09vimpDraw()"><option value="impurity" selected>不純度下降（feature_importances_）</option><option value="permutation">Permutation（測試集上打亂；平均 ± SD）</option></select></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Boston 固定切分上的 RandomForestRegressor；測試 R² permutation importance 重複 30 次，mean 與 SD 由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1820,7 +1834,7 @@ Accuracy: 84.21%</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">兩種重要度差在哪 <span class="ic-badge">ISLP 圖 8.9</span></div>
-      <strong>不純度下降</strong>（impurity / Gini importance）：直接從訓練好的樹裡加總，<strong>零成本</strong>，但它是在<strong>訓練資料</strong>上算的，而且會系統性偏袒「取值很多的變數」（連續變數、高基數的類別變數）。<br><strong>Permutation importance</strong>：把某一欄<strong>隨機打亂</strong>，看測試誤差變差多少。定義在<strong>測試資料</strong>上，直接對應「這個變數對預測的貢獻」，但要多跑很多次預測。
+      <strong>不純度下降</strong>（impurity / Gini importance）：直接從訓練好的樹裡加總，<strong>零成本</strong>，但它是在<strong>訓練資料</strong>上算的，而且會系統性偏袒「取值很多的變數」（連續變數、高基數的類別變數）。<br><strong>Permutation importance</strong>：把某一欄<strong>隨機打亂</strong>，看測試集的 R² 下降多少。定義在<strong>測試資料</strong>上，直接對應「這個變數對預測的貢獻」，但要多跑很多次預測。
     </div>
     <div class="info-card">
       <div class="ic-title">最大的陷阱：相關的變數會互相稀釋</div>
@@ -2626,7 +2640,7 @@ HC.initFlashcards = () => {
 /* ===== 烘焙資料（tools/frames/gen_trees.py，固定種子）===== */
 const FRAMES_w09prune = {"meta":{"src":"ISLP Hitters（§8.1.1、圖 8.5 的設定：去掉 Salary 缺失、log Salary、九個特徵）","seed":"train_test_split(train_size=132, random_state=8)；KFold(6, shuffle=True, random_state=8)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_trees.py","note":"CV 最低在 4 個葉子、測試最低在 9 個葉子；課本圖 8.5 的 CV 最低點是 3 個葉子。分割不同數字不會一樣，形狀才是重點。"},"leaves":[1,2,3,4,5,6,7,8,9,10,11],"alpha":[0.30953,0.09677,0.03251,0.02574,0.02286,0.01433,0.01314,0.01207,0.01129,0.01018,0.00838],"train":[0.7598,0.4503,0.3535,0.321,0.2952,0.2724,0.258,0.2449,0.2328,0.2215,0.2114],"cv":[0.7141,0.4746,0.4052,0.4031,0.4183,0.4322,0.4346,0.4269,0.4269,0.4374,0.4348],"cvSe":[0.09,0.051,0.0569,0.0573,0.072,0.0679,0.067,0.0679,0.0679,0.0655,0.0571],"test":[0.8157,0.4269,0.3793,0.3866,0.3688,0.3601,0.331,0.3071,0.303,0.3178,0.3289],"nTrain":132,"nTest":131,"p":9,"cvBest":4,"testBest":9};
 const FRAMES_w09rf = {"meta":{"src":"ISLP Boston（與 Ch08-baggboost-lab-zh.ipynb 儲存格 52 同一切分）＋ 一份標明是模擬的資料","seed":"train_test_split(test_size=0.3, random_state=0)；RandomForestRegressor(random_state=0)；模擬用 np.random.default_rng(524)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_trees.py","note":"Boston 上 m=p 的 B=100 測試 MSE = 14.6347（lab 儲存格 66 是 14.6347）、m=6 是 20.0428（lab 儲存格 70 是 20.0428）"},"B":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,30,40,50,60,80,100,125,150,175,200,225,250,275,300],"boston":{"p":12,"ms":[12,6,4,2],"curves":[[25.4848,13.7849,16.403,16.5744,17.7568,18.5356,18.5981,18.2521,18.4514,18.9097,19.3427,17.1628,17.6953,17.6815,16.1489,16.4149,15.4602,15.518,15.6166,15.9187,15.3521,15.6684,15.6821,14.6748,14.38,14.3909,14.6347,14.717,14.9714,14.7775,14.8589,14.8865,14.8333,14.9826,15.0424],[25.1336,25.7256,23.0951,22.1393,20.3391,21.302,20.3349,20.56,20.1117,20.3432,20.8615,21.7351,22.0274,21.8572,21.3689,22.0584,21.1921,20.018,20.3025,20.7642,20.2292,20.6356,19.7166,19.8282,20.0269,19.98,20.0428,20.133,20.2019,19.5092,19.636,19.5541,19.1763,19.1661,19.038],[36.5891,34.698,31.7052,28.2076,26.1735,22.2843,19.1561,20.3915,19.5399,19.6462,19.8461,20.6148,21.3954,21.2542,20.5485,20.4397,20.1458,19.02,19.4128,19.7882,19.4229,18.4732,19.7253,19.9936,19.8933,20.6594,20.6094,20.5322,20.2128,19.4676,19.5331,19.9026,19.888,19.9887,19.6891],[35.3635,25.9389,24.6369,23.5363,24.1338,25.2021,22.6032,22.244,23.3557,24.785,25.5163,25.3074,24.8361,24.185,24.1684,24.4636,24.5174,24.5847,24.678,24.5331,25.725,25.5446,24.8325,22.9167,22.8917,20.3947,19.7454,19.8422,19.7947,19.5523,20.142,20.3589,20.4511,20.5664,20.2517]],"rho":[0.8154,0.8126,0.7719,0.6827],"treeVar":[13.0682,14.6813,17.5848,22.3427],"n":354,"nTest":152,"singleTree":28.0699},"sim":{"p":30,"ms":[30,15,5,2],"curves":[[46.9383,30.7028,25.0072,22.6203,20.7878,19.5581,18.2693,18.2576,17.0122,16.155,16.1096,15.5463,15.3052,15.5082,15.3071,15.1604,15.1537,15.0353,14.8182,14.7144,14.1707,13.3953,13.1435,12.8755,12.6722,12.5747,12.1069,12.2139,12.1847,12.2984,12.2533,12.2823,12.1895,12.0983,12.0891],[52.4694,31.7426,26.5928,22.1836,19.6834,18.2152,16.7498,16.696,15.9399,14.9814,14.3915,13.9745,13.6345,13.3758,13.0534,12.9976,12.9889,13.1179,12.9219,12.8424,12.6879,12.5126,12.0796,12.0709,11.9933,11.7595,11.525,11.519,11.4005,11.34,11.2108,11.1991,11.1179,11.133,11.0931],[46.2483,29.8407,26.0381,21.9633,20.0554,18.3635,16.9034,16.071,15.8226,15.2237,15.1932,14.6183,14.4794,14.1603,14.0619,14.2543,14.6028,14.2067,13.7569,13.4618,12.7829,12.2276,11.862,11.7658,11.6291,11.2752,11.114,11.0772,10.7783,10.5788,10.5599,10.4274,10.3646,10.2951,10.3392],[58.3652,36.585,25.507,21.8255,19.3836,18.1252,16.4825,15.2658,14.9211,14.4711,14.1612,13.9062,13.4767,12.8324,12.5055,12.2829,12.4273,12.2903,12.4289,12.3538,11.9749,11.7061,11.611,11.3716,11.2199,11.1686,11.0046,10.8789,10.6902,10.7207,10.6885,10.5735,10.5993,10.7368,10.6204]],"rho":[0.8237,0.8203,0.8117,0.8006],"treeVar":[41.2686,41.9309,44.3087,48.2062],"n":400,"nTest":400,"xCorr":0.617,"singleTree":43.9105}};
-const FRAMES_w09vimp = {"meta":{"src":"ISLP Boston · RandomForestRegressor(max_features=6, random_state=0)（＝lab 儲存格 70／72 的同一個模型；Heart 不在 ISLP 0.4.0 裡，所以改用 Boston）","seed":"random_state=0；permutation_importance(n_repeats=30, random_state=0)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_trees.py","note":"不純度下降的第一名是 lstat = 0.356203（lab 儲存格 72 是 lstat 0.356203）"},"names":["lstat","rm","ptratio","crim","indus","dis","nox","tax","age","rad","chas","zn"],"impurity":[0.356203,0.332163,0.06727,0.055404,0.053851,0.041582,0.035225,0.025355,0.021506,0.004784,0.004203,0.002454],"permutation":[0.4323,0.286,0.0175,0.005,0.0045,0.0196,0.031,0.0071,0.007,0.0016,0.0009,-0.0003],"permSd":[0.0722,0.0342,0.0067,0.0085,0.0031,0.0043,0.0072,0.0034,0.0032,0.0011,0.0018,0.0003],"testMse":20.0428};
+const FRAMES_w09vimp = {"meta":{"src":"ISLP Boston · RandomForestRegressor(max_features=6, random_state=0)（＝lab 儲存格 70／72 的同一個模型；Heart 不在 ISLP 0.4.0 裡，所以改用 Boston）","seed":"random_state=0；permutation_importance(scoring='r2', n_repeats=30, random_state=0)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_trees.py","note":"不純度下降的第一名是 lstat = 0.356203（lab 儲存格 72 是 lstat 0.356203）"},"names":["lstat","rm","ptratio","crim","indus","dis","nox","tax","age","rad","chas","zn"],"impurity":[0.356203,0.332163,0.06727,0.055404,0.053851,0.041582,0.035225,0.025355,0.021506,0.004784,0.004203,0.002454],"permutation":[0.4323,0.286,0.0175,0.005,0.0045,0.0196,0.031,0.0071,0.007,0.0016,0.0009,-0.0003],"permSd":[0.0722,0.0342,0.0067,0.0085,0.0031,0.0043,0.0072,0.0034,0.0032,0.0011,0.0018,0.0003],"testMse":20.0428};
 
 
 /* ===== tree_based_methods 本頁元件（id 與全域一律 w09 前綴）===== */
@@ -3224,12 +3238,16 @@ function w09vimpDraw() {
   const el = document.getElementById('w09vimpSel');
   const mode = el ? el.value : 'impurity';
   const vals = mode === 'impurity' ? F.impurity : F.permutation;
+  const ord = vals.map((_, i) => i).sort((a, b) => vals[b] - vals[a]);
+  const labels = ord.map(i => mode === 'impurity' ? F.names[i]
+    : F.names[i] + '  ' + HC.fmt(vals[i], 3) + ' ± ' + HC.fmt(F.permSd[i], 3));
+  const shown = ord.map(i => vals[i]);
   HC.bar('w09vimpChart', {
-    labels: F.names,
+    labels: labels,
     datasets: [{
-      label: mode === 'impurity' ? '不純度（RSS）下降總量' : 'Permutation 重要度（測試 MSE 增加量）',
-      data: vals,
-      backgroundColor: vals.map((v, i) => i < 2 ? HC.tok.accent : 'rgba(44,62,122,.62)'),
+      label: mode === 'impurity' ? '不純度（RSS）下降總量' : 'Permutation 重要度（測試 R² 下降量）',
+      data: shown,
+      backgroundColor: shown.map((v, i) => i < 2 ? HC.tok.accent : 'rgba(44,62,122,.62)'),
       borderRadius: 4,
     }],
   }, {
@@ -3237,21 +3255,25 @@ function w09vimpDraw() {
     plugins: { legend: { display: false } },
     scales: { x: { title: { display: true,
                             text: mode === 'impurity' ? '不純度下降的相對佔比'
-                                                      : '打亂該欄後測試 MSE 增加多少' } },
+                                                      : '打亂該欄後測試 R² 下降多少' } },
               y: { title: { display: true, text: 'Boston 的 12 個變數' } } },
   });
   const tot = vals.reduce((s, v) => s + Math.max(0, v), 0);
-  document.getElementById('w09vimpTop1').textContent = F.names[0] + '（' + HC.fmt(vals[0], 3) + '）';
-  document.getElementById('w09vimpTop2').textContent = F.names[1] + '（' + HC.fmt(vals[1], 3) + '）';
+  const showVal = i => mode === 'impurity' ? HC.fmt(vals[i], 3)
+    : HC.fmt(vals[i], 3) + ' ± ' + HC.fmt(F.permSd[i], 3);
+  document.getElementById('w09vimpTop1').textContent = F.names[ord[0]] + '（' + showVal(ord[0]) + '）';
+  document.getElementById('w09vimpTop2').textContent = F.names[ord[1]] + '（' + showVal(ord[1]) + '）';
   document.getElementById('w09vimpShare').textContent =
-    tot > 0 ? HC.pct((vals[0] + vals[1]) / tot, 1) : '—';
+    mode === 'impurity' && tot > 0 ? HC.pct((vals[ord[0]] + vals[ord[1]]) / tot, 1)
+      : '不適用（不是可加總份額）';
   document.getElementById('w09vimpMse').textContent = HC.fmt(F.testMse, 2);
-  setStatus('w09vimpStatus', (mode === 'impurity'
+  const leaders = '前兩名是 <strong>' + F.names[ord[0]] + '</strong> 與 <strong>'
+    + F.names[ord[1]] + '</strong>。';
+  setStatus('w09vimpStatus', mode === 'impurity'
     ? '不純度下降（<code>feature_importances_</code>，訓練資料上、零成本）：'
-    : 'Permutation 重要度（測試資料上打亂該欄，重複 30 次取平均）：')
-    + '前兩名都是 <strong>' + F.names[0] + '</strong> 與 <strong>' + F.names[1]
-    + '</strong>，合計佔 ' + (tot > 0 ? HC.pct((vals[0] + vals[1]) / tot, 1) : '—')
-    + '。兩種定義的排名在這份資料上幾乎一致——但這不保證，換一份資料就可能不同。');
+      + leaders + '合計佔 ' + (tot > 0 ? HC.pct((vals[ord[0]] + vals[ord[1]]) / tot, 1) : '—') + '。'
+    : 'Permutation 重要度（測試資料上打亂該欄 30 次；標籤顯示 mean ± SD）：'
+      + leaders + '這些 R² 下降量不是可加總的份額；SD 大時也不要把相近名次當成穩定排序。');
 }
 
 
@@ -3366,6 +3388,10 @@ function w09gbApply(f) {
   }
   w09mk(host, 'text', { x: X0 + W / 2, y: 392, 'text-anchor': 'middle', cls: 'axtitle' }, 'x');
   document.getElementById('w09gbB').textContent = f.b + ' / ' + w09gbSteps;
+  const bSlider = document.getElementById('w09gbSlB');
+  if (bSlider) bSlider.value = String(f.b);
+  const bSliderVal = document.getElementById('w09gbSlBVal');
+  if (bSliderVal) bSliderVal.textContent = String(f.b);
   document.getElementById('w09gbMse').textContent = HC.fmt(f.mse, 4);
   document.getElementById('w09gbSd').textContent = HC.fmt(f.sd, 4);
   document.getElementById('w09gbLeaf').textContent = String(Math.pow(2, w09gbDepth));
@@ -3396,6 +3422,13 @@ function w09gbSetDepth() {
   const el = document.getElementById('w09gbSel');
   if (el) w09gbDepth = parseInt(el.value, 10);
   w09gbRebuild();
+}
+function w09gbSetB() {
+  if (w09gbPlayer) w09gbPlayer.stop();
+  const el = document.getElementById('w09gbSlB');
+  const b = el ? parseInt(el.value, 10) : 0;
+  if (!w09gbFrames.length) w09gbFrames = w09gbBuild();
+  w09gbApply(w09gbFrames[Math.max(0, Math.min(w09gbSteps, b))]);
 }
 function w09gbStart() { w09gbRebuild(); w09gbPlayer.play(); }
 function w09gbReset() { w09gbRebuild(); }

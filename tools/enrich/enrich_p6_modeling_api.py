@@ -65,7 +65,8 @@ BODIES["prologue"] = f"""
      '<button class="btn btn-toggle" onclick="w19apiSet(0)">① 準備 X</button>'
      '<button class="btn btn-toggle" onclick="w19apiSet(1)">② 配適</button>'
      '<button class="btn btn-toggle" onclick="w19apiSet(2)">③ 看結果</button>'
-     '<button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button>')}
+     '<button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button>',
+     provenance=("course-data", "依 Ch03 lab 的 statsmodels 與 scikit-learn 同一 lstat 模型逐步對照。"))}
 
 {card("statsmodels：截距要自己放進 X", C(3, 22), O(3, 22), src=S(3, 22),
       note="那一欄全是 1 的 <code>intercept</code> 不是裝飾——"
@@ -113,7 +114,8 @@ BODIES["design"] = f"""
      '<button class="btn btn-toggle" onclick="w19dsSet(0)">MS([&quot;lstat&quot;])</button>'
      '<button class="btn btn-toggle" onclick="w19dsSet(1)">加 age</button>'
      '<button class="btn btn-toggle" onclick="w19dsSet(2)">加交互作用</button>'
-     '<button class="btn btn-toggle" onclick="w19dsSet(3)">類別變數展開</button>')}
+     '<button class="btn btn-toggle" onclick="w19dsSet(3)">類別變數展開</button>',
+     provenance=("course-data", "依 Ch03 lab 的 Boston 設計矩陣與 ModelSpec 用法重繪。"))}
 
 {card("MS 幫你把資料框變成 X", C(3, 30, 32), f"{O(3, 30)}\n{O(3, 32)}", src=S(3, 30, 32),
       note="輸出跟上一節手工做的 X 完全一樣，差別是 <code>MS</code> "
@@ -161,7 +163,8 @@ BODIES["summary"] = f"""
      '<button class="btn btn-toggle" onclick="w19smSet(0)">coef</button>'
      '<button class="btn btn-toggle" onclick="w19smSet(1)">std err</button>'
      '<button class="btn btn-toggle" onclick="w19smSet(2)">t</button>'
-     '<button class="btn btn-toggle" onclick="w19smSet(3)">P&gt;|t|</button>')}
+     '<button class="btn btn-toggle" onclick="w19smSet(3)">P&gt;|t|</button>',
+     provenance=("course-data", "係數、標準誤、t 與 p 值逐項取自 Ch03 lab 的 OLS summary。"))}
 
 {card("只要係數的話", C(3, 37), O(3, 37), src=S(3, 37),
       note="<code>results.params</code> 回傳一個 Series，索引是欄名。"
@@ -217,7 +220,8 @@ BODIES["skl"] = f"""
      "w19flStatus", "按「單步」走一次 fit → predict → score。",
      '<button class="btn btn-step" onclick="w19flStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w19flPlay()">▶ 連續播</button>'
-     '<button class="btn btn-reset" onclick="w19flReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w19flReset()">重置</button>',
+     provenance=("course-data", "依 Ch03 lab 的 sklearn LinearRegression fit／predict／score 流程重繪。"))}
 
 {card("同一個模型的 sklearn 版本", C(3, 110), O(3, 110), src=S(3, 110),
       note="輸出是 <code>(intercept_, coef_)</code>：34.5538408793831 與 −0.95004935。"
@@ -283,7 +287,8 @@ BODIES["split"] = f"""
                 "所以才需要交叉驗證，下一節講。")],
      "w19cvStatus", "驗證集 MSE：二次式最低，三次式沒有更好。",
      '<button class="btn btn-toggle" onclick="w19cvSet(0)">驗證集 MSE</button>'
-     '<button class="btn btn-toggle" onclick="w19cvSet(1)">加上 LOOCV</button>')}
+     '<button class="btn btn-toggle" onclick="w19cvSet(1)">加上 LOOCV</button>',
+     provenance=("course-data", "MSE 逐項取自 Ch05 lab 儲存格 26 與 34；圖只重畫這些輸出。"))}
 
 {card("三個次數的驗證誤差", C(5, 26), O(5, 26), src=S(5, 26),
       note="上面那張圖的三個數字就是這一格的輸出，逐字取用。")}
@@ -315,17 +320,18 @@ BODIES["cv"] = f"""
       rows_card("目前",
                 [("路線", "—", "w19lkPath"),
                  ("標準化用到了誰的資訊", "—", "w19lkInfo"),
-                 ("測試分數", "—", "w19lkScore")]),
+                 ("評估可否解讀", "—", "w19lkValid")]),
       info_card("為什麼這叫洩漏",
                 "先標準化的話，訓練集的每一筆都間接知道了測試集的平均與標準差。"
-                "模型因此在測試集上表現得比實際好——"
-                "<strong>你以為的 out-of-sample 其實不是</strong>。"
+                "評估已經不再是乾淨的 out-of-sample 比較；"
+                "分數可能被扭曲，卻不能只憑洩漏就預告一定改善多少。"
                 "Pipeline 的存在就是為了讓這件事不可能發生。")],
-     "w19lkStatus", "先猜哪一條會給出比較好看（但假的）分數。",
+     "w19lkStatus", "先找出哪條路在切分前看過測試集資訊。",
      '<button class="btn btn-toggle" onclick="w19lkSet(0)">先標準化再切分 ✗</button>'
      '<button class="btn btn-toggle" onclick="w19lkSet(1)">先切分再標準化 ✓</button>'
      '<button class="btn btn-step" onclick="w19lkStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w19lkReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w19lkReset()">重置</button>',
+     provenance=("illustrative", "自訂資訊流示意；不附虛構 MSE，只判定評估流程是否洩漏。"))}
 
 {card("留一交叉驗證", C(5, 34), O(5, 34), src=S(5, 34),
       note="24.2315。每一筆各當一次驗證集，所以只有一個數字、沒有隨機性——"
@@ -336,10 +342,13 @@ BODIES["cv"] = f"""
            "它告訴你單切一刀的結果可以晃動多少，"
            "兩個模型的 MSE 差 0.5 根本不算差別。")}
 
-{table(["順序", "標準化用到了什麼", "測試分數", "對不對"],
-       [["先標準化 → 再切分", "全部資料的平均與標準差（含測試集）", "偏樂觀", "✗ 洩漏"],
-        ["先切分 → 用訓練集 fit、對測試集 transform", "只有訓練集", "誠實", "✓"],
-        ["<code>Pipeline</code> ＋ <code>cross_validate</code>", "每一折各自的訓練部分", "誠實", "✓ 最推薦"]])}
+{table(["順序", "標準化參數從哪裡估", "評估能否解讀", "判定"],
+       [["先標準化 → 再切分", "全部資料（含之後的測試資料）",
+         "不能當成乾淨的 out-of-sample 表現", "✗ 洩漏"],
+        ["先切分 → 訓練集 fit；測試集只 transform", "只有訓練集",
+         "可作為這次切分的測試表現", "✓"],
+        ["<code>Pipeline</code> ＋ <code>cross_validate</code>", "每一折各自的訓練部分",
+         "可彙整各折的驗證表現", "✓ 最推薦"]])}
 
 {info("Pipeline 是紀律，不是語法糖",
       "把 <code>StandardScaler</code> 與模型包成 <code>Pipeline</code> 之後丟進 "
@@ -362,9 +371,12 @@ BODIES["cv"] = f"""
       "你先對整份資料做 <code>StandardScaler().fit_transform(X)</code>，"
       "再 <code>train_test_split</code>，最後回報測試 MSE。這個數字有什麼問題？",
       [(False, "沒問題，標準化不會改變模型的排序",
-        "會有問題。重點不是排序，是<strong>那個數字不再是 out-of-sample 的估計</strong>。"),
-       (True, "它偏樂觀，因為標準化的參數用到了測試集的資訊",
-        "對。測試集的平均與標準差已經透過 scaler 進到訓練流程裡了。"
+        "流程仍有問題。即使某些模型在這個例子中剛好得到相同數字，"
+        "也不能把測試資料納入前處理參數的估計。"),
+       (True, "它不再是嚴格獨立的評估；偏差方向與大小不能只靠『有洩漏』判定",
+        "對。測試集的平均與標準差已經透過 scaler 進到訓練流程裡了，"
+        "因此這個 MSE 不能當成乾淨的 out-of-sample 證據；但不能憑這件事"
+        "直接宣稱它一定降低多少。"
         "正確做法是把 scaler 與模型包成 <code>Pipeline</code>，"
         "讓每一折自己 fit 自己的 scaler。"),
        (False, "應該改用 MinMaxScaler",
@@ -463,7 +475,7 @@ BODIES["reference"] = f"""
       "<strong>2. sklearn 的一切都是 fit / predict / score。</strong>"
       "換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br>"
       "<strong>3. 先切分，再轉換。</strong>"
-      "順序反了，你報告的 out-of-sample 分數就是假的，用 Pipeline 讓自己想犯錯都難。")}
+      "順序反了，那個分數就不再是乾淨的 out-of-sample 評估；用 Pipeline 固定正確順序。")}
 
 {ver_note((3, 5))}
 """
@@ -745,7 +757,7 @@ function w19lkDraw() {
                                                 fill: HC.tok.resid}, g);
     }
     if (st >= 3) {
-      w19lkS.txtPx(310, 250, '測試 MSE 22.9 —— 比真實情況好看，但這個數字沒有意義',
+      w19lkS.txtPx(310, 250, '測試資料已參與前處理參數估計：評估失去獨立性',
                    {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
     }
   } else {
@@ -761,7 +773,7 @@ function w19lkDraw() {
       w19box(w19lkS, g, 428, 106, 152, 52, 'transform', HC.tok.muted, '沿用訓練的參數');
     }
     if (st >= 3) {
-      w19lkS.txtPx(310, 250, '測試 MSE 25.6 —— 難看一點，但它是真的',
+      w19lkS.txtPx(310, 250, '測試資料只套用訓練集學到的轉換：評估仍可解讀',
                    {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
       w19lkS.txtPx(310, 282, 'Pipeline 會在每一折自動做這件事，讓你想犯錯都難',
                    {cls: 'axlab', anchor: 'middle'}, g);
@@ -770,8 +782,8 @@ function w19lkDraw() {
   document.getElementById('w19lkPath').textContent = bad ? '先標準化再切分 ✗' : '先切分再標準化 ✓';
   document.getElementById('w19lkInfo').textContent =
     st >= 2 ? (bad ? '全部資料（含測試集）' : '只有訓練集') : '—';
-  document.getElementById('w19lkScore').textContent =
-    st >= 3 ? (bad ? '22.9（假的）' : '25.6（真的）') : '—';
+  document.getElementById('w19lkValid').textContent =
+    st >= 3 ? (bad ? '否：測試資訊已進入訓練流程' : '是：測試集只用於最後評估') : '—';
   setStatus('w19lkStatus', st === 0
     ? '按「單步」看資料怎麼流。'
     : (bad ? '注意 scaler 是在<b>切分之前</b> fit 的 —— 它看過測試集了。'

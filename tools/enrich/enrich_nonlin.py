@@ -136,7 +136,8 @@ BODIES["poly"] = f"""
      "w08polyStatus", "把滑桿從 1 推到 15，盯著兩端的信賴帶（淡藍）而不是中間的曲線。",
      slider("w08polySl", "次數 d", 1, 15, 1, 4, "4", "w08polySetDeg()")
      + '<button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴帶：開</button>'
-     + '<button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button>')}
+     + '<button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button>',
+     provenance=("course-data", "Wage 全體資料配適與固定 90 筆背景子樣本；曲線、CV MSE 與信賴帶由 generator 計算。"))}
 
   <h3 id="dx-poly">講義完整實作：四次多項式與它的 t 檢定</h3>
 {card("lab 07 · degree 4 多項式（Wage：age → wage）",
@@ -214,7 +215,8 @@ BODIES["step"] = f"""
      '<option value="2">2</option><option value="3">3</option>'
      '<option value="4" selected>4</option><option value="5">5</option>'
      '<option value="6">6</option></select>'
-     '<button class="btn btn-reset" onclick="w08stepReset()">回到分位數切點</button>')}
+     '<button class="btn btn-reset" onclick="w08stepReset()">回到分位數切點</button>',
+     provenance=("course-data", "Wage 資料；初始分位數切點對照 Ch07 lab 儲存格 39，拖動後由同一資料重算。"))}
 
   <h3 id="dx-step">講義完整實作：<code>pd.qcut</code> 切四段</h3>
 {card("lab 07 · 用分位數切點配階梯函數", lab_code(CH, 39), lab_output(CH, 39), src=src(39),
@@ -286,7 +288,8 @@ BODIES["basis"] = f"""
      '<button class="btn btn-toggle" id="w08basisB7" onclick="w08basisToggle(7)">I(x≥ξ₂)</button>'
      '<button class="btn btn-step" onclick="w08basisPreset(\'poly\')">預設：三次多項式</button>'
      '<button class="btn btn-step" onclick="w08basisPreset(\'spline\')">預設：立方樣條</button>'
-     '<button class="btn btn-step" onclick="w08basisPreset(\'step\')">預設：階梯函數</button>')}
+     '<button class="btn btn-step" onclick="w08basisPreset(\'step\')">預設：階梯函數</button>',
+     provenance=("course-data", "Wage 固定子樣本；基底與最小平方配適依 Ch07 lab 的 polynomial／spline／step 表示。"))}
 
   <h3 id="dx-bs0">講義完整實作：把樣條的次數調成 0，就是階梯函數</h3>
 {card("lab 07 · degree=0 的 B-樣條 ≡ 分段常數", lab_code(CH, 53), lab_output(CH, 53),
@@ -361,7 +364,8 @@ BODIES["splines"] = f"""
      '<input type="radio" id="w08knotLv2" name="w08knotLvl" value="2" onchange="w08knotSet(2)"> 一階導數連續</label>'
      '<label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;">'
      '<input type="radio" id="w08knotLv3" name="w08knotLvl" value="3" checked onchange="w08knotSet(3)"> 二階導數連續</label>'
-     '<button class="btn btn-reset" onclick="w08knotReset()">重置（ξ = 50）</button>')}
+     '<button class="btn btn-reset" onclick="w08knotReset()">重置（ξ = 50）</button>',
+     provenance=("course-data", "Wage 固定子樣本上的分段多項式；連續性約束依 ISLP 圖 7.3 即時計算。"))}
 
   <p>那要怎麼真的把約束配進去？不必解限制式最小平方——<strong>換基底就好</strong>。
   從三次多項式的基底 $x, x^2, x^3$ 出發，每個節點加一個<strong>截斷冪基底</strong>
@@ -459,7 +463,8 @@ BODIES["natural"] = f"""
                 '所以這個交換在實務上幾乎總是划算的。')],
      "w08natStatus", "兩條曲線用同樣的三個節點。比較的是兩端信賴帶的寬度。",
      '<button class="btn btn-toggle" id="w08natBandBtn" onclick="w08natToggleBands()">信賴帶：開</button>'
-     '<button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button>')}
+     '<button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button>',
+     provenance=("course-data", "Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴帶。"))}
 
   <p>ISLP 圖 7.7 把這件事推到極端：<strong>15 個自由度的自然樣條 vs 15 次多項式</strong>。
   兩者複雜度相同，但多項式在尾端狂野擺盪，自然樣條還很體面。
@@ -565,7 +570,8 @@ BODIES["smooth"] = f"""
      "w08lamStatus", "推滑桿改有效自由度。df = 2 是直線，df 愈大愈抖。",
      slider("w08lamSl", "df", 0, 9, 1, 3, "5.0", "w08lamSet()")
      + '<button class="btn btn-toggle" id="w08lamPickBtn" onclick="w08lamTogglePick()">GCV 選出的曲線：開</button>'
-     + '<button class="btn btn-reset" onclick="w08lamReset()">回到 df = 5</button>')}
+     + '<button class="btn btn-reset" onclick="w08lamReset()">回到 df = 5</button>',
+     provenance=("course-data", "Wage 全體資料的 smoothing spline／pygam gridsearch；GCV、λ 與有效 df 由 generator 計算。"))}
 
 {qa("觀念釐清", [
     ("Q：「自由度」在這一章出現了三次，它們是同一回事嗎？",
@@ -652,11 +658,12 @@ BODIES["loess"] = f"""
                 '<strong>2. 維度一高就垮：</strong>p 超過 3 或 4，x₀ 附近幾乎找不到點'
                 '（跟第 3 章 KNN 的維度詛咒同一個病）。所以局部迴歸主要用在 1～2 維，'
                 '或者當 GAM 的單變數積木。')],
-     "w08loessStatus", "推滑桿改 span，按「開始」讓 x₀ 從左掃到右，曲線一點一點長出來。",
+     "w08loessStatus", "直接調 span 與 x₀，看鄰域、權重、局部斜率與配適值怎麼一起變。",
      slider("w08loessSl", "span s", 10, 90, 5, 30, "0.30", "w08loessSetSpan()", "200px")
-     + '<button class="btn btn-play" onclick="w08loessStart()">▶ 開始</button>'
-     '<button class="btn btn-step" onclick="w08loessPlayer &amp;&amp; w08loessPlayer.step()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w08loessReset()">重置</button>')}
+     + slider("w08loessXSl", "目標點 x₀", 20, 77, 1, 49, "49", "w08loessSetX0()", "200px")
+     + '<button class="btn btn-play" onclick="w08loessStart()">▶ 自動掃描（可選）</button>'
+     '<button class="btn btn-reset" onclick="w08loessReset()">重置</button>',
+     provenance=("course-data", "Wage 固定 90 筆子樣本；tricube 權重與局部線性最小平方由瀏覽器即時計算。"))}
 
 {table(["span s", "鄰域", "曲線", "ISLP 圖 7.10 標的有效自由度"],
        [["0.2", "20% 的資料", "抖，跟著局部起伏", "16.4"],
@@ -749,7 +756,8 @@ BODIES["gam"] = f"""
      "w08gamStatus", "推兩個滑桿改 age 與 year 的自由度，右邊看模型整體的成績怎麼變。",
      slider("w08gamAgeSl", "age df", 0, 5, 1, 3, "5.0", "w08gamSet()", "200px")
      + slider("w08gamYearSl", "year df", 0, 4, 1, 3, "5.0", "w08gamSet()", "200px")
-     + '<button class="btn btn-reset" onclick="w08gamReset()">回到 lab 的設定</button>')}
+     + '<button class="btn btn-reset" onclick="w08gamReset()">回到 lab 的設定</button>',
+     provenance=("course-data", "Wage 的 year／age／education GAM；曲線、信賴帶與整體指標由 generator 計算。"))}
 
 {table(["GAM 的優點 ✔", "GAM 的限制 ✘"],
        [["每個 $X_j$ 各配一個非線性 $f_j$，不必手動試變換", "<strong>模型被限制成加法的</strong>，變數多的時候會漏掉重要的交互作用"],
@@ -1314,7 +1322,7 @@ function w08knotDraw() {
 function w08knotSet(lv) { w08knotLevel = lv; w08knotDraw(); }
 function w08knotReset() {
   w08knotXi = 50; w08knotLevel = 3;
-  const r = $('w08knotR3'); if (r) r.checked = true;
+  const r = $('w08knotLv3'); if (r) r.checked = true;
   w08knotDraw();
 }
 
@@ -1438,6 +1446,7 @@ function w08lamReset() { $('w08lamSl').value = '3'; w08lamDraw(); }
 /* ---------- P07 局部迴歸的 span 掃描器（live） ---------- */
 let w08loessSvc = null, w08loessPlayer = null;
 function w08loessSpan() { return parseInt($('w08loessSl').value, 10) / 100; }
+function w08loessX0() { return parseFloat($('w08loessXSl').value); }
 function w08loessSetup() {
   w08loessSvc = HC.svg('w08loessSvg', { xd: w08sub.xd, yd: w08sub.yd, h: 340 });
   w08loessSvc.grid(6, 5, { xtitle: 'age（歲）', ytitle: 'wage（千美元）', xdec: 0, ydec: 0 });
@@ -1505,6 +1514,8 @@ function w08loessApply(f) {
   $('w08loessSpanTxt').textContent = HC.fmt(span, 2);
   $('w08loessK').textContent = r.k + ' / ' + w08sub.n;
   $('w08loessX0').textContent = HC.fmt(f.x0, 1);
+  $('w08loessXSl').value = String(Math.round(f.x0));
+  $('w08loessXSlVal').textContent = HC.fmt(f.x0, 1);
   $('w08loessB1').textContent = HC.fmt(r.b1, 3);
   $('w08loessFhat').textContent = HC.fmt(r.fit, 1);
   setStatus('w08loessStatus', 'x₀ = ' + HC.fmt(f.x0, 1) + '：取最近的 ' + r.k
@@ -1517,22 +1528,28 @@ function w08loessStart() {
   w08loessPlayer.reset();
   w08loessPlayer.play();
 }
+function w08loessShowX0() {
+  if (w08loessPlayer) w08loessPlayer.stop();
+  const x0 = w08loessX0(), span = w08loessSpan(), r = w08loessAt(x0, span);
+  w08loessApply({ j: 0, x0: x0, span: span, r: r, path: [] });
+  $('w08loessXSlVal').textContent = HC.fmt(x0, 0);
+}
 function w08loessReset() {
   if (w08loessPlayer) w08loessPlayer.stop();
-  const frames = w08loessFrames();
-  w08loessPlayer = new Player({ frames: frames, apply: w08loessApply });
-  /* 哨兵狀態也要是合法的 frame：畫最左邊那一格，但路徑只有它自己 */
-  const f0 = frames[0];
-  w08loessApply({ j: 0, x0: f0.x0, span: f0.span, r: f0.r, path: [[f0.x0, f0.r.fit]] });
+  $('w08loessSl').value = '30';
+  $('w08loessXSl').value = '49';
+  $('w08loessSlVal').textContent = '0.30';
+  $('w08loessXSlVal').textContent = '49';
+  w08loessShowX0();
   hlLine('w08loessCode', 1);
-  setStatus('w08loessStatus', 'span = ' + HC.fmt(w08loessSpan(), 2)
-    + '。淡紅細線是這個 span 配出來的完整曲線；按「開始」讓 x₀ 從左掃到右，'
-    + '粗紅線會一點一點長成它。');
+  setStatus('w08loessStatus', 'span = 0.30、x₀ = 49。直接拖任一滑桿比較鄰域與局部斜率；'
+    + '「自動掃描」只是一個可選的總覽。');
 }
 function w08loessSetSpan() {
   $('w08loessSlVal').textContent = HC.fmt(w08loessSpan(), 2);
-  w08loessReset();
+  w08loessShowX0();
 }
+function w08loessSetX0() { w08loessShowX0(); }
 
 /* ---------- P08 GAM 三面板（baked：FRAMES_w08gam） ---------- */
 function w08gamPanel(cid, xs, cur, xtitle, dash) {

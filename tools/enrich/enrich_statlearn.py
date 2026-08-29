@@ -140,23 +140,24 @@ BODIES["irreducible"] = f"""
                 '真實的 f（綠色虛線）<strong>固定不動</strong>，只有雜訊的 σ 在變。'
                 '綠色淡帶是 f ± σ 的範圍。拖滑桿把 σ 拉大，看點雲怎麼變胖——'
                 '而 f 一動也沒動。', "ISLP 式 2.3"),
-      rows_card("兩種誤差的即時對帳",
+      rows_card("期望測試誤差的對帳",
                 [("σ（雜訊的標準差）", "1.0", "w02irrSigma"),
                  ("Var(ε) = σ² ← 下限", "1.00", "w02irrVar"),
-                 ("用完美的 f̂ = f 算 MSE", "—", "w02irrPerfect"),
-                 ("用線性 f̂ 算 MSE", "—", "w02irrLin"),
-                 ("差額 ＝ 可縮減部分", "—", "w02irrGap")]),
+                 ("完美 f 的期望測試 MSE", "—", "w02irrPerfect"),
+                 ("線性 f̂ 的期望測試 MSE", "—", "w02irrLin"),
+                 ("獨立測試網格上的可縮減部分", "—", "w02irrGap")]),
       info_card("重點在哪一行",
-                '看「用完美的 f̂ = f 算 MSE」那一行：它<strong>永遠在 σ² 附近抖動，'
-                '不會趨近 0</strong>。這就是不可縮減誤差。線性 f̂ 那一行比它高出來的部分，'
-                '才是你努力可以拿回來的。')],
+                '這裡不再拿配適線性模型的同一批訓練點算 MSE。'
+                '線性模型先在訓練樣本上配適，再到<strong>獨立而密集的 x 網格</strong>計算'
+                '$E[(Y-\\hat f(X))^2]=\\sigma^2+E[(f(X)-\\hat f(X))^2]$。')],
      "w02irrStatus", "拖動 σ 滑桿，看不可縮減下限跟著抬高。",
      '<div class="slider-row" style="flex:1;min-width:190px;">'
      '<span class="slider-label">σ</span>'
      '<input type="range" id="w02irrSig" min="0.2" max="2" step="0.1" value="1" '
      'oninput="w02irrDraw()">'
      '<span class="slider-val" id="w02irrSigVal">1.0</span></div>'
-     '<button class="btn btn-toggle" onclick="w02irrToggleLin()">切換線性 f̂</button>')}
+     '<button class="btn btn-toggle" onclick="w02irrToggleLin()">切換線性 f̂</button>',
+     provenance=("simulation", "固定訓練樣本；期望誤差在獨立 x 網格上計算"))}
 
   <p>講義第 12–15 頁接著問：那要怎麼估 $E[Y \\mid X = x]$？最直覺的辦法是
   <strong>最近鄰平均</strong>（nearest neighbor averaging）。把 $x$ 附近一小塊區域裡的
@@ -293,27 +294,6 @@ BODIES["tradeoff"] = f"""
   ISLP 的回答很直接——<strong>令人意外的是，用比較不彈性的方法常常反而預測更準。</strong>
   原因是過度配適，下一節就會用數字說清楚。</p>
 
-{viz(svg("w02mapSvg", 340),
-     [info_card("怎麼玩這個元件",
-                '點任何一個方法看它的定位與所在章節。'
-                '兩個按鈕分別框出「做推論該待的區域」與「只求預測可以走的區域」。'
-                '注意這張圖是<strong>示意</strong>，位置取自 ISLP 圖 2.7 的相對關係，'
-                '不是量出來的座標。', "ISLP 圖 2.7"),
-      rows_card("目前選到的方法",
-                [("方法", "最小平方線性迴歸", "w02mapName"),
-                 ("本書章節", "第 3 章", "w02mapCh"),
-                 ("彈性", "低", "w02mapFlex"),
-                 ("可解釋性", "高", "w02mapInterp")]),
-      info_card("Lasso 為什麼比最小平方「更不彈性」",
-                'lasso（第 6 章）用的還是線性模型，但它的配適方式更受限，'
-                '會把一部分係數<strong>壓成剛好 0</strong>。'
-                '模型能生出的形狀變少（彈性更低），而最終模型只牽涉少數幾個變數'
-                '（可解釋性更高）。')],
-     "w02mapStatus", "點圖上的方法，或按下方按鈕看兩種目的各該待在哪一區。",
-     '<button class="btn btn-toggle" onclick="w02mapShow(\'infer\')">推論優先</button>'
-     '<button class="btn btn-toggle" onclick="w02mapShow(\'pred\')">預測優先</button>'
-     '<button class="btn btn-reset" onclick="w02mapShow(\'all\')">看全部</button>')}
-
 {info("三個「選不彈性的」正當理由", '''<strong>1. 要做推論：</strong>
   線性模型能直接回答「TV 廣告每多花一千元，銷售大約多幾單位」。
   提升法給不出這種句子。<br>
@@ -383,7 +363,8 @@ BODIES["mse"] = f"""
      "w02flexStatus", "按三個按鈕切換彈性，看訓練 MSE 與測試 MSE 各自往哪裡走。",
      '<button class="btn btn-toggle" onclick="w02flexSet(2)">線性（df 2）</button>'
      '<button class="btn btn-toggle" onclick="w02flexSet(6)">中等彈性（df 6）</button>'
-     '<button class="btn btn-toggle" onclick="w02flexSet(25)">過度彈性（df 25）</button>')}
+     '<button class="btn btn-toggle" onclick="w02flexSet(25)">過度彈性（df 25）</button>',
+     provenance=("simulation", "固定種子模擬；對照 ISLP 圖 2.9"))}
 
 {info("這張圖的三個一定要看懂的地方", '''<strong>1. 訓練 MSE 從 3.43 一路掉到 0.48，</strong>
   單調下降，沒有轉折。它永遠獎勵更多彈性。<br>
@@ -493,7 +474,8 @@ BODIES["biasvar"] = f"""
      "w02bvStatus", "切換三個情境：真實 f 的形狀怎麼改變最佳彈性度。",
      '<button class="btn btn-toggle" onclick="w02bvSet(\'A\')">中度非線性</button>'
      '<button class="btn btn-toggle" onclick="w02bvSet(\'B\')">接近線性</button>'
-     '<button class="btn btn-toggle" onclick="w02bvSet(\'C\')">高度非線性</button>')}
+     '<button class="btn btn-toggle" onclick="w02bvSet(\'C\')">高度非線性</button>',
+     provenance=("simulation", "固定種子蒙地卡羅 M=300；對照 ISLP 圖 2.12"))}
 
 {info("三個情境的最佳 df 分別是 2、7、18", '''這就是 ISLP 圖 2.12 想講的唯一一件事：
   <strong>沒有一個放諸四海皆準的彈性度。</strong><br>
@@ -638,7 +620,8 @@ BODIES["bayes"] = f"""
      '<span class="slider-label">σ</span>'
      '<input type="range" id="w02bayesS" min="0.4" max="1.6" step="0.05" value="1" '
      'oninput="w02bayesDraw()">'
-     '<span class="slider-val" id="w02bayesSVal">1.00</span></div>')}
+     '<span class="slider-val" id="w02bayesSVal">1.00</span></div>',
+     provenance=("book-redraw", "依講義式 2.11 的兩類常態模型重繪"))}
 
   <h3>KNN：不知道真實機率時的替代方案</h3>
 
@@ -672,7 +655,8 @@ BODIES["bayes"] = f"""
      "w02knnStatus", "切換 K，看決策區域與 Bayes 邊界（紫色虛線）差多少。",
      '<button class="btn btn-toggle" onclick="w02knnSet(1)">K = 1</button>'
      '<button class="btn btn-toggle" onclick="w02knnSet(10)">K = 10</button>'
-     '<button class="btn btn-toggle" onclick="w02knnSet(100)">K = 100</button>')}
+     '<button class="btn btn-toggle" onclick="w02knnSet(100)">K = 100</button>',
+     provenance=("simulation", "固定種子模擬；對照 ISLP 圖 2.15–2.16"))}
 
 {info("Bayes 錯誤率算不出來，那講它有什麼用", '''<strong>1. 它定義了「盡力了」的意思。</strong>
   測試錯誤率已經逼近估計的 Bayes 錯誤率時，再換模型是浪費時間，該回頭找新變數——
@@ -683,30 +667,8 @@ BODIES["bayes"] = f"""
   Bayes 分類器的形式是「比較條件機率的大小」，所以第 4 章的邏輯斯迴歸、LDA、Naive Bayes
   全都在做同一件事：各用不同的假設去估那個條件機率，再套上同一個「取最大」的規則。''')}
 
-  <p>把所有的 $K$ 一次畫出來，就是 ISLP 圖 2.17 的形狀——
-  跟迴歸那邊的訓練／測試 MSE 圖<strong>一模一樣的故事</strong>：</p>
-
-{viz(chart("w02kerrChart", "tall",
-           "。此圖的重點：橫軸是 1/K（往右愈有彈性）。訓練錯誤率在 K = 1 時是 0 並隨彈性下降，"
-           "測試錯誤率卻是 U 型，最低點在 K = 50 附近，而且永遠碰不到 Bayes 錯誤率 0.1382。"),
-     [info_card("怎麼看這張圖",
-                '橫軸是 $1/K$（對數刻度），<strong>往右愈有彈性</strong>。'
-                '藍線是訓練錯誤率、紅線是測試錯誤率、灰色虛線是 Bayes 錯誤率。'
-                '注意最右端（K = 1）：訓練錯誤率是 <strong>0</strong>，測試錯誤率卻最差。',
-                "ISLP 圖 2.17"),
-      rows_card("讀出來的數字",
-                [("最佳 K", "—", "w02kerrBest"),
-                 ("最佳的測試錯誤率", "—", "w02kerrLow"),
-                 ("K = 1 的測試錯誤率", "—", "w02kerrK1"),
-                 ("K = 150 的測試錯誤率", "—", "w02kerrK150"),
-                 ("Bayes 錯誤率", "0.1382", "w02kerrBayes")]),
-      info_card("跟課本數字對一下",
-                'ISLP 圖 2.15–2.17 用的是它自己的模擬資料，報告的是 '
-                'Bayes 0.1304、K = 10 為 0.1363、K = 1 為 0.1695、K = 100 為 0.1925。'
-                '本頁是<strong>另一份</strong>模擬（種子與參數寫在 <code>meta</code> 裡），'
-                '所以數字不同，但<strong>形狀與量級一致</strong>，那才是重點。')],
-     "w02kerrStatus", "訓練錯誤率隨彈性單調下降，測試錯誤率是 U 型。",
-     '<button class="btn btn-toggle" onclick="w02kerrToggleLog()">切換 x 軸刻度</button>')}
+  <p>KNN 元件已經同時列出 K = 1、10、100 的訓練與獨立測試錯誤，足以看見
+  「訓練誤差偏好高彈性、測試誤差不一定」的故事；不再重複放一張只把同一批數字連成線的圖。</p>
 
   <h3 id="dx-bool">講義完整實作：錯誤率其實就是布林陣列取平均</h3>
 
@@ -950,9 +912,14 @@ function w02irrDraw() {
   s.area(band, { cls: 'aux', fill: 'rgba(26,107,74,.12)' }, g);
   s.poly(band.map(p => [p[0], (p[1] + p[2]) / 2]), { cls: 'truef' }, g);
   const ys = w02irrX.map((x, i) => w02irrF(x) + sig * w02irrZ[i]);
-  const perfect = HC.stat.mean(w02irrX.map((x, i) => (ys[i] - w02irrF(x)) ** 2));
   const fit = HC.stat.ols(w02irrX, ys);
-  const lin = HC.stat.mean(w02irrX.map((x, i) => (ys[i] - fit.b0 - fit.b1 * x) ** 2));
+  // 在獨立的密集 x 網格上積分，而不是把模型拿回訓練點自評。
+  // 條件於目前這個已配適的 f-hat，期望測試 MSE = sigma^2 + approximation error。
+  const xTest = HC.stat.seq(0, 10, 401);
+  const reducible = HC.stat.mean(xTest.map(x =>
+    (w02irrF(x) - (fit.b0 + fit.b1 * x)) ** 2));
+  const perfect = sig * sig;
+  const lin = perfect + reducible;
   if (w02irrShowLin) {
     s.poly([[0, fit.b0], [10, fit.b0 + fit.b1 * 10]], { cls: 'fit' }, g);
   }
@@ -965,87 +932,11 @@ function w02irrDraw() {
   $('w02irrVar').textContent = HC.fmt(sig * sig, 2);
   $('w02irrPerfect').textContent = HC.fmt(perfect, 2);
   $('w02irrLin').textContent = HC.fmt(lin, 2);
-  $('w02irrGap').textContent = HC.fmt(lin - perfect, 2);
+  $('w02irrGap').textContent = HC.fmt(reducible, 2);
   setStatus('w02irrStatus', 'σ = ' + HC.fmt(sig, 1) + ' ⇒ 不可縮減下限 Var(ε) = '
-    + HC.fmt(sig * sig, 2) + '。就算 f̂ 完全等於 f，MSE 也只到 ' + HC.fmt(perfect, 2)
-    + '；線性 f̂ 是 ' + HC.fmt(lin, 2) + '，多出來的 ' + HC.fmt(lin - perfect, 2)
-    + ' 才是可縮減的部分。');
-}
-
-/* ---------- P02 彈性 ↔ 可解釋性（ISLP 圖 2.7 的示意圖，live） ---------- */
-const w02mapPts = [
-  { n: '子集選擇', f: 0.10, i: 0.94, ch: '第 6 章', side: 'r' },
-  { n: 'Lasso', f: 0.17, i: 0.87, ch: '第 6 章', side: 'r' },
-  { n: '最小平方線性迴歸', f: 0.33, i: 0.71, ch: '第 3 章', side: 'r' },
-  { n: '廣義加法模型 GAM', f: 0.50, i: 0.54, ch: '第 7 章', side: 'r' },
-  { n: '決策樹', f: 0.58, i: 0.46, ch: '第 8 章', side: 'r' },
-  { n: 'Bagging、Boosting', f: 0.75, i: 0.28, ch: '第 8 章', side: 'l' },
-  { n: '支持向量機 SVM', f: 0.84, i: 0.18, ch: '第 9 章', side: 'l' },
-  { n: '深度學習', f: 0.93, i: 0.08, ch: '第 10 章', side: 'l' },
-];
-let w02mapSvc = null;
-let w02mapSel = 2;
-let w02mapMode = 'all';
-function w02mapSetup() {
-  w02mapSvc = HC.svg('w02mapSvg', {
-    xd: [0, 1], yd: [0, 1], h: 340, pad: { l: 52, r: 20, t: 26, b: 40 },
-  });
-}
-function w02mapPick(k) {
-  w02mapSel = k;
-  const p = w02mapPts[k];
-  $('w02mapName').textContent = p.n;
-  $('w02mapCh').textContent = p.ch;
-  $('w02mapFlex').textContent = p.f < 0.35 ? '低' : (p.f < 0.65 ? '中' : '高');
-  $('w02mapInterp').textContent = p.i > 0.65 ? '高' : (p.i > 0.35 ? '中' : '低');
-  w02mapDraw();
-  setStatus('w02mapStatus', p.n + '（' + p.ch + '）：彈性 '
-    + $('w02mapFlex').textContent + '、可解釋性 ' + $('w02mapInterp').textContent
-    + '。' + (p.i > 0.6 ? '想做推論就從這一端挑。'
-      : (p.i < 0.4 ? '只求預測準時才值得付出解釋力的代價。'
-        : '中段：非線性配得起來，每個變數的效果還講得出來。')));
-}
-function w02mapShow(mode) {
-  w02mapMode = mode;
-  w02mapDraw();
-  setStatus('w02mapStatus', mode === 'infer'
-    ? '推論優先：待在可解釋性高的那一區（左上）。線性模型能直接說出「多花一千元多賣幾單位」。'
-    : (mode === 'pred'
-      ? '預測優先：可以往彈性高的那一區走（右下），但要小心過度配適——彈性不等於更準。'
-      : '全部八個方法。一般趨勢：彈性愈高、可解釋性愈低。點任一個看它的定位。'));
-}
-function w02mapDraw() {
-  const s = w02mapSvc;
-  if (!s) return;
-  s.grid(4, 4, { xtitle: '彈性（低 → 高）', ytitle: '可解釋性（低 → 高）',
-                 xfmt: () => '', yfmt: () => '' });
-  const g = s.clearLayer('main');
-  if (w02mapMode === 'infer') {
-    s.box(0, 0.5, 0.45, 1, { fill: 'rgba(26,107,74,.13)', rx: 6 }, g);
-    s.txtPx(s.X(0.02), s.Y(0.97) + 14, '推論該待的區域', { cls: 'axtitle' }, g);
-  } else if (w02mapMode === 'pred') {
-    s.box(0.55, 0, 1, 0.5, { fill: 'rgba(192,57,43,.13)', rx: 6 }, g);
-    s.txtPx(s.X(0.57), s.Y(0.44), '只求預測可以走的區域', { cls: 'axtitle' }, g);
-  }
-  s.poly([[0.05, 0.97], [0.97, 0.03]],
-         { cls: 'aux', stroke: HC.tok.muted, sw: 1.2, dash: '5 5' }, g);
-  w02mapPts.forEach((p, k) => {
-    const on = k === w02mapSel;
-    const node = s.dot(p.f, p.i, {
-      r: on ? 8 : 5.5, fill: on ? HC.tok.accent : HC.tok.accent2,
-      stroke: '#fff', sw: 1.6,
-    }, g);
-    node.style.cursor = 'pointer';
-    node.addEventListener('click', () => w02mapPick(k));
-    const t = s.txt(p.f, p.i, p.n, {
-      dx: p.side === 'r' ? 12 : -12, dy: 4,
-      anchor: p.side === 'r' ? 'start' : 'end',
-    }, g);
-    t.style.fill = on ? HC.tok.accent : HC.tok.ink;
-    t.style.fontWeight = on ? '700' : '500';
-    t.style.cursor = 'pointer';
-    t.addEventListener('click', () => w02mapPick(k));
-  });
+    + HC.fmt(sig * sig, 2) + '。在獨立 x 網格上，完美 f 的期望測試 MSE 是 '
+    + HC.fmt(perfect, 2) + '；目前線性 f̂ 的期望測試 MSE 是 ' + HC.fmt(lin, 2)
+    + '，其中 ' + HC.fmt(reducible, 2) + ' 是可縮減部分。');
 }
 
 /* ---------- P04 同資料三種擬合（baked，ISLP 圖 2.9） ---------- */
@@ -1217,44 +1108,6 @@ function w02knnDraw() {
     + '，Bayes 下限 ' + HC.fmt(F.bayesErr, 4) + '。' + tag + '。');
 }
 
-/* ---------- P06 訓練／測試錯誤率對 1/K（baked，ISLP 圖 2.17） ---------- */
-let w02kerrLog = true;
-function w02kerrToggleLog() { w02kerrLog = !w02kerrLog; w02kerrDraw(); }
-function w02kerrDraw() {
-  const F = FRAMES_w02kerr;
-  const order = F.invk.map((v, i) => i).sort((a, b) => F.invk[a] - F.invk[b]);
-  const pts = arr => order.map(i => ({ x: F.invk[i], y: arr[i] }));
-  HC.line('w02kerrChart', {
-    datasets: [
-      { label: '訓練錯誤率', data: pts(F.train), borderColor: HC.tok.accent2,
-        backgroundColor: HC.tok.accent2, borderWidth: 2.4, pointRadius: 3, fill: false },
-      { label: '測試錯誤率', data: pts(F.test), borderColor: HC.tok.test,
-        backgroundColor: HC.tok.test, borderWidth: 2.8, pointRadius: 3.4, fill: false },
-    ],
-  }, {
-    scales: {
-      x: {
-        type: w02kerrLog ? 'logarithmic' : 'linear',
-        min: w02kerrLog ? 0.006 : 0, max: 1.1,
-        title: { display: true, text: '1 / K（往右愈有彈性）' },
-      },
-      y: { min: 0, max: 0.3, title: { display: true, text: '錯誤率' } },
-    },
-  });
-  const c = HC.get('w02kerrChart');
-  HC.refs(c, [HC.hline(F.bayesErr, 'Bayes 錯誤率 ' + HC.fmt(F.bayesErr, 4))]);
-  const lo = Math.min(...F.test);
-  $('w02kerrBest').textContent = String(F.bestK);
-  $('w02kerrLow').textContent = HC.fmt(lo, 4);
-  $('w02kerrK1').textContent = HC.fmt(F.test[0], 4);
-  $('w02kerrK150').textContent = HC.fmt(F.test[F.test.length - 1], 4);
-  $('w02kerrBayes').textContent = HC.fmt(F.bayesErr, 4);
-  setStatus('w02kerrStatus', 'x 軸目前是' + (w02kerrLog ? '對數' : '線性')
-    + '刻度。訓練錯誤率在 K = 1（最右）掉到 0，測試錯誤率卻在那裡最差（'
-    + HC.fmt(F.test[0], 4) + '）；最佳 K = ' + F.bestK + '（' + HC.fmt(lo, 4)
-    + '），仍高於 Bayes 下限 ' + HC.fmt(F.bayesErr, 4) + '。');
-}
-
 /* ---------- P06 一維兩類密度與 Bayes 錯誤率（live） ---------- */
 let w02bayesSvc = null;
 function w02bayesSetup() {
@@ -1298,9 +1151,6 @@ function w02bayesDraw() {
 /* ---------- 啟動 ---------- */
 w02irrSetup();
 w02irrDraw();
-w02mapSetup();
-w02mapPick(2);
-w02mapShow('all');
 w02flexSetup();
 w02flexDraw();
 w02knnSetup();
@@ -1309,7 +1159,6 @@ w02bayesSetup();
 w02bayesDraw();
 HC.ready(() => {
   w02bvDraw();
-  w02kerrDraw();
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */

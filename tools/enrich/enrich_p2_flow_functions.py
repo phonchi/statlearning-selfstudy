@@ -56,7 +56,7 @@ BODIES["prologue"] = f"""
                 "按「改需求」看「要多試一個次數」這件事在兩邊分別要動幾個地方。"),
       rows_card("目前",
                 [("寫法", "複製貼上", "w15whyKind"),
-                 ("總行數", "—", "w15whyLines"),
+                 ("邏輯有幾份", "—", "w15whyCopies"),
                  ("要改幾個地方", "—", "w15whyEdits")]),
       info_card("這不是美觀問題",
                 "統計程式最怕的錯誤是<strong>沉默的錯</strong>——"
@@ -66,7 +66,8 @@ BODIES["prologue"] = f"""
      '<button class="btn btn-toggle" onclick="w15whySet(0)">複製貼上</button>'
      '<button class="btn btn-toggle" onclick="w15whySet(1)">函式 ＋ 迴圈</button>'
      '<button class="btn btn-step" onclick="w15whyEdit()">改需求：多試一個次數</button>'
-     '<button class="btn btn-reset" onclick="w15whyReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w15whyReset()">重置</button>',
+     provenance=("course-data", "比較 Ch05 lab 的 evalMSE 函式與逐次複製同一分析的維護差異；不以假想行數計量。"))}
 
 {quiz("qWhy", "PART 00 · 自我檢測",
       "同一段分析程式碼在 notebook 裡複製了三次。最大的風險是什麼？",
@@ -109,7 +110,8 @@ BODIES["cond"] = f"""
      '<button class="btn btn-toggle" onclick="w15blSet(0)">year &gt; 80</button>'
      '<button class="btn btn-toggle" onclick="w15blSet(1)">mpg &gt; 30</button>'
      '<button class="btn btn-toggle" onclick="w15blSet(2)">兩者皆是（&amp;）</button>'
-     '<button class="btn btn-toggle" onclick="w15blSet(3)">任一成立（|）</button>')}
+     '<button class="btn btn-toggle" onclick="w15blSet(3)">任一成立（|）</button>',
+     provenance=("course-data", "依 Ch02 lab 的 Auto 條件篩選語法重繪。"))}
 
 {card("一個條件", C(2, 226), O(2, 226), src=S(2, 226),
       note="先算出一整排 True／False，再拿它去 <code>loc</code> 選列。")}
@@ -165,7 +167,8 @@ BODIES["loop"] = f"""
      "w15lpStatus", "按「單步」跟著跑一次。",
      '<button class="btn btn-step" onclick="w15lpStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w15lpPlay()">▶ 連續播</button>'
-     '<button class="btn btn-reset" onclick="w15lpReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w15lpReset()">重置</button>',
+     provenance=("course-data", "依 Ch02 lab 的累加迴圈逐步呈現。"))}
 
 {card("最基本的累加迴圈", C(2, 236), O(2, 236), src=S(2, 236),
       note="<code>total += value</code> 是 <code>total = total + value</code> 的簡寫。"
@@ -224,7 +227,8 @@ BODIES["func"] = f"""
      "w15fnStatus", "按「單步」走一次課程 lab 的 evalMSE。",
      '<button class="btn btn-step" onclick="w15fnStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w15fnPlay()">▶ 連續播</button>'
-     '<button class="btn btn-reset" onclick="w15fnReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w15fnReset()">重置</button>',
+     provenance=("course-data", "依 Ch05 lab 的 evalMSE 函式資料流重繪。"))}
 
 {card("再看一次 evalMSE", C(5, 24), src=S(5, 24),
       note="四個參數、四個步驟、一個回傳值。"
@@ -284,7 +288,8 @@ BODIES["scope"] = f"""
      "w15scStatus", "三個情境，看名字的可見範圍。",
      '<button class="btn btn-toggle" onclick="w15scSet(0)">函式讀外面的變數</button>'
      '<button class="btn btn-toggle" onclick="w15scSet(1)">函式裡指派同名變數</button>'
-     '<button class="btn btn-toggle" onclick="w15scSet(2)">可變預設值的陷阱</button>')}
+     '<button class="btn btn-toggle" onclick="w15scSet(2)">可變預設值的陷阱</button>',
+     provenance=("illustrative", "自訂小例子，用來比較 Python 名稱作用域與可變預設值。"))}
 
 {info("為什麼 seed 要當參數",
       "<code>boot_SE(..., seed=0)</code> 把種子做成參數而不是寫死在函式裡，"
@@ -328,7 +333,8 @@ BODIES["err"] = f"""
                 "<code>ValueError</code> 型別對但值不合理（形狀對不上多半是這個）。")],
      "w15erStatus", "按「單步」從最後一行往上讀。",
      '<button class="btn btn-step" onclick="w15erStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w15erReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w15erReset()">重置</button>',
+     provenance=("illustrative", "自訂 traceback，用來練習由錯誤末行往上定位。"))}
 
 {info("try / except 不是拿來蓋住錯誤的",
       "<code>try: ... except: pass</code> 會把錯誤吞掉，讓程式帶著錯誤的狀態繼續跑——"
@@ -464,7 +470,6 @@ function w15whyDraw() {
   const g = w15whyS.clearLayer('main');
   const copy = w15whyMode === 0;
   const n = copy ? (w15whyEdited ? 4 : 3) : 1;
-  const lines = copy ? 8 * n : (8 + 3);
   w15whyS.txtPx(24, 34, copy ? '複製貼上：每一種次數各一份' : '一個函式 ＋ 一個迴圈',
                 {cls: 'axtitle', fill: copy ? HC.tok.resid : HC.tok.accent2}, g);
   if (copy) {
@@ -501,9 +506,9 @@ function w15whyDraw() {
                   {cls: 'axlab', anchor: 'middle'}, g);
   }
   document.getElementById('w15whyKind').textContent = copy ? '複製貼上' : '函式 ＋ 迴圈';
-  document.getElementById('w15whyLines').textContent = lines + ' 行';
+  document.getElementById('w15whyCopies').textContent = copy ? n + ' 份' : '1 份';
   document.getElementById('w15whyEdits').textContent = w15whyEdited
-    ? (copy ? '複製整段第 4 份（8 行）' : '改一個數字（1 個字）') : '—';
+    ? (copy ? '新增一份副本，之後每份都要同步' : '只改迴圈的範圍') : '—';
   setStatus('w15whyStatus', w15whyEdited
     ? (copy ? '要多試一個次數，得<b>再複製一整段</b>，而且四份都要記得同步維護。'
             : '要多試一個次數，只改 <b>range 的那個數字</b>。')

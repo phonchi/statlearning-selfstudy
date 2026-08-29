@@ -58,7 +58,8 @@ BODIES["prologue"] = f"""
                 "陣列規定<strong>整塊都是同一個型別</strong>，才談得上逐元素運算。")],
      "w16laStatus", "按「切換」看同一組數字在兩種容器裡的行為。",
      '<button class="btn btn-step" onclick="w16laTog()">切換：串列 ⇄ 陣列</button>'
-     '<button class="btn btn-reset" onclick="w16laReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w16laReset()">重置</button>',
+     provenance=("course-data", "依 Ch02 lab 的 list 與 ndarray 加法結果重繪。"))}
 
 {card("串列的 + 是串接", C(21, 23), O(23), src=S(21, 23),
       note="注意輸出是 <code>[3, 4, 5, 4, 9, 7]</code>，六個元素，不是三個。")}
@@ -145,7 +146,8 @@ BODIES["reshape"] = f"""
      '<button class="btn btn-toggle" onclick="w16rsSet(1,6)">(6,)</button>'
      '<button class="btn btn-toggle" onclick="w16rsSet(2,3)">(2, 3)</button>'
      '<button class="btn btn-toggle" onclick="w16rsSet(3,2)">(3, 2)</button>'
-     '<button class="btn btn-toggle" onclick="w16rsSet(6,1)">(6, 1)</button>')}
+     '<button class="btn btn-toggle" onclick="w16rsSet(6,1)">(6, 1)</button>',
+     provenance=("course-data", "依 Ch02 lab 的 reshape/view 範例重繪；六個數值共享同一資料順序。"))}
 
 {card("reshape 成兩列三欄", C(54), O(54), src=S(54))}
 
@@ -212,7 +214,8 @@ BODIES["index"] = f"""
      '<button class="btn btn-toggle" onclick="w16idxSet(2)">A[:,[0,2]]</button>'
      '<button class="btn btn-toggle" onclick="w16idxSet(3)">A[[1,3],[0,2]]</button>'
      '<button class="btn btn-toggle" onclick="w16idxSet(4)">np.ix_([1,3],[0,2])</button>'
-     '<button class="btn btn-toggle" onclick="w16idxSet(5)">A[1:4:2,0:3:2]</button>')}
+     '<button class="btn btn-toggle" onclick="w16idxSet(5)">A[1:4:2,0:3:2]</button>',
+     provenance=("course-data", "依 Ch02 lab 的 4×4 陣列、花式索引與 np.ix_ 結果重繪。"))}
 
 {card("先做一個 4×4 的 A", C(138), O(138), src=S(138))}
 
@@ -276,7 +279,8 @@ BODIES["bool"] = f"""
      "w16maskStatus", "拖動門檻線，看遮罩怎麼變。",
      '<button class="btn btn-step" onclick="w16maskStep(-2)">門檻 −2</button>'
      '<button class="btn btn-step" onclick="w16maskStep(2)">門檻 +2</button>'
-     '<button class="btn btn-reset" onclick="w16maskReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w16maskReset()">重置</button>',
+     provenance=("illustrative", "自訂八個數值，用來呈現 Ch02 lab 所用的逐列布林遮罩規則。"))}
 
 {card("做一個布林遮罩", C(162) + "\n" + C(164), f"{O(162)}\n{O(164)}", src=S(162, 164),
       note="<code>np.zeros(n, bool)</code> 開一排 False，再把要的位置設成 True。")}
@@ -329,7 +333,8 @@ BODIES["bcast"] = f"""
      '<button class="btn btn-toggle" onclick="w16bcCase(1)">(10,3) 與 (10,1)</button>'
      '<button class="btn btn-toggle" onclick="w16bcCase(2)">(10,3) 與 (10,)　✗</button>'
      '<button class="btn btn-step" onclick="w16bcStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w16bcReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w16bcReset()">重置</button>',
+     provenance=("illustrative", "自訂 shape 範例，依 NumPy 廣播規則計算相容性。"))}
 
 {card("最單純的廣播：陣列與純量", C(68) + "\n" + C(70), f"{O(68)}\n{O(70)}", src=S(68, 70),
       note="<code>x**2</code> 的 2 是純量，shape 是 <code>()</code>，"
@@ -382,7 +387,8 @@ BODIES["agg"] = f"""
      "w16axStatus", "先猜結果的 shape，再按按鈕。",
      '<button class="btn btn-toggle" onclick="w16axSet(0)">axis=0（往下摺）</button>'
      '<button class="btn btn-toggle" onclick="w16axSet(1)">axis=1（往右摺）</button>'
-     '<button class="btn btn-toggle" onclick="w16axSet(2)">不給 axis（全摺）</button>')}
+     '<button class="btn btn-toggle" onclick="w16axSet(2)">不給 axis（全摺）</button>',
+     provenance=("course-data", "依 Ch02 lab 的 (10,3) 陣列與 axis 平均範例重繪。"))}
 
 {card("變異數的三種寫法會一致", C(84) + "\n" + C(85), f"{O(84)}\n{O(85)}", src=S(84, 85),
       note="<code>np.var</code> 預設除以 n（不是 n−1），所以它跟"
@@ -449,7 +455,8 @@ BODIES["rand"] = f"""
      '<button class="btn btn-play" onclick="w16rdDraw()">▶ 重抽一次</button>'
      '<button class="btn btn-toggle" id="w16rdSeedBtn" onclick="w16rdSeedTog()">固定種子：開</button>'
      '<button class="btn btn-step" onclick="w16rdSize()">切換 n：50 ⇄ 500</button>'
-     '<button class="btn btn-reset" onclick="w16rdReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w16rdReset()">重置</button>',
+     provenance=("simulation", "瀏覽器端常態抽樣；固定種子模式可重現，統計量由當次樣本即時計算。"))}
 
 {card("沒固定種子：兩次結果不同", C(80), O(80), src=S(80),
       note="同一行跑兩次，數字完全不一樣。這在寫報告時是災難。")}

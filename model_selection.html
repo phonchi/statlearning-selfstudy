@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -687,7 +692,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.6｜講義 06）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -791,13 +796,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   代價是：<strong>貪婪走法不保證找到最佳子集</strong>。下面第二張圖用真實的 <code>Credit</code>
   資料把這件事畫出來。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w06subsetSvg" height="190"></svg>
       <svg class="viz-svg" id="w06subsetLatSvg" height="300"></svg>
       <div class="status-banner" id="w06subsetStatus"><span class="status-icon">›</span><span class="status-text">上面的滑桿看 2ᵖ 有多可怕；下面按「開始」看 forward 在真實資料上怎麼走。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 200px;margin-bottom:0;min-width:0;"><span class="slider-label">p =</span><input type="range" id="w06subsetP" min="2" max="20" step="1" value="10" oninput="w06subsetCounts()" onchange="w06subsetCounts()"><span class="slider-val" id="w06subsetPv">10</span></div><button class="btn btn-play" onclick="w06latStart()">▶ 開始</button><button class="btn btn-step" onclick="w06latPlayer &amp;&amp; w06latPlayer.step()">→ 單步</button><button class="btn btn-toggle" onclick="w06latToggleBest()">切換最佳前緣</button><button class="btn btn-reset" onclick="w06latReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>ISLP Credit；完整列舉 4 變數的 16 個子集</div>
     </div>
   </div>
   <div class="side-panel">
@@ -990,32 +996,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   兩個版本都叫 AIC，看到數字差很多不要慌，先問是哪一個公式。
 </div>
 
-<div class="viz-layout">
-  <div>
-    <div class="viz-panel">
-      <div class="chart-wrap tall"><canvas id="w06critChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：Credit 上 Cp 選 6 個變數、BIC 選 4 個、調整後 R² 選 7 個——同一份資料，四個準則挑出三種答案，而 BIC 因為懲罰項是 log n 而不是 2，明顯偏好小模型。</div></div>
-      </div>
-      <div class="status-banner" id="w06critStatus"><span class="status-icon">›</span><span class="status-text">Credit 全部 2¹¹ 個子集窮舉後，五個準則畫在同一張圖上。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w06critToggle()">切換原始單位</button></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">各準則挑出的大小 <span class="ic-badge">Credit n=400</span></div>
-      <div class="ic-row"><span class="ic-label">Cp</span><span class="ic-value" id="w06critCp">—</span></div><div class="ic-row"><span class="ic-label">AIC（log-likelihood 版）</span><span class="ic-value" id="w06critAic">—</span></div><div class="ic-row"><span class="ic-label">BIC</span><span class="ic-value" id="w06critBic">—</span></div><div class="ic-row"><span class="ic-label">調整後 R²</span><span class="ic-value" id="w06critAdj">—</span></div><div class="ic-row"><span class="ic-label">10-fold CV 誤差</span><span class="ic-value" id="w06critCv">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 6.2／6.3</span></div>
-      每一條線是一個準則在「最佳 d 變數模型」上的值，<strong>大圓點是它自己的最佳位置</strong>。預設把五條線各自正規化到 0–1（0 = 該準則最好），這樣單位完全不同的五個量才能放在一起比。按「切換原始單位」可以看 Cp、BIC、CV 誤差的真實數值（都是 MSE 單位）。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">最重要的一件事</div>
-      四條曲線從 d = 4 之後幾乎是平的。<strong>不要為了「哪個數字最小」去爭論</strong>——Cp 在 d=6 是 9846.8、在 d=4 是 9982.8，差 1.4%，遠在雜訊範圍內。看的是曲線在哪裡拉平。
-    </div>
-  </div>
-</div>
-
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>準則</th><th>式子（最小平方）</th><th>每多一個變數罰多少</th><th>n=400 時的懲罰</th><th>Credit 選出</th></tr></thead>
   <tbody><tr><td>Cp</td><td>(RSS + 2dσ̂²)/n</td><td>2σ̂²</td><td>2σ̂²</td><td><strong>6 個</strong></td></tr><tr><td>AIC（課本）</td><td>RSS + 2dσ̂²</td><td>2σ̂²</td><td>與 Cp 成正比</td><td>同 Cp</td></tr><tr><td>BIC</td><td>(RSS + log(n)·dσ̂²)/n</td><td>log(n)·σ̂²</td><td><strong>5.99σ̂²</strong></td><td><strong>4 個</strong></td></tr><tr><td>調整後 R²</td><td>1 − [RSS/(n−d−1)] / [TSS/(n−1)]</td><td>分母的 n−d−1 變小</td><td>很輕</td><td><strong>7 個</strong></td></tr><tr><td>交叉驗證</td><td>直接估測試誤差</td><td>不需要 σ̂²</td><td>—</td><td><strong>6 個</strong></td></tr></tbody>
@@ -1160,17 +1140,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>$\lambda = 0$ 就是最小平方；$\lambda \to \infty$ 所有係數趨近 0。
   注意<strong>截距 $\beta_0$ 不罰</strong>——罰它等於在乎你把 y 的原點放在哪裡。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w06ridgeChart"></canvas>
         <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：λ 變大時所有係數一起往零收縮，但沒有任何一個變成剛好 0。</div></div>
       </div>
-      <div class="chart-wrap"><canvas id="w06bvChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：λ 增加時變異快速下降、偏差緩慢上升，測試 MSE 因此先降後升。</div></div>
-      </div>
       <div class="status-banner" id="w06ridgeStatus"><span class="status-icon">›</span><span class="status-text">拖動滑桿看係數怎麼收縮。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">log λ</label><input type="range" id="w06ridgeSl" min="0" max="39" step="1" value="20" oninput="w06ridgeMove()" style="flex:1 1 140px;max-width:220px;min-width:0;"><button class="btn btn-toggle" onclick="w06ridgeAxis()">切換 x 軸</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>ISLP Credit 的標準化 Ridge 路徑；對照圖 6.4</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1183,8 +1161,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       <div class="ic-row"><span class="ic-label">λ</span><span class="ic-value" id="w06ridgeLam">—</span></div><div class="ic-row"><span class="ic-label">‖β̂ᴿ‖₂ ⁄ ‖β̂‖₂</span><span class="ic-value" id="w06ridgeRatio">—</span></div><div class="ic-row"><span class="ic-label">非零係數</span><span class="ic-value" id="w06ridgeNz">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">下圖：偏差–變異 <span class="ic-badge">圖 6.5</span></div>
-      模擬資料上把測試 MSE 拆成偏差²、變異、不可縮減誤差。變異從 59.1 掉到 0.2，偏差² 從 0.4 升到 17.6——<strong>中間有一段 λ 讓總和比最小平方（λ→0）更低</strong>，這就是 Ridge 划算的地方。
+      <div class="ic-title">為什麼收縮可能更準</div>
+      Ridge 以小幅偏差換取較大的變異下降。這個偏差–變異機制已在第 2 章完整畫過；此處只保留 Credit 的係數路徑，避免再放一張同概念的模擬曲線。
     </div>
   </div>
 </div>
@@ -1267,18 +1245,19 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   $$\min_{\beta} \mathrm{RSS} \quad \text{s.t.} \quad
     \|\beta\|_1 \le s \;\;(\text{Lasso，菱形})
     \qquad\text{或}\qquad
-    \|\beta\|_2^2 \le s \;\;(\text{Ridge，圓})$$
+    \|\beta\|_2 \le s \;\;(\text{Ridge，圓；預算重新參數化})$$
 
   <p>RSS 的等高線是以 $\hat\beta^{\mathrm{OLS}}$ 為中心的同心橢圓。解就是
   <strong>橢圓第一次碰到約束區域的那一點</strong>。菱形有<em>尖角</em>而且尖角剛好落在座標軸上，
   所以碰撞很容易發生在尖角。那裡有一個座標是 0。圓沒有尖角，碰到座標軸是機率 0 的事。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="book-redraw">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w06geomSvg" height="380"></svg>
       <div class="status-banner" id="w06geomStatus"><span class="status-icon">›</span><span class="status-text">紅色橢圓是 RSS 等高線，藍色區域是約束。解在兩者相切處。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">預算 s</label><input type="range" id="w06geomSl" min="20" max="400" step="5" value="200" oninput="w06geomMove()" style="flex:1 1 140px;max-width:200px;min-width:0;"><button class="btn btn-toggle" id="w06geomBtn" onclick="w06geomToggle()">切換為 L2（Ridge）</button></div>
+      <div class="viz-source"><span>講義／課本重繪</span>依講義圖 6.7；約束最佳解以解析邊與 Lagrange 方程求得</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1297,7 +1276,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w06lassoChart"></canvas>
@@ -1305,6 +1284,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       </div>
       <div class="status-banner" id="w06lassoStatus"><span class="status-icon">›</span><span class="status-text">拖動滑桿看變數一個一個被淘汰。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">log λ</label><input type="range" id="w06lassoSl" min="0" max="39" step="1" value="24" oninput="w06lassoMove()" style="flex:1 1 140px;max-width:220px;min-width:0;"><button class="btn btn-reset" onclick="w06lassoCvJump()">跳到 CV 選出的 λ</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>ISLP Credit 的標準化 Lasso 路徑；對照圖 6.6</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1429,12 +1409,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>M 是調整參數，同樣用 CV 選。M = p 時 PCR 就退回最小平方（只是換了個座標）；
   M 小的時候，被丟掉的那些低變異方向就是被收縮掉的部分。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w06dirSvg" height="340"></svg>
       <div class="status-banner" id="w06dirStatus"><span class="status-icon">›</span><span class="status-text">灰點是資料，兩條線分別是 PC1 與 PLS1 的方向。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">y 的方向</label><input type="range" id="w06dirSl" min="0" max="180" step="3" value="20" oninput="w06dirMove()" style="flex:1 1 140px;max-width:220px;min-width:0;"><button class="btn btn-reset" onclick="w06dirReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>依講義圖 6.14–6.15 的 PCR／PLS 方向差異示意</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1559,17 +1540,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   殘差全部是 0、R² 剛好等於 1。這不是模型好，而是自由度用完了：
   n 個方程式、p ≥ n 個未知數，解不唯一而且必然過度配適。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w06hdChart"></canvas>
         <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：p 從 1 增到 n = 20 時訓練 R² 一路衝到 1，而測試 MSE 從 1.07 爆到 46.3。</div></div>
       </div>
-      <div class="chart-wrap"><canvas id="w06curseChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：加入完全無關的雜訊變數只會讓測試誤差變差，從 1.34 升到 7.54。</div></div>
-      </div>
-      <div class="status-banner" id="w06hdStatus"><span class="status-icon">›</span><span class="status-text">純雜訊變數愈多，訓練誤差愈好看、測試誤差愈糟。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w06hdToggle()">切換訓練 R² ／ 訓練 MSE</button></div>
+      <div class="status-banner" id="w06hdStatus"><span class="status-icon">›</span><span class="status-text">純雜訊變數愈多，訓練 R² 愈好看、測試誤差愈糟。</span></div>
+      <div class="controls-bar"></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子 n=20 純雜訊模擬；對照 ISLP 圖 6.22–6.23</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1582,8 +1561,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       <div class="ic-row"><span class="ic-label">p = 1：訓練 R² ／ 測試 MSE</span><span class="ic-value" id="w06hdA">0.051 ／ 1.07</span></div><div class="ic-row"><span class="ic-label">p = 18：訓練 R² ／ 測試 MSE</span><span class="ic-value" id="w06hdB">1.000 ／ 46.3</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">下圖：維度的詛咒 <span class="ic-badge">圖 6.24</span></div>
-      Lasso 在 p = 20、50、2000 個候選變數下的測試 MSE：<strong>1.34 → 1.60 → 7.54</strong>。真正有用的變數一直是那 <em>20</em> 個，多加進來的全是雜訊，但雜訊也要花代價去排除。
+      <div class="ic-title">維度的詛咒 <span class="ic-badge">圖 6.22–6.23</span></div>
+      真正有用的訊號不變時，額外雜訊變數仍要花資料去排除。圖只保留最直接的 train/test 對照，不再另放第二組尺度不同的模擬。
     </div>
   </div>
 </div>
@@ -2301,10 +2280,9 @@ HC.initFlashcards = () => {
 <script>
 /* ===== 烘焙資料（tools/frames/gen_modelsel.py，固定種子）===== */
 const FRAMES_w06lat = {"meta":{"src":"ISLP Credit（Balance ~ Limit + Rating + Cards + Student）· 自算","seed":"無隨機性（窮舉 2⁴ 個子集的最小平方 RSS）","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_modelsel.py","note":"forward stepwise 在大小 [3] 上選到的子集與最佳子集不同"},"names":["Limit","Rating","Cards","Student"],"rss":[84.3399,21.7157,21.4351,21.4272,83.7095,21.2072,21.2965,21.1759,78.6815,15.8283,15.7,15.6556,77.9479,15.2251,15.5108,15.225],"n":400,"unit":"百萬","diverge":[3]};
-const FRAMES_w06crit = {"meta":{"src":"ISLP Credit · 全部 2¹¹ 個子集窮舉（對應 ISLP 圖 6.1／6.2／6.3）","seed":"KFold(n_splits=10, shuffle=True, random_state=0)；每折內重跑最佳子集","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_modelsel.py","note":"Cp 選 6 個、BIC 選 4 個、調整後 R² 選 7 個（與 ISLP 圖 6.2 相符）；CV 選 6 個，one-SE 規則選 4 個"},"sizes":[1,2,3,4,5,6,7,8,9,10,11],"n":400,"p":11,"sigma2":9759.6,"names":["Income","Limit","Rating","Cards","Age","Education","Gender[F]","Student[Y]","Married[Y]","Ethn[Asian]","Ethn[Cauc]"],"rss":[21.4351,10.5325,4.2272,3.9151,3.8661,3.8216,3.8108,3.8047,3.7984,3.7913,3.7867],"cp":[53636.6,26428.9,10714.4,9982.8,9909.2,9846.8,9868.5,9902.2,9935.1,9966.3,10003.6],"bic":[53734.0,26623.7,11006.6,10372.4,10396.2,10431.2,10550.2,10681.4,10811.6,10940.2,11074.9],"aic":[5494.8,5212.6,4849.4,4820.7,4817.7,4815.0,4815.9,4817.3,4818.6,4819.9,4821.4],"adjr2":[0.74521,0.87449,0.9495,0.95311,0.95358,0.954,0.95401,0.95396,0.95392,0.95389,0.95383],"r2":[0.7458,0.8751,0.9499,0.9536,0.9542,0.9547,0.9548,0.9549,0.955,0.955,0.9551],"vars":[["Rating"],["Income","Rating"],["Income","Rating","Student[Y]"],["Income","Limit","Cards","Student[Y]"],["Income","Limit","Rating","Cards","Student[Y]"],["Income","Limit","Rating","Cards","Age","Student[Y]"],["Income","Limit","Rating","Cards","Age","Gender[F]","Student[Y]"],["Income","Limit","Rating","Cards","Age","Gender[F]","Student[Y]","Ethn[Asian]"],["Income","Limit","Rating","Cards","Age","Gender[F]","Student[Y]","Married[Y]","Ethn[Asian]"],["Income","Limit","Rating","Cards","Age","Gender[F]","Student[Y]","Married[Y]","Ethn[Asian]","Ethn[Cauc]"],["Income","Limit","Rating","Cards","Age","Education","Gender[F]","Student[Y]","Married[Y]","Ethn[Asian]","Ethn[Cauc]"]],"fwdVars":[["Rating"],["Rating","Income"],["Rating","Income","Student[Y]"],["Rating","Income","Student[Y]","Limit"],["Rating","Income","Student[Y]","Limit","Cards"],["Rating","Income","Student[Y]","Limit","Cards","Age"],["Rating","Income","Student[Y]","Limit","Cards","Age","Gender[F]"],["Rating","Income","Student[Y]","Limit","Cards","Age","Gender[F]","Ethn[Asian]"],["Rating","Income","Student[Y]","Limit","Cards","Age","Gender[F]","Ethn[Asian]","Married[Y]"],["Rating","Income","Student[Y]","Limit","Cards","Age","Gender[F]","Ethn[Asian]","Married[Y]","Ethn[Cauc]"],["Rating","Income","Student[Y]","Limit","Cards","Age","Gender[F]","Ethn[Asian]","Married[Y]","Ethn[Cauc]","Education"]],"fwdRss":[21.4351,10.5325,4.2272,4.0325,3.8661,3.8216,3.8108,3.8047,3.7984,3.7913,3.7867],"cvMean":[54020.6,26661.8,10751.7,9991.7,10007.9,9809.5,9947.7,10048.0,10031.6,9989.5,9959.5],"cvSe":[5994.0,2596.9,655.5,573.8,575.5,612.5,606.4,636.8,640.3,646.5,651.4],"arg":{"cp":6,"bic":4,"aic":6,"adjr2":7,"cv":6,"ose":4}};
-const FRAMES_w06ridge = {"meta":{"src":"ISLP Credit 標準化後的 Ridge 係數路徑（ISLP 圖 6.4）＋ p=45／n=50 模擬（ISLP 圖 6.5）","seed":"np.random.default_rng(6)，300 次重複","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_modelsel.py","note":"sklearn Ridge 的 alpha 就是式 6.5 的 λ（目標函數是 RSS + λ‖β‖²）"},"names":["Income","Limit","Rating","Cards","Age","Education","Gender[F]","Student[Y]","Married[Y]","Ethn[Asian]","Ethn[Cauc]"],"lambdas":[0.01,0.0151,0.0229,0.0346,0.0522,0.079,0.1194,0.1805,0.2728,0.4125,0.6236,0.9427,1.4251,2.1544,3.257,4.9239,7.4438,11.2534,17.0125,25.7191,38.8816,58.7802,88.8624,134.3399,203.0918,307.0291,464.1589,701.7038,1060.8184,1603.7187,2424.462,3665.2412,5541.0203,8376.7764,12663.8017,19144.8198,28942.6612,43754.7938,66147.4064,100000.0],"l2ratio":[0.9987,0.998,0.997,0.9956,0.9935,0.9905,0.9864,0.981,0.9744,0.9666,0.9583,0.9498,0.9415,0.9329,0.9232,0.9109,0.8941,0.8709,0.8389,0.7962,0.742,0.6772,0.605,0.5303,0.4578,0.3902,0.3279,0.2704,0.2172,0.1692,0.1276,0.0933,0.0665,0.0463,0.0318,0.0216,0.0145,0.0097,0.0065,0.0043],"coefs":[[-274.64,-274.62,-274.6,-274.56,-274.5,-274.41,-274.28,-274.08,-273.77,-273.29,-272.57,-271.47,-269.8,-267.29,-263.54,-258.0,-249.94,-238.42,-222.41,-200.97,-173.65,-141.04,-105.07,-68.91,-36.18,-9.83,8.59,19.16,23.18,22.64,19.57,15.59,11.73,8.48,5.95,4.1,2.79,1.88,1.26,0.84],[438.55,437.78,436.62,434.91,432.4,428.79,423.7,416.75,407.66,396.39,383.31,369.21,355.09,341.84,329.91,319.2,309.18,299.01,287.75,274.47,258.47,239.51,217.93,194.58,170.53,146.69,123.62,101.68,81.28,62.94,47.19,34.35,24.38,16.96,11.62,7.87,5.29,3.54,2.36,1.57],[177.14,177.91,179.04,180.72,183.17,186.7,191.66,198.41,207.21,218.02,230.4,243.42,255.88,266.62,274.8,279.94,281.8,280.24,275.06,266.01,252.95,236.01,215.83,193.43,170.0,146.53,123.66,101.8,81.41,63.06,47.29,34.43,24.43,16.99,11.64,7.89,5.3,3.55,2.36,1.57],[24.21,24.18,24.13,24.06,23.95,23.8,23.59,23.3,22.93,22.47,21.95,21.41,20.9,20.47,20.18,20.04,20.08,20.29,20.68,21.21,21.8,22.29,22.42,21.93,20.61,18.47,15.73,12.75,9.87,7.36,5.32,3.75,2.6,1.77,1.2,0.81,0.54,0.36,0.24,0.16],[-10.58,-10.58,-10.59,-10.59,-10.6,-10.61,-10.62,-10.64,-10.68,-10.72,-10.79,-10.88,-11.01,-11.21,-11.49,-11.88,-12.45,-13.22,-14.24,-15.5,-16.89,-18.17,-18.96,-18.83,-17.47,-14.93,-11.65,-8.25,-5.32,-3.13,-1.7,-0.86,-0.41,-0.18,-0.08,-0.03,-0.01,-0.0,0.0,0.0],[-3.42,-3.42,-3.41,-3.4,-3.39,-3.37,-3.34,-3.3,-3.25,-3.19,-3.11,-3.03,-2.93,-2.84,-2.73,-2.61,-2.46,-2.28,-2.04,-1.73,-1.37,-0.95,-0.53,-0.18,0.06,0.15,0.11,0.0,-0.11,-0.19,-0.21,-0.2,-0.17,-0.13,-0.1,-0.07,-0.05,-0.03,-0.02,-0.01],[-5.32,-5.32,-5.32,-5.32,-5.32,-5.32,-5.31,-5.31,-5.3,-5.28,-5.26,-5.23,-5.18,-5.1,-4.98,-4.81,-4.55,-4.19,-3.68,-3.01,-2.16,-1.17,-0.12,0.88,1.68,2.19,2.36,2.24,1.94,1.57,1.19,0.87,0.62,0.43,0.29,0.2,0.13,0.09,0.06,0.04],[127.71,127.7,127.69,127.68,127.65,127.62,127.57,127.5,127.41,127.28,127.12,126.9,126.62,126.25,125.74,125.02,123.99,122.51,120.38,117.36,113.16,107.49,100.09,90.86,79.95,67.82,55.28,43.26,32.59,23.75,16.84,11.7,8.01,5.42,3.64,2.43,1.62,1.08,0.71,0.47],[-4.17,-4.17,-4.18,-4.2,-4.22,-4.24,-4.28,-4.33,-4.4,-4.49,-4.59,-4.7,-4.82,-4.93,-5.05,-5.16,-5.29,-5.43,-5.59,-5.77,-5.94,-6.06,-6.05,-5.82,-5.32,-4.56,-3.63,-2.69,-1.85,-1.2,-0.75,-0.45,-0.27,-0.17,-0.1,-0.06,-0.04,-0.03,-0.02,-0.01],[7.33,7.33,7.34,7.35,7.36,7.37,7.4,7.43,7.46,7.51,7.55,7.6,7.62,7.62,7.58,7.49,7.33,7.07,6.7,6.18,5.52,4.7,3.78,2.84,1.94,1.18,0.58,0.15,-0.11,-0.24,-0.28,-0.26,-0.21,-0.16,-0.12,-0.08,-0.06,-0.04,-0.03,-0.02],[5.05,5.05,5.06,5.06,5.06,5.06,5.06,5.07,5.07,5.07,5.08,5.08,5.08,5.08,5.07,5.05,5.01,4.95,4.86,4.71,4.48,4.16,3.7,3.11,2.43,1.72,1.08,0.58,0.24,0.05,-0.03,-0.06,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,-0.01,-0.01]],"olsNorm":563.14,"bv":{"lambdas":[0.1,0.158,0.251,0.398,0.631,1.0,1.585,2.512,3.981,6.31,10.0,15.849,25.119,39.811,63.096,100.0,158.489,251.189,398.107,630.957,1000.0,1584.893,2511.886,3981.072,6309.573,10000.0],"bias2":[0.429,0.482,0.558,0.663,0.809,1.011,1.283,1.636,2.084,2.645,3.358,4.266,5.404,6.772,8.326,9.978,11.616,13.123,14.407,15.427,16.187,16.725,17.093,17.337,17.496,17.599],"var":[59.12,52.495,45.239,37.957,31.145,25.06,19.766,15.266,11.543,8.553,6.211,4.41,3.049,2.044,1.328,0.846,0.543,0.367,0.272,0.225,0.203,0.194,0.19,0.188,0.187,0.187],"mse":[68.549,61.977,54.797,47.62,40.955,35.071,30.049,25.902,22.627,20.198,18.568,17.676,17.452,17.815,18.654,19.824,21.159,22.489,23.68,24.652,25.39,25.919,26.282,26.525,26.684,26.786],"irr":9.0,"n":50,"p":45,"reps":300}};
+const FRAMES_w06ridge = {"meta":{"src":"ISLP Credit 標準化後的 Ridge 係數路徑（ISLP 圖 6.4）","seed":"無隨機性（資料與 lambda 網格固定）","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_modelsel.py","note":"sklearn Ridge 的 alpha 就是式 6.5 的 λ（目標函數是 RSS + λ‖β‖²）"},"names":["Income","Limit","Rating","Cards","Age","Education","Gender[F]","Student[Y]","Married[Y]","Ethn[Asian]","Ethn[Cauc]"],"lambdas":[0.01,0.0151,0.0229,0.0346,0.0522,0.079,0.1194,0.1805,0.2728,0.4125,0.6236,0.9427,1.4251,2.1544,3.257,4.9239,7.4438,11.2534,17.0125,25.7191,38.8816,58.7802,88.8624,134.3399,203.0918,307.0291,464.1589,701.7038,1060.8184,1603.7187,2424.462,3665.2412,5541.0203,8376.7764,12663.8017,19144.8198,28942.6612,43754.7938,66147.4064,100000.0],"l2ratio":[0.9987,0.998,0.997,0.9956,0.9935,0.9905,0.9864,0.981,0.9744,0.9666,0.9583,0.9498,0.9415,0.9329,0.9232,0.9109,0.8941,0.8709,0.8389,0.7962,0.742,0.6772,0.605,0.5303,0.4578,0.3902,0.3279,0.2704,0.2172,0.1692,0.1276,0.0933,0.0665,0.0463,0.0318,0.0216,0.0145,0.0097,0.0065,0.0043],"coefs":[[-274.64,-274.62,-274.6,-274.56,-274.5,-274.41,-274.28,-274.08,-273.77,-273.29,-272.57,-271.47,-269.8,-267.29,-263.54,-258.0,-249.94,-238.42,-222.41,-200.97,-173.65,-141.04,-105.07,-68.91,-36.18,-9.83,8.59,19.16,23.18,22.64,19.57,15.59,11.73,8.48,5.95,4.1,2.79,1.88,1.26,0.84],[438.55,437.78,436.62,434.91,432.4,428.79,423.7,416.75,407.66,396.39,383.31,369.21,355.09,341.84,329.91,319.2,309.18,299.01,287.75,274.47,258.47,239.51,217.93,194.58,170.53,146.69,123.62,101.68,81.28,62.94,47.19,34.35,24.38,16.96,11.62,7.87,5.29,3.54,2.36,1.57],[177.14,177.91,179.04,180.72,183.17,186.7,191.66,198.41,207.21,218.02,230.4,243.42,255.88,266.62,274.8,279.94,281.8,280.24,275.06,266.01,252.95,236.01,215.83,193.43,170.0,146.53,123.66,101.8,81.41,63.06,47.29,34.43,24.43,16.99,11.64,7.89,5.3,3.55,2.36,1.57],[24.21,24.18,24.13,24.06,23.95,23.8,23.59,23.3,22.93,22.47,21.95,21.41,20.9,20.47,20.18,20.04,20.08,20.29,20.68,21.21,21.8,22.29,22.42,21.93,20.61,18.47,15.73,12.75,9.87,7.36,5.32,3.75,2.6,1.77,1.2,0.81,0.54,0.36,0.24,0.16],[-10.58,-10.58,-10.59,-10.59,-10.6,-10.61,-10.62,-10.64,-10.68,-10.72,-10.79,-10.88,-11.01,-11.21,-11.49,-11.88,-12.45,-13.22,-14.24,-15.5,-16.89,-18.17,-18.96,-18.83,-17.47,-14.93,-11.65,-8.25,-5.32,-3.13,-1.7,-0.86,-0.41,-0.18,-0.08,-0.03,-0.01,-0.0,0.0,0.0],[-3.42,-3.42,-3.41,-3.4,-3.39,-3.37,-3.34,-3.3,-3.25,-3.19,-3.11,-3.03,-2.93,-2.84,-2.73,-2.61,-2.46,-2.28,-2.04,-1.73,-1.37,-0.95,-0.53,-0.18,0.06,0.15,0.11,0.0,-0.11,-0.19,-0.21,-0.2,-0.17,-0.13,-0.1,-0.07,-0.05,-0.03,-0.02,-0.01],[-5.32,-5.32,-5.32,-5.32,-5.32,-5.32,-5.31,-5.31,-5.3,-5.28,-5.26,-5.23,-5.18,-5.1,-4.98,-4.81,-4.55,-4.19,-3.68,-3.01,-2.16,-1.17,-0.12,0.88,1.68,2.19,2.36,2.24,1.94,1.57,1.19,0.87,0.62,0.43,0.29,0.2,0.13,0.09,0.06,0.04],[127.71,127.7,127.69,127.68,127.65,127.62,127.57,127.5,127.41,127.28,127.12,126.9,126.62,126.25,125.74,125.02,123.99,122.51,120.38,117.36,113.16,107.49,100.09,90.86,79.95,67.82,55.28,43.26,32.59,23.75,16.84,11.7,8.01,5.42,3.64,2.43,1.62,1.08,0.71,0.47],[-4.17,-4.17,-4.18,-4.2,-4.22,-4.24,-4.28,-4.33,-4.4,-4.49,-4.59,-4.7,-4.82,-4.93,-5.05,-5.16,-5.29,-5.43,-5.59,-5.77,-5.94,-6.06,-6.05,-5.82,-5.32,-4.56,-3.63,-2.69,-1.85,-1.2,-0.75,-0.45,-0.27,-0.17,-0.1,-0.06,-0.04,-0.03,-0.02,-0.01],[7.33,7.33,7.34,7.35,7.36,7.37,7.4,7.43,7.46,7.51,7.55,7.6,7.62,7.62,7.58,7.49,7.33,7.07,6.7,6.18,5.52,4.7,3.78,2.84,1.94,1.18,0.58,0.15,-0.11,-0.24,-0.28,-0.26,-0.21,-0.16,-0.12,-0.08,-0.06,-0.04,-0.03,-0.02],[5.05,5.05,5.06,5.06,5.06,5.06,5.06,5.07,5.07,5.07,5.08,5.08,5.08,5.08,5.07,5.05,5.01,4.95,4.86,4.71,4.48,4.16,3.7,3.11,2.43,1.72,1.08,0.58,0.24,0.05,-0.03,-0.06,-0.06,-0.05,-0.04,-0.03,-0.02,-0.01,-0.01,-0.01]],"olsNorm":563.14};
 const FRAMES_w06lasso = {"meta":{"src":"ISLP Credit 標準化後的 Lasso 路徑（ISLP 圖 6.6）","seed":"lasso_path(n_alphas=40)；LassoCV 用 KFold(10, shuffle=True, random_state=0)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_modelsel.py","note":"課本式 6.7 的 λ = 2n × sklearn 的 alpha，頁面上標的都是 λ"},"names":["Income","Limit","Rating","Cards","Age","Education","Gender[F]","Student[Y]","Married[Y]","Ethn[Asian]","Ethn[Cauc]"],"lambdas":[317250.16,250517.314,197821.57,156210.255,123351.785,97405.019,76916.096,60736.971,47961.088,37872.583,29906.172,23615.477,18648.015,14725.448,11627.984,9182.064,7250.638,5725.483,4521.14,3570.129,2819.16,2226.157,1757.89,1388.122,1096.133,865.564,683.495,539.723,426.194,336.545,265.753,209.853,165.711,130.854,103.329,81.594,64.431,50.878,40.176,31.725],"l1ratio":[0.0,0.0774,0.1385,0.1867,0.2248,0.2549,0.3005,0.3383,0.368,0.4729,0.5735,0.6529,0.7157,0.7666,0.8099,0.8448,0.8724,0.8942,0.9115,0.9252,0.9381,0.9492,0.9583,0.9667,0.9736,0.9791,0.9835,0.9869,0.9897,0.9918,0.9935,0.9949,0.9959,0.9968,0.9975,0.998,0.9984,0.9987,0.999,0.9992],"coefs":[[0.0,0.0,0.0,0.0,0.0,-0.0,-0.0,-0.0,-0.0,-48.26,-96.94,-135.39,-165.74,-189.42,-207.62,-221.66,-232.75,-241.5,-248.42,-253.89,-258.25,-261.73,-264.47,-266.62,-268.31,-269.65,-270.7,-271.53,-272.19,-272.71,-273.12,-273.45,-273.71,-273.91,-274.07,-274.2,-274.3,-274.37,-274.44,-274.49],[0.0,0.0,0.0,0.0,0.0,0.0,25.6,45.86,61.91,109.11,146.29,175.63,198.82,222.81,267.39,303.21,331.23,353.56,371.47,385.63,395.43,403.15,409.54,414.57,418.66,422.03,424.87,427.27,429.36,431.16,432.71,434.04,435.16,436.1,436.87,437.5,438.02,438.44,438.78,439.05],[0.0,83.42,149.29,201.3,242.37,274.81,274.94,275.01,275.02,278.79,290.24,299.29,306.42,306.05,279.75,258.24,241.5,228.09,217.22,208.63,203.32,199.17,195.6,192.79,190.46,188.47,186.73,185.2,183.79,182.54,181.41,180.42,179.56,178.84,178.23,177.73,177.31,176.98,176.7,176.49],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2.04,6.68,10.44,13.4,15.75,17.61,19.08,20.14,20.95,21.59,22.09,22.5,22.82,23.09,23.3,23.48,23.63,23.75,23.85,23.93,24.0,24.06,24.1,24.14,24.16,24.19,24.2],[0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-1.04,-3.08,-4.7,-5.97,-6.98,-7.77,-8.41,-8.9,-9.28,-9.56,-9.78,-9.95,-10.08,-10.18,-10.27,-10.33,-10.38,-10.43,-10.46,-10.48,-10.5,-10.52,-10.53,-10.54,-10.55,-10.55],[-0.0,-0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.52,-1.15,-1.63,-2.0,-2.3,-2.53,-2.71,-2.86,-2.98,-3.07,-3.15,-3.21,-3.25,-3.29,-3.32,-3.34,-3.36,-3.37,-3.39],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.16,-1.23,-2.08,-2.76,-3.3,-3.72,-4.06,-4.33,-4.54,-4.7,-4.83,-4.94,-5.02,-5.08,-5.13,-5.17,-5.2,-5.23,-5.25,-5.26,-5.28],[0.0,0.0,0.0,0.0,0.0,0.0,23.5,43.85,59.92,73.77,84.93,93.74,100.7,106.26,110.8,114.34,117.14,119.34,121.09,122.48,123.54,124.38,125.07,125.61,126.05,126.39,126.67,126.88,127.06,127.19,127.3,127.39,127.46,127.52,127.56,127.59,127.62,127.64,127.66,127.67],[-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.61,-1.31,-1.85,-2.34,-2.73,-3.04,-3.28,-3.47,-3.62,-3.74,-3.83,-3.9,-3.95,-4.0,-4.03,-4.06,-4.08,-4.1,-4.11,-4.12],[-0.0,-0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.54,1.35,1.99,2.99,3.91,4.63,5.2,5.65,6.01,6.29,6.51,6.68,6.82,6.92,7.01,7.07,7.13,7.17,7.2,7.23],[-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.85,1.73,2.43,2.98,3.42,3.76,4.03,4.25,4.42,4.55,4.66,4.74,4.81,4.86,4.9,4.93,4.96]],"nz":[0,1,1,1,1,1,3,3,3,4,4,4,4,5,6,6,6,6,6,7,9,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],"olsNorm1":1078.26,"cvLambda":364.761,"cvNz":11,"cvCoefs":[-272.58,445.73,167.82,24.23,-10.3,-3.02,-4.79,127.25,-3.59,6.12,3.94]};
-const FRAMES_w06hd = {"meta":{"src":"純噪音模擬：n=20，加入 p 個與 y 完全無關的變數（ISLP 圖 6.23）；curse 對應 ISLP 圖 6.24","seed":"np.random.default_rng(20260810) / default_rng(24)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_modelsel.py","note":"測試 MSE 取 400 次重複的中位數（p 接近 n 時偶爾會爆到極大值）"},"ps":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],"n":20,"trainR2":[0.0515,0.1052,0.1614,0.212,0.2622,0.3198,0.3689,0.4179,0.4713,0.5335,0.5624,0.639,0.6808,0.7319,0.7797,0.8458,0.898,0.9416,1.0],"trainMse":[0.8832,0.8455,0.7858,0.7666,0.7036,0.658,0.5852,0.5531,0.5115,0.436,0.4258,0.3368,0.307,0.2493,0.206,0.1487,0.0971,0.0546,0.0001],"testMse":[1.073,1.145,1.213,1.296,1.389,1.485,1.572,1.711,1.887,2.049,2.328,2.631,3.219,3.698,4.558,5.896,7.507,12.467,46.322],"reps":400,"curse":{"20":{"mse":1.34,"df":20},"50":{"mse":1.6,"df":31},"2000":{"mse":7.54,"df":70}}};
+const FRAMES_w06hd = {"meta":{"src":"純噪音模擬：n=20，加入 p 個與 y 完全無關的變數（ISLP 圖 6.23）","seed":"np.random.default_rng(20260810)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_modelsel.py","note":"測試 MSE 取 400 次重複的中位數（p 接近 n 時偶爾會爆到極大值）"},"ps":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],"n":20,"trainR2":[0.0515,0.1052,0.1614,0.212,0.2622,0.3198,0.3689,0.4179,0.4713,0.5335,0.5624,0.639,0.6808,0.7319,0.7797,0.8458,0.898,0.9416,1.0],"trainMse":[0.8832,0.8455,0.7858,0.7666,0.7036,0.658,0.5852,0.5531,0.5115,0.436,0.4258,0.3368,0.307,0.2493,0.206,0.1487,0.0971,0.0546,0.0001],"testMse":[1.073,1.145,1.213,1.296,1.389,1.485,1.572,1.711,1.887,2.049,2.328,2.631,3.219,3.698,4.558,5.896,7.507,12.467,46.322],"reps":400};
 
 
 /* ===== model_selection 本頁元件（id 與全域一律 w06 前綴）===== */
@@ -2447,55 +2425,6 @@ function w06latReset() {
 }
 function w06latToggleBest() { w06latShowBest = !w06latShowBest; if (w06latPlayer) w06latApply(w06latPlayer.frames[Math.max(0, w06latPlayer.i)]); }
 
-/* ---------- P02 五準則 ---------- */
-let w06critRaw = false;
-function w06critToggle() { w06critRaw = !w06critRaw; w06critDraw(); }
-function w06critDraw() {
-  const F = FRAMES_w06crit;
-  // 五個量的單位完全不同，預設各自正規化到 0–1（0 = 該準則最好）
-  // 注意資料鍵與 arg 鍵不同名：CV 的資料在 cvMean，最佳位置在 arg.cv
-  const spec = [['cp', 'cp', 'Cp', 'var(--accent2)', false],
-                ['aic', 'aic', 'AIC', 'var(--accent3)', false],
-                ['bic', 'bic', 'BIC', 'var(--accent)', false],
-                ['adjr2', 'adjr2', '調整後 R²', '#8e44ad', true],
-                ['cvMean', 'cv', '10-fold CV 誤差', '#f39c12', false]];
-  const norm = (arr, higherBetter) => {
-    const lo = Math.min.apply(null, arr), hi = Math.max.apply(null, arr);
-    if (hi === lo) return arr.map(() => 0);
-    return arr.map(v => higherBetter ? (hi - v) / (hi - lo) : (v - lo) / (hi - lo));
-  };
-  const shown = w06critRaw ? ['cp', 'bic', 'cvMean'] : spec.map(s => s[0]);
-  const ds = spec.filter(s => shown.indexOf(s[0]) >= 0).map(s => {
-    const raw = F[s[0]];
-    const data = w06critRaw ? raw : norm(raw, s[4]);
-    const bestIdx = F.arg[s[1]] - 1;
-    return { label: s[2], data: data, borderColor: s[3], backgroundColor: s[3],
-             borderWidth: 2.4, fill: false,
-             pointRadius: data.map((v, i) => (i === bestIdx ? 7 : 2.6)),
-             pointHoverRadius: data.map((v, i) => (i === bestIdx ? 9 : 5)) };
-  });
-  HC.line('w06critChart', { labels: F.sizes, datasets: ds }, {
-    scales: { x: { title: { display: true, text: '模型大小（變數個數）' } },
-              y: { title: { display: true,
-                            text: w06critRaw ? '原始值（MSE 單位）' : '正規化（0 = 該準則最好）' } } } },
-  );
-  const c = HC.get('w06critChart');
-  HC.refs(c, [HC.vline(F.arg.bic - 1, 'BIC 選 ' + F.arg.bic, 'var(--accent)'),
-                        HC.vline(F.arg.cp - 1, 'Cp 選 ' + F.arg.cp, 'var(--accent2)')]);
-  $('w06critCp').textContent = F.arg.cp + ' 個';
-  $('w06critAic').textContent = F.arg.aic + ' 個';
-  $('w06critBic').textContent = F.arg.bic + ' 個';
-  $('w06critAdj').textContent = F.arg.adjr2 + ' 個';
-  $('w06critCv').textContent = F.arg.cv + ' 個（one-SE 選 ' + F.arg.ose + ' 個）';
-  setStatus('w06critStatus', w06critRaw
-    ? '原始單位：只留下三個同為 MSE 單位的量（Cp、BIC、CV 誤差）才能公平比高低。'
-      + 'σ̂² = ' + F.sigma2 + '，n = ' + F.n + '。'
-    : '五條線各自正規化到 0–1，大圓點是各自的最佳位置。'
-      + 'Cp ' + F.arg.cp + '｜AIC ' + F.arg.aic + '｜BIC ' + F.arg.bic
-      + '｜調整後 R² ' + F.arg.adjr2 + '｜CV ' + F.arg.cv + '｜one-SE ' + F.arg.ose
-      + '——同一份資料，四種答案。');
-}
-
 /* ---------- P04 Ridge ---------- */
 let w06ridgeByRatio = false;
 function w06ridgeAxis() { w06ridgeByRatio = !w06ridgeByRatio; w06ridgeDraw(); }
@@ -2514,21 +2443,6 @@ function w06ridgeDraw() {
   });
   const c = HC.get('w06ridgeChart');
   HC.refs(c, [HC.hline(0, '', 'var(--muted)')]);
-  const bv = F.bv;
-  HC.line('w06bvChart', {
-    labels: bv.lambdas.map(l => HC.fmt(Math.log10(l), 1)),
-    datasets: [
-      { label: '偏差²', data: bv.bias2, borderColor: HC.tok.accent, borderWidth: 2.4,
-        pointRadius: 0, fill: false },
-      { label: '變異', data: bv.var, borderColor: HC.tok.accent3, borderWidth: 2.4,
-        pointRadius: 0, fill: false },
-      { label: '測試 MSE', data: bv.mse, borderColor: HC.tok.accent2, borderWidth: 3,
-        pointRadius: 0, fill: false },
-      { label: '不可縮減誤差', data: bv.lambdas.map(() => bv.irr), borderColor: HC.tok.muted,
-        borderWidth: 1.6, borderDash: [5, 4], pointRadius: 0, fill: false },
-    ],
-  }, { scales: { x: { title: { display: true, text: 'log₁₀ λ' } },
-                 y: { title: { display: true, text: '誤差' } } } });
   w06ridgeMove();
 }
 function w06ridgeMove() {
@@ -2551,20 +2465,48 @@ function w06geomRss(b) {
   const d0 = b[0] - w06geomBhat[0], d1 = b[1] - w06geomBhat[1];
   return w06geomA[0][0] * d0 * d0 + 2 * w06geomA[0][1] * d0 * d1 + w06geomA[1][1] * d1 * d1;
 }
+function w06geomSolveL1(s) {
+  /* 在菱形四條邊上做一維二次最小化；端點由 clamp 精確納入。 */
+  let best = null, bestV = Infinity;
+  [-1, 1].forEach(a => [-1, 1].forEach(b => {
+    const c = [0, b * s], v = [a, -b];
+    const d = [c[0] - w06geomBhat[0], c[1] - w06geomBhat[1]];
+    const Av = [w06geomA[0][0] * v[0] + w06geomA[0][1] * v[1],
+                w06geomA[1][0] * v[0] + w06geomA[1][1] * v[1]];
+    const Ad = [w06geomA[0][0] * d[0] + w06geomA[0][1] * d[1],
+                w06geomA[1][0] * d[0] + w06geomA[1][1] * d[1]];
+    const den = v[0] * Av[0] + v[1] * Av[1];
+    const t = Math.max(0, Math.min(s, -(v[0] * Ad[0] + v[1] * Ad[1]) / den));
+    const cand = [c[0] + t * v[0], c[1] + t * v[1]];
+    const value = w06geomRss(cand);
+    if (value < bestV) { bestV = value; best = cand; }
+  }));
+  return best;
+}
+function w06geomSolveL2(s) {
+  /* KKT: (A + lambda I)b = A b_OLS；解單調方程 ||b||_2 = s。 */
+  const A = w06geomA, bh = w06geomBhat;
+  const c0 = A[0][0] * bh[0] + A[0][1] * bh[1];
+  const c1 = A[1][0] * bh[0] + A[1][1] * bh[1];
+  const at = lam => {
+    const a = A[0][0] + lam, d = A[1][1] + lam;
+    const det = a * d - A[0][1] * A[1][0];
+    return [(d * c0 - A[0][1] * c1) / det,
+            (-A[1][0] * c0 + a * c1) / det];
+  };
+  let lo = 0, hi = 1;
+  while (Math.hypot(...at(hi)) > s) hi *= 2;
+  for (let i = 0; i < 100; i++) {
+    const mid = (lo + hi) / 2;
+    if (Math.hypot(...at(mid)) > s) lo = mid; else hi = mid;
+  }
+  return at(hi);
+}
 function w06geomSolve(s) {
   const norm = w06geomL1 ? Math.abs(w06geomBhat[0]) + Math.abs(w06geomBhat[1])
                          : Math.hypot(w06geomBhat[0], w06geomBhat[1]);
   if (norm <= s) return w06geomBhat.slice();
-  let best = null, bestV = Infinity;
-  for (let t = 0; t < 1440; t++) {
-    const th = t / 1440 * 2 * Math.PI;
-    const co = Math.cos(th), si = Math.sin(th);
-    const k = w06geomL1 ? s / (Math.abs(co) + Math.abs(si)) : s;
-    const b = [k * co, k * si];
-    const v = w06geomRss(b);
-    if (v < bestV) { bestV = v; best = b; }
-  }
-  return best;
+  return w06geomL1 ? w06geomSolveL1(s) : w06geomSolveL2(s);
 }
 function w06geomToggle() {
   w06geomL1 = !w06geomL1;
@@ -2607,7 +2549,7 @@ function w06geomDraw() {
   svc.dot(w06geomBhat[0], w06geomBhat[1], { r: 5, fill: 'var(--accent)', stroke: '#fff', sw: 1.5 }, g);
   svc.txt(w06geomBhat[0], w06geomBhat[1], 'β̂ (OLS)', { dy: -13, fill: 'var(--accent)' }, g);
   svc.dot(sol[0], sol[1], { r: 6.5, fill: 'var(--accent3)', stroke: '#fff', sw: 2 }, g);
-  const zeros = sol.filter(v => Math.abs(v) < 5e-3).length;
+  const zeros = w06geomL1 ? sol.filter(v => v === 0).length : 0;
   svc.txt(sol[0], sol[1], zeros ? '解（有係數 = 0）' : '解', { dy: 21, fill: 'var(--accent3)' }, g);
   $('w06geomS').textContent = HC.fmt(s, 2);
   $('w06geomB1').textContent = HC.fmt(sol[0], 3);
@@ -2744,13 +2686,6 @@ function w06hdDraw() {
   });
   const c = HC.get('w06hdChart');
   HC.refs(c, [HC.vline(F.n - 2, 'p = n')]);
-  const keys = Object.keys(F.curse);
-  HC.bar('w06curseChart', {
-    labels: keys.map(k => 'p = ' + k),
-    datasets: [{ label: 'Lasso 的測試 MSE', data: keys.map(k => F.curse[k].mse),
-                 backgroundColor: ['#1a6b4a', '#f39c12', '#c0392b'], borderRadius: 5 }],
-  }, { plugins: { legend: { display: false } },
-       scales: { y: { title: { display: true, text: '測試 MSE' }, beginAtZero: true } } });
   setStatus('w06hdStatus', '真正有用的變數只有第一個，其餘全是雜訊。p 從 1 加到 '
     + F.ps[F.ps.length - 1] + ' 時訓練 R² 從 ' + F.trainR2[0] + ' 升到 '
     + F.trainR2[F.trainR2.length - 1] + '，而測試 MSE 從 ' + F.testMse[0] + ' 爆到 '
@@ -2765,7 +2700,6 @@ w06latReset();
 w06geomDraw();
 w06dirDraw();
 HC.ready(() => {
-  w06critDraw();
   w06ridgeDraw();
   w06lassoDraw();
   w06hdDraw();

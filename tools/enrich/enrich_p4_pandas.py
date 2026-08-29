@@ -58,7 +58,8 @@ BODIES["prologue"] = f"""
      "w17serStatus", "從字典開始，看它怎麼變成 Series 再變成 DataFrame。",
      '<button class="btn btn-toggle" onclick="w17serSet(0)">Python 字典</button>'
      '<button class="btn btn-toggle" onclick="w17serSet(1)">Series</button>'
-     '<button class="btn btn-toggle" onclick="w17serSet(2)">DataFrame</button>')}
+     '<button class="btn btn-toggle" onclick="w17serSet(2)">DataFrame</button>',
+     provenance=("course-data", "依 Ch01 lab 的 Series 與 DataFrame 建構結果重繪。"))}
 
 {card("自訂索引的 Series", C(1, 17), O(1, 17), src=S(1, 17),
       note="左邊那一排 <code>d b a c</code> 是索引，不是資料。")}
@@ -103,7 +104,8 @@ BODIES["view"] = f"""
      '<button class="btn btn-toggle" onclick="w17peekSet(0)">df.shape</button>'
      '<button class="btn btn-toggle" onclick="w17peekSet(1)">df.head()</button>'
      '<button class="btn btn-toggle" onclick="w17peekSet(2)">df.dtypes</button>'
-     '<button class="btn btn-toggle" onclick="w17peekSet(3)">df.describe()</button>')}
+     '<button class="btn btn-toggle" onclick="w17peekSet(3)">df.describe()</button>',
+     provenance=("course-data", "依 Ch01 lab 的資料檢視指令與輸出重繪。"))}
 
 {card("看前幾列與後幾列", C(1, 31) + "\n" + C(1, 32), f"{O(1, 31)}\n{O(1, 32)}",
       src=S(1, 31, 32), note="<code>head()</code> 預設五列，<code>tail(3)</code> 給最後三列。")}
@@ -168,7 +170,8 @@ BODIES["select"] = f"""
      '<button class="btn btn-toggle" onclick="w17selSet(1)">df[0:3]</button>'
      '<button class="btn btn-toggle" onclick="w17selSet(2)">df.loc[:, [&quot;A&quot;,&quot;C&quot;]]</button>'
      '<button class="btn btn-toggle" onclick="w17selSet(3)">df.iloc[3]</button>'
-     '<button class="btn btn-toggle" onclick="w17selSet(4)">df[df[&quot;A&quot;]&gt;0]</button>')}
+     '<button class="btn btn-toggle" onclick="w17selSet(4)">df[df[&quot;A&quot;]&gt;0]</button>',
+     provenance=("course-data", "依 Ch01 lab 的示範 DataFrame 與 loc／iloc 選取結果重繪。"))}
 
 {card("取一欄與取幾列", C(1, 45) + "\n" + C(1, 47), f"{O(1, 45)}\n{O(1, 47)}",
       src=S(1, 45, 47),
@@ -220,7 +223,8 @@ BODIES["na"] = f"""
                 "<code>na_values=['?']</code> 一次解決，而且下次重跑也不會忘。")],
      "w17naStatus", "按「單步」看整件事怎麼發生、怎麼修。",
      '<button class="btn btn-step" onclick="w17naStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w17naReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w17naReset()">重置</button>',
+     provenance=("course-data", "依 Ch02 lab 的 Auto.data 讀檔、? 遺漏值與 397→392 列流程重繪。"))}
 
 {card("找出兇手", C(2, 192), O(2, 192), src=S(2, 192),
       note="全部是<strong>帶引號的字串</strong>，輸出末尾就會看到那個 "
@@ -279,7 +283,8 @@ BODIES["group"] = f"""
      "w17grpStatus", "按「單步」把 groupby 拆成三個動作看。",
      '<button class="btn btn-step" onclick="w17grpStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w17grpPlay()">▶ 連續播</button>'
-     '<button class="btn btn-reset" onclick="w17grpReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w17grpReset()">重置</button>',
+     provenance=("course-data", "依 Ch01 lab 儲存格 78 的 groupby 拆分、套用、合併流程重繪。"))}
 
 {card("先數一數每一類有幾筆", C(1, 76), O(1, 76), src=S(1, 76),
       note="<code>value_counts()</code> 是拿到類別欄的第一個動作。"
@@ -300,7 +305,8 @@ BODIES["group"] = f"""
                 "本站所有圖表的數字都可以這樣追回來源。")],
      "w17grpStatus2", "bar 與 foo 兩組在 C 欄的方向相反。",
      '<button class="btn btn-toggle" onclick="w17grpCol(&quot;C&quot;)">看 C 欄</button>'
-     '<button class="btn btn-toggle" onclick="w17grpCol(&quot;D&quot;)">看 D 欄</button>')}
+     '<button class="btn btn-toggle" onclick="w17grpCol(&quot;D&quot;)">看 D 欄</button>',
+     provenance=("course-data", "圖中數值逐項取自 Ch01 lab 儲存格 78 的 groupby 輸出。"))}
 
 {quiz("qGrp", "PART 04 · 自我檢測",
       "<code>df.groupby('A').sum()</code> 之後，欄 <code>A</code> 跑去哪了？",
@@ -346,7 +352,8 @@ BODIES["join"] = f"""
                 "對不起來的位置會填 NaN。這是最容易產生意外遺漏值的操作。")],
      "w17catStatus", "按「單步」把三塊接回去。",
      '<button class="btn btn-step" onclick="w17catStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w17catReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w17catReset()">重置</button>',
+     provenance=("course-data", "依 Ch01 lab 的 DataFrame 分塊與 concat 範例重繪。"))}
 
 {qa("觀念釐清", [
     ("<code>concat</code> 跟 <code>merge</code> 差在哪？",

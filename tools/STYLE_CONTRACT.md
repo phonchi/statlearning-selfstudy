@@ -76,14 +76,14 @@ node tools/browser_check.js <stem>
 
 ---
 
-## 4. 每一節的固定順序
+## 4. 每一節的建議順序
 
 ```
 PART 內部：
   1. 1–2 段導入散文（第二人稱、直接、口語一點）
   2. info(...)          一句話重點；警告用 info(..., "warm")
   3. $$…$$              行間公式（靜態 HTML）
-  4. viz(...)           互動元件：stage → .status-banner → .controls-bar ＋ .side-panel
+  4. viz(...)           只有真的需要操作或空間關係時才放；沒有教學增益就省略
   5. qa(...)            觀念釐清 Q&A（0–2 則）
   6. card(...)          .deck-extra 講義完整實作 + 預期輸出
   7. quiz(...)          三選一自測（每節至少一個）
@@ -101,8 +101,12 @@ PART 內部：
 
 ## 5. 元件（widget）規則
 
-- **每頁 6–9 個**，其中 Chart.js 約三分之一、手寫 SVG 約三分之二。
-- **`.viz-panel` 的解剖結構不可變**：stage → `.status-banner` → `.controls-bar`。
+- **沒有最低數量，也不以精簡為目的。**判準只有一個：操作後是否能看見文字、表格或程式輸出
+  無法同樣清楚表達的機制、幾何、隨機變動或資料狀態。真正有價值的保留；純播放、固定詞條切換、
+  與鄰近表格重複或只有裝飾作用的移除。
+- **`.viz-panel` 的結構**：stage → `.status-banner` → `.controls-bar` → `.viz-source`。
+  每個 `viz()` 必須標示 provenance：`course-data`、`book-redraw`、`simulation` 或 `illustrative`。
+  `illustrative` 必須明說不是課本或實證數值；`simulation` 必須有固定種子。
 - 按鈕一律用變體：`.btn .btn-play`（▶ 開始）、`.btn .btn-step`（→ 單步）、
   `.btn .btn-reset`（重置）、`.btn .btn-toggle`。
 - **SVG 元件的初始化一律放在 `HC.ready()` 外面。** Chart.js 從 CDN 載不到時 `HC.ready()`
@@ -175,7 +179,7 @@ Hybrid 最好：烘焙老師的資料，即時重算上層（`w04thr` 就是這�
 |---|---|
 | 單頁 | 130–240 KB（>300 KB validator 會警告） |
 | PART 數 | 照 `pages.py`，不要自己增減 |
-| 元件 | 6–9 個 |
+| 視覺元件 | 無固定數量；只保留有明確教學增益者 |
 | `.quiz-box` | 每 PART 一個 + EX 區 4 個 |
 | Q&A | 3–4 則（第 3 章 6 則） |
 | `.deck-extra` | 8–12 張 |
@@ -265,14 +269,9 @@ Page(n=16, stem="p3_numpy", …,
 
 ### 9.4 元件
 
-一般先備頁以 **6–9 個元件，其中 live SVG 佔 5–7 個、Chart.js 最多 1–2 個**為上限——
-比正課的「Chart.js 約三分之一」低，因為先備頁要講的是<em>機制</em>（執行流程、記憶體別名、
-廣播對齊、groupby 拆分套用合併、pipeline 資料流），不是要重現誰的數字。
-判準仍照 §5：數字要對上權威來源才 baked。
-
-**概念型先備頁例外：**`00a_why_code` 與 `00c_ai_assisted` 不設元件下限，也不要求每節配一張圖。
-00A 正文最多一個用來表達循環關係的靜態視覺；00C 正文可以完全不用 SVG／Canvas。
-表格、程式範例、檢查清單或文字已能說清楚時，不得為了湊數再加入播放、切換或拖曳元件。
+先備頁與正課採同一判準：不設最低數量，也不硬設每頁上限。語法、固定命令、錯誤類型與查表資訊
+通常用真實 code/output 或表格更清楚；alias、slice、矩陣索引、broadcasting 等需要觀察狀態或空間
+關係的題目則可以保留互動。不得為了讓每節「看起來有元件」加入播放、切換或拖曳。
 
 其餘規則與正課完全相同，特別是這三條：SVG 初始化放在 `HC.ready()` 外面、
 `viewBox` 寬度 620、隨機一律 `HC.stat.lcg(固定種子)`。

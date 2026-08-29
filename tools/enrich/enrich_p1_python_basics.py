@@ -56,7 +56,8 @@ BODIES["prologue"] = f"""
      "w14rdStatus", "按「單步」一行一行拆。",
      '<button class="btn btn-step" onclick="w14rdStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w14rdPlay()">▶ 連續播</button>'
-     '<button class="btn btn-reset" onclick="w14rdReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w14rdReset()">重置</button>',
+     provenance=("course-data", "依 Ch02 lab 的實際程式逐行拆解。"))}
 
 {card("印出一行字", C(2, 12), O(2, 12), src=S(2, 12),
       note="<code>print</code> 是一個函式，括號裡是要給它的東西，"
@@ -101,7 +102,8 @@ BODIES["var"] = f"""
      "w14vaStatus", "先猜按下「改內容」之後 x 會變成什麼。",
      '<button class="btn btn-step" onclick="w14vaAlias()">再貼一張名牌 y = x</button>'
      '<button class="btn btn-step" onclick="w14vaMut()">改內容 y[0] = 99</button>'
-     '<button class="btn btn-reset" onclick="w14vaReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w14vaReset()">重置</button>',
+     provenance=("illustrative", "自訂串列別名範例，用來呈現可變物件的共享參照。"))}
 
 {table(["型別", "長什麼樣", "在這門課裡是什麼"],
        [["<code>int</code>", "<code>392</code>", "樣本數 n、變數個數 p、折數 k"],
@@ -154,7 +156,8 @@ BODIES["list"] = f"""
      "w14ixStatus", "按左右看每一個位置的索引。",
      '<button class="btn btn-step" onclick="w14ixMove(-1)">← 左</button>'
      '<button class="btn btn-step" onclick="w14ixMove(1)">右 →</button>'
-     '<button class="btn btn-reset" onclick="w14ixReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w14ixReset()">重置</button>',
+     provenance=("illustrative", "自訂欄名字串，用來對照正索引與負索引。"))}
 
 {table(["你想做的事", "寫法"],
        [["拿第一個", "<code>cols[0]</code>"],
@@ -201,7 +204,8 @@ BODIES["slice"] = f"""
      '<button class="btn btn-step" onclick="w14slMove(1,-1)">終點 −</button>'
      '<button class="btn btn-step" onclick="w14slMove(1,1)">終點 +</button>'
      '<button class="btn btn-toggle" onclick="w14slStepTog()">步長 1 ⇄ 2</button>'
-     '<button class="btn btn-reset" onclick="w14slReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w14slReset()">重置</button>',
+     provenance=("course-data", "依 Ch02 lab 的字串切片範例重繪。"))}
 
 {card("字串也能切", C(2, 132), O(2, 132), src=S(2, 132),
       note="從第 3 個字元開始、取到第 6 個之前，三個字元，其中一個是空白。")}
@@ -248,7 +252,8 @@ BODIES["dict"] = f"""
      "w14dcStatus", "同一件事，兩種資料結構。",
      '<button class="btn btn-toggle" onclick="w14dcSet(0)">拿 R²</button>'
      '<button class="btn btn-toggle" onclick="w14dcSet(1)">拿 MSE</button>'
-     '<button class="btn btn-toggle" onclick="w14dcSet(2)">多加一項</button>')}
+     '<button class="btn btn-toggle" onclick="w14dcSet(2)">多加一項</button>',
+     provenance=("illustrative", "自訂 R²／MSE 小例子，用來比較位置與具名取值。"))}
 
 {table(["你想做的事", "寫法"],
        [["取值", "<code>d['R2']</code>"],
@@ -312,7 +317,8 @@ BODIES["str"] = f"""
      '<button class="btn btn-toggle" onclick="w14fmSet(1)">{:.4f}</button>'
      '<button class="btn btn-toggle" onclick="w14fmSet(2)">{:.2%}</button>'
      '<button class="btn btn-toggle" onclick="w14fmSet(3)">{:.3e}</button>'
-     '<button class="btn btn-toggle" onclick="w14fmSet(4)">{:>10.2f}</button>')}
+     '<button class="btn btn-toggle" onclick="w14fmSet(4)">{:>10.2f}</button>',
+     provenance=("course-data", "依 Ch02 lab 的 format 與 f-string 格式規格重繪。"))}
 
 {quiz("qStr", "PART 05 · 自我檢測",
       "<code>'{{:.2%}}'.format(0.1654)</code> 會印出什麼？",

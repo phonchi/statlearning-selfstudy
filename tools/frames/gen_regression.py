@@ -24,7 +24,6 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from ISLP import load_data
-from sklearn.neighbors import KNeighborsRegressor
 from statsmodels.stats.outliers_influence import variance_inflation_factor as VIF
 
 VERSIONS = "numpy {} · pandas {} · statsmodels {} · scikit-learn {}".format(
@@ -100,7 +99,7 @@ def arr(a, d=3):
 
 
 def fit_block(df, cols, ycol):
-    """回傳一個子集的完整迴歸摘要（給 w03tf 用）。"""
+    """回傳一個子集的完整迴歸摘要，供課本數字自我檢查使用。"""
     y = df[ycol]
     if cols:
         X = sm.add_constant(df[list(cols)], has_constant="add")
@@ -125,7 +124,7 @@ def fit_block(df, cols, ycol):
     }
 
 
-# ── 1. w03tf：Advertising 的 8 個子集（ISLP 表 3.1／3.3／3.4／3.6）──────────
+# ── 1. Advertising 的 8 個子集（只供課本表格數字自我檢查）────────────────
 subsets = []
 for mask in range(8):
     cols = [v for i, v in enumerate(ADV_VARS) if mask & (1 << (2 - i))]
@@ -265,49 +264,6 @@ cred_student = {"names": ["intercept", "Student[Yes]"],
                 "t": [r(v, 3) for v in ms2.tvalues], "p": [r(v, 6) for v in ms2.pvalues],
                 "means": {"No": r(CB[stu == 0].mean(), 2), "Yes": r(CB[stu == 1].mean(), 2)}}
 
-# ── 6. w03knn：線性迴歸 vs KNN（ISLP 圖 3.19–3.20 的設定重做）───────────────
-KS = [1, 2, 3, 4, 5, 7, 9, 12, 16, 20, 25]
-
-
-SIG = 0.1
-
-
-def knn_curve(fun, p_extra, n=50, reps=80, seed=11):
-    """回傳 (KNN 各 K 的測試 MSE, 線性迴歸的測試 MSE)。測試集不加噪音，量的是對 f 的誤差。"""
-    g = np.random.default_rng(seed)
-    knn = np.zeros(len(KS))
-    lin = 0.0
-    for _ in range(reps):
-        Xtr = g.uniform(-1, 1, (n, 1 + p_extra))
-        Xte = g.uniform(-1, 1, (500, 1 + p_extra))
-        ytr = fun(Xtr[:, 0]) + g.normal(0, SIG, n)
-        yte = fun(Xte[:, 0])
-        lin += float(np.mean((yte - sm.OLS(ytr, sm.add_constant(Xtr)).fit()
-                              .predict(sm.add_constant(Xte))) ** 2))
-        for j, k in enumerate(KS):
-            m = KNeighborsRegressor(n_neighbors=min(k, n)).fit(Xtr, ytr)
-            knn[j] += float(np.mean((yte - m.predict(Xte)) ** 2))
-    return arr(knn / reps, 5), r(lin / reps, 5)
-
-
-F_LIN = lambda x: 2.0 + 1.5 * x                                       # noqa: E731
-F_MILD = lambda x: 2.0 + 1.5 * x + 0.35 * x ** 2                      # noqa: E731
-F_STRONG = lambda x: 2.0 + 0.9 * np.sin(2.6 * x) + 0.55 * x ** 2      # noqa: E731
-
-knn_shape = {}
-for name, f in (("linear", F_LIN), ("mild", F_MILD), ("strong", F_STRONG)):
-    kmse, lmse = knn_curve(f, 0)
-    knn_shape[name] = {"knn": kmse, "lin": lmse,
-                       "best": r(min(kmse), 5), "bestK": KS[int(np.argmin(kmse))]}
-
-PS = [1, 2, 3, 4, 10, 20]
-knn_dim = {}
-for pex in PS:
-    kmse, lmse = knn_curve(F_STRONG, pex - 1)
-    knn_dim[str(pex)] = {"knn": kmse, "lin": lmse,
-                         "best": r(min(kmse), 5), "bestK": KS[int(np.argmin(kmse))]}
-
-
 # ── 輸出 ────────────────────────────────────────────────────────────────
 def js(name, obj, src, seed, note=""):
     meta = {"src": src, "seed": seed, "versions": VERSIONS, "gen": GEN}
@@ -318,13 +274,6 @@ def js(name, obj, src, seed, note=""):
 
 
 out = [
-    js("FRAMES_w03tf",
-       {"n": 200, "vars": ADV_VARS, "subsets": subsets, "corr": adv_corr,
-        "vif": adv_vif, "ci": adv_ci, "inter": adv_inter,
-        "ybar": r(YA.mean(), 4), "ysd": r(YA.std(ddof=1), 4)},
-       "Advertising（statlearning.com）· statsmodels OLS 自算",
-       "無隨機（純最小平方，資料固定）",
-       "對照 ISLP 表 3.1／3.3（單變數）、表 3.4／3.6（三變數）、表 3.9（交互作用）"),
     js("FRAMES_w03rss", rss_ref,
        "Advertising sales~TV（ISLP 圖 3.2 的等高線就是這一組）",
        "無隨機",
@@ -346,12 +295,6 @@ out = [
        "ISLP Credit（圖 3.7 的 income × student）與 Advertising（表 3.9）",
        "無隨機",
        "ISLP 的 Python Credit 沒有 own／region 兩欄，三水準的例子改用同資料集的 Ethnicity"),
-    js("FRAMES_w03knn",
-       {"ks": KS, "shape": knn_shape, "ps": PS, "dim": knn_dim, "sigma": SIG},
-       "以 ISLP 圖 3.19／3.20 的設定重做的模擬（課本未公布產生資料的函數）",
-       "np.random.default_rng(11)，n = 50，80 次重複，測試集 500 筆",
-       "線性 f = 2 + 1.5x；輕微非線性 + 0.35x²；強非線性 f = 2 + 0.9sin(2.6x) + 0.55x²；"
-       "p 增加時額外的變數都是純噪音，維度掃描用強非線性那一組"),
 ]
 print("\n".join(out))
 

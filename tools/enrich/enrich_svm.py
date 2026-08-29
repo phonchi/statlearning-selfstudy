@@ -113,7 +113,8 @@ BODIES["prologue"] = f"""
               basis="1 1 170px", vw=40, lw=26)
      + slider("w10hyperB2", "β₂", -3, 3, 0.1, 3, "w10hyperDraw()", "w10hyperB2V", "3.0",
               basis="1 1 170px", vw=40, lw=26)
-     + '<button class="btn btn-reset" onclick="w10hyperReset()">重置</button>')}
+     + '<button class="btn btn-reset" onclick="w10hyperReset()">重置</button>',
+     provenance=("book-redraw", "依 ISLP 圖 9.1 的 1+2X₁+3X₂=0 幾何關係即時計算。"))}
 
   <p>有了超平面，分類規則就寫完了：把 $y_i$ 編碼成 $\\pm 1$，
   <strong>分離超平面</strong>（separating hyperplane）就是滿足</p>
@@ -199,7 +200,8 @@ BODIES["maxmargin"] = f"""
                 '元件會直接說解不出來。', "LIVE")],
      "w10marginStatus", "拖動任何一個點。加粗描邊的是支持向量，只有它們會改變答案。",
      '<button class="btn btn-reset" onclick="w10marginReset()">重置點的位置</button>'
-     '<button class="btn btn-toggle" onclick="w10marginToggleHull()">切換凸包顯示</button>')}
+     '<button class="btn btn-toggle" onclick="w10marginToggleHull()">切換凸包顯示</button>',
+     provenance=("illustrative", "自訂可拖曳二維點；最大邊界由兩類凸包最近點即時計算。"))}
 
   <p>那幾個剛好落在虛線上的點就是<strong>支持向量</strong>（support vector）。
   名字的由來很直白：它們像柱子一樣「支撐」著那片超平面——移動它們，超平面跟著動；
@@ -341,7 +343,8 @@ BODIES["soft"] = f"""
      '<option value="nonsep" selected>不可分開（儲存格 14）</option>'
      '<option value="sep">剛好可分開（儲存格 41）</option></select>'
      + slider("w10softSl", "sklearn 的 C", 0, 5, 1, 3, "w10softDraw()", "w10softSlV", "1",
-              basis="1 1 240px", vw=54, lw=86))}
+              basis="1 1 240px", vw=54, lw=86),
+     provenance=("course-data", "Ch09 lab 儲存格 14／22／23／27／41 的線性 SVC 配適。"))}
 
   <p>偏差與變異在這張圖上看得很清楚。<strong>C 小（滑桿左端）</strong>：margin 寬、支持向量多，
   決定邊界的點多，所以<strong>變異小、偏差大</strong>，配得比較鬆。
@@ -473,7 +476,8 @@ BODIES["hinge"] = f"""
                  ("y·f = −2（篤定分錯）", "—", "w10lossN2")])],
      "w10lossStatus", "綠線是 hinge、紅線是邏輯斯。注意綠線在右邊完全貼著 0。",
      '<button class="btn btn-toggle" onclick="w10lossToggle01()">顯示 0–1 損失</button>'
-     '<button class="btn btn-toggle" onclick="w10lossToggleZoom()">切換 y 軸範圍</button>')}
+     '<button class="btn btn-toggle" onclick="w10lossToggleZoom()">切換 y 軸範圍</button>',
+     provenance=("book-redraw", "依 ISLP 圖 9.12 的 hinge、logistic 與 0–1 loss 公式即時計算。"))}
 
   <p>那個「剛好是 0」是本節的全部重點。一個損失恰好為 0 的點，對目標函數的貢獻是 0，
   <strong>對它求梯度也是 0</strong>。把它從資料裡整筆刪掉，最佳解一模一樣。
@@ -585,7 +589,8 @@ BODIES["kernel"] = f"""
      '<option value="circle">同心圓 → 二次核</option></select>'
      '<button class="btn btn-play" onclick="w10kernStart()">▶ 開始</button>'
      '<button class="btn btn-step" onclick="w10kernStep()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w10kernReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w10kernReset()">重置</button>',
+     provenance=("course-data", "同心圓取自 Ch09 lab 儲存格 51–54；一維 lift 為公式機制示意。"))}
 
   <h3 id="dx-map">講義完整實作：手寫一個二次核，跟「先映射再配線性」比對</h3>
 {card("lab 09 · 特徵映射 vs 自訂核（同心圓資料）",
@@ -629,8 +634,8 @@ BODIES["kernel"] = f"""
 {viz(svg("w10rbfSvg", 420) + "\n" + chart("w10rbfChart", "", "。此圖的重點：γ 從 0.25 加到 50，訓練錯誤率一路掉到 0，但測試錯誤率先降後升——γ = 50 時訓練幾乎完美而測試最差，這就是過度配適。"),
      [info_card("怎麼看",
                 '上圖：填色是 RBF 核 SVM 的決策區域（<strong>烘焙的 40×40 格點</strong>），'
-                '點是訓練資料。推滑桿掃過四組 (C, γ)。'
-                '<strong>看 γ = 50 那一格</strong>：邊界縮成一個個包住單點的小島，'
+                '點是訓練資料。先選只改 γ 或只改 C，再推滑桿；另一個參數全程固定。'
+                '<strong>在 C=1 下看 γ = 50</strong>：邊界縮成一個個包住單點的小島，'
                 '訓練錯誤率是 0。那不是學到了結構，那是把每個點各自圈起來。<br>'
                 '下圖：C = 1 固定，γ 從 0.25 掃到 50 的訓練與測試錯誤率。', "圖 9.9"),
       rows_card("這一格的配適",
@@ -649,9 +654,14 @@ BODIES["kernel"] = f"""
                 'γ 小 → 每個支持向量的影響範圍大 → 邊界平滑 → 偏差大變異小；'
                 'γ 大 → 影響範圍小 → 邊界破碎 → 偏差小變異大。'
                 '它跟 C 要<strong>一起</strong>用網格搜尋調，因為兩者都在控制彈性。')],
-     "w10rbfStatus", "推滑桿掃過四組 (C, γ)，看決策區域從平滑變成一堆小島。",
-     slider("w10rbfSl", "組合", 0, 3, 1, 0, "w10rbfDraw()", "w10rbfSlV", "γ = 0.5, C = 1",
-            basis="1 1 300px", vw=104, lw=30))}
+     "w10rbfStatus", "一次只改一個參數，分清 γ 的局部性與 C 的違規懲罰。",
+     '<label class="slider-label">這次要改</label>'
+     '<select id="w10rbfMode" class="mono" onchange="w10rbfModeChange()">'
+     '<option value="gamma" selected>γ（C 固定為 1）</option>'
+     '<option value="C">C（γ 固定為 1）</option></select>'
+     + slider("w10rbfSl", "設定", 0, 2, 1, 0, "w10rbfDraw()", "w10rbfSlV", "γ = 0.5",
+              basis="1 1 260px", vw=112, lw=30),
+     provenance=("course-data", "Ch09 lab 儲存格 57／61／65／67／75；同一 train/test split 的 SVC 配適。"))}
 
   <h3 id="dx-rbf">講義完整實作：RBF 核 SVM</h3>
 {card("lab 09 · 非線性邊界的資料 + RBF 核", lab_code(CH, 57) + "\n\n" + lab_code(CH, 61),
@@ -725,45 +735,15 @@ BODIES["multiclass"] = f"""
   「其餘」——樣本不平衡，而且那一團的形狀可能根本不是一片超平面切得開的。<br>
   ISLP 的建議：<strong>K 不太大就用 OVO</strong>（講義第 29 頁同樣的結論）。''')}
 
-{viz(svg("w10ovoSvg", 410),
-     [info_card("怎麼玩",
-                '三類資料，按前兩個按鈕切換 OVO 與 OVA：填色是決策區域，'
-                '三條虛線是那三個分類器的邊界。K = 3 時兩邊都是 3 個分類器，'
-                '所以<strong>要看的不是個數，是它們把平面切成什麼形狀</strong>。<br>'
-                '按<strong>「疊上不一致」</strong>會用橘色蓋住兩種規則答案不同的格子。'
-                '那些地方一個測試點的預測類別會因為你選 OVO 還是 OVA 而改變。'),
-      rows_card("目前的設定",
-                [("方法", "—", "w10ovoMode"),
-                 ("要訓練幾個分類器", "—", "w10ovoNclf"),
-                 ("每個分類器用多少資料", "—", "w10ovoNdata"),
-                 ("決策規則", "—", "w10ovoRule"),
-                 ("兩種規則不一致的格子", "—", "w10ovoDiffN"),
-                 ("OVO 三票平手的格子", "—", "w10ovoAmbN")]),
-      info_card("K 變大以後要訓練幾個",
-                '<table style="width:100%;font-size:.78rem;border-collapse:collapse;">'
-                '<tr><td style="padding:2px 0;">K</td><td>OVO</td><td>OVA</td></tr>'
-                '<tr><td style="padding:2px 0;">3</td><td>3</td><td>3</td></tr>'
-                '<tr><td style="padding:2px 0;">4</td><td>6</td><td>4</td></tr>'
-                '<tr><td style="padding:2px 0;">10</td><td>45</td><td>10</td></tr>'
-                '<tr><td style="padding:2px 0;">100</td><td>4950</td><td>100</td></tr></table>'
-                'OVO 是 K 的平方級。但 OVO 的每個問題都小得多，'
-                '總計算量常常還是它划算。', "HYBRID")],
-     "w10ovoStatus", "按按鈕切換 OVO 與 OVA，看兩種規則把平面切成什麼形狀。",
-     '<button class="btn btn-toggle" onclick="w10ovoSetMode(\'ovo\')">一對一（OVO · 投票）</button>'
-     '<button class="btn btn-toggle" onclick="w10ovoSetMode(\'ova\')">一對其餘（OVA · 取最大）</button>'
-     '<button class="btn btn-play" onclick="w10ovoToggleDiff()">疊上不一致</button>')}
+{table(["類別數 K", "OVO 分類器數", "OVA 分類器數", "決策規則"],
+       [["3", "3", "3", "OVO 投票；OVA 取最大分數"],
+        ["4", "6", "4", "同上"],
+        ["10", "45", "10", "同上"],
+        ["100", "4,950", "100", "同上"]])}
 
-  <p>兩件事值得看清楚。第一，<strong>兩種規則真的會給出不同答案</strong>：
-  在這組資料上，格點裡大約 7% 的位置，一個測試點的預測類別會因為你選 OVO 還是 OVA 而改變。
-  差異來自 OVA 的每個分類器都被迫把「其餘兩類」當成一團來切，而 OVO 的每個分類器只處理兩類。</p>
-
-  <p>第二，<strong>OVO 的投票在理論上可能平手</strong>。三個分類器各投一票給不同的類別，
-  誰都沒過半，投票規則本身給不出答案。但你在這組資料上看到的平手格子是
-  <strong>0 格</strong>：三團分得很開時，三條成對邊界幾乎就是三個間隙的垂直平分線，
-  而三角形三邊的垂直平分線會交於同一點（外心），所以平手區幾乎退化成一個點。
-  平手要變成真問題，得等到<strong>類別重疊</strong>或 K 變大的時候。
-  實作上 <code>libsvm</code> 用 decision_function 的加總去打破平手，
-  但那是實作細節，不是投票規則給的答案。</p>
+  <p>OVO 與 OVA 可以給出不同答案，但差異比例取決於資料分布、分類器與調整參數；
+  本頁不再用一份自訂三團資料的「約 7%」當成一般結論。OVO 投票也可能平手，
+  實作時需明訂 tie-breaking 規則。</p>
 
 {info("關於 decision_function_shape 的一個常見誤解", '''<code>SVC</code> 的
   <code>decision_function_shape</code> <strong>只改變 <code>decision_function()</code>
@@ -1656,9 +1636,13 @@ function w10rbfSetup() {
 function w10rbfDraw() {
   const s = w10rbfSvc, F = FRAMES_w10rbf;
   if (!s) return;
-  const i = Math.max(0, Math.min(F.frames.length - 1, parseInt($('w10rbfSl').value, 10)));
-  const fr = F.frames[i];
-  $('w10rbfSlV').textContent = 'γ = ' + fr.gamma + ', C = ' + (fr.C >= 1000 ? '10⁵' : fr.C);
+  const mode = $('w10rbfMode').value;
+  const ids = mode === 'gamma' ? F.gammaFrames : F.cFrames;
+  const i = Math.max(0, Math.min(ids.length - 1, parseInt($('w10rbfSl').value, 10)));
+  const fr = F.frames[ids[i]];
+  $('w10rbfSlV').textContent = mode === 'gamma'
+    ? 'γ = ' + fr.gamma + '（C=1）'
+    : 'C = ' + (fr.C >= 1000 ? '10⁵' : fr.C) + '（γ=1）';
   const gg = s.clearLayer('grid2'), gp = s.clearLayer('pts');
   w10gridDraw(s, fr.rows, { '0': w10REG[0], '1': w10REG[1] }, gg);
   F.trainPts.forEach(p => {
@@ -1670,7 +1654,8 @@ function w10rbfDraw() {
   $('w10rbfTr').textContent = HC.pct(fr.trainErr, 1);
   $('w10rbfTe').textContent = HC.pct(fr.testErr, 1);
   $('w10rbfWhy').textContent = fr.why;
-  setStatus('w10rbfStatus', 'γ = ' + fr.gamma + '、C = ' + (fr.C >= 1000 ? '10⁵' : fr.C)
+  setStatus('w10rbfStatus', (mode === 'gamma' ? '只改 γ；C 固定為 1。' : '只改 C；γ 固定為 1。')
+    + '目前 γ = ' + fr.gamma + '、C = ' + (fr.C >= 1000 ? '10⁵' : fr.C)
     + '：訓練錯誤率 <b>' + HC.pct(fr.trainErr, 1) + '</b>、測試錯誤率 <b>'
     + HC.pct(fr.testErr, 1) + '</b>、支持向量 ' + fr.nsv + ' 個。'
     + (fr.gamma >= 50
@@ -1678,6 +1663,10 @@ function w10rbfDraw() {
       : (fr.C >= 1000
         ? ' C 拉到極大：邊界變得很不規則，因為它不肯放過任何一個訓練點。'
         : ' 邊界還算平滑，抓到的是資料真正的結構。')));
+}
+function w10rbfModeChange() {
+  $('w10rbfSl').value = 0;
+  w10rbfDraw();
 }
 function w10rbfChart() {
   const F = FRAMES_w10rbf.curve;
@@ -1701,91 +1690,6 @@ function w10rbfChart() {
   HC.refs(c, [HC.hline(Math.min.apply(null, F.testErr), '測試錯誤率的最低點')]);
 }
 
-/* ---------- P05 OVO vs OVA ---------- */
-let w10ovoMode = 'ovo', w10ovoSvc = null, w10ovoDiff = false;
-function w10ovoSetup() {
-  const F = FRAMES_w10mc;
-  w10ovoSvc = HC.svg('w10ovoSvg', { xd: [F.bb[0], F.bb[1]], yd: [F.bb[2], F.bb[3]], h: 410 });
-  w10ovoSvc.grid(4, 4, { xtitle: 'X₁', ytitle: 'X₂', xdec: 0, ydec: 0 });
-  w10ovoSvc.layer('grid2'); w10ovoSvc.layer('line'); w10ovoSvc.layer('pts');
-}
-const w10ovoNX = 60, w10ovoNY = 38;
-function w10ovoLabel(mode, x, y) {
-  const F = FRAMES_w10mc;
-  if (mode === 'ova') {
-    let best = 0, bv = -1e18;
-    F.ova.forEach(o => {
-      const f = o.w[0] * x + o.w[1] * y + o.b;
-      if (f > bv) { bv = f; best = o.k; }
-    });
-    return String(best);
-  }
-  const votes = [0, 0, 0];
-  F.ovo.forEach(o => { votes[(o.w[0] * x + o.w[1] * y + o.b) > 0 ? o.hi : o.lo]++; });
-  const mx = Math.max(votes[0], votes[1], votes[2]);
-  if (votes.filter(v => v === mx).length > 1) return '?';   /* 三票各投一個 → 平手 */
-  return String(votes.indexOf(mx));
-}
-function w10ovoGrid(mode) {
-  const F = FRAMES_w10mc, rows = [];
-  for (let r = 0; r < w10ovoNY; r++) {
-    const y = F.bb[3] - (F.bb[3] - F.bb[2]) * (r + 0.5) / w10ovoNY;
-    let line = '';
-    for (let c = 0; c < w10ovoNX; c++) {
-      line += w10ovoLabel(mode, F.bb[0] + (F.bb[1] - F.bb[0]) * (c + 0.5) / w10ovoNX, y);
-    }
-    rows.push(line);
-  }
-  return rows;
-}
-function w10ovoSetMode(m) { w10ovoMode = m; w10ovoDraw(); }
-function w10ovoToggleDiff() { w10ovoDiff = !w10ovoDiff; w10ovoDraw(); }
-function w10ovoDraw() {
-  const s = w10ovoSvc, F = FRAMES_w10mc;
-  if (!s) return;
-  const gOvo = w10ovoGrid('ovo'), gOva = w10ovoGrid('ova');
-  const rows = w10ovoMode === 'ova' ? gOva : gOvo;
-  const diffRows = gOvo.map((row, r) => {
-    let out = '';
-    for (let c = 0; c < row.length; c++) out += (row[c] === gOva[r][c] ? '.' : 'D');
-    return out;
-  });
-  const nDiff = diffRows.reduce((n, r) => n + (r.split('D').length - 1), 0);
-  const nAmb = gOvo.reduce((n, r) => n + (r.split('?').length - 1), 0);
-  const nCell = w10ovoNX * w10ovoNY;
-
-  const gg = s.clearLayer('grid2'), gl = s.clearLayer('line'), gp = s.clearLayer('pts');
-  w10gridDraw(s, rows, { '0': w10REG[0], '1': w10REG[1], '2': w10REG[2],
-                         '?': 'rgba(138,133,120,.34)' }, gg);
-  if (w10ovoDiff) {
-    w10gridDraw(s, diffRows, { 'D': 'rgba(243,156,18,.40)', '.': 'none' }, gg);
-  }
-  const clfs = w10ovoMode === 'ova' ? F.ova : F.ovo;
-  clfs.forEach(o => {
-    const e = w10lineEnds(s, o.b, o.w[0], o.w[1], 0);
-    if (e) s.poly(e, { stroke: 'var(--fit-line)', sw: 2.2, dash: '6 4' }, gl);
-  });
-  F.pts.forEach(p => {
-    s.dot(p[0], p[1], { r: 5, fill: w10CLS[p[2]] }, gp);
-  });
-  $('w10ovoMode').textContent = w10ovoMode === 'ova' ? '一對其餘（OVA）' : '一對一（OVO）';
-  $('w10ovoNclf').textContent = w10ovoMode === 'ova' ? '3 個（K 個）' : '3 個（K(K−1)/2 個）';
-  $('w10ovoNdata').textContent = w10ovoMode === 'ova' ? '每個都用全部 96 筆' : '每個只用相關的兩類';
-  $('w10ovoRule').textContent = w10ovoMode === 'ova' ? '取 f_k 最大的類別' : '三票裡最多票的類別';
-  $('w10ovoDiffN').textContent = nDiff + ' / ' + nCell + '（' + HC.pct(nDiff / nCell, 1) + '）';
-  $('w10ovoAmbN').textContent = nAmb + ' / ' + nCell;
-  setStatus('w10ovoStatus', (w10ovoMode === 'ova'
-    ? '<b>一對其餘</b>：3 個分類器，每一個都把某一類對上「其餘兩類合起來」，'
-      + '測試點指派給 f_k 最大的那一類。'
-    : '<b>一對一</b>：3 個分類器，每一個只比較兩類、其餘資料完全不看，最後投票。')
-    + ' 兩種規則在 <b>' + nDiff + ' / ' + nCell + '</b> 格上給出不同答案（'
-    + HC.pct(nDiff / nCell, 1) + '，按「疊上不一致」看在哪裡）。'
-    + ' 三票平手的格子：' + nAmb + ' 格——'
-    + (nAmb === 0
-      ? '這組資料剛好三條成對邊界幾乎交於一點，所以看不到平手區。'
-      : '灰色那一小塊就是投票規則給不出答案的地方。'));
-}
-
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。
    Chart.js 從 CDN 載不到時 HC.ready() 不會執行，若把 SVG 初始化放進去，
@@ -1801,8 +1705,6 @@ w10kernSetup();
 w10kernReset();
 w10rbfSetup();
 w10rbfDraw();
-w10ovoSetup();
-w10ovoDraw();
 HC.ready(() => {
   w10softChart();
   w10softDraw();

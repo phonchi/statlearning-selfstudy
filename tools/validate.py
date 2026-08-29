@@ -180,6 +180,21 @@ def check_page(p: P.Page):
 
     # QUIZ-TRIPLE（只掃 HTML；<script> 內的 JS 字串會有 id="bq' + i + 'Options" 這種樣子）
     html_only = re.sub(r"<script\b.*?</script>", "", src, flags=re.S)
+
+    # VIZ-PROVENANCE：每組正文視覺都要讓學生看得出資料／數值從哪裡來。
+    viz_layouts = re.findall(r'<div class="viz-layout"([^>]*)>', html_only)
+    viz_sources = re.findall(r'class="viz-source"', html_only)
+    if len(viz_sources) != len(viz_layouts):
+        fail("VIZ-PROVENANCE", w,
+             f"{len(viz_layouts)} 組 viz-layout 只有 {len(viz_sources)} 個 .viz-source")
+    allowed_provenance = {"course-data", "book-redraw", "simulation", "illustrative"}
+    for attrs in viz_layouts:
+        m = re.search(r'data-provenance="([^"]+)"', attrs)
+        if not m:
+            fail("VIZ-PROVENANCE", w, "viz-layout 缺 data-provenance")
+        elif m.group(1) not in allowed_provenance:
+            fail("VIZ-PROVENANCE", w, f"不支援的 provenance：{m.group(1)}")
+
     for qid in sorted(set(re.findall(r"quizCheck\('([^']+)'", html_only))):
         for suf in ("Options", "Feedback"):
             if f'id="{qid}{suf}"' not in html_only:

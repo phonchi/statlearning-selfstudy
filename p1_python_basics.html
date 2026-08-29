@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -683,7 +688,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · Python 基礎）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -721,12 +726,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   ① <strong>算</strong>一個值；② 把值<strong>取個名字</strong>存起來；③ 把值<strong>丟給某個函式</strong>處理。課程 lab 裡每一行都是這三件事的組合，沒有第四種。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w14readSvg" height="320"></svg>
       <div class="status-banner" id="w14rdStatus"><span class="status-icon">›</span><span class="status-text">按「單步」一行一行拆。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w14rdStep()">→ 單步</button><button class="btn btn-play" onclick="w14rdPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w14rdReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的實際程式逐行拆解。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -789,12 +795,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   然後把 <strong>x 這個名牌貼上去</strong>。同一個東西可以貼很多張名牌——
   這件事在 P3 講陣列的「檢視」時會變成一個真的會咬人的問題。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w14varSvg" height="320"></svg>
       <div class="status-banner" id="w14vaStatus"><span class="status-icon">›</span><span class="status-text">先猜按下「改內容」之後 x 會變成什麼。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w14vaAlias()">再貼一張名牌 y = x</button><button class="btn btn-step" onclick="w14vaMut()">改內容 y[0] = 99</button><button class="btn btn-reset" onclick="w14vaReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>自訂串列別名範例，用來呈現可變物件的共享參照。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -858,12 +865,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 23</span>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w14idxSvg" height="300"></svg>
       <div class="status-banner" id="w14ixStatus"><span class="status-icon">›</span><span class="status-text">按左右看每一個位置的索引。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w14ixMove(-1)">← 左</button><button class="btn btn-step" onclick="w14ixMove(1)">右 →</button><button class="btn btn-reset" onclick="w14ixReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>自訂欄名字串，用來對照正索引與負索引。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -904,12 +912,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   這個「不包含」讓很多人第一次用就錯，但它有個好處：
   <code>a[:3]</code> 加 <code>a[3:]</code> 剛好就是整個 a，中間不會重疊也不會漏。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w14slSvg" height="320"></svg>
       <div class="status-banner" id="w14slStatus"><span class="status-icon">›</span><span class="status-text">先猜 s[3:6] 會取到哪三個字。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w14slMove(0,-1)">起點 −</button><button class="btn btn-step" onclick="w14slMove(0,1)">起點 +</button><button class="btn btn-step" onclick="w14slMove(1,-1)">終點 −</button><button class="btn btn-step" onclick="w14slMove(1,1)">終點 +</button><button class="btn btn-toggle" onclick="w14slStepTog()">步長 1 ⇄ 2</button><button class="btn btn-reset" onclick="w14slReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的字串切片範例重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -996,12 +1005,13 @@ dtype: int64</pre></div>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 26</span>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w14dcSvg" height="300"></svg>
       <div class="status-banner" id="w14dcStatus"><span class="status-icon">›</span><span class="status-text">同一件事，兩種資料結構。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w14dcSet(0)">拿 R²</button><button class="btn btn-toggle" onclick="w14dcSet(1)">拿 MSE</button><button class="btn btn-toggle" onclick="w14dcSet(2)">多加一項</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>自訂 R²／MSE 小例子，用來比較位置與具名取值。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1079,12 +1089,13 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 236</span>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w14fmtSvg" height="300"></svg>
       <div class="status-banner" id="w14fmStatus"><span class="status-icon">›</span><span class="status-text">同一個數字，五種格式。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w14fmSet(0)">{:.2f}</button><button class="btn btn-toggle" onclick="w14fmSet(1)">{:.4f}</button><button class="btn btn-toggle" onclick="w14fmSet(2)">{:.2%}</button><button class="btn btn-toggle" onclick="w14fmSet(3)">{:.3e}</button><button class="btn btn-toggle" onclick="w14fmSet(4)">{:>10.2f}</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 format 與 f-string 格式規格重繪。</div>
     </div>
   </div>
   <div class="side-panel">

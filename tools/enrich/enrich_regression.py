@@ -141,7 +141,8 @@ BODIES["slr"] = f"""
      "w03dragStatus", "拖動任何一個藍點，係數與 RSS 會即時重算。灰紫色虛線是殘差。",
      '<button class="btn btn-reset" onclick="w03dragReset()">重置</button>'
      '<button class="btn btn-step" onclick="w03dragNewData()">→ 換一組資料</button>'
-     '<button class="btn btn-toggle" id="w03dragResBtn" onclick="w03dragToggleRes()">隱藏殘差線段</button>')}
+     '<button class="btn btn-toggle" id="w03dragResBtn" onclick="w03dragToggleRes()">隱藏殘差線段</button>',
+     provenance=("simulation", "固定種子模擬；最小平方量由目前資料即時計算"))}
 
   <p>接著把同一件事換個角度看。上面那張圖的橫軸是 x、縱軸是 y；
   下面這張圖的<strong>兩個軸都是參數</strong>：橫軸 β₀、縱軸 β₁，
@@ -183,7 +184,8 @@ BODIES["slr"] = f"""
      '<span class="slider-label">β₁ 偏移</span>'
      '<input type="range" id="w03rssV" min="-100" max="100" value="0" oninput="w03rssMove()">'
      '<span class="slider-val" id="w03rssVv">0.00</span></div>'
-     '<button class="btn btn-reset" onclick="w03rssHome()">回到最小點</button>')}
+     '<button class="btn btn-reset" onclick="w03rssHome()">回到最小點</button>',
+     provenance=("simulation", "由上方同一份模擬資料的精確 RSS 二次式繪製"))}
 
 {qa("觀念釐清", [
     ("Q：誤差曲面（error surface）到底是什麼？為什麼線性迴歸不用梯度下降？",
@@ -297,7 +299,8 @@ BODIES["inference"] = f"""
      "w03sampStatus", "按「抽一次」看一條新樣本配出的線；抽滿 100 次再跟公式對照。",
      '<button class="btn btn-step" onclick="w03sampOne()">→ 抽一次</button>'
      '<button class="btn btn-play" onclick="w03sampMany()">▶ 抽滿 100 次</button>'
-     '<button class="btn btn-reset" onclick="w03sampReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w03sampReset()">重置</button>',
+     provenance=("simulation", "固定種子重複抽樣；對照 ISLP 圖 3.3"))}
 
   <p>有了 SE，兩個標準工具就出來了。<strong>95% 信賴區間</strong>：</p>
 
@@ -489,35 +492,7 @@ BODIES["mlr"] = f"""
 
   <p>$H_0$ 為真時分子與分母的期望值都是 σ²，所以 <strong><em>F</em> 應該在 1 附近</strong>；
   $H_a$ 為真時分子會變大，<em>F</em> 就明顯大於 1。多大才算大？取決於 n 與 p，
-  交給軟體算 p 值。下面這個元件讓你自己勾選要放哪些變數，看 <em>t</em> 與 <em>F</em> 怎麼動：</p>
-
-{viz(chart("w03tfChart", "",
-           "。此圖的重點：TV 與 radio 的 |t| 都在 20 以上，newspaper 只有 0.18，"
-           "但把 radio 拿掉，newspaper 的 |t| 會跳到 4.35。"),
-     [rows_card("目前模型",
-                [("放進去的變數", "TV、radio、newspaper", "w03tfVars"),
-                 ("TV", "—", "w03tfRowTV"), ("radio", "—", "w03tfRowRadio"),
-                 ("newspaper", "—", "w03tfRowNews"),
-                 ("整體 F", "—", "w03tfF"), ("R²", "—", "w03tfR2"),
-                 ("RSE", "—", "w03tfRse")], "ISLP 表 3.1／3.3／3.4"),
-      info_card("非做不可的兩個實驗",
-                '<strong>① 只留 <code>newspaper</code>：</strong>'
-                '|t| = 3.30，顯著。<strong>② 留 <code>newspaper</code> + '
-                '<code>TV</code>：</strong>|t| = 4.35，更顯著！'
-                '<strong>③ 三個都放：</strong>|t| = 0.18，完全不顯著。'
-                '關鍵在 <code>radio</code>。把它放進來，newspaper 就失業了。'
-                '為什麼？看下面的相關矩陣與 Q&amp;A。'),
-      info_card("三個媒體與 sales 的相關係數",
-                '<code>TV</code> 0.782 · <code>radio</code> 0.576 · '
-                '<code>newspaper</code> 0.228。而預測變數之間：'
-                '<strong>corr(radio, newspaper) = 0.354</strong>，'
-                'corr(TV, radio) = 0.055、corr(TV, newspaper) = 0.057。'
-                '報紙預算高的市場，通常廣播預算也高。', "ISLP 表 3.5")],
-     "w03tfStatus", "三個都放進模型時：TV 與 radio 的 t 值極大，newspaper 只有 −0.18。",
-     '<button class="btn btn-toggle" id="w03tfBtnTV" onclick="w03tfToggle(0)">TV</button>'
-     '<button class="btn btn-toggle" id="w03tfBtnRadio" onclick="w03tfToggle(1)">radio</button>'
-     '<button class="btn btn-toggle" id="w03tfBtnNews" onclick="w03tfToggle(2)">newspaper</button>'
-     '<button class="btn btn-reset" onclick="w03tfReset()">三個都放回去</button>')}
+  交給軟體算 p 值。下面直接列出講義與課本的完整係數表；不再另外畫一張只重複同一批 t 值的長條圖。</p>
 
 {table(["三個媒體都放進去（ISLP 表 3.4／3.6）", "係數", "SE", "<em>t</em>", "p 值", "95% CI"],
        [["截距", "2.9389", "0.3119", "9.42", "&lt; 0.0001", "(2.324, 3.554)"],
@@ -675,7 +650,8 @@ BODIES["qualitative"] = f"""
      '<span class="slider-label">β₃</span>'
      '<input type="range" id="w03interB3" min="-800" max="400" value="-200" oninput="w03interDraw()">'
      '<span class="slider-val" id="w03interB3v">−2.00</span></div>'
-     '<button class="btn btn-reset" onclick="w03interHome()">回到最小平方解</button>')}
+     '<button class="btn btn-reset" onclick="w03interHome()">回到最小平方解</button>',
+     provenance=("course-data", "ISLP Credit；對照課本圖 3.7"))}
 
 {table(["Advertising 加入 TV×radio（ISLP 表 3.9）", "係數", "SE", "<em>t</em>", "p 值"],
        [["截距", "6.7502", "0.2479", "27.23", "&lt; 0.0001"],
@@ -783,7 +759,8 @@ BODIES["problems"] = f"""
      '<button class="btn btn-toggle" onclick="w03diagView(0)">殘差 vs 配適</button>'
      '<button class="btn btn-toggle" onclick="w03diagView(1)">Q-Q 圖</button>'
      '<button class="btn btn-toggle" onclick="w03diagView(2)">scale-location</button>'
-     '<button class="btn btn-toggle" onclick="w03diagView(3)">殘差 vs 槓桿</button>')}
+     '<button class="btn btn-toggle" onclick="w03diagView(3)">殘差 vs 槓桿</button>',
+     provenance=("simulation", "固定種子診斷案例；非線性面板使用 ISLP Auto"))}
 
   <p>離群值與高槓桿點的判準要說清楚。<strong>學生化殘差</strong>是把殘差除以它自己的
   估計標準差：</p>
@@ -859,7 +836,8 @@ BODIES["problems"] = f"""
      '<input type="range" id="w03vifRho" min="0" max="99" value="0" oninput="w03vifDraw()">'
      '<span class="slider-val" id="w03vifRhoV">0.00</span></div>'
      '<button class="btn btn-step" onclick="w03vifJump()">→ 跳到 Credit 的 limit／rating</button>'
-     '<button class="btn btn-reset" onclick="w03vifHome()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w03vifHome()">重置</button>',
+     provenance=("book-redraw", "依 ISLP 圖 3.15 與 VIF 公式重繪"))}
 
   <h3 id="dx-prob">講義完整實作：VIF、多項式與 anova_lm</h3>
 {card("講義 03 · 用串列生成式算每一欄的 VIF", lab_code(CH, 87), lab_output(CH, 87),
@@ -921,37 +899,9 @@ BODIES["vsknn"] = f"""
   <p>它對 f 的形狀不做任何假設。K 小＝很有彈性但很不穩（K = 1 會穿過每一個訓練點）；
   K 大＝很平滑但可能糊掉真正的結構。這是第 2 章偏差–變異取捨的又一個化身。</p>
 
-  <p>那到底該用哪個？下面這個元件把 ISLP 圖 3.19 與 3.20 的實驗重跑一遍，
-  三個視角回答三個問題：</p>
-
-{viz(chart("w03knnChart", "tall",
-           "。此圖的重點：真實關係是直線時線性迴歸大勝；愈彎 KNN 愈有優勢；"
-           "但變數一多（p ≥ 4），KNN 就迅速輸掉。這是維度詛咒。"),
-     [info_card("三個視角",
-                '<strong>① 真實形狀：</strong>三種真相（直線／輕微彎／很彎）下，'
-                '線性迴歸與最佳 KNN 誰的測試 MSE 低。<br>'
-                '<strong>② K 的取捨：</strong>固定「很彎」的真相，看 KNN 的測試 MSE '
-                '怎麼隨 K 變化，以及線性迴歸的水平基準線在哪。<br>'
-                '<strong>③ 維度 p：</strong>真相只跟第一個變數有關，'
-                '其餘 p − 1 個全是純雜訊。看兩者怎麼隨 p 退化。'),
-      rows_card("目前這一組數字",
-                [("視角", "—", "w03knnView"),
-                 ("線性迴歸的測試 MSE", "—", "w03knnLin"),
-                 ("KNN 最好的測試 MSE", "—", "w03knnBest"),
-                 ("最好的 K", "—", "w03knnK"),
-                 ("誰贏", "—", "w03knnWin")], "LIVE 讀烘焙資料"),
-      info_card("課本的結論",
-                '<strong>「KNN 至少不會比線性迴歸差太多，可能好很多」。'
-                '這句話只在 p 很小時成立。</strong>'
-                'ISLP 圖 3.20：真相明顯非線性時，p = 1 或 2 時 KNN 贏，'
-                'p = 3 打成平手，<strong>p ≥ 4 之後線性迴歸反過來贏</strong>，'
-                '而且 KNN 的 MSE 是十倍級地爆掉。'
-                '原因是 50 筆資料撒進 20 維空間之後，'
-                '任何一點的「最近鄰」其實都離得很遠。', "ISLP §3.5")],
-     "w03knnStatus", "按三個按鈕切換視角。先猜「真相是直線時誰贏」，再看答案。",
-     '<button class="btn btn-toggle" onclick="w03knnView(0)">① 真實形狀</button>'
-     '<button class="btn btn-toggle" onclick="w03knnView(1)">② K 的取捨</button>'
-     '<button class="btn btn-toggle" onclick="w03knnView(2)">③ 維度 p</button>')}
+  <p>ISLP 圖 3.19–3.20 的結論是：真實關係接近直線時線性迴歸占優勢；
+  關係明顯彎曲且 p 很小時 KNN 可能較好，但加入無關變數後 KNN 會迅速受維度詛咒影響。
+  第 2 章已用 KNN 圖完整呈現彈性取捨，這裡不再用另一組模擬重複一次。</p>
 
 {info("為什麼 p 大的時候無母數方法會崩掉", '''這叫<strong>維度詛咒</strong>
   （curse of dimensionality）。KNN 的整個邏輯建立在「最近的 K 個點跟 x₀ 很像」之上。
@@ -1479,76 +1429,6 @@ function w03sampReset() {
   setStatus('w03sampStatus', '按「抽一次」看一條新樣本配出的線；抽滿 100 次再跟公式對照。');
 }
 
-/* ---------- P04 單變數顯著 vs 多變數顯著 ---------- */
-let w03tfOn = [true, true, true];
-const w03tfBtnIds = ['w03tfBtnTV', 'w03tfBtnRadio', 'w03tfBtnNews'];
-const w03tfNames = ['TV', 'radio', 'newspaper'];
-
-function w03tfSub() {
-  const key = w03tfOn.map(function (v) { return v ? '1' : '0'; }).join('');
-  const subs = FRAMES_w03tf.subsets;
-  for (let i = 0; i < subs.length; i++) if (subs[i].key === key) return subs[i];
-  return subs[0];
-}
-function w03tfToggle(i) { w03tfOn[i] = !w03tfOn[i]; w03tfDraw(); }
-function w03tfReset() { w03tfOn = [true, true, true]; w03tfDraw(); }
-function w03tfPtxt(p) {
-  if (p === null || p === undefined) return '—';
-  return p < 0.0001 ? 'p < 0.0001' : 'p = ' + HC.fmt(p, 4);
-}
-function w03tfDraw() {
-  const sub = w03tfSub();
-  for (let i = 0; i < 3; i++) {
-    const b = $(w03tfBtnIds[i]);
-    if (b) b.classList.toggle('off', !w03tfOn[i]);
-  }
-  const rowIds = ['w03tfRowTV', 'w03tfRowRadio', 'w03tfRowNews'];
-  const tvals = [];
-  for (let i = 0; i < 3; i++) {
-    const j = sub.vars.indexOf(w03tfNames[i]);
-    if (j < 0) {
-      tvals.push(0);
-      $(rowIds[i]).textContent = '沒放進模型';
-    } else {
-      tvals.push(Math.abs(sub.t[j + 1]));
-      $(rowIds[i]).textContent = 'β̂ ' + HC.fmt(sub.coef[j + 1], 4) + ' · t '
-        + HC.fmt(sub.t[j + 1], 2) + ' · ' + w03tfPtxt(sub.p[j + 1]);
-    }
-  }
-  $('w03tfVars').textContent = sub.vars.length ? sub.vars.join('、') : '（一個都沒放）';
-  $('w03tfF').textContent = sub.F === null ? '—（沒有變數可檢定）' : HC.fmt(sub.F, 2);
-  $('w03tfR2').textContent = HC.fmt(sub.r2, 4);
-  $('w03tfRse').textContent = HC.fmt(sub.rse, 4);
-  HC.bar('w03tfChart', {
-    labels: w03tfNames,
-    datasets: [{ label: '這個模型裡各變數的 |t|', data: tvals,
-                 backgroundColor: [HC.tok.accent2, HC.tok.accent3, HC.tok.accent],
-                 borderRadius: 5 }],
-  }, {
-    plugins: { legend: { display: false } },
-    scales: { y: { min: 0, max: 36, title: { display: true, text: '|t| 統計量' } },
-              x: { title: { display: true, text: '沒放進模型的變數畫成 0' } } },
-  });
-  const c = HC.get('w03tfChart');
-  HC.refs(c, [HC.hline(1.97, '5% 顯著門檻 |t| ≈ 1.97')]);
-  if (!sub.vars.length) {
-    setStatus('w03tfStatus', '一個變數都沒放：模型只剩截距 14.02（sales 的平均），'
-      + 'R² = 0、RSE = 5.218、沒有 F 可以檢定。這是所有比較的起點。');
-  } else if (w03tfOn[2] && w03tfOn[1]) {
-    setStatus('w03tfStatus', 'radio 在模型裡，newspaper 的 t 只有 '
-      + HC.fmt(sub.t[sub.vars.indexOf('newspaper') + 1], 2)
-      + '。整體 F = ' + HC.fmt(sub.F, 1) + '，R² = ' + HC.fmt(sub.r2, 4) + '。');
-  } else if (w03tfOn[2]) {
-    setStatus('w03tfStatus', 'radio 不在模型裡，newspaper 的 t 變成 '
-      + HC.fmt(sub.t[sub.vars.indexOf('newspaper') + 1], 2)
-      + ' —— 同一欄資料，換了同伴就換了結論。整體 F = ' + HC.fmt(sub.F, 1) + '。');
-  } else {
-    setStatus('w03tfStatus', '目前放了 ' + sub.vars.join('、') + '：整體 F = '
-      + HC.fmt(sub.F, 1) + '、R² = ' + HC.fmt(sub.r2, 4) + '、RSE = '
-      + HC.fmt(sub.rse, 3) + '。');
-  }
-}
-
 /* ---------- P06 四張診斷圖 ---------- */
 let w03diagKey = 'good', w03diagV = 0;
 const w03diagVNames = ['殘差 vs 配適值', 'Q-Q 圖', 'scale-location', '殘差 vs 槓桿值'];
@@ -1768,93 +1648,6 @@ function w03interDraw() {
   }
 }
 
-/* ---------- P07 線性迴歸 vs KNN ---------- */
-let w03knnV = 0;
-const w03knnShapeName = { linear: '真相是直線', mild: '輕微非線性', strong: '強烈非線性' };
-function w03knnView(v) { w03knnV = v; w03knnDraw(); }
-function w03knnDraw() {
-  const F = FRAMES_w03knn;
-  const keys = ['linear', 'mild', 'strong'];
-  if (w03knnV === 0) {
-    HC.bar('w03knnChart', {
-      labels: keys.map(function (k) { return w03knnShapeName[k]; }),
-      datasets: [
-        { label: '線性迴歸', data: keys.map(function (k) { return F.shape[k].lin; }),
-          backgroundColor: HC.tok.accent2, borderRadius: 5 },
-        { label: 'KNN（最好的 K）', data: keys.map(function (k) { return F.shape[k].best; }),
-          backgroundColor: HC.tok.accent3, borderRadius: 5 },
-      ],
-    }, {
-      scales: { y: { title: { display: true, text: '測試 MSE（愈低愈好）' }, min: 0 },
-                x: { title: { display: true, text: '真實的 f 有多彎（p = 1，n = 50）' } } },
-    });
-    $('w03knnView').textContent = '① 真實形狀';
-    $('w03knnLin').textContent = keys.map(function (k) {
-      return HC.fmt(F.shape[k].lin, 4); }).join(' / ');
-    $('w03knnBest').textContent = keys.map(function (k) {
-      return HC.fmt(F.shape[k].best, 4); }).join(' / ');
-    $('w03knnK').textContent = keys.map(function (k) {
-      return 'K=' + F.shape[k].bestK; }).join(' / ');
-    $('w03knnWin').textContent = '線性 / KNN / KNN';
-    setStatus('w03knnStatus', '真相是直線時線性迴歸的測試 MSE 只有 '
-      + HC.fmt(F.shape.linear.lin, 4) + '，比最好的 KNN（' + HC.fmt(F.shape.linear.best, 4)
-      + '）低一個數量級。可是真相很彎時反過來：' + HC.fmt(F.shape.strong.lin, 4)
-      + ' 對 ' + HC.fmt(F.shape.strong.best, 4) + '，KNN 大勝。'
-      + 'KNN 三組的表現幾乎一樣——它不在乎真相是什麼形狀，線性迴歸很在乎。');
-  } else if (w03knnV === 1) {
-    const inv = F.ks.map(function (k) { return HC.fmt(1 / k, 3); });
-    const S = F.shape.strong;
-    HC.line('w03knnChart', {
-      labels: inv,
-      datasets: [
-        { label: 'KNN（強烈非線性）', data: S.knn, borderColor: HC.tok.accent3,
-          backgroundColor: HC.tok.accent3, borderWidth: 2.6, pointRadius: 3, fill: false },
-        { label: '線性迴歸（同一組資料）',
-          data: F.ks.map(function () { return S.lin; }), borderColor: HC.tok.accent2,
-          borderWidth: 2.2, borderDash: [7, 4], pointRadius: 0, fill: false },
-      ],
-    }, {
-      scales: { x: { title: { display: true, text: '1/K（右邊＝K 小＝很有彈性）' } },
-                y: { title: { display: true, text: '測試 MSE' }, min: 0 } },
-    });
-    $('w03knnView').textContent = '② K 的取捨';
-    $('w03knnLin').textContent = HC.fmt(S.lin, 4);
-    $('w03knnBest').textContent = HC.fmt(S.best, 4);
-    $('w03knnK').textContent = 'K = ' + S.bestK;
-    $('w03knnWin').textContent = 'KNN（低 ' + HC.fmt(S.lin / S.best, 1) + ' 倍）';
-    setStatus('w03knnStatus', '真相強烈非線性時，KNN 在 K = ' + S.bestK + ' 附近最好（MSE '
-      + HC.fmt(S.best, 4) + '），遠低於線性迴歸的水平虛線 ' + HC.fmt(S.lin, 4)
-      + '。兩端都變差：K 太小配到雜訊、K 太大把結構糊掉——又是偏差與變異的取捨。');
-  } else {
-    HC.line('w03knnChart', {
-      labels: F.ps.map(String),
-      datasets: [
-        { label: 'KNN（每個 p 各取最好的 K）',
-          data: F.ps.map(function (p) { return F.dim[String(p)].best; }),
-          borderColor: HC.tok.accent3, backgroundColor: HC.tok.accent3,
-          borderWidth: 2.6, pointRadius: 4, fill: false },
-        { label: '線性迴歸', data: F.ps.map(function (p) { return F.dim[String(p)].lin; }),
-          borderColor: HC.tok.accent2, backgroundColor: HC.tok.accent2,
-          borderWidth: 2.6, pointRadius: 4, borderDash: [7, 4], fill: false },
-      ],
-    }, {
-      scales: { x: { title: { display: true, text: '預測變數個數 p（只有第 1 個真的有用）' } },
-                y: { title: { display: true, text: '測試 MSE' }, min: 0 } },
-    });
-    $('w03knnView').textContent = '③ 維度 p';
-    $('w03knnLin').textContent = HC.fmt(F.dim['1'].lin, 4) + ' → '
-      + HC.fmt(F.dim['20'].lin, 4);
-    $('w03knnBest').textContent = HC.fmt(F.dim['1'].best, 4) + ' → '
-      + HC.fmt(F.dim['20'].best, 4);
-    $('w03knnK').textContent = 'K=' + F.dim['1'].bestK + ' → K=' + F.dim['20'].bestK;
-    $('w03knnWin').textContent = 'p 小時 KNN，p ≥ 4 之後線性';
-    setStatus('w03knnStatus', 'p 從 1 到 20：線性迴歸只從 ' + HC.fmt(F.dim['1'].lin, 3)
-      + ' 退到 ' + HC.fmt(F.dim['20'].lin, 3) + '，但 KNN 從 '
-      + HC.fmt(F.dim['1'].best, 3) + ' 爆到 ' + HC.fmt(F.dim['20'].best, 3)
-      + '——多出來的變數全是純雜訊，卻直接污染了「誰是鄰居」的計算。這就是維度詛咒。');
-  }
-}
-
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。
    Chart.js 從 CDN 載不到時 HC.ready() 不會執行，若把 SVG 初始化放進去，
@@ -1870,9 +1663,7 @@ w03sampReset();
 w03vifDraw();
 w03interDraw();
 HC.ready(function () {
-  w03tfDraw();
   w03diagDraw();
-  w03knnDraw();
   w03sampHist();
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，

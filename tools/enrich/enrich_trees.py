@@ -157,7 +157,8 @@ BODIES["grow"] = f"""
      "按「單步」切一刀：程式會掃過兩個變數的每個候選切點，挑 RSS 下降最多的那一個。",
      '<button class="btn btn-play" onclick="w09growStart()">▶ 自動長</button>'
      '<button class="btn btn-step" onclick="w09growPlayer &amp;&amp; w09growPlayer.step()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w09growReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w09growReset()">重置</button>',
+     provenance=("simulation", "固定種子合成四區塊資料；每一步分裂與 RSS 下降由瀏覽器即時計算。"))}
 
   <p>玩過上面的元件之後有三件事應該很明顯：</p>
 
@@ -245,7 +246,8 @@ BODIES["prune"] = f"""
                 '從 1 到 3 個葉子誤差雪崩式下降，之後就在雜訊裡晃。')],
      "w09pruneStatus", "拖動 α：α 愈大，樹被剪得愈小。看三條誤差線怎麼反應。",
      slider("w09pruneAlpha", "α", 0, 10, 1, 3, "—", "w09pruneSet()", "300px")
-     + '<button class="btn btn-toggle" onclick="w09pruneJumpCv()">跳到 CV 選出的 α</button>')}
+     + '<button class="btn btn-toggle" onclick="w09pruneJumpCv()">跳到 CV 選出的 α</button>',
+     provenance=("course-data", "Boston 固定 train/test split；成本複雜度路徑與六折 CV 由 generator 計算。"))}
 
   <h3 id="dx-ccp">講義完整實作：Boston 上的成本複雜度剪枝</h3>
 {card("講義 08 · cost_complexity_pruning_path ＋ GridSearchCV（迴歸）",
@@ -315,7 +317,8 @@ BODIES["classtree"] = f"""
                 '演算法看到下降量 0，就以為這一刀沒用。下面那張表是最經典的例子。')],
      "w09impStatus", "拖動 p̂ 看三個不純度指標的值。注意錯誤率是折線、另兩個是曲線。",
      slider("w09impSl", "p̂", 0, 100, 1, 50, "0.50", "w09impSet()", "280px")
-     + '<button class="btn btn-toggle" onclick="w09impToggle()">縮放交叉熵</button>')}
+     + '<button class="btn btn-toggle" onclick="w09impToggle()">縮放交叉熵</button>',
+     provenance=("illustrative", "依 ISLP 第 8 章與習題 8.4(3) 的節點不純度公式即時計算。"))}
 
   <p>下面這個例子把問題講得最清楚。父節點有 800 筆、兩類各 400 筆。兩種切法：</p>
 
@@ -471,7 +474,8 @@ BODIES["why"] = f"""
                 '紅色一多，投票就開始穩定地答錯。')],
      "w09voteStatus", "拖動 p 與 M：看多數投票的正確率怎麼變。p 拖到 0.5 以下會發生有趣的事。",
      slider("w09voteSlP", "p", 30, 80, 1, 55, "0.55", "w09voteSet()", "220px")
-     + slider("w09voteSlM", "M", 1, 201, 2, 15, "15", "w09voteSet()", "200px"))}
+     + slider("w09voteSlM", "M", 1, 201, 2, 15, "15", "w09voteSet()", "200px"),
+     provenance=("illustrative", "獨立弱分類器的二項尾機率為理論值；上方方塊為固定種子概念示意。"))}
 
 {info("「各自獨立」是整件事的命門", '''上面那條公式只有在
   <strong>分類器彼此完全獨立、錯的地方互不相關</strong>時才成立。<br>
@@ -554,7 +558,8 @@ BODIES["bagging"] = f"""
      "w09bagStatus", "按「長一棵樹」看一次有放回重抽：虛線框的球就是這棵樹的袋外樣本。",
      '<button class="btn btn-step" onclick="w09bagOne()">→ 長一棵樹</button>'
      '<button class="btn btn-play" onclick="w09bagMany()">▶ 連長 200 棵</button>'
-     '<button class="btn btn-reset" onclick="w09bagReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w09bagReset()">重置</button>',
+     provenance=("simulation", "n=20 的固定種子 bootstrap 重抽；累計 OOB 比例與 1/e 理論值即時計算。"))}
 
   <p>還有一件實務上很重要的事：<strong>B 不是需要調的參數</strong>。
   ISLP 圖 8.8 顯示誤差隨 B 上升而下降、然後平掉就不動了——
@@ -650,7 +655,8 @@ BODIES["rf"] = f"""
      '<select id="w09rfSel" class="mono" onchange="w09rfDraw()">'
      '<option value="boston" selected>Boston（p = 12，lab 的同一份切分）</option>'
      '<option value="sim">模擬：1 強 ＋ 20 中，30 個變數彼此相關</option>'
-     '</select>')}
+     '</select>',
+     provenance=("course-data", "Boston 曲線對照 Ch08 lab；第二個選項為固定種子 524 的相關特徵模擬，兩者均由 generator 計算。"))}
 
   <h3 id="dx-imp">講義完整實作：random forest 與變數重要度</h3>
 {card("講義 08 · max_features = 6 的 random forest ＋ feature_importances_",
@@ -732,14 +738,15 @@ BODIES["boosting"] = f"""
                 '注意它總是往殘差最偏的地方去。<br>'
                 '<strong>λ 調小</strong>：每一步只走一點點，需要更多棵樹，但配出來的曲線更平滑；'
                 '<strong>λ 調到 1</strong>：幾步就衝過去，然後開始抖。')],
-     "w09gbStatus", "按「單步」加一棵淺樹：它配的是目前的殘差，然後乘上 λ 加進配適裡。",
+     "w09gbStatus", "直接調 B 看第 b 棵樹後的配適與殘差；自動播放只是可選總覽。",
      slider("w09gbSlLam", "λ", 5, 100, 5, 35, "0.35", "w09gbSetLam()", "200px")
+     + slider("w09gbSlB", "B", 0, 40, 1, 0, "0", "w09gbSetB()", "180px")
      + '<label class="slider-label" style="margin:0 .3rem;">深度 d</label>'
      '<select id="w09gbSel" class="mono" onchange="w09gbSetDepth()">'
      '<option value="1" selected>1（stump）</option><option value="2">2</option></select>'
-     '<button class="btn btn-play" onclick="w09gbStart()">▶ 開始</button>'
-     '<button class="btn btn-step" onclick="w09gbPlayer &amp;&amp; w09gbPlayer.step()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w09gbReset()">重置</button>')}
+     '<button class="btn btn-play" onclick="w09gbStart()">▶ 自動播放（可選）</button>'
+     '<button class="btn btn-reset" onclick="w09gbReset()">重置</button>',
+     provenance=("simulation", "固定種子 52408 的非線性迴歸模擬；淺樹、殘差與提升序列由瀏覽器即時計算。"))}
 
   <p>Boosting 有<strong>三個</strong>要調的參數，而且跟 bagging 不同，
   <strong>它真的會過度配適</strong>：</p>
@@ -800,7 +807,8 @@ BODIES["boosting"] = f"""
      "w09adaStatus", "按「單步」跑一輪 AdaBoost：看答錯的點怎麼變大，切點怎麼被逼著移動。",
      '<button class="btn btn-play" onclick="w09adaStart()">▶ 開始</button>'
      '<button class="btn btn-step" onclick="w09adaPlayer &amp;&amp; w09adaPlayer.step()">→ 單步</button>'
-     '<button class="btn btn-reset" onclick="w09adaReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w09adaReset()">重置</button>',
+     provenance=("illustrative", "16 點固定分類示意；權重、stump 與 AdaBoost 輪次依頁面公式即時計算。"))}
 
   <h3 id="dx-gbr">講義完整實作：Boston 上的梯度提升</h3>
 {card("講義 08 · GradientBoostingRegressor（5000 棵樹，λ = 0.001）",
@@ -973,7 +981,7 @@ BODIES["stacking"] = f"""
                 '直接從訓練好的樹裡加總，<strong>零成本</strong>，但它是在<strong>訓練資料</strong>上算的，'
                 '而且會系統性偏袒「取值很多的變數」（連續變數、高基數的類別變數）。<br>'
                 '<strong>Permutation importance</strong>：把某一欄<strong>隨機打亂</strong>，'
-                '看測試誤差變差多少。定義在<strong>測試資料</strong>上，'
+                '看測試集的 R² 下降多少。定義在<strong>測試資料</strong>上，'
                 '直接對應「這個變數對預測的貢獻」，但要多跑很多次預測。', "ISLP 圖 8.9"),
       info_card("最大的陷阱：相關的變數會互相稀釋",
                 '如果兩個變數幾乎一樣（例如身高（公分）與身高（英吋）），'
@@ -984,8 +992,9 @@ BODIES["stacking"] = f"""
      '<label class="slider-label" style="margin-right:.4rem;">重要度</label>'
      '<select id="w09vimpSel" class="mono" onchange="w09vimpDraw()">'
      '<option value="impurity" selected>不純度下降（feature_importances_）</option>'
-     '<option value="permutation">Permutation（測試集上打亂）</option>'
-     '</select>')}
+     '<option value="permutation">Permutation（測試集上打亂；平均 ± SD）</option>'
+     '</select>',
+     provenance=("course-data", "Boston 固定切分上的 RandomForestRegressor；測試 R² permutation importance 重複 30 次，mean 與 SD 由 generator 計算。"))}
 
 {info("變數重要度不是因果，也不是「拿掉它會怎樣」", '''三件常見的誤讀，每一件都會出事：<br>
   <strong>① 它不是因果效應。</strong>重要度高只表示「樹很愛用它來切」，
@@ -1784,12 +1793,16 @@ function w09vimpDraw() {
   const el = document.getElementById('w09vimpSel');
   const mode = el ? el.value : 'impurity';
   const vals = mode === 'impurity' ? F.impurity : F.permutation;
+  const ord = vals.map((_, i) => i).sort((a, b) => vals[b] - vals[a]);
+  const labels = ord.map(i => mode === 'impurity' ? F.names[i]
+    : F.names[i] + '  ' + HC.fmt(vals[i], 3) + ' ± ' + HC.fmt(F.permSd[i], 3));
+  const shown = ord.map(i => vals[i]);
   HC.bar('w09vimpChart', {
-    labels: F.names,
+    labels: labels,
     datasets: [{
-      label: mode === 'impurity' ? '不純度（RSS）下降總量' : 'Permutation 重要度（測試 MSE 增加量）',
-      data: vals,
-      backgroundColor: vals.map((v, i) => i < 2 ? HC.tok.accent : 'rgba(44,62,122,.62)'),
+      label: mode === 'impurity' ? '不純度（RSS）下降總量' : 'Permutation 重要度（測試 R² 下降量）',
+      data: shown,
+      backgroundColor: shown.map((v, i) => i < 2 ? HC.tok.accent : 'rgba(44,62,122,.62)'),
       borderRadius: 4,
     }],
   }, {
@@ -1797,21 +1810,25 @@ function w09vimpDraw() {
     plugins: { legend: { display: false } },
     scales: { x: { title: { display: true,
                             text: mode === 'impurity' ? '不純度下降的相對佔比'
-                                                      : '打亂該欄後測試 MSE 增加多少' } },
+                                                      : '打亂該欄後測試 R² 下降多少' } },
               y: { title: { display: true, text: 'Boston 的 12 個變數' } } },
   });
   const tot = vals.reduce((s, v) => s + Math.max(0, v), 0);
-  document.getElementById('w09vimpTop1').textContent = F.names[0] + '（' + HC.fmt(vals[0], 3) + '）';
-  document.getElementById('w09vimpTop2').textContent = F.names[1] + '（' + HC.fmt(vals[1], 3) + '）';
+  const showVal = i => mode === 'impurity' ? HC.fmt(vals[i], 3)
+    : HC.fmt(vals[i], 3) + ' ± ' + HC.fmt(F.permSd[i], 3);
+  document.getElementById('w09vimpTop1').textContent = F.names[ord[0]] + '（' + showVal(ord[0]) + '）';
+  document.getElementById('w09vimpTop2').textContent = F.names[ord[1]] + '（' + showVal(ord[1]) + '）';
   document.getElementById('w09vimpShare').textContent =
-    tot > 0 ? HC.pct((vals[0] + vals[1]) / tot, 1) : '—';
+    mode === 'impurity' && tot > 0 ? HC.pct((vals[ord[0]] + vals[ord[1]]) / tot, 1)
+      : '不適用（不是可加總份額）';
   document.getElementById('w09vimpMse').textContent = HC.fmt(F.testMse, 2);
-  setStatus('w09vimpStatus', (mode === 'impurity'
+  const leaders = '前兩名是 <strong>' + F.names[ord[0]] + '</strong> 與 <strong>'
+    + F.names[ord[1]] + '</strong>。';
+  setStatus('w09vimpStatus', mode === 'impurity'
     ? '不純度下降（<code>feature_importances_</code>，訓練資料上、零成本）：'
-    : 'Permutation 重要度（測試資料上打亂該欄，重複 30 次取平均）：')
-    + '前兩名都是 <strong>' + F.names[0] + '</strong> 與 <strong>' + F.names[1]
-    + '</strong>，合計佔 ' + (tot > 0 ? HC.pct((vals[0] + vals[1]) / tot, 1) : '—')
-    + '。兩種定義的排名在這份資料上幾乎一致——但這不保證，換一份資料就可能不同。');
+      + leaders + '合計佔 ' + (tot > 0 ? HC.pct((vals[ord[0]] + vals[ord[1]]) / tot, 1) : '—') + '。'
+    : 'Permutation 重要度（測試資料上打亂該欄 30 次；標籤顯示 mean ± SD）：'
+      + leaders + '這些 R² 下降量不是可加總的份額；SD 大時也不要把相近名次當成穩定排序。');
 }
 """
 
@@ -1928,6 +1945,10 @@ function w09gbApply(f) {
   }
   w09mk(host, 'text', { x: X0 + W / 2, y: 392, 'text-anchor': 'middle', cls: 'axtitle' }, 'x');
   document.getElementById('w09gbB').textContent = f.b + ' / ' + w09gbSteps;
+  const bSlider = document.getElementById('w09gbSlB');
+  if (bSlider) bSlider.value = String(f.b);
+  const bSliderVal = document.getElementById('w09gbSlBVal');
+  if (bSliderVal) bSliderVal.textContent = String(f.b);
   document.getElementById('w09gbMse').textContent = HC.fmt(f.mse, 4);
   document.getElementById('w09gbSd').textContent = HC.fmt(f.sd, 4);
   document.getElementById('w09gbLeaf').textContent = String(Math.pow(2, w09gbDepth));
@@ -1958,6 +1979,13 @@ function w09gbSetDepth() {
   const el = document.getElementById('w09gbSel');
   if (el) w09gbDepth = parseInt(el.value, 10);
   w09gbRebuild();
+}
+function w09gbSetB() {
+  if (w09gbPlayer) w09gbPlayer.stop();
+  const el = document.getElementById('w09gbSlB');
+  const b = el ? parseInt(el.value, 10) : 0;
+  if (!w09gbFrames.length) w09gbFrames = w09gbBuild();
+  w09gbApply(w09gbFrames[Math.max(0, Math.min(w09gbSteps, b))]);
 }
 function w09gbStart() { w09gbRebuild(); w09gbPlayer.play(); }
 function w09gbReset() { w09gbRebuild(); }

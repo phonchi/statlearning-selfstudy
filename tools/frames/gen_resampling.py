@@ -63,19 +63,7 @@ for d in range(1, MAXDEG + 1):
     kf10.append(round(-cross_val_score(LinearRegression(), X, Y, cv=kf,
                                        scoring="neg_mean_squared_error").mean(), 4))
 
-# ── 3. 每一折的 MSE（degree 2），給分割動畫器右側的累計表 ────────────────
-fold_detail = {}
-for k in (2, 5, 10):
-    X = poly_design(H, 2)
-    kfk = KFold(n_splits=k, shuffle=True, random_state=0)
-    per = []
-    for tr, te in kfk.split(X):
-        m = LinearRegression().fit(X[tr], Y[tr])
-        per.append({"n_train": int(len(tr)), "n_held": int(len(te)),
-                    "mse": round(mse(Y[te], m.predict(X[te])), 4)})
-    fold_detail[str(k)] = per
-
-# ── 4. Bootstrap：Portfolio 的 α（ISLP §5.2）────────────────────────────
+# ── 3. Bootstrap：Portfolio 的 α（ISLP §5.2）────────────────────────────
 Portfolio = load_data("Portfolio")
 PX, PY = np.asarray(Portfolio["X"], dtype=float), np.asarray(Portfolio["Y"], dtype=float)
 
@@ -91,24 +79,44 @@ n = len(PX)
 boot = [alpha_hat(*(lambda i: (PX[i], PY[i]))(rng.integers(0, n, n))) for _ in range(1000)]
 boot_hist, boot_edges = np.histogram(boot, bins=24)
 
-# ── 5. CV 的錯用 vs 正用：p 遠大於 n 的純噪音資料 ────────────────────────
-rng2 = np.random.default_rng(7)
+# ── 4. CV 的錯用 vs 正用：p 遠大於 n 的純噪音資料 ────────────────────────
 n_obs, p_all, k_sel = 50, 500, 10
-Xn = rng2.standard_normal((n_obs, p_all))
-yn = rng2.integers(0, 2, n_obs)                 # 與 X 完全無關
-corr = np.array([abs(np.corrcoef(Xn[:, j], yn)[0, 1]) for j in range(p_all)])
-top = np.argsort(-corr)[:k_sel]                 # 先用全部資料挑特徵 ← 錯的做法
-kf5 = KFold(n_splits=5, shuffle=True, random_state=0)
 from sklearn.linear_model import LogisticRegression  # noqa: E402
 
-wrong = 1 - cross_val_score(LogisticRegression(max_iter=2000), Xn[:, top], yn, cv=kf5).mean()
-right_scores = []
-for tr, te in kf5.split(Xn):
-    c = np.array([abs(np.corrcoef(Xn[tr, j], yn[tr])[0, 1]) for j in range(p_all)])
-    sel = np.argsort(-c)[:k_sel]                # 在每個 fold 內才挑 ← 對的做法
-    m = LogisticRegression(max_iter=2000).fit(Xn[tr][:, sel], yn[tr])
-    right_scores.append(m.score(Xn[te][:, sel], yn[te]))
-right = 1 - float(np.mean(right_scores))
+
+def cv_misuse_once(seed):
+    """同一個純雜訊實驗的一次完整重複；回傳錯誤與正確流程的 5-fold error。"""
+    grng = np.random.default_rng(seed)
+    Xn = grng.standard_normal((n_obs, p_all))
+    yn = grng.integers(0, 2, n_obs)              # 與 X 完全無關
+    def abs_corr(X, y):
+        xc, yc = X - X.mean(axis=0), y - y.mean()
+        den = np.sqrt((xc * xc).sum(axis=0) * float(yc @ yc))
+        return np.abs((xc.T @ yc) / np.where(den == 0, 1, den))
+
+    corr = abs_corr(Xn, yn)
+    top = np.argsort(-corr)[:k_sel]              # 先看全部 y 挑特徵 ← 錯
+    kf5 = KFold(n_splits=5, shuffle=True, random_state=seed)
+    wrong = 1 - cross_val_score(LogisticRegression(max_iter=2000), Xn[:, top], yn,
+                                cv=kf5).mean()
+    right_scores = []
+    for tr, te in kf5.split(Xn):
+        c = abs_corr(Xn[tr], yn[tr])
+        sel = np.argsort(-c)[:k_sel]             # 每個 fold 內才挑 ← 對
+        m = LogisticRegression(max_iter=2000).fit(Xn[tr][:, sel], yn[tr])
+        right_scores.append(m.score(Xn[te][:, sel], yn[te]))
+    return float(wrong), 1 - float(np.mean(right_scores))
+
+
+misuse = np.asarray([cv_misuse_once(7000 + i) for i in range(100)])
+wrong_all, right_all = misuse[:, 0], misuse[:, 1]
+
+
+def summary(a):
+    return {"mean": round(float(np.mean(a)), 4),
+            "median": round(float(np.median(a)), 4),
+            "q10": round(float(np.quantile(a, 0.10)), 4),
+            "q90": round(float(np.quantile(a, 0.90)), 4)}
 
 # ── 輸出 ────────────────────────────────────────────────────────────────
 def js(name, obj, src, seed, note=""):
@@ -128,19 +136,18 @@ out = [
        "Ch05-resample-lab-zh.ipynb 儲存格 37／41（該格未存輸出，用同設定重算）",
        "KFold(n_splits=10, shuffle=True, random_state=0)",
        f"degree 1 的 LOOCV = {loocv[0]}，與 lab 儲存格 32 的 24.2315 相符"),
-    js("FRAMES_w05fold", {"detail": fold_detail, "n": N, "degree": 2},
-       "ISLP Auto · degree 2 · 自算", "KFold(shuffle=True, random_state=0)"),
-    js("FRAMES_w05boot", {"n": n, "alphaHat": round(alpha_hat(PX, PY), 6),
+    js("FRAMES_w05boot", {"n": n, "x": [round(float(v), 10) for v in PX],
+                          "y": [round(float(v), 10) for v in PY],
+                          "alphaHat": round(alpha_hat(PX, PY), 6),
                           "bootMean": round(float(np.mean(boot)), 6),
                           "bootSE": round(float(np.std(boot, ddof=1)), 6),
                           "hist": boot_hist.tolist(),
                           "edges": [round(float(e), 4) for e in boot_edges]},
        "ISLP Portfolio（ISLP §5.2 的 α 範例）", "np.random.default_rng(0)，B = 1000"),
-    js("FRAMES_w05misuse", {"n": n_obs, "p": p_all, "kSel": k_sel,
-                            "wrongErr": round(float(wrong), 4),
-                            "rightErr": round(float(right), 4)},
-       "純噪音模擬（y 與 X 完全獨立）", "np.random.default_rng(7)",
-       "正確做法的錯誤率應該接近 0.5"),
+    js("FRAMES_w05misuse", {"n": n_obs, "p": p_all, "kSel": k_sel, "reps": 100,
+                            "wrong": summary(wrong_all), "right": summary(right_all)},
+       "純噪音模擬（y 與 X 完全獨立）", "np.random.default_rng(7000..7099)",
+       "報告 100 次獨立模擬的平均、中位數與 10–90 百分位，不以單次結果作一般結論"),
 ]
 print("\n".join(out))
 
@@ -148,4 +155,4 @@ print(f"\n/* 檢查：LOOCV degree1={loocv[0]}（lab 24.2315）· "
       f"驗證集 seed0 degree1..3={val_curves[0][:3]} · "
       f"alpha_hat={alpha_hat(PX, PY):.4f}（ISLP 書上 0.5758）· "
       f"bootSE={np.std(boot, ddof=1):.4f}（ISLP 書上約 0.089）· "
-      f"誤用 CV 錯誤率={wrong:.3f} vs 正用={right:.3f} */", file=sys.stderr)
+      f"誤用 CV 平均錯誤率={wrong_all.mean():.3f} vs 正用={right_all.mean():.3f} */", file=sys.stderr)

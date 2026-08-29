@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -683,7 +688,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · 視覺化）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -713,36 +718,37 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:prologue -->
 
   <p>統計課教你算平均、標準差、相關係數。這些數字很有用，但它們<strong>會漏掉形狀</strong>。
-  三組資料可以有幾乎一樣的平均、標準差與相關係數，畫出來卻完全不同——
-  其中一組是直線關係、一組是曲線、一組只是被一個離群值拉出來的假相關。</p>
+  四組資料可以有幾乎一樣的平均、標準差、相關係數與迴歸線，畫出來卻完全不同。
+  這不是刻意湊出的動畫，而是 Anscombe 在 1973 年提出、可以逐筆驗算的經典四重奏。</p>
 
 <div class="info-box">
   <span class="info-label">一句話</span>
   <strong>先畫圖，再算數字。</strong>圖告訴你「這份資料長什麼樣」，數字告訴你「有多強」——順序反過來很容易被騙。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="book-redraw">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w18sameChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：三組資料的平均與相關係數幾乎相同，但一組是直線、一組是曲線、一組只有一個離群值在撐。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>：Anscombe 四組資料的摘要統計幾乎相同，但散佈圖形狀完全不同。</div></div>
       </div>
-      <div class="status-banner" id="w18smStatus"><span class="status-icon">›</span><span class="status-text">三組資料，摘要統計幾乎相同。先看數字，再按按鈕看形狀。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18smSet(0)">① 直線關係</button><button class="btn btn-toggle" onclick="w18smSet(1)">② 曲線關係</button><button class="btn btn-toggle" onclick="w18smSet(2)">③ 一個離群值撐出來的</button></div>
+      <div class="status-banner" id="w18smStatus"><span class="status-icon">›</span><span class="status-text">四組資料，摘要統計幾乎相同。先看數字，再按按鈕看形狀。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w18smSet(0)">I</button><button class="btn btn-toggle" onclick="w18smSet(1)">II</button><button class="btn btn-toggle" onclick="w18smSet(2)">III</button><button class="btn btn-toggle" onclick="w18smSet(3)">IV</button></div>
+      <div class="viz-source"><span>講義／課本重繪</span>Anscombe (1973) 四重奏原始數據；摘要由圖中同一批點即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">按按鈕換一組</div>
-      三組資料的<strong>平均、標準差、相關係數都幾乎一樣</strong>，但形狀完全不同。只看數字的話，你會以為它們是同一回事。
+      四組資料的<strong>平均、標準差、相關係數與迴歸線都幾乎一樣</strong>，但形狀完全不同。只看數字的話，你會以為它們是同一回事。
     </div>
     <div class="info-card">
       <div class="ic-title">這一組的摘要統計</div>
-      <div class="ic-row"><span class="ic-label">x 平均</span><span class="ic-value" id="w18smMx">—</span></div><div class="ic-row"><span class="ic-label">y 平均</span><span class="ic-value" id="w18smMy">—</span></div><div class="ic-row"><span class="ic-label">相關係數 r</span><span class="ic-value" id="w18smR">—</span></div>
+      <div class="ic-row"><span class="ic-label">x 平均</span><span class="ic-value" id="w18smMx">—</span></div><div class="ic-row"><span class="ic-label">y 平均</span><span class="ic-value" id="w18smMy">—</span></div><div class="ic-row"><span class="ic-label">x／y 樣本標準差</span><span class="ic-value" id="w18smSd">—</span></div><div class="ic-row"><span class="ic-label">相關係數 r</span><span class="ic-value" id="w18smR">—</span></div><div class="ic-row"><span class="ic-label">最小平方線</span><span class="ic-value" id="w18smLine">—</span></div>
     </div>
     <div class="info-card">
       <div class="ic-title">這些點哪裡來的</div>
-      頁面用固定種子當場算出來的（<code>HC.stat.lcg</code>），不是任何一份真實資料——重點是機制，所以用 live 而不是烘焙。重新整理頁面會得到完全一樣的三組點。
+      逐筆採用 Anscombe's quartet 的經典 11 筆資料；頁面再由同一批點即時計算平均與相關係數，沒有另寫摘要數字。
     </div>
   </div>
 </div>
@@ -788,12 +794,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>Axes 是裡面的一個座標系</strong>（畫點、設軸範圍、加圖例）。
   一張 Figure 可以有很多個 Axes。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18anatSvg" height="320"></svg>
       <div class="status-banner" id="w18anStatus"><span class="status-icon">›</span><span class="status-text">先分清楚哪一層是哪一層，之後查文件會快很多。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w18anSet(0)">Figure</button><button class="btn btn-toggle" onclick="w18anSet(1)">Axes</button><button class="btn btn-toggle" onclick="w18anSet(2)">Axis（軸）</button><button class="btn btn-toggle" onclick="w18anSet(3)">Artist（點、線、字）</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>依 matplotlib 的 Figure／Axes／Axis／Artist 物件層級製作概念示意。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -832,12 +839,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 105</span>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18gridSvg" height="300"></svg>
       <div class="status-banner" id="w18gdStatus"><span class="status-icon">›</span><span class="status-text">點任一格，看它的索引。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w18gdNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18gdReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 2×3 subplots 與 axes 索引範例重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -891,12 +899,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>調參數之前先想好你要回答什麼問題。</strong>想看「有沒有兩群」就把 bins 調細一點；想看「大致集中在哪」就調粗一點。調到「圖看起來最漂亮」為止，是在騙自己。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18binsSvg" height="340"></svg>
       <div class="status-banner" id="w18bnStatus"><span class="status-icon">›</span><span class="status-text">先猜這份資料有幾個峰，再把 bins 從 4 拉到 40。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w18bnStep(-4)">參數 −</button><button class="btn btn-step" onclick="w18bnStep(4)">參數 +</button><button class="btn btn-toggle" onclick="w18bnMode()">切換：直方圖 ⇄ 密度圖</button><button class="btn btn-reset" onclick="w18bnReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子 20260828 的雙峰常態混合模擬；120 筆資料由頁面即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -963,12 +972,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>用顏色、大小、分面把第三、第四個變數也塞進同一張圖</strong>——
   <code>hue</code>、<code>size</code>、<code>col</code> 這三個參數值得記起來。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18pickSvg" height="340"></svg>
       <div class="status-banner" id="w18pkStatus"><span class="status-icon">›</span><span class="status-text">選 x 與 y 的型別。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w18pkSet(0)">數值 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(1)">類別 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(2)">類別 × 類別</button><button class="btn btn-toggle" onclick="w18pkSet(3)">單一數值</button><button class="btn btn-toggle" onclick="w18pkSet(4)">時間 × 數值</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 實際使用的 seaborn 圖型與變數型別整理。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1045,18 +1055,19 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>countplot 講「有幾筆」、barplot 講「平均是多少」、boxplot 講「分布長怎樣」</strong>。
   三種被混用的後果是很嚴重的。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18misSvg" height="340"></svg>
       <div class="status-banner" id="w18msStatus"><span class="status-icon">›</span><span class="status-text">先看左邊，再按「截斷 y 軸」。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w18msSet(0)">y 軸從 0 開始</button><button class="btn btn-toggle" onclick="w18msSet(1)">截斷 y 軸</button><button class="btn btn-toggle" onclick="w18msSet(2)">改用盒鬚圖</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>A、B 兩組固定示意資料；平均、盒鬚摘要與視覺倍率皆由同一批觀測即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">同一份資料，兩種畫法</div>
-      左邊是誠實的版本（y 軸從 0 開始），右邊是截斷 y 軸的版本。按按鈕切換，看「差距」怎麼被放大成三倍。
+      左邊是誠實的版本（y 軸從 0 開始），右邊是截斷 y 軸的版本。按按鈕切換；右側倍率會由同一批資料與目前的軸起點即時計算。
     </div>
     <div class="info-card">
       <div class="ic-title">兩組的真實數字</div>
@@ -1076,7 +1087,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, kind=<span class="str">&quot;box&quot;</span>, data=tips);</span>
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, kind=<span class="str">&quot;box&quot;</span>, data=tips); <span class="com"># When adding a hue semantic, the box for each level of the semantic variable is moved along the categorical axis so they don’t overlap:b</span></span></div>
-  <p class="dx-note">盒子是四分位距、線是中位數、鬚是 1.5 倍 IQR 內的極值，外面的點是離群值。<strong>它是唯一一種會告訴你「有沒有離群值」的類別圖。</strong>（產生的是圖，沒有文字輸出可對照。）</p>
+  <p class="dx-note">盒子是四分位距、線是中位數、鬚是 1.5 倍 IQR 內的極值，外面的點是離群值。<strong>在本節比較的基本類別圖中，只有盒鬚圖直接標出這些候選離群值。</strong>（產生的是圖，沒有文字輸出可對照。）</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 120、121</span>
 </div>
 
@@ -1135,12 +1146,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
   這是統計圖跟一般商業圖表最大的差別。你不只在描述資料，還在展示一個模型對不對。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18corrSvg" height="340"></svg>
       <div class="status-banner" id="w18crStatus"><span class="status-icon">›</span><span class="status-text">點格子看那一對變數的相關係數。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w18crNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18crReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的 tips.corr(numeric_only=True) 相關矩陣重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1221,7 +1233,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 選圖</div>
   <p>你要呈現「三個地區（origin）的 mpg 分布，並讓讀者看得出有沒有離群值」。該畫什麼？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="<code>barplot</code> 只給平均與信賴區間，<strong>離群值完全看不到</strong>。它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。盒鬚圖是唯一會把離群值單獨畫成點的類別圖。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="<code>barplot</code> 只給平均與信賴區間，<strong>離群值完全看不到</strong>。它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。在本節比較的基本類別圖中，盒鬚圖會把超出鬚線的觀測單獨畫成點。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1234,7 +1246,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 圖表誠實度</div>
-  <p>一張長條圖的 y 軸從 2.9 開始，讓 2.98 與 3.26 看起來差三倍。這張圖錯在哪？</p>
+  <p>一張長條圖把 y 軸截在兩組平均附近，讓小差異看起來大幅放大。這張圖錯在哪？</p>
   <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="「方便觀察」跟「誤導」的界線就在這裡。長條圖用<strong>長度</strong>編碼數值，截斷之後長度的比例不再對應數值的比例。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 沒錯，只是放大了差異方便觀察</div><div class="quiz-opt" data-correct="true" data-fb="對。真的要放大差異，改用點估計圖（<code>pointplot</code>）——點的位置不隱含「從零開始」的承諾，截斷是可以接受的，而且要在圖上標明。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 長條圖用長度表示數量，截斷 y 軸會破壞長度的意義</div><div class="quiz-opt" data-correct="false" data-fb="對數是給跨數量級的資料用的。2.98 與 3.26 差不到 10%，取對數只會更難讀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 應該把 y 軸改成對數尺度</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
@@ -2074,15 +2086,23 @@ if (w18pkS) w18pkDraw();
 
 /* ═══ w18ms 截斷 y 軸 ═══ */
 const w18msS = HC.svg('w18misSvg', {h: 340});
-const w18msVals = [2.98, 3.26];
+const w18msGroups = [[1.4, 2.4, 3.0, 4.2, 3.9], [1.6, 2.7, 3.3, 4.6, 4.1]];
+const w18msVals = w18msGroups.map(xs => HC.stat.mean(xs));
+function w18msFive(xs) {
+  const s = xs.slice().sort((a, b) => a - b);
+  return [s[0], HC.stat.quantile(s, 0.25), HC.stat.quantile(s, 0.5),
+          HC.stat.quantile(s, 0.75), s[s.length - 1]];
+}
 let w18msI = 0;
 function w18msDraw() {
   const s = w18msS;
   const g = s.clearLayer('main');
+  document.getElementById('w18msA').textContent = HC.fmt(w18msVals[0], 2);
+  document.getElementById('w18msB').textContent = HC.fmt(w18msVals[1], 2);
   if (w18msI === 2) {
-    s.domain([0, 3], [0, 6]);
-    s.grid(3, 6, {ytitle: '小費', ydec: 0});
-    [[1, 1.4, 2.4, 3.0, 4.2, 5.6], [2, 1.6, 2.7, 3.3, 4.6, 6.1]].forEach((b, i) => {
+    s.domain([0, 3], [0, 5]);
+    s.grid(3, 5, {ytitle: '小費', ydec: 1});
+    w18msGroups.map((xs, i) => [i + 1].concat(w18msFive(xs))).forEach((b, i) => {
       s.box(b[0] - 0.28, b[2], b[0] + 0.28, b[4],
             {fill: i === 0 ? HC.tok.accent2 : HC.tok.accent, stroke: HC.tok.ink,
              sw: 1.5, rx: 3}, g);
@@ -2096,7 +2116,7 @@ function w18msDraw() {
               + '長條圖的「差距」其實被個體差異淹沒了。');
     return;
   }
-  const y0 = w18msI === 0 ? 0 : 2.9;
+  const y0 = w18msI === 0 ? 0 : Math.min.apply(null, w18msVals) - 0.08;
   s.domain([0, 3], [y0, 3.4]);
   s.grid(3, 5, {ytitle: '平均小費', ydec: 2});
   w18msVals.forEach((v, i) => {
@@ -2109,7 +2129,8 @@ function w18msDraw() {
   document.getElementById('w18msRatio').textContent =
     w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（假的）';
   setStatus('w18msStatus', w18msI === 0
-    ? 'y 軸從 0 開始：兩根長條幾乎一樣高，差距約 <b>9%</b>。'
+    ? 'y 軸從 0 開始：兩根長條幾乎一樣高，平均差距約 <b>'
+      + HC.fmt((w18msVals[1] / w18msVals[0] - 1) * 100, 1) + '%</b>。'
     : '同樣的兩個數字，截斷之後看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>——數字沒變，圖說謊了。');
 }
 function w18msSet(i) { w18msI = i; w18msDraw(); }
@@ -2163,28 +2184,17 @@ function w18crNext() { w18crI = (w18crI + 1) % 9; w18crDraw(); }
 function w18crReset() { w18crI = 1; w18crDraw(); }
 if (w18crS) w18crDraw();
 
-/* ═══ w18sm 摘要統計一樣、形狀不同（Chart.js）═══ */
+/* ═══ w18sm Anscombe's quartet（Chart.js）═══ */
+const w18smX = [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5];
+const w18smData = [
+  [8.04, 6.95, 7.58, 8.81, 8.33, 9.96, 7.24, 4.26, 10.84, 4.82, 5.68],
+  [9.14, 8.14, 8.74, 8.77, 9.26, 8.10, 6.13, 3.10, 9.13, 7.26, 4.74],
+  [7.46, 6.77, 12.74, 7.11, 7.81, 8.84, 6.08, 5.39, 8.15, 6.42, 5.73],
+  [6.58, 5.76, 7.71, 8.84, 8.47, 7.04, 5.25, 12.50, 5.56, 7.91, 6.89]
+];
 function w18smMake(kind) {
-  const rand = HC.stat.lcg(kind === 0 ? 11 : (kind === 1 ? 22 : 33));
-  const pts = [];
-  if (kind === 0) {
-    for (let i = 0; i < 30; i++) {
-      const x = 4 + rand() * 10;
-      pts.push({x: x, y: 3 + 0.5 * x + HC.stat.normal(rand) * 1.2});
-    }
-  } else if (kind === 1) {
-    for (let i = 0; i < 30; i++) {
-      const x = 4 + rand() * 10;
-      pts.push({x: x, y: 3 + 1.9 * x - 0.078 * x * x + HC.stat.normal(rand) * 0.5});
-    }
-  } else {
-    for (let i = 0; i < 29; i++) {
-      const x = 4 + rand() * 5;
-      pts.push({x: x, y: 7.6 + HC.stat.normal(rand) * 1.1});
-    }
-    pts.push({x: 17.5, y: 15.5});
-  }
-  return pts;
+  const xs = kind === 3 ? [8, 8, 8, 8, 8, 8, 8, 19, 8, 8, 8] : w18smX;
+  return xs.map((x, i) => ({x: x, y: w18smData[kind][i]}));
 }
 let w18smI = 0;
 function w18smDraw() {
@@ -2201,8 +2211,13 @@ function w18smDraw() {
   })();
   document.getElementById('w18smMx').textContent = HC.fmt(HC.stat.mean(xs), 2);
   document.getElementById('w18smMy').textContent = HC.fmt(HC.stat.mean(ys), 2);
+  document.getElementById('w18smSd').textContent = HC.fmt(HC.stat.sd(xs), 2)
+    + ' ／ ' + HC.fmt(HC.stat.sd(ys), 2);
   document.getElementById('w18smR').textContent = HC.fmt(r, 2);
-  const names = ['直線關係', '曲線關係', '一個離群值撐出來的'];
+  const fit = HC.stat.ols(xs, ys);
+  document.getElementById('w18smLine').textContent = 'ŷ = ' + HC.fmt(fit.b0, 2)
+    + ' + ' + HC.fmt(fit.b1, 2) + 'x';
+  const names = ['近似線性', '明顯曲線', 'y 方向離群值', '高槓桿點'];
   setStatus('w18smStatus', '第 ' + (w18smI + 1) + ' 組（' + names[w18smI]
             + '）：x̄ ≈ ' + HC.fmt(HC.stat.mean(xs), 1) + '、ȳ ≈ '
             + HC.fmt(HC.stat.mean(ys), 1) + '、r ≈ ' + HC.fmt(r, 2) + '。');
@@ -2214,7 +2229,7 @@ function w18smDraw() {
                 pointRadius: 5}]
   }, {
     scales: {x: {title: {display: true, text: 'x'}, min: 0, max: 20},
-             y: {title: {display: true, text: 'y'}, min: 0, max: 18}},
+             y: {title: {display: true, text: 'y'}, min: 0, max: 14}},
     plugins: {legend: {display: false}}
   });
 }

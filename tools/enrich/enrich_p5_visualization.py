@@ -38,29 +38,32 @@ BODIES = {}
 # ── PROLOGUE 為什麼要先畫圖 ────────────────────────────────────────────
 BODIES["prologue"] = f"""
   <p>統計課教你算平均、標準差、相關係數。這些數字很有用，但它們<strong>會漏掉形狀</strong>。
-  三組資料可以有幾乎一樣的平均、標準差與相關係數，畫出來卻完全不同——
-  其中一組是直線關係、一組是曲線、一組只是被一個離群值拉出來的假相關。</p>
+  四組資料可以有幾乎一樣的平均、標準差、相關係數與迴歸線，畫出來卻完全不同。
+  這不是刻意湊出的動畫，而是 Anscombe 在 1973 年提出、可以逐筆驗算的經典四重奏。</p>
 
 {info("一句話", "<strong>先畫圖，再算數字。</strong>"
       "圖告訴你「這份資料長什麼樣」，數字告訴你「有多強」——順序反過來很容易被騙。")}
 
-{viz(chart("w18sameChart", fallback="：三組資料的平均與相關係數幾乎相同，"
-                                   "但一組是直線、一組是曲線、一組只有一個離群值在撐。"),
+{viz(chart("w18sameChart", fallback="：Anscombe 四組資料的摘要統計幾乎相同，"
+                                   "但散佈圖形狀完全不同。"),
      [info_card("按按鈕換一組",
-                "三組資料的<strong>平均、標準差、相關係數都幾乎一樣</strong>，"
+                "四組資料的<strong>平均、標準差、相關係數與迴歸線都幾乎一樣</strong>，"
                 "但形狀完全不同。只看數字的話，你會以為它們是同一回事。"),
       rows_card("這一組的摘要統計",
                 [("x 平均", "—", "w18smMx"),
                  ("y 平均", "—", "w18smMy"),
-                 ("相關係數 r", "—", "w18smR")]),
+                 ("x／y 樣本標準差", "—", "w18smSd"),
+                 ("相關係數 r", "—", "w18smR"),
+                 ("最小平方線", "—", "w18smLine")]),
       info_card("這些點哪裡來的",
-                "頁面用固定種子當場算出來的（<code>HC.stat.lcg</code>），"
-                "不是任何一份真實資料——重點是機制，所以用 live 而不是烘焙。"
-                "重新整理頁面會得到完全一樣的三組點。")],
-     "w18smStatus", "三組資料，摘要統計幾乎相同。先看數字，再按按鈕看形狀。",
-     '<button class="btn btn-toggle" onclick="w18smSet(0)">① 直線關係</button>'
-     '<button class="btn btn-toggle" onclick="w18smSet(1)">② 曲線關係</button>'
-     '<button class="btn btn-toggle" onclick="w18smSet(2)">③ 一個離群值撐出來的</button>')}
+                "逐筆採用 Anscombe's quartet 的經典 11 筆資料；"
+                "頁面再由同一批點即時計算平均與相關係數，沒有另寫摘要數字。")],
+     "w18smStatus", "四組資料，摘要統計幾乎相同。先看數字，再按按鈕看形狀。",
+     '<button class="btn btn-toggle" onclick="w18smSet(0)">I</button>'
+     '<button class="btn btn-toggle" onclick="w18smSet(1)">II</button>'
+     '<button class="btn btn-toggle" onclick="w18smSet(2)">III</button>'
+     '<button class="btn btn-toggle" onclick="w18smSet(3)">IV</button>',
+     provenance=("book-redraw", "Anscombe (1973) 四重奏原始數據；摘要由圖中同一批點即時計算。"))}
 
 {info("這一頁的程式碼卡為什麼沒有「預期輸出」",
       "繪圖的儲存格在 notebook 裡存下來的是圖，不是文字，"
@@ -109,7 +112,8 @@ BODIES["anat"] = f"""
      '<button class="btn btn-toggle" onclick="w18anSet(0)">Figure</button>'
      '<button class="btn btn-toggle" onclick="w18anSet(1)">Axes</button>'
      '<button class="btn btn-toggle" onclick="w18anSet(2)">Axis（軸）</button>'
-     '<button class="btn btn-toggle" onclick="w18anSet(3)">Artist（點、線、字）</button>')}
+     '<button class="btn btn-toggle" onclick="w18anSet(3)">Artist（點、線、字）</button>',
+     provenance=("illustrative", "依 matplotlib 的 Figure／Axes／Axis／Artist 物件層級製作概念示意。"))}
 
 {card("subplots 一次給你兩個東西", C(2, 96), src=S(2, 96), note="這一格畫的是圖。" + FIG_NOTE)}
 
@@ -129,7 +133,8 @@ BODIES["anat"] = f"""
                 "要一致就寫 <code>subplots(1, 3, squeeze=False)</code>。")],
      "w18gdStatus", "點任一格，看它的索引。",
      '<button class="btn btn-step" onclick="w18gdNext()">→ 下一格</button>'
-     '<button class="btn btn-reset" onclick="w18gdReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w18gdReset()">重置</button>',
+     provenance=("course-data", "依 Ch02 lab 的 2×3 subplots 與 axes 索引範例重繪。"))}
 
 {card("2×3 的子圖網格", C(2, 112, 114), src=S(2, 112, 114), note="這一格畫的是圖。" + FIG_NOTE)}
 
@@ -173,7 +178,8 @@ BODIES["dist"] = f"""
      '<button class="btn btn-step" onclick="w18bnStep(-4)">參數 −</button>'
      '<button class="btn btn-step" onclick="w18bnStep(4)">參數 +</button>'
      '<button class="btn btn-toggle" onclick="w18bnMode()">切換：直方圖 ⇄ 密度圖</button>'
-     '<button class="btn btn-reset" onclick="w18bnReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w18bnReset()">重置</button>',
+     provenance=("simulation", "固定種子 20260828 的雙峰常態混合模擬；120 筆資料由頁面即時計算。"))}
 
 {card("最基本的直方圖", C(1, 105), src=S(1, 105),
       note="lab 的註解就提醒了 <code>bins</code> 這個參數。" + FIG_NOTE)}
@@ -222,7 +228,8 @@ BODIES["rel"] = f"""
      '<button class="btn btn-toggle" onclick="w18pkSet(1)">類別 × 數值</button>'
      '<button class="btn btn-toggle" onclick="w18pkSet(2)">類別 × 類別</button>'
      '<button class="btn btn-toggle" onclick="w18pkSet(3)">單一數值</button>'
-     '<button class="btn btn-toggle" onclick="w18pkSet(4)">時間 × 數值</button>')}
+     '<button class="btn btn-toggle" onclick="w18pkSet(4)">時間 × 數值</button>',
+     provenance=("course-data", "依 Ch01 lab 實際使用的 seaborn 圖型與變數型別整理。"))}
 
 {card("散佈圖，以及把第三個變數塞進去", C(1, 91, 93), src=S(1, 91, 93),
       note="<code>hue</code> 與 <code>style</code> 同時用同一個變數，"
@@ -263,7 +270,7 @@ BODIES["cat"] = f"""
 {viz(svg("w18misSvg", 340),
      [info_card("同一份資料，兩種畫法",
                 "左邊是誠實的版本（y 軸從 0 開始），右邊是截斷 y 軸的版本。"
-                "按按鈕切換，看「差距」怎麼被放大成三倍。"),
+                "按按鈕切換；右側倍率會由同一批資料與目前的軸起點即時計算。"),
       rows_card("兩組的真實數字",
                 [("A 組平均", "2.98", "w18msA"),
                  ("B 組平均", "3.26", "w18msB"),
@@ -275,11 +282,12 @@ BODIES["cat"] = f"""
      "w18msStatus", "先看左邊，再按「截斷 y 軸」。",
      '<button class="btn btn-toggle" onclick="w18msSet(0)">y 軸從 0 開始</button>'
      '<button class="btn btn-toggle" onclick="w18msSet(1)">截斷 y 軸</button>'
-     '<button class="btn btn-toggle" onclick="w18msSet(2)">改用盒鬚圖</button>')}
+     '<button class="btn btn-toggle" onclick="w18msSet(2)">改用盒鬚圖</button>',
+     provenance=("illustrative", "A、B 兩組固定示意資料；平均、盒鬚摘要與視覺倍率皆由同一批觀測即時計算。"))}
 
 {card("盒鬚圖：看分布", C(1, 120, 121), src=S(1, 120, 121),
       note="盒子是四分位距、線是中位數、鬚是 1.5 倍 IQR 內的極值，"
-           "外面的點是離群值。<strong>它是唯一一種會告訴你「有沒有離群值」的類別圖。</strong>" + FIG_NOTE)}
+           "外面的點是離群值。<strong>在本節比較的基本類別圖中，只有盒鬚圖直接標出這些候選離群值。</strong>" + FIG_NOTE)}
 
 {card("長條圖：看平均與不確定性", C(1, 124, 125), src=S(1, 124, 125),
       note="<code>barplot</code> 的長條高度是<strong>平均</strong>，"
@@ -335,7 +343,8 @@ BODIES["model"] = f"""
                 "熱圖是用來快速找候選的。")],
      "w18crStatus", "點格子看那一對變數的相關係數。",
      '<button class="btn btn-step" onclick="w18crNext()">→ 下一格</button>'
-     '<button class="btn btn-reset" onclick="w18crReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w18crReset()">重置</button>',
+     provenance=("course-data", "依 Ch01 lab 的 tips.corr(numeric_only=True) 相關矩陣重繪。"))}
 
 {card("散佈圖加迴歸線", C(1, 133), src=S(1, 133),
       note="<code>regplot</code> 直接配一條最小平方直線並畫出 95% 信賴帶。"
@@ -384,7 +393,7 @@ BODIES["exercises"] = f"""
         "<code>barplot</code> 只給平均與信賴區間，"
         "<strong>離群值完全看不到</strong>。它們被平均掉了。"),
        (True, "<code>boxplot</code>（或加上 <code>stripplot</code> 疊點）",
-        "對。盒鬚圖是唯一會把離群值單獨畫成點的類別圖。"
+        "對。在本節比較的基本類別圖中，盒鬚圖會把超出鬚線的觀測單獨畫成點。"
         "組數少、樣本不多的時候再疊一層原始點更誠實。"),
        (False, "<code>countplot</code>",
         "它只數每一組有幾筆，完全沒有用到 mpg 這個變數。")])}
@@ -400,7 +409,7 @@ BODIES["exercises"] = f"""
         "沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。")])}
 
 {quiz("qEx3", "EXERCISE 3 · 圖表誠實度",
-      "一張長條圖的 y 軸從 2.9 開始，讓 2.98 與 3.26 看起來差三倍。這張圖錯在哪？",
+      "一張長條圖把 y 軸截在兩組平均附近，讓小差異看起來大幅放大。這張圖錯在哪？",
       [(False, "沒錯，只是放大了差異方便觀察",
         "「方便觀察」跟「誤導」的界線就在這裡。長條圖用<strong>長度</strong>編碼數值，"
         "截斷之後長度的比例不再對應數值的比例。"),
@@ -660,15 +669,23 @@ if (w18pkS) w18pkDraw();
 PAGEJS += r"""
 /* ═══ w18ms 截斷 y 軸 ═══ */
 const w18msS = HC.svg('w18misSvg', {h: 340});
-const w18msVals = [2.98, 3.26];
+const w18msGroups = [[1.4, 2.4, 3.0, 4.2, 3.9], [1.6, 2.7, 3.3, 4.6, 4.1]];
+const w18msVals = w18msGroups.map(xs => HC.stat.mean(xs));
+function w18msFive(xs) {
+  const s = xs.slice().sort((a, b) => a - b);
+  return [s[0], HC.stat.quantile(s, 0.25), HC.stat.quantile(s, 0.5),
+          HC.stat.quantile(s, 0.75), s[s.length - 1]];
+}
 let w18msI = 0;
 function w18msDraw() {
   const s = w18msS;
   const g = s.clearLayer('main');
+  document.getElementById('w18msA').textContent = HC.fmt(w18msVals[0], 2);
+  document.getElementById('w18msB').textContent = HC.fmt(w18msVals[1], 2);
   if (w18msI === 2) {
-    s.domain([0, 3], [0, 6]);
-    s.grid(3, 6, {ytitle: '小費', ydec: 0});
-    [[1, 1.4, 2.4, 3.0, 4.2, 5.6], [2, 1.6, 2.7, 3.3, 4.6, 6.1]].forEach((b, i) => {
+    s.domain([0, 3], [0, 5]);
+    s.grid(3, 5, {ytitle: '小費', ydec: 1});
+    w18msGroups.map((xs, i) => [i + 1].concat(w18msFive(xs))).forEach((b, i) => {
       s.box(b[0] - 0.28, b[2], b[0] + 0.28, b[4],
             {fill: i === 0 ? HC.tok.accent2 : HC.tok.accent, stroke: HC.tok.ink,
              sw: 1.5, rx: 3}, g);
@@ -682,7 +699,7 @@ function w18msDraw() {
               + '長條圖的「差距」其實被個體差異淹沒了。');
     return;
   }
-  const y0 = w18msI === 0 ? 0 : 2.9;
+  const y0 = w18msI === 0 ? 0 : Math.min.apply(null, w18msVals) - 0.08;
   s.domain([0, 3], [y0, 3.4]);
   s.grid(3, 5, {ytitle: '平均小費', ydec: 2});
   w18msVals.forEach((v, i) => {
@@ -695,7 +712,8 @@ function w18msDraw() {
   document.getElementById('w18msRatio').textContent =
     w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（假的）';
   setStatus('w18msStatus', w18msI === 0
-    ? 'y 軸從 0 開始：兩根長條幾乎一樣高，差距約 <b>9%</b>。'
+    ? 'y 軸從 0 開始：兩根長條幾乎一樣高，平均差距約 <b>'
+      + HC.fmt((w18msVals[1] / w18msVals[0] - 1) * 100, 1) + '%</b>。'
     : '同樣的兩個數字，截斷之後看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>——數字沒變，圖說謊了。');
 }
 function w18msSet(i) { w18msI = i; w18msDraw(); }
@@ -749,28 +767,17 @@ function w18crNext() { w18crI = (w18crI + 1) % 9; w18crDraw(); }
 function w18crReset() { w18crI = 1; w18crDraw(); }
 if (w18crS) w18crDraw();
 
-/* ═══ w18sm 摘要統計一樣、形狀不同（Chart.js）═══ */
+/* ═══ w18sm Anscombe's quartet（Chart.js）═══ */
+const w18smX = [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5];
+const w18smData = [
+  [8.04, 6.95, 7.58, 8.81, 8.33, 9.96, 7.24, 4.26, 10.84, 4.82, 5.68],
+  [9.14, 8.14, 8.74, 8.77, 9.26, 8.10, 6.13, 3.10, 9.13, 7.26, 4.74],
+  [7.46, 6.77, 12.74, 7.11, 7.81, 8.84, 6.08, 5.39, 8.15, 6.42, 5.73],
+  [6.58, 5.76, 7.71, 8.84, 8.47, 7.04, 5.25, 12.50, 5.56, 7.91, 6.89]
+];
 function w18smMake(kind) {
-  const rand = HC.stat.lcg(kind === 0 ? 11 : (kind === 1 ? 22 : 33));
-  const pts = [];
-  if (kind === 0) {
-    for (let i = 0; i < 30; i++) {
-      const x = 4 + rand() * 10;
-      pts.push({x: x, y: 3 + 0.5 * x + HC.stat.normal(rand) * 1.2});
-    }
-  } else if (kind === 1) {
-    for (let i = 0; i < 30; i++) {
-      const x = 4 + rand() * 10;
-      pts.push({x: x, y: 3 + 1.9 * x - 0.078 * x * x + HC.stat.normal(rand) * 0.5});
-    }
-  } else {
-    for (let i = 0; i < 29; i++) {
-      const x = 4 + rand() * 5;
-      pts.push({x: x, y: 7.6 + HC.stat.normal(rand) * 1.1});
-    }
-    pts.push({x: 17.5, y: 15.5});
-  }
-  return pts;
+  const xs = kind === 3 ? [8, 8, 8, 8, 8, 8, 8, 19, 8, 8, 8] : w18smX;
+  return xs.map((x, i) => ({x: x, y: w18smData[kind][i]}));
 }
 let w18smI = 0;
 function w18smDraw() {
@@ -787,8 +794,13 @@ function w18smDraw() {
   })();
   document.getElementById('w18smMx').textContent = HC.fmt(HC.stat.mean(xs), 2);
   document.getElementById('w18smMy').textContent = HC.fmt(HC.stat.mean(ys), 2);
+  document.getElementById('w18smSd').textContent = HC.fmt(HC.stat.sd(xs), 2)
+    + ' ／ ' + HC.fmt(HC.stat.sd(ys), 2);
   document.getElementById('w18smR').textContent = HC.fmt(r, 2);
-  const names = ['直線關係', '曲線關係', '一個離群值撐出來的'];
+  const fit = HC.stat.ols(xs, ys);
+  document.getElementById('w18smLine').textContent = 'ŷ = ' + HC.fmt(fit.b0, 2)
+    + ' + ' + HC.fmt(fit.b1, 2) + 'x';
+  const names = ['近似線性', '明顯曲線', 'y 方向離群值', '高槓桿點'];
   setStatus('w18smStatus', '第 ' + (w18smI + 1) + ' 組（' + names[w18smI]
             + '）：x̄ ≈ ' + HC.fmt(HC.stat.mean(xs), 1) + '、ȳ ≈ '
             + HC.fmt(HC.stat.mean(ys), 1) + '、r ≈ ' + HC.fmt(r, 2) + '。');
@@ -800,7 +812,7 @@ function w18smDraw() {
                 pointRadius: 5}]
   }, {
     scales: {x: {title: {display: true, text: 'x'}, min: 0, max: 20},
-             y: {title: {display: true, text: 'y'}, min: 0, max: 18}},
+             y: {title: {display: true, text: 'y'}, min: 0, max: 14}},
     plugins: {legend: {display: false}}
   });
 }

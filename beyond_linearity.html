@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -686,7 +691,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.7｜講義 07）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -785,13 +790,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>這個公式是整節的關鍵</strong>：$x_0$ 跑到資料邊界時 $x_0^{15}$ 大得離譜，
   乘上共變異數矩陣以後變異就炸開了。下面把滑桿推到 15 就看得到。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08polySvg" height="300"></svg>
       <svg class="viz-svg" id="w08polyMse" height="170"></svg>
       <div class="status-banner" id="w08polyStatus"><span class="status-icon">›</span><span class="status-text">把滑桿從 1 推到 15，盯著兩端的信賴帶（淡藍）而不是中間的曲線。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 240px;min-width:0;"><span class="slider-label">次數 d</span><input type="range" id="w08polySl" min="1" max="15" step="1" value="4" oninput="w08polySetDeg()" aria-label="次數 d"><span class="slider-val" id="w08polySlVal">4</span></span><button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴帶：開</button><button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 全體資料配適與固定 90 筆背景子樣本；曲線、CV MSE 與信賴帶由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -902,12 +908,13 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   兩種編碼配出來的曲線完全一樣。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08stepSvg" height="330"></svg>
       <div class="status-banner" id="w08stepStatus"><span class="status-icon">›</span><span class="status-text">拖橘色的切點看每一段的平均怎麼變。用上面的選單改段數。</span></div>
       <div class="controls-bar"><span class="slider-label" style="margin-right:.2rem;">段數</span><select id="w08stepSel" class="mono" onchange="w08stepSetK()"><option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option></select><button class="btn btn-reset" onclick="w08stepReset()">回到分位數切點</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 資料；初始分位數切點對照 Ch07 lab 儲存格 39，拖動後由同一資料重算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -986,13 +993,14 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   你選哪幾個，下面就用<strong>那幾個</strong>去配。三個預設按鈕分別把選擇切成
   「三次多項式」、「立方樣條」、「階梯函數」。<strong>你會看到它們只是勾選項不同而已</strong>。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08basisFn" height="200"></svg>
       <svg class="viz-svg" id="w08basisFit" height="280"></svg>
       <div class="status-banner" id="w08basisStatus"><span class="status-icon">›</span><span class="status-text">勾選基底函數，看它們怎麼組合成一條曲線。三個預設按鈕在最右邊。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" id="w08basisB0" onclick="w08basisToggle(0)">1</button><button class="btn btn-toggle" id="w08basisB1" onclick="w08basisToggle(1)">x</button><button class="btn btn-toggle" id="w08basisB2" onclick="w08basisToggle(2)">x²</button><button class="btn btn-toggle" id="w08basisB3" onclick="w08basisToggle(3)">x³</button><button class="btn btn-toggle" id="w08basisB4" onclick="w08basisToggle(4)">(x−ξ₁)³₊</button><button class="btn btn-toggle" id="w08basisB5" onclick="w08basisToggle(5)">(x−ξ₂)³₊</button><button class="btn btn-toggle" id="w08basisB6" onclick="w08basisToggle(6)">I(x≥ξ₁)</button><button class="btn btn-toggle" id="w08basisB7" onclick="w08basisToggle(7)">I(x≥ξ₂)</button><button class="btn btn-step" onclick="w08basisPreset('poly')">預設：三次多項式</button><button class="btn btn-step" onclick="w08basisPreset('spline')">預設：立方樣條</button><button class="btn btn-step" onclick="w08basisPreset('step')">預設：階梯函數</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 固定子樣本；基底與最小平方配適依 Ch07 lab 的 polynomial／spline／step 表示。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1066,12 +1074,13 @@ bs(age, df=3, degree=0)[2]  22.7814    2.087  10.917    0.0</pre></div>
   d 次樣條的定義是：分段 d 次多項式，且導數連續到 d − 1 階。
   所以線性樣條只要求函數連續（圖 7.3 右下），而 §7.2 的階梯函數就是 0 次樣條。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08knotSvg" height="340"></svg>
       <div class="status-banner" id="w08knotStatus"><span class="status-icon">›</span><span class="status-text">拖節點、切換連續性層級，看曲線從斷裂變平滑，同時看自由度從 8 掉到 5。</span></div>
       <div class="controls-bar"><label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;"><input type="radio" id="w08knotLv0" name="w08knotLvl" value="0" onchange="w08knotSet(0)"> 不連續</label><label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;"><input type="radio" id="w08knotLv1" name="w08knotLvl" value="1" onchange="w08knotSet(1)"> 連續</label><label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;"><input type="radio" id="w08knotLv2" name="w08knotLvl" value="2" onchange="w08knotSet(2)"> 一階導數連續</label><label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;"><input type="radio" id="w08knotLv3" name="w08knotLvl" value="3" checked onchange="w08knotSet(3)"> 二階導數連續</label><button class="btn btn-reset" onclick="w08knotReset()">重置（ξ = 50）</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 固定子樣本上的分段多項式；連續性約束依 ISLP 圖 7.3 即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1169,7 +1178,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
   而三次要 4 個，所以每一端省下 2 個自由度，兩端合計省 4 個。
   K 個內部節點的自然立方樣條因此只用 <strong>K + 2</strong> 個參數（含截距）。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w08natChart"></canvas>
@@ -1177,6 +1186,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
       </div>
       <div class="status-banner" id="w08natStatus"><span class="status-icon">›</span><span class="status-text">兩條曲線用同樣的三個節點。比較的是兩端信賴帶的寬度。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" id="w08natBandBtn" onclick="w08natToggleBands()">信賴帶：開</button><button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴帶。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1283,7 +1293,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
     = \sum_{i=1}^{n} \left[\frac{y_i - \hat g_\lambda(x_i)}
     {1 - \{S_\lambda\}_{ii}}\right]^2$$
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w08lamChart"></canvas>
@@ -1291,6 +1301,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
       </div>
       <div class="status-banner" id="w08lamStatus"><span class="status-icon">›</span><span class="status-text">推滑桿改有效自由度。df = 2 是直線，df 愈大愈抖。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 240px;min-width:0;"><span class="slider-label">df</span><input type="range" id="w08lamSl" min="0" max="9" step="1" value="3" oninput="w08lamSet()" aria-label="df"><span class="slider-val" id="w08lamSlVal">5.0</span></span><button class="btn btn-toggle" id="w08lamPickBtn" onclick="w08lamTogglePick()">GCV 選出的曲線：開</button><button class="btn btn-reset" onclick="w08lamReset()">回到 df = 5</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 全體資料的 smoothing spline／pygam gridsearch；GCV、λ 與有效 df 由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1363,12 +1374,13 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <strong>s 才是關鍵。它扮演的角色跟平滑樣條的 λ 一樣</strong>。
   s 小則鄰域窄、曲線抖；s 大則鄰域寬、接近全域配適。s 一樣可以用交叉驗證選。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08loessSvg" height="340"></svg>
-      <div class="status-banner" id="w08loessStatus"><span class="status-icon">›</span><span class="status-text">推滑桿改 span，按「開始」讓 x₀ 從左掃到右，曲線一點一點長出來。</span></div>
-      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">span s</span><input type="range" id="w08loessSl" min="10" max="90" step="5" value="30" oninput="w08loessSetSpan()" aria-label="span s"><span class="slider-val" id="w08loessSlVal">0.30</span></span><button class="btn btn-play" onclick="w08loessStart()">▶ 開始</button><button class="btn btn-step" onclick="w08loessPlayer &amp;&amp; w08loessPlayer.step()">→ 單步</button><button class="btn btn-reset" onclick="w08loessReset()">重置</button></div>
+      <div class="status-banner" id="w08loessStatus"><span class="status-icon">›</span><span class="status-text">直接調 span 與 x₀，看鄰域、權重、局部斜率與配適值怎麼一起變。</span></div>
+      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">span s</span><input type="range" id="w08loessSl" min="10" max="90" step="5" value="30" oninput="w08loessSetSpan()" aria-label="span s"><span class="slider-val" id="w08loessSlVal">0.30</span></span><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">目標點 x₀</span><input type="range" id="w08loessXSl" min="20" max="77" step="1" value="49" oninput="w08loessSetX0()" aria-label="目標點 x₀"><span class="slider-val" id="w08loessXSlVal">49</span></span><button class="btn btn-play" onclick="w08loessStart()">▶ 自動掃描（可選）</button><button class="btn btn-reset" onclick="w08loessReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 固定 90 筆子樣本；tricube 權重與局部線性最小平方由瀏覽器即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1473,7 +1485,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   就能配任意多變數的加法模型。</strong>ISLP §7.9 第 11、12 題用線性迴歸版本讓你手動跑一遍。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.5rem;">
@@ -1489,6 +1501,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
       </div>
       <div class="status-banner" id="w08gamStatus"><span class="status-icon">›</span><span class="status-text">推兩個滑桿改 age 與 year 的自由度，右邊看模型整體的成績怎麼變。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">age df</span><input type="range" id="w08gamAgeSl" min="0" max="5" step="1" value="3" oninput="w08gamSet()" aria-label="age df"><span class="slider-val" id="w08gamAgeSlVal">5.0</span></span><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">year df</span><input type="range" id="w08gamYearSl" min="0" max="4" step="1" value="3" oninput="w08gamSet()" aria-label="year df"><span class="slider-val" id="w08gamYearSlVal">5.0</span></span><button class="btn btn-reset" onclick="w08gamReset()">回到 lab 的設定</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 的 year／age／education GAM；曲線、信賴帶與整體指標由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -2685,7 +2698,7 @@ function w08knotDraw() {
 function w08knotSet(lv) { w08knotLevel = lv; w08knotDraw(); }
 function w08knotReset() {
   w08knotXi = 50; w08knotLevel = 3;
-  const r = $('w08knotR3'); if (r) r.checked = true;
+  const r = $('w08knotLv3'); if (r) r.checked = true;
   w08knotDraw();
 }
 
@@ -2809,6 +2822,7 @@ function w08lamReset() { $('w08lamSl').value = '3'; w08lamDraw(); }
 /* ---------- P07 局部迴歸的 span 掃描器（live） ---------- */
 let w08loessSvc = null, w08loessPlayer = null;
 function w08loessSpan() { return parseInt($('w08loessSl').value, 10) / 100; }
+function w08loessX0() { return parseFloat($('w08loessXSl').value); }
 function w08loessSetup() {
   w08loessSvc = HC.svg('w08loessSvg', { xd: w08sub.xd, yd: w08sub.yd, h: 340 });
   w08loessSvc.grid(6, 5, { xtitle: 'age（歲）', ytitle: 'wage（千美元）', xdec: 0, ydec: 0 });
@@ -2876,6 +2890,8 @@ function w08loessApply(f) {
   $('w08loessSpanTxt').textContent = HC.fmt(span, 2);
   $('w08loessK').textContent = r.k + ' / ' + w08sub.n;
   $('w08loessX0').textContent = HC.fmt(f.x0, 1);
+  $('w08loessXSl').value = String(Math.round(f.x0));
+  $('w08loessXSlVal').textContent = HC.fmt(f.x0, 1);
   $('w08loessB1').textContent = HC.fmt(r.b1, 3);
   $('w08loessFhat').textContent = HC.fmt(r.fit, 1);
   setStatus('w08loessStatus', 'x₀ = ' + HC.fmt(f.x0, 1) + '：取最近的 ' + r.k
@@ -2888,22 +2904,28 @@ function w08loessStart() {
   w08loessPlayer.reset();
   w08loessPlayer.play();
 }
+function w08loessShowX0() {
+  if (w08loessPlayer) w08loessPlayer.stop();
+  const x0 = w08loessX0(), span = w08loessSpan(), r = w08loessAt(x0, span);
+  w08loessApply({ j: 0, x0: x0, span: span, r: r, path: [] });
+  $('w08loessXSlVal').textContent = HC.fmt(x0, 0);
+}
 function w08loessReset() {
   if (w08loessPlayer) w08loessPlayer.stop();
-  const frames = w08loessFrames();
-  w08loessPlayer = new Player({ frames: frames, apply: w08loessApply });
-  /* 哨兵狀態也要是合法的 frame：畫最左邊那一格，但路徑只有它自己 */
-  const f0 = frames[0];
-  w08loessApply({ j: 0, x0: f0.x0, span: f0.span, r: f0.r, path: [[f0.x0, f0.r.fit]] });
+  $('w08loessSl').value = '30';
+  $('w08loessXSl').value = '49';
+  $('w08loessSlVal').textContent = '0.30';
+  $('w08loessXSlVal').textContent = '49';
+  w08loessShowX0();
   hlLine('w08loessCode', 1);
-  setStatus('w08loessStatus', 'span = ' + HC.fmt(w08loessSpan(), 2)
-    + '。淡紅細線是這個 span 配出來的完整曲線；按「開始」讓 x₀ 從左掃到右，'
-    + '粗紅線會一點一點長成它。');
+  setStatus('w08loessStatus', 'span = 0.30、x₀ = 49。直接拖任一滑桿比較鄰域與局部斜率；'
+    + '「自動掃描」只是一個可選的總覽。');
 }
 function w08loessSetSpan() {
   $('w08loessSlVal').textContent = HC.fmt(w08loessSpan(), 2);
-  w08loessReset();
+  w08loessShowX0();
 }
+function w08loessSetX0() { w08loessShowX0(); }
 
 /* ---------- P08 GAM 三面板（baked：FRAMES_w08gam） ---------- */
 function w08gamPanel(cid, xs, cur, xtitle, dash) {

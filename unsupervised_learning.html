@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -688,7 +693,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.12｜講義 12）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
@@ -795,12 +800,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>下面這個元件就是把上面那個最佳化問題「用手轉一遍」：拖動角度，看投影後的變異數怎麼變。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07spinSvg" height="360"></svg>
       <div class="status-banner" id="w07spinStatus"><span class="status-icon">›</span><span class="status-text">拖動橘色把手轉動投影方向，看投影後的變異數怎麼變。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">角度</label><input type="range" id="w07spinSlider" min="0" max="180" step="1" value="8" oninput="w07spinFromSlider()" style="width:150px;accent-color:var(--accent3);"><span class="mono" id="w07spinSliderVal" style="min-width:44px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);">8°</span><button class="btn btn-play" onclick="w07spinSnap()">▶ 跳到變異最大處</button><button class="btn btn-reset" onclick="w07spinReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子 7071 的二維橢圓常態模擬；投影變異由目前角度即時計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -874,12 +880,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>下面這個 biplot 用的是課本的資料。真正要玩的是那個 toggle：
   <strong>按下「未標準化」，整張圖會變形。</strong></p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07biSvg" height="400"></svg>
       <div class="status-banner" id="w07biStatus"><span class="status-icon">›</span><span class="status-text">這是標準化後的 biplot，對應 ISLP 圖 12.1 與圖 12.4 左。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w07biToggle()">切換 標準化 / 未標準化</button><button class="btn btn-reset" onclick="w07biSetScaled(true)">回到標準化</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>USArrests PCA；負荷量與 Ch12 lab 儲存格 29 對照，對應 ISLP 圖 12.1／12.4。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1018,7 +1025,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>所有 $\min(n-1,p)$ 個 PVE 加起來剛好是 1。累積 PVE 就是「前 M 個主成分留住了幾成」，
   由上一節的式 12.11，它同時也是「用前 M 個主成分近似資料矩陣」的 $R^2$。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w07screeChart"></canvas>
@@ -1026,6 +1033,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       </div>
       <div class="status-banner" id="w07screeStatus"><span class="status-icon">›</span><span class="status-text">拖滑桿改變 M，看留住多少變異、丟掉多少。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">M =</label><input type="range" id="w07screeSlider" min="1" max="4" step="1" value="2" oninput="w07screeSet()" style="width:130px;accent-color:var(--accent3);"><span id="w07screeVal" style="min-width:22px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;">2</span><button class="btn btn-toggle" onclick="w07screeToggleCum()">切換 只看 PVE / 加上累積</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>USArrests 標準化 PCA；PVE 與 Ch12 lab 儲存格 39 對照，對應 ISLP 圖 12.3。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1172,7 +1180,7 @@ dtype: float64</pre></div>
   <p>$\mathcal{O}$ 是觀測到的位置集合。跟 P03 的式子唯一的差別就是求和範圍，
   但這一改就沒有封閉解了，只能迭代。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07mcSvg" height="190"></svg>
@@ -1181,6 +1189,7 @@ dtype: float64</pre></div>
       </div>
       <div class="status-banner" id="w07mcStatus"><span class="status-icon">›</span><span class="status-text">按「單步」跑演算法 12.1 的一輪：算秩一近似 → 覆蓋缺失格 → 算目標函數。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">缺失格數</label><input type="range" id="w07mcSlider" min="10" max="50" step="10" value="20" oninput="w07mcSetMiss()" style="width:120px;accent-color:var(--accent3);"><span id="w07mcSliderVal" style="min-width:34px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;">20</span><button class="btn btn-step" onclick="w07mcStep()">→ 單步</button><button class="btn btn-play" onclick="w07mcRun()">▶ 跑到收斂</button><button class="btn btn-toggle" onclick="w07mcReseed()">🔀 換缺失位置</button><button class="btn btn-reset" onclick="w07mcReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>USArrests 上的固定種子缺失位置；前端依 ISLP 演算法 12.1 即時計算低秩補值。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1314,12 +1323,13 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   (b) 因為換到更近的形心只會讓自己那一項變小。所以目標函數<strong>單調不增</strong>，一定會停。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07kmSvg" height="330"></svg>
       <div class="status-banner" id="w07kmStatus"><span class="status-icon">›</span><span class="status-text">選 K 之後按「單步」，交替執行「算群心」與「重新指派」。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">K =</label><select id="w07kmSel" class="mono" onchange="w07kmSetK()"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select><button class="btn btn-step" onclick="w07kmStep()">→ 單步</button><button class="btn btn-play" onclick="w07kmRun()">▶ 跑到收斂</button><button class="btn btn-toggle" onclick="w07kmReseed()">🔀 換初始值</button><button class="btn btn-reset" onclick="w07kmReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>依 Ch12 lab 的三群模擬設定與 K-means 目標函數製作；初始值由固定種子控制。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1435,12 +1445,13 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <strong>連結方式</strong>（linkage），四種常見的定義在下面那張表。
   換 linkage，樹的形狀會整個變。這是這一節最重要的實驗。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07dendroSvg" height="350"></svg>
       <div class="status-banner" id="w07dendroStatus"><span class="status-icon">›</span><span class="status-text">拖動橘色切線改變群數，換 select 看四種 linkage 的差別。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">linkage</label><select id="w07dendroSel" class="mono" onchange="w07dendroSetLk()"><option value="complete" selected>complete</option><option value="average">average</option><option value="single">single</option><option value="centroid">centroid</option></select><label class="slider-label" style="margin:0 .3rem 0 .5rem;">切線高度</label><input type="range" id="w07dendroSlider" min="2" max="98" step="1" value="55" oninput="w07dendroFromSlider()" style="width:120px;accent-color:var(--accent3);"><button class="btn btn-reset" onclick="w07dendroReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子 12 的三群模擬；linkage matrix 由 scipy 計算，形狀比照 ISLP 圖 12.10。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1524,15 +1535,18 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
     <li>資料裡的<strong>離群值</strong>怎麼辦？</li>
   </ul>
 
-  <p>下面這個元件是課本圖 12.16 的可玩版本：一家網路商店只賣兩種東西——襪子與電腦。
-  八位顧客的購買紀錄一樣，<strong>只是換一種尺度，K = 2 的分群就換一組答案</strong>。</p>
+  <p>下面這個元件沿用課本圖 12.16 的「襪子與電腦」情境，但課本沒有提供逐筆數值；
+  八位顧客的購買次數、單價與離群值都是本站為呈現尺度效應而設定的示意值。
+  <strong>它只用來說明：資料不變而尺度改變時，K = 2 的分群可能跟著改變，
+  不能把畫面上的群或 WSS 當成課本實證結果。</strong></p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07practSvg" height="340"></svg>
       <div class="status-banner" id="w07practStatus"><span class="status-icon">›</span><span class="status-text">換一種尺度，同樣八位顧客的 K = 2 分群結果就變了。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">尺度</label><select id="w07practSel" class="mono" onchange="w07practSetMode()"><option value="raw" selected>原始次數</option><option value="scaled">標準化</option><option value="dollar">花費金額</option></select><button class="btn btn-toggle" onclick="w07practToggleOut()">加入 / 移除離群值</button><button class="btn btn-reset" onclick="w07practReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>概念取自 ISLP 圖 12.16；課本未提供數值，購買次數、單價與離群值皆為本站自訂示意。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1638,7 +1652,7 @@ HClust
   硬要用高斯核會讓所有點擠在一起（crowding problem）；
   t 分佈的尾巴重，允許中距離的點被推得比較遠，圖才會散開。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w07tsneChart"></canvas>
@@ -1646,6 +1660,7 @@ HClust
       </div>
       <div class="status-banner" id="w07tsneStatus"><span class="status-icon">›</span><span class="status-text">同一批 500 張手寫數字，換方法看嵌入結果怎麼變。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">方法</label><select id="w07tsneSel" class="mono" onchange="w07tsneSet()"><option value="pca" selected>PCA</option><option value="tsne5">t-SNE · perplexity 5</option><option value="tsne30">t-SNE · perplexity 30</option></select></div>
+      <div class="viz-source"><span>課程／lab 資料</span>sklearn digits 固定抽樣 500 筆；PCA／t-SNE 與 Ch12 lab 儲存格 71–75 對照。</div>
     </div>
   </div>
   <div class="side-panel">

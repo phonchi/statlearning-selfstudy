@@ -447,6 +447,11 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .band{fill:var(--band);stroke:none;}
 .viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
 .viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
 .strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
@@ -516,10 +521,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 }
 
 
-/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
-       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
-       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
-       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -592,7 +594,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
 .tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
 .trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
-.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
 .vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
 .adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
 .bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
@@ -619,7 +622,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
 .tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
 .trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
-.tree-node.done b,.vert-table th strong,.vert-table th b{color:#fff;}
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
 .adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
 .bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
 .btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
@@ -641,7 +645,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
 .study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
 .tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
-.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
 .vert-table th i{color:inherit;}
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
@@ -683,7 +688,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · 建模 API）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明，動手玩互動元件——<em>先預測結果，再按按鈕驗證</em>。
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
   ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
@@ -722,12 +727,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   同一個模型在兩套 API 底下<strong>係數完全一樣</strong>——課程 lab 裡 statsmodels 給 34.5538 與 −0.9500，sklearn 給 34.5538408793831 與 −0.95004935，對 lstat = 5、10、15 的預測值逐位相同。所以「選哪一套」不是精度問題，是<strong>你要什麼輸出</strong>的問題。
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19apiSvg" height="340"></svg>
       <div class="status-banner" id="w19apiStatus"><span class="status-icon">›</span><span class="status-text">四個步驟，看兩套 API 各自怎麼寫。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19apiSet(0)">① 準備 X</button><button class="btn btn-toggle" onclick="w19apiSet(1)">② 配適</button><button class="btn btn-toggle" onclick="w19apiSet(2)">③ 看結果</button><button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch03 lab 的 statsmodels 與 scikit-learn 同一 lstat 模型逐步對照。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -790,12 +796,13 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   類別變數要先展開成 0／1 的欄，交互作用要先乘起來變成新的一欄。
   <code>MS()</code>（ModelSpec）就是幫你做這件事的。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19dsgSvg" height="340"></svg>
       <div class="status-banner" id="w19dsStatus"><span class="status-icon">›</span><span class="status-text">先猜加了交互作用之後 X 有幾欄，再按按鈕。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19dsSet(0)">MS([&quot;lstat&quot;])</button><button class="btn btn-toggle" onclick="w19dsSet(1)">加 age</button><button class="btn btn-toggle" onclick="w19dsSet(2)">加交互作用</button><button class="btn btn-toggle" onclick="w19dsSet(3)">類別變數展開</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch03 lab 的 Boston 設計矩陣與 ModelSpec 用法重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -879,12 +886,13 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   這是最浪費的讀法——<strong>係數告訴你效果多大，標準誤告訴你這個估計多穩</strong>，
   p 值只是這兩者的比值換算出來的。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19smSvg" height="320"></svg>
       <div class="status-banner" id="w19smStatus"><span class="status-icon">›</span><span class="status-text">四個欄位，一個一個看。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19smSet(0)">coef</button><button class="btn btn-toggle" onclick="w19smSet(1)">std err</button><button class="btn btn-toggle" onclick="w19smSet(2)">t</button><button class="btn btn-toggle" onclick="w19smSet(3)">P&gt;|t|</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>係數、標準誤、t 與 p 值逐項取自 Ch03 lab 的 OLS summary。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -950,12 +958,13 @@ dtype: float64</pre></div>
   <code>fit(X, y)</code> 學參數、<code>predict(X)</code> 給預測、<code>score</code> 算分數。
   換模型只要換建構子那一行，後面完全不用改。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19flowSvg" height="340"></svg>
       <div class="status-banner" id="w19flStatus"><span class="status-icon">›</span><span class="status-text">按「單步」走一次 fit → predict → score。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w19flStep()">→ 單步</button><button class="btn btn-play" onclick="w19flPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w19flReset()">重置</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>依 Ch03 lab 的 sklearn LinearRegression fit／predict／score 流程重繪。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1076,7 +1085,7 @@ The RMSE is: 5.0571</pre></div>
   <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 22</span>
 </div>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w19cvChart"></canvas>
@@ -1084,6 +1093,7 @@ The RMSE is: 5.0571</pre></div>
       </div>
       <div class="status-banner" id="w19cvStatus"><span class="status-icon">›</span><span class="status-text">驗證集 MSE：二次式最低，三次式沒有更好。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19cvSet(0)">驗證集 MSE</button><button class="btn btn-toggle" onclick="w19cvSet(1)">加上 LOOCV</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>MSE 逐項取自 Ch05 lab 儲存格 26 與 34；圖只重畫這些輸出。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1134,12 +1144,13 @@ The RMSE is: 5.0571</pre></div>
   交叉驗證把資料輪流當驗證集，每一筆都當過一次，結果穩定得多。
   但用它之前得先弄清楚一件事——<strong>前處理要在切分的哪一邊做</strong>。</p>
 
-<div class="viz-layout">
+<div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19leakSvg" height="340"></svg>
-      <div class="status-banner" id="w19lkStatus"><span class="status-icon">›</span><span class="status-text">先猜哪一條會給出比較好看（但假的）分數。</span></div>
+      <div class="status-banner" id="w19lkStatus"><span class="status-icon">›</span><span class="status-text">先找出哪條路在切分前看過測試集資訊。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19lkSet(0)">先標準化再切分 ✗</button><button class="btn btn-toggle" onclick="w19lkSet(1)">先切分再標準化 ✓</button><button class="btn btn-step" onclick="w19lkStep()">→ 單步</button><button class="btn btn-reset" onclick="w19lkReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>自訂資訊流示意；不附虛構 MSE，只判定評估流程是否洩漏。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1149,11 +1160,11 @@ The RMSE is: 5.0571</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">目前</div>
-      <div class="ic-row"><span class="ic-label">路線</span><span class="ic-value" id="w19lkPath">—</span></div><div class="ic-row"><span class="ic-label">標準化用到了誰的資訊</span><span class="ic-value" id="w19lkInfo">—</span></div><div class="ic-row"><span class="ic-label">測試分數</span><span class="ic-value" id="w19lkScore">—</span></div>
+      <div class="ic-row"><span class="ic-label">路線</span><span class="ic-value" id="w19lkPath">—</span></div><div class="ic-row"><span class="ic-label">標準化用到了誰的資訊</span><span class="ic-value" id="w19lkInfo">—</span></div><div class="ic-row"><span class="ic-label">評估可否解讀</span><span class="ic-value" id="w19lkValid">—</span></div>
     </div>
     <div class="info-card">
       <div class="ic-title">為什麼這叫洩漏</div>
-      先標準化的話，訓練集的每一筆都間接知道了測試集的平均與標準差。模型因此在測試集上表現得比實際好——<strong>你以為的 out-of-sample 其實不是</strong>。Pipeline 的存在就是為了讓這件事不可能發生。
+      先標準化的話，訓練集的每一筆都間接知道了測試集的平均與標準差。評估已經不再是乾淨的 out-of-sample 比較；分數可能被扭曲，卻不能只憑洩漏就預告一定改善多少。Pipeline 的存在就是為了讓這件事不可能發生。
     </div>
   </div>
 </div>
@@ -1197,8 +1208,8 @@ The RMSE is: 5.0571</pre></div>
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>順序</th><th>標準化用到了什麼</th><th>測試分數</th><th>對不對</th></tr></thead>
-  <tbody><tr><td>先標準化 → 再切分</td><td>全部資料的平均與標準差（含測試集）</td><td>偏樂觀</td><td>✗ 洩漏</td></tr><tr><td>先切分 → 用訓練集 fit、對測試集 transform</td><td>只有訓練集</td><td>誠實</td><td>✓</td></tr><tr><td><code>Pipeline</code> ＋ <code>cross_validate</code></td><td>每一折各自的訓練部分</td><td>誠實</td><td>✓ 最推薦</td></tr></tbody>
+  <thead><tr><th>順序</th><th>標準化參數從哪裡估</th><th>評估能否解讀</th><th>判定</th></tr></thead>
+  <tbody><tr><td>先標準化 → 再切分</td><td>全部資料（含之後的測試資料）</td><td>不能當成乾淨的 out-of-sample 表現</td><td>✗ 洩漏</td></tr><tr><td>先切分 → 訓練集 fit；測試集只 transform</td><td>只有訓練集</td><td>可作為這次切分的測試表現</td><td>✓</td></tr><tr><td><code>Pipeline</code> ＋ <code>cross_validate</code></td><td>每一折各自的訓練部分</td><td>可彙整各折的驗證表現</td><td>✓ 最推薦</td></tr></tbody>
 </table></div>
 
 <div class="info-box">
@@ -1219,7 +1230,7 @@ The RMSE is: 5.0571</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
   <p>你先對整份資料做 <code>StandardScaler().fit_transform(X)</code>，再 <code>train_test_split</code>，最後回報測試 MSE。這個數字有什麼問題？</p>
-  <div class="quiz-options" id="qCvOptions"><div class="quiz-opt" data-correct="false" data-fb="會有問題。重點不是排序，是<strong>那個數字不再是 out-of-sample 的估計</strong>。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(A)</span> 沒問題，標準化不會改變模型的排序</div><div class="quiz-opt" data-correct="true" data-fb="對。測試集的平均與標準差已經透過 scaler 進到訓練流程裡了。正確做法是把 scaler 與模型包成 <code>Pipeline</code>，讓每一折自己 fit 自己的 scaler。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(B)</span> 它偏樂觀，因為標準化的參數用到了測試集的資訊</div><div class="quiz-opt" data-correct="false" data-fb="換哪一種 scaler 都一樣。問題出在<strong>順序</strong>，不是選哪個轉換器。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(C)</span> 應該改用 MinMaxScaler</div></div>
+  <div class="quiz-options" id="qCvOptions"><div class="quiz-opt" data-correct="false" data-fb="流程仍有問題。即使某些模型在這個例子中剛好得到相同數字，也不能把測試資料納入前處理參數的估計。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(A)</span> 沒問題，標準化不會改變模型的排序</div><div class="quiz-opt" data-correct="true" data-fb="對。測試集的平均與標準差已經透過 scaler 進到訓練流程裡了，因此這個 MSE 不能當成乾淨的 out-of-sample 證據；但不能憑這件事直接宣稱它一定降低多少。正確做法是把 scaler 與模型包成 <code>Pipeline</code>，讓每一折自己 fit 自己的 scaler。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(B)</span> 它不再是嚴格獨立的評估；偏差方向與大小不能只靠『有洩漏』判定</div><div class="quiz-opt" data-correct="false" data-fb="換哪一種 scaler 都一樣。問題出在<strong>順序</strong>，不是選哪個轉換器。" onclick="quizCheck('qCv', this)"><span class="opt-letter">(C)</span> 應該改用 MinMaxScaler</div></div>
   <div class="quiz-feedback" id="qCvFeedback"></div>
 </div>
 
@@ -1291,7 +1302,7 @@ The RMSE is: 5.0571</pre></div>
 
 <div class="info-box">
   <span class="info-label">三個一定要記住的觀念</span>
-  <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，你報告的 out-of-sample 分數就是假的，用 Pipeline 讓自己想犯錯都難。
+  <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，那個分數就不再是乾淨的 out-of-sample 評估；用 Pipeline 固定正確順序。
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch03、Ch05）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
@@ -2172,7 +2183,7 @@ function w19lkDraw() {
                                                 fill: HC.tok.resid}, g);
     }
     if (st >= 3) {
-      w19lkS.txtPx(310, 250, '測試 MSE 22.9 —— 比真實情況好看，但這個數字沒有意義',
+      w19lkS.txtPx(310, 250, '測試資料已參與前處理參數估計：評估失去獨立性',
                    {cls: 'axtitle', anchor: 'middle', fill: HC.tok.resid}, g);
     }
   } else {
@@ -2188,7 +2199,7 @@ function w19lkDraw() {
       w19box(w19lkS, g, 428, 106, 152, 52, 'transform', HC.tok.muted, '沿用訓練的參數');
     }
     if (st >= 3) {
-      w19lkS.txtPx(310, 250, '測試 MSE 25.6 —— 難看一點，但它是真的',
+      w19lkS.txtPx(310, 250, '測試資料只套用訓練集學到的轉換：評估仍可解讀',
                    {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
       w19lkS.txtPx(310, 282, 'Pipeline 會在每一折自動做這件事，讓你想犯錯都難',
                    {cls: 'axlab', anchor: 'middle'}, g);
@@ -2197,8 +2208,8 @@ function w19lkDraw() {
   document.getElementById('w19lkPath').textContent = bad ? '先標準化再切分 ✗' : '先切分再標準化 ✓';
   document.getElementById('w19lkInfo').textContent =
     st >= 2 ? (bad ? '全部資料（含測試集）' : '只有訓練集') : '—';
-  document.getElementById('w19lkScore').textContent =
-    st >= 3 ? (bad ? '22.9（假的）' : '25.6（真的）') : '—';
+  document.getElementById('w19lkValid').textContent =
+    st >= 3 ? (bad ? '否：測試資訊已進入訓練流程' : '是：測試集只用於最後評估') : '—';
   setStatus('w19lkStatus', st === 0
     ? '按「單步」看資料怎麼流。'
     : (bad ? '注意 scaler 是在<b>切分之前</b> fit 的 —— 它看過測試集了。'

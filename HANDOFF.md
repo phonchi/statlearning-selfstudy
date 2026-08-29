@@ -350,3 +350,29 @@ AI 可參與找資料、清理、EDA、文字探勘、建模與溝通，但不�
 
 已知還沒做的：`p3_numpy` 的廣播元件在 stage 上緣留白偏多（不影響閱讀，沒動）。
 `p1`／`p2`／`00a`／`00b` 沒有 Chart.js 圖表（純機制頁，契約 §9.4 允許 0–2 個）。
+
+---
+
+## 10. 2026-08-29 全站視覺稽核
+
+完整決策見 `tools/VISUAL_AUDIT.md`。本輪不設定「每頁應有幾張圖」，也不以總數愈少愈好；
+判準改成視覺是否真的呈現幾何、隨機變動、資料狀態或參數效果。正文視覺區塊由 125 組降為
+106 組，主要移除 00B 重複導覽、假量化方法地圖、重複 ROC/KNN 圖與固定折分播放器。
+
+每個 `viz()` 現在必須帶 `provenance=(kind, detail)`，kind 只能是 `course-data`、
+`book-redraw`、`simulation`、`illustrative`；HTML 會顯示 `.viz-source`，`validate.py`
+以 `VIZ-PROVENANCE` 檢查數量與類型。講義／ISLP／ESL 是概念黃金標準，lab 是精確數字來源；
+合成與自訂資料必須讓學生一眼看出不是課本實證。
+
+高風險修正包括：不可縮減誤差改用獨立 test 網格；LDA/QDA 固定同一資料比較；bootstrap
+統一使用 Portfolio α；Lasso geometry 改解析/KKT 解；P5 改 canonical Anscombe；截斷軸與
+boxplot 共用同一資料；P6 刪除虛構 leakage MSE；RBF 分開 γ/C；刪除合成 OVO 7% 與手寫
+情感規則假 RNN；permutation importance 改報測試 R² decrease mean±SD。
+
+除一般驗證外，必跑：
+
+```bash
+python3 tools/check_visual_claims.py
+python3 tools/validate.py --net
+node tools/browser_check.js
+```

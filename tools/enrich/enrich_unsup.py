@@ -135,7 +135,8 @@ BODIES["pca"] = f"""
      '<span class="mono" id="w07spinSliderVal" style="min-width:44px;'
      'font-family:\'JetBrains Mono\',monospace;font-size:.82rem;color:var(--accent);">8°</span>'
      '<button class="btn btn-play" onclick="w07spinSnap()">▶ 跳到變異最大處</button>'
-     '<button class="btn btn-reset" onclick="w07spinReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w07spinReset()">重置</button>',
+     provenance=("simulation", "固定種子 7071 的二維橢圓常態模擬；投影變異由目前角度即時計算。"))}
 
   <p>找完第一主成分之後，第二主成分是<strong>所有跟 $Z_1$ 不相關的線性組合裡變異最大的那一個</strong>。
   「與 $Z_1$ 不相關」這個條件等價於「方向 $\\phi_2$ 與 $\\phi_1$ 垂直」，
@@ -208,7 +209,8 @@ BODIES["biplot"] = f"""
                 '<strong>biplot 要看的是整體結構，不是逐一查表。</strong>', "圖 12.1")],
      "w07biStatus", "這是標準化後的 biplot，對應 ISLP 圖 12.1 與圖 12.4 左。",
      '<button class="btn btn-toggle" onclick="w07biToggle()">切換 標準化 / 未標準化</button>'
-     '<button class="btn btn-reset" onclick="w07biSetScaled(true)">回到標準化</button>')}
+     '<button class="btn btn-reset" onclick="w07biSetScaled(true)">回到標準化</button>',
+     provenance=("course-data", "USArrests PCA；負荷量與 Ch12 lab 儲存格 29 對照，對應 ISLP 圖 12.1／12.4。"))}
 
   <h3 id="dx-bi">講義完整實作：手工畫 biplot</h3>
 {card("講義 12 · biplot（scatter + arrow + text）", lab_code(CH, 33), None, src=src("31、33"),
@@ -346,7 +348,8 @@ BODIES["pve"] = f"""
      'oninput="w07screeSet()" style="width:130px;accent-color:var(--accent3);">'
      '<span id="w07screeVal" style="min-width:22px;font-family:\'JetBrains Mono\',monospace;'
      'font-size:.82rem;color:var(--accent);font-weight:600;">2</span>'
-     '<button class="btn btn-toggle" onclick="w07screeToggleCum()">切換 只看 PVE / 加上累積</button>')}
+     '<button class="btn btn-toggle" onclick="w07screeToggleCum()">切換 只看 PVE / 加上累積</button>',
+     provenance=("course-data", "USArrests 標準化 PCA；PVE 與 Ch12 lab 儲存格 39 對照，對應 ISLP 圖 12.3。"))}
 
   <h3 id="dx-pve">講義完整實作：<code>explained_variance_ratio_</code></h3>
 {card("講義 12 · 得分的標準差、變異數與 PVE", _pve_code, lab_output(CH, 39),
@@ -520,7 +523,8 @@ BODIES["completion"] = f"""
      '<button class="btn btn-step" onclick="w07mcStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w07mcRun()">▶ 跑到收斂</button>'
      '<button class="btn btn-toggle" onclick="w07mcReseed()">🔀 換缺失位置</button>'
-     '<button class="btn btn-reset" onclick="w07mcReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w07mcReset()">重置</button>',
+     provenance=("simulation", "USArrests 上的固定種子缺失位置；前端依 ISLP 演算法 12.1 即時計算低秩補值。"))}
 
 {info("三個前提，少一個就不要用", '''<strong>1. 缺失必須是隨機的</strong>（missing at random）。
   「電子秤剛好沒電」可以補；「病人太重上不了秤」不行——缺失本身帶著資訊，
@@ -619,7 +623,8 @@ BODIES["kmeans"] = f"""
      '<button class="btn btn-step" onclick="w07kmStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w07kmRun()">▶ 跑到收斂</button>'
      '<button class="btn btn-toggle" onclick="w07kmReseed()">🔀 換初始值</button>'
-     '<button class="btn btn-reset" onclick="w07kmReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w07kmReset()">重置</button>',
+     provenance=("simulation", "依 Ch12 lab 的三群模擬設定與 K-means 目標函數製作；初始值由固定種子控制。"))}
 
   <h3 id="dx-km">講義完整實作：<code>KMeans()</code></h3>
 {card("講義 12 · K = 2 的模擬資料", _km_code, lab_output(CH, 107), src=src("103、105、107"),
@@ -730,7 +735,8 @@ BODIES["hclust"] = f"""
      '<label class="slider-label" style="margin:0 .3rem 0 .5rem;">切線高度</label>'
      '<input type="range" id="w07dendroSlider" min="2" max="98" step="1" value="55" '
      'oninput="w07dendroFromSlider()" style="width:120px;accent-color:var(--accent3);">'
-     '<button class="btn btn-reset" onclick="w07dendroReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w07dendroReset()">重置</button>',
+     provenance=("simulation", "固定種子 12 的三群模擬；linkage matrix 由 scipy 計算，形狀比照 ISLP 圖 12.10。"))}
 
 {table(["Linkage", "群間相異度的定義", "樹的形狀", "評語"],
        [["<strong>Complete</strong>", "兩群之間<strong>最大</strong>的那個距離",
@@ -788,8 +794,10 @@ BODIES["practical"] = f"""
     <li>資料裡的<strong>離群值</strong>怎麼辦？</li>
   </ul>
 
-  <p>下面這個元件是課本圖 12.16 的可玩版本：一家網路商店只賣兩種東西——襪子與電腦。
-  八位顧客的購買紀錄一樣，<strong>只是換一種尺度，K = 2 的分群就換一組答案</strong>。</p>
+  <p>下面這個元件沿用課本圖 12.16 的「襪子與電腦」情境，但課本沒有提供逐筆數值；
+  八位顧客的購買次數、單價與離群值都是本站為呈現尺度效應而設定的示意值。
+  <strong>它只用來說明：資料不變而尺度改變時，K = 2 的分群可能跟著改變，
+  不能把畫面上的群或 WSS 當成課本實證結果。</strong></p>
 
 {viz(svg("w07practSvg", 340),
      [rows_card("K = 2 的結果",
@@ -821,7 +829,8 @@ BODIES["practical"] = f"""
      '<option value="scaled">標準化</option>'
      '<option value="dollar">花費金額</option></select>'
      '<button class="btn btn-toggle" onclick="w07practToggleOut()">加入 / 移除離群值</button>'
-     '<button class="btn btn-reset" onclick="w07practReset()">重置</button>')}
+     '<button class="btn btn-reset" onclick="w07practReset()">重置</button>',
+     provenance=("illustrative", "概念取自 ISLP 圖 12.16；課本未提供數值，購買次數、單價與離群值皆為本站自訂示意。"))}
 
   <h3>「分群結果對不對」有客觀標準嗎？</h3>
 
@@ -947,7 +956,8 @@ BODIES["manifold"] = f"""
      '<select id="w07tsneSel" class="mono" onchange="w07tsneSet()">'
      '<option value="pca" selected>PCA</option>'
      '<option value="tsne5">t-SNE · perplexity 5</option>'
-     '<option value="tsne30">t-SNE · perplexity 30</option></select>')}
+     '<option value="tsne30">t-SNE · perplexity 30</option></select>',
+     provenance=("course-data", "sklearn digits 固定抽樣 500 筆；PCA／t-SNE 與 Ch12 lab 儲存格 71–75 對照。"))}
 
 {info("t-SNE 不是萬能，也不是 PCA 的替代品", '''<strong>t-SNE 幾乎只能用來「看」。</strong>
   它沒有 <code>transform()</code>（新資料無法投影到既有的嵌入上，
