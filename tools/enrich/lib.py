@@ -156,17 +156,20 @@ def svg(sid, height=340):
     return f'      <svg class="viz-svg" id="{sid}" height="{height}"></svg>'
 
 
-def ver_note(labs=()):
+def ver_note(labs=(), include_frames=True):
     """REF 區的環境版本註記。
 
-    labs 給先備頁用：一頁會引用多份 lab，把它們列出來。不給就是舊行為，
-    輸出字串與過去逐字相同（正課十一章的 GEN 之外內容不會變）。
+    labs 給先備頁用：一頁會引用多份 lab，把它們列出來。不給就是舊行為。
+    include_frames=False 給沒有烘焙圖表的概念頁，避免註記宣稱頁面使用了 frames。
+    兩個參數都保留預設值，既有正課頁的輸出逐字不變。
     """
     import pages as P
     src = ("課程 lab notebook" if not labs else
            "課程 lab notebook（" + "、".join(f"Ch{c:02d}" for c in labs) + "）")
+    frames = (f'圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，'
+              f'環境為 {P.ENV_NOTE}。') if include_frames else f'課程環境版本為 {P.ENV_NOTE}。'
     return (f'<p class="ver-note">本頁「預期輸出」逐字取自{src}（老師在課程環境實跑）；'
-            f'圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 {P.ENV_NOTE}。'
+            f'{frames}'
             f'每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>')
 
 

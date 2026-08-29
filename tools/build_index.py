@@ -74,8 +74,8 @@ def build_html():
         pre_widgets = sum(counts(q)[3] for q in pre)
         pre_block = f"""  <section id="pre">
     <h2>課前準備</h2>
-    <p>三頁，讀完大概一小時。先搞清楚<strong>為什麼還要自己寫統計程式</strong>、
-    把環境弄好、以及怎麼跟 AI 協作而不被它的錯誤帶著走。
+    <p>三頁，讀完大概一小時。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
+    把環境弄好、再學會怎麼跟 AI 協作而不把判斷外包。
     這三頁不需要任何程式基礎，選讀，不列入評分。
     共 {len(pre)} 頁、{pre_widgets} 個互動元件。</p>
     <div class="ch-grid">
@@ -195,8 +195,9 @@ def build_readme():
         out = []
         for i, q in enumerate([x for x in P.PAGES if x.grp == grp], 1):
             parts, cards, _qs, widgets = counts(q)
+            widget_label = "動態元件" if q.stem in {"00a_why_code", "00c_ai_assisted"} else "元件"
             out.append(f"| {i} | [{q.plain}]({q.file}) | {q.islp_label} | "
-                       f"{parts} 節 · {widgets} 元件 · {cards} 張卡 |")
+                       f"{parts} 節 · {widgets} {widget_label} · {cards} 張卡 |")
         return "\n".join(out)
 
     pre_table = side_table("pre")
@@ -205,7 +206,7 @@ def build_readme():
 
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分成三區：
 
-1. **課前準備**（3 頁）——為什麼還要自己寫統計程式、環境安裝、怎麼跟 AI 協作。不需要程式基礎。
+1. **課前準備**（3 頁）——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
 2. **正課**（11 章）——每一節都能動手操作、預測、驗證，配上每節 quiz、觀念釐清 Q&A、
    關鍵詞彙卡與 REF 速查表。
 3. **附錄：Python 先備知識**（6 頁）——正課會用到的語法與套件，查閱用。

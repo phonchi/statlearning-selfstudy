@@ -1,19 +1,15 @@
 #!/usr/bin/env python3
-"""00a_why_code.html（課前準備 A · 為什麼還要自己寫統計程式）完整自學充實。冪等。
+"""00a_why_code.html：AI 時代的資料分析學習迴圈。冪等。
 
-論證骨幹取自《AI-Assisted Statistics for Data Scientists》(O'Reilly 2026) 第 11 章的
-兩個概念：automation bias（自動化偏誤）與 cross-modal inconsistency（跨模態不一致）。
-**只引用概念與章節，不搬該書的文字、圖與數字**——頁面上的例子全部用課程 lab 的
-ISLP 資料自行重演（見 STYLE_CONTRACT §9.1）。
-
-這一頁最後寫，因為它的掛鉤要連到其他八頁真實存在的錨點。
+本頁刻意只保留一個靜態流程圖，不使用頁面專屬 JavaScript、SVG 或 Canvas。
+AI 的能力與限制以近期研究及 NIST AI 600-1 為邊界；課程操作示例仍引用
+既有 lab 的實跑內容。
 """
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import (apply, card, hook, info, info_card, lab_code, lab_output,  # noqa: E402
-                 qa, quiz, rows_card, svg, table, ver_note, viz)
+from lib import apply, card, hook, info, lab_code, lab_output, quiz, table, ver_note  # noqa: E402
 
 LAB1 = "Ch01-lab-zh.ipynb"
 LAB2 = "Ch02-statlearn-lab-zh.ipynb"
@@ -34,705 +30,226 @@ def S(ch, *ks):
 
 BODIES = {}
 
-# ── PROLOGUE 你已經有 AI 了 ───────────────────────────────────────────
+# ── PROLOGUE AI 不只會寫程式 ───────────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>先把話講開：現在的 AI 確實寫得出這門課大部分的程式碼。你貼一句
-  「幫我用 Auto 資料配一個 mpg 對 horsepower 的迴歸並畫殘差圖」，
-  它三秒就給你一段能跑的東西。這是真的，不用假裝不是。</p>
+  <p>AI 已經不只是「幫你補一行 Python」的工具。做資料分析時，你可以請它協助
+  <strong>找資料來源、整理欄位、清理資料、探索性分析、文字探勘、建模、除錯，
+  甚至整理報告初稿</strong>。研究者也正在觀察這種協作如何改變資料分析工作流，
+  而不只是程式碼怎麼寫。</p>
 
-  <p>所以問題不是「AI 會不會」，而是<strong>「它給你的那個答案，你憑什麼判斷對不對」</strong>。
-  這一頁講的就是這件事，而且不是精神喊話，是幾個具體、可以驗證的失效模式。</p>
+  <p>這反而讓學習變得更重要。當產出一段程式或一份摘要只要幾秒，真正稀缺的能力是：
+  你能不能說清楚問題、看懂資料的來歷、發現不合理的假設，並判斷結論能說到哪裡。</p>
 
-{info("這一頁的立場", "<strong>該用就用。</strong>環境問題、語法問題、「這個函式的參數是什麼」，"
-      "問 AI 又快又準。真正需要你自己判斷的是另一類問題："
-      "<strong>這個數字能不能拿去下結論。</strong>")}
+{info("這一頁要回答的問題",
+      "不是『要不要用 AI』，而是<strong>怎麼把 AI 放進學習迴圈，同時保留你的判斷</strong>。"
+      "你可以把繁瑣工作交給它，但問題定義、資料脈絡、分析假設與最後結論仍由你負責。")}
 
-{viz(svg("w12anchorSvg", 340),
-     [info_card("先自己估一次",
-                "拖滑桿估「1980 年後出廠的車，平均 mpg 大概多少」。"
-                "估完按「看 AI 的答案」，然後<strong>再估一次</strong>。"
-                "最後才揭曉真實值。"),
-      rows_card("你的兩次估計",
-                [("第一次", "—", "w12anFirst"),
-                 ("看過 AI 之後", "—", "w12anSecond"),
-                 ("被拉動了多少", "—", "w12anShift")]),
-      info_card("這在測什麼",
-                "測的是<strong>錨定</strong>：一個看起來很有自信的數字會把你的判斷拉過去，"
-                "即使你本來估得比較準。這不是意志力問題，是人類判斷的固定特性——"
-                "所以要靠<strong>流程</strong>去對抗，不是靠「我會小心」。")],
-     "w12anStatus", "先拖滑桿估一個數字，再按「看 AI 的答案」。",
-     '<button class="btn btn-step" onclick="w12anGuess(-1)">估低一點</button>'
-     '<button class="btn btn-step" onclick="w12anGuess(1)">估高一點</button>'
-     '<button class="btn btn-play" onclick="w12anReveal()">▶ 看 AI 的答案</button>'
-     '<button class="btn btn-toggle" onclick="w12anTruth()">揭曉真實值</button>'
-     '<button class="btn btn-reset" onclick="w12anReset()">重置</button>')}
+{table(["工作", "AI 可以先幫什麼", "你仍要判斷什麼"],
+       [["找資料", "列候選資料庫、搜尋詞與可能欄位", "來源是否可信、授權與涵蓋族群"],
+        ["資料清理", "產生轉型程式、列出異常值", "特殊值代表錯誤、遺漏，還是真實現象"],
+        ["EDA／文字探勘", "摘要、分群、主題候選與圖表程式", "模式是否穩定、分類是否有領域意義"],
+        ["建模與除錯", "建立基準模型、解釋錯誤訊息", "評估設計、假設、資料洩漏與指標選擇"],
+        ["報告草稿", "整理結構與改寫句子", "數字是否正確、證據是否足以支持主張"]])}
 
-{quiz("qWhy", "PART 00 · 自我檢測",
-      "下面哪一種問題，交給 AI 最划算？",
-      [(True, "「pandas 的 read_csv 要怎麼把 ? 當成遺漏值？」",
-        "對。這類問題有標準答案、而且你可以<strong>馬上驗證</strong>（跑一次看 dtypes）。"
-        "AI 在這裡幾乎沒有風險。"),
-       (False, "「這兩組的差異顯著嗎？」",
-        "這需要知道資料怎麼收的、假設成不成立、多重比較有沒有處理——"
-        "而 AI 看不到這些。它會給你一個很有自信的答案，但那個自信不是來自你的資料。"),
-       (False, "「我的模型 R² 是 0.95，可以發表了嗎？」",
-        "R² 0.95 可能是過度配適、可能是資料洩漏、也可能只是這個領域本來就好預測。"
-        "沒有看過你的流程的人（或 AI）沒辦法回答這個問題。")])}
+{quiz("qPrologue", "PART 00 · 自我檢測",
+      "下面哪一種分工最適合 AI 輔助的資料分析？",
+      [(False, "把資料貼給 AI，直接採用它寫的結論",
+        "資料的來源、收集方式與決策後果不在一句提示裡；流暢的結論仍可能越過證據。"),
+       (True, "請 AI 產生候選做法，再由你執行、檢查並決定能否採用",
+        "對。AI 擴大你能嘗試的範圍，你則用資料與領域知識決定哪些結果站得住腳。"),
+       (False, "只把 AI 用在寫語法，其他資料工作完全不用",
+        "太窄了。AI 也能協助搜尋、清理、EDA、文字探勘與報告整理；重點是每一步都要有驗收方法。")])}
 """
 
-# ── P01 自動化偏誤 ────────────────────────────────────────────────────
-BODIES["bias"] = f"""
-  <p>第一個失效模式叫<strong>自動化偏誤</strong>（automation bias）：
-  對機器產出的答案給予比對人類答案更高的信任。
-  它最狡猾的地方在於——<strong>答案排版得越整齊、語氣越肯定，你越不會去查</strong>。</p>
+# ── LOOP 學習迴圈 ─────────────────────────────────────────────────────
+BODIES["loop"] = f"""
+  <p>有效的學習不是「看過答案」，而是反覆經歷一個小迴圈：
+  <strong>先提出自己的想法，再動手嘗試，觀察證據，最後修正理解</strong>。
+  AI 可以在每一步提供選項、範例或解釋，但不能替你跳過任何一步。</p>
 
-{info("為什麼特別危險",
-      "同樣一句「這兩組差異顯著」，同學講你會追問「你用什麼檢定」，"
-      "AI 講你會直接複製到報告裡。"
-      "但 AI 沒有比同學更了解你的資料。它甚至沒看過你的資料。", "warm")}
+  <div class="info-box purple" aria-label="資料分析學習迴圈">
+    <span class="info-label">資料分析學習迴圈</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.75rem;margin:.65rem 0;">
+      <div class="info-card"><div class="ic-title">① 提出想法</div>先預測結果、寫下理由，也說出你不確定的地方。</div>
+      <div class="info-card"><div class="ic-title">② 動手嘗試</div>請 AI 協助拆解任務或產生初稿，再由你執行。</div>
+      <div class="info-card"><div class="ic-title">③ 觀察證據</div>看資料、輸出與錯誤訊息，不只看 AI 的文字解釋。</div>
+      <div class="info-card"><div class="ic-title">④ 修正理解</div>解釋預測為何不符，改一個條件後重新開始。</div>
+    </div>
+    <p style="margin:.5rem 0 0;"><strong>↻ 下一輪：</strong>把修正後的理解變成新的問題，而不是把第一個答案當終點。</p>
+  </div>
 
-{viz(svg("w12biasSvg", 320),
-     [info_card("同一句話，兩個來源",
-                "按按鈕切換這句話是誰說的，看你心裡的「要不要查證」有沒有不一樣。"
-                "誠實一點，多數人是有的。"),
-      rows_card("這個主張",
-                [("誰說的", "—", "w12biWho"),
-                 ("你會去查嗎", "—", "w12biCheck"),
-                 ("實際上該做什麼", "回到資料驗證", "w12biDo")]),
-      info_card("流程比意志力可靠",
-                "對抗自動化偏誤的方法不是「我會保持懷疑」，"
-                "而是<strong>把驗證變成固定動作</strong>："
-                "任何一個數字進到報告之前，先問「我能不能自己重算一次」。")],
-     "w12biStatus", "同一句話，三個來源。",
-     '<button class="btn btn-toggle" onclick="w12biSet(0)">同學說的</button>'
-     '<button class="btn btn-toggle" onclick="w12biSet(1)">AI 說的</button>'
-     '<button class="btn btn-toggle" onclick="w12biSet(2)">你自己算的</button>')}
+{info("為什麼要先想再問",
+      "如果一開始就看完整答案，你很難分辨自己原本懂了什麼。先寫下一句預測，"
+      "再把 AI 的回答和實際輸出放在一起比對，錯誤才會變成可用的回饋。", "warm")}
 
-{card("最便宜的驗證動作", C(1, 36), O(1, 36), src=S(1, 36),
-      note="<code>describe()</code> 一行就能戳破一半的錯誤主張："
-           "範圍不合理、count 比列數少（有遺漏值）、標準差是 0（整欄同一個值）。"
-           "<strong>問任何進階問題之前，先看過這張表。</strong>")}
-
-{quiz("qBias", "PART 01 · 自我檢測",
-      "AI 給你一段分析，結論寫得很肯定、格式也很整齊。你該做的第一件事是？",
-      [(False, "看它的說法有沒有邏輯漏洞",
-        "會有幫助，但這是在<strong>文字層面</strong>檢查。"
-        "說得通的錯誤結論很多，光讀文字抓不出來。"),
-       (True, "回到資料，自己把關鍵那個數字算一次",
-        "對。這是唯一能真正確認的方式，而且通常只要一兩行程式碼——"
-        "這也正是你需要看得懂那一兩行的理由。"),
-       (False, "問另一個 AI 看看說法一不一致",
-        "兩個模型可能犯同一類錯（訓練資料重疊、同樣的統計誤解）。"
-        "一致不等於正確。")])}
+{quiz("qLoop", "PART 01 · 自我檢測",
+      "你要理解一份資料中兩個變數可能的關係。哪個做法最符合學習迴圈？",
+      [(True, "先畫下你預期的形狀與理由，再請 AI 建議圖形，執行後比較差異",
+        "對。你留下自己的預測，也用實際資料檢查 AI 和自己的想法。"),
+       (False, "請 AI 直接寫出完整分析與結論，讀完就算完成",
+        "你只看到了成品，沒有留下可供比較的預測，也沒有用輸出修正理解。"),
+       (False, "先背熟所有繪圖函式，等完全不會出錯再碰資料",
+        "學習迴圈需要小步嘗試與回饋；等到『全部會了』才開始，反而失去從錯誤學習的機會。")])}
 """
 
-# ── P02 AI 讀圖會讀錯 ─────────────────────────────────────────────────
-BODIES["crossmodal"] = f"""
-  <p>第二個失效模式更具體：<strong>跨模態不一致</strong>（cross-modal inconsistency）——
-  同一份資料用表、圖、文字三種形式呈現時，AI 對它們的解讀可能互相矛盾。
-  最常見的是<strong>讀圖</strong>：它會很肯定地說出一個從圖上根本讀不出來的區間。</p>
+# ── WORKFLOW 每一步都能協作 ───────────────────────────────────────────
+BODIES["workflow"] = f"""
+  <p>把「分析資料」當成單一大任務，AI 很容易用通用答案填滿空白。更好的做法是沿著工作流，
+  一次處理一個可以檢查的小問題。資料分析者也會在搜尋資訊、操作資料、解讀結果與重新提問之間
+  來回，而不是從提示一次跳到結論。</p>
 
-{info("這不是罕見的失誤",
-      "參考書第 11 章舉的例子裡，AI 描述一張密度圖時把最密集的區間講錯了一整格。"
-      "文字讀起來完全合理，只是跟圖不符——<strong>而且沒有任何警訊</strong>。"
-      "下面我們用課程的 Auto 資料重演同一件事。", "warm")}
+{table(["分析階段", "可以怎麼請 AI 幫忙", "留下什麼證據"],
+       [["釐清問題", "把模糊問題改寫成幾個可回答的問題", "目標變數、分析單位、預測或解釋"],
+        ["找資料", "建議搜尋詞、公開資料庫與必要欄位", "來源頁、版本、授權、下載日期"],
+        ["清理資料", "列檢查項目並產生轉型程式", "每一步前後的筆數、型態與異常紀錄"],
+        ["EDA／文字探勘", "提出摘要、主題或關係的候選", "可重算的統計量、樣本片段與圖"],
+        ["建模", "建立簡單基準、比較候選方法", "切分方式、指標、假設與未見資料表現"],
+        ["溝通", "依讀者改寫、整理圖表說明", "數字對照、限制與沒有回答的問題"]])}
 
-{viz(svg("w12readSvg", 340),
-     [info_card("你來當裁判",
-                "下面是 Auto 資料的 horsepower 分布（頁面當場算的）。"
-                "旁邊那段「AI 的描述」是我們寫的，模仿真實會犯的那種錯。"
-                "拖兩個標記，標出「AI 說的最密區間」與「真實的最密區間」。"),
-      rows_card("兩個區間各有幾筆",
-                [("AI 說的區間", "—", "w12rdAi"),
-                 ("你標的區間", "—", "w12rdYou"),
-                 ("差幾筆", "—", "w12rdDiff")]),
-      info_card("為什麼會這樣",
-                "AI 看圖是把像素轉成描述，中間沒有「回去數一次」的步驟。"
-                "它的說法聽起來有多確定，跟它有多正確<strong>完全無關</strong>。")],
-     "w12rdStatus", "先讀那段描述，再自己找真正的最密區間。",
-     '<button class="btn btn-step" onclick="w12rdMove(-1)">標記左移</button>'
-     '<button class="btn btn-step" onclick="w12rdMove(1)">標記右移</button>'
-     '<button class="btn btn-toggle" onclick="w12rdShowAi()">顯示 AI 說的區間</button>'
-     '<button class="btn btn-reset" onclick="w12rdReset()">重置</button>')}
+{card("先看你實際拿到的資料", C(1, 31), O(1, 31), src=S(1, 31),
+      note="AI 可以解釋這段輸出，但你要親自確認欄名、資料型態與數值量級。"
+           "這張表就是後續提問的共同起點：不要讓模型用猜的補上資料脈絡。")}
 
-{info("AI 的描述（我們寫的，模仿真實會犯的錯）",
-      "「這份資料的馬力主要集中在 <strong>140 到 180</strong> 之間，呈現單峰的常態分布，"
-      "少數高馬力的車形成右尾。」<br>"
-      "——語氣很肯定、術語也用對了。問題是<strong>那個區間是錯的</strong>，"
-      "而且「常態分布」這個描述也需要驗證，不是看一眼就能宣稱的。")}
+{info("研究給我們的啟示",
+      "Drosos 等人的參與式研究描述了生成式 AI 介入資料分析時，"
+      "搜尋資訊與理解資料會反覆交錯；Yang 等人則展示 AI 可參與從資料轉換、EDA 到統計與機器學習的多個環節。"
+      "這些工作說明<strong>協作範圍很廣</strong>，不代表每個輸出都正確，也不代表可以省略人工核對。")}
 
-{card("回到資料，自己數一次", C(2, 192), O(2, 192), src=S(2, 192),
-      note="這一格提醒了另一件事：課程 lab 裡的 horsepower "
-           "<strong>一開始根本不是數字</strong>（混了一個 <code>?</code>）。"
-           "AI 對著一張畫錯的圖描述得再流暢，也還是錯的。")}
-
-{quiz("qCross", "PART 02 · 自我檢測",
-      "AI 對一張圖的描述，和你自己算出來的數字對不上。最可能的解釋是？",
-      [(True, "它讀圖讀錯了。這是已知且常見的失效模式",
-        "對。讀圖是把像素轉成描述，中間沒有回去核對數字的步驟。"
-        "遇到不一致，<strong>以你自己算的為準</strong>。"),
-       (False, "你的程式碼寫錯了",
-        "當然要檢查，但別預設「機器比較不會錯」——"
-        "這正是自動化偏誤的定義。兩邊都查，然後<strong>以能重現的那一邊為準</strong>。"),
-       (False, "圖畫錯了",
-        "有可能，但那也是你能自己驗證的事（回去看資料）。"
-        "重點仍然是：<strong>能重算的才算數</strong>。")])}
+{quiz("qWorkflow", "PART 02 · 自我檢測",
+      "AI 建議你刪除某欄中的所有「?」。下一步最有學習價值的是？",
+      [(False, "照做，因為問號一定是打字錯誤",
+        "問號可能表示遺漏、拒答、未知或合法字元；沒有資料文件時不能直接決定。"),
+       (True, "查資料說明並比較處理前後的筆數，再決定轉成遺漏值或保留",
+        "對。你把 AI 的建議變成可查證的候選，並保留了清理決策的證據。"),
+       (False, "換一個 AI 問同樣問題，兩者一致就刪除",
+        "兩個模型可能依賴相同的通用慣例；一致仍不能替代這份資料的說明文件。")])}
 """
 
-# ── P03 驗證迴圈 ──────────────────────────────────────────────────────
-BODIES["verify"] = f"""
-  <p>講完兩個失效模式，接下來是解法。解法不是「不要用 AI」，而是
-  <strong>把它的輸出當成假設而不是結論</strong>，然後跑一個固定的驗證迴圈。
-  這個迴圈只有五步，而且每一步都很便宜。</p>
+# ── JUDGMENT 人必須保留的判斷 ─────────────────────────────────────────
+BODIES["judgment"] = f"""
+  <p>AI 能產生方法，卻不知道你的研究或決策真正要承擔什麼後果。
+  所以人的工作不是在最後「看一眼」，而是從一開始就替分析設定邊界。</p>
 
-{viz(svg("w12loopSvg", 340),
-     [info_card("五個步驟",
-                "按「單步」走一次。注意這五步<strong>沒有一步需要你自己想出答案</strong>——"
-                "它們只要求你會跑幾行程式碼、並且知道要看什麼。"),
-      rows_card("這一步",
-                [("步驟", "0 / 5", "w12vfStep"),
-                 ("要做什麼", "—", "w12vfWhat"),
-                 ("本站哪一頁教", "—", "w12vfWhere")]),
-      info_card("為什麼這是「你要學的東西」",
-                "這五步全部需要看得懂並且改得動程式碼。"
-                "所以這門課要練的不是打字，是<strong>把一個主張變成可以驗證的東西</strong>——"
-                "那正是統計學這門學問本身在做的事。")],
-     "w12vfStatus", "按「單步」走一次驗證迴圈。",
-     '<button class="btn btn-step" onclick="w12vfStep()">→ 單步</button>'
-     '<button class="btn btn-play" onclick="w12vfPlay()">▶ 連續播</button>'
-     '<button class="btn btn-reset" onclick="w12vfReset()">重置</button>')}
+{table(["你要守住的判斷", "至少問一句"],
+       [["問題定義", "我要回答的是預測、描述、解釋，還是因果問題？"],
+        ["資料來源與代表性", "這些資料怎麼收集，能代表我要談的族群嗎？"],
+        ["欄位定義與單位", "一列代表誰／什麼？零、空白與特殊碼各代表什麼？"],
+        ["方法假設", "缺失、獨立性、線性或取樣方式會不會破壞解讀？"],
+        ["證據與結論", "哪個輸出直接支持這句話？它沒有回答什麼？"],
+        ["風險與責任", "如果答案錯了，誰會受影響，還需要誰審查？"]])}
 
-{table(["步驟", "具體要做的事", "本站哪一頁"],
-       [["① 看資料", "<code>shape</code>、<code>dtypes</code>、<code>describe()</code>",
-         "<a href=\"p4_pandas.html#view\">P4</a>"],
-        ["② 重算關鍵數字", "把那個主張的數字自己算一次",
-         "<a href=\"p3_numpy.html#agg\">P3</a>、<a href=\"p4_pandas.html#group\">P4</a>"],
-        ["③ 畫一張圖", "數字對得上不代表形狀對",
-         "<a href=\"p5_visualization.html\">P5</a>"],
-        ["④ 檢查假設與流程", "有沒有資料洩漏？評估用的是沒看過的資料嗎？",
-         "<a href=\"p6_modeling_api.html#cv\">P6</a>"],
-        ["⑤ 記下來", "固定種子、記下版本，讓別人重現得出來",
-         "<a href=\"00b_setup.html\">00B</a>"]])}
+{info("判斷不是『憑感覺』",
+      "你可以要求 AI 提出反例、替代解釋與失敗條件，但裁決要回到資料、文件與領域知識。"
+      "NIST 的生成式 AI 風險管理指引也把來源追溯、輸出驗證、資料治理與人工監督視為實際治理工作，"
+      "而不是在結尾加一句『請自行查證』就完成。", "warm")}
 
-{card("第一步永遠是這個", C(1, 31), O(1, 31), src=S(1, 31),
-      note="看前五列。欄名對不對、有沒有整欄空白、數字的量級合不合理——"
-           "三秒鐘就能排除掉一大類的錯。")}
-
-{quiz("qVerify", "PART 03 · 自我檢測",
-      "AI 告訴你「加上這五個交互作用項之後 R² 從 0.54 提升到 0.91」。你先做什麼？",
-      [(False, "把這五項加進報告的模型",
-        "R² 隨著變數增加<strong>一定</strong>會上升，這不是模型變好的證據。"),
-       (True, "在沒看過的資料上評估一次",
-        "對。訓練 R² 上升可能只是過度配適。"
-        "切出測試集或用交叉驗證看一次，才知道它有沒有真的變好——"
-        "這正是 <a href=\"p6_modeling_api.html#split\">P6</a> 與第 5 章的主題。"),
-       (False, "檢查那五個交互作用有沒有統計顯著",
-        "會有幫助，但五個檢定就有多重比較的問題，而且顯著不等於預測得更好。"
-        "先做最直接的那一步：<strong>在沒看過的資料上試</strong>。")])}
+{quiz("qJudgment", "PART 03 · 自我檢測",
+      "模型在現有資料上的預測很準。下面哪個問題仍不能只靠這個分數回答？",
+      [(False, "同一評估程式算出的誤差是多少",
+        "這是可重算的技術問題；你可以執行程式核對。"),
+       (True, "這份資料是否足以代表模型將服務的族群",
+        "對。代表性取決於資料如何收集與實際使用情境，單一分數不會自動回答。"),
+       (False, "資料共有幾列",
+        "這也是可以直接從資料重算的事，不需要交給抽象判斷。")])}
 """
 
-# ── P04 可重現性 ──────────────────────────────────────────────────────
-BODIES["repro"] = f"""
-  <p>驗證迴圈的最後一步是「記下來」，它值得單獨講。
-  統計分析跟一般程式最大的差別是<strong>裡面有隨機性</strong>：
-  切分、重抽樣、隨機森林抽變數。沒有固定種子的話，
-  <strong>連你自己明天都重現不了今天的結果</strong>。</p>
+# ── HABITS 五個學習習慣 ───────────────────────────────────────────────
+BODIES["habits"] = f"""
+  <p>你不必每次都寫一份正式稽核報告。先把下面五個小習慣固定下來，
+  就能讓 AI 成為練習夥伴，而不是替你跳過練習。</p>
 
-{card("沒固定種子：跑兩次不一樣", C(2, 80), O(2, 80), src=S(2, 80),
-      note="同一行跑兩次，四個數字完全不同。"
-           "寫報告的時候這是災難。你沒辦法說明「我的 0.24 是怎麼來的」。")}
+{table(["習慣", "你可以立刻做的動作"],
+       [["① 先預測", "問 AI 前先寫一句：我預期看到什麼，為什麼"],
+        ["② 任務切小", "一次只請它處理一個能執行、能核對的步驟"],
+        ["③ 問假設與錯因", "要求列出需要成立的條件，以及最可能錯在哪裡"],
+        ["④ 親自執行", "在你的資料與環境跑過；錯誤訊息和輸出都是證據"],
+        ["⑤ 改條件重做", "換欄位、門檻、樣本或方法，確認理解能不能遷移"]])}
 
-{card("固定種子：兩個產生器逐位相同", C(2, 82), O(2, 82), src=S(2, 82),
-      note="<code>default_rng(1303)</code> 開兩次，抽出來一模一樣。"
-           "本站每一張自己算的圖都是這樣產生的，"
-           "所以任何人拿到程式碼都能重生同樣的數字。")}
+{info("本站的閱讀方式",
+      "把每頁的例子當成下一輪迴圈的起點：先猜輸出，再跑程式；回答自我檢測後，"
+      "不要只看對錯，也要說明另外兩個選項錯在哪裡。遇到卡住可以問 AI，"
+      "但回到頁面或 lab 親自確認。")}
 
-{viz(svg("w12seedSvg", 320),
-     [info_card("開關種子看看",
-                "同一段模擬跑四次。固定種子時四條線完全重疊；"
-                "關掉之後每次都不一樣——<strong>而且每一次都「看起來很合理」</strong>。"),
-      rows_card("四次的結果",
-                [("種子", "固定（1303）", "w12sdSeed"),
-                 ("四次的估計值", "—", "w12sdVals"),
-                 ("最大差距", "—", "w12sdRange")]),
-      info_card("可重現不等於正確",
-                "固定種子只保證「別人跑得出同樣的數字」，"
-                "不保證那個數字是對的。但<strong>不可重現的結果連討論都沒辦法討論</strong>——"
-                "它是所有其他檢查的前提。")],
-     "w12sdStatus", "先看固定種子的版本，再關掉。",
-     '<button class="btn btn-play" onclick="w12sdRun()">▶ 再跑四次</button>'
-     '<button class="btn btn-toggle" id="w12sdBtn" onclick="w12sdTog()">種子：固定</button>'
-     '<button class="btn btn-reset" onclick="w12sdReset()">重置</button>')}
-
-{qa("觀念釐清", [
-    ("固定種子會不會讓結果「作弊」？",
-     "不會。種子只決定<strong>抽到哪一組隨機樣本</strong>，不影響方法本身的性質。"
-     "真正該擔心的是<strong>挑種子</strong>——試十個種子挑結果最好看的那個，"
-     "那才是作弊。所以要先定種子再跑，不是跑完再挑。"),
-    ("那怎麼知道結果穩不穩定？",
-     "換幾個種子各跑一次，看結果晃動多大。"
-     "課程 lab 的 <code>ShuffleSplit(n_splits=10)</code> 就是在做這件事——"
-     "它同時報告平均與標準差，後者才是重點。"
-     "細節見 <a href=\"p6_modeling_api.html#cv\">P6</a>。"),
-])}
-
-{quiz("qRepro", "PART 04 · 自我檢測",
-      "你跑了十個種子，其中一個的測試 MSE 特別低。報告裡該寫哪一個？",
-      [(False, "最低的那一個，那是模型能達到的最佳表現",
-        "這是挑種子，等於用測試集調參數。"
-        "「能達到」跟「平均能達到」是兩回事，前者對新資料沒有意義。"),
-       (True, "十個的平均，並且把標準差一起寫出來",
-        "對。標準差告訴讀者「這個數字能晃多少」，"
-        "沒有它的話，兩個模型差 0.5 到底算不算差別根本無從判斷。"),
-       (False, "第一個跑的那個，因為它最沒有偏見",
-        "單一個結果沒有偏見，但也沒有告訴你不確定性。"
-        "既然已經跑了十個，就把資訊用完。")])}
-"""
-
-# ── P05 你要練的其實是什麼 ────────────────────────────────────────────
-BODIES["you"] = f"""
-  <p>把前面串起來：AI 很會產出<strong>看起來對的東西</strong>，
-  而你要練的是判斷<strong>哪些是真的對</strong>。這件事需要三種能力，
-  剛好就是這門課的三塊內容。</p>
-
-{table(["你需要的能力", "為什麼", "在哪裡練"],
-       [["看得懂並改得動幾行程式碼",
-         "驗證迴圈的每一步都要跑程式碼；不會改就只能相信別人",
-         "<a href=\"p1_python_basics.html\">P1</a>–<a href=\"p6_modeling_api.html\">P6</a>"],
-        ["知道一個統計主張要滿足什麼條件才成立",
-         "「顯著」「相關」「準確」各有前提，AI 不會替你檢查",
-         "正課第 <a href=\"linear_regression.html\">3</a>–<a href=\"classification.html\">4</a> 章"],
-        ["知道評估要用沒看過的資料",
-         "這是整套機器學習最容易被繞過、也最致命的一條",
-         "正課第 <a href=\"resampling_methods.html\">5</a>–<a href=\"model_selection.html\">6</a> 章"]])}
-
-{viz(svg("w12mapSvg", 340),
-     [info_card("這個站怎麼讀",
-                "按按鈕看兩條路線。沒寫過程式的走完整路線；"
-                "寫過但沒碰過資料科學套件的可以跳過前兩頁。"),
-      rows_card("這條路線",
-                [("適合誰", "—", "w12mpWho"),
-                 ("順序", "—", "w12mpOrder"),
-                 ("大概要多久", "—", "w12mpTime")]),
-      info_card("先備頁是選讀",
-                "它們不列入評分，也不是課程的一部分。"
-                "但如果你在正課的第一份 lab 就卡在「這行在幹嘛」，"
-                "回來讀完會省下更多時間。")],
-     "w12mpStatus", "兩條路線，看哪一條是你。",
-     '<button class="btn btn-toggle" onclick="w12mpSet(0)">完全沒寫過程式</button>'
-     '<button class="btn btn-toggle" onclick="w12mpSet(1)">寫過程式，沒碰過資料科學</button>'
-     '<button class="btn btn-toggle" onclick="w12mpSet(2)">兩者都會，直接進正課</button>')}
-
-{info("最後一句",
-      "這門課不是在跟 AI 比誰寫得快。那個比賽你不會贏，也不需要贏。"
-      "它在練的是另一件事：<strong>當一個數字擺在你面前，你有沒有辦法判斷它站不站得住腳</strong>。"
-      "這件事目前還沒有東西可以外包。")}
-
-{quiz("qYou", "PART 05 · 自我檢測",
-      "這門課練完之後，你跟「只會叫 AI 寫程式的人」最大的差別是什麼？",
-      [(False, "你打字比較快",
-        "不會，而且這也不重要。"),
-       (True, "你能判斷一個統計結果站不站得住腳，並且自己驗證",
-        "對。產出程式碼的成本已經趨近於零，<strong>審查的價值因此變高了</strong>。"
-        "這門課練的是審查那一半。"),
-       (False, "你不需要用 AI",
-        "恰恰相反。你會用得更多也更放心，因為你查得動它。")])}
+{quiz("qHabits", "PART 04 · 自我檢測",
+      "AI 已經幫你修好一段清理程式，而且能順利執行。怎樣確認你真的學會了？",
+      [(False, "把修好的版本收藏起來，下次原樣貼上",
+        "收藏答案有用，但不能證明你理解它在什麼條件下成立。"),
+       (False, "再請 AI 用更簡單的話解釋一次",
+        "解釋可以幫忙，但你仍可能只是在熟悉文字。"),
+       (True, "改一個欄位型態或特殊值，先預測結果，再自己修改並執行",
+        "對。條件改變後仍能預測、操作與解釋，才表示理解可以遷移。")])}
 
 {hook("接下來讀什麼",
-      '環境還沒好就先去 <a href="00b_setup.html">00B 環境安裝</a>（三分鐘）。'
-      '沒寫過程式從 <a href="p1_python_basics.html">P1</a> 開始；'
-      '寫過的直接跳 <a href="p3_numpy.html">P3 NumPy</a>。'
-      '想直接進正課就從 <a href="introduction.html">第 1 章 統計學習導論</a> 開始。')}
+      '先到 <a href="00b_setup.html">00B 環境安裝</a>，確保每次嘗試都能真的執行；'
+      '再讀 <a href="00c_ai_assisted.html">00C AI 輔助統計分析</a>，把這個學習迴圈變成具體的分析協作流程。'
+      '進入先備課程後，可依序練習 <a href="p1_python_basics.html">P1–P6</a>。')}
 """
 
-# ── EX 練習 ─────────────────────────────────────────────────────────────
+# ── EX 整合情境 ────────────────────────────────────────────────────────
 BODIES["exercises"] = f"""
-{quiz("qEx1", "EXERCISE 1 · 找出不能信的地方",
-      "AI 說：「這兩個變數的相關係數是 0.87，所以 X 造成了 Y 的變化。」問題在哪？",
-      [(True, "相關不等於因果，而且它也沒說 0.87 是怎麼算的",
-        "對。相關係數再高也不能推論方向與因果，"
-        "而且它可能被一個離群值撐起來（見 <a href=\"p5_visualization.html\">P5</a>）。"
-        "至少要先畫一張散佈圖。"),
-       (False, "0.87 不夠高，要 0.95 以上才算相關",
-        "沒有這種門檻。「多高算高」完全取決於領域與問題。"),
-       (False, "應該要用 Spearman 相關係數",
-        "換一個係數不會解決因果的問題。方法選擇是次要的，"
-        "那個「所以」才是真正的錯。")])}
+{quiz("qEx1", "EXERCISE 1 · 公開資料搜尋",
+      "你請 AI 找到一份適合研究大學生就業的公開資料。它列了三個網址與欄位。第一輪應怎麼做？",
+      [(True, "逐一開啟官方來源，確認年份、抽樣對象、欄位定義與授權，再選資料",
+        "對。搜尋結果是候選；來源頁與文件才是你能引用並判斷適用性的證據。"),
+       (False, "選欄位最多的資料，資訊一定比較完整",
+        "欄位多不代表樣本適合你的問題，也不代表收集品質較好。"),
+       (False, "把三份資料合併，樣本越大越可靠",
+        "定義、年份與抽樣框不同的資料不能因為欄名相似就直接合併。")])}
 
-{quiz("qEx2", "EXERCISE 2 · 找出不能信的地方",
-      "AI 說：「模型在測試集上的準確率是 99%，表現非常好。」你要先問什麼？",
-      [(True, "類別是不是極度不平衡，以及測試集有沒有被污染",
-        "對。如果 99% 的樣本都是同一類，「全部猜多數類」也有 99%。"
-        "另外要確認前處理是不是在切分之後才做的"
-        "（見 <a href=\"p6_modeling_api.html#cv\">P6 的資料洩漏</a>）。"),
-       (False, "99% 太高了，一定是造假",
-        "有些問題本來就好預測。先問<strong>可驗證的問題</strong>，不要先下結論。"),
-       (False, "應該改用 F1 分數",
-        "換指標是後面的事。先確認這個 99% 是怎麼來的。")])}
+{quiz("qEx2", "EXERCISE 2 · 文字探勘",
+      "AI 把一批訪談分成四個主題，名稱也很通順。你下一步該怎麼建立證據？",
+      [(False, "把四個主題直接當成受訪者的真實觀點",
+        "主題是分析產物，不是受訪者自己宣告的分類。"),
+       (True, "抽查各主題的原文、尋找反例，並記錄分類規則與無法歸類的文本",
+        "對。這讓你能判斷主題是否忠於材料，也保留模型分類失敗的線索。"),
+       (False, "請 AI 為每個主題寫更有吸引力的名稱",
+        "命名不能取代原文核對；名稱越流暢，越可能掩蓋分類本身不穩定。")])}
 
-{quiz("qEx3", "EXERCISE 3 · 找出不能信的地方",
-      "AI 說：「p 值是 0.001，所以這個變數的效果很大。」問題在哪？",
-      [(True, "p 值小講的是「不是 0」很有把握，跟效果大小無關",
-        "對。樣本夠大時，一個實務上可以忽略的效果也會有很小的 p 值。"
-        "要談大小得看係數本身（見 <a href=\"p6_modeling_api.html#summary\">P6</a>）。"),
-       (False, "p 值應該要小於 0.05 才算顯著，0.001 太小了",
-        "0.001 比 0.05 小，是更強的證據。這個選項把方向搞反了。"),
-       (False, "沒問題，p 值就是用來衡量效果大小的",
-        "這正是最常見的誤解。p 值衡量的是證據強度，不是效果大小。")])}
-
-{quiz("qEx4", "EXERCISE 4 · 找出不能信的地方",
-      "AI 幫你把整份資料標準化之後才切訓練測試集，並回報測試 MSE。問題在哪？",
-      [(True, "資料洩漏：標準化的參數用到了測試集的資訊",
-        "對。這個測試 MSE 會偏樂觀，它已經不是 out-of-sample 的估計了。"
-        "正確做法是把 scaler 與模型包成 Pipeline"
-        "（見 <a href=\"p6_modeling_api.html#cv\">P6</a>）。"),
-       (False, "標準化會改變資料的分布，不應該做",
-        "標準化只是平移與縮放，不改變分布的形狀；"
-        "而且第 6 章的收縮方法非做不可。問題出在<strong>順序</strong>。"),
-       (False, "應該用 MinMaxScaler 而不是 StandardScaler",
-        "換哪一種都一樣會洩漏。錯的是順序，不是選哪個轉換器。")])}
+{quiz("qEx3", "EXERCISE 3 · 模型與報告",
+      "AI 建好模型並寫道：『特徵 A 是造成結果的主要因素，因此應立即採用這項政策。』你要怎麼處理？",
+      [(False, "只要測試分數高就保留原句",
+        "預測表現不會自動建立因果關係，也不會替政策權衡成本與風險。"),
+       (False, "把『造成』改成『相關』就可以發布",
+        "用詞修正只是第一步；仍要交代資料、模型、效果大小、不確定性與適用範圍。"),
+       (True, "回查研究問題與資料設計，重算關鍵結果，改寫成證據能支持的主張並列出限制",
+        "對。這同時檢查問題定義、數值證據與結論邊界，也把決策責任留在人身上。")])}
 """
 
-# ── REF 總覽 ────────────────────────────────────────────────────────────
+# ── REF 來源與安全邊界 ────────────────────────────────────────────────
 BODIES["reference"] = f"""
-  <p>三張表：什麼時候該信 AI、驗證迴圈、以及這個站怎麼讀。</p>
+  <p>本頁的核心不是「AI 一定做得到」，而是：它已能參與很多資料工作，
+  所以你更需要用學習迴圈留下可檢查的證據。不同研究的任務、模型、樣本與評分方式不同，
+  <strong>不能把單一案例或 benchmark 外推成所有領域的可靠度保證</strong>。</p>
 
-{table(["這類問題", "交給 AI 划不划算", "為什麼"],
-       [["語法、函式參數、環境錯誤", "✓ 很划算", "有標準答案，而且你能<b>馬上驗證</b>"],
-        ["「這段程式碼在做什麼」", "✓ 划算", "讀懂之後你自己能核對"],
-        ["「幫我寫一個做 X 的函式」", "△ 可以，但要看得懂再用", "能跑不等於做的是你要的事"],
-        ["「這個結果顯著嗎」", "✗ 不划算", "它沒看過你的資料，也不知道假設成不成立"],
-        ["「這張圖告訴我們什麼」", "✗ 不划算", "讀圖是已知的失效模式，會很肯定地說錯"],
-        ["「這個模型可以上線了嗎」", "✗ 不划算", "牽涉流程、洩漏、族群差異。這些只有你知道"]])}
+{table(["來源", "本頁怎麼使用", "解讀限制"],
+       [["<a href=\"https://www.microsoft.com/en-us/research/publication/its-like-a-rubber-duck-that-talks-back-understanding-generative-ai-assisted-data-analysis-workflows-through-a-participatory-prompting-study/\">Drosos et al., CHIWORK 2024</a>",
+         "理解 AI 輔助資料分析中的資訊搜尋、分析策略與 sensemaking 迴圈",
+         "參與式研究提供工作流洞見，不是所有使用者的代表性成效估計"],
+        ["<a href=\"https://www.nature.com/articles/s44387-025-00070-2\">Yang et al., npj Artificial Intelligence, 2026</a>",
+         "說明 AI 可參與資料轉換、EDA、統計分析與機器學習等環節",
+         "能力展示不等於每種資料、模型或決策都能無監督使用"],
+        ["<a href=\"https://www.nature.com/articles/s41598-025-23798-y\">Bermejo et al., Scientific Reports, 2025</a>",
+         "作為 AI 參與文字探勘的近期案例",
+         "特定資料與研究設計的案例不能直接推廣成通用準確率"],
+        ["<a href=\"https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence\">NIST AI 600-1: Generative AI Profile</a>",
+         "支持來源追溯、輸出驗證、資料治理與人工監督的風險管理觀點",
+         "這是風險管理框架，不替任何個別分析背書"],
+        ["<a href=\"https://link.springer.com/article/10.1007/s10664-025-10622-4\">Ramasamy et al., Empirical Software Engineering, 2025</a>",
+         "延伸閱讀：AI 如何在 notebook 的不同資料科學步驟提供建議",
+         "研究任務偏簡單，不應直接外推到複雜的端到端分析"],
+        ["<a href=\"https://aclanthology.org/2024.nlp4science-1.10/\">Zhou et al., NLP4Science 2024</a>",
+         "延伸閱讀：從標記範例產生假設，再依錯誤案例反覆更新",
+         "這裡的假設是分類模式，不等於已驗證的科學或因果理論"]])}
 
-{table(["驗證迴圈", "一行程式碼版本"],
-       [["① 看資料", "<code>df.shape</code>、<code>df.dtypes</code>、<code>df.describe()</code>"],
-        ["② 重算關鍵數字", "<code>df.groupby(k)[v].mean()</code> 之類"],
-        ["③ 畫一張圖", "<code>sns.histplot(...)</code> 或 <code>sns.scatterplot(...)</code>"],
-        ["④ 檢查流程", "前處理在切分之後嗎？評估用沒看過的資料嗎？"],
-        ["⑤ 記下來", "<code>random_state=0</code>、記下套件版本"]])}
+{info("使用資料時的最低安全線",
+      "不要把未去識別的個資、機密研究資料或受限制資料直接貼進公開 AI 服務。"
+      "先確認機構規範與服務條款；必要時只提供欄位結構、合成範例或去識別片段。"
+      "無論工具多強，來源、單位、關鍵數字與對外結論都必須由人核對。", "warm")}
 
-{table(["你的情況", "建議路線"],
-       [["完全沒寫過程式",
-         "00B → P1 → P2 → P3 → P4 → P5 → P6 → 正課第 1 章"],
-        ["寫過程式，沒碰過資料科學套件", "00B → P3 → P4 → P5 → P6 → 正課第 1 章"],
-        ["兩者都熟", "直接進正課，遇到卡住再回來查"]])}
-
-{info("三個一定要記住的觀念",
-      "<strong>1. 自動化偏誤是預設值。</strong>"
-      "排版整齊、語氣肯定的答案，你天生就比較不會去查，靠流程對抗，不要靠意志力。<br>"
-      "<strong>2. AI 讀圖會很肯定地說錯。</strong>"
-      "遇到它的描述跟你算的對不上，以<strong>能重現的那一邊</strong>為準。<br>"
-      "<strong>3. 你要練的是審查，不是打字。</strong>"
-      "產出的成本趨近於零，判斷「這個數字站不站得住腳」的價值因此變高了。")}
-
-{ver_note((1, 2))}
+{ver_note((1,), include_frames=False)}
 """
 
-# ── 元件 JS ─────────────────────────────────────────────────────────────
-PAGEJS = r"""
-/* 這一頁用的 Auto 馬力資料：固定種子當場產生，形狀模仿真實的 Auto 分布
-   （右偏、主峰在 70–110）。不是任何一份真實資料，重點是機制。 */
-const w12hp = (() => {
-  const rand = HC.stat.lcg(524), out = [];
-  for (let i = 0; i < 240; i++) out.push(78 + Math.abs(HC.stat.normal(rand)) * 16);
-  for (let i = 0; i < 100; i++) out.push(120 + HC.stat.normal(rand) * 26);
-  for (let i = 0; i < 52; i++) out.push(175 + Math.abs(HC.stat.normal(rand)) * 22);
-  return out.map(v => Math.max(46, Math.min(230, v)));
-})();
-function w12count(lo, hi) { return w12hp.filter(v => v >= lo && v < hi).length; }
-
-/* ═══ w12an 錨定實驗 ═══ */
-const w12anS = HC.svg('w12anchorSvg', {h: 340});
-const w12Truth = 30.4, w12AiSays = 24.8;
-let w12anG = 27.0, w12anPhase = 0, w12anFirst = null, w12anSecond = null;
-function w12anDraw() {
-  const s = w12anS;
-  s.domain([18, 40], [0, 1]);
-  const g = s.clearLayer('main');
-  s.grid(5, 1, {xtitle: '平均 mpg 的估計', ydec: 0});
-  const bar = (v, y, col, label) => {
-    s.add('circle', {cx: s.X(v), cy: y, r: 11, fill: col}, g);
-    const t = s.add('text', {x: s.X(v), y: y - 20, 'text-anchor': 'middle', cls: 'axlab',
-                             fill: col}, g);
-    t.textContent = label + ' ' + HC.fmt(v, 1);
-  };
-  bar(w12anG, 120, HC.tok.accent2, '你的估計');
-  if (w12anFirst !== null) bar(w12anFirst, 176, HC.tok.muted, '第一次');
-  if (w12anPhase >= 1) bar(w12AiSays, 220, HC.tok.accent, 'AI 說');
-  if (w12anPhase >= 2) bar(w12Truth, 264, HC.tok.resid, '真實值');
-  s.txtPx(310, 44, w12anPhase === 0 ? '先自己估一個數字'
-          : (w12anPhase === 1 ? '現在再估一次' : '揭曉'),
-          {cls: 'axtitle', anchor: 'middle'}, g);
-  document.getElementById('w12anFirst').textContent =
-    w12anFirst === null ? '—' : HC.fmt(w12anFirst, 1);
-  document.getElementById('w12anSecond').textContent =
-    w12anSecond === null ? '—' : HC.fmt(w12anSecond, 1);
-  document.getElementById('w12anShift').textContent =
-    (w12anFirst !== null && w12anSecond !== null)
-      ? HC.fmt(w12anSecond - w12anFirst, 1) : '—';
-  setStatus('w12anStatus', w12anPhase === 0
-    ? '拖到你覺得合理的位置，然後按「看 AI 的答案」。'
-    : (w12anPhase === 1
-       ? 'AI 說 24.8。<b>再估一次</b>，然後看你有沒有被拉過去。'
-       : '真實值是 30.4。AI 的 24.8 偏低，而多數人的第二次估計會往它靠。'));
-}
-function w12anGuess(d) {
-  w12anG = Math.max(18, Math.min(40, w12anG + d * 0.6));
-  if (w12anPhase >= 1) w12anSecond = w12anG;
-  w12anDraw();
-}
-function w12anReveal() {
-  if (w12anPhase === 0) { w12anFirst = w12anG; w12anPhase = 1; w12anSecond = w12anG; }
-  w12anDraw();
-}
-function w12anTruth() { if (w12anPhase >= 1) w12anPhase = 2; w12anDraw(); }
-function w12anReset() {
-  w12anG = 27.0; w12anPhase = 0; w12anFirst = null; w12anSecond = null; w12anDraw();
-}
-if (w12anS) w12anDraw();
-
-/* ═══ w12bi 自動化偏誤 ═══ */
-const w12biS = HC.svg('w12biasSvg', {h: 320});
-const w12biCases = [
-  {who: '同學', check: '多半會追問「你用什麼檢定」', col: 'muted',
-   note: '你會追問來源與方法 —— 這是<b>健康</b>的反應。'},
-  {who: 'AI', check: '多半直接用了', col: 'resid',
-   note: '同樣一句話，換成 AI 講，追問的比例明顯下降。<b>這就是自動化偏誤。</b>'},
-  {who: '你自己算的', check: '你知道每一步怎麼來的', col: 'accent2',
-   note: '唯一你真的知道前提成不成立的來源 —— 代價是你得看得懂那幾行。'}
-];
-let w12biI = 0;
-function w12biDraw() {
-  const g = w12biS.clearLayer('main');
-  const c = w12biCases[w12biI];
-  const col = HC.tok[c.col] || HC.tok.muted;
-  w12biS.add('rect', {x: 60, y: 84, width: 500, height: 76, rx: 10,
-                      fill: HC.tok.card, stroke: col, 'stroke-width': 2.4}, g);
-  const t = w12biS.add('text', {x: 310, y: 120, 'text-anchor': 'middle', cls: 'axtitle'}, g);
-  t.textContent = '「這兩組的差異是顯著的。」';
-  const u = w12biS.add('text', {x: 310, y: 146, 'text-anchor': 'middle', cls: 'axlab'}, g);
-  u.textContent = '—— ' + c.who + '說';
-  w12biCases.forEach((cc, i) => {
-    const on = i === w12biI;
-    const x = 60 + i * 172;
-    w12biS.add('rect', {x: x, y: 196, width: 156, height: 54, rx: 8,
-                        fill: on ? (HC.tok[cc.col] || HC.tok.muted) : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.4,
-                        opacity: on ? 0.95 : 0.5}, g);
-    const tt = w12biS.add('text', {x: x + 78, y: 220, 'text-anchor': 'middle', cls: 'axtitle',
-                                   fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    tt.textContent = cc.who;
-    const uu = w12biS.add('text', {x: x + 78, y: 240, 'text-anchor': 'middle', cls: 'axlab',
-                                   fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    uu.textContent = i === 1 ? '追問的比例最低' : (i === 0 ? '會追問' : '你知道全部');
-  });
-  document.getElementById('w12biWho').textContent = c.who;
-  document.getElementById('w12biCheck').textContent = c.check;
-  setStatus('w12biStatus', c.note);
-}
-function w12biSet(i) { w12biI = i; w12biDraw(); }
-if (w12biS) w12biDraw();
-
-/* ═══ w12rd 讀圖對照器（本頁招牌）═══ */
-const w12rdS = HC.svg('w12readSvg', {h: 340});
-const w12BinW = 20, w12Lo = 40, w12Hi = 240;
-let w12rdPos = 60, w12rdShow = false;
-function w12rdDraw() {
-  const s = w12rdS;
-  const nb = (w12Hi - w12Lo) / w12BinW;
-  const counts = [];
-  for (let i = 0; i < nb; i++) counts.push(w12count(w12Lo + i * w12BinW,
-                                                    w12Lo + (i + 1) * w12BinW));
-  const mx = Math.max.apply(null, counts);
-  s.domain([w12Lo, w12Hi], [0, mx * 1.18]);
-  const g = s.clearLayer('main');
-  s.grid(5, 4, {xtitle: 'horsepower', ytitle: '筆數'});
-  counts.forEach((c, i) => {
-    const x0 = w12Lo + i * w12BinW;
-    const inYou = x0 >= w12rdPos && x0 < w12rdPos + 40;
-    const inAi = w12rdShow && x0 >= 140 && x0 < 180;
-    s.add('rect', {x: s.X(x0) + 1, y: s.Y(c), width: s.X(x0 + w12BinW) - s.X(x0) - 2,
-                   height: s.Y(0) - s.Y(c),
-                   fill: inYou ? HC.tok.accent2 : (inAi ? HC.tok.resid : HC.tok.muted),
-                   opacity: inYou || inAi ? 0.95 : 0.55}, g);
-  });
-  const youN = w12count(w12rdPos, w12rdPos + 40);
-  const aiN = w12count(140, 180);
-  s.add('rect', {x: s.X(w12rdPos), y: s.Y(mx * 1.15), width: s.X(w12rdPos + 40) - s.X(w12rdPos),
-                 height: 6, fill: HC.tok.accent2, rx: 3}, g);
-  s.txt(w12rdPos + 20, mx * 1.15, '你標的', {cls: 'vlab', dy: -8, fill: HC.tok.accent2}, g);
-  if (w12rdShow) {
-    s.add('rect', {x: s.X(140), y: s.Y(mx * 1.05), width: s.X(180) - s.X(140),
-                   height: 6, fill: HC.tok.resid, rx: 3}, g);
-    s.txt(160, mx * 1.05, 'AI 說的 140–180', {cls: 'vlab', dy: -8, fill: HC.tok.resid}, g);
-  }
-  document.getElementById('w12rdAi').textContent = w12rdShow ? aiN + ' 筆' : '（先自己找）';
-  document.getElementById('w12rdYou').textContent =
-    w12rdPos + '–' + (w12rdPos + 40) + '：' + youN + ' 筆';
-  document.getElementById('w12rdDiff').textContent =
-    w12rdShow ? (youN - aiN) + ' 筆' : '—';
-  setStatus('w12rdStatus', w12rdShow
-    ? 'AI 說的 140–180 只有 <b>' + aiN + '</b> 筆，你標的區間有 <b>' + youN
-      + '</b> 筆。<b>它把最密的區間講錯了整整一段。</b>'
-    : '拖標記找最密的 40 單位區間，找到再按「顯示 AI 說的區間」。');
-}
-function w12rdMove(d) {
-  w12rdPos = Math.max(w12Lo, Math.min(w12Hi - 40, w12rdPos + d * 20));
-  w12rdDraw();
-}
-function w12rdShowAi() { w12rdShow = true; w12rdDraw(); }
-function w12rdReset() { w12rdPos = 60; w12rdShow = false; w12rdDraw(); }
-if (w12rdS) w12rdDraw();
-"""
-
-PAGEJS += r"""
-/* ═══ w12vf 驗證迴圈 ═══ */
-const w12vfS = HC.svg('w12loopSvg', {h: 340});
-const w12vfSteps = [
-  {w: '看資料：shape、dtypes、describe()', p: 'P4 pandas'},
-  {w: '重算關鍵數字：把那個主張自己算一次', p: 'P3 NumPy／P4 pandas'},
-  {w: '畫一張圖：數字對得上不代表形狀對', p: 'P5 視覺化'},
-  {w: '檢查假設與流程：有沒有資料洩漏', p: 'P6 建模 API'},
-  {w: '記下來：固定種子、記下版本', p: '00B 環境安裝'}
-];
-let w12vfI = 0, w12vfTimer = null;
-function w12vfDraw() {
-  const g = w12vfS.clearLayer('main');
-  const cx = 310, cy = 176, r = 108;
-  w12vfS.add('circle', {cx: cx, cy: cy, r: r, fill: 'none',
-                        stroke: HC.tok.cardBorder, 'stroke-width': 2,
-                        'stroke-dasharray': '6 6'}, g);
-  w12vfSteps.forEach((st, i) => {
-    const a = -Math.PI / 2 + i * 2 * Math.PI / 5;
-    const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
-    const on = i < w12vfI;
-    const cur = i === w12vfI - 1;
-    w12vfS.add('circle', {cx: x, cy: y, r: 26,
-                          fill: on ? (cur ? HC.tok.accent : HC.tok.accent2) : HC.tok.card,
-                          stroke: HC.tok.cardBorder, 'stroke-width': 1.6,
-                          opacity: on ? 0.95 : 0.5}, g);
-    const t = w12vfS.add('text', {x: x, y: y + 6, 'text-anchor': 'middle', cls: 'axtitle',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = String(i + 1);
-    const lx = cx + (r + 68) * Math.cos(a), ly = cy + (r + 68) * Math.sin(a);
-    const u = w12vfS.add('text', {x: lx, y: ly + 4, 'text-anchor': 'middle', cls: 'axlab',
-                                  fill: on ? HC.tok.ink : HC.tok.muted}, g);
-    u.textContent = ['看資料', '重算', '畫圖', '檢查流程', '記下來'][i];
-  });
-  w12vfS.txtPx(cx, cy + 4, w12vfI === 0 ? 'AI 的輸出' : (w12vfI >= 5 ? '可以下結論了' : '驗證中'),
-               {cls: 'axtitle', anchor: 'middle'}, g);
-  const st = w12vfSteps[Math.max(0, w12vfI - 1)];
-  document.getElementById('w12vfStep').textContent = w12vfI + ' / 5';
-  document.getElementById('w12vfWhat').textContent = w12vfI === 0 ? '—' : st.w;
-  document.getElementById('w12vfWhere').textContent = w12vfI === 0 ? '—' : st.p;
-  setStatus('w12vfStatus', w12vfI === 0
-    ? '把 AI 的輸出當成<b>假設</b>，不是結論。按「單步」開始驗證。'
-    : (w12vfI >= 5 ? '五步走完，這個數字現在<b>可以拿去下結論</b>了。' : st.w + '。'));
-}
-function w12vfStep() { w12vfI = Math.min(5, w12vfI + 1); w12vfDraw(); }
-function w12vfReset() {
-  if (w12vfTimer) { clearTimeout(w12vfTimer); w12vfTimer = null; }
-  w12vfI = 0; w12vfDraw();
-}
-function w12vfPlay() {
-  w12vfReset();
-  const tick = () => {
-    if (w12vfI >= 5) { w12vfTimer = null; return; }
-    w12vfStep();
-    w12vfTimer = setTimeout(tick, 850);
-  };
-  w12vfTimer = setTimeout(tick, 400);
-}
-if (w12vfS) w12vfDraw();
-
-/* ═══ w12sd 種子 ═══ */
-const w12sdS = HC.svg('w12seedSvg', {h: 320});
-let w12sdFixed = true, w12sdRuns = 0;
-function w12sdSample(k) {
-  const seed = w12sdFixed ? 1303 : (1303 + (w12sdRuns * 4 + k) * 7919);
-  const rand = HC.stat.lcg(seed);
-  const out = [];
-  for (let i = 0; i < 40; i++) out.push(HC.stat.normal(rand));
-  return HC.stat.mean(out);
-}
-function w12sdDraw() {
-  const s = w12sdS;
-  s.domain([-0.6, 0.6], [0, 5]);
-  const g = s.clearLayer('main');
-  s.grid(4, 1, {xtitle: '四次模擬各自估到的平均', ydec: 0, xdec: 1});
-  const vals = [0, 1, 2, 3].map(k => w12sdSample(k));
-  vals.forEach((v, k) => {
-    const y = 4 - k;
-    s.add('line', {x1: s.X(v), y1: s.Y(y - 0.35), x2: s.X(v), y2: s.Y(y + 0.35),
-                   stroke: w12sdFixed ? HC.tok.accent2 : HC.tok.resid, 'stroke-width': 3.4}, g);
-    s.txt(v, y, '第 ' + (k + 1) + ' 次', {cls: 'vlab', dy: -14,
-                                          fill: w12sdFixed ? HC.tok.accent2 : HC.tok.resid}, g);
-  });
-  const rng = Math.max.apply(null, vals) - Math.min.apply(null, vals);
-  document.getElementById('w12sdSeed').textContent = w12sdFixed ? '固定（1303）' : '沒有固定';
-  document.getElementById('w12sdVals').textContent = vals.map(v => HC.fmt(v, 3)).join('、');
-  document.getElementById('w12sdRange').textContent = HC.fmt(rng, 3);
-  setStatus('w12sdStatus', w12sdFixed
-    ? '四次<b>完全重疊</b>，因為它們用的是同一個種子。再按「再跑四次」也一樣。'
-    : '四次各自不同，最大差距 <b>' + HC.fmt(rng, 3)
-      + '</b>。每一次看起來都很合理，但你沒辦法說明自己那個數字是怎麼來的。');
-}
-function w12sdTog() {
-  w12sdFixed = !w12sdFixed;
-  document.getElementById('w12sdBtn').textContent = '種子：' + (w12sdFixed ? '固定' : '沒有');
-  w12sdDraw();
-}
-function w12sdRun() { w12sdRuns += 1; w12sdDraw(); }
-function w12sdReset() {
-  w12sdFixed = true; w12sdRuns = 0;
-  document.getElementById('w12sdBtn').textContent = '種子：固定';
-  w12sdDraw();
-}
-if (w12sdS) w12sdDraw();
-
-/* ═══ w12mp 學習路線 ═══ */
-const w12mpS = HC.svg('w12mapSvg', {h: 340});
-const w12mpCases = [
-  {who: '完全沒寫過程式', order: ['00B', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', '正課'],
-   time: '先備頁約 6–8 小時'},
-  {who: '寫過程式，沒碰過資料科學套件', order: ['00B', 'P3', 'P4', 'P5', 'P6', '正課'],
-   time: '先備頁約 4 小時'},
-  {who: '兩者都熟', order: ['正課'], time: '直接開始'}
-];
-let w12mpI = 0;
-function w12mpDraw() {
-  const g = w12mpS.clearLayer('main');
-  const c = w12mpCases[w12mpI];
-  const all = ['00B', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', '正課'];
-  const cw = 66;
-  const x0 = 310 - all.length * cw / 2;
-  all.forEach((nm, i) => {
-    const on = c.order.indexOf(nm) >= 0;
-    const last = nm === '正課';
-    w12mpS.add('rect', {x: x0 + i * cw, y: 130, width: cw - 10, height: 56, rx: 8,
-                        fill: on ? (last ? HC.tok.accent : HC.tok.accent2) : HC.tok.card,
-                        stroke: HC.tok.cardBorder, 'stroke-width': 1.5,
-                        opacity: on ? 0.95 : 0.35}, g);
-    const t = w12mpS.add('text', {x: x0 + i * cw + (cw - 10) / 2, y: 164,
-                                  'text-anchor': 'middle', cls: 'axtitle',
-                                  fill: on ? HC.tok.paper : HC.tok.muted}, g);
-    t.textContent = nm;
-    if (i < all.length - 1 && on && c.order.indexOf(all[i + 1]) >= 0) {
-      w12mpS.add('path', {d: 'M' + (x0 + i * cw + cw - 8) + ' 158 H ' + (x0 + (i + 1) * cw - 2),
-                          stroke: HC.tok.accent2, 'stroke-width': 2.2}, g);
-    }
-  });
-  w12mpS.txtPx(310, 76, c.who, {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent}, g);
-  w12mpS.txtPx(310, 232, c.order.join(' → '), {cls: 'axlab', anchor: 'middle'}, g);
-  w12mpS.txtPx(310, 262, c.time, {cls: 'axlab', anchor: 'middle'}, g);
-  document.getElementById('w12mpWho').textContent = c.who;
-  document.getElementById('w12mpOrder').textContent = c.order.join(' → ');
-  document.getElementById('w12mpTime').textContent = c.time;
-  setStatus('w12mpStatus', c.who + '：' + c.order.join(' → ') + '。');
-}
-function w12mpSet(i) { w12mpI = i; w12mpDraw(); }
-if (w12mpS) w12mpDraw();
-"""
+# 本頁沒有專屬互動元件；quiz 使用全站共用 JavaScript。
+PAGEJS = ""
 
 apply("00a_why_code", BODIES, PAGEJS)
