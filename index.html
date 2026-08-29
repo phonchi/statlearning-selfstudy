@@ -351,11 +351,6 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .btn:hover{filter:brightness(1.12);}
 .btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
 
-/* ---- 修正 base.css：.status-banner 是深色底（--code-bg），
-       但 base.css 的 strong{color:var(--ink)} 是深墨色，疊上去幾乎看不見 ---- */
-.status-banner strong,.status-banner b{color:#fff;font-weight:700;}
-.status-banner code{background:rgba(255,255,255,.14);color:#ffe9a8;}
-
 /* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
 .qa-box{margin:1.4rem 0;}
 .qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
@@ -512,23 +507,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
 }
 
-/* index.html 專用（章節總覽）。base.css 提供 token、hero、container、footer。 */
 
-.hero-code{position:absolute;right:4%;top:50%;transform:translateY(-50%);opacity:.09;
-  pointer-events:none;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.7;
-  color:#fff;white-space:pre;text-align:left;}
-@media(max-width:1000px){.hero-code{display:none;}}
-
-.loop-box{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);
-  border-radius:12px;padding:1.3rem 1.6rem;box-shadow:0 2px 10px rgba(0,0,0,.04);}
-.lb-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:1.05rem;color:var(--accent2);
-  margin-bottom:.6rem;}
-.loop-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin-top:1rem;}
-.loop-steps .step{background:var(--paper);border:1px solid var(--card-border);border-radius:9px;
-  padding:.75rem .9rem;font-size:.88rem;line-height:1.8;}
-.loop-steps .step b{display:block;font-family:'JetBrains Mono',monospace;font-size:.7rem;
-  letter-spacing:.1em;color:var(--accent3);margin-bottom:.3rem;}
-
+/* ---- 章節卡片。原本只在 index.css，但 introduction 的課程地圖元件（w01mapDraw）
+       也用 innerHTML 產出 .ch-card／.ch-num／.ch-meta，而章節頁只內嵌
+       base.css + stats.css —— 那組卡片因此完全沒有樣式，<a> 走瀏覽器預設藍紫色。
+       規則搬到這裡，index.html 內嵌 base+stats+index 照樣拿得到。 ---- */
 .ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
 .ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
   border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
@@ -547,6 +530,127 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   color:var(--accent2);background:rgba(44,62,122,.08);border-radius:4px;padding:.12rem .45rem;
   margin-bottom:.5rem;}
 .ch-meta{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);line-height:1.7;}
+
+
+/* ══ contrast-fix v1 ═══════════════════════════════════════════════
+   base.css 有兩條全域規則：code{color:var(--accent2)}（#2c3e7a）與
+   strong{color:var(--ink)}（#1a1a2e）。它們一旦落進深色底容器就會消失——
+   最糟的是 .cmp-table th 與 .info-box .info-label，底色也是 #2c3e7a，
+   對比 1.00，字跟背景完全同色。
+
+   下面把「深色底容器裡的行內元素」統一改掉。chip 用 rgba(26,26,46,.7)
+   配 #ffe9a8：對本設計系統的每一個深色底，最差的對比是 7.84（在 #f39c12 上），
+   全部過 WCAG AA。單一組值、不分層，才驗得動。
+
+   只列 code/kbd/a/strong/b/em/i 七個標籤，**從不用 * 、從不碰 span**——
+   .pseudo-code 的 .kw/.str/.fn/.com/.num 與 .status-banner 的 .status-icon
+   本來就是為深底調好的，不能被蓋掉。
+
+   容器清單是三站的聯集（多列的在該站只是無效的死規則，漏列才會出事）。
+   真正的把關者是 tools/check_contrast.py，它會逐站掃出所有深色底選擇器再比對這份清單。
+   ═══════════════════════════════════════════════════════════════════════ */
+.adj-matrix th code,.adj-matrix th kbd,.adj-matrix th a,.ai-box .ai-label code,.ai-box .ai-label kbd,
+.ai-box .ai-label a,.bar code,.bar kbd,.bar a,.bar-fill code,.bar-fill kbd,.bar-fill a,.bq-item code,
+.bq-item kbd,.bq-item a,.bs-hl code,.bs-hl kbd,.bs-hl a,.bs-item code,.bs-item kbd,.bs-item a,.btn code,
+.btn kbd,.btn a,.btn-play code,.btn-play kbd,.btn-play a,.btn-shuffle code,.btn-shuffle kbd,.btn-shuffle a,
+.btn-step code,.btn-step kbd,.btn-step a,.btn-toggle code,.btn-toggle kbd,.btn-toggle a,.chain-node code,
+.chain-node kbd,.chain-node a,.char-bad code,.char-bad kbd,.char-bad a,.char-cur code,.char-cur kbd,
+.char-cur a,.chess-cell.current code,.chess-cell.current kbd,.chess-cell.current a,.chess-cell.dark code,
+.chess-cell.dark kbd,.chess-cell.dark a,.chess-cell.start code,.chess-cell.start kbd,.chess-cell.start a,
+.chess-cell.visited code,.chess-cell.visited kbd,.chess-cell.visited a,.cmp-table th code,.cmp-table th kbd,
+.cmp-table th a,.console code,.console kbd,.console a,.ds-item code,.ds-item kbd,.ds-item a,.eq-card code,
+.eq-card kbd,.eq-card a,.eslx code,.eslx kbd,.eslx a,.fc-card .fc-front code,.fc-card .fc-front kbd,
+.fc-card .fc-front a,.fc-controls button:hover code,.fc-controls button:hover kbd,
+.fc-controls button:hover a,.float-nav a.active code,.float-nav a.active kbd,.float-nav a.active a,
+.game-console code,.game-console kbd,.game-console a,.heap-cell.parent code,.heap-cell.parent kbd,
+.heap-cell.parent a,.heap-cell.swap code,.heap-cell.swap kbd,.heap-cell.swap a,.hero code,.hero kbd,.hero a,
+.info-box .info-label code,.info-box .info-label kbd,.info-box .info-label a,
+.info-card .ic-title .ic-badge code,.info-card .ic-title .ic-badge kbd,.info-card .ic-title .ic-badge a,
+.kv-pair .kv-key code,.kv-pair .kv-key kbd,.kv-pair .kv-key a,.num-cell.sel code,.num-cell.sel kbd,
+.num-cell.sel a,.obj-box .obj-type code,.obj-box .obj-type kbd,.obj-box .obj-type a,.obj-box .tag code,
+.obj-box .tag kbd,.obj-box .tag a,.preset-btn.active code,.preset-btn.active kbd,.preset-btn.active a,
+.pseudo-code code,.pseudo-code kbd,.pseudo-code a,.quiz-box .quiz-code code,.quiz-box .quiz-code kbd,
+.quiz-box .quiz-code a,.quiz-box .quiz-label .multi-badge code,.quiz-box .quiz-label .multi-badge kbd,
+.quiz-box .quiz-label .multi-badge a,.sandbox .sandbox-label code,.sandbox .sandbox-label kbd,
+.sandbox .sandbox-label a,.sandbox-result code,.sandbox-result kbd,.sandbox-result a,
+.seq-cell .order-badge code,.seq-cell .order-badge kbd,.seq-cell .order-badge a,.sol-links a:hover code,
+.sol-links a:hover kbd,.sol-links a:hover a,.sq-code code,.sq-code kbd,.sq-code a,.stack-frame code,
+.stack-frame kbd,.stack-frame a,.status-banner code,.status-banner kbd,.status-banner a,
+.strip .cell.held code,.strip .cell.held kbd,.strip .cell.held a,.strip .cell.picked code,
+.strip .cell.picked kbd,.strip .cell.picked a,.strip .cell.train code,.strip .cell.train kbd,
+.strip .cell.train a,.study-guide .sg-links a:hover code,.study-guide .sg-links a:hover kbd,
+.study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
+.tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
+.trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,.vert-table th code,
+.vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
+.adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
+.bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
+.btn strong,.btn b,.btn-play strong,.btn-play b,.btn-shuffle strong,.btn-shuffle b,.btn-step strong,
+.btn-step b,.btn-toggle strong,.btn-toggle b,.chain-node strong,.chain-node b,.char-bad strong,.char-bad b,
+.char-cur strong,.char-cur b,.chess-cell.current strong,.chess-cell.current b,.chess-cell.dark strong,
+.chess-cell.dark b,.chess-cell.start strong,.chess-cell.start b,.chess-cell.visited strong,
+.chess-cell.visited b,.cmp-table th strong,.cmp-table th b,.console strong,.console b,.ds-item strong,
+.ds-item b,.eq-card strong,.eq-card b,.eslx strong,.eslx b,.fc-card .fc-front strong,.fc-card .fc-front b,
+.fc-controls button:hover strong,.fc-controls button:hover b,.float-nav a.active strong,
+.float-nav a.active b,.game-console strong,.game-console b,.heap-cell.parent strong,.heap-cell.parent b,
+.heap-cell.swap strong,.heap-cell.swap b,.hero strong,.hero b,.info-box .info-label strong,
+.info-box .info-label b,.info-card .ic-title .ic-badge strong,.info-card .ic-title .ic-badge b,
+.kv-pair .kv-key strong,.kv-pair .kv-key b,.num-cell.sel strong,.num-cell.sel b,.obj-box .obj-type strong,
+.obj-box .obj-type b,.obj-box .tag strong,.obj-box .tag b,.preset-btn.active strong,.preset-btn.active b,
+.pseudo-code strong,.pseudo-code b,.quiz-box .quiz-code strong,.quiz-box .quiz-code b,
+.quiz-box .quiz-label .multi-badge strong,.quiz-box .quiz-label .multi-badge b,
+.sandbox .sandbox-label strong,.sandbox .sandbox-label b,.sandbox-result strong,.sandbox-result b,
+.seq-cell .order-badge strong,.seq-cell .order-badge b,.sol-links a:hover strong,.sol-links a:hover b,
+.sq-code strong,.sq-code b,.stack-frame strong,.stack-frame b,.status-banner strong,.status-banner b,
+.strip .cell.held strong,.strip .cell.held b,.strip .cell.picked strong,.strip .cell.picked b,
+.strip .cell.train strong,.strip .cell.train b,.study-guide .sg-links a:hover strong,
+.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,.tok b,.tok-op strong,.tok-op b,
+.traceback strong,.traceback b,.trav-mini .mini-output strong,.trav-mini .mini-output b,
+.traversal-output strong,.traversal-output b,.tree-node.done strong,.tree-node.done b,.vert-table th strong,
+.vert-table th b{color:#fff;}
+.adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
+.bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
+.btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
+.chain-node em,.chain-node i,.char-bad em,.char-bad i,.char-cur em,.char-cur i,.chess-cell.current em,
+.chess-cell.current i,.chess-cell.dark em,.chess-cell.dark i,.chess-cell.start em,.chess-cell.start i,
+.chess-cell.visited em,.chess-cell.visited i,.cmp-table th em,.cmp-table th i,.console em,.console i,
+.ds-item em,.ds-item i,.eq-card em,.eq-card i,.eslx em,.eslx i,.fc-card .fc-front em,.fc-card .fc-front i,
+.fc-controls button:hover em,.fc-controls button:hover i,.float-nav a.active em,.float-nav a.active i,
+.game-console em,.game-console i,.heap-cell.parent em,.heap-cell.parent i,.heap-cell.swap em,
+.heap-cell.swap i,.hero em,.hero i,.info-box .info-label em,.info-box .info-label i,
+.info-card .ic-title .ic-badge em,.info-card .ic-title .ic-badge i,.kv-pair .kv-key em,.kv-pair .kv-key i,
+.num-cell.sel em,.num-cell.sel i,.obj-box .obj-type em,.obj-box .obj-type i,.obj-box .tag em,.obj-box .tag i,
+.preset-btn.active em,.preset-btn.active i,.pseudo-code em,.pseudo-code i,.quiz-box .quiz-code em,
+.quiz-box .quiz-code i,.quiz-box .quiz-label .multi-badge em,.quiz-box .quiz-label .multi-badge i,
+.sandbox .sandbox-label em,.sandbox .sandbox-label i,.sandbox-result em,.sandbox-result i,
+.seq-cell .order-badge em,.seq-cell .order-badge i,.sol-links a:hover em,.sol-links a:hover i,.sq-code em,
+.sq-code i,.stack-frame em,.stack-frame i,.status-banner em,.status-banner i,.strip .cell.held em,
+.strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
+.study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
+.tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,.vert-table th em,
+.vert-table th i{color:inherit;}
+
+/* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
+.status-banner strong,.status-banner b{font-weight:700;}
+
+/* index.html 專用（章節總覽）。base.css 提供 token、hero、container、footer。 */
+
+.hero-code{position:absolute;right:4%;top:50%;transform:translateY(-50%);opacity:.09;
+  pointer-events:none;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.7;
+  color:#fff;white-space:pre;text-align:left;}
+@media(max-width:1000px){.hero-code{display:none;}}
+
+.loop-box{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);
+  border-radius:12px;padding:1.3rem 1.6rem;box-shadow:0 2px 10px rgba(0,0,0,.04);}
+.lb-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:1.05rem;color:var(--accent2);
+  margin-bottom:.6rem;}
+.loop-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin-top:1rem;}
+.loop-steps .step{background:var(--paper);border:1px solid var(--card-border);border-radius:9px;
+  padding:.75rem .9rem;font-size:.88rem;line-height:1.8;}
+.loop-steps .step b{display:block;font-family:'JetBrains Mono',monospace;font-size:.7rem;
+  letter-spacing:.1em;color:var(--accent3);margin-bottom:.3rem;}
 
 .res-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:1.2rem;}
 .res-card{background:var(--card);border:1px solid var(--card-border);border-radius:11px;

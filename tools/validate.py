@@ -508,6 +508,21 @@ def check_index():
                  f"{p.file} 的 .ch-meta「{m.group(1)}」與 {p.dkey}.json 的 {n} 張不符")
 
 
+def check_contrast_contract():
+    """CONTRAST：深色底容器裡的行內元素必須被 contrast-fix 區塊涵蓋。
+
+    實作在 tools/check_contrast.py（三站共用同一支）。之所以驗 CSS 合約而不是
+    驗內容：最嚴重的案例是 setStatus() 執行時才生出 <strong>，靜態走 DOM 看不到。
+    """
+    import subprocess
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "check_contrast.py")],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        for ln in r.stdout.splitlines():
+            if "FAIL" in ln:
+                fail("CONTRAST", "template", ln.split("]", 1)[-1].strip())
+
+
 def check_repo():
     for bad in ("_config.yml", "Gemfile", "LICENSE"):
         if (ROOT / bad).exists():
@@ -566,6 +581,7 @@ def main(argv):
         check_questions()
         check_index()
         check_repo()
+        check_contrast_contract()
     if "--net" in argv:
         check_links()
 
