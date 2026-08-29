@@ -90,7 +90,17 @@ class Page:
     data_key: str = ""          # 詞彙卡／題庫的檔名鍵；空字串→沿用 ch{islp}
     src_labs: tuple = ()        # 本頁允許引用的 lab 章號，如 (2, 1)；空→(islp,)
     ex_links: list = field(default_factory=list)   # prep 頁 EX 區的 pill（官方文件）
-    nav_next: str = ""          # 覆寫 chapter-nav 的下一頁 stem（prep 末頁接回正課）
+    nav_next: str = ""          # 覆寫 chapter-nav 的下一頁 stem（區與區之間的接縫）
+    nav_prev: str = ""          # 覆寫 chapter-nav 的上一頁 stem（同上，反方向）
+    # 顯示分區。空字串→退回 kind。三個值："pre"（課前準備）、"core"（正課）、
+    # "appendix"（Python 先備）。刻意與 kind 分開：kind 管的是「這頁受哪一套檢查」
+    # （prep 頁要過 check_prep_grounding），group 管的是「這頁排在哪一區」。
+    group: str = ""
+
+    @property
+    def grp(self) -> str:
+        """顯示分區。沒指定就退回 kind。"""
+        return self.group or self.kind
 
     @property
     def dkey(self) -> str:
@@ -359,6 +369,98 @@ def _svg_dialog():
 
 
 PAGES = [
+    # ── 課前準備（group="pre"）：定位、環境、AI 協作 ────────
+    Page(
+        n=12, stem="00a_why_code", slug="WHY CODE", title_en="Why Write Code",
+        h1='AI 都會算了，<span class="orange">我為什麼還要學</span>？',
+        plain="為什麼還要自己寫統計程式",
+        subtitle="課前準備 A — 選讀，不列入評分",
+        formula="自動化偏誤｜跨模態不一致｜AI 讀圖會讀錯｜可重現性｜固定種子｜驗證迴圈｜你要練的是判斷力",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="課前 · 為什麼寫程式", esl_label="",
+        playlist="",
+        hero_svg=_svg_spark(),
+        group="pre",
+        kind="prep", data_key="prep_00a_why_code", src_labs=(1, 2),
+        ex_links=[("🔗 本站章節總覽", "index.html"),
+                  ("🔗 ISLP 原書", BOOK_ISLP)],
+        secs=[
+            Sec("prologue", "你已經有 AI 了", "那還學這門課幹嘛？先把問題問對",
+                "AI-Stats §11", kicker="PROLOGUE · 開場"),
+            Sec("bias", "自動化偏誤", "答案排版得越好看，你越不會去查",
+                "AI-Stats §11"),
+            Sec("crossmodal", "AI 讀圖會讀錯", "同一份資料，表、圖與文字摘要說法不一樣",
+                "AI-Stats §11"),
+            Sec("verify", "驗證迴圈", "拿到一個答案之後，你能做的五件事",
+                "課程 Lab Ch1 · 儲存格 31–38"),
+            Sec("repro", "可重現性", "沒有種子的結果，連你自己都重現不了",
+                "課程 Lab Ch2 · 儲存格 80–84"),
+            Sec("you", "你要練的其實是什麼", "不是打字，是判斷「這個數字能不能信」",
+                "先備 · 學習路線"),
+        ],
+    ),
+    Page(
+        n=13, stem="00b_setup", slug="SETUP", title_en="Setup",
+        h1='把<span class="blue">環境</span>準備好：三分鐘上手',
+        plain="環境安裝",
+        subtitle="課前準備 B — 選讀，不列入評分",
+        formula="Colab 開了就能跑｜%pip install ISLP｜imports 一格｜掛 Drive 讀資料｜本機 conda 對齊版本｜儲存格亂序執行是最常見的假故障",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="課前 · 環境安裝", esl_label="",
+        playlist="",
+        hero_svg=_svg_gear(),
+        group="pre",
+        kind="prep", data_key="prep_00b_setup", src_labs=(1, 2),
+        ex_links=[("🔗 Google Colab", "https://colab.research.google.com/"),
+                  ("🔗 conda 環境管理",
+                   "https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html"),
+                  ("🔗 ISLP 套件", "https://islp.readthedocs.io/")],
+        secs=[
+            Sec("prologue", "先能跑，再談其他", "三分鐘從零到跑出第一張圖",
+                "課程 Lab Ch1 · 儲存格 3–5", kicker="PROLOGUE · 開場"),
+            Sec("colab", "Colab 工作流", "開瀏覽器就有，但關掉就沒了",
+                "課程 Lab Ch1 · 儲存格 3–4"),
+            Sec("imports", "imports 那一格", "每一份 lab 的第一格都長一樣，而且要先跑",
+                "課程 Lab Ch2 · 儲存格 3–8"),
+            Sec("data", "資料放哪裡", "掛 Drive、或直接讀網址",
+                "課程 Lab Ch2 · 儲存格 183–187"),
+            Sec("local", "本機安裝", "要長期用就自己開一個 conda 環境",
+                "conda 文件 · 環境管理"),
+            Sec("trouble", "跑不動的時候", "四種最常見的假故障，各自怎麼修",
+                "Python 文件 · 例外"),
+        ],
+    ),
+    Page(
+        n=20, stem="00c_ai_assisted", slug="AI ASSISTED", title_en="AI-Assisted Analysis",
+        h1='用 <span class="orange">AI</span> 做統計分析而不被坑',
+        plain="AI 協作",
+        subtitle="先備知識 P7 — 選讀，不列入評分",
+        formula="給脈絡再提問｜資料字典｜術語有兩種意思｜讀 summary 的常見誤讀｜跨模態一致性｜驗證清單｜留下可重現的紀錄",
+        deck="", deck_pages=0, lab="",
+        islp=0, islp_label="課前 · AI 協作", esl_label="",
+        playlist="",
+        hero_svg=_svg_dialog(),
+        group="pre",
+        kind="prep", data_key="prep_00c_ai_assisted", src_labs=(1, 3, 5),
+        nav_next="introduction",
+        ex_links=[("🔗 本站章節總覽", "index.html"),
+                  ("🔗 為什麼還要自己寫", "00a_why_code.html")],
+        secs=[
+            Sec("prologue", "問法決定答案品質", "同一個問題，三種問法，三種可用程度",
+                "AI-Stats §11", kicker="PROLOGUE · 開場"),
+            Sec("context", "給脈絡", "資料字典與前五列：讓它看到你看到的東西",
+                "課程 Lab Ch1 · 儲存格 26–36"),
+            Sec("terms", "術語有兩種意思", "同一個詞在統計與機器學習裡指不同的事",
+                "AI-Stats §11"),
+            Sec("summary", "讀 summary 的常見誤讀", "四個欄位，四種被講錯的方式",
+                "課程 Lab Ch3 · 儲存格 26–37"),
+            Sec("check", "驗證清單", "把 AI 的輸出變成可以核對的東西",
+                "課程 Lab Ch5 · 儲存格 34–46"),
+            Sec("explore", "拿它來探索", "AI 最有價值的用法：產生候選，不是給結論",
+                "AI-Stats §11"),
+        ],
+    ),
+    # ── 正課十一章（group="core"，依授課順序） ────────────────
     Page(
         n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
         h1='什麼是<span class="blue">統計學習</span>？',
@@ -369,6 +471,8 @@ PAGES = [
         islp=1, islp_label="ISLP Ch.1", esl_label="",
         playlist="PLHNZtBNWQ-85VI_x3duODyfYm4r3pOl3e",
         hero_svg=_svg_map(),
+        group="core",
+        nav_prev="00c_ai_assisted",
         secs=[
             Sec("prologue", "課程地圖", "十章方法一次看懂：這門課到底在教什麼",
                 "講義 01 · p.9–11", kicker="PROLOGUE · 開場"),
@@ -396,6 +500,7 @@ PAGES = [
         islp=2, islp_label="ISLP Ch.2", esl_label="ESL Ch.2",
         playlist="PLHNZtBNWQ-87OBZ1ggt-ZMj3gK2LfUufD",
         hero_svg=_svg_bias(),
+        group="core",
         secs=[
             Sec("prologue", "為什麼要估計 f", "把「學習」寫成一條式子：Y = f(X) + ε",
                 "ISLP §2.1|講義 02 · p.2–9", kicker="PROLOGUE · 開場"),
@@ -420,6 +525,7 @@ PAGES = [
         islp=3, islp_label="ISLP Ch.3", esl_label="ESL §3.1–3.3",
         playlist="PLHNZtBNWQ-87GVk0NXHo19GPagNc7g-ba",
         hero_svg=_svg_scatter(), bankquiz=True,
+        group="core",
         secs=[
             Sec("prologue", "四個老問題", "Advertising 資料要回答的四件事",
                 "ISLP §3 開頭|講義 03 · p.2–3", kicker="PROLOGUE · 開場"),
@@ -447,6 +553,7 @@ PAGES = [
         islp=4, islp_label="ISLP Ch.4", esl_label="ESL §4.1–4.4",
         playlist="PLHNZtBNWQ-86o54cIAZDsEQH85i1Sf8XT",
         hero_svg=_svg_boundary(), bankquiz=True,
+        group="core",
         secs=[
             Sec("prologue", "為什麼不用迴歸", "把類別編成 1、2、3 會出什麼事",
                 "ISLP §4.2|講義 04 · p.2–6", kicker="PROLOGUE · 開場"),
@@ -475,6 +582,7 @@ PAGES = [
         islp=5, islp_label="ISLP Ch.5", esl_label="ESL §7.1–7.4、7.10–7.11",
         playlist="PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN",
         hero_svg=_svg_folds(),
+        group="core",
         secs=[
             Sec("prologue", "訓練誤差會騙人", "為什麼要重抽樣：訓練誤差不是測試誤差",
                 "ISLP §5 開頭|講義 05 · p.2–6", kicker="PROLOGUE · 開場"),
@@ -503,6 +611,7 @@ PAGES = [
         islp=6, islp_label="ISLP Ch.6", esl_label="ESL §3.3–3.6、§7.1–7.7",
         playlist="PLHNZtBNWQ-86msOZdtaMyKHwk2mWpOWmu",
         hero_svg=_svg_shrink(),
+        group="core",
         secs=[
             Sec("prologue", "為什麼要動手術", "最小平方法什麼時候會不夠用",
                 "ISLP §6 開頭|講義 06 · p.2–5", kicker="PROLOGUE · 開場"),
@@ -533,6 +642,7 @@ PAGES = [
         islp=12, islp_label="ISLP Ch.12", esl_label="ESL §13.1–13.3、§14.1–14.3、§14.5–14.9",
         playlist="PLHNZtBNWQ-85BiSie5BdC-ElKcRw37fs1,PLHNZtBNWQ-87wNMJFe_UQj_DzsiHVZWkx",
         hero_svg=_svg_cluster(),
+        group="core",
         secs=[
             Sec("prologue", "沒有標準答案", "非監督式學習的挑戰：沒有 y 就沒有對錯",
                 "ISLP §12.1|講義 12 · p.2–6", kicker="PROLOGUE · 開場"),
@@ -566,6 +676,7 @@ PAGES = [
         islp=7, islp_label="ISLP Ch.7", esl_label="ESL §5.1–5.7、§6.1–6.3、§9.1",
         playlist="PLHNZtBNWQ-87lLBZoc83Gwofk8a1gkvfu",
         hero_svg=_svg_curves(),
+        group="core",
         secs=[
             Sec("prologue", "線性不夠用", "放寬線性假設，但不要放棄可解釋性",
                 "ISLP §7 開頭|講義 07 · p.2–4", kicker="PROLOGUE · 開場"),
@@ -594,6 +705,7 @@ PAGES = [
         esl_label="ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3",
         playlist="PLHNZtBNWQ-87ZC7BDwkB-bgSbqggcWp6T,PLHNZtBNWQ-84JjvtG4zgpxTPF3HDJBnfR",
         hero_svg=_svg_tree(), bankquiz=True,
+        group="core",
         secs=[
             Sec("prologue", "樹在幹什麼", "把特徵空間切成方塊，每塊給一個預測值",
                 "ISLP §8.1|講義 08 · p.2–9", kicker="PROLOGUE · 開場"),
@@ -628,6 +740,7 @@ PAGES = [
         islp=9, islp_label="ISLP Ch.9", esl_label="ESL §6.6–6.9、§12.1–12.3",
         playlist="PLHNZtBNWQ-87bbEwPnJsJirQbdJpfPD5O",
         hero_svg=_svg_margin(),
+        group="core",
         secs=[
             Sec("prologue", "用一刀分開", "超平面：把分類問題變成幾何問題",
                 "ISLP §9.1|講義 09 · p.2–7", kicker="PROLOGUE · 開場"),
@@ -643,11 +756,6 @@ PAGES = [
                 "ISLP §9.5|講義 09 · p.37–39"),
         ],
     ),
-    # ── 補充章：本課沒教 ISLP 第 10 章，所以沒有講義、沒有中文 lab、沒有課程錄影。
-    #    「補充」由 plain 與 islp_label 承載，會一路帶到 index 卡片、TOC、
-    #    chapter-nav、footer 與 README。出處改用課本官方的英文 lab（見
-    #    tools/extract_lab.py 的 OFFICIAL）。務必 append 不要插中間：n 同時是
-    #    頁面的 ID 前綴（w11），改動它等於要把後面每一章的 id 全部改名。
     Page(
         n=11, stem="deep_learning", slug="DEEP LEARNING", title_en="Deep Learning",
         h1='<span class="orange">神經網路</span>：把非線性一層一層疊起來',
@@ -661,6 +769,7 @@ PAGES = [
                       "https://github.com/intro-stat-learning/ISLP_labs/blob/"
                       "6bf6160a3dd180c6651ba06655b453e81f91dc20/Ch10-deeplearning-lab.ipynb")],
         hero_svg=_svg_net(),
+        group="core",
         secs=[
             Sec("prologue", "先看它跟迴歸的關係", "神經網路不是新東西：從線性模型長出隱藏層",
                 "ISLP §10 開頭", kicker="PROLOGUE · 開場"),
@@ -678,65 +787,7 @@ PAGES = [
                 "ISLP §10.8|ISLP §10.6"),
         ],
     ),
-    # ── 先備入口層（kind="prep"，n=12 起）────────────────────────────────
-    Page(
-        n=12, stem="00a_why_code", slug="WHY CODE", title_en="Why Write Code",
-        h1='AI 都會算了，<span class="orange">我為什麼還要學</span>？',
-        plain="為什麼還要自己寫統計程式",
-        subtitle="課前準備 A — 選讀，不列入評分",
-        formula="自動化偏誤｜跨模態不一致｜AI 讀圖會讀錯｜可重現性｜固定種子｜驗證迴圈｜你要練的是判斷力",
-        deck="", deck_pages=0, lab="",
-        islp=0, islp_label="先備 · 為什麼寫程式", esl_label="",
-        playlist="",
-        hero_svg=_svg_spark(),
-        kind="prep", data_key="prep_00a_why_code", src_labs=(1, 2),
-        ex_links=[("🔗 本站章節總覽", "index.html"),
-                  ("🔗 ISLP 原書", BOOK_ISLP)],
-        secs=[
-            Sec("prologue", "你已經有 AI 了", "那還學這門課幹嘛？先把問題問對",
-                "AI-Stats §11", kicker="PROLOGUE · 開場"),
-            Sec("bias", "自動化偏誤", "答案排版得越好看，你越不會去查",
-                "AI-Stats §11"),
-            Sec("crossmodal", "AI 讀圖會讀錯", "同一份資料，表、圖與文字摘要說法不一樣",
-                "AI-Stats §11"),
-            Sec("verify", "驗證迴圈", "拿到一個答案之後，你能做的五件事",
-                "課程 Lab Ch1 · 儲存格 31–38"),
-            Sec("repro", "可重現性", "沒有種子的結果，連你自己都重現不了",
-                "課程 Lab Ch2 · 儲存格 80–84"),
-            Sec("you", "你要練的其實是什麼", "不是打字，是判斷「這個數字能不能信」",
-                "先備 · 學習路線"),
-        ],
-    ),
-    Page(
-        n=13, stem="00b_setup", slug="SETUP", title_en="Setup",
-        h1='把<span class="blue">環境</span>準備好：三分鐘上手',
-        plain="環境安裝",
-        subtitle="課前準備 B — 選讀，不列入評分",
-        formula="Colab 開了就能跑｜%pip install ISLP｜imports 一格｜掛 Drive 讀資料｜本機 conda 對齊版本｜儲存格亂序執行是最常見的假故障",
-        deck="", deck_pages=0, lab="",
-        islp=0, islp_label="先備 · 環境", esl_label="",
-        playlist="",
-        hero_svg=_svg_gear(),
-        kind="prep", data_key="prep_00b_setup", src_labs=(1, 2),
-        ex_links=[("🔗 Google Colab", "https://colab.research.google.com/"),
-                  ("🔗 conda 環境管理",
-                   "https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html"),
-                  ("🔗 ISLP 套件", "https://islp.readthedocs.io/")],
-        secs=[
-            Sec("prologue", "先能跑，再談其他", "三分鐘從零到跑出第一張圖",
-                "課程 Lab Ch1 · 儲存格 3–5", kicker="PROLOGUE · 開場"),
-            Sec("colab", "Colab 工作流", "開瀏覽器就有，但關掉就沒了",
-                "課程 Lab Ch1 · 儲存格 3–4"),
-            Sec("imports", "imports 那一格", "每一份 lab 的第一格都長一樣，而且要先跑",
-                "課程 Lab Ch2 · 儲存格 3–8"),
-            Sec("data", "資料放哪裡", "掛 Drive、或直接讀網址",
-                "課程 Lab Ch2 · 儲存格 183–187"),
-            Sec("local", "本機安裝", "要長期用就自己開一個 conda 環境",
-                "conda 文件 · 環境管理"),
-            Sec("trouble", "跑不動的時候", "四種最常見的假故障，各自怎麼修",
-                "Python 文件 · 例外"),
-        ],
-    ),
+    # ── 附錄：Python 先備知識（group="appendix"，選讀查閱用） ────
     Page(
         n=14, stem="p1_python_basics", slug="PYTHON BASICS", title_en="Python Basics",
         h1='看得懂一段<span class="blue">統計程式</span>：Python 基礎',
@@ -747,6 +798,7 @@ PAGES = [
         islp=0, islp_label="先備 · Python 基礎", esl_label="",
         playlist="",
         hero_svg=_svg_code(),
+        group="appendix",
         kind="prep", data_key="prep_p1_python_basics", src_labs=(2, 1),
         ex_links=[("🔗 Python 官方教學（中文）", "https://docs.python.org/zh-tw/3/tutorial/"),
                   ("🔗 內建型別", "https://docs.python.org/zh-tw/3/library/stdtypes.html"),
@@ -777,6 +829,7 @@ PAGES = [
         islp=0, islp_label="先備 · 流程與函式", esl_label="",
         playlist="",
         hero_svg=_svg_flow(),
+        group="appendix",
         kind="prep", data_key="prep_p2_flow_functions", src_labs=(2, 5),
         ex_links=[("🔗 Python 控制流程",
                    "https://docs.python.org/zh-tw/3/tutorial/controlflow.html"),
@@ -808,6 +861,7 @@ PAGES = [
         islp=0, islp_label="先備 · NumPy 陣列", esl_label="",
         playlist="",
         hero_svg=_svg_grid(),
+        group="appendix",
         kind="prep", data_key="prep_p3_numpy", src_labs=(2, 1),
         ex_links=[("🔗 NumPy 官方教學", "https://numpy.org/doc/stable/user/absolute_beginners.html"),
                   ("🔗 NumPy 廣播規則", "https://numpy.org/doc/stable/user/basics.broadcasting.html"),
@@ -842,6 +896,7 @@ PAGES = [
         islp=0, islp_label="先備 · pandas 資料框", esl_label="",
         playlist="",
         hero_svg=_svg_table(),
+        group="appendix",
         kind="prep", data_key="prep_p4_pandas", src_labs=(1, 2),
         ex_links=[("🔗 pandas 十分鐘入門",
                    "https://pandas.pydata.org/docs/user_guide/10min.html"),
@@ -874,6 +929,7 @@ PAGES = [
         islp=0, islp_label="先備 · 視覺化", esl_label="",
         playlist="",
         hero_svg=_svg_chart(),
+        group="appendix",
         kind="prep", data_key="prep_p5_visualization", src_labs=(1, 2),
         ex_links=[("🔗 seaborn 教學", "https://seaborn.pydata.org/tutorial.html"),
                   ("🔗 Matplotlib 快速入門",
@@ -905,6 +961,7 @@ PAGES = [
         islp=0, islp_label="先備 · 建模 API", esl_label="",
         playlist="",
         hero_svg=_svg_pipe(),
+        group="appendix",
         kind="prep", data_key="prep_p6_modeling_api", src_labs=(3, 5),
         ex_links=[("🔗 statsmodels 快速入門",
                    "https://www.statsmodels.org/stable/gettingstarted.html"),
@@ -927,42 +984,22 @@ PAGES = [
                 "課程 Lab Ch5 · 儲存格 34–46"),
         ],
     ),
-    Page(
-        n=20, stem="p7_ai_assisted", slug="AI ASSISTED", title_en="AI-Assisted Analysis",
-        h1='用 <span class="orange">AI</span> 做統計分析而不被坑',
-        plain="AI 協作",
-        subtitle="先備知識 P7 — 選讀，不列入評分",
-        formula="給脈絡再提問｜資料字典｜術語有兩種意思｜讀 summary 的常見誤讀｜跨模態一致性｜驗證清單｜留下可重現的紀錄",
-        deck="", deck_pages=0, lab="",
-        islp=0, islp_label="先備 · AI 協作", esl_label="",
-        playlist="",
-        hero_svg=_svg_dialog(),
-        kind="prep", data_key="prep_p7_ai_assisted", src_labs=(1, 3, 5),
-        nav_next="introduction",
-        ex_links=[("🔗 本站章節總覽", "index.html"),
-                  ("🔗 為什麼還要自己寫", "00a_why_code.html")],
-        secs=[
-            Sec("prologue", "問法決定答案品質", "同一個問題，三種問法，三種可用程度",
-                "AI-Stats §11", kicker="PROLOGUE · 開場"),
-            Sec("context", "給脈絡", "資料字典與前五列：讓它看到你看到的東西",
-                "課程 Lab Ch1 · 儲存格 26–36"),
-            Sec("terms", "術語有兩種意思", "同一個詞在統計與機器學習裡指不同的事",
-                "AI-Stats §11"),
-            Sec("summary", "讀 summary 的常見誤讀", "四個欄位，四種被講錯的方式",
-                "課程 Lab Ch3 · 儲存格 26–37"),
-            Sec("check", "驗證清單", "把 AI 的輸出變成可以核對的東西",
-                "課程 Lab Ch5 · 儲存格 34–46"),
-            Sec("explore", "拿它來探索", "AI 最有價值的用法：產生候選，不是給結論",
-                "AI-Stats §11"),
-        ],
-    ),
+
 ]
-# ⚠️ 既有頁面的 n 一旦定了就不能改。
-# w<NN> 的 NN 就是這裡的 n（validate.py 的 ID-PREFIX 檢查），十一支 enrich 腳本裡
-# 寫死了 w01–w11；中間插一頁會讓後面每一頁的前綴位移，整批元件的 id 與 JS 宣告全部失效。
-# 先備入口層從 n=12 起跳，正是為了避開這件事。
-# 補寫先備層還沒寫的頁（例如先寫 16 再補 14）是安全的——那不會動到任何既有頁的 n。
-# 但字面值要照 n 由小到大排，因為 index 與 README 的順序就是這個列表的順序。
+# ⚠️ 兩條規矩，分清楚：
+#
+# 1. **既有頁面的 n 一旦定了就不能改。** w<NN> 的 NN 就是這裡的 n
+#    （validate.py 的 ID-PREFIX 檢查），二十支 enrich 腳本裡寫死了 w01–w20；
+#    改一頁的 n 就要跟著改那一頁所有的 id 與頂層 JS 宣告（單頁 200–600 處）。
+#    新增頁面一律取沒用過的最大值。
+#
+# 2. **顯示順序看的是這個列表的字面值順序，跟 n 無關。** index、README 與
+#    chapter-nav 三處都由它決定（validate.py 的 INDEX-SYNC 比對的就是攤平後的整份順序）。
+#    2026-08 重排成三區之後 n 已經與順序脫鉤：課前準備是 12、13、20，
+#    正課是 1–11，附錄是 14–19。要調整順序就搬字面值，不要動 n。
+#
+# 分區用 group（"pre"／"core"／"appendix"），不要用 kind——kind 管的是
+# 「這頁受哪一套檢查」（prep 頁要過 check_prep_grounding），兩者刻意分開。
 
 BY_STEM = {p.stem: p for p in PAGES}
 BY_N = {p.n: p for p in PAGES}
@@ -988,18 +1025,24 @@ def tokens(page: Page):
 def neighbours(page: Page):
     """chapter-nav 的前後鄰居。
 
-    在**同 kind 的頁面**裡依 n 排序後取前後，不要用 n±1：
-    1. 先備入口層是另一條獨立的閱讀線，不該讓正課第 11 章長出「下一章」
-       （那會改到它的 chapternav GEN 區段 sha256）。
-    2. 分期實作時 n 會有洞（先寫 16 再寫 12），排序法不受影響。
-    正課 n=1–11 連續，排序法的輸出與舊的 n±1 完全相同。
+    在**同一個 group 裡、依 PAGES 字面值的順序**取前後。
+
+    刻意不用 n 排序：重排三區之後 n 已經與顯示順序脫鉤
+    （課前準備是 12、13、20，正課是 1–11，附錄是 14–19）。
+    字面值順序才是唯一的真實來源，index、README 與 chapter-nav 三處都看它。
+
+    區與區之間的接縫用 nav_next／nav_prev 明寫：
+    課前準備末頁 → introduction，introduction ← 課前準備末頁。
+    正課末章刻意不接附錄——附錄是選讀查閱用的。
     """
-    fam = sorted((q for q in PAGES if q.kind == page.kind), key=lambda q: q.n)
+    fam = [q for q in PAGES if q.grp == page.grp]
     i = fam.index(page)
     prev = fam[i - 1] if i > 0 else None
     nxt = fam[i + 1] if i + 1 < len(fam) else None
     if nxt is None and page.nav_next:
         nxt = BY_STEM.get(page.nav_next)
+    if prev is None and page.nav_prev:
+        prev = BY_STEM.get(page.nav_prev)
     return prev, nxt
 
 

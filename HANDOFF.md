@@ -9,7 +9,7 @@
 十一章全部完成並上線：**https://phonchi.github.io/statlearning-selfstudy/**
 
 2026-08 起多了一層**先備入口**（`kind="prep"`，n=12 起），給沒寫過 Python 的人先讀。
-規劃九頁（兩章課前準備 ＋ 七頁 Python 與套件），目前完成 `p3_numpy`。
+九頁全部完成，並於 2026-08-29 **重排成三區**（見 §9.1）。
 它跟正課的差別、以及工具鏈為它做了哪些擴充，全部寫在 §9；撰寫規格在
 [`tools/STYLE_CONTRACT.md`](tools/STYLE_CONTRACT.md) §9。
 
@@ -252,19 +252,30 @@ MNIST 錯誤率課本 1.8%，lab 3.8%），因為切分、epoch 數與套件版�
 
 正課十一章預設你已經會 Python。先備入口層補的就是這一段：
 
-**九頁全部完成。**
+**九頁全部完成，並重排成三區。**
+
+站台現在的順序是 **課前準備 → 正課十一章 → 附錄：Python 先備知識**。
+分區由 `Page.group`（`"pre"`／`"core"`／`"appendix"`）承載，
+**顯示順序看的是 `PAGES` 字面值的排列，跟 `n` 無關**——重排之後 n 已經與順序脫鉤
+（課前準備是 12、13、20，正課 1–11，附錄 14–19）。`group` 刻意與 `kind` 分開：
+`kind="prep"` 管的是「這頁要過 `check_prep_grounding` 那層檢查」，九頁都維持不變。
+
+區與區之間的接縫用 `nav_next`／`nav_prev` 明寫：`00c_ai_assisted → introduction`。
+**正課末章刻意不接附錄**——附錄是查閱用的，不該把讀完正課的人導過去。
+
+`p7_ai_assisted` 已改名為 `00c_ai_assisted`（舊網址會 404，站台當時上線一天）。
 
 | n | stem | 出處 lab | 規模 |
 |---|---|---|---|
-| 12 | `00a_why_code`（為什麼還要自己寫統計程式） | Ch1、Ch2 | 128 KB · 6 元件 · 24 卡 |
-| 13 | `00b_setup`（環境安裝，Colab 為主） | Ch1、Ch2 | 141 KB · 6 元件 · 24 卡 |
+| 12 | `00a_why_code`（為什麼還要自己寫統計程式）·**課前準備** | Ch1、Ch2 | 128 KB · 6 元件 · 24 卡 |
+| 13 | `00b_setup`（環境安裝，Colab 為主）·**課前準備** | Ch1、Ch2 | 141 KB · 6 元件 · 24 卡 |
 | 14 | `p1_python_basics` | Ch2、Ch1 | 121 KB · 6 元件 · 24 卡 |
 | 15 | `p2_flow_functions` | Ch2、Ch5 | 138 KB · 6 元件 · 25 卡 |
 | **16** | **`p3_numpy`**（pilot，規格由它凍結） | Ch2、Ch1 | 150 KB · 7 元件 · 26 卡 |
 | 17 | `p4_pandas` | Ch1、Ch2 | 138 KB · 7 元件 · 25 卡 |
 | 18 | `p5_visualization` | Ch1、Ch2 | 140 KB · 7 元件 · 24 卡 |
 | 19 | `p6_modeling_api`（statsmodels 與 sklearn） | Ch3、Ch5 | 139 KB · 6 元件 · 25 卡 |
-| 20 | `p7_ai_assisted`（用 AI 協助統計分析而不被坑） | Ch1、Ch3、Ch5 | 124 KB · 6 元件 · 24 卡 |
+| 20 | `00c_ai_assisted`（用 AI 協助統計分析而不被坑）·**課前準備** | Ch1、Ch3、Ch5 | 130 KB · 6 元件 · 24 卡 |
 
 規格與正課相同（每頁 6–9 元件、20–28 詞彙卡、每節一個 quiz、EX 四題），
 差別只在元件配比偏向手寫 SVG，以及出處來源不同（見 9.3）。

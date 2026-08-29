@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：十一章互動教材，另有九頁 Python 先備入口，每節都能動手操作、預測、驗證。NSYSU MATH524 課程配套。">
+<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、十一章互動教材、六頁 Python 先備知識附錄，每節都能動手操作、預測、驗證。NSYSU MATH524 課程配套。">
 <title>統計學習 × Python 互動自學網站 — NSYSU MATH524</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -571,7 +571,7 @@ cv   = KFold(10, shuffle=True,
     <h1>統計學習 <span class="green">×</span> <span class="blue">Python</span><br>互動自學網站</h1>
     <div class="subtitle">NSYSU MATH524 統計學習與資料探勘 · 依 ISLP 與課程講義編寫</div>
     <div class="big-formula">迴歸｜分類｜重抽樣｜模型選擇｜非監督式｜樣條與 GAM｜樹與集成｜SVM｜深度學習</div>
-    <div class="scroll-hint">選一章開始<span>↓</span></div>
+    <div class="scroll-hint">從課前準備開始<span>↓</span></div>
   </div>
 </div>
 
@@ -582,8 +582,8 @@ cv   = KFold(10, shuffle=True,
       <p>這個網站是課程講義的互動版配套：<strong>講義給完整程式與推導，這裡給你「動手驗證直覺」的空間。</strong>
       每頁的 §徽章都標了 ISLP 節號與講義頁碼，方便左右對照；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
       最後一章標了「補充」——本課沒有教 ISLP 第 10 章，那一頁的出處改用課本官方的英文 lab，其餘規格相同。<br>
-      <strong>沒寫過 Python，或只會一點點？</strong>下面還有一區<a href="#prep">先備入口</a>：
-      兩章課前準備加七頁 Python 與套件，程式碼一樣逐字取自課程 lab。選讀，不列入評分。</p>
+      <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（一小時，不需要程式基礎）；
+      <strong>沒寫過 Python？</strong>正課讀到卡住就翻<a href="#appendix">附錄</a>。兩區都是選讀，不列入評分。</p>
       <div class="loop-steps">
         <div class="step"><b>① READ &amp; PLAY</b>逐節閱讀，動手操作互動元件：先預測結果，再按按鈕驗證。</div>
         <div class="step"><b>② CROSS-CHECK</b>對照講義 PDF 與 ISLP 原文，把完整程式看懂、抄一遍、跑一遍。</div>
@@ -593,8 +593,36 @@ cv   = KFold(10, shuffle=True,
     </div>
   </section>
 
-  <section>
-    <h2>章節（依授課順序）</h2>
+  <section id="pre">
+    <h2>課前準備</h2>
+    <p>三頁，讀完大概一小時。先搞清楚<strong>為什麼還要自己寫統計程式</strong>、
+    把環境弄好、以及怎麼跟 AI 協作而不被它的錯誤帶著走。
+    這三頁不需要任何程式基礎，選讀，不列入評分。
+    共 3 頁、18 個互動元件。</p>
+    <div class="ch-grid">
+      <a class="ch-card" href="00a_why_code.html">
+        <span class="ch-num">01 · WHY CODE</span>
+        <h3>為什麼還要自己寫統計程式</h3>
+        <span class="ch-badge">課前 · 為什麼寫程式</span>
+        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
+      </a>
+      <a class="ch-card" href="00b_setup.html">
+        <span class="ch-num">02 · SETUP</span>
+        <h3>環境安裝</h3>
+        <span class="ch-badge">課前 · 環境安裝</span>
+        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
+      </a>
+      <a class="ch-card" href="00c_ai_assisted.html">
+        <span class="ch-num">03 · AI ASSISTED</span>
+        <h3>AI 協作</h3>
+        <span class="ch-badge">課前 · AI 協作</span>
+        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="core">
+    <h2>正課 · 十一章</h2>
     <p>順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
     共 11 章、92 個互動元件、296 張詞彙卡。</p>
     <div class="ch-grid">
@@ -667,65 +695,48 @@ cv   = KFold(10, shuffle=True,
     </div>
   </section>
 
-  <section id="prep">
-    <h2>先備入口 · Python 起步</h2>
-    <p>沒寫過 Python，或只會一點點？這幾頁把正課會用到的語法與套件先講一遍，
-    程式碼全部取自課程 lab notebook。選讀，不列入評分。
-    共 9 頁、57 個互動元件。</p>
+  <section id="appendix">
+    <h2>附錄 · Python 先備知識</h2>
+    <p>沒寫過 Python，或只會一點點？這六頁把正課會用到的語法與套件講一遍，
+    程式碼全部逐字取自課程 lab notebook。<strong>查閱用</strong>——
+    正課讀到卡住再回來翻，不必先讀完。選讀，不列入評分。
+    共 6 頁、39 個互動元件。</p>
     <div class="ch-grid">
-      <a class="ch-card" href="00a_why_code.html">
-        <span class="ch-num">12 · WHY CODE</span>
-        <h3>為什麼還要自己寫統計程式</h3>
-        <span class="ch-badge">先備 · 為什麼寫程式</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="00b_setup.html">
-        <span class="ch-num">13 · SETUP</span>
-        <h3>環境安裝</h3>
-        <span class="ch-badge">先備 · 環境</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
-      </a>
       <a class="ch-card" href="p1_python_basics.html">
-        <span class="ch-num">14 · PYTHON BASICS</span>
+        <span class="ch-num">01 · PYTHON BASICS</span>
         <h3>Python 基礎</h3>
         <span class="ch-badge">先備 · Python 基礎</span>
         <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p2_flow_functions.html">
-        <span class="ch-num">15 · FLOW & FUNCTIONS</span>
+        <span class="ch-num">02 · FLOW & FUNCTIONS</span>
         <h3>流程與函式</h3>
         <span class="ch-badge">先備 · 流程與函式</span>
         <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p3_numpy.html">
-        <span class="ch-num">16 · NUMPY</span>
+        <span class="ch-num">03 · NUMPY</span>
         <h3>NumPy 陣列</h3>
         <span class="ch-badge">先備 · NumPy 陣列</span>
         <div class="ch-meta">8 節 · 7 個互動元件 · 每節 quiz · 26 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p4_pandas.html">
-        <span class="ch-num">17 · PANDAS</span>
+        <span class="ch-num">04 · PANDAS</span>
         <h3>pandas 資料框</h3>
         <span class="ch-badge">先備 · pandas 資料框</span>
         <div class="ch-meta">6 節 · 7 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p5_visualization.html">
-        <span class="ch-num">18 · VISUALIZATION</span>
+        <span class="ch-num">05 · VISUALIZATION</span>
         <h3>視覺化</h3>
         <span class="ch-badge">先備 · 視覺化</span>
         <div class="ch-meta">6 節 · 7 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p6_modeling_api.html">
-        <span class="ch-num">19 · MODELING API</span>
+        <span class="ch-num">06 · MODELING API</span>
         <h3>建模 API</h3>
         <span class="ch-badge">先備 · 建模 API</span>
         <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 25 張詞彙卡</div>
-      </a>
-      <a class="ch-card" href="p7_ai_assisted.html">
-        <span class="ch-num">20 · AI ASSISTED</span>
-        <h3>AI 協作</h3>
-        <span class="ch-badge">先備 · AI 協作</span>
-        <div class="ch-meta">6 節 · 6 個互動元件 · 每節 quiz · 24 張詞彙卡</div>
       </a>
     </div>
   </section>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""p7_ai_assisted.html（先備 P7 · AI 協作）完整自學充實。冪等。
+"""00c_ai_assisted.html（先備 P7 · AI 協作）完整自學充實。冪等。
 
 跟 00A 的分工：00A 講「為什麼還要自己學」（失效模式當動機），
 這一頁講「那到底該怎麼用」（提問、驗證、探索）。
@@ -33,6 +33,14 @@ BODIES = {}
 
 # ── PROLOGUE 問法決定答案品質 ─────────────────────────────────────────
 BODIES["prologue"] = f"""
+{info("先說這一頁怎麼讀", "它排在課前準備的第三頁，<strong>所以你可以現在就讀</strong>——"
+      "整頁的主張不需要任何 Python 基礎。<br>"
+      "但下面會出現幾段真的程式碼與一張迴歸的 summary 表。"
+      "<strong>看不懂的先跳過</strong>，抓住那一段在講的判斷原則就夠了；"
+      "等你在正課裡真的跑過一次，或翻過附錄的 "
+      "<a href=\"p3_numpy.html\">P3</a>–<a href=\"p6_modeling_api.html\">P6</a>，"
+      "再回來一次會清楚很多。", "warm")}
+
   <p><a href="00a_why_code.html">00A</a> 講的是為什麼你還是得自己看得懂。
   這一頁講另一半：<strong>那到底該怎麼用它</strong>。
   結論先說——同一個問題，問法不同，答案的可用程度差非常多，
@@ -343,10 +351,10 @@ BODIES["explore"] = f"""
         "很划算。解釋完你可以自己跑一次核對，風險很低。")])}
 
 {hook("先備入口層到這裡結束",
-      '接下來就是正課了。第 1 章會把整門課的地圖攤開，'
+      '課前準備到這裡結束，接下來就是正課了。第 1 章會把整門課的地圖攤開，'
       '第 2 章開始每一章都有可以動手的 lab。'
-      '遇到 Python 卡住就回來查 <a href="p3_numpy.html">P3</a>–'
-      '<a href="p6_modeling_api.html">P6</a>。'
+      '正課讀到 Python 卡住的時候，附錄的 <a href="p3_numpy.html">P3</a>–'
+      '<a href="p6_modeling_api.html">P6</a> 就是拿來翻的——不必先讀完再開始。'
       '<a href="introduction.html">→ 第 1 章 統計學習導論</a>')}
 """
 
@@ -743,4 +751,4 @@ function w20exReset() { w20exI = 0; w20exDraw(); }
 HC.ready(() => { w20exDraw(); });
 """
 
-apply("p7_ai_assisted", BODIES, PAGEJS)
+apply("00c_ai_assisted", BODIES, PAGEJS)

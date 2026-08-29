@@ -152,9 +152,10 @@ def prep_ex_head(p: P.Page) -> str:
     pill 排改掛官方文件（Page.ex_links）而不是 ISLP 解答站。"""
     pills = "".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>'
                     for t, u in p.ex_links)
+    lbl = "課前" if p.grp == "pre" else "先備"
     return f"""  <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>先備頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
+  <h2>動手驗證：概念自測 <span class="sec-badge">{lbl} · 自我檢測</span></h2>
+  <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
   程式碼卡在自己的環境跑一次。</p>
   <div class="sol-links">{pills}</div>"""

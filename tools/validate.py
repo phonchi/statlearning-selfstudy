@@ -56,7 +56,7 @@ BADGE_RE = re.compile(
     r"|課程 Lab Ch\d+ · "
     r"|(?:Python|NumPy|pandas|Matplotlib|seaborn|SciPy|statsmodels|scikit-learn"
     r"|Colab|conda) 文件 · "
-    r"|先備 · |AI-Stats §)")
+    r"|先備 · |課前 · |AI-Stats §)")
 
 
 class Ids(HTMLParser):
