@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -660,12 +671,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="fn-title">章節導覽</div>
   <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">先能跑，再談其他</span></a>
   <a href="#colab" data-target="colab"><span class="fn-num">P01</span><span class="fn-name">Colab 工作流</span></a>
-  <a href="#imports" data-target="imports"><span class="fn-num">P02</span><span class="fn-name">imports 那一格</span></a>
+  <a href="#imports" data-target="imports"><span class="fn-num">P02</span><span class="fn-name">匯入套件</span></a>
   <a href="#data" data-target="data"><span class="fn-num">P03</span><span class="fn-name">資料放哪裡</span></a>
-  <a href="#local" data-target="local"><span class="fn-num">P04</span><span class="fn-name">本機安裝</span></a>
+  <a href="#local" data-target="local"><span class="fn-num">P04</span><span class="fn-name">本機與考前準備</span></a>
   <a href="#trouble" data-target="trouble"><span class="fn-num">P05</span><span class="fn-name">跑不動的時候</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -677,9 +688,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <g fill="#fff" opacity=".8"><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(0 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(45 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(90 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(135 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(180 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(225 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(270 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(315 167 140)"/><circle cx="167" cy="140" r="58"/></g><circle cx="167" cy="140" r="28" fill="#2b3a67" opacity=".9"/><g stroke="#fff" stroke-width="4" fill="none" opacity=".9"><path d="M250 96 l 16 16 l 30 -32"/><path d="M250 156 l 16 16 l 30 -32"/><path d="M250 216 l 16 16 l 30 -32"/></g>
   </svg>
   <div class="hero-content">
-    <h1>把<span class="blue">環境</span>準備好：三分鐘上手</h1>
+    <h1>把<span class="blue">環境</span>準備好：跑出第一張圖</h1>
     <div class="subtitle">課前準備 B — 選讀，不列入評分</div>
-    <div class="big-formula">Colab 開了就能跑｜%pip install ISLP｜imports 一格｜掛 Drive 讀資料｜本機 conda 對齊版本｜儲存格亂序執行是最常見的假故障</div>
+    <div class="big-formula">平時可用 Colab｜期中使用電腦教室電腦｜本機版本對齊教室｜確認 kernel 與資料路徑｜考前完整重跑練習</div>
     <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
   </div>
 </div>
@@ -689,10 +700,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（課前 · 環境安裝）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）與儲存格編號；需要實作時，再打開原始筆記本對照。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -701,12 +713,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="toc-grid">
     <a href="#prologue"><span class="toc-num">P00</span>先能跑，再談其他</a>
     <a href="#colab"><span class="toc-num">P01</span>Colab 工作流</a>
-    <a href="#imports"><span class="toc-num">P02</span>imports 那一格</a>
+    <a href="#imports"><span class="toc-num">P02</span>匯入套件</a>
     <a href="#data"><span class="toc-num">P03</span>資料放哪裡</a>
-    <a href="#local"><span class="toc-num">P04</span>本機安裝</a>
+    <a href="#local"><span class="toc-num">P04</span>本機與考前準備</a>
     <a href="#trouble"><span class="toc-num">P05</span>跑不動的時候</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -714,22 +726,21 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>三分鐘從零到跑出第一張圖 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–5</span></h2>
+  <h2>從開啟筆記本到跑出第一張圖 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–5</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>環境這件事有一個常見的誤區：想先把最完整的設定弄好，再開始學。
-  結果是花了一個下午裝東西，一行統計程式都還沒跑過。
-  <strong>順序反過來</strong>——先用三分鐘在瀏覽器裡跑出第一張圖，
-  等你確定要長期用了，再回來做本機安裝。</p>
-
-<div class="info-box">
-  <span class="info-label">三分鐘版本</span>
-  ① 開 <a href="https://colab.research.google.com/" target="_blank" rel="noopener">Colab</a>；② 新增一個 notebook；③ 第一格貼 <code>%pip install ISLP</code> 按執行；④ 第二格貼課程 lab 的 imports；⑤ 開始跑。就這樣。
+  <p>先完成一件可以確認成功的小事：開課程 notebook、讀入 Auto 汽車資料，畫出馬力對 mpg 的散佈圖。平時可以先用 Colab 練習；本地端版本則建議和電腦教室一致，考前要熟悉教室的操作環境。</p>
+<div class="info-box warm">
+  <span class="info-label">期中考準備：熟悉電腦教室的環境</span>
+  期中考使用電腦教室的電腦。平時可用 Colab 學習，但本地端練習建議依 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方套件版本清單</a> 設定，並在考前用教室電腦完整跑一次練習。下方「本機安裝」說明如何核對 Python、套件與 kernel。
 </div>
-
+<div class="info-box">
+  <span class="info-label">第一次上手路徑</span>
+  開啟 <a href="https://colab.research.google.com/github/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb">Ch02 中文課程 notebook（Colab）</a>，選「在雲端硬碟中儲存副本」。先執行安裝套件與 imports；第一次使用 CPU 即可，先跳過 cudf／cuml 的 GPU 擴充。接著照下方「資料放哪裡」取得 Auto.csv，完成第一張圖。
+</div>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>環境</th><th>啟動成本</th><th>適合情境</th><th>主要代價</th></tr></thead>
-  <tbody><tr><td><strong>Colab（第一次上手推薦）</strong></td><td>瀏覽器開啟即可使用</td><td>第一次跑 lab、公用電腦、需要臨時 GPU</td><td>執行階段會回收，套件需重裝</td></tr><tr><td>本機 conda</td><td>需安裝環境並註冊 kernel</td><td>長期使用、需要固定版本</td><td>要管理環境與 Jupyter kernel</td></tr><tr><td>本機 pip + venv</td><td>需自行準備 Python 與 venv</td><td>磁碟空間有限、熟悉 Python 環境</td><td>Python 與套件版本需自行管理</td></tr></tbody>
+  <tbody><tr><td><strong>Colab（第一次上手推薦）</strong></td><td>瀏覽器開啟即可使用</td><td>第一次跑 lab、公用電腦、需要臨時 GPU</td><td>執行階段會回收，套件需重裝</td></tr><tr><td>本機 conda</td><td>需安裝環境並註冊 kernel</td><td>本地練習、對齊教室版本</td><td>要管理環境與 Jupyter kernel</td></tr><tr><td>本機 pip + venv</td><td>需自行準備 Python 與 venv</td><td>磁碟空間有限、熟悉 Python 環境</td><td>Python 與套件版本需自行管理</td></tr></tbody>
 </table></div>
 
 <div class="deck-extra">
@@ -758,16 +769,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="colab">
 <!-- GEN:BEGIN sec:colab -->
   <div class="section-number">PART 01 · Colab 工作流</div>
-  <h2>開瀏覽器就有，但關掉就沒了 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–4</span></h2>
+  <h2>筆記本會保存，執行階段會回收 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–4</span></h2>
 <!-- GEN:END sec:colab -->
 
-  <p>Colab 是跑在 Google 機器上的 Jupyter notebook。它的好處是零安裝、有免費 GPU；
-  代價是<strong>執行階段（runtime）會被回收</strong>——閒置太久或關掉分頁之後，
+  <p>Colab 是跑在 Google 機器上的 Jupyter notebook。你可以直接在瀏覽器使用；
+  代價是<strong>執行階段（runtime）會被回收</strong>——執行階段結束或被回收後，
   你裝的套件與記憶體裡的變數都會消失，程式碼本身則存在你的 Drive 裡不會掉。</p>
 
 <div class="info-box warm">
   <span class="info-label">最常見的一個誤會</span>
-  「我明明裝過 ISLP 了，怎麼又說找不到？」，因為那是<strong>上一個執行階段</strong>裝的。重新連線之後要再跑一次 <code>%pip install ISLP</code>。把它留在 notebook 的第一格，就不會忘。
+  「我明明裝過 ISLP 了，怎麼又說找不到？」，因為那是<strong>上一個執行階段</strong>裝的。連到新的執行階段之後要再跑一次 <code>%pip install ISLP</code>。把它留在 notebook 的第一格，就不會忘。
 </div>
 
 <div class="deck-extra">
@@ -819,8 +830,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </section>
 <section id="imports">
 <!-- GEN:BEGIN sec:imports -->
-  <div class="section-number">PART 02 · imports 那一格</div>
-  <h2>每一份 lab 的第一格都長一樣，而且要先跑 <span class="sec-badge">課程 Lab Ch2 · 儲存格 3–8</span></h2>
+  <div class="section-number">PART 02 · 匯入套件</div>
+  <h2>先執行本份筆記本的匯入程式 <span class="sec-badge">課程 Lab Ch2 · 儲存格 3–8</span></h2>
 <!-- GEN:END sec:imports -->
 
   <p>每一份課程 lab 的第一格都長得差不多：把要用的套件全部 import 進來。
@@ -882,8 +893,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>掛 Drive、或直接讀網址 <span class="sec-badge">課程 Lab Ch2 · 儲存格 183–187</span></h2>
 <!-- GEN:END sec:data -->
 
-  <p>課程 lab 的資料放在你自己的 Google Drive 裡。流程是三步：
-  掛載 Drive → 設一個 <code>DATA_PATH</code> → 用 <code>pd.read_csv</code> 讀。</p>
+  <p>資料不會因為掛載 Drive 就自動出現。第一次請依序完成下面四步：</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>步驟</th><th>操作與完成標準</th></tr></thead>
+  <tbody><tr><td>1. 取得資料</td><td><a href="https://raw.githubusercontent.com/phonchi/nsysu-math524-2025/main/static_files/assignments/Auto.csv">下載課程 Auto.csv</a>。若瀏覽器顯示文字，另存為 Auto.csv，保留副檔名。</td></tr><tr><td>2. 放進自己的 Drive</td><td>在 Google Drive 建立 Lab/Data 資料夾，將 Auto.csv 上傳到裡面。</td></tr><tr><td>3. 掛載並設定路徑</td><td>在 Colab 執行下方掛載儲存格；DATA_PATH 改成 /content/drive/MyDrive/Lab/Data/，或你實際建立的資料夾。</td></tr><tr><td>4. 讀取、檢查、畫圖</td><td>先確認有 horsepower 與 mpg 欄，再執行下方繪圖步驟。成功時會看到橫軸 horsepower、縱軸 mpg 的散佈圖。</td></tr></tbody>
+</table></div>
+  <p>另可下載課本的 <a href="https://www.statlearning.com/s/ALL-CSV-FILES-2nd-Edition-corrected.zip">官方 CSV 資料壓縮檔</a>，解壓後取得 Auto.csv。不同來源可能已做過清理，列數與特殊值不一定一樣；本頁起步與 00C 的清理練習都使用上面的<strong>課程 Auto.csv</strong>，不要混用不同檔案的輸出。</p>
 
 <div class="deck-extra">
   <div class="dx-label">掛載 Drive</div>
@@ -935,13 +950,23 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 391          19.4    82       1                 chevy s-10  
 
 [392 rows x 10 columns]</pre></div>
-  <p class="dx-note"><code>os.path.join</code> 幫你處理斜線，比自己用加號接字串保險（Windows 與 Linux 的斜線方向不同）。</p>
+  <p class="dx-note"><code>os.path.join</code> 幫你處理斜線，比自己用加號接字串保險。下方保存的是老師當時檔案的輸出；你的檔案若少了 Unnamed: 0 這類索引欄，先核對來源，不要手動補造資料。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 185</span>
 </div>
 
-<div class="info-box warm">
-  <span class="info-label">讀檔的參數決定你後面有多痛</span>
-  同一份 Auto 資料，<code>Auto.csv</code> 與 <code>Auto.data</code> 要用不同的參數讀，而且後者需要 <code>na_values=['?']</code>，不然 horsepower 整欄會變成字串。細節在 <a href="p4_pandas.html#na">P4 的遺漏值那一節</a>。
+  <p>接著以指定的特殊值規則重新讀取，讓 horsepower 能作數值運算。這是供你在自己的檔案執行的設定片段，不代填輸出；<a href="p4_pandas.html#na">P4</a> 會說明參數的作用。</p>
+<div class="pseudo-code">
+<span class="line">Auto = pd.read_csv(os.path.join(DATA_PATH, <span class="str">&#x27;Auto.csv&#x27;</span>), na_values=[<span class="str">&#x27;?&#x27;</span>])</span>
+<span class="line">print(Auto.shape)</span>
+<span class="line">print(Auto[[<span class="str">&#x27;horsepower&#x27;</span>, <span class="str">&#x27;mpg&#x27;</span>]].dtypes)</span>
+<span class="line">print(Auto[[<span class="str">&#x27;horsepower&#x27;</span>, <span class="str">&#x27;mpg&#x27;</span>]].isna().sum())</span></div>
+<div class="deck-extra">
+  <div class="dx-label">畫第一張散佈圖</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">ax = Auto.plot.scatter(<span class="str">&#x27;horsepower&#x27;</span>, <span class="str">&#x27;mpg&#x27;</span>)</span>
+  <span class="line">ax.set_title(<span class="str">&#x27;Horsepower vs. MPG&#x27;</span>);</span></div>
+  <p class="dx-note">在上面的 Auto 已讀取後執行。圖的橫軸是 horsepower、縱軸是 mpg。含缺值的觀測不會畫成點；圖能出現只表示操作成功，還不能取代資料清理與統計判斷。</p>
+  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 252</span>
 </div>
 
 <div class="quiz-box">
@@ -953,31 +978,32 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </section>
 <section id="local">
 <!-- GEN:BEGIN sec:local -->
-  <div class="section-number">PART 04 · 本機安裝</div>
-  <h2>要長期用就自己開一個 conda 環境 <span class="sec-badge">conda 文件 · 環境管理</span></h2>
+  <div class="section-number">PART 04 · 本機與考前準備</div>
+  <h2>期中使用電腦教室電腦，本機練習建議對齊版本 <span class="sec-badge">conda 文件 · 環境管理</span></h2>
 <!-- GEN:END sec:local -->
 
-  <p>確定要長期用了再做這一步。本機安裝的唯一理由是<strong>你想控制版本</strong>——
-  讓自己跑出來的數字跟課程 lab 一致。做法是開一個獨立的 conda 環境，
-  把版本釘在課程用的那一組。</p>
-
-<div class="info-box">
-  <span class="info-label">本站的圖表就是這樣產生的</span>
-  環境版本：numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。本站每一張自己算的圖都在這個環境下用固定種子跑出來，所以任何人都能重生同樣的數字。
-</div>
-
+  <p>本地端練習建議使用與電腦教室相同的 Python 與核心套件版本。依據是 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方 packages.txt</a>，以下於 <strong>2026-09-05</strong> 核對；若清單更新，以官方檔案為準。</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>項目</th><th>官方清單版本</th></tr></thead>
+  <tbody><tr><td>Python</td><td>3.9.13</td></tr><tr><td>NumPy／pandas</td><td>1.24.4／2.3.2</td></tr><tr><td>scikit-learn／SciPy</td><td>1.6.1／1.13.1</td></tr><tr><td>statsmodels／Matplotlib</td><td>0.13.2／3.5.2</td></tr><tr><td>seaborn／ISLP</td><td>0.13.2／0.4.0</td></tr><tr><td>JupyterLab／ipykernel／Notebook</td><td>3.4.4／6.15.2／6.4.12</td></tr></tbody>
+</table></div>
+  <p>先安裝 conda，再建立獨立環境。下面安裝的是清單中的核心套件，不是教室整台電腦的完整複本；作業系統、其他相依套件與實際使用的 kernel 仍需核對。官方檔案是 <code>pip list</code> 形式的版本表，<strong>不能直接用 pip install -r packages.txt 安裝</strong>。</p>
 <div class="pseudo-code">
-<span class="line"><span class="com"># 開一個獨立的環境，Python 版本也釘住</span></span>
-<span class="line">conda create -n m524 python=<span class="num">3.11</span> -y</span>
+<span class="line"><span class="com"># 建立本地練習環境</span></span>
+<span class="line">conda create -n m524 python=<span class="num">3.9.13</span> -y</span>
 <span class="line"> </span>
-<span class="line"><span class="com"># 裝課程用的套件（版本對齊課程的 packages.txt）</span></span>
-<span class="line">conda run -n m524 pip install numpy==<span class="num">1.24.4</span> pandas==<span class="num">2.3.2</span> \</span>
-<span class="line">  scikit-learn==<span class="num">1.6.1</span> scipy==<span class="num">1.13.1</span> statsmodels==<span class="num">0.14.2</span> \</span>
-<span class="line">  matplotlib==<span class="num">3.8.4</span> seaborn==<span class="num">0.13.2</span> ISLP==<span class="num">0.4.0</span></span>
+<span class="line"><span class="com"># 依官方清單安裝核心分析套件</span></span>
+<span class="line">conda run -n m524 python -m pip install numpy==<span class="num">1.24.4</span> pandas==<span class="num">2.3.2</span> scikit-learn==<span class="num">1.6.1</span> scipy==<span class="num">1.13.1</span> statsmodels==<span class="num">0.13.2</span> matplotlib==<span class="num">3.5.2</span> seaborn==<span class="num">0.13.2</span> ISLP==<span class="num">0.4.0</span></span>
 <span class="line"> </span>
-<span class="line"><span class="com"># 讓 Jupyter 看得到這個環境</span></span>
-<span class="line">conda run -n m524 pip install jupyterlab ipykernel</span>
-<span class="line">conda run -n m524 python -m ipykernel install --user --name m524</span></div>
+<span class="line"><span class="com"># 安裝 notebook 工具，註冊 kernel</span></span>
+<span class="line">conda run -n m524 python -m pip install jupyterlab==<span class="num">3.4.4</span> ipykernel==<span class="num">6.15.2</span> notebook==<span class="num">6.4.12</span></span>
+<span class="line">conda run -n m524 python -m ipykernel install --user --name m524</span>
+<span class="line"> </span>
+<span class="line"><span class="com"># 核對版本，並由這個環境啟動 JupyterLab</span></span>
+<span class="line">conda run -n m524 python --version</span>
+<span class="line">conda run -n m524 python -m pip list</span>
+<span class="line">conda run -n m524 jupyter lab</span></div>
+  <p>在 JupyterLab 開啟練習 notebook，選擇 <code>m524</code> kernel，再執行 <code>import sys; print(sys.version); print(sys.executable)</code> 確認實際使用的 Python。若安裝失敗，保留完整錯誤訊息並核對相依套件；不要默默換成另一版後仍宣稱與教室一致。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>做法</th><th>課程專案</th><th>另一個專案</th><th>結果</th></tr></thead>
@@ -986,18 +1012,18 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="info-box">
   <span class="info-label">四步驟的順序</span>
-  <strong>建立環境 → 安裝套件 → 註冊 kernel → 選擇／啟用環境。</strong>上面的命令區已給出可直接執行的精確指令；不需要另一個動畫重複播放。若 Jupyter 說找不到已安裝的套件，先用 <code>import sys; print(sys.executable)</code> 確認當前 kernel 使用哪一個 Python。
+  <strong>建立環境 → 安裝套件 → 註冊 kernel → 選擇／啟用環境。</strong>上面的命令區列出這些步驟；完成後還要在 Jupyter 選擇 m524 kernel。若 Jupyter 說找不到已安裝的套件，先用 <code>import sys; print(sys.executable)</code> 確認當前 kernel 使用哪一個 Python。
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>情境</th><th>建議</th></tr></thead>
-  <tbody><tr><td>第一次上手、只想跑 lab</td><td>Colab</td></tr><tr><td>想長期用、要跟課程數字一致</td><td>conda 環境（上面那段指令）</td></tr><tr><td>電腦空間很小</td><td>pip + venv（不裝 Anaconda，省 3–5 GB）</td></tr><tr><td>要用 GPU</td><td>Colab（本機要 NVIDIA 顯卡加 CUDA，很麻煩）</td></tr><tr><td>交作業前的最後檢查</td><td><b>重啟 kernel 並全部重跑一次</b></td></tr></tbody>
+  <tbody><tr><td>第一次上手、只想跑 lab</td><td>Colab</td></tr><tr><td>本地端練習</td><td>依官方清單設定 conda 環境，再核對版本與 kernel</td></tr><tr><td>電腦空間很小</td><td>pip + venv（不裝 Anaconda，省 3–5 GB）</td></tr><tr><td>要用 GPU</td><td>Colab（本機要 NVIDIA 顯卡加 CUDA，很麻煩）</td></tr><tr><td>交作業前的最後檢查</td><td><b>重啟 kernel 並全部重跑一次</b></td></tr><tr><td>期中考前</td><td>在電腦教室的電腦完整跑一次練習，熟悉開啟檔案、路徑與 kernel</td></tr></tbody>
 </table></div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p>你在終端機 <code>pip install ISLP</code> 裝好了，但 Jupyter 裡還是 <code>ModuleNotFoundError</code>。最可能的原因？</p>
-  <div class="quiz-options" id="qLocalOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是最常見的假故障。在 notebook 裡跑 <code>%pip install ISLP</code>（前面加百分比符號），它會裝到<strong>當前 kernel</strong> 的 Python 裡，直接避開這個問題。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(A)</span> Jupyter 用的 kernel 不是你剛剛裝套件的那個環境</div><div class="quiz-opt" data-correct="false" data-fb="重開沒有用——問題不是快取，是<strong>裝到了另一個 Python</strong>。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(B)</span> 要重開電腦</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 是純 Python 套件，跨平台。先檢查環境，再懷疑套件。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(C)</span> ISLP 不支援你的作業系統</div></div>
+  <div class="quiz-options" id="qLocalOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是最常見的假故障。先選擇已依課程清單安裝套件的 kernel，再核對 <code>sys.executable</code>；若確實缺套件，再依官方版本安裝，避免意外換版。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(A)</span> Jupyter 用的 kernel 不是你剛剛裝套件的那個環境</div><div class="quiz-opt" data-correct="false" data-fb="重開沒有用——問題不是快取，是<strong>裝到了另一個 Python</strong>。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(B)</span> 要重開電腦</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 是純 Python 套件，跨平台。先檢查環境，再懷疑套件。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(C)</span> ISLP 不支援你的作業系統</div></div>
   <div class="quiz-feedback" id="qLocalFeedback"></div>
 </div>
 </section>
@@ -1027,7 +1053,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="info-box">
   <span class="info-label">交作業之前一定要做的一件事</span>
-  <strong>重啟執行階段 → 從第一格全部重跑 → 確認每一格都有輸出而且沒有紅色錯誤。</strong>你不會想交出一份「只有我這台機器、而且只有照某個特定順序跑才對」的作業。
+  <strong>重啟執行階段 → 從第一格全部重跑 → 確認所有必要步驟完成，沒有未處理錯誤。</strong>你不會想交出一份「只有我這台機器、而且只有照某個特定順序跑才對」的作業。
 </div>
 
 <div class="quiz-box">
@@ -1049,7 +1075,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
   程式碼卡在自己的環境跑一次。</p>
-  <div class="sol-links"><a href="https://colab.research.google.com/" target="_blank" rel="noopener">🔗 Google Colab</a><a href="https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html" target="_blank" rel="noopener">🔗 conda 環境管理</a><a href="https://islp.readthedocs.io/" target="_blank" rel="noopener">🔗 ISLP 套件</a></div>
+  <div class="sol-links"><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt" target="_blank" rel="noopener">🔗 電腦教室版本清單</a><a href="https://colab.research.google.com/" target="_blank" rel="noopener">🔗 Google Colab</a><a href="https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html" target="_blank" rel="noopener">🔗 conda 環境管理</a><a href="https://islp.readthedocs.io/" target="_blank" rel="noopener">🔗 ISLP 套件</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
@@ -1068,8 +1094,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 版本</div>
-  <p>為什麼本站要把套件版本釘死（numpy 1.24.4、pandas 2.3.2…）？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。版本一改，某些預設值與演算法細節就可能不同，數字就對不上課程 lab 了。可重現性是這門課的基本紀律。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 讓任何人重跑都能得到同一組數字</div><div class="quiz-opt" data-correct="false" data-fb="沒有這個假設。釘版本是為了<strong>一致</strong>，不是因為新版不好。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 新版本有 bug</div><div class="quiz-opt" data-correct="false" data-fb="跟速度無關。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 舊版本比較快</div></div>
+  <p>為什麼本地端練習建議依官方清單固定 Python 與套件版本？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。版本一改，某些預設值與演算法細節就可能不同，固定核心版本能減少差異，但仍要核對資料、相依套件與 kernel，並在教室電腦實際練習。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 減少本地端與電腦教室的環境差異</div><div class="quiz-opt" data-correct="false" data-fb="沒有這個假設。釘版本是為了<strong>一致</strong>，不是因為新版不好。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 新版本有 bug</div><div class="quiz-opt" data-correct="false" data-fb="跟速度無關。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 舊版本比較快</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -1082,15 +1108,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
+  <div class="section-number">重點速查與來源</div>
   <h2>環境安裝速查表 <span class="sec-badge">課前 · 環境安裝</span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w13-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>三張速查表。跑不動的時候回來看第二張。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>環境</th><th>花多久</th><th>適合誰</th><th>注意</th></tr></thead>
-  <tbody><tr><td>Colab</td><td>3 分鐘</td><td>第一次上手、公用電腦</td><td>執行階段會回收，套件要重裝</td></tr><tr><td>conda 環境</td><td>20 分鐘</td><td>長期使用、要跟課程數字一致</td><td>記得選對 kernel</td></tr><tr><td>pip + venv</td><td>10 分鐘</td><td>電腦空間小</td><td>自己管 Python 版本</td></tr><tr><td>本機 base 環境</td><td>—</td><td><b>不建議</b></td><td>遲早會版本衝突</td></tr></tbody>
+  <thead><tr><th>環境</th><th>需要準備</th><th>適合誰</th><th>注意</th></tr></thead>
+  <tbody><tr><td>Colab</td><td>帳號、網路與資料</td><td>第一次上手、公用電腦</td><td>執行階段會回收，套件要重裝</td></tr><tr><td>conda 環境</td><td>安裝 conda 與套件</td><td>本地練習、對齊教室版本</td><td>依官方清單核對，記得選對 kernel</td></tr><tr><td>pip + venv</td><td>Python 與虛擬環境</td><td>電腦空間小</td><td>自己管 Python 版本</td></tr><tr><td>本機 base 環境</td><td>—</td><td><b>不建議</b></td><td>遲早會版本衝突</td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1100,15 +1127,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>交作業前的檢查</th><th>為什麼</th></tr></thead>
-  <tbody><tr><td>重啟 kernel</td><td>清掉殘留的變數</td></tr><tr><td>從第一格全部重跑</td><td>確認不依賴亂序執行</td></tr><tr><td>每一格都有輸出、沒有紅色錯誤</td><td>確認別人打開也跑得動</td></tr><tr><td>固定所有種子</td><td>確認別人跑得出同樣的數字</td></tr><tr><td>DATA_PATH 有註明要改</td><td>別人的 Drive 結構跟你不同</td></tr></tbody>
+  <tbody><tr><td>重啟 kernel</td><td>清掉殘留的變數</td></tr><tr><td>從第一格全部重跑</td><td>確認不依賴亂序執行</td></tr><tr><td>必要步驟完成、沒有未處理錯誤</td><td>確認別人打開也跑得動</td></tr><tr><td>固定所有種子</td><td>確認別人跑得出同樣的數字</td></tr><tr><td>DATA_PATH 有註明要改</td><td>別人的 Drive 結構跟你不同</td></tr></tbody>
 </table></div>
 
 <div class="info-box">
   <span class="info-label">三個一定要記住的觀念</span>
-  <strong>1. 先能跑，再談其他。</strong>第一次上手用 Colab，把耐心留給課程內容而不是安裝問題。<br><strong>2. 八成的「壞掉」其實是環境或執行順序。</strong>萬用第一步：重啟 kernel 並全部重跑。<br><strong>3. 交作業前一定要從頭重跑一次。</strong>不然你交的是「只有你那台機器跑得出來」的東西。
+  <strong>1. 平時可用 Colab；考前熟悉教室環境。</strong>本地端版本依官方清單設定，並在教室電腦完整跑過練習。<br><strong>2. 八成的「壞掉」其實是環境或執行順序。</strong>萬用第一步：重啟 kernel 並全部重跑。<br><strong>3. 交作業前一定要從頭重跑一次。</strong>不然你交的是「只有你那台機器跑得出來」的東西。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+  <p class="ver-note">本頁程式碼卡與保存輸出取自課程 Ch01、Ch02 lab，各卡標有來源儲存格。保存輸出反映老師當時使用的資料與環境；本地練習與期中準備的現行版本，以 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方電腦教室套件清單</a> 為準。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1766,7 +1793,7 @@ function w13clTopDown() {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"雲端筆記本（Colab）","back":"跑在 Google 機器上的 Jupyter notebook。零安裝、有免費 GPU、換電腦也接得上。第一次上手一律選它。"},{"front":"執行階段（Runtime）","back":"Colab 幫你開的那台虛擬機。閒置太久或關掉分頁就會被回收，<b>裝的套件與記憶體裡的變數都會消失</b>，程式碼本身存在 Drive 裡不會掉。"},{"front":"魔術指令（Magic Command）","back":"以 <code>%</code> 開頭的 Jupyter 指令。<code>%pip install X</code> 會裝到<b>當前 kernel</b> 的 Python 裡，比在終端機打 pip 保險。"},{"front":"核心（Kernel）","back":"實際執行你程式碼的那個 Python 行程。<b>kernel 選錯是最常見的假故障</b>——你裝在 m524，Jupyter 卻用 base 在跑。"},{"front":"儲存格編號（Cell Number）","back":"左邊的 <code>[7]</code> 是「這個 kernel 的第 7 次執行」，<b>不是第 7 格</b>。編號不是由上到下遞增，就代表你亂序執行過。"},{"front":"亂序執行（Out-of-order Execution）","back":"notebook 可以照任何順序跑儲存格，於是變數狀態可能跟「從頭跑一次」不同。交作業前一定要重啟並全部重跑。"},{"front":"重啟並全部重跑（Restart and Run All）","back":"解環境問題的萬用第一步。它同時消除了「亂序執行」與「殘留變數」這兩個最常見的干擾。"},{"front":"匯入（import）","back":"把已經裝好的套件拿進來用，並建立慣用簡稱。<code>import numpy as np</code> 沒跑，<code>np</code> 這個名字就不存在。"},{"front":"慣用簡稱（Alias）","back":"<code>np</code>／<code>pd</code>／<code>plt</code>／<code>sns</code>／<code>sm</code> 是整個社群的慣例。照著用，別人與 AI 才看得懂你的程式碼。"},{"front":"ISLP 套件","back":"課本的配套套件，提供 <code>load_data</code>、<code>MS</code>、<code>summarize</code> 等工具。裝它會順便裝上 numpy、pandas、scikit-learn、statsmodels。"},{"front":"掛載雲端硬碟（drive.mount）","back":"把你的 Google Drive 接到 Colab 的檔案系統，之後 <code>/content/drive/MyDrive/</code> 底下就是你的雲端硬碟。第一次會跳授權視窗。"},{"front":"資料路徑變數（DATA_PATH）","back":"把資料夾位置存成一個變數而不是每次打全長。<b>課程 lab 裡那一行是老師的路徑，你一定要改成自己的。</b>"},{"front":"路徑組合（os.path.join）","back":"幫你處理斜線方向，比自己用加號接字串保險（Windows 與 Linux 的斜線不同）。"},{"front":"虛擬環境（Virtual Environment）","back":"把一個專案的套件裝在獨立的一份 Python 裡。沒有它的話，另一個專案裝了不同版本就會把你的蓋掉。"},{"front":"conda 環境","back":"<code>conda create -n m524 python=3.11</code>。連 Python 版本都能釘住，是本站產生圖表用的方式。"},{"front":"釘版本（Version Pinning）","back":"<code>pandas==2.3.2</code> 這種寫法。目的是<b>一致</b>不是「新版不好」——版本一改，某些預設值與演算法細節就可能不同，數字就對不上了。"},{"front":"套件相依（Dependency）","back":"一個套件需要的其他套件。裝 ISLP 會連帶裝一整串，所以輸出很長。相依之間版本衝突正是要用獨立環境的原因。"},{"front":"找不到模組（ModuleNotFoundError）","back":"沒裝，或裝到了另一個環境。先 <code>%pip install X</code>，再檢查 kernel 是哪一個。"},{"front":"名字未定義（NameError）","back":"十次有九次是「某一格沒跑」，尤其是 imports 那一格。解法就是從第一格重跑。"},{"front":"找不到檔案（FileNotFoundError）","back":"路徑不對或 Drive 沒掛。在 Colab 左側的檔案窗格點開資料夾、右鍵複製正確路徑最快。"},{"front":"隨機種子（random_state／seed）","back":"切分與重抽樣都有隨機性。沒固定種子的話，你跟同學跑出來的數字就會不一樣——而且兩邊都沒錯。"},{"front":"GPU 加速（cudf／cuml）","back":"課程 lab 開頭那兩行 <code>%load_ext</code> 是 Colab 上的 GPU 加速。<b>沒有 NVIDIA 顯卡就刪掉那兩行</b>，其餘照樣能跑，只是慢一點。"},{"front":"例外處理的正確用法（try／except）","back":"課程 lab 用 <code>try: from google.colab import drive / except:</code> 處理「Colab 才有這個套件」。你知道會發生什麼錯、也知道怎麼處理，才該用它。"},{"front":"可重現的交件（Reproducible Submission）","back":"重啟 kernel → 從第一格全部重跑 → 每格都有輸出且無紅字 → 種子都固定。做完這四件才交，不然你交的是只有自己機器跑得出來的東西。"}];
+const FLASHCARDS = [{"front":"雲端筆記本（Colab）","back":"平時可在瀏覽器使用 Colab 練習。期中考使用電腦教室的電腦，考前仍要熟悉教室環境，並完整跑一次練習。"},{"front":"執行階段（Runtime）","back":"Colab 提供的執行環境。結束或被回收後，套件、記憶體變數與暫存檔可能消失；已儲存到 Drive 的 notebook 與檔案可保留。關閉分頁不等於立刻刪除執行階段。"},{"front":"魔術指令（Magic Command）","back":"以 <code>%</code> 開頭的 Jupyter 指令。<code>%pip install X</code> 會裝到<b>當前 kernel</b> 的 Python 裡，比在終端機打 pip 保險。"},{"front":"核心（Kernel）","back":"實際執行你程式碼的那個 Python 行程。<b>kernel 選錯是最常見的假故障</b>——你裝在 m524，Jupyter 卻用 base 在跑。"},{"front":"儲存格編號（Cell Number）","back":"左邊的 <code>[7]</code> 是「這個 kernel 的第 7 次執行」，<b>不是第 7 格</b>。編號不是由上到下遞增，就代表你亂序執行過。"},{"front":"亂序執行（Out-of-order Execution）","back":"notebook 可以照任何順序跑儲存格，於是變數狀態可能跟「從頭跑一次」不同。交作業前一定要重啟並全部重跑。"},{"front":"重啟並全部重跑（Restart and Run All）","back":"解環境問題的萬用第一步。它同時消除了「亂序執行」與「殘留變數」這兩個最常見的干擾。"},{"front":"匯入（import）","back":"把已經裝好的套件拿進來用，並建立慣用簡稱。<code>import numpy as np</code> 沒跑，<code>np</code> 這個名字就不存在。"},{"front":"慣用簡稱（Alias）","back":"<code>np</code>／<code>pd</code>／<code>plt</code>／<code>sns</code>／<code>sm</code> 是整個社群的慣例。照著用，別人與 AI 才看得懂你的程式碼。"},{"front":"ISLP 套件","back":"課本的配套套件，提供 <code>load_data</code>、<code>MS</code>、<code>summarize</code> 等工具。裝它會順便裝上 numpy、pandas、scikit-learn、statsmodels。"},{"front":"掛載雲端硬碟（drive.mount）","back":"把你的 Google Drive 接到 Colab 的檔案系統，之後 <code>/content/drive/MyDrive/</code> 底下就是你的雲端硬碟。第一次會跳授權視窗。"},{"front":"資料路徑變數（DATA_PATH）","back":"把資料夾位置存成一個變數而不是每次打全長。<b>課程 lab 裡那一行是老師的路徑，你一定要改成自己的。</b>"},{"front":"路徑組合（os.path.join）","back":"幫你處理斜線方向，比自己用加號接字串保險（Windows 與 Linux 的斜線不同）。"},{"front":"虛擬環境（Virtual Environment）","back":"把一個專案的套件裝在獨立的一份 Python 裡。沒有它的話，另一個專案裝了不同版本就會把你的蓋掉。"},{"front":"conda 環境","back":"本地端練習建議與教室版本一致。2026-09-05 核對官方清單為 Python 3.9.13，可先 conda create -n m524 python=3.9.13，再依清單安裝核心套件、核對 pip list 與 kernel；更新以官方檔案為準。"},{"front":"釘版本（Version Pinning）","back":"例如 pandas==2.3.2。本地端練習以課程官方 packages.txt 為核對依據，可減少與教室的版本差異；仍需在教室電腦實際練習。該檔是版本表，不能直接用 pip install -r 安裝。"},{"front":"套件相依（Dependency）","back":"一個套件需要的其他套件。裝 ISLP 會連帶裝一整串，所以輸出很長。相依之間版本衝突正是要用獨立環境的原因。"},{"front":"找不到模組（ModuleNotFoundError）","back":"沒裝，或裝到了另一個環境。先 <code>%pip install X</code>，再檢查 kernel 是哪一個。"},{"front":"名字未定義（NameError）","back":"十次有九次是「某一格沒跑」，尤其是 imports 那一格。解法就是從第一格重跑。"},{"front":"找不到檔案（FileNotFoundError）","back":"路徑不對或 Drive 沒掛。在 Colab 左側的檔案窗格點開資料夾、右鍵複製正確路徑最快。"},{"front":"隨機種子（random_state／seed）","back":"切分與重抽樣都有隨機性。沒固定種子的話，你跟同學跑出來的數字就會不一樣——而且兩邊都沒錯。"},{"front":"GPU 加速（cudf／cuml）","back":"課程 lab 開頭那兩行 <code>%load_ext</code> 是 Colab 上的 GPU 加速。<b>沒有 NVIDIA 顯卡就刪掉那兩行</b>，其餘照樣能跑，只是慢一點。"},{"front":"例外處理的正確用法（try／except）","back":"課程 lab 用 <code>try: from google.colab import drive / except:</code> 處理「Colab 才有這個套件」。你知道會發生什麼錯、也知道怎麼處理，才該用它。"},{"front":"可重現的交件（Reproducible Submission）","back":"重啟 kernel，從第一格完成必要步驟並核對輸出，保留資料來源、版本與路徑說明。期中考前也要在電腦教室的電腦完整跑一次練習，確認會操作當地環境。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

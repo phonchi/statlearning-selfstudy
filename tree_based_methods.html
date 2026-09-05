@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -670,7 +681,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#modern" data-target="modern"><span class="fn-num">P09</span><span class="fn-name">XGBoost 與後繼者</span></a>
   <a href="#stacking" data-target="stacking"><span class="fn-num">P10</span><span class="fn-name">Stacking 與 BART</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#bankquiz" data-target="bankquiz"><span class="fn-num">QUIZ</span><span class="fn-name">自我檢測</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
@@ -695,10 +706,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.8｜講義 08）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/08_Tree-Based_Methods.pdf" target="_blank" rel="noopener">📑 講義 08 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch08 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87ZC7BDwkB-bgSbqggcWp6T" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-84JjvtG4zgpxTPF3HDJBnfR" target="_blank" rel="noopener">▶ 課程錄影 2</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 ESL 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/08_Tree-Based_Methods.pdf" target="_blank" rel="noopener">📑 講義 08 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch08 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87ZC7BDwkB-bgSbqggcWp6T" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-84JjvtG4zgpxTPF3HDJBnfR" target="_blank" rel="noopener">▶ 課程錄影 2</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -717,7 +729,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#modern"><span class="toc-num">P09</span>XGBoost 與後繼者</a>
     <a href="#stacking"><span class="toc-num">P10</span>Stacking 與 BART</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#bankquiz"><span class="toc-num">QUIZ</span>自我檢測</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
@@ -726,7 +738,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>把特徵空間切成方塊，每塊給一個預測值 <span class="sec-badge">ISLP §8.1</span><span class="sec-badge">講義 08 · p.2–9</span></h2>
+  <h2>把特徵空間切成方塊，每塊給一個預測值 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.1 節</a></span><span class="sec-badge">講義 08 · p.2–9</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>前面幾章的模型都在配一個<strong>式子</strong>：線性迴歸配一條線、樣條配一條彎的曲線、
@@ -807,7 +819,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="grow">
 <!-- GEN:BEGIN sec:grow -->
   <div class="section-number">PART 01 · 迴歸樹的生長</div>
-  <h2>遞迴二元分裂：每一刀都選讓 RSS 掉最多的那一刀 <span class="sec-badge">ISLP §8.1.1</span><span class="sec-badge">講義 08 · p.10–14</span></h2>
+  <h2>遞迴二元分裂：每一刀都選讓 RSS 掉最多的那一刀 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.1.1 節</a></span><span class="sec-badge">講義 08 · p.10–14</span></h2>
 <!-- GEN:END sec:grow -->
 
   <p>方塊要怎麼切？理想上我們想找到讓下面這個 RSS 最小的一組方塊 $R_1, \dots, R_J$：</p>
@@ -915,7 +927,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prune">
 <!-- GEN:BEGIN sec:prune -->
   <div class="section-number">PART 02 · 剪枝</div>
-  <h2>先長太大再剪：成本複雜度與 α <span class="sec-badge">ISLP §8.1.1</span><span class="sec-badge">講義 08 · p.15–21</span></h2>
+  <h2>先長太大再剪：成本複雜度與 α <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.1.1 節</a></span><span class="sec-badge">講義 08 · p.15–21</span></h2>
 <!-- GEN:END sec:prune -->
 
   <p>上一節的過程如果不管它，樹會一直長到每個葉子只剩幾個點。訓練誤差很漂亮，
@@ -1038,7 +1050,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="classtree">
 <!-- GEN:BEGIN sec:classtree -->
   <div class="section-number">PART 03 · 分類樹</div>
-  <h2>Gini 指數與交叉熵：為什麼不用錯誤率當分裂準則 <span class="sec-badge">ISLP §8.1.2</span><span class="sec-badge">講義 08 · p.22–27</span></h2>
+  <h2>Gini 指數與交叉熵：為什麼不用錯誤率當分裂準則 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.1.2 節</a></span><span class="sec-badge">講義 08 · p.22–27</span></h2>
 <!-- GEN:END sec:classtree -->
 
   <p>分類樹跟迴歸樹幾乎一樣：一樣遞迴二元分裂、一樣剪枝。只有兩件事要換。</p>
@@ -1168,7 +1180,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="vslinear">
 <!-- GEN:BEGIN sec:vslinear -->
   <div class="section-number">PART 04 · 樹 vs 線性模型</div>
-  <h2>哪一種對，看真實邊界長什麼樣 <span class="sec-badge">ISLP §8.1.3–8.1.4</span><span class="sec-badge">講義 08 · p.28–29</span></h2>
+  <h2>哪一種對，看真實邊界長什麼樣 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.1.3–8.1.4 節</a></span><span class="sec-badge">講義 08 · p.28–29</span></h2>
 <!-- GEN:END sec:vslinear -->
 
   <p>兩個模型形式擺在一起：</p>
@@ -1221,7 +1233,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="why">
 <!-- GEN:BEGIN sec:why -->
   <div class="section-number">PART 05 · 為什麼要集成</div>
-  <h2>投票與大數法則：一群弱分類器怎麼變強 <span class="sec-badge">講義 08 · p.30–31</span><span class="sec-badge">ESL §16.1 · 進階</span></h2>
+  <h2>投票與大數法則：一群弱分類器怎麼變強 <span class="sec-badge">講義 08 · p.30–31</span><span class="sec-badge"><a href="#w09-source-esl">進階參考 · 第 16.1 節 · 進階</a></span></h2>
 <!-- GEN:END sec:why -->
 
   <p>先講一個跟樹無關的事實，因為整個集成學習都建在它上面。</p>
@@ -1332,7 +1344,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
 <section id="bagging">
 <!-- GEN:BEGIN sec:bagging -->
   <div class="section-number">PART 06 · Bagging 與 OOB</div>
-  <h2>重抽樣造很多棵樹再平均；順手拿到免費的驗證集 <span class="sec-badge">ISLP §8.2.1</span><span class="sec-badge">講義 08 · p.32–37</span></h2>
+  <h2>重抽樣造很多棵樹再平均；順手拿到免費的驗證集 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.2.1 節</a></span><span class="sec-badge">講義 08 · p.32–37</span></h2>
 <!-- GEN:END sec:bagging -->
 
   <p>回到樹。單一棵樹的問題是<strong>變異太大</strong>。而降變異最古典的手段，
@@ -1418,7 +1430,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：Bagging 為什麼能降變異，卻幾乎不降偏差？</summary>
-    <div class="qa-a"><p>從公式看最清楚。設每棵樹的預測 $\hat f^{*b}(x)$ 期望值都是 $\mu(x)$、變異數都是 $\sigma^2(x)$、兩兩相關係數是 $\rho$。那麼平均的期望與變異是</p><p>$$\mathbb{E}\left[\hat f_{\text{bag}}(x)\right] = \mu(x), \qquad \mathrm{Var}\left[\hat f_{\text{bag}}(x)\right] = \frac{1-\rho}{B}\sigma^2(x) + \rho\, \sigma^2(x)$$</p><p><strong>期望值完全沒變</strong>——平均一堆同分佈的東西，期望還是那個期望，所以偏差 $\mu(x) - f(x)$ 一動也不動。變異數則被壓成兩項：第一項隨 B 變大而消失，第二項 $\rho \sigma^2$ <strong>不隨 B 消失</strong>。這第二項就是下一節 random forest 要對付的東西。</p><p>所以 bagging 的正確用法是：<strong>拿變異很大、偏差很小的東西去平均</strong>。長很深不剪枝的樹剛好就是這種東西。它把訓練資料配到幾乎完美（低偏差），但資料換一點就長成另一棵（高變異）。反過來，拿 bagging 去平均一堆線性迴歸幾乎沒有用：線性迴歸本來變異就小，沒什麼可壓的。</p></div>
+    <div class="qa-a"><p>從公式看最清楚。固定 x，考慮重複訓練造成的變動。設每棵樹的預測 $\hat f^{*b}(x)$ 期望值都是 $\mu(x)$、變異數都是 $\sigma^2(x)$、兩兩相關係數是 $\rho$。那麼平均的期望與變異是</p><p>$$\mathbb{E}\left[\hat f_{\text{bag}}(x)\right] = \mu(x), \qquad \mathrm{Var}\left[\hat f_{\text{bag}}(x)\right] = \frac{1-\rho}{B}\sigma^2(x) + \rho\, \sigma^2(x)$$</p><p><strong>期望值完全沒變</strong>——平均一堆同分佈的東西，期望還是那個期望，所以偏差 $\mu(x) - f(x)$ 一動也不動。變異數則被壓成兩項：第一項隨 B 變大而消失，第二項 $\rho \sigma^2$ <strong>不隨 B 消失</strong>。這第二項就是下一節 random forest 要對付的東西。</p><p>所以 bagging 的正確用法是：<strong>拿變異很大、偏差很小的東西去平均</strong>。長很深不剪枝的樹剛好就是這種東西。它把訓練資料配到幾乎完美（低偏差），但資料換一點就長成另一棵（高變異）。反過來，拿 bagging 去平均一堆線性迴歸幾乎沒有用：線性迴歸本來變異就小，沒什麼可壓的。</p></div>
   </details>
   <details class="qa-item"><summary>Q：既然有 OOB 誤差，還需要交叉驗證嗎？</summary>
     <div class="qa-a"><p>估 bagging／random forest 本身的測試誤差時，OOB 就夠了，而且便宜太多：配一次模型就順手拿到，不必像 k-fold 那樣配 k 次。ISLP 說 B 夠大時 OOB 誤差<strong>幾乎等於 LOOCV 誤差</strong>。</p><p>要小心的是兩件事。第一，如果你用 OOB 誤差去<strong>挑超參數</strong>（例如挑 m、挑樹的深度），那被挑中的那組的 OOB 誤差就跟第 5 章講的一樣會偏低，不能再當誠實的測試誤差報出來。第二，OOB 只有在<strong>有 bootstrap 抽樣</strong>時才存在——boosting 沒有 bootstrap，所以沒有 OOB，只能用驗證集或 CV。</p></div>
@@ -1435,7 +1447,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
 <section id="rf">
 <!-- GEN:BEGIN sec:rf -->
   <div class="section-number">PART 07 · Random Forest</div>
-  <h2>每次分裂只看 m 個變數：去相關才是關鍵 <span class="sec-badge">ISLP §8.2.2</span><span class="sec-badge">講義 08 · p.38–42</span></h2>
+  <h2>每次分裂只看 m 個變數：去相關才是關鍵 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.2.2 節</a></span><span class="sec-badge">講義 08 · p.38–42</span></h2>
 <!-- GEN:END sec:rf -->
 
   <p>上一節的公式留了一個尾巴：</p>
@@ -1455,8 +1467,8 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
   典型取 $m \approx \sqrt{p}$（分類）或 $m = p/3$（迴歸）。</p>
 
   <p>於是平均有 $(p-m)/p$ 比例的分裂<strong>根本看不到那個強變數</strong>，
-  其他變數就有機會出頭。樹跟樹長得不一樣了，$\rho$ 掉下來，
-  第二項跟著縮小。這叫<strong>去相關</strong>（decorrelate）。
+  其他變數就有機會出頭。這讓樹有機會長得更不一樣，降低預測的相關性，
+  稱為<strong>去相關</strong>（decorrelate）；效果與預測能力的取捨仍要看資料。
   注意 $m = p$ 時 random forest 就<strong>退化成 bagging</strong>，
   所以 bagging 只是 random forest 的一個特例。</p>
 
@@ -1464,7 +1476,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w09rfChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：m 愈小，樹與樹之間的相關 ρ 愈低（右側面板），但單棵樹也愈弱——m 是一個要調的參數，不是愈小愈好。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：限制 m 可增加樹的多樣性，但也可能減弱預測能力；m 要用驗證選擇，不是愈小愈好。</div></div>
       </div>
       <div class="status-banner" id="w09rfStatus"><span class="status-icon">›</span><span class="status-text">換資料集看 m 的效果。注意兩份資料給出相反的結論。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">資料</label><select id="w09rfSel" class="mono" onchange="w09rfDraw()"><option value="boston" selected>Boston（p = 12，lab 的同一份切分）</option><option value="sim">模擬：1 強 ＋ 20 中，30 個變數彼此相關</option></select></div>
@@ -1478,7 +1490,7 @@ Accuracy: 0.82 (+/- 0.04) [StackingClassifier]</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 8.8／8.10</span></div>
-      x 軸是樹的棵數 B（前 B 棵的平均預測），y 軸是測試 MSE。右邊面板每一列同時列出<strong>該 m 的測試 MSE 與樹間平均相關 ρ</strong>。<strong>ρ 一定隨 m 變小而下降</strong>。那是去相關的直接證據；但誤差會不會跟著下降，要看資料。
+      x 軸是樹的棵數 B（前 B 棵的平均預測），y 軸是測試 MSE。右邊列出<strong>測試 MSE 與各棵樹跨測試樣本的預測相關</strong>。後者描述這次配適的樹有多相似，<strong>不是上式固定 x 的理論 ρ 估計</strong>，也不保證隨 m 單調改變。
     </div>
     <div class="info-card">
       <div class="ic-title">兩份資料為什麼結論不同</div>
@@ -1520,7 +1532,7 @@ zn         0.002454</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：Random Forest 的 m 為什麼要小於 p？「去相關」在數學上到底降低了什麼？</summary>
-    <div class="qa-a"><p>降低的是變異數公式裡<strong>那個不隨 B 消失的項</strong>。</p><p>$$\mathrm{Var}\left[\hat f_{\text{avg}}\right] = \frac{1-\rho}{B}\sigma^2 + \rho\,\sigma^2$$</p><p>把 B 開到一萬，第一項趨近 0，剩下的是 $\rho \sigma^2$。所以「多種幾棵樹」有一個天花板，而天花板的高度由 $\rho$ 決定。bagging 沒有任何機制去壓 $\rho$——每棵樹都看得到全部變數，貪婪法就會一再選中同一個最強的變數，$\rho$ 因此很高（本頁 Boston 上實測 m = p 時 ρ ≈ 0.82）。限制 m 之後，不同的樹被迫用不同的變數，ρ 掉到 0.68。</p><p>但這裡有一個取捨，而且非常實在：<strong>m 變小同時讓每棵樹變差</strong>，也就是上式的 $\sigma^2$ 變大（元件的側欄有列出每棵樹預測的變異，m 愈小它愈大）。所以 $\rho \sigma^2$ 是「$\rho$ 下降 × $\sigma^2$ 上升」的乘積，不保證變小。$m$ 太小的時候，樹弱到連訊號都找不到，整體反而變糟。</p><p>什麼時候壓 $\rho$ 划算？<strong>變數多、而且彼此相關</strong>的時候。此時「不給樹看變數 A」的損失很小（相關的變數 B 幾乎能代替它），但換到的多樣性很大。反過來像 Boston 這種只有 12 個變數、其中兩個明顯不可替代的資料，遮住它們的代價就付不起。<strong>結論：$m$ 是超參數，$\sqrt{p}$ 只是好用的預設值，該調就調。</strong></p></div>
+    <div class="qa-a"><p>平均的變異數公式是在<strong>固定 x</strong> 下，對重複訓練所產生的預測變動而言。在其他條件相同時，降低相關性有助於壓低不隨 B 消失的那一項。</p><p>但限制 m 也可能讓樹錯過有用變數、降低預測能力；<strong>「樹變弱」不等於「變異數一定增加」</strong>，也可能是偏差增加。這個取捨不能只看相關性，要用驗證誤差判斷。</p><p>本頁的相關數字是同一次配適中、各棵樹跨測試樣本預測向量的平均相關，只能描述這組樹的相似程度，不能代入上面的理論公式。<strong>m 是超參數，√p 是起點，不是定律。</strong></p></div>
   </details>
 </div>
 
@@ -1534,7 +1546,7 @@ zn         0.002454</pre></div>
 <section id="boosting">
 <!-- GEN:BEGIN sec:boosting -->
   <div class="section-number">PART 08 · Boosting</div>
-  <h2>慢慢學：AdaBoost 與梯度提升 <span class="sec-badge">ISLP §8.2.3</span><span class="sec-badge">講義 08 · p.43–51</span><span class="sec-badge">ESL §10.1–10.10 · 進階</span></h2>
+  <h2>慢慢學：AdaBoost 與梯度提升 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.2.3 節</a></span><span class="sec-badge">講義 08 · p.43–51</span><span class="sec-badge"><a href="#w09-source-esl">進階參考 · 第 10.1–10.10 節 · 進階</a></span></h2>
 <!-- GEN:END sec:boosting -->
 
   <p>Bagging 與 random forest 是<strong>並行</strong>的：B 棵樹互不相干，
@@ -1683,7 +1695,7 @@ zn         0.002454</pre></div>
 <section id="modern">
 <!-- GEN:BEGIN sec:modern -->
   <div class="section-number">PART 09 · XGBoost 與後繼者</div>
-  <h2>XGBoost、LightGBM、CatBoost 與該調的超參數 <span class="sec-badge">講義 08 · p.52–61</span><span class="sec-badge">ESL §10.10–10.14 · 進階</span><span class="eslx">ESL 進階</span></h2>
+  <h2>XGBoost、LightGBM、CatBoost 與該調的超參數 <span class="sec-badge">講義 08 · p.52–61</span><span class="sec-badge"><a href="#w09-source-esl">進階參考 · 第 10.10–10.14 節 · 進階</a></span><span class="eslx">ESL 進階</span></h2>
 <!-- GEN:END sec:modern -->
 
   <p class="skip-note">這一節是課堂沒細講的延伸（講義 p.52–61）：三個現代 GBDT 套件與該調的超參數。
@@ -1795,7 +1807,7 @@ Accuracy: 84.21%</pre></div>
 <section id="stacking">
 <!-- GEN:BEGIN sec:stacking -->
   <div class="section-number">PART 10 · Stacking 與 BART</div>
-  <h2>變數重要度、堆疊法，以及貝氏版的加法樹 <span class="sec-badge">ISLP §8.2.4</span><span class="sec-badge">講義 08 · p.66–79</span><span class="eslx">ESL 進階</span></h2>
+  <h2>變數重要度、堆疊法，以及貝氏版的加法樹 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.2.4 節</a></span><span class="sec-badge">講義 08 · p.66–79</span><span class="eslx">ESL 進階</span></h2>
 <!-- GEN:END sec:stacking -->
 
   <p class="skip-note">這一節是課堂沒細講的延伸（講義 p.66–79、ISLP §8.2.4）：變數重要度的讀法、
@@ -1944,7 +1956,7 @@ Accuracy: 0.81 (+/- 0.05) [StackingClassifier]</pre></div>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 8 章精選題 <span class="sec-badge">ISLP §8.4 習題</span></h2>
+  <h2>動手驗證：教科書第 8 章精選題 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8.4 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §8.4 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter8/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch08.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
@@ -1974,14 +1986,16 @@ Accuracy: 0.81 (+/- 0.05) [StackingClassifier]</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 8.4 第 7 題</div>
   <p>課本第 7 題要你在 <code>Boston</code> 上掃過一整片 <code>max_features</code>（m）與 <code>n_estimators</code>（B）的組合，畫成圖 8.10 那樣。預期會看到什麼？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度配適</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\sqrt{p}$ 只是預設值。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低</div><div class="quiz-opt" data-correct="false" data-fb="那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 的原話是 <em>random forests will not overfit if we increase B</em>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B</div><div class="quiz-opt" data-correct="false" data-fb="去相關確實會降低 ρ（本頁元件的側欄實測 0.82 → 0.68），但 m 變小同時讓<strong>每棵樹變差</strong>。變異數是 $\rho\sigma^2$ 的形式，兩個因子一降一升，不保證淨變小——Boston 就是反例。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> m 愈小曲線一定愈低，因為去相關永遠讓變異更小</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度配適</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\sqrt{p}$ 只是預設值。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低</div><div class="quiz-opt" data-correct="false" data-fb="那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 的原話是 <em>random forests will not overfit if we increase B</em>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B</div><div class="quiz-opt" data-correct="false" data-fb="限制 m 可增加多樣性，但也可能讓樹錯過重要變數。整體誤差不保證下降，Boston 就是反例；不能把樹變弱直接等同於變異數增加。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> m 愈小曲線一定愈低，因為去相關永遠讓變異更小</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
-  <h2>樹狀方法與集成學習速查表 <span class="sec-badge">ISLP Ch.8</span></h2>
+  <div class="section-number">重點速查與來源</div>
+  <h2>樹狀方法與集成學習速查表 <span class="sec-badge"><a href="#w09-source-islp">教科書 · 第 8 章</a></span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w09-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 8.1 節；教科書 · 第 8.1.1 節；教科書 · 第 8.1.2 節；教科書 · 第 8.1.3–8.1.4 節；教科書 · 第 8.2.1 節；教科書 · 第 8.2.2 節；教科書 · 第 8.2.3 節；教科書 · 第 8.2.4 節。</li>
+<li id="w09-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：進階參考 · 第 16.1 節 · 進階；進階參考 · 第 10.1–10.10 節 · 進階；進階參考 · 第 10.10–10.14 節 · 進階。</li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>考前把這一頁掃過去就好。</p>
@@ -2019,8 +2033,8 @@ Accuracy: 0.81 (+/- 0.05) [StackingClassifier]</pre></div>
   因為錯誤率是折線、對純度的變化不敏感，會把「生出一個純葉子」的好刀報成「下降量 0」。<br>
   <strong>2. Bagging 降變異、Boosting 降偏差，所以 bagging 的樹要很深，boosting 的樹要很淺。</strong>
   平均不會改變偏差，序列修正不需要深樹。順帶：bagging 的 B 不會過度配適，boosting 的會。<br>
-  <strong>3. Random Forest 的 m 在壓 $\rho\sigma^2$ 裡的 $\rho$，代價是 $\sigma^2$ 變大。</strong>
-  變數多又彼此相關時這筆交易划算；變數少又不可替代時（例如 Boston）就不划算。
+  <strong>3. Random Forest 的 m 控制樹的多樣性與預測能力的取捨，不能只追求低相關。</strong>
+  這裡的模擬資料與 Boston 給出不同結果，正好提醒你用驗證選 m。
   $\sqrt{p}$ 是預設值，不是定律。
 </div>
 
@@ -3220,16 +3234,16 @@ function w09rfDraw() {
     const e = document.getElementById('w09rfR' + j);
     if (!e) continue;
     e.textContent = (j === best ? '★ ' : '') + 'MSE ' + HC.fmt(S.curves[j][last], 2)
-      + ' · ρ ' + HC.fmt(S.rho[j], 3);
+      + ' · 預測向量相關 ' + HC.fmt(S.rho[j], 3);
   }
   document.getElementById('w09rfSingle').textContent = HC.fmt(S.singleTree, 2);
   setStatus('w09rfStatus', (key === 'boston'
     ? 'Boston（p = 12，' + S.n + ' 筆訓練／' + S.nTest + ' 筆測試）：'
     : '模擬資料（p = 30，特徵之間平均 |相關| = ' + S.xCorr + '）：')
     + 'B = 300 時最好的是 <strong>m = ' + S.ms[best] + '</strong>（MSE '
-    + HC.fmt(S.curves[best][last], 2) + '）。ρ 從 m = ' + S.ms[0] + ' 的 '
-    + HC.fmt(S.rho[0], 3) + ' 一路降到 m = 2 的 '
-    + HC.fmt(S.rho[3], 3) + '——去相關是真的，但誤差降不降要看資料。');
+    + HC.fmt(S.curves[best][last], 2) + '）。這次配適的預測向量平均相關：m = ' + S.ms[0] + ' 為 '
+    + HC.fmt(S.rho[0], 3) + '，m = 2 為 '
+    + HC.fmt(S.rho[3], 3) + '。這是描述性比較；m 的選擇仍要看驗證誤差。');
 }
 
 /* ---------- P11 vimp：變數重要度（烘焙） ---------- */
@@ -3583,11 +3597,11 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"決策樹（Decision Tree）","back":"把特徵空間切成一堆互不重疊的方塊，每個方塊裡的所有點都給同一個預測值。模型形式是階梯函數 f(X) = Σ c_m·1(X ∈ R_m)。"},{"front":"終端節點／葉（Terminal Node / Leaf）","back":"樹最底下不再分裂的節點，每一個對應特徵空間的一塊方塊 R_m。迴歸樹的葉值是該塊訓練資料的 y 平均，分類樹是多數類別。"},{"front":"內部節點（Internal Node）","back":"寫著分裂規則（例如 Years < 4.5）的節點。慣例是條件成立走左邊、不成立走右邊。樹是倒著畫的：根在上、葉在下。"},{"front":"遞迴二元分裂（Recursive Binary Splitting）","back":"長樹的貪婪演算法：每一步在所有變數與所有切點裡選讓 RSS 掉最多的那一刀，然後對切出來的兩塊各自再遞迴。因為枚舉所有分割算不完，只能這樣近似。"},{"front":"貪婪（Greedy）","back":"每一步只挑「這一步最好」而不往前看。好處是快，代價是可能錯過「這一刀本身沒用、但下一刀超好」的組合——剪枝就是為了補救這種短視。"},{"front":"成本複雜度剪枝（Cost Complexity Pruning）","back":"又叫 weakest link pruning。對每個 α ≥ 0 找讓「訓練 RSS + α|T|」最小的子樹。α = 0 給出完整的樹，α 愈大樹愈小。形式跟 lasso 一模一樣。"},{"front":"調整參數 α（Tuning Parameter α）","back":"成本複雜度剪枝裡「多留一個葉子要付的錢」。α 從 0 調大時分支以巢狀且可預測的方式被剪掉，所以整條子樹序列只有 O(|T₀|) 條，可以一次算完再用交叉驗證挑 α。"},{"front":"錯誤率（Classification Error Rate）","back":"E = 1 − max_k p̂_mk，節點裡不屬於多數類別的比例。可以用來剪枝與評估，但不適合當分裂準則——它是折線，對純度變化不敏感。"},{"front":"Gini 指數（Gini Index）","back":"G = Σ_k p̂_mk(1 − p̂_mk)，量節點的總變異。所有 p̂ 都靠近 0 或 1 時 G 很小。兩類的上限是 0.5（p̂ = 0.5 時），下限 0。"},{"front":"交叉熵（Cross-Entropy / Entropy）","back":"D = −Σ_k p̂_mk log p̂_mk。跟 Gini 一樣量節點純度，數值上非常接近，實務上選哪個幾乎沒差。兩類的上限是 ln 2 ≈ 0.693。"},{"front":"節點純度（Node Purity）","back":"節點裡的觀測是否幾乎都屬於同一類。Gini 與交叉熵是嚴格凹函數，所以對純度的變化比錯誤率敏感得多——「生出一個完全純的葉子」它們認得出價值，錯誤率認不出。"},{"front":"集成（Ensemble）","back":"把很多簡單的「積木」模型合起來變成一個強模型。積木常常是弱學習器（weak learner），單獨用只有平庸的表現。本章的積木全是樹。"},{"front":"多數投票（Majority Vote / Hard Voting）","back":"M 個分類器各投一票，票多的類別當答案。若各分類器獨立且正確率都是 p，投票的正確率是二項尾機率。p > 0.5 時隨 M 上升趨近 1，p < 0.5 時趨近 0。"},{"front":"Bagging（Bootstrap Aggregation）","back":"用 bootstrap 造 B 份假的訓練資料、各配一棵深樹、把預測平均（分類則多數投票）。專治變異，不治偏差——所以樹要長很深、不剪枝。"},{"front":"袋外樣本（Out-of-Bag, OOB）","back":"某棵樹的 bootstrap 樣本沒抽到的那約 1/3 筆資料。用「所有沒用到第 i 筆的樹」去預測第 i 筆，就得到免費的測試誤差估計；B 夠大時幾乎等於 LOOCV 誤差。"},{"front":"1/e 這個數字（The 1/e Fact）","back":"有放回抽 n 次，某一筆始終沒被抽到的機率是 (1 − 1/n)ⁿ → e⁻¹ ≈ 0.368。所以每棵 bagged 樹平均只用到約 63.2% 的資料，剩下 36.8% 就是 OOB。"},{"front":"Random Forest（隨機森林）","back":"在 bagging 之上加一個小改動：每一次分裂只准從隨機抽出的 m 個變數裡選（每一刀都重抽）。m = p 時退化成 bagging。典型 m ≈ √p（分類）或 p/3（迴歸）。"},{"front":"去相關（Decorrelation）","back":"限制 m 讓不同的樹被迫使用不同變數，樹與樹之間的預測相關係數 ρ 因此下降。平均的變異數是 (1−ρ)σ²/B + ρσ²，第二項不隨 B 消失——壓 ρ 就是在壓那一項。"},{"front":"Boosting（提升法）","back":"樹序列式地長出來，每棵都用前面那些樹的資訊。沒有 bootstrap，每棵樹都看全部資料，只是目標（或權重）被改過。專治偏差——所以樹要很淺。"},{"front":"收縮參數 λ（Shrinkage Parameter）","back":"boosting 每一輪只採用新樹的 λ 倍：f ← f + λf^b。典型值 0.01 或 0.001。λ 砍十倍，需要的樹數 B 大約要放大十倍。λ 太大會幾步就衝過頭。"},{"front":"交互作用深度 d（Interaction Depth）","back":"boosting 裡每棵樹的分裂刀數。d 刀最多牽涉 d 個變數，所以 d 就是模型能表現的交互作用階數。ISLP 說 d = 1 常常就夠。"},{"front":"樹樁（Stump）","back":"只有一刀、兩個葉子的樹（d = 1）。stump 的 boosting 集成是一個加法模型 f(X) = Σ_j f_j(X_j)，因為每個 stump 只依賴單一個變數。"},{"front":"AdaBoost（Adaptive Boosting）","back":"不改目標而是改每筆資料的權重：這一輪答錯的下一輪權重變大。α_j = η·log((1−e_j)/e_j) 既是權重更新的幅度，也是該分類器在最終投票裡的份量。"},{"front":"加權錯誤率 e（Weighted Error Rate）","back":"AdaBoost 裡用當前權重算出的錯誤率。e 愈低，該輪分類器的 α 愈大、投票時份量愈重；e 接近 0.5 時 α 接近 0，等於這個分類器沒有意見。"},{"front":"變數重要度（Variable Importance）","back":"把每個變數造成的 RSS 下降（迴歸）或 Gini 下降（分類）總量加起來，在 B 棵樹上平均。集成之後失去可解釋性，這是買回一點的標準做法。它不是因果、不帶方向，而且相關的變數會互相稀釋。"},{"front":"Permutation 重要度（Permutation Importance）","back":"把某一欄隨機打亂，看測試誤差變差多少。定義在測試資料上，直接對應「這個變數對預測的貢獻」；比不純度下降貴，但不會偏袒取值很多的變數。"},{"front":"XGBoost（Extreme Gradient Boosting）","back":"梯度提升的正則化版：目標函數多了 γ|T| + ½λΣw_m²（葉子數與葉值的罰項），並用類似牛頓法的二階近似。加上分位數草圖、稀疏感知、快取友善，速度快幾十倍。"},{"front":"直方圖分箱（Histogram-based Gradient Boosting）","back":"LightGBM 的加速核心：把連續特徵分成整數箱（預設 255 箱），把找切點的排序成本從 O(n log n) 降成 O(n)，候選切點也大幅變少。"},{"front":"Stacking（堆疊法）","back":"不用固定規則（投票、平均）合併，而是訓練一個合併器（blender）。關鍵是成員模型的預測必須用交叉驗證產生 out-of-sample 預測，否則合併器會學成「相信最會過度配適的成員」。"},{"front":"BART（Bayesian Additive Regression Trees）","back":"介於 bagging 與 boosting 之間：每棵樹帶隨機性（像 RF），每棵樹抓還沒解釋掉的偏殘差（像 boosting）。新意在生新樹的方式——微調上一輪的樹（加剪分支、改葉值），整體是一個 MCMC。"}];
+const FLASHCARDS = [{"front":"決策樹（Decision Tree）","back":"把特徵空間切成一堆互不重疊的方塊，每個方塊裡的所有點都給同一個預測值。模型形式是階梯函數 f(X) = Σ c_m·1(X ∈ R_m)。"},{"front":"終端節點／葉（Terminal Node / Leaf）","back":"樹最底下不再分裂的節點，每一個對應特徵空間的一塊方塊 R_m。迴歸樹的葉值是該塊訓練資料的 y 平均，分類樹是多數類別。"},{"front":"內部節點（Internal Node）","back":"寫著分裂規則（例如 Years < 4.5）的節點。慣例是條件成立走左邊、不成立走右邊。樹是倒著畫的：根在上、葉在下。"},{"front":"遞迴二元分裂（Recursive Binary Splitting）","back":"長樹的貪婪演算法：每一步在所有變數與所有切點裡選讓 RSS 掉最多的那一刀，然後對切出來的兩塊各自再遞迴。因為枚舉所有分割算不完，只能這樣近似。"},{"front":"貪婪（Greedy）","back":"每一步只挑「這一步最好」而不往前看。好處是快，代價是可能錯過「這一刀本身沒用、但下一刀超好」的組合——剪枝就是為了補救這種短視。"},{"front":"成本複雜度剪枝（Cost Complexity Pruning）","back":"又叫 weakest link pruning。對每個 α ≥ 0 找讓「訓練 RSS + α|T|」最小的子樹。α = 0 給出完整的樹，α 愈大樹愈小。形式跟 lasso 一模一樣。"},{"front":"調整參數 α（Tuning Parameter α）","back":"成本複雜度剪枝裡「多留一個葉子要付的錢」。α 從 0 調大時分支以巢狀且可預測的方式被剪掉，所以整條子樹序列只有 O(|T₀|) 條，可以一次算完再用交叉驗證挑 α。"},{"front":"錯誤率（Classification Error Rate）","back":"E = 1 − max_k p̂_mk，節點裡不屬於多數類別的比例。可以用來剪枝與評估，但不適合當分裂準則——它是折線，對純度變化不敏感。"},{"front":"Gini 指數（Gini Index）","back":"G = Σ_k p̂_mk(1 − p̂_mk)，量節點的總變異。所有 p̂ 都靠近 0 或 1 時 G 很小。兩類的上限是 0.5（p̂ = 0.5 時），下限 0。"},{"front":"交叉熵（Cross-Entropy / Entropy）","back":"D = −Σ_k p̂_mk log p̂_mk。跟 Gini 一樣量節點純度，數值上非常接近，實務上選哪個幾乎沒差。兩類的上限是 ln 2 ≈ 0.693。"},{"front":"節點純度（Node Purity）","back":"節點裡的觀測是否幾乎都屬於同一類。Gini 與交叉熵是嚴格凹函數，所以對純度的變化比錯誤率敏感得多——「生出一個完全純的葉子」它們認得出價值，錯誤率認不出。"},{"front":"集成（Ensemble）","back":"把很多簡單的「積木」模型合起來變成一個強模型。積木常常是弱學習器（weak learner），單獨用只有平庸的表現。本章的積木全是樹。"},{"front":"多數投票（Majority Vote / Hard Voting）","back":"M 個分類器各投一票，票多的類別當答案。若各分類器獨立且正確率都是 p，投票的正確率是二項尾機率。p > 0.5 時隨 M 上升趨近 1，p < 0.5 時趨近 0。"},{"front":"Bagging（Bootstrap Aggregation）","back":"用 bootstrap 造 B 份假的訓練資料、各配一棵深樹、把預測平均（分類則多數投票）。專治變異，不治偏差——所以樹要長很深、不剪枝。"},{"front":"袋外樣本（Out-of-Bag, OOB）","back":"某棵樹的 bootstrap 樣本沒抽到的那約 1/3 筆資料。用「所有沒用到第 i 筆的樹」去預測第 i 筆，就得到免費的測試誤差估計；B 夠大時幾乎等於 LOOCV 誤差。"},{"front":"1/e 這個數字（The 1/e Fact）","back":"有放回抽 n 次，某一筆始終沒被抽到的機率是 (1 − 1/n)ⁿ → e⁻¹ ≈ 0.368。所以每棵 bagged 樹平均只用到約 63.2% 的資料，剩下 36.8% 就是 OOB。"},{"front":"Random Forest（隨機森林）","back":"在 bagging 之上加一個小改動：每一次分裂只准從隨機抽出的 m 個變數裡選（每一刀都重抽）。m = p 時退化成 bagging。典型 m ≈ √p（分類）或 p/3（迴歸）。"},{"front":"去相關（Decorrelation）","back":"限制每次分裂可選的變數，讓樹有機會長得更不一樣。在其他條件相同時，降低相關性有助於平均降低變異；但限制 m 也可能減弱預測能力，整體效果要看驗證誤差。樹變弱不等於變異數一定增加。"},{"front":"Boosting（提升法）","back":"樹序列式地長出來，每棵都用前面那些樹的資訊。沒有 bootstrap，每棵樹都看全部資料，只是目標（或權重）被改過。專治偏差——所以樹要很淺。"},{"front":"收縮參數 λ（Shrinkage Parameter）","back":"boosting 每一輪只採用新樹的 λ 倍：f ← f + λf^b。典型值 0.01 或 0.001。λ 砍十倍，需要的樹數 B 大約要放大十倍。λ 太大會幾步就衝過頭。"},{"front":"交互作用深度 d（Interaction Depth）","back":"boosting 裡每棵樹的分裂刀數。d 刀最多牽涉 d 個變數，所以 d 就是模型能表現的交互作用階數。ISLP 說 d = 1 常常就夠。"},{"front":"樹樁（Stump）","back":"只有一刀、兩個葉子的樹（d = 1）。stump 的 boosting 集成是一個加法模型 f(X) = Σ_j f_j(X_j)，因為每個 stump 只依賴單一個變數。"},{"front":"AdaBoost（Adaptive Boosting）","back":"不改目標而是改每筆資料的權重：這一輪答錯的下一輪權重變大。α_j = η·log((1−e_j)/e_j) 既是權重更新的幅度，也是該分類器在最終投票裡的份量。"},{"front":"加權錯誤率 e（Weighted Error Rate）","back":"AdaBoost 裡用當前權重算出的錯誤率。e 愈低，該輪分類器的 α 愈大、投票時份量愈重；e 接近 0.5 時 α 接近 0，等於這個分類器沒有意見。"},{"front":"變數重要度（Variable Importance）","back":"把每個變數造成的 RSS 下降（迴歸）或 Gini 下降（分類）總量加起來，在 B 棵樹上平均。集成之後失去可解釋性，這是買回一點的標準做法。它不是因果、不帶方向，而且相關的變數會互相稀釋。"},{"front":"Permutation 重要度（Permutation Importance）","back":"把某一欄隨機打亂，看測試誤差變差多少。定義在測試資料上，直接對應「這個變數對預測的貢獻」；比不純度下降貴，但不會偏袒取值很多的變數。"},{"front":"XGBoost（Extreme Gradient Boosting）","back":"梯度提升的正則化版：目標函數多了 γ|T| + ½λΣw_m²（葉子數與葉值的罰項），並用類似牛頓法的二階近似。加上分位數草圖、稀疏感知、快取友善，速度快幾十倍。"},{"front":"直方圖分箱（Histogram-based Gradient Boosting）","back":"LightGBM 的加速核心：把連續特徵分成整數箱（預設 255 箱），把找切點的排序成本從 O(n log n) 降成 O(n)，候選切點也大幅變少。"},{"front":"Stacking（堆疊法）","back":"不用固定規則（投票、平均）合併，而是訓練一個合併器（blender）。關鍵是成員模型的預測必須用交叉驗證產生 out-of-sample 預測，否則合併器會學成「相信最會過度配適的成員」。"},{"front":"BART（Bayesian Additive Regression Trees）","back":"介於 bagging 與 boosting 之間：每棵樹帶隨機性（像 RF），每棵樹抓還沒解釋掉的偏殘差（像 boosting）。新意在生新樹的方式——微調上一輪的樹（加剪分支、改葉值），整體是一個 MCMC。"}];
 HC.initFlashcards();
 </script>
 <script>
-const BANKQUIZ = [{"topic":"樹的生長與剪枝","q":"關於「先長一棵很大的樹再剪枝」這個策略，下面哪一句是<strong>錯</strong>的？","options":["如果改成「RSS 下降量低於門檻就停止分裂」，可能會錯過「這一刀沒用、但下一刀很有用」的組合","成本複雜度剪枝的目標函數是「訓練 RSS ＋ α|T|」，形式跟第 6 章的 lasso 類似","α 從 0 慢慢調大時，被剪掉的分支是巢狀的，所以整條子樹序列可以一次算完","選 α 的交叉驗證只需要在完整訓練資料上長一次樹，然後在每一折上評估各個 α 即可"],"answer":3,"why":["這句是對的。ISLP §8.1.1 用的字是 <em>too short-sighted</em>，這正是門檻法被否決的理由。","這句是對的。左邊是配適程度、右邊是複雜度的罰款乘上調整參數——跟 lasso 的 RSS + λΣ|β| 是同一個模式，所以 α 的選法也一樣（交叉驗證）。","這句是對的。α₁ &lt; α₂ 對應的子樹一定滿足 T(α₂) ⊂ T(α₁)，所以只有 O(|T₀|) 條子樹要考慮，不必枚舉指數多的子樹。","答對了，這句是錯的。演算法 8.1 步驟 3(a) 講得很明確：<strong>每一折都要重跑步驟 1 與 2</strong>——在該折的訓練部分重新長樹、重新剪枝。如果只長一次樹再拿去各折評估，那棵樹已經看過全部訓練資料（包含被留出的那折），CV 誤差會偏低。這就是第 5 章「用到 y 的步驟要關在折裡面」的老規矩。"]},{"topic":"分裂準則","q":"某節點有 800 筆、兩類各 400 筆。切法 A 得到 (300 Yes, 100 No) 與 (100 Yes, 300 No)；切法 B 得到 (200 Yes, 400 No) 與 (200 Yes, 0 No)。下面哪一句正確？","options":["兩種切法的加權錯誤率都是 0.25，但切法 B 的加權 Gini 較低，所以 Gini 會選 B","切法 A 的加權錯誤率較低，所以三個準則都會選 A","切法 B 產生一個純節點，所以它的加權錯誤率一定比切法 A 低","兩種切法的加權 Gini 相同，因為 Gini 只看兩邊各自被分錯幾筆"],"answer":0,"why":["答對了。兩種切法都是 200 筆被分錯（0.25），<strong>錯誤率完全分不出高下</strong>；但切法 B 的加權 Gini 是 (600/800)×2×(1/3)×(2/3) + 0 = 0.333，低於切法 A 的 0.375。這就是「錯誤率不夠敏感」的具體長相，也是 ISLP 圖 8.6 裡 <code>RestECG &lt; 1</code> 那一刀之所以會被切的原因。","錯誤率算錯了。切法 A：100 + 100 = 200 筆分錯；切法 B：200 + 0 = 200 筆分錯。<strong>兩者完全相同</strong>，都是 0.25。這正是題目的重點。","不對，而且這是很常見的誤會。純節點確實讓 Gini 與交叉熵變好，但<strong>錯誤率不會</strong>：切法 B 的左邊節點錯了 200 筆（200/600 = 1/3），右邊 0 筆，加權起來仍是 0.25。純度的價值錯誤率量不到。","不對。Gini 不是在數「分錯幾筆」，它算的是 Σ p̂(1−p̂) 的加權平均，是 p̂ 的<strong>非線性</strong>函數。兩種切法的 Gini 分別是 0.375 與 0.333，並不相同。"]},{"topic":"Bagging 與 OOB","q":"用 bagging 配了 B = 500 棵樹。關於 OOB 誤差，下面哪一句<strong>不</strong>正確？","options":["每一筆觀測值大約會有 B/3 ≈ 167 棵樹沒有用到它，OOB 預測就是用那些樹算出來的","B 夠大時 OOB 誤差幾乎等於留一交叉驗證（LOOCV）誤差","如果拿 OOB 誤差當目標去挑 max_features，被挑中那組的 OOB 誤差仍然是誠實的測試誤差估計","OOB 誤差只有在做了 bootstrap 抽樣時才存在，所以 boosting 沒有 OOB 誤差"],"answer":2,"why":["這句是對的。(1 − 1/n)ⁿ → e⁻¹ ≈ 0.368，所以每筆平均約有 36.8% × 500 ≈ 184 棵樹（ISLP 講的「約 B/3」）沒用到它。用那些樹預測再平均（或投票），就得到該筆的 OOB 預測。","這句是對的，ISLP §8.2.1 明確這樣說。這也是 OOB 這麼好用的理由：一次配適就換到近似 LOOCV 品質的估計，而 LOOCV 本來要配 n 次。","答對了，這句是錯的。一旦拿 OOB 誤差當<strong>選擇的目標</strong>，被選中的那一組就是「在這組 OOB 樣本上運氣最好」的那組，報出來的數字會偏低——跟第 5 章的選擇偏差是同一件事。要誠實的估計就得另外留一份從頭到尾沒碰過的測試集，或做嵌套 CV。","這句是對的。boosting 每棵樹都看全部資料、沒有袋外樣本，所以只能用驗證集、CV 或 early stopping。這是 bagging 家族相對於 boosting 的一個實務優勢。"]},{"topic":"Random Forest 的 m","q":"平均 B 棵樹的變異數可以寫成 (1−ρ)σ²/B + ρσ²。關於 random forest 把 m 調小這件事，下面哪一句最正確？","options":["m 調小會同時降低 ρ 與 σ²，所以 m 愈小一定愈好","m 調小降低 ρ，但同時讓每棵樹變弱（σ² 變大），所以 ρσ² 不保證變小——m 是要調的超參數","m 調小只影響第一項 (1−ρ)σ²/B，所以只要 B 夠大，m 取多少都沒差","m 調小會降低 ρ，因此把 B 開得夠大就能把整個變異數壓到 0"],"answer":1,"why":["前半句錯了。m 調小確實壓低 ρ（本頁元件在 Boston 上實測 0.82 → 0.68），但<strong>σ² 會變大</strong>：不給樹看最好的變數，每棵樹自然變差。本頁的 Boston 例子就是 m 調小反而更糟的反例（lab 儲存格 70 的 20.04 對上 bagging 的 14.63）。","答對了。這是一筆交易：ρ 下降、σ² 上升，淨效果看資料。<strong>變數多而且彼此相關</strong>時划算（遮住變數 A 的損失小，因為相關的 B 幾乎能代替它）；變數少又不可替代時就不划算。√p 是好用的預設值，不是定律。","剛好相反。m 影響的主要是 <strong>ρ</strong>，也就是<strong>第二項</strong>——而第二項是唯一不隨 B 消失的那一項。B 開再大都繞不過它，這正是 random forest 存在的理由。","第二項 ρσ² 完全不含 B，所以 B 開到無限大也只能把第一項消掉，變異數會停在 ρσ²。除非 ρ = 0（樹之間完全不相關），否則壓不到 0——而樹都吃同一份資料，ρ 不可能是 0。"]},{"topic":"Bagging vs Boosting","q":"為什麼 bagging 的樹要長很深不剪枝，boosting 的樹卻常常只用一刀（stump）？","options":["因為 bagging 降變異、平均不會改變偏差，所以偏差要靠單棵深樹先壓低；boosting 是序列降偏差，每步只修一小塊，深樹會一次把殘差連雜訊配光","因為 bagging 的樹數 B 通常比 boosting 少，所以每棵樹必須更強","因為 boosting 沒有 bootstrap，每棵樹看到的資料比較少，只夠長一刀","因為深樹在序列裡會讓計算太慢，stump 只是為了節省算力的妥協"],"answer":0,"why":["答對了。B 個同分佈估計的平均，期望值不變（偏差不動）、變異被壓下去——所以 bagging 必須拿「低偏差高變異」的東西去平均，深樹剛好是。boosting 反過來：它一步一步把偏差咬掉，每步只需要一點修正，樹太深會一次把殘差（含雜訊）配光，後面幾千棵只剩雜訊可配，還一路增加變異。","事實剛好相反：boosting 常常用幾千棵樹（lab 用 5000），bagging 一兩百棵就收斂了。而且「B 少所以每棵要強」也不是深樹的理由——理由是平均治不了偏差。","不對。boosting <strong>不做</strong> bootstrap，每棵樹都看<strong>全部</strong>資料，被改掉的是目標（殘差）或權重。看到的資料一點都不少。","算力不是主因。就算算力無限，深樹在 boosting 裡也會表現變差（ISLP 圖 8.11 顯示 depth-1 略勝 depth-2）。這是統計上的理由，不是工程上的妥協。"]},{"topic":"現代 GBDT 與變數重要度","q":"同事拿 random forest 的 <code>feature_importances_</code> 給你看，說「排最後那三個變數重要度接近 0，可以直接刪掉」。最該提醒他的是什麼？","options":["不純度下降是在訓練資料上算的，會偏袒取值很多的變數；而且相關的變數會互相稀釋，重要度低不等於沒用","重要度是負的才代表沒用，接近 0 只代表方向不明","應該改看係數的 p 值，樹模型的重要度沒有統計意義所以不能用","要先把所有變數標準化，否則重要度會被變數的單位影響"],"answer":0,"why":["答對了。兩個陷阱都要提。① <strong>相關變數互相稀釋</strong>：兩個幾乎一樣的變數，樹會隨機挑一個來切，兩者的重要度各自被砍半，看起來都「不重要」——刪掉其中一個可能沒事，刪掉兩個就出事。② 不純度下降定義在訓練資料上，而且對連續／高基數變數有偏。想做特徵篩選，至少改用測試集上的 permutation 重要度，並且刪完之後重新用 CV 驗一次。","不對。不純度下降<strong>不可能是負的</strong>（每一刀的不純度下降都 ≥ 0）。permutation 重要度理論上可以是小負數（打亂之後誤差反而變好），但那通常只是雜訊，不是「沒用」的判準。","樹模型的重要度沒有 p 值，這是真的；但推論說「所以不能用」太過頭了——它是有用的診斷工具，只是不能當因果或當充分的刪除依據。而且對非線性模型套線性迴歸的 p 值也不對題。","樹完全不受變數尺度影響（它只看大小順序），所以標準化對重要度沒有任何作用。這是樹相對於正則化線性模型的一個優點，不是要注意的陷阱。"]}];
+const BANKQUIZ = [{"topic":"樹的生長與剪枝","q":"關於「先長一棵很大的樹再剪枝」這個策略，下面哪一句是<strong>錯</strong>的？","options":["如果改成「RSS 下降量低於門檻就停止分裂」，可能會錯過「這一刀沒用、但下一刀很有用」的組合","成本複雜度剪枝的目標函數是「訓練 RSS ＋ α|T|」，形式跟第 6 章的 lasso 類似","α 從 0 慢慢調大時，被剪掉的分支是巢狀的，所以整條子樹序列可以一次算完","選 α 的交叉驗證只需要在完整訓練資料上長一次樹，然後在每一折上評估各個 α 即可"],"answer":3,"why":["這句是對的。ISLP §8.1.1 用的字是 <em>too short-sighted</em>，這正是門檻法被否決的理由。","這句是對的。左邊是配適程度、右邊是複雜度的罰款乘上調整參數——跟 lasso 的 RSS + λΣ|β| 是同一個模式，所以 α 的選法也一樣（交叉驗證）。","這句是對的。α₁ &lt; α₂ 對應的子樹一定滿足 T(α₂) ⊂ T(α₁)，所以只有 O(|T₀|) 條子樹要考慮，不必枚舉指數多的子樹。","答對了，這句是錯的。演算法 8.1 步驟 3(a) 講得很明確：<strong>每一折都要重跑步驟 1 與 2</strong>——在該折的訓練部分重新長樹、重新剪枝。如果只長一次樹再拿去各折評估，那棵樹已經看過全部訓練資料（包含被留出的那折），CV 誤差會偏低。這就是第 5 章「用到 y 的步驟要關在折裡面」的老規矩。"]},{"topic":"分裂準則","q":"某節點有 800 筆、兩類各 400 筆。切法 A 得到 (300 Yes, 100 No) 與 (100 Yes, 300 No)；切法 B 得到 (200 Yes, 400 No) 與 (200 Yes, 0 No)。下面哪一句正確？","options":["兩種切法的加權錯誤率都是 0.25，但切法 B 的加權 Gini 較低，所以 Gini 會選 B","切法 A 的加權錯誤率較低，所以三個準則都會選 A","切法 B 產生一個純節點，所以它的加權錯誤率一定比切法 A 低","兩種切法的加權 Gini 相同，因為 Gini 只看兩邊各自被分錯幾筆"],"answer":0,"why":["答對了。兩種切法都是 200 筆被分錯（0.25），<strong>錯誤率完全分不出高下</strong>；但切法 B 的加權 Gini 是 (600/800)×2×(1/3)×(2/3) + 0 = 0.333，低於切法 A 的 0.375。這就是「錯誤率不夠敏感」的具體長相，也是 ISLP 圖 8.6 裡 <code>RestECG &lt; 1</code> 那一刀之所以會被切的原因。","錯誤率算錯了。切法 A：100 + 100 = 200 筆分錯；切法 B：200 + 0 = 200 筆分錯。<strong>兩者完全相同</strong>，都是 0.25。這正是題目的重點。","不對，而且這是很常見的誤會。純節點確實讓 Gini 與交叉熵變好，但<strong>錯誤率不會</strong>：切法 B 的左邊節點錯了 200 筆（200/600 = 1/3），右邊 0 筆，加權起來仍是 0.25。純度的價值錯誤率量不到。","不對。Gini 不是在數「分錯幾筆」，它算的是 Σ p̂(1−p̂) 的加權平均，是 p̂ 的<strong>非線性</strong>函數。兩種切法的 Gini 分別是 0.375 與 0.333，並不相同。"]},{"topic":"Bagging 與 OOB","q":"用 bagging 配了 B = 500 棵樹。關於 OOB 誤差，下面哪一句<strong>不</strong>正確？","options":["每一筆觀測值大約會有 B/3 ≈ 167 棵樹沒有用到它，OOB 預測就是用那些樹算出來的","B 夠大時 OOB 誤差幾乎等於留一交叉驗證（LOOCV）誤差","如果拿 OOB 誤差當目標去挑 max_features，被挑中那組的 OOB 誤差仍然是誠實的測試誤差估計","OOB 誤差只有在做了 bootstrap 抽樣時才存在，所以 boosting 沒有 OOB 誤差"],"answer":2,"why":["這句是對的。(1 − 1/n)ⁿ → e⁻¹ ≈ 0.368，所以每筆平均約有 36.8% × 500 ≈ 184 棵樹（ISLP 講的「約 B/3」）沒用到它。用那些樹預測再平均（或投票），就得到該筆的 OOB 預測。","這句是對的，ISLP §8.2.1 明確這樣說。這也是 OOB 這麼好用的理由：一次配適就換到近似 LOOCV 品質的估計，而 LOOCV 本來要配 n 次。","答對了，這句是錯的。一旦拿 OOB 誤差當<strong>選擇的目標</strong>，被選中的那一組就是「在這組 OOB 樣本上運氣最好」的那組，報出來的數字會偏低——跟第 5 章的選擇偏差是同一件事。要誠實的估計就得另外留一份從頭到尾沒碰過的測試集，或做嵌套 CV。","這句是對的。boosting 每棵樹都看全部資料、沒有袋外樣本，所以只能用驗證集、CV 或 early stopping。這是 bagging 家族相對於 boosting 的一個實務優勢。"]},{"topic":"Random Forest 的 m","q":"Random forest 把每次分裂可選的變數數量 m 調小時，下面哪一句最正確？","options":["m 調小會同時降低所有樹的偏差與變異，所以 m 愈小一定愈好","限制 m 可增加樹的多樣性，但也可能減弱預測能力，整體效果要用驗證誤差判斷","只要樹的棵數 B 夠大，m 取多少都不影響結果","本頁各棵樹跨測試樣本的預測向量相關，可以直接當成固定 x 的理論變異分解中的 ρ"],"answer":1,"why":["不對。遮住有用的變數可能增加偏差或改變變異，沒有兩者都必然下降的保證。","答對了。多樣性與單棵樹的預測能力需要取捨；樹變弱也不等於變異數一定增加。√p 可作起點，仍要用驗證選 m。","不對。增加 B 讓平均更穩定，但不能補回限制 m 所造成的預測能力損失，不同 m 的誤差仍可不同。","不對。這裡的相關描述同一次配適中，樹在不同測試樣本上的預測有多相似；理論公式則固定 x、考慮重複訓練的變動，兩者不能直接替換。"]},{"topic":"Bagging vs Boosting","q":"為什麼 bagging 的樹要長很深不剪枝，boosting 的樹卻常常只用一刀（stump）？","options":["因為 bagging 降變異、平均不會改變偏差，所以偏差要靠單棵深樹先壓低；boosting 是序列降偏差，每步只修一小塊，深樹會一次把殘差連雜訊配光","因為 bagging 的樹數 B 通常比 boosting 少，所以每棵樹必須更強","因為 boosting 沒有 bootstrap，每棵樹看到的資料比較少，只夠長一刀","因為深樹在序列裡會讓計算太慢，stump 只是為了節省算力的妥協"],"answer":0,"why":["答對了。B 個同分佈估計的平均，期望值不變（偏差不動）、變異被壓下去——所以 bagging 必須拿「低偏差高變異」的東西去平均，深樹剛好是。boosting 反過來：它一步一步把偏差咬掉，每步只需要一點修正，樹太深會一次把殘差（含雜訊）配光，後面幾千棵只剩雜訊可配，還一路增加變異。","事實剛好相反：boosting 常常用幾千棵樹（lab 用 5000），bagging 一兩百棵就收斂了。而且「B 少所以每棵要強」也不是深樹的理由——理由是平均治不了偏差。","不對。boosting <strong>不做</strong> bootstrap，每棵樹都看<strong>全部</strong>資料，被改掉的是目標（殘差）或權重。看到的資料一點都不少。","算力不是主因。就算算力無限，深樹在 boosting 裡也會表現變差（ISLP 圖 8.11 顯示 depth-1 略勝 depth-2）。這是統計上的理由，不是工程上的妥協。"]},{"topic":"現代 GBDT 與變數重要度","q":"同事拿 random forest 的 <code>feature_importances_</code> 給你看，說「排最後那三個變數重要度接近 0，可以直接刪掉」。最該提醒他的是什麼？","options":["不純度下降是在訓練資料上算的，會偏袒取值很多的變數；而且相關的變數會互相稀釋，重要度低不等於沒用","重要度是負的才代表沒用，接近 0 只代表方向不明","應該改看係數的 p 值，樹模型的重要度沒有統計意義所以不能用","要先把所有變數標準化，否則重要度會被變數的單位影響"],"answer":0,"why":["答對了。兩個陷阱都要提。① <strong>相關變數互相稀釋</strong>：兩個幾乎一樣的變數，樹會隨機挑一個來切，兩者的重要度各自被砍半，看起來都「不重要」——刪掉其中一個可能沒事，刪掉兩個就出事。② 不純度下降定義在訓練資料上，而且對連續／高基數變數有偏。想做特徵篩選，至少改用測試集上的 permutation 重要度，並且刪完之後重新用 CV 驗一次。","不對。不純度下降<strong>不可能是負的</strong>（每一刀的不純度下降都 ≥ 0）。permutation 重要度理論上可以是小負數（打亂之後誤差反而變好），但那通常只是雜訊，不是「沒用」的判準。","樹模型的重要度沒有 p 值，這是真的；但推論說「所以不能用」太過頭了——它是有用的診斷工具，只是不能當因果或當充分的刪除依據。而且對非線性模型套線性迴歸的 p 值也不對題。","樹完全不受變數尺度影響（它只看大小順序），所以標準化對重要度沒有任何作用。這是樹相對於正則化線性模型的一個優點，不是要注意的陷阱。"]}];
 /* ===== 題庫自我檢測引擎（資料在 BANKQUIZ） ===== */
 (() => {
   const box = document.getElementById('bqBox');

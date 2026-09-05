@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -665,7 +676,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#split" data-target="split"><span class="fn-num">P04</span><span class="fn-name">切分訓練與測試</span></a>
   <a href="#cv" data-target="cv"><span class="fn-num">P05</span><span class="fn-name">交叉驗證與資料洩漏</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -689,10 +700,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · 建模 API）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）與儲存格編號；需要實作時，再打開原始筆記本對照。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -706,7 +718,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#split"><span class="toc-num">P04</span>切分訓練與測試</a>
     <a href="#cv"><span class="toc-num">P05</span>交叉驗證與資料洩漏</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -933,7 +945,7 @@ dtype: float64</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>p 值 0.000 是不是代表這個變數很重要？</summary>
-    <div class="qa-a">不是。p 值小只代表<strong>「係數不是 0」這件事很有把握</strong>，跟效果大不大無關。樣本夠大時，一個實務上可以忽略的效果也會有很小的 p 值。要談重要性要看係數本身的大小，以及它在你的問題裡代表什麼。</div>
+    <div class="qa-a">不是。在模型假設與零係數假設成立時，p 值衡量出現目前或更極端統計量的機率。小 p 值提供反對零係數假設的證據，跟效果大不大無關。樣本夠大時，一個實務上可以忽略的效果也會有很小的 p 值。要談重要性要看係數本身的大小，以及它在你的問題裡代表什麼。</div>
   </details>
   <details class="qa-item"><summary>標準誤跟標準差差在哪？</summary>
     <div class="qa-a">標準差量的是<strong>個別觀測</strong>的分散程度；標準誤量的是<strong>估計量</strong>（例如這個係數）的分散程度。樣本變大時標準差不會變小，標準誤會。第 5 章的自助法就是在估標準誤。</div>
@@ -970,7 +982,7 @@ dtype: float64</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">三個動詞</div>
-      按「單步」看資料怎麼流過去。注意 <code>fit</code> 是<strong>唯一</strong>會看 y 的一步。之後的 <code>predict</code> 只吃 X。
+      按「單步」看資料怎麼流過去。注意 <code>fit</code> 用訓練資料的 y 學參數；<code>predict</code> 只吃 X，<code>score</code> 則需要 y 作為評分答案。
     </div>
     <div class="info-card">
       <div class="ic-title">目前</div>
@@ -1164,7 +1176,7 @@ The RMSE is: 5.0571</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">為什麼這叫洩漏</div>
-      先標準化的話，訓練集的每一筆都間接知道了測試集的平均與標準差。評估已經不再是乾淨的 out-of-sample 比較；分數可能被扭曲，卻不能只憑洩漏就預告一定改善多少。Pipeline 的存在就是為了讓這件事不可能發生。
+      先標準化的話，訓練集的每一筆都間接知道了測試集的平均與標準差。評估已經不再是乾淨的 out-of-sample 比較；分數可能被扭曲，卻不能只憑洩漏就預告一定改善多少。Pipeline 可以把這些前處理放進每一折，但仍要檢查管線外的處理與切分方式。
     </div>
   </div>
 </div>
@@ -1187,7 +1199,7 @@ The RMSE is: 5.0571</pre></div>
   <span class="line">cv_err = np.mean(cv_results[<span class="str">&#x27;test_score&#x27;</span>])</span>
   <span class="line">cv_err</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(24.231513517929226)</pre></div>
-  <p class="dx-note">24.2315。每一筆各當一次驗證集，所以只有一個數字、沒有隨機性——但要配適 n 次，資料大的時候很貴。</p>
+  <p class="dx-note">24.2315 是各留一折誤差的平均。固定資料下的留一切法唯一，仍有各筆誤差與抽樣不確定性；但要配適 n 次，資料大的時候很貴。</p>
   <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 34</span>
 </div>
 
@@ -1203,7 +1215,7 @@ The RMSE is: 5.0571</pre></div>
   <span class="line">                         cv=validation)</span>
   <span class="line">results[<span class="str">&#x27;test_score&#x27;</span>].mean(), results[<span class="str">&#x27;test_score&#x27;</span>].std()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(np.float64(23.802232661034168), np.float64(1.4218450941091842))</pre></div>
-  <p class="dx-note">平均 23.80、標準差 1.42。<strong>那個 1.42 才是重點</strong>：它告訴你單切一刀的結果可以晃動多少，兩個模型的 MSE 差 0.5 根本不算差別。</p>
+  <p class="dx-note">平均 23.80、標準差 1.42。<strong>那個 1.42 才是重點</strong>：它告訴你單切一刀的結果可以晃動多少，但不能用單一模型的標準差判定兩個模型是否有差別；還要看相同切分下的配對差異。</p>
   <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 46</span>
 </div>
 
@@ -1214,7 +1226,7 @@ The RMSE is: 5.0571</pre></div>
 
 <div class="info-box">
   <span class="info-label">Pipeline 是紀律，不是語法糖</span>
-  把 <code>StandardScaler</code> 與模型包成 <code>Pipeline</code> 之後丟進 <code>cross_validate</code>，sklearn 會<strong>在每一折內部</strong>重新 fit 那個 scaler。你想犯錯都犯不了。第 6 章的收縮方法一定要標準化，那時這件事就從「好習慣」變成「非做不可」。
+  把 <code>StandardScaler</code> 與模型包成 <code>Pipeline</code> 之後丟進 <code>cross_validate</code>，sklearn 會<strong>在每一折內部</strong>重新 fit 那個 scaler。但放在 Pipeline 外的補值、選欄位或不當切分仍可能洩漏。第 6 章的收縮方法通常要標準化，那時這件事就從「好習慣」變成「非做不可」。
 </div>
 
 <div class="qa-box">
@@ -1222,8 +1234,8 @@ The RMSE is: 5.0571</pre></div>
   <details class="qa-item"><summary>交叉驗證跟測試集是不是同一件事？</summary>
     <div class="qa-a">不是。交叉驗證是在<strong>訓練資料內部</strong>切來切去，用來選模型與調參數；測試集是最後才動一次的、完全獨立的一份，用來報告最終效能。拿測試集去選模型，等於把它變成訓練資料的一部分。</div>
   </details>
-  <details class="qa-item"><summary>為什麼 LOOCV 的結果沒有標準差？</summary>
-    <div class="qa-a">因為它<strong>沒有隨機性</strong>。每一筆各當一次驗證集，切法只有一種。k 折就不同了，切法隨機，所以 lab 才會用 <code>ShuffleSplit(n_splits=10)</code> 看它的平均與標準差。</div>
+  <details class="qa-item"><summary>留一交叉驗證為什麼只列一個數字？</summary>
+    <div class="qa-a">這個 lab 把每一個留一折的損失取平均，所以只顯示平均值；不是所有損失都一樣。固定資料與配適程序下，LOOCV 沒有切分的隨機性，仍有資料抽樣的不確定性。上面的 ShuffleSplit 是十次隨機留出一半資料，並非把資料分成十個互斥的折。</div>
   </details>
 </div>
 
@@ -1252,7 +1264,7 @@ The RMSE is: 5.0571</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 選工具</div>
   <p>你要比較五個模型並挑一個，中間需要標準化與多項式展開。該用哪一套？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。要比較模型就需要一致的評估流程，這正是 sklearn 的設計目的。Pipeline 還順便擋掉了資料洩漏。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> scikit-learn，把前處理與模型包成 Pipeline 再交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="那些統計量在「比較五個模型」這件事上幫不上忙，而且 statsmodels 沒有 Pipeline 與 <code>cross_validate</code>。選定模型之後再用它報告係數是合理的。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> statsmodels，因為它給的統計量比較完整</div><div class="quiz-opt" data-correct="false" data-fb="彈性換來的是每一次都要自己記得「先切分再轉換」。Pipeline 存在的理由就是讓你不必依賴記憶力。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 手寫迴圈，最有彈性</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。要比較模型就需要一致的評估流程，這正是 sklearn 的設計目的。Pipeline 讓其中的前處理隨每一折配適；管線外的資料處理仍需檢查。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> scikit-learn，把前處理與模型包成 Pipeline 再交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="那些統計量在「比較五個模型」這件事上幫不上忙，而且 statsmodels 沒有 Pipeline 與 <code>cross_validate</code>。選定模型之後再用它報告係數是合理的。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> statsmodels，因為它給的統計量比較完整</div><div class="quiz-opt" data-correct="false" data-fb="彈性換來的是每一次都要自己記得「先切分再轉換」。Pipeline 存在的理由就是讓你不必依賴記憶力。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 手寫迴圈，最有彈性</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1265,8 +1277,8 @@ The RMSE is: 5.0571</pre></div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 誤差的不確定性</div>
-  <p>模型 A 的十折 CV MSE 是 23.8（標準差 1.4），模型 B 是 23.4（標準差 1.5）。結論是？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="差距 0.4 遠小於兩者各自的標準差。這個差很可能只是切分的隨機性。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> B 比較好，選 B</div><div class="quiz-opt" data-correct="true" data-fb="對。差距被不確定性淹沒的時候，就用簡單性、可解釋性或計算成本來決定——第 6 章的一倍標準誤法則正是這個想法的正式版。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 兩者在這份資料上分不出高下，改用其他理由來選</div><div class="quiz-opt" data-correct="false" data-fb="折數變多會讓每一折的訓練集更大、估計的變異更小，但也更貴，而且不會讓兩個本來就很接近的模型突然分出勝負。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 增加折數到 50 折再比一次</div></div>
+  <p>相同十次切分中，模型 A 的 MSE 平均是 23.8（標準差 1.4），模型 B 是 23.4（標準差 1.5）。這些摘要能告訴你什麼？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="B 在這次評估的平均較低，但單憑這些摘要不能判斷差距是否穩定，也不能保證新資料的排序。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> B 的真實預測表現一定較好</div><div class="quiz-opt" data-correct="true" data-fb="對。兩個模型各自的標準差，不等於模型差異的不確定性。要保留每次切分的配對結果，並考慮切分之間的相依性。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> B 的平均較低；還要查看相同切分下兩模型的配對差異與評估設計</div><div class="quiz-opt" data-correct="false" data-fb="這不是有效的判定門檻。兩個模型可能一起隨切分起伏，但其中一個持續較好；沒有足夠證據也不等於證明相同。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 差距小於各自標準差，所以兩模型已證明一樣好</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -1279,8 +1291,9 @@ The RMSE is: 5.0571</pre></div>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
+  <div class="section-number">重點速查與來源</div>
   <h2>建模 API速查表 <span class="sec-badge">先備 · 建模 API</span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w19-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>兩套 API 的對照表，以及最後那條不能違反的順序。</p>
@@ -2032,7 +2045,7 @@ const w19smInfo = [
   {w: '係數是標準誤的幾倍', n: '絕對值小於 2',
    note: 't = coef / std err：−0.9500 ÷ 0.039 ≈ −24.5，跟表上對得起來。'},
   {w: '「係數其實是 0」的話有多難得到這個結果', n: '不要只看這一欄',
-   note: 'p 值小只代表「不是 0」很有把握，<b>跟效果大不大無關</b>。'}
+   note: '小 p 值是在模型假設下反對零係數假設的證據，<b>跟效果大不大無關</b>。'}
 ];
 let w19smI = 0;
 function w19smDraw() {
@@ -2201,7 +2214,7 @@ function w19lkDraw() {
     if (st >= 3) {
       w19lkS.txtPx(310, 250, '測試資料只套用訓練集學到的轉換：評估仍可解讀',
                    {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
-      w19lkS.txtPx(310, 282, 'Pipeline 會在每一折自動做這件事，讓你想犯錯都難',
+      w19lkS.txtPx(310, 282, 'Pipeline 在每折配適其中的步驟；仍需檢查管線外處理',
                    {cls: 'axlab', anchor: 'middle'}, g);
     }
   }
@@ -2250,7 +2263,7 @@ HC.ready(() => { w19cvDraw(); });
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"設計矩陣（Design Matrix）","back":"模型真正看到的東西：第一欄通常是全 1 的截距，後面每一欄是一個預測變數。類別變數與交互作用都在這一層被展開成數字欄。"},{"front":"模型規格（ModelSpec, MS）","back":"ISLP 提供的設計矩陣建構器。<code>MS(['lstat']).fit_transform(df)</code> 會自動加上截距欄，而且記得規格，之後可以對新資料 <code>transform</code> 重放一次。"},{"front":"截距（Intercept）","back":"<code>sm.OLS</code> <b>不會</b>自動加。忘了放那一欄全 1，配出來的就是一條被迫過原點的線。sklearn 則是用 <code>fit_intercept=True</code> 處理。"},{"front":"係數（coef）","back":"summary 表的第一欄：效果的大小與方向。lstat 的 −0.9500 是「lstat 每多 1，medv 平均少 0.95」。這才是你要報告的東西。"},{"front":"標準誤（Standard Error）","back":"估計量本身的分散程度，不是個別觀測的分散程度（那是標準差）。樣本變大時標準誤會變小，標準差不會。"},{"front":"t 值（t-statistic）","back":"<code>coef / std err</code>，也就是「係數是標準誤的幾倍」。lstat 的 −0.9500 ÷ 0.039 ≈ −24.5。所以 summary 的四欄裡只有前兩欄是獨立資訊。"},{"front":"p 值（p-value）","back":"「係數其實是 0」的話有多難得到這個結果。它小只代表「不是 0」很有把握，<b>跟效果大不大無關</b>——樣本夠大時可忽略的效果也會有很小的 p 值。"},{"front":"虛擬變數編碼（Dummy Coding）","back":"k 個類別展開成 <b>k−1</b> 欄，留一個當參考組。展成 k 欄會跟截距共線，矩陣不滿秩。其他欄的係數都是「相對於參考組」的差。"},{"front":"估計器（Estimator）","back":"scikit-learn 裡會學參數的物件：<code>fit(X, y)</code>、<code>predict(X)</code>、<code>score(X, y)</code>。換模型只要換建構子那一行。"},{"front":"轉換器（Transformer）","back":"只做資料轉換的物件：<code>fit(X)</code> 學參數、<code>transform(X)</code> 套用、<code>fit_transform</code> 兩步合一。StandardScaler、PCA、SimpleImputer 都是。"},{"front":"結尾底線屬性（Trailing Underscore）","back":"sklearn 的慣例：<code>coef_</code>、<code>intercept_</code>、<code>classes_</code> 這種結尾有底線的屬性，代表<b>配適之後才存在</b>。沒 fit 就用會拋 NotFittedError。"},{"front":"引數順序（Argument Order）","back":"<code>sm.OLS(y, X)</code> 是 y 在前，<code>model.fit(X, y)</code> 是 X 在前。兩套 API 剛好相反，這是最常打錯的一行。"},{"front":"訓練與測試切分（train_test_split）","back":"一份學、一份考。<code>random_state</code> 一定要固定，不然今天的 MSE 跟明天的不一樣，模型就沒得比。"},{"front":"樂觀偏誤（Optimistic Bias）","back":"在訓練資料上評估自己一定會太好看，因為模型可以把雜訊也背下來。整門課的評估紀律都建立在「用沒看過的資料」這一句上。"},{"front":"平均絕對誤差（MAE）","back":"誤差取絕對值再平均。跟 y 同單位，而且對離群值比 MSE 不敏感。"},{"front":"均方誤差（MSE）","back":"誤差平方再平均。數學上好處理（可微、可分解成偏差與變異），是整門課的預設指標。"},{"front":"均方根誤差（RMSE）","back":"MSE 開根號，回到 y 的單位。要跟別人解釋「大概差多少」時最好用。"},{"front":"決定係數（R²）","back":"被模型解釋掉的變異比例。方便比較，但會隨著變數增加而虛高——第 6 章的調整後 R² 與資訊準則就是在修這件事。"},{"front":"交叉驗證（Cross-Validation）","back":"把訓練資料輪流當驗證集，每一筆都當過一次。比單切一刀穩定，而且用到了全部資料。它是在<b>訓練資料內部</b>做的，不是測試集。"},{"front":"留一交叉驗證（LOOCV）","back":"每一筆各當一次驗證集。沒有隨機性（切法只有一種），所以沒有標準差；代價是要配適 n 次。"},{"front":"重複切分（ShuffleSplit）","back":"隨機切很多次再看平均與標準差。那個標準差很重要——它告訴你單切一刀的結果能晃動多少，兩個模型差 0.5 可能根本不算差別。"},{"front":"資料洩漏（Data Leakage）","back":"測試資料的資訊透過某個步驟進到訓練流程裡。先對整份資料標準化再切分是最典型的一種，結果是你報告的 out-of-sample 分數其實不是。"},{"front":"管線（Pipeline）","back":"把前處理與模型串成一個估計器。丟進 <code>cross_validate</code> 之後，sklearn 會在<b>每一折內部</b>重新 fit 那些轉換器——你想犯錯都犯不了。"},{"front":"先切分再轉換（Fit on Train Only）","back":"<code>fit</code> 只看訓練集，<code>transform</code> 對兩邊都用同一組參數。順序反了，整套評估就作廢。這是本頁唯一不能違反的規矩。"},{"front":"sklearn_sm 包裝器","back":"ISLP 提供的轉接頭，把 statsmodels 的模型包成 sklearn 的估計器，好丟進 <code>cross_validate</code>。兩套 API 是可以混用的。"}];
+const FLASHCARDS = [{"front":"設計矩陣（Design Matrix）","back":"模型真正看到的東西：第一欄通常是全 1 的截距，後面每一欄是一個預測變數。類別變數與交互作用都在這一層被展開成數字欄。"},{"front":"模型規格（ModelSpec, MS）","back":"ISLP 提供的設計矩陣建構器。<code>MS(['lstat']).fit_transform(df)</code> 會自動加上截距欄，而且記得規格，之後可以對新資料 <code>transform</code> 重放一次。"},{"front":"截距（Intercept）","back":"<code>sm.OLS</code> <b>不會</b>自動加。忘了放那一欄全 1，配出來的就是一條被迫過原點的線。sklearn 則是用 <code>fit_intercept=True</code> 處理。"},{"front":"係數（coef）","back":"summary 表的第一欄：效果的大小與方向。lstat 的 −0.9500 是「lstat 每多 1，medv 平均少 0.95」。這才是你要報告的東西。"},{"front":"標準誤（Standard Error）","back":"估計量本身的分散程度，不是個別觀測的分散程度（那是標準差）。樣本變大時標準誤會變小，標準差不會。"},{"front":"t 值（t-statistic）","back":"<code>coef / std err</code>，也就是「係數是標準誤的幾倍」。lstat 的 −0.9500 ÷ 0.039 ≈ −24.5。所以 summary 的四欄裡只有前兩欄是獨立資訊。"},{"front":"p 值（p-value）","back":"在模型假設及零係數假設成立時，出現目前或更極端檢定統計量的機率。小 p 值是反對零假設的證據，不是零假設為假的機率，也不衡量效果大小。"},{"front":"虛擬變數編碼（Dummy Coding）","back":"k 個類別展開成 <b>k−1</b> 欄，留一個當參考組。展成 k 欄會跟截距共線，矩陣不滿秩。其他欄的係數都是「相對於參考組」的差。"},{"front":"估計器（Estimator）","back":"scikit-learn 裡會學參數的物件：<code>fit(X, y)</code>、<code>predict(X)</code>、<code>score(X, y)</code>。換模型只要換建構子那一行。"},{"front":"轉換器（Transformer）","back":"只做資料轉換的物件：<code>fit(X)</code> 學參數、<code>transform(X)</code> 套用、<code>fit_transform</code> 兩步合一。StandardScaler、PCA、SimpleImputer 都是。"},{"front":"結尾底線屬性（Trailing Underscore）","back":"sklearn 的慣例：<code>coef_</code>、<code>intercept_</code>、<code>classes_</code> 這種結尾有底線的屬性，代表<b>配適之後才存在</b>。沒 fit 就用會拋 NotFittedError。"},{"front":"引數順序（Argument Order）","back":"<code>sm.OLS(y, X)</code> 是 y 在前，<code>model.fit(X, y)</code> 是 X 在前。兩套 API 剛好相反，這是最常打錯的一行。"},{"front":"訓練與測試切分（train_test_split）","back":"一份學、一份考。<code>random_state</code> 一定要固定，不然今天的 MSE 跟明天的不一樣，模型就沒得比。"},{"front":"樂觀偏誤（Optimistic Bias）","back":"在訓練資料上評估自己一定會太好看，因為模型可以把雜訊也背下來。整門課的評估紀律都建立在「用沒看過的資料」這一句上。"},{"front":"平均絕對誤差（MAE）","back":"誤差取絕對值再平均。跟 y 同單位，而且對離群值比 MSE 不敏感。"},{"front":"均方誤差（MSE）","back":"誤差平方再平均。數學上好處理（可微、可分解成偏差與變異），是整門課的預設指標。"},{"front":"均方根誤差（RMSE）","back":"MSE 開根號，回到 y 的單位。要跟別人解釋「大概差多少」時最好用。"},{"front":"決定係數（R²）","back":"被模型解釋掉的變異比例。方便比較，但會隨著變數增加而虛高——第 6 章的調整後 R² 與資訊準則就是在修這件事。"},{"front":"交叉驗證（Cross-Validation）","back":"把訓練資料輪流當驗證集，每一筆都當過一次。比單切一刀穩定，而且用到了全部資料。它是在<b>訓練資料內部</b>做的，不是測試集。"},{"front":"留一交叉驗證（LOOCV）","back":"固定資料下，每筆各留出一次的切法唯一。通常報各留一折損失的平均；切法固定不代表各筆損失相同，也不代表沒有抽樣不確定性。"},{"front":"重複切分（ShuffleSplit）","back":"反覆隨機留出一部分資料作驗證，驗證樣本可以重複，並非互斥的 k 折。比較模型時要保留相同切分下的配對分數；各自的標準差不是差值的不確定性。"},{"front":"資料洩漏（Data Leakage）","back":"測試資料的資訊透過某個步驟進到訓練流程裡。先對整份資料標準化再切分是最典型的一種，結果是你報告的 out-of-sample 分數其實不是。"},{"front":"管線（Pipeline）","back":"把前處理與模型串在一起。交叉驗證會在每一折內重新配適管線中的步驟；管線外的補值、選欄位或不當切分仍可能洩漏。"},{"front":"先切分再轉換（Fit on Train Only）","back":"<code>fit</code> 只看訓練集，<code>transform</code> 對兩邊都用同一組參數。順序反了，整套評估就作廢。這是本頁唯一不能違反的規矩。"},{"front":"sklearn_sm 包裝器","back":"ISLP 提供的轉接頭，把 statsmodels 的模型包成 sklearn 的估計器，好丟進 <code>cross_validate</code>。兩套 API 是可以混用的。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

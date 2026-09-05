@@ -576,7 +576,7 @@ BODIES["bagging"] = f"""
 
 {qa("觀念釐清", [
     ("Q：Bagging 為什麼能降變異，卻幾乎不降偏差？",
-     "<p>從公式看最清楚。設每棵樹的預測 $\\hat f^{*b}(x)$ 期望值都是 $\\mu(x)$、變異數都是 "
+     "<p>從公式看最清楚。固定 x，考慮重複訓練造成的變動。設每棵樹的預測 $\\hat f^{*b}(x)$ 期望值都是 $\\mu(x)$、變異數都是 "
      "$\\sigma^2(x)$、兩兩相關係數是 $\\rho$。那麼平均的期望與變異是</p>"
      "<p>$$\\mathbb{E}\\left[\\hat f_{\\text{bag}}(x)\\right] = \\mu(x), \\qquad "
      "\\mathrm{Var}\\left[\\hat f_{\\text{bag}}(x)\\right] = "
@@ -627,23 +627,22 @@ BODIES["rf"] = f"""
   典型取 $m \\approx \\sqrt{{p}}$（分類）或 $m = p/3$（迴歸）。</p>
 
   <p>於是平均有 $(p-m)/p$ 比例的分裂<strong>根本看不到那個強變數</strong>，
-  其他變數就有機會出頭。樹跟樹長得不一樣了，$\\rho$ 掉下來，
-  第二項跟著縮小。這叫<strong>去相關</strong>（decorrelate）。
+  其他變數就有機會出頭。這讓樹有機會長得更不一樣，降低預測的相關性，
+  稱為<strong>去相關</strong>（decorrelate）；效果與預測能力的取捨仍要看資料。
   注意 $m = p$ 時 random forest 就<strong>退化成 bagging</strong>，
   所以 bagging 只是 random forest 的一個特例。</p>
 
 {viz(chart("w09rfChart", "tall",
-           "。此圖的重點：m 愈小，樹與樹之間的相關 ρ 愈低（右側面板），"
-           "但單棵樹也愈弱——m 是一個要調的參數，不是愈小愈好。"),
+           "。此圖的重點：限制 m 可增加樹的多樣性，但也可能減弱預測能力；m 要用驗證選擇，不是愈小愈好。"),
      [rows_card("每個 m 的表現（B = 300）",
                 [("m = p（bagging）", "—", "w09rfR0"), ("m = p/2", "—", "w09rfR1"),
                  ("m ≈ √p", "—", "w09rfR2"), ("m = 2", "—", "w09rfR3"),
                  ("單一棵樹", "—", "w09rfSingle")]),
       info_card("怎麼看這張圖",
                 'x 軸是樹的棵數 B（前 B 棵的平均預測），y 軸是測試 MSE。'
-                '右邊面板每一列同時列出<strong>該 m 的測試 MSE 與樹間平均相關 ρ</strong>。'
-                '<strong>ρ 一定隨 m 變小而下降</strong>。那是去相關的直接證據；'
-                '但誤差會不會跟著下降，要看資料。', "圖 8.8／8.10"),
+                '右邊列出<strong>測試 MSE 與各棵樹跨測試樣本的預測相關</strong>。'
+                '後者描述這次配適的樹有多相似，<strong>不是上式固定 x 的理論 ρ 估計</strong>，'
+                '也不保證隨 m 單調改變。', "圖 8.8／8.10"),
       info_card("兩份資料為什麼結論不同",
                 '<strong>Boston</strong>：只有 12 個變數、<code>lstat</code> 與 <code>rm</code> '
                 '真的最有用，硬是不給樹看它們只是自找麻煩，所以 m = p 最好。'
@@ -669,23 +668,14 @@ BODIES["rf"] = f"""
 
 {qa("觀念釐清", [
     ("Q：Random Forest 的 m 為什麼要小於 p？「去相關」在數學上到底降低了什麼？",
-     "<p>降低的是變異數公式裡<strong>那個不隨 B 消失的項</strong>。</p>"
-     "<p>$$\\mathrm{Var}\\left[\\hat f_{\\text{avg}}\\right] = "
-     "\\frac{1-\\rho}{B}\\sigma^2 + \\rho\\,\\sigma^2$$</p>"
-     "<p>把 B 開到一萬，第一項趨近 0，剩下的是 $\\rho \\sigma^2$。"
-     "所以「多種幾棵樹」有一個天花板，而天花板的高度由 $\\rho$ 決定。"
-     "bagging 沒有任何機制去壓 $\\rho$——每棵樹都看得到全部變數，"
-     "貪婪法就會一再選中同一個最強的變數，$\\rho$ 因此很高（本頁 Boston 上實測 m = p 時 ρ ≈ 0.82）。"
-     "限制 m 之後，不同的樹被迫用不同的變數，ρ 掉到 0.68。</p>"
-     "<p>但這裡有一個取捨，而且非常實在：<strong>m 變小同時讓每棵樹變差</strong>，"
-     "也就是上式的 $\\sigma^2$ 變大（元件的側欄有列出每棵樹預測的變異，m 愈小它愈大）。"
-     "所以 $\\rho \\sigma^2$ 是「$\\rho$ 下降 × $\\sigma^2$ 上升」的乘積，不保證變小。"
-     "$m$ 太小的時候，樹弱到連訊號都找不到，整體反而變糟。</p>"
-     "<p>什麼時候壓 $\\rho$ 划算？<strong>變數多、而且彼此相關</strong>的時候。"
-     "此時「不給樹看變數 A」的損失很小（相關的變數 B 幾乎能代替它），"
-     "但換到的多樣性很大。反過來像 Boston 這種只有 12 個變數、"
-     "其中兩個明顯不可替代的資料，遮住它們的代價就付不起。"
-     "<strong>結論：$m$ 是超參數，$\\sqrt{p}$ 只是好用的預設值，該調就調。</strong></p>"),
+     "<p>平均的變異數公式是在<strong>固定 x</strong> 下，對重複訓練所產生的預測變動而言。"
+     "在其他條件相同時，降低相關性有助於壓低不隨 B 消失的那一項。</p>"
+     "<p>但限制 m 也可能讓樹錯過有用變數、降低預測能力；"
+     "<strong>「樹變弱」不等於「變異數一定增加」</strong>，也可能是偏差增加。"
+     "這個取捨不能只看相關性，要用驗證誤差判斷。</p>"
+     "<p>本頁的相關數字是同一次配適中、各棵樹跨測試樣本預測向量的平均相關，"
+     "只能描述這組樹的相似程度，不能代入上面的理論公式。"
+     "<strong>m 是超參數，√p 是起點，不是定律。</strong></p>"),
 ])}
 
 {quiz("qRf", "QUIZ · Random Forest",
@@ -1113,7 +1103,7 @@ BODIES["exercises"] = f"""
        (False, "曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B",
         "那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 的原話是 <em>random forests will not overfit if we increase B</em>。"),
        (False, "m 愈小曲線一定愈低，因為去相關永遠讓變異更小",
-        "去相關確實會降低 ρ（本頁元件的側欄實測 0.82 → 0.68），但 m 變小同時讓<strong>每棵樹變差</strong>。變異數是 $\\rho\\sigma^2$ 的形式，兩個因子一降一升，不保證淨變小——Boston 就是反例。")])}
+        "限制 m 可增加多樣性，但也可能讓樹錯過重要變數。整體誤差不保證下降，Boston 就是反例；不能把樹變弱直接等同於變異數增加。")])}
 """
 
 # ── REF ───────────────────────────────────────────────────────────────
@@ -1183,8 +1173,8 @@ BODIES["reference"] = f"""
   因為錯誤率是折線、對純度的變化不敏感，會把「生出一個純葉子」的好刀報成「下降量 0」。<br>
   <strong>2. Bagging 降變異、Boosting 降偏差，所以 bagging 的樹要很深，boosting 的樹要很淺。</strong>
   平均不會改變偏差，序列修正不需要深樹。順帶：bagging 的 B 不會過度配適，boosting 的會。<br>
-  <strong>3. Random Forest 的 m 在壓 $\\rho\\sigma^2$ 裡的 $\\rho$，代價是 $\\sigma^2$ 變大。</strong>
-  變數多又彼此相關時這筆交易划算；變數少又不可替代時（例如 Boston）就不划算。
+  <strong>3. Random Forest 的 m 控制樹的多樣性與預測能力的取捨，不能只追求低相關。</strong>
+  這裡的模擬資料與 Boston 給出不同結果，正好提醒你用驗證選 m。
   $\\sqrt{p}$ 是預設值，不是定律。''')}
 
 {ver_note()}
@@ -1775,16 +1765,16 @@ function w09rfDraw() {
     const e = document.getElementById('w09rfR' + j);
     if (!e) continue;
     e.textContent = (j === best ? '★ ' : '') + 'MSE ' + HC.fmt(S.curves[j][last], 2)
-      + ' · ρ ' + HC.fmt(S.rho[j], 3);
+      + ' · 預測向量相關 ' + HC.fmt(S.rho[j], 3);
   }
   document.getElementById('w09rfSingle').textContent = HC.fmt(S.singleTree, 2);
   setStatus('w09rfStatus', (key === 'boston'
     ? 'Boston（p = 12，' + S.n + ' 筆訓練／' + S.nTest + ' 筆測試）：'
     : '模擬資料（p = 30，特徵之間平均 |相關| = ' + S.xCorr + '）：')
     + 'B = 300 時最好的是 <strong>m = ' + S.ms[best] + '</strong>（MSE '
-    + HC.fmt(S.curves[best][last], 2) + '）。ρ 從 m = ' + S.ms[0] + ' 的 '
-    + HC.fmt(S.rho[0], 3) + ' 一路降到 m = 2 的 '
-    + HC.fmt(S.rho[3], 3) + '——去相關是真的，但誤差降不降要看資料。');
+    + HC.fmt(S.curves[best][last], 2) + '）。這次配適的預測向量平均相關：m = ' + S.ms[0] + ' 為 '
+    + HC.fmt(S.rho[0], 3) + '，m = 2 為 '
+    + HC.fmt(S.rho[3], 3) + '。這是描述性比較；m 的選擇仍要看驗證誤差。');
 }
 
 /* ---------- P11 vimp：變數重要度（烘焙） ---------- */

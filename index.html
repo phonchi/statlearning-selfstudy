@@ -644,6 +644,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
 
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
+
 /* index.html 專用（章節總覽）。base.css 提供 token、hero、container、footer。 */
 
 .hero-code{position:absolute;right:4%;top:50%;transform:translateY(-50%);opacity:.09;
@@ -692,44 +703,48 @@ cv   = KFold(10, shuffle=True,
   <section>
     <div class="loop-box">
       <div class="lb-title">📌 建議學習迴圈（每一章都照這個節奏）</div>
-      <p>這個網站是課程講義的互動版配套：<strong>講義給完整程式與推導，這裡給你「動手驗證直覺」的空間。</strong>
-      每頁的 §徽章都標了 ISLP 節號與講義頁碼，方便左右對照；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
+      <p>本站以 <cite>An Introduction to Statistical Learning with Applications in Python</cite>（簡稱 ISLP）
+      與課程講義為主教材。<strong>先用例子理解問題，再動手驗證直覺。</strong>
+      章節旁的中文來源標記列出課本節號或講義頁碼，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
       最後一章標了「補充」——本課沒有教 ISLP 第 10 章，那一頁的出處改用課本官方的英文 lab，其餘規格相同。<br>
-      <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（一小時，不需要程式基礎）；
+      <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（不需要程式基礎）；
       <strong>沒寫過 Python？</strong>正課讀到卡住就翻<a href="#appendix">附錄</a>。兩區都是選讀，不列入評分。</p>
       <div class="loop-steps">
-        <div class="step"><b>① READ &amp; CHECK</b>逐節閱讀；遇到互動元件時，先預測結果，再操作驗證。</div>
-        <div class="step"><b>② CROSS-CHECK</b>對照講義 PDF 與 ISLP 原文，把完整程式看懂、抄一遍、跑一遍。</div>
-        <div class="step"><b>③ QUIZ</b>每節 quiz 立刻自測：答錯就回頭重讀該節，不要往下跳。</div>
-        <div class="step"><b>④ FLASHCARDS &amp; REF</b>翻完詞彙卡、掃過 REF 速查表，能不看答案講出定義才算過關。</div>
+        <div class="step"><b>① 閱讀與驗證</b>逐節閱讀；遇到互動元件時，先預測結果，再操作驗證。</div>
+        <div class="step"><b>② 對照教材</b>需要完整推導時回到講義與教科書；實作時，打開課程練習筆記本並核對結果。</div>
+        <div class="step"><b>③ 觀念自測</b>自測後先讀回饋，再回到相關說明；延伸內容可留待第二輪。</div>
+        <div class="step"><b>④ 詞彙卡與重點速查</b>用詞彙卡回想定義，再查重點速查表；也試著用本章例子解釋概念。</div>
       </div>
     </div>
   </section>
 
   <section id="pre">
     <h2>課前準備</h2>
-    <p>三頁，讀完大概一小時。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
+    <p>三頁，可依需要選讀。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
     把環境弄好、再學會怎麼跟 AI 協作而不把判斷外包。
     這三頁不需要任何程式基礎，選讀，不列入評分。
     共 3 頁、1 個視覺區塊。</p>
+    <p><strong>期中考使用電腦教室的電腦。</strong>平時可用 Colab；若在自己的電腦練習，
+    建議讓本機 Python 與套件版本和教室一致，依<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt" target="_blank" rel="noopener">課程提供的版本清單</a>核對。
+    考前也要熟悉教室的操作環境；詳見<a href="00b_setup.html#local">本機安裝與考前準備</a>。</p>
     <div class="ch-grid">
       <a class="ch-card" href="00a_why_code.html">
         <span class="ch-num">01 · LEARNING WITH AI</span>
         <h3>AI 時代的資料分析學習迴圈</h3>
         <span class="ch-badge">課前 · AI 學習迴圈</span>
-        <div class="ch-meta">5 節 · 每節 quiz · 18 張詞彙卡</div>
+        <div class="ch-meta">5 節 · 每節自測 · 18 張詞彙卡</div>
       </a>
       <a class="ch-card" href="00b_setup.html">
         <span class="ch-num">02 · SETUP</span>
         <h3>環境安裝</h3>
         <span class="ch-badge">課前 · 環境安裝</span>
-        <div class="ch-meta">6 節 · 1 個視覺區塊 · 每節 quiz · 24 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 1 個視覺區塊 · 每節自測 · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="00c_ai_assisted.html">
         <span class="ch-num">03 · AI-ASSISTED STATISTICS</span>
         <h3>AI 輔助統計分析：從提問到驗證</h3>
         <span class="ch-badge">課前 · AI 協作</span>
-        <div class="ch-meta">6 節 · 每節 quiz · 18 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 每節自測 · 18 張詞彙卡</div>
       </a>
     </div>
   </section>
@@ -742,68 +757,68 @@ cv   = KFold(10, shuffle=True,
       <a class="ch-card" href="introduction.html">
         <span class="ch-num">01 · INTRODUCTION</span>
         <h3>統計學習導論</h3>
-        <span class="ch-badge">ISLP Ch.1</span>
-        <div class="ch-meta">8 節 · 4 個視覺區塊 · 每節 quiz · 23 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 1 章</span>
+        <div class="ch-meta">8 節 · 4 個視覺區塊 · 每節自測 · 23 張詞彙卡</div>
       </a>
       <a class="ch-card" href="statistical_learning.html">
         <span class="ch-num">02 · STATISTICAL LEARNING</span>
         <h3>統計學習的基本框架</h3>
-        <span class="ch-badge">ISLP Ch.2 ／ ESL Ch.2</span>
-        <div class="ch-meta">7 節 · 5 個視覺區塊 · 每節 quiz · 26 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 2 章 ／ 進階參考 · 第 2 章</span>
+        <div class="ch-meta">7 節 · 5 個視覺區塊 · 每節自測 · 26 張詞彙卡</div>
       </a>
       <a class="ch-card" href="linear_regression.html">
         <span class="ch-num">03 · LINEAR REGRESSION</span>
         <h3>線性迴歸</h3>
-        <span class="ch-badge">ISLP Ch.3 ／ ESL §3.1–3.3</span>
+        <span class="ch-badge">教科書 · 第 3 章 ／ 進階參考 · 第 3.1–3.3 節</span>
         <div class="ch-meta">8 節 · 6 個視覺區塊 · 題庫自測 6 題 · 28 張詞彙卡</div>
       </a>
       <a class="ch-card" href="classification.html">
         <span class="ch-num">04 · CLASSIFICATION</span>
         <h3>分類</h3>
-        <span class="ch-badge">ISLP Ch.4 ／ ESL §4.1–4.4</span>
+        <span class="ch-badge">教科書 · 第 4 章 ／ 進階參考 · 第 4.1–4.4 節</span>
         <div class="ch-meta">8 節 · 5 個視覺區塊 · 題庫自測 6 題 · 28 張詞彙卡</div>
       </a>
       <a class="ch-card" href="resampling_methods.html">
         <span class="ch-num">05 · RESAMPLING</span>
         <h3>重抽樣方法</h3>
-        <span class="ch-badge">ISLP Ch.5 ／ ESL §7.1–7.4、7.10–7.11</span>
-        <div class="ch-meta">8 節 · 4 個視覺區塊 · 每節 quiz · 23 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 5 章 ／ 進階參考 · 第 7.1–7.4 節、7.10–7.11</span>
+        <div class="ch-meta">8 節 · 4 個視覺區塊 · 每節自測 · 23 張詞彙卡</div>
       </a>
       <a class="ch-card" href="model_selection.html">
         <span class="ch-num">06 · MODEL SELECTION</span>
         <h3>線性模型選擇與正則化</h3>
-        <span class="ch-badge">ISLP Ch.6 ／ ESL §3.3–3.6、§7.1–7.7</span>
-        <div class="ch-meta">10 節 · 6 個視覺區塊 · 每節 quiz · 27 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 6 章 ／ 進階參考 · 第 3.3–3.6 節、第 7.1–7.7 節</span>
+        <div class="ch-meta">10 節 · 6 個視覺區塊 · 每節自測 · 27 張詞彙卡</div>
       </a>
       <a class="ch-card" href="unsupervised_learning.html">
         <span class="ch-num">07 · UNSUPERVISED</span>
         <h3>非監督式學習</h3>
-        <span class="ch-badge">ISLP Ch.12 ／ ESL §13.1–13.3、§14.1–14.3、§14.5–14.9</span>
-        <div class="ch-meta">11 節 · 8 個視覺區塊 · 每節 quiz · 30 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 12 章 ／ 進階參考 · 第 13.1–13.3 節、第 14.1–14.3 節、第 14.5–14.9 節</span>
+        <div class="ch-meta">11 節 · 8 個視覺區塊 · 每節自測 · 30 張詞彙卡</div>
       </a>
       <a class="ch-card" href="beyond_linearity.html">
         <span class="ch-num">08 · BEYOND LINEARITY</span>
         <h3>超越線性</h3>
-        <span class="ch-badge">ISLP Ch.7 ／ ESL §5.1–5.7、§6.1–6.3、§9.1</span>
-        <div class="ch-meta">9 節 · 8 個視覺區塊 · 每節 quiz · 28 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 7 章 ／ 進階參考 · 第 5.1–5.7 節、第 6.1–6.3 節、第 9.1 節</span>
+        <div class="ch-meta">9 節 · 8 個視覺區塊 · 每節自測 · 28 張詞彙卡</div>
       </a>
       <a class="ch-card" href="tree_based_methods.html">
         <span class="ch-num">09 · TREES & ENSEMBLES</span>
         <h3>樹狀方法與集成學習</h3>
-        <span class="ch-badge">ISLP Ch.8 ／ ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3</span>
+        <span class="ch-badge">教科書 · 第 8 章 ／ 進階參考 · 第 9.2 節、第 8.7–8.8 節、第 10.1–10.14 節、第 15.1–15.3 節</span>
         <div class="ch-meta">11 節 · 9 個視覺區塊 · 題庫自測 6 題 · 30 張詞彙卡</div>
       </a>
       <a class="ch-card" href="support_vector_machines.html">
         <span class="ch-num">10 · SVM</span>
         <h3>支持向量機</h3>
-        <span class="ch-badge">ISLP Ch.9 ／ ESL §6.6–6.9、§12.1–12.3</span>
-        <div class="ch-meta">7 節 · 6 個視覺區塊 · 每節 quiz · 26 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 9 章 ／ 進階參考 · 第 6.6–6.9 節、第 12.1–12.3 節</span>
+        <div class="ch-meta">7 節 · 6 個視覺區塊 · 每節自測 · 26 張詞彙卡</div>
       </a>
       <a class="ch-card" href="deep_learning.html">
         <span class="ch-num">11 · DEEP LEARNING</span>
         <h3>深度學習（補充）</h3>
-        <span class="ch-badge">ISLP Ch.10 · 補充 ／ ESL Ch.11</span>
-        <div class="ch-meta">7 節 · 5 個視覺區塊 · 每節 quiz · 27 張詞彙卡</div>
+        <span class="ch-badge">教科書 · 第 10 章 · 補充 ／ 進階參考 · 第 11 章</span>
+        <div class="ch-meta">7 節 · 5 個視覺區塊 · 每節自測 · 27 張詞彙卡</div>
       </a>
     </div>
   </section>
@@ -819,37 +834,37 @@ cv   = KFold(10, shuffle=True,
         <span class="ch-num">01 · PYTHON BASICS</span>
         <h3>Python 基礎</h3>
         <span class="ch-badge">先備 · Python 基礎</span>
-        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節 quiz · 24 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節自測 · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p2_flow_functions.html">
         <span class="ch-num">02 · FLOW & FUNCTIONS</span>
         <h3>流程與函式</h3>
         <span class="ch-badge">先備 · 流程與函式</span>
-        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節 quiz · 25 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節自測 · 25 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p3_numpy.html">
         <span class="ch-num">03 · NUMPY</span>
         <h3>NumPy 陣列</h3>
         <span class="ch-badge">先備 · NumPy 陣列</span>
-        <div class="ch-meta">8 節 · 7 個視覺區塊 · 每節 quiz · 26 張詞彙卡</div>
+        <div class="ch-meta">8 節 · 7 個視覺區塊 · 每節自測 · 26 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p4_pandas.html">
         <span class="ch-num">04 · PANDAS</span>
         <h3>pandas 資料框</h3>
         <span class="ch-badge">先備 · pandas 資料框</span>
-        <div class="ch-meta">6 節 · 7 個視覺區塊 · 每節 quiz · 25 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 7 個視覺區塊 · 每節自測 · 25 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p5_visualization.html">
         <span class="ch-num">05 · VISUALIZATION</span>
         <h3>視覺化</h3>
         <span class="ch-badge">先備 · 視覺化</span>
-        <div class="ch-meta">6 節 · 7 個視覺區塊 · 每節 quiz · 24 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 7 個視覺區塊 · 每節自測 · 24 張詞彙卡</div>
       </a>
       <a class="ch-card" href="p6_modeling_api.html">
         <span class="ch-num">06 · MODELING API</span>
         <h3>建模 API</h3>
         <span class="ch-badge">先備 · 建模 API</span>
-        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節 quiz · 25 張詞彙卡</div>
+        <div class="ch-meta">6 節 · 6 個視覺區塊 · 每節自測 · 25 張詞彙卡</div>
       </a>
     </div>
   </section>
@@ -858,7 +873,7 @@ cv   = KFold(10, shuffle=True,
     <h2>配套資源</h2>
     <div class="res-list">
       <div class="res-card"><b>📖 教科書 ISLP</b>An Introduction to Statistical Learning with
-      Applications in Python（James、Witten、Hastie、Tibshirani、Taylor）。頁上的 §徽章都對應此書節號。<br>
+      Applications in Python（James、Witten、Hastie、Tibshirani、Taylor）。標示「教科書」的來源對應此書章節。<br>
       <a href="https://www.statlearning.com/" target="_blank" rel="noopener">statlearning.com（可免費下載）</a></div>
       <div class="res-card"><b>📗 進階參考 ESL</b>The Elements of Statistical Learning。
       標「ESL 進階」的段落對應這本，課堂沒細講，第一輪可略過。<br>

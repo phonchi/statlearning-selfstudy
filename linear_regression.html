@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -667,7 +678,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#problems" data-target="problems"><span class="fn-num">P06</span><span class="fn-name">六個潛在問題</span></a>
   <a href="#vsknn" data-target="vsknn"><span class="fn-num">P07</span><span class="fn-name">與 KNN 的比較</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#bankquiz" data-target="bankquiz"><span class="fn-num">QUIZ</span><span class="fn-name">自我檢測</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
@@ -692,10 +703,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.3｜講義 03）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/03_Regression.pdf" target="_blank" rel="noopener">📑 講義 03 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch03 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87GVk0NXHo19GPagNc7g-ba" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 ESL 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/03_Regression.pdf" target="_blank" rel="noopener">📑 講義 03 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch03 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87GVk0NXHo19GPagNc7g-ba" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -711,7 +723,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#problems"><span class="toc-num">P06</span>六個潛在問題</a>
     <a href="#vsknn"><span class="toc-num">P07</span>與 KNN 的比較</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#bankquiz"><span class="toc-num">QUIZ</span>自我檢測</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
@@ -720,7 +732,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>Advertising 資料要回答的四件事 <span class="sec-badge">ISLP §3 開頭</span><span class="sec-badge">講義 03 · p.2–3</span></h2>
+  <h2>Advertising 資料要回答的四件事 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3 章開頭</a></span><span class="sec-badge">講義 03 · p.2–3</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>桌上只有一張表：200 個市場，每個市場在<strong>電視、廣播、報紙</strong>上各花了多少錢
@@ -765,14 +777,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 四個問題各配哪個工具</div>
   <p>「三種媒體裡，<strong>哪些</strong>跟銷售量有關？」這個問題該看哪個統計量？</p>
-  <div class="quiz-options" id="qFourOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是「個別變數有沒有用」的問題，逐個看 <em>t</em>。注意順序：先用 <em>F</em> 確認「至少有一個有用」，再看個別的 <em>t</em> 決定是哪些。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(A)</span> 多元迴歸裡<strong>每一個</strong>係數各自的 <em>t</em> 統計量與 p 值</div><div class="quiz-opt" data-correct="false" data-fb="不對。<em>F</em> 回答的是「<strong>至少有一個</strong>變數有用嗎」，它給你一個是／否，不會告訴你是哪一個。它是入場券，不是名單。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(B)</span> 整個模型的 <em>F</em> 統計量</div><div class="quiz-opt" data-correct="false" data-fb="不對。R² 是整體配適程度，跟「有幾個變數有關」沒有對應關係——多加一個完全沒用的變數，R² 也只會上升不會下降（P03 會算給你看）。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(C)</span> R²，值愈高就代表愈多媒體有關</div></div>
+  <div class="quiz-options" id="qFourOptions"><div class="quiz-opt" data-correct="true" data-fb="對。個別 t 檢定評估的是控制其他變數後的一個係數。整體 F 檢定可先評估是否有整體證據，但通過 F 不等於每個小 p 值都是可靠發現；同時檢定很多係數仍要處理多重比較。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(A)</span> 多元迴歸裡<strong>每一個</strong>係數各自的 <em>t</em> 統計量與 p 值</div><div class="quiz-opt" data-correct="false" data-fb="不對。<em>F</em> 回答的是「<strong>至少有一個</strong>變數有用嗎」，它給你一個是／否，不會告訴你是哪一個。它提供整體證據，不能替個別變數下結論。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(B)</span> 整個模型的 <em>F</em> 統計量</div><div class="quiz-opt" data-correct="false" data-fb="不對。R² 是整體配適程度，跟「有幾個變數有關」沒有對應關係——多加一個完全沒用的變數，R² 也只會上升不會下降（P03 會算給你看）。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(C)</span> R²，值愈高就代表愈多媒體有關</div></div>
   <div class="quiz-feedback" id="qFourFeedback"></div>
 </div>
 </section>
 <section id="slr">
 <!-- GEN:BEGIN sec:slr -->
   <div class="section-number">PART 01 · 簡單線性迴歸</div>
-  <h2>最小平方法：讓 RSS 最小的那條線 <span class="sec-badge">ISLP §3.1.1</span><span class="sec-badge">講義 03 · p.4–6</span></h2>
+  <h2>最小平方法：讓 RSS 最小的那條線 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.1 節</a></span><span class="sec-badge">講義 03 · p.4–6</span></h2>
 <!-- GEN:END sec:slr -->
 
   <p>先只用一個變數。假設 sales 跟 TV 預算大致是一條直線：</p>
@@ -924,7 +936,7 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 <section id="inference">
 <!-- GEN:BEGIN sec:inference -->
   <div class="section-number">PART 02 · 係數的不確定性</div>
-  <h2>SE、信賴區間與 t 檢定：這個斜率可信嗎 <span class="sec-badge">ISLP §3.1.2</span><span class="sec-badge">講義 03 · p.7–11</span></h2>
+  <h2>SE、信賴區間與 t 檢定：這個斜率可信嗎 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.2 節</a></span><span class="sec-badge">講義 03 · p.7–11</span></h2>
 <!-- GEN:END sec:inference -->
 
   <p>β̂₁ = 0.0475 這個數字，可信嗎？先弄清楚在問什麼。真實世界裡有一條看不到的
@@ -1075,7 +1087,7 @@ Notes:
 <section id="accuracy">
 <!-- GEN:BEGIN sec:accuracy -->
   <div class="section-number">PART 03 · 模型準確度</div>
-  <h2>RSE 與 R²：擬合得好不好 <span class="sec-badge">ISLP §3.1.3</span><span class="sec-badge">講義 03 · p.12–13</span></h2>
+  <h2>RSE 與 R²：擬合得好不好 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.3 節</a></span><span class="sec-badge">講義 03 · p.12–13</span></h2>
 <!-- GEN:END sec:accuracy -->
 
   <p>檢定過關（「有關係」）之後，下一個問題是「配得<strong>多好</strong>」。
@@ -1154,7 +1166,7 @@ MSE : 38.48296722989415</pre></div>
 <section id="mlr">
 <!-- GEN:BEGIN sec:mlr -->
   <div class="section-number">PART 04 · 多元迴歸與 F 檢定</div>
-  <h2>同時放進多個變數：F 檢定在問什麼 <span class="sec-badge">ISLP §3.2</span><span class="sec-badge">講義 03 · p.15–24</span></h2>
+  <h2>同時放進多個變數：F 檢定在問什麼 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.2 節</a></span><span class="sec-badge">講義 03 · p.15–24</span></h2>
 <!-- GEN:END sec:mlr -->
 
   <p>三個媒體要不要各配一條簡單迴歸，然後把結論拼起來？<strong>不行。</strong>
@@ -1198,7 +1210,7 @@ MSE : 38.48296722989415</pre></div>
     <div class="qa-a"><p>因為兩個迴歸問的是<strong>不同的問題</strong>。</p><p>單變數迴歸的係數回答：「只看 newspaper 這一欄，它跟 sales 有沒有線性關聯？」多變數迴歸的係數回答：「<strong>在 TV 與 radio 都已知的情況下</strong>，再多知道 newspaper 有沒有幫助？」第二個問題嚴格得多。</p><p>機制就在相關矩陣裡：corr(radio, newspaper) = 0.354。假設真相是「radio 影響 sales、newspaper 不影響」。報紙預算高的市場通常廣播預算也高，廣播帶動了銷售，於是「報紙預算高的市場銷售也高」——單變數迴歸只看得到這個共同變動，就把功勞記在報紙頭上。等 radio 進了模型，功勞被歸還，報紙的係數就掉到 0 附近。</p><p>這在因果推論裡叫<strong>混淆</strong>（confounding）：radio 是 newspaper 與 sales 之間的混淆變數。同一個結構也可能反過來：$X_j$ 單獨看不顯著、控制別的變數後才顯著（被壓抑效應蓋住）。所以「單變數篩選再進多變數模型」是個危險的習慣。</p><p>另一個常見但<strong>不同</strong>的成因是共線性：$X_j$ 真的有用，只是它跟別的變數太像，SE 被膨脹到檢不出來（P06 的 Credit <code>limit</code>／<code>rating</code>）。分辨方法：看 VIF。這裡 newspaper 的 VIF 只有 1.145，所以是混淆，不是共線性。</p></div>
   </details>
   <details class="qa-item"><summary>Q：有了 t 檢定，為什麼還要 F 檢定？</summary>
-    <div class="qa-a"><p>因為<strong>多重比較</strong>。單一個 t 檢定在 α = 0.05 下有 5% 的機率誤判；但如果你有 100 個變數、逐一做 t 檢定，即使它們全部無用，預期也會冒出 100 × 0.05 = <strong>5 個「顯著」</strong>。看到 5 個顯著就宣布發現，等於在報告雜訊。</p><p><em>F</em> 檢定一次檢定<strong>全體</strong>：$H_0$ 是所有係數同時為 0。它的分佈已經把 p 個變數的維度算進去了，所以不會被這種累積誤判騙到。正確的順序是<strong>先看 F 拿入場券，再看個別 t 找名單</strong>。如果 F 不顯著，就算某個 t 看起來很漂亮，也要非常保守地對待。</p><p>還有一個 t 做不到的用途：<em>F</em> 可以檢定<strong>一組</strong>係數（$H_0: \beta_{p-q+1} = \cdots = \beta_p = 0$）。質性變數的多個虛擬欄就是這種情況——個別虛擬欄的 t 值會隨基準水準的選擇而變，但「這個變數整體有沒有用」的 F 檢定不會（P05 會看到）。巢狀模型的比較（<code>anova_lm()</code>）也是同一件事。</p><p>最後一個常被忽略的細節：<strong>p ≥ n 時 F 檢定根本算不出來</strong>，因為 RSS 可以壓到 0。那種情況要用第 6 章的方法。</p></div>
+    <div class="qa-a"><p>因為<strong>多重比較</strong>。單一個 t 檢定在 α = 0.05 下有 5% 的機率誤判；但如果你有 100 個變數、逐一做 t 檢定，即使它們全部無用，預期也會冒出 100 × 0.05 = <strong>5 個「顯著」</strong>。看到 5 個顯著就宣布發現，等於在報告雜訊。</p><p><em>F</em> 檢定一次檢定<strong>全體</strong>：$H_0$ 是所有係數同時為 0。它的分佈已經把 p 個變數的維度算進去了，在模型假設成立、顯著水準為 0.05 時，整體 F 的第一型錯誤率仍是 5%，而不是 0。</p><p>可以先看 F 了解整體證據，再研究個別係數，但<strong>先通過 F 不等於完成個別檢定的多重比較校正</strong>。若同時探索許多變數，仍須處理假發現問題；事前指定的一個係數檢定，則與探索後挑最小 p 值不同。</p><p>還有一個 t 做不到的用途：<em>F</em> 可以檢定<strong>一組</strong>係數（$H_0: \beta_{p-q+1} = \cdots = \beta_p = 0$）。質性變數的多個虛擬欄就是這種情況——個別虛擬欄的 t 值會隨基準水準的選擇而變，但「這個變數整體有沒有用」的 F 檢定不會（P05 會看到）。巢狀模型的比較（<code>anova_lm()</code>）也是同一件事。</p><p>最後一個常被忽略的細節：<strong>p ≥ n 時 F 檢定根本算不出來</strong>，因為全模型無法按一般滿欄秩、正殘差自由度的設定估計誤差變異。可接著看<a href='model_selection.html#highdim'>線性模型選擇的高維度一節</a>。</p></div>
   </details>
 </div>
 
@@ -1247,15 +1259,15 @@ lstat      -0.5520    0.051 -10.897  0.000</pre></div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · F 檢定</div>
-  <p>某個模型的 <em>F</em> 統計量是 1.04，p 值 0.41；但其中有一個變數的 <em>t</em> = 2.3、p = 0.023。該怎麼解讀？</p>
-  <div class="quiz-options" id="qFOptions"><div class="quiz-opt" data-correct="true" data-fb="對。F 檢定說「整體看不出任何訊號」，這時單獨冒出來的一個 p = 0.023 完全在雜訊的預期範圍內——變數愈多，這種假陽性愈難避免。正確做法是先問「為什麼 F 過不了」，而不是急著報告那個變數。" onclick="quizCheck('qF', this)"><span class="opt-letter">(A)</span> 很可能是多重比較的假陽性，應該非常保守地看待那個「顯著」的變數</div><div class="quiz-opt" data-correct="false" data-fb="不對。兩個檢定不是精細度的差別，而是<strong>問的問題不同</strong>。F 已經把「我做了 p 次檢定」這件事算進分佈裡；單獨的 t 沒有。在 F 不顯著的情況下相信個別 t，正是最典型的 p-hacking。" onclick="quizCheck('qF', this)"><span class="opt-letter">(B)</span> t 檢定比 F 檢定精細，所以應該相信 t：那個變數確實有用</div><div class="quiz-opt" data-correct="false" data-fb="不對。這兩個結果<strong>不矛盾</strong>，它們回答的是不同的問題，同時出現是很正常的。常態假設在這裡沒有被指控——要指控它得看殘差圖與 Q-Q 圖（P06）。" onclick="quizCheck('qF', this)"><span class="opt-letter">(C)</span> 兩個結果矛盾，說明資料違反常態假設，要先做轉換</div></div>
+  <p>某模型的整體 F 檢定 p 值為 0.41，但一個係數的 t 檢定 p 值為 0.023。該怎麼解讀？</p>
+  <div class="quiz-options" id="qFOptions"><div class="quiz-opt" data-correct="true" data-fb="對。整體 F 未拒絕全零假設，不代表已證明每個係數都為零。個別 t 回答另一個問題；如果是在大量檢定後才挑出 0.023，就要處理多重比較，而不能直接宣布發現。" onclick="quizCheck('qF', this)"><span class="opt-letter">(A)</span> 兩者檢定的假設不同，並不矛盾；解讀個別結果還要知道是否事先指定、是否同時檢定很多係數</div><div class="quiz-opt" data-correct="false" data-fb="不對。整體 F 的 5% 第一型錯誤率針對全體係數同時為零的假設。它不會自動校正逐一探索係數造成的假發現。" onclick="quizCheck('qF', this)"><span class="opt-letter">(B)</span> 只要先看過 F，個別 t 的 p 值就已完成多重比較校正</div><div class="quiz-opt" data-correct="false" data-fb="不對。未拒絕不是證明虛無假設成立，而且整體 F 與單一係數 t 的檢定力不同，這兩個結果可以同時出現。" onclick="quizCheck('qF', this)"><span class="opt-letter">(C)</span> F 不顯著證明全部係數都等於零，所以個別 t 一定算錯了</div></div>
   <div class="quiz-feedback" id="qFFeedback"></div>
 </div>
 </section>
 <section id="qualitative">
 <!-- GEN:BEGIN sec:qualitative -->
   <div class="section-number">PART 05 · 質性變數與交互作用</div>
-  <h2>類別變數怎麼進模型，交互作用又是什麼 <span class="sec-badge">ISLP §3.3.1–3.3.2</span><span class="sec-badge">講義 03 · p.25–36</span></h2>
+  <h2>類別變數怎麼進模型，交互作用又是什麼 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.3.1–3.3.2 節</a></span><span class="sec-badge">講義 03 · p.25–36</span></h2>
 <!-- GEN:END sec:qualitative -->
 
   <p>前面所有的 x 都是數字。可是「貨架位置：好／中／差」、「是不是學生」、
@@ -1399,7 +1411,7 @@ Price:Age           0.0001    0.000   0.801  0.424</pre></div>
 <section id="problems">
 <!-- GEN:BEGIN sec:problems -->
   <div class="section-number">PART 06 · 六個潛在問題</div>
-  <h2>非線性、殘差相關、異質變異、離群、高槓桿、共線性 <span class="sec-badge">ISLP §3.3.3</span><span class="sec-badge">講義 03 · p.37–52</span></h2>
+  <h2>非線性、殘差相關、異質變異、離群、高槓桿、共線性 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.3.3 節</a></span><span class="sec-badge">講義 03 · p.37–52</span></h2>
 <!-- GEN:END sec:problems -->
 
   <p>線性迴歸配起來很容易，配出<strong>錯的</strong>結論也一樣容易。
@@ -1582,7 +1594,7 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
 <section id="vsknn">
 <!-- GEN:BEGIN sec:vsknn -->
   <div class="section-number">PART 07 · 與 KNN 的比較</div>
-  <h2>什麼時候線性模型會輸給 KNN <span class="sec-badge">ISLP §3.5</span><span class="sec-badge">講義 03 · p.53–58</span></h2>
+  <h2>什麼時候線性模型會輸給 KNN <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.5 節</a></span><span class="sec-badge">講義 03 · p.53–58</span></h2>
 <!-- GEN:END sec:vsknn -->
 
   <p>線性迴歸是<strong>參數方法</strong>（parametric）：它先假設 f 的形狀
@@ -1634,7 +1646,7 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 3 章精選題 <span class="sec-badge">ISLP §3.7 習題</span></h2>
+  <h2>動手驗證：教科書第 3 章精選題 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.7 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §3.7 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter3/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch03.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
@@ -1670,8 +1682,10 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
-  <h2>線性迴歸速查表 <span class="sec-badge">ISLP Ch.3</span></h2>
+  <div class="section-number">重點速查與來源</div>
+  <h2>線性迴歸速查表 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3 章</a></span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w03-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 3 章開頭；教科書 · 第 3.1.1 節；教科書 · 第 3.1.2 節；教科書 · 第 3.1.3 節；教科書 · 第 3.2 節；教科書 · 第 3.3.1–3.3.2 節；教科書 · 第 3.3.3 節；教科書 · 第 3.5 節。</li>
+<li id="w03-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>考前把這一頁掃過去就好。</p>
@@ -1702,8 +1716,8 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
   <strong>1. 多元迴歸的每個係數都是「控制住其他變數之後」的效果。</strong>
   單變數顯著、多變數不顯著（Advertising 的 newspaper、Boston 的 age）不是矛盾，
   是兩個問題的答案不同。<br>
-  <strong>2. 先 F 再 t。</strong>F 回答「至少有一個有用嗎」，t 回答「是哪些」。
-  跳過 F 直接看 t，變數一多就會被多重比較咬到。<br>
+  <strong>2. F 與 t 回答不同的假設。</strong>F 評估整體證據，t 評估指定係數；
+  兩者都可能有第一型錯誤，先通過 F 也不會自動校正多個個別檢定。<br>
   <strong>3. 六個問題裡只有「非線性」會讓係數本身失去意義；</strong>
   誤差相關、異質變異、共線性傷的是 SE 與檢定，係數還是無偏的。
   所以殘差圖不是選修，是必看。
@@ -2937,11 +2951,11 @@ HC.ready(function () {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"簡單線性迴歸（Simple Linear Regression）","back":"用單一預測變數 X 預測數值反應變數 Y，假設兩者近似直線關係 Y ≈ β₀ + β₁X。β₀ 是截距、β₁ 是斜率，兩者合稱模型係數。"},{"front":"最小平方法（Least Squares）","back":"挑選讓殘差平方和 RSS 最小的係數。簡單線性迴歸有封閉解：β̂₁ = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)²，β̂₀ = ȳ − β̂₁x̄。多元的矩陣寫法是 β̂ = (XᵀX)⁻¹Xᵀy。"},{"front":"殘差（Residual）","back":"第 i 筆的觀測值與配適值之差 eᵢ = yᵢ − ŷᵢ。最小平方解一定滿足 Σeᵢ = 0 與 Σeᵢxᵢ = 0，所以迴歸線必然通過 (x̄, ȳ)。"},{"front":"殘差平方和（RSS, Residual Sum of Squares）","back":"RSS = Σ(yᵢ − ŷᵢ)²，最小平方法要最小化的目標。它是係數的二次函數，所以誤差曲面是一個碗，等高線是橢圓，最小點唯一。"},{"front":"誤差曲面（Error Surface）","back":"把 RSS 看成參數（β₀, β₁）的函數所畫出來的曲面。線性迴歸的 RSS 是凸的二次式，等高線是同心橢圓，可以直接用封閉解找到最低點，不必做梯度下降。"},{"front":"母體迴歸線（Population Regression Line）","back":"真實但看不到的 Y = β₀ + β₁X + ε 那條線。最小平方線只是用一份樣本估出來的版本；換一份樣本就會得到不同的最小平方線，但母體迴歸線不動。"},{"front":"無偏（Unbiased）","back":"估計量在大量重複抽樣下的平均值恰等於被估的真值。最小平方的 β̂₀、β̂₁ 都是無偏的：單一份樣本可能高估或低估，但沒有系統性偏移。"},{"front":"標準誤（Standard Error, SE）","back":"估計量在重複抽樣下的標準差。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)²：x 散得愈開、樣本愈多、雜訊愈小，斜率就估得愈準。σ² 未知時用 RSE² 代替。"},{"front":"信賴區間（Confidence Interval）","back":"β̂₁ ± t₀.₉₇₅·SE(β̂₁)，實務上近似 β̂₁ ± 2·SE(β̂₁)。解讀是「重複抽樣時有 95% 的區間會蓋住真值」，不是「真值有 95% 的機率落在這個區間」。"},{"front":"預測區間（Prediction Interval）","back":"對「單一筆新觀測值」的區間，比同一點的信賴區間寬，因為它額外算進不可約誤差 ε 的變異。信賴區間只針對平均反應 f(x)。"},{"front":"t 統計量（t-statistic）","back":"t = β̂ⱼ / SE(β̂ⱼ)，衡量係數離 0 有幾個標準誤。在 H₀: βⱼ = 0 下服從自由度 n−p−1 的 t 分佈；n 大時 |t| 超過約 2 就對應 5% 顯著水準。"},{"front":"p 值（p-value）","back":"假設 H₀ 成立時，看到「像現在這麼極端或更極端」的統計量的機率。p 值小表示這種關聯不太可能只是碰巧，於是拒絕 H₀。它不是「H₀ 為真的機率」。"},{"front":"殘差標準誤（RSE, Residual Standard Error）","back":"RSE = √(RSS/(n−p−1))，是誤差標準差 σ 的估計，單位跟 y 一樣。Advertising 用三個媒體的模型 RSE = 1.69，而 sales 平均 14.02，約 12% 的相對誤差。"},{"front":"R²（R-squared）","back":"R² = 1 − RSS/TSS，被模型解釋掉的變異比例，無單位、介於 0 與 1。簡單迴歸時 R² 等於 x 與 y 相關係數的平方。加變數只會讓 R² 上升，所以不能用它比較變數個數不同的模型。"},{"front":"多元線性迴歸（Multiple Linear Regression）","back":"Y = β₀ + β₁X₁ + … + βₚXₚ + ε。每個 βⱼ 的解讀是「固定其他所有變數不動時，Xⱼ 增加一單位對 Y 的平均影響」。"},{"front":"偏迴歸係數（Partial Regression Coefficient）","back":"多元迴歸裡的 βⱼ：控制住其他變數之後 Xⱼ 的邊際效果。它跟單變數迴歸的係數問的是不同問題，數值當然可以不同，甚至換方向。"},{"front":"F 統計量（F-statistic）","back":"F = ((TSS−RSS)/p) / (RSS/(n−p−1))，檢定 H₀: β₁ = … = βₚ = 0。H₀ 成立時期望值約為 1；F 遠大於 1 表示至少有一個變數有用。它一次檢定全體，避開多重比較的問題。"},{"front":"虛擬變數（Dummy Variable）","back":"把質性變數編成 0／1 的指標欄。k 個水準只要 k−1 個虛擬變數；係數的解讀都是「相對於基準水準的差距」。"},{"front":"基準水準（Baseline Level）","back":"質性變數中沒有分到虛擬變數的那個水準，截距代表它的平均。換一個水準當基準，係數與 p 值都會變，但配適值與預測完全不變。"},{"front":"交互作用（Interaction）","back":"加入乘積項 X₁X₂，讓 X₁ 的效果隨 X₂ 而變：Y = β₀ + (β₁ + β₃X₂)X₁ + β₂X₂。Advertising 加了 TV×radio 之後 R² 從 89.7% 跳到 96.8%，這就是行銷上說的綜效。"},{"front":"階層原則（Hierarchical Principle）","back":"只要模型放了交互作用項，就要一起放它的主效果，即使主效果的 p 值不顯著。因為乘積項通常與主效果相關，抽掉主效果會改變交互作用項的意義。"},{"front":"異質變異（Heteroscedasticity）","back":"誤差的變異數隨 x 或配適值改變，殘差圖呈漏斗形。此時最小平方估計仍無偏，但 SE、信賴區間與檢定會失準。可用 log y 或 √y 轉換，或改用加權最小平方。"},{"front":"離群值（Outlier）","back":"y 遠離模型預測的點。判準看學生化殘差，絕對值超過 3 就可疑。它會明顯推高 RSE 與拉低 R²，但如果槓桿值不高，對係數的影響可能有限。"},{"front":"學生化殘差（Studentized Residual）","back":"把殘差除以它自己的估計標準差：eᵢ / (RSE·√(1−hᵢ))。因為每筆殘差的變異數不同，直接比較原始殘差並不公平，學生化之後才有共同的尺度。"},{"front":"槓桿值（Leverage）","back":"帽子矩陣的對角元 hᵢ，衡量第 i 筆的 x 有多不尋常。簡單迴歸時 hᵢ = 1/n + (xᵢ−x̄)²/Σ(xⱼ−x̄)²，介於 1/n 與 1，平均恰為 (p+1)/n。遠超過這個平均就是高槓桿點。"},{"front":"共線性（Collinearity）","back":"兩個或多個預測變數彼此高度相關。此時 RSS 的等高線由碗變成狹長的溝，係數組合難以分辨，SE 變大、t 變小，檢定的檢定力下降——變數其實有用卻檢不出來。"},{"front":"變異數膨脹因子（VIF, Variance Inflation Factor）","back":"VIF(β̂ⱼ) = 1/(1−R²_{Xⱼ|X₋ⱼ})，即 Xⱼ 對其他所有變數迴歸的 R² 換算出的膨脹倍數。最小值 1；超過 5 或 10 就代表共線性嚴重。SE 的膨脹倍數是 √VIF。"},{"front":"維度詛咒（Curse of Dimensionality）","back":"p 變大時，任一測試點的「最近鄰」其實都離得很遠，KNN 之類的無母數方法因此迅速退化。線性迴歸只多估幾個係數，退化得慢得多——這是每個變數的樣本數太少時偏好參數方法的理由。"}];
+const FLASHCARDS = [{"front":"簡單線性迴歸（Simple Linear Regression）","back":"用單一預測變數 X 預測數值反應變數 Y，假設兩者近似直線關係 Y ≈ β₀ + β₁X。β₀ 是截距、β₁ 是斜率，兩者合稱模型係數。"},{"front":"最小平方法（Least Squares）","back":"挑選讓殘差平方和 RSS 最小的係數。簡單線性迴歸有封閉解：β̂₁ = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)²，β̂₀ = ȳ − β̂₁x̄。多元的矩陣寫法是 β̂ = (XᵀX)⁻¹Xᵀy。"},{"front":"殘差（Residual）","back":"第 i 筆的觀測值與配適值之差 eᵢ = yᵢ − ŷᵢ。最小平方解一定滿足 Σeᵢ = 0 與 Σeᵢxᵢ = 0，所以迴歸線必然通過 (x̄, ȳ)。"},{"front":"殘差平方和（RSS, Residual Sum of Squares）","back":"RSS = Σ(yᵢ − ŷᵢ)²，最小平方法要最小化的目標。它是係數的二次函數，所以誤差曲面是一個碗，等高線是橢圓，最小點唯一。"},{"front":"誤差曲面（Error Surface）","back":"把 RSS 看成參數（β₀, β₁）的函數所畫出來的曲面。線性迴歸的 RSS 是凸的二次式，等高線是同心橢圓，可以直接用封閉解找到最低點，不必做梯度下降。"},{"front":"母體迴歸線（Population Regression Line）","back":"真實但看不到的 Y = β₀ + β₁X + ε 那條線。最小平方線只是用一份樣本估出來的版本；換一份樣本就會得到不同的最小平方線，但母體迴歸線不動。"},{"front":"無偏（Unbiased）","back":"估計量在大量重複抽樣下的平均值恰等於被估的真值。最小平方的 β̂₀、β̂₁ 都是無偏的：單一份樣本可能高估或低估，但沒有系統性偏移。"},{"front":"標準誤（Standard Error, SE）","back":"估計量在重複抽樣下的標準差。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)²：x 散得愈開、樣本愈多、雜訊愈小，斜率就估得愈準。σ² 未知時用 RSE² 代替。"},{"front":"信賴區間（Confidence Interval）","back":"β̂₁ ± t₀.₉₇₅·SE(β̂₁)，實務上近似 β̂₁ ± 2·SE(β̂₁)。解讀是「重複抽樣時有 95% 的區間會蓋住真值」，不是「真值有 95% 的機率落在這個區間」。"},{"front":"預測區間（Prediction Interval）","back":"對「單一筆新觀測值」的區間，比同一點的信賴區間寬，因為它額外算進不可約誤差 ε 的變異。信賴區間只針對平均反應 f(x)。"},{"front":"t 統計量（t-statistic）","back":"t = β̂ⱼ / SE(β̂ⱼ)，衡量係數離 0 有幾個標準誤。在 H₀: βⱼ = 0 下服從自由度 n−p−1 的 t 分佈；n 大時 |t| 超過約 2 就對應 5% 顯著水準。"},{"front":"p 值（p-value）","back":"假設 H₀ 成立時，看到「像現在這麼極端或更極端」的統計量的機率。p 值小表示這種關聯不太可能只是碰巧，於是拒絕 H₀。它不是「H₀ 為真的機率」。"},{"front":"殘差標準誤（RSE, Residual Standard Error）","back":"RSE = √(RSS/(n−p−1))，是誤差標準差 σ 的估計，單位跟 y 一樣。Advertising 用三個媒體的模型 RSE = 1.69，而 sales 平均 14.02，約 12% 的相對誤差。"},{"front":"R²（R-squared）","back":"R² = 1 − RSS/TSS，被模型解釋掉的變異比例，無單位、介於 0 與 1。簡單迴歸時 R² 等於 x 與 y 相關係數的平方。加變數只會讓 R² 上升，所以不能用它比較變數個數不同的模型。"},{"front":"多元線性迴歸（Multiple Linear Regression）","back":"Y = β₀ + β₁X₁ + … + βₚXₚ + ε。每個 βⱼ 的解讀是「固定其他所有變數不動時，Xⱼ 增加一單位對 Y 的平均影響」。"},{"front":"偏迴歸係數（Partial Regression Coefficient）","back":"多元迴歸裡的 βⱼ：控制住其他變數之後 Xⱼ 的邊際效果。它跟單變數迴歸的係數問的是不同問題，數值當然可以不同，甚至換方向。"},{"front":"F 統計量（F-statistic）","back":"F = ((TSS−RSS)/p) / (RSS/(n−p−1))，檢定 H₀: β₁ = … = βₚ = 0。H₀ 成立時期望值約為 1；F 遠大於 1 表示至少有一個變數有用。它一次檢定全體；模型假設成立且顯著水準為 0.05 時，仍有 5% 第一型錯誤率。通過 F 不等於完成個別係數檢定的多重比較校正。"},{"front":"虛擬變數（Dummy Variable）","back":"把質性變數編成 0／1 的指標欄。k 個水準只要 k−1 個虛擬變數；係數的解讀都是「相對於基準水準的差距」。"},{"front":"基準水準（Baseline Level）","back":"質性變數中沒有分到虛擬變數的那個水準，截距代表它的平均。換一個水準當基準，係數與 p 值都會變，但配適值與預測完全不變。"},{"front":"交互作用（Interaction）","back":"加入乘積項 X₁X₂，讓 X₁ 的效果隨 X₂ 而變：Y = β₀ + (β₁ + β₃X₂)X₁ + β₂X₂。Advertising 加了 TV×radio 之後 R² 從 89.7% 跳到 96.8%，這就是行銷上說的綜效。"},{"front":"階層原則（Hierarchical Principle）","back":"只要模型放了交互作用項，就要一起放它的主效果，即使主效果的 p 值不顯著。因為乘積項通常與主效果相關，抽掉主效果會改變交互作用項的意義。"},{"front":"異質變異（Heteroscedasticity）","back":"誤差的變異數隨 x 或配適值改變，殘差圖呈漏斗形。此時最小平方估計仍無偏，但 SE、信賴區間與檢定會失準。可用 log y 或 √y 轉換，或改用加權最小平方。"},{"front":"離群值（Outlier）","back":"y 遠離模型預測的點。判準看學生化殘差，絕對值超過 3 就可疑。它會明顯推高 RSE 與拉低 R²，但如果槓桿值不高，對係數的影響可能有限。"},{"front":"學生化殘差（Studentized Residual）","back":"把殘差除以它自己的估計標準差：eᵢ / (RSE·√(1−hᵢ))。因為每筆殘差的變異數不同，直接比較原始殘差並不公平，學生化之後才有共同的尺度。"},{"front":"槓桿值（Leverage）","back":"帽子矩陣的對角元 hᵢ，衡量第 i 筆的 x 有多不尋常。簡單迴歸時 hᵢ = 1/n + (xᵢ−x̄)²/Σ(xⱼ−x̄)²，介於 1/n 與 1，平均恰為 (p+1)/n。遠超過這個平均就是高槓桿點。"},{"front":"共線性（Collinearity）","back":"兩個或多個預測變數彼此高度相關。此時 RSS 的等高線由碗變成狹長的溝，係數組合難以分辨，SE 變大、t 變小，檢定的檢定力下降——變數其實有用卻檢不出來。"},{"front":"變異數膨脹因子（VIF, Variance Inflation Factor）","back":"VIF(β̂ⱼ) = 1/(1−R²_{Xⱼ|X₋ⱼ})，即 Xⱼ 對其他所有變數迴歸的 R² 換算出的膨脹倍數。最小值 1；超過 5 或 10 就代表共線性嚴重。SE 的膨脹倍數是 √VIF。"},{"front":"維度詛咒（Curse of Dimensionality）","back":"p 變大時，任一測試點的「最近鄰」其實都離得很遠，KNN 之類的無母數方法因此迅速退化。線性迴歸只多估幾個係數，退化得慢得多——這是每個變數的樣本數太少時偏好參數方法的理由。"}];
 HC.initFlashcards();
 </script>
 <script>
-const BANKQUIZ = [{"topic":"最小平方法","q":"關於簡單線性迴歸的最小平方解 β̂₀ = ȳ − β̂₁x̄、β̂₁ = Σ(xᵢ−x̄)(yᵢ−ȳ)／Σ(xᵢ−x̄)²，下面哪一句是錯的？","options":["最小平方線一定通過樣本平均點 (x̄, ȳ)","殘差的總和一定是 0","最小平方法需要假設誤差服從常態分佈才能求解","RSS 是 (β₀, β₁) 的凸二次函數，所以最小點唯一"],"answer":2,"why":["這句是對的。把 x = x̄ 代進 ŷ = β̂₀ + β̂₁x，直接得到 ŷ = ȳ——這正是 ISLP 3.7 第 6 題要你證的事。","這句是對的。對 β₀ 偏微分等於零就給出 Σ(yᵢ − β̂₀ − β̂₁xᵢ) = 0，也就是 Σeᵢ = 0（前提是模型有截距項）。","答對了，這句是錯的。<strong>求解</strong>最小平方係數只是一個代數最佳化問題，完全不需要任何機率假設。常態性只在後面要算 t 檢定、F 檢定、信賴區間時才需要——把「估計」和「推論」分開是這一章的關鍵。","這句是對的。RSS = Σ(yᵢ − β₀ − β₁xᵢ)² 展開後是 β 的二次式且係數矩陣正定（只要 x 不是全部相同），所以誤差曲面是一個碗，等高線是橢圓。"]},{"topic":"標準誤與 t 檢定","q":"SE(β̂₁)² = σ²／Σ(xᵢ−x̄)²。想讓斜率估得更準（SE 更小），下面哪個做法<strong>沒有</strong>幫助？","options":["增加樣本數 n","把 x 的取值設計得更分散","設法降低誤差的變異數 σ²","把 x 整體平移，讓 x̄ 變成 0"],"answer":3,"why":["有幫助。n 變大會讓 Σ(xᵢ−x̄)² 變大，分母變大 SE 就變小。","有幫助，而且效果常常最明顯。分母就是 x 的離散程度：兩端各放一半的點，量斜率的「槓桿」最長。這是實驗設計的核心想法。","有幫助。σ² 是分子，雜訊小則所有係數都估得準。實務上的做法是把能解釋 y 的變數放進模型，把 σ² 壓下來。","答對了，這個沒有幫助。平移 x 會改變 x̄，因此會改變 SE(β̂₀)（它的公式含 x̄²），但 Σ(xᵢ−x̄)² 完全不變，所以 SE(β̂₁) 一模一樣。中心化只是讓截距變得好解讀，不會讓斜率變準。"]},{"topic":"R² 與 RSE","q":"Advertising 資料上，只用 TV 的模型 R² = 0.612、RSE = 3.26；加入 radio 後 R² = 0.897、RSE = 1.681；再加 newspaper 後 R² = 0.897、RSE = 1.686。RSE 為什麼會在加入變數後<strong>變大</strong>？","options":["因為加入 newspaper 讓 RSS 上升了","因為 RSE = √(RSS／(n−p−1))：RSS 只降了一點點，但分母的 n−p−1 少了 1","因為 newspaper 與 radio 相關，破壞了無偏性","因為 R² 已經飽和，RSE 的定義在這種情況下不再適用"],"answer":1,"why":["不對。加入任何變數，訓練資料上的 RSS 都只會下降或不變（最壞情況是係數配到 0），絕不會上升。","答對了。RSS 從 556.91 只掉到 556.83，幾乎沒變；但自由度 n−p−1 從 197 變成 196。分子幾乎不動而分母變小，RSE 就上升了。這正是「多加一個沒用的變數要付代價」被量化出來的樣子——R² 看不到這個代價，RSE 看得到。","不對。共線性會讓 SE 變大，但最小平方估計仍然是無偏的；而且這裡 VIF 只有 1.005／1.145／1.145，幾乎沒有共線性。","不對。RSE 的定義永遠適用，它就是照 √(RSS／(n−p−1)) 算出來的，沒有任何「飽和」的例外。"]},{"topic":"t 檢定與 F 檢定","q":"手上有 p = 100 個純雜訊的預測變數、n = 1000 筆資料，y 與所有變數都無關。若逐一做 t 檢定（α = 0.05），會發生什麼？F 檢定又會怎麼說？","options":["t 檢定預期約有 5 個變數「顯著」；F 檢定的值會接近 1，不會拒絕 H₀","t 檢定與 F 檢定都不會拒絕，因為變數確實與 y 無關","t 檢定不會拒絕，但 F 檢定會誤判為顯著","兩者都會拒絕，因為 p 太大讓兩個檢定同時失效"],"answer":0,"why":["答對了。這正是多重比較問題：100 個各有 5% 誤判率的檢定，預期就會冒出約 5 個假顯著。F 檢定則一次檢定全體，H₀ 成立時它的期望值約為 1，所以不會被這種隨機波動騙到。先看 F 再看個別 t，順序不能顛倒。","不對。「變數與 y 無關」講的是真相，不是檢定的行為。第一型錯誤率 5% 的意思就是：H₀ 為真時仍有 5% 的機會拒絕它。100 個檢定就預期約 5 次誤判。","剛好講反了。F 檢定是用來抵抗多重比較的那一個；會被 5% 誤判率累積起來咬到的是逐一做的 t 檢定。","不對。F 檢定在 n 遠大於 p 時運作良好。要注意的是另一種情況：p ≥ n 時 F 檢定根本算不出來（RSS 可以壓到 0），那時要改用第 6 章的方法。"]},{"topic":"質性變數與交互作用","q":"用 Credit 資料配 balance ≈ β₀ + β₁·income + β₂·student + β₃·(income×student)，得到 β̂₁ = 6.22、β̂₃ = −2.00。這代表什麼？","options":["學生的 balance 隨 income 上升的斜率是 6.22 − 2.00 = 4.22，比非學生的 6.22 平緩","學生的 balance 平均比非學生少 2.00","income 對 balance 沒有影響，因為兩個係數幾乎抵銷","β₃ 為負代表交互作用項應該從模型中移除"],"answer":0,"why":["答對了。有交互作用時模型變成兩條<strong>不平行</strong>的線：非學生的斜率是 β̂₁，學生的斜率是 β̂₁ + β̂₃。負的 β̂₃ 意思是 income 對學生的 balance 影響比較小。沒有交互作用時兩條線平行，只有截距不同。","不對，這是 β₂（截距的差距）的解讀，不是 β₃。β₃ 乘的是 income×student，它調的是<strong>斜率</strong>差，不是水準差。","不對。6.22 與 −2.00 不是同一個東西的兩半：前者是非學生的斜率，後者是學生比非學生少掉的斜率。學生的斜率 4.22 仍然明顯為正。","不對。係數的正負跟該不該留在模型裡無關，要看的是 p 值與研究問題。順帶一提，這一組的交互作用項 t = −1.15、p = 0.25，確實不算顯著——但理由是 p 值，不是負號。"]},{"topic":"共線性與診斷","q":"Credit 資料上，balance 對 age + limit 迴歸時 limit 的 t = 34.5（p < 0.0001）；改成對 rating + limit 迴歸時 limit 的 t = 0.38（p = 0.70）。最合理的解讀是？","options":["limit 其實與 balance 無關，第一個模型的顯著是假的","rating 與 limit 高度共線（VIF 約 160），limit 的 SE 膨脹了約 12 倍，於是 t 被壓下來","第二個模型違反了常態假設，t 檢定失效","rating 是比 limit 更好的變數，所以 limit 的係數自動變成 0"],"answer":1,"why":["不對。兩個模型的 limit 係數都是無偏估計；問題出在第二個模型的<strong>精確度</strong>，不是方向。單獨看 limit 與 balance 的關係非常強。","答對了。這就是 ISLP 表 3.11：SE(β̂limit) 從 0.005 膨脹到 0.064，約 12 倍，係數估計本身還在，只是被雜訊淹沒。共線性降低的是檢定的檢定力，不是估計的無偏性。處理方式是拿掉其中一個，或把兩者合成一個信用評分。","不對。共線性跟誤差的分佈假設是兩件不相干的事。就算誤差完全常態，共線性照樣會把 SE 撐大。","不對。最小平方法不會「自動」把任何係數設成 0（那是第 6 章 lasso 才會做的事）。這裡 β̂limit = 0.025，不是 0，只是它的 SE 比它自己還大。"]}];
+const BANKQUIZ = [{"topic":"最小平方法","q":"關於簡單線性迴歸的最小平方解 β̂₀ = ȳ − β̂₁x̄、β̂₁ = Σ(xᵢ−x̄)(yᵢ−ȳ)／Σ(xᵢ−x̄)²，下面哪一句是錯的？","options":["最小平方線一定通過樣本平均點 (x̄, ȳ)","殘差的總和一定是 0","最小平方法需要假設誤差服從常態分佈才能求解","RSS 是 (β₀, β₁) 的凸二次函數，所以最小點唯一"],"answer":2,"why":["這句是對的。把 x = x̄ 代進 ŷ = β̂₀ + β̂₁x，直接得到 ŷ = ȳ——這正是 ISLP 3.7 第 6 題要你證的事。","這句是對的。對 β₀ 偏微分等於零就給出 Σ(yᵢ − β̂₀ − β̂₁xᵢ) = 0，也就是 Σeᵢ = 0（前提是模型有截距項）。","答對了，這句是錯的。<strong>求解</strong>最小平方係數只是一個代數最佳化問題，完全不需要任何機率假設。常態性只在後面要算 t 檢定、F 檢定、信賴區間時才需要——把「估計」和「推論」分開是這一章的關鍵。","這句是對的。RSS = Σ(yᵢ − β₀ − β₁xᵢ)² 展開後是 β 的二次式且係數矩陣正定（只要 x 不是全部相同），所以誤差曲面是一個碗，等高線是橢圓。"]},{"topic":"標準誤與 t 檢定","q":"SE(β̂₁)² = σ²／Σ(xᵢ−x̄)²。想讓斜率估得更準（SE 更小），下面哪個做法<strong>沒有</strong>幫助？","options":["增加樣本數 n","把 x 的取值設計得更分散","設法降低誤差的變異數 σ²","把 x 整體平移，讓 x̄ 變成 0"],"answer":3,"why":["有幫助。n 變大會讓 Σ(xᵢ−x̄)² 變大，分母變大 SE 就變小。","有幫助，而且效果常常最明顯。分母就是 x 的離散程度：兩端各放一半的點，量斜率的「槓桿」最長。這是實驗設計的核心想法。","有幫助。σ² 是分子，雜訊小則所有係數都估得準。實務上的做法是把能解釋 y 的變數放進模型，把 σ² 壓下來。","答對了，這個沒有幫助。平移 x 會改變 x̄，因此會改變 SE(β̂₀)（它的公式含 x̄²），但 Σ(xᵢ−x̄)² 完全不變，所以 SE(β̂₁) 一模一樣。中心化只是讓截距變得好解讀，不會讓斜率變準。"]},{"topic":"R² 與 RSE","q":"Advertising 資料上，只用 TV 的模型 R² = 0.612、RSE = 3.26；加入 radio 後 R² = 0.897、RSE = 1.681；再加 newspaper 後 R² = 0.897、RSE = 1.686。RSE 為什麼會在加入變數後<strong>變大</strong>？","options":["因為加入 newspaper 讓 RSS 上升了","因為 RSE = √(RSS／(n−p−1))：RSS 只降了一點點，但分母的 n−p−1 少了 1","因為 newspaper 與 radio 相關，破壞了無偏性","因為 R² 已經飽和，RSE 的定義在這種情況下不再適用"],"answer":1,"why":["不對。加入任何變數，訓練資料上的 RSS 都只會下降或不變（最壞情況是係數配到 0），絕不會上升。","答對了。RSS 從 556.91 只掉到 556.83，幾乎沒變；但自由度 n−p−1 從 197 變成 196。分子幾乎不動而分母變小，RSE 就上升了。這正是「多加一個沒用的變數要付代價」被量化出來的樣子——R² 看不到這個代價，RSE 看得到。","不對。共線性會讓 SE 變大，但最小平方估計仍然是無偏的；而且這裡 VIF 只有 1.005／1.145／1.145，幾乎沒有共線性。","不對。RSE 的定義永遠適用，它就是照 √(RSS／(n−p−1)) 算出來的，沒有任何「飽和」的例外。"]},{"topic":"t 檢定與 F 檢定","q":"手上有 p = 100 個純雜訊的預測變數、n = 1000 筆資料，y 與所有變數都無關。若逐一做 t 檢定（α = 0.05），會發生什麼？F 檢定又會怎麼說？","options":["t 檢定預期約有 5 個變數「顯著」；模型假設成立時，顯著水準 0.05 的整體 F 檢定仍有 5% 機率誤拒 H₀","t 檢定與 F 檢定都不會拒絕，因為變數確實與 y 無關","t 檢定不會拒絕，但 F 檢定會誤判為顯著","兩者都會拒絕，因為 p 太大讓兩個檢定同時失效"],"answer":0,"why":["答對了。100 個各有 5% 第一型錯誤率的檢定，預期有約 5 個假陽性。整體 F 的誤拒率維持 5%，不是零；而先通過整體 F，也不等於已替後續個別檢定完成多重比較校正。","不對。「變數與 y 無關」講的是真相，不是檢定的行為。第一型錯誤率 5% 的意思就是：H₀ 為真時仍有 5% 的機會拒絕它。100 個檢定就預期約 5 次誤判。","這不是能事先保證的結果。t 與 F 都可能有第一型錯誤；兩者分別檢定單一係數與整體假設。逐一探索許多 t 檢定還會增加發現假陽性的機會。","不對。F 檢定在 n 遠大於 p 時運作良好。要注意的是另一種情況：p ≥ n 時，全模型不滿足一般 F 檢定所需的滿欄秩與正殘差自由度條件，要改用適合高維度的估計與評估方法。"]},{"topic":"質性變數與交互作用","q":"用 Credit 資料配 balance ≈ β₀ + β₁·income + β₂·student + β₃·(income×student)，得到 β̂₁ = 6.22、β̂₃ = −2.00。這代表什麼？","options":["學生的 balance 隨 income 上升的斜率是 6.22 − 2.00 = 4.22，比非學生的 6.22 平緩","學生的 balance 平均比非學生少 2.00","income 對 balance 沒有影響，因為兩個係數幾乎抵銷","β₃ 為負代表交互作用項應該從模型中移除"],"answer":0,"why":["答對了。有交互作用時模型變成兩條<strong>不平行</strong>的線：非學生的斜率是 β̂₁，學生的斜率是 β̂₁ + β̂₃。負的 β̂₃ 意思是 income 對學生的 balance 影響比較小。沒有交互作用時兩條線平行，只有截距不同。","不對，這是 β₂（截距的差距）的解讀，不是 β₃。β₃ 乘的是 income×student，它調的是<strong>斜率</strong>差，不是水準差。","不對。6.22 與 −2.00 不是同一個東西的兩半：前者是非學生的斜率，後者是學生比非學生少掉的斜率。學生的斜率 4.22 仍然明顯為正。","不對。係數的正負跟該不該留在模型裡無關，要看的是 p 值與研究問題。順帶一提，這一組的交互作用項 t = −1.15、p = 0.25，確實不算顯著——但理由是 p 值，不是負號。"]},{"topic":"共線性與診斷","q":"Credit 資料上，balance 對 age + limit 迴歸時 limit 的 t = 34.5（p < 0.0001）；改成對 rating + limit 迴歸時 limit 的 t = 0.38（p = 0.70）。最合理的解讀是？","options":["limit 其實與 balance 無關，第一個模型的顯著是假的","rating 與 limit 高度共線（VIF 約 160），limit 的 SE 膨脹了約 12 倍，於是 t 被壓下來","第二個模型違反了常態假設，t 檢定失效","rating 是比 limit 更好的變數，所以 limit 的係數自動變成 0"],"answer":1,"why":["不對。兩個模型的 limit 係數都是無偏估計；問題出在第二個模型的<strong>精確度</strong>，不是方向。單獨看 limit 與 balance 的關係非常強。","答對了。這就是 ISLP 表 3.11：SE(β̂limit) 從 0.005 膨脹到 0.064，約 12 倍，係數估計本身還在，只是被雜訊淹沒。共線性降低的是檢定的檢定力，不是估計的無偏性。處理方式是拿掉其中一個，或把兩者合成一個信用評分。","不對。共線性跟誤差的分佈假設是兩件不相干的事。就算誤差完全常態，共線性照樣會把 SE 撐大。","不對。最小平方法不會「自動」把任何係數設成 0（那是第 6 章 lasso 才會做的事）。這裡 β̂limit = 0.025，不是 0，只是它的 SE 比它自己還大。"]}];
 /* ===== 題庫自我檢測引擎（資料在 BANKQUIZ） ===== */
 (() => {
   const box = document.getElementById('bqBox');

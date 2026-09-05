@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -666,7 +677,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#fitting" data-target="fitting"><span class="fn-num">P05</span><span class="fn-name">怎麼配適</span></a>
   <a href="#doubledesc" data-target="doubledesc"><span class="fn-num">P06</span><span class="fn-name">雙下降與該不該用</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -690,10 +701,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.10 · 補充）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照課本</strong>：每個 §徽章都標了 ISLP 節號，細節與完整推導請回課本。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://github.com/intro-stat-learning/ISLP_labs/blob/6bf6160a3dd180c6651ba06655b453e81f91dc20/Ch10-deeplearning-lab.ipynb" target="_blank" rel="noopener">📓 ISLP 官方 Lab</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 ESL 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照課本</strong>：章節旁標示課本節號，細節與完整推導請回課本。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://github.com/intro-stat-learning/ISLP_labs/blob/6bf6160a3dd180c6651ba06655b453e81f91dc20/Ch10-deeplearning-lab.ipynb" target="_blank" rel="noopener">📓 ISLP 官方 Lab</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -708,7 +720,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#fitting"><span class="toc-num">P05</span>怎麼配適</a>
     <a href="#doubledesc"><span class="toc-num">P06</span>雙下降與該不該用</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -716,7 +728,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>神經網路不是新東西：從線性模型長出隱藏層 <span class="sec-badge">ISLP §10 開頭</span></h2>
+  <h2>神經網路不是新東西：從線性模型長出隱藏層 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10 章開頭</a></span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>先講清楚這一章的定位：<strong>本課沒有教第 10 章</strong>。它不在考試範圍，
@@ -761,7 +773,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="single">
 <!-- GEN:BEGIN sec:single -->
   <div class="section-number">PART 01 · 單層神經網路</div>
-  <h2>一層隱藏層：非線性怎麼進來的 <span class="sec-badge">ISLP §10.1</span><span class="sec-badge">ESL §11.3</span></h2>
+  <h2>一層隱藏層：非線性怎麼進來的 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.1 節</a></span><span class="sec-badge"><a href="#w11-source-esl">進階參考 · 第 11.3 節</a></span></h2>
 <!-- GEN:END sec:single -->
 
   <p>單層網路的結構只有三步：輸入做 K 組線性組合、每一組過同一個 g、
@@ -947,7 +959,7 @@ Estimated Total Size (MB): 0.09
 <section id="multi">
 <!-- GEN:BEGIN sec:multi -->
   <div class="section-number">PART 02 · 多層與 MNIST</div>
-  <h2>疊第二層之後：softmax 與 235,146 個參數 <span class="sec-badge">ISLP §10.2</span><span class="sec-badge">ESL §11.4–11.6</span></h2>
+  <h2>疊第二層之後：softmax 與 235,146 個參數 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.2 節</a></span><span class="sec-badge"><a href="#w11-source-esl">進階參考 · 第 11.4–11.6 節</a></span></h2>
 <!-- GEN:END sec:multi -->
 
   <p>多加一層之後，第二層的輸入不再是 X，而是第一層的輸出 A^(1)。
@@ -1117,7 +1129,7 @@ Estimated Total Size (MB): 2.55
 <section id="cnn">
 <!-- GEN:BEGIN sec:cnn -->
   <div class="section-number">PART 03 · 卷積神經網路</div>
-  <h2>把「哪裡」的資訊丟掉一部分：卷積與池化 <span class="sec-badge">ISLP §10.3</span></h2>
+  <h2>把「哪裡」的資訊丟掉一部分：卷積與池化 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.3 節</a></span></h2>
 <!-- GEN:END sec:cnn -->
 
   <p>上一節把 28×28 攤平成 784 的那一刻，「這兩個像素相鄰」的資訊就沒了。
@@ -1286,7 +1298,7 @@ Image: book_images/Sleeping_Cat.jpg
 <section id="rnn">
 <!-- GEN:BEGIN sec:rnn -->
   <div class="section-number">PART 04 · 文件分類與 RNN</div>
-  <h2>順序有意義的時候：詞袋不夠用 <span class="sec-badge">ISLP §10.4</span><span class="sec-badge">ISLP §10.5</span></h2>
+  <h2>順序有意義的時候：詞袋不夠用 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.4 節</a></span><span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.5 節</a></span></h2>
 <!-- GEN:END sec:rnn -->
 
   <p>影像的結構是空間上的，文字與股價的結構是<strong>順序上的</strong>。
@@ -1387,7 +1399,7 @@ Image: book_images/Sleeping_Cat.jpg
 <section id="fitting">
 <!-- GEN:BEGIN sec:fitting -->
   <div class="section-number">PART 05 · 怎麼配適</div>
-  <h2>反向傳播、SGD、dropout：非凸問題怎麼還是解得動 <span class="sec-badge">ISLP §10.7</span><span class="sec-badge">ESL §11.4 · 進階</span></h2>
+  <h2>反向傳播、SGD、dropout：非凸問題怎麼還是解得動 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.7 節</a></span><span class="sec-badge"><a href="#w11-source-esl">進階參考 · 第 11.4 節 · 進階</a></span></h2>
 <!-- GEN:END sec:fitting -->
 
   <p>前面都在講模型長什麼樣，這一節講怎麼把參數估出來。目標函數以量化反應為例：</p>
@@ -1463,7 +1475,7 @@ Image: book_images/Sleeping_Cat.jpg
 <section id="doubledesc">
 <!-- GEN:BEGIN sec:doubledesc -->
   <div class="section-number">PART 06 · 雙下降與該不該用</div>
-  <h2>參數比樣本多還會變好？以及什麼時候該收手 <span class="sec-badge">ISLP §10.8</span><span class="sec-badge">ISLP §10.6</span></h2>
+  <h2>參數比樣本多還會變好？以及什麼時候該收手 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.8 節</a></span><span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.6 節</a></span></h2>
 <!-- GEN:END sec:doubledesc -->
 
   <p>從第 2 章開始，這本書一直在講同一件事：測試誤差對模型彈性是 U 形的，
@@ -1523,8 +1535,8 @@ Image: book_images/Sleeping_Cat.jpg
   <p>順帶把 §10.6 的建議收在這裡。ISLP 對「該不該用深度學習」的答案是：
   <strong>先跑簡單模型當基準，讓深度學習去證明自己值得。</strong>
   Hitters 那個例子就是示範：三個模型表現相近時，選看得懂的那個。
-  但反過來，CIFAR 的影像與 IMDB 的文字這種輸入本身有結構、樣本量又大的問題，
-  線性模型從一開始就沒有機會。</p>
+  CIFAR 的影像具有空間結構，適合發揮 CNN 的優勢；文字分類仍要實測詞袋的線性基準。
+  ISLP 圖 10.11 的 IMDB 比較中，lasso 邏輯斯迴歸與兩隱藏層網路的測試準確率就相近。</p>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 雙下降在說什麼</div>
@@ -1536,7 +1548,7 @@ Image: book_images/Sleeping_Cat.jpg
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 10 章精選題 <span class="sec-badge">ISLP §10.10 習題</span></h2>
+  <h2>動手驗證：教科書第 10 章精選題 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.10 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §10.10 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面2個站。</p>
   <div class="sol-links"><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch10.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
@@ -1572,8 +1584,10 @@ Image: book_images/Sleeping_Cat.jpg
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
-  <h2>深度學習（補充）速查表 <span class="sec-badge">ISLP Ch.10 · 補充</span></h2>
+  <div class="section-number">重點速查與來源</div>
+  <h2>深度學習（補充）速查表 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10 章 · 補充</a></span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w11-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 10 章開頭；教科書 · 第 10.1 節；教科書 · 第 10.2 節；教科書 · 第 10.3 節；教科書 · 第 10.4 節；教科書 · 第 10.5 節；教科書 · 第 10.7 節；教科書 · 第 10.8 節；教科書 · 第 10.6 節。</li>
+<li id="w11-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：進階參考 · 第 11.3 節；進階參考 · 第 11.4–11.6 節；進階參考 · 第 11.4 節 · 進階。</li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>考前把這一頁掃過去就好。這一章不在考試範圍，但它是 ISLP 的完整拼圖。</p>

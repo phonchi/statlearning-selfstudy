@@ -21,6 +21,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_page as B  # noqa: E402
 import pages as P  # noqa: E402
+import sources as S  # noqa: E402
 from paths import FLASHCARDS, QUESTIONS, ROOT, SRC_INDEX  # noqa: E402
 
 FAIL, WARN = [], []
@@ -56,7 +57,7 @@ BADGE_RE = re.compile(
     r"|課程 Lab Ch\d+ · "
     r"|(?:Python|NumPy|pandas|Matplotlib|seaborn|SciPy|statsmodels|scikit-learn"
     r"|Colab|conda) 文件 · "
-    r"|先備 · |課前 · |AI-Stats §)")
+    r"|先備 · |課前 · |教科書 · |進階參考 · |參考：)")
 
 
 class Ids(HTMLParser):
@@ -165,6 +166,13 @@ def check_page(p: P.Page):
     dangling = sorted({a for a in ids.anchors if a and a not in set(ids.ids)})
     if dangling:
         fail("ANCHOR", w, f"指向不存在 id 的錨點：{dangling}")
+    for target, anchor in re.findall(r'''href=["']([a-z0-9_]+\.html)(?:#([^"']+))?["']''', src):
+        linked = ROOT / target
+        if not linked.exists():
+            fail("ANCHOR", w, f"站內導讀指向不存在的 {target}")
+        elif anchor and not re.search(r'id=[\"\']' + re.escape(anchor) + r'[\"\']',
+                                      linked.read_text(encoding="utf-8")):
+            fail("ANCHOR", w, f"站內導讀指向不存在的 {target}#{anchor}")
 
     # BADGE：每個 h2 至少一個合格徽章
     badge_per_h2 = re.findall(r"<h2>(.*?)</h2>", src, re.S)
@@ -180,6 +188,22 @@ def check_page(p: P.Page):
 
     # QUIZ-TRIPLE（只掃 HTML；<script> 內的 JS 字串會有 id="bq' + i + 'Options" 這種樣子）
     html_only = re.sub(r"<script\b.*?</script>", "", src, flags=re.S)
+
+    # Reader-facing references must identify a book on this page, with working locators.
+    visible = re.sub(r"<style\b.*?</style>|<!--.*?-->", "", html_only, flags=re.S)
+    visible = re.sub(r"<[^>]+>", "", visible)
+    if re.search(r"AI-Stats\s*§|書籍\s*Preface|書中\s*Ch\.11|\.dx-src", visible):
+        fail("SOURCE-CLARITY", w, "可見文字仍有不明來源縮寫或實作術語")
+    for key in S.page_books(p):
+        if S.source_id(p, key) not in ids.ids:
+            fail("SOURCE-CLARITY", w, f"缺少 {key} 同頁書目定位")
+        if S.BOOKS[key][1] not in (region(src, "studyguide") or ""):
+            fail("SOURCE-CLARITY", w, f"首次導讀未介紹 {key} 完整書名")
+    for sec in p.secs:
+        for label in sec.badge.split("|"):
+            label = label.strip()
+            if S.source_key(label) and S.badge(p, label) not in (region(src, f"sec:{sec.id}") or ""):
+                fail("SOURCE-CLARITY", w, f"#{sec.id} 缺少可跳書目的來源標記")
 
     # VIZ-PROVENANCE：每組正文視覺都要讓學生看得出資料／數值從哪裡來。
     viz_layouts = re.findall(r'<div class="viz-layout"([^>]*)>', html_only)

@@ -35,7 +35,7 @@ node tools/browser_check.js <stem>
 
 | 規則 | 為什麼 |
 |---|---|
-| 每個 `<h2>` 至少一個 `.sec-badge`，格式必須是 `ISLP §x.y` / `ESL §x.y` / `講義 NN · p.a–b` / `課程題庫 …` | 學生要能回頭對照；徽章由 `pages.py` 產生，不要在內文自己加 |
+| 每個 `<h2>` 至少一個 `.sec-badge`；書籍標記顯示中文來源角色／主題與章節，可跳到同頁完整書目 | `pages.py` 保存節號，`sources.py` 統一呈現；不要在內文手加不明縮寫 |
 | 每張 `.deck-extra` 一定要 `.dx-src`，內容是 `<code>ChNN-…-zh.ipynb</code> · 儲存格 k` | 可機器檢查 |
 | `.expected-out` 一律 `lab_output(CH, cell)` 逐字取，**不要自己打字、不要重跑** | 本機環境與課程環境不同；notebook 裡已經是老師本人跑的結果 |
 | 程式碼一律 `lab_code(CH, cell)` 取，或至少能對回某一格 | 同上 |
@@ -93,7 +93,8 @@ PART 內部：
 **EX 區**：4 個 `quiz()`，`.quiz-label` 用 `EXERCISE n · ISLP N.4 第 m 題`，題號要真
 （去 `pdftotext` 讀該章習題確認）。解答 pill 排由 `build_page.py` 產生，不要自己寫。
 
-**REF 區**：2–3 個比較表 + 「三個一定要記住的觀念」`info()` + `ver_note()`。
+**重點速查與來源區**（原 REF）：只留有查閱用途的比較表、必要提醒與 `ver_note()`；不再完整重講正文。
+完整書目由共用產生器放入，不必在內文重複列一次。各頁首次導讀介紹完整書名，章節標記可直接跳到書目。
 
 **CARDS 區**：整段由 `build_page.py` 產生。你只要寫 `data/flashcards_zh/chN.json`。
 
@@ -247,9 +248,16 @@ def S(*ks): return f'<code>{LAB}</code> · 儲存格 ' + "、".join(str(k) for k
 | `課程 Lab ChN · 儲存格 k` 或 `… 儲存格 a–b` | 節標題的主要徽章 | **會**，儲存格必須真的存在於 `lab_chN.md` |
 | `Python／NumPy／pandas／Matplotlib／seaborn／SciPy／statsmodels／scikit-learn／Colab／conda 文件 · …` | lab 沒有的語法點 | 否 |
 | `先備 · …` | `islp_label`、EX 區徽章 | 否 |
-| `AI-Stats §N` | 只指名參考書概念，**不引用其文字、圖與數字** | 否 |
+| `AI-Stats §N`（僅內部鍵） | 顯示「參考：中文主題（第 N 章）」並連完整書目；不搬原書文字、圖與數字 | SOURCE-CLARITY 核對呈現與定位 |
 
 引用的章號必須列在 `Page.src_labs` 裡，否則 FAIL。
+
+### 教學精簡與難度
+
+- 保留三區與授課章序。課前核心自測不預設已懂模型、檢定或交叉驗證；進階案例明標延伸並連相關章節。
+- 同一概念的正文、自測回饋、詞彙卡、題庫與圖旁文字必須同步修訂。
+- 重複語法連回 Python 附錄；PCA 幾何、低秩近似與補值等不同角度的必要遞進應保留。
+- 不以固定表格、程式碼卡或字數目標塞滿頁面；刪除無教學用途的重複內容時仍保留有效來源。
 
 ### 9.3 Page 的登記
 

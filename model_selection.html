@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -669,7 +680,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#pls" data-target="pls"><span class="fn-num">P08</span><span class="fn-name">偏最小平方 PLS</span></a>
   <a href="#highdim" data-target="highdim"><span class="fn-num">P09</span><span class="fn-name">高維度的陷阱</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -693,10 +704,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.6｜講義 06）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/06_Linear_Model_Selection.pdf" target="_blank" rel="noopener">📑 講義 06 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch06 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-86msOZdtaMyKHwk2mWpOWmu" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 ESL 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/06_Linear_Model_Selection.pdf" target="_blank" rel="noopener">📑 講義 06 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch06 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-86msOZdtaMyKHwk2mWpOWmu" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -714,7 +726,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#pls"><span class="toc-num">P08</span>偏最小平方 PLS</a>
     <a href="#highdim"><span class="toc-num">P09</span>高維度的陷阱</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -722,7 +734,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>最小平方法什麼時候會不夠用 <span class="sec-badge">ISLP §6 開頭</span><span class="sec-badge">講義 06 · p.2–5</span></h2>
+  <h2>最小平方法什麼時候會不夠用 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6 章開頭</a></span><span class="sec-badge">講義 06 · p.2–5</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>第 3 章的最小平方法很好用：沒有調整參數、有封閉解、係數可以直接解讀。
@@ -730,8 +742,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   還是最好的做法嗎？</strong>答案通常是不。</p>
 
   <p>問題出在兩個地方。第一是<strong>預測準確度</strong>：當 p 逼近 n，最小平方的估計會非常不穩定
-  （變異很大）；當 p &gt; n，它連唯一解都沒有。你可以找到無限多組係數把訓練誤差壓到 0，
-  而它們在新資料上都爛得一樣。第二是<strong>可解讀性</strong>：一堆跟 y 沒關係的變數留在模型裡，
+  （變異很大）；當 p &gt; n，它連唯一解都沒有。若設計矩陣的列滿秩，可以找到無限多組係數把訓練誤差壓到 0，
+  但它們在新資料上的預測不一定相同，訓練誤差無法幫你選出泛化較好的解。第二是<strong>可解讀性</strong>：一堆跟 y 沒關係的變數留在模型裡，
   最小平方幾乎不可能把它們的係數估成剛好 0，於是你得到一個沒人看得懂的模型。</p>
 
 <div class="info-box">
@@ -767,7 +779,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="subset">
 <!-- GEN:BEGIN sec:subset -->
   <div class="section-number">PART 01 · 子集選擇</div>
-  <h2>2^p 個模型跑不完：最佳子集與逐步選擇 <span class="sec-badge">ISLP §6.1</span><span class="sec-badge">講義 06 · p.6–14</span></h2>
+  <h2>2^p 個模型跑不完：最佳子集與逐步選擇 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1 節</a></span><span class="sec-badge">講義 06 · p.6–14</span></h2>
 <!-- GEN:END sec:subset -->
 
   <p>最直白的想法：<strong>每一種變數組合都試一次，挑最好的</strong>。這就是最佳子集選擇
@@ -956,7 +968,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>搜尋法</th><th>要配幾個模型</th><th>p = 20 時</th><th>n &lt; p 能用嗎</th><th>保證找到最佳子集嗎</th></tr></thead>
-  <tbody><tr><td>最佳子集</td><td>2<sup>p</sup></td><td>1,048,576</td><td>不能（最多到 n−1 個變數）</td><td><strong>會</strong></td></tr><tr><td>前向逐步</td><td>1 + p(p+1)/2</td><td>211</td><td><strong>可以</strong></td><td>不保證</td></tr><tr><td>後向逐步</td><td>1 + p(p+1)/2</td><td>211</td><td>不能（要先配全模型）</td><td>不保證</td></tr><tr><td>混合逐步</td><td>略多於逐步</td><td>約 211+</td><td>看實作</td><td>不保證（但比較接近）</td></tr></tbody>
+  <tbody><tr><td>最佳子集</td><td>2<sup>p</sup></td><td>1,048,576</td><td>可以（只比較可估計的小子集）</td><td><strong>會</strong></td></tr><tr><td>前向逐步</td><td>1 + p(p+1)/2</td><td>211</td><td><strong>可以</strong></td><td>不保證</td></tr><tr><td>後向逐步</td><td>1 + p(p+1)/2</td><td>211</td><td>不能（要先配全模型）</td><td>不保證</td></tr><tr><td>混合逐步</td><td>略多於逐步</td><td>約 211+</td><td>看實作</td><td>不保證（但比較接近）</td></tr></tbody>
 </table></div>
 
 <div class="quiz-box">
@@ -969,7 +981,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="criteria">
 <!-- GEN:BEGIN sec:criteria -->
   <div class="section-number">PART 02 · 選模型的準則</div>
-  <h2>Cp、AIC、BIC、調整後 R²：懲罰項在做什麼 <span class="sec-badge">ISLP §6.1.3</span><span class="sec-badge">講義 06 · p.15–24</span></h2>
+  <h2>Cp、AIC、BIC、調整後 R²：懲罰項在做什麼 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1.3 節</a></span><span class="sec-badge">講義 06 · p.15–24</span></h2>
 <!-- GEN:END sec:criteria -->
 
   <p>第二階段的問題是：<strong>怎麼比較「大小不同」的模型？</strong>訓練 RSS 與 R² 不能用，
@@ -1067,7 +1079,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="onese">
 <!-- GEN:BEGIN sec:onese -->
   <div class="section-number">PART 03 · 用 CV 選模型</div>
-  <h2>驗證與交叉驗證，以及 one-standard-error 規則 <span class="sec-badge">ISLP §6.1.3</span><span class="sec-badge">講義 06 · p.22–24</span></h2>
+  <h2>驗證與交叉驗證，以及 one-standard-error 規則 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1.3 節</a></span><span class="sec-badge">講義 06 · p.22–24</span></h2>
 <!-- GEN:END sec:onese -->
 
   <p>Cp、AIC、BIC 都需要估 $\hat\sigma^2$，而在 p 接近 n 的時候那個估計本身就不可靠。
@@ -1125,7 +1137,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="ridge">
 <!-- GEN:BEGIN sec:ridge -->
   <div class="section-number">PART 04 · Ridge 迴歸</div>
-  <h2>把係數往零壓：L2 懲罰與係數路徑 <span class="sec-badge">ISLP §6.2.1</span><span class="sec-badge">講義 06 · p.25–32</span></h2>
+  <h2>把係數往零壓：L2 懲罰與係數路徑 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.1 節</a></span><span class="sec-badge">講義 06 · p.25–32</span></h2>
 <!-- GEN:END sec:ridge -->
 
   <p>子集選擇是離散的：一個變數要嘛在、要嘛不在。這讓它<strong>變異很大</strong>——
@@ -1227,7 +1239,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="lasso">
 <!-- GEN:BEGIN sec:lasso -->
   <div class="section-number">PART 05 · Lasso 與稀疏性</div>
-  <h2>L1 為什麼會把係數壓成剛好 0 <span class="sec-badge">ISLP §6.2.2</span><span class="sec-badge">講義 06 · p.33–41</span></h2>
+  <h2>L1 為什麼會把係數壓成剛好 0 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.2 節</a></span><span class="sec-badge">講義 06 · p.33–41</span></h2>
 <!-- GEN:END sec:lasso -->
 
   <p>Ridge 的缺點是：它留下全部 p 個變數。p = 500 的時候你得到 500 個很小但不為零的係數，
@@ -1348,7 +1360,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="lambda">
 <!-- GEN:BEGIN sec:lambda -->
   <div class="section-number">PART 06 · 怎麼選 λ</div>
-  <h2>調整參數也要用 CV 選 <span class="sec-badge">ISLP §6.2.3</span><span class="sec-badge">講義 06 · p.42–45</span></h2>
+  <h2>調整參數也要用 CV 選 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.3 節</a></span><span class="sec-badge">講義 06 · p.42–45</span></h2>
 <!-- GEN:END sec:lambda -->
 
   <p>λ 是<strong>調整參數</strong>（tuning parameter），不是從資料估出來的參數。
@@ -1394,7 +1406,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="pcr">
 <!-- GEN:BEGIN sec:pcr -->
   <div class="section-number">PART 07 · 主成分迴歸 PCR</div>
-  <h2>先降維再迴歸：方向由 X 自己決定 <span class="sec-badge">ISLP §6.3.1</span><span class="sec-badge">講義 06 · p.46–55</span></h2>
+  <h2>先降維再迴歸：方向由 X 自己決定 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.3.1 節</a></span><span class="sec-badge">講義 06 · p.46–55</span></h2>
 <!-- GEN:END sec:pcr -->
 
   <p>第三條路：<strong>不動變數，改換座標。</strong>先把 p 個相關的預測變數壓成
@@ -1482,7 +1494,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="pls">
 <!-- GEN:BEGIN sec:pls -->
   <div class="section-number">PART 08 · 偏最小平方 PLS</div>
-  <h2>讓 y 也參與挑方向 <span class="sec-badge">ISLP §6.3.2</span><span class="sec-badge">講義 06 · p.56–58</span></h2>
+  <h2>讓 y 也參與挑方向 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.3.2 節</a></span><span class="sec-badge">講義 06 · p.56–58</span></h2>
 <!-- GEN:END sec:pls -->
 
   <p>PCR 挑方向時<strong>完全沒看 y</strong>。這有點浪費。我們明明知道 y 是什麼。</p>
@@ -1530,21 +1542,22 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="highdim">
 <!-- GEN:BEGIN sec:highdim -->
   <div class="section-number">PART 09 · 高維度的陷阱</div>
-  <h2>p 逼近 n 時 R² 會騙你騙得很徹底 <span class="sec-badge">ISLP §6.4</span><span class="sec-badge">講義 06 · p.59–66</span></h2>
+  <h2>p 逼近 n 時 R² 會騙你騙得很徹底 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.4 節</a></span><span class="sec-badge">講義 06 · p.59–66</span></h2>
 <!-- GEN:END sec:highdim -->
 
   <p>基因資料、文字資料、感測器資料常常是 <strong>p 遠大於 n</strong>：
-  幾萬個變數、幾百個樣本。這時候最小平方不只是「表現不好」，而是<strong>徹底失效</strong>。</p>
+  幾萬個變數、幾百個樣本。這時候傳統最小平方的<strong>唯一係數解與一般推論不再適用</strong>，需要額外的結構或選解規則。</p>
 
-  <p>當 p ≥ n 時，最小平方能找到一組係數<strong>完美通過每一個訓練點</strong>——
-  殘差全部是 0、R² 剛好等於 1。這不是模型好，而是自由度用完了：
-  n 個方程式、p ≥ n 個未知數，解不唯一而且必然過度配適。</p>
+  <p>當 p ≥ n，且含截距的設計矩陣有 n 個獨立的列時，最小平方能
+  <strong>完美配適訓練資料</strong>：RSS = 0；y 非常數時訓練 R² = 1。
+  這只說明模型能插值，不代表一定能或一定不能預測新資料。係數通常不唯一，
+  必須說明如何選解，再用獨立資料評估；不能拿訓練滿分當作泛化證據。</p>
 
 <div class="viz-layout" data-provenance="simulation">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w06hdChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：p 從 1 增到 n = 20 時訓練 R² 一路衝到 1，而測試 MSE 從 1.07 爆到 46.3。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：n = 20、p 從 1 增到 19（加截距共 20 個參數）時，訓練 R² 一路衝到 1，而測試 MSE 從 1.07 爆到 46.3。</div></div>
       </div>
       <div class="status-banner" id="w06hdStatus"><span class="status-icon">›</span><span class="status-text">純雜訊變數愈多，訓練 R² 愈好看、測試誤差愈糟。</span></div>
       <div class="controls-bar"></div>
@@ -1554,15 +1567,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">上圖在做什麼 <span class="ic-badge">圖 6.22–6.23</span></div>
-      n = 20 的模擬資料，<strong>只有第一個變數真的跟 y 有關</strong>，其餘都是純雜訊。x 軸是放進模型的變數個數。訓練 R² 從 0.051 升到 <strong>1.000</strong>，測試 MSE 從 1.07 升到 <strong>46.3</strong>。
+      n = 20 的<strong>純雜訊</strong>模擬：X 與 y 完全獨立，沒有任何有用的預測變數。x 軸是變數個數 p；p = 19 加上截距後共 20 個參數。每個 p 重複 400 次；圖中訓練 R² 取平均，測試 MSE 取中位數。訓練 R² 從 0.051 升到 <strong>1.000</strong>，測試 MSE 從 1.07 升到 <strong>46.3</strong>。
     </div>
     <div class="info-card">
       <div class="ic-title">關鍵數字</div>
-      <div class="ic-row"><span class="ic-label">p = 1：訓練 R² ／ 測試 MSE</span><span class="ic-value" id="w06hdA">0.051 ／ 1.07</span></div><div class="ic-row"><span class="ic-label">p = 18：訓練 R² ／ 測試 MSE</span><span class="ic-value" id="w06hdB">1.000 ／ 46.3</span></div>
+      <div class="ic-row"><span class="ic-label">p = 1：訓練 R² ／ 測試 MSE</span><span class="ic-value" id="w06hdA">0.051 ／ 1.07</span></div><div class="ic-row"><span class="ic-label">p = 19：訓練 R² ／ 測試 MSE</span><span class="ic-value" id="w06hdB">1.000 ／ 46.3</span></div>
     </div>
     <div class="info-card">
       <div class="ic-title">維度的詛咒 <span class="ic-badge">圖 6.22–6.23</span></div>
-      真正有用的訊號不變時，額外雜訊變數仍要花資料去排除。圖只保留最直接的 train/test 對照，不再另放第二組尺度不同的模擬。
+      這裡所有變數都無法提供母體的預測訊號，但最小平方仍能改善訓練配適。對照新資料的誤差，才看得出這些改善沒有換來預測能力。
     </div>
   </div>
 </div>
@@ -1570,8 +1583,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="info-box warm">
   <span class="info-label">在高維度千萬不要相信這三個數字</span>
   <strong>1. 訓練資料上的 R²。</strong>
-  p 接近 n 時它必然接近 1，跟模型好壞完全無關。<br>
-  <strong>2. 訓練資料上的 RSS 或 MSE。</strong>同理，必然接近 0。<br>
+  模型有足夠自由度時它可能接近 1，但不能據此判斷泛化。<br>
+  <strong>2. 訓練資料上的 RSS 或 MSE。</strong>同理，可能接近 0，卻沒有告訴你測試誤差。<br>
   <strong>3. 用同一份資料選完變數之後算出來的 p 值。</strong>
   從幾萬個變數裡挑「最顯著」的，一定挑得到看起來很顯著的，那是多重比較，不是發現。<br><br>
   唯一能信的是<strong>在完全沒參與過任何選擇的資料上</strong>算出來的誤差——
@@ -1581,7 +1594,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：p > n 的時候「維度的詛咒」到底詛咒了什麼？</summary>
-    <div class="qa-a"><p>詛咒的是<strong>額外的變數不是免費的</strong>。</p><p>直覺上多一個變數只會提供更多資訊，最壞也就是沒用。但實際上每個變數都要花自由度去估它的係數，而估計本身帶進變異。一個跟 y 完全無關的變數，它的係數估計值不會剛好是 0，而是一個隨機的小數字。那個隨機性直接進到預測裡。</p><p>下面那張圖就是這件事：真正有用的變數固定是 20 個，把候選池從 20 擴到 2000 之後測試 MSE 從 1.34 升到 7.54。<strong>雜訊不會互相抵消，它會累加。</strong></p></div>
+    <div class="qa-a"><p>詛咒的是<strong>額外的變數不是免費的</strong>。</p><p>直覺上多一個變數只會提供更多資訊，最壞也就是沒用。但實際上每個變數都要花自由度去估它的係數，而估計本身帶進變異。一個跟 y 完全無關的變數，它的係數估計值不會剛好是 0，而是一個隨機的小數字。那個隨機性直接進到預測裡。</p><p>上圖中 X 與 y 完全獨立，所有預測變數都是雜訊。加入更多候選變數後，訓練誤差下降，測試誤差卻可能上升。<strong>因此要用獨立評估判斷新增變數是否值得保留。</strong></p></div>
   </details>
   <details class="qa-item"><summary>Q：那高維度該用什麼？</summary>
     <div class="qa-a"><p>這一章的三類工具全部都是為此設計的：<strong>子集／逐步選擇</strong>（明確減少變數）、<strong>收縮</strong>（Ridge 與 Lasso，Lasso 還順便選變數）、<strong>降維</strong>（PCR 與 PLS）。它們的共同點是<em>降低變異，代價是接受一點偏差</em>。</p><p>在 p ≫ n 的場景，Lasso 與 elastic net 特別受歡迎，因為稀疏假設常常合理（幾萬個基因裡真的有關的通常只有少數幾個），而且結果可以直接列出「這幾個變數」。</p></div>
@@ -1590,15 +1603,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 高維度</div>
-  <p>n = 50、p = 500 的資料，用最小平方配適。訓練 R² 大約會是多少？</p>
-  <div class="quiz-options" id="qHdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這也是為什麼在高維度看訓練 R² 完全沒有意義。它跟模型好壞無關，只反映了自由度夠不夠用。" onclick="quizCheck('qHd', this)"><span class="opt-letter">(A)</span> 1.0，因為 p > n 時一定存在完美通過所有訓練點的解</div><div class="quiz-opt" data-correct="false" data-fb="方向剛好相反。雜訊變數<strong>幫助</strong>模型記住訓練資料，那正是問題所在；所以訓練 R² 會很高。糟的是測試誤差。" onclick="quizCheck('qHd', this)"><span class="opt-letter">(B)</span> 接近 0，因為 500 個變數大部分是雜訊</div><div class="quiz-opt" data-correct="false" data-fb="$X^\top X$ 確實奇異，所以係數解<em>不唯一</em>，但仍然存在（用偽逆就得到一組），而且任何一組都達到 RSS = 0。「解不唯一」不等於「算不出來」。" onclick="quizCheck('qHd', this)"><span class="opt-letter">(C)</span> 無法計算，因為 XᵀX 不可逆</div></div>
+  <p>n = 50、p = 500 的資料，y 不是常數，含截距的設計矩陣有 50 個獨立的列。最小平方的訓練 R² 是多少？能因此判斷泛化嗎？</p>
+  <div class="quiz-options" id="qHdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。列滿秩讓模型能插值這 50 筆資料，但係數不唯一；不同選解規則可能給出不同的新資料預測。收縮、降維與獨立評估才是在處理如何選模型的問題。" onclick="quizCheck('qHd', this)"><span class="opt-letter">(A)</span> 訓練 R² = 1，但不能因此判斷新資料的預測表現</div><div class="quiz-opt" data-correct="false" data-fb="在題目給的列滿秩條件下，最小平方可以把訓練 RSS 壓成 0。變數多不會阻止插值，反而讓訓練滿分失去判斷泛化的能力。" onclick="quizCheck('qHd', this)"><span class="opt-letter">(B)</span> 訓練 R² 接近 0，因為變數比樣本多</div><div class="quiz-opt" data-correct="false" data-fb="係數不唯一不代表配適值算不出來。可以用偽逆選出一組解；但這個選解規則與它的測試表現，不能只靠訓練 R² 證明。" onclick="quizCheck('qHd', this)"><span class="opt-letter">(C)</span> 無法計算任何配適值，因為係數解不唯一</div></div>
   <div class="quiz-feedback" id="qHdFeedback"></div>
 </div>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 6 章精選題 <span class="sec-badge">ISLP §6.6 習題</span></h2>
+  <h2>動手驗證：教科書第 6 章精選題 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.6 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §6.6 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter6/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch06.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
@@ -1634,8 +1647,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
-  <h2>線性模型選擇與正則化速查表 <span class="sec-badge">ISLP Ch.6</span></h2>
+  <div class="section-number">重點速查與來源</div>
+  <h2>線性模型選擇與正則化速查表 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6 章</a></span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w06-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 6 章開頭；教科書 · 第 6.1 節；教科書 · 第 6.1.3 節；教科書 · 第 6.2.1 節；教科書 · 第 6.2.2 節；教科書 · 第 6.2.3 節；教科書 · 第 6.3.1 節；教科書 · 第 6.3.2 節；教科書 · 第 6.4 節。</li>
+<li id="w06-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>考前把這一頁掃過去就好。</p>
@@ -1669,7 +1684,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   菱形有尖角而尖角落在座標軸上；圓沒有。<br>
   <strong>3. Ridge、Lasso、PCR、PLS 之前都必須標準化。</strong>
   它們的目標函數對單位敏感，最小平方不是。<br>
-  <strong>4. 高維度時訓練 R² 必然接近 1，看它等於沒看。</strong>
+  <strong>4. 高維度時訓練 R² 可能接近 1，不能據此判斷泛化。</strong>
   只信沒參與過任何選擇的資料上算出來的誤差。
 </div>
 
@@ -2685,8 +2700,8 @@ function w06hdDraw() {
     },
   });
   const c = HC.get('w06hdChart');
-  HC.refs(c, [HC.vline(F.n - 2, 'p = n')]);
-  setStatus('w06hdStatus', '真正有用的變數只有第一個，其餘全是雜訊。p 從 1 加到 '
+  HC.refs(c, [HC.vline(F.n - 2, 'p + 1 = n')]);
+  setStatus('w06hdStatus', 'X 與 y 完全獨立。各 p 重複 400 次，訓練 R² 取平均、測試 MSE 取中位數。p 從 1 加到 '
     + F.ps[F.ps.length - 1] + ' 時訓練 R² 從 ' + F.trainR2[0] + ' 升到 '
     + F.trainR2[F.trainR2.length - 1] + '，而測試 MSE 從 ' + F.testMse[0] + ' 爆到 '
     + F.testMse[F.testMse.length - 1] + '。');
@@ -2708,7 +2723,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"最佳子集選擇（Best Subset Selection）","back":"把 p 個變數的全部 2^p 種組合都配適一次，在每個模型大小裡挑訓練 RSS 最小的，再用 Cp、BIC 或 CV 從這 p+1 個候選裡選一個。保證找到每個大小的最佳組合，但 p > 40 就算不完。"},{"front":"前向逐步選擇（Forward Stepwise Selection）","back":"從空模型開始，每一步在剩下的變數裡加入一個讓 RSS 掉最多的，共配適 1 + p(p+1)/2 個模型。貪婪，所以不保證找到最佳子集——Credit 資料上從大小 3 開始就跟最佳子集分歧。"},{"front":"後向逐步選擇（Backward Stepwise Selection）","back":"從全模型開始，每一步移除一個最沒貢獻的變數。計算量與前向相同，但需要 n > p 才能配適起始的全模型，所以在高維度不能用。"},{"front":"Cp 統計量（Mallows' Cp）","back":"(RSS + 2dσ̂²)/n，其中 d 是變數個數。每多一個變數罰 2σ̂²。在誤差變異數估得準的前提下，它是測試 MSE 的無偏估計。Credit 上選出 6 個變數。"},{"front":"AIC（Akaike Information Criterion）","back":"從 Kullback–Leibler 散度導出的模型選擇準則。在常態誤差的最小平方模型上與 Cp 成正比，所以兩者選出同一個模型；但 statsmodels 用的 log-likelihood 版 −2 log L + 2k 與 Cp 不是單調對應。"},{"front":"BIC（Bayesian Information Criterion）","back":"(RSS + log(n)·dσ̂²)/n。每多一個變數罰 log(n)·σ̂²，n > 7 時比 Cp 的 2σ̂² 重，所以偏好較小的模型。Credit 上選出 4 個變數，比 Cp 少兩個。"},{"front":"調整後 R²（Adjusted R²）","back":"1 − [RSS/(n−d−1)] / [TSS/(n−1)]。用分母的 n−d−1 對變數個數作輕微懲罰，是這幾個準則裡罰得最輕的，所以傾向選出最大的模型。Credit 上選出 7 個變數。"},{"front":"one-standard-error 規則","back":"先找 CV 誤差最小的模型並算出它的標準誤，然後在「CV 誤差落在最小值加一個標準誤」以內的所有模型裡選最簡單的。立場是：預測能力分不出差別時偏好簡單。Credit 上把 6 個變數降到 4 個。"},{"front":"調整參數（Tuning Parameter）","back":"不是從資料估出來的參數，而是要另外選定的量，例如 Ridge 與 Lasso 的 λ、PCR 與 PLS 的成分個數 M、子集選擇的模型大小 k。標準做法是掃一排候選值再用交叉驗證比較。"},{"front":"收縮法（Shrinkage Method）","back":"留下全部 p 個變數，但在目標函數上加懲罰項把係數往零壓，用降低變異來換取一點偏差。Ridge 與 Lasso 是兩個代表。"},{"front":"Ridge 迴歸（Ridge Regression）","back":"最小化 RSS + λ‖β‖₂²。λ = 0 是最小平方、λ → ∞ 所有係數趨近 0，但永遠不會剛好等於 0。有封閉解，計算很快，適合「很多變數都有小貢獻」的情況。"},{"front":"L2 懲罰（L2 Penalty）","back":"係數平方和 Σβⱼ²。等價的約束區域是圓（高維是球），處處平滑沒有尖角，所以解碰到座標軸是機率 0 的事——這就是 Ridge 不會歸零的幾何理由。"},{"front":"Lasso","back":"最小化 RSS + λ‖β‖₁。λ 夠大時會把一部分係數壓成剛好 0，所以同時做收縮與變數選擇。適合真實係數稀疏的情況。"},{"front":"L1 懲罰（L1 Penalty）","back":"係數絕對值和 Σ|βⱼ|。等價的約束區域是菱形（高維是超菱形），尖角剛好落在座標軸上，橢圓等高線很容易先碰到尖角——那裡有座標等於 0。這是稀疏解的幾何來源。"},{"front":"稀疏（Sparse）","back":"只有少數幾個係數不為零的解。Lasso 產生稀疏解，Ridge 不會。稀疏的好處是模型可以直接說「用到這幾個變數」，壞處是相關變數之間留誰很不穩定。"},{"front":"軟門檻（Soft Thresholding）","back":"Lasso 在正交設計下的封閉解形式：把每個最小平方係數的絕對值減掉 λ，若減到負的就設為 0。這說明了「歸零」不是近似，而是解的精確性質。"},{"front":"彈性網（Elastic Net）","back":"同時放 L1 與 L2 懲罰的方法，混合比例是另一個調整參數。它兼具 Lasso 的稀疏性與 Ridge 對相關變數「同進同出」的性質，適合不確定係數稀疏與否的情況。"},{"front":"維度縮減法（Dimension Reduction Method）","back":"不動變數而換座標：先把 p 個相關的預測變數壓成 M 個互不相關的方向，再對這 M 個方向做最小平方。PCR 與 PLS 是兩個代表；兩者都不做變數選擇。"},{"front":"主成分迴歸（PCR, Principal Components Regression）","back":"用主成分當新的預測變數。方向完全由 X 的變異決定、沒看 y，所以隱含假設「X 變異大的方向也是跟 y 有關的方向」。M 用 CV 選；M = p 時退回最小平方。"},{"front":"偏最小平方（PLS, Partial Least Squares）","back":"監督式的降維：第一個方向的權重取自各 Xⱼ 與 y 的簡單迴歸係數，跟 y 相關性愈強權重愈大，之後在殘差上重複。降低了偏差但增加了變異，實務上常與 PCR 打成平手。"},{"front":"負荷量（Loading）","back":"把原始變數線性組合成主成分時的權重 φⱼₘ。因為每個負荷量通常都不為零，PCR 的最終模型仍然用到全部 p 個原始變數——這是它跟 Lasso 最重要的差別。"},{"front":"標準化（Standardization）","back":"把每個預測變數減平均、除標準差。Ridge、Lasso、PCR、PLS 之前都必須做，因為它們的目標函數對單位敏感；最小平方不需要。實作上包進 Pipeline 順便解決 CV 的洩漏問題。"},{"front":"係數路徑（Coefficient Path）","back":"把各係數估計值畫成 λ（或相對收縮量 ‖β̂ᴿ‖₂/‖β̂‖₂）的函數。Ridge 的路徑一起往零靠但不觸零；Lasso 的路徑會一條一條真的碰到 0 並停住。"},{"front":"對數等距網格（Log-spaced Grid）","back":"選候選 λ 的正確方式，例如 np.logspace(-2, 5, 100)。因為 λ 的作用是乘性的，等距取樣會把幾乎全部的點浪費在「懲罰太重、係數全被壓平」的那一端。"},{"front":"高維度（High-dimensional）","back":"p 接近或超過 n 的設定。這時最小平方能找到完美通過每一個訓練點的解，訓練 RSS = 0、R² = 1，但那只反映自由度用完了，跟模型好壞無關。"},{"front":"維度的詛咒（Curse of Dimensionality）","back":"額外的變數不是免費的：每個變數都要花自由度去估係數，估計本身帶進變異，而雜訊不會互相抵消而是累加。模擬上把候選變數從 20 擴到 2000，Lasso 的測試 MSE 從 1.34 升到 7.54。"},{"front":"選後推論（Post-selection Inference）","back":"先用資料選變數、再對選出來的變數做 t 檢定會嚴重高估顯著性，因為同一份資料用了兩次。誠實的說法是「在這個 λ 之下 Lasso 保留了這些變數」，而不是「這些變數顯著」。"}];
+const FLASHCARDS = [{"front":"最佳子集選擇（Best Subset Selection）","back":"把 p 個變數的全部 2^p 種組合都配適一次，在每個模型大小裡挑訓練 RSS 最小的，再用 Cp、BIC 或 CV 從這 p+1 個候選裡選一個。保證找到每個大小的最佳組合，但 p > 40 就算不完。"},{"front":"前向逐步選擇（Forward Stepwise Selection）","back":"從空模型開始，每一步在剩下的變數裡加入一個讓 RSS 掉最多的，共配適 1 + p(p+1)/2 個模型。貪婪，所以不保證找到最佳子集——Credit 資料上從大小 3 開始就跟最佳子集分歧。"},{"front":"後向逐步選擇（Backward Stepwise Selection）","back":"從全模型開始，每一步移除一個最沒貢獻的變數。計算量與前向相同，但需要 n > p 才能配適起始的全模型，所以在高維度不能用。"},{"front":"Cp 統計量（Mallows' Cp）","back":"(RSS + 2dσ̂²)/n，其中 d 是變數個數。每多一個變數罰 2σ̂²。在誤差變異數估得準的前提下，它是測試 MSE 的無偏估計。Credit 上選出 6 個變數。"},{"front":"AIC（Akaike Information Criterion）","back":"從 Kullback–Leibler 散度導出的模型選擇準則。在常態誤差的最小平方模型上與 Cp 成正比，所以兩者選出同一個模型；但 statsmodels 用的 log-likelihood 版 −2 log L + 2k 與 Cp 不是單調對應。"},{"front":"BIC（Bayesian Information Criterion）","back":"(RSS + log(n)·dσ̂²)/n。每多一個變數罰 log(n)·σ̂²，n > 7 時比 Cp 的 2σ̂² 重，所以偏好較小的模型。Credit 上選出 4 個變數，比 Cp 少兩個。"},{"front":"調整後 R²（Adjusted R²）","back":"1 − [RSS/(n−d−1)] / [TSS/(n−1)]。用分母的 n−d−1 對變數個數作輕微懲罰，是這幾個準則裡罰得最輕的，所以傾向選出最大的模型。Credit 上選出 7 個變數。"},{"front":"one-standard-error 規則","back":"先找 CV 誤差最小的模型並算出它的標準誤，然後在「CV 誤差落在最小值加一個標準誤」以內的所有模型裡選最簡單的。立場是：預測能力分不出差別時偏好簡單。Credit 上把 6 個變數降到 4 個。"},{"front":"調整參數（Tuning Parameter）","back":"不是從資料估出來的參數，而是要另外選定的量，例如 Ridge 與 Lasso 的 λ、PCR 與 PLS 的成分個數 M、子集選擇的模型大小 k。標準做法是掃一排候選值再用交叉驗證比較。"},{"front":"收縮法（Shrinkage Method）","back":"留下全部 p 個變數，但在目標函數上加懲罰項把係數往零壓，用降低變異來換取一點偏差。Ridge 與 Lasso 是兩個代表。"},{"front":"Ridge 迴歸（Ridge Regression）","back":"最小化 RSS + λ‖β‖₂²。λ = 0 是最小平方、λ → ∞ 所有係數趨近 0，但永遠不會剛好等於 0。有封閉解，計算很快，適合「很多變數都有小貢獻」的情況。"},{"front":"L2 懲罰（L2 Penalty）","back":"係數平方和 Σβⱼ²。等價的約束區域是圓（高維是球），處處平滑沒有尖角，所以解碰到座標軸是機率 0 的事——這就是 Ridge 不會歸零的幾何理由。"},{"front":"Lasso","back":"最小化 RSS + λ‖β‖₁。λ 夠大時會把一部分係數壓成剛好 0，所以同時做收縮與變數選擇。適合真實係數稀疏的情況。"},{"front":"L1 懲罰（L1 Penalty）","back":"係數絕對值和 Σ|βⱼ|。等價的約束區域是菱形（高維是超菱形），尖角剛好落在座標軸上，橢圓等高線很容易先碰到尖角——那裡有座標等於 0。這是稀疏解的幾何來源。"},{"front":"稀疏（Sparse）","back":"只有少數幾個係數不為零的解。Lasso 產生稀疏解，Ridge 不會。稀疏的好處是模型可以直接說「用到這幾個變數」，壞處是相關變數之間留誰很不穩定。"},{"front":"軟門檻（Soft Thresholding）","back":"Lasso 在正交設計下的封閉解形式：把每個最小平方係數的絕對值減掉 λ，若減到負的就設為 0。這說明了「歸零」不是近似，而是解的精確性質。"},{"front":"彈性網（Elastic Net）","back":"同時放 L1 與 L2 懲罰的方法，混合比例是另一個調整參數。它兼具 Lasso 的稀疏性與 Ridge 對相關變數「同進同出」的性質，適合不確定係數稀疏與否的情況。"},{"front":"維度縮減法（Dimension Reduction Method）","back":"不動變數而換座標：先把 p 個相關的預測變數壓成 M 個互不相關的方向，再對這 M 個方向做最小平方。PCR 與 PLS 是兩個代表；兩者都不做變數選擇。"},{"front":"主成分迴歸（PCR, Principal Components Regression）","back":"用主成分當新的預測變數。方向完全由 X 的變異決定、沒看 y，所以隱含假設「X 變異大的方向也是跟 y 有關的方向」。M 用 CV 選；M = p 時退回最小平方。"},{"front":"偏最小平方（PLS, Partial Least Squares）","back":"監督式的降維：第一個方向的權重取自各 Xⱼ 與 y 的簡單迴歸係數，跟 y 相關性愈強權重愈大，之後在殘差上重複。降低了偏差但增加了變異，實務上常與 PCR 打成平手。"},{"front":"負荷量（Loading）","back":"把原始變數線性組合成主成分時的權重 φⱼₘ。因為每個負荷量通常都不為零，PCR 的最終模型仍然用到全部 p 個原始變數——這是它跟 Lasso 最重要的差別。"},{"front":"標準化（Standardization）","back":"把每個預測變數減平均、除標準差。Ridge、Lasso、PCR、PLS 之前都必須做，因為它們的目標函數對單位敏感；最小平方不需要。實作上包進 Pipeline 順便解決 CV 的洩漏問題。"},{"front":"係數路徑（Coefficient Path）","back":"把各係數估計值畫成 λ（或相對收縮量 ‖β̂ᴿ‖₂/‖β̂‖₂）的函數。Ridge 的路徑一起往零靠但不觸零；Lasso 的路徑會一條一條真的碰到 0 並停住。"},{"front":"對數等距網格（Log-spaced Grid）","back":"選候選 λ 的正確方式，例如 np.logspace(-2, 5, 100)。因為 λ 的作用是乘性的，等距取樣會把幾乎全部的點浪費在「懲罰太重、係數全被壓平」的那一端。"},{"front":"高維度（High-dimensional）","back":"p 接近或超過 n 的設定。設計矩陣列滿秩時，最小平方可讓訓練 RSS = 0，但係數通常不唯一。插值不保證泛化，需要說明選解規則並用獨立資料評估。"},{"front":"維度的詛咒（Curse of Dimensionality）","back":"額外的變數不是免費的：每個變數都要花自由度去估係數，估計本身帶進變異，而雜訊不會互相抵消而是累加。本頁的固定種子模擬顯示，加入更多雜訊變數能改善訓練配適，卻可能增加測試誤差。"},{"front":"選後推論（Post-selection Inference）","back":"先用資料選變數、再對選出來的變數做 t 檢定會嚴重高估顯著性，因為同一份資料用了兩次。誠實的說法是「在這個 λ 之下 Lasso 保留了這些變數」，而不是「這些變數顯著」。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

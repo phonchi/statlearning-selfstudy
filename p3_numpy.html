@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -667,7 +678,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#agg" data-target="agg"><span class="fn-num">P06</span><span class="fn-name">彙總與 axis</span></a>
   <a href="#rand" data-target="rand"><span class="fn-num">P07</span><span class="fn-name">亂數與模擬</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -691,10 +702,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · NumPy 陣列）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）與儲存格編號；需要實作時，再打開原始筆記本對照。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -710,7 +722,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#agg"><span class="toc-num">P06</span>彙總與 axis</a>
     <a href="#rand"><span class="toc-num">P07</span>亂數與模擬</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -850,8 +862,8 @@ dtype(&#x27;int64&#x27;)
   <h2>reshape 給的是<strong>同一塊資料的另一種看法</strong> <span class="sec-badge">課程 Lab Ch2 · 儲存格 50–66</span></h2>
 <!-- GEN:END sec:reshape -->
 
-  <p><code>reshape</code> 不搬資料。它給你的是<strong>同一塊記憶體的另一種讀法</strong>——
-  六個數字排成一排，或排成兩列三欄，底下是同一塊。這件事不知道的話，
+  <p>本例的 <code>reshape</code> 可以用<strong>同一塊記憶體的另一種讀法</strong>完成：
+  六個數字排成一排，或排成兩列三欄，底下是同一塊。一般情況則是能共用就回傳檢視，否則可能複製。若沒注意這個差別，
   之後改了一個變數卻發現另一個也跟著變，會找很久。</p>
 
 <div class="viz-layout" data-provenance="course-data">
@@ -932,7 +944,7 @@ x after we modify top left element of x_reshape:
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>什麼時候會真的複製一份？</summary>
-    <div class="qa-a">切片（<code>A[1:3]</code>）與 <code>reshape</code> 給的是<strong>檢視（view）</strong>，不複製；<strong>花式索引</strong>（用整數串列或布林陣列去挑，例如 <code>A[[1,3]]</code>）與明確呼叫 <code>.copy()</code> 才會複製。不確定就 <code>.copy()</code>，安全比省記憶體重要。</div>
+    <div class="qa-a">基本切片（<code>A[1:3]</code>）給的是<strong>檢視（view）</strong>；<code>reshape</code> 則在可行時共用資料，否則可能複製。<strong>花式索引</strong>（用整數串列或布林陣列去挑，例如 <code>A[[1,3]]</code>）與明確呼叫 <code>.copy()</code> 才會複製。不確定就 <code>.copy()</code>，安全比省記憶體重要。</div>
   </details>
   <details class="qa-item"><summary>為什麼 reshape 要傳一個 tuple？</summary>
     <div class="qa-a">因為形狀本來就是一個 tuple。<code>x.reshape((2, 3))</code> 與 <code>x.reshape(2, 3)</code> 都可以，前者跟 <code>shape</code> 屬性的寫法一致，讀起來比較不會誤會。</div>
@@ -942,7 +954,7 @@ x after we modify top left element of x_reshape:
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p><code>x = np.array([1,2,3,4,5,6])</code>、<code>y = x.reshape((2,3))</code>，接著執行 <code>y[0,0] = 99</code>。<code>x[0]</code> 現在是多少？</p>
-  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="false" data-fb="這正是 lab 那一格要示範的陷阱。<code>reshape</code> 回傳的是<strong>同一塊資料的檢視</strong>，不是複本。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 還是 1，y 是新的陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。要切斷連結得寫 <code>y = x.reshape((2,3)).copy()</code>。在資料前處理時這個坑很常見：你以為在改暫存變數，其實動到了原始資料。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 99，因為 y 跟 x 共用同一塊資料</div><div class="quiz-opt" data-correct="false" data-fb="view 是可以寫入的。它就是拿來讓你原地修改的。唯讀的 view 要另外設 <code>flags.writeable = False</code>。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 會報錯，view 不能改</div></div>
+  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="false" data-fb="這正是 lab 那一格要示範的陷阱。本例的 <code>reshape</code> 回傳的是<strong>同一塊資料的檢視</strong>，不是複本。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 還是 1，y 是新的陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。要切斷連結得寫 <code>y = x.reshape((2,3)).copy()</code>。在資料前處理時這個坑很常見：你以為在改暫存變數，其實動到了原始資料。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 99，因為 y 跟 x 共用同一塊資料</div><div class="quiz-opt" data-correct="false" data-fb="view 是可以寫入的。它就是拿來讓你原地修改的。唯讀的 view 要另外設 <code>flags.writeable = False</code>。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 會報錯，view 不能改</div></div>
   <div class="quiz-feedback" id="qViewFeedback"></div>
 </div>
 
@@ -1442,8 +1454,9 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
+  <div class="section-number">重點速查與來源</div>
   <h2>NumPy 陣列速查表 <span class="sec-badge">先備 · NumPy 陣列</span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w16-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>這一頁的東西之後每一章都會用到。下面三張表當速查用。</p>
@@ -2440,7 +2453,7 @@ HC.ready(() => { w16rdRender(); });
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"陣列（ndarray）","back":"NumPy 的核心容器。整塊是<b>同一個型別</b>、記憶體連續排列，所以能逐元素運算，也才快得起來。串列裝什麼都行，因此沒辦法定義逐元素相加。"},{"front":"逐元素運算（Element-wise Operation）","back":"對陣列的每一個位置各做一次同樣的運算。<code>x + y</code>、<code>x**2</code>、<code>np.sqrt(x)</code> 都是。迴圈跑在 C 裡面，不會回到 Python。"},{"front":"維度數（ndim）","back":"陣列有幾維，等於 <code>shape</code> 這個 tuple 的長度。一維是一排數字，二維是一張表。看不懂錯誤訊息時先印它。"},{"front":"形狀（shape）","back":"一個 tuple，記每一維多長。二維陣列是 <code>(列數, 欄數)</code>，<b>列在前</b>。統計資料的慣例是列＝觀測、欄＝變數，所以 <code>(n, p)</code>。"},{"front":"資料型別（dtype）","back":"整塊陣列共用的元素型別。混入一個浮點數，整塊就升成 <code>float64</code>——陣列不允許同一塊裡混型別。可用 <code>np.array(..., float)</code> 指定。"},{"front":"reshape","back":"換一種讀法，<b>不搬資料</b>。六個數字可以讀成 <code>(2,3)</code> 或 <code>(3,2)</code>，底下是同一塊記憶體，所以改了新變數會動到舊的。"},{"front":"C 順序（Row-major）","back":"NumPy 預設的填法：先填滿一列再換下一列。所以 <code>reshape((2,3))</code> 的第一列是前三個數字，不是每隔一個取一次。"},{"front":"檢視（View）","back":"同一塊資料的另一種看法，不複製。切片、<code>reshape</code>、<code>.T</code> 都給 view。改 view 會改到原陣列——這是初學最常見的意外。"},{"front":"複本（Copy）","back":"真的另外配一塊記憶體。花式索引、布林索引與 <code>.copy()</code> 都給複本。不確定是哪一種就明確寫 <code>.copy()</code>。"},{"front":"切片（Slice）","back":"<code>起:迄:步長</code>，<b>迄不包含</b>。<code>A[1:4:2]</code> 取第 1、3 列。切片給的是 view。"},{"front":"花式索引（Fancy Indexing）","back":"用整數串列去挑，例如 <code>A[[1,3]]</code>。兩個串列一起寫時會<b>逐位配對</b>：<code>A[[1,3],[0,2]]</code> 只拿到 <code>A[1,0]</code> 與 <code>A[3,2]</code> 兩個數。"},{"front":"np.ix_","back":"把兩組索引展開成<b>交叉</b>而不是配對。要取「第 1、3 列與第 0、2 欄」的子矩陣就用 <code>A[np.ix_([1,3],[0,2])]</code>，或分兩步 <code>A[[1,3]][:,[0,2]]</code>。"},{"front":"布林索引（Boolean Indexing）","back":"用一排 True／False 挑資料。遮罩的長度必須跟被索引的那一維<b>一樣長</b>，不是符合條件的筆數。統計程式挑資料九成靠它。"},{"front":"遮罩（Mask）","back":"布林索引用的那個布林陣列。<code>mask = mpg &gt; 30</code> 的結果跟原資料等長；真正的筆數要 <code>mask.sum()</code>。"},{"front":"向量化（Vectorization）","back":"把逐筆的迴圈改寫成整塊的運算。除了快一到兩個數量級，更重要的是<b>條件寫成一行才看得出你在挑什麼</b>。"},{"front":"廣播（Broadcasting）","back":"形狀不同的陣列也能一起運算。規則三步：右對齊 shape、缺的維度補 1、長度 1 的維度拉伸。任何一維既不相等也沒有一邊是 1 就報錯。"},{"front":"右對齊（Right Alignment）","back":"廣播比對 shape 的方向：從<b>最後一維</b>開始往前對。<code>(10,3)</code> 與 <code>(3,)</code> 對得起來，與 <code>(10,)</code> 對不起來。"},{"front":"keepdims","back":"彙總時保留被摺掉的那一維（長度變成 1）。<code>X.mean(1, keepdims=True)</code> 給 <code>(10,1)</code> 而不是 <code>(10,)</code>，這樣廣播回去才不會對錯邊。"},{"front":"軸（axis）","back":"彙總時<b>被摺掉</b>的那一維。<code>axis=0</code> 往下摺得到每一欄一個數字，<code>axis=1</code> 往右摺得到每一列一個數字，不給就整塊摺成純量。"},{"front":"標準化（Standardization）","back":"<code>(X - X.mean(0)) / X.std(0)</code>。左邊 <code>(n,p)</code>、右邊 <code>(p,)</code>，靠廣播讓每一列都減同一組欄平均。第 6 章的收縮方法一定要先做這件事。"},{"front":"自由度修正（ddof）","back":"算變異數時分母要不要扣掉。NumPy 的 <code>np.var</code> 預設 <code>ddof=0</code>（除以 n），<b>pandas 的 <code>.var()</code> 預設 ddof=1</b>——同一份資料用兩個套件算會得到不同的數字。"},{"front":"相關係數矩陣（Correlation Matrix）","back":"<code>np.corrcoef(x, y)</code> 的輸出。對角線一定是 1，非對角線是兩兩相關。第 3 章判斷共線性時會一直用到。"},{"front":"亂數產生器（Random Generator）","back":"<code>rng = np.random.default_rng(1303)</code>。比 <code>np.random.normal</code> 好，因為後者用全域狀態，任何地方的呼叫都會動到它。"},{"front":"種子（Seed）","back":"決定亂數序列的起點。固定種子，同一段程式每次跑出一模一樣的結果，別人才重現得出來。報告裡要註明用的是哪一個種子。"},{"front":"可重現性（Reproducibility）","back":"別人照你的程式碼跑，能得到同一組數字。做到它需要三件事：固定種子、記下套件版本、資料來源可追。本站每一張自己算的圖都符合這三點。"},{"front":"大數法則（Law of Large Numbers）","back":"樣本數變大時，樣本平均會越來越靠近母體平均。第 5 章的自助法與交叉驗證整套建立在這個現象上。"}];
+const FLASHCARDS = [{"front":"陣列（ndarray）","back":"NumPy 的核心容器。整塊是<b>同一個型別</b>、記憶體連續排列，所以能逐元素運算，也才快得起來。串列裝什麼都行，因此沒辦法定義逐元素相加。"},{"front":"逐元素運算（Element-wise Operation）","back":"對陣列的每一個位置各做一次同樣的運算。<code>x + y</code>、<code>x**2</code>、<code>np.sqrt(x)</code> 都是。迴圈跑在 C 裡面，不會回到 Python。"},{"front":"維度數（ndim）","back":"陣列有幾維，等於 <code>shape</code> 這個 tuple 的長度。一維是一排數字，二維是一張表。看不懂錯誤訊息時先印它。"},{"front":"形狀（shape）","back":"一個 tuple，記每一維多長。二維陣列是 <code>(列數, 欄數)</code>，<b>列在前</b>。統計資料的慣例是列＝觀測、欄＝變數，所以 <code>(n, p)</code>。"},{"front":"資料型別（dtype）","back":"整塊陣列共用的元素型別。混入一個浮點數，整塊就升成 <code>float64</code>——陣列不允許同一塊裡混型別。可用 <code>np.array(..., float)</code> 指定。"},{"front":"reshape","back":"改變陣列形狀；可行時共用原資料，否則可能複製。本頁連續六個數值的範例共用記憶體，所以修改會影響原陣列。"},{"front":"C 順序（Row-major）","back":"NumPy 預設的填法：先填滿一列再換下一列。所以 <code>reshape((2,3))</code> 的第一列是前三個數字，不是每隔一個取一次。"},{"front":"檢視（View）","back":"與另一個陣列共用資料的看法。NumPy 基本切片與轉置通常用檢視，reshape 則在可行時才共用。修改可寫入的檢視會影響共用的資料。"},{"front":"複本（Copy）","back":"真的另外配一塊記憶體。花式索引、布林索引與 <code>.copy()</code> 都給複本。不確定是哪一種就明確寫 <code>.copy()</code>。"},{"front":"切片（Slice）","back":"<code>起:迄:步長</code>，<b>迄不包含</b>。<code>A[1:4:2]</code> 取第 1、3 列。切片給的是 view。"},{"front":"花式索引（Fancy Indexing）","back":"用整數串列去挑，例如 <code>A[[1,3]]</code>。兩個串列一起寫時會<b>逐位配對</b>：<code>A[[1,3],[0,2]]</code> 只拿到 <code>A[1,0]</code> 與 <code>A[3,2]</code> 兩個數。"},{"front":"np.ix_","back":"把兩組索引展開成<b>交叉</b>而不是配對。要取「第 1、3 列與第 0、2 欄」的子矩陣就用 <code>A[np.ix_([1,3],[0,2])]</code>，或分兩步 <code>A[[1,3]][:,[0,2]]</code>。"},{"front":"布林索引（Boolean Indexing）","back":"用一排 True／False 挑資料。遮罩的長度必須跟被索引的那一維<b>一樣長</b>，不是符合條件的筆數。統計程式挑資料九成靠它。"},{"front":"遮罩（Mask）","back":"布林索引用的那個布林陣列。<code>mask = mpg &gt; 30</code> 的結果跟原資料等長；真正的筆數要 <code>mask.sum()</code>。"},{"front":"向量化（Vectorization）","back":"把逐筆的迴圈改寫成整塊的運算。除了快一到兩個數量級，更重要的是<b>條件寫成一行才看得出你在挑什麼</b>。"},{"front":"廣播（Broadcasting）","back":"形狀不同的陣列也能一起運算。規則三步：右對齊 shape、缺的維度補 1、長度 1 的維度拉伸。任何一維既不相等也沒有一邊是 1 就報錯。"},{"front":"右對齊（Right Alignment）","back":"廣播比對 shape 的方向：從<b>最後一維</b>開始往前對。<code>(10,3)</code> 與 <code>(3,)</code> 對得起來，與 <code>(10,)</code> 對不起來。"},{"front":"keepdims","back":"彙總時保留被摺掉的那一維（長度變成 1）。<code>X.mean(1, keepdims=True)</code> 給 <code>(10,1)</code> 而不是 <code>(10,)</code>，這樣廣播回去才不會對錯邊。"},{"front":"軸（axis）","back":"彙總時<b>被摺掉</b>的那一維。<code>axis=0</code> 往下摺得到每一欄一個數字，<code>axis=1</code> 往右摺得到每一列一個數字，不給就整塊摺成純量。"},{"front":"標準化（Standardization）","back":"<code>(X - X.mean(0)) / X.std(0)</code>。左邊 <code>(n,p)</code>、右邊 <code>(p,)</code>，靠廣播讓每一列都減同一組欄平均。第 6 章的收縮方法一定要先做這件事。"},{"front":"自由度修正（ddof）","back":"算變異數時分母要不要扣掉。NumPy 的 <code>np.var</code> 預設 <code>ddof=0</code>（除以 n），<b>pandas 的 <code>.var()</code> 預設 ddof=1</b>——同一份資料用兩個套件算會得到不同的數字。"},{"front":"相關係數矩陣（Correlation Matrix）","back":"<code>np.corrcoef(x, y)</code> 的輸出。對角線一定是 1，非對角線是兩兩相關。第 3 章判斷共線性時會一直用到。"},{"front":"亂數產生器（Random Generator）","back":"<code>rng = np.random.default_rng(1303)</code>。比 <code>np.random.normal</code> 好，因為後者用全域狀態，任何地方的呼叫都會動到它。"},{"front":"種子（Seed）","back":"決定亂數序列的起點。固定種子，同一段程式每次跑出一模一樣的結果，別人才重現得出來。報告裡要註明用的是哪一個種子。"},{"front":"可重現性（Reproducibility）","back":"別人照你的程式碼跑，能得到同一組數字。做到它需要三件事：固定種子、記下套件版本、資料來源可追。本站每一張自己算的圖都符合這三點。"},{"front":"大數法則（Law of Large Numbers）","back":"樣本數變大時，樣本平均會越來越靠近母體平均。第 5 章的自助法與交叉驗證整套建立在這個現象上。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

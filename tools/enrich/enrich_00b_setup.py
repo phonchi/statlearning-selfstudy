@@ -4,7 +4,7 @@
 內容依據：課程 lab 每一份的前幾格（%pip install ISLP、imports、掛 Drive）。
 以 Colab 為主、本機 conda 為輔，因為第一次上手最重要的是「先能跑」。
 
-版本清單一律引用 pages.ENV_NOTE，不要在內文自己抄一份。
+本地練習依課程官方 packages.txt 核對教室版本；網站圖表生成環境不作考試準備依據。
 """
 import sys
 from pathlib import Path
@@ -36,20 +36,13 @@ BODIES = {}
 
 # ── PROLOGUE 先能跑 ───────────────────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>環境這件事有一個常見的誤區：想先把最完整的設定弄好，再開始學。
-  結果是花了一個下午裝東西，一行統計程式都還沒跑過。
-  <strong>順序反過來</strong>——先用三分鐘在瀏覽器裡跑出第一張圖，
-  等你確定要長期用了，再回來做本機安裝。</p>
-
-{info("三分鐘版本", '① 開 <a href="https://colab.research.google.com/" target="_blank" '
-      'rel="noopener">Colab</a>；② 新增一個 notebook；③ 第一格貼 ' 
-      "<code>%pip install ISLP</code> 按執行；④ 第二格貼課程 lab 的 imports；"
-      "⑤ 開始跑。就這樣。")}
-
+  <p>先完成一件可以確認成功的小事：開課程 notebook、讀入 Auto 汽車資料，畫出馬力對 mpg 的散佈圖。平時可以先用 Colab 練習；本地端版本則建議和電腦教室一致，考前要熟悉教室的操作環境。</p>
+{info("期中考準備：熟悉電腦教室的環境", '期中考使用電腦教室的電腦。平時可用 Colab 學習，但本地端練習建議依 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方套件版本清單</a> 設定，並在考前用教室電腦完整跑一次練習。下方「本機安裝」說明如何核對 Python、套件與 kernel。', "warm")}
+{info("第一次上手路徑", '開啟 <a href="https://colab.research.google.com/github/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb">Ch02 中文課程 notebook（Colab）</a>，選「在雲端硬碟中儲存副本」。先執行安裝套件與 imports；第一次使用 CPU 即可，先跳過 cudf／cuml 的 GPU 擴充。接著照下方「資料放哪裡」取得 Auto.csv，完成第一張圖。')}
 {table(["環境", "啟動成本", "適合情境", "主要代價"],
        [["<strong>Colab（第一次上手推薦）</strong>", "瀏覽器開啟即可使用",
          "第一次跑 lab、公用電腦、需要臨時 GPU", "執行階段會回收，套件需重裝"],
-        ["本機 conda", "需安裝環境並註冊 kernel", "長期使用、需要固定版本",
+        ["本機 conda", "需安裝環境並註冊 kernel", "本地練習、對齊教室版本",
          "要管理環境與 Jupyter kernel"],
         ["本機 pip + venv", "需自行準備 Python 與 venv", "磁碟空間有限、熟悉 Python 環境",
          "Python 與套件版本需自行管理"]])}
@@ -76,13 +69,13 @@ BODIES["prologue"] = f"""
 
 # ── P01 Colab 工作流 ──────────────────────────────────────────────────
 BODIES["colab"] = f"""
-  <p>Colab 是跑在 Google 機器上的 Jupyter notebook。它的好處是零安裝、有免費 GPU；
-  代價是<strong>執行階段（runtime）會被回收</strong>——閒置太久或關掉分頁之後，
+  <p>Colab 是跑在 Google 機器上的 Jupyter notebook。你可以直接在瀏覽器使用；
+  代價是<strong>執行階段（runtime）會被回收</strong>——執行階段結束或被回收後，
   你裝的套件與記憶體裡的變數都會消失，程式碼本身則存在你的 Drive 裡不會掉。</p>
 
 {info("最常見的一個誤會", "「我明明裝過 ISLP 了，怎麼又說找不到？」"
       "，因為那是<strong>上一個執行階段</strong>裝的。"
-      "重新連線之後要再跑一次 <code>%pip install ISLP</code>。"
+      "連到新的執行階段之後要再跑一次 <code>%pip install ISLP</code>。"
       "把它留在 notebook 的第一格，就不會忘。", "warm")}
 
 {card("Colab 上的加速選項", C(1, 4), O(1, 4), src=S(1, 4),
@@ -175,8 +168,9 @@ BODIES["imports"] = f"""
 
 # ── P03 資料放哪裡 ────────────────────────────────────────────────────
 BODIES["data"] = f"""
-  <p>課程 lab 的資料放在你自己的 Google Drive 裡。流程是三步：
-  掛載 Drive → 設一個 <code>DATA_PATH</code> → 用 <code>pd.read_csv</code> 讀。</p>
+  <p>資料不會因為掛載 Drive 就自動出現。第一次請依序完成下面四步：</p>
+{table(["步驟", "操作與完成標準"], [["1. 取得資料", '<a href="https://raw.githubusercontent.com/phonchi/nsysu-math524-2025/main/static_files/assignments/Auto.csv">下載課程 Auto.csv</a>。若瀏覽器顯示文字，另存為 Auto.csv，保留副檔名。'], ["2. 放進自己的 Drive", "在 Google Drive 建立 Lab/Data 資料夾，將 Auto.csv 上傳到裡面。"], ["3. 掛載並設定路徑", "在 Colab 執行下方掛載儲存格；DATA_PATH 改成 /content/drive/MyDrive/Lab/Data/，或你實際建立的資料夾。"], ["4. 讀取、檢查、畫圖", "先確認有 horsepower 與 mpg 欄，再執行下方繪圖步驟。成功時會看到橫軸 horsepower、縱軸 mpg 的散佈圖。"]])}
+  <p>另可下載課本的 <a href="https://www.statlearning.com/s/ALL-CSV-FILES-2nd-Edition-corrected.zip">官方 CSV 資料壓縮檔</a>，解壓後取得 Auto.csv。不同來源可能已做過清理，列數與特殊值不一定一樣；本頁起步與 00C 的清理練習都使用上面的<strong>課程 Auto.csv</strong>，不要混用不同檔案的輸出。</p>
 
 {card("掛載 Drive", C(2, 183), O(2, 183), src=S(2, 183),
       note="第一次會跳出授權視窗，選你的 Google 帳號按同意。"
@@ -188,12 +182,11 @@ BODIES["data"] = f"""
 
 {card("讀進來", C(2, 185), O(2, 185), src=S(2, 185),
       note="<code>os.path.join</code> 幫你處理斜線，"
-           "比自己用加號接字串保險（Windows 與 Linux 的斜線方向不同）。")}
+           "比自己用加號接字串保險。下方保存的是老師當時檔案的輸出；你的檔案若少了 Unnamed: 0 這類索引欄，先核對來源，不要手動補造資料。")}
 
-{info("讀檔的參數決定你後面有多痛",
-      "同一份 Auto 資料，<code>Auto.csv</code> 與 <code>Auto.data</code> 要用不同的參數讀，"
-      "而且後者需要 <code>na_values=['?']</code>，不然 horsepower 整欄會變成字串。"
-      "細節在 <a href=\"p4_pandas.html#na\">P4 的遺漏值那一節</a>。", "warm")}
+  <p>接著以指定的特殊值規則重新讀取，讓 horsepower 能作數值運算。這是供你在自己的檔案執行的設定片段，不代填輸出；<a href="p4_pandas.html#na">P4</a> 會說明參數的作用。</p>
+{hl("Auto = pd.read_csv(os.path.join(DATA_PATH, 'Auto.csv'), na_values=['?'])\nprint(Auto.shape)\nprint(Auto[['horsepower', 'mpg']].dtypes)\nprint(Auto[['horsepower', 'mpg']].isna().sum())")}
+{card("畫第一張散佈圖", C(2, 252), src=S(2, 252), note="在上面的 Auto 已讀取後執行。圖的橫軸是 horsepower、縱軸是 mpg。含缺值的觀測不會畫成點；圖能出現只表示操作成功，還不能取代資料清理與統計判斷。")}
 
 {quiz("qData", "PART 03 · 自我檢測",
       "<code>FileNotFoundError: /content/drive/MyDrive/Lab/Data/Auto.csv</code>。"
@@ -211,25 +204,11 @@ BODIES["data"] = f"""
 
 # ── P04 本機安裝 ──────────────────────────────────────────────────────
 BODIES["local"] = f"""
-  <p>確定要長期用了再做這一步。本機安裝的唯一理由是<strong>你想控制版本</strong>——
-  讓自己跑出來的數字跟課程 lab 一致。做法是開一個獨立的 conda 環境，
-  把版本釘在課程用的那一組。</p>
-
-{info("本站的圖表就是這樣產生的",
-      f"環境版本：{P.ENV_NOTE}。"
-      "本站每一張自己算的圖都在這個環境下用固定種子跑出來，所以任何人都能重生同樣的數字。")}
-
-{hl('''# 開一個獨立的環境，Python 版本也釘住
-conda create -n m524 python=3.11 -y
-
-# 裝課程用的套件（版本對齊課程的 packages.txt）
-conda run -n m524 pip install numpy==1.24.4 pandas==2.3.2 \\
-  scikit-learn==1.6.1 scipy==1.13.1 statsmodels==0.14.2 \\
-  matplotlib==3.8.4 seaborn==0.13.2 ISLP==0.4.0
-
-# 讓 Jupyter 看得到這個環境
-conda run -n m524 pip install jupyterlab ipykernel
-conda run -n m524 python -m ipykernel install --user --name m524''')}
+  <p>本地端練習建議使用與電腦教室相同的 Python 與核心套件版本。依據是 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方 packages.txt</a>，以下於 <strong>2026-09-05</strong> 核對；若清單更新，以官方檔案為準。</p>
+{table(["項目", "官方清單版本"], [["Python", "3.9.13"], ["NumPy／pandas", "1.24.4／2.3.2"], ["scikit-learn／SciPy", "1.6.1／1.13.1"], ["statsmodels／Matplotlib", "0.13.2／3.5.2"], ["seaborn／ISLP", "0.13.2／0.4.0"], ["JupyterLab／ipykernel／Notebook", "3.4.4／6.15.2／6.4.12"]])}
+  <p>先安裝 conda，再建立獨立環境。下面安裝的是清單中的核心套件，不是教室整台電腦的完整複本；作業系統、其他相依套件與實際使用的 kernel 仍需核對。官方檔案是 <code>pip list</code> 形式的版本表，<strong>不能直接用 pip install -r packages.txt 安裝</strong>。</p>
+{hl("# 建立本地練習環境\nconda create -n m524 python=3.9.13 -y\n\n# 依官方清單安裝核心分析套件\nconda run -n m524 python -m pip install numpy==1.24.4 pandas==2.3.2 scikit-learn==1.6.1 scipy==1.13.1 statsmodels==0.13.2 matplotlib==3.5.2 seaborn==0.13.2 ISLP==0.4.0\n\n# 安裝 notebook 工具，註冊 kernel\nconda run -n m524 python -m pip install jupyterlab==3.4.4 ipykernel==6.15.2 notebook==6.4.12\nconda run -n m524 python -m ipykernel install --user --name m524\n\n# 核對版本，並由這個環境啟動 JupyterLab\nconda run -n m524 python --version\nconda run -n m524 python -m pip list\nconda run -n m524 jupyter lab")}
+  <p>在 JupyterLab 開啟練習 notebook，選擇 <code>m524</code> kernel，再執行 <code>import sys; print(sys.version); print(sys.executable)</code> 確認實際使用的 Python。若安裝失敗，保留完整錯誤訊息並核對相依套件；不要默默換成另一版後仍宣稱與教室一致。</p>
 
 {table(["做法", "課程專案", "另一個專案", "結果"],
        [["全部裝在 base", "需要 pandas 2.3.2", "需要 pandas 1.5.3",
@@ -239,24 +218,25 @@ conda run -n m524 python -m ipykernel install --user --name m524''')}
 
 {info("四步驟的順序",
       "<strong>建立環境 → 安裝套件 → 註冊 kernel → 選擇／啟用環境。</strong>"
-      "上面的命令區已給出可直接執行的精確指令；不需要另一個動畫重複播放。"
+      "上面的命令區列出這些步驟；完成後還要在 Jupyter 選擇 m524 kernel。"
       "若 Jupyter 說找不到已安裝的套件，先用 <code>import sys; print(sys.executable)</code> "
       "確認當前 kernel 使用哪一個 Python。")}
 
 {table(["情境", "建議"],
        [["第一次上手、只想跑 lab", "Colab"],
-        ["想長期用、要跟課程數字一致", "conda 環境（上面那段指令）"],
+        ["本地端練習", "依官方清單設定 conda 環境，再核對版本與 kernel"],
         ["電腦空間很小", "pip + venv（不裝 Anaconda，省 3–5 GB）"],
         ["要用 GPU", "Colab（本機要 NVIDIA 顯卡加 CUDA，很麻煩）"],
-        ["交作業前的最後檢查", "<b>重啟 kernel 並全部重跑一次</b>"]])}
+        ["交作業前的最後檢查", "<b>重啟 kernel 並全部重跑一次</b>"],
+        ["期中考前", "在電腦教室的電腦完整跑一次練習，熟悉開啟檔案、路徑與 kernel"]])}
 
 {quiz("qLocal", "PART 04 · 自我檢測",
       "你在終端機 <code>pip install ISLP</code> 裝好了，但 Jupyter 裡還是 "
       "<code>ModuleNotFoundError</code>。最可能的原因？",
       [(True, "Jupyter 用的 kernel 不是你剛剛裝套件的那個環境",
         "對。這是最常見的假故障。"
-        "在 notebook 裡跑 <code>%pip install ISLP</code>（前面加百分比符號），"
-        "它會裝到<strong>當前 kernel</strong> 的 Python 裡，直接避開這個問題。"),
+        "先選擇已依課程清單安裝套件的 kernel，再核對 <code>sys.executable</code>；"
+        "若確實缺套件，再依官方版本安裝，避免意外換版。"),
        (False, "要重開電腦",
         "重開沒有用——問題不是快取，是<strong>裝到了另一個 Python</strong>。"),
        (False, "ISLP 不支援你的作業系統",
@@ -292,7 +272,7 @@ BODIES["trouble"] = f"""
 ])}
 
 {info("交作業之前一定要做的一件事",
-      "<strong>重啟執行階段 → 從第一格全部重跑 → 確認每一格都有輸出而且沒有紅色錯誤。</strong>"
+      "<strong>重啟執行階段 → 從第一格全部重跑 → 確認所有必要步驟完成，沒有未處理錯誤。</strong>"
       "你不會想交出一份「只有我這台機器、而且只有照某個特定順序跑才對」的作業。")}
 
 {quiz("qFix", "PART 05 · 自我檢測",
@@ -340,10 +320,10 @@ BODIES["exercises"] = f"""
         "執行時間會顯示在儲存格下方，不是那個中括號。")])}
 
 {quiz("qEx3", "EXERCISE 3 · 版本",
-      "為什麼本站要把套件版本釘死（numpy 1.24.4、pandas 2.3.2…）？",
-      [(True, "讓任何人重跑都能得到同一組數字",
+      "為什麼本地端練習建議依官方清單固定 Python 與套件版本？",
+      [(True, "減少本地端與電腦教室的環境差異",
         "對。版本一改，某些預設值與演算法細節就可能不同，"
-        "數字就對不上課程 lab 了。可重現性是這門課的基本紀律。"),
+        "固定核心版本能減少差異，但仍要核對資料、相依套件與 kernel，並在教室電腦實際練習。"),
        (False, "新版本有 bug",
         "沒有這個假設。釘版本是為了<strong>一致</strong>，不是因為新版不好。"),
        (False, "舊版本比較快",
@@ -366,10 +346,10 @@ BODIES["exercises"] = f"""
 BODIES["reference"] = f"""
   <p>三張速查表。跑不動的時候回來看第二張。</p>
 
-{table(["環境", "花多久", "適合誰", "注意"],
-       [["Colab", "3 分鐘", "第一次上手、公用電腦", "執行階段會回收，套件要重裝"],
-        ["conda 環境", "20 分鐘", "長期使用、要跟課程數字一致", "記得選對 kernel"],
-        ["pip + venv", "10 分鐘", "電腦空間小", "自己管 Python 版本"],
+{table(["環境", "需要準備", "適合誰", "注意"],
+       [["Colab", "帳號、網路與資料", "第一次上手、公用電腦", "執行階段會回收，套件要重裝"],
+        ["conda 環境", "安裝 conda 與套件", "本地練習、對齊教室版本", "依官方清單核對，記得選對 kernel"],
+        ["pip + venv", "Python 與虛擬環境", "電腦空間小", "自己管 Python 版本"],
         ["本機 base 環境", "—", "<b>不建議</b>", "遲早會版本衝突"]])}
 
 {table(["症狀", "真正的原因", "怎麼修"],
@@ -385,19 +365,19 @@ BODIES["reference"] = f"""
 {table(["交作業前的檢查", "為什麼"],
        [["重啟 kernel", "清掉殘留的變數"],
         ["從第一格全部重跑", "確認不依賴亂序執行"],
-        ["每一格都有輸出、沒有紅色錯誤", "確認別人打開也跑得動"],
+        ["必要步驟完成、沒有未處理錯誤", "確認別人打開也跑得動"],
         ["固定所有種子", "確認別人跑得出同樣的數字"],
         ["DATA_PATH 有註明要改", "別人的 Drive 結構跟你不同"]])}
 
 {info("三個一定要記住的觀念",
-      "<strong>1. 先能跑，再談其他。</strong>第一次上手用 Colab，"
-      "把耐心留給課程內容而不是安裝問題。<br>"
+      "<strong>1. 平時可用 Colab；考前熟悉教室環境。</strong>本地端版本依官方清單設定，"
+      "並在教室電腦完整跑過練習。<br>"
       "<strong>2. 八成的「壞掉」其實是環境或執行順序。</strong>"
       "萬用第一步：重啟 kernel 並全部重跑。<br>"
       "<strong>3. 交作業前一定要從頭重跑一次。</strong>"
       "不然你交的是「只有你那台機器跑得出來」的東西。")}
 
-{ver_note((1, 2))}
+  <p class="ver-note">本頁程式碼卡與保存輸出取自課程 Ch01、Ch02 lab，各卡標有來源儲存格。保存輸出反映老師當時使用的資料與環境；本地練習與期中準備的現行版本，以 <a href="{P.CLASSROOM_PACKAGES}">課程官方電腦教室套件清單</a> 為準。</p>
 """
 
 # ── 元件 JS：只保留 notebook 儲存格狀態模擬器 ─────────────────────────

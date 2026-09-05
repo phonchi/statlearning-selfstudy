@@ -126,8 +126,8 @@ BODIES["create"] = f"""
 
 # ── P02 reshape 與轉置 ──────────────────────────────────────────────────
 BODIES["reshape"] = f"""
-  <p><code>reshape</code> 不搬資料。它給你的是<strong>同一塊記憶體的另一種讀法</strong>——
-  六個數字排成一排，或排成兩列三欄，底下是同一塊。這件事不知道的話，
+  <p>本例的 <code>reshape</code> 可以用<strong>同一塊記憶體的另一種讀法</strong>完成：
+  六個數字排成一排，或排成兩列三欄，底下是同一塊。一般情況則是能共用就回傳檢視，否則可能複製。若沒注意這個差別，
   之後改了一個變數卻發現另一個也跟著變，會找很久。</p>
 
 {viz(svg("w16reshapeSvg", 320),
@@ -160,8 +160,7 @@ BODIES["reshape"] = f"""
 
 {qa("觀念釐清", [
     ("什麼時候會真的複製一份？",
-     "切片（<code>A[1:3]</code>）與 <code>reshape</code> 給的是<strong>檢視（view）</strong>，"
-     "不複製；<strong>花式索引</strong>（用整數串列或布林陣列去挑，例如 <code>A[[1,3]]</code>）"
+     "基本切片（<code>A[1:3]</code>）給的是<strong>檢視（view）</strong>；<code>reshape</code> 則在可行時共用資料，否則可能複製。<strong>花式索引</strong>（用整數串列或布林陣列去挑，例如 <code>A[[1,3]]</code>）"
      "與明確呼叫 <code>.copy()</code> 才會複製。"
      "不確定就 <code>.copy()</code>，安全比省記憶體重要。"),
     ("為什麼 reshape 要傳一個 tuple？",
@@ -174,7 +173,7 @@ BODIES["reshape"] = f"""
       "<code>x = np.array([1,2,3,4,5,6])</code>、<code>y = x.reshape((2,3))</code>，"
       "接著執行 <code>y[0,0] = 99</code>。<code>x[0]</code> 現在是多少？",
       [(False, "還是 1，y 是新的陣列",
-        "這正是 lab 那一格要示範的陷阱。<code>reshape</code> 回傳的是"
+        "這正是 lab 那一格要示範的陷阱。本例的 <code>reshape</code> 回傳的是"
         "<strong>同一塊資料的檢視</strong>，不是複本。"),
        (True, "99，因為 y 跟 x 共用同一塊資料",
         "對。要切斷連結得寫 <code>y = x.reshape((2,3)).copy()</code>。"

@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -664,7 +675,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#judgment" data-target="judgment"><span class="fn-num">P03</span><span class="fn-name">判斷不能外包</span></a>
   <a href="#habits" data-target="habits"><span class="fn-num">P04</span><span class="fn-name">把 AI 留在迴圈裡</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -688,10 +699,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（課前 · AI 學習迴圈）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab 的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）與儲存格編號；需要實作時，再打開原始筆記本對照。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>AI 協作參考書：<cite>AI-Assisted Statistics for Data Scientists</cite>（第三版）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -704,7 +716,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#judgment"><span class="toc-num">P03</span>判斷不能外包</a>
     <a href="#habits"><span class="toc-num">P04</span>把 AI 留在迴圈裡</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -715,23 +727,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>它能參與整個資料分析流程，但不會替你學會 <span class="sec-badge">先備 · AI 與資料分析</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>AI 已經不只是「幫你補一行 Python」的工具。做資料分析時，你可以請它協助
-  <strong>找資料來源、整理欄位、清理資料、探索性分析、文字探勘、建模、除錯，
-  甚至整理報告初稿</strong>。研究者也正在觀察這種協作如何改變資料分析工作流，
-  而不只是程式碼怎麼寫。</p>
-
-  <p>這反而讓學習變得更重要。當產出一段程式或一份摘要只要幾秒，真正稀缺的能力是：
-  你能不能說清楚問題、看懂資料的來歷、發現不合理的假設，並判斷結論能說到哪裡。</p>
-
+  <p>你想知道 Auto 汽車資料中的馬力與油耗有什麼關係。AI 能立刻給你繪圖程式，甚至寫出結論；但你還不知道欄位單位，也不知道圖會長什麼樣。這一頁練習的是：<strong>讓 AI 的幫忙留下你自己的學習過程</strong>。</p>
 <div class="info-box">
-  <span class="info-label">這一頁要回答的問題</span>
-  不是『要不要用 AI』，而是<strong>怎麼把 AI 放進學習迴圈，同時保留你的判斷</strong>。你可以把繁瑣工作交給它，但問題定義、資料脈絡、分析假設與最後結論仍由你負責。
+  <span class="info-label">先留一句自己的想法</span>
+  例如：『我猜馬力較大的車，mpg 較低。』mpg 是每加侖可行駛的英里數，數值越高代表同樣燃料跑得越遠。先寫下猜測與理由，後面才有東西可以對照。
 </div>
-
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>工作</th><th>AI 可以先幫什麼</th><th>你仍要判斷什麼</th></tr></thead>
-  <tbody><tr><td>找資料</td><td>列候選資料庫、搜尋詞與可能欄位</td><td>來源是否可信、授權與涵蓋族群</td></tr><tr><td>資料清理</td><td>產生轉型程式、列出異常值</td><td>特殊值代表錯誤、遺漏，還是真實現象</td></tr><tr><td>EDA／文字探勘</td><td>摘要、分群、主題候選與圖表程式</td><td>模式是否穩定、分類是否有領域意義</td></tr><tr><td>建模與除錯</td><td>建立基準模型、解釋錯誤訊息</td><td>評估設計、假設、資料洩漏與指標選擇</td></tr><tr><td>報告草稿</td><td>整理結構與改寫句子</td><td>數字是否正確、證據是否足以支持主張</td></tr></tbody>
-</table></div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 00 · 自我檢測</div>
@@ -779,34 +779,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>從找資料到報告草稿，重點不是禁用而是分工 <span class="sec-badge">先備 · 資料分析流程</span></h2>
 <!-- GEN:END sec:workflow -->
 
-  <p>把「分析資料」當成單一大任務，AI 很容易用通用答案填滿空白。更好的做法是沿著工作流，
-  一次處理一個可以檢查的小問題。資料分析者也會在搜尋資訊、操作資料、解讀結果與重新提問之間
-  來回，而不是從提示一次跳到結論。</p>
-
+  <p>沿用 Auto 這個問題，先只做一張馬力對 mpg 的散佈圖。請 AI 幫你列出需要確認的欄位、資料來源與繪圖步驟；環境操作在 <a href="00b_setup.html#data">00B</a>，完整提示寫法在 <a href="00c_ai_assisted.html#context">00C</a>。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>分析階段</th><th>可以怎麼請 AI 幫忙</th><th>留下什麼證據</th></tr></thead>
-  <tbody><tr><td>釐清問題</td><td>把模糊問題改寫成幾個可回答的問題</td><td>目標變數、分析單位、預測或解釋</td></tr><tr><td>找資料</td><td>建議搜尋詞、公開資料庫與必要欄位</td><td>來源頁、版本、授權、下載日期</td></tr><tr><td>清理資料</td><td>列檢查項目並產生轉型程式</td><td>每一步前後的筆數、型態與異常紀錄</td></tr><tr><td>EDA／文字探勘</td><td>提出摘要、主題或關係的候選</td><td>可重算的統計量、樣本片段與圖</td></tr><tr><td>建模</td><td>建立簡單基準、比較候選方法</td><td>切分方式、指標、假設與未見資料表現</td></tr><tr><td>溝通</td><td>依讀者改寫、整理圖表說明</td><td>數字對照、限制與沒有回答的問題</td></tr></tbody>
+  <thead><tr><th>這一輪</th><th>你留下什麼</th></tr></thead>
+  <tbody><tr><td>提出想法</td><td>馬力與 mpg 可能往什麼方向變，理由是什麼</td></tr><tr><td>動手嘗試</td><td>執行繪圖程式，確認軸標籤與單位</td></tr><tr><td>觀察證據</td><td>圖是否有曲線、離群點，或沒有明顯關係</td></tr><tr><td>修正理解</td><td>寫一句猜測被支持或需要修改的地方，再提出下一個問題</td></tr></tbody>
 </table></div>
-
-<div class="deck-extra">
-  <div class="dx-label">先看你實際拿到的資料</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
-  <span class="line">df.head() <span class="com"># Get the first 5 rows of data</span></span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
-2025-09-01 -0.397297 -1.061537  1.455216  0.632237
-2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
-2025-09-03  0.501820 -0.662466  0.146713  0.293567
-2025-09-04 -1.060077 -1.010073  0.553983  0.211157
-2025-09-05 -0.109702  0.236859 -0.203407  0.695861</pre></div>
-  <p class="dx-note">AI 可以解釋這段輸出，但你要親自確認欄名、資料型態與數值量級。這張表就是後續提問的共同起點：不要讓模型用猜的補上資料脈絡。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 31</span>
-</div>
-
-<div class="info-box">
-  <span class="info-label">研究給我們的啟示</span>
-  Drosos 等人的參與式研究描述了生成式 AI 介入資料分析時，搜尋資訊與理解資料會反覆交錯；Yang 等人則展示 AI 可參與從資料轉換、EDA 到統計與機器學習的多個環節。這些工作說明<strong>協作範圍很廣</strong>，不代表每個輸出都正確，也不代表可以省略人工核對。
-</div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
@@ -818,20 +795,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="judgment">
 <!-- GEN:BEGIN sec:judgment -->
   <div class="section-number">PART 03 · 判斷不能外包</div>
-  <h2>資料代表什麼、流程站不站得住，仍然由你負責 <span class="sec-badge">AI-Stats §11</span></h2>
+  <h2>資料代表什麼、流程站不站得住，仍然由你負責 <span class="sec-badge"><a href="#w12-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
 <!-- GEN:END sec:judgment -->
 
-  <p>AI 能產生方法，卻不知道你的研究或決策真正要承擔什麼後果。
-  所以人的工作不是在最後「看一眼」，而是從一開始就替分析設定邊界。</p>
-
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>你要守住的判斷</th><th>至少問一句</th></tr></thead>
-  <tbody><tr><td>問題定義</td><td>我要回答的是預測、描述、解釋，還是因果問題？</td></tr><tr><td>資料來源與代表性</td><td>這些資料怎麼收集，能代表我要談的族群嗎？</td></tr><tr><td>欄位定義與單位</td><td>一列代表誰／什麼？零、空白與特殊碼各代表什麼？</td></tr><tr><td>方法假設</td><td>缺失、獨立性、線性或取樣方式會不會破壞解讀？</td></tr><tr><td>證據與結論</td><td>哪個輸出直接支持這句話？它沒有回答什麼？</td></tr><tr><td>風險與責任</td><td>如果答案錯了，誰會受影響，還需要誰審查？</td></tr></tbody>
-</table></div>
-
+  <p>即使散佈圖支持你的猜測，也不能直接寫「增加馬力造成油耗改變」。這份觀察資料還可能混有車重、年份等差異。<strong>把圖中看見的關係，和你想提出的解釋分開</strong>，正是這門課會逐步建立的能力。</p>
 <div class="info-box warm">
-  <span class="info-label">判斷不是『憑感覺』</span>
-  你可以要求 AI 提出反例、替代解釋與失敗條件，但裁決要回到資料、文件與領域知識。NIST 的生成式 AI 風險管理指引也把來源追溯、輸出驗證、資料治理與人工監督視為實際治理工作，而不是在結尾加一句『請自行查證』就完成。
+  <span class="info-label">這一輪先守住兩件事</span>
+  欄位的單位要查原始說明；圖中關係不能直接當成因果。AI 可以幫你提出其他解釋，但接受哪一個解釋仍要有資料與研究設計的支持。
 </div>
 
 <div class="quiz-box">
@@ -847,17 +817,24 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>五個習慣，讓協助變成學習而不是代工 <span class="sec-badge">先備 · 學習策略</span></h2>
 <!-- GEN:END sec:habits -->
 
-  <p>你不必每次都寫一份正式稽核報告。先把下面五個小習慣固定下來，
-  就能讓 AI 成為練習夥伴，而不是替你跳過練習。</p>
-
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>習慣</th><th>你可以立刻做的動作</th></tr></thead>
-  <tbody><tr><td>① 先預測</td><td>問 AI 前先寫一句：我預期看到什麼，為什麼</td></tr><tr><td>② 任務切小</td><td>一次只請它處理一個能執行、能核對的步驟</td></tr><tr><td>③ 問假設與錯因</td><td>要求列出需要成立的條件，以及最可能錯在哪裡</td></tr><tr><td>④ 親自執行</td><td>在你的資料與環境跑過；錯誤訊息和輸出都是證據</td></tr><tr><td>⑤ 改條件重做</td><td>換欄位、門檻、樣本或方法，確認理解能不能遷移</td></tr></tbody>
-</table></div>
-
+  <p>完成第一張圖後，換一個條件再練：例如只看某些年份的車，先猜圖形會怎麼變，再執行比較。不要只收藏 AI 修好的版本，要確認自己能解釋這次改動。</p>
 <div class="info-box">
-  <span class="info-label">本站的閱讀方式</span>
-  把每頁的例子當成下一輪迴圈的起點：先猜輸出，再跑程式；回答自我檢測後，不要只看對錯，也要說明另外兩個選項錯在哪裡。遇到卡住可以問 AI，但回到頁面或 lab 親自確認。
+  <span class="info-label">每次練習留下三句話</span>
+  ① 我原本預期什麼。② 程式與資料實際顯示什麼。③ 我下一次會改哪個條件。這三句比再讀一遍完整答案更容易讓你看出還不懂哪裡。
+</div>
+<div class="deck-extra">
+  <div class="dx-label">練習讀表：另一份課程示範資料</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
+  <span class="line">df.head() <span class="com"># Get the first 5 rows of data</span></span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
+2025-09-01 -0.397297 -1.061537  1.455216  0.632237
+2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
+2025-09-03  0.501820 -0.662466  0.146713  0.293567
+2025-09-04 -1.060077 -1.010073  0.553983  0.211157
+2025-09-05 -0.109702  0.236859 -0.203407  0.695861</pre></div>
+  <p class="dx-note">這是 Ch01 的小型示範表，不是 Auto。先只指出欄名、資料型態與量級；等讀 Auto 時，也用同樣的方法確認拿到什麼。</p>
+  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 31</span>
 </div>
 
 <div class="quiz-box">
@@ -905,13 +882,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
+  <div class="section-number">重點速查與來源</div>
   <h2>AI 時代的資料分析學習迴圈速查表 <span class="sec-badge">課前 · AI 學習迴圈</span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w12-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li>
+<li id="w12-source-ai-stats"><strong>AI 協作參考書</strong>：<cite>AI-Assisted Statistics for Data Scientists</cite>。Peter Bruce、Andrew Bruce、Peter Gedeck，第三版，2026。<a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists" target="_blank" rel="noopener">作者提供的程式與資料</a><br>本頁對應：參考：AI 分析的限制與責任（第 11 章）。</li></ul></div>
 <!-- GEN:END sec:reference -->
 
-  <p>本頁的核心不是「AI 一定做得到」，而是：它已能參與很多資料工作，
-  所以你更需要用學習迴圈留下可檢查的證據。不同研究的任務、模型、樣本與評分方式不同，
-  <strong>不能把單一案例或 benchmark 外推成所有領域的可靠度保證</strong>。</p>
+  <p>本頁的 Auto 情境是學習活動；以下研究用來理解 AI 協作與核對的必要性，不代表所有分析都能自動完成。書籍概念參考 Bruce、Bruce 與 Gedeck 的 <cite>AI-Assisted Statistics for Data Scientists</cite> 第三版，第 11 章（2026）；完整操作流程見 <a href="00c_ai_assisted.html#reference">00C 來源與速查</a>。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>來源</th><th>本頁怎麼使用</th><th>解讀限制</th></tr></thead>
@@ -923,7 +900,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   不要把未去識別的個資、機密研究資料或受限制資料直接貼進公開 AI 服務。先確認機構規範與服務條款；必要時只提供欄位結構、合成範例或去識別片段。無論工具多強，來源、單位、關鍵數字與對外結論都必須由人核對。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01）（老師在課程環境實跑）；課程環境版本為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01）（老師在課程環境實跑）；考前的 Python 與套件版本請依<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">電腦教室版本清單</a>核對。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->

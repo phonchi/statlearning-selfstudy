@@ -5,7 +5,7 @@
 {"front": "係數（coef）", "back": "summary 表的第一欄：效果的大小與方向。lstat 的 −0.9500 是「lstat 每多 1，medv 平均少 0.95」。這才是你要報告的東西。"},
 {"front": "標準誤（Standard Error）", "back": "估計量本身的分散程度，不是個別觀測的分散程度（那是標準差）。樣本變大時標準誤會變小，標準差不會。"},
 {"front": "t 值（t-statistic）", "back": "<code>coef / std err</code>，也就是「係數是標準誤的幾倍」。lstat 的 −0.9500 ÷ 0.039 ≈ −24.5。所以 summary 的四欄裡只有前兩欄是獨立資訊。"},
-{"front": "p 值（p-value）", "back": "「係數其實是 0」的話有多難得到這個結果。它小只代表「不是 0」很有把握，<b>跟效果大不大無關</b>——樣本夠大時可忽略的效果也會有很小的 p 值。"},
+{"front": "p 值（p-value）", "back": "在模型假設及零係數假設成立時，出現目前或更極端檢定統計量的機率。小 p 值是反對零假設的證據，不是零假設為假的機率，也不衡量效果大小。"},
 {"front": "虛擬變數編碼（Dummy Coding）", "back": "k 個類別展開成 <b>k−1</b> 欄，留一個當參考組。展成 k 欄會跟截距共線，矩陣不滿秩。其他欄的係數都是「相對於參考組」的差。"},
 {"front": "估計器（Estimator）", "back": "scikit-learn 裡會學參數的物件：<code>fit(X, y)</code>、<code>predict(X)</code>、<code>score(X, y)</code>。換模型只要換建構子那一行。"},
 {"front": "轉換器（Transformer）", "back": "只做資料轉換的物件：<code>fit(X)</code> 學參數、<code>transform(X)</code> 套用、<code>fit_transform</code> 兩步合一。StandardScaler、PCA、SimpleImputer 都是。"},
@@ -18,10 +18,10 @@
 {"front": "均方根誤差（RMSE）", "back": "MSE 開根號，回到 y 的單位。要跟別人解釋「大概差多少」時最好用。"},
 {"front": "決定係數（R²）", "back": "被模型解釋掉的變異比例。方便比較，但會隨著變數增加而虛高——第 6 章的調整後 R² 與資訊準則就是在修這件事。"},
 {"front": "交叉驗證（Cross-Validation）", "back": "把訓練資料輪流當驗證集，每一筆都當過一次。比單切一刀穩定，而且用到了全部資料。它是在<b>訓練資料內部</b>做的，不是測試集。"},
-{"front": "留一交叉驗證（LOOCV）", "back": "每一筆各當一次驗證集。沒有隨機性（切法只有一種），所以沒有標準差；代價是要配適 n 次。"},
-{"front": "重複切分（ShuffleSplit）", "back": "隨機切很多次再看平均與標準差。那個標準差很重要——它告訴你單切一刀的結果能晃動多少，兩個模型差 0.5 可能根本不算差別。"},
+{"front": "留一交叉驗證（LOOCV）", "back": "固定資料下，每筆各留出一次的切法唯一。通常報各留一折損失的平均；切法固定不代表各筆損失相同，也不代表沒有抽樣不確定性。"},
+{"front": "重複切分（ShuffleSplit）", "back": "反覆隨機留出一部分資料作驗證，驗證樣本可以重複，並非互斥的 k 折。比較模型時要保留相同切分下的配對分數；各自的標準差不是差值的不確定性。"},
 {"front": "資料洩漏（Data Leakage）", "back": "測試資料的資訊透過某個步驟進到訓練流程裡。先對整份資料標準化再切分是最典型的一種，結果是你報告的 out-of-sample 分數其實不是。"},
-{"front": "管線（Pipeline）", "back": "把前處理與模型串成一個估計器。丟進 <code>cross_validate</code> 之後，sklearn 會在<b>每一折內部</b>重新 fit 那些轉換器——你想犯錯都犯不了。"},
+{"front": "管線（Pipeline）", "back": "把前處理與模型串在一起。交叉驗證會在每一折內重新配適管線中的步驟；管線外的補值、選欄位或不當切分仍可能洩漏。"},
 {"front": "先切分再轉換（Fit on Train Only）", "back": "<code>fit</code> 只看訓練集，<code>transform</code> 對兩邊都用同一組參數。順序反了，整套評估就作廢。這是本頁唯一不能違反的規矩。"},
 {"front": "sklearn_sm 包裝器", "back": "ISLP 提供的轉接頭，把 statsmodels 的模型包成 sklearn 的估計器，好丟進 <code>cross_validate</code>。兩套 API 是可以混用的。"}
 ]

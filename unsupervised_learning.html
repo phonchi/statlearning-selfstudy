@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -670,7 +681,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#practical" data-target="practical"><span class="fn-num">P09</span><span class="fn-name">分群的實務問題</span></a>
   <a href="#manifold" data-target="manifold"><span class="fn-num">P10</span><span class="fn-name">流形學習與 t-SNE</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -694,10 +705,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.12｜講義 12）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/12_Unsupervised_learning.pdf" target="_blank" rel="noopener">📑 講義 12 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch12 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-85BiSie5BdC-ElKcRw37fs1" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87wNMJFe_UQj_DzsiHVZWkx" target="_blank" rel="noopener">▶ 課程錄影 2</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 ESL 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/12_Unsupervised_learning.pdf" target="_blank" rel="noopener">📑 講義 12 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch12 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-85BiSie5BdC-ElKcRw37fs1" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87wNMJFe_UQj_DzsiHVZWkx" target="_blank" rel="noopener">▶ 課程錄影 2</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -716,7 +728,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#practical"><span class="toc-num">P09</span>分群的實務問題</a>
     <a href="#manifold"><span class="toc-num">P10</span>流形學習與 t-SNE</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -724,7 +736,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>非監督式學習的挑戰：沒有 y 就沒有對錯 <span class="sec-badge">ISLP §12.1</span><span class="sec-badge">講義 12 · p.2–6</span></h2>
+  <h2>沒有現成標籤，該怎麼評估找到的結構？ <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.1 節</a></span><span class="sec-badge">講義 12 · p.2–6</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>前面十幾週，每一章都有一個 <span class="orange">y</span>。有了 y，一切都好辦：
@@ -734,10 +746,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>這批資料本身有什麼結構？</strong>能不能用兩個座標軸就把 6830 個基因的樣本畫在紙上？
   這 64 個細胞株是不是可以分成幾個自然的群？</p>
 
-  <p>麻煩的地方是：<strong>沒有 y，就沒有對錯。</strong>你沒辦法交叉驗證一個分群結果，
-  因為沒有「正確的群」可以比。所以非監督式學習比監督式主觀得多，
+  <p>麻煩的地方是：<strong>沒有現成的真實群標籤，就不能直接用分類錯誤率判斷分群好壞。</strong>
+  你得先說清楚想找什麼結構、用什麼證據評估。所以非監督式學習比監督式主觀得多，
   它的定位通常是<strong>探索式資料分析</strong>（exploratory data analysis）——
   產出的是值得進一步檢驗的假設，不是結論。</p>
+
+  <p>這不表示不能留出資料做驗證。例如矩陣補全可以暫時遮住部分已觀測的格子，
+  再用補值與真值的差距評估預測能力。<strong>能評估某個目標，不等於證明群具有實質意義。</strong></p>
 
 <div class="info-box">
   <span class="info-label">本章的三條主線</span>
@@ -765,15 +780,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 為什麼非監督式比較難</div>
-  <p>為什麼非監督式學習「無法用交叉驗證來驗證結果」？</p>
-  <div class="quiz-options" id="qWhyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。CV 的機制是「拿沒看過的資料算誤差」，這需要 y。沒有 y 就沒有誤差可以算，所以評估只能靠可解釋性、穩定性與外部驗證。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(A)</span> 交叉驗證需要在留出的資料上比對預測與真實答案，而非監督式問題根本沒有真實答案可比</div><div class="quiz-opt" data-correct="false" data-fb="不對，而且剛好相反——非監督式方法要調的東西不少（M、K、linkage、距離、要不要標準化），正是因為<strong>沒有客觀標準</strong>可以調它們，這些選擇才特別麻煩。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(B)</span> 因為非監督式方法沒有參數可以調，所以不需要交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="不對。PCA 是一次特徵分解、K-means 是幾十次迭代，都不慢。問題出在「沒有正確答案」這個本質，不是算力。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(C)</span> 因為非監督式方法的計算量太大，跑 k 折會太慢</div></div>
+  <p>把資料分成幾個很緊密的群，為什麼還不能說找到了真實子群？</p>
+  <div class="quiz-options" id="qWhyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。即使資料沒有明確子群，分群演算法仍會給出分組。幾何指標與實質意義是不同的評估目標。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(A)</span> 群內緊密只符合某個幾何目標，仍要檢查穩定性與領域證據</div><div class="quiz-opt" data-correct="false" data-fb="不對。只要先定義可評估的目標，就能設計驗證；例如遮住已觀測格子，檢查矩陣補全的補值誤差。這仍不能直接證明群的實質意義。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(B)</span> 因為只要沒有 y，就完全不能用留出資料或交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="不對。M、K、linkage、距離與標準化都是要做的選擇；困難在於先釐清評估目標，而不是沒有參數。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(C)</span> 因為非監督式方法沒有參數可以調</div></div>
   <div class="quiz-feedback" id="qWhyFeedback"></div>
 </div>
 </section>
 <section id="pca">
 <!-- GEN:BEGIN sec:pca -->
   <div class="section-number">PART 01 · 主成分是什麼</div>
-  <h2>第一主成分：變異最大的那個方向 <span class="sec-badge">ISLP §12.2.1</span><span class="sec-badge">講義 12 · p.7–12</span></h2>
+  <h2>第一主成分：變異最大的那個方向 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.2.1 節</a></span><span class="sec-badge">講義 12 · p.7–12</span></h2>
 <!-- GEN:END sec:pca -->
 
   <p>先想一個很現實的問題：p = 10 個變數，兩兩畫散佈圖有 45 張，你看不完；
@@ -858,7 +873,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="biplot">
 <!-- GEN:BEGIN sec:biplot -->
   <div class="section-number">PART 02 · Biplot 怎麼讀</div>
-  <h2>USArrests：一張圖同時放州與變數 <span class="sec-badge">ISLP §12.2.2</span><span class="sec-badge">講義 12 · p.13–16</span></h2>
+  <h2>USArrests：一張圖同時放州與變數 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.2.2 節</a></span><span class="sec-badge">講義 12 · p.13–16</span></h2>
 <!-- GEN:END sec:biplot -->
 
   <p>算完 PCA 之後，最常畫的圖是 <strong>biplot</strong>（雙標圖）：
@@ -868,9 +883,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>讀法有三條，記住就夠用：</p>
 
   <ul>
-    <li><strong>箭頭之間的夾角 → 變數的相關。</strong>Murder、Assault、Rape 三支箭頭幾乎重疊，
-    表示它們高度相關（謀殺率高的州，傷害與強制性交的通報率也高）。UrbanPop 指向別的方向，
-    跟那三個關係弱。</li>
+    <li><strong>箭頭的座標 → 變數在兩個主成分中的負荷量。</strong>
+    Murder、Assault、Rape 在 PC1 上都有較大的正負荷；UrbanPop 在 PC2 上最突出。
+    本圖畫的是原始負荷量，不能直接把箭頭夾角的 cosine 當成相關係數。</li>
     <li><strong>點在箭頭方向上的位置 → 那筆資料在該變數上的高低。</strong>
     加州在 Rape 與 UrbanPop 方向都很遠，所以兩者都高。北達科他在犯罪方向的另一端，犯罪率低。</li>
     <li><strong>點與點的距離 → 兩筆資料在前兩個主成分上的相似度。</strong>
@@ -921,21 +936,21 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">    ax.text(s_*pcaUS.components_[i,k],</span>
   <span class="line">            s_*pcaUS.components_[j,k],</span>
   <span class="line">            USArrests.columns[k])</span></div>
-  <p class="dx-note"><code>scikit-learn</code> 沒有內建 biplot，所以 lab 用 <code>ax.scatter</code> 畫得分、<code>ax.arrow</code> 畫負荷量，再用 <code>s_ = 2</code> 把箭頭放長一點（否則負荷量都在 ±1 以內，跟得分的尺度差太多，會縮成一小坨）。<strong>箭頭長度只是為了看得清楚，可以自己乘上任何常數。</strong><br>第 2 行與第 3 行把第二個主成分的得分與負荷量同時乘上 −1。同時翻兩邊，圖只是上下鏡射，任何結論都不變。這正是 P05 要講的符號不唯一。本頁的 biplot 直接用儲存格 29 那組負荷量，跟課本表 12.1 的數字逐位相同。</p>
+  <p class="dx-note"><code>scikit-learn</code> 沒有內建 biplot，所以 lab 用 <code>ax.scatter</code> 畫得分、<code>ax.arrow</code> 畫負荷量，再用 <code>s_ = 2</code> 把箭頭放長一點（否則負荷量都在 ±1 以內，跟得分的尺度差太多，會縮成一小坨）。<strong>整組箭頭同乘一個正的顯示倍率，方向不變。</strong><br>第 2 行與第 3 行把第二個主成分的得分與負荷量同時乘上 −1。同時翻兩邊，圖只是上下鏡射，任何結論都不變。這正是 P05 要講的符號不唯一。本頁的 biplot 直接用儲存格 29 那組負荷量，跟課本表 12.1 的數字逐位相同。</p>
   <span class="dx-src">來源：<code>Ch12-unsup-lab-zh.ipynb</code> · 儲存格 31、33</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 讀 biplot</div>
-  <p>在 USArrests 的 biplot 上，Murder 與 UrbanPop 兩支箭頭夾角接近 90°。這代表什麼？</p>
-  <div class="quiz-options" id="qBiOptions"><div class="quiz-opt" data-correct="true" data-fb="對。箭頭夾角約 90° ⇒ 相關係數接近 0。要注意「在前兩個主成分描述的範圍內」這個限定：biplot 只呈現前兩個主成分，被丟掉的部分不在圖上。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(A)</span> 這兩個變數在前兩個主成分所描述的範圍內幾乎不相關</div><div class="quiz-opt" data-correct="false" data-fb="不對，那要看箭頭<strong>長度</strong>（在標準化後的 biplot 上長度反映該變數被前兩個主成分解釋了多少），而且四個變數都已經被標準化成變異數 1 了。夾角講的是相關，不是大小。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(B)</span> 這兩個變數的變異數差不多大</div><div class="quiz-opt" data-correct="false" data-fb="不對。箭頭互相垂直只說它們彼此獨立，完全沒有「解釋了全部變異」的意思——USArrests 的前兩個主成分合起來解釋 86.8%，還有 13% 在圖外。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(C)</span> 這兩個變數合起來就能解釋所有變異，其他變數是多餘的</div></div>
+  <p>USArrests 的 PC1 對三個犯罪變數的負荷約為 0.54、0.58、0.54，PC2 對 UrbanPop 的負荷約為 0.87。哪個解讀合理？</p>
+  <div class="quiz-options" id="qBiOptions"><div class="quiz-opt" data-correct="true" data-fb="對。箭頭座標呈現各變數在主成分中的係數；這是解讀主成分組成的依據。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(A)</span> PC1 主要綜合犯罪程度，PC2 的組成以都市化程度最突出</div><div class="quiz-opt" data-correct="false" data-fb="不對。這張圖使用標準化後的資料，負荷量不是原始變異數。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(B)</span> UrbanPop 的原始變異數一定比其他變數大</div><div class="quiz-opt" data-correct="false" data-fb="不對。本圖的箭頭夾角不能直接換成相關係數；即使相關係數為 0，也不代表獨立。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(C)</span> 只要兩支負荷量箭頭垂直，就能證明兩個原始變數獨立</div></div>
   <div class="quiz-feedback" id="qBiFeedback"></div>
 </div>
 </section>
 <section id="lowrank">
 <!-- GEN:BEGIN sec:lowrank -->
   <div class="section-number">PART 03 · 另一種解釋</div>
-  <h2>主成分也是「最佳低維近似」 <span class="sec-badge">ISLP §12.2.2</span><span class="sec-badge">講義 12 · p.17–19</span></h2>
+  <h2>主成分也是「最佳低維近似」 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.2.2 節</a></span><span class="sec-badge">講義 12 · p.17–19</span></h2>
 <!-- GEN:END sec:lowrank -->
 
   <p>到目前為止主成分的定義是「變異最大的方向」。現在換一個完全不同的角度看它，
@@ -970,7 +985,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   求主成分不必真的做特徵分解。把置中後的資料矩陣做
   <strong>奇異值分解</strong>（singular value decomposition, SVD）
   $\mathbf{X} = \mathbf{U}\mathbf{D}\mathbf{V}^{\mathsf T}$，
-  $\mathbf{V}$ 的每一列就是負荷向量、$\mathbf{U}\mathbf{D}$ 就是得分矩陣。
+  $\mathbf{V}$ 的每一欄就是負荷向量、$\mathbf{U}\mathbf{D}$ 就是得分矩陣。
   <code>numpy.linalg.svd</code> 比自己算 $\mathbf{X}^{\mathsf T}\mathbf{X}$ 的特徵向量穩定得多，
   而且下一節的矩陣補全就是靠它一步步逼近的。
 </div>
@@ -988,7 +1003,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
        [-0.41818087, -0.1879856 ,  0.87280619,  0.16731864],
        [ 0.34123273,  0.26814843,  0.37801579, -0.81777791],
        [ 0.6492278 , -0.74340748,  0.13387773,  0.08902432]])</pre></div>
-  <p class="dx-note"><code>V</code> 的每一列就是負荷向量，只差符號。跟上一節儲存格 29 的 <code>components_</code> 比：第 1、3、4 列整列變號，第 2 列一模一樣。<br>lab 儲存格 51 又印了一次 <code>components_</code>，但<strong>那時第 33 格已經把 PC2 翻號了</strong>，所以第 2 列跟儲存格 29 不同——不是印錯，是同一個物件被就地改過。儲存格 53 與 54 也是同一件事：<code>U * D</code> 跟 <code>scores</code> 差整組符號。</p>
+  <p class="dx-note">lab 的變數 <code>V</code> 儲存的是數學上的 Vᵀ（NumPy 的第三個回傳值），因此它的每一列才是負荷向量，只差符號。跟上一節儲存格 29 的 <code>components_</code> 比：第 1、3、4 列整列變號，第 2 列一模一樣。<br>lab 儲存格 51 又印了一次 <code>components_</code>，但<strong>那時第 33 格已經把 PC2 翻號了</strong>，所以第 2 列跟儲存格 29 不同——不是印錯，是同一個物件被就地改過。儲存格 53 與 54 也是同一件事：<code>U * D</code> 跟 <code>scores</code> 差整組符號。</p>
   <span class="dx-src">來源：<code>Ch12-unsup-lab-zh.ipynb</code> · 儲存格 48、50、51</span>
 </div>
 
@@ -1009,7 +1024,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="pve">
 <!-- GEN:BEGIN sec:pve -->
   <div class="section-number">PART 04 · PVE 與 scree plot</div>
-  <h2>要留幾個主成分？先看解釋了多少變異 <span class="sec-badge">ISLP §12.2.3</span><span class="sec-badge">講義 12 · p.20–22</span></h2>
+  <h2>要留幾個主成分？先看解釋了多少變異 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.2.3 節</a></span><span class="sec-badge">講義 12 · p.20–22</span></h2>
 <!-- GEN:END sec:pve -->
 
   <p>壓到 2 維畫出來很方便，但<strong>丟掉了多少東西？</strong>這個問題的答案叫做
@@ -1076,7 +1091,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="scaling">
 <!-- GEN:BEGIN sec:scaling -->
   <div class="section-number">PART 05 · 尺度化與符號</div>
-  <h2>沒標準化就等於在比單位；符號翻掉不影響結論 <span class="sec-badge">ISLP §12.2.3</span><span class="sec-badge">講義 12 · p.23–28</span></h2>
+  <h2>沒標準化就等於在比單位；符號翻掉不影響結論 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.2.4 節</a></span><span class="sec-badge">講義 12 · p.23–28</span></h2>
 <!-- GEN:END sec:scaling -->
 
   <p>這一節只有兩件事，但兩件都會在實務上咬人：<strong>做 PCA 之前要不要標準化</strong>，
@@ -1157,7 +1172,7 @@ dtype: float64</pre></div>
 <section id="completion">
 <!-- GEN:BEGIN sec:completion -->
   <div class="section-number">PART 06 · 矩陣補全</div>
-  <h2>把缺失值當成主成分問題解 <span class="sec-badge">ISLP §12.3</span><span class="sec-badge">講義 12 · p.30–38</span></h2>
+  <h2>把缺失值當成主成分問題解 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.3 節</a></span><span class="sec-badge">講義 12 · p.30–38</span></h2>
 <!-- GEN:END sec:completion -->
 
   <p>手上的資料矩陣有缺失值，怎麼辦？兩個常見的做法都不太好：
@@ -1294,7 +1309,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <section id="kmeans">
 <!-- GEN:BEGIN sec:kmeans -->
   <div class="section-number">PART 07 · K-means</div>
-  <h2>指派、更新、再指派：目標函數單調下降 <span class="sec-badge">ISLP §12.4.1</span><span class="sec-badge">講義 12 · p.54–66</span></h2>
+  <h2>指派、更新、再指派：目標函數單調下降 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.4.1 節</a></span><span class="sec-badge">講義 12 · p.54–66</span></h2>
 <!-- GEN:END sec:kmeans -->
 
   <p>換一種化簡方式：不找低維座標，直接把資料<strong>分成 K 群</strong>。
@@ -1409,7 +1424,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <section id="hclust">
 <!-- GEN:BEGIN sec:hclust -->
   <div class="section-number">PART 08 · 階層式分群</div>
-  <h2>不用先決定 K：dendrogram 與四種 linkage <span class="sec-badge">ISLP §12.4.2</span><span class="sec-badge">講義 12 · p.67–90</span></h2>
+  <h2>不用先決定 K：dendrogram 與四種 linkage <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.4.2 節</a></span><span class="sec-badge">講義 12 · p.67–90</span></h2>
 <!-- GEN:END sec:hclust -->
 
   <p>K-means 有個明顯的麻煩：<strong>你得先決定 K</strong>。
@@ -1522,7 +1537,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <section id="practical">
 <!-- GEN:BEGIN sec:practical -->
   <div class="section-number">PART 09 · 分群的實務問題</div>
-  <h2>要不要標準化、離群值怎麼辦、結果穩不穩 <span class="sec-badge">ISLP §12.4.3</span><span class="sec-badge">講義 12 · p.91–98</span></h2>
+  <h2>要不要標準化、離群值怎麼辦、結果穩不穩 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.4.3 節</a></span><span class="sec-badge">講義 12 · p.91–98</span></h2>
 <!-- GEN:END sec:practical -->
 
   <p>演算法都很乾淨，麻煩全在做決定的地方。ISLP §12.4.3 把它們列成一張清單，
@@ -1571,7 +1586,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 
   <h3>「分群結果對不對」有客觀標準嗎？</h3>
 
-  <p>沒有。這不是敷衍，是這一類方法的本質限制。
+  <p>沒有一個通用指標能直接證明群具有實質意義。
   <strong>任何時候把資料丟去分群，它都會給你群</strong>——即使資料是純雜訊。
   真正想問的是「這些群在獨立的新資料上也會出現嗎」，
   文獻上有給群一個 p 值的做法，但沒有共識（細節在 ESL）。</p>
@@ -1609,7 +1624,7 @@ HClust
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：分群結果「對不對」要怎麼判斷？沒有 y 的時候有沒有客觀標準？</summary>
-    <div class="qa-a"><p>沒有一個像測試誤差那樣的單一數字。原因很直接：測試誤差需要正確答案，而分群問題裡「正確的群」並不存在（如果存在，那就是分類問題了）。</p><p>常見的內部指標（silhouette、Calinski–Harabasz、gap statistic）能算，但它們量的是<strong>幾何上的緊密與分離</strong>，不是「這些群是不是真的」。一份純雜訊的資料照樣可以有不錯的 silhouette；反過來，兩個真實但形狀狹長交錯的子群，silhouette 會很難看。所以這些指標可以用來在同一個方法內部比較 K，不能用來宣告「分群成功」。</p><p>比較誠實的做法是三件事併用：<strong>（1）穩定性</strong>——換設定、抽子樣本重跑，看哪些群每次都在；<strong>（2）可解釋性</strong>。每一群能不能用領域語言講成一句話；<strong>（3）外部驗證</strong>——在獨立的新資料上重做一次，或對上事後才知道的標籤。ISLP 的結語值得抄下來：分群結果不該當成資料的絕對真相，而是<strong>形成科學假設的起點</strong>。</p></div>
+    <div class="qa-a"><p>沒有一個通用數字能直接證明群是真的。沒有已知群標籤時，不能直接算分類錯誤率；但仍可先訂評估目標，再比較幾何結構、穩定性或留出資料上的表現。</p><p>常見的內部指標（silhouette、Calinski–Harabasz、gap statistic）能算，但它們量的是<strong>幾何上的緊密與分離</strong>，不是「這些群是不是真的」。一份純雜訊的資料照樣可以有不錯的 silhouette；反過來，兩個真實但形狀狹長交錯的子群，silhouette 會很難看。所以這些指標可以用來在同一個方法內部比較 K，不能用來宣告「分群成功」。</p><p>比較誠實的做法是三件事併用：<strong>（1）穩定性</strong>——換設定、抽子樣本重跑，看哪些群每次都在；<strong>（2）可解釋性</strong>。每一群能不能用領域語言講成一句話；<strong>（3）外部驗證</strong>——在獨立的新資料上重做一次，或對上事後才知道的標籤。ISLP 的結語值得抄下來：分群結果不該當成資料的絕對真相，而是<strong>形成科學假設的起點</strong>。</p></div>
   </details>
   <details class="qa-item"><summary>Q：PCA 與分群都在「找結構」，差在哪？</summary>
     <div class="qa-a"><p>差在產出的東西是<strong>連續</strong>還是<strong>離散</strong>。PCA 給每一筆資料一組新的連續座標（得分），資料在低維空間裡還是一片雲；分群給每一筆資料一個離散的群編號，雲被切成幾塊。</p><p>對應的假設也不同。PCA 假設「大部分變異集中在少數幾個方向」，它不假設資料裡有子群。如果真的只有一片橢圓形的雲，PCA 照樣給你很有用的答案。分群則假設「資料由幾個同質的子群組成」，如果實際上是連續漸變的，切出來的界線就是人造的。</p><p>實務上兩者常常串起來用，而且順序有講究：<strong>先 PCA 再分群</strong>是很常見的做法（lab 儲存格 178 就對 NCI60 的前五個得分向量做階層式分群），理由是前幾個主成分可以看成資料的低雜訊版本。反過來也有用：分群完之後，用前兩個主成分的散佈圖把群畫出來，因為 p > 2 的時候你沒別的辦法看。</p></div>
@@ -1626,7 +1641,7 @@ HClust
 <section id="manifold">
 <!-- GEN:BEGIN sec:manifold -->
   <div class="section-number">PART 10 · 流形學習與 t-SNE</div>
-  <h2>非線性降維：t-SNE 好用但很會騙人 <span class="sec-badge">講義 12 · p.39–53</span><span class="sec-badge">ESL §14.9 · 進階</span><span class="eslx">ESL 進階</span></h2>
+  <h2>非線性降維：t-SNE 好用但很會騙人 <span class="sec-badge">講義 12 · p.39–53</span><span class="sec-badge"><a href="#w07-source-esl">進階參考 · 第 14.9 節 · 進階</a></span><span class="eslx">ESL 進階</span></h2>
 <!-- GEN:END sec:manifold -->
 
   <p class="skip-note">這一節是課堂沒細講的延伸（講義 12 · p.39–53），第一輪可以直接跳過去看
@@ -1722,7 +1737,7 @@ HClust
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 12 章精選題 <span class="sec-badge">ISLP §12.6 習題</span></h2>
+  <h2>動手驗證：教科書第 12 章精選題 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.6 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §12.6 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面2個站。</p>
   <div class="sol-links"><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch12.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
@@ -1758,8 +1773,10 @@ HClust
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
-  <h2>非監督式學習速查表 <span class="sec-badge">ISLP Ch.12</span></h2>
+  <div class="section-number">重點速查與來源</div>
+  <h2>非監督式學習速查表 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12 章</a></span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w07-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 12.1 節；教科書 · 第 12.2.1 節；教科書 · 第 12.2.2 節；教科書 · 第 12.2.3 節；教科書 · 第 12.2.4 節；教科書 · 第 12.3 節；教科書 · 第 12.4.1 節；教科書 · 第 12.4.2 節；教科書 · 第 12.4.3 節。</li>
+<li id="w07-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：進階參考 · 第 14.9 節 · 進階。</li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>考前把這一頁掃過去就好。</p>
@@ -3269,7 +3286,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"非監督式學習（Unsupervised Learning）","back":"只有特徵 X1…Xp、沒有反應變數 Y 的分析。目標不是預測，而是找出資料本身的結構（低維表示或群組）。因為沒有正確答案，也就沒有交叉驗證可以用來判斷對錯。"},{"front":"主成分分析（Principal Components Analysis, PCA）","back":"把 p 個相關的變數換成少數幾個不相關的線性組合，每一個都盡量抓住最多變異。用途有三：視覺化、當成迴歸的特徵（主成分迴歸）、以及填補缺失值。"},{"front":"負荷量（Loading）","back":"主成分線性組合裡的係數 φjm。同一個主成分的負荷量平方和被約束為 1，否則把係數放大就能讓變異數任意大。負荷量告訴你這個主成分「由哪些變數組成」。"},{"front":"主成分得分（Score）","back":"第 i 筆資料在某個主成分方向上的投影值 zim = Σj φjm xij。得分是「每一筆資料的新座標」，負荷量是「新座標軸的方向」。"},{"front":"第一主成分（First Principal Component）","back":"所有標準化線性組合中樣本變異數最大的那一個方向。等價說法：它是 p 維空間中離所有資料點平均平方距離最近的那條直線。"},{"front":"雙標圖（Biplot）","back":"同一張圖上同時畫主成分得分（點）與負荷量（箭頭）。箭頭方向相近代表變數相關；點沿箭頭方向的位置代表該筆資料在那些變數上的高低。USArrests 的圖 12.1 就是典型例子。"},{"front":"解釋變異比例（Proportion of Variance Explained, PVE）","back":"第 m 個主成分的變異數除以資料總變異數。所有 min(n−1, p) 個 PVE 加起來是 1。PVE 也可以讀成「用前 M 個主成分近似資料矩陣」的 R²：PVE = 1 − RSS/TSS。"},{"front":"陡坡圖（Scree Plot）","back":"把各主成分的 PVE 依序畫出來的折線圖。搭配累積 PVE 一起看，用來判斷該留幾個主成分。USArrests 的前兩個主成分合起來解釋約 87% 的變異。"},{"front":"肘點（Elbow）","back":"陡坡圖上 PVE 突然由陡變平的轉折點。肘點之後的主成分解釋的變異很少，通常就不看了。這個判斷是目測的、沒有客觀標準——PCA 本質上是探索工具。"},{"front":"最佳低維近似（Best M-Dimensional Approximation）","back":"前 M 個主成分的得分與負荷量，是所有秩 M 的近似 xij ≈ Σm aim bjm 之中殘差平方和最小的那一組（式 12.6）。所以「變異最大」與「近似誤差最小」是同一件事的兩種說法。"},{"front":"奇異值分解（Singular Value Decomposition, SVD）","back":"把置中後的資料矩陣寫成 X = U D Vᵀ。V 的每一列就是負荷向量（差一個符號），U 乘上 D 就是得分矩陣。求主成分不必真的做特徵分解，SVD 更穩定也更通用。"},{"front":"標準化（Standardization）","back":"把每個變數減平均、除標準差，使其變異數為 1。PCA 前幾乎一定要做，否則變異數大的變數（例如 USArrests 的 Assault，變異數 6945）會直接主宰第一主成分。變數同單位時可以不做。"},{"front":"符號不唯一（Sign Indeterminacy）","back":"負荷向量描述的是一個「方向」，把 φm 與 zm 同時乘上 −1，方向沒變、變異數沒變、近似結果 zimφjm 也沒變。所以不同套件跑出來的主成分可能整組翻號，這不影響任何結論。"},{"front":"矩陣補全（Matrix Completion）","back":"利用變數之間的相關性、用主成分把缺失格子填回來。演算法 12.1 的做法是：先用欄平均填補，反覆「算前 M 個主成分 → 用低秩近似覆蓋缺失格 → 檢查目標函數」直到收斂。"},{"front":"隨機缺失（Missing at Random）","back":"缺失與該格的值本身無關（例如體重計剛好沒電）。矩陣補全需要這個前提；如果是「太重所以量不到」這種帶資訊的缺失，補出來的值會有系統性偏差。"},{"front":"推薦系統（Recommender System）","back":"矩陣補全最有名的應用。使用者 × 電影的評分矩陣絕大部分是空的，把它補起來就等於預測「這個人會不會喜歡那部沒看過的片」。Netflix 競賽用的就是這類主成分模型。"},{"front":"分群（Clustering）","back":"把觀測值分成若干子群，讓群內相似、群間相異。與 PCA 的分工：PCA 找的是連續的低維表示，分群給的是離散的群標籤；兩者都在化簡資料，但化簡的方式不同。"},{"front":"K-means 分群（K-Means Clustering）","back":"先指定群數 K，再把 n 筆資料分到 K 個不重疊的群，使群內平方距離總和（式 12.17）最小。實際解法是演算法 12.2：反覆「算群心 → 把每點指派給最近的群心」直到指派不再改變。"},{"front":"群內變異（Within-Cluster Variation）","back":"衡量同一群內部差異的量 W(Ck)。最常用的定義是群內所有兩點平方歐氏距離之和除以群的大小；由式 12.18，它等於 2 倍的「各點到群心的平方距離和」。"},{"front":"形心（Centroid）","back":"一個群裡所有觀測值在每個特徵上的平均，長度為 p 的向量。K-means 的名字就來自這一步：每次迭代都把群心設成群內平均，因為平均是讓平方偏差最小的那個常數。"},{"front":"局部極小（Local Optimum）","back":"演算法收斂到的解只保證每一步都讓目標函數下降，不保證是全域最小。K-means 的結果取決於第 1 步的隨機初始指派，換一組初值可能得到不同的分群（ISLP 圖 12.9 有三個不同的局部極小）。"},{"front":"多重初始化（Multiple Random Starts, n_init）","back":"用多組不同的隨機初值各跑一次 K-means，回報目標函數最小的那一次。scikit-learn 的 n_init 就是這件事，實務上建議設 20 或 50；再配上 random_state 讓結果可重現。"},{"front":"階層式分群（Hierarchical Clustering）","back":"不必先決定 K 的分群法。凝聚式（bottom-up）做法是每筆資料各自成群，反覆合併最相似的兩群，直到全部併成一群，過程畫成樹狀圖。切在不同高度就得到不同的群數。"},{"front":"樹狀圖（Dendrogram）","back":"階層式分群的樹狀表示。兩筆資料的相異程度看它們所在分支「第一次合併的高度」，不能看它們在水平方向上有多近——n 個葉子有 2^(n−1) 種等價的左右排法。"},{"front":"連結方式（Linkage）","back":"把「兩點之間的相異度」推廣成「兩群之間的相異度」的規則。四種常見的是 complete（取最大）、single（取最小）、average（取平均）、centroid（比兩群心的距離）。換 linkage 樹的形狀會整個改變。"},{"front":"單一連結（Single Linkage）","back":"用兩群之間最小的那個距離當群間相異度。容易產生鏈狀（trailing）結果：一個很大的群不斷把單一觀測值一顆一顆黏上去。所以實務上偏好 complete 或 average。"},{"front":"相關係數距離（Correlation-Based Distance）","back":"用兩筆觀測值在 p 個特徵上的相關係數衡量相似度（常取 1 − rij）。它看的是輪廓的「形狀」而不是「高低」：兩個購物量差很多但偏好一致的顧客，歐氏距離大、相關係數距離小。"},{"front":"流形學習（Manifold Learning）","back":"假設高維資料其實落在一個低維的彎曲流形上，用非線性方法把它攤平。PCA 只能做線性投影，遇到彎曲結構會失真；t-SNE、UMAP、PHATE 都屬於這一類。"},{"front":"t-SNE（t-Distributed Stochastic Neighbor Embedding）","back":"把高維的鄰近關係轉成機率分佈，再在低維找一組座標讓兩個分佈的 KL 散度最小。低維用重尾的 t 分佈以避免擁擠問題。適合看局部群集，但座標本身沒有意義、群間距離與大小都不可信。"},{"front":"困惑度（Perplexity）","back":"t-SNE 最關鍵的參數，可以理解為「每個點考慮幾個鄰居」的平滑版本。太小只看到破碎的小團，太大會把結構抹平。換一個 perplexity 圖可能長得完全不同，所以要多試幾個值再下結論。"}];
+const FLASHCARDS = [{"front":"非監督式學習（Unsupervised Learning）","back":"只有特徵 X1…Xp、沒有反應變數 Y 的分析，用來找低維表示或群組。沒有真實群標籤時，不能直接用分類錯誤率判斷分群；若先定義補值誤差等目標，仍可用留出資料評估。"},{"front":"主成分分析（Principal Components Analysis, PCA）","back":"把 p 個相關的變數換成少數幾個不相關的線性組合，每一個都盡量抓住最多變異。用途有三：視覺化、當成迴歸的特徵（主成分迴歸）、以及填補缺失值。"},{"front":"負荷量（Loading）","back":"主成分線性組合裡的係數 φjm。同一個主成分的負荷量平方和被約束為 1，否則把係數放大就能讓變異數任意大。負荷量告訴你這個主成分「由哪些變數組成」。"},{"front":"主成分得分（Score）","back":"第 i 筆資料在某個主成分方向上的投影值 zim = Σj φjm xij。得分是「每一筆資料的新座標」，負荷量是「新座標軸的方向」。"},{"front":"第一主成分（First Principal Component）","back":"所有標準化線性組合中樣本變異數最大的那一個方向。等價說法：它是 p 維空間中離所有資料點平均平方距離最近的那條直線。"},{"front":"雙標圖（Biplot）","back":"同時畫主成分得分（點）與負荷量（箭頭）。本頁箭頭的座標表示各變數在 PC1、PC2 中的係數，點的位置表示觀測值的得分。原始負荷量箭頭的夾角不能直接換成相關係數；不相關也不等於獨立。"},{"front":"解釋變異比例（Proportion of Variance Explained, PVE）","back":"第 m 個主成分的變異數除以資料總變異數。所有 min(n−1, p) 個 PVE 加起來是 1。PVE 也可以讀成「用前 M 個主成分近似資料矩陣」的 R²：PVE = 1 − RSS/TSS。"},{"front":"陡坡圖（Scree Plot）","back":"把各主成分的 PVE 依序畫出來的折線圖。搭配累積 PVE 一起看，用來判斷該留幾個主成分。USArrests 的前兩個主成分合起來解釋約 87% 的變異。"},{"front":"肘點（Elbow）","back":"陡坡圖上 PVE 突然由陡變平的轉折點。肘點之後的主成分解釋的變異很少，通常就不看了。這個判斷是目測的、沒有客觀標準——PCA 本質上是探索工具。"},{"front":"最佳低維近似（Best M-Dimensional Approximation）","back":"前 M 個主成分的得分與負荷量，是所有秩 M 的近似 xij ≈ Σm aim bjm 之中殘差平方和最小的那一組（式 12.6）。所以「變異最大」與「近似誤差最小」是同一件事的兩種說法。"},{"front":"奇異值分解（Singular Value Decomposition, SVD）","back":"置中後的資料矩陣 X = U D Vᵀ：V 的每一欄是負荷向量，UD 是得分矩陣。NumPy 第三個回傳值是 Vᵀ，lab 把它命名為 V，因此程式裡的 V 各列才是負荷向量。"},{"front":"標準化（Standardization）","back":"把每個變數減平均、除標準差，使其變異數為 1。PCA 前幾乎一定要做，否則變異數大的變數（例如 USArrests 的 Assault，變異數 6945）會直接主宰第一主成分。變數同單位時可以不做。"},{"front":"符號不唯一（Sign Indeterminacy）","back":"負荷向量描述的是一個「方向」，把 φm 與 zm 同時乘上 −1，方向沒變、變異數沒變、近似結果 zimφjm 也沒變。所以不同套件跑出來的主成分可能整組翻號，這不影響任何結論。"},{"front":"矩陣補全（Matrix Completion）","back":"利用變數之間的相關性、用主成分把缺失格子填回來。演算法 12.1 的做法是：先用欄平均填補，反覆「算前 M 個主成分 → 用低秩近似覆蓋缺失格 → 檢查目標函數」直到收斂。"},{"front":"隨機缺失（Missing at Random）","back":"缺失與該格的值本身無關（例如體重計剛好沒電）。矩陣補全需要這個前提；如果是「太重所以量不到」這種帶資訊的缺失，補出來的值會有系統性偏差。"},{"front":"推薦系統（Recommender System）","back":"矩陣補全最有名的應用。使用者 × 電影的評分矩陣絕大部分是空的，把它補起來就等於預測「這個人會不會喜歡那部沒看過的片」。Netflix 競賽用的就是這類主成分模型。"},{"front":"分群（Clustering）","back":"把觀測值分成若干子群，讓群內相似、群間相異。與 PCA 的分工：PCA 找的是連續的低維表示，分群給的是離散的群標籤；兩者都在化簡資料，但化簡的方式不同。"},{"front":"K-means 分群（K-Means Clustering）","back":"先指定群數 K，再把 n 筆資料分到 K 個不重疊的群，使群內平方距離總和（式 12.17）最小。實際解法是演算法 12.2：反覆「算群心 → 把每點指派給最近的群心」直到指派不再改變。"},{"front":"群內變異（Within-Cluster Variation）","back":"衡量同一群內部差異的量 W(Ck)。最常用的定義是群內所有兩點平方歐氏距離之和除以群的大小；由式 12.18，它等於 2 倍的「各點到群心的平方距離和」。"},{"front":"形心（Centroid）","back":"一個群裡所有觀測值在每個特徵上的平均，長度為 p 的向量。K-means 的名字就來自這一步：每次迭代都把群心設成群內平均，因為平均是讓平方偏差最小的那個常數。"},{"front":"局部極小（Local Optimum）","back":"演算法收斂到的解只保證每一步都讓目標函數下降，不保證是全域最小。K-means 的結果取決於第 1 步的隨機初始指派，換一組初值可能得到不同的分群（ISLP 圖 12.9 有三個不同的局部極小）。"},{"front":"多重初始化（Multiple Random Starts, n_init）","back":"用多組不同的隨機初值各跑一次 K-means，回報目標函數最小的那一次。scikit-learn 的 n_init 就是這件事，實務上建議設 20 或 50；再配上 random_state 讓結果可重現。"},{"front":"階層式分群（Hierarchical Clustering）","back":"不必先決定 K 的分群法。凝聚式（bottom-up）做法是每筆資料各自成群，反覆合併最相似的兩群，直到全部併成一群，過程畫成樹狀圖。切在不同高度就得到不同的群數。"},{"front":"樹狀圖（Dendrogram）","back":"階層式分群的樹狀表示。兩筆資料的相異程度看它們所在分支「第一次合併的高度」，不能看它們在水平方向上有多近——n 個葉子有 2^(n−1) 種等價的左右排法。"},{"front":"連結方式（Linkage）","back":"把「兩點之間的相異度」推廣成「兩群之間的相異度」的規則。四種常見的是 complete（取最大）、single（取最小）、average（取平均）、centroid（比兩群心的距離）。換 linkage 樹的形狀會整個改變。"},{"front":"單一連結（Single Linkage）","back":"用兩群之間最小的那個距離當群間相異度。容易產生鏈狀（trailing）結果：一個很大的群不斷把單一觀測值一顆一顆黏上去。所以實務上偏好 complete 或 average。"},{"front":"相關係數距離（Correlation-Based Distance）","back":"用兩筆觀測值在 p 個特徵上的相關係數衡量相似度（常取 1 − rij）。它看的是輪廓的「形狀」而不是「高低」：兩個購物量差很多但偏好一致的顧客，歐氏距離大、相關係數距離小。"},{"front":"流形學習（Manifold Learning）","back":"假設高維資料其實落在一個低維的彎曲流形上，用非線性方法把它攤平。PCA 只能做線性投影，遇到彎曲結構會失真；t-SNE、UMAP、PHATE 都屬於這一類。"},{"front":"t-SNE（t-Distributed Stochastic Neighbor Embedding）","back":"把高維的鄰近關係轉成機率分佈，再在低維找一組座標讓兩個分佈的 KL 散度最小。低維用重尾的 t 分佈以避免擁擠問題。適合看局部群集，但座標本身沒有意義、群間距離與大小都不可信。"},{"front":"困惑度（Perplexity）","back":"t-SNE 最關鍵的參數，可以理解為「每個點考慮幾個鄰居」的平滑版本。太小只看到破碎的小團，太大會把結構抹平。換一個 perplexity 圖可能長得完全不同，所以要多試幾個值再下結論。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

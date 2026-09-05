@@ -376,7 +376,7 @@ BODIES["lda"] = f"""
      "<li><strong>要做推論、要 p 值、要處理類別型預測變數</strong>：邏輯斯迴歸的工具鏈成熟得多。</li></ul>"
      "<p>實務上兩者的預測往往幾乎一樣。lab 儲存格 79 的 LDA 混淆矩陣"
      "（35／35／76／106）跟儲存格 53 的邏輯斯<strong>一個數字都沒差</strong>。"
-     "這不是巧合，是式 4.32 保證的。</p>"),
+     "這是這份資料上的結果。式 4.32 只說兩者的 log-odds 都是線性形式；估計係數的方法不同，並不保證預測機率、分類結果或混淆矩陣相同。</p>"),
 ])}
 
   <h3 id="dx-lda">講義完整實作：<code>LinearDiscriminantAnalysis</code></h3>
@@ -405,7 +405,7 @@ BODIES["lda"] = f"""
        (False, "X 的各個分量在每一類內互相獨立，且服從常態",
         "這是 <strong>Naive Bayes</strong>（配上常態密度）的假設，不是 LDA。"
         "LDA 允許變數之間相關——相關結構就寫在共用的 Σ 的非對角元素裡。"
-        "有趣的是 ISLP §4.5.1 指出：常態版的 Naive Bayes 其實是「Σ 被限制成對角矩陣」的 LDA。")])}
+        "常態版 Naive Bayes 一般對應各類 Σₖ 為對角矩陣的 QDA；只有各變數的變異數也跨類別共用時，才成為對角 Σ 的 LDA（ISLP §4.4.4、§4.5.1）。")])}
 
 {table(["", "要估的參數", "p = 2, K = 2 時", "p = 50, K = 2 時"],
        [["先驗 π<sub>k</sub>", "K − 1 個", "1", "1"],
@@ -598,8 +598,8 @@ BODIES["threshold"] = f"""
     ("Q：類別不平衡時，「準確率 99%」為什麼可能一文不值？該看什麼？",
      "<p>因為<strong>準確率的分母被多數類綁死了</strong>。假設 1000 個人裡有 10 個得病，"
      "你寫一支 <code>return '沒病'</code> 的程式，準確率就是 99%。它一個病人都沒抓到。</p>"
-     "<p>這個「什麼都不做」的基準線有名字，叫 <strong>虛無率</strong>（null rate）。"
-     "ISLP 用 <code>Default</code> 示範：虛無率 3.33%，LDA 的 2.75% 只是小勝。"
+     "<p>這是<strong>多數類基準正確率</strong>；對應的<strong>多數類基準錯誤率</strong>則是 1%。兩者互為 1 減對方，報告時要跟模型用同一種量尺。"
+     "ISLP 用 <code>Default</code> 示範：基準錯誤率 3.33%，LDA 的 2.75% 只是小勝。"
      "lab 的 <code>Caravan</code> 例子更誇張——只有 6% 的人買保險，"
      "KNN 的錯誤率 11.1% 比「全猜不買」的 6.7% <strong>還差</strong>（儲存格 145）。</p>"
      "<p>該看什麼？先問「哪一種錯誤比較貴」，再挑指標：</p>"
@@ -609,7 +609,7 @@ BODIES["threshold"] = f"""
      "<li><strong>要一個不挑閾值的總結</strong>：看 <strong>AUC</strong>，"
      "或在極不平衡時看 PR 曲線下面積。</li>"
      "<li><strong>兩邊都要顧</strong>：F1（精確率與 recall 的調和平均），或平衡準確率。</li></ul>"
-     "<p>最後一句：<strong>永遠把虛無率一起報出來</strong>。沒有基準線的準確率是沒有資訊的數字。</p>"),
+     "<p>最後一句：<strong>把同一量尺的多數類基準一起報出來</strong>。沒有基準線的準確率是沒有資訊的數字。</p>"),
     ("Q：TP / FP / FN / TN 跟那三個比率的關係是什麼？為什麼醫學篩檢跟垃圾信過濾在意的方向剛好相反？",
      "<p>先把四格與三個比率的<strong>分母</strong>釘死，這是最容易搞混的地方：</p>"
      "<ul><li><strong>靈敏度</strong> = TP/(TP+FN)：分母是<strong>真實</strong>的正類總數（縱向看）。</li>"
@@ -686,7 +686,8 @@ BODIES["compare"] = f"""
   不意外，LDA 就是加了 Σ₁ = ⋯ = Σ<sub>K</sub> 的 QDA。<br>
   <strong>2. 任何線性邊界的分類器都是 Naive Bayes 的特例</strong>（取 g<sub>kj</sub>(x<sub>j</sub>) = b<sub>kj</sub>x<sub>j</sub>）。
   所以 <strong>LDA 是 Naive Bayes 的特例</strong>。這件事從兩者的假設完全看不出來。<br>
-  <strong>3. 用常態密度的 Naive Bayes 是「Σ 被限制成對角矩陣」的 LDA。</strong><br>
+  <strong>3. 常態 Naive Bayes 一般是各類 Σₖ 為對角矩陣的 QDA。</strong>
+  若再要求每個變數的變異數跨類別共用，才成為對角 Σ 的 LDA；lab 的 GaussianNB 每類各估變異數。<br>
   <strong>4. QDA 與 Naive Bayes 誰都不是誰的特例。</strong>Naive Bayes 的 g<sub>kj</sub> 可以是任意函數（更彈性），
   但它是純加性的、<strong>永遠沒有 x<sub>j</sub>x<sub>l</sub> 交互項</strong>；QDA 有交互項但被鎖在二次式裡。''')}
 
@@ -732,7 +733,7 @@ BODIES["compare"] = f"""
         "Naive Bayes 的 g<sub>kj</sub> 可以是任意一維函數，取成 b<sub>kj</sub>x<sub>j</sub> 就退化成線性邊界，"
         "而 LDA 的邊界正好是線性的。所以任何線性邊界的分類器都落在 Naive Bayes 的表達範圍內。"),
        (False, "因為當 Σ 是對角矩陣時，LDA 的變數就真的獨立了，兩者於是相同",
-        "這句話講的是<strong>另一個</strong>結論（常態版 Naive Bayes = 對角 Σ 的 LDA），"
+        "這句話還要補上<strong>每個變數的變異數跨類別共用</strong>，才是對角 Σ 的 LDA；一般 GaussianNB 每類各估變異數。它講的是另一個特例，"
         "而且方向反了。「LDA 是 Naive Bayes 的特例」對<strong>任意</strong> Σ 都成立，不必是對角的，"
         "因為決定的是邊界的函數形式，不是相關結構。"),
        (False, "這句話只在 p = 1 時成立，p ≥ 2 時兩者沒有包含關係",
@@ -920,7 +921,7 @@ BODIES["reference"] = f"""
         ["LDA，閾值 0.2", "9432", "235", "<strong>138</strong>", "195", "3.73%", "58.6%", "ISLP 表 4.5"],
         ["Naive Bayes，閾值 0.5", "9621", "46", "244", "89", "2.90%", "26.7%", "ISLP 表 4.8"],
         ["Naive Bayes，閾值 0.2", "9339", "328", "130", "203", "4.58%", "61.0%", "ISLP 表 4.9"],
-        ["一律預測「不違約」", "9667", "0", "333", "0", "3.33%", "0.0%", "虛無率"]])}
+        ["一律預測「不違約」", "9667", "0", "333", "0", "3.33%", "0.0%", "基準錯誤率"]])}
   <p style="font-size:.82rem;color:var(--muted);">本頁 <code>w04thr</code> 元件的 2×2 表在閾值
   0.5 與 0.2 會<strong>逐格</strong>重現前兩列（我們用 <code>scikit-learn</code> 的
   <code>LinearDiscriminantAnalysis</code> 在 <code>balance</code> + <code>student</code> 上重算，
@@ -936,7 +937,7 @@ BODIES["reference"] = f"""
         ["Naive Bayes（Lag1 + Lag2）", "0.5952", "29／20／82／121", "116、117"],
         ["KNN，K = 1", "0.5000", "43／58／68／83", "122、124"],
         ["KNN，K = 3", "0.5317", "—", "127"],
-        ["一律猜 Up（虛無率）", "0.5595", "—", "—"]])}
+        ["一律猜 Up（基準正確率）", "0.5595", "—", "—"]])}
   <p style="font-size:.82rem;color:var(--muted);">注意最後一列：<strong>「每天都猜漲」就有 55.95%</strong>。
   邏輯斯與 LDA 剛好打成平手、沒有贏過它；只有 QDA 與 Naive Bayes 真的多了一點資訊。</p>
 
@@ -970,7 +971,7 @@ BODIES["reference"] = f"""
   共用 Σ 給線性邊界、各自 Σ<sub>k</sub> 給二次邊界、類內獨立給加性邊界。<br>
   <strong>3. 0.5 這個閾值只是「總錯誤率最小」的產物。</strong>
   類別不平衡或兩種錯誤成本不同時，先問「哪種錯誤比較貴」，再調閾值，
-  並且永遠把虛無率與混淆矩陣一起報出來。''')}
+  並且把同一量尺的多數類基準與混淆矩陣一起報出來。''')}
 
 {ver_note()}
 """

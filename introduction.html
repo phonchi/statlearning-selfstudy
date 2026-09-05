@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -667,7 +678,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#slvsml" data-target="slvsml"><span class="fn-num">P06</span><span class="fn-name">統計學習與機器學習</span></a>
   <a href="#toolchain" data-target="toolchain"><span class="fn-num">P07</span><span class="fn-name">Python 工具鏈</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -691,10 +702,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.1｜講義 01）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/01_Introduction.pdf" target="_blank" rel="noopener">📑 講義 01 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-85VI_x3duODyfYm4r3pOl3e" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/01_Introduction.pdf" target="_blank" rel="noopener">📑 講義 01 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-85VI_x3duODyfYm4r3pOl3e" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -710,7 +722,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#slvsml"><span class="toc-num">P06</span>統計學習與機器學習</a>
     <a href="#toolchain"><span class="toc-num">P07</span>Python 工具鏈</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -740,7 +752,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="supervised">
 <!-- GEN:BEGIN sec:supervised -->
   <div class="section-number">PART 01 · 監督式與非監督式</div>
-  <h2>有沒有 <span class="orange">y</span>：監督式與非監督式的分界 <span class="sec-badge">ISLP §1.1</span><span class="sec-badge">講義 01 · p.23–27</span></h2>
+  <h2>有沒有 <span class="orange">y</span>：監督式與非監督式的分界 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 1.1 節</a></span><span class="sec-badge">講義 01 · p.23–27</span></h2>
 <!-- GEN:END sec:supervised -->
 
   <p>整門課最大的分水嶺只有一個問題：<strong>你手上有沒有「答案」？</strong></p>
@@ -788,7 +800,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="regcls">
 <!-- GEN:BEGIN sec:regcls -->
   <div class="section-number">PART 02 · 迴歸與分類</div>
-  <h2>輸出是數字還是類別：迴歸與分類 <span class="sec-badge">ISLP §1.1</span><span class="sec-badge">講義 01 · p.33</span></h2>
+  <h2>輸出是數字還是類別：迴歸與分類 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 1.1 節</a></span><span class="sec-badge">講義 01 · p.33</span></h2>
 <!-- GEN:END sec:regcls -->
 
   <p>確定是監督式之後，第二個問題：<strong>y 是數字還是類別？</strong></p>
@@ -819,15 +831,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 迴歸與分類</div>
-  <p>預測「明天的降雨機率是幾 %」。這是迴歸還是分類？</p>
-  <div class="quiz-options" id="qRegClsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同一個現實問題可以包裝成兩種。實務上常見的做法是<strong>用分類模型輸出機率</strong>（邏輯斯迴歸就是這樣），再選一個閾值變成硬決策。第 4 章的閾值滑桿元件在演這件事。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(A)</span> 看你怎麼定義輸出——輸出機率值就是迴歸；輸出「會下／不會下」就是分類</div><div class="quiz-opt" data-correct="false" data-fb="只答對一半。輸出連續值確實是迴歸的形式，但這個問題的<em>原始</em> y 是「有沒有下雨」這個二元事件，用分類模型建模再輸出機率通常更自然也更準。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(B)</span> 一定是迴歸，因為機率是 0 到 1 之間的連續數值</div><div class="quiz-opt" data-correct="false" data-fb="也只答對一半。若你要回報的是機率而不是硬決策，那個輸出是連續的。關鍵在於<strong>你要交出什麼</strong>，不是現象本身有幾種狀態。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(C)</span> 一定是分類，因為下雨只有兩種可能</div></div>
+  <p>用歷史資料的「當天有沒有下雨」（0／1）訓練模型，回報明天的降雨機率。這是哪一類問題？</p>
+  <div class="quiz-options" id="qRegClsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。判斷依據是<strong>訓練資料裡 y 代表什麼</strong>。邏輯斯迴歸先估機率，再視需要選閾值轉成標籤；回報機率不會讓這個二元分類任務變成連續反應的迴歸。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(A)</span> 分類問題；訓練的 y 是二元類別，分類模型也可以輸出機率</div><div class="quiz-opt" data-correct="false" data-fb="輸出值連續，不代表訓練的反應變數是連續量。這裡觀測到的是下雨與否，估的是類別機率。若觀測的 y 改成降雨量，才是另一個迴歸任務。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(B)</span> 迴歸問題，因為輸出的機率是 0 到 1 之間的連續值</div><div class="quiz-opt" data-correct="false" data-fb="未來的 y 未知是預測的常態。監督式與否看的是訓練資料有沒有 y，這裡的歷史資料已有下雨與否的標籤。" onclick="quizCheck('qRegCls', this)"><span class="opt-letter">(C)</span> 非監督式問題，因為明天的答案還不知道</div></div>
   <div class="quiz-feedback" id="qRegClsFeedback"></div>
 </div>
 </section>
 <section id="predinfer">
 <!-- GEN:BEGIN sec:predinfer -->
   <div class="section-number">PART 03 · 預測與推論</div>
-  <h2>你要的是<strong>準</strong>還是<strong>懂</strong>：預測與推論 <span class="sec-badge">ISLP §2.1.1</span><span class="sec-badge">講義 01 · p.24</span></h2>
+  <h2>你要的是<strong>準</strong>還是<strong>懂</strong>：預測與推論 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 2.1.1 節</a></span><span class="sec-badge">講義 01 · p.24</span></h2>
 <!-- GEN:END sec:predinfer -->
 
   <p>第三個問題最容易被忽略，但它直接決定你該選什麼模型：
@@ -858,7 +870,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="notation">
 <!-- GEN:BEGIN sec:notation -->
   <div class="section-number">PART 04 · 符號約定</div>
-  <h2>n、p 與矩陣寫法：先把符號講清楚 <span class="sec-badge">ISLP §1.2</span></h2>
+  <h2>n、p 與矩陣寫法：先把符號講清楚 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 1.2 節</a></span></h2>
 <!-- GEN:END sec:notation -->
 
   <p>後面每一章都會用到這套符號，先講清楚省得後面卡住。</p>
@@ -907,9 +919,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="info-box warm">
   <span class="info-label">p ≫ n 會出大事</span>
   NCI60 資料是 <strong>64 × 6830</strong>——變數比觀測值多一百倍。
-  這種「高維度」設定下，最小平方法能找到完美通過每一個訓練點的解，訓練 R² 剛好等於 1，
-  但那個模型毫無預測能力。第 6 章有一整節在講這件事，
-  以及該用什麼方法（收縮、降維）才活得下來。
+  這種「高維度」設定下，最小平方係數通常不唯一；設計矩陣的列滿秩時，甚至能讓訓練 R² 等於 1。
+  但訓練滿分不能證明預測能力。<a href="model_selection.html#highdim">線性模型選擇的高維度一節</a>
+  會說明如何用收縮、降維與獨立評估處理這個問題。
 </div>
 
 <div class="quiz-box">
@@ -922,7 +934,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="datasets">
 <!-- GEN:BEGIN sec:datasets -->
   <div class="section-number">PART 05 · 資料集巡禮</div>
-  <h2>課本三大資料集：Wage、Smarket、NCI60 <span class="sec-badge">ISLP §1.1</span><span class="sec-badge">講義 01 · p.34–38</span></h2>
+  <h2>課本三大資料集：Wage、Smarket、NCI60 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 1.1 節</a></span><span class="sec-badge">講義 01 · p.34–38</span></h2>
 <!-- GEN:END sec:datasets -->
 
   <p>ISLP 第 1 章用三份資料介紹三類問題。這三份會在後面的章節反覆出現，
@@ -1069,7 +1081,7 @@ memory usage: 79.6 KB</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">p ≫ n 的極端例子</div>
-      6830 個變數、64 個樣本。任何需要 n &gt; p 的方法（例如最小平方）在這裡直接失效。這也是為什麼降維在基因資料上這麼重要。
+      6830 個變數、64 個樣本。傳統最小平方的唯一係數解與一般推論在這裡不再適用。降維與收縮提供額外結構，預測表現仍要用未見資料檢查。
     </div>
   </div>
 </div>
@@ -1191,7 +1203,7 @@ memory usage: 79.6 KB</pre></div>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：概念自測 <span class="sec-badge">ISLP Ch.1</span></h2>
+  <h2>動手驗證：概念自測 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 1 章</a></span></h2>
   <p>ISLP 第 1 章沒有課後習題，所以這幾題是照本章觀念設計的。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。第 2 章開始就有課本習題可以對答案了。</p>
   <div class="sol-links"><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
@@ -1200,7 +1212,7 @@ memory usage: 79.6 KB</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 分類問題的四個象限</div>
   <p>一家串流平台想「從觀看紀錄預測使用者下個月會不會退訂」。這在本課的地圖上是？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。有 y（退訂了沒有）＝監督式；y 是二元類別＝分類；平台最在意「抓得準不準」＝偏預測，所以彈性方法（隨機森林、GBDT）通常表現最好。若同時想知道「為什麼退訂」，那部分是推論，要另外用可解釋的模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 監督式、分類、偏預測 → 第 4 章（分類）與第 8、9 章（彈性方法）</div><div class="quiz-opt" data-correct="false" data-fb="「最後得到兩組」不等於非監督式。歷史資料裡<strong>已經知道</strong>誰退訂了，那就是 y，所以是監督式分類，不是分群。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 非監督式，因為要把使用者分成「會退訂」與「不會退訂」兩群</div><div class="quiz-opt" data-correct="false" data-fb="如果你要輸出機率，形式上確實是連續值，但原始的 y 是二元事件，標準做法是用分類模型（邏輯斯迴歸）輸出機率。歸類為分類問題才對得上第 4 章的工具。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 監督式、迴歸，因為要預測的是機率</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。有 y（退訂了沒有）＝監督式；y 是二元類別＝分類；平台最在意「抓得準不準」＝偏預測，所以彈性方法（隨機森林、GBDT）通常表現最好。若同時想知道「為什麼退訂」，那部分是推論，要另外用可解釋的模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 監督式、分類、偏預測 → 第 4 章（分類）與第 8、9 章（彈性方法）</div><div class="quiz-opt" data-correct="false" data-fb="「最後得到兩組」不等於非監督式。歷史資料裡<strong>已經知道</strong>誰退訂了，那就是 y，所以是監督式分類，不是分群。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 非監督式，因為要把使用者分成「會退訂」與「不會退訂」兩群</div><div class="quiz-opt" data-correct="false" data-fb="分類模型可以輸出機率。這裡訓練的 y 是「有沒有退訂」的二元事件，所以仍是分類任務；不能只憑輸出是連續機率就改判為迴歸。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 監督式、迴歸，因為要預測的是機率</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1214,7 +1226,7 @@ memory usage: 79.6 KB</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · n 與 p</div>
   <p>一份資料有 200 位病人、每人測 20000 個基因。n 與 p 各是多少，會有什麼麻煩？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。這是第 6 章「高維度」那一節的核心情境。p ≥ n 時最小平方能讓訓練 RSS = 0、R² = 1，那只反映自由度用完了。要用收縮（Lasso、Ridge）或降維（PCR、PLS）才活得下來。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> n = 200、p = 20000；p ≫ n，最小平方會完美配適訓練資料但毫無預測力</div><div class="quiz-opt" data-correct="false" data-fb="n 與 p 弄反了。<strong>n 是觀測值個數（病人）、p 是變數個數（基因）</strong>。這裡病人只有 200 位。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> n = 20000、p = 200；資料量很大所以沒問題</div><div class="quiz-opt" data-correct="false" data-fb="n 與 p 對了，但「沒問題」錯了。p ≫ n 對所有方法都是挑戰——隨機森林比較耐受，但仍然會被大量無關變數拖累（第 6 章的維度詛咒模擬，候選變數從 20 加到 2000 時測試誤差從 1.34 升到 7.54）。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> n = 200、p = 20000；資料量夠大，用隨機森林就沒問題</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。當設計矩陣的列滿秩時可以插值訓練資料，但同樣的訓練預測可能來自許多不同係數，它們在新資料上的預測不一定相同。收縮與降維用額外結構約束估計，最後仍要獨立評估。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> n = 200、p = 20000；p ≫ n，最小平方係數不唯一，訓練滿分也不能證明預測力</div><div class="quiz-opt" data-correct="false" data-fb="n 與 p 弄反了。<strong>n 是觀測值個數（病人）、p 是變數個數（基因）</strong>。這裡病人只有 200 位。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> n = 20000、p = 200；資料量很大所以沒問題</div><div class="quiz-opt" data-correct="false" data-fb="n 與 p 對了，但「沒問題」錯了。大量無關變數也可能影響隨機森林的分裂選擇。是否適合這份資料，要用未參與特徵選擇與調參的資料評估，不能只憑方法名稱判斷。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> n = 200、p = 20000；資料量夠大，用隨機森林就沒問題</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -1227,8 +1239,9 @@ memory usage: 79.6 KB</pre></div>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
-  <h2>統計學習導論速查表 <span class="sec-badge">ISLP Ch.1</span></h2>
+  <div class="section-number">重點速查與來源</div>
+  <h2>統計學習導論速查表 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 1 章</a></span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w01-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 1.1 節；教科書 · 第 2.1.1 節；教科書 · 第 1.2 節。</li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>這一頁沒有公式要背，但這四個分類問題會決定你之後每次遇到新問題時該翻哪一章。</p>
@@ -2061,7 +2074,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"統計學習（Statistical Learning）","back":"一套用來理解資料的工具，核心是估計一個把輸入 X 對應到輸出 Y 的函數 f。相對於機器學習，它更強調不確定性的量化、模型假設與可解釋性，而不只是預測誤差。"},{"front":"監督式學習（Supervised Learning）","back":"每一筆訓練資料都有想預測的目標值 y，所以可以把預測值跟真實值相減來算誤差。本課第 2 到 9 章都屬於此類。"},{"front":"非監督式學習（Unsupervised Learning）","back":"只有 X 沒有 y，目的是找出資料裡的結構（分群、降維）而不是預測。因為沒有正確答案，所以沒有客觀的對錯標準——這是它跟監督式最根本的差別。"},{"front":"半監督式學習（Semi-supervised Learning）","back":"少數資料有 y、大量資料只有 X 的情況，設法同時利用兩批資料。實務上很常見（標註很貴），但本課不涵蓋。"},{"front":"迴歸（Regression）","back":"目標值 y 是連續數值的監督式問題，例如薪資、房價、mpg。誤差通常用均方誤差 MSE 衡量。"},{"front":"分類（Classification）","back":"目標值 y 是類別的監督式問題，例如漲／跌、良性／惡性。誤差通常用錯誤率衡量。大部分方法都有迴歸版與分類版。"},{"front":"分群（Clustering）","back":"非監督式地把觀測值分成幾組。跟分類的關鍵差別是：群是演算法自己劃出來的，資料裡本來沒有標籤，劃完之後的意義要靠人解讀。"},{"front":"預測（Prediction）","back":"只在乎 ŷ 準不準，f̂ 內部長什麼樣不重要，所以可以用黑盒模型（隨機森林、GBDT、SVM）。本課第 5、8、9 章的重心。"},{"front":"推論（Inference）","back":"想知道哪些 X 影響 y、影響多大、往哪個方向、可不可信。這時 f̂ 必須看得懂，而且需要標準誤與 p 值。本課第 3、4、7 章的重心。"},{"front":"可解釋性與彈性的取捨（Interpretability–Flexibility Trade-off）","back":"讓模型變準的手段多半是讓它變複雜，而複雜的模型難以翻譯成人話。線性迴歸只有 p+1 個係數可以逐一解讀；500 棵樹的森林可能更準卻無法一句話說明。GAM 是刻意站在中間的折衷。"},{"front":"觀測值（Observation）","back":"資料表的一列，也就是一個個體、一天、一個州。個數記為 n。符號 xᵢ（下標一個數字）指第 i 個觀測值，是長度 p 的向量。"},{"front":"預測變數（Predictor / Feature）","back":"用來預測 y 的輸入變數，也叫自變數、輸入、特徵。個數記為 p。符號 𝐱ⱼ（粗體）指第 j 個變數，是長度 n 的向量。"},{"front":"樣本數與變數數（n and p）","back":"n 是觀測值個數（列數）、p 是預測變數個數（行數）。X 是 n × p 矩陣。兩者搞反是初學最常見的錯誤，而它們決定了哪些方法可用——p ≥ n 時最小平方就失效。"},{"front":"高維度（High-dimensional）","back":"p 接近或超過 n 的設定，例如 NCI60 的 64 × 6830。最小平方能完美通過所有訓練點使訓練 R² = 1，但毫無預測力。需要收縮或降維（第 6 章）。"},{"front":"質性變數（Qualitative / Categorical Variable）","back":"取值為類別的變數，例如教育程度、婚姻狀態。就算有順序（國中 < 高中 < 大學），硬編成 1、2、3 當數字也隱含了「間距相等」的假設，通常不成立。"},{"front":"資料洩漏（Data Leakage）","back":"把不該知道的資訊放進模型。最典型的例子是用 Smarket 的 Today 預測 Direction——後者就是前者的正負號，正確率 100% 但毫無意義。近乎完美的表現幾乎都是洩漏的訊號。"},{"front":"橫斷面資料（Cross-sectional Data）","back":"同一時點對不同個體的觀測。Wage 資料中薪資在 60 歲後下降，不代表「變老會變窮」——60 歲那群人跟 30 歲那群人是不同的人，這是相關不等於因果的典型陷阱。"},{"front":"薪資資料集（Wage）","back":"美國大西洋中部 3000 位男性的薪資與人口特徵，n × p = 3000 × 11，y 是 wage（連續）。ISLP 圖 1.1 示範薪資對年齡是先升後降的曲線、對年份緩慢上升、對教育程度單調但不等距。"},{"front":"股市資料集（Smarket）","back":"2001–2005 年 S&P 500 每日報酬，1250 × 9，y 是 Direction（Up／Down）。前幾日報酬在漲日與跌日的分佈幾乎重疊——這是課本刻意給的「難以預測」的誠實例子。"},{"front":"基因表現資料集（NCI60）","back":"64 個癌症細胞株 × 6830 個基因表現量，沒有 y。用來示範非監督式降維：把 6830 維壓成 2 維後，同型別的樣本會自然靠在一起，而分析過程完全沒用到型別資訊。"},{"front":"主成分（Principal Component）","back":"資料變異最大的方向。把高維資料投影到前幾個主成分上就能在二維平面觀察結構，這是 NCI60 圖能畫出來的原因。第 12 章詳述。"},{"front":"statsmodels 與 scikit-learn 的分工","back":"statsmodels 給完整的推論報表（係數、標準誤、t 值、p 值、信賴區間），對應第 3、4 章；scikit-learn 給統一的預測介面（fit／predict／score）與 Pipeline、cross_validate，刻意不提供 p 值。"},{"front":"管線（Pipeline）","back":"把前處理與模型串成一個物件。交給 cross_validate 之後它會在每一折的訓練部分重新配適前處理步驟，這是避免資料洩漏的標準做法（第 5、6 章反覆用到）。"}];
+const FLASHCARDS = [{"front":"統計學習（Statistical Learning）","back":"一套用來理解資料的工具，核心是估計一個把輸入 X 對應到輸出 Y 的函數 f。相對於機器學習，它更強調不確定性的量化、模型假設與可解釋性，而不只是預測誤差。"},{"front":"監督式學習（Supervised Learning）","back":"每一筆訓練資料都有想預測的目標值 y，所以可以把預測值跟真實值相減來算誤差。本課第 2 到 9 章都屬於此類。"},{"front":"非監督式學習（Unsupervised Learning）","back":"只有 X 沒有 y，目的是找出資料裡的結構（分群、降維）而不是預測。因為沒有正確答案，所以沒有客觀的對錯標準——這是它跟監督式最根本的差別。"},{"front":"半監督式學習（Semi-supervised Learning）","back":"少數資料有 y、大量資料只有 X 的情況，設法同時利用兩批資料。實務上很常見（標註很貴），但本課不涵蓋。"},{"front":"迴歸（Regression）","back":"目標值 y 是連續數值的監督式問題，例如薪資、房價、mpg。誤差通常用均方誤差 MSE 衡量。"},{"front":"分類（Classification）","back":"訓練的目標值 y 是類別的監督式問題，例如漲／跌、良性／惡性。分類模型可以先輸出類別機率，再視需要轉成標籤；不能只因輸出是連續機率就改判為迴歸。"},{"front":"分群（Clustering）","back":"非監督式地把觀測值分成幾組。跟分類的關鍵差別是：群是演算法自己劃出來的，資料裡本來沒有標籤，劃完之後的意義要靠人解讀。"},{"front":"預測（Prediction）","back":"只在乎 ŷ 準不準，f̂ 內部長什麼樣不重要，所以可以用黑盒模型（隨機森林、GBDT、SVM）。本課第 5、8、9 章的重心。"},{"front":"推論（Inference）","back":"想知道哪些 X 影響 y、影響多大、往哪個方向、可不可信。這時 f̂ 必須看得懂，而且需要標準誤與 p 值。本課第 3、4、7 章的重心。"},{"front":"可解釋性與彈性的取捨（Interpretability–Flexibility Trade-off）","back":"讓模型變準的手段多半是讓它變複雜，而複雜的模型難以翻譯成人話。線性迴歸只有 p+1 個係數可以逐一解讀；500 棵樹的森林可能更準卻無法一句話說明。GAM 是刻意站在中間的折衷。"},{"front":"觀測值（Observation）","back":"資料表的一列，也就是一個個體、一天、一個州。個數記為 n。符號 xᵢ（下標一個數字）指第 i 個觀測值，是長度 p 的向量。"},{"front":"預測變數（Predictor / Feature）","back":"用來預測 y 的輸入變數，也叫自變數、輸入、特徵。個數記為 p。符號 𝐱ⱼ（粗體）指第 j 個變數，是長度 n 的向量。"},{"front":"樣本數與變數數（n and p）","back":"n 是觀測值個數（列數）、p 是預測變數個數（行數）。X 是 n × p 矩陣。兩者搞反是初學最常見的錯誤，而它們決定了哪些方法可用——p ≥ n 時最小平方係數通常不唯一，不能只看訓練配適判斷泛化。"},{"front":"高維度（High-dimensional）","back":"p 接近或超過 n 的設定，例如 NCI60 的 64 × 6830。設計矩陣列滿秩時，最小平方能插值訓練資料，但訓練滿分不能證明泛化；需要額外的選解規則、收縮或降維，並用獨立資料評估。"},{"front":"質性變數（Qualitative / Categorical Variable）","back":"取值為類別的變數，例如教育程度、婚姻狀態。就算有順序（國中 < 高中 < 大學），硬編成 1、2、3 當數字也隱含了「間距相等」的假設，通常不成立。"},{"front":"資料洩漏（Data Leakage）","back":"把不該知道的資訊放進模型。最典型的例子是用 Smarket 的 Today 預測 Direction——後者就是前者的正負號，正確率 100% 但毫無意義。近乎完美的表現幾乎都是洩漏的訊號。"},{"front":"橫斷面資料（Cross-sectional Data）","back":"同一時點對不同個體的觀測。Wage 資料中薪資在 60 歲後下降，不代表「變老會變窮」——60 歲那群人跟 30 歲那群人是不同的人，這是相關不等於因果的典型陷阱。"},{"front":"薪資資料集（Wage）","back":"美國大西洋中部 3000 位男性的薪資與人口特徵，n × p = 3000 × 11，y 是 wage（連續）。ISLP 圖 1.1 示範薪資對年齡是先升後降的曲線、對年份緩慢上升、對教育程度單調但不等距。"},{"front":"股市資料集（Smarket）","back":"2001–2005 年 S&P 500 每日報酬，1250 × 9，y 是 Direction（Up／Down）。前幾日報酬在漲日與跌日的分佈幾乎重疊——這是課本刻意給的「難以預測」的誠實例子。"},{"front":"基因表現資料集（NCI60）","back":"64 個癌症細胞株 × 6830 個基因表現量，沒有 y。用來示範非監督式降維：把 6830 維壓成 2 維後，同型別的樣本會自然靠在一起，而分析過程完全沒用到型別資訊。"},{"front":"主成分（Principal Component）","back":"資料變異最大的方向。把高維資料投影到前幾個主成分上就能在二維平面觀察結構，這是 NCI60 圖能畫出來的原因。第 12 章詳述。"},{"front":"statsmodels 與 scikit-learn 的分工","back":"statsmodels 給完整的推論報表（係數、標準誤、t 值、p 值、信賴區間），對應第 3、4 章；scikit-learn 給統一的預測介面（fit／predict／score）與 Pipeline、cross_validate，刻意不提供 p 值。"},{"front":"管線（Pipeline）","back":"把前處理與模型串成一個物件。交給 cross_validate 之後它會在每一折的訓練部分重新配適前處理步驟，這是避免資料洩漏的標準做法（第 5、6 章反覆用到）。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

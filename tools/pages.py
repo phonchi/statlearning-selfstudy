@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 COURSE_REPO = "phonchi/nsysu-math524-2025"   # 凍結的封存 repo，連結不會爛
 SITE_REPO = "phonchi/statlearning-selfstudy"
 SITE_URL = "https://phonchi.github.io/statlearning-selfstudy/"
+CLASSROOM_PACKAGES = "https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt"
 
 CHARTJS_VER = "4.5.1"
 # 實算：curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A
@@ -44,7 +45,7 @@ def sol_links(ch: int):
     out.append(("🔗 ESL 解答（YuhangZhou88）", "https://yuhangzhou88.github.io/ESL_Solution/"))
     return out
 
-# 產生 frames 用的環境（conda env m524）。與課程 packages.txt 對齊之處與差異都記在這裡。
+# 網站既有 frames 的生成環境，保留歷史數值來源；考前準備以 CLASSROOM_PACKAGES 為準。
 ENV_NOTE = ("numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · "
             "statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1")
 
@@ -400,30 +401,31 @@ PAGES = [
     ),
     Page(
         n=13, stem="00b_setup", slug="SETUP", title_en="Setup",
-        h1='把<span class="blue">環境</span>準備好：三分鐘上手',
+        h1='把<span class="blue">環境</span>準備好：跑出第一張圖',
         plain="環境安裝",
         subtitle="課前準備 B — 選讀，不列入評分",
-        formula="Colab 開了就能跑｜%pip install ISLP｜imports 一格｜掛 Drive 讀資料｜本機 conda 對齊版本｜儲存格亂序執行是最常見的假故障",
+        formula="平時可用 Colab｜期中使用電腦教室電腦｜本機版本對齊教室｜確認 kernel 與資料路徑｜考前完整重跑練習",
         deck="", deck_pages=0, lab="",
         islp=0, islp_label="課前 · 環境安裝", esl_label="",
         playlist="",
         hero_svg=_svg_gear(),
         group="pre",
         kind="prep", data_key="prep_00b_setup", src_labs=(1, 2),
-        ex_links=[("🔗 Google Colab", "https://colab.research.google.com/"),
+        ex_links=[("🔗 電腦教室版本清單", CLASSROOM_PACKAGES),
+                  ("🔗 Google Colab", "https://colab.research.google.com/"),
                   ("🔗 conda 環境管理",
                    "https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html"),
                   ("🔗 ISLP 套件", "https://islp.readthedocs.io/")],
         secs=[
-            Sec("prologue", "先能跑，再談其他", "三分鐘從零到跑出第一張圖",
+            Sec("prologue", "先能跑，再談其他", "從開啟筆記本到跑出第一張圖",
                 "課程 Lab Ch1 · 儲存格 3–5", kicker="PROLOGUE · 開場"),
-            Sec("colab", "Colab 工作流", "開瀏覽器就有，但關掉就沒了",
+            Sec("colab", "Colab 工作流", "筆記本會保存，執行階段會回收",
                 "課程 Lab Ch1 · 儲存格 3–4"),
-            Sec("imports", "imports 那一格", "每一份 lab 的第一格都長一樣，而且要先跑",
+            Sec("imports", "匯入套件", "先執行本份筆記本的匯入程式",
                 "課程 Lab Ch2 · 儲存格 3–8"),
             Sec("data", "資料放哪裡", "掛 Drive、或直接讀網址",
                 "課程 Lab Ch2 · 儲存格 183–187"),
-            Sec("local", "本機安裝", "要長期用就自己開一個 conda 環境",
+            Sec("local", "本機與考前準備", "期中使用電腦教室電腦，本機練習建議對齊版本",
                 "conda 文件 · 環境管理"),
             Sec("trouble", "跑不動的時候", "四種最常見的假故障，各自怎麼修",
                 "Python 文件 · 例外"),
@@ -433,7 +435,7 @@ PAGES = [
         n=20, stem="00c_ai_assisted", slug="AI-ASSISTED STATISTICS", title_en="AI-Assisted Statistics",
         h1='用 <span class="orange">AI</span> 做統計分析，但別把判斷外包',
         plain="AI 輔助統計分析：從提問到驗證",
-        subtitle="先備知識 P7 — 選讀，不列入評分",
+        subtitle="課前準備 C — 選讀，不列入評分",
         formula="任務分流｜補足脈絡｜拆成小步｜執行與核對｜反駁而非保證｜留下可重現紀錄",
         deck="", deck_pages=0, lab="",
         islp=0, islp_label="課前 · AI 協作", esl_label="",
@@ -444,7 +446,7 @@ PAGES = [
         nav_next="introduction",
         ex_links=[("🔗 本站章節總覽", "index.html"),
                   ("🔗 資料分析學習迴圈", "00a_why_code.html"),
-                  ("🔗 書籍官方程式與資料", "https://github.com/gedeck/ai-assisted-statistics-for-data-scientists")],
+                  ("🔗 AI 協作參考書：作者程式與資料", "https://github.com/gedeck/ai-assisted-statistics-for-data-scientists")],
         secs=[
             Sec("prologue", "責任界線", "AI 能幫忙，但統計責任仍然在人",
                 "AI-Stats §Preface", kicker="PROLOGUE · 開場"),
@@ -563,7 +565,7 @@ PAGES = [
             Sec("lda", "LDA", "換個方向想：先建各類的機率模型再用 Bayes 定理",
                 "ISLP §4.4.1–4.4.3|講義 04 · p.14–29"),
             Sec("qda", "QDA 與 Naive Bayes", "共變異數要不要共用？獨立假設又幫了什麼",
-                "ISLP §4.4.4–4.4.5|講義 04 · p.30–37"),
+                "ISLP §4.4.3–4.4.4|講義 04 · p.30–37"),
             Sec("threshold", "閾值、混淆矩陣與 ROC", "0.5 不是天經地義：把閾值當旋鈕",
                 "ISLP §4.4.2|講義 04 · p.20–23"),
             Sec("compare", "方法的解析比較", "五種方法在什麼假設下等價、什麼時候會分家",
@@ -596,7 +598,7 @@ PAGES = [
             Sec("cvclass", "分類問題上的 CV", "把 MSE 換成錯誤率，其餘一樣",
                 "ISLP §5.1.5|講義 05 · p.17–18"),
             Sec("cvwrong", "CV 的對與錯", "先用全資料選特徵再 CV：一個很常見的致命錯誤",
-                "ISLP §5.1.4|講義 05 · p.19–21"),
+                "ESL §7.10.2|講義 05 · p.19–21"),
             Sec("bootstrap", "Bootstrap", "有放回地重抽：直接把標準誤算出來",
                 "ISLP §5.2|講義 05 · p.22–35"),
         ],
@@ -644,7 +646,7 @@ PAGES = [
         hero_svg=_svg_cluster(),
         group="core",
         secs=[
-            Sec("prologue", "沒有標準答案", "非監督式學習的挑戰：沒有 y 就沒有對錯",
+            Sec("prologue", "沒有標準答案", "沒有現成標籤，該怎麼評估找到的結構？",
                 "ISLP §12.1|講義 12 · p.2–6", kicker="PROLOGUE · 開場"),
             Sec("pca", "主成分是什麼", "第一主成分：變異最大的那個方向",
                 "ISLP §12.2.1|講義 12 · p.7–12"),
@@ -654,7 +656,7 @@ PAGES = [
             Sec("pve", "PVE 與 scree plot", "要留幾個主成分？先看解釋了多少變異",
                 "ISLP §12.2.3|講義 12 · p.20–22"),
             Sec("scaling", "尺度化與符號", "沒標準化就等於在比單位；符號翻掉不影響結論",
-                "ISLP §12.2.3|講義 12 · p.23–28"),
+                "ISLP §12.2.4|講義 12 · p.23–28"),
             Sec("completion", "矩陣補全", "把缺失值當成主成分問題解", "ISLP §12.3|講義 12 · p.30–38"),
             Sec("kmeans", "K-means", "指派、更新、再指派：目標函數單調下降",
                 "ISLP §12.4.1|講義 12 · p.54–66"),
@@ -1015,7 +1017,7 @@ def tokens(page: Page):
             part += 1
             out.append((s, f"P{part:02d}", f"PART {part:02d} · {s.short}"))
     out.append((Sec("exercises", "練習題", "", ""), "EX", "EXERCISES · 練習"))
-    out.append((Sec("reference", "總覽比較", "", ""), "REF", "REFERENCE · 總覽"))
+    out.append((Sec("reference", "重點速查與來源", "", ""), "速查", "重點速查與來源"))
     if page.bankquiz:
         out.append((Sec("bankquiz", "自我檢測", "", ""), "QUIZ", "QUIZ · 自我檢測"))
     out.append((Sec("cards", "關鍵詞彙卡", "", ""), "CARD", "CARDS · 關鍵詞彙卡"))

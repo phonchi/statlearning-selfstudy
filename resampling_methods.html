@@ -651,6 +651,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 /* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
 .status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -667,7 +678,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#cvwrong" data-target="cvwrong"><span class="fn-num">P06</span><span class="fn-name">CV 的對與錯</span></a>
   <a href="#bootstrap" data-target="bootstrap"><span class="fn-num">P07</span><span class="fn-name">Bootstrap</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
-  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">總覽比較</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
   <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
@@ -691,10 +702,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.5｜講義 05）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，細節與完整推導請回講義與課本。
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/05_Resampling_Methods.pdf" target="_blank" rel="noopener">📑 講義 05 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch05 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 ISLP 原書</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 ESL 原書</a><a href="index.html">🏠 章節總覽</a></div>
+  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/05_Resampling_Methods.pdf" target="_blank" rel="noopener">📑 講義 05 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch05 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -710,7 +722,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#cvwrong"><span class="toc-num">P06</span>CV 的對與錯</a>
     <a href="#bootstrap"><span class="toc-num">P07</span>Bootstrap</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
-    <a href="#reference"><span class="toc-num">REF</span>總覽比較</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
     <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
@@ -718,7 +730,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>為什麼要重抽樣：訓練誤差不是測試誤差 <span class="sec-badge">ISLP §5 開頭</span><span class="sec-badge">講義 05 · p.2–6</span></h2>
+  <h2>為什麼要重抽樣：訓練誤差不是測試誤差 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5 章開頭</a></span><span class="sec-badge">講義 05 · p.2–6</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>你已經會配模型了。現在的問題換成：<strong>這個模型在沒見過的資料上會有多準？</strong>
@@ -754,7 +766,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="validation">
 <!-- GEN:BEGIN sec:validation -->
   <div class="section-number">PART 01 · 驗證集法</div>
-  <h2>隨手一切兩半：簡單，但答案會跳 <span class="sec-badge">ISLP §5.1.1</span><span class="sec-badge">講義 05 · p.7–9</span></h2>
+  <h2>隨手一切兩半：簡單，但答案會跳 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.1 節</a></span><span class="sec-badge">講義 05 · p.7–9</span></h2>
 <!-- GEN:END sec:validation -->
 
   <p>最直接的做法：把資料隨機切成兩半，一半訓練、一半當<strong>驗證集</strong>（validation set，
@@ -847,7 +859,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="loocv">
 <!-- GEN:BEGIN sec:loocv -->
   <div class="section-number">PART 02 · LOOCV</div>
-  <h2>一次只留一個：沒有隨機性，而且有捷徑 <span class="sec-badge">ISLP §5.1.2</span><span class="sec-badge">講義 05 · p.10–12</span></h2>
+  <h2>一次只留一個：沒有隨機性，而且有捷徑 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.2 節</a></span><span class="sec-badge">講義 05 · p.10–12</span></h2>
 <!-- GEN:END sec:loocv -->
 
   <p>驗證集法浪費了一半的資料，而且答案會跳。把它推到極端：
@@ -919,7 +931,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="kfold">
 <!-- GEN:BEGIN sec:kfold -->
   <div class="section-number">PART 03 · k-fold CV</div>
-  <h2>折成 k 份輪流當驗證集 <span class="sec-badge">ISLP §5.1.3</span><span class="sec-badge">講義 05 · p.13–15</span></h2>
+  <h2>折成 k 份輪流當驗證集 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.3 節</a></span><span class="sec-badge">講義 05 · p.13–15</span></h2>
 <!-- GEN:END sec:kfold -->
 
   <p>LOOCV 要配 n 次模型，n 大就吃不消。折衷方案：把資料<strong>隨機平分成 k 份</strong>，
@@ -964,7 +976,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="kbias">
 <!-- GEN:BEGIN sec:kbias -->
   <div class="section-number">PART 04 · k 該取多少</div>
-  <h2>k 的偏差–變異取捨：為什麼實務上取 5 或 10 <span class="sec-badge">ISLP §5.1.4</span><span class="sec-badge">講義 05 · p.16</span></h2>
+  <h2>k 的偏差–變異取捨：為什麼實務上取 5 或 10 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.4 節</a></span><span class="sec-badge">講義 05 · p.16</span></h2>
 <!-- GEN:END sec:kbias -->
 
   <p>k 該取多少？兩個方向在拉扯：</p>
@@ -1031,7 +1043,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="cvclass">
 <!-- GEN:BEGIN sec:cvclass -->
   <div class="section-number">PART 05 · 分類問題上的 CV</div>
-  <h2>把 MSE 換成錯誤率，其餘一樣 <span class="sec-badge">ISLP §5.1.5</span><span class="sec-badge">講義 05 · p.17–18</span></h2>
+  <h2>把 MSE 換成錯誤率，其餘一樣 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.5 節</a></span><span class="sec-badge">講義 05 · p.17–18</span></h2>
 <!-- GEN:END sec:cvclass -->
 
   <p>整套邏輯搬到分類問題只要換一件事：把 MSE 換成<strong>錯誤率</strong>。</p>
@@ -1076,7 +1088,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="cvwrong">
 <!-- GEN:BEGIN sec:cvwrong -->
   <div class="section-number">PART 06 · CV 的對與錯</div>
-  <h2>先用全資料選特徵再 CV：一個很常見的致命錯誤 <span class="sec-badge">ISLP §5.1.4</span><span class="sec-badge">講義 05 · p.19–21</span></h2>
+  <h2>先用全資料選特徵再 CV：一個很常見的致命錯誤 <span class="sec-badge"><a href="#w05-source-esl">進階參考 · 第 7.10.2 節</a></span><span class="sec-badge">講義 05 · p.19–21</span></h2>
 <!-- GEN:END sec:cvwrong -->
 
   <p>這一節是整章最容易在實務上出錯、而且錯了不會有任何錯誤訊息的地方。</p>
@@ -1101,7 +1113,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">這個模擬在做什麼 <span class="ic-badge">ISLP §5.1.4</span></div>
+      <div class="ic-title">這個模擬在做什麼 <span class="ic-badge">ESL §7.10.2</span></div>
       n = 50、p = 500 的<strong>純雜訊</strong>資料：y 是丟硬幣決定的，跟每一個 X 都完全無關。所以任何誠實的方法都該回報「錯誤率約 50%，這些特徵沒用」。
     </div>
     <div class="info-card">
@@ -1143,7 +1155,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="bootstrap">
 <!-- GEN:BEGIN sec:bootstrap -->
   <div class="section-number">PART 07 · Bootstrap</div>
-  <h2>有放回地重抽：直接把標準誤算出來 <span class="sec-badge">ISLP §5.2</span><span class="sec-badge">講義 05 · p.22–35</span></h2>
+  <h2>有放回地重抽：直接把標準誤算出來 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.2 節</a></span><span class="sec-badge">講義 05 · p.22–35</span></h2>
 <!-- GEN:END sec:bootstrap -->
 
   <p>換一個問題。前面都在問「模型的預測有多準」；現在問<strong>「我算出來的這個數字有多不確定」</strong>。</p>
@@ -1245,7 +1257,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     \;\xrightarrow[n \to \infty]{}\; 1 - e^{-1} \approx 0.632$$
 
   <p>剩下那 36.8% 沒被抽到的樣本叫做 <strong>out-of-bag</strong>（OOB）。
-  它們對這一輪的模型來說是天然的驗證集。第 9 章的 bagging 與 random forest 就靠這招
+  它們對這一輪的模型來說是天然的驗證集。<a href="tree_based_methods.html#bagging">樹狀方法的 bagging 與 random forest</a> 就靠這招
   免費拿到測試誤差估計。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1276,7 +1288,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 5 章精選題 <span class="sec-badge">ISLP §5.4 習題</span></h2>
+  <h2>動手驗證：教科書第 5 章精選題 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.4 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §5.4 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter5/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch05.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
@@ -1312,8 +1324,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
-  <div class="section-number">REFERENCE · 總覽</div>
-  <h2>重抽樣方法速查表 <span class="sec-badge">ISLP Ch.5</span></h2>
+  <div class="section-number">重點速查與來源</div>
+  <h2>重抽樣方法速查表 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5 章</a></span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w05-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 5 章開頭；教科書 · 第 5.1.1 節；教科書 · 第 5.1.2 節；教科書 · 第 5.1.3 節；教科書 · 第 5.1.4 節；教科書 · 第 5.1.5 節；教科書 · 第 5.2 節。</li>
+<li id="w05-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：進階參考 · 第 7.10.2 節。</li></ul></div>
 <!-- GEN:END sec:reference -->
 
   <p>考前把這一頁掃過去就好。</p>

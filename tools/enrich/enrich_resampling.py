@@ -338,7 +338,7 @@ BODIES["cvwrong"] = f"""
      [info_card("這個模擬在做什麼",
                 'n = 50、p = 500 的<strong>純雜訊</strong>資料：y 是丟硬幣決定的，'
                 '跟每一個 X 都完全無關。所以任何誠實的方法都該回報「錯誤率約 50%，'
-                '這些特徵沒用」。', "ISLP §5.1.4"),
+                '這些特徵沒用」。', "ESL §7.10.2"),
       rows_card("100 次獨立模擬",
                 [("錯誤流程｜平均", "—", "w05misWrong"),
                  ("正確流程｜平均", "—", "w05misRight"),
@@ -441,7 +441,7 @@ BODIES["bootstrap"] = f"""
     \\;\\xrightarrow[n \\to \\infty]{{}}\\; 1 - e^{{-1}} \\approx 0.632$$
 
   <p>剩下那 36.8% 沒被抽到的樣本叫做 <strong>out-of-bag</strong>（OOB）。
-  它們對這一輪的模型來說是天然的驗證集。第 9 章的 bagging 與 random forest 就靠這招
+  它們對這一輪的模型來說是天然的驗證集。<a href="tree_based_methods.html#bagging">樹狀方法的 bagging 與 random forest</a> 就靠這招
   免費拿到測試誤差估計。</p>
 
 {table(["n", "5", "20", "100", "n → ∞"],

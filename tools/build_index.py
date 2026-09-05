@@ -12,6 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_page as B  # noqa: E402
 import pages as P  # noqa: E402
+import sources as S  # noqa: E402
 from paths import FLASHCARDS, QUESTIONS, ROOT, TEMPLATE  # noqa: E402
 
 
@@ -32,7 +33,7 @@ def meta_line(p: P.Page):
     bits = [f"{parts} 節"]
     if widgets:
         bits.append(f"{widgets} 個視覺區塊")
-    bits.append(f"題庫自測 {qs} 題" if qs else "每節 quiz")
+    bits.append(f"題庫自測 {qs} 題" if qs else "每節自測")
     bits.append(f"{cards} 張詞彙卡" if cards else "詞彙卡待補")
     return " · ".join(bits)
 
@@ -43,8 +44,8 @@ def card(p: P.Page, seq: int):
     return (f'      <a class="ch-card" href="{p.file}">\n'
             f'        <span class="ch-num">{seq:02d} · {p.slug}</span>\n'
             f'        <h3>{p.plain}</h3>\n'
-            f'        <span class="ch-badge">{p.islp_label}'
-            f'{" ／ " + p.esl_label if p.esl_label else ""}</span>\n'
+            f'        <span class="ch-badge">{S.label_text(p.islp_label)}'
+            f'{" ／ " + S.label_text(p.esl_label) if p.esl_label else ""}</span>\n'
             f'        <div class="ch-meta">{meta_line(p)}</div>\n'
             f'      </a>')
 
@@ -74,10 +75,13 @@ def build_html():
         pre_widgets = sum(counts(q)[3] for q in pre)
         pre_block = f"""  <section id="pre">
     <h2>課前準備</h2>
-    <p>三頁，讀完大概一小時。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
+    <p>三頁，可依需要選讀。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
     把環境弄好、再學會怎麼跟 AI 協作而不把判斷外包。
     這三頁不需要任何程式基礎，選讀，不列入評分。
     共 {len(pre)} 頁、{pre_widgets} 個視覺區塊。</p>
+    <p><strong>期中考使用電腦教室的電腦。</strong>平時可用 Colab；若在自己的電腦練習，
+    建議讓本機 Python 與套件版本和教室一致，依<a href="{P.CLASSROOM_PACKAGES}" target="_blank" rel="noopener">課程提供的版本清單</a>核對。
+    考前也要熟悉教室的操作環境；詳見<a href="00b_setup.html#local">本機安裝與考前準備</a>。</p>
     <div class="ch-grid">
 {pre_cards}
     </div>
@@ -130,16 +134,17 @@ def build_html():
   <section>
     <div class="loop-box">
       <div class="lb-title">📌 建議學習迴圈（每一章都照這個節奏）</div>
-      <p>這個網站是課程講義的互動版配套：<strong>講義給完整程式與推導，這裡給你「動手驗證直覺」的空間。</strong>
-      每頁的 §徽章都標了 ISLP 節號與講義頁碼，方便左右對照；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
+      <p>本站以 <cite>An Introduction to Statistical Learning with Applications in Python</cite>（簡稱 ISLP）
+      與課程講義為主教材。<strong>先用例子理解問題，再動手驗證直覺。</strong>
+      章節旁的中文來源標記列出課本節號或講義頁碼，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
       最後一章標了「補充」——本課沒有教 ISLP 第 10 章，那一頁的出處改用課本官方的英文 lab，其餘規格相同。<br>
-      <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（一小時，不需要程式基礎）；
+      <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（不需要程式基礎）；
       <strong>沒寫過 Python？</strong>正課讀到卡住就翻<a href="#appendix">附錄</a>。兩區都是選讀，不列入評分。</p>
       <div class="loop-steps">
-        <div class="step"><b>① READ &amp; CHECK</b>逐節閱讀；遇到互動元件時，先預測結果，再操作驗證。</div>
-        <div class="step"><b>② CROSS-CHECK</b>對照講義 PDF 與 ISLP 原文，把完整程式看懂、抄一遍、跑一遍。</div>
-        <div class="step"><b>③ QUIZ</b>每節 quiz 立刻自測：答錯就回頭重讀該節，不要往下跳。</div>
-        <div class="step"><b>④ FLASHCARDS &amp; REF</b>翻完詞彙卡、掃過 REF 速查表，能不看答案講出定義才算過關。</div>
+        <div class="step"><b>① 閱讀與驗證</b>逐節閱讀；遇到互動元件時，先預測結果，再操作驗證。</div>
+        <div class="step"><b>② 對照教材</b>需要完整推導時回到講義與教科書；實作時，打開課程練習筆記本並核對結果。</div>
+        <div class="step"><b>③ 觀念自測</b>自測後先讀回饋，再回到相關說明；延伸內容可留待第二輪。</div>
+        <div class="step"><b>④ 詞彙卡與重點速查</b>用詞彙卡回想定義，再查重點速查表；也試著用本章例子解釋概念。</div>
       </div>
     </div>
   </section>
@@ -157,7 +162,7 @@ def build_html():
     <h2>配套資源</h2>
     <div class="res-list">
       <div class="res-card"><b>📖 教科書 ISLP</b>An Introduction to Statistical Learning with
-      Applications in Python（James、Witten、Hastie、Tibshirani、Taylor）。頁上的 §徽章都對應此書節號。<br>
+      Applications in Python（James、Witten、Hastie、Tibshirani、Taylor）。標示「教科書」的來源對應此書章節。<br>
       <a href="{P.BOOK_ISLP}" target="_blank" rel="noopener">statlearning.com（可免費下載）</a></div>
       <div class="res-card"><b>📗 進階參考 ESL</b>The Elements of Statistical Learning。
       標「ESL 進階」的段落對應這本，課堂沒細講，第一輪可略過。<br>
@@ -208,7 +213,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 1. **課前準備**（3 頁）——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
 2. **正課**（11 章）——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
-   關鍵詞彙卡與 REF 速查表。
+   關鍵詞彙卡與重點速查表。
 3. **附錄：Python 先備知識**（6 頁）——正課會用到的語法與套件，查閱用。
 
 課前準備與附錄都是選讀，不列入評分。
@@ -220,7 +225,11 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 ## 課前準備（選讀，不列入評分）
 
-三頁，讀完大概一小時，不需要任何程式基礎。
+三頁，可依需要選讀，不需要任何程式基礎。
+
+**期中考使用電腦教室的電腦。** 本機練習建議依[課程提供的版本清單]({P.CLASSROOM_PACKAGES})
+對齊教室的 Python 與套件版本；平時可用 Colab，考前仍應熟悉教室環境。
+安裝與核對步驟見[環境安裝：本機與考前準備](00b_setup.html#local)。
 
 | # | 頁面 | 對應 | 內容量 |
 |---|------|------|--------|
@@ -249,7 +258,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 ## 內容出處
 
-每頁的 §徽章都標了 ISLP 節號與講義頁碼。`.deck-extra` 卡片裡的程式碼與「預期輸出」
+每頁的中文來源標記提供課本節號或講義頁碼，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
 **逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方的「來源」標了儲存格編號。
 圖表用的烘焙資料由 `tools/frames/` 在固定種子下產生，環境為 {P.ENV_NOTE}。
 每個正文視覺另標示它屬於課程資料、講義／課本重繪、固定種子模擬或自訂概念示意；

@@ -20,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pages as P  # noqa: E402
+import sources as S  # noqa: E402
 from paths import ROOT, TEMPLATE  # noqa: E402
 
 BEGIN = "<!-- GEN:BEGIN {k} -->"
@@ -97,29 +98,30 @@ def studyguide(p: P.Page) -> str:
         label = "▶ 課程錄影" if i == 0 else f"▶ 課程錄影 {i + 1}"
         pills.append((label, f"https://www.youtube.com/playlist?list={pl}"))
     pills.extend(p.extra_pills)
-    pills.append(("📖 ISLP 原書", P.BOOK_ISLP))
+    pills.append(("📖 統計學習教科書（ISLP）", P.BOOK_ISLP))
     if p.esl_label:
-        pills.append(("📗 ESL 原書", P.BOOK_ESL))
+        pills.append(("📗 進階參考書（ESL）", P.BOOK_ESL))
     links = "".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>' for t, u in pills)
     links += '<a href="index.html">🏠 章節總覽</a>'
     esl_hint = ("標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。"
                 if any(s.eslx for s in p.secs) else "")
     deck_bit = f"｜講義 {p.deck_no}" if p.deck else ""
     if p.kind == "prep":
-        step2 = ("<strong>對照 lab</strong>：程式碼卡的 .dx-src 標了它出自哪一份課程 lab "
-                 "的第幾個儲存格，輸出是老師本人跑出來的，可以直接打開對照。")
+        step2 = ("<strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）"
+                 "與儲存格編號；需要實作時，再打開原始筆記本對照。")
     elif p.deck:
-        step2 = ("<strong>對照講義</strong>：每個 §徽章都標了 ISLP 節號與講義頁碼，"
-                 "細節與完整推導請回講義與課本。")
+        step2 = ("<strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，"
+                 "需要完整推導時，點來源標記查書目，再回課本與講義閱讀。")
     else:
-        step2 = ("<strong>對照課本</strong>：每個 §徽章都標了 ISLP 節號，"
+        step2 = ("<strong>對照課本</strong>：章節旁標示課本節號，"
                  "細節與完整推導請回課本。")
     return f"""<div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（{p.islp_label}{deck_bit}）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② {step2}
-  ③ <strong>每節做 quiz</strong>：答錯就回到該節重讀，不要往下跳；錯的選項也寫了「錯在哪」。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">REF 總覽</a>當速查表。{esl_hint}</p>
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。{esl_hint}</p>
+  {S.introduction(p)}
   <div class="sg-links">{links}</div>
 </div>"""
 
@@ -132,7 +134,7 @@ def toc(p: P.Page) -> str:
 
 
 def sec_head(p: P.Page, s: P.Sec, number: str) -> str:
-    badges = "".join(f'<span class="sec-badge">{b.strip()}</span>'
+    badges = "".join(S.badge(p, b.strip())
                      for b in s.badge.split("|") if b.strip())
     eslx = '<span class="eslx">ESL 進階</span>' if s.eslx else ""
     h2 = f'  <h2>{s.h2} {badges}{eslx}</h2>' if s.h2 else ""
@@ -169,13 +171,13 @@ def ex_head(p: P.Page) -> str:
     # ISLP 第 1 章沒有課後習題，所以這一頁的練習改成概念自測
     if p.islp == 1:
         return f"""  <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：概念自測 <span class="sec-badge">ISLP Ch.1</span></h2>
+  <h2>動手驗證：概念自測 {S.badge(p, 'ISLP Ch.1')}</h2>
   <p>ISLP 第 1 章沒有課後習題，所以這幾題是照本章觀念設計的。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。第 2 章開始就有課本習題可以對答案了。</p>
   <div class="sol-links">{pills}</div>"""
     n_site = len(links)
     return f"""  <div class="section-number">EXERCISES · 練習</div>
-  <h2>動手驗證：ISLP 第 {p.islp} 章精選題 <span class="sec-badge">ISLP §{P.EX_SEC[p.islp]} 習題</span></h2>
+  <h2>動手驗證：教科書第 {p.islp} 章精選題 {S.badge(p, 'ISLP §' + P.EX_SEC[p.islp] + ' 習題')}</h2>
   <p>下面幾題取自 ISLP §{P.EX_SEC[p.islp]} 的課後習題，題號都對得回課本。先自己想過再點選項；
   每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面{n_site}個站。</p>
   <div class="sol-links">{pills}</div>"""
@@ -247,6 +249,12 @@ def sharedjs(p: P.Page) -> str:
     return "<script>\n" + read_tpl("shared.js") + "\n</script>"
 
 
+def reference_head(p: P.Page) -> str:
+    return ('  <div class="section-number">重點速查與來源</div>\n'
+            f'  <h2>{p.plain}速查表 {S.badge(p, p.islp_label)}</h2>\n'
+            + S.bibliography(p))
+
+
 # ── 組裝 ────────────────────────────────────────────────────────────────
 def render_new(p: P.Page) -> str:
     parts = ["<!DOCTYPE html>", '<html lang="zh-Hant">', gen("head", head(p)), "<body>",
@@ -258,9 +266,7 @@ def render_new(p: P.Page) -> str:
         elif s.id == "cards":
             inner = gen(f"sec:{s.id}", cards_block(p))
         elif s.id == "reference":
-            inner = (gen(f"sec:{s.id}",
-                         '  <div class="section-number">REFERENCE · 總覽</div>\n'
-                         f'  <h2>{p.plain}速查表 <span class="sec-badge">{p.islp_label}</span></h2>')
+            inner = (gen(f"sec:{s.id}", reference_head(p))
                      + "\n  <!-- 比較表、重點回顧、.ver-note 寫在這裡 -->")
         elif s.id == "bankquiz":
             inner = gen(f"sec:{s.id}", bankquiz_head(p)) + '\n  <div id="bqBox"></div>'
@@ -290,9 +296,7 @@ def refresh(p: P.Page, src: str):
         elif s.id == "cards":
             regions[f"sec:{s.id}"] = cards_block(p)
         elif s.id == "reference":
-            regions[f"sec:{s.id}"] = ('  <div class="section-number">REFERENCE · 總覽</div>\n'
-                                      f'  <h2>{p.plain}速查表 '
-                                      f'<span class="sec-badge">{p.islp_label}</span></h2>')
+            regions[f"sec:{s.id}"] = reference_head(p)
         elif s.id == "bankquiz":
             regions[f"sec:{s.id}"] = bankquiz_head(p)
         else:

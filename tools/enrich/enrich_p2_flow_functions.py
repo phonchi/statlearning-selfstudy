@@ -35,40 +35,9 @@ BODIES = {}
 
 # ── PROLOGUE 為什麼要寫函式 ────────────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>假設你要比較三種多項式次數的驗證誤差。不寫函式的話，你會把同一段
-  「切分 → 配適 → 預測 → 算 MSE」複製三次，只改中間一個數字。
-  三份幾乎一樣的程式碼，就是<strong>三個各自會出錯、而且改了一份忘了改另外兩份</strong>的地方。</p>
-
-{info("課程 lab 的做法", "把那一段包成 <code>evalMSE(terms, response, train, test)</code>，"
-      "然後用一個迴圈跑三次。程式碼從三十行變成六行，而且<strong>只有一個地方會錯</strong>。")}
-
-{card("包成一個函式", C(5, 24), src=S(5, 24),
-      note="這是課程 lab 真的在用的函式，不是教學範例。"
-           "四個參數：要放哪些項、反應變數是誰、訓練集、測試集。")}
-
-{card("然後用迴圈跑三次", C(5, 26), O(5, 26), src=S(5, 26),
-      note="三個次數的驗證 MSE 一次算完。"
-           "要改成試五個次數，只要把 <code>range(1, 4)</code> 改成 <code>range(1, 6)</code>。")}
-
-{viz(svg("w15whySvg", 320),
-     [info_card("兩種寫法並排",
-                "左邊是複製貼上三次，右邊是一個函式加一個迴圈。"
-                "按「改需求」看「要多試一個次數」這件事在兩邊分別要動幾個地方。"),
-      rows_card("目前",
-                [("寫法", "複製貼上", "w15whyKind"),
-                 ("邏輯有幾份", "—", "w15whyCopies"),
-                 ("要改幾個地方", "—", "w15whyEdits")]),
-      info_card("這不是美觀問題",
-                "統計程式最怕的錯誤是<strong>沉默的錯</strong>——"
-                "程式跑完了、有數字、但那個數字是錯的。"
-                "重複的程式碼正是這種錯的溫床。")],
-     "w15whyStatus", "先看兩邊的長度，再按「改需求」。",
-     '<button class="btn btn-toggle" onclick="w15whySet(0)">複製貼上</button>'
-     '<button class="btn btn-toggle" onclick="w15whySet(1)">函式 ＋ 迴圈</button>'
-     '<button class="btn btn-step" onclick="w15whyEdit()">改需求：多試一個次數</button>'
-     '<button class="btn btn-reset" onclick="w15whyReset()">重置</button>',
-     provenance=("course-data", "比較 Ch05 lab 的 evalMSE 函式與逐次複製同一分析的維護差異；不以假想行數計量。"))}
-
+  <p>先用三個小動作認識流程：依條件選一條路、對每個數字重做一次、把步驟包成可重用的函式。這一頁先練 Python，再連回課程的模型程式。把重複步驟寫成一個函式，修改時較不容易漏改其中一份。</p>
+{hl("mpg = 30\nif mpg >= 25:\n    print('達到門檻')\nelse:\n    print('未達門檻')")}
+  <p>這是自訂語法練習，不是 lab 的實跑輸出。先猜會執行哪一個 print，再把 mpg 改成 20 重跑。冒號開始區塊；同一區塊的縮排必須一致。</p>
 {quiz("qWhy", "PART 00 · 自我檢測",
       "同一段分析程式碼在 notebook 裡複製了三次。最大的風險是什麼？",
       [(False, "檔案變大，跑得比較慢",
@@ -82,10 +51,9 @@ BODIES["prologue"] = f"""
 
 # ── P01 條件與布林 ─────────────────────────────────────────────────────
 BODIES["cond"] = f"""
-  <p>條件判斷本身很簡單：<code>if</code> 成立就做這個、否則做那個。
-  真正會咬人的是<strong>純 Python 的 <code>and</code>／<code>or</code> 跟
-  NumPy 與 pandas 的 <code>&amp;</code>／<code>|</code> 不是同一回事</strong>。</p>
-
+  <p>上面的 <code>if</code> 只要一個真假值。可以用 <code>and</code>／<code>or</code> 合併純量條件，例如 <code>mpg &gt; 25 and year &gt; 80</code>。先熟悉這一種，再看下面一整欄同時判斷的寫法。</p>
+{hl("values = [18, 30, 24]\nfor mpg in values:\n    if mpg >= 25:\n        print(mpg)")}
+  <p>這個自訂例子依序取出三個數字，每次都做相同判斷。下面的 NumPy／pandas 遮罩把整欄一起判斷；若尚不熟資料表，可以先讀下一節的基本迴圈，學完 P3、P4 再回來對照。</p>
 {info("一句話講完差別",
       "<code>and</code> 一次只能判斷<strong>一個</strong>真假值；"
       "<code>&amp;</code> 是<strong>逐元素</strong>做「且」，一整排一起算。"
@@ -191,7 +159,7 @@ BODIES["loop"] = f"""
         ["DataFrame 的每一欄", "<code>for col in df.columns:</code>"]])}
 
 {info("能不用迴圈就不要用",
-      "對整排數字做同一個運算時，NumPy 與 pandas 的向量化寫法又快又好讀（P3 講過）。"
+      "對整排數字做同一個運算時，NumPy 與 pandas 的向量化寫法又快又好讀（P3 接著會介紹）。"
       "迴圈留給「每一圈的內容真的不一樣」的情況——"
       "例如每一圈試一個不同的參數、或每一圈抽一份新的樣本。")}
 
@@ -212,6 +180,47 @@ BODIES["func"] = f"""
   <strong>回傳值</strong>（它給你什麼）。寫得好的函式就像一個黑盒子——
   用的人只要知道這三件事，不必知道裡面怎麼做。</p>
 
+{hl("def above_threshold(value, threshold=25):\n    return value >= threshold\n\nfor value in [18, 30, 24]:\n    print(above_threshold(value))")}
+  <p>這是自訂函式練習。<code>def</code> 定義名字和參數；<code>return</code> 交回真假值，外面的 print 才負責顯示。先改門檻，確認每次呼叫如何使用引數。以下是學完基本語法後的課程應用；OLS、設計矩陣與 MSE 可在 <a href="p6_modeling_api.html">P6</a> 詳讀。</p>
+  <p>假設你要比較三種多項式次數的驗證誤差。不寫函式的話，你會把同一段
+  「切分 → 配適 → 預測 → 算 MSE」複製三次，只改中間一個數字。
+  三份幾乎一樣的程式碼，就是<strong>三個各自會出錯、而且改了一份忘了改另外兩份</strong>的地方。</p>
+
+{info("課程 lab 的做法", "把那一段包成 <code>evalMSE(terms, response, train, test)</code>，"
+      "然後用一個迴圈跑三次。程式碼從多份重複變成一份共用邏輯，修改時較容易保持一致。")}
+
+  <p>以下先讀懂函式如何被重用。要實跑，請開啟 <a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb">重抽樣方法的課程筆記本</a>，
+  先執行套件安裝與匯入（儲存格 3–4）、Auto 資料載入與切分（儲存格 8–16），再執行下面的函式與呼叫。
+  這會準備好 <code>MS</code>、<code>sm</code>、<code>poly</code>、<code>Auto_train</code> 與 <code>Auto_valid</code>。</p>
+
+{card("包成一個函式", C(5, 24), src=S(5, 24),
+      note="這是課程 lab 真的在用的函式，不是教學範例。"
+           "四個參數：要放哪些項、反應變數是誰、訓練集、測試集。")}
+
+{card("然後用迴圈跑三次", C(5, 26), O(5, 26), src=S(5, 26),
+      note="三個次數的驗證 MSE 一次算完。"
+           "要改成試五個次數，把 <code>range(1, 4)</code> 改成 <code>range(1, 6)</code>，"
+           "並把存放結果的 <code>np.zeros(3)</code> 改成 <code>np.zeros(5)</code>，避免陣列越界。")}
+
+{viz(svg("w15whySvg", 320),
+     [info_card("兩種寫法並排",
+                "左邊是複製貼上三次，右邊是一個函式加一個迴圈。"
+                "按「改需求」看「要多試一個次數」這件事在兩邊分別要動幾個地方。"),
+      rows_card("目前",
+                [("寫法", "複製貼上", "w15whyKind"),
+                 ("邏輯有幾份", "—", "w15whyCopies"),
+                 ("要改幾個地方", "—", "w15whyEdits")]),
+      info_card("這不是美觀問題",
+                "統計程式最怕的錯誤是<strong>沉默的錯</strong>——"
+                "程式跑完了、有數字、但那個數字是錯的。"
+                "重複的程式碼正是這種錯的溫床。")],
+     "w15whyStatus", "先看兩邊的長度，再按「改需求」。",
+     '<button class="btn btn-toggle" onclick="w15whySet(0)">複製貼上</button>'
+     '<button class="btn btn-toggle" onclick="w15whySet(1)">函式 ＋ 迴圈</button>'
+     '<button class="btn btn-step" onclick="w15whyEdit()">改需求：多試一個次數</button>'
+     '<button class="btn btn-reset" onclick="w15whyReset()">重置</button>',
+     provenance=("course-data", "比較 Ch05 lab 的 evalMSE 函式與逐次複製同一分析的維護差異；不以假想行數計量。"))}
+
 {viz(svg("w15fnSvg", 340),
      [info_card("看資料怎麼進出",
                 "按「單步」走一次 <code>evalMSE</code>：四個參數進去、"
@@ -230,10 +239,7 @@ BODIES["func"] = f"""
      '<button class="btn btn-reset" onclick="w15fnReset()">重置</button>',
      provenance=("course-data", "依 Ch05 lab 的 evalMSE 函式資料流重繪。"))}
 
-{card("再看一次 evalMSE", C(5, 24), src=S(5, 24),
-      note="四個參數、四個步驟、一個回傳值。"
-           "注意它<strong>只用參數傳進來的東西</strong>，"
-           "不去讀外面的全域變數。這叫「沒有副作用」，是好函式的特徵。")}
+  <p>這個函式由參數接收資料，較容易換資料重用。是否有副作用，還要看它會不會修改傳入物件、全域狀態或檔案。</p>
 
 {qa("觀念釐清", [
     ("參數（parameter）與引數（argument）差在哪？",
@@ -263,6 +269,10 @@ BODIES["scope"] = f"""
   <strong>作用域</strong>決定一個名字在哪裡看得到。
   課程 lab 的 <code>boot_SE</code> 兩者都用上了。</p>
 
+  <p>這個進階應用同樣在重抽樣方法的課程筆記本中執行：先跑儲存格 3–4 的安裝與匯入，
+  再跑儲存格 53 建立 <code>Portfolio</code> 與 <code>alpha_func</code>，最後跑下面的儲存格 59、61。
+  第一輪先看引數如何傳入即可，bootstrap 的用途留待正課。</p>
+
 {card("有預設值的參數", C(5, 59), src=S(5, 59),
       note="<code>n=None</code>、<code>B=1000</code>、<code>seed=0</code> 都有預設值，"
            "所以呼叫時可以只給前兩個。"
@@ -284,7 +294,7 @@ BODIES["scope"] = f"""
                 "<code>def f(acc=[])</code> 這種寫法，那個空串列<strong>只會建立一次</strong>，"
                 "後續每次呼叫都共用同一個，於是它會越積越多。"
                 "要用可變的預設值，寫 <code>def f(acc=None)</code> 再在函式裡面 "
-                "<code>acc = acc or []</code>。")],
+                "<code>if acc is None: acc = []</code>。")],
      "w15scStatus", "三個情境，看名字的可見範圍。",
      '<button class="btn btn-toggle" onclick="w15scSet(0)">函式讀外面的變數</button>'
      '<button class="btn btn-toggle" onclick="w15scSet(1)">函式裡指派同名變數</button>'

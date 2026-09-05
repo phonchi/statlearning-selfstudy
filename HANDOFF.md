@@ -376,3 +376,20 @@ python3 tools/check_visual_claims.py
 python3 tools/validate.py --net
 node tools/browser_check.js
 ```
+
+---
+
+## 11. 2026-09-05 教學與來源修訂
+
+完整決策與驗證記錄見 [`tools/TEACHING_AUDIT.md`](tools/TEACHING_AUDIT.md)。
+三區與授課章序保留；修正正文、自測、詞彙卡與題庫的錯誤通則，精簡 00A／00C 重複清單，
+補齊 00B 起步路徑與 P2 前置概念。既有 lab 引用與烘焙數值保留。
+
+`tools/sources.py` 將 `pages.py` 內部書籍鍵轉成中文來源標記，提供同頁完整書目與定位。
+來源書名在導讀首次介紹，`AI-Stats §N` 不再直接顯示給學生。
+`validate.py` 新增 SOURCE-CLARITY 與跨頁錨點檢查；更新書目後需重跑 `build_page.py`。
+
+**期中使用電腦教室電腦。** 學生本機練習建議以 `pages.CLASSROOM_PACKAGES` 指向的
+現行課程版本清單對齊教室。2026-09-05 清單中的 Python 為 3.9.13、statsmodels 為 0.13.2、
+Matplotlib 為 3.5.2；清單若更新，需核對 00B 的日期、版本表、安裝範例與詞彙卡。
+`pages.ENV_NOTE` 是本站既有圖表的歷史生成環境，不是考前安裝版本依據，不要為了更新教室版本改掉它。
