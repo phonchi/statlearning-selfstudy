@@ -400,8 +400,8 @@ Matplotlib 為 3.5.2；清單若更新，需核對 00B 的日期、版本表、�
 新聞、領域分工、基本學習問題、推薦系統、十個想法、EDA、資料集與後續入口。
 資料總表完整 22 筆、五欄，6 合成／16 真實；Advertising 依使用者確認列合成。
 
-第一章依本地 39 頁新版 PDF；線上 42 頁舊版連結釘至特定提交並標出頁次差異。
-本次沒有發布課程 repo 尚未提交的 PDF。`Page.deck_url/deck_label/deck_note` 支援單頁來源版本，
+第一章講義依使用者指示同步至現行課程 repo，連結使用 main 分支，按鈕不加版本標註。
+`Page.deck_url/deck_label/deck_note` 支援單頁來源版本，
 `legacy_anchors` 保留重排後的舊書籤，`page_css` 僅供本章表格與圖形閱讀版面。
 
 正文與自測在 `enrich_intro.py`；總表在 `intro_catalog.py`；五組九張 SVG 在 `intro_visuals.py`。

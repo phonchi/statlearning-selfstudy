@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """統計學習導論與 EDA：由新聞、學習問題走到資料閱讀。
 
-內容依本機 39 頁 01_Introduction.pdf 的教學主線組織；公開講義的
-頁次對照由 pages.py 管理。行政與評分不放進自學正文。
+內容依 01_Introduction.pdf 的教學主線組織；公開講義連結
+由 pages.py 管理。行政與評分不放進自學正文。
 資料總表與五組讀圖例子由 intro_catalog / intro_visuals 提供，
 逐字 lab 引用與圖表數字由各模組保留來源，不在此重抄或重算。
 """

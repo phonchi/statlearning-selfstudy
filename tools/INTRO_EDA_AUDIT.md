@@ -6,8 +6,8 @@
 
 內容依使用者指定的 `nsysu-math524/static_files/presentations/01_Introduction.pdf` 新版 39 頁；
 SHA256 為 `f4d025d510add4184d032000f170885916fd3e1c80fce0d2057cc9abd89b6e91`。
-該檔仍是課程 repo 未提交的變更，本次不發布此 PDF。公開連結固定到 a0c8b9910a450ae2328adff5f8d8665479be71f5 的 42 頁舊版，
-頁面已說明版本與新舊頁次對照。
+依使用者後續指示，講義檔同步發布至現行課程 repo，連結直接使用 main 分支的 PDF。
+按鈕只顯示「講義 01 PDF」，不加版本標註或頁次對照。
 
 | 段落 | 新版講義頁次 | 修訂 |
 |---|---|---|
