@@ -38,6 +38,8 @@ def read_tpl(name):
 # ── 各 GEN 區段 ─────────────────────────────────────────────────────────
 def head(p: P.Page) -> str:
     css = read_tpl("base.css") + "\n\n" + read_tpl("stats.css")
+    if p.page_css:
+        css += "\n\n" + p.page_css
     return f"""<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -91,7 +93,8 @@ def studyguide(p: P.Page) -> str:
     # playlist 尤其陰險："".split(",") 回的是 [""] 不是 []，會生出 ?list= 的空連結。
     pills = []
     if p.deck:
-        pills.append((f"📑 講義 {p.deck_no} PDF", p.blob + p.deck.replace(" ", "%20")))
+        pills.append((p.deck_label or f"📑 講義 {p.deck_no} PDF",
+                      p.deck_url or p.blob + p.deck.replace(" ", "%20")))
     if p.lab:
         pills.append((f"📓 Ch{p.islp:02d} 中文 Lab", p.blob + p.lab.replace(" ", "%20")))
     for i, pl in enumerate([x for x in p.playlist.split(",") if x]):
@@ -106,6 +109,7 @@ def studyguide(p: P.Page) -> str:
     esl_hint = ("標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。"
                 if any(s.eslx for s in p.secs) else "")
     deck_bit = f"｜講義 {p.deck_no}" if p.deck else ""
+    deck_note = f'\n  <p class="source-intro">{p.deck_note}</p>' if p.deck_note else ""
     if p.kind == "prep":
         step2 = ("<strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）"
                  "與儲存格編號；需要實作時，再打開原始筆記本對照。")
@@ -121,7 +125,7 @@ def studyguide(p: P.Page) -> str:
   ② {step2}
   ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。{esl_hint}</p>
-  {S.introduction(p)}
+  {S.introduction(p)}{deck_note}
   <div class="sg-links">{links}</div>
 </div>"""
 

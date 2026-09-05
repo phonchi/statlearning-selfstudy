@@ -97,6 +97,11 @@ class Page:
     # "appendix"（Python 先備）。刻意與 kind 分開：kind 管的是「這頁受哪一套檢查」
     # （prep 頁要過 check_prep_grounding），group 管的是「這頁排在哪一區」。
     group: str = ""
+    deck_url: str = ""         # 單頁引用的講義版本；空字串沿用課程封存站
+    deck_label: str = ""
+    deck_note: str = ""
+    legacy_anchors: tuple = ()  # 重排後保留在小標題上的既有書籤
+    page_css: str = ""         # 僅此頁需要的閱讀版面，避免影響其他章
 
     @property
     def grp(self) -> str:
@@ -464,32 +469,33 @@ PAGES = [
     ),
     # ── 正課十一章（group="core"，依授課順序） ────────────────
     Page(
-        n=1, stem="introduction", slug="INTRODUCTION", title_en="Introduction",
-        h1='什麼是<span class="blue">統計學習</span>？',
-        plain="統計學習導論",
-        subtitle="ISLP 第 1 章 — 對應講義 01",
-        formula="監督式｜非監督式｜迴歸 vs 分類｜預測 vs 推論｜n 與 p｜Wage｜Smarket｜NCI60",
-        deck="01_Introduction.pdf", deck_pages=42, lab="Ch01-lab-zh.ipynb",
+        n=1, stem="introduction", slug="INTRODUCTION & EDA", title_en="Introduction to Statistical Learning and EDA",
+        h1='<span class="blue">統計學習導論</span>與 <span class="green">EDA</span>',
+        plain="統計學習導論與 EDA",
+        subtitle="從新聞與核心想法，到探索式資料分析 — 對應講義 01",
+        formula="新聞與應用｜領域區別｜推薦系統｜10 個重要想法｜先看資料再建模｜22 個資料集",
+        deck="01_Introduction.pdf", deck_pages=39, lab="Ch01-lab-zh.ipynb",
         islp=1, islp_label="ISLP Ch.1", esl_label="",
         playlist="PLHNZtBNWQ-85VI_x3duODyfYm4r3pOl3e",
         hero_svg=_svg_map(),
         group="core",
         nav_prev="00c_ai_assisted",
+        deck_url="https://github.com/phonchi/nsysu-math524/blob/a0c8b9910a450ae2328adff5f8d8665479be71f5/static_files/presentations/01_Introduction.pdf",
+        deck_label="📑 講義 01 PDF（線上舊版，42 頁）",
+        deck_note="本頁依 39 頁新版講義編寫，節旁標示新版頁碼。連結的 PDF 為 42 頁舊版：新版第 6–39 頁的章節位置對應舊版第 9–42 頁（加 3 頁），部分新聞與說明已更新；閱讀以本頁介紹為準。",
+        legacy_anchors=("regcls", "predinfer", "notation"),
+        page_css=".w01-catalog{min-width:660px;} .w01-ideas{min-width:640px;} #datasets .viz-layout>div{min-width:0;} .w01-catalog th{white-space:nowrap;} .w01-figure-scroll{overflow-x:auto;max-width:100%;} .w01-figure-scroll .viz-svg{min-width:620px;height:auto;} .w01-figure-scroll .axlab{font-size:12px;} .w01-figure-scroll .axtitle{font-size:13px;}",
         secs=[
-            Sec("prologue", "課程地圖", "十章方法一次看懂：這門課到底在教什麼",
-                "講義 01 · p.9–11", kicker="PROLOGUE · 開場"),
-            Sec("supervised", "監督式與非監督式", "有沒有 <span class=\"orange\">y</span>：監督式與非監督式的分界",
-                "ISLP §1.1|講義 01 · p.23–27"),
-            Sec("regcls", "迴歸與分類", "輸出是數字還是類別：迴歸與分類", "ISLP §1.1|講義 01 · p.33"),
-            Sec("predinfer", "預測與推論", "你要的是<strong>準</strong>還是<strong>懂</strong>：預測與推論",
-                "ISLP §2.1.1|講義 01 · p.24"),
-            Sec("notation", "符號約定", "n、p 與矩陣寫法：先把符號講清楚", "ISLP §1.2"),
-            Sec("datasets", "資料集巡禮", "課本三大資料集：Wage、Smarket、NCI60",
-                "ISLP §1.1|講義 01 · p.34–38"),
-            Sec("slvsml", "統計學習與機器學習", "統計學習、機器學習、資料科學差在哪？",
-                "講義 01 · p.19–22"),
-            Sec("toolchain", "Python 工具鏈", "動手前的準備：Python 生態與 lab 導覽",
-                "講義 01 · p.6–7、41"),
+            Sec("prologue", "這門課的重點", "先理解問題，再用資料檢查想法",
+                "講義 01 · p.6、21", kicker="PROLOGUE · 開場"),
+            Sec("news", "新聞與應用", "新聞中的 AI，究竟在學什麼？", "講義 01 · p.9–15"),
+            Sec("slvsml", "相關領域的分工", "統計、機器學習與資料科學：重疊中的不同側重", "講義 01 · p.7、16–19"),
+            Sec("supervised", "基本學習問題", "先問：有什麼資料，想回答什麼？", "講義 01 · p.20–22|ISLP §2.1"),
+            Sec("recommendation", "推薦系統", "Netflix：推薦系統是一種應用任務", "講義 01 · p.23–24"),
+            Sec("ideas", "10 個重要想法", "從統計到 AI：十個想法各解決什麼問題？", "講義 01 · p.25"),
+            Sec("eda", "EDA 入門", "先看資料：資料表、摘要與選圖", "講義 01 · p.26–29"),
+            Sec("datasets", "22 個資料集與讀圖", "課程資料集總表與五組讀圖練習", "講義 01 · p.30–35|ISLP Ch.1"),
+            Sec("toolchain", "繼續學習", "從這一頁走向 Lab 與後續章節", "講義 01 · p.36、38–39"),
         ],
     ),
     Page(

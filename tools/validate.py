@@ -252,12 +252,15 @@ def check_page(p: P.Page):
     # ID-PREFIX：69 個元件共用全域，前綴是唯一的防撞機制
     pref = f"w{p.n:02d}"
     for i in ids.ids:
-        if i in SKELETON_IDS or i in want_ids:
+        if i in SKELETON_IDS or i in want_ids or i in p.legacy_anchors:
             continue
         if re.match(r"^(q[A-Z]|dx-)", i):     # quiz id 與 deck-extra 錨點另有規則
             continue
         if not i.startswith(pref):
             fail("ID-PREFIX", w, f"id=\"{i}\" 沒有 {pref} 前綴")
+    for anchor in p.legacy_anchors:
+        if anchor not in ids.ids:
+            fail("ANCHOR", w, f"重排後缺少既有書籤 #{anchor}")
     js = pagejs(src)
     # 只查真正的頂層宣告（第 0 欄）；函式內的區域變數不會相撞
     for m in re.finditer(r"^(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)", js, re.M):
@@ -600,7 +603,15 @@ def check_links(base=None):
             if code >= 400:
                 fail("LINKS", u, f"HTTP {code}")
         except urllib.error.HTTPError as e:
-            if e.code in (403, 405, 429):        # 有些站不接受 HEAD
+            if e.code == 404:  # Kaggle 等站可能只對 HEAD 回 404；確認一般讀取是否也失敗
+                try:
+                    req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 link-check"})
+                    with urllib.request.urlopen(req, timeout=25) as response:
+                        if response.status >= 400:
+                            fail("LINKS", u, f"GET HTTP {response.status}")
+                except Exception as get_error:
+                    fail("LINKS", u, f"HEAD HTTP 404；GET {get_error}")
+            elif e.code in (403, 405, 429):        # 有些站不接受 HEAD
                 warn("LINKS", u, f"HTTP {e.code}（可能只是不接受 HEAD）")
             else:
                 fail("LINKS", u, f"HTTP {e.code}")

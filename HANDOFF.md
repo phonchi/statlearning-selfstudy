@@ -393,3 +393,17 @@ node tools/browser_check.js
 現行課程版本清單對齊教室。2026-09-05 清單中的 Python 為 3.9.13、statsmodels 為 0.13.2、
 Matplotlib 為 3.5.2；清單若更新，需核對 00B 的日期、版本表、安裝範例與詞彙卡。
 `pages.ENV_NOTE` 是本站既有圖表的歷史生成環境，不是考前安裝版本依據，不要為了更新教室版本改掉它。
+
+## 12. 第一章改為「統計學習導論與 EDA」
+
+決策與驗證見 [`tools/INTRO_EDA_AUDIT.md`](tools/INTRO_EDA_AUDIT.md)。正文按新版講義重排為
+新聞、領域分工、基本學習問題、推薦系統、十個想法、EDA、資料集與後續入口。
+資料總表完整 22 筆、五欄，6 合成／16 真實；Advertising 依使用者確認列合成。
+
+第一章依本地 39 頁新版 PDF；線上 42 頁舊版連結釘至特定提交並標出頁次差異。
+本次沒有發布課程 repo 尚未提交的 PDF。`Page.deck_url/deck_label/deck_note` 支援單頁來源版本，
+`legacy_anchors` 保留重排後的舊書籤，`page_css` 僅供本章表格與圖形閱讀版面。
+
+正文與自測在 `enrich_intro.py`；總表在 `intro_catalog.py`；五組九張 SVG 在 `intro_visuals.py`。
+圖形資料由 `gen_intro.py` 重算，`frames()` 使用既有 m524 環境，主 enrich 用系統 python3。
+沒有重跑或改寫保存的 lab 輸出。不要把 N/P 總表、模型 p、索引欄與圖形矩陣欄數混為一談。

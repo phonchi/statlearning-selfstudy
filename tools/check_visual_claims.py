@@ -24,7 +24,7 @@ def source(path):
 
 
 # Every remaining viz() must make its source boundary explicit.
-for path in sorted(ENRICH.glob("enrich_*.py")):
+for path in sorted([*ENRICH.glob("enrich_*.py"), *ENRICH.glob("intro_visuals.py")]):
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     for call in (n for n in ast.walk(tree)
                  if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
