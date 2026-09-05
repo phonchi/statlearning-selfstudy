@@ -2,14 +2,14 @@
 {"front": "畫布（Figure）", "back": "整張圖的最外層：大小、存檔、總標題都歸它管。一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。"},
 {"front": "座標系（Axes）", "back": "資料真正被畫進去的地方。你 99% 的時間都在跟它打交道，seaborn 的 <code>ax=</code> 指的就是它。注意它跟 Axis（單一根軸）差一個字母。"},
 {"front": "子圖網格（subplots）", "back": "<code>subplots(nrows=2, ncols=3)</code> 回傳一個 Figure 與一個 <b>(2,3) 的 NumPy 陣列</b>。索引法跟一般二維陣列一樣。"},
-{"front": "圖層級函式（Figure-level）", "back": "<code>relplot</code>、<code>catplot</code>、<code>lmplot</code>、<code>displot</code>、<code>jointplot</code>、<code>pairplot</code>。它們會自己開一張新 Figure，<b>不吃 <code>ax=</code></b>。"},
-{"front": "座標系層級函式（Axes-level）", "back": "<code>scatterplot</code>、<code>histplot</code>、<code>boxplot</code>、<code>regplot</code> 等。接受 <code>ax=</code>，可以塞進自己的 subplots 網格。"},
+{"front": "圖層級函式（Figure-level）", "back": "自行建立並管理圖，例如 relplot、displot、catplot 與 lmplot 回傳 FacetGrid。沒有分面時也可以只有一個子圖。它們不是直接回傳 Figure，也不是用 ax= 畫進既有座標系。"},
+{"front": "座標系層級函式（Axes-level）", "back": "畫到一個 Axes 並回傳該 Axes，例如 scatterplot、histplot、boxplot、regplot、residplot、heatmap。接受 ax=，可以放進自己建立的 subplots；不要由函式名稱結尾猜層級。"},
 {"front": "直方圖（Histogram）", "back": "把值切成幾格再數每格幾筆。<b>bins 是你的選擇，不是資料的性質</b>——太少會糊掉真的結構，太多會讓雜訊看起來像結構。"},
 {"front": "核密度估計（KDE）", "back": "把每個點換成一個小鐘形再加起來，所以結果<b>一定是平滑的</b>。那個平滑是你給的假設。頻寬就是直方圖 bins 的另一個化身。"},
 {"front": "頻寬（Bandwidth）", "back": "KDE 的平滑程度。大＝平滑＝可能糊掉真結構；小＝每個點戳出一根。跟 bins 是同一個取捨。"},
 {"front": "散佈圖（Scatterplot）", "back": "兩個數值變數的標準圖。統計分析的第一張圖幾乎都是它——它會告訴你關係是直線、曲線、還是根本沒有。"},
 {"front": "色相參數（hue）", "back": "用顏色把第三個變數塞進同一張圖。組數 ≤ 5 時最有效；再多就該用 <code>col=</code> 拆成小圖。"},
-{"front": "分面參數（col／row）", "back": "把資料按某個類別拆成好幾張小圖並排。組數多、疊起來會糊的時候用它。"},
+{"front": "分面參數（col／row）", "back": "將資料依某個變數拆成多個子圖，分別排成欄或列。例如 displot(..., col=\"smoker\") 分開比較各組；kind 選的是畫法，col／row 選的是分組布局。"},
 {"front": "成對關係圖（pairplot）", "back": "所有數值欄兩兩配對畫一格，對角線放各自的分布。探索階段最划算的一張圖，但欄多時會很慢。"},
 {"front": "盒鬚圖（Boxplot）", "back": "盒子涵蓋第一至第三四分位數，中線是中位數；鬚延伸到距盒邊 1.5 倍 IQR 內的最遠觀測，外面的點是候選離群值。也可疊上 stripplot 等原始點圖檢查。"},
 {"front": "長條圖（Barplot）", "back": "長條高度是各組的<b>平均</b>，上面那條細線是 bootstrap 信賴區間，不是標準差。看到它要先問「每組幾筆」。"},
@@ -22,5 +22,9 @@
 {"front": "折線圖與信賴帶（lineplot）", "back": "同一個 x 有多筆資料時，<code>lineplot</code> 會畫平均與 95% 信賴帶，那條帶子是 bootstrap 算的。"},
 {"front": "摘要統計的盲點（Summary Statistics）", "back": "平均、標準差、相關係數都一樣的兩份資料，散佈圖可以完全不同：一組直線、一組曲線、一組只是被離群值拉出來的假相關。所以<b>先畫圖再算數字</b>。"},
 {"front": "離群值（Outlier）", "back": "遠離其他觀測的點。它可以單獨把相關係數從 0 拉到 0.8，也可以主宰一條迴歸線。盒鬚圖與殘差圖是最快發現它的兩張圖。"},
-{"front": "圖型選擇（Chart Choice）", "back": "先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"}
+{"front": "圖型選擇（Chart Choice）", "back": "先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"},
+{"front": "三個函式家族（Function Families）", "back": "關係家族 relplot 看變數如何一起變動；分布家族 displot 看數值如何分布；類別家族 catplot 比較不同組別。這是在分問題，Figure-level／Axes-level 則是在分控制層級。"},
+{"front": "圖型選擇參數（kind）", "back": "在 Figure-level 入口選子圖畫法：relplot 可選 scatter／line，displot 可選 hist／kde／ecdf，catplot 例如選 box。kind 不決定分面；分面用 row／col。"},
+{"front": "累積分布與觀測刻度（ECDF and Rug）", "back": "ecdfplot 顯示累積比例隨數值改變；rugplot 用小刻度標出觀測位置。displot 可用 kind=\"ecdf\" 畫前者；刻度則用 rug=True 加上，沒有 kind=\"rug\"。"},
+{"front": "管理多個座標系（Grid Objects）", "back": "jointplot 回傳 JointGrid，管理一對變數的關係與兩側分布；pairplot 回傳 PairGrid，管理多對變數；clustermap 回傳 ClusterGrid，管理分群樹與熱圖。它們各自管理圖，不直接畫進一個既有 ax。"}
 ]

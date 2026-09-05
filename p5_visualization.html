@@ -662,6 +662,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* The page contents and chapter links provide navigation without covering text. */
   .float-nav{display:none;}
 }
+
+.w18-function-map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:1.2rem 0;} .w18-function-family{min-width:0;padding:1rem;border:1px solid var(--card-border);border-radius:10px;background:var(--card);} .w18-level-head{padding:.8rem;margin-bottom:1rem;border-radius:8px;line-height:1.6;} .w18-function-family:nth-child(1) .w18-level-head{background:#eaf0fc;color:#233666;} .w18-function-family:nth-child(2) .w18-level-head{background:#fff0e7;color:#8c380f;} .w18-function-family:nth-child(3) .w18-level-head{background:#e8f3e8;color:#175c30;} .w18-function-family ul{padding-left:1.2rem;} .w18-function-family li{margin:.45rem 0;} .w18-function-family code{overflow-wrap:anywhere;} @media(max-width:760px){.w18-function-map{grid-template-columns:1fr;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -670,7 +672,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <nav class="float-nav" id="floatNav" aria-label="章節導覽">
   <div class="fn-title">章節導覽</div>
   <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">為什麼要先畫圖</span></a>
-  <a href="#anat" data-target="anat"><span class="fn-num">P01</span><span class="fn-name">Figure 與 Axes</span></a>
+  <a href="#anat" data-target="anat"><span class="fn-num">P01</span><span class="fn-name">圖形層級與 Seaborn 分類</span></a>
   <a href="#dist" data-target="dist"><span class="fn-num">P02</span><span class="fn-name">看一個變數的分布</span></a>
   <a href="#rel" data-target="rel"><span class="fn-num">P03</span><span class="fn-name">看兩個變數的關係</span></a>
   <a href="#cat" data-target="cat"><span class="fn-num">P04</span><span class="fn-name">類別變數的圖</span></a>
@@ -690,7 +692,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="hero-content">
     <h1>先<span class="blue">畫</span>再算：matplotlib 與 seaborn</h1>
     <div class="subtitle">先備知識 P5 — 選讀，不列入評分</div>
-    <div class="big-formula">Figure 與 Axes｜subplots 網格｜histplot 的 bins｜kdeplot 的頻寬｜relplot 與 catplot｜regplot｜heatmap｜截斷的 y 軸會說謊</div>
+    <div class="big-formula">Figure 與 Axes｜Seaborn 圖族與層級｜relplot／displot／catplot｜分布與關係｜迴歸與矩陣圖｜選對圖再解讀</div>
     <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
   </div>
 </div>
@@ -704,7 +706,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/01_Introduction.pdf" target="_blank" rel="noopener">📑 導論講義</a><a href="https://seaborn.pydata.org/tutorial/function_overview.html" target="_blank" rel="noopener">🔗 Seaborn 圖形分類</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -712,7 +714,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="toc-title">CONTENTS · 內容目錄</div>
   <div class="toc-grid">
     <a href="#prologue"><span class="toc-num">P00</span>為什麼要先畫圖</a>
-    <a href="#anat"><span class="toc-num">P01</span>Figure 與 Axes</a>
+    <a href="#anat"><span class="toc-num">P01</span>圖形層級與 Seaborn 分類</a>
     <a href="#dist"><span class="toc-num">P02</span>看一個變數的分布</a>
     <a href="#rel"><span class="toc-num">P03</span>看兩個變數的關係</a>
     <a href="#cat"><span class="toc-num">P04</span>類別變數的圖</a>
@@ -797,8 +799,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </section>
 <section id="anat">
 <!-- GEN:BEGIN sec:anat -->
-  <div class="section-number">PART 01 · Figure 與 Axes</div>
-  <h2>一張圖的解剖：Figure 是畫布，Axes 才是座標系 <span class="sec-badge">課程 Lab Ch2 · 儲存格 96–114</span></h2>
+  <div class="section-number">PART 01 · 圖形層級與 Seaborn 分類</div>
+  <h2>Figure、Axes 與 Seaborn 的圖形分類 <span class="sec-badge">講義 01 · p.29</span><span class="sec-badge">課程 Lab Ch2 · 儲存格 96–114</span><span class="sec-badge">seaborn 文件 · 圖形分類</span></h2>
 <!-- GEN:END sec:anat -->
 
   <p>matplotlib 的物件有兩層，搞混這兩層是所有「為什麼我的設定沒有生效」的根源：
@@ -825,8 +827,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       <div class="ic-row"><span class="ic-label">物件</span><span class="ic-value" id="w18anObj">Figure</span></div><div class="ic-row"><span class="ic-label">負責什麼</span><span class="ic-value" id="w18anWhat">整張畫布</span></div><div class="ic-row"><span class="ic-label">常用方法</span><span class="ic-value" id="w18anHow">set_size_inches、savefig</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">為什麼 seaborn 有時候回 Figure、有時候回 Axes</div>
-      名字結尾是 <code>plot</code> 的多半回 Axes（<code>histplot</code>、<code>regplot</code>）；<code>relplot</code>、<code>catplot</code>、<code>lmplot</code> 這種會自己開一張新 Figure（叫 figure-level）。要塞進自己的 subplots 就得挑前者。
+      <div class="ic-title">seaborn 函式管理哪一層</div>
+      Axes-level 函式畫在一個 Axes，可用 <code>ax=</code> 指定位置。Figure-level 函式建立並管理自己的圖，通常回傳 Grid 管理物件，不是直接回傳 Figure。層級要查函式文件，不能由名稱結尾判斷。
     </div>
   </div>
 </div>
@@ -889,10 +891,95 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 112、114</span>
 </div>
 
+  <h3>Seaborn 函式地圖：先選問題，再選控制層級</h3>
+  <p>導論講義第 29 頁把常用函式分成<strong>關係、分布、類別</strong>三個家族；
+  這是在分「你想看什麼」。每個家族又有不同控制層級：上層的 Figure-level 入口替你管理整張圖，
+  下層的 Axes-level 函式畫到一個座標系。<strong>家族與層級是兩個不同的面向。</strong></p>
+
+  <div id="w18seaborn" class="w18-function-map" aria-label="Seaborn 三個函式家族與控制層級">
+    <div class="w18-function-family rel">
+      <div class="w18-level-head"><strong>關係（Relational）</strong><br>
+        看兩個變數如何一起變動<br>Figure-level：<a href="https://seaborn.pydata.org/generated/seaborn.relplot.html"><code>relplot</code></a></div>
+      <p><strong>Axes-level</strong></p>
+      <ul>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.scatterplot.html"><code>scatterplot</code></a>：散佈圖</li>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.lineplot.html"><code>lineplot</code></a>：折線圖</li>
+      </ul>
+      <p><code>kind="scatter"</code> 或 <code>kind="line"</code> 選擇畫法。</p>
+    </div>
+    <div class="w18-function-family dist">
+      <div class="w18-level-head"><strong>分布（Distributional）</strong><br>
+        看數值集中在哪裡、如何散開<br>Figure-level：<a href="https://seaborn.pydata.org/generated/seaborn.displot.html"><code>displot</code></a></div>
+      <p><strong>Axes-level</strong></p>
+      <ul>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.histplot.html"><code>histplot</code></a>：直方圖</li>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.kdeplot.html"><code>kdeplot</code></a>：密度圖</li>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.ecdfplot.html"><code>ecdfplot</code></a>：經驗累積分布圖</li>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.rugplot.html"><code>rugplot</code></a>：以小刻度標出觀測位置</li>
+      </ul>
+      <p><code>kind</code> 可選 <code>"hist"</code>、<code>"kde"</code>、<code>"ecdf"</code>。
+      小刻度用 <code>rug=True</code> 加上，<strong>不是 <code>kind="rug"</code></strong>。</p>
+    </div>
+    <div class="w18-function-family cat">
+      <div class="w18-level-head"><strong>類別（Categorical）</strong><br>
+        比較不同組別的觀測或摘要<br>Figure-level：<a href="https://seaborn.pydata.org/generated/seaborn.catplot.html"><code>catplot</code></a></div>
+      <p><strong>Axes-level</strong></p>
+      <ul>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.stripplot.html"><code>stripplot</code></a>、<a href="https://seaborn.pydata.org/generated/seaborn.swarmplot.html"><code>swarmplot</code></a>：逐筆畫點</li>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.boxplot.html"><code>boxplot</code></a>、<a href="https://seaborn.pydata.org/generated/seaborn.violinplot.html"><code>violinplot</code></a>：分布摘要</li>
+        <li><a href="https://seaborn.pydata.org/generated/seaborn.pointplot.html"><code>pointplot</code></a>、<a href="https://seaborn.pydata.org/generated/seaborn.barplot.html"><code>barplot</code></a>：估計值與誤差線</li>
+      </ul>
+      <p>例如 <code>kind="box"</code> 選箱形圖。
+      本頁另補 <a href="https://seaborn.pydata.org/generated/seaborn.countplot.html"><code>countplot</code></a>：各組筆數，可用 <code>kind="count"</code>；它未列在講義這張分類圖中。</p>
+    </div>
+  </div>
+
+  <p>以 <code>relplot</code>、<code>displot</code>、<code>catplot</code> 為例，
+  <code>kind</code> 決定每個子圖的畫法，<code>row</code>／<code>col</code> 則依變數分面，
+  把各組排成不同列／欄。三者回傳 <code>FacetGrid</code>；沒指定分面時，也可以只畫一個子圖。
+  <strong>Figure-level 不等於「一定有多個子圖」。</strong></p>
+
+  <p>下面是<strong>語法示意</strong>，沿用本頁開頭載入的 <code>tips</code>；先執行 imports 與資料載入。
+  第一種交給 Seaborn 依吸菸與否分面，第二種把圖放到自己指定的 <code>ax</code>；不另列實跑輸出。</p>
+<div class="pseudo-code">
+<span class="line"><span class="com"># Figure-level：kind 選散佈圖，col 將各組分開</span></span>
+<span class="line">g = sns.relplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>,</span>
+<span class="line">                kind=<span class="str">&quot;scatter&quot;</span>, col=<span class="str">&quot;smoker&quot;</span>)</span>
+<span class="line"> </span>
+<span class="line"><span class="com"># Axes-level：指定要畫到哪個座標系</span></span>
+<span class="line">fig, ax = plt.subplots()</span>
+<span class="line">sns.scatterplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, ax=ax)</span></div>
+
+  <p>講義第 29 頁還列了下面三類。它們補充不同的看法，並不是另外三個和上圖一模一樣的家族。</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>用途</th><th>Axes-level</th><th>Figure-level／回傳的管理物件</th></tr></thead>
+  <tbody><tr><td>多個視角：同時看關係與各欄分布</td><td>由管理物件安排多個座標系</td><td><a href="https://seaborn.pydata.org/generated/seaborn.jointplot.html"><code>jointplot</code></a> → JointGrid；<a href="https://seaborn.pydata.org/generated/seaborn.pairplot.html"><code>pairplot</code></a> → PairGrid</td></tr><tr><td>迴歸與殘差：看趨勢及偏離趨勢的情形</td><td><a href="https://seaborn.pydata.org/generated/seaborn.regplot.html"><code>regplot</code></a>、<a href="https://seaborn.pydata.org/generated/seaborn.residplot.html"><code>residplot</code></a></td><td><a href="https://seaborn.pydata.org/generated/seaborn.lmplot.html"><code>lmplot</code></a> → FacetGrid</td></tr><tr><td>矩陣：用顏色看各格數值，需要時依分群排列</td><td><a href="https://seaborn.pydata.org/generated/seaborn.heatmap.html"><code>heatmap</code></a></td><td><a href="https://seaborn.pydata.org/generated/seaborn.clustermap.html"><code>clustermap</code></a> → ClusterGrid</td></tr></tbody>
+</table></div>
+  <p><code>jointplot</code> 以一對變數為主，加上兩側的分布；<code>pairplot</code> 組合多對變數，
+  兩者各自管理多個 Axes。<code>clustermap</code> 則連同分群樹與熱圖一起管理。
+  若你已建立自己的 <code>subplots</code>，應選可接收 <code>ax=</code> 的 Axes-level 函式。</p>
+  <p>分類依據：導論講義第 29 頁與
+  <a href="https://seaborn.pydata.org/tutorial/function_overview.html">Seaborn 官方函式總覽</a>。
+  函式名稱都可點回官方 API 文件。</p>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 01 · 函式家族自測</div>
+  <p>你想比較吸菸與不吸菸兩組的帳單金額分布，各組分開成一張直方圖。哪個寫法符合這個目標？</p>
+  <div class="quiz-options" id="qSeabornFamilyOptions"><div class="quiz-opt" data-correct="false" data-fb="relplot 屬於關係家族，kind 接受 scatter 或 line；直方圖應由 displot／histplot 處理。" onclick="quizCheck('qSeabornFamily', this)"><span class="opt-letter">(A)</span> <code>sns.relplot(data=tips, x='total_bill', col='smoker', kind='hist')</code></div><div class="quiz-opt" data-correct="true" data-fb="對。displot 管理分布圖，kind 選直方圖，col 依 smoker 分面；這三個決定各有用途。" onclick="quizCheck('qSeabornFamily', this)"><span class="opt-letter">(B)</span> <code>sns.displot(data=tips, x='total_bill', col='smoker', kind='hist')</code></div><div class="quiz-opt" data-correct="false" data-fb="histplot 畫在單一 Axes，不以 col 管理分面。要自動拆成多個子圖，用 displot；要手動排版，先建立 Axes 再逐組畫。" onclick="quizCheck('qSeabornFamily', this)"><span class="opt-letter">(C)</span> <code>sns.histplot(data=tips, x='total_bill', col='smoker')</code></div></div>
+  <div class="quiz-feedback" id="qSeabornFamilyFeedback"></div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 01 · 分布家族自測</div>
+  <p>你已用 displot 畫好直方圖，想再以小刻度標出各筆觀測的位置。應如何指定？</p>
+  <div class="quiz-options" id="qSeabornRugOptions"><div class="quiz-opt" data-correct="false" data-fb="rugplot 雖在分布家族裡，displot 的 kind 仍只有 hist、kde、ecdf；小刻度是加上的一層。" onclick="quizCheck('qSeabornRug', this)"><span class="opt-letter">(A)</span> 把 <code>kind</code> 改成 <code>'rug'</code></div><div class="quiz-opt" data-correct="false" data-fb="col 指定用來分面的變數，不是開啟觀測刻度的開關。" onclick="quizCheck('qSeabornRug', this)"><span class="opt-letter">(B)</span> 加上 <code>col=True</code></div><div class="quiz-opt" data-correct="true" data-fb="對。kind 決定主要的分布圖，rug=True 再加上標示觀測位置的小刻度。" onclick="quizCheck('qSeabornRug', this)"><span class="opt-letter">(C)</span> 保留 <code>kind='hist'</code>，再加 <code>rug=True</code></div></div>
+  <div class="quiz-feedback" id="qSeabornRugFeedback"></div>
+</div>
+
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p>你用 <code>sns.relplot(...)</code> 畫完圖，接著寫 <code>ax.set_xlim([0, 10])</code>，卻沒有任何效果。最可能的原因是？</p>
-  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，它不會畫到你手上那個 <code>ax</code> 上。要控制軸就改用 <code>scatterplot</code> 這種 axes-level 的函式並傳 <code>ax=ax</code>。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。問題不在支不支援，在你設到了<strong>另一個 Axes</strong> 上。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
+  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，它不會畫到你手上那個 <code>ax</code> 上。要放進既有座標系可改用 <code>scatterplot(..., ax=ax)</code>；保留 relplot 時則透過回傳的 Grid 修改它所管理的軸。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。問題不在支不支援，在你設到了<strong>另一個 Axes</strong> 上。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
   <div class="quiz-feedback" id="qAnatFeedback"></div>
 </div>
 </section>
@@ -1266,7 +1353,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · figure-level 與 axes-level</div>
   <p>你想把四張 seaborn 圖排成 2×2 放進同一張 Figure。下列哪一個函式<strong>做不到</strong>？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。名字結尾是 <code>plot</code> 的多半是 axes-level，接受 <code>ax=</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，根本不吃 <code>ax=</code> 參數。要散佈圖就改用 <code>sns.scatterplot</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。histplot 是 axes-level，接受 <code>ax=</code>；這是函式的介面約定，不能只看名稱結尾。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，根本不吃 <code>ax=</code> 參數。要散佈圖就改用 <code>sns.scatterplot</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1277,7 +1364,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w18-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
-  <p>選圖速查表。先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。</p>
+  <p>選圖速查表。先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。需要依家族與控制層級找函式，可回到 <a href="#w18seaborn">Seaborn 函式地圖</a>。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>x 的型別</th><th>y 的型別</th><th>圖</th><th>seaborn</th></tr></thead>
@@ -1286,7 +1373,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>figure-level（自己開 Figure）</th><th>axes-level（可以傳 ax=）</th></tr></thead>
-  <tbody><tr><td><code>relplot</code></td><td><code>scatterplot</code>、<code>lineplot</code></td></tr><tr><td><code>catplot</code></td><td><code>boxplot</code>、<code>barplot</code>、<code>countplot</code>、<code>pointplot</code></td></tr><tr><td><code>displot</code></td><td><code>histplot</code>、<code>kdeplot</code></td></tr><tr><td><code>lmplot</code>、<code>jointplot</code>、<code>pairplot</code></td><td><code>regplot</code>、<code>heatmap</code></td></tr></tbody>
+  <tbody><tr><td><code>relplot</code></td><td><code>scatterplot</code>、<code>lineplot</code></td></tr><tr><td><code>catplot</code></td><td><code>boxplot</code>、<code>barplot</code>、<code>countplot</code>、<code>pointplot</code></td></tr><tr><td><code>displot</code></td><td><code>histplot</code>、<code>kdeplot</code>、<code>ecdfplot</code>；刻度用 <code>rugplot</code></td></tr><tr><td><code>lmplot</code>（迴歸）</td><td><code>regplot</code>、<code>residplot</code></td></tr><tr><td><code>clustermap</code>（分群熱圖）</td><td><code>heatmap</code></td></tr><tr><td><code>jointplot</code>、<code>pairplot</code>（多軸組圖）</td><td>組合多種單軸畫法；見上方函式地圖</td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1304,7 +1391,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 24 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 28 張</span></h2>
   <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
   先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
   <div class="fc-controls">
@@ -2252,7 +2339,7 @@ HC.ready(() => { w18smDraw(); });
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"畫布（Figure）","back":"整張圖的最外層：大小、存檔、總標題都歸它管。一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。"},{"front":"座標系（Axes）","back":"資料真正被畫進去的地方。你 99% 的時間都在跟它打交道，seaborn 的 <code>ax=</code> 指的就是它。注意它跟 Axis（單一根軸）差一個字母。"},{"front":"子圖網格（subplots）","back":"<code>subplots(nrows=2, ncols=3)</code> 回傳一個 Figure 與一個 <b>(2,3) 的 NumPy 陣列</b>。索引法跟一般二維陣列一樣。"},{"front":"圖層級函式（Figure-level）","back":"<code>relplot</code>、<code>catplot</code>、<code>lmplot</code>、<code>displot</code>、<code>jointplot</code>、<code>pairplot</code>。它們會自己開一張新 Figure，<b>不吃 <code>ax=</code></b>。"},{"front":"座標系層級函式（Axes-level）","back":"<code>scatterplot</code>、<code>histplot</code>、<code>boxplot</code>、<code>regplot</code> 等。接受 <code>ax=</code>，可以塞進自己的 subplots 網格。"},{"front":"直方圖（Histogram）","back":"把值切成幾格再數每格幾筆。<b>bins 是你的選擇，不是資料的性質</b>——太少會糊掉真的結構，太多會讓雜訊看起來像結構。"},{"front":"核密度估計（KDE）","back":"把每個點換成一個小鐘形再加起來，所以結果<b>一定是平滑的</b>。那個平滑是你給的假設。頻寬就是直方圖 bins 的另一個化身。"},{"front":"頻寬（Bandwidth）","back":"KDE 的平滑程度。大＝平滑＝可能糊掉真結構；小＝每個點戳出一根。跟 bins 是同一個取捨。"},{"front":"散佈圖（Scatterplot）","back":"兩個數值變數的標準圖。統計分析的第一張圖幾乎都是它——它會告訴你關係是直線、曲線、還是根本沒有。"},{"front":"色相參數（hue）","back":"用顏色把第三個變數塞進同一張圖。組數 ≤ 5 時最有效；再多就該用 <code>col=</code> 拆成小圖。"},{"front":"分面參數（col／row）","back":"把資料按某個類別拆成好幾張小圖並排。組數多、疊起來會糊的時候用它。"},{"front":"成對關係圖（pairplot）","back":"所有數值欄兩兩配對畫一格，對角線放各自的分布。探索階段最划算的一張圖，但欄多時會很慢。"},{"front":"盒鬚圖（Boxplot）","back":"盒子涵蓋第一至第三四分位數，中線是中位數；鬚延伸到距盒邊 1.5 倍 IQR 內的最遠觀測，外面的點是候選離群值。也可疊上 stripplot 等原始點圖檢查。"},{"front":"長條圖（Barplot）","back":"長條高度是各組的<b>平均</b>，上面那條細線是 bootstrap 信賴區間，不是標準差。看到它要先問「每組幾筆」。"},{"front":"計數圖（Countplot）","back":"只數每一類有幾筆，等於 <code>value_counts()</code> 的圖版。跟 barplot 完全是兩回事。"},{"front":"點估計圖（Pointplot）","back":"把長條換成一個點加誤差線。要比較好幾組平均時比長條清楚，而且截斷 y 軸是可以接受的。"},{"front":"截斷的 y 軸（Truncated Axis）","back":"長條圖用<b>長度</b>編碼數值，y 軸不從 0 開始會讓長度的比例不再對應數值的比例，9% 的差可以看起來像三倍。要放大差異就改用點估計圖並標明。"},{"front":"迴歸散佈圖（regplot）","back":"散佈圖加一條最小平方線與 95% 信賴帶。那條帶子是<b>對迴歸線的不確定性</b>，不是預測區間。它不給係數也不給 p 值。"},{"front":"分組迴歸圖（lmplot）","back":"加 <code>hue</code> 之後每一組各配一條線。<b>兩條線的斜率明顯不同就是交互作用的視覺證據。</b>"},{"front":"相關係數熱圖（Heatmap）","back":"把 <code>df.corr()</code> 的矩陣上色。用來快速找候選，<b>下結論要回去看數字</b>——顏色的對比取決於色階怎麼設。"},{"front":"折線圖與信賴帶（lineplot）","back":"同一個 x 有多筆資料時，<code>lineplot</code> 會畫平均與 95% 信賴帶，那條帶子是 bootstrap 算的。"},{"front":"摘要統計的盲點（Summary Statistics）","back":"平均、標準差、相關係數都一樣的兩份資料，散佈圖可以完全不同：一組直線、一組曲線、一組只是被離群值拉出來的假相關。所以<b>先畫圖再算數字</b>。"},{"front":"離群值（Outlier）","back":"遠離其他觀測的點。它可以單獨把相關係數從 0 拉到 0.8，也可以主宰一條迴歸線。盒鬚圖與殘差圖是最快發現它的兩張圖。"},{"front":"圖型選擇（Chart Choice）","back":"先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"}];
+const FLASHCARDS = [{"front":"畫布（Figure）","back":"整張圖的最外層：大小、存檔、總標題都歸它管。一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。"},{"front":"座標系（Axes）","back":"資料真正被畫進去的地方。你 99% 的時間都在跟它打交道，seaborn 的 <code>ax=</code> 指的就是它。注意它跟 Axis（單一根軸）差一個字母。"},{"front":"子圖網格（subplots）","back":"<code>subplots(nrows=2, ncols=3)</code> 回傳一個 Figure 與一個 <b>(2,3) 的 NumPy 陣列</b>。索引法跟一般二維陣列一樣。"},{"front":"圖層級函式（Figure-level）","back":"自行建立並管理圖，例如 relplot、displot、catplot 與 lmplot 回傳 FacetGrid。沒有分面時也可以只有一個子圖。它們不是直接回傳 Figure，也不是用 ax= 畫進既有座標系。"},{"front":"座標系層級函式（Axes-level）","back":"畫到一個 Axes 並回傳該 Axes，例如 scatterplot、histplot、boxplot、regplot、residplot、heatmap。接受 ax=，可以放進自己建立的 subplots；不要由函式名稱結尾猜層級。"},{"front":"直方圖（Histogram）","back":"把值切成幾格再數每格幾筆。<b>bins 是你的選擇，不是資料的性質</b>——太少會糊掉真的結構，太多會讓雜訊看起來像結構。"},{"front":"核密度估計（KDE）","back":"把每個點換成一個小鐘形再加起來，所以結果<b>一定是平滑的</b>。那個平滑是你給的假設。頻寬就是直方圖 bins 的另一個化身。"},{"front":"頻寬（Bandwidth）","back":"KDE 的平滑程度。大＝平滑＝可能糊掉真結構；小＝每個點戳出一根。跟 bins 是同一個取捨。"},{"front":"散佈圖（Scatterplot）","back":"兩個數值變數的標準圖。統計分析的第一張圖幾乎都是它——它會告訴你關係是直線、曲線、還是根本沒有。"},{"front":"色相參數（hue）","back":"用顏色把第三個變數塞進同一張圖。組數 ≤ 5 時最有效；再多就該用 <code>col=</code> 拆成小圖。"},{"front":"分面參數（col／row）","back":"將資料依某個變數拆成多個子圖，分別排成欄或列。例如 displot(..., col=\"smoker\") 分開比較各組；kind 選的是畫法，col／row 選的是分組布局。"},{"front":"成對關係圖（pairplot）","back":"所有數值欄兩兩配對畫一格，對角線放各自的分布。探索階段最划算的一張圖，但欄多時會很慢。"},{"front":"盒鬚圖（Boxplot）","back":"盒子涵蓋第一至第三四分位數，中線是中位數；鬚延伸到距盒邊 1.5 倍 IQR 內的最遠觀測，外面的點是候選離群值。也可疊上 stripplot 等原始點圖檢查。"},{"front":"長條圖（Barplot）","back":"長條高度是各組的<b>平均</b>，上面那條細線是 bootstrap 信賴區間，不是標準差。看到它要先問「每組幾筆」。"},{"front":"計數圖（Countplot）","back":"只數每一類有幾筆，等於 <code>value_counts()</code> 的圖版。跟 barplot 完全是兩回事。"},{"front":"點估計圖（Pointplot）","back":"把長條換成一個點加誤差線。要比較好幾組平均時比長條清楚，而且截斷 y 軸是可以接受的。"},{"front":"截斷的 y 軸（Truncated Axis）","back":"長條圖用<b>長度</b>編碼數值，y 軸不從 0 開始會讓長度的比例不再對應數值的比例，9% 的差可以看起來像三倍。要放大差異就改用點估計圖並標明。"},{"front":"迴歸散佈圖（regplot）","back":"散佈圖加一條最小平方線與 95% 信賴帶。那條帶子是<b>對迴歸線的不確定性</b>，不是預測區間。它不給係數也不給 p 值。"},{"front":"分組迴歸圖（lmplot）","back":"加 <code>hue</code> 之後每一組各配一條線。<b>兩條線的斜率明顯不同就是交互作用的視覺證據。</b>"},{"front":"相關係數熱圖（Heatmap）","back":"把 <code>df.corr()</code> 的矩陣上色。用來快速找候選，<b>下結論要回去看數字</b>——顏色的對比取決於色階怎麼設。"},{"front":"折線圖與信賴帶（lineplot）","back":"同一個 x 有多筆資料時，<code>lineplot</code> 會畫平均與 95% 信賴帶，那條帶子是 bootstrap 算的。"},{"front":"摘要統計的盲點（Summary Statistics）","back":"平均、標準差、相關係數都一樣的兩份資料，散佈圖可以完全不同：一組直線、一組曲線、一組只是被離群值拉出來的假相關。所以<b>先畫圖再算數字</b>。"},{"front":"離群值（Outlier）","back":"遠離其他觀測的點。它可以單獨把相關係數從 0 拉到 0.8，也可以主宰一條迴歸線。盒鬚圖與殘差圖是最快發現它的兩張圖。"},{"front":"圖型選擇（Chart Choice）","back":"先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"},{"front":"三個函式家族（Function Families）","back":"關係家族 relplot 看變數如何一起變動；分布家族 displot 看數值如何分布；類別家族 catplot 比較不同組別。這是在分問題，Figure-level／Axes-level 則是在分控制層級。"},{"front":"圖型選擇參數（kind）","back":"在 Figure-level 入口選子圖畫法：relplot 可選 scatter／line，displot 可選 hist／kde／ecdf，catplot 例如選 box。kind 不決定分面；分面用 row／col。"},{"front":"累積分布與觀測刻度（ECDF and Rug）","back":"ecdfplot 顯示累積比例隨數值改變；rugplot 用小刻度標出觀測位置。displot 可用 kind=\"ecdf\" 畫前者；刻度則用 rug=True 加上，沒有 kind=\"rug\"。"},{"front":"管理多個座標系（Grid Objects）","back":"jointplot 回傳 JointGrid，管理一對變數的關係與兩側分布；pairplot 回傳 PairGrid，管理多對變數；clustermap 回傳 ClusterGrid，管理分群樹與熱圖。它們各自管理圖，不直接畫進一個既有 ax。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

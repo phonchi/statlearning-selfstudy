@@ -58,7 +58,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 | 2 | [流程與函式](p2_flow_functions.html) | 先備 · 流程與函式 | 6 節 · 6 視覺區塊 · 25 張卡 |
 | 3 | [NumPy 陣列](p3_numpy.html) | 先備 · NumPy 陣列 | 8 節 · 7 視覺區塊 · 26 張卡 |
 | 4 | [pandas 資料框](p4_pandas.html) | 先備 · pandas 資料框 | 6 節 · 7 視覺區塊 · 25 張卡 |
-| 5 | [視覺化](p5_visualization.html) | 先備 · 視覺化 | 6 節 · 7 視覺區塊 · 24 張卡 |
+| 5 | [視覺化](p5_visualization.html) | 先備 · 視覺化 | 6 節 · 7 視覺區塊 · 28 張卡 |
 | 6 | [建模 API](p6_modeling_api.html) | 先備 · 建模 API | 6 節 · 6 視覺區塊 · 25 張卡 |
 
 真的想先打底再進正課的話：P1 → P2 → P3 → P4 → P5 → P6；

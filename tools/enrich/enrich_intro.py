@@ -258,7 +258,7 @@ BODIES["eda"] = f"""
   <p>講義以 Seaborn 說明這些圖形：它建立在 Matplotlib 與 pandas 之上。
   有些函式管理整張圖與多個子圖，有些只畫到一個座標軸；迴歸趨勢圖、殘差圖與矩陣圖也各有用途。
   這裡先練習<strong>依問題選圖並讀圖</strong>，操作細節可查
-  <a href="p4_pandas.html">pandas 附錄</a>與<a href="p5_visualization.html">視覺化附錄</a>。</p>
+  <a href="p4_pandas.html">pandas 附錄</a>與<a href="p5_visualization.html#w18seaborn">視覺化附錄的 Seaborn 分類地圖</a>。</p>
 
 {info("把觀察與解釋分開", '''「圖中馬力較高的車，mpg 通常較低」是資料中的觀察；
   「增加馬力一定會造成 mpg 降低」是因果主張，光靠這張圖不夠。

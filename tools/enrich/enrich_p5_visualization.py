@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import (apply, card, chart, hook, info, info_card, lab_code,  # noqa: E402
+from lib import (apply, card, chart, hl, hook, info, info_card, lab_code,  # noqa: E402
                  lab_output, qa, quiz, rows_card, svg, table, ver_note, viz)
 
 LAB1 = "Ch01-lab-zh.ipynb"
@@ -31,6 +31,11 @@ def O(ch, k):
 def S(ch, *ks):
     lab = LAB1 if ch == 1 else LAB2
     return f'<code>{lab}</code> · 儲存格 ' + "、".join(str(k) for k in ks)
+
+
+def seaborn_fn(name):
+    return (f'<a href="https://seaborn.pydata.org/generated/seaborn.{name}.html">'
+            f'<code>{name}</code></a>')
 
 
 BODIES = {}
@@ -103,11 +108,10 @@ BODIES["anat"] = f"""
                 [("物件", "Figure", "w18anObj"),
                  ("負責什麼", "整張畫布", "w18anWhat"),
                  ("常用方法", "set_size_inches、savefig", "w18anHow")]),
-      info_card("為什麼 seaborn 有時候回 Figure、有時候回 Axes",
-                "名字結尾是 <code>plot</code> 的多半回 Axes（<code>histplot</code>、"
-                "<code>regplot</code>）；<code>relplot</code>、<code>catplot</code>、"
-                "<code>lmplot</code> 這種會自己開一張新 Figure（叫 figure-level）。"
-                "要塞進自己的 subplots 就得挑前者。")],
+      info_card("seaborn 函式管理哪一層",
+                "Axes-level 函式畫在一個 Axes，可用 <code>ax=</code> 指定位置。"
+                "Figure-level 函式建立並管理自己的圖，通常回傳 Grid 管理物件，"
+                "不是直接回傳 Figure。層級要查函式文件，不能由名稱結尾判斷。")],
      "w18anStatus", "先分清楚哪一層是哪一層，之後查文件會快很多。",
      '<button class="btn btn-toggle" onclick="w18anSet(0)">Figure</button>'
      '<button class="btn btn-toggle" onclick="w18anSet(1)">Axes</button>'
@@ -138,13 +142,105 @@ BODIES["anat"] = f"""
 
 {card("2×3 的子圖網格", C(2, 112, 114), src=S(2, 112, 114), note="這一格畫的是圖。" + FIG_NOTE)}
 
+  <h3>Seaborn 函式地圖：先選問題，再選控制層級</h3>
+  <p>導論講義第 29 頁把常用函式分成<strong>關係、分布、類別</strong>三個家族；
+  這是在分「你想看什麼」。每個家族又有不同控制層級：上層的 Figure-level 入口替你管理整張圖，
+  下層的 Axes-level 函式畫到一個座標系。<strong>家族與層級是兩個不同的面向。</strong></p>
+
+  <div id="w18seaborn" class="w18-function-map" aria-label="Seaborn 三個函式家族與控制層級">
+    <div class="w18-function-family rel">
+      <div class="w18-level-head"><strong>關係（Relational）</strong><br>
+        看兩個變數如何一起變動<br>Figure-level：{seaborn_fn('relplot')}</div>
+      <p><strong>Axes-level</strong></p>
+      <ul>
+        <li>{seaborn_fn('scatterplot')}：散佈圖</li>
+        <li>{seaborn_fn('lineplot')}：折線圖</li>
+      </ul>
+      <p><code>kind="scatter"</code> 或 <code>kind="line"</code> 選擇畫法。</p>
+    </div>
+    <div class="w18-function-family dist">
+      <div class="w18-level-head"><strong>分布（Distributional）</strong><br>
+        看數值集中在哪裡、如何散開<br>Figure-level：{seaborn_fn('displot')}</div>
+      <p><strong>Axes-level</strong></p>
+      <ul>
+        <li>{seaborn_fn('histplot')}：直方圖</li>
+        <li>{seaborn_fn('kdeplot')}：密度圖</li>
+        <li>{seaborn_fn('ecdfplot')}：經驗累積分布圖</li>
+        <li>{seaborn_fn('rugplot')}：以小刻度標出觀測位置</li>
+      </ul>
+      <p><code>kind</code> 可選 <code>"hist"</code>、<code>"kde"</code>、<code>"ecdf"</code>。
+      小刻度用 <code>rug=True</code> 加上，<strong>不是 <code>kind="rug"</code></strong>。</p>
+    </div>
+    <div class="w18-function-family cat">
+      <div class="w18-level-head"><strong>類別（Categorical）</strong><br>
+        比較不同組別的觀測或摘要<br>Figure-level：{seaborn_fn('catplot')}</div>
+      <p><strong>Axes-level</strong></p>
+      <ul>
+        <li>{seaborn_fn('stripplot')}、{seaborn_fn('swarmplot')}：逐筆畫點</li>
+        <li>{seaborn_fn('boxplot')}、{seaborn_fn('violinplot')}：分布摘要</li>
+        <li>{seaborn_fn('pointplot')}、{seaborn_fn('barplot')}：估計值與誤差線</li>
+      </ul>
+      <p>例如 <code>kind="box"</code> 選箱形圖。
+      本頁另補 {seaborn_fn('countplot')}：各組筆數，可用 <code>kind="count"</code>；它未列在講義這張分類圖中。</p>
+    </div>
+  </div>
+
+  <p>以 <code>relplot</code>、<code>displot</code>、<code>catplot</code> 為例，
+  <code>kind</code> 決定每個子圖的畫法，<code>row</code>／<code>col</code> 則依變數分面，
+  把各組排成不同列／欄。三者回傳 <code>FacetGrid</code>；沒指定分面時，也可以只畫一個子圖。
+  <strong>Figure-level 不等於「一定有多個子圖」。</strong></p>
+
+  <p>下面是<strong>語法示意</strong>，沿用本頁開頭載入的 <code>tips</code>；先執行 imports 與資料載入。
+  第一種交給 Seaborn 依吸菸與否分面，第二種把圖放到自己指定的 <code>ax</code>；不另列實跑輸出。</p>
+{hl('''# Figure-level：kind 選散佈圖，col 將各組分開
+g = sns.relplot(data=tips, x="total_bill", y="tip",
+                kind="scatter", col="smoker")
+
+# Axes-level：指定要畫到哪個座標系
+fig, ax = plt.subplots()
+sns.scatterplot(data=tips, x="total_bill", y="tip", ax=ax)''')}
+
+  <p>講義第 29 頁還列了下面三類。它們補充不同的看法，並不是另外三個和上圖一模一樣的家族。</p>
+{table(["用途", "Axes-level", "Figure-level／回傳的管理物件"],
+       [["多個視角：同時看關係與各欄分布", "由管理物件安排多個座標系",
+         f"{seaborn_fn('jointplot')} → JointGrid；{seaborn_fn('pairplot')} → PairGrid"],
+        ["迴歸與殘差：看趨勢及偏離趨勢的情形",
+         f"{seaborn_fn('regplot')}、{seaborn_fn('residplot')}",
+         f"{seaborn_fn('lmplot')} → FacetGrid"],
+        ["矩陣：用顏色看各格數值，需要時依分群排列",
+         seaborn_fn('heatmap'), f"{seaborn_fn('clustermap')} → ClusterGrid"]])}
+  <p><code>jointplot</code> 以一對變數為主，加上兩側的分布；<code>pairplot</code> 組合多對變數，
+  兩者各自管理多個 Axes。<code>clustermap</code> 則連同分群樹與熱圖一起管理。
+  若你已建立自己的 <code>subplots</code>，應選可接收 <code>ax=</code> 的 Axes-level 函式。</p>
+  <p>分類依據：導論講義第 29 頁與
+  <a href="https://seaborn.pydata.org/tutorial/function_overview.html">Seaborn 官方函式總覽</a>。
+  函式名稱都可點回官方 API 文件。</p>
+
+{quiz("qSeabornFamily", "PART 01 · 函式家族自測",
+      "你想比較吸菸與不吸菸兩組的帳單金額分布，各組分開成一張直方圖。哪個寫法符合這個目標？",
+      [(False, "<code>sns.relplot(data=tips, x='total_bill', col='smoker', kind='hist')</code>",
+        "relplot 屬於關係家族，kind 接受 scatter 或 line；直方圖應由 displot／histplot 處理。"),
+       (True, "<code>sns.displot(data=tips, x='total_bill', col='smoker', kind='hist')</code>",
+        "對。displot 管理分布圖，kind 選直方圖，col 依 smoker 分面；這三個決定各有用途。"),
+       (False, "<code>sns.histplot(data=tips, x='total_bill', col='smoker')</code>",
+        "histplot 畫在單一 Axes，不以 col 管理分面。要自動拆成多個子圖，用 displot；要手動排版，先建立 Axes 再逐組畫。")])}
+
+{quiz("qSeabornRug", "PART 01 · 分布家族自測",
+      "你已用 displot 畫好直方圖，想再以小刻度標出各筆觀測的位置。應如何指定？",
+      [(False, "把 <code>kind</code> 改成 <code>'rug'</code>",
+        "rugplot 雖在分布家族裡，displot 的 kind 仍只有 hist、kde、ecdf；小刻度是加上的一層。"),
+       (False, "加上 <code>col=True</code>",
+        "col 指定用來分面的變數，不是開啟觀測刻度的開關。"),
+       (True, "保留 <code>kind='hist'</code>，再加 <code>rug=True</code>",
+        "對。kind 決定主要的分布圖，rug=True 再加上標示觀測位置的小刻度。")])}
+
 {quiz("qAnat", "PART 01 · 自我檢測",
       "你用 <code>sns.relplot(...)</code> 畫完圖，接著寫 <code>ax.set_xlim([0, 10])</code>，"
       "卻沒有任何效果。最可能的原因是？",
       [(True, "<code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖",
         "對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，"
-        "它不會畫到你手上那個 <code>ax</code> 上。要控制軸就改用 "
-        "<code>scatterplot</code> 這種 axes-level 的函式並傳 <code>ax=ax</code>。"),
+        "它不會畫到你手上那個 <code>ax</code> 上。要放進既有座標系可改用 "
+        "<code>scatterplot(..., ax=ax)</code>；保留 relplot 時則透過回傳的 Grid 修改它所管理的軸。"),
        (False, "<code>set_xlim</code> 要寫在畫圖之前",
         "順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。"),
        (False, "seaborn 不支援設定軸範圍",
@@ -423,7 +519,7 @@ BODIES["exercises"] = f"""
 {quiz("qEx4", "EXERCISE 4 · figure-level 與 axes-level",
       "你想把四張 seaborn 圖排成 2×2 放進同一張 Figure。下列哪一個函式<strong>做不到</strong>？",
       [(False, "<code>sns.histplot(..., ax=axes[0,0])</code>",
-        "做得到。名字結尾是 <code>plot</code> 的多半是 axes-level，接受 <code>ax=</code>。"),
+        "做得到。histplot 是 axes-level，接受 <code>ax=</code>；這是函式的介面約定，不能只看名稱結尾。"),
        (False, "<code>sns.boxplot(..., ax=axes[0,1])</code>",
         "做得到，同樣是 axes-level。"),
        (True, "<code>sns.relplot(..., ax=axes[1,0])</code>",
@@ -433,7 +529,7 @@ BODIES["exercises"] = f"""
 
 # ── REF 總覽 ────────────────────────────────────────────────────────────
 BODIES["reference"] = f"""
-  <p>選圖速查表。先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。</p>
+  <p>選圖速查表。先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。需要依家族與控制層級找函式，可回到 <a href="#w18seaborn">Seaborn 函式地圖</a>。</p>
 
 {table(["x 的型別", "y 的型別", "圖", "seaborn"],
        [["數值", "數值", "散佈圖", "<code>scatterplot</code> / <code>relplot</code>"],
@@ -448,8 +544,10 @@ BODIES["reference"] = f"""
 {table(["figure-level（自己開 Figure）", "axes-level（可以傳 ax=）"],
        [["<code>relplot</code>", "<code>scatterplot</code>、<code>lineplot</code>"],
         ["<code>catplot</code>", "<code>boxplot</code>、<code>barplot</code>、<code>countplot</code>、<code>pointplot</code>"],
-        ["<code>displot</code>", "<code>histplot</code>、<code>kdeplot</code>"],
-        ["<code>lmplot</code>、<code>jointplot</code>、<code>pairplot</code>", "<code>regplot</code>、<code>heatmap</code>"]])}
+        ["<code>displot</code>", "<code>histplot</code>、<code>kdeplot</code>、<code>ecdfplot</code>；刻度用 <code>rugplot</code>"],
+        ["<code>lmplot</code>（迴歸）", "<code>regplot</code>、<code>residplot</code>"],
+        ["<code>clustermap</code>（分群熱圖）", "<code>heatmap</code>"],
+        ["<code>jointplot</code>、<code>pairplot</code>（多軸組圖）", "組合多種單軸畫法；見上方函式地圖"]])}
 
 {table(["參數", "做什麼", "什麼時候用"],
        [["<code>hue=</code>", "用顏色分第三個變數", "組數 ≤ 5、要疊在同一張圖比較"],

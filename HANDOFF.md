@@ -407,3 +407,14 @@ Matplotlib 為 3.5.2；清單若更新，需核對 00B 的日期、版本表、�
 正文與自測在 `enrich_intro.py`；總表在 `intro_catalog.py`；五組九張 SVG 在 `intro_visuals.py`。
 圖形資料由 `gen_intro.py` 重算，`frames()` 使用既有 m524 環境，主 enrich 用系統 python3。
 沒有重跑或改寫保存的 lab 輸出。不要把 N/P 總表、模型 p、索引欄與圖形矩陣欄數混為一談。
+
+## 13. P5 補入 Seaborn 函式分類（講義第 29 頁）
+
+`p5_visualization.html#w18seaborn` 以三欄分類卡呈現關係、分布、類別家族，以及 Figure-level／Axes-level。
+手機改為單欄排列；第一章 EDA 段落直接連到此處。另整理 jointplot／pairplot、迴歸圖與矩陣圖。
+修正以名稱結尾判斷層級、Figure-level 直接回傳 Figure 等說法，說明 kind 與 row／col 分工及 rug=True。
+新增兩題自測與四張詞彙卡（P5 共 28 張）。
+
+依據：01 講義 p.29 與 Seaborn 0.13.2 官方 function_overview／API 文件。
+驗證記錄在 `tools/verification/seaborn-map-20260905/`：全站結構通過、P5 瀏覽器與新題回饋通過，
+139 個外部連結零失敗（2 個既有 Colab HEAD 405 警告）。以少量自訂資料核對 API 控制層級，未重跑課程 lab。
