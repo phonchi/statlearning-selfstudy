@@ -44,7 +44,7 @@ BODIES = {}
 BODIES["prologue"] = f"""
   <p>統計課教你算平均、標準差、相關係數。這些數字很有用，但它們<strong>會漏掉形狀</strong>。
   四組資料可以有幾乎一樣的平均、標準差、相關係數與迴歸線，畫出來卻完全不同。
-  這不是刻意湊出的動畫，而是 Anscombe 在 1973 年提出、可以逐筆驗算的經典四重奏。</p>
+  Anscombe 在 1973 年提出的經典四重奏就展示了這種情況，下面可以逐筆驗算。</p>
 
 {info("一句話", "<strong>先畫圖，再算數字。</strong>"
       "圖告訴你「這份資料長什麼樣」，數字告訴你「有多強」——順序反過來很容易被騙。")}
@@ -70,11 +70,11 @@ BODIES["prologue"] = f"""
      '<button class="btn btn-toggle" onclick="w18smSet(3)">IV</button>',
      provenance=("book-redraw", "Anscombe (1973) 四重奏原始數據；摘要由圖中同一批點即時計算。"))}
 
-{info("這一頁的程式碼卡為什麼沒有「預期輸出」",
-      "繪圖的儲存格在 notebook 裡存下來的是圖，不是文字，"
+{info("如何對照繪圖程式與圖形",
+      "繪圖儲存格在 notebook 中保存圖形，"
       "所以下面的程式碼卡多半只有程式碼、沒有預期輸出。"
-      "圖本身的行為改由每一節的互動元件重現——"
-      "<strong>那些元件是頁面當場算的，不是課程圖的截圖</strong>（本站 repo 不放任何圖檔）。")}
+      "你可以用每節的互動元件觀察圖形如何改變。"
+      "<strong>元件會在頁面中計算並畫出結果</strong>，圖下標有資料來源。")}
 
 {card("這一頁用的資料：tips", C(1, 88), O(1, 88), src=S(1, 88),
       note="244 筆餐廳帳單。<code>total_bill</code> 與 <code>tip</code> 是數值，"
@@ -87,15 +87,15 @@ BODIES["prologue"] = f"""
         "不一定。相關係數只量「線性關係有多強」，"
         "它看不出曲線、看不出離群值、也看不出資料是不是分成兩群。"),
        (True, "只知道兩者的線性關係強度接近，形狀可能完全不同",
-        "對。所以拿到資料的第一個動作是畫圖，不是算相關係數。"
-        "第 3 章講迴歸診斷時會再看到同一件事：殘差圖比 R² 誠實。"),
+        "對。所以閱讀相關係數時，也要畫圖核對資料形狀。"
+        "第 3 章講迴歸診斷時會再看到同一件事：殘差圖可以補上 R² 沒有呈現的資訊。"),
        (False, "兩份資料的迴歸線斜率一樣",
         "不一定。相關係數跟斜率是兩回事——斜率還取決於兩個變數的標準差比例。")])}
 """
 
 # ── P01 Figure 與 Axes ─────────────────────────────────────────────────
 BODIES["anat"] = f"""
-  <p>matplotlib 的物件有兩層，搞混這兩層是所有「為什麼我的設定沒有生效」的根源：
+  <p>使用 matplotlib 時，先分清設定屬於哪一層：
   <strong>Figure 是整張畫布</strong>（大小、存檔、標題），
   <strong>Axes 是裡面的一個座標系</strong>（畫點、設軸範圍、加圖例）。
   一張 Figure 可以有很多個 Axes。</p>
@@ -111,7 +111,7 @@ BODIES["anat"] = f"""
       info_card("seaborn 函式管理哪一層",
                 "Axes-level 函式畫在一個 Axes，可用 <code>ax=</code> 指定位置。"
                 "Figure-level 函式建立並管理自己的圖，通常回傳 Grid 管理物件，"
-                "不是直接回傳 Figure。層級要查函式文件，不能由名稱結尾判斷。")],
+                "Grid 負責管理 Figure。請查函式文件確認層級，名稱結尾無法判定。")],
      "w18anStatus", "先分清楚哪一層是哪一層，之後查文件會快很多。",
      '<button class="btn btn-toggle" onclick="w18anSet(0)">Figure</button>'
      '<button class="btn btn-toggle" onclick="w18anSet(1)">Axes</button>'
@@ -200,7 +200,7 @@ g = sns.relplot(data=tips, x="total_bill", y="tip",
 fig, ax = plt.subplots()
 sns.scatterplot(data=tips, x="total_bill", y="tip", ax=ax)''')}
 
-  <p>講義第 29 頁還列了下面三類。它們補充不同的看法，並不是另外三個和上圖一模一樣的家族。</p>
+  <p>講義第 29 頁還列了下面三類。它們分別提供多視角組圖、迴歸與殘差圖，以及矩陣圖；可依用途與控制層級查找。</p>
 {table(["用途", "Axes-level", "Figure-level／回傳的管理物件"],
        [["多個視角：同時看關係與各欄分布", "由管理物件安排多個座標系",
          f"{seaborn_fn('jointplot')} → JointGrid；{seaborn_fn('pairplot')} → PairGrid"],
@@ -244,19 +244,19 @@ sns.scatterplot(data=tips, x="total_bill", y="tip", ax=ax)''')}
        (False, "<code>set_xlim</code> 要寫在畫圖之前",
         "順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。"),
        (False, "seaborn 不支援設定軸範圍",
-        "支援。問題不在支不支援，在你設到了<strong>另一個 Axes</strong> 上。")])}
+        "支援。這次設定用到了<strong>另一個 Axes</strong>，請確認要修改的座標系。")])}
 """
 
 # ── P02 分布 ────────────────────────────────────────────────────────────
 BODIES["dist"] = f"""
   <p>看一個變數的分布有兩種標準做法：直方圖與密度圖。兩者都有一個<strong>你必須自己決定的參數</strong>——
-  直方圖是 bins（切幾格），密度圖是頻寬（平滑多少）。這個參數不是細節，
-  它可以讓同一份資料看起來有兩個峰或只有一個。</p>
+  直方圖是 bins（切幾格），密度圖是頻寬（平滑多少）。調整這個參數，
+  同一份資料可能看起來有兩個峰或只有一個。</p>
 
-{info("這是本頁最重要的一件事",
+{info("依分析問題調整圖形",
       "<strong>調參數之前先想好你要回答什麼問題。</strong>"
       "想看「有沒有兩群」就把 bins 調細一點；想看「大致集中在哪」就調粗一點。"
-      "調到「圖看起來最漂亮」為止，是在騙自己。", "warm")}
+      "也要比較其他設定下的結果，確認看到的形狀是否穩定。", "warm")}
 
 {viz(svg("w18binsSvg", 340),
      [info_card("拖 bins，看結論怎麼變",
@@ -286,14 +286,14 @@ BODIES["dist"] = f"""
 
 {card("密度圖", C(1, 110, 111), src=S(1, 110, 111),
       note="<code>kdeplot</code> 把每個點換成一個小鐘形再加起來，"
-           "所以它<strong>一定是平滑的</strong>。那個平滑是你給的假設，不是資料本身。" + FIG_NOTE)}
+           "所以它<strong>一定是平滑的</strong>。平滑程度來自繪圖設定，讀圖時也要留意這項選擇。" + FIG_NOTE)}
 
 {quiz("qDist", "PART 02 · 自我檢測",
       "同一份資料，bins=5 看起來是一個峰，bins=30 看起來是兩個峰。你該怎麼辦？",
       [(False, "選看起來比較漂亮的那一張放進報告",
-        "這就是本節警告的事。「漂亮」不是判準。你是在挑一個支持自己想法的圖。"),
+        "挑圖應依分析問題與資料證據，否則可能只留下符合自己想法的結果。"),
        (True, "兩張都看，再回頭問「有沒有理由相信這兩群真的存在」",
-        "對。圖是提出假設的工具，不是證據本身。"
+        "對。圖可以幫你提出假設，接著要用資料核對。"
         "如果兩群對應到某個真實的分類（例如吸菸與不吸菸），"
         "就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。"),
        (False, "用預設的 bins，seaborn 的預設一定是對的",
@@ -304,7 +304,7 @@ BODIES["dist"] = f"""
 # ── P03 兩個變數的關係 ──────────────────────────────────────────────────
 BODIES["rel"] = f"""
   <p>兩個變數的關係圖幾乎都是散佈圖的變形。seaborn 幫你做的事是
-  <strong>用顏色、大小、分面把第三、第四個變數也塞進同一張圖</strong>——
+  <strong>用顏色、大小、分面在同一張圖中呈現第三、第四個變數</strong>——
   <code>hue</code>、<code>size</code>、<code>col</code> 這三個參數值得記起來。</p>
 
 {viz(svg("w18pickSvg", 340),
@@ -318,7 +318,7 @@ BODIES["rel"] = f"""
       info_card("第三個變數怎麼辦",
                 "<code>hue=</code> 用顏色、<code>size=</code> 用點的大小、"
                 "<code>col=</code> 拆成好幾張小圖。"
-                "超過兩個額外變數的話，多半該畫好幾張圖而不是硬塞。")],
+                "超過兩個額外變數時，可分成好幾張圖，方便比較。")],
      "w18pkStatus", "選 x 與 y 的型別。",
      '<button class="btn btn-toggle" onclick="w18pkSet(0)">數值 × 數值</button>'
      '<button class="btn btn-toggle" onclick="w18pkSet(1)">類別 × 數值</button>'
@@ -327,7 +327,7 @@ BODIES["rel"] = f"""
      '<button class="btn btn-toggle" onclick="w18pkSet(4)">時間 × 數值</button>',
      provenance=("course-data", "依 Ch01 lab 實際使用的 seaborn 圖型與變數型別整理。"))}
 
-{card("散佈圖，以及把第三個變數塞進去", C(1, 91, 93), src=S(1, 91, 93),
+{card("散佈圖，以及呈現第三個變數", C(1, 91, 93), src=S(1, 91, 93),
       note="<code>hue</code> 與 <code>style</code> 同時用同一個變數，"
            "是為了在黑白列印時也分得出來。這個習慣值得學。" + FIG_NOTE)}
 
@@ -341,7 +341,7 @@ BODIES["rel"] = f"""
            "第 5 章會講它怎麼來的。" + FIG_NOTE)}
 
 {card("joint 與 pair", C(1, 114, 117), src=S(1, 114, 117),
-      note="<code>pairplot</code> 是探索階段最划算的一張圖："
+      note="<code>pairplot</code> 適合一次查看多個變數的關係："
            "所有數值欄兩兩配對，一眼看完。欄多的時候會很慢，先挑幾欄再畫。" + FIG_NOTE)}
 
 {quiz("qRel", "PART 03 · 自我檢測",
@@ -361,11 +361,11 @@ BODIES["rel"] = f"""
 BODIES["cat"] = f"""
   <p>類別變數的圖最容易被誤讀，因為它們看起來都像長條，但講的事情差很多：
   <strong>countplot 講「有幾筆」、barplot 講「平均是多少」、boxplot 講「分布長怎樣」</strong>。
-  三種被混用的後果是很嚴重的。</p>
+  選圖前先確認你要比較筆數、平均還是分布。</p>
 
 {viz(svg("w18misSvg", 340),
      [info_card("同一份資料，兩種畫法",
-                "左邊是誠實的版本（y 軸從 0 開始），右邊是截斷 y 軸的版本。"
+                "左邊的 y 軸從 0 開始，右邊則截斷 y 軸。"
                 "按按鈕切換；右側倍率會由同一批資料與目前的軸起點即時計算。"),
       rows_card("兩組的真實數字",
                 [("A 組平均", "2.98", "w18msA"),
@@ -423,7 +423,7 @@ BODIES["cat"] = f"""
 # ── P05 把模型畫進圖裡 ─────────────────────────────────────────────────
 BODIES["model"] = f"""
   <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
-  這是統計圖跟一般商業圖表最大的差別。你不只在描述資料，還在展示一個模型對不對。</p>
+  把模型與觀測放在一起，可以檢查模型如何描述資料，以及哪些地方有差距。</p>
 
 {viz(svg("w18corrSvg", 340),
      [info_card("熱圖在講什麼",
@@ -457,7 +457,7 @@ BODIES["model"] = f"""
 
 {qa("觀念釐清", [
     ("<code>regplot</code> 幫我配了線，是不是就等於做了迴歸分析？",
-     "不是。它只給你一條線與一條帶子，<strong>沒有係數、沒有 p 值、沒有診斷</strong>。"
+     "還需要後續分析。這個函式給你一條線與一條帶子，<strong>沒有係數、沒有 p 值、沒有診斷</strong>。"
      "要那些東西得用 statsmodels（P6 會講）。"
      "<code>regplot</code> 的用途是「先看看有沒有線性關係」。"),
     ("熱圖看到兩個變數相關 0.9，該怎麼辦？",
@@ -470,15 +470,15 @@ BODIES["model"] = f"""
       "<code>lmplot</code> 加了 <code>hue='smoker'</code> 之後，兩組的迴歸線斜率明顯不同。"
       "這在暗示什麼？",
       [(False, "吸菸者的小費比較高",
-        "斜率不同講的不是「誰比較高」（那是截距與整體位置的事），"
-        "而是「<strong>帳單每增加一元，小費增加多少</strong>」在兩組之間不一樣。"),
+        "斜率描述「<strong>帳單每增加一元，小費增加多少</strong>」。兩組斜率不同，表示這個變化量不同；"
+        "比較哪組較高，還要看截距與整體位置。"),
        (True, "帳單對小費的效果在兩組之間不同，可能有交互作用",
         "對。斜率隨另一個變數改變，正是交互作用的定義。"
         "第 3 章會教怎麼在模型裡寫出來（<code>total_bill * smoker</code>），"
         "並檢定它是不是真的。"),
        (False, "資料裡有離群值",
-        "離群值會影響斜率，但「兩組斜率不同」本身不是離群值的證據。"
-        "要看離群值該畫盒鬚圖或殘差圖。")])}
+        "離群值會影響斜率。單憑兩組斜率不同，無法確定是否有離群值；"
+        "可以畫盒鬚圖或殘差圖檢查。")])}
 """
 
 # ── EX 練習 ─────────────────────────────────────────────────────────────
@@ -500,7 +500,7 @@ BODIES["exercises"] = f"""
         "對。bins 越細，每一格的樣本越少，隨機起伏就越明顯。"
         "要判斷是不是真的結構，就用 <code>hue</code> 拿一個候選的分類變數去驗。"),
        (False, "資料真的有很多群，應該用 60 這張",
-        "細的 bins 幾乎一定會生出更多峰，這是它的數學性質，不是資料的性質。"),
+        "較細的 bins 會呈現更細小的起伏，也可能把雜訊畫成峰；仍需用資料確認這些峰的意義。"),
        (False, "資料有問題，應該重新收集",
         "沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。")])}
 
@@ -524,7 +524,7 @@ BODIES["exercises"] = f"""
         "做得到，同樣是 axes-level。"),
        (True, "<code>sns.relplot(..., ax=axes[1,0])</code>",
         "對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，"
-        "根本不吃 <code>ax=</code> 參數。要散佈圖就改用 <code>sns.scatterplot</code>。")])}
+        "它的介面不接受 <code>ax=</code> 來指定既有座標系。要散佈圖就改用 <code>sns.scatterplot</code>。")])}
 """
 
 # ── REF 總覽 ────────────────────────────────────────────────────────────
@@ -555,10 +555,10 @@ BODIES["reference"] = f"""
         ["<code>size=</code>", "用點的大小分", "第三個變數是數值且範圍大"],
         ["<code>col=</code> / <code>row=</code>", "拆成好幾張小圖", "組數多、疊起來會糊"]])}
 
-{info("三個一定要記住的觀念",
+{info("三個閱讀重點",
       "<strong>1. 先畫圖再算數字。</strong>摘要統計會漏掉形狀，"
       "相關係數一樣的兩份資料可以長得完全不同。<br>"
-      "<strong>2. bins 與頻寬是你的假設，不是資料的性質。</strong>"
+      "<strong>2. bins 與頻寬會影響圖形呈現的細緻程度。</strong>"
       "調參數之前先想好要回答什麼問題。<br>"
       "<strong>3. countplot 講筆數、barplot 講平均、boxplot 講分布。</strong>"
       "三種長條講三件事，不要混用。")}
@@ -573,8 +573,8 @@ const w18anS = HC.svg('w18anatSvg', {h: 320});
 const w18anCases = [
   {o: 'Figure', w: '整張畫布：大小、存檔、總標題', h: 'set_size_inches、savefig、suptitle',
    note: '一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。'},
-  {o: 'Axes', w: '一個座標系：資料真正被畫進去的地方', h: 'plot、scatter、set_xlim、legend',
-   note: '你 99% 的時間都在跟它打交道。seaborn 的 ax= 參數指的就是它。'},
+  {o: 'Axes', w: '一個座標系：實際繪製資料的座標系', h: 'plot、scatter、set_xlim、legend',
+   note: '繪圖時會經常使用這個座標系。seaborn 的 ax= 參數指的就是它。'},
   {o: 'Axis（軸）', w: '單一根軸的刻度與標籤', h: 'set_xlabel、set_xticks',
    note: '注意 Axes（座標系）與 Axis（軸）差一個字母，是兩個不同的東西。'},
   {o: 'Artist', w: '畫上去的每一個東西：點、線、文字', h: 'set_color、set_alpha',
@@ -697,7 +697,7 @@ function w18bnDraw() {
   document.getElementById('w18bnPeaks').textContent = peaks + ' 個峰';
   setStatus('w18bnStatus', peaks >= 2
     ? '看得到 <b>' + peaks + '</b> 個峰。這份資料本來就是兩群造出來的。'
-    : '只看得到 <b>' + peaks + '</b> 個峰：參數把真正的兩群<b>糊掉了</b>。');
+    : '只看得到 <b>' + peaks + '</b> 個峰：目前的平滑或分箱設定讓兩群<b>合在一起</b>。');
 }
 function w18bnStep(d) { w18bnK = Math.max(4, Math.min(40, w18bnK + d)); w18bnDraw(); }
 function w18bnMode() { w18bnKde = !w18bnKde; w18bnDraw(); }
@@ -794,7 +794,7 @@ function w18msDraw() {
     });
     document.getElementById('w18msRatio').textContent = '看得到重疊';
     setStatus('w18msStatus', '盒鬚圖：兩組的分布<b>大幅重疊</b>——'
-              + '長條圖的「差距」其實被個體差異淹沒了。');
+              + '組內的個體差異也需要一起看。');
     return;
   }
   const y0 = w18msI === 0 ? 0 : Math.min.apply(null, w18msVals) - 0.08;
@@ -808,11 +808,11 @@ function w18msDraw() {
   });
   const hA = w18msVals[0] - y0, hB = w18msVals[1] - y0;
   document.getElementById('w18msRatio').textContent =
-    w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（假的）';
+    w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（截斷後柱高比）';
   setStatus('w18msStatus', w18msI === 0
     ? 'y 軸從 0 開始：兩根長條幾乎一樣高，平均差距約 <b>'
       + HC.fmt((w18msVals[1] / w18msVals[0] - 1) * 100, 1) + '%</b>。'
-    : '同樣的兩個數字，截斷之後看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>——數字沒變，圖說謊了。');
+    : '同樣的兩個數字，截斷之後長條高度看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>。資料數字相同，截斷軸放大了視覺差距。');
 }
 function w18msSet(i) { w18msI = i; w18msDraw(); }
 if (w18msS) w18msDraw();

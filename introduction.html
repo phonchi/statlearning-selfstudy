@@ -737,13 +737,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>先理解問題，再用資料檢查想法 <span class="sec-badge">講義 01 · p.6、21</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>電腦能回答問題、下棋、推薦電影，也能產生看似真實的圖片。
-  這些新聞背後有不同的技術，但都有一個值得追問的問題：
-  <strong>它從什麼資料學到什麼，我們又怎麼知道它做得好？</strong></p>
+  <p>回答自然語言問題、協助寫程式、下棋、預測蛋白質結構、生成圖片，
+  <strong>從資料學習已經能完成許多不同的工作</strong>。
+  Watson、AlphaGo、AlphaFold、ChatGPT 等案例，展示了這些方法在科學、工作與日常生活中的應用。</p>
 
-  <p>這一章先從應用認識統計學習，再把眼光拉回一張你能親自查看的資料表。
-  正式配模型之前，先弄清楚每列代表誰、變數是什麼、資料有哪些分布與關係。
-  這就是<strong>探索式資料分析</strong>（exploratory data analysis, EDA）的起點。</p>
+  <p>這些成果需要理解資料、表達問題、建立模型與評估表現。掌握這些基礎，
+  才能理解方法為什麼有效，以及遇到新問題時如何使用它。
+  本課從容易觀察與解讀的例子開始：先查看資料的分布與關係，
+  也就是<strong>探索式資料分析</strong>（exploratory data analysis, EDA）。</p>
 
 <div class="info-box">
   <span class="info-label">讀完這一頁，你應該能做什麼</span>
@@ -755,26 +756,25 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="news">
 <!-- GEN:BEGIN sec:news -->
   <div class="section-number">PART 01 · 新聞與應用</div>
-  <h2>新聞中的 AI，究竟在學什麼？ <span class="sec-badge">講義 01 · p.9–15</span></h2>
+  <h2>從新聞看統計學習能完成的工作 <span class="sec-badge">講義 01 · p.9–15</span></h2>
 <!-- GEN:END sec:news -->
 
-  <p>講義用一系列新聞案例開場。下面保留事件的年份，把它們當成理解問題類型的入口，
-  不把當年的成果當成今天所有 AI 系統都具備的能力。</p>
+  <p>講義選用的新聞涵蓋問答、遊戲、科學與媒體生成。依事件年份回看這些案例，
+  可以看到從資料學習如何用來完成不同的任務。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>應用</th><th>講義中的歷史案例</th><th>先問哪個問題</th></tr></thead>
-  <tbody><tr><td>回答問題與協助工作</td><td>Watson（2011）；ChatGPT（2023）；GitHub Copilot（2021），以及講義中的 vibe coding 例子</td><td>訓練資料中的規律，如何變成回答或程式？產出是否能由外部資料、執行結果核對？</td></tr><tr><td>遊戲與連續決策</td><td>AlphaGo（2016）、AlphaStar（2019）、Gran Turismo 賽車 AI（2022）</td><td>每一步行動會改變後續局面，要怎麼衡量整段決策的好壞？</td></tr><tr><td>科學與推理</td><td>AlphaFold（2020）；講義引用的 2025 IMO 金牌等級 AI 解題案例</td><td>預測結構或產生解答後，是否有獨立的結構資料、評分規則或證明可檢查？</td></tr><tr><td>產生與修改媒體</td><td>GPT-4o 圖像生成、Nano Banana（2025）；deepfake 討論（2020）及影片生成案例</td><td>內容看起來合理，是否就代表它是真實紀錄？生成品質與真實性是同一件事嗎？</td></tr></tbody>
+  <thead><tr><th>應用</th><th>講義中的歷史案例</th><th>展示的能力</th></tr></thead>
+  <tbody><tr><td>回答問題與協助工作</td><td>Watson（2011）；ChatGPT（2023）；GitHub Copilot（2021），以及講義中的 vibe coding 例子</td><td>回答自然語言問題、產生文字，以及協助撰寫程式。</td></tr><tr><td>遊戲與連續決策</td><td>AlphaGo（2016）、AlphaStar（2019）、Gran Turismo 賽車 AI（2022）</td><td>根據遊戲局勢選擇行動，並完成需要連續決策與控制的任務。</td></tr><tr><td>科學與推理</td><td>AlphaFold（2020）；講義引用的 2025 IMO 金牌等級 AI 解題案例</td><td>預測蛋白質結構，以及產生數學問題的解答。</td></tr><tr><td>產生與修改媒體</td><td>GPT-4o 圖像生成、Nano Banana（2025）；deepfake 討論（2020）及影片生成案例</td><td>依提示生成、修改圖片與影片，形成新的媒體製作方式。</td></tr></tbody>
 </table></div>
 
-  <p>這些案例可能涉及深度學習、生成模型、強化學習，或多種訓練方式的組合。
-  <strong>不能只憑產品會做什麼，就把整個系統判成監督式或非監督式。</strong>
-  要看具體的訓練資料、目標與評估方式。本課會從較容易看懂的模型開始，
-  練習拆解這三件事；不會逐一重建新聞中的系統。</p>
+  <p>各案例採用的技術包含深度學習、生成模型、強化學習，或多種訓練方式的組合。
+  <strong>理解資料、設定學習目標、建立模型與評估表現</strong>，是進一步理解這些成果的共同基礎。
+  本課會從較容易看懂的模型與資料例子開始，逐步建立這些能力。</p>
 
 <div class="quiz-box">
-  <div class="quiz-label">QUIZ · 從新聞回到問題</div>
-  <p>一個 AI 產生了逼真的照片，也能寫出流暢的解說。從這件事本身，可以下哪個結論？</p>
-  <div class="quiz-options" id="qNewsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。看起來合理是產出的性質，真實性與正確性需要其他證據。遊戲、科學預測與內容生成也需要不同的評估方式。" onclick="quizCheck('qNews', this)"><span class="opt-letter">(A)</span> 它展示了生成能力；照片是否真實、解說是否正確，仍要各自核對</div><div class="quiz-opt" data-correct="false" data-fb="輸出的外觀不能告訴你訓練方式。要知道訓練時用了哪些資料、目標與回饋，才能討論學習設定。" onclick="quizCheck('qNews', this)"><span class="opt-letter">(B)</span> 它一定只用了監督式學習，因為輸出看起來像正確答案</div><div class="quiz-opt" data-correct="false" data-fb="生成的圖片不一定對應真實事件；流暢解說也可能包含錯誤。仍須追查原始資料與可核對的證據。" onclick="quizCheck('qNews', this)"><span class="opt-letter">(C)</span> 它已理解照片中的真實事件，所以解說可以直接當資料來源</div></div>
+  <div class="quiz-label">QUIZ · 從應用回到基礎</div>
+  <p>AI 已經能回答問題、寫程式與預測結構，為什麼本課仍從資料與簡單模型開始？</p>
+  <div class="quiz-options" id="qNewsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。應用採用的技術各有不同，共同的資料與建模基礎能幫助你讀懂成果，並判斷如何選擇和使用方法。" onclick="quizCheck('qNews', this)"><span class="opt-letter">(A)</span> 理解資料、目標、模型與評估，能幫助我們理解方法為何有效，以及如何用在新問題上</div><div class="quiz-opt" data-correct="false" data-fb="產品名稱提供應用入口；理解方法還需要知道使用哪些資料、如何設定目標，以及如何評估表現。" onclick="quizCheck('qNews', this)"><span class="opt-letter">(B)</span> 只要記住每個產品名稱，就等於理解它的學習方法</div><div class="quiz-opt" data-correct="false" data-fb="簡單模型讓資料、假設與結果的關係容易觀察，也能練習評估方法。這些能力會延續到更複雜的應用。" onclick="quizCheck('qNews', this)"><span class="opt-letter">(C)</span> 簡單模型只能用來練習語法，與進階應用無關</div></div>
   <div class="quiz-feedback" id="qNewsFeedback"></div>
 </div>
 </section>
@@ -785,7 +785,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:slvsml -->
 
   <p>統計、機器學習、資料探勘、統計學習、人工智慧，常出現在同一個專案裡。
-  這些名稱有不同的歷史與關注重點，<strong>並不是互斥的方法清單</strong>。
+  這些名稱有不同的歷史與關注重點，<strong>使用的方法則有許多重疊</strong>。
   講義的作者觀點是：機器學習源自 AI，統計學習源自統計；兩者都研究監督式與非監督式問題，
   也持續互相影響。</p>
 
@@ -844,14 +844,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">沒有 Y，怎麼知道分析有沒有用？</div>
   <details class="qa-item"><summary>非監督式是不是完全無法評估？</summary>
-    <div class="qa-a"><p>不是。它缺少一套現成的目標標籤可以直接計算分類對錯，但仍可檢查結果對抽樣或設定是否穩定、是否保留想研究的資料結構，以及是否有外部證據支持用途。評估方式必須跟分析目的配合；分出三群本身還不是成功的證明。詳細方法在<a href='unsupervised_learning.html'>非監督式學習</a>。</p></div>
+    <div class="qa-a"><p>不是。它缺少一套現成的目標標籤可以直接計算分類對錯，但仍可檢查結果對抽樣或設定是否穩定、是否保留想研究的資料結構，以及是否有外部證據支持用途。評估方式必須跟分析目的配合；分出三群後，還要檢查這些群是否符合分析用途。詳細方法在<a href='unsupervised_learning.html'>非監督式學習</a>。</p></div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 判斷學習問題</div>
   <p>一份細胞資料有基因表現量和癌症型別。你先只用基因表現量找相似的細胞群，再用癌症型別對照結果。找群的步驟屬於什麼？</p>
-  <div class="quiz-options" id="qSupOptions"><div class="quiz-opt" data-correct="false" data-fb="分類要學的是已指定的目標類別；這裡的群是從特徵結構找出來的，不是照已知類別訓練。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(A)</span> 分類，因為最後每個細胞都被分到一群</div><div class="quiz-opt" data-correct="false" data-fb="迴歸或分類看的是監督式任務的 Y，不是輸入 X 是否為數字。這個找群步驟沒有使用 Y。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(B)</span> 迴歸，因為基因表現量是數字</div><div class="quiz-opt" data-correct="true" data-fb="對。任務與實際使用的資訊決定學習設定。事後用外部標籤對照，是評估結果的一種方式。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(C)</span> 非監督式，因為找群時沒有使用癌症型別當目標</div></div>
+  <div class="quiz-options" id="qSupOptions"><div class="quiz-opt" data-correct="false" data-fb="分類學習已指定的目標類別；這裡則直接從特徵結構找群。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(A)</span> 分類，因為最後每個細胞都被分到一群</div><div class="quiz-opt" data-correct="false" data-fb="迴歸或分類依監督式任務的 Y 判斷。這裡只用 X 找群，沒有使用 Y。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(B)</span> 迴歸，因為基因表現量是數字</div><div class="quiz-opt" data-correct="true" data-fb="對。任務與實際使用的資訊決定學習設定。事後用外部標籤對照，是評估結果的一種方式。" onclick="quizCheck('qSup', this)"><span class="opt-letter">(C)</span> 非監督式，因為找群時沒有使用癌症型別當目標</div></div>
   <div class="quiz-feedback" id="qSupFeedback"></div>
 </div>
 </section>
@@ -871,7 +871,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   誤差的詳細定義會在<a href="statistical_learning.html#mse">統計學習的基本框架</a>學到。</p>
 
 <div class="info-box">
-  <span class="info-label">推薦系統是應用名稱，不是一種學習設定</span>
+  <span class="info-label">推薦系統可以結合多種學習設定</span>
   同一個推薦系統可以包含多個步驟：
   用已知評分學習預測，是有目標值的任務；只根據特徵找出相似使用者或項目，
   可以是非監督式步驟。是否推薦、如何排序、如何驗證有幫助，則是整個應用要決定的事。
@@ -925,7 +925,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>先看資料：資料表、摘要與選圖 <span class="sec-badge">講義 01 · p.26–29</span></h2>
 <!-- GEN:END sec:eda -->
 
-  <p>EDA 的目的不是替已決定的結論找一張漂亮圖，而是<strong>先看資料，讓它有機會改變你的問題</strong>。
+  <p>EDA 用摘要與圖形探索資料的結構、異常和變數關係，<strong>再依觀察調整問題</strong>。
   你會在摘要與圖形之間來回：圖上看到異常，再回頭查原始記錄；摘要有不合理的範圍，再換個分組或尺度看。</p>
 
   <h3 id="notation">先知道每列、每欄代表什麼</h3>
@@ -969,7 +969,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 摘要與圖的分工</div>
   <p>兩組薪資資料的平均值很接近。你可以因此說兩組的薪資分布也差不多嗎？</p>
-  <div class="quiz-options" id="qEdaOptions"><div class="quiz-opt" data-correct="false" data-fb="平均的計算用到全部數值，但把它們壓成一個數後，不會保留每一筆的位置及分布形狀。" onclick="quizCheck('qEda', this)"><span class="opt-letter">(A)</span> 可以，平均值已使用每一筆資料，所以保留了全部資訊</div><div class="quiz-opt" data-correct="false" data-fb="摘要與圖各有作用。圖上看到模式，還可以用分位數、分組統計量及原始記錄檢查；不需要把其中一種工具丟掉。" onclick="quizCheck('qEda', this)"><span class="opt-letter">(B)</span> 不能，所以應該直接忽略所有數值摘要，只看圖</div><div class="quiz-opt" data-correct="true" data-fb="對。平均值只回答一部分的位置問題。箱形圖、分位數與完整分布能補上平均值沒有說的資訊。" onclick="quizCheck('qEda', this)"><span class="opt-letter">(C)</span> 不能；還要比較散開程度、偏斜、極端值與分布圖</div></div>
+  <div class="quiz-options" id="qEdaOptions"><div class="quiz-opt" data-correct="false" data-fb="平均值將全部數值概括成一個位置摘要；每筆資料的位置及分布形狀，仍須回到原始資料與圖形查看。" onclick="quizCheck('qEda', this)"><span class="opt-letter">(A)</span> 可以，平均值已使用每一筆資料，所以保留了全部資訊</div><div class="quiz-opt" data-correct="false" data-fb="摘要與圖各有作用。圖上看到模式，還可以用分位數、分組統計量及原始記錄檢查；不需要把其中一種工具丟掉。" onclick="quizCheck('qEda', this)"><span class="opt-letter">(B)</span> 不能，所以應該直接忽略所有數值摘要，只看圖</div><div class="quiz-opt" data-correct="true" data-fb="對。平均值只回答一部分的位置問題。箱形圖、分位數與完整分布能補上平均值沒有說的資訊。" onclick="quizCheck('qEda', this)"><span class="opt-letter">(C)</span> 不能；還要比較散開程度、偏斜、極端值與分布圖</div></div>
   <div class="quiz-feedback" id="qEdaFeedback"></div>
 </div>
 </section>
@@ -1020,7 +1020,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">讀圖自測 · Wage</div>
   <p>教育程度較高的組，薪資中位數也較高。這張圖支持哪個說法？</p>
-  <div class="quiz-options" id="qIntroWageOptions"><div class="quiz-opt" data-correct="false" data-fb="不對。這些是不同人的比較，且教育組之間的差距也不固定。" onclick="quizCheck('qIntroWage', this)"><span class="opt-letter">(A)</span> 多讀一個教育階段，每個人的薪資都會增加固定金額</div><div class="quiz-opt" data-correct="true" data-fb="對。箱形圖比較組間與組內差異，並未控制其他因素。" onclick="quizCheck('qIntroWage', this)"><span class="opt-letter">(B)</span> 樣本中不同教育組的薪資分布不同，但不能直接推論教育造成差距</div><div class="quiz-opt" data-correct="false" data-fb="不對。箱子、鬚與外面的點正是在呈現組內差異。" onclick="quizCheck('qIntroWage', this)"><span class="opt-letter">(C)</span> 同一教育組的人薪資都相同</div></div>
+  <div class="quiz-options" id="qIntroWageOptions"><div class="quiz-opt" data-correct="false" data-fb="不對。這些是不同人的比較，且教育組之間的差距也不固定。" onclick="quizCheck('qIntroWage', this)"><span class="opt-letter">(A)</span> 多讀一個教育階段，每個人的薪資都會增加固定金額</div><div class="quiz-opt" data-correct="true" data-fb="對。箱形圖比較組間與組內差異，並未控制其他因素。" onclick="quizCheck('qIntroWage', this)"><span class="opt-letter">(B)</span> 樣本中不同教育組的薪資分布不同；教育的因果效果仍須其他研究證據</div><div class="quiz-opt" data-correct="false" data-fb="不對。箱子、鬚與外面的點正是在呈現組內差異。" onclick="quizCheck('qIntroWage', this)"><span class="opt-letter">(C)</span> 同一教育組的人薪資都相同</div></div>
   <div class="quiz-feedback" id="qIntroWageFeedback"></div>
 </div>
 <h3 id="dx-smarket">Smarket：前幾天的報酬與當天漲跌</h3>
@@ -1065,7 +1065,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-feedback" id="qIntroSmarketFeedback"></div>
 </div>
 <h3 id="dx-nci">NCI60：把6830個基因畫成兩個座標</h3>
-<p>這份資料另有癌症型別標籤，但眼前的任務是只根據基因表現探索結構，因此投影時不把型別當作y。</p>
+<p>投影使用基因表現量探索結構；資料另附的癌症型別供投影完成後上色對照，未作為訓練目標y。</p>
 <div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
@@ -1119,7 +1119,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">回lab看完整pairplot</div>
-      這裡只取horsepower與mpg這一對。lab儲存格176另比較排氣量、車重與汽缸數；完整成對圖用來找候選關係，不是在做因果判斷。
+      這裡只取horsepower與mpg這一對。lab儲存格176另比較排氣量、車重與汽缸數；完整成對圖可幫助找出候選關係；因果判斷還需要研究設計與其他證據。
     </div>
   </div>
 </div>
@@ -1157,7 +1157,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       將8645筆每小時紀錄按hr（0到23時）分組，每組計算bikers的算術平均。不同小時的紀錄數可能不同。
     </div>
     <div class="info-card">
-      <div class="ic-title">這條線不是模型係數</div>
+      <div class="ic-title">這條線呈現各小時的平均租借量</div>
       這是<strong>本站EDA補充</strong>，沒有控制工作日、天氣或季節。講義p35畫的是模型中的小時效果，兩者不能互換解讀。
     </div>
   </div>
@@ -1209,7 +1209,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge"><a href="#w01-source-islp">教科書 · 第 1 章</a></span></h2>
   <p>ISLP 第 1 章沒有課後習題，所以這幾題是照本章觀念設計的。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。第 2 章開始就有課本習題可以對答案了。</p>
+  每個選項都有解說，答完後可以核對自己的理由。第 2 章起另有課本習題可練習。</p>
   <div class="sol-links"><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1239,7 +1239,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 觀察與結論</div>
   <p>Auto 的圖中，馬力較大的車通常有較低的 mpg。現在最合適的下一步是？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="圖能幫助形成問題、辨認模式與發現異常。不是每個有用的觀察都已經是最終因果答案。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 既然不能直接證明因果，這張圖就沒有價值</div><div class="quiz-opt" data-correct="true" data-fb="對。EDA 已提供值得追查的觀察，但還沒分辨不同變數的角色，也沒有建立因果結論。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 記下這個關係，並檢查車重、年份等其他差異，再決定後續分析問題</div><div class="quiz-opt" data-correct="false" data-fb="這把不同車之間的關係，直接變成改造同一台車的因果效果；一張散佈圖不足以支持。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 直接宣告提高任何車的馬力一定會降低 mpg</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="圖能幫助形成問題、辨認模式與發現異常；因果解釋還需要研究設計與其他證據。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 既然不能直接證明因果，這張圖就沒有價值</div><div class="quiz-opt" data-correct="true" data-fb="對。EDA 已提供值得追查的觀察，但還沒分辨不同變數的角色，也沒有建立因果結論。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 記下這個關係，並檢查車重、年份等其他差異，再決定後續分析問題</div><div class="quiz-opt" data-correct="false" data-fb="這把不同車之間的關係，直接變成改造同一台車的因果效果；一張散佈圖不足以支持。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 直接宣告提高任何車的馬力一定會降低 mpg</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1278,7 +1278,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 26 張</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 1 章，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
@@ -1983,7 +1983,7 @@ w01ivBikeDraw();
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"領域重疊（Overlapping Fields）","back":"統計學習、機器學習、資料科學與人工智慧有大量重疊。可以用研究目的與工作範圍理解它們，不必把同一個方法硬分到互斥的門派。"},{"front":"輸入與目標（X and Y）","back":"X 是分析時使用的輸入資料，Y 是問題指定的目標。例如用年齡與教育程度預測薪資，前兩者是 X，薪資是 Y；同一份表換一個問題，角色也可能改變。"},{"front":"監督式學習（Supervised Learning）","back":"用訓練資料中已有的目標值學習輸入與目標的關係，再對新個案預測。未來的答案尚未知，不會讓這個任務變成非監督式。"},{"front":"非監督式學習（Unsupervised Learning）","back":"不以指定目標標籤訓練，主要探索資料的分組或低維結構。即使另有標籤，也可以先不使用，之後再作外部對照；仍可檢查結果是否穩定、有用。"},{"front":"迴歸問題（Regression）","back":"目標是數值，例如薪資、油耗或租借數量。先弄清楚單位與觀測對象，再考慮模型；用數字編碼的類別不會因此自動成為迴歸目標。"},{"front":"分類也能輸出機率（Classification Probabilities）","back":"分類的目標是類別，例如漲跌或違約與否。模型可以先輸出某一類的機率，再依需要轉成標籤；輸出機率不會改變原本的分類任務。"},{"front":"推薦系統（Recommender System）","back":"推薦是應用問題，不是單一演算法，也不固定屬於監督式或非監督式。要先問推薦給誰、推薦什麼、手上有哪些互動資料，以及怎樣算推薦得好。"},{"front":"評分與互動紀錄（Ratings and Interactions）","back":"評分直接表達使用者回饋；點擊、觀看或購買紀錄則需要依情境解讀。沒有互動不一定表示不喜歡，也可能只是沒有看過這項內容。"},{"front":"探索式資料分析（EDA）","back":"在急著建模前，用摘要與圖形了解資料的分布、變數關係和可能問題。它會讓你重新提問、查資料定義，並修正原先的想法。"},{"front":"摘要統計（Summary Statistics）","back":"筆數、平均、中位數、標準差與分位數回答不同問題。平均不能單獨描述分布；看 count 時也要記得確認是否排除了遺漏值。"},{"front":"讀圖的起點（Reading a Plot）","back":"先看每個點或長條代表什麼，再看軸、單位、分組方式與範圍。圖形看起來不同，可能來自資料，也可能來自尺度或畫法。"},{"front":"單變數與變數關係（Distributions and Relationships）","back":"直方圖幫助看一個數值變數的分布；散佈圖看兩個數值變數的關係；分組盒鬚圖比較不同類別的數值分布。選圖取決於你想問的問題。"},{"front":"資料規模 N 與 P（Dataset Size）","back":"本章總覽的 N、P 沿用講義所採資料的列數與欄數口徑。P 不必等於模型的預測變數個數；目標、識別欄與移作索引的欄位都要另外確認。"},{"front":"真實與合成資料（Observed and Simulated Data）","back":"真實資料來自觀測、調查、交易或研究紀錄；合成資料依設定的規則產生。合成資料適合展示方法，但不能直接當成真實世界的實證結果。"},{"front":"資料代表誰（Data Context）","back":"欄名與筆數之外，還要知道資料從哪裡來、何時收集、一列代表誰，以及哪些個案沒有被收進來。能套用的結論範圍取決於這些條件。"},{"front":"關聯與因果（Association and Causation）","back":"圖中兩個變數一起變動，還不足以說其中一個造成另一個。其他因素、樣本選擇與收集方式都可能影響關係，因果結論需要研究設計與額外假設。"},{"front":"Akaike：模型比較（Information Criteria）","back":"配適資料更好，不一定代表對新資料更好。資訊準則把配適與模型複雜度一起考慮，提醒我們不能只挑最會貼住目前資料的模型。"},{"front":"Tukey：先探索資料（Exploratory Data Analysis）","back":"用圖與摘要找結構、異常和新問題。EDA 不只是正式分析前的例行清單，而是讓資料反過來改變你問題的過程。"},{"front":"Wahba：平滑與模型誤差（Spline Smoothing）","back":"關係不必全是直線，也不必跟著每個觀測起伏。樣條平滑用可彎曲的函數描述趨勢，同時控制過度追逐雜訊的程度。"},{"front":"Efron：自助法（Bootstrap）","back":"從已有樣本反覆重抽，觀察估計結果如何變動，藉此近似不確定性。它仍依賴資料與抽樣方式，不能自動補救不具代表性的樣本。"},{"front":"Gelfand 與 Smith：以抽樣協助計算（Sampling-based Computation）","back":"有些機率分布很難直接計算，可以用合適的抽樣方法近似所需的量。這讓較複雜的貝氏模型更容易實際分析。"},{"front":"Imbens 與 Angrist：辨識因果效果（Causal Identification）","back":"觀察到差異之前，要先問研究設計能識別什麼因果效果，以及需要哪些假設。可識別的效果也可能只適用於特定族群。"},{"front":"Tibshirani：Lasso 收縮與選擇（Lasso）","back":"對係數加入限制，讓某些估計縮小，部分可縮到零。這把控制模型複雜度與選擇變數連在一起，而不是只看訓練配適。"},{"front":"Wilkinson：圖形語法（Grammar of Graphics）","back":"把圖拆成資料、視覺對應與幾何圖形等部分。用一致的組合方式思考圖表，有助於說清楚每個顏色、位置與形狀在表達什麼。"},{"front":"Goodfellow 等人：生成對抗網路（GAN）","back":"生成器嘗試產生像資料的樣本，判別器嘗試分辨來源，兩者在訓練中互相提供訊號。生成結果看起來逼真，不代表每個細節都是事實。"},{"front":"Bengio、LeCun 與 Hinton：深度學習（Deep Learning）","back":"用多層轉換從資料學習表示，再用於辨識或預測等任務。表示能由資料學得，不表示可以省略資料品質與結果評估。"}];
+const FLASHCARDS = [{"front":"領域重疊（Overlapping Fields）","back":"統計學習、機器學習、資料科學與人工智慧有大量重疊。可依研究目的與工作範圍理解它們，同一個方法也能用於不同領域。"},{"front":"輸入與目標（X and Y）","back":"X 是分析時使用的輸入資料，Y 是問題指定的目標。例如用年齡與教育程度預測薪資，前兩者是 X，薪資是 Y；同一份表換一個問題，角色也可能改變。"},{"front":"監督式學習（Supervised Learning）","back":"用訓練資料中已有的目標值學習輸入與目標的關係，再對新個案預測。未來的答案尚未知，不會讓這個任務變成非監督式。"},{"front":"非監督式學習（Unsupervised Learning）","back":"不以指定目標標籤訓練，主要探索資料的分組或低維結構。即使另有標籤，也可以先不使用，之後再作外部對照；仍可檢查結果是否穩定、有用。"},{"front":"迴歸問題（Regression）","back":"目標是數值，例如薪資、油耗或租借數量。先弄清楚單位與觀測對象，再考慮模型；用數字編碼的類別不會因此自動成為迴歸目標。"},{"front":"分類也能輸出機率（Classification Probabilities）","back":"分類的目標是類別，例如漲跌或違約與否。模型可以先輸出某一類的機率，再依需要轉成標籤；輸出機率不會改變原本的分類任務。"},{"front":"推薦系統（Recommender System）","back":"推薦是應用問題，可以結合監督式、非監督式等不同學習方法。要先問推薦給誰、推薦什麼、手上有哪些互動資料，以及怎樣算推薦得好。"},{"front":"評分與互動紀錄（Ratings and Interactions）","back":"評分直接表達使用者回饋；點擊、觀看或購買紀錄則需要依情境解讀。沒有互動不一定表示不喜歡，也可能只是沒有看過這項內容。"},{"front":"探索式資料分析（EDA）","back":"在急著建模前，用摘要與圖形了解資料的分布、變數關係和可能問題。它會讓你重新提問、查資料定義，並修正原先的想法。"},{"front":"摘要統計（Summary Statistics）","back":"筆數、平均、中位數、標準差與分位數回答不同問題。平均不能單獨描述分布；看 count 時也要記得確認是否排除了遺漏值。"},{"front":"讀圖的起點（Reading a Plot）","back":"先看每個點或長條代表什麼，再看軸、單位、分組方式與範圍。圖形看起來不同，可能來自資料，也可能來自尺度或畫法。"},{"front":"單變數與變數關係（Distributions and Relationships）","back":"直方圖幫助看一個數值變數的分布；散佈圖看兩個數值變數的關係；分組盒鬚圖比較不同類別的數值分布。選圖取決於你想問的問題。"},{"front":"資料規模 N 與 P（Dataset Size）","back":"本章總覽的 N、P 沿用講義所採資料的列數與欄數口徑。P 不必等於模型的預測變數個數；目標、識別欄與移作索引的欄位都要另外確認。"},{"front":"真實與合成資料（Observed and Simulated Data）","back":"真實資料來自觀測、調查、交易或研究紀錄；合成資料依設定的規則產生。合成資料適合展示方法；要提出真實世界的實證結論，仍須使用相應的觀測證據。"},{"front":"資料代表誰（Data Context）","back":"欄名與筆數之外，還要知道資料從哪裡來、何時收集、一列代表誰，以及哪些個案沒有被收進來。能套用的結論範圍取決於這些條件。"},{"front":"關聯與因果（Association and Causation）","back":"圖中兩個變數一起變動，還不足以說其中一個造成另一個。其他因素、樣本選擇與收集方式都可能影響關係，因果結論需要研究設計與額外假設。"},{"front":"Akaike：模型比較（Information Criteria）","back":"配適資料更好，不一定代表對新資料更好。資訊準則把配適與模型複雜度一起考慮，提醒我們不能只挑最會貼住目前資料的模型。"},{"front":"Tukey：先探索資料（Exploratory Data Analysis）","back":"用圖與摘要探索資料的結構、異常與關係，再依觀察調整原有問題或提出新的問題。"},{"front":"Wahba：平滑與模型誤差（Spline Smoothing）","back":"樣條平滑用可彎曲的函數描述關係，同時控制曲線的粗糙程度，讓趨勢估計較少受觀測雜訊影響。"},{"front":"Efron：自助法（Bootstrap）","back":"從已有樣本反覆重抽，觀察估計結果如何變動，藉此近似不確定性。它仍依賴資料與抽樣方式，不能自動補救不具代表性的樣本。"},{"front":"Gelfand 與 Smith：以抽樣協助計算（Sampling-based Computation）","back":"有些機率分布很難直接計算，可以用合適的抽樣方法近似所需的量。這讓較複雜的貝氏模型更容易實際分析。"},{"front":"Imbens 與 Angrist：辨識因果效果（Causal Identification）","back":"觀察到差異之前，要先問研究設計能識別什麼因果效果，以及需要哪些假設。可識別的效果也可能只適用於特定族群。"},{"front":"Tibshirani：Lasso 收縮與選擇（Lasso）","back":"對係數加入限制，讓某些估計縮小，部分可縮到零。這把控制模型複雜度與選擇變數連在一起，同時考慮訓練配適與模型限制。"},{"front":"Wilkinson：圖形語法（Grammar of Graphics）","back":"把圖拆成資料、視覺對應與幾何圖形等部分。用一致的組合方式思考圖表，有助於說清楚每個顏色、位置與形狀在表達什麼。"},{"front":"Goodfellow 等人：生成對抗網路（GAN）","back":"生成器嘗試產生像資料的樣本，判別器嘗試分辨來源，兩者在訓練中互相提供訊號。生成結果的真實性仍需另外核對。"},{"front":"Bengio、LeCun 與 Hinton：深度學習（Deep Learning）","back":"用多層轉換從資料學習表示，再用於辨識或預測等任務。使用學得的表示時，仍須確認資料品質與評估結果。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

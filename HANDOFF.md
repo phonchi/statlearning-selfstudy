@@ -418,3 +418,12 @@ Matplotlib 為 3.5.2；清單若更新，需核對 00B 的日期、版本表、�
 依據：01 講義 p.29 與 Seaborn 0.13.2 官方 function_overview／API 文件。
 驗證記錄在 `tools/verification/seaborn-map-20260905/`：全站結構通過、P5 瀏覽器與新題回饋通過，
 139 個外部連結零失敗（2 個既有 Colab HEAD 405 警告）。以少量自訂資料核對 API 控制層級，未重跑課程 lab。
+
+## 14. 全站 speak-human-tw 改寫
+
+詳見 [`tools/HUMANIZE_AUDIT.md`](tools/HUMANIZE_AUDIT.md)。已同步處理 20 頁教材、首頁、
+標題、圖說、旁白、自測、詞卡與題庫，完整原句／改後句／原因在 `tools/verification/humanize-20260905/`。
+
+新聞以統計學習的應用能力帶出共同基礎。後續撰寫直接說明定義、操作與證據，避免再次加入
+修辭性否定對比、維護歷史與誇大比喻。邏輯否定、公式及資料來源界線保持清楚。
+本輪保留 b93f4be 的 FRAMES 物件，沒有重算資料；所有新文案仍以 enrich／pages／data 母檔為準。

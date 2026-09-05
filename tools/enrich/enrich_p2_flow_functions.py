@@ -41,10 +41,10 @@ BODIES["prologue"] = f"""
 {quiz("qWhy", "PART 00 · 自我檢測",
       "同一段分析程式碼在 notebook 裡複製了三次。最大的風險是什麼？",
       [(False, "檔案變大，跑得比較慢",
-        "三十行跟九十行的執行時間差別可以忽略。風險不在效能。"),
+        "這題要留意多份程式修改後是否一致，不能單憑行數判斷執行速度。"),
        (True, "改了一份忘了改另外兩份，而且不會有人告訴你",
         "對。程式照樣跑完、照樣有數字，只是其中兩個數字是用舊邏輯算的。"
-        "這種<strong>沉默的錯</strong>比報錯難查一百倍。"),
+        "這種<strong>沉默的錯</strong>沒有例外訊息提示，需要另外核對結果。"),
        (False, "會有變數名稱衝突",
         "有可能，但那通常會直接報錯或給出明顯離譜的結果，反而好查。")])}
 """
@@ -194,7 +194,7 @@ BODIES["func"] = f"""
   這會準備好 <code>MS</code>、<code>sm</code>、<code>poly</code>、<code>Auto_train</code> 與 <code>Auto_valid</code>。</p>
 
 {card("包成一個函式", C(5, 24), src=S(5, 24),
-      note="這是課程 lab 真的在用的函式，不是教學範例。"
+      note="這個函式取自課程 lab 的模型比較流程。"
            "四個參數：要放哪些項、反應變數是誰、訓練集、測試集。")}
 
 {card("然後用迴圈跑三次", C(5, 26), O(5, 26), src=S(5, 26),
@@ -210,10 +210,10 @@ BODIES["func"] = f"""
                 [("寫法", "複製貼上", "w15whyKind"),
                  ("邏輯有幾份", "—", "w15whyCopies"),
                  ("要改幾個地方", "—", "w15whyEdits")]),
-      info_card("這不是美觀問題",
-                "統計程式最怕的錯誤是<strong>沉默的錯</strong>——"
+      info_card("重複程式碼的維護風險",
+                "有一種錯誤不會觸發例外："
                 "程式跑完了、有數字、但那個數字是錯的。"
-                "重複的程式碼正是這種錯的溫床。")],
+                "多份程式修改不一致，就可能產生這種錯誤。")],
      "w15whyStatus", "先看兩邊的長度，再按「改需求」。",
      '<button class="btn btn-toggle" onclick="w15whySet(0)">複製貼上</button>'
      '<button class="btn btn-toggle" onclick="w15whySet(1)">函式 ＋ 迴圈</button>'
@@ -248,7 +248,7 @@ BODIES["func"] = f"""
     ("為什麼不要在函式裡直接用外面的變數？",
      "因為那樣它就<strong>不能重複使用</strong>了——換一份資料就得改函式本身。"
      "而且外面的變數被改掉時，函式的行為會跟著變，你卻看不出來。"
-     "把需要的東西都當參數傳進去，函式才是一個可以信任的黑盒子。"),
+     "把需要的東西都當參數傳進去，使用者才容易確認函式需要哪些輸入。"),
 ])}
 
 {quiz("qFunc", "PART 03 · 自我檢測",
@@ -302,9 +302,9 @@ BODIES["scope"] = f"""
      provenance=("illustrative", "自訂小例子，用來比較 Python 名稱作用域與可變預設值。"))}
 
 {info("為什麼 seed 要當參數",
-      "<code>boot_SE(..., seed=0)</code> 把種子做成參數而不是寫死在函式裡，"
+      "<code>boot_SE(..., seed=0)</code> 把種子做成可設定的參數，"
       "這樣你既能重現結果（給同一個 seed），也能檢查結果穩不穩定（換幾個 seed 跑跑看）。"
-      "這是一個很小但很專業的習慣。")}
+      "把這項設定留在呼叫處，之後較容易重現與比較結果。")}
 
 {quiz("qScope", "PART 04 · 自我檢測",
       "<code>def add(x, acc=[]):</code> 這樣寫有什麼問題？",
@@ -319,7 +319,7 @@ BODIES["scope"] = f"""
 
 # ── P05 讀懂錯誤訊息 ───────────────────────────────────────────────────
 BODIES["err"] = f"""
-  <p>程式報錯不是壞事，是<strong>它在告訴你哪裡不對</strong>。真正該怕的是不報錯的錯。
+  <p>程式報錯時，可以從<strong>錯誤訊息找出原因</strong>。程式沒有報錯時，也要核對結果是否符合預期。
   Python 的錯誤訊息（traceback）要<strong>從最後一行開始讀</strong>：
   最後一行是錯誤的種類與說明，往上是它發生在哪一行。</p>
 
@@ -346,9 +346,9 @@ BODIES["err"] = f"""
      '<button class="btn btn-reset" onclick="w15erReset()">重置</button>',
      provenance=("illustrative", "自訂 traceback，用來練習由錯誤末行往上定位。"))}
 
-{info("try / except 不是拿來蓋住錯誤的",
+{info("使用 try / except 時要處理錯誤",
       "<code>try: ... except: pass</code> 會把錯誤吞掉，讓程式帶著錯誤的狀態繼續跑——"
-      "那正是你最不想要的「沉默的錯」。"
+      "後續結果就可能出錯，卻沒有訊息提醒你。"
       "只有在你<strong>知道會發生什麼錯、而且知道該怎麼處理</strong>時才用它，"
       "例如「這個套件在 Colab 上才有，本機沒有就跳過」。", "warm")}
 
@@ -372,8 +372,8 @@ except ImportError:
         "對。最後一行講的是「發生了什麼事」，這通常直接告訴你要修什麼。"
         "看完再往上找「發生在我寫的哪一行」。"),
        (False, "第一行，因為那是最早發生的",
-        "第一行是呼叫堆疊的最外層，多半是你自己那一行的位置沒錯，"
-        "但它不會告訴你錯誤的種類。"),
+        "第一行顯示呼叫堆疊的最外層，通常可以定位到你的程式。"
+        "錯誤種類則要看最後一行。"),
        (False, "中間套件內部的那幾行",
         "那些是套件內部的呼叫路徑，除非你在寫套件，否則幫助不大——"
         "而且很容易讓人誤以為是套件壞了。")])}
@@ -425,13 +425,13 @@ BODIES["exercises"] = f"""
 {quiz("qEx4", "EXERCISE 4 · 錯誤訊息",
       "你看到 <code>KeyError: 'horsepower'</code>。第一件該做的事是？",
       [(False, "改用 <code>try / except</code> 把它包起來",
-        "那只是把錯誤藏起來，欄還是拿不到，後面照樣錯，而且變成沉默的錯。"),
+        "捕捉例外並未補回缺少的欄位；仍須查明欄名，後續程式才能正確取值。"),
        (True, "印 <code>df.columns</code> 看實際的欄名",
         "對。KeyError 的意思就是「這個鍵不存在」，"
         "多半是打錯字、大小寫不同、或前面某一步把欄改名了。"
-        "看一眼實際的欄名通常五秒就解決。"),
+        "查看實際欄名，可以先確認是否有拼字或大小寫差異。"),
        (False, "重新下載資料",
-        "在確認欄名之前就換資料，是最貴的一步。先看最便宜的證據。")])}
+        "先查看現有資料的欄名，確認問題後再決定是否需要重新下載。")])}
 """
 
 # ── REF 總覽 ────────────────────────────────────────────────────────────
@@ -460,11 +460,11 @@ BODIES["reference"] = f"""
         ["呼叫（關鍵字）", "<code>name(x, b=y)</code>", "參數多時一律用這個"],
         ["可變預設值", "<code>def f(acc=None)</code>", "<b>不要寫 <code>acc=[]</code></b>"]])}
 
-{info("三個一定要記住的觀念",
+{info("三個閱讀重點",
       "<strong>1. 選資料用 <code>&amp;</code>／<code>|</code>，而且每個條件都包括號。</strong>"
       "<code>and</code> 一次只判斷一個真假值。<br>"
       "<strong>2. 同一段程式碼要寫第三次，就該包成函式。</strong>"
-      "重複是沉默的錯的溫床。<br>"
+      "共用一份邏輯，修改時較容易保持一致。<br>"
       "<strong>3. traceback 從最後一行讀起。</strong>"
       "最後一行說錯在哪，往上找是誰呼叫的。")}
 
@@ -522,8 +522,8 @@ function w15whyDraw() {
   setStatus('w15whyStatus', w15whyEdited
     ? (copy ? '要多試一個次數，得<b>再複製一整段</b>，而且四份都要記得同步維護。'
             : '要多試一個次數，只改 <b>range 的那個數字</b>。')
-    : (copy ? '三份幾乎一樣的程式碼，三個各自會出錯的地方。'
-            : '一份邏輯，一個迴圈。錯只會錯在一個地方。'));
+    : (copy ? '三份相近的程式碼，修改時要核對三個地方。'
+            : '一份邏輯由一個迴圈呼叫，修改集中在一個地方。'));
 }
 function w15whySet(m) { w15whyMode = m; w15whyDraw(); }
 function w15whyEdit() { w15whyEdited = true; w15whyDraw(); }
@@ -581,7 +581,7 @@ function w15blDraw() {
   w15blS.txtPx(24, 34, ops[w15blI], {cls: 'axtitle', fill: HC.tok.accent}, g);
   document.getElementById('w15blOp').textContent = ['&gt;', '&gt;', '&amp;', '|'][w15blI];
   document.getElementById('w15blN').textContent = keep + ' 列';
-  document.getElementById('w15blErr').textContent = '不會（用的是 & 不是 and）';
+  document.getElementById('w15blErr').textContent = '不會（& 逐元素運算）';
   setStatus('w15blStatus', '留下 <b>' + keep + '</b> 列。每一列各自算一次，'
             + '所以結果是一整排真假值。');
 }

@@ -690,7 +690,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="hero-content">
     <h1>看得懂一段<span class="blue">統計程式</span>：Python 基礎</h1>
     <div class="subtitle">先備知識 P1 — 選讀，不列入評分</div>
-    <div class="big-formula">變數是名牌不是盒子｜int float str bool｜串列與索引｜切片含頭不含尾｜字典是鍵值對｜f-string 與 format</div>
+    <div class="big-formula">變數名稱與物件參照｜int float str bool｜串列與索引｜切片含頭不含尾｜字典是鍵值對｜f-string 與 format</div>
     <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
   </div>
 </div>
@@ -730,12 +730,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:prologue -->
 
   <p>這一頁假設你完全沒寫過程式。目標很具體：讀完之後，
-  你能看懂課程 lab 裡那些一行一行的東西在做什麼，不是會寫，是<strong>看得懂</strong>。
-  會寫是後面幾頁的事。</p>
+  你能逐行<strong>讀懂課程 lab 的程式</strong>。後面幾頁再練習自己寫。</p>
 
 <div class="info-box">
-  <span class="info-label">Python 只做三件事</span>
-  ① <strong>算</strong>一個值；② 把值<strong>取個名字</strong>存起來；③ 把值<strong>丟給某個函式</strong>處理。課程 lab 裡每一行都是這三件事的組合，沒有第四種。
+  <span class="info-label">先從三件事讀程式</span>
+  ① <strong>算</strong>一個值；② 把值<strong>取個名字</strong>存起來；③ 把值<strong>丟給某個函式</strong>處理。閱讀課程 lab 時，先找出這三件事如何組合。
 </div>
 
 <div class="viz-layout" data-provenance="course-data">
@@ -800,12 +799,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="var">
 <!-- GEN:BEGIN sec:var -->
   <div class="section-number">PART 01 · 變數與型別</div>
-  <h2>變數是貼在資料上的名牌，不是裝資料的盒子 <span class="sec-badge">課程 Lab Ch2 · 儲存格 16–23</span></h2>
+  <h2>變數名稱如何參照資料物件 <span class="sec-badge">課程 Lab Ch2 · 儲存格 16–23</span></h2>
 <!-- GEN:END sec:var -->
 
-  <p>變數不是盒子。<code>x = [3, 4, 5]</code> 這一行做的事是：先做出一個串列，
+  <p>可以把變數想成物件上的名牌。<code>x = [3, 4, 5]</code> 會先做出一個串列，
   然後把 <strong>x 這個名牌貼上去</strong>。同一個東西可以貼很多張名牌——
-  這件事在 P3 講陣列的「檢視」時會變成一個真的會咬人的問題。</p>
+  P3 會用陣列的「檢視」示範共用資料時的修改結果。</p>
 
 <div class="viz-layout" data-provenance="illustrative">
   <div>
@@ -818,7 +817,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">名牌不是盒子</div>
+      <div class="ic-title">兩個名字指向同一個物件</div>
       按「再貼一張名牌」，兩個名字會指到<strong>同一個</strong>串列。接著按「改內容」，你會看到兩個名字看到的東西一起變了。
     </div>
     <div class="info-card">
@@ -838,14 +837,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </table></div>
 
 <div class="info-box warm">
-  <span class="info-label">整數除法會咬人</span>
+  <span class="info-label">留意兩種除法的結果</span>
   <code>7 / 2</code> 給 <code>3.5</code>（浮點數），<code>7 // 2</code> 給 <code>3</code>（整數，直接砍掉小數）。算折數或索引時用得到後者，算統計量千萬不要用錯。
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p><code>a = [1, 2]</code>、<code>b = a</code>、<code>b.append(3)</code>。現在 <code>a</code> 是什麼？</p>
-  <div class="quiz-options" id="qVarOptions"><div class="quiz-opt" data-correct="false" data-fb="<code>b = a</code> 沒有複製任何東西，它只是<strong>多貼一張名牌</strong>。要複製得寫 <code>b = a.copy()</code>。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(A)</span> <code>[1, 2]</code>，因為 b 是複製的</div><div class="quiz-opt" data-correct="true" data-fb="對。這是初學最常見的意外，而且在資料前處理時特別危險——你以為在改暫存變數，其實動到了原始資料。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(B)</span> <code>[1, 2, 3]</code>，因為兩個名字指的是同一個串列</div><div class="quiz-opt" data-correct="false" data-fb="不會。一個東西可以有很多個名字，它們平起平坐，沒有誰取代誰。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(C)</span> 會報錯，a 已經被 b 取代了</div></div>
+  <div class="quiz-options" id="qVarOptions"><div class="quiz-opt" data-correct="false" data-fb="<code>b = a</code> 沒有複製任何東西，它只是<strong>多貼一張名牌</strong>。要複製得寫 <code>b = a.copy()</code>。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(A)</span> <code>[1, 2]</code>，因為 b 是複製的</div><div class="quiz-opt" data-correct="true" data-fb="對。資料前處理時要留意這種共用關係：修改共用物件時，原本的名字也會看到修改後的資料。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(B)</span> <code>[1, 2, 3]</code>，因為兩個名字指的是同一個串列</div><div class="quiz-opt" data-correct="false" data-fb="不會。一個東西可以有很多個名字，它們平起平坐，沒有誰取代誰。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(C)</span> 會報錯，a 已經被 b 取代了</div></div>
   <div class="quiz-feedback" id="qVarFeedback"></div>
 </div>
 </section>
@@ -977,11 +976,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="dict">
 <!-- GEN:BEGIN sec:dict -->
   <div class="section-number">PART 04 · 字典</div>
-  <h2>用名字取值，而不是用位置 <span class="sec-badge">課程 Lab Ch1 · 儲存格 19–26</span></h2>
+  <h2>透過鍵取得字典中的值 <span class="sec-badge">課程 Lab Ch1 · 儲存格 19–26</span></h2>
 <!-- GEN:END sec:dict -->
 
-  <p>串列用位置取值，字典用<strong>名字</strong>取值。統計程式裡幾乎所有「一組具名的結果」
-  都是字典：模型的評分、欄名對應到型別、參數名稱對應到值。</p>
+  <p>串列用位置取值，字典用<strong>名字</strong>取值。統計程式常用字典儲存「一組具名的結果」：模型的評分、欄名對應到型別、參數名稱對應到值。</p>
 
 <div class="deck-extra">
   <div class="dx-label">用字典建一個 Series</div>
@@ -994,7 +992,7 @@ Texas     71000
 Oregon    16000
 Utah       5000
 dtype: int64</pre></div>
-  <p class="dx-note">鍵變成索引、值變成資料。pandas 直接吃字典，因為兩者的結構本來就一樣。</p>
+  <p class="dx-note">鍵變成索引、值變成資料。pandas 可以用字典中的鍵和值建立 Series。</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 19</span>
 </div>
 
@@ -1021,7 +1019,7 @@ dtype: int64</pre></div>
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w14dcSvg" height="300"></svg>
-      <div class="status-banner" id="w14dcStatus"><span class="status-icon">›</span><span class="status-text">同一件事，兩種資料結構。</span></div>
+      <div class="status-banner" id="w14dcStatus"><span class="status-icon">›</span><span class="status-text">比較串列的位置與字典的鍵如何取值。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w14dcSet(0)">拿 R²</button><button class="btn btn-toggle" onclick="w14dcSet(1)">拿 MSE</button><button class="btn btn-toggle" onclick="w14dcSet(2)">多加一項</button></div>
       <div class="viz-source"><span>自訂概念示意</span>自訂 R²／MSE 小例子，用來比較位置與具名取值。</div>
     </div>
@@ -1029,7 +1027,7 @@ dtype: int64</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">兩種取值方式</div>
-      左邊是串列（用位置），右邊是字典（用名字）。按按鈕看同一個查詢在兩邊怎麼寫，以及為什麼字典比較不會出錯。
+      左邊是串列（用位置），右邊是字典（用名字）。按按鈕看同一個查詢在兩邊怎麼寫，並比較用名字與位置取值時需要確認的資訊。
     </div>
     <div class="info-card">
       <div class="ic-title">目前</div>
@@ -1050,10 +1048,10 @@ dtype: int64</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>字典的鍵可以是什麼？</summary>
-    <div class="qa-a">不可變的東西都可以：字串、數字、tuple。<strong>串列不行</strong>，因為它會變，變了之後就找不回原來的位置。實務上九成的鍵是字串。</div>
+    <div class="qa-a">不可變的東西都可以：字串、數字、tuple。<strong>串列不行</strong>，因為它會變，變了之後就找不回原來的位置。實務上常用字串作為鍵。</div>
   </details>
   <details class="qa-item"><summary>字典有順序嗎？</summary>
-    <div class="qa-a">Python 3.7 之後，字典會<strong>記住插入的順序</strong>，所以 <code>for k in d</code> 的順序是可預期的。但不要依賴它做排序，要排序就明確寫 <code>sorted(d)</code>。</div>
+    <div class="qa-a">Python 3.7 之後，字典會<strong>記住插入的順序</strong>，所以 <code>for k in d</code> 的順序是可預期的。需要排序時，明確使用 <code>sorted(d)</code>。</div>
   </details>
 </div>
 
@@ -1143,8 +1141,8 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
   <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
-  程式碼卡在自己的環境跑一次。</p>
+  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
+  程式碼範例，觀察結果。</p>
   <div class="sol-links"><a href="https://docs.python.org/zh-tw/3/tutorial/" target="_blank" rel="noopener">🔗 Python 官方教學（中文）</a><a href="https://docs.python.org/zh-tw/3/library/stdtypes.html" target="_blank" rel="noopener">🔗 內建型別</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch02 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1165,14 +1163,14 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 字典</div>
   <p>你想記錄三個模型的 MSE，之後要能用模型名字查。該用什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="能動，但沒辦法用迴圈處理，也沒辦法「用名字查」——你得記得哪個數字對應哪個模型。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 三個變數 <code>mse1</code>、<code>mse2</code>、<code>mse3</code></div><div class="quiz-opt" data-correct="true" data-fb="對。名字直接當鍵，之後 <code>for name, mse in d.items()</code> 就能一次處理完，印報告也方便。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 一個字典 <code>{{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}}</code></div><div class="quiz-opt" data-correct="false" data-fb="串列能存值但存不了名字，你得另外記「第 0 個是 linear」——那正是字典要解決的問題。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 一個串列 <code>[25.57, 22.22, 22.67]</code></div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="能動，但沒辦法用迴圈處理，也沒辦法「用名字查」——你得記得哪個數字對應哪個模型。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 三個變數 <code>mse1</code>、<code>mse2</code>、<code>mse3</code></div><div class="quiz-opt" data-correct="true" data-fb="對。名字直接當鍵，之後 <code>for name, mse in d.items()</code> 就能一次處理完，印報告也方便。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 一個字典 <code>{{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}}</code></div><div class="quiz-opt" data-correct="false" data-fb="串列能存值但存不了名字，你得另外記「第 0 個是 linear」——用字典可以直接依模型名稱查值。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 一個串列 <code>[25.57, 22.22, 22.67]</code></div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 格式化</div>
   <p>MSE 是 25.573878189684412，你想在報告裡印成兩位小數。哪一個寫法對？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。用 <code>'{{:.2f}}'.format(mse)</code> 也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>f'MSE = {{mse:.2f}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="<code>round</code> 不給第二個引數的話會四捨五入到整數，變成 26。而且它改的是<strong>數值</strong>，格式化改的只是顯示——後者比較安全。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>f'MSE = {{round(mse)}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="少了那個點。<code>2f</code> 的 2 會被當成<strong>總寬度</strong>不是小數位數，結果會印出全部的小數。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>f'MSE = {{mse:2f}}'</code></div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。用 <code>'{{:.2f}}'.format(mse)</code> 也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>f'MSE = {{mse:.2f}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="<code>round</code> 不給第二個引數的話會四捨五入到整數，變成 26。它會改變<strong>數值</strong>；格式化保留數值，只調整顯示方式，後者比較安全。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>f'MSE = {{round(mse)}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="少了那個點。<code>2f</code> 的 2 會被當成<strong>總寬度</strong>不是小數位數，結果會印出全部的小數。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>f'MSE = {{mse:2f}}'</code></div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1183,7 +1181,7 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w14-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
-  <p>三張速查表。忘了就回來看。</p>
+  <p>三張速查表整理串列與字典、切片、格式規格。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>你想做的事</th><th>串列</th><th>字典</th></tr></thead>
@@ -1201,8 +1199,8 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 </table></div>
 
 <div class="info-box">
-  <span class="info-label">三個一定要記住的觀念</span>
-  <strong>1. 變數是名牌，不是盒子。</strong><code>b = a</code> 只是多貼一張名牌，改 b 會動到 a。<br><strong>2. 索引從 0 開始，切片的迄不包含。</strong>所以 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a。<br><strong>3. 串列用位置、字典用名字。</strong>有名字的東西就用字典，不要用「我記得第 2 個是 MSE」。
+  <span class="info-label">三個閱讀重點</span>
+  <strong>1. 變數像貼在物件上的名牌。</strong><code>b = a</code> 只是多貼一張名牌，改 b 會動到 a。<br><strong>2. 索引從 0 開始，切片的迄不包含。</strong>所以 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a。<br><strong>3. 串列用位置、字典用名字。</strong>有名字的資料可以用字典儲存，省去記「第 2 個是 MSE」這類位置對應。
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch01）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
@@ -1212,7 +1210,7 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 24 張</span></h2>
   <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
@@ -1882,7 +1880,7 @@ function w14rdPlay() {
 }
 if (w14rdS) w14rdDraw();
 
-/* ═══ w14va 名牌不是盒子 ═══ */
+/* ═══ w14va 兩個名字指向同一個物件 ═══ */
 const w14vaS = HC.svg('w14varSvg', {h: 320});
 let w14vaHasY = false, w14vaVals = [3, 4, 5];
 function w14vaDraw() {
@@ -2090,7 +2088,7 @@ if (w14fmS) w14fmDraw();
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"直譯器（Interpreter）","back":"一行一行讀你的程式碼並執行的東西。Jupyter 的每一個儲存格都是丟給它跑，而且會自動顯示<b>最後一行的值</b>，所以不寫 print 也看得到結果。"},{"front":"變數（Variable）","back":"貼在資料上的<b>名牌</b>，不是裝資料的盒子。<code>b = a</code> 只是多貼一張名牌，兩個名字指的是同一個東西。"},{"front":"賦值（Assignment）","back":"<code>x = [3, 4, 5]</code>：先做出右邊那個東西，再把左邊的名字貼上去。等號不是數學的等於，是「取名字」。"},{"front":"別名（Alias）","back":"同一個物件有兩個以上的名字。改其中一個會影響全部——這是資料前處理最常見的意外，要複製得明講 <code>.copy()</code>。"},{"front":"不可變（Immutable）","back":"整數、浮點數、字串、tuple 不能被就地修改，所以它們沒有別名的問題。串列與字典是可變的，才要小心。"},{"front":"整數（int）","back":"沒有小數的數。樣本數 n、變數個數 p、折數 k 都是它。<code>7 // 2</code> 是整數除法，直接砍掉小數。"},{"front":"浮點數（float）","back":"有小數的數。MSE、係數、p 值幾乎都是。<code>7 / 2</code> 給的就是浮點數 3.5。"},{"front":"字串（str）","back":"用引號包起來的文字。欄名、檔名、圖的標題都是。加號對字串是<b>接起來</b>，不是相加。"},{"front":"布林（bool）","back":"只有 <code>True</code> 與 <code>False</code>。條件的結果是它，P3 的布林遮罩整排都是它。"},{"front":"串列（list）","back":"有順序的一排東西，用中括號寫，從 <b>0</b> 開始數。常拿來裝一組欄名或一組要試的參數。"},{"front":"索引（Index）","back":"串列裡的位置。想成「離開頭有多遠」——第一個離開頭 0 步，所以從 0 開始。"},{"front":"負索引（Negative Index）","back":"從後面數起：<code>-1</code> 是最後一個、<code>-2</code> 是倒數第二。比 <code>a[len(a)-1]</code> 好讀。"},{"front":"切片（Slice）","back":"<code>起:迄:步長</code>，而且<b>迄不包含</b>。好處是 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a，不重疊也不漏。"},{"front":"整段切片（a[:]）","back":"從頭到尾，而且會產生<b>新的一份</b>。跟 <code>b = a</code> 完全不同——後者只是多貼名牌。"},{"front":"字典（dict）","back":"鍵值對的集合，用<b>名字</b>取值而不是位置。統計程式裡所有「一組具名的結果」都是它。"},{"front":"鍵（Key）","back":"字典裡用來查值的名字。必須是不可變的東西（字串、數字、tuple），串列不行。實務上九成是字串。"},{"front":"KeyError","back":"字典裡沒有那個鍵時拋的錯。這是刻意的設計，免得你把打錯的欄名一路帶下去。想要預設值就用 <code>d.get(鍵, 預設)</code>。"},{"front":"安全取值（get）","back":"<code>d.get('R2', 0)</code>：找得到就給值，找不到給預設值而不是報錯。"},{"front":"函式呼叫（Function Call）","back":"名字後面加括號，括號裡是要給它的東西。<code>print(x)</code>、<code>len(a)</code>、<code>sm.OLS(y, X)</code> 都是。"},{"front":"格式化（Formatting）","back":"把數字變成人看得懂的字串。<code>f'MSE = {mse:.2f}'</code> 或 <code>'{:.2f}'.format(mse)</code>，冒號後面是格式規格。"},{"front":"格式規格（Format Spec）","back":"冒號後面那一段。<code>.2f</code> 是小數兩位、<code>.2%</code> 是百分比（<b>會自己乘 100</b>）、<code>.3e</code> 是科學記號、<code>&gt;10</code> 是靠右對齊到寬度 10。"},{"front":"f-string","back":"字串前面加 <code>f</code>，就能把變數直接寫在大括號裡：<code>f'n = {n}'</code>。現在的預設寫法，格式規格跟 <code>format</code> 完全一樣。"},{"front":"整數除法（//）","back":"<code>7 // 2</code> 給 3，直接砍掉小數。算折數或索引時用，算統計量千萬別用錯。"},{"front":"Jupyter 儲存格（Cell）","back":"一小塊可以單獨執行的程式碼。它會顯示最後一行的值。<b>執行順序由你決定，不是由上到下</b>——亂序執行會造成很難查的狀態污染。"}];
+const FLASHCARDS = [{"front":"直譯器（Interpreter）","back":"一行一行讀你的程式碼並執行的東西。Jupyter 的每一個儲存格都是丟給它跑，而且會自動顯示<b>最後一行的值</b>，所以不寫 print 也看得到結果。"},{"front":"變數（Variable）","back":"可以把變數想成貼在物件上的<b>名牌</b>。<code>b = a</code> 讓兩個名字指向同一個物件。"},{"front":"賦值（Assignment）","back":"<code>x = [3, 4, 5]</code>：先建立右邊的物件，再讓左邊的名字指向它。這裡的等號表示賦值。"},{"front":"別名（Alias）","back":"同一個物件有兩個以上的名字。修改共用的資料時，其他名字也會看到改動。需要獨立副本時，明確使用 <code>.copy()</code>。"},{"front":"不可變（Immutable）","back":"整數、浮點數、字串、tuple 不能被就地修改，所以它們沒有別名的問題。串列與字典是可變的，才要小心。"},{"front":"整數（int）","back":"沒有小數的數。樣本數 n、變數個數 p、折數 k 都是它。<code>7 // 2</code> 是整數除法，直接砍掉小數。"},{"front":"浮點數（float）","back":"有小數的數。MSE、係數、p 值幾乎都是。<code>7 / 2</code> 給的就是浮點數 3.5。"},{"front":"字串（str）","back":"用引號包起來的文字，例如欄名、檔名與圖的標題。字串的加號表示<b>串接</b>。"},{"front":"布林（bool）","back":"只有 <code>True</code> 與 <code>False</code>。條件的結果是它，P3 的布林遮罩整排都是它。"},{"front":"串列（list）","back":"有順序的一排東西，用中括號寫，從 <b>0</b> 開始數。常拿來裝一組欄名或一組要試的參數。"},{"front":"索引（Index）","back":"串列裡的位置。想成「離開頭有多遠」——第一個離開頭 0 步，所以從 0 開始。"},{"front":"負索引（Negative Index）","back":"從後面數起：<code>-1</code> 是最後一個、<code>-2</code> 是倒數第二。比 <code>a[len(a)-1]</code> 好讀。"},{"front":"切片（Slice）","back":"<code>起:迄:步長</code>，而且<b>迄不包含</b>。好處是 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a，不重疊也不漏。"},{"front":"整段切片（a[:]）","back":"從頭到尾，而且會產生<b>新的一份</b>。跟 <code>b = a</code> 完全不同——後者只是多貼名牌。"},{"front":"字典（dict）","back":"鍵值對的集合，可以用<b>名字</b>取值。統計程式常用它儲存一組具名的結果。"},{"front":"鍵（Key）","back":"字典裡用來查值的名字。必須是不可變的東西（字串、數字、tuple），串列不行。實務上常用字串。"},{"front":"KeyError","back":"字典裡沒有指定的鍵時拋出的錯誤，可以先核對名稱。需要找不到時回傳預設值，可用 <code>d.get(鍵, 預設)</code>。"},{"front":"安全取值（get）","back":"<code>d.get('R2', 0)</code>：找得到就給值，找不到給預設值而不是報錯。"},{"front":"函式呼叫（Function Call）","back":"名字後面加括號，括號裡是要給它的東西。<code>print(x)</code>、<code>len(a)</code>、<code>sm.OLS(y, X)</code> 都是。"},{"front":"格式化（Formatting）","back":"把數字變成人看得懂的字串。<code>f'MSE = {mse:.2f}'</code> 或 <code>'{:.2f}'.format(mse)</code>，冒號後面是格式規格。"},{"front":"格式規格（Format Spec）","back":"冒號後面那一段。<code>.2f</code> 是小數兩位、<code>.2%</code> 是百分比（<b>會自己乘 100</b>）、<code>.3e</code> 是科學記號、<code>&gt;10</code> 是靠右對齊到寬度 10。"},{"front":"f-string","back":"字串前面加 <code>f</code>，就能把變數直接寫在大括號裡：<code>f'n = {n}'</code>。現在的預設寫法，格式規格跟 <code>format</code> 完全一樣。"},{"front":"整數除法（//）","back":"<code>7 // 2</code> 給 3，直接砍掉小數。算折數或索引時用，算統計量千萬別用錯。"},{"front":"Jupyter 儲存格（Cell）","back":"一小塊可以單獨執行的程式碼，會顯示最後一行的值。<b>你可以自行選擇執行順序</b>；亂序執行時，要留意記憶體中殘留的變數。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

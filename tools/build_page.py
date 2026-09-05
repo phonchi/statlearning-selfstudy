@@ -162,8 +162,8 @@ def prep_ex_head(p: P.Page) -> str:
     return f"""  <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">{lbl} · 自我檢測</span></h2>
   <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
-  程式碼卡在自己的環境跑一次。</p>
+  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
+  程式碼範例，觀察結果。</p>
   <div class="sol-links">{pills}</div>"""
 
 
@@ -177,13 +177,13 @@ def ex_head(p: P.Page) -> str:
         return f"""  <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 {S.badge(p, 'ISLP Ch.1')}</h2>
   <p>ISLP 第 1 章沒有課後習題，所以這幾題是照本章觀念設計的。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。第 2 章開始就有課本習題可以對答案了。</p>
+  每個選項都有解說，答完後可以核對自己的理由。第 2 章起另有課本習題可練習。</p>
   <div class="sol-links">{pills}</div>"""
     n_site = len(links)
     return f"""  <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：教科書第 {p.islp} 章精選題 {S.badge(p, 'ISLP §' + P.EX_SEC[p.islp] + ' 習題')}</h2>
   <p>下面幾題取自 ISLP §{P.EX_SEC[p.islp]} 的課後習題，題號都對得回課本。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面{n_site}個站。</p>
+  每個選項都有解說；需要完整解答時，可查閱下面{n_site}個站。</p>
   <div class="sol-links">{pills}</div>"""
 
 
@@ -209,7 +209,7 @@ def cards_block(p: P.Page) -> str:
     return f"""  <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">{badge}</span></h2>
   <p>詞彙卡取自{src}，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>

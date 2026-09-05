@@ -733,7 +733,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>統計課教你算平均、標準差、相關係數。這些數字很有用，但它們<strong>會漏掉形狀</strong>。
   四組資料可以有幾乎一樣的平均、標準差、相關係數與迴歸線，畫出來卻完全不同。
-  這不是刻意湊出的動畫，而是 Anscombe 在 1973 年提出、可以逐筆驗算的經典四重奏。</p>
+  Anscombe 在 1973 年提出的經典四重奏就展示了這種情況，下面可以逐筆驗算。</p>
 
 <div class="info-box">
   <span class="info-label">一句話</span>
@@ -768,8 +768,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </div>
 
 <div class="info-box">
-  <span class="info-label">這一頁的程式碼卡為什麼沒有「預期輸出」</span>
-  繪圖的儲存格在 notebook 裡存下來的是圖，不是文字，所以下面的程式碼卡多半只有程式碼、沒有預期輸出。圖本身的行為改由每一節的互動元件重現——<strong>那些元件是頁面當場算的，不是課程圖的截圖</strong>（本站 repo 不放任何圖檔）。
+  <span class="info-label">如何對照繪圖程式與圖形</span>
+  繪圖儲存格在 notebook 中保存圖形，所以下面的程式碼卡多半只有程式碼、沒有預期輸出。你可以用每節的互動元件觀察圖形如何改變。<strong>元件會在頁面中計算並畫出結果</strong>，圖下標有資料來源。
 </div>
 
 <div class="deck-extra">
@@ -793,7 +793,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 00 · 自我檢測</div>
   <p>兩份資料的相關係數都是 0.82。可以推論什麼？</p>
-  <div class="quiz-options" id="qSameOptions"><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數只量「線性關係有多強」，它看不出曲線、看不出離群值、也看不出資料是不是分成兩群。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(A)</span> 兩份資料的散佈圖會很像</div><div class="quiz-opt" data-correct="true" data-fb="對。所以拿到資料的第一個動作是畫圖，不是算相關係數。第 3 章講迴歸診斷時會再看到同一件事：殘差圖比 R² 誠實。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(B)</span> 只知道兩者的線性關係強度接近，形狀可能完全不同</div><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數跟斜率是兩回事——斜率還取決於兩個變數的標準差比例。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(C)</span> 兩份資料的迴歸線斜率一樣</div></div>
+  <div class="quiz-options" id="qSameOptions"><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數只量「線性關係有多強」，它看不出曲線、看不出離群值、也看不出資料是不是分成兩群。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(A)</span> 兩份資料的散佈圖會很像</div><div class="quiz-opt" data-correct="true" data-fb="對。所以閱讀相關係數時，也要畫圖核對資料形狀。第 3 章講迴歸診斷時會再看到同一件事：殘差圖可以補上 R² 沒有呈現的資訊。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(B)</span> 只知道兩者的線性關係強度接近，形狀可能完全不同</div><div class="quiz-opt" data-correct="false" data-fb="不一定。相關係數跟斜率是兩回事——斜率還取決於兩個變數的標準差比例。" onclick="quizCheck('qSame', this)"><span class="opt-letter">(C)</span> 兩份資料的迴歸線斜率一樣</div></div>
   <div class="quiz-feedback" id="qSameFeedback"></div>
 </div>
 </section>
@@ -803,7 +803,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>Figure、Axes 與 Seaborn 的圖形分類 <span class="sec-badge">講義 01 · p.29</span><span class="sec-badge">課程 Lab Ch2 · 儲存格 96–114</span><span class="sec-badge">seaborn 文件 · 圖形分類</span></h2>
 <!-- GEN:END sec:anat -->
 
-  <p>matplotlib 的物件有兩層，搞混這兩層是所有「為什麼我的設定沒有生效」的根源：
+  <p>使用 matplotlib 時，先分清設定屬於哪一層：
   <strong>Figure 是整張畫布</strong>（大小、存檔、標題），
   <strong>Axes 是裡面的一個座標系</strong>（畫點、設軸範圍、加圖例）。
   一張 Figure 可以有很多個 Axes。</p>
@@ -828,7 +828,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">seaborn 函式管理哪一層</div>
-      Axes-level 函式畫在一個 Axes，可用 <code>ax=</code> 指定位置。Figure-level 函式建立並管理自己的圖，通常回傳 Grid 管理物件，不是直接回傳 Figure。層級要查函式文件，不能由名稱結尾判斷。
+      Axes-level 函式畫在一個 Axes，可用 <code>ax=</code> 指定位置。Figure-level 函式建立並管理自己的圖，通常回傳 Grid 管理物件，Grid 負責管理 Figure。請查函式文件確認層級，名稱結尾無法判定。
     </div>
   </div>
 </div>
@@ -950,7 +950,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <span class="line">fig, ax = plt.subplots()</span>
 <span class="line">sns.scatterplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, ax=ax)</span></div>
 
-  <p>講義第 29 頁還列了下面三類。它們補充不同的看法，並不是另外三個和上圖一模一樣的家族。</p>
+  <p>講義第 29 頁還列了下面三類。它們分別提供多視角組圖、迴歸與殘差圖，以及矩陣圖；可依用途與控制層級查找。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>用途</th><th>Axes-level</th><th>Figure-level／回傳的管理物件</th></tr></thead>
   <tbody><tr><td>多個視角：同時看關係與各欄分布</td><td>由管理物件安排多個座標系</td><td><a href="https://seaborn.pydata.org/generated/seaborn.jointplot.html"><code>jointplot</code></a> → JointGrid；<a href="https://seaborn.pydata.org/generated/seaborn.pairplot.html"><code>pairplot</code></a> → PairGrid</td></tr><tr><td>迴歸與殘差：看趨勢及偏離趨勢的情形</td><td><a href="https://seaborn.pydata.org/generated/seaborn.regplot.html"><code>regplot</code></a>、<a href="https://seaborn.pydata.org/generated/seaborn.residplot.html"><code>residplot</code></a></td><td><a href="https://seaborn.pydata.org/generated/seaborn.lmplot.html"><code>lmplot</code></a> → FacetGrid</td></tr><tr><td>矩陣：用顏色看各格數值，需要時依分群排列</td><td><a href="https://seaborn.pydata.org/generated/seaborn.heatmap.html"><code>heatmap</code></a></td><td><a href="https://seaborn.pydata.org/generated/seaborn.clustermap.html"><code>clustermap</code></a> → ClusterGrid</td></tr></tbody>
@@ -979,7 +979,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p>你用 <code>sns.relplot(...)</code> 畫完圖，接著寫 <code>ax.set_xlim([0, 10])</code>，卻沒有任何效果。最可能的原因是？</p>
-  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，它不會畫到你手上那個 <code>ax</code> 上。要放進既有座標系可改用 <code>scatterplot(..., ax=ax)</code>；保留 relplot 時則透過回傳的 Grid 修改它所管理的軸。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。問題不在支不支援，在你設到了<strong>另一個 Axes</strong> 上。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
+  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，它不會畫到你手上那個 <code>ax</code> 上。要放進既有座標系可改用 <code>scatterplot(..., ax=ax)</code>；保留 relplot 時則透過回傳的 Grid 修改它所管理的軸。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。這次設定用到了<strong>另一個 Axes</strong>，請確認要修改的座標系。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
   <div class="quiz-feedback" id="qAnatFeedback"></div>
 </div>
 </section>
@@ -990,12 +990,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:dist -->
 
   <p>看一個變數的分布有兩種標準做法：直方圖與密度圖。兩者都有一個<strong>你必須自己決定的參數</strong>——
-  直方圖是 bins（切幾格），密度圖是頻寬（平滑多少）。這個參數不是細節，
-  它可以讓同一份資料看起來有兩個峰或只有一個。</p>
+  直方圖是 bins（切幾格），密度圖是頻寬（平滑多少）。調整這個參數，
+  同一份資料可能看起來有兩個峰或只有一個。</p>
 
 <div class="info-box warm">
-  <span class="info-label">這是本頁最重要的一件事</span>
-  <strong>調參數之前先想好你要回答什麼問題。</strong>想看「有沒有兩群」就把 bins 調細一點；想看「大致集中在哪」就調粗一點。調到「圖看起來最漂亮」為止，是在騙自己。
+  <span class="info-label">依分析問題調整圖形</span>
+  <strong>調參數之前先想好你要回答什麼問題。</strong>想看「有沒有兩群」就把 bins 調細一點；想看「大致集中在哪」就調粗一點。也要比較其他設定下的結果，確認看到的形狀是否穩定。
 </div>
 
 <div class="viz-layout" data-provenance="simulation">
@@ -1050,14 +1050,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>);</span>
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：KDE 密度圖</span></span>
   <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;time&quot;</span>, multiple=<span class="str">&quot;stack&quot;</span>);</span></div>
-  <p class="dx-note"><code>kdeplot</code> 把每個點換成一個小鐘形再加起來，所以它<strong>一定是平滑的</strong>。那個平滑是你給的假設，不是資料本身。（產生的是圖，沒有文字輸出可對照。）</p>
+  <p class="dx-note"><code>kdeplot</code> 把每個點換成一個小鐘形再加起來，所以它<strong>一定是平滑的</strong>。平滑程度來自繪圖設定，讀圖時也要留意這項選擇。（產生的是圖，沒有文字輸出可對照。）</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 110、111</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p>同一份資料，bins=5 看起來是一個峰，bins=30 看起來是兩個峰。你該怎麼辦？</p>
-  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="這就是本節警告的事。「漂亮」不是判準。你是在挑一個支持自己想法的圖。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖是提出假設的工具，不是證據本身。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
+  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="挑圖應依分析問題與資料證據，否則可能只留下符合自己想法的結果。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖可以幫你提出假設，接著要用資料核對。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
   <div class="quiz-feedback" id="qDistFeedback"></div>
 </div>
 </section>
@@ -1068,7 +1068,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:rel -->
 
   <p>兩個變數的關係圖幾乎都是散佈圖的變形。seaborn 幫你做的事是
-  <strong>用顏色、大小、分面把第三、第四個變數也塞進同一張圖</strong>——
+  <strong>用顏色、大小、分面在同一張圖中呈現第三、第四個變數</strong>——
   <code>hue</code>、<code>size</code>、<code>col</code> 這三個參數值得記起來。</p>
 
 <div class="viz-layout" data-provenance="course-data">
@@ -1091,13 +1091,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">第三個變數怎麼辦</div>
-      <code>hue=</code> 用顏色、<code>size=</code> 用點的大小、<code>col=</code> 拆成好幾張小圖。超過兩個額外變數的話，多半該畫好幾張圖而不是硬塞。
+      <code>hue=</code> 用顏色、<code>size=</code> 用點的大小、<code>col=</code> 拆成好幾張小圖。超過兩個額外變數時，可分成好幾張圖，方便比較。
     </div>
   </div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">散佈圖，以及把第三個變數塞進去</div>
+  <div class="dx-label">散佈圖，以及呈現第三個變數</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line"><span class="com"># Scatterplot</span></span>
   <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips); <span class="com"># Semicolon is intended to suppress text representation</span></span>
@@ -1133,7 +1133,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">sns.jointplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span>
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：變數成對關係圖</span></span>
   <span class="line">sns.pairplot(tips);</span></div>
-  <p class="dx-note"><code>pairplot</code> 是探索階段最划算的一張圖：所有數值欄兩兩配對，一眼看完。欄多的時候會很慢，先挑幾欄再畫。（產生的是圖，沒有文字輸出可對照。）</p>
+  <p class="dx-note"><code>pairplot</code> 適合一次查看多個變數的關係：所有數值欄兩兩配對，一眼看完。欄多的時候會很慢，先挑幾欄再畫。（產生的是圖，沒有文字輸出可對照。）</p>
   <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 114、117</span>
 </div>
 
@@ -1152,7 +1152,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>類別變數的圖最容易被誤讀，因為它們看起來都像長條，但講的事情差很多：
   <strong>countplot 講「有幾筆」、barplot 講「平均是多少」、boxplot 講「分布長怎樣」</strong>。
-  三種被混用的後果是很嚴重的。</p>
+  選圖前先確認你要比較筆數、平均還是分布。</p>
 
 <div class="viz-layout" data-provenance="illustrative">
   <div>
@@ -1166,7 +1166,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">同一份資料，兩種畫法</div>
-      左邊是誠實的版本（y 軸從 0 開始），右邊是截斷 y 軸的版本。按按鈕切換；右側倍率會由同一批資料與目前的軸起點即時計算。
+      左邊的 y 軸從 0 開始，右邊則截斷 y 軸。按按鈕切換；右側倍率會由同一批資料與目前的軸起點即時計算。
     </div>
     <div class="info-card">
       <div class="ic-title">兩組的真實數字</div>
@@ -1243,7 +1243,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:model -->
 
   <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
-  這是統計圖跟一般商業圖表最大的差別。你不只在描述資料，還在展示一個模型對不對。</p>
+  把模型與觀測放在一起，可以檢查模型如何描述資料，以及哪些地方有差距。</p>
 
 <div class="viz-layout" data-provenance="course-data">
   <div>
@@ -1305,7 +1305,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary><code>regplot</code> 幫我配了線，是不是就等於做了迴歸分析？</summary>
-    <div class="qa-a">不是。它只給你一條線與一條帶子，<strong>沒有係數、沒有 p 值、沒有診斷</strong>。要那些東西得用 statsmodels（P6 會講）。<code>regplot</code> 的用途是「先看看有沒有線性關係」。</div>
+    <div class="qa-a">還需要後續分析。這個函式給你一條線與一條帶子，<strong>沒有係數、沒有 p 值、沒有診斷</strong>。要那些東西得用 statsmodels（P6 會講）。<code>regplot</code> 的用途是「先看看有沒有線性關係」。</div>
   </details>
   <details class="qa-item"><summary>熱圖看到兩個變數相關 0.9，該怎麼辦？</summary>
     <div class="qa-a">先想它們是不是本來就在量同一件事（例如 <code>weight</code> 與 <code>displacement</code>）。真的要放進同一個迴歸模型的話，第 3 章的共線性與第 6 章的收縮方法就是在處理這件事。</div>
@@ -1315,7 +1315,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
   <p><code>lmplot</code> 加了 <code>hue='smoker'</code> 之後，兩組的迴歸線斜率明顯不同。這在暗示什麼？</p>
-  <div class="quiz-options" id="qModelOptions"><div class="quiz-opt" data-correct="false" data-fb="斜率不同講的不是「誰比較高」（那是截距與整體位置的事），而是「<strong>帳單每增加一元，小費增加多少</strong>」在兩組之間不一樣。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(A)</span> 吸菸者的小費比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。斜率隨另一個變數改變，正是交互作用的定義。第 3 章會教怎麼在模型裡寫出來（<code>total_bill * smoker</code>），並檢定它是不是真的。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(B)</span> 帳單對小費的效果在兩組之間不同，可能有交互作用</div><div class="quiz-opt" data-correct="false" data-fb="離群值會影響斜率，但「兩組斜率不同」本身不是離群值的證據。要看離群值該畫盒鬚圖或殘差圖。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(C)</span> 資料裡有離群值</div></div>
+  <div class="quiz-options" id="qModelOptions"><div class="quiz-opt" data-correct="false" data-fb="斜率描述「<strong>帳單每增加一元，小費增加多少</strong>」。兩組斜率不同，表示這個變化量不同；比較哪組較高，還要看截距與整體位置。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(A)</span> 吸菸者的小費比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。斜率隨另一個變數改變，正是交互作用的定義。第 3 章會教怎麼在模型裡寫出來（<code>total_bill * smoker</code>），並檢定它是不是真的。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(B)</span> 帳單對小費的效果在兩組之間不同，可能有交互作用</div><div class="quiz-opt" data-correct="false" data-fb="離群值會影響斜率。單憑兩組斜率不同，無法確定是否有離群值；可以畫盒鬚圖或殘差圖檢查。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(C)</span> 資料裡有離群值</div></div>
   <div class="quiz-feedback" id="qModelFeedback"></div>
 </div>
 </section>
@@ -1324,8 +1324,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
   <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
-  程式碼卡在自己的環境跑一次。</p>
+  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
+  程式碼範例，觀察結果。</p>
   <div class="sol-links"><a href="https://seaborn.pydata.org/tutorial.html" target="_blank" rel="noopener">🔗 seaborn 教學</a><a href="https://matplotlib.org/stable/users/explain/quick_start.html" target="_blank" rel="noopener">🔗 Matplotlib 快速入門</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1339,7 +1339,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · bins</div>
   <p>把 bins 從 10 調到 60 之後，直方圖出現很多小峰。最合理的解讀是？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。bins 越細，每一格的樣本越少，隨機起伏就越明顯。要判斷是不是真的結構，就用 <code>hue</code> 拿一個候選的分類變數去驗。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 多半是抽樣雜訊，除非那些峰對應到某個真實的分類</div><div class="quiz-opt" data-correct="false" data-fb="細的 bins 幾乎一定會生出更多峰，這是它的數學性質，不是資料的性質。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 資料真的有很多群，應該用 60 這張</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 資料有問題，應該重新收集</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。bins 越細，每一格的樣本越少，隨機起伏就越明顯。要判斷是不是真的結構，就用 <code>hue</code> 拿一個候選的分類變數去驗。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 多半是抽樣雜訊，除非那些峰對應到某個真實的分類</div><div class="quiz-opt" data-correct="false" data-fb="較細的 bins 會呈現更細小的起伏，也可能把雜訊畫成峰；仍需用資料確認這些峰的意義。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 資料真的有很多群，應該用 60 這張</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 資料有問題，應該重新收集</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
@@ -1353,7 +1353,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · figure-level 與 axes-level</div>
   <p>你想把四張 seaborn 圖排成 2×2 放進同一張 Figure。下列哪一個函式<strong>做不到</strong>？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。histplot 是 axes-level，接受 <code>ax=</code>；這是函式的介面約定，不能只看名稱結尾。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，根本不吃 <code>ax=</code> 參數。要散佈圖就改用 <code>sns.scatterplot</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。histplot 是 axes-level，接受 <code>ax=</code>；這是函式的介面約定，不能只看名稱結尾。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，它的介面不接受 <code>ax=</code> 來指定既有座標系。要散佈圖就改用 <code>sns.scatterplot</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1382,8 +1382,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </table></div>
 
 <div class="info-box">
-  <span class="info-label">三個一定要記住的觀念</span>
-  <strong>1. 先畫圖再算數字。</strong>摘要統計會漏掉形狀，相關係數一樣的兩份資料可以長得完全不同。<br><strong>2. bins 與頻寬是你的假設，不是資料的性質。</strong>調參數之前先想好要回答什麼問題。<br><strong>3. countplot 講筆數、barplot 講平均、boxplot 講分布。</strong>三種長條講三件事，不要混用。
+  <span class="info-label">三個閱讀重點</span>
+  <strong>1. 先畫圖再算數字。</strong>摘要統計會漏掉形狀，相關係數一樣的兩份資料可以長得完全不同。<br><strong>2. bins 與頻寬會影響圖形呈現的細緻程度。</strong>調參數之前先想好要回答什麼問題。<br><strong>3. countplot 講筆數、barplot 講平均、boxplot 講分布。</strong>三種長條講三件事，不要混用。
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
@@ -1393,7 +1393,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 28 張</span></h2>
   <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
@@ -1996,8 +1996,8 @@ const w18anS = HC.svg('w18anatSvg', {h: 320});
 const w18anCases = [
   {o: 'Figure', w: '整張畫布：大小、存檔、總標題', h: 'set_size_inches、savefig、suptitle',
    note: '一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。'},
-  {o: 'Axes', w: '一個座標系：資料真正被畫進去的地方', h: 'plot、scatter、set_xlim、legend',
-   note: '你 99% 的時間都在跟它打交道。seaborn 的 ax= 參數指的就是它。'},
+  {o: 'Axes', w: '一個座標系：實際繪製資料的座標系', h: 'plot、scatter、set_xlim、legend',
+   note: '繪圖時會經常使用這個座標系。seaborn 的 ax= 參數指的就是它。'},
   {o: 'Axis（軸）', w: '單一根軸的刻度與標籤', h: 'set_xlabel、set_xticks',
    note: '注意 Axes（座標系）與 Axis（軸）差一個字母，是兩個不同的東西。'},
   {o: 'Artist', w: '畫上去的每一個東西：點、線、文字', h: 'set_color、set_alpha',
@@ -2118,7 +2118,7 @@ function w18bnDraw() {
   document.getElementById('w18bnPeaks').textContent = peaks + ' 個峰';
   setStatus('w18bnStatus', peaks >= 2
     ? '看得到 <b>' + peaks + '</b> 個峰。這份資料本來就是兩群造出來的。'
-    : '只看得到 <b>' + peaks + '</b> 個峰：參數把真正的兩群<b>糊掉了</b>。');
+    : '只看得到 <b>' + peaks + '</b> 個峰：目前的平滑或分箱設定讓兩群<b>合在一起</b>。');
 }
 function w18bnStep(d) { w18bnK = Math.max(4, Math.min(40, w18bnK + d)); w18bnDraw(); }
 function w18bnMode() { w18bnKde = !w18bnKde; w18bnDraw(); }
@@ -2213,7 +2213,7 @@ function w18msDraw() {
     });
     document.getElementById('w18msRatio').textContent = '看得到重疊';
     setStatus('w18msStatus', '盒鬚圖：兩組的分布<b>大幅重疊</b>——'
-              + '長條圖的「差距」其實被個體差異淹沒了。');
+              + '組內的個體差異也需要一起看。');
     return;
   }
   const y0 = w18msI === 0 ? 0 : Math.min.apply(null, w18msVals) - 0.08;
@@ -2227,11 +2227,11 @@ function w18msDraw() {
   });
   const hA = w18msVals[0] - y0, hB = w18msVals[1] - y0;
   document.getElementById('w18msRatio').textContent =
-    w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（假的）';
+    w18msI === 0 ? HC.fmt(hB / hA, 2) + ' 倍' : HC.fmt(hB / hA, 1) + ' 倍（截斷後柱高比）';
   setStatus('w18msStatus', w18msI === 0
     ? 'y 軸從 0 開始：兩根長條幾乎一樣高，平均差距約 <b>'
       + HC.fmt((w18msVals[1] / w18msVals[0] - 1) * 100, 1) + '%</b>。'
-    : '同樣的兩個數字，截斷之後看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>——數字沒變，圖說謊了。');
+    : '同樣的兩個數字，截斷之後長條高度看起來差 <b>' + HC.fmt(hB / hA, 1) + ' 倍</b>。資料數字相同，截斷軸放大了視覺差距。');
 }
 function w18msSet(i) { w18msI = i; w18msDraw(); }
 if (w18msS) w18msDraw();
@@ -2339,7 +2339,7 @@ HC.ready(() => { w18smDraw(); });
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"畫布（Figure）","back":"整張圖的最外層：大小、存檔、總標題都歸它管。一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。"},{"front":"座標系（Axes）","back":"資料真正被畫進去的地方。你 99% 的時間都在跟它打交道，seaborn 的 <code>ax=</code> 指的就是它。注意它跟 Axis（單一根軸）差一個字母。"},{"front":"子圖網格（subplots）","back":"<code>subplots(nrows=2, ncols=3)</code> 回傳一個 Figure 與一個 <b>(2,3) 的 NumPy 陣列</b>。索引法跟一般二維陣列一樣。"},{"front":"圖層級函式（Figure-level）","back":"自行建立並管理圖，例如 relplot、displot、catplot 與 lmplot 回傳 FacetGrid。沒有分面時也可以只有一個子圖。它們不是直接回傳 Figure，也不是用 ax= 畫進既有座標系。"},{"front":"座標系層級函式（Axes-level）","back":"畫到一個 Axes 並回傳該 Axes，例如 scatterplot、histplot、boxplot、regplot、residplot、heatmap。接受 ax=，可以放進自己建立的 subplots；不要由函式名稱結尾猜層級。"},{"front":"直方圖（Histogram）","back":"把值切成幾格再數每格幾筆。<b>bins 是你的選擇，不是資料的性質</b>——太少會糊掉真的結構，太多會讓雜訊看起來像結構。"},{"front":"核密度估計（KDE）","back":"把每個點換成一個小鐘形再加起來，所以結果<b>一定是平滑的</b>。那個平滑是你給的假設。頻寬就是直方圖 bins 的另一個化身。"},{"front":"頻寬（Bandwidth）","back":"KDE 的平滑程度。大＝平滑＝可能糊掉真結構；小＝每個點戳出一根。跟 bins 是同一個取捨。"},{"front":"散佈圖（Scatterplot）","back":"兩個數值變數的標準圖。統計分析的第一張圖幾乎都是它——它會告訴你關係是直線、曲線、還是根本沒有。"},{"front":"色相參數（hue）","back":"用顏色把第三個變數塞進同一張圖。組數 ≤ 5 時最有效；再多就該用 <code>col=</code> 拆成小圖。"},{"front":"分面參數（col／row）","back":"將資料依某個變數拆成多個子圖，分別排成欄或列。例如 displot(..., col=\"smoker\") 分開比較各組；kind 選的是畫法，col／row 選的是分組布局。"},{"front":"成對關係圖（pairplot）","back":"所有數值欄兩兩配對畫一格，對角線放各自的分布。探索階段最划算的一張圖，但欄多時會很慢。"},{"front":"盒鬚圖（Boxplot）","back":"盒子涵蓋第一至第三四分位數，中線是中位數；鬚延伸到距盒邊 1.5 倍 IQR 內的最遠觀測，外面的點是候選離群值。也可疊上 stripplot 等原始點圖檢查。"},{"front":"長條圖（Barplot）","back":"長條高度是各組的<b>平均</b>，上面那條細線是 bootstrap 信賴區間，不是標準差。看到它要先問「每組幾筆」。"},{"front":"計數圖（Countplot）","back":"只數每一類有幾筆，等於 <code>value_counts()</code> 的圖版。跟 barplot 完全是兩回事。"},{"front":"點估計圖（Pointplot）","back":"把長條換成一個點加誤差線。要比較好幾組平均時比長條清楚，而且截斷 y 軸是可以接受的。"},{"front":"截斷的 y 軸（Truncated Axis）","back":"長條圖用<b>長度</b>編碼數值，y 軸不從 0 開始會讓長度的比例不再對應數值的比例，9% 的差可以看起來像三倍。要放大差異就改用點估計圖並標明。"},{"front":"迴歸散佈圖（regplot）","back":"散佈圖加一條最小平方線與 95% 信賴帶。那條帶子是<b>對迴歸線的不確定性</b>，不是預測區間。它不給係數也不給 p 值。"},{"front":"分組迴歸圖（lmplot）","back":"加 <code>hue</code> 之後每一組各配一條線。<b>兩條線的斜率明顯不同就是交互作用的視覺證據。</b>"},{"front":"相關係數熱圖（Heatmap）","back":"把 <code>df.corr()</code> 的矩陣上色。用來快速找候選，<b>下結論要回去看數字</b>——顏色的對比取決於色階怎麼設。"},{"front":"折線圖與信賴帶（lineplot）","back":"同一個 x 有多筆資料時，<code>lineplot</code> 會畫平均與 95% 信賴帶，那條帶子是 bootstrap 算的。"},{"front":"摘要統計的盲點（Summary Statistics）","back":"平均、標準差、相關係數都一樣的兩份資料，散佈圖可以完全不同：一組直線、一組曲線、一組只是被離群值拉出來的假相關。所以<b>先畫圖再算數字</b>。"},{"front":"離群值（Outlier）","back":"遠離其他觀測的點。它可以單獨把相關係數從 0 拉到 0.8，也可以主宰一條迴歸線。盒鬚圖與殘差圖是最快發現它的兩張圖。"},{"front":"圖型選擇（Chart Choice）","back":"先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"},{"front":"三個函式家族（Function Families）","back":"關係家族 relplot 看變數如何一起變動；分布家族 displot 看數值如何分布；類別家族 catplot 比較不同組別。這是在分問題，Figure-level／Axes-level 則是在分控制層級。"},{"front":"圖型選擇參數（kind）","back":"在 Figure-level 入口選子圖畫法：relplot 可選 scatter／line，displot 可選 hist／kde／ecdf，catplot 例如選 box。kind 不決定分面；分面用 row／col。"},{"front":"累積分布與觀測刻度（ECDF and Rug）","back":"ecdfplot 顯示累積比例隨數值改變；rugplot 用小刻度標出觀測位置。displot 可用 kind=\"ecdf\" 畫前者；刻度則用 rug=True 加上，沒有 kind=\"rug\"。"},{"front":"管理多個座標系（Grid Objects）","back":"jointplot 回傳 JointGrid，管理一對變數的關係與兩側分布；pairplot 回傳 PairGrid，管理多對變數；clustermap 回傳 ClusterGrid，管理分群樹與熱圖。它們各自管理圖，不直接畫進一個既有 ax。"}];
+const FLASHCARDS = [{"front":"畫布（Figure）","back":"整張圖的最外層：大小、存檔、總標題都歸它管。一張 Figure 可以裝好幾個 Axes。<code>fig.savefig()</code> 存的是整張。"},{"front":"座標系（Axes）","back":"實際繪製資料的座標系。繪圖時經常會用到它，seaborn 的 <code>ax=</code> 指的就是它。注意它跟 Axis（單一根軸）差一個字母。"},{"front":"子圖網格（subplots）","back":"<code>subplots(nrows=2, ncols=3)</code> 回傳一個 Figure 與一個 <b>(2,3) 的 NumPy 陣列</b>。索引法跟一般二維陣列一樣。"},{"front":"圖層級函式（Figure-level）","back":"自行建立並管理圖，例如 relplot、displot、catplot 與 lmplot 回傳 FacetGrid，由它管理 Figure。未指定分面時也可以只有一個子圖；要畫進既有座標系，需改用接受 ax= 的 Axes-level 函式。"},{"front":"座標系層級函式（Axes-level）","back":"畫到一個 Axes 並回傳該 Axes，例如 scatterplot、histplot、boxplot、regplot、residplot、heatmap。接受 ax=，可以放進自己建立的 subplots；不要由函式名稱結尾猜層級。"},{"front":"直方圖（Histogram）","back":"把值分箱，再計算每箱筆數。<b>bins 決定分箱方式</b>：太少可能合併資料中的結構，太多可能把雜訊呈現成細小的峰。"},{"front":"核密度估計（KDE）","back":"將每個觀測換成一個小鐘形再加總，得到平滑的分布估計。平滑程度由頻寬決定；和直方圖選 bins 一樣，都要比較設定對圖形的影響。"},{"front":"頻寬（Bandwidth）","back":"KDE 的平滑程度。大＝平滑＝可能糊掉真結構；小＝每個點戳出一根。跟 bins 是同一個取捨。"},{"front":"散佈圖（Scatterplot）","back":"用點呈現兩個數值變數，可以查看直線、曲線或不明顯的關係。"},{"front":"色相參數（hue）","back":"用顏色把第三個變數塞進同一張圖。組數 ≤ 5 時最有效；再多就該用 <code>col=</code> 拆成小圖。"},{"front":"分面參數（col／row）","back":"將資料依某個變數拆成多個子圖，分別排成欄或列。例如 displot(..., col=\"smoker\") 分開比較各組；kind 選的是畫法，col／row 選的是分組布局。"},{"front":"成對關係圖（pairplot）","back":"將數值欄兩兩配對作圖，對角線呈現各欄的分布。適合探索多個變數；欄多時繪圖會較慢。"},{"front":"盒鬚圖（Boxplot）","back":"盒子涵蓋第一至第三四分位數，中線是中位數；鬚延伸到距盒邊 1.5 倍 IQR 內的最遠觀測，外面的點是候選離群值。也可疊上 stripplot 等原始點圖檢查。"},{"front":"長條圖（Barplot）","back":"長條高度是各組的<b>平均</b>，上面那條細線是 bootstrap 信賴區間，不是標準差。看到它要先問「每組幾筆」。"},{"front":"計數圖（Countplot）","back":"只數每一類有幾筆，等於 <code>value_counts()</code> 的圖版。跟 barplot 完全是兩回事。"},{"front":"點估計圖（Pointplot）","back":"把長條換成一個點加誤差線。要比較好幾組平均時比長條清楚，而且截斷 y 軸是可以接受的。"},{"front":"截斷的 y 軸（Truncated Axis）","back":"長條圖用<b>長度</b>編碼數值，y 軸不從 0 開始會讓長度的比例不再對應數值的比例，9% 的差可以看起來像三倍。要放大差異就改用點估計圖並標明。"},{"front":"迴歸散佈圖（regplot）","back":"散佈圖加一條最小平方線與 95% 信賴帶。那條帶子是<b>對迴歸線的不確定性</b>，不是預測區間。它不給係數也不給 p 值。"},{"front":"分組迴歸圖（lmplot）","back":"加 <code>hue</code> 之後每一組各配一條線。<b>兩條線的斜率明顯不同就是交互作用的視覺證據。</b>"},{"front":"相關係數熱圖（Heatmap）","back":"把 <code>df.corr()</code> 的矩陣上色。用來快速找候選，<b>下結論要回去看數字</b>——顏色的對比取決於色階怎麼設。"},{"front":"折線圖與信賴帶（lineplot）","back":"同一個 x 有多筆資料時，<code>lineplot</code> 會畫平均與 95% 信賴帶，那條帶子是 bootstrap 算的。"},{"front":"摘要統計的盲點（Summary Statistics）","back":"平均、標準差、相關係數都一樣的兩份資料，散佈圖可以完全不同：一組直線、一組曲線、一組只是被離群值拉出來的假相關。所以<b>先畫圖再算數字</b>。"},{"front":"離群值（Outlier）","back":"遠離其他觀測的點。它可以單獨把相關係數從 0 拉到 0.8，也可以主宰一條迴歸線。盒鬚圖與殘差圖是最快發現它的兩張圖。"},{"front":"圖型選擇（Chart Choice）","back":"先問「x 與 y 各是什麼型別」，再問「我要回答什麼」。數值×數值→散佈圖；類別×數值→盒鬚／長條／點估計；類別×類別→交叉表熱圖。"},{"front":"三個函式家族（Function Families）","back":"關係家族 relplot 看變數如何一起變動；分布家族 displot 看數值如何分布；類別家族 catplot 比較不同組別。這是在分問題，Figure-level／Axes-level 則是在分控制層級。"},{"front":"圖型選擇參數（kind）","back":"在 Figure-level 入口選子圖畫法：relplot 可選 scatter／line，displot 可選 hist／kde／ecdf，catplot 例如選 box。kind 不決定分面；分面用 row／col。"},{"front":"累積分布與觀測刻度（ECDF and Rug）","back":"ecdfplot 顯示累積比例隨數值改變；rugplot 用小刻度標出觀測位置。displot 可用 kind=\"ecdf\" 畫前者；刻度則用 rug=True 加上，沒有 kind=\"rug\"。"},{"front":"管理多個座標系（Grid Objects）","back":"jointplot 回傳 JointGrid，管理一對變數的關係與兩側分布；pairplot 回傳 PairGrid，管理多對變數；clustermap 回傳 ClusterGrid，管理分群樹與熱圖。它們各自管理圖，不直接畫進一個既有 ax。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

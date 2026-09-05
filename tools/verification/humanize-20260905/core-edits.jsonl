@@ -1,0 +1,203 @@
+{"path": "tools/enrich/enrich_intro.py", "old": "  <p>電腦能回答問題、下棋、推薦電影，也能產生看似真實的圖片。\n  這些新聞背後有不同的技術，但都有一個值得追問的問題：\n  <strong>它從什麼資料學到什麼，我們又怎麼知道它做得好？</strong></p>\n\n  <p>這一章先從應用認識統計學習，再把眼光拉回一張你能親自查看的資料表。\n  正式配模型之前，先弄清楚每列代表誰、變數是什麼、資料有哪些分布與關係。\n  這就是<strong>探索式資料分析</strong>（exploratory data analysis, EDA）的起點。</p>\n", "new": "  <p>回答自然語言問題、協助寫程式、下棋、預測蛋白質結構、生成圖片，\n  <strong>從資料學習已經能完成許多不同的工作</strong>。\n  Watson、AlphaGo、AlphaFold、ChatGPT 等案例，展示了這些方法在科學、工作與日常生活中的應用。</p>\n\n  <p>這些成果需要理解資料、表達問題、建立模型與評估表現。掌握這些基礎，\n  才能理解方法為什麼有效，以及遇到新問題時如何使用它。\n  本課從容易觀察與解讀的例子開始：先查看資料的分布與關係，\n  也就是<strong>探索式資料分析</strong>（exploratory data analysis, EDA）。</p>\n", "reason": "依使用者指定，導論改為應用能力、共同基礎與本課的正向銜接", "line_before": 21}
+{"path": "tools/enrich/enrich_intro.py", "old": "  <p>講義用一系列新聞案例開場。下面保留事件的年份，把它們當成理解問題類型的入口，\n  不把當年的成果當成今天所有 AI 系統都具備的能力。</p>\n", "new": "  <p>講義選用的新聞涵蓋問答、遊戲、科學與媒體生成。依事件年份回看這些案例，\n  可以看到從資料學習如何用來完成不同的任務。</p>\n", "reason": "新聞先介紹應用能力，不以限制或維護說明開場", "line_before": 36}
+{"path": "tools/enrich/enrich_intro.py", "old": "\"先問哪個問題\"", "new": "\"展示的能力\"", "reason": "新聞表保留原案例及年份，改為直接介紹展示的能力", "line_before": 39}
+{"path": "tools/enrich/enrich_intro.py", "old": "訓練資料中的規律，如何變成回答或程式？產出是否能由外部資料、執行結果核對？", "new": "回答自然語言問題、產生文字，以及協助撰寫程式。", "reason": "新聞表保留原案例及年份，改為直接介紹展示的能力", "line_before": 41}
+{"path": "tools/enrich/enrich_intro.py", "old": "每一步行動會改變後續局面，要怎麼衡量整段決策的好壞？", "new": "根據遊戲局勢選擇行動，並完成需要連續決策與控制的任務。", "reason": "新聞表保留原案例及年份，改為直接介紹展示的能力", "line_before": 43}
+{"path": "tools/enrich/enrich_intro.py", "old": "預測結構或產生解答後，是否有獨立的結構資料、評分規則或證明可檢查？", "new": "預測蛋白質結構，以及產生數學問題的解答。", "reason": "新聞表保留原案例及年份，改為直接介紹展示的能力", "line_before": 45}
+{"path": "tools/enrich/enrich_intro.py", "old": "內容看起來合理，是否就代表它是真實紀錄？生成品質與真實性是同一件事嗎？", "new": "依提示生成、修改圖片與影片，形成新的媒體製作方式。", "reason": "新聞表保留原案例及年份，改為直接介紹展示的能力", "line_before": 47}
+{"path": "tools/enrich/enrich_intro.py", "old": "  <p>這些案例可能涉及深度學習、生成模型、強化學習，或多種訓練方式的組合。\n  <strong>不能只憑產品會做什麼，就把整個系統判成監督式或非監督式。</strong>\n  要看具體的訓練資料、目標與評估方式。本課會從較容易看懂的模型開始，\n  練習拆解這三件事；不會逐一重建新聞中的系統。</p>\n\n{quiz(\"qNews\", \"QUIZ · 從新聞回到問題\",\n      \"一個 AI 產生了逼真的照片，也能寫出流暢的解說。從這件事本身，可以下哪個結論？\",\n      [(True, \"它展示了生成能力；照片是否真實、解說是否正確，仍要各自核對\",\n        \"對。看起來合理是產出的性質，真實性與正確性需要其他證據。遊戲、科學預測與內容生成也需要不同的評估方式。\"),\n       (False, \"它一定只用了監督式學習，因為輸出看起來像正確答案\",\n        \"輸出的外觀不能告訴你訓練方式。要知道訓練時用了哪些資料、目標與回饋，才能討論學習設定。\"),\n       (False, \"它已理解照片中的真實事件，所以解說可以直接當資料來源\",\n        \"生成的圖片不一定對應真實事件；流暢解說也可能包含錯誤。仍須追查原始資料與可核對的證據。\")])}", "new": "  <p>各案例採用的技術包含深度學習、生成模型、強化學習，或多種訓練方式的組合。\n  <strong>理解資料、設定學習目標、建立模型與評估表現</strong>，是進一步理解這些成果的共同基礎。\n  本課會從較容易看懂的模型與資料例子開始，逐步建立這些能力。</p>\n\n{quiz(\"qNews\", \"QUIZ · 從應用回到基礎\",\n      \"AI 已經能回答問題、寫程式與預測結構，為什麼本課仍從資料與簡單模型開始？\",\n      [(True, \"理解資料、目標、模型與評估，能幫助我們理解方法為何有效，以及如何用在新問題上\",\n        \"對。應用採用的技術各有不同，共同的資料與建模基礎能幫助你讀懂成果，並判斷如何選擇和使用方法。\"),\n       (False, \"只要記住每個產品名稱，就等於理解它的學習方法\",\n        \"產品名稱提供應用入口；理解方法還需要知道使用哪些資料、如何設定目標，以及如何評估表現。\"),\n       (False, \"簡單模型只能用來練習語法，與進階應用無關\",\n        \"簡單模型讓資料、假設與結果的關係容易觀察，也能練習評估方法。這些能力會延續到更複雜的應用。\")])}\n", "reason": "依使用者授權重寫新聞自測，正解維持第0項，檢查能力與共同基礎", "line_before": 50}
+{"path": "tools/enrich/enrich_intro.py", "old": "這些名稱有不同的歷史與關注重點，<strong>並不是互斥的方法清單</strong>。", "new": "這些名稱有不同的歷史與關注重點，<strong>使用的方法則有許多重疊</strong>。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 67}
+{"path": "tools/enrich/enrich_intro.py", "old": "推薦系統是應用名稱，不是一種學習設定", "new": "推薦系統可以結合多種學習設定", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 154}
+{"path": "tools/enrich/enrich_intro.py", "old": "EDA 的目的不是替已決定的結論找一張漂亮圖，而是<strong>先看資料，讓它有機會改變你的問題</strong>。", "new": "EDA 用摘要與圖形探索資料的結構、異常和變數關係，<strong>再依觀察調整問題</strong>。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 222}
+{"path": "tools/enrich/enrich_intro.py", "old": "分出三群本身還不是成功的證明。", "new": "分出三群後，還要檢查這些群是否符合分析用途。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 130}
+{"path": "tools/enrich/enrich_intro.py", "old": "分類要學的是已指定的目標類別；這裡的群是從特徵結構找出來的，不是照已知類別訓練。", "new": "分類學習已指定的目標類別；這裡則直接從特徵結構找群。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 137}
+{"path": "tools/enrich/enrich_intro.py", "old": "迴歸或分類看的是監督式任務的 Y，不是輸入 X 是否為數字。這個找群步驟沒有使用 Y。", "new": "迴歸或分類依監督式任務的 Y 判斷。這裡只用 X 找群，沒有使用 Y。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 139}
+{"path": "tools/enrich/enrich_intro.py", "old": "圖能幫助形成問題、辨認模式與發現異常。不是每個有用的觀察都已經是最終因果答案。", "new": "圖能幫助形成問題、辨認模式與發現異常；因果解釋還需要研究設計與其他證據。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 357}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "讀成字串（lab 儲存格 190、192 示範了那個災難）。", "new": "讀成字串（lab 儲存格 190、192 示範了這個結果）。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 87}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "把真正有用的變數加進來——都在打這一塊", "new": "加入有用的變數，都能減少這部分誤差", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 123}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "                '這裡不再拿配適線性模型的同一批訓練點算 MSE。'\n", "new": "", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 150}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "重點在哪一行", "new": "期望誤差如何計算", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 149}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "先講結論：<strong>多蒐集資料沒用，多加變數有用，但加進來的那部分就不再算是 ε 了。</strong>", "new": "<strong>增加同類樣本不會改變不可縮減誤差；加入有用變數則會改變 ε 的定義，讓其中一部分能由 X 解釋。</strong>", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 194}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "不可縮減誤差是「相對於你手上這組 X」的下限，不是宇宙常數。", "new": "不可縮減誤差的下限由你使用的這組 X 決定。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 203}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "該去找新變數而不是繼續換模型", "new": "可優先考慮蒐集新變數", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 211}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "已經吃掉 87%", "new": "已經減少 87%", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 213}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "n = 60、p = 12 落在維度詛咒的火線上，這時反而該用有結構的參數式模型", "new": "n = 60、p = 12 時資料不足以支持高度彈性的估計，可考慮有結構的參數式模型", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 276}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "一個值得注意的巧合（其實不是巧合）", "new": "為什麼變異曲線相同", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 464}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "而我們真正在意的是後者", "new": "我們用後者評估新資料上的表現", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 340}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "要的是看得懂的關係，不是準確的數字。這是推論。", "new": "目的是理解因素與薪水的關係，屬於推論。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 736}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "該去找新變數，不是繼續換模型", "new": "可優先考慮蒐集新變數", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 848}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "彈性方法的變異會爆掉", "new": "彈性方法的變異會很大", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 713}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "用最土的辦法把它估出來", "new": "用鄰近樣本的類別比例估計它", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 612}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "只有測試誤差誠實", "new": "測試誤差則用未見資料評估表現", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 850}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "因為它不誠實", "new": "因為這些資料已參與配適", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 746}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "再換模型是浪費時間，該回頭找新變數——", "new": "可優先考慮蒐集新變數，", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 645}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "它是模擬研究的裁判", "new": "它提供模擬研究的比較基準", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 647}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "它定義了「盡力了」的意思", "new": "它給出理論上可達到的誤差下限", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 644}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "  「訓練誤差偏好高彈性、測試誤差不一定」的故事；不再重複放一張只把同一批數字連成線的圖。</p>", "new": "  「訓練誤差偏好高彈性、測試誤差不一定」的差異。</p>", "reason": "移除刪圖歷史，保留目前圖表的教學用途", "line_before": 654}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "這正是下面 Q&amp;A 要釐清的地方。", "new": "下面的 Q&amp;A 說明這兩種平均的差別。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 514}
+{"path": "tools/enrich/enrich_regression.py", "old": "這條式子是精確的（不是近似）", "new": "這條式子精確描述 RSS", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 157}
+{"path": "tools/enrich/enrich_regression.py", "old": "座標軸不是資料的 x 與 y，而是 β₀ 與 β₁；曲面的高度是「用這組參數時的 RSS」。", "new": "座標軸是參數 β₀ 與 β₁，曲面的高度是這組參數在資料 x 與 y 上得到的 RSS。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 193}
+{"path": "tools/enrich/enrich_regression.py", "old": "並不代表課本認為 x 不隨機，而是代表那些式子都是條件式的。", "new": "這些式子都以觀測到的 x 為條件；在隨機設計中，x 本身仍是隨機的。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 213}
+{"path": "tools/enrich/enrich_regression.py", "old": "SE 不是「這條線的誤差」，而是「這種線的散佈程度」。", "new": "SE 描述重複抽樣時，估計出的係數會散開多少。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 295}
+{"path": "tools/enrich/enrich_regression.py", "old": "實測標準差跟公式值對得上，就證明那條公式不是憑空來的。", "new": "可把實測標準差與公式值對照，理解公式量到的是什麼。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 298}
+{"path": "tools/enrich/enrich_regression.py", "old": "記住這一列，P04 會回來打它一巴掌。", "new": "P04 會比較這一列在多元迴歸中的變化。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 327}
+{"path": "tools/enrich/enrich_regression.py", "old": "還爛", "new": "還差", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 439}
+{"path": "tools/enrich/enrich_regression.py", "old": "解讀變了，而且這是全章最重要的一句話：", "new": "多元迴歸的係數應這樣解讀：", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 477}
+{"path": "tools/enrich/enrich_regression.py", "old": "下面直接列出講義與課本的完整係數表；不再另外畫一張只重複同一批 t 值的長條圖。", "new": "下表列出講義與課本的完整係數表，包含各變數的 t 值。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 495}
+{"path": "tools/enrich/enrich_regression.py", "old": "newspaper 的失業", "new": "newspaper 不顯著", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 504}
+{"path": "tools/enrich/enrich_regression.py", "old": "VIF 就爆掉", "new": "VIF 就會變得很大", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 803}
+{"path": "tools/enrich/enrich_regression.py", "old": "落在「要留意但還不到災難」的區間。跟 Credit 的 160 比一比就知道什麼叫嚴重。", "new": "需要留意這兩欄的共線性；Credit 的 160 則顯示更嚴重的情況。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 848}
+{"path": "tools/enrich/enrich_regression.py", "old": "壞處只有一個，但很致命：", "new": "主要限制是：", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 891}
+{"path": "tools/enrich/enrich_regression.py", "old": "為什麼 p 大的時候無母數方法會崩掉", "new": "為什麼 p 大時無母數方法較難估準", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 906}
+{"path": "tools/enrich/enrich_regression.py", "old": "<strong>迅速崩掉</strong>", "new": "<strong>快速退化</strong>", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 919}
+{"path": "tools/enrich/enrich_regression.py", "old": "所以殘差圖不是選修，是必看。", "new": "因此應檢查殘差圖。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 1060}
+{"path": "tools/enrich/enrich_regression.py", "old": "第 2 章已用 KNN 圖完整呈現彈性取捨，這裡不再用另一組模擬重複一次。", "new": "第 2 章的 KNN 圖可用來複習這個彈性取捨。", "reason": "移除維護歷程，保留跨章複習位置", "line_before": 904}
+{"path": "tools/enrich/enrich_regression.py", "old": "不對。「不做假設」在低維是優點，在高維是災難：不做假設就得完全依賴局部鄰居，而高維裡沒有真正的鄰居。而且雜訊變數會直接進到距離的計算裡，把鄰居選歪。", "new": "不對。KNN 依賴局部鄰居。維度高時，鄰近樣本也可能相距很遠；雜訊變數還會影響距離計算，使選出的鄰居較難代表目標點。", "reason": "誇張措辭改成具體的高維距離問題，維持錯選項判斷", "line_before": 935}
+{"path": "tools/enrich/enrich_classification.py", "old": "而且兩個都不是技術細節，是真的錯。", "new": "這兩個問題都會影響結果的解讀。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 55}
+{"path": "tools/enrich/enrich_classification.py", "old": "線性迴歸用在類別上的兩個致命傷", "new": "線性迴歸用在類別上的兩個問題", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 57}
+{"path": "tools/enrich/enrich_classification.py", "old": "真正的問題是：<strong>類別沒有順序也沒有距離</strong>，硬編成數字就是在硬塞結構進去。", "new": "這些<strong>類別沒有順序也沒有距離</strong>，數字編碼卻加入了順序與等距的假設。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 106}
+{"path": "tools/enrich/enrich_classification.py", "old": "所以邏輯斯迴歸真正線性的東西不是機率，<strong>是 log-odds</strong>。這句話決定了係數怎麼解讀。", "new": "所以邏輯斯迴歸的 <strong>log-odds 是線性函數</strong>；機率則隨 x 呈 S 形變化，係數須依 log-odds 解讀。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 141}
+{"path": "tools/enrich/enrich_classification.py", "old": "真正值得停下來的是<strong>加了變數以後係數會變號</strong>這件事。", "new": "加入變數後，<strong>原有係數可能變號</strong>。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 223}
+{"path": "tools/enrich/enrich_classification.py", "old": "這叫混淆（confounding），不是矛盾", "new": "混淆（confounding）：條件改變，係數的意義也改變", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 231}
+{"path": "tools/enrich/enrich_classification.py", "old": "移掉變數會讓你回去回答另一個問題，不是修好了什麼。", "new": "移掉變數會改變控制的條件，也會改變係數所回答的問題。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 289}
+{"path": "tools/enrich/enrich_classification.py", "old": "邏輯斯迴歸的係數會爆掉。", "new": "邏輯斯迴歸的係數估計可能發散。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 307}
+{"path": "tools/enrich/enrich_classification.py", "old": "這個 0.5 不是天上掉下來的，它來自 Bayes 分類器——", "new": "這個 0.5 來自 Bayes 分類器，", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 541}
+{"path": "tools/enrich/enrich_classification.py", "old": "所以它描述的是分類器本身，不是某一個閾值。", "new": "所以它呈現分類器在所有閾值下的表現。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 587}
+{"path": "tools/enrich/enrich_classification.py", "old": "這三行完整說明了「準確率不是唯一指標」。", "new": "這三行分別呈現總錯誤率與兩種錯誤，讓你依用途比較。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 584}
+{"path": "tools/enrich/enrich_classification.py", "old": "<strong>Naive Bayes 崩掉</strong>", "new": "<strong>Naive Bayes 表現變差</strong>", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 718}
+{"path": "tools/enrich/enrich_classification.py", "old": "對。關鍵是<strong>比較「模型能表達的函數族」而不是比較「假設的措辭」</strong>。", "new": "對。這裡比較的是<strong>模型能表達的函數族</strong>，包含關係可由 log-odds 的形式判斷。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 732}
+{"path": "tools/enrich/enrich_classification.py", "old": "  這裡不再疊一張幾乎重合的 ROC 圖。方法選擇也不能靠固定情境配答案；應把候選方法放進\n  同一個重抽樣流程，以未見資料的表現與問題的錯誤成本裁決。", "new": "  可用這個元件比較不同閾值下的表現。選擇方法時，把候選方法放進\n  同一個重抽樣流程，依未見資料的表現與問題的錯誤成本判斷。", "reason": "移除刪圖與假想作答方式，直接說明比較方法的流程", "line_before": 702}
+{"path": "tools/enrich/enrich_resampling.py", "old": "反覆從同一批資料裡切出「假的」訓練／測試組合，用它們的平均表現去猜真正的測試誤差。", "new": "反覆從同一批資料裡切出訓練／驗證組合，用它們的平均表現估計測試誤差。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 45}
+{"path": "tools/enrich/enrich_resampling.py", "old": "該固定，但理由是<strong>可重現</strong>，不是「這個 seed 比較好」。", "new": "固定 seed 是為了讓結果<strong>可重現</strong>。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 118}
+{"path": "tools/enrich/enrich_resampling.py", "old": "這是實作的事，不是理論的事。", "new": "這個計算成本取決於通用函式的實作方式。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 163}
+{"path": "tools/enrich/enrich_resampling.py", "old": "CV 的角色是選，不是產出最終模型。", "new": "CV 負責比較設定，選好後再配適最終模型。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 176}
+{"path": "tools/enrich/enrich_resampling.py", "old": "這是統計上的講究，不是 API 的限制。", "new": "使用相同分割能減少比較時混入的隨機變動。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 215}
+{"path": "tools/enrich/enrich_resampling.py", "old": "這一節是整章最容易在實務上出錯、而且錯了不會有任何錯誤訊息的地方。", "new": "先篩選特徵再做 CV，可能讓驗證資料的資訊提前進入訓練流程；程式仍會正常執行。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 328}
+{"path": "tools/enrich/enrich_resampling.py", "old": "。單次結果會波動，因此不把某一次的差距當成固定效果量。", "new": "。單次結果會波動，應一起閱讀多次模擬的分布與平均。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 656}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "這一章不是要換掉它，而是要問一句話：<strong>當變數很多的時候，「把全部變數丟進去做最小平方」\n  還是最好的做法嗎？</strong>答案通常是不。", "new": "當變數很多時，<strong>估計的穩定性與模型的可解讀性</strong>就需要更多考量。\n  本章介紹子集選擇、收縮與降維，處理這兩個問題。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 49}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "兩個準則差了 5 個變數。這不是誰算錯，是兩個準則的懲罰強度本來就不同。", "new": "兩個準則差了 5 個變數，反映了它們對模型複雜度採用不同的懲罰強度。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 268}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "這在 p &gt; n 的時候直接破功", "new": "這在 p &gt; n 的時候無法按全模型的常規公式計算", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 241}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "注意輸出裡有<strong>剛好等於 0</strong> 的係數。那不是「很小」，是真的 0。", "new": "注意輸出裡有<strong>剛好等於 0</strong> 的係數。這些係數精確等於 0。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 449}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "所以 Lasso 沒有真的丟掉東西。這是個誠實的結果，不是失敗：\n  <strong>Lasso 沒有義務一定要歸零。</strong>", "new": "所以在這個設定下保留了全部變數。\n  <strong>Lasso 是否產生零係數，取決於資料與 λ 的選擇。</strong>", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 499}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "Credit 的係數並不稀疏，所以 Lasso 沒有真的丟掉東西。這是誠實的結果，不是失敗。", "new": "Credit 的係數並不稀疏，在這個設定下保留了全部變數。是否產生零係數取決於資料與 λ。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 1096}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "被歸零的係數是真的 0，不是很小。", "new": "被歸零的係數精確等於 0。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 1085}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "對。CV 的角色是「選」，不是「產出」。每一折配出來的模型都只用了 (k−1)/k 的資料，把它們平均或任選一個都不對。", "new": "對。CV 比較各個設定；每一折配出的模型只用了 (k−1)/k 的資料。選好設定後，依本頁流程用全部訓練資料重新配適。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 516}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "不是因為它最重要，而是因為它的單位最大。第 12 章的 USArrests biplot 有更戲劇性的例子。", "new": "這主要反映單位造成的尺度差異，不能直接當成重要性。第 12 章的 USArrests biplot 也呈現這個現象。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 580}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "這些方法不是「新的比舊的好」，而是各有適用場景。", "new": "這些方法各有適合的資料條件。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 726}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "它們的目標函數對單位敏感，最小平方不是。", "new": "它們的目標函數對單位敏感，最小平方的預測則不受換單位影響。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 773}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "詛咒的是<strong>額外的變數不是免費的</strong>。", "new": "<strong>新增變數也會增加估計的不確定性。</strong>", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 665}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "變異爆炸", "new": "變異很大", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 73}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "變異爆炸", "new": "變異很大", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 85}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "強弱不是重點——λ 可以任意調。決定性的差別是<strong>形狀</strong>：有沒有尖角。", "new": "λ 可以調整懲罰強度；稀疏性來自約束區域的<strong>形狀</strong>與尖角。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 480}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "為什麼用對數等距而不是等距", "new": "為什麼用對數等距選 λ", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 502}
+{"path": "tools/enrich/intro_visuals.py", "old": "完整成對圖用來找候選關係，不是在做因果判斷。", "new": "完整成對圖可幫助找出候選關係；因果判斷還需要研究設計與其他證據。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 71}
+{"path": "tools/enrich/intro_visuals.py", "old": "這條線不是模型係數", "new": "這條線呈現各小時的平均租借量", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 77}
+{"path": "data/flashcards_zh/ch1.json", "old": "推薦是應用問題，不是單一演算法，也不固定屬於監督式或非監督式。", "new": "推薦是應用問題，可以結合監督式、非監督式等不同學習方法。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 28}
+{"path": "data/flashcards_zh/ch1.json", "old": "用圖與摘要找結構、異常和新問題。EDA 不只是正式分析前的例行清單，而是讓資料反過來改變你問題的過程。", "new": "用圖與摘要探索資料的結構、異常與關係，再依觀察調整原有問題或提出新的問題。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 72}
+{"path": "data/flashcards_zh/ch1.json", "old": "這把控制模型複雜度與選擇變數連在一起，而不是只看訓練配適。", "new": "這把控制模型複雜度與選擇變數連在一起，同時考慮訓練配適與模型限制。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 92}
+{"path": "data/flashcards_zh/ch2.json", "old": "加入真正有用的變數都能把它壓下去——統計學習做的就是這件事。", "new": "加入有用的變數，都能減少這部分誤差。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 6}
+{"path": "data/flashcards_zh/ch2.json", "old": "這才是我們真正關心的量。", "new": "用來評估模型在新資料上的表現。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 16}
+{"path": "data/flashcards_zh/ch4.json", "old": "反應變數是類別而不是數字的監督式學習問題。", "new": "反應變數是類別的監督式學習問題。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 4}
+{"path": "data/flashcards_zh/ch4.json", "old": "它描述的是分類器本身而不是某一個閾值", "new": "它呈現分類器在所有閾值下的表現", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 96}
+{"path": "data/flashcards_zh/ch4.json", "old": "邏輯斯迴歸真正線性的量就是它——", "new": "邏輯斯迴歸的線性函數對應這個量，", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 12}
+{"path": "data/flashcards_zh/ch5.json", "old": "這才是我們真正關心的量，重抽樣方法就是為了在沒有額外測試資料時估出它。", "new": "重抽樣方法可在沒有額外測試資料時，估計這個量。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 4}
+{"path": "data/flashcards_zh/ch6.json", "old": "不是從資料估出來的參數，而是要另外選定的量", "new": "要另外選定的設定", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 10}
+{"path": "data/flashcards_zh/ch6.json", "old": "這說明了「歸零」不是近似，而是解的精確性質。", "new": "「歸零」是這個解的精確性質。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 17}
+{"path": "data/flashcards_zh/ch6.json", "old": "額外的變數不是免費的：每個變數都要花自由度去估係數，估計本身帶進變異，而雜訊不會互相抵消而是累加。", "new": "每個變數都需要估計係數，新增估計會帶進變異，也可能增加預測的不確定性。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 27}
+{"path": "data/questions_zh/ch3.json", "old": "不對。6.22 與 −2.00 不是同一個東西的兩半：前者是非學生的斜率，後者是學生比非學生少掉的斜率。", "new": "不對。6.22 是非學生的斜率，−2.00 是學生相對於非學生的斜率差。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 83}
+{"path": "data/questions_zh/ch3.json", "old": "只是被雜訊淹沒", "new": "只是估計的不確定性很大", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 99}
+{"path": "data/questions_zh/ch4.json", "old": "特異度算得對，結論錯。FP = 30 對篩檢來說不是主要問題，真正的問題是 FN = 12（漏掉六成病人）。", "new": "特異度算得對；但在這個重視找出病人的篩檢情境，FN = 12（漏掉六成病人）是優先要改善的問題，同時也要衡量 FP = 30 的成本。", "reason": "將修辭對比改為直接說明，保留教學意義", "line_before": 67}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "天下沒有白吃的午餐", "new": "這個彈性也有代價", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 241}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "變異會吃掉一切", "new": "變異可能抵銷偏差降低的好處", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 298}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "這一招的威力在於", "new": "這個做法把", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 234}
+{"path": "tools/enrich/enrich_regression.py", "old": "大勝", "new": "表現明顯較好", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 918}
+{"path": "tools/enrich/enrich_regression.py", "old": "大勝", "new": "表現明顯較好", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 933}
+{"path": "tools/enrich/enrich_regression.py", "old": "把這句話刻進腦子", "new": "記住這個性質", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 424}
+{"path": "tools/enrich/enrich_regression.py", "old": "名不符實的詞", "new": "較弱的相似性判準", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 908}
+{"path": "tools/enrich/enrich_regression.py", "old": "這一張表是整章的儀表板", "new": "這一張表整理了整個模型的估計與檢定結果", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 353}
+{"path": "tools/enrich/enrich_classification.py", "old": "變異吃掉一切", "new": "變異可能抵銷偏差降低的好處", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 509}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "一個沒人看得懂的模型", "new": "一個難以逐項解讀的模型", "reason": "以具體方法或結果取代誇張比喻與說教措辭", "line_before": 55}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "這個做法把：原本要估「一個任意的 $p$ 維函數」，現在只要估 $p+1$ 個數字。", "new": "原本要估「一個任意的 $p$ 維函數」，做了線性假設後，只要估 $p+1$ 個數字。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 234}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "所以 ε 遠不只是量測誤差。", "new": "所以 ε 也包含未量到的變數所造成的變動。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 107}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "它的變異數 Var(ε) 會變成你努力的天花板。", "new": "它的變異數 Var(ε) 決定可達到的誤差下限。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 63}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "維度詛咒：最近鄰平均在高維會壞掉", "new": "維度詛咒：最近鄰平均在高維難以估準", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 165}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "（打的是可縮減那一塊）", "new": "（減少可縮減誤差）", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 197}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "這就是 ISLP 圖 2.12 想講的唯一一件事：", "new": "ISLP 圖 2.12 比較了不同情境：", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 475}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "Bayes 分類器：能做到多好的天花板", "new": "Bayes 分類器：分類錯誤率的理論下限", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 560}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "它告訴你目標是估機率，不是估標籤。", "new": "它提供先估機率、再決定標籤的做法。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 649}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "同一個病", "new": "同一種評估問題", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 682}
+{"path": "tools/enrich/enrich_regression.py", "old": "報紙廣告的故事，是這一章最值得記住的一段", "new": "報紙廣告：加入其他變數後，係數如何改變", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 78}
+{"path": "tools/enrich/enrich_regression.py", "old": "下面這個元件是本頁最重要的一個——拖動任何一個點，", "new": "拖動下面元件中的任何一個點，", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 116}
+{"path": "tools/enrich/enrich_regression.py", "old": "四個字首拼成 LINE，好記，但更重要的是知道<strong>哪一條壞掉會傷到什麼</strong>。", "new": "四個字首拼成 LINE；下面分別說明<strong>違反各假設會影響哪些結果</strong>。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 334}
+{"path": "tools/enrich/enrich_regression.py", "old": "這張表最值得盯的是第 2 列跟第 3 列", "new": "比較這張表的第 2 列與第 3 列", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 416}
+{"path": "tools/enrich/enrich_regression.py", "old": "不對，而且很危險。U 形是<strong>系統性</strong>的結構，不是幾個點造成的——刪掉最大的殘差之後，剩下的點還是會排成 U 形。用刪點來掩蓋模型形狀錯誤，是統計上最糟的做法之一。", "new": "不對。這裡的 U 形反映<strong>系統性</strong>的結構；刪掉最大的殘差之後，剩下的點仍會排成 U 形。應調整模型的形狀，避免刪除資料後仍留下同樣的問題。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 875}
+{"path": "tools/enrich/enrich_classification.py", "old": "把它整理一下，會冒出這一章最重要的兩個名詞。先移項：", "new": "整理式子後，可以定義勝算與 log-odds。先移項：", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 132}
+{"path": "tools/enrich/enrich_classification.py", "old": "講義 04 · 誠實一點：2005 年當測試集", "new": "講義 04 · 用2005 年當測試集", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 201}
+{"path": "tools/enrich/enrich_classification.py", "old": "整體正確率在這裡根本沒有資訊量。", "new": "單看整體正確率，無法看出它是否優於多數類基準。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 274}
+{"path": "tools/enrich/enrich_classification.py", "old": "係數的標準誤沒有爆掉", "new": "係數的標準誤沒有明顯膨脹", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 288}
+{"path": "tools/enrich/enrich_classification.py", "old": "n = 40 根本不夠", "new": "n = 40 時估計較不穩定", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 505}
+{"path": "tools/enrich/enrich_classification.py", "old": "課本第 (d) 小題要打掉的迷思", "new": "課本第 (d) 小題要釐清的差別", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 896}
+{"path": "tools/enrich/enrich_classification.py", "old": "一支 <code>sm.GLM()</code> 打三種模型", "new": "用 <code>sm.GLM()</code> 建立三種模型", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 805}
+{"path": "tools/enrich/enrich_resampling.py", "old": "報出來的誤差就不再誠實了。", "new": "報出的誤差會受到這次選擇影響。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 121}
+{"path": "tools/enrich/enrich_resampling.py", "old": "要降低這種隨機性的影響，正解是改用 k-fold CV，\"\n     \"不是換 seed。", "new": "可以用 k-fold CV 降低單次分割對結果的影響。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 121}
+{"path": "tools/enrich/enrich_resampling.py", "old": "第二項就吃掉了第一項的好處。", "new": "第二項就會抵銷第一項隨 k 減小的效果。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 259}
+{"path": "tools/enrich/enrich_resampling.py", "old": "它的缺點是變異與算力，不是誠實度。", "new": "它的主要代價是估計變異與計算量。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 274}
+{"path": "tools/enrich/enrich_resampling.py", "old": "那是加速手段，不是適用範圍。", "new": "這個公式提供加速方式；一般 LOOCV 的適用範圍更廣。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 276}
+{"path": "tools/enrich/enrich_resampling.py", "old": "的荒謬情況", "new": "的情況", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 292}
+{"path": "tools/enrich/enrich_resampling.py", "old": "任何誠實的方法都該回報", "new": "未洩漏驗證資訊的流程應回報", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 339}
+{"path": "tools/enrich/enrich_resampling.py", "old": "要誠實的估計，用", "new": "要把調參與評估分開，可以用", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 368}
+{"path": "tools/enrich/enrich_resampling.py", "old": "誠實的答案 ≈ 0.5", "new": "獨立評估的錯誤率 ≈ 0.5", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 647}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "三類方法都在做同一件事：<strong>用一點偏差換一大塊變異</strong>。", "new": "三類方法都透過<strong>接受一些偏差來降低變異</strong>。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 64}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "但在 p 大的時候變異大到讓它毫無用處", "new": "但在 p 大的時候，高變異會降低預測表現", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 65}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "實務上的誠實說法是：", "new": "可以依實際的選擇結果說：", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 465}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "（幾萬個基因裡真的有關的通常只有少數幾個）", "new": "（幾萬個基因裡有關的通常只有少數幾個）", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 678}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "或誠實做的交叉驗證", "new": "或將所有選擇步驟留在訓練折內的交叉驗證", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 661}
+{"path": "data/flashcards_zh/ch1.json", "old": "可以用研究目的與工作範圍理解它們，不必把同一個方法硬分到互斥的門派。", "new": "可依研究目的與工作範圍理解它們，同一個方法也能用於不同領域。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 4}
+{"path": "data/flashcards_zh/ch1.json", "old": "關係不必全是直線，也不必跟著每個觀測起伏。樣條平滑用可彎曲的函數描述趨勢，同時控制過度追逐雜訊的程度。", "new": "樣條平滑用可彎曲的函數描述關係，同時控制曲線的粗糙程度，讓趨勢估計較少受觀測雜訊影響。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 76}
+{"path": "data/flashcards_zh/ch1.json", "old": "生成結果看起來逼真，不代表每個細節都是事實。", "new": "生成結果的真實性仍需另外核對。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 100}
+{"path": "data/flashcards_zh/ch1.json", "old": "表示能由資料學得，不表示可以省略資料品質與結果評估。", "new": "使用學得的表示時，仍須確認資料品質與評估結果。", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 104}
+{"path": "data/flashcards_zh/ch5.json", "old": "的荒謬情況", "new": "的情況", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 13}
+{"path": "data/questions_zh/ch4.json", "old": "就是在打掉這個迷思", "new": "說明了這個差別", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 47}
+{"path": "data/questions_zh/ch4.json", "old": "變異吃掉一切", "new": "變異可能抵銷偏差降低的好處", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 48}
+{"path": "data/questions_zh/ch4.json", "old": "差別一點都不能忽略：", "new": "參數量的差別是：", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 49}
+{"path": "data/questions_zh/ch4.json", "old": "KNN 被維度詛咒打敗", "new": "KNN 容易受維度詛咒影響", "reason": "回讀後改為具體直述，移除說教或誇張措辭", "line_before": 84}
+{"path": "tools/enrich/enrich_resampling.py", "old": "\"<p>固定 seed 是為了讓結果<strong>可重現</strong>。\"\n     \"固定 seed 讓你（和讀你程式的人）能重跑出同樣的數字。</p>\"", "new": "\"<p>固定 seed 讓你和讀程式的人能重跑出同樣的數字，使結果<strong>可重現</strong>。</p>\"", "reason": "末輪回讀去除新增重複或修辭語氣，保留結果與條件", "line_before": 118}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "這個 λ 還不夠大，全部變數都活著。", "new": "在這個 λ 下，全部變數的係數都非零。", "reason": "末輪回讀去除新增重複或修辭語氣，保留結果與條件", "line_before": 1086}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "全部還活著", "new": "全部仍保留", "reason": "末輪回讀去除新增重複或修辭語氣，保留結果與條件", "line_before": 498}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "全部還活著", "new": "全部仍保留", "reason": "末輪回讀去除新增重複或修辭語氣，保留結果與條件", "line_before": 1095}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "存活的變數", "new": "保留的變數", "reason": "末輪回讀去除新增重複或修辭語氣，保留結果與條件", "line_before": 438}
+{"path": "tools/enrich/enrich_classification.py", "old": "反而是「QDA 與 Naive Bayes 誰都不是誰的特例」這一條，才是真的沒有包含關係。", "new": "「QDA 與 Naive Bayes 誰都不是誰的特例」表示兩者的函數族沒有包含關係。", "reason": "末輪回讀去除新增重複或修辭語氣，保留結果與條件", "line_before": 741}
+{"path": "tools/enrich/intro_visuals.py", "old": "這份資料另有癌症型別標籤，但眼前的任務是只根據基因表現探索結構，因此投影時不把型別當作y。", "new": "投影使用基因表現量探索結構；資料另附的癌症型別供投影完成後上色對照，未作為訓練目標y。", "reason": "主代理末輪對照後，以直述保留計算結果或資料角色", "line_before": 95}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "它的係數估計值不會剛好是 0，而是一個隨機的小數字。", "new": "它的係數估計值是一個隨機的小數字，通常會偏離 0。", "reason": "主代理末輪對照後，以直述保留計算結果或資料角色", "line_before": 668}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "K = 1 錯了。最近的一筆不是第 2 筆（距離 2），而是第 5 筆 (−1,0,1)，", "new": "K = 1 錯了。第 2 筆的距離為 2；最近的是第 5 筆 (−1,0,1)，", "reason": "主代理末輪對照後，以直述保留計算結果或資料角色", "line_before": 766}
+{"path": "tools/enrich/enrich_regression.py", "old": "不對，這就是這一題要抓的錯。35 只有在 GPA = 0 時才是完整的差距；真正的差距是 35 − 10·GPA，", "new": "不對。35 只有在 GPA = 0 時才是完整的差距；兩組的差距是 35 − 10·GPA，", "reason": "主代理末輪對照後，以直述保留計算結果或資料角色", "line_before": 959}
+{"path": "tools/enrich/enrich_intro.py", "old": "平均的計算用到全部數值，但把它們壓成一個數後，不會保留每一筆的位置及分布形狀。", "new": "平均值將全部數值概括成一個位置摘要；每筆資料的位置及分布形狀，仍須回到原始資料與圖形查看。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 272}
+{"path": "data/flashcards_zh/ch1.json", "old": "合成資料適合展示方法，但不能直接當成真實世界的實證結果。", "new": "合成資料適合展示方法；要提出真實世界的實證結論，仍須使用相應的觀測證據。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 56}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "但 Ridge 不是——係數變大 1000 倍，懲罰項就變大 10⁶ 倍，這個變數會被壓得特別兇。", "new": "Ridge 的懲罰會隨係數尺度改變：係數變大 1000 倍，懲罰項就變大 10⁶ 倍，這個變數受到的收縮也會更強。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 373}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "對<strong>最小平方</strong>成立（係數等比例調整、預測完全相同），但 Ridge 多了一個懲罰項，那一項不會隨著係數等比例縮放而抵消。", "new": "<strong>最小平方</strong>的係數等比例調整時，預測保持相同。Ridge 的懲罰項則依調整後的係數計算，換單位會改變懲罰與配適之間的取捨。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 383}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "係數的平均在線性模型上勉強可以定義，但那不是 CV 的用法，而且對非線性模型根本無法定義。CV 只回答「λ 該取多少」。", "new": "線性模型可定義係數平均；非線性模型則缺少這種共同的係數平均定義。本頁的 CV 流程用來比較 λ，選好後用全部訓練資料重新配適。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 518}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "模型有足夠自由度時它可能接近 1，但不能據此判斷泛化。", "new": "模型有足夠自由度時它可能接近 1；泛化表現仍須用未參與訓練的資料評估。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 656}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "同理，可能接近 0，卻沒有告訴你測試誤差。", "new": "同理，可能接近 0；測試誤差需要另外評估。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 657}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "訓練 R² = 1，但不能因此判斷新資料的預測表現", "new": "訓練 R² = 1；新資料的預測表現仍需獨立評估", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 683}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "對。列滿秩讓模型能插值這 50 筆資料，但係數不唯一；不同選解規則可能給出不同的新資料預測。", "new": "對。列滿秩讓模型能插值這 50 筆資料，且有多組係數可以達成；不同選解規則可能給出不同的新資料預測。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 684}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "係數不唯一不代表配適值算不出來。可以用偽逆選出一組解；但這個選解規則與它的測試表現，不能只靠訓練 R² 證明。", "new": "可以用偽逆從多組係數解中選出一組，計算配適值。選解規則的測試表現仍須由獨立評估確認，訓練 R² 只說明訓練配適。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 688}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "但測試誤差是另一回事：搜得最廣不代表泛化最好，過度搜尋反而更容易挑到剛好貼合訓練資料的模型。", "new": "測試誤差需要獨立評估；搜尋範圍擴大，也會增加選到恰好貼合訓練雜訊之模型的機會。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 698}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "搜得廣保證訓練 RSS 較小，但那正是過度配適的定義——對測試誤差沒有保證。", "new": "搜尋較廣可降低訓練 RSS，也可能配到更多訓練雜訊；測試誤差仍須另外評估。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 700}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "變異較低是 forward stepwise 的<em>優點</em>，但這只是機率上的傾向，不是保證。題目問的是「一定會是哪一個」，答案是不確定。", "new": "forward stepwise 通常有<em>較低的變異</em>；測試誤差還受偏差與資料影響。題目要求確定指出贏家，這些資訊不足以決定。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 702}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "這裡所有變數都無法提供母體的預測訊號，但最小平方仍能改善訓練配適。", "new": "這裡的變數全是雜訊，最小平方仍能利用樣本中的偶然關係改善訓練配適。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 650}
+{"path": "tools/enrich/enrich_modelsel.py", "old": "直覺上多一個變數只會提供更多資訊，最壞也就是沒用。但實際上每個變數都要花", "new": "每個新增變數都需要花", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 666}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "很接近，但不是最極端的那一端。最小平方會用上<strong>所有</strong>變數，", "new": "最小平方會用上<strong>所有</strong>變數，", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 323}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "對。更多同類資料通常有助於把 f 估得更穩，但不會改變母體的不可縮減誤差。", "new": "對。更多同類資料通常有助於把 f 估得更穩；母體的不可縮減誤差由既定資料分布決定，會保持相同。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 541}
+{"path": "tools/enrich/enrich_statlearn.py", "old": "但不會造成 K = 1 與 K = 25 之間的差距。這個差距來自方法的偏差與變異，", "new": "K = 1 與 K = 25 之間的差距則來自方法的偏差與變異，", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 703}
+{"path": "data/flashcards_zh/ch6.json", "old": "保證找到每個大小的最佳組合，但 p > 40 就算不完。", "new": "能找到每個大小的最佳組合；p > 40 時，計算量會超過可負擔範圍。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 2}
+{"path": "data/flashcards_zh/ch6.json", "old": "計算量與前向相同，但需要 n > p 才能配適起始的全模型，所以在高維度不能用。", "new": "計算量與前向相同。起始全模型要求 n > p，因此適用範圍受樣本數限制。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 4}
+{"path": "data/flashcards_zh/ch6.json", "old": "留下全部 p 個變數，但在目標函數上加懲罰項把係數往零壓", "new": "保留全部 p 個變數，透過目標函數中的懲罰項將係數往零壓", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 11}
+{"path": "data/flashcards_zh/ch6.json", "old": "但 statsmodels 用的 log-likelihood 版 −2 log L + 2k 與 Cp 不是單調對應。", "new": "statsmodels 採用 log-likelihood 版 −2 log L + 2k，與 Cp 的排序則可能不同。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 6}
+{"path": "data/flashcards_zh/ch6.json", "old": "λ = 0 是最小平方、λ → ∞ 所有係數趨近 0，但永遠不會剛好等於 0。", "new": "λ = 0 是最小平方；λ → ∞ 時係數逼近 0。一般情況下，有限 λ 會保留非零係數，極限才達到 0。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 12}
+{"path": "data/flashcards_zh/ch6.json", "old": "Ridge 的路徑一起往零靠但不觸零；", "new": "Ridge 的路徑向零靠近，並維持非零係數；", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 24}
+{"path": "data/flashcards_zh/ch6.json", "old": "最小平方可讓訓練 RSS = 0，但係數通常不唯一。插值不保證泛化，需要說明選解規則並用獨立資料評估。", "new": "最小平方可讓訓練 RSS = 0，通常有多組係數都能達成。需要說明選解規則，再用獨立資料評估泛化表現。", "reason": "最後加掃but-not型句式，分別直述方法行為與必要條件", "line_before": 26}
+{"path": "tools/enrich/intro_visuals.py", "old": "樣本中不同教育組的薪資分布不同，但不能直接推論教育造成差距", "new": "樣本中不同教育組的薪資分布不同；教育的因果效果仍須其他研究證據", "reason": "發布前補掃，以各自性質及所需證據取代but-not反駁", "line_before": 88}
+{"path": "tools/enrich/enrich_regression.py", "old": "但「這個變數整體有沒有用」的 F 檢定不會（P05 會看到）。", "new": "「這個變數整體有沒有用」的 F 檢定則保持相同（P05 會看到）。", "reason": "發布前補掃，以各自性質及所需證據取代but-not反駁", "line_before": 541}
+{"path": "tools/enrich/enrich_regression.py", "old": "剛好講反。模型矩陣雖然不同，但它們張出同一個線性空間，所以配適值與 R² 完全相同；會變的是係數。", "new": "兩個模型矩陣張出同一個線性空間，所以配適值與 R² 完全相同；換基準會改變係數的比較對象，因此係數會變。", "reason": "發布前補掃，以各自性質及所需證據取代but-not反駁", "line_before": 701}
+{"path": "tools/enrich/enrich_regression.py", "old": "一半對。<strong>配適</strong>不受影響（這半對），但<strong>係數的意義</strong>整個換了：", "new": "<strong>配適</strong>不受影響；<strong>係數的意義</strong>則隨比較對象改變：", "reason": "發布前補掃，以各自性質及所需證據取代but-not反駁", "line_before": 699}
+{"path": "tools/enrich/enrich_resampling.py", "old": "不對。樣本少會讓誤差不穩定（變異大），但這裡的問題是<strong>系統性偏低</strong>（偏差），不是不穩定。就算訓練資料很多，訓練誤差仍然偏低。", "new": "不對。樣本少會增加誤差估計的變異；訓練誤差還有<strong>系統性偏低</strong>的偏差。增加訓練資料後，用配適資料自評造成的偏差仍然存在。", "reason": "發布前補掃，以各自性質及所需證據取代but-not反駁", "line_before": 65}

@@ -728,21 +728,21 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>神經網路不是新東西：從線性模型長出隱藏層 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10 章開頭</a></span></h2>
+  <h2>從線性模型理解神經網路的隱藏層 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10 章開頭</a></span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>先講清楚這一章的定位：<strong>本課沒有教第 10 章</strong>。它不在考試範圍，
+  <p><strong>本課沒有教第 10 章</strong>。它不在考試範圍，
   也沒有對應的講義與 lab。放上來是因為前面九章把「線性模型 → 加彈性 → 加正則化 →
   換基底 → 集成」這條線走完之後，深度學習正好是同一條線的下一步，缺了它整本書會斷掉。</p>
 
-  <p>ISLP 用一個很不客氣的方式介紹神經網路：把式子攤開來看，它就是
+  <p>ISLP 從模型形式介紹神經網路：把式子攤開來看，它就是
   <strong>線性模型套一層非線性再線性組合一次</strong>。單層網路的預測函數長這樣：</p>
 
   $$f(X) = \beta_0 + \sum_{k=1}^{K} \beta_k \, g\!\left(w_{k0}
     + \sum_{j=1}^{p} w_{kj} X_j\right) \tag{10.1}$$
 
   <p>把 g 換成恆等函數，整條式子會塌回線性迴歸：兩層線性組合疊起來還是線性組合。
-  所以真正做事的是 g，其餘都是熟面孔。</p>
+  其中 g 提供非線性，其餘部分沿用線性組合。</p>
 
 <div class="info-box">
   <span class="info-label">這一章的六個主題</span>
@@ -791,7 +791,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="info-label">g 的兩個常見選擇</span>
   <strong>Sigmoid：</strong>g(z) = eᶻ/(1+eᶻ)，把任何實數壓進 (0, 1)。
   就是邏輯斯迴歸那個函數。缺點是 |z| 一大曲線就平掉，導數趨近 0，梯度傳不回去。<br>
-  <strong>ReLU：</strong>g(z) = max(0, z)。負的歸零、正的原樣過。導數不是 0 就是 1，
+  <strong>ReLU：</strong>g(z) = max(0, z)。負的歸零、正的原樣過。導數取 0 或 1，
   算得快也不會消失，現代網路的預設。
 </div>
 
@@ -823,7 +823,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：隱藏單元的個數 K 該怎麼選？</summary>
-    <div class="qa-a"><p>沒有公式，它是超參數，跟第 6 章的 λ、第 8 章的樹深度同一個地位，用交叉驗證或驗證集選。</p><p>但實務上的取法跟你想的可能不一樣：<strong>現代做法是先把 K 開大，再靠正則化（dropout、權重衰減、早停）把彈性收回來</strong>，而不是小心翼翼地找剛剛好的 K。原因在 §10.8：過度參數化的網路配上會找平滑解的 SGD，表現往往比「剛好夠用」的網路更好。</p></div>
+    <div class="qa-a"><p>沒有公式，它是超參數，跟第 6 章的 λ、第 8 章的樹深度同一個地位，用交叉驗證或驗證集選。</p><p>實務上也常<strong>先把 K 開大，再靠正則化（dropout、權重衰減、早停）把彈性收回來</strong>，這種做法的理由見 §10.8：過度參數化的網路配上會找平滑解的 SGD，表現往往比「剛好夠用」的網路更好。</p></div>
   </details>
   <details class="qa-item"><summary>Q：為什麼要標準化輸入？</summary>
     <div class="qa-a"><p>跟 SVM 與嶺迴歸的理由一樣：所有輸入共用同一個學習率與同一個權重衰減，尺度差很多時，數值大的那個變數會主宰梯度，小的那個幾乎不動。</p><p>官方 lab 的 Hitters 例子在 lasso 那條路上用 <code>StandardScaler</code> 包進 <code>Pipeline</code>，神經網路那條路則是先把整個 X 標準化再切訓練測試。要注意的是：<strong>標準化的統計量只能從訓練資料算</strong>，否則就是第 5 章講過的資料洩漏。</p></div>
@@ -945,14 +945,14 @@ Estimated Total Size (MB): 0.09
         test_mae            221.83148193359375
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 [{&#x27;test_loss&#x27;: 107904.640625, &#x27;test_mae&#x27;: 221.83148193359375}]</pre></div>
-  <p class="dx-note"><code>test_mae</code> = <strong>221.83</strong>，比 lasso 的 235.68 好。但先別急著下結論——<strong>課本 Table 10.2 裡神經網路是輸的</strong>（MAE 257.4 對線性迴歸的 254.7）。同一份資料、同一個做法，換個切分與 epoch 數就換了名次，這件事本身比誰贏更值得記住。</p>
+  <p class="dx-note"><code>test_mae</code> = <strong>221.83</strong>，比 lasso 的 235.68 好。但先別急著下結論——<strong>課本 Table 10.2 裡神經網路是輸的</strong>（MAE 257.4 對線性迴歸的 254.7）。同一份資料、同一個做法，換個切分與 epoch 數就換了名次，比較名次時也要交代這些設定。</p>
   <span class="dx-src">來源：<code>Ch10-deeplearning-lab.ipynb</code> · 儲存格 56、58</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 怎麼讀這組數字</div>
   <p>官方 lab 跑出線性 259.72、lasso 235.68、神經網路 221.83；課本 Table 10.2 卻是線性 254.7、lasso 252.3、神經網路 257.4。該怎麼解釋？</p>
-  <div class="quiz-options" id="qHitOptions"><div class="quiz-opt" data-correct="true" data-fb="對。測試集只有 88 筆，MAE 差二三十完全可能只是切分運氣。第 5 章講過的事在這裡照樣成立：<strong>要比較模型，得用交叉驗證或重複多次切分</strong>，不是看一次 hold-out。ISLP 自己的結論是三個模型「表現相近」，然後選簡單的那個。" onclick="quizCheck('qHit', this)"><span class="opt-letter">(A)</span> 兩邊是不同的隨機切分與訓練設定，這種量級的差距落在單一測試集的變異裡，不能當成「神經網路比較好」的證據</div><div class="quiz-opt" data-correct="false" data-fb="「比較新」不代表比較準。兩邊都只是各跑一次的單一測試集結果，新舊不會改變這一點。真要說的話，兩組數字都不該被當成定論。" onclick="quizCheck('qHit', this)"><span class="opt-letter">(B)</span> 官方 lab 的版本比較新，所以它的數字才是對的</div><div class="quiz-opt" data-correct="false" data-fb="反了，而且事實不對——lab 的 <code>HittersModel</code> 裡就有 <code>nn.Dropout(0.4)</code>，課本 Table 10.2 的註腳也說用了 10% dropout。兩邊都有正則化，差別在切分與訓練長度。" onclick="quizCheck('qHit', this)"><span class="opt-letter">(C)</span> 課本用了 dropout 而 lab 沒有，所以課本的神經網路比較差</div></div>
+  <div class="quiz-options" id="qHitOptions"><div class="quiz-opt" data-correct="true" data-fb="對。測試集只有 88 筆，MAE 差二三十完全可能只是切分運氣。第 5 章講過的事在這裡照樣成立：<strong>要比較模型，得用交叉驗證或重複多次切分</strong>，需要更多切分或重複訓練的結果來判斷。ISLP 自己的結論是三個模型「表現相近」，然後選簡單的那個。" onclick="quizCheck('qHit', this)"><span class="opt-letter">(A)</span> 兩邊是不同的隨機切分與訓練設定，這種量級的差距落在單一測試集的變異裡，不能當成「神經網路比較好」的證據</div><div class="quiz-opt" data-correct="false" data-fb="「比較新」不代表比較準。兩邊都只是各跑一次的單一測試集結果，新舊不會改變這一點。真要說的話，兩組數字都不該被當成定論。" onclick="quizCheck('qHit', this)"><span class="opt-letter">(B)</span> 官方 lab 的版本比較新，所以它的數字才是對的</div><div class="quiz-opt" data-correct="false" data-fb="反了，而且事實不對——lab 的 <code>HittersModel</code> 裡就有 <code>nn.Dropout(0.4)</code>，課本 Table 10.2 的註腳也說用了 10% dropout。兩邊都有正則化，差別在切分與訓練長度。" onclick="quizCheck('qHit', this)"><span class="opt-letter">(C)</span> 課本用了 dropout 而 lab 沒有，所以課本的神經網路比較差</div></div>
   <div class="quiz-feedback" id="qHitFeedback"></div>
 </div>
 </section>
@@ -962,7 +962,7 @@ Estimated Total Size (MB): 0.09
   <h2>疊第二層之後：softmax 與 235,146 個參數 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.2 節</a></span><span class="sec-badge"><a href="#w11-source-esl">進階參考 · 第 11.4–11.6 節</a></span></h2>
 <!-- GEN:END sec:multi -->
 
-  <p>多加一層之後，第二層的輸入不再是 X，而是第一層的輸出 A^(1)。
+  <p>多加一層之後，第二層接收第一層的輸出 A^(1)，由它繼續計算。
   式子還是那個式子，只是套了兩次：</p>
 
   $$A^{(1)}_k = g\!\left(w^{(1)}_{k0} + \sum_j w^{(1)}_{kj} X_j\right),
@@ -1122,7 +1122,7 @@ Estimated Total Size (MB): 2.55
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 參數量</div>
   <p>一個網路是 784 → 256 → 128 → 10 的全連接架構（每層都有偏置）。第一層有幾個參數？</p>
-  <div class="quiz-options" id="qParamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。一層從 a 接到 b 就是 (a+1)×b 個參數。整個網路 200,960 + 32,896 + 1,290 = <strong>235,146</strong>，正好是 ISLP §10.2 印的那個數字。" onclick="quizCheck('qParam', this)"><span class="opt-letter">(A)</span> 200,960 個：權重 784×256 = 200,704，加上 256 個偏置</div><div class="quiz-opt" data-correct="false" data-fb="偏置也要估，當然算參數。它就是迴歸裡的截距，你不會說線性迴歸的 β₀ 不是參數。少算 256 個雖然不影響量級，但習題 1(d) 考的正是這個細節。" onclick="quizCheck('qParam', this)"><span class="opt-letter">(B)</span> 200,704 個，偏置不算參數因為它不乘任何輸入</div><div class="quiz-opt" data-correct="false" data-fb="把「單元個數」當成「參數個數」了。參數在<strong>連線</strong>上，不在單元上：784 個輸入各自連到 256 個隱藏單元，連線數是相乘不是相加。" onclick="quizCheck('qParam', this)"><span class="opt-letter">(C)</span> 1,040 個：784 + 256 個單元各一個參數</div></div>
+  <div class="quiz-options" id="qParamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。一層從 a 接到 b 就是 (a+1)×b 個參數。整個網路 200,960 + 32,896 + 1,290 = <strong>235,146</strong>，正好是 ISLP §10.2 印的那個數字。" onclick="quizCheck('qParam', this)"><span class="opt-letter">(A)</span> 200,960 個：權重 784×256 = 200,704，加上 256 個偏置</div><div class="quiz-opt" data-correct="false" data-fb="偏置也需要估計，因此計入參數個數。它就是迴歸裡的截距，線性迴歸的 β₀ 也包含在參數計數中。少算 256 個後，結果仍在相同量級；習題 1(d) 要求把偏置一併計入。" onclick="quizCheck('qParam', this)"><span class="opt-letter">(B)</span> 200,704 個，偏置不算參數因為它不乘任何輸入</div><div class="quiz-opt" data-correct="false" data-fb="把「單元個數」當成「參數個數」了。參數應按<strong>連線</strong>上的權重計數：784 個輸入各自連到 256 個隱藏單元，連線數由輸入數乘上隱藏單元數得到。" onclick="quizCheck('qParam', this)"><span class="opt-letter">(C)</span> 1,040 個：784 + 256 個單元各一個參數</div></div>
   <div class="quiz-feedback" id="qParamFeedback"></div>
 </div>
 </section>
@@ -1172,11 +1172,11 @@ Estimated Total Size (MB): 2.55
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
-  <details class="qa-item"><summary>Q：池化為什麼要「丟掉資訊」？那不是壞事嗎？</summary>
+  <details class="qa-item"><summary>Q：池化為什麼要「丟掉資訊」？這樣有什麼好處？</summary>
     <div class="qa-a"><p>丟掉的是位置的精度，留下的是「這個特徵存不存在」。對分類來說後者才是重點——你要判斷這是不是一隻貓，不需要知道耳朵精確在第 137 個像素。</p><p>更實際的理由是它讓後面的層看得更廣。經過一次 2×2 池化，同樣一個 3×3 濾波器在原圖上涵蓋的範圍就變成兩倍。<strong>堆疊「卷積＋池化」等於一步步擴大視野</strong>：前面的層看邊緣與紋理，後面的層看得到整隻動物。官方 lab 的 <code>CIFARModel</code> 疊了四組，32×32 因此縮成 2×2。</p></div>
   </details>
   <details class="qa-item"><summary>Q：資料擴增算正則化嗎？</summary>
-    <div class="qa-a"><p>算，而且 ISLP §10.3.4 就是這樣定位它的。把訓練影像隨機翻轉、平移、縮放之後標籤不變，等於在告訴模型「這些變化不該影響答案」。這是一個很強的約束，跟嶺迴歸用懲罰項限制係數是同一種事，都在縮小模型能選的函數空間。</p><p>差別在於它是<strong>用資料表達</strong>的約束，不是用公式。好處是很容易加進任何模型；壞處是你得知道哪些變化是無害的（影像可以左右翻，手寫數字的 6 跟 9 就不能上下翻）。</p></div>
+    <div class="qa-a"><p>算，而且 ISLP §10.3.4 就是這樣定位它的。把訓練影像隨機翻轉、平移、縮放之後標籤不變，等於在告訴模型「這些變化不該影響答案」。這是一個很強的約束，跟嶺迴歸用懲罰項限制係數是同一種事，都在縮小模型能選的函數空間。</p><p>差別在於它是<strong>用資料表達</strong>的約束。好處是很容易加進任何模型；壞處是你得知道哪些變化是無害的（影像可以左右翻，手寫數字的 6 跟 9 就不能上下翻）。</p></div>
   </details>
 </div>
 
@@ -1291,14 +1291,14 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 卷積的參數量</div>
   <p>輸入是 32×32 的灰階影像，一個卷積層有三個 5×5 濾波器、不做邊界填補。這一層要估幾個參數？</p>
-  <div class="quiz-options" id="qConvOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每個濾波器 25 個權重加 1 個偏置，三個就是 78。<strong>跟輸入影像多大完全無關</strong>，這正是權重共享的意思。順帶算一下輸出：不填補時每張特徵圖是 (32−5+1)² = 28×28，三張共 2,352 個隱藏單元。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(A)</span> 78 個：3 × (5×5 + 1)</div><div class="quiz-opt" data-correct="false" data-fb="那是<strong>單元</strong>個數不是<strong>參數</strong>個數。這 2,352 個單元全都由同樣的 78 個參數算出來，它們共享權重，只是對齊到影像的不同位置。這個區別是習題 4(c) 的重點。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(B)</span> 2,352 個，因為輸出有 3 × 28 × 28 個隱藏單元</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>拿掉權重共享之後</strong>的答案，也就是習題 4(d) 問的那個數字（2,352 × 1,024）。卷積層之所以叫「加了限制的全連接層」，就是因為它把這兩百多萬個權重綁成只有 78 個自由參數。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(C)</span> 2,408,448 個，每個隱藏單元都要連到全部 1,024 個像素</div></div>
+  <div class="quiz-options" id="qConvOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每個濾波器 25 個權重加 1 個偏置，三個就是 78。<strong>跟輸入影像多大完全無關</strong>，這正是權重共享的意思。順帶算一下輸出：不填補時每張特徵圖是 (32−5+1)² = 28×28，三張共 2,352 個隱藏單元。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(A)</span> 78 個：3 × (5×5 + 1)</div><div class="quiz-opt" data-correct="false" data-fb="這個數字計算的是<strong>單元</strong>；<strong>參數</strong>還需依共用權重計數。這 2,352 個單元全都由同樣的 78 個參數算出來，它們共享權重，只是對齊到影像的不同位置。這個區別是習題 4(c) 的重點。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(B)</span> 2,352 個，因為輸出有 3 × 28 × 28 個隱藏單元</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>拿掉權重共享之後</strong>的答案，也就是習題 4(d) 問的那個數字（2,352 × 1,024）。卷積層之所以叫「加了限制的全連接層」，就是因為它把這兩百多萬個權重綁成只有 78 個自由參數。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(C)</span> 2,408,448 個，每個隱藏單元都要連到全部 1,024 個像素</div></div>
   <div class="quiz-feedback" id="qConvFeedback"></div>
 </div>
 </section>
 <section id="rnn">
 <!-- GEN:BEGIN sec:rnn -->
   <div class="section-number">PART 04 · 文件分類與 RNN</div>
-  <h2>順序有意義的時候：詞袋不夠用 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.4 節</a></span><span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.5 節</a></span></h2>
+  <h2>文件分類中的詞袋表示與順序資訊 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.4 節</a></span><span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.5 節</a></span></h2>
 <!-- GEN:END sec:rnn -->
 
   <p>影像的結構是空間上的，文字與股價的結構是<strong>順序上的</strong>。
@@ -1307,7 +1307,7 @@ Image: book_images/Sleeping_Cat.jpg
   然後就當成普通的分類問題丟給 lasso 或神經網路。</p>
 
   <p>詞袋完全丟掉詞序，所以「這部片一點都不好看」跟「這部片好看一點都不」是同一個向量。
-  聽起來很糟，實際上在情感分類這種任務上表現意外地好，因為有沒有出現
+  詞袋在情感分類這種任務上仍可有良好表現，因為有沒有出現
   <em>terrible</em> 這個詞，本身就是很強的訊號。</p>
 
 <div class="deck-extra">
@@ -1336,8 +1336,8 @@ Image: book_images/Sleeping_Cat.jpg
   只是換成在時間上共享。序列多長都用同一組參數。</p>
 
 <div class="info-box purple">
-  <span class="info-label">RNN 真正共享的是參數，不是手寫的詞語分數</span>
-  每個時間點都套用同一組 <strong>W、U、b</strong>：目前輸入 Xℓ 與上一個狀態 Aℓ−1 一起產生新狀態 Aℓ。權重必須從資料學出來；本站不再用人工指定的情感權重或『遇到否定詞就翻轉』規則冒充 RNN 預測。
+  <span class="info-label">RNN 在各時間點共用參數</span>
+  每個時間點都套用同一組 <strong>W、U、b</strong>：目前輸入 Xℓ 與上一個狀態 Aℓ−1 一起產生新狀態 Aℓ。這些權重由訓練資料學得。
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1346,8 +1346,8 @@ Image: book_images/Sleeping_Cat.jpg
 </table></div>
 
 <div class="info-box">
-  <span class="info-label">黃金參考</span>
-  這裡只解釋 ISLP §10.5 的 recurrence 結構；模型表現回到下面官方 lab 的 LSTM 與詞袋實跑結果比較。公式說明架構，lab 數字才是這個任務的證據。
+  <span class="info-label">架構與模型表現</span>
+  這裡只解釋 ISLP §10.5 的 recurrence 結構；模型表現回到下面官方 lab 的 LSTM 與詞袋實跑結果比較。公式說明架構，lab 結果提供這次配適的表現。
 </div>
 
   <h3 id="dx-lstm">官方 lab §10.9.6：LSTM 與時間序列</h3>
@@ -1392,14 +1392,14 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 詞袋輸給 RNN 了嗎</div>
   <p>IMDB 上詞袋加兩層網路是 0.8450，LSTM 是 0.8400。下面哪一句最站得住腳？</p>
-  <div class="quiz-options" id="qSeqOptions"><div class="quiz-opt" data-correct="true" data-fb="對。情感分類很大程度上是關鍵詞偵測，<em>terrible</em>、<em>masterpiece</em> 出現與否就決定大半。ISLP 的立場一貫：<strong>先試簡單的，複雜模型要證明自己值得</strong>。順帶一提，0.845 與 0.840 這種差距在 25,000 筆測試集上也接近雜訊。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(A)</span> 這個任務的訊號多半在「有沒有出現某些詞」，詞序能加的資訊有限，所以兩者打平不奇怪</div><div class="quiz-opt" data-correct="false" data-fb="從一個任務、一次訓練就推翻整個架構，太快了。RNN 與其後繼者在機器翻譯、語音辨識上的優勢很清楚：那些任務的輸出本身就是序列，詞序不是加分項而是必要條件。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(B)</span> LSTM 比較差，代表遞迴架構不適合處理文字</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個推測，而且它把問題想反了：訓練更久通常先過度配適。要主張 LSTM 有潛力，該做的是畫學習曲線看驗證誤差還有沒有在降，不是假設它一定會贏。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(C)</span> 因為 LSTM 只訓練了很少的 epoch，訓練久一點就會贏</div></div>
+  <div class="quiz-options" id="qSeqOptions"><div class="quiz-opt" data-correct="true" data-fb="對。情感分類很大程度上是關鍵詞偵測，<em>terrible</em>、<em>masterpiece</em> 出現與否就決定大半。ISLP 的立場一貫：<strong>先試簡單的，複雜模型要證明自己值得</strong>。順帶一提，0.845 與 0.840 這種差距在 25,000 筆測試集上也接近雜訊。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(A)</span> 這個任務的訊號多半在「有沒有出現某些詞」，詞序能加的資訊有限，所以兩者打平不奇怪</div><div class="quiz-opt" data-correct="false" data-fb="一個任務與一次訓練不足以判斷整個架構的適用性。RNN 與其後繼者在機器翻譯、語音辨識上的優勢很清楚：那些任務的輸出本身就是序列，詞序是完成這些任務的必要資訊。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(B)</span> LSTM 比較差，代表遞迴架構不適合處理文字</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個推測，而且它把問題想反了：訓練更久通常先過度配適。要主張 LSTM 有潛力，該做的是畫學習曲線看驗證誤差還有沒有在降，再根據驗證結果判斷是否繼續訓練。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(C)</span> 因為 LSTM 只訓練了很少的 epoch，訓練久一點就會贏</div></div>
   <div class="quiz-feedback" id="qSeqFeedback"></div>
 </div>
 </section>
 <section id="fitting">
 <!-- GEN:BEGIN sec:fitting -->
   <div class="section-number">PART 05 · 怎麼配適</div>
-  <h2>反向傳播、SGD、dropout：非凸問題怎麼還是解得動 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.7 節</a></span><span class="sec-badge"><a href="#w11-source-esl">進階參考 · 第 11.4 節 · 進階</a></span></h2>
+  <h2>反向傳播、SGD、dropout：神經網路的訓練流程 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.7 節</a></span><span class="sec-badge"><a href="#w11-source-esl">進階參考 · 第 11.4 節 · 進階</a></span></h2>
 <!-- GEN:END sec:fitting -->
 
   <p>前面都在講模型長什麼樣，這一節講怎麼把參數估出來。目標函數以量化反應為例：</p>
@@ -1410,13 +1410,13 @@ Image: book_images/Sleeping_Cat.jpg
   <p>問題在於這個 R(θ) <strong>不是凸函數</strong>。線性迴歸有閉式解、
   邏輯斯迴歸的對數似然是凹的所以有唯一最大值，神經網路兩個都沒有：
   它有很多局部極小，而我們只能用梯度下降慢慢滑下去、
-  接受「找到一個夠好的解」而不是「找到最好的解」。</p>
+  以找到足夠好的解為目標，保留全域最優性尚未確定的限制。</p>
 
 <div class="viz-layout" data-provenance="book-redraw">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w11gdChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：同一個函數、同一個學習率，只是起點不同，梯度下降就會滑進不同的局部極小，這就是非凸最佳化的日常。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：同一個函數、同一個學習率，只是起點不同，梯度下降就會滑進不同的局部極小，這是非凸最佳化可能出現的結果。</div></div>
       </div>
       <div class="status-banner" id="w11gdStatus"><span class="status-icon">›</span><span class="status-text">拖滑桿改起點與學習率，按「開始」看軌跡。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 180px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:26px;">β⁰</span><input type="range" id="w11gdB0s" min="-6" max="6" step="0.1" value="2.3" oninput="w11gdSync()" onchange="w11gdSync()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w11gdB0v" style="min-width:44px;">2.3</span></div><div class="slider-row" style="flex:1 1 180px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:22px;">ρ</span><input type="range" id="w11gdRhos" min="0.02" max="1.6" step="0.02" value="0.1" oninput="w11gdSync()" onchange="w11gdSync()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w11gdRhov" style="min-width:44px;">0.10</span></div><button class="btn btn-play" onclick="w11gdRun()">▶ 開始</button><button class="btn btn-reset" onclick="w11gdReset()">重置</button></div>
@@ -1442,7 +1442,7 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="info-box">
   <span class="info-label">三個讓它跑得動的技巧</span>
   <strong>反向傳播：</strong>用連鎖律由輸出往回逐層算梯度，
-  重複利用前一層算好的中間量。它不是另一種演算法，只是把梯度算得夠便宜——
+  重複利用前一層算好的中間量，
   成本跟一次前向傳播同一個量級。<br>
   <strong>隨機梯度下降：</strong>每一步只用一小批（minibatch）樣本估梯度。
   除了便宜，取樣雜訊本身還有正則化效果，也幫忙跳出不好的局部極小。<br>
@@ -1458,7 +1458,7 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：非凸為什麼還敢用？局部極小不會害死我們嗎？</summary>
-    <div class="qa-a"><p>會，但沒有想像中嚴重，原因有幾個層次。</p><p>第一，實務上在高維空間裡，真正的「壞局部極小」比想像中少：更常見的是鞍點，而 SGD 的雜訊很容易把你推離鞍點。第二，我們要的不是訓練誤差的全域最小，而是<strong>測試</strong>誤差夠低；訓練誤差的全域最小很可能就是嚴重過度配適的那個點。</p><p>第三，這是誠實的部分：<strong>它就是會隨機。</strong>同一份資料換一個隨機種子，跑出來的網路不一樣、測試誤差也不一樣。官方 lab 每次訓練前都呼叫 <code>seed_everything</code>，並在 <code>Trainer</code> 裡設 <code>deterministic=True</code>，就是為了讓結果可重現。</p></div>
+    <div class="qa-a"><p>會。以下幾個因素有助於找到可用的解。</p><p>第一，實務上在高維空間裡，會嚴重影響結果的局部極小相對較少：更常見的是鞍點，而 SGD 的雜訊很容易把你推離鞍點。第二，學習的目標是降低<strong>測試</strong>誤差；訓練誤差的全域最小值本身不足以衡量泛化；訓練誤差的全域最小很可能就是嚴重過度配適的那個點。</p><p>第三，這是誠實的部分：<strong>它就是會隨機。</strong>同一份資料換一個隨機種子，跑出來的網路不一樣、測試誤差也不一樣。官方 lab 每次訓練前都呼叫 <code>seed_everything</code>，並在 <code>Trainer</code> 裡設 <code>deterministic=True</code>，就是為了讓結果可重現。</p></div>
   </details>
   <details class="qa-item"><summary>Q：dropout 為什麼要「按比例放大」？</summary>
     <div class="qa-a"><p>因為訓練與預測時的行為必須對得起來。訓練時如果丟掉 40% 的單元，下一層收到的加總平均就只剩 60%；預測時所有單元都在，加總會突然變大 1/0.6 倍，模型等於面對一個沒見過的輸入分布。</p><p>解法是訓練時把留下來的值除以 0.6，讓期望值維持不變，預測時就什麼都不用做。這叫 inverted dropout，也是 <code>nn.Dropout</code> 的做法。順帶一提，這就是為什麼 <code>model.eval()</code> 很重要——它會關掉 dropout；忘了呼叫的話預測會帶著隨機性。</p></div>
@@ -1468,18 +1468,18 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · minibatch 的大小</div>
   <p>把批次大小從 32 改成整個訓練集（也就是每一步都用全部資料算梯度），會發生什麼？</p>
-  <div class="quiz-options" id="qSgdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。梯度更準不等於學得更好：<strong>參數更新的次數大幅減少</strong>，同樣的 epoch 數下走的路短很多。而且 SGD 的取樣雜訊是有用的：它幫忙跳出不好的局部極小，也讓解偏向比較平坦、泛化比較好的區域。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(A)</span> 每一步的梯度更準，但一個 epoch 只更新一次參數，而且失去了雜訊帶來的正則化</div><div class="quiz-opt" data-correct="false" data-fb="期望值確實一樣，但最佳化不是只看期望值。<strong>變異數也是演算法行為的一部分</strong>——雜訊改變了它會走到哪裡去。而且更新次數差了 n/32 倍，這一點跟期望值無關。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(B)</span> 完全一樣，因為梯度的期望值不變</div><div class="quiz-opt" data-correct="false" data-fb="算一次全資料的梯度本來就比算一個批次貴 n/32 倍，總計算量沒有變少。而且大批次沒辦法塞進記憶體是很常見的實際限制，minibatch 一開始就是為了這個而發明的。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(C)</span> 會更快，因為少了每個批次的額外開銷</div></div>
+  <div class="quiz-options" id="qSgdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。梯度更準不等於學得更好：<strong>參數更新的次數大幅減少</strong>，同樣的 epoch 數下走的路短很多。而且 SGD 的取樣雜訊是有用的：它幫忙跳出不好的局部極小，也讓解偏向比較平坦、泛化比較好的區域。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(A)</span> 每一步的梯度更準，但一個 epoch 只更新一次參數，而且失去了雜訊帶來的正則化</div><div class="quiz-opt" data-correct="false" data-fb="期望值確實一樣，但最佳化還受到梯度變動的影響。<strong>變異數也是演算法行為的一部分</strong>——雜訊改變了它會走到哪裡去。而且更新次數差了 n/32 倍，這一點跟期望值無關。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(B)</span> 完全一樣，因為梯度的期望值不變</div><div class="quiz-opt" data-correct="false" data-fb="算一次全資料的梯度本來就比算一個批次貴 n/32 倍，總計算量沒有變少。而且大批次沒辦法塞進記憶體是很常見的實際限制，minibatch 一開始就是為了這個而發明的。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(C)</span> 會更快，因為少了每個批次的額外開銷</div></div>
   <div class="quiz-feedback" id="qSgdFeedback"></div>
 </div>
 </section>
 <section id="doubledesc">
 <!-- GEN:BEGIN sec:doubledesc -->
   <div class="section-number">PART 06 · 雙下降與該不該用</div>
-  <h2>參數比樣本多還會變好？以及什麼時候該收手 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.8 節</a></span><span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.6 節</a></span></h2>
+  <h2>參數比樣本多還會變好？以及如何評估模型 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.8 節</a></span><span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.6 節</a></span></h2>
 <!-- GEN:END sec:doubledesc -->
 
   <p>從第 2 章開始，這本書一直在講同一件事：測試誤差對模型彈性是 U 形的，
-  所以不要把訓練誤差壓到 0。§10.8 要示範一個看起來完全相反的現象。</p>
+  因此把訓練誤差壓到 0 後，仍需檢查泛化表現。§10.8 進一步討論雙下降現象。</p>
 
   <p>設定很簡單，用的還是第 7 章的自然樣條，跟神經網路無關：
   n = 20 筆資料來自 Y = sin(X) + ε，X 均勻分布在 [−5, 5]、ε 的標準差是 0.3。
@@ -1497,7 +1497,7 @@ Image: book_images/Sleeping_Cat.jpg
       </div>
       <div class="status-banner" id="w11ddStatus"><span class="status-icon">›</span><span class="status-text">紅線是測試誤差、藍線是訓練誤差。注意 d = 20 那根尖峰。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w11ddShow(&quot;err&quot;)">誤差曲線</button><button class="btn btn-toggle" onclick="w11ddShow(&quot;fit&quot;)">看配適曲線</button><label class="slider-label">面板 d</label><select id="w11ddSel" class="mono" onchange="w11ddShow(&quot;fit&quot;)"><option value="8">d = 8</option><option value="20" selected>d = 20</option><option value="42">d = 42</option><option value="80">d = 80</option></select></div>
-      <div class="viz-source"><span>固定種子模擬</span>固定種子重跑 ISLP 圖 10.20／10.21 的設定；不是複製課本點。</div>
+      <div class="viz-source"><span>固定種子模擬</span>依 ISLP 圖 10.20／10.21 的設定以固定種子重新模擬；數值為本站計算。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1511,20 +1511,20 @@ Image: book_images/Sleeping_Cat.jpg
     </div>
     <div class="info-card">
       <div class="ic-title">兩個要注意的地方</div>
-      d = 20 只有一種方式穿過 20 個點，而那一種很極端；d = 42 有無限多種，挑最平滑的那一種當然溫和得多。切到配適曲線會看到 Σβ² <strong>在 d = 20 最大、之後反而變小</strong>。<br>另外，訓練誤差在 d ≥ 20 之後<strong>真的是 0</strong>（10⁻²⁸ 量級），但對數軸畫不出 0，所以藍線被壓在 10⁻⁵ 的底線上。
+      d = 20 只有一種方式穿過 20 個點，而那一種很極端；d = 42 有無限多種，挑出的平滑解有較小的起伏。切到配適曲線會看到 Σβ² <strong>在 d = 20 最大、之後反而變小</strong>。<br>另外，訓練誤差在 d ≥ 20 之後<strong>真的是 0</strong>（10⁻²⁸ 量級），但對數軸畫不出 0，所以藍線被壓在 10⁻⁵ 的底線上。
     </div>
   </div>
 </div>
 
 <div class="info-box">
   <span class="info-label">雙下降沒有推翻偏差–變異取捨</span>
-  ISLP 把話講得很白：橫軸畫的是「基底函數的個數」，
-  而那並沒有正確反映內插模型真正的彈性。d = 42 的最小範數樣條，
+  ISLP 提醒讀者：橫軸畫的是「基底函數的個數」，
+  而那並沒有正確反映內插模型實際的彈性。d = 42 的最小範數樣條，
   變異其實比 d = 20 的樣條<strong>小</strong>，它只是用比較多的基底去表達一個比較平滑的函數。<br>
   另外兩件要記住的事：<strong>這本書裡大多數方法不會出現雙下降</strong>
   （正則化方法通常不內插資料）；而且在這個例子裡，
   如果改用嶺迴歸配樣條並好好選懲罰項，測試誤差還會更低。
-  <strong>雙下降不是「參數愈多愈好」的許可證。</strong>
+  <strong>判斷模型大小時，仍需比較正則化與測試誤差。</strong>
 </div>
 
   <p>這跟深度學習的關係在最後一段：訓練神經網路時我們常常用遠多於樣本數的參數，
@@ -1540,8 +1540,8 @@ Image: book_images/Sleeping_Cat.jpg
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 雙下降在說什麼</div>
-  <p>下面哪一句是 ISLP §10.8 真正主張的？</p>
-  <div class="quiz-options" id="qDdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。關鍵不在「參數變多」，而在<strong>參數變多之後我們有得挑</strong>，而挑的規則（最小範數）偏好平滑。d = n 時只有一種穿法，別無選擇，所以最糟。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(A)</span> 測試誤差的第二次下降，是因為 d > n 時我們挑了最小範數解，而它比 d = n 的唯一內插解平滑得多</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 明確反駁了這個讀法。取捨仍然成立，只是橫軸那個「基底個數」沒有正確衡量彈性。而且課本自己說了，同一個例子改用嶺迴歸會得到<strong>更低</strong>的測試誤差。大模型不是免費的午餐。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(B)</span> 偏差–變異取捨在深度學習裡不成立，模型愈大測試誤差就愈低</div><div class="quiz-opt" data-correct="false" data-fb="順序反了。d = 20 就已經把訓練誤差壓到 0，而那正是測試誤差最糟的地方。零訓練誤差是必要條件不是充分條件，還要那個內插解夠平滑才行。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(C)</span> 只要把訓練誤差壓到 0，測試誤差就會開始下降</div></div>
+  <p>下面哪一句符合 ISLP §10.8 的說明？</p>
+  <div class="quiz-options" id="qDdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。參數變多之後，<strong>有多個內插解可供選擇</strong>，而挑的規則（最小範數）偏好平滑。d = n 時只有一種穿法，別無選擇，所以最糟。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(A)</span> 測試誤差的第二次下降，是因為 d > n 時我們挑了最小範數解，而它比 d = n 的唯一內插解平滑得多</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 明確反駁了這個讀法。取捨仍然成立，只是橫軸那個「基底個數」沒有正確衡量彈性。而且課本自己說了，同一個例子改用嶺迴歸會得到<strong>更低</strong>的測試誤差。增加模型大小仍有配適與泛化的取捨。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(B)</span> 偏差–變異取捨在深度學習裡不成立，模型愈大測試誤差就愈低</div><div class="quiz-opt" data-correct="false" data-fb="順序反了。d = 20 就已經把訓練誤差壓到 0，而那正是測試誤差最糟的地方。零訓練誤差是必要條件；要出現這裡的第二次下降，仍需選到夠平滑的內插解。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(C)</span> 只要把訓練誤差壓到 0，測試誤差就會開始下降</div></div>
   <div class="quiz-feedback" id="qDdFeedback"></div>
 </div>
 </section>
@@ -1550,35 +1550,35 @@ Image: book_images/Sleeping_Cat.jpg
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：教科書第 10 章精選題 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.10 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §10.10 的課後習題，題號都對得回課本。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面2個站。</p>
+  每個選項都有解說；需要完整解答時，可查閱下面2個站。</p>
   <div class="sol-links"><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch10.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 10.10 第 1 題（d）</div>
   <p>一個網路有 p = 4 個輸入、第一層 2 個隱藏單元、第二層 3 個隱藏單元、單一輸出，每一層都有偏置。總共有幾個參數？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。逐層算：4→2 是 (4+1)×2 = 10；2→3 是 (2+1)×3 = 9；3→1 是 (3+1)×1 = 4。合計 <strong>23</strong>。訣竅是每一層都用 (輸入數 + 1) × 輸出數，那個 +1 就是偏置。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 23 個</div><div class="quiz-opt" data-correct="false" data-fb="這是忘了偏置的答案：4×2 + 2×3 + 3×1 = 17。偏置每一個輸出單元都有一個，這裡共 2 + 3 + 1 = 6 個，加回去才是 23。本題的 (d) 小題考的就是這個細節。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 17 個</div><div class="quiz-opt" data-correct="false" data-fb="把單元個數加起來了（4 + 2 + 3 + 1 = 10）。參數在<strong>連線</strong>上不在單元上：單元只是中間量，它的值是算出來的，不需要估。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 10 個</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。逐層算：4→2 是 (4+1)×2 = 10；2→3 是 (2+1)×3 = 9；3→1 是 (3+1)×1 = 4。合計 <strong>23</strong>。訣竅是每一層都用 (輸入數 + 1) × 輸出數，那個 +1 就是偏置。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 23 個</div><div class="quiz-opt" data-correct="false" data-fb="這是忘了偏置的答案：4×2 + 2×3 + 3×1 = 17。偏置每一個輸出單元都有一個，這裡共 2 + 3 + 1 = 6 個，加回去才是 23。本題的 (d) 小題考的就是這個細節。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 17 個</div><div class="quiz-opt" data-correct="false" data-fb="把單元個數加起來了（4 + 2 + 3 + 1 = 10）。應計算<strong>連線</strong>上的權重；單元表示中間量，它的值是算出來的，不需要估。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 10 個</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · ISLP 10.10 第 2 題（a）</div>
   <p>softmax 的定義是 f_m(X) = e^{{Z_m}} / Σ_ℓ e^{{Z_ℓ}}。把每一個 Z_ℓ 都加上同一個常數 c，機率會怎麼變？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。分子變成 e^(Z_m + c) = e^c·e^(Z_m)，分母變成 e^c·Σ e^(Z_ℓ)，e^c 上下消掉。這說明 softmax 是<strong>過度參數化</strong>的——有一整族參數給出完全一樣的預測。實務上靠正則化與 SGD 把解釘在一個地方；第 4 章的多元邏輯斯迴歸則是挑一個類別當基準來解決。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 完全不變，因為分子分母各多出一個 e^c，約掉了</div><div class="quiz-opt" data-correct="false" data-fb="只有分子乘上 e^c 的話確實會這樣，但<strong>分母也一起乘了</strong>——分母是所有 e^{{Z_ℓ}} 的和，每一項都多了 e^c。加總永遠是 1 是 softmax 的定義保證的。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 每個機率都乘上 e^c，所以加總不再是 1</div><div class="quiz-opt" data-correct="false" data-fb="「加常數」跟「壓縮」是兩回事。真正會讓機率變平均的是把所有 Z_ℓ 同時<strong>除以</strong>一個大於 1 的數（那就是溫度縮放），那是乘法不是加法。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 機率會變得更平均，因為指數函數把大的值壓縮了</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。分子變成 e^(Z_m + c) = e^c·e^(Z_m)，分母變成 e^c·Σ e^(Z_ℓ)，e^c 上下消掉。這說明 softmax 是<strong>過度參數化</strong>的——有一整族參數給出完全一樣的預測。實務上靠正則化與 SGD 把解釘在一個地方；第 4 章的多元邏輯斯迴歸則是挑一個類別當基準來解決。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 完全不變，因為分子分母各多出一個 e^c，約掉了</div><div class="quiz-opt" data-correct="false" data-fb="只有分子乘上 e^c 的話確實會這樣，但<strong>分母也一起乘了</strong>——分母是所有 e^{{Z_ℓ}} 的和，每一項都多了 e^c。加總永遠是 1 是 softmax 的定義保證的。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 每個機率都乘上 e^c，所以加總不再是 1</div><div class="quiz-opt" data-correct="false" data-fb="「加常數」跟「壓縮」是兩回事。若要讓機率更接近平均，可以把所有 Z_ℓ 同時<strong>除以</strong>一個大於 1 的數（那就是溫度縮放），這個變換是乘法；前面的共同平移是加法。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 機率會變得更平均，因為指數函數把大的值壓縮了</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 10.10 第 4 題（b）（d）</div>
   <p>輸入是 32×32 灰階影像，一個卷積層有三個 5×5 濾波器、不做邊界填補。「這一層的參數量」與「拿掉權重共享後的權重數」分別是多少？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。共享時是 3 × (5×5 + 1) = 78。拿掉共享的話，輸出有 3 × 28 × 28 = 2,352 個隱藏單元（32 − 5 + 1 = 28），每個都要連到全部 32 × 32 = 1,024 個像素，得到 2,352 × 1,024 = <strong>2,408,448</strong>。差了三萬倍。卷積層就是一個被綁得很緊的全連接層。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 78 個與 2,408,448 個</div><div class="quiz-opt" data-correct="false" data-fb="前半對、後半把題目讀反了。(d) 問的正是「<strong>如果沒有</strong>那些限制」會有幾個權重，也就是把每條連線都放開來各自估。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 78 個與 78 個，因為權重共享不改變參數量</div><div class="quiz-opt" data-correct="false" data-fb="75 是漏了偏置（3 × 25）。2,352 則是隱藏<strong>單元</strong>的個數，不是權重數，每個單元還要各自連到 1,024 個像素。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 75 個與 2,352 個</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。共享時是 3 × (5×5 + 1) = 78。拿掉共享的話，輸出有 3 × 28 × 28 = 2,352 個隱藏單元（32 − 5 + 1 = 28），每個都要連到全部 32 × 32 = 1,024 個像素，得到 2,352 × 1,024 = <strong>2,408,448</strong>。差了三萬倍。卷積層就是一個被綁得很緊的全連接層。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 78 個與 2,408,448 個</div><div class="quiz-opt" data-correct="false" data-fb="前半對、後半把題目讀反了。(d) 問的正是「<strong>如果沒有</strong>那些限制」會有幾個權重，也就是把每條連線都放開來各自估。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 78 個與 78 個，因為權重共享不改變參數量</div><div class="quiz-opt" data-correct="false" data-fb="75 是漏了偏置（3 × 25）。2,352 則是隱藏<strong>單元</strong>的個數，這個數字計算單元，每個單元還要各自連到 1,024 個像素。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 75 個與 2,352 個</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 10.10 第 5 題</div>
   <p>課本 Table 10.2 裡，三個模型依「平均絕對誤差」排出來的名次，跟依「測試 R²」排出來的名次不一樣。這怎麼可能？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。一筆殘差 100 對 MAE 的貢獻是另一筆殘差 50 的兩倍，對平方誤差的貢獻卻是四倍。所以<strong>「多數點準、少數點爆掉」的模型 MAE 會贏、R² 會輸</strong>，反之亦然。Hitters 的薪水分布右偏、有幾個天價球員，正是會出現這種分歧的典型情況。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 兩個指標對大誤差的懲罰方式不同：R² 建立在平方誤差上，少數幾筆很大的殘差會嚴重拉低它，MAE 則是線性計入</div><div class="quiz-opt" data-correct="false" data-fb="會扣參數量的是調整後 R²、AIC、BIC 那一類。測試集上的 R² = 1 − RSS/TSS 完全沒有參數項，它是在<strong>測試</strong>資料上算的，本來就不需要為複雜度罰款。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 因為 R² 有考慮參數量而 MAE 沒有，所以參數多的模型 R² 會被扣分</div><div class="quiz-opt" data-correct="false" data-fb="兩個指標都在衡量「預測準不準」，但<strong>加權方式不同就可能給出不同名次</strong>，這是完全正常的。這也是為什麼報告結果時該同時給幾個指標，而不是挑一個最好看的。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 一定是其中一個數字算錯了，兩個指標衡量的是同一件事所以名次必須一致</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。一筆殘差 100 對 MAE 的貢獻是另一筆殘差 50 的兩倍，對平方誤差的貢獻卻是四倍。所以<strong>「多數點準、少數點誤差很大」的模型 MAE 會贏、R² 會輸</strong>，反之亦然。Hitters 的薪水分布右偏、有幾個天價球員，正是會出現這種分歧的典型情況。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 兩個指標對大誤差的懲罰方式不同：R² 建立在平方誤差上，少數幾筆很大的殘差會嚴重拉低它，MAE 則是線性計入</div><div class="quiz-opt" data-correct="false" data-fb="會扣參數量的是調整後 R²、AIC、BIC 那一類。測試集上的 R² = 1 − RSS/TSS 完全沒有參數項，它是在<strong>測試</strong>資料上算的，本來就不需要為複雜度罰款。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 因為 R² 有考慮參數量而 MAE 沒有，所以參數多的模型 R² 會被扣分</div><div class="quiz-opt" data-correct="false" data-fb="兩個指標都在衡量「預測準不準」，但<strong>加權方式不同就可能給出不同名次</strong>，這是完全正常的。這也是為什麼報告結果時該同時給幾個指標，並一併交代各指標的結果。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 一定是其中一個數字算錯了，兩個指標衡量的是同一件事所以名次必須一致</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1590,7 +1590,7 @@ Image: book_images/Sleeping_Cat.jpg
 <li id="w11-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：進階參考 · 第 11.3 節；進階參考 · 第 11.4–11.6 節；進階參考 · 第 11.4 節 · 進階。</li></ul></div>
 <!-- GEN:END sec:reference -->
 
-  <p>考前把這一頁掃過去就好。這一章不在考試範圍，但它是 ISLP 的完整拼圖。</p>
+  <p>考前把這一頁掃過去就好。這一章不在考試範圍，但它補充了 ISLP 的神經網路主題。</p>
 
   <h3>四種架構對照</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1615,18 +1615,18 @@ Image: book_images/Sleeping_Cat.jpg
 </table></div>
 
 <div class="info-box">
-  <span class="info-label">三個一定要記住的觀念</span>
+  <span class="info-label">重點回顧</span>
   <strong>1. 神經網路是線性模型套非線性再組合一次。</strong>
   把 g 拿掉就退回線性迴歸；非線性只能從 g 進來，加總本身不會產生它。<br>
   <strong>2. 權重共享是 CNN 與 RNN 的共同心臟。</strong>
-  一個在空間上共享、一個在時間上共享，兩者都是把「結構」寫進架構而不是靠資料學。<br>
-  <strong>3. 雙下降不是「參數愈多愈好」。</strong>
-  第二次下降來自最小範數解比較平滑，不是來自參數變多本身；
+  一個在空間上共享、一個在時間上共享，兩者都透過架構指定權重共享的方式。<br>
+  <strong>3. 雙下降需要連同解的選擇方式一起看。</strong>
+  第二次下降與最小範數解比較平滑有關；增加參數後如何選解也需交代；
   同一個例子改用嶺迴歸還會更好。
 </div>
 
 <div class="info-box warm">
-  <span class="info-label">順手提醒</span>
+  <span class="info-label">使用時的檢查</span>
   <strong>先跑基準再跑網路。</strong>ISLP 每個例子都先給線性模型或 lasso 的數字，
   沒有基準線你不會知道網路是好是壞。<strong>輸入一定要標準化</strong>，統計量只能從訓練資料算。
   <strong>預測前記得 <code>model.eval()</code></strong>，否則 dropout 還開著、
@@ -1647,7 +1647,7 @@ Image: book_images/Sleeping_Cat.jpg
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 27 張</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 10 章，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
@@ -2245,7 +2245,6 @@ HC.initFlashcards = () => {
 <!-- GEN:END sharedjs -->
 <!-- PAGEJS:BEGIN -->
 <script>
-/* ===== 烘焙資料（tools/frames/gen_deeplearning.py，固定種子）===== */
 const FRAMES_w11dd = {"meta":{"src":"ISLP §10.8（圖 10.20 與 10.21 的模擬設定）","seed":"np.random.default_rng(100…149)，n=20、σ=0.3、測試集 2000 筆","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · ISLP 0.4.0","gen":"tools/frames/gen_deeplearning.py","note":"依課本 §10.8 的設定重跑，不是圖 10.20 的逐點複製。誤差曲線是 50 組重抽樣的平均（單一次抽樣時 n = 20 的分位數節點常擠在一起，尖峰會跑掉）；面板用第 0 組。課本沒有公佈亂數種子，所以高低會有差，但兩段下降與 d = 20 那根尖峰的位置一致。"},"n":20,"sigma":0.3,"thr":20,"snr":5.86,"reps":50,"ds":[2,3,4,5,6,8,10,12,14,16,18,19,20,21,22,24,26,28,30,34,38,42,46,50,56,62,70,80,90,100],"train":[0.5317,0.4862,0.1374,0.1066,0.0719,0.0546,0.0438,0.0338,0.0266,0.0167,0.0081,0.0037,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"test":[0.628,0.682,0.211,0.197,0.151,0.188,0.23,0.453,1.159,3.188,1017.449,1617.844,1201.658,1512.48,296.514,46.9,14.404,11.647,7.113,3.789,1.809,1.29,1.027,0.982,0.959,0.593,0.358,0.357,0.38,0.398],"xtr":[-4.57,-3.1,-2.153,-2.111,-0.058,0.019,0.352,0.81,0.965,0.966,0.999,1.293,1.882,2.71,2.903,3.35,4.103,4.737,4.815,4.958],"ytr":[0.692,-0.463,-0.905,-1.064,0.396,-0.161,0.859,0.603,0.903,0.834,0.844,0.623,1.053,0.533,0.308,-0.02,-1.066,-1.089,-1.193,-1.481],"grid":[-5.0,-4.917,-4.833,-4.75,-4.667,-4.583,-4.5,-4.417,-4.333,-4.25,-4.167,-4.083,-4.0,-3.917,-3.833,-3.75,-3.667,-3.583,-3.5,-3.417,-3.333,-3.25,-3.167,-3.083,-3.0,-2.917,-2.833,-2.75,-2.667,-2.583,-2.5,-2.417,-2.333,-2.25,-2.167,-2.083,-2.0,-1.917,-1.833,-1.75,-1.667,-1.583,-1.5,-1.417,-1.333,-1.25,-1.167,-1.083,-1.0,-0.917,-0.833,-0.75,-0.667,-0.583,-0.5,-0.417,-0.333,-0.25,-0.167,-0.083,0.0,0.083,0.167,0.25,0.333,0.417,0.5,0.583,0.667,0.75,0.833,0.917,1.0,1.083,1.167,1.25,1.333,1.417,1.5,1.583,1.667,1.75,1.833,1.917,2.0,2.083,2.167,2.25,2.333,2.417,2.5,2.583,2.667,2.75,2.833,2.917,3.0,3.083,3.167,3.25,3.333,3.417,3.5,3.583,3.667,3.75,3.833,3.917,4.0,4.083,4.167,4.25,4.333,4.417,4.5,4.583,4.667,4.75,4.833,4.917,5.0],"truth":[0.959,0.979,0.993,0.999,0.999,0.992,0.978,0.957,0.929,0.895,0.855,0.809,0.757,0.7,0.638,0.572,0.501,0.428,0.351,0.272,0.191,0.108,0.025,-0.058,-0.141,-0.223,-0.303,-0.382,-0.457,-0.53,-0.598,-0.663,-0.723,-0.778,-0.828,-0.872,-0.909,-0.941,-0.966,-0.984,-0.995,-1.0,-0.997,-0.988,-0.972,-0.949,-0.919,-0.884,-0.841,-0.794,-0.74,-0.682,-0.618,-0.551,-0.479,-0.405,-0.327,-0.247,-0.166,-0.083,0.0,0.083,0.166,0.247,0.327,0.405,0.479,0.551,0.618,0.682,0.74,0.794,0.841,0.884,0.919,0.949,0.972,0.988,0.997,1.0,0.995,0.984,0.966,0.941,0.909,0.872,0.828,0.778,0.723,0.663,0.598,0.53,0.457,0.382,0.303,0.223,0.141,0.058,-0.025,-0.108,-0.191,-0.272,-0.351,-0.428,-0.501,-0.572,-0.638,-0.7,-0.757,-0.809,-0.855,-0.895,-0.929,-0.957,-0.978,-0.992,-0.999,-0.999,-0.993,-0.979,-0.959],"panels":[8,20,42,80],"fits":{"8":{"y":[1.207,1.114,1.022,0.929,0.837,0.746,0.656,0.566,0.478,0.391,0.305,0.221,0.138,0.058,-0.021,-0.097,-0.172,-0.243,-0.312,-0.378,-0.441,-0.501,-0.558,-0.611,-0.661,-0.707,-0.749,-0.787,-0.82,-0.85,-0.875,-0.895,-0.91,-0.92,-0.925,-0.925,-0.92,-0.909,-0.894,-0.874,-0.85,-0.821,-0.788,-0.752,-0.712,-0.669,-0.623,-0.574,-0.522,-0.468,-0.411,-0.353,-0.293,-0.231,-0.168,-0.104,-0.038,0.027,0.094,0.16,0.227,0.293,0.359,0.424,0.487,0.548,0.606,0.659,0.707,0.749,0.784,0.811,0.829,0.839,0.843,0.846,0.848,0.851,0.854,0.856,0.856,0.855,0.852,0.846,0.837,0.824,0.807,0.786,0.759,0.727,0.688,0.643,0.591,0.531,0.464,0.388,0.304,0.215,0.121,0.022,-0.079,-0.182,-0.286,-0.39,-0.492,-0.592,-0.688,-0.779,-0.865,-0.944,-1.015,-1.078,-1.13,-1.172,-1.207,-1.233,-1.254,-1.27,-1.282,-1.291,-1.3],"l2":11.8},"20":{"y":[1.455,1.304,1.153,1.004,0.858,0.714,0.574,0.439,0.31,0.186,0.07,-0.038,-0.139,-0.229,-0.31,-0.38,-0.438,-0.483,-0.516,-0.534,-0.538,-0.526,-0.498,-0.453,-0.392,-0.325,-0.259,-0.204,-0.168,-0.16,-0.189,-0.264,-0.394,-0.587,-0.852,-1.161,-1.374,-1.481,-1.493,-1.421,-1.277,-1.072,-0.816,-0.52,-0.196,0.146,0.494,0.838,1.166,1.467,1.731,1.946,2.102,2.187,2.19,2.1,1.907,1.599,1.166,0.595,-0.059,-0.2,0.203,0.717,0.907,0.41,-0.545,-1.438,-1.749,-0.956,1.432,3.107,0.877,2.656,2.443,1.266,0.133,-0.486,-0.671,-0.529,-0.164,0.316,0.806,1.201,1.451,1.574,1.589,1.518,1.383,1.204,1.002,0.799,0.615,0.47,0.37,0.297,0.24,0.19,0.138,0.076,-0.002,-0.104,-0.227,-0.364,-0.507,-0.648,-0.781,-0.899,-0.993,-1.056,-1.083,-1.08,-1.059,-1.031,-1.01,-1.007,-1.034,-1.104,-1.225,-1.39,-1.578],"l2":196.1},"42":{"y":[0.807,0.788,0.768,0.747,0.723,0.697,0.666,0.631,0.591,0.544,0.491,0.43,0.361,0.282,0.194,0.099,-0.0,-0.099,-0.194,-0.28,-0.354,-0.411,-0.449,-0.465,-0.46,-0.436,-0.393,-0.332,-0.258,-0.188,-0.152,-0.178,-0.295,-0.528,-0.848,-1.15,-1.294,-1.298,-1.199,-1.033,-0.838,-0.65,-0.489,-0.355,-0.243,-0.148,-0.066,0.007,0.076,0.145,0.218,0.3,0.394,0.503,0.612,0.702,0.752,0.743,0.657,0.473,0.07,-0.653,-0.173,0.521,0.838,0.815,0.605,0.423,0.417,0.522,0.605,0.358,0.846,0.4,0.464,0.611,0.616,0.606,0.636,0.704,0.807,0.927,1.024,1.055,0.99,0.852,0.68,0.513,0.391,0.335,0.337,0.387,0.476,0.575,0.494,0.276,0.137,0.06,0.018,-0.004,-0.017,-0.039,-0.087,-0.178,-0.321,-0.496,-0.68,-0.85,-0.983,-1.058,-1.058,-0.961,-0.772,-0.565,-0.427,-0.446,-0.685,-1.19,-1.097,-1.338,-1.61],"l2":30.7},"80":{"y":[0.418,0.485,0.548,0.605,0.653,0.688,0.707,0.708,0.686,0.638,0.563,0.466,0.359,0.253,0.162,0.089,0.023,-0.044,-0.124,-0.221,-0.32,-0.404,-0.456,-0.46,-0.42,-0.343,-0.239,-0.133,-0.052,-0.013,-0.004,-0.011,-0.079,-0.322,-0.817,-0.813,-0.336,-0.142,-0.081,-0.046,-0.023,-0.01,-0.003,-0.001,-0.0,-0.0,-0.0,0.0,0.0,0.0,0.0,0.001,0.004,0.009,0.019,0.034,0.056,0.097,0.181,0.334,-0.117,-0.044,0.018,0.325,0.814,0.642,0.171,0.028,0.073,0.375,0.589,0.001,0.848,0.038,0.108,0.581,0.546,0.28,0.071,0.064,0.285,0.642,0.963,1.043,0.791,0.421,0.167,0.056,0.02,0.026,0.095,0.239,0.429,0.511,0.115,0.303,0.107,0.016,-0.003,-0.013,-0.02,-0.017,-0.009,-0.006,-0.008,-0.045,-0.197,-0.497,-0.829,-1.046,-1.01,-0.647,-0.233,-0.05,-0.022,-0.126,-0.577,-1.147,-0.911,-1.164,-0.881],"l2":29.6}}};
 
 
@@ -2628,7 +2627,7 @@ function w11convApply(f) {
   if (f.pool) {
     setStatus('w11convSvgStatus',
       '掃完了。6×6 的特徵圖經過 2×2 最大池化變成 3×3——'
-      + '<b>解析度掉一半，但「這個樣式有沒有出現」還在</b>。'
+      + '<b>解析度掉一半，輸出仍保留樣式出現與否的資訊</b>。'
       + '整層從頭到尾只有 10 個參數，跟影像多大無關。');
   } else {
     setStatus('w11convSvgStatus',
@@ -2721,18 +2720,18 @@ function w11gdRun() {
   $('w11gdEnd').textContent = HC.fmt(b, 3);
   $('w11gdVal').textContent = HC.fmt(w11gdR(b), 3);
   $('w11gdGlobal').textContent = near === w11gdMIN[0] ? '是（−6…6 之間最低）'
-    : (near === w11gdMIN[1] ? '不是，只是局部極小' : '還沒收斂');
+    : (near === w11gdMIN[1] ? '否，收斂到較高的局部極小' : '還沒收斂');
   let msg = '從 β⁰ = ' + HC.fmt(parseFloat($('w11gdB0s').value), 2) + ' 出發、學習率 '
     + HC.fmt(rho, 2) + '，走了 ' + steps + ' 步收在 β ≈ ' + HC.fmt(b, 3) + '。';
   if (near === w11gdMIN[1]) {
-    msg += ' <b>這是局部極小，不是全域最小</b>——左邊 β ≈ −1.67 那個谷底更低'
+    msg += ' <b>這次收斂到較高的局部極小</b>——左邊 β ≈ −1.67 那個谷底更低'
       + '（R = −1.162 對 −0.534）。把起點改成 1.4 就會掉到那邊去，'
       + '這正是習題 6(c) 與 6(d) 要你比較的事。';
   } else if (near === w11gdMIN[0]) {
     msg += ' 這次掉進了比較低的那個谷底（R = −1.162）。'
       + '把起點改回 2.3 會收到右邊那個比較淺的極小。';
   } else {
-    msg += ' <b>還沒收斂——學習率太大，它在跳來跳去而不是滑下去。</b>'
+    msg += ' <b>尚未收斂：目前學習率過大，參數持續震盪。</b>'
       + '把 ρ 調小一點再試一次。';
   }
   setStatus('w11gdStatus', msg);
@@ -2783,7 +2782,7 @@ function w11ddShow(mode) {
     const fit = F.fits[d];
     HC.line('w11ddChart', {
       datasets: [
-        { label: '真正的 f(X) = sin(X)', data: F.grid.map((x, i) => ({ x: x, y: F.truth[i] })),
+        { label: '資料生成函數 f(X) = sin(X)', data: F.grid.map((x, i) => ({ x: x, y: F.truth[i] })),
           borderColor: HC.tok.truef, backgroundColor: HC.tok.truef, borderWidth: 2.4,
           pointRadius: 0, borderDash: [7, 4], fill: false },
         { label: '配適的樣條（d = ' + d + '）',
@@ -2807,7 +2806,7 @@ function w11ddShow(mode) {
         : '——自由度不夠，它沒有穿過每一個點');
     setStatus('w11ddStatus',
       'd = ' + d + ' 的配適曲線，係數平方和 Σβ² = ' + fit.l2 + wild + '。'
-      + '切到 d = 20 再切到 d = 42，看那條橘線怎麼從狂震變回溫和。');
+      + '切到 d = 20 再切到 d = 42，比較那條橘線的起伏。');
   }
 }
 function w11ddInit() {
@@ -2842,7 +2841,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"神經網路（Neural Network）","back":"把輸入先做 K 個線性組合、各自過一個非線性函數 g，再把結果線性組合成輸出的模型。式 10.1：f(X) = β₀ + Σₖ βₖ g(wₖ₀ + Σⱼ wₖⱼXⱼ)。它不是全新的東西——把 g 拿掉就退回線性迴歸。"},{"front":"隱藏層（Hidden Layer）","back":"輸入與輸出之間那一排單元。「隱藏」只是說它們不是資料裡的欄位，而是模型自己算出來的中間量 Aₖ。層數與每層寬度是你選的，不是資料告訴你的。"},{"front":"隱藏單元（Hidden Unit）","back":"隱藏層裡的一個節點，值 Aₖ = g(wₖ₀ + Σⱼ wₖⱼXⱼ)。ISLP 稱它為 activation。所有 Aₖ 共用同一個 g，差別只在權重 wₖⱼ。"},{"front":"激發函數（Activation Function）","back":"隱藏單元上的非線性函數 g(z)。非線性是整個模型的關鍵：g 若是恆等函數，兩層線性組合疊起來還是線性組合，模型就退化成線性迴歸。"},{"front":"修正線性單元（ReLU）","back":"g(z) = max(0, z)。負的壓成 0、正的原樣通過。現代網路的預設選擇：算得快、導數不是 0 就是 1，梯度不會像 sigmoid 那樣在兩端消失。"},{"front":"S 型函數（Sigmoid）","back":"g(z) = eᶻ/(1+eᶻ)，把任意實數壓進 (0, 1)。早期網路的標準激發函數，也正是邏輯斯迴歸用的那個函數。缺點是 |z| 大時曲線幾乎平掉，梯度趨近 0、學不動。"},{"front":"偏置（Bias）","back":"式 10.2 裡的截距項 wₖ₀ 與 β₀。注意這個「bias」跟偏差–變異取捨的偏差沒有關係，ISLP 特別在註腳提醒不要混淆——是機器學習圈自己的用法。"},{"front":"前向傳播（Forward Propagation）","back":"給定權重，從輸入層依序算到輸出層的過程：每一層做一次「線性組合再過 g」。預測就只是跑一次前向傳播，成本很低——貴的是訓練。"},{"front":"Softmax 函數（Softmax）","back":"把 M 個實數 Zₘ 轉成加總為 1 的機率：fₘ(X) = e^Zₘ / Σₗ e^Zₗ。多類別分類的輸出層用它。它是過度參數化的——每個 Zₘ 同加一個常數 c，機率完全不變（習題 2a）。"},{"front":"交叉熵（Cross-Entropy）","back":"分類問題的損失函數，即負的多項式對數似然：−Σᵢ Σₘ yᵢₘ log fₘ(xᵢ)。M = 2 時它就退回邏輯斯迴歸的負對數似然（習題 3）。量化反應則改用平方誤差。"},{"front":"卷積神經網路（CNN）","back":"為影像設計的網路：交替堆疊卷積層與池化層，最後接幾層全連接。它把「同一個特徵在畫面哪裡都算數」這個先驗寫進了架構，所以參數遠少於同等能力的全連接網路。"},{"front":"卷積層（Convolution Layer）","back":"用一組小濾波器掃過整張影像，每個位置算一次內積。關鍵是權重共享：同一個濾波器在所有位置用同一組權重，等於一個「加了限制」的全連接層（習題 4c）。"},{"front":"濾波器（Filter）","back":"卷積層裡的小權重矩陣（例如 5×5）。它偵測的是一種局部樣式——邊緣、色塊、紋理。濾波器的值是學出來的，不是人挑的。"},{"front":"特徵圖（Feature Map）","back":"一個濾波器掃完整張影像後產生的輸出矩陣，記錄「這個樣式在每個位置出現得多強」。一個卷積層有幾個濾波器，就產生幾張特徵圖。"},{"front":"池化（Pooling）","back":"把相鄰的一小塊（例如 2×2）濃縮成一個值，最大池化取其中最大者。它降低解析度、也讓結果對小幅平移不敏感——刻意丟掉一部分「在哪裡」的資訊，換取「有沒有」的穩健。"},{"front":"資料擴增（Data Augmentation）","back":"訓練時把每張影像隨機翻轉、平移、縮放、變形，當成新樣本餵進去。標籤不變，所以等於免費放大訓練集。ISLP §10.3.4 把它看成一種正則化：它在告訴模型哪些變化不該影響答案。"},{"front":"預訓練模型（Pretrained Model）","back":"別人在大資料集（如 ImageNet）上訓練好的網路，例如 ResNet50。可以直接拿來預測，也可以只換掉最後一層再用自己的小資料微調——資料不多時這幾乎一定比從頭訓練好。"},{"front":"詞袋（Bag-of-Words）","back":"把一篇文件表示成「字典裡每個詞有沒有出現（或出現幾次）」的長向量。它完全丟掉詞序，所以「不好看」跟「好看不」是同一個向量。§10.4 的 IMDB 例子先用它，§10.5 才用 RNN 把順序找回來。"},{"front":"遞迴神經網路（RNN）","back":"處理序列的網路：依序讀入 X₁, X₂, …，每一步用同一組權重更新一個隱藏狀態 Aℓ，讓它攜帶前面看過的資訊。權重在時間上共享，就像 CNN 在空間上共享。"},{"front":"長短期記憶（LSTM）","back":"RNN 的一種，除了短期的隱藏狀態之外另外維護一條長期記憶通道，用閘門決定要記住還是遺忘。它讓「很前面出現過的詞」也能影響現在的輸出，緩解了樸素 RNN 的梯度消失。"},{"front":"反向傳播（Backpropagation）","back":"用連鎖律由輸出往回逐層算梯度的方法。它不是另一種訓練演算法，只是「怎麼把梯度算出來」的高效做法——重複利用前一層已經算好的中間結果，成本跟一次前向傳播同一個量級。"},{"front":"隨機梯度下降（SGD）","back":"每一步只用一小批（minibatch）樣本估梯度，而不是全部資料。除了便宜之外，取樣帶來的雜訊本身有正則化效果，也幫忙跳出不好的局部極小。深度學習實務上幾乎只用它。"},{"front":"週期（Epoch）","back":"把訓練資料完整走過一遍。一個 epoch 包含 n/batch_size 次參數更新。「訓練 30 個 epoch」是說整份資料被看了 30 次。"},{"front":"丟棄法（Dropout）","back":"訓練時隨機把一部分單元的值設為 0，剩下的按比例放大。每一批看到的都是不同的子網路，所以沒有單元能依賴特定同伴。ISLP 說它的精神接近隨機森林——都是靠隨機性打散相關性。"},{"front":"雙下降（Double Descent）","back":"測試誤差在內插門檻之前呈 U 形、在門檻附近衝高，然後隨模型再變大又降下來的現象。它沒有推翻偏差–變異取捨：x 軸畫的是基底函數個數，而那並沒有正確反映內插模型真正的彈性。"},{"front":"內插門檻（Interpolation Threshold）","back":"參數個數剛好夠把訓練資料完全穿過去的那一點（例中 d = n = 20）。訓練誤差在此降到 0，測試誤差在此最糟——因為用剛好 20 個基底穿過 20 個點的方法只有一種，而那一種很極端。"},{"front":"最小範數解（Minimum-Norm Solution）","back":"d > n 時最小平方解有無限多個，取係數平方和 Σβ̂ⱼ² 最小的那一個。它是這些內插解裡最平滑的，所以 d = 42 反而比 d = 20 溫和。SGD 天生就傾向找到這種解，這是深度學習也會出現雙下降的原因之一。"}];
+const FLASHCARDS = [{"front":"神經網路（Neural Network）","back":"把輸入先做 K 個線性組合、各自過一個非線性函數 g，再把結果線性組合成輸出的模型。式 10.1：f(X) = β₀ + Σₖ βₖ g(wₖ₀ + Σⱼ wₖⱼXⱼ)。把 g 拿掉就退回線性迴歸。"},{"front":"隱藏層（Hidden Layer）","back":"輸入與輸出之間那一排單元。隱藏單元表示模型根據輸入算出的中間量 Aₖ。層數與每層寬度由建模者選擇。"},{"front":"隱藏單元（Hidden Unit）","back":"隱藏層裡的一個節點，值 Aₖ = g(wₖ₀ + Σⱼ wₖⱼXⱼ)。ISLP 稱它為 activation。所有 Aₖ 共用同一個 g，差別只在權重 wₖⱼ。"},{"front":"激發函數（Activation Function）","back":"隱藏單元上的非線性函數 g(z)。非線性是整個模型的關鍵：g 若是恆等函數，兩層線性組合疊起來還是線性組合，模型就退化成線性迴歸。"},{"front":"修正線性單元（ReLU）","back":"g(z) = max(0, z)。負的壓成 0、正的原樣通過。現代網路的預設選擇：算得快、導數取 0 或 1，梯度不會像 sigmoid 那樣在兩端消失。"},{"front":"S 型函數（Sigmoid）","back":"g(z) = eᶻ/(1+eᶻ)，把任意實數壓進 (0, 1)。早期網路的標準激發函數，也正是邏輯斯迴歸用的那個函數。缺點是 |z| 大時曲線幾乎平掉，梯度趨近 0、學不動。"},{"front":"偏置（Bias）","back":"式 10.2 裡的截距項 wₖ₀ 與 β₀。注意這個「bias」跟偏差–變異取捨的偏差沒有關係，ISLP 特別在註腳提醒不要混淆——是機器學習圈自己的用法。"},{"front":"前向傳播（Forward Propagation）","back":"給定權重，從輸入層依序算到輸出層的過程：每一層做一次「線性組合再過 g」。預測就只是跑一次前向傳播，成本很低——貴的是訓練。"},{"front":"Softmax 函數（Softmax）","back":"把 M 個實數 Zₘ 轉成加總為 1 的機率：fₘ(X) = e^Zₘ / Σₗ e^Zₗ。多類別分類的輸出層用它。它是過度參數化的——每個 Zₘ 同加一個常數 c，機率完全不變（習題 2a）。"},{"front":"交叉熵（Cross-Entropy）","back":"分類問題的損失函數，即負的多項式對數似然：−Σᵢ Σₘ yᵢₘ log fₘ(xᵢ)。M = 2 時它就退回邏輯斯迴歸的負對數似然（習題 3）。量化反應則改用平方誤差。"},{"front":"卷積神經網路（CNN）","back":"為影像設計的網路：交替堆疊卷積層與池化層，最後接幾層全連接。它把「同一個特徵在畫面哪裡都算數」這個先驗寫進了架構，所以參數遠少於同等能力的全連接網路。"},{"front":"卷積層（Convolution Layer）","back":"用一組小濾波器掃過整張影像，每個位置算一次內積。關鍵是權重共享：同一個濾波器在所有位置用同一組權重，等於一個「加了限制」的全連接層（習題 4c）。"},{"front":"濾波器（Filter）","back":"卷積層裡的小權重矩陣（例如 5×5）。它偵測的是一種局部樣式——邊緣、色塊、紋理。濾波器的值由訓練資料學得。"},{"front":"特徵圖（Feature Map）","back":"一個濾波器掃完整張影像後產生的輸出矩陣，記錄「這個樣式在每個位置出現得多強」。一個卷積層有幾個濾波器，就產生幾張特徵圖。"},{"front":"池化（Pooling）","back":"把相鄰的一小塊（例如 2×2）濃縮成一個值，最大池化取其中最大者。它降低解析度、也讓結果對小幅平移不敏感——刻意丟掉一部分「在哪裡」的資訊，換取「有沒有」的穩健。"},{"front":"資料擴增（Data Augmentation）","back":"訓練時把每張影像隨機翻轉、平移、縮放、變形，當成新樣本餵進去。標籤不變，所以等於免費放大訓練集。ISLP §10.3.4 把它看成一種正則化：它在告訴模型哪些變化不該影響答案。"},{"front":"預訓練模型（Pretrained Model）","back":"別人在大資料集（如 ImageNet）上訓練好的網路，例如 ResNet50。可以直接拿來預測，也可以只換掉最後一層再用自己的小資料微調——資料不多時這幾乎一定比從頭訓練好。"},{"front":"詞袋（Bag-of-Words）","back":"把一篇文件表示成「字典裡每個詞有沒有出現（或出現幾次）」的長向量。它完全丟掉詞序，所以「不好看」跟「好看不」是同一個向量。§10.4 的 IMDB 例子先用它，§10.5 才用 RNN 把順序找回來。"},{"front":"遞迴神經網路（RNN）","back":"處理序列的網路：依序讀入 X₁, X₂, …，每一步用同一組權重更新一個隱藏狀態 Aℓ，讓它攜帶前面看過的資訊。權重在時間上共享，就像 CNN 在空間上共享。"},{"front":"長短期記憶（LSTM）","back":"RNN 的一種，除了短期的隱藏狀態之外另外維護一條長期記憶通道，用閘門決定要記住還是遺忘。它讓「很前面出現過的詞」也能影響現在的輸出，緩解了樸素 RNN 的梯度消失。"},{"front":"反向傳播（Backpropagation）","back":"用連鎖律由輸出往回逐層算梯度的方法。它負責有效率地計算梯度，重複利用前一層已經算好的中間結果，成本跟一次前向傳播同一個量級。"},{"front":"隨機梯度下降（SGD）","back":"每一步抽一小批（minibatch）樣本來估計全資料的梯度。除了便宜之外，取樣帶來的雜訊本身有正則化效果，也幫忙跳出不好的局部極小。深度學習實務上幾乎只用它。"},{"front":"週期（Epoch）","back":"把訓練資料完整走過一遍。一個 epoch 包含 n/batch_size 次參數更新。「訓練 30 個 epoch」是說整份資料被看了 30 次。"},{"front":"丟棄法（Dropout）","back":"訓練時隨機把一部分單元的值設為 0，剩下的按比例放大。每一批看到的都是不同的子網路，所以沒有單元能依賴特定同伴。ISLP 說它的精神接近隨機森林——都是靠隨機性打散相關性。"},{"front":"雙下降（Double Descent）","back":"測試誤差在內插門檻之前呈 U 形、在門檻附近衝高，然後隨模型再變大又降下來的現象。它沒有推翻偏差–變異取捨：x 軸畫的是基底函數個數，而那並沒有正確反映內插模型實際的彈性。"},{"front":"內插門檻（Interpolation Threshold）","back":"參數個數剛好夠把訓練資料完全穿過去的那一點（例中 d = n = 20）。訓練誤差在此降到 0，測試誤差在此最糟——因為用剛好 20 個基底穿過 20 個點的方法只有一種，而那一種很極端。"},{"front":"最小範數解（Minimum-Norm Solution）","back":"d > n 時最小平方解有無限多個，取係數平方和 Σβ̂ⱼ² 最小的那一個。它是這些內插解裡最平滑的，所以 d = 42 反而比 d = 20 溫和。SGD 天生就傾向找到這種解，這是深度學習也會出現雙下降的原因之一。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

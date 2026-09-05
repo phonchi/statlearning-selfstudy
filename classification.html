@@ -741,10 +741,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <code>Smarket</code> 資料當主線。</p>
 
   <p>直覺會說：把類別編成數字，然後照第 3 章配線性迴歸就好。<strong>這條路在兩個地方會撞牆</strong>，
-  而且兩個都不是技術細節，是真的錯。</p>
+  這兩個問題都會影響結果的解讀。</p>
 
 <div class="info-box warm">
-  <span class="info-label">線性迴歸用在類別上的兩個致命傷</span>
+  <span class="info-label">線性迴歸用在類別上的兩個問題</span>
   <strong>1. 多於兩類時，編碼本身就帶進了假設。</strong>
   把「中風 = 1、藥物過量 = 2、癲癇 = 3」丟進迴歸，等於宣告這三種病有順序，
   而且「中風到藥物過量」的距離等於「藥物過量到癲癇」的距離。換一個編碼順序，模型就變了。<br>
@@ -794,7 +794,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <tbody><tr><td>編碼 A</td><td>1</td><td>2</td><td>3</td><td>三種病有順序，而且「中風→藥物過量」與「藥物過量→癲癇」的差距一樣大</td></tr><tr><td>編碼 B</td><td>1</td><td>3</td><td>2</td><td>順序變成中風 &lt; 癲癇 &lt; 藥物過量——同一份資料，配出完全不同的模型</td></tr><tr><td>編碼 C</td><td>2</td><td>1</td><td>3</td><td>又是另一個模型。哪一個才對？<strong>都不對。</strong></td></tr></tbody>
 </table></div>
 
-  <p>真正的問題是：<strong>類別沒有順序也沒有距離</strong>，硬編成數字就是在硬塞結構進去。
+  <p>這些<strong>類別沒有順序也沒有距離</strong>，數字編碼卻加入了順序與等距的假設。
   正解是邏輯斯迴歸（兩類）與多元邏輯斯迴歸（多類），或者本章後半的生成式模型。</p>
 
 <div class="quiz-box">
@@ -814,7 +814,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   $$p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}$$
 
-  <p>把它整理一下，會冒出這一章最重要的兩個名詞。先移項：</p>
+  <p>整理式子後，可以定義勝算與 log-odds。先移項：</p>
 
   $$\underbrace{\frac{p(X)}{1 - p(X)}}_{\text{勝算 odds}} = e^{\beta_0 + \beta_1 X}
     \qquad\Longleftrightarrow\qquad
@@ -823,7 +823,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p><strong>勝算</strong>（odds）是「發生機率 ÷ 不發生機率」，範圍 (0, ∞)；
   取 log 之後範圍變成整個實數線，這個量叫 <strong>log-odds</strong> 或 <strong>logit</strong>。
-  所以邏輯斯迴歸真正線性的東西不是機率，<strong>是 log-odds</strong>。這句話決定了係數怎麼解讀。</p>
+  所以邏輯斯迴歸的 <strong>log-odds 是線性函數</strong>；機率則隨 x 呈 S 形變化，係數須依 log-odds 解讀。</p>
 
 <div class="info-box">
   <span class="info-label">三個一句話的重點</span>
@@ -909,7 +909,7 @@ Up          457  507</pre></div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">講義 04 · 誠實一點：2005 年當測試集</div>
+  <div class="dx-label">講義 04 · 用2005 年當測試集</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">X_train, X_test = X.loc[train], X.loc[~train]</span>
   <span class="line">y_train, y_test = y.loc[train], y.loc[~train]</span>
@@ -944,7 +944,7 @@ Up           34  44</pre></div>
 <!-- GEN:END sec:multinomial -->
 
   <p>把一個預測變數換成 p 個，式子幾乎不用改——線性部分變成 $\beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p$
-  就好。真正值得停下來的是<strong>加了變數以後係數會變號</strong>這件事。</p>
+  就好。加入變數後，<strong>原有係數可能變號</strong>。</p>
 
   <p>ISLP 的 <code>Default</code> 例子最經典。只用 <code>student</code> 一個變數配（表 4.2），
   <code>student[Yes]</code> 的係數是 <strong>+0.4049</strong>：學生比較容易違約。
@@ -953,7 +953,7 @@ Up           34  44</pre></div>
   <strong>同一份資料，符號翻過來了。</strong></p>
 
 <div class="info-box warm">
-  <span class="info-label">這叫混淆（confounding），不是矛盾</span>
+  <span class="info-label">混淆（confounding）：條件改變，係數的意義也改變</span>
   兩個係數都對，只是在回答不同的問題。<br>
   <strong>+0.4049 回答的是：</strong>「隨便抓一個學生跟一個非學生比，誰比較容易違約？」——學生。
   因為學生的 <code>balance</code> 整體偏高。<br>
@@ -1012,14 +1012,14 @@ Up           34  44</pre></div>
 Predicted           
 Down         35   35
 Up           76  106</pre></div>
-  <p class="dx-note">六個變數的 p 值都很醜，那就只留看起來最有希望的兩個。測試正確率從 48.0% 升到 <strong>(35 + 106) / 252 = 56.0%</strong>；而且在「模型說會漲」的日子裡，它有 <strong>106 / (106 + 76) = 58.2%</strong> 準（儲存格 55）。不過先別開心：那 252 天裡本來就有 141 天在漲，<strong>每天都猜漲也有 56%</strong>。整體正確率在這裡根本沒有資訊量。這是下面「閾值與混淆矩陣」那一節的引子。</p>
+  <p class="dx-note">六個變數的 p 值都很醜，那就只留看起來最有希望的兩個。測試正確率從 48.0% 升到 <strong>(35 + 106) / 252 = 56.0%</strong>；而且在「模型說會漲」的日子裡，它有 <strong>106 / (106 + 76) = 58.2%</strong> 準（儲存格 55）。不過先別開心：那 252 天裡本來就有 141 天在漲，<strong>每天都猜漲也有 56%</strong>。單看整體正確率，無法看出它是否優於多數類基準。這是下面「閾值與混淆矩陣」那一節的引子。</p>
   <span class="dx-src">來源：<code>Ch04-classification-lab-zh.ipynb</code> · 儲存格 53、55</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 混淆</div>
   <p>只用 <code>student</code> 配時它的係數是正的，加入 <code>balance</code> 後變成負的。該怎麼理解？</p>
-  <div class="quiz-options" id="qMulOptions"><div class="quiz-opt" data-correct="true" data-fb="對。多元迴歸的係數一律是「控制住其他變數之後」的偏效果。學生整體 balance 偏高所以整體違約率高；但同樣的 balance 之下，學生反而比較不容易違約。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(A)</span> 兩個係數在回答不同的問題：後者是「在 balance 相同的前提下」的效果</div><div class="quiz-opt" data-correct="false" data-fb="兩個模型都沒配錯，各自都是它所設定問題的正確答案。「相信變數多的」也不是普遍原則——要看你問的是<strong>邊際</strong>效果還是<strong>偏</strong>效果。想預測「該不該發卡給這個學生」用後者；想知道「學生族群整體風險」用前者。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(B)</span> 其中一個模型配錯了，應該相信變數比較多的那一個</div><div class="quiz-opt" data-correct="false" data-fb="方向不對。<code>student</code> 與 <code>balance</code> 確實相關，但這裡的現象是混淆（confounding）而不是共線性造成的不穩定——係數的標準誤沒有爆掉，符號翻轉是<strong>真實的、可解釋的</strong>。移掉變數會讓你回去回答另一個問題，不是修好了什麼。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(C)</span> 這是共線性造成的，把 student 或 balance 移掉一個就好</div></div>
+  <div class="quiz-options" id="qMulOptions"><div class="quiz-opt" data-correct="true" data-fb="對。多元迴歸的係數一律是「控制住其他變數之後」的偏效果。學生整體 balance 偏高所以整體違約率高；但同樣的 balance 之下，學生反而比較不容易違約。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(A)</span> 兩個係數在回答不同的問題：後者是「在 balance 相同的前提下」的效果</div><div class="quiz-opt" data-correct="false" data-fb="兩個模型都沒配錯，各自都是它所設定問題的正確答案。「相信變數多的」也不是普遍原則——要看你問的是<strong>邊際</strong>效果還是<strong>偏</strong>效果。想預測「該不該發卡給這個學生」用後者；想知道「學生族群整體風險」用前者。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(B)</span> 其中一個模型配錯了，應該相信變數比較多的那一個</div><div class="quiz-opt" data-correct="false" data-fb="方向不對。<code>student</code> 與 <code>balance</code> 確實相關，但這裡的現象是混淆（confounding）而不是共線性造成的不穩定——係數的標準誤沒有明顯膨脹，符號翻轉是<strong>真實的、可解釋的</strong>。移掉變數會改變控制的條件，也會改變係數所回答的問題。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(C)</span> 這是共線性造成的，把 student 或 balance 移掉一個就好</div></div>
   <div class="quiz-feedback" id="qMulFeedback"></div>
 </div>
 </section>
@@ -1041,7 +1041,7 @@ Up           76  106</pre></div>
 <div class="info-box">
   <span class="info-label">為什麼還要別的方法？ISLP §4.4 開頭給了三個理由</span>
   <strong>1. 兩類分得很開的時候，
-  邏輯斯迴歸的係數會爆掉。</strong>完美可分時最大似然沒有有限解，係數往無限大跑。生成式模型不會。<br>
+  邏輯斯迴歸的係數估計可能發散。</strong>完美可分時最大似然沒有有限解，係數往無限大跑。生成式模型不會。<br>
   <strong>2. n 小而各類內的 X 近似常態時，生成式模型更準。</strong>它用上了「常態」這個額外資訊。<br>
   <strong>3. K &gt; 2 時很自然。</strong>不用挑基準類，每一類算一個 δ<sub>k</sub>(x) 比大小就好。
 </div>
@@ -1256,18 +1256,18 @@ Up           82  121</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 該用 LDA 還是 QDA</div>
   <p>只有 n = 40 筆訓練資料、p = 2，而且你有理由相信真實的決策邊界是線性的。該選哪個？</p>
-  <div class="quiz-options" id="qQdaOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這正是 ISLP 圖 4.9 左圖與習題 4.8 第 5 題 (d) 的答案：邊界是線性時 QDA 雖然「配得下」線性邊界，但它要估兩個 Σ，n = 40 根本不夠，測試誤差反而會變差。" onclick="quizCheck('qQda', this)"><span class="opt-letter">(A)</span> LDA。真實邊界既然是線性的，QDA 多出來的彈性只會帶來變異、換不到偏差的減少</div><div class="quiz-opt" data-correct="false" data-fb="「線性是二次的特例」這句話沒錯，但「所以不會更差」錯了。<strong>模型空間包含真解 ≠ 估得準</strong>——QDA 要多估 p(p+1)/2 = 3 個參數，n = 40 時這些估計很不穩，變異吃掉一切。" onclick="quizCheck('qQda', this)"><span class="opt-letter">(B)</span> QDA。它比較有彈性，線性邊界是二次邊界的特例，所以不會更差</div><div class="quiz-opt" data-correct="false" data-fb="不對。就算只多 3 個參數，在 n = 40 的資料上仍然是可觀的變異，而且 QDA 的邊界形狀本身就比較不穩（會彎）。ISLP 的模擬顯示這個差距看得出來。" onclick="quizCheck('qQda', this)"><span class="opt-letter">(C)</span> 兩個一樣，因為 p = 2 時共變異數矩陣只有 3 個參數，差別可以忽略</div></div>
+  <div class="quiz-options" id="qQdaOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這正是 ISLP 圖 4.9 左圖與習題 4.8 第 5 題 (d) 的答案：邊界是線性時 QDA 雖然「配得下」線性邊界，但它要估兩個 Σ，n = 40 時估計較不穩定，測試誤差反而會變差。" onclick="quizCheck('qQda', this)"><span class="opt-letter">(A)</span> LDA。真實邊界既然是線性的，QDA 多出來的彈性只會帶來變異、換不到偏差的減少</div><div class="quiz-opt" data-correct="false" data-fb="「線性是二次的特例」這句話沒錯，但「所以不會更差」錯了。<strong>模型空間包含真解 ≠ 估得準</strong>——QDA 要多估 p(p+1)/2 = 3 個參數，n = 40 時這些估計很不穩，變異可能抵銷偏差降低的好處。" onclick="quizCheck('qQda', this)"><span class="opt-letter">(B)</span> QDA。它比較有彈性，線性邊界是二次邊界的特例，所以不會更差</div><div class="quiz-opt" data-correct="false" data-fb="不對。就算只多 3 個參數，在 n = 40 的資料上仍然是可觀的變異，而且 QDA 的邊界形狀本身就比較不穩（會彎）。ISLP 的模擬顯示這個差距看得出來。" onclick="quizCheck('qQda', this)"><span class="opt-letter">(C)</span> 兩個一樣，因為 p = 2 時共變異數矩陣只有 3 個參數，差別可以忽略</div></div>
   <div class="quiz-feedback" id="qQdaFeedback"></div>
 </div>
 </section>
 <section id="threshold">
 <!-- GEN:BEGIN sec:threshold -->
   <div class="section-number">PART 05 · 閾值、混淆矩陣與 ROC</div>
-  <h2>0.5 不是天經地義：把閾值當旋鈕 <span class="sec-badge"><a href="#w04-source-islp">教科書 · 第 4.4.2 節</a></span><span class="sec-badge">講義 04 · p.20–23</span></h2>
+  <h2>調整 0.5 閾值，觀察各類錯誤如何改變 <span class="sec-badge"><a href="#w04-source-islp">教科書 · 第 4.4.2 節</a></span><span class="sec-badge">講義 04 · p.20–23</span></h2>
 <!-- GEN:END sec:threshold -->
 
   <p>前面所有方法的最後一步都是同一句話：「後驗機率大於 <strong>0.5</strong> 就判成正類」。
-  這個 0.5 不是天上掉下來的，它來自 Bayes 分類器——<strong>而 Bayes 分類器最小化的是「總」錯誤率</strong>，
+  這個 0.5 來自 Bayes 分類器，<strong>而 Bayes 分類器最小化的是「總」錯誤率</strong>，
   它完全不管兩種錯誤誰比較痛。</p>
 
   <p>ISLP 的 <code>Default</code> 例子把這件事講得很殘忍。LDA 在 10000 筆訓練資料上的錯誤率是
@@ -1328,11 +1328,11 @@ Up           82  121</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">三個一定要記住的數字 <span class="ic-badge">表 4.4／4.5</span></div>
-      <strong>閾值 0.5：</strong>錯誤率 2.75%，但漏掉 252 / 333 = 75.7% 的違約戶。<br><strong>閾值 0.2：</strong>錯誤率 3.73%，只漏掉 138 個（41.4%）。<br><strong>一律猜不違約：</strong>錯誤率 3.33%，漏掉全部 333 個。<br>這三行完整說明了「準確率不是唯一指標」。
+      <strong>閾值 0.5：</strong>錯誤率 2.75%，但漏掉 252 / 333 = 75.7% 的違約戶。<br><strong>閾值 0.2：</strong>錯誤率 3.73%，只漏掉 138 個（41.4%）。<br><strong>一律猜不違約：</strong>錯誤率 3.33%，漏掉全部 333 個。<br>這三行分別呈現總錯誤率與兩種錯誤，讓你依用途比較。
     </div>
     <div class="info-card">
       <div class="ic-title">ROC 與 AUC</div>
-      ROC 曲線把<strong>所有</strong>閾值的（假陽率、真陽率）畫成一條線，所以它描述的是分類器本身，不是某一個閾值。<strong>AUC = 0.95</strong>（ISLP §4.4.2）；隨機猜是 0.5，完美是 1。紅點是你現在選的閾值在曲線上的位置。
+      ROC 曲線把<strong>所有</strong>閾值的（假陽率、真陽率）畫成一條線，所以它呈現分類器在所有閾值下的表現。<strong>AUC = 0.95</strong>（ISLP §4.4.2）；隨機猜是 0.5，完美是 1。紅點是你現在選的閾值在曲線上的位置。
     </div>
   </div>
 </div>
@@ -1410,7 +1410,7 @@ Yes         20    9</pre></div>
 <section id="compare">
 <!-- GEN:BEGIN sec:compare -->
   <div class="section-number">PART 06 · 方法的解析比較</div>
-  <h2>五種方法在什麼假設下等價、什麼時候會分家 <span class="sec-badge"><a href="#w04-source-islp">教科書 · 第 4.5 節</a></span><span class="sec-badge">講義 04 · p.38–48</span></h2>
+  <h2>五種分類方法的假設與函數形式 <span class="sec-badge"><a href="#w04-source-islp">教科書 · 第 4.5 節</a></span><span class="sec-badge">講義 04 · p.38–48</span></h2>
 <!-- GEN:END sec:compare -->
 
   <p>五個方法看起來各說各話，其實把它們統一寫成「相對於第 K 類的 log-odds」之後，
@@ -1447,8 +1447,8 @@ Yes         20    9</pre></div>
   代價是（a）需要 n ≫ p，（b）不告訴你哪個變數重要。</p>
 
   <p>Default 上四個方法的 AUC 幾乎相同；上面的閾值元件已經完整呈現 ROC 與 AUC，
-  這裡不再疊一張幾乎重合的 ROC 圖。方法選擇也不能靠固定情境配答案；應把候選方法放進
-  同一個重抽樣流程，以未見資料的表現與問題的錯誤成本裁決。</p>
+  可用這個元件比較不同閾值下的表現。選擇方法時，把候選方法放進
+  同一個重抽樣流程，依未見資料的表現與問題的錯誤成本判斷。</p>
 
   <h3 id="dx-knn">講義完整實作：KNN，唯一的無母數方法</h3>
 <div class="deck-extra">
@@ -1471,13 +1471,13 @@ Up           68  83</pre></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>ISLP 情境（§4.5.2）</th><th>資料怎麼產生</th><th>誰贏</th><th>為什麼</th></tr></thead>
-  <tbody><tr><td>情境 1</td><td>各類內兩變數不相關的常態，每類 20 筆</td><td>LDA、邏輯斯</td><td>邊界真的是線性的，KNN 白付變異</td></tr><tr><td>情境 2</td><td>同上，但類內相關 −0.5</td><td>LDA、邏輯斯</td><td><strong>Naive Bayes 崩掉</strong>——獨立假設被違反</td></tr><tr><td>情境 3</td><td>類內強負相關的 t 分佈，每類 50 筆</td><td>邏輯斯</td><td>邊界仍線性但不常態，LDA／QDA 吃虧</td></tr><tr><td>情境 4</td><td>兩類相關係數 +0.5 與 −0.5 的常態</td><td>QDA</td><td>真實邊界二次，正好是 QDA 的假設</td></tr><tr><td>情境 5</td><td>不相關常態，反應由複雜非線性函數生成</td><td>KNN-CV</td><td>邊界很彎；<strong>KNN-1 最差</strong>——平滑度沒選對</td></tr><tr><td>情境 6</td><td>各類對角但不同的 Σ，每類只有 6 筆</td><td>Naive Bayes</td><td>假設正好成立，而 n 太小連 QDA 都撐不住</td></tr></tbody>
+  <tbody><tr><td>情境 1</td><td>各類內兩變數不相關的常態，每類 20 筆</td><td>LDA、邏輯斯</td><td>邊界真的是線性的，KNN 白付變異</td></tr><tr><td>情境 2</td><td>同上，但類內相關 −0.5</td><td>LDA、邏輯斯</td><td><strong>Naive Bayes 表現變差</strong>——獨立假設被違反</td></tr><tr><td>情境 3</td><td>類內強負相關的 t 分佈，每類 50 筆</td><td>邏輯斯</td><td>邊界仍線性但不常態，LDA／QDA 吃虧</td></tr><tr><td>情境 4</td><td>兩類相關係數 +0.5 與 −0.5 的常態</td><td>QDA</td><td>真實邊界二次，正好是 QDA 的假設</td></tr><tr><td>情境 5</td><td>不相關常態，反應由複雜非線性函數生成</td><td>KNN-CV</td><td>邊界很彎；<strong>KNN-1 最差</strong>——平滑度沒選對</td></tr><tr><td>情境 6</td><td>各類對角但不同的 Σ，每類只有 6 筆</td><td>Naive Bayes</td><td>假設正好成立，而 n 太小連 QDA 都撐不住</td></tr></tbody>
 </table></div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 解析比較</div>
   <p>ISLP §4.5.1 說「LDA 是 Naive Bayes 的特例」。這句話怎麼可能成立？LDA 明明允許變數相關、Naive Bayes 明明假設獨立。</p>
-  <div class="quiz-options" id="qCmpOptions"><div class="quiz-opt" data-correct="true" data-fb="對。關鍵是<strong>比較「模型能表達的函數族」而不是比較「假設的措辭」</strong>。Naive Bayes 的 g<sub>kj</sub> 可以是任意一維函數，取成 b<sub>kj</sub>x<sub>j</sub> 就退化成線性邊界，而 LDA 的邊界正好是線性的。所以任何線性邊界的分類器都落在 Naive Bayes 的表達範圍內。" onclick="quizCheck('qCmp', this)"><span class="opt-letter">(A)</span> 因為兩者的 log-odds 都能寫成 a_k + Σ_j g_kj(x_j)；LDA 對應 g_kj 取線性函數的情況</div><div class="quiz-opt" data-correct="false" data-fb="這句話還要補上<strong>每個變數的變異數跨類別共用</strong>，才是對角 Σ 的 LDA；一般 GaussianNB 每類各估變異數。它講的是另一個特例，而且方向反了。「LDA 是 Naive Bayes 的特例」對<strong>任意</strong> Σ 都成立，不必是對角的，因為決定的是邊界的函數形式，不是相關結構。" onclick="quizCheck('qCmp', this)"><span class="opt-letter">(B)</span> 因為當 Σ 是對角矩陣時，LDA 的變數就真的獨立了，兩者於是相同</div><div class="quiz-opt" data-correct="false" data-fb="不對。p = 1 時獨立假設是空的、結論太廉價；ISLP 那條結論對一般 p 都成立。反而是「QDA 與 Naive Bayes 誰都不是誰的特例」這一條，才是真的沒有包含關係。" onclick="quizCheck('qCmp', this)"><span class="opt-letter">(C)</span> 這句話只在 p = 1 時成立，p ≥ 2 時兩者沒有包含關係</div></div>
+  <div class="quiz-options" id="qCmpOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這裡比較的是<strong>模型能表達的函數族</strong>，包含關係可由 log-odds 的形式判斷。Naive Bayes 的 g<sub>kj</sub> 可以是任意一維函數，取成 b<sub>kj</sub>x<sub>j</sub> 就退化成線性邊界，而 LDA 的邊界正好是線性的。所以任何線性邊界的分類器都落在 Naive Bayes 的表達範圍內。" onclick="quizCheck('qCmp', this)"><span class="opt-letter">(A)</span> 因為兩者的 log-odds 都能寫成 a_k + Σ_j g_kj(x_j)；LDA 對應 g_kj 取線性函數的情況</div><div class="quiz-opt" data-correct="false" data-fb="這句話還要補上<strong>每個變數的變異數跨類別共用</strong>，才是對角 Σ 的 LDA；一般 GaussianNB 每類各估變異數。它講的是另一個特例，而且方向反了。「LDA 是 Naive Bayes 的特例」對<strong>任意</strong> Σ 都成立，不必是對角的，因為決定的是邊界的函數形式，不是相關結構。" onclick="quizCheck('qCmp', this)"><span class="opt-letter">(B)</span> 因為當 Σ 是對角矩陣時，LDA 的變數就真的獨立了，兩者於是相同</div><div class="quiz-opt" data-correct="false" data-fb="不對。p = 1 時獨立假設是空的、結論太廉價；ISLP 那條結論對一般 p 都成立。「QDA 與 Naive Bayes 誰都不是誰的特例」表示兩者的函數族沒有包含關係。" onclick="quizCheck('qCmp', this)"><span class="opt-letter">(C)</span> 這句話只在 p = 1 時成立，p ≥ 2 時兩者沒有包含關係</div></div>
   <div class="quiz-feedback" id="qCmpFeedback"></div>
 </div>
 </section>
@@ -1546,7 +1546,7 @@ Up           68  83</pre></div>
   任何「挑一個指數族成員 + 挑一個連結函數」的迴歸都叫 GLM。
   所以 lab 裡從頭到尾只用了一支 <code>sm.GLM()</code>——換 <code>family</code> 就換模型。</p>
 
-  <h3 id="dx-poi">講義完整實作：一支 <code>sm.GLM()</code> 打三種模型</h3>
+  <h3 id="dx-poi">講義完整實作：用 <code>sm.GLM()</code> 建立三種模型</h3>
 <div class="deck-extra">
   <div class="dx-label">講義 04 · Poisson 迴歸（Bikeshare）</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1587,7 +1587,7 @@ Up           68  83</pre></div>
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：教科書第 4 章精選題 <span class="sec-badge"><a href="#w04-source-islp">教科書 · 第 4.8 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §4.8 的課後習題，題號都對得回課本。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
+  每個選項都有解說；需要完整解答時，可查閱下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter4/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch04.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1615,7 +1615,7 @@ Up           68  83</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 4.8 第 5 題（a）（d）</div>
   <p>（a）Bayes 決策邊界是<strong>線性</strong>時，LDA 與 QDA 誰在訓練集上比較好？測試集呢？（d）「就算邊界是線性的，QDA 彈性夠大也配得下，所以測試誤差還是會比較好」——對嗎？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。QDA 比較有彈性，所以<strong>訓練</strong>誤差通常較低（甚至一定不會更高）。但邊界既然是線性的，多出來的彈性只帶來變異、換不到偏差的減少，所以<strong>測試</strong>誤差 LDA 較好。(d) 的錯誤在於把「模型空間包含真解」當成「估得準」。這是偏差–變異取捨的核心誤解。附帶第 (c) 小題：n 變大時 QDA 相對 LDA 會<strong>改善</strong>，因為變異的代價被 n 稀釋掉了。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 訓練集 QDA 通常較好，測試集 LDA 較好；(d) 是錯的</div><div class="quiz-opt" data-correct="false" data-fb="測試集對，訓練集錯。<strong>訓練誤差幾乎總是站在比較彈性的模型那一邊</strong>。這正是訓練誤差不能用來選模型的原因。分辨「訓練」與「測試」是這一題的全部重點。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 兩個集合都是 LDA 較好，因為真實邊界是線性的</div><div class="quiz-opt" data-correct="false" data-fb="訓練集對，測試集錯，而且理由正是課本第 (d) 小題要打掉的迷思。「特例」保證的是<strong>偏差</strong>不會更差，完全沒有保證變異——而測試誤差 = 偏差² + 變異 + 不可約誤差。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩個集合都是 QDA 較好，因為線性邊界是二次邊界的特例</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。QDA 比較有彈性，所以<strong>訓練</strong>誤差通常較低（甚至一定不會更高）。但邊界既然是線性的，多出來的彈性只帶來變異、換不到偏差的減少，所以<strong>測試</strong>誤差 LDA 較好。(d) 的錯誤在於把「模型空間包含真解」當成「估得準」。這是偏差–變異取捨的核心誤解。附帶第 (c) 小題：n 變大時 QDA 相對 LDA 會<strong>改善</strong>，因為變異的代價被 n 稀釋掉了。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 訓練集 QDA 通常較好，測試集 LDA 較好；(d) 是錯的</div><div class="quiz-opt" data-correct="false" data-fb="測試集對，訓練集錯。<strong>訓練誤差幾乎總是站在比較彈性的模型那一邊</strong>。這正是訓練誤差不能用來選模型的原因。分辨「訓練」與「測試」是這一題的全部重點。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 兩個集合都是 LDA 較好，因為真實邊界是線性的</div><div class="quiz-opt" data-correct="false" data-fb="訓練集對，測試集錯，而且理由正是課本第 (d) 小題要釐清的差別。「特例」保證的是<strong>偏差</strong>不會更差，完全沒有保證變異——而測試誤差 = 偏差² + 變異 + 不可約誤差。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩個集合都是 QDA 較好，因為線性邊界是二次邊界的特例</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1687,7 +1687,7 @@ Up           68  83</pre></div>
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 28 張</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 4 章，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
@@ -2285,7 +2285,6 @@ HC.initFlashcards = () => {
 <!-- GEN:END sharedjs -->
 <!-- PAGEJS:BEGIN -->
 <script>
-/* ===== 烘焙資料（tools/frames/gen_classification.py，固定種子）===== */
 const FRAMES_w04why = {"meta":{"src":"ISLP Default（ISLP 圖 4.2、表 4.1、表 4.3）","seed":"rug 用 np.random.default_rng(20260810) 分層抽 70 + 170 筆","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_classification.py","note":"邏輯斯係數 -10.6513 / 0.0055 與 ISLP 表 4.1 的 −10.6513 / 0.0055 相符；線性配適在 balance < 579 會給負機率，要到 balance ≈ 8279 才超過 1，已經在資料範圍（最大 2654）之外"},"n":10000,"rate":0.0333,"lin":{"b0":-0.075192,"b1":0.000129872},"logit":{"b0":-10.65133,"b1":0.00549892},"multi":{"b0":-10.869045,"balance":0.005737,"income":0.003033,"student":-0.646776},"zeroAt":579.0,"oneAt":8278.8,"balMax":2654.3,"pts":[[1722,0],[1189,0],[31,0],[779,0],[1775,1],[783,0],[1355,0],[1643,1],[1992,1],[1217,0],[786,0],[605,0],[1981,1],[767,0],[1182,0],[679,0],[566,0],[1532,1],[914,0],[988,0],[857,0],[95,0],[1237,0],[1244,1],[1753,1],[1964,1],[1467,0],[934,0],[833,0],[0,0],[661,0],[1471,0],[1682,0],[1546,0],[2123,1],[828,0],[837,0],[480,0],[1791,1],[1101,0],[1840,0],[712,0],[1033,0],[2010,1],[907,0],[1859,1],[1024,0],[774,0],[1790,1],[1749,1],[691,0],[1135,1],[2262,1],[1041,0],[1812,1],[652,0],[1155,0],[513,0],[1176,0],[437,0],[471,0],[653,0],[1443,0],[793,0],[0,0],[825,0],[548,0],[1011,0],[1154,0],[555,0],[13,0],[2387,1],[550,0],[1068,0],[377,0],[984,0],[2008,1],[1923,1],[669,0],[1475,1],[16,0],[379,0],[787,0],[1238,1],[949,0],[686,0],[336,0],[1400,0],[488,0],[44,0],[1804,1],[1168,0],[482,0],[901,0],[699,1],[1759,0],[294,0],[631,0],[695,0],[1308,0],[1236,0],[641,0],[1635,0],[1142,0],[1351,1],[0,0],[1155,0],[546,0],[1855,1],[1147,0],[819,0],[1200,0],[1550,1],[919,0],[366,0],[1463,0],[463,0],[1332,0],[970,0],[518,0],[1928,1],[1029,1],[682,0],[273,0],[1878,1],[1734,1],[1489,0],[866,0],[1711,1],[408,0],[1647,1],[845,0],[1102,1],[768,0],[1802,1],[0,0],[639,0],[924,0],[1191,0],[961,1],[1178,1],[1400,0],[2087,1],[697,0],[812,0],[639,0],[1408,1],[23,0],[283,0],[1263,0],[406,0],[544,0],[1572,1],[1315,0],[640,0],[1562,1],[1571,1],[1144,1],[2287,1],[1190,0],[177,0],[0,0],[1807,1],[915,0],[0,0],[1456,0],[1378,1],[344,0],[1186,0],[1150,0],[1393,1],[327,0],[1231,0],[772,0],[1622,1],[1099,1],[1127,0],[1022,0],[1563,0],[322,0],[553,0],[2039,1],[1794,0],[820,0],[112,0],[0,0],[490,0],[888,0],[1199,0],[1200,0],[489,0],[868,0],[908,0],[1202,0],[535,0],[519,0],[1223,0],[1804,1],[1656,1],[1013,1],[2025,1],[101,0],[1816,1],[139,0],[1114,0],[2049,1],[247,0],[1434,0],[2007,1],[1378,0],[1748,1],[1857,1],[1265,0],[549,0],[2095,1],[1538,1],[817,0],[1505,0],[912,0],[2074,1],[1826,1],[1659,1],[1726,1],[959,1],[51,0],[927,0],[819,0],[2129,1],[1189,0],[843,0],[492,0],[1916,0],[667,0],[280,0],[1976,1],[1070,0],[1067,0],[1974,1],[813,0],[1516,1]]};
 const FRAMES_w04thr = {"meta":{"src":"ISLP Default · LDA(balance, student)（ISLP 表 4.4、表 4.5、圖 4.7、圖 4.8）","seed":"無隨機性：LDA 是閉式解，直方圖是全部 10000 筆的後驗機率","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_classification.py","note":"直方圖每格寬 0.005，閾值只走 0.005 的倍數，所以 JS 累加出來的 2×2 表是精確值：閾值 0.5 得 9644/23/252/81（表 4.4）、閾值 0.2 得 9432/235/138/195（表 4.5）"},"n":10000,"nPos":333,"nNeg":9667,"nbins":200,"step":0.005,"histYes":[3,4,4,7,6,3,4,2,5,6,4,5,6,6,3,4,3,5,1,2,4,4,3,1,3,3,3,4,3,2,3,2,2,4,2,3,2,2,3,2,5,2,2,1,0,5,3,3,1,1,3,1,1,2,1,3,3,3,2,2,1,5,2,2,1,3,4,1,4,1,5,0,2,1,3,2,1,3,1,1,1,1,1,0,1,3,3,2,2,0,2,1,2,4,0,2,1,0,0,1,1,0,2,1,5,0,1,0,1,1,2,2,3,2,1,0,4,0,2,3,0,1,0,3,1,2,3,4,1,1,0,2,1,1,0,0,0,0,2,1,1,0,2,2,1,0,0,1,1,1,0,0,1,1,0,3,1,0,2,0,0,0,0,1,0,1,0,1,0,0,0,0,1,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0],"histNo":[5299,1173,606,413,294,229,167,143,113,106,93,82,72,68,44,42,42,33,38,34,34,23,18,28,13,18,24,17,20,13,18,16,17,15,6,14,16,6,11,14,12,9,8,11,5,8,9,8,10,7,7,8,7,9,4,2,5,3,2,4,5,0,3,3,5,0,4,1,7,5,6,4,3,2,0,1,1,2,3,2,0,1,0,2,1,1,0,1,2,2,3,0,1,1,0,0,1,1,0,0,1,0,1,1,0,1,1,0,1,1,0,0,1,0,1,2,0,0,1,2,0,0,0,0,1,0,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"auc":0.9496,"ref":{"t50":[9644,23,252,81],"t20":[9432,235,138,195]}};
 
@@ -2722,11 +2721,11 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"分類（Classification）","back":"反應變數是類別而不是數字的監督式學習問題。目標是把每一筆觀測值指派到 K 個類別之一，通常先估出屬於各類的機率，再依某個閾值決定標籤。"},{"front":"勝算（Odds）","back":"p /(1 − p)，發生機率除以不發生機率，範圍是 (0, ∞)。p 很小時勝算約等於機率；p 接近 1 時勝算會衝向無限大。"},{"front":"對數勝算（Log-odds / Logit）","back":"log[p /(1 − p)]，範圍是整個實數線。邏輯斯迴歸真正線性的量就是它——所以係數要讀成「log-odds 的變化」，不是機率的變化。"},{"front":"邏輯斯函數（Logistic Function）","back":"p(X) = e^(β₀+β₁X) /(1 + e^(β₀+β₁X))。把任意實數壓進 (0, 1)，所以輸出永遠是合法機率，這是它取代線性迴歸的理由。"},{"front":"勝算比（Odds Ratio）","back":"e^β₁。預測變數每增加一單位，勝算要乘上的倍數。它不隨 x 改變，所以是報告邏輯斯迴歸效果時最不容易講錯的量。"},{"front":"最大似然法（Maximum Likelihood）","back":"挑一組參數讓「觀察到手上這批資料」的機率最大。邏輯斯迴歸與 Poisson 迴歸都用它，沒有封閉解要迭代；常態假設下的最大似然就退化成最小平方法。"},{"front":"混淆（Confounding）","back":"只放一個變數與同時放多個變數時，同一個係數可能連正負號都相反。ISLP 的 Default 例子：student 單獨配是 +0.4049，加了 balance 後變 −0.6468。多元迴歸的係數一律是「控制住其他變數之後」的效果。"},{"front":"多元邏輯斯迴歸（Multinomial Logistic Regression）","back":"K 大於 2 時的邏輯斯迴歸。挑一類當基準（baseline），對其餘 K − 1 類各寫一條相對於基準的 log-odds。換基準會讓係數變，但預測值不變。"},{"front":"Softmax 編碼（Softmax Coding）","back":"多類別邏輯斯的等價寫法：不挑基準、K 類對稱，Pr(Y = k|x) 正比於 e^(線性式)。只有兩類係數之差有意義；機器學習與神經網路慣用這種寫法。"},{"front":"生成式模型（Generative Model）","back":"先分別建模每一類裡面 X 的分佈 fₖ(x) 與先驗 πₖ，再用 Bayes 定理翻成後驗機率。LDA、QDA、Naive Bayes 都是這一類，跟直接建模後驗的邏輯斯迴歸（判別式）相對。"},{"front":"先驗機率（Prior Probability）","back":"πₖ，隨便抓一筆觀測值屬於第 k 類的機率。實務上直接用訓練資料裡各類的比例估：π̂ₖ = nₖ / n。"},{"front":"後驗機率（Posterior Probability）","back":"pₖ(x) = Pr(Y = k | X = x)，看到 x 之後它屬於第 k 類的機率。Bayes 分類器把 x 判給後驗機率最大的類，總錯誤率最低。"},{"front":"Bayes 定理（Bayes Theorem）","back":"Pr(Y = k|X = x) = πₖ fₖ(x) / Σ πₗ fₗ(x)。它把「各類裡 X 長什麼樣」翻成「看到這個 X 該猜哪一類」，是所有生成式分類器的骨架。"},{"front":"線性判別分析（LDA, Linear Discriminant Analysis）","back":"假設每一類的 X 服從多變量常態，平均向量各類不同、共變異數矩陣所有類共用。共用讓二次項在相減時抵消，所以決策邊界是線性的。"},{"front":"判別函數（Discriminant Function）","back":"δₖ(x)，把 Bayes 後驗取 log 並丟掉與 k 無關的項之後剩下的量。把 x 判給 δₖ(x) 最大的類。LDA 的 δ 是 x 的一次式，QDA 的是二次式。"},{"front":"二次判別分析（QDA, Quadratic Discriminant Analysis）","back":"放掉共用共變異數，讓每一類有自己的 Σₖ。二次項不再抵消，邊界變成二次曲面。要多估 K·p(p+1)/2 個參數，所以只在 n 大或共用假設明顯不成立時才划算。"},{"front":"Naive Bayes 分類器（Naive Bayes Classifier）","back":"假設在每一類內部 p 個預測變數互相獨立，於是 fₖ(x) 可拆成一維密度的乘積，以結構假設降低估計變異。常態版一般對應各類共變異數為對角的 QDA；變異數再跨類別共用時，才是對角 LDA。"},{"front":"混淆矩陣（Confusion Matrix）","back":"把預測標籤與真實標籤交叉列出的 2 × 2（或 K × K）表。對角是猜對、非對角是猜錯。看到別人的混淆矩陣第一件事是確認哪一軸是真實值，否則靈敏度與精確率會對調。"},{"front":"靈敏度（Sensitivity / Recall）","back":"TP /(TP + FN)，真的是正類的人裡你抓到幾成。分母是真實的正類總數。癌症篩檢在意的就是這個。"},{"front":"特異度（Specificity）","back":"TN /(TN + FP)，真的沒事的人裡你放對幾成。分母是真實的負類總數。1 − 特異度就是假陽率，也就是 ROC 曲線的橫軸。"},{"front":"精確率（Precision / PPV）","back":"TP /(TP + FP)，你喊「有事」的人裡真的有事的比例。分母是你預測為正的總數。垃圾信過濾與行銷名單在意的是這個。"},{"front":"多數類基準（Majority-class Baseline）","back":"一律預測多數類的表現。基準正確率是多數類比例，基準錯誤率是 1 減該比例；例如 Default 分別為 96.67% 與 3.33%。比較模型時要用同一量尺，並查看混淆矩陣及錯誤成本。"},{"front":"決策閾值（Decision Threshold）","back":"把後驗機率切成標籤的那個切點。0.5 只是「總錯誤率最小」的產物；類別不平衡或兩種錯誤成本不同時應該調整。Default 上從 0.5 降到 0.2，漏掉的違約戶從 252 降到 138。"},{"front":"ROC 曲線（ROC Curve）","back":"把所有可能閾值下的（假陽率、真陽率）畫成一條曲線。它描述的是分類器本身而不是某一個閾值，愈貼左上角愈好。對角線代表隨機猜。"},{"front":"曲線下面積（AUC, Area Under the ROC Curve）","back":"ROC 曲線下的面積，把所有閾值的表現總結成一個數。隨機猜是 0.5、完美是 1。LDA 在 Default 上的 AUC 是 0.95。"},{"front":"Poisson 迴歸（Poisson Regression）","back":"計數型反應變數的 GLM。假設 Y 服從 Poisson 分佈並對 log λ 配線性式，所以 λ 永遠是正的，而且自動帶進「平均等於變異」的關係。係數要用乘法解讀：λ 乘上 e^βⱼ。"},{"front":"廣義線性模型（GLM, Generalized Linear Model）","back":"假設 Y 屬於某個指數族分佈，再用連結函數把 E(Y) 轉換成預測變數的線性組合。線性迴歸（恆等連結）、邏輯斯迴歸（logit）、Poisson 迴歸（log）都是它的特例。"},{"front":"連結函數（Link Function）","back":"η，把 E(Y|X) 轉換成線性組合的那個函數。線性迴歸取 η(μ) = μ、邏輯斯取 log[μ/(1 − μ)]、Poisson 取 log μ。它同時決定了 μ 的合法範圍與係數的解讀方式。"}];
+const FLASHCARDS = [{"front":"分類（Classification）","back":"反應變數是類別的監督式學習問題。目標是把每一筆觀測值指派到 K 個類別之一，通常先估出屬於各類的機率，再依某個閾值決定標籤。"},{"front":"勝算（Odds）","back":"p /(1 − p)，發生機率除以不發生機率，範圍是 (0, ∞)。p 很小時勝算約等於機率；p 接近 1 時勝算會衝向無限大。"},{"front":"對數勝算（Log-odds / Logit）","back":"log[p /(1 − p)]，範圍是整個實數線。邏輯斯迴歸的線性函數對應這個量，所以係數要讀成「log-odds 的變化」，不是機率的變化。"},{"front":"邏輯斯函數（Logistic Function）","back":"p(X) = e^(β₀+β₁X) /(1 + e^(β₀+β₁X))。把任意實數壓進 (0, 1)，所以輸出永遠是合法機率，這是它取代線性迴歸的理由。"},{"front":"勝算比（Odds Ratio）","back":"e^β₁。預測變數每增加一單位，勝算要乘上的倍數。它不隨 x 改變，所以是報告邏輯斯迴歸效果時最不容易講錯的量。"},{"front":"最大似然法（Maximum Likelihood）","back":"挑一組參數讓「觀察到手上這批資料」的機率最大。邏輯斯迴歸與 Poisson 迴歸都用它，沒有封閉解要迭代；常態假設下的最大似然就退化成最小平方法。"},{"front":"混淆（Confounding）","back":"只放一個變數與同時放多個變數時，同一個係數可能連正負號都相反。ISLP 的 Default 例子：student 單獨配是 +0.4049，加了 balance 後變 −0.6468。多元迴歸的係數一律是「控制住其他變數之後」的效果。"},{"front":"多元邏輯斯迴歸（Multinomial Logistic Regression）","back":"K 大於 2 時的邏輯斯迴歸。挑一類當基準（baseline），對其餘 K − 1 類各寫一條相對於基準的 log-odds。換基準會讓係數變，但預測值不變。"},{"front":"Softmax 編碼（Softmax Coding）","back":"多類別邏輯斯的等價寫法：不挑基準、K 類對稱，Pr(Y = k|x) 正比於 e^(線性式)。只有兩類係數之差有意義；機器學習與神經網路慣用這種寫法。"},{"front":"生成式模型（Generative Model）","back":"先分別建模每一類裡面 X 的分佈 fₖ(x) 與先驗 πₖ，再用 Bayes 定理翻成後驗機率。LDA、QDA、Naive Bayes 都是這一類，跟直接建模後驗的邏輯斯迴歸（判別式）相對。"},{"front":"先驗機率（Prior Probability）","back":"πₖ，隨便抓一筆觀測值屬於第 k 類的機率。實務上直接用訓練資料裡各類的比例估：π̂ₖ = nₖ / n。"},{"front":"後驗機率（Posterior Probability）","back":"pₖ(x) = Pr(Y = k | X = x)，看到 x 之後它屬於第 k 類的機率。Bayes 分類器把 x 判給後驗機率最大的類，總錯誤率最低。"},{"front":"Bayes 定理（Bayes Theorem）","back":"Pr(Y = k|X = x) = πₖ fₖ(x) / Σ πₗ fₗ(x)。它把「各類裡 X 長什麼樣」翻成「看到這個 X 該猜哪一類」，是所有生成式分類器的骨架。"},{"front":"線性判別分析（LDA, Linear Discriminant Analysis）","back":"假設每一類的 X 服從多變量常態，平均向量各類不同、共變異數矩陣所有類共用。共用讓二次項在相減時抵消，所以決策邊界是線性的。"},{"front":"判別函數（Discriminant Function）","back":"δₖ(x)，把 Bayes 後驗取 log 並丟掉與 k 無關的項之後剩下的量。把 x 判給 δₖ(x) 最大的類。LDA 的 δ 是 x 的一次式，QDA 的是二次式。"},{"front":"二次判別分析（QDA, Quadratic Discriminant Analysis）","back":"放掉共用共變異數，讓每一類有自己的 Σₖ。二次項不再抵消，邊界變成二次曲面。要多估 K·p(p+1)/2 個參數，所以只在 n 大或共用假設明顯不成立時才划算。"},{"front":"Naive Bayes 分類器（Naive Bayes Classifier）","back":"假設在每一類內部 p 個預測變數互相獨立，於是 fₖ(x) 可拆成一維密度的乘積，以結構假設降低估計變異。常態版一般對應各類共變異數為對角的 QDA；變異數再跨類別共用時，才是對角 LDA。"},{"front":"混淆矩陣（Confusion Matrix）","back":"把預測標籤與真實標籤交叉列出的 2 × 2（或 K × K）表。對角是猜對、非對角是猜錯。看到別人的混淆矩陣第一件事是確認哪一軸是真實值，否則靈敏度與精確率會對調。"},{"front":"靈敏度（Sensitivity / Recall）","back":"TP /(TP + FN)，真的是正類的人裡你抓到幾成。分母是真實的正類總數。癌症篩檢在意的就是這個。"},{"front":"特異度（Specificity）","back":"TN /(TN + FP)，真的沒事的人裡你放對幾成。分母是真實的負類總數。1 − 特異度就是假陽率，也就是 ROC 曲線的橫軸。"},{"front":"精確率（Precision / PPV）","back":"TP /(TP + FP)，你喊「有事」的人裡真的有事的比例。分母是你預測為正的總數。垃圾信過濾與行銷名單在意的是這個。"},{"front":"多數類基準（Majority-class Baseline）","back":"一律預測多數類的表現。基準正確率是多數類比例，基準錯誤率是 1 減該比例；例如 Default 分別為 96.67% 與 3.33%。比較模型時要用同一量尺，並查看混淆矩陣及錯誤成本。"},{"front":"決策閾值（Decision Threshold）","back":"把後驗機率切成標籤的那個切點。0.5 只是「總錯誤率最小」的產物；類別不平衡或兩種錯誤成本不同時應該調整。Default 上從 0.5 降到 0.2，漏掉的違約戶從 252 降到 138。"},{"front":"ROC 曲線（ROC Curve）","back":"把所有可能閾值下的（假陽率、真陽率）畫成一條曲線。它呈現分類器在所有閾值下的表現，愈貼左上角愈好。對角線代表隨機猜。"},{"front":"曲線下面積（AUC, Area Under the ROC Curve）","back":"ROC 曲線下的面積，把所有閾值的表現總結成一個數。隨機猜是 0.5、完美是 1。LDA 在 Default 上的 AUC 是 0.95。"},{"front":"Poisson 迴歸（Poisson Regression）","back":"計數型反應變數的 GLM。假設 Y 服從 Poisson 分佈並對 log λ 配線性式，所以 λ 永遠是正的，而且自動帶進「平均等於變異」的關係。係數要用乘法解讀：λ 乘上 e^βⱼ。"},{"front":"廣義線性模型（GLM, Generalized Linear Model）","back":"假設 Y 屬於某個指數族分佈，再用連結函數把 E(Y) 轉換成預測變數的線性組合。線性迴歸（恆等連結）、邏輯斯迴歸（logit）、Poisson 迴歸（log）都是它的特例。"},{"front":"連結函數（Link Function）","back":"η，把 E(Y|X) 轉換成線性組合的那個函數。線性迴歸取 η(μ) = μ、邏輯斯取 log[μ/(1 − μ)]、Poisson 取 log μ。它同時決定了 μ 的合法範圍與係數的解讀方式。"}];
 HC.initFlashcards();
 </script>
 <script>
-const BANKQUIZ = [{"topic":"邏輯斯迴歸 · 係數","q":"某邏輯斯迴歸模型中 <code>hours</code> 的估計係數是 −0.35（p 值 0.002）。下面哪個敘述完全正確？","options":["<code>hours</code> 每增加一單位，事件發生的機率減少 0.35","<code>hours</code> 每增加一單位，事件發生的勝算乘上 e<sup>−0.35</sup> ≈ 0.705","<code>hours</code> 每增加一單位，事件發生的機率乘上 0.705","<code>hours</code> 每增加一單位，log-odds 乘上 −0.35"],"answer":1,"why":["不對。係數是 log-odds 的變化量，不是機率的變化量。機率的變化隨你站的位置而變，講不出一個固定數字。","正確。線性的是 log-odds，所以 log-odds「加上 −0.35」等於勝算「乘上 e^(−0.35) = 0.705」，也就是勝算掉了約 29.5%。","不對，乘上 e^β 的是勝算 p/(1−p) 而不是機率 p。只有在 p 很小的時候兩者才近似相等。","不對，是「加上」−0.35，不是「乘上」。log-odds = β₀ + β₁x 是一次式，x 增加一單位讓它加 β₁。"]},{"topic":"LDA · 決策邊界","q":"p = 1、K = 2 的 LDA，兩類平均 μ̂₁ = 2、μ̂₂ = 6，共用標準差 σ̂ = 2，先驗 π̂₁ = π̂₂ = 0.5。決策邊界在哪裡？","options":["x = 4","x = 2","x = 8","沒有足夠資訊，還需要知道每一類的樣本數"],"answer":0,"why":["正確。等先驗時 LDA 的邊界就是兩個平均的中點 (μ̂₁ + μ̂₂)/2 = (2 + 6)/2 = 4（ISLP 式 4.19），而且跟 σ̂ 完全無關。","不對，2 是 μ̂₁ 本身。邊界要落在兩個平均之間；如果 π̂₁ 變大，邊界會往「另一類」的方向移動，讓第 1 類拿到更多地盤。","不對，8 在兩個平均之外。等先驗時邊界一定落在 μ̂₁ 與 μ̂₂ 中間。","資訊已經夠了。樣本數只透過先驗 π̂ₖ = nₖ/n 影響邊界，而題目已經直接給了 π̂₁ = π̂₂ = 0.5。"]},{"topic":"LDA vs QDA · 偏差與變異","q":"p = 10、K = 2，訓練資料只有 60 筆，而且沒有理由懷疑兩類的共變異數矩陣不同。選 LDA 還是 QDA？","options":["QDA，因為它比較有彈性，線性邊界是二次邊界的特例","LDA，因為 QDA 要多估 55 個共變異數參數，60 筆資料撐不住","都可以，p = 10 時兩者的參數量差別可以忽略","QDA，但要先把資料標準化"],"answer":1,"why":["「特例」只保證偏差不會更差，完全沒有保證變異。ISLP 習題 4.8 第 5 題 (d) 就是在打掉這個迷思。","正確。LDA 估一個 Σ 要 p(p+1)/2 = 55 個數，QDA 要兩倍 110 個；n = 60 時多出來的 55 個估計極不穩定，變異吃掉一切。","差別一點都不能忽略：55 對 110 個參數，而樣本只有 60 筆——這已經是「參數比資料多」的量級了。","標準化不會改變參數的數量，也不會讓 QDA 在 n = 60 時變穩。判別分析對線性尺度變換基本上不敏感（那是 KNN 才要在意的事）。"]},{"topic":"混淆矩陣 · 不平衡資料","q":"某疾病篩檢工具在 1000 人（其中 20 人真的有病）上的結果：TP = 8、FN = 12、FP = 30、TN = 950。下面哪個判讀最恰當？","options":["準確率 95.8%，表現良好，可以上線","靈敏度只有 40%，漏掉六成病人；多數類基準正確率 98% 甚至比準確率還高，應該調低閾值","精確率 21.1% 太低，應該調高閾值減少誤報","特異度 96.9% 很高，所以這個工具主要的問題是誤報"],"answer":1,"why":["準確率算得對（(8+950)/1000 = 95.8%），判讀完全錯。一律說「沒病」就有 98% 準確率——這個工具還輸給什麼都不做。","正確。靈敏度 = 8/(8+12) = 40%，多數類基準正確率 = 980/1000 = 98%。篩檢最怕漏抓（FN），所以要調低閾值換靈敏度，代價是 FP 上升。","精確率算得對（8/38 = 21.1%），但方向反了。篩檢的目的是不要漏掉病人；調高閾值會讓靈敏度更差。精確率是垃圾信過濾那類問題在意的方向。","特異度算得對，結論錯。FP = 30 對篩檢來說不是主要問題，真正的問題是 FN = 12（漏掉六成病人）。"]},{"topic":"方法選擇 · 假設","q":"資料有 p = 200 個預測變數、n = 500，而且領域知識告訴你這些變數在各類內大致互相獨立。哪個方法最可能勝出？","options":["QDA，因為它最有彈性","LDA，因為它的參數比 QDA 少","Naive Bayes，因為獨立假設剛好成立，而它要估的參數最少","KNN（K = 1），因為它完全不做分佈假設"],"answer":2,"why":["QDA 要估 2 × 200 × 201/2 = 40200 個共變異數參數，n = 500 完全不可能。彈性在 p 大 n 小時是負債。","方向對（參數比 QDA 少），但 LDA 仍要估 200 × 201/2 = 20100 個共變異數參數，n = 500 還是撐不住。","正確。獨立假設成立時 Naive Bayes 的偏差極小，而它只要估約 2Kp = 800 個數。這就是 ISLP 情境 6 與 Caravan 那類資料的情況。","p = 200 時 KNN 被維度詛咒打敗：高維空間裡「最近的鄰居」其實一點都不近，K = 1 又把變異放到最大。"]},{"topic":"Poisson 迴歸 · GLM","q":"對計數資料配 Poisson 迴歸，某個二元變數的係數是 −0.5。這代表什麼？","options":["這個變數從 0 變 1 時，平均計數減少 0.5","這個變數從 0 變 1 時，平均計數乘上 e<sup>−0.5</sup> ≈ 0.607，也就是只剩約 61%","這個變數從 0 變 1 時，計數的變異數減少 0.5，但平均不變","這個變數從 0 變 1 時，計數的勝算乘上 e<sup>−0.5</sup>"],"answer":1,"why":["不對。Poisson 迴歸線性的是 log λ，所以係數對 λ 的作用是乘法不是加法——這跟邏輯斯迴歸「勝算乘上 e^β」是同一個模式。","正確。log λ 加上 −0.5 等於 λ 乘上 e^(−0.5) = 0.607。ISLP 表 4.11 的 weathersit[cloudy/misty] = −0.08 就是這樣解讀成「陰天只有晴天的 92.3%」。","不對。Poisson 模型裡 E(Y) = Var(Y) = λ，平均與變異是綁在一起的，不可能只動變異不動平均。","「勝算」是二元反應才有的概念。Poisson 迴歸的反應是計數，改變的是平均值 λ。"]}];
+const BANKQUIZ = [{"topic":"邏輯斯迴歸 · 係數","q":"某邏輯斯迴歸模型中 <code>hours</code> 的估計係數是 −0.35（p 值 0.002）。下面哪個敘述完全正確？","options":["<code>hours</code> 每增加一單位，事件發生的機率減少 0.35","<code>hours</code> 每增加一單位，事件發生的勝算乘上 e<sup>−0.35</sup> ≈ 0.705","<code>hours</code> 每增加一單位，事件發生的機率乘上 0.705","<code>hours</code> 每增加一單位，log-odds 乘上 −0.35"],"answer":1,"why":["不對。係數是 log-odds 的變化量，不是機率的變化量。機率的變化隨你站的位置而變，講不出一個固定數字。","正確。線性的是 log-odds，所以 log-odds「加上 −0.35」等於勝算「乘上 e^(−0.35) = 0.705」，也就是勝算掉了約 29.5%。","不對，乘上 e^β 的是勝算 p/(1−p) 而不是機率 p。只有在 p 很小的時候兩者才近似相等。","不對，是「加上」−0.35，不是「乘上」。log-odds = β₀ + β₁x 是一次式，x 增加一單位讓它加 β₁。"]},{"topic":"LDA · 決策邊界","q":"p = 1、K = 2 的 LDA，兩類平均 μ̂₁ = 2、μ̂₂ = 6，共用標準差 σ̂ = 2，先驗 π̂₁ = π̂₂ = 0.5。決策邊界在哪裡？","options":["x = 4","x = 2","x = 8","沒有足夠資訊，還需要知道每一類的樣本數"],"answer":0,"why":["正確。等先驗時 LDA 的邊界就是兩個平均的中點 (μ̂₁ + μ̂₂)/2 = (2 + 6)/2 = 4（ISLP 式 4.19），而且跟 σ̂ 完全無關。","不對，2 是 μ̂₁ 本身。邊界要落在兩個平均之間；如果 π̂₁ 變大，邊界會往「另一類」的方向移動，讓第 1 類拿到更多地盤。","不對，8 在兩個平均之外。等先驗時邊界一定落在 μ̂₁ 與 μ̂₂ 中間。","資訊已經夠了。樣本數只透過先驗 π̂ₖ = nₖ/n 影響邊界，而題目已經直接給了 π̂₁ = π̂₂ = 0.5。"]},{"topic":"LDA vs QDA · 偏差與變異","q":"p = 10、K = 2，訓練資料只有 60 筆，而且沒有理由懷疑兩類的共變異數矩陣不同。選 LDA 還是 QDA？","options":["QDA，因為它比較有彈性，線性邊界是二次邊界的特例","LDA，因為 QDA 要多估 55 個共變異數參數，60 筆資料撐不住","都可以，p = 10 時兩者的參數量差別可以忽略","QDA，但要先把資料標準化"],"answer":1,"why":["「特例」只保證偏差不會更差，完全沒有保證變異。ISLP 習題 4.8 第 5 題 (d) 說明了這個差別。","正確。LDA 估一個 Σ 要 p(p+1)/2 = 55 個數，QDA 要兩倍 110 個；n = 60 時多出來的 55 個估計極不穩定，變異可能抵銷偏差降低的好處。","參數量的差別是：55 對 110 個參數，而樣本只有 60 筆——這已經是「參數比資料多」的量級了。","標準化不會改變參數的數量，也不會讓 QDA 在 n = 60 時變穩。判別分析對線性尺度變換基本上不敏感（那是 KNN 才要在意的事）。"]},{"topic":"混淆矩陣 · 不平衡資料","q":"某疾病篩檢工具在 1000 人（其中 20 人真的有病）上的結果：TP = 8、FN = 12、FP = 30、TN = 950。下面哪個判讀最恰當？","options":["準確率 95.8%，表現良好，可以上線","靈敏度只有 40%，漏掉六成病人；多數類基準正確率 98% 甚至比準確率還高，應該調低閾值","精確率 21.1% 太低，應該調高閾值減少誤報","特異度 96.9% 很高，所以這個工具主要的問題是誤報"],"answer":1,"why":["準確率算得對（(8+950)/1000 = 95.8%），判讀完全錯。一律說「沒病」就有 98% 準確率——這個工具還輸給什麼都不做。","正確。靈敏度 = 8/(8+12) = 40%，多數類基準正確率 = 980/1000 = 98%。篩檢最怕漏抓（FN），所以要調低閾值換靈敏度，代價是 FP 上升。","精確率算得對（8/38 = 21.1%），但方向反了。篩檢的目的是不要漏掉病人；調高閾值會讓靈敏度更差。精確率是垃圾信過濾那類問題在意的方向。","特異度算得對；但在這個重視找出病人的篩檢情境，FN = 12（漏掉六成病人）是優先要改善的問題，同時也要衡量 FP = 30 的成本。"]},{"topic":"方法選擇 · 假設","q":"資料有 p = 200 個預測變數、n = 500，而且領域知識告訴你這些變數在各類內大致互相獨立。哪個方法最可能勝出？","options":["QDA，因為它最有彈性","LDA，因為它的參數比 QDA 少","Naive Bayes，因為獨立假設剛好成立，而它要估的參數最少","KNN（K = 1），因為它完全不做分佈假設"],"answer":2,"why":["QDA 要估 2 × 200 × 201/2 = 40200 個共變異數參數，n = 500 完全不可能。彈性在 p 大 n 小時是負債。","方向對（參數比 QDA 少），但 LDA 仍要估 200 × 201/2 = 20100 個共變異數參數，n = 500 還是撐不住。","正確。獨立假設成立時 Naive Bayes 的偏差極小，而它只要估約 2Kp = 800 個數。這就是 ISLP 情境 6 與 Caravan 那類資料的情況。","p = 200 時 KNN 容易受維度詛咒影響：高維空間裡「最近的鄰居」其實一點都不近，K = 1 又把變異放到最大。"]},{"topic":"Poisson 迴歸 · GLM","q":"對計數資料配 Poisson 迴歸，某個二元變數的係數是 −0.5。這代表什麼？","options":["這個變數從 0 變 1 時，平均計數減少 0.5","這個變數從 0 變 1 時，平均計數乘上 e<sup>−0.5</sup> ≈ 0.607，也就是只剩約 61%","這個變數從 0 變 1 時，計數的變異數減少 0.5，但平均不變","這個變數從 0 變 1 時，計數的勝算乘上 e<sup>−0.5</sup>"],"answer":1,"why":["不對。Poisson 迴歸線性的是 log λ，所以係數對 λ 的作用是乘法不是加法——這跟邏輯斯迴歸「勝算乘上 e^β」是同一個模式。","正確。log λ 加上 −0.5 等於 λ 乘上 e^(−0.5) = 0.607。ISLP 表 4.11 的 weathersit[cloudy/misty] = −0.08 就是這樣解讀成「陰天只有晴天的 92.3%」。","不對。Poisson 模型裡 E(Y) = Var(Y) = λ，平均與變異是綁在一起的，不可能只動變異不動平均。","「勝算」是二元反應才有的概念。Poisson 迴歸的反應是計數，改變的是平均值 λ。"]}];
 /* ===== 題庫自我檢測引擎（資料在 BANKQUIZ） ===== */
 (() => {
   const box = document.getElementById('bqBox');

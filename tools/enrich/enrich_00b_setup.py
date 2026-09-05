@@ -36,7 +36,7 @@ BODIES = {}
 
 # ── PROLOGUE 先能跑 ───────────────────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>先完成一件可以確認成功的小事：開課程 notebook、讀入 Auto 汽車資料，畫出馬力對 mpg 的散佈圖。平時可以先用 Colab 練習；本地端版本則建議和電腦教室一致，考前要熟悉教室的操作環境。</p>
+  <p>先完成讀取資料與繪圖的練習：開課程 notebook、讀入 Auto 汽車資料，畫出馬力對 mpg 的散佈圖。平時可以先用 Colab 練習；本地端版本則建議和電腦教室一致，考前要熟悉教室的操作環境。</p>
 {info("期中考準備：熟悉電腦教室的環境", '期中考使用電腦教室的電腦。平時可用 Colab 學習，但本地端練習建議依 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方套件版本清單</a> 設定，並在考前用教室電腦完整跑一次練習。下方「本機安裝」說明如何核對 Python、套件與 kernel。', "warm")}
 {info("第一次上手路徑", '開啟 <a href="https://colab.research.google.com/github/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb">Ch02 中文課程 notebook（Colab）</a>，選「在雲端硬碟中儲存副本」。先執行安裝套件與 imports；第一次使用 CPU 即可，先跳過 cudf／cuml 的 GPU 擴充。接著照下方「資料放哪裡」取得 Auto.csv，完成第一張圖。')}
 {table(["環境", "啟動成本", "適合情境", "主要代價"],
@@ -70,13 +70,13 @@ BODIES["prologue"] = f"""
 # ── P01 Colab 工作流 ──────────────────────────────────────────────────
 BODIES["colab"] = f"""
   <p>Colab 是跑在 Google 機器上的 Jupyter notebook。你可以直接在瀏覽器使用；
-  代價是<strong>執行階段（runtime）會被回收</strong>——執行階段結束或被回收後，
+  <strong>執行階段（runtime）會被回收</strong>。執行階段結束或被回收後，
   你裝的套件與記憶體裡的變數都會消失，程式碼本身則存在你的 Drive 裡不會掉。</p>
 
 {info("最常見的一個誤會", "「我明明裝過 ISLP 了，怎麼又說找不到？」"
       "，因為那是<strong>上一個執行階段</strong>裝的。"
       "連到新的執行階段之後要再跑一次 <code>%pip install ISLP</code>。"
-      "把它留在 notebook 的第一格，就不會忘。", "warm")}
+      "可以把它留在 notebook 的第一格，方便重新執行。", "warm")}
 
 {card("Colab 上的加速選項", C(1, 4), O(1, 4), src=S(1, 4),
       note="這兩行是課程 lab 拿來開 GPU 加速的（<code>cudf</code> 加速 pandas、"
@@ -103,9 +103,8 @@ BODIES["colab"] = f"""
   <div class="viz-source"><span>自訂概念示意</span>三格程式用來呈現 notebook 的狀態與執行順序；數值不是課程資料。</div>
  </div></div>
  <div class="side-panel">
-  <div class="info-card"><div class="ic-title">這個模擬器要看什麼</div>
-   同一格可以重跑，也可以跳著跑；所以 notebook 的結果取決於<strong>目前記憶體狀態</strong>，
-   不只取決於畫面上儲存格的位置。</div>
+  <div class="info-card"><div class="ic-title">執行順序與記憶體狀態</div>
+   同一格可以重跑，也可以跳著跑。執行時會使用<strong>目前記憶體中的變數</strong>，所以執行順序會影響結果。</div>
   <div class="info-card"><div class="ic-title">交作業前</div>
    重啟執行階段並由上到下全部執行，確認結果不依賴先前殘留的變數。</div>
  </div>
@@ -125,9 +124,9 @@ BODIES["colab"] = f"""
         "對。Colab 的環境是暫時的。把 <code>%pip install ISLP</code> "
         "留在第一格，每次重新連線先跑它就好。"),
        (False, "notebook 檔案壞掉了",
-        "notebook 存在 Drive 裡不會壞。報錯的是<strong>環境</strong>不是檔案。"),
+        "這個錯誤表示當前環境找不到套件，請先檢查執行階段與安裝狀態。"),
        (False, "ISLP 這個套件被下架了",
-        "在懷疑套件之前先懷疑環境，後者的機率高一萬倍。")])}
+        "先檢查當前環境是否裝好套件，再確認套件來源。")])}
 """
 
 # ── P02 imports 那一格 ────────────────────────────────────────────────
@@ -158,7 +157,7 @@ BODIES["imports"] = f"""
       [(True, "回去把第一格跑一次",
         "對。<code>np</code> 是 <code>import numpy as np</code> 建立的名字，"
         "那一格沒跑，這個名字就不存在。"
-        "NameError 十次有九次是「某一格沒跑」。"),
+        "也要確認建立變數的儲存格是否已經執行。"),
        (False, "重新安裝 numpy",
         "套件裝得好好的，只是<strong>還沒 import</strong>。"
         "重裝不會建立 <code>np</code> 這個名字。"),
@@ -178,13 +177,13 @@ BODIES["data"] = f"""
 
 {card("設一個路徑變數", C(2, 184), src=S(2, 184),
       note="<strong>這一行要改成你自己的路徑。</strong>"
-           "把路徑存成變數而不是每次都打全長，換資料夾時只要改一個地方。")}
+           "把路徑存成變數，換資料夾時只要改一個地方。")}
 
 {card("讀進來", C(2, 185), O(2, 185), src=S(2, 185),
       note="<code>os.path.join</code> 幫你處理斜線，"
            "比自己用加號接字串保險。下方保存的是老師當時檔案的輸出；你的檔案若少了 Unnamed: 0 這類索引欄，先核對來源，不要手動補造資料。")}
 
-  <p>接著以指定的特殊值規則重新讀取，讓 horsepower 能作數值運算。這是供你在自己的檔案執行的設定片段，不代填輸出；<a href="p4_pandas.html#na">P4</a> 會說明參數的作用。</p>
+  <p>接著以指定的特殊值規則重新讀取，讓 horsepower 能作數值運算。請在自己的檔案執行這段設定並查看輸出；<a href="p4_pandas.html#na">P4</a> 會說明參數的作用。</p>
 {hl("Auto = pd.read_csv(os.path.join(DATA_PATH, 'Auto.csv'), na_values=['?'])\nprint(Auto.shape)\nprint(Auto[['horsepower', 'mpg']].dtypes)\nprint(Auto[['horsepower', 'mpg']].isna().sum())")}
 {card("畫第一張散佈圖", C(2, 252), src=S(2, 252), note="在上面的 Auto 已讀取後執行。圖的橫軸是 horsepower、縱軸是 mpg。含缺值的觀測不會畫成點；圖能出現只表示操作成功，還不能取代資料清理與統計判斷。")}
 
@@ -206,9 +205,9 @@ BODIES["data"] = f"""
 BODIES["local"] = f"""
   <p>本地端練習建議使用與電腦教室相同的 Python 與核心套件版本。依據是 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方 packages.txt</a>，以下於 <strong>2026-09-05</strong> 核對；若清單更新，以官方檔案為準。</p>
 {table(["項目", "官方清單版本"], [["Python", "3.9.13"], ["NumPy／pandas", "1.24.4／2.3.2"], ["scikit-learn／SciPy", "1.6.1／1.13.1"], ["statsmodels／Matplotlib", "0.13.2／3.5.2"], ["seaborn／ISLP", "0.13.2／0.4.0"], ["JupyterLab／ipykernel／Notebook", "3.4.4／6.15.2／6.4.12"]])}
-  <p>先安裝 conda，再建立獨立環境。下面安裝的是清單中的核心套件，不是教室整台電腦的完整複本；作業系統、其他相依套件與實際使用的 kernel 仍需核對。官方檔案是 <code>pip list</code> 形式的版本表，<strong>不能直接用 pip install -r packages.txt 安裝</strong>。</p>
+  <p>先安裝 conda，再建立獨立環境。下面安裝清單中的核心套件；作業系統、其他相依套件與實際使用的 kernel 仍需核對。官方檔案是 <code>pip list</code> 形式的版本表，<strong>不能直接用 pip install -r packages.txt 安裝</strong>。</p>
 {hl("# 建立本地練習環境\nconda create -n m524 python=3.9.13 -y\n\n# 依官方清單安裝核心分析套件\nconda run -n m524 python -m pip install numpy==1.24.4 pandas==2.3.2 scikit-learn==1.6.1 scipy==1.13.1 statsmodels==0.13.2 matplotlib==3.5.2 seaborn==0.13.2 ISLP==0.4.0\n\n# 安裝 notebook 工具，註冊 kernel\nconda run -n m524 python -m pip install jupyterlab==3.4.4 ipykernel==6.15.2 notebook==6.4.12\nconda run -n m524 python -m ipykernel install --user --name m524\n\n# 核對版本，並由這個環境啟動 JupyterLab\nconda run -n m524 python --version\nconda run -n m524 python -m pip list\nconda run -n m524 jupyter lab")}
-  <p>在 JupyterLab 開啟練習 notebook，選擇 <code>m524</code> kernel，再執行 <code>import sys; print(sys.version); print(sys.executable)</code> 確認實際使用的 Python。若安裝失敗，保留完整錯誤訊息並核對相依套件；不要默默換成另一版後仍宣稱與教室一致。</p>
+  <p>在 JupyterLab 開啟練習 notebook，選擇 <code>m524</code> kernel，再執行 <code>import sys; print(sys.version); print(sys.executable)</code> 確認實際使用的 Python。若安裝失敗，保留完整錯誤訊息並核對相依套件。更換版本後也要重新確認與教室的差異。</p>
 
 {table(["做法", "課程專案", "另一個專案", "結果"],
        [["全部裝在 base", "需要 pandas 2.3.2", "需要 pandas 1.5.3",
@@ -234,19 +233,18 @@ BODIES["local"] = f"""
       "你在終端機 <code>pip install ISLP</code> 裝好了，但 Jupyter 裡還是 "
       "<code>ModuleNotFoundError</code>。最可能的原因？",
       [(True, "Jupyter 用的 kernel 不是你剛剛裝套件的那個環境",
-        "對。這是最常見的假故障。"
+        "對。安裝套件的環境與 notebook 的 kernel 要一致。"
         "先選擇已依課程清單安裝套件的 kernel，再核對 <code>sys.executable</code>；"
         "若確實缺套件，再依官方版本安裝，避免意外換版。"),
        (False, "要重開電腦",
-        "重開沒有用——問題不是快取，是<strong>裝到了另一個 Python</strong>。"),
+        "請先核對 Python 環境：套件可能<strong>裝到了另一個 Python</strong>，重開電腦不會改變安裝位置。"),
        (False, "ISLP 不支援你的作業系統",
         "ISLP 是純 Python 套件，跨平台。先檢查環境，再懷疑套件。")])}
 """
 
 # ── P05 跑不動的時候 ──────────────────────────────────────────────────
 BODIES["trouble"] = f"""
-  <p>環境的問題有八成是同樣的四種。這一節把它們列出來，
-  每一種都給「症狀 → 原因 → 怎麼修」。學會這四種，你以後遇到的環境問題會少一大半。</p>
+  <p>以下四種情況整理了症狀、可能原因與檢查方式，遇到環境問題時可以依序核對。</p>
 
 {table(["症狀", "先收集的證據", "優先檢查"],
        [["<code>ModuleNotFoundError</code>", "<code>sys.executable</code> 與 kernel 名稱",
@@ -262,18 +260,18 @@ BODIES["trouble"] = f"""
     ("問人之前先做這三件事",
      "① <strong>重啟並全部重跑</strong>；② 把<strong>完整的錯誤訊息最後一行</strong>複製起來；"
      "③ 確認是哪一格出錯、那一格用到哪些變數。"
-     "做完這三件事，八成的問題你自己就解掉了；剩下的兩成，別人也才幫得上忙。"),
+     "先做這三件事，可以縮小問題範圍，也方便別人協助你檢查。"),
     ("可以直接把錯誤訊息丟給 AI 嗎？",
-     "可以，而且通常很有用——環境問題正是 AI 最擅長的那一類（有標準答案、可驗證）。"
+     "可以。環境問題可以透過錯誤訊息、版本與執行結果核對，適合請 AI 提出除錯建議。"
      "但要把<strong>完整的錯誤訊息</strong>與<strong>你實際跑的那一格</strong>都給它，"
      "不要只說「我的程式跑不動」。"
-     "為什麼統計結果就不能這樣信它，見 "
+     "如何核對統計結果，見 "
      "<a href=\"00a_why_code.html\">00A</a>。"),
 ])}
 
 {info("交作業之前一定要做的一件事",
       "<strong>重啟執行階段 → 從第一格全部重跑 → 確認所有必要步驟完成，沒有未處理錯誤。</strong>"
-      "你不會想交出一份「只有我這台機器、而且只有照某個特定順序跑才對」的作業。")}
+      "這樣可以檢查作業是否依賴你機器上殘留的變數或特殊執行順序。")}
 
 {quiz("qFix", "PART 05 · 自我檢測",
       "同一份 notebook，你跑出來的 MSE 是 25.57，同學是 23.80。程式碼一模一樣。為什麼？",
@@ -282,10 +280,10 @@ BODIES["trouble"] = f"""
         "先做可重現的完整重跑，再逐項比對；若流程含隨機切分或重抽樣，"
         "才進一步檢查 <code>random_state</code> 或 <code>seed</code>。"),
        (False, "一定是其中一邊沒有固定 seed",
-        "seed 是常見原因，但不是唯一原因。資料版本、前處理、套件版本、"
+        "需要檢查 seed，也要核對資料版本、前處理、套件版本、"
         "kernel 與亂序執行都可能造成差異，不能只由兩個 MSE 反推原因。"),
        (False, "直接把兩人的 MSE 平均起來",
-        "平均不會找出差異來源。先確認兩邊其實在執行同一個分析。")])}
+        "平均不會找出差異來源。先確認兩邊執行的分析與資料是否一致。")])}
 
 {hook("接下來讀什麼",
       '環境好了就可以開始了。沒寫過程式的話從 '
@@ -325,7 +323,7 @@ BODIES["exercises"] = f"""
         "對。版本一改，某些預設值與演算法細節就可能不同，"
         "固定核心版本能減少差異，但仍要核對資料、相依套件與 kernel，並在教室電腦實際練習。"),
        (False, "新版本有 bug",
-        "沒有這個假設。釘版本是為了<strong>一致</strong>，不是因為新版不好。"),
+        "固定版本是為了和教室環境保持<strong>一致</strong>，並未判定新版有問題。"),
        (False, "舊版本比較快",
         "跟速度無關。")])}
 
@@ -337,7 +335,7 @@ BODIES["exercises"] = f"""
         "在 notebook 裡跑 <code>import sys; print(sys.executable)</code> 就知道"
         "當前用的是哪一個 Python。"),
        (False, "重裝 Anaconda",
-        "最貴的一步，而且多半沒用。先看便宜的證據。"),
+        "先核對 kernel 使用的 Python，再決定是否需要重裝。"),
        (False, "改用 Colab",
         "可以繞過問題，但你不會學到怎麼修，而且下次還會遇到。")])}
 """
@@ -350,9 +348,9 @@ BODIES["reference"] = f"""
        [["Colab", "帳號、網路與資料", "第一次上手、公用電腦", "執行階段會回收，套件要重裝"],
         ["conda 環境", "安裝 conda 與套件", "本地練習、對齊教室版本", "依官方清單核對，記得選對 kernel"],
         ["pip + venv", "Python 與虛擬環境", "電腦空間小", "自己管 Python 版本"],
-        ["本機 base 環境", "—", "<b>不建議</b>", "遲早會版本衝突"]])}
+        ["本機 base 環境", "—", "<b>不建議</b>", "不同專案的版本需求可能互相影響"]])}
 
-{table(["症狀", "真正的原因", "怎麼修"],
+{table(["症狀", "檢查原因", "怎麼修"],
        [["<code>ModuleNotFoundError</code>", "沒裝，或裝到別的環境",
          "<code>%pip install X</code>；檢查 kernel"],
         ["<code>NameError</code>", "某一格沒跑（多半是 imports）", "從第一格重跑"],
@@ -369,11 +367,11 @@ BODIES["reference"] = f"""
         ["固定所有種子", "確認別人跑得出同樣的數字"],
         ["DATA_PATH 有註明要改", "別人的 Drive 結構跟你不同"]])}
 
-{info("三個一定要記住的觀念",
+{info("三個閱讀重點",
       "<strong>1. 平時可用 Colab；考前熟悉教室環境。</strong>本地端版本依官方清單設定，"
       "並在教室電腦完整跑過練習。<br>"
-      "<strong>2. 八成的「壞掉」其實是環境或執行順序。</strong>"
-      "萬用第一步：重啟 kernel 並全部重跑。<br>"
+      "<strong>2. 跑不動時，先檢查環境與執行順序。</strong>"
+      "先重啟 kernel 並全部重跑，確認執行狀態。<br>"
       "<strong>3. 交作業前一定要從頭重跑一次。</strong>"
       "不然你交的是「只有你那台機器跑得出來」的東西。")}
 

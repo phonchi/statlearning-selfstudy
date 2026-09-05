@@ -732,7 +732,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>放寬線性假設，但不要放棄可解釋性 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7 章開頭</a></span><span class="sec-badge">講義 07 · p.2–4</span></h2>
+  <h2>以可解讀的函數描述非線性關係 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7 章開頭</a></span><span class="sec-badge">講義 07 · p.2–4</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>到目前為止的每一個模型都長成 $y = \beta_0 + \beta_1 x_1 + \cdots + \beta_p x_p$。
@@ -760,11 +760,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>方法</th><th>彈性怎麼來的</th><th>由什麼控制</th><th>邊界行為</th><th>一句話</th></tr></thead>
-  <tbody><tr><td>多項式</td><td>拉高次數 d</td><td>d（整數）</td><td><span class='worst'>很糟</span>，會暴衝</td><td>最省事，但 d &gt; 4 就別碰</td></tr><tr><td>階梯函數</td><td>多切幾段</td><td>切點數 K</td><td>還可以（常數）</td><td>沒有自然切點就會漏掉趨勢</td></tr><tr><td>立方樣條</td><td>多加節點</td><td>節點數 K（df = K+4）</td><td>偏糟，信賴帶會爆開</td><td>次數固定 3，靠節點取得彈性</td></tr><tr><td>自然樣條</td><td>多加節點</td><td>節點數 K（df = K+2）</td><td><span class='best'>好</span>，兩端是直線</td><td>同樣的彈性、更穩的兩端</td></tr><tr><td>平滑樣條</td><td>調 λ</td><td>有效自由度 df<sub>λ</sub>（連續）</td><td>好（兩端線性）</td><td>不必選節點，只要選 λ</td></tr><tr><td>局部迴歸</td><td>調鄰域大小</td><td>跨距 s</td><td>偏糟（單邊資料）</td><td>每次預測都要用到全部資料</td></tr></tbody>
+  <tbody><tr><td>多項式</td><td>拉高次數 d</td><td>d（整數）</td><td><span class='worst'>很糟</span>，可能大幅振盪</td><td>最省事，但 d &gt; 4 就別碰</td></tr><tr><td>階梯函數</td><td>多切幾段</td><td>切點數 K</td><td>還可以（常數）</td><td>沒有自然切點就會漏掉趨勢</td></tr><tr><td>立方樣條</td><td>多加節點</td><td>節點數 K（df = K+4）</td><td>偏糟，信賴帶可能很寬</td><td>次數固定 3，靠節點取得彈性</td></tr><tr><td>自然樣條</td><td>多加節點</td><td>節點數 K（df = K+2）</td><td><span class='best'>好</span>，兩端是直線</td><td>同樣的彈性、更穩的兩端</td></tr><tr><td>平滑樣條</td><td>調 λ</td><td>有效自由度 df<sub>λ</sub>（連續）</td><td>好（兩端線性）</td><td>不必選節點，只要選 λ</td></tr><tr><td>局部迴歸</td><td>調鄰域大小</td><td>跨距 s</td><td>偏糟（單邊資料）</td><td>每次預測都要用到全部資料</td></tr></tbody>
 </table></div>
 
   <p>這一章的講義有 54 頁，順序就是上面這張表。往下每一節都有一個可以拖、可以推的元件。
-  <strong>先猜結果再按按鈕</strong>，猜錯的地方才是你真正學到東西的地方。</p>
+  <strong>先猜結果再按按鈕</strong>，再對照畫面，檢查自己對參數效果的理解。</p>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 為什麼它還算線性模型</div>
@@ -776,7 +776,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="poly">
 <!-- GEN:BEGIN sec:poly -->
   <div class="section-number">PART 01 · 多項式迴歸</div>
-  <h2>加高次項：好用，但邊界會爆 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.1 節</a></span><span class="sec-badge">講義 07 · p.5–7</span></h2>
+  <h2>高次多項式的配適與邊界變動 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.1 節</a></span><span class="sec-badge">講義 07 · p.5–7</span></h2>
 <!-- GEN:END sec:poly -->
 
   <p>最直接的放寬：把直線換成 d 次多項式。</p>
@@ -807,7 +807,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <div class="viz-panel">
       <svg class="viz-svg" id="w08polySvg" height="300"></svg>
       <svg class="viz-svg" id="w08polyMse" height="170"></svg>
-      <div class="status-banner" id="w08polyStatus"><span class="status-icon">›</span><span class="status-text">把滑桿從 1 推到 15，盯著兩端的信賴帶（淡藍）而不是中間的曲線。</span></div>
+      <div class="status-banner" id="w08polyStatus"><span class="status-icon">›</span><span class="status-text">把滑桿從 1 推到 15，比較兩端與中央的信賴帶寬度（淡藍）。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 240px;min-width:0;"><span class="slider-label">次數 d</span><input type="range" id="w08polySl" min="1" max="15" step="1" value="4" oninput="w08polySetDeg()" aria-label="次數 d"><span class="slider-val" id="w08polySlVal">4</span></span><button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴帶：開</button><button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button></div>
       <div class="viz-source"><span>課程／lab 資料</span>Wage 全體資料配適與固定 90 筆背景子樣本；曲線、CV MSE 與信賴帶由 generator 計算。</div>
     </div>
@@ -879,14 +879,14 @@ poly(age, degree=4)[0]  71.9642   26.133   2.754  0.006
 poly(age, degree=4)[1] -85.7729   35.929  -2.387  0.017
 poly(age, degree=4)[2]  34.1626   19.697   1.734  0.083
 poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
-  <p class="dx-note">同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，所以係數的標準誤很大、信賴帶很寬，尤其在 age 大的那一端。<strong>「樣本數夠大」要看的是關鍵事件的數量，不是總筆數。</strong></p>
+  <p class="dx-note">同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，所以係數的標準誤很大、信賴帶很寬，尤其在 age 大的那一端。<strong>評估樣本量時，也要檢查關鍵事件有多少筆。</strong></p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 33</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 多項式的次數</div>
   <p>同一份 <code>Wage</code> 資料上，d 從 1 加到 15，訓練 MSE 一路從 1674 掉到 1585，但 10-fold CV MSE 在 d = 4 觸底（1596）之後回頭升到 1603。這說明什麼？</p>
-  <div class="quiz-options" id="qDegOptions"><div class="quiz-opt" data-correct="true" data-fb="對。訓練 MSE 必然單調下降（參數只增不減），CV MSE 才是測試誤差的估計。兩條線分岔的地方就是過度配適開始的地方。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(A)</span> d 超過 4 之後多出來的彈性只是在配雜訊，所以測試誤差反而變差</div><div class="quiz-opt" data-correct="false" data-fb="不對，方向剛好反了。訓練 MSE 是<strong>系統性偏低</strong>的（第 5 章講過）；CV MSE 才是誠實的估計。而且 1596 → 1603 的上升是單調的，不像雜訊。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(B)</span> CV MSE 的估計本身有偏誤，所以它上升只是雜訊，該相信訓練 MSE</div><div class="quiz-opt" data-correct="false" data-fb="太強了。CV 只告訴你「在多項式這個模型族裡，d = 4 附近的複雜度最合適」。真實關係很可能根本不是多項式。後面的樣條與平滑樣條會用完全不同的基底配出差不多好的結果。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(C)</span> 說明 <code>Wage</code> 資料裡 age 與 wage 的真實關係是四次多項式</div></div>
+  <div class="quiz-options" id="qDegOptions"><div class="quiz-opt" data-correct="true" data-fb="對。訓練 MSE 必然單調下降（參數只增不減），CV MSE 才是測試誤差的估計。兩條線分岔的地方就是過度配適開始的地方。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(A)</span> d 超過 4 之後多出來的彈性只是在配雜訊，所以測試誤差反而變差</div><div class="quiz-opt" data-correct="false" data-fb="不對，方向剛好反了。訓練 MSE 是<strong>系統性偏低</strong>的（第 5 章講過）；CV MSE 用來估計測試誤差。而且 1596 → 1603 的上升是單調的，不像雜訊。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(B)</span> CV MSE 的估計本身有偏誤，所以它上升只是雜訊，該相信訓練 MSE</div><div class="quiz-opt" data-correct="false" data-fb="這個推論超出了 CV 的結果。CV 只告訴你「在多項式這個模型族裡，d = 4 附近的複雜度最合適」。真實關係很可能屬於其他函數形式。後面的樣條與平滑樣條會用完全不同的基底配出差不多好的結果。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(C)</span> 說明 <code>Wage</code> 資料裡 age 與 wage 的真實關係是四次多項式</div></div>
   <div class="quiz-feedback" id="qDegFeedback"></div>
 </div>
 </section>
@@ -969,14 +969,14 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 階梯函數</div>
   <p>只有 <code>age</code> 一個預測變數時，階梯函數在每一段的配適值是什麼？</p>
-  <div class="quiz-options" id="qStepOptions"><div class="quiz-opt" data-correct="true" data-fb="對。段內的設計矩陣只有一個常數欄，最小平方對常數的解就是平均。所以 lab 儲存格 39 的四個係數 94.16／116.66／119.19／116.57 就是四段的平均薪水。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(A)</span> 那一段內所有觀測值的 y 平均</div><div class="quiz-opt" data-correct="false" data-fb="不對。階梯函數段內<strong>沒有斜率</strong>，根本沒有直線可言。你想的是「分段線性」（linear spline），那是後面的事。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(B)</span> 那一段兩個端點上迴歸直線的中點</div><div class="quiz-opt" data-correct="false" data-fb="接近但不對。截距是<strong>第一段</strong>的平均，不是全體平均；各段係數是相對第一段的增量。全體平均只有在各段樣本數相同時才剛好等於各段平均的平均。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(C)</span> 全體樣本平均，加上該段切點對應的偏移量</div></div>
+  <div class="quiz-options" id="qStepOptions"><div class="quiz-opt" data-correct="true" data-fb="對。段內的設計矩陣只有一個常數欄，最小平方對常數的解就是平均。所以 lab 儲存格 39 的四個係數 94.16／116.66／119.19／116.57 就是四段的平均薪水。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(A)</span> 那一段內所有觀測值的 y 平均</div><div class="quiz-opt" data-correct="false" data-fb="不對。階梯函數段內<strong>沒有斜率</strong>，各段都取常數；後面介紹的「分段線性」（linear spline）才允許各段有斜率。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(B)</span> 那一段兩個端點上迴歸直線的中點</div><div class="quiz-opt" data-correct="false" data-fb="接近但不對。截距對應<strong>第一段</strong>的平均；全體平均則納入所有段的資料；各段係數是相對第一段的增量。全體平均只有在各段樣本數相同時才剛好等於各段平均的平均。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(C)</span> 全體樣本平均，加上該段切點對應的偏移量</div></div>
   <div class="quiz-feedback" id="qStepFeedback"></div>
 </div>
 </section>
 <section id="basis">
 <!-- GEN:BEGIN sec:basis -->
   <div class="section-number">PART 03 · 基底函數框架</div>
-  <h2>多項式與階梯其實是同一件事的兩個特例 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.3 節</a></span><span class="sec-badge">講義 07 · p.10</span></h2>
+  <h2>用基底函數表示多項式與階梯函數 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.3 節</a></span><span class="sec-badge">講義 07 · p.10</span></h2>
 <!-- GEN:END sec:basis -->
 
   <p>停下來看一下前兩節做了什麼。多項式迴歸用的預測變數是 $x, x^2, x^3, \ldots$；
@@ -992,7 +992,7 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   標準線性模型，最小平方、標準誤、F 檢定原封不動搬過來。</p>
 
 <div class="info-box">
-  <span class="info-label">這一節是整章的骨架</span>
+  <span class="info-label">幾種常見的基底函數</span>
   <strong>多項式：</strong>$b_j(x) = x^j$<br>
   <strong>階梯函數：</strong>$b_j(x) = I(c_j \le x < c_{j+1})$<br>
   <strong>立方樣條：</strong>$x, x^2, x^3$ 再加每個節點一個 $(x - \xi_k)^3_+$<br>
@@ -1001,7 +1001,7 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   小波（wavelet）與傅立葉級數也是合法的選擇，只是這一章不講。
 </div>
 
-  <p>下面這個元件是本頁最重要的一個。左邊每一個核取鈕都是一個基底函數；
+  <p>下面的元件讓你組合不同基底。左邊每一個核取鈕都是一個基底函數；
   你選哪幾個，下面就用<strong>那幾個</strong>去配。三個預設按鈕分別把選擇切成
   「三次多項式」、「立方樣條」、「階梯函數」。<strong>你會看到它們只是勾選項不同而已</strong>。</p>
 
@@ -1052,7 +1052,7 @@ bs(age, df=3, degree=0)[2]  22.7814    2.087  10.917    0.0</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 基底函數框架</div>
   <p>基底函數框架要求 $b_1(\cdot), \ldots, b_K(\cdot)$ 必須「事先選定、固定且已知」。這個要求為什麼這麼重要？</p>
-  <div class="quiz-options" id="qBasisOptions"><div class="quiz-opt" data-correct="true" data-fb="對。一旦基底函數自己含有要估的參數（例如節點位置也要估），模型就變成非線性最小平方，標準誤與檢定都要重推。這就是為什麼實務上節點放在固定分位數，而不是「估」出來。" onclick="quizCheck('qBasis', this)"><span class="opt-letter">(A)</span> 因為這樣模型才對參數線性，第 3 章的最小平方與推論工具（標準誤、F 檢定）才能原封不動使用</div><div class="quiz-opt" data-correct="false" data-fb="不對。階梯函數的基底也是固定的，配出來卻是不連續的階梯。平滑不平滑取決於<strong>選哪組基底</strong>，跟「固定」無關。" onclick="quizCheck('qBasis', this)"><span class="opt-letter">(B)</span> 因為固定的基底函數保證配出來的曲線一定平滑</div><div class="quiz-opt" data-correct="false" data-fb="不對。可逆性取決於基底函數在資料上是否線性獨立，跟固定與否是兩件事——事實上高次多項式的設計矩陣就常常接近奇異（Vandermonde 矩陣條件數很差）。" onclick="quizCheck('qBasis', this)"><span class="opt-letter">(C)</span> 因為只有固定的基底函數才能讓設計矩陣可逆</div></div>
+  <div class="quiz-options" id="qBasisOptions"><div class="quiz-opt" data-correct="true" data-fb="對。一旦基底函數自己含有要估的參數（例如節點位置也要估），模型就變成非線性最小平方，標準誤與檢定都要重推。因此實務上常將節點預先放在固定分位數。" onclick="quizCheck('qBasis', this)"><span class="opt-letter">(A)</span> 因為這樣模型才對參數線性，第 3 章的最小平方與推論工具（標準誤、F 檢定）才能原封不動使用</div><div class="quiz-opt" data-correct="false" data-fb="不對。階梯函數的基底也是固定的，配出來卻是不連續的階梯。平滑不平滑取決於<strong>選哪組基底</strong>，跟「固定」無關。" onclick="quizCheck('qBasis', this)"><span class="opt-letter">(B)</span> 因為固定的基底函數保證配出來的曲線一定平滑</div><div class="quiz-opt" data-correct="false" data-fb="不對。可逆性取決於基底函數在資料上是否線性獨立，跟固定與否是兩件事——事實上高次多項式的設計矩陣就常常接近奇異（Vandermonde 矩陣條件數很差）。" onclick="quizCheck('qBasis', this)"><span class="opt-letter">(C)</span> 因為只有固定的基底函數才能讓設計矩陣可逆</div></div>
   <div class="quiz-feedback" id="qBasisFeedback"></div>
 </div>
 </section>
@@ -1150,7 +1150,7 @@ bs(age, internal_knots=[25, 40, 60])[2]  62.8388   10.755  5.843  0.000
 bs(age, internal_knots=[25, 40, 60])[3]  55.9908   10.706  5.230  0.000
 bs(age, internal_knots=[25, 40, 60])[4]  50.6881   14.402  3.520  0.000
 bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></div>
-  <p class="dx-note"><code>BSpline(internal_knots=[25,40,60], intercept=True)</code> 給出 <strong>7 欄</strong>＝K + 4 = 3 + 4，正好是理論值。<code>bs()</code> 預設 <code>intercept=False</code>，所以會丟掉一個基底函數讓模型自己的截距去頂，摘要裡只剩 6 個 <code>bs(age)[j]</code> 加一個 <code>intercept</code>——加起來還是 7 個參數。<br>注意這裡用的是 <strong>B-樣條</strong>基底，不是上面講的截斷冪基底。兩者張出<strong>同一個函數空間</strong>，配出來的曲線一模一樣，但 B-樣條的設計矩陣是帶狀的（每列只有 degree + 1 個非零元素），條件數低得多。</p>
+  <p class="dx-note"><code>BSpline(internal_knots=[25,40,60], intercept=True)</code> 給出 <strong>7 欄</strong>＝K + 4 = 3 + 4，正好是理論值。<code>bs()</code> 預設 <code>intercept=False</code>，所以會丟掉一個基底函數讓模型自己的截距去頂，摘要裡只剩 6 個 <code>bs(age)[j]</code> 加一個 <code>intercept</code>——加起來還是 7 個參數。<br>這裡使用 <strong>B-樣條</strong>基底；上面介紹的是截斷冪基底。兩者張出<strong>同一個函數空間</strong>，配出來的曲線一模一樣，但 B-樣條的設計矩陣是帶狀的（每列只有 degree + 1 個非零元素），條件數低得多。</p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 44、46</span>
 </div>
 
@@ -1171,17 +1171,17 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 樣條的自由度</div>
   <p>在 <code>age</code> 上配一個有 <strong>5 個</strong>內部節點的立方樣條（含截距），要估幾個參數？</p>
-  <div class="quiz-options" id="qSplOptions"><div class="quiz-opt" data-correct="true" data-fb="對。從 x, x², x³ 的 3 個，加截距 1 個，再加 5 個截斷冪基底項 (x−ξₖ)³₊，總共 9。等價的說法：6 段 × 4 個參數 − 5 個節點 × 3 個約束 = 24 − 15 = 9。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(A)</span> 9 個（K + 4 = 5 + 4）</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>完全不加約束</strong>的分段三次多項式的自由度。加上「連續 + 一階 + 二階導數連續」共 5 × 3 = 15 個約束後，剩下 9 個。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(B)</span> 24 個（6 段各 4 個參數）</div><div class="quiz-opt" data-correct="false" data-fb="不對。節點數只決定<strong>額外</strong>的彈性；基礎的三次多項式本身就要 4 個參數（含截距）。df = K + 4，不是 K。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(C)</span> 5 個（節點數就是自由度）</div></div>
+  <div class="quiz-options" id="qSplOptions"><div class="quiz-opt" data-correct="true" data-fb="對。從 x, x², x³ 的 3 個，加截距 1 個，再加 5 個截斷冪基底項 (x−ξₖ)³₊，總共 9。等價的說法：6 段 × 4 個參數 − 5 個節點 × 3 個約束 = 24 − 15 = 9。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(A)</span> 9 個（K + 4 = 5 + 4）</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>完全不加約束</strong>的分段三次多項式的自由度。加上「連續 + 一階 + 二階導數連續」共 5 × 3 = 15 個約束後，剩下 9 個。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(B)</span> 24 個（6 段各 4 個參數）</div><div class="quiz-opt" data-correct="false" data-fb="不對。節點數只決定<strong>額外</strong>的彈性；基礎的三次多項式本身就要 4 個參數（含截距）。計入基礎參數後，df = K + 4；只算 K 會漏掉基礎參數。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(C)</span> 5 個（節點數就是自由度）</div></div>
   <div class="quiz-feedback" id="qSplFeedback"></div>
 </div>
 </section>
 <section id="natural">
 <!-- GEN:BEGIN sec:natural -->
   <div class="section-number">PART 05 · 自然樣條</div>
-  <h2>在兩端加線性約束，邊界的變異就收斂了 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.4.4–7.4.5 節</a></span><span class="sec-badge">講義 07 · p.21–23</span></h2>
+  <h2>自然樣條：以線性約束處理兩端的配適 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.4.4–7.4.5 節</a></span><span class="sec-badge">講義 07 · p.21–23</span></h2>
 <!-- GEN:END sec:natural -->
 
-  <p>立方樣條看起來很漂亮，但有一個藏起來的問題：<strong>兩端的變異很大</strong>。
+  <p>立方樣條在資料兩端仍有一個問題：<strong>兩端的變異很大</strong>。
   在最小節點以左、最大節點以右，資料只從單邊來，三次多項式卻還有完整的四個自由度可以亂扭。
   ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴帶「appear fairly wild」。</p>
 
@@ -1212,7 +1212,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
     </div>
     <div class="info-card">
       <div class="ic-title">代價是什麼</div>
-      自然樣條放棄了「兩端也可以彎」的能力。如果真實函數在邊界確實彎得厲害，自然樣條會配不出來（有偏差）。但邊界的資料本來就少，<strong>那裡的「彎」通常是雜訊而不是訊號</strong>，所以這個交換在實務上幾乎總是划算的。
+      自然樣條放棄了「兩端也可以彎」的能力。如果真實函數在邊界確實彎得厲害，自然樣條會配不出來（有偏差）。但邊界的資料本來就少，<strong>那裡的彎曲通常反映了雜訊</strong>，所以這個交換在實務上幾乎總是划算的。
     </div>
   </div>
 </div>
@@ -1225,7 +1225,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：節點該放幾個？放哪裡？</summary>
-    <div class="qa-a"><p><strong>放哪裡：</strong>理論上該把節點放在「函數變化快」的地方，變化慢的地方少放。實務上幾乎沒人這樣做，因為你事先不知道哪裡變化快。標準做法是<strong>指定自由度，讓軟體把對應數量的節點放在資料的均勻分位數上</strong>。lab 儲存格 51 的 <code>BSpline(df=6)</code> 就自動選了 33.75、42.0、51.0，正好是 25%／50%／75% 分位數。用分位數而不是等距，好處是每一段的樣本數差不多，不會出現「某一段只有 3 個點」的情況。</p><p><strong>放幾個：</strong>用交叉驗證。ISLP 圖 7.6 對 <code>Wage</code> 掃了 df = 1 到 10 的10-fold CV MSE：自然樣條在 df = 3、立方樣條在 df = 4 就已經足夠，曲線之後就拉平了。做法跟第 5 章完全一樣——留一部分資料、配一個指定節點數的樣條、在留出的部分算誤差，換不同的 K 重複，選 CV 誤差最小的。</p><p>還有一個很務實的答案：§7.7 配多變數 GAM 時，每個變數都要選 df 就太麻煩了，所以<strong>實務上常常直接把所有項的 df 都定成 4</strong>，先跑起來再說。書上原話是「we typically adopt a more pragmatic approach」。</p></div>
+    <div class="qa-a"><p><strong>放哪裡：</strong>理論上該把節點放在「函數變化快」的地方，變化慢的地方少放。實務上幾乎沒人這樣做，因為你事先不知道哪裡變化快。標準做法是<strong>指定自由度，讓軟體把對應數量的節點放在資料的均勻分位數上</strong>。lab 儲存格 51 的 <code>BSpline(df=6)</code> 就自動選了 33.75、42.0、51.0，正好是 25%／50%／75% 分位數。用分位數放節點的好處是每一段的樣本數差不多，不會出現「某一段只有 3 個點」的情況。</p><p><strong>放幾個：</strong>用交叉驗證。ISLP 圖 7.6 對 <code>Wage</code> 掃了 df = 1 到 10 的10-fold CV MSE：自然樣條在 df = 3、立方樣條在 df = 4 就已經足夠，曲線之後就拉平了。做法跟第 5 章完全一樣——留一部分資料、配一個指定節點數的樣條、在留出的部分算誤差，換不同的 K 重複，選 CV 誤差最小的。</p><p>還有一個很務實的答案：§7.7 配多變數 GAM 時，每個變數都要選 df 就太麻煩了，所以<strong>實務上常常直接把所有項的 df 都定成 4</strong>，先跑起來再說。書上原話是「we typically adopt a more pragmatic approach」。</p></div>
   </details>
 </div>
 
@@ -1263,7 +1263,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <p>迴歸樣條的流程是：選節點 → 造基底 → 最小平方。<strong>平滑樣條</strong>（smoothing spline）
   換一個完全不同的入口：直接寫下你要的東西，然後解一個最佳化問題。</p>
 
-  <p>我們要一個配得好、又不要太扭的函數 g。「配得好」是 RSS 小，「不要太扭」怎麼寫？
+  <p>我們希望函數 g 同時有較小的 RSS 與平滑的曲線。平滑程度可以如何量化？
   二階導數 $g''(t)$ 衡量斜率變化的速度，也就是<strong>粗糙度</strong>：
   g 在 t 附近很抖，$|g''(t)|$ 就大；直線的二階導數恆為 0。
   把它平方後在整個範圍上積起來，就得到總粗糙度。於是：</p>
@@ -1309,7 +1309,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w08lamChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：df = 2 幾乎是直線，df = 19 抖得離譜；pygam 依 GCV 選出 df = 5.64，跟課本圖 7.8 用 LOOCV 選出的 6.8 很接近。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：df = 2 幾乎是直線，df = 19 有明顯起伏；pygam 依 GCV 選出 df = 5.64，跟課本圖 7.8 用 LOOCV 選出的 6.8 很接近。</div></div>
       </div>
       <div class="status-banner" id="w08lamStatus"><span class="status-icon">›</span><span class="status-text">推滑桿改有效自由度。df = 2 是直線，df 愈大愈抖。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 240px;min-width:0;"><span class="slider-label">df</span><input type="range" id="w08lamSl" min="0" max="9" step="1" value="3" oninput="w08lamSet()" aria-label="df"><span class="slider-val" id="w08lamSlVal">5.0</span></span><button class="btn btn-toggle" id="w08lamPickBtn" onclick="w08lamTogglePick()">GCV 選出的曲線：開</button><button class="btn btn-reset" onclick="w08lamReset()">回到 df = 5</button></div>
@@ -1319,7 +1319,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 7.8</span></div>
-      灰點是 90 筆子樣本（背景），曲線是用<strong>全部 3000 筆</strong>配的平滑樣條。滑桿的刻度是有效自由度 df<sub>λ</sub>，不是 λ 本身，因為 df 才是人看得懂的尺度（λ = 5.2×10⁹ 對上 df = 2）。
+      灰點是 90 筆子樣本（背景），曲線是用<strong>全部 3000 筆</strong>配的平滑樣條。滑桿以有效自由度 df<sub>λ</sub> 顯示複雜度，每個刻度對應一個 λ，df 較容易用來比較複雜度（λ = 5.2×10⁹ 對上 df = 2）。
     </div>
     <div class="info-card">
       <div class="ic-title">這個 df 的成績</div>
@@ -1335,7 +1335,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：「自由度」在這一章出現了三次，它們是同一回事嗎？</summary>
-    <div class="qa-a"><p><strong>不完全是。</strong>前兩個是同一回事，第三個是另一種東西。</p><p><strong>（1）多項式的次數 d、（2）樣條的 K + 4：</strong>這兩個都是<strong>老實的參數計數</strong>。你要估幾個 β，自由度就是幾。它們一定是整數，而且「d = 4」跟「3 個節點的立方樣條（df = 7）」都可以直接對應到設計矩陣有幾欄。第 3 章那套「殘差自由度 = n − p」照用。</p><p><strong>（3）平滑樣條的 $\mathrm{df}_\lambda$：</strong>這個不是參數計數。平滑樣條名目上有 n 個參數（每個 x 都是節點），但它們被懲罰項<strong>綁得死死的</strong>。所以我們改量「這個平滑器實際上用掉多少彈性」，定義成平滑矩陣的跡 $\sum_i \{S_\lambda\}_{ii}$。它是連續的（6.8、5.64 都合法），而且會隨 λ 連續變化。</p><p>把它們放在同一把尺上看是有道理的：$\mathrm{df}_\lambda = 5$ 的平滑樣條，彈性大約等於一個 5 個參數的迴歸樣條。這就是為什麼 <code>pygam</code> 提供 <code>approx_lam(X, term, df)</code> 讓你「用 df 指定 λ」——<strong>λ 沒有直覺，df 有</strong>。局部迴歸也可以這樣量：ISLP 圖 7.10 標了「span 0.2 相當於 16.4 個自由度、span 0.7 相當於 5.3 個」。</p></div>
+    <div class="qa-a"><p><strong>不完全是。</strong>前兩個是同一回事，第三個是另一種東西。</p><p><strong>（1）多項式的次數 d、（2）樣條的 K + 4：</strong>這兩個都是<strong>參數個數</strong>。你要估幾個 β，自由度就是幾。它們一定是整數，而且「d = 4」跟「3 個節點的立方樣條（df = 7）」都可以直接對應到設計矩陣有幾欄。第 3 章那套「殘差自由度 = n − p」照用。</p><p><strong>（3）平滑樣條的 $\mathrm{df}_\lambda$：</strong>這個量由平滑矩陣的跡定義。平滑樣條名目上有 n 個參數（每個 x 都是節點），但它們被懲罰項<strong>綁得死死的</strong>。所以我們改量「這個平滑器實際上用掉多少彈性」，定義成平滑矩陣的跡 $\sum_i \{S_\lambda\}_{ii}$。它是連續的（6.8、5.64 都合法），而且會隨 λ 連續變化。</p><p>把它們放在同一把尺上看是有道理的：$\mathrm{df}_\lambda = 5$ 的平滑樣條，彈性大約等於一個 5 個參數的迴歸樣條。這就是為什麼 <code>pygam</code> 提供 <code>approx_lam(X, term, df)</code> 讓你「用 df 指定 λ」——<strong>df 較容易對照模型的複雜度</strong>。局部迴歸也可以這樣量：ISLP 圖 7.10 標了「span 0.2 相當於 16.4 個自由度、span 0.7 相當於 5.3 個」。</p></div>
   </details>
 </div>
 
@@ -1348,14 +1348,14 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <span class="line">age_term.lam = lam_4</span>
   <span class="line">degrees_of_freedom(X_age, age_term)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(4.000000100000307)</pre></div>
-  <p class="dx-note"><code>approx_lam(X_age, age_term, 4)</code> 找出「讓有效自由度等於 4」的那個 λ，回代驗算得到 <code>4.000000100000307</code>。注意 lab 的說明：<strong>這個 df 包含平滑樣條那個沒有被懲罰的截距與線性項，所以下限是 2</strong>。這正好對上課本「λ → ∞ 時 df 降到 2」。所以 lab 儲存格 73 畫圖時用 <code>approx_lam(..., df+1)</code>，標籤上的 <code>df=1</code> 其實就是直線配適。<br>上面元件的滑桿刻度用的是 <code>degrees_of_freedom()</code> 的定義（含截距），所以最左邊是 2 而不是 0。</p>
+  <p class="dx-note"><code>approx_lam(X_age, age_term, 4)</code> 找出「讓有效自由度等於 4」的那個 λ，回代驗算得到 <code>4.000000100000307</code>。注意 lab 的說明：<strong>這個 df 包含平滑樣條那個沒有被懲罰的截距與線性項，所以下限是 2</strong>。這正好對上課本「λ → ∞ 時 df 降到 2」。所以 lab 儲存格 73 畫圖時用 <code>approx_lam(..., df+1)</code>，標籤上的 <code>df=1</code> 其實就是直線配適。<br>上面元件的滑桿刻度用的是 <code>degrees_of_freedom()</code> 的定義（含截距），所以最左邊標為 2，0 未列入這個範圍。</p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 71</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 平滑樣條的懲罰</div>
   <p>$\lambda \to \infty$ 時，(7.11) 的解 $\hat g$ 會變成什麼？</p>
-  <div class="quiz-options" id="qLamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。懲罰項迫使 $\int g''(t)^2 dt = 0$，也就是 g 必須是一次函數；在這個限制下最小化 RSS，就得到普通的最小平方直線。這時有效自由度是 2（截距 + 斜率）。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(A)</span> 最小平方<strong>直線</strong>，因為只有二階導數恆為 0 的函數才不被懲罰</div><div class="quiz-opt" data-correct="false" data-fb="不對，錯在懲罰的是<strong>二階</strong>導數不是一階。要求 $g' = 0$ 才會得到常數；$g'' = 0$ 允許固定的斜率。（ISLP §7.9 第 2 題就在玩這個：把懲罰換成 m 階導數，m = 1 才給常數。）" onclick="quizCheck('qLam', this)"><span class="opt-letter">(B)</span> 常數函數 $\hat g(x) = \bar y$，因為懲罰項要求函數完全不變化</div><div class="quiz-opt" data-correct="false" data-fb="話只對一半。解的<em>形式</em>確實永遠是那個自然立方樣條，但係數被 λ 收縮；λ → ∞ 時收縮到只剩線性部分，圖形就是一條直線。這一題問的是「長什麼樣」。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(C)</span> 在每個 xᵢ 上都有節點的自然立方樣條，因為解永遠是自然立方樹條</div></div>
+  <div class="quiz-options" id="qLamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。懲罰項迫使 $\int g''(t)^2 dt = 0$，也就是 g 必須是一次函數；在這個限制下最小化 RSS，就得到普通的最小平方直線。這時有效自由度是 2（截距 + 斜率）。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(A)</span> 最小平方<strong>直線</strong>，因為只有二階導數恆為 0 的函數才不被懲罰</div><div class="quiz-opt" data-correct="false" data-fb="這裡懲罰<strong>二階</strong>導數；一階導數的懲罰會給出不同結果。要求 $g' = 0$ 才會得到常數；$g'' = 0$ 允許固定的斜率。（ISLP §7.9 第 2 題就在玩這個：把懲罰換成 m 階導數，m = 1 才給常數。）" onclick="quizCheck('qLam', this)"><span class="opt-letter">(B)</span> 常數函數 $\hat g(x) = \bar y$，因為懲罰項要求函數完全不變化</div><div class="quiz-opt" data-correct="false" data-fb="話只對一半。解的<em>形式</em>確實永遠是那個自然立方樣條，但係數被 λ 收縮；λ → ∞ 時收縮到只剩線性部分，圖形就是一條直線。這一題問的是「長什麼樣」。" onclick="quizCheck('qLam', this)"><span class="opt-letter">(C)</span> 在每個 xᵢ 上都有節點的自然立方樣條，因為解永遠是自然立方樹條</div></div>
   <div class="quiz-feedback" id="qLamFeedback"></div>
 </div>
 </section>
@@ -1383,7 +1383,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 
   <p>要做的選擇有三個：權重函數 K 怎麼定、第 3 步配常數／直線／二次、以及
   <strong>跨距</strong>（span）s 取多少。前兩個影響不大，
-  <strong>s 才是關鍵。它扮演的角色跟平滑樣條的 λ 一樣</strong>。
+  <strong>s 控制平滑程度，作用類似平滑樣條的 λ</strong>。
   s 小則鄰域窄、曲線抖；s 大則鄰域寬、接近全域配適。s 一樣可以用交叉驗證選。</p>
 
 <div class="viz-layout" data-provenance="course-data">
@@ -1414,7 +1414,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">兩個要記住的限制</div>
-      <strong>1. 記憶式（memory-based）：</strong>每做一次預測都要用到全部訓練資料，沒有一組係數可以存下來。模型體積 = 資料體積。<br><strong>2. 維度一高就垮：</strong>p 超過 3 或 4，x₀ 附近幾乎找不到點（跟第 3 章 KNN 的維度詛咒同一個病）。所以局部迴歸主要用在 1～2 維，或者當 GAM 的單變數積木。
+      <strong>1. 記憶式（memory-based）：</strong>每做一次預測都要用到全部訓練資料，沒有一組係數可以存下來。模型體積 = 資料體積。<br><strong>2. 高維度時鄰近資料稀少：</strong>p 超過 3 或 4，x₀ 附近幾乎找不到點（跟第 3 章 KNN 的維度詛咒同一個病）。所以局部迴歸主要用在 1～2 維，或者當 GAM 的單變數積木。
     </div>
   </div>
 </div>
@@ -1427,7 +1427,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   （<code>Wage</code>，局部線性）。lab 儲存格 125 畫的是 span 0.2 與 0.5。
   <strong>注意上面元件是瀏覽器即時算的 tricube 加權最小平方，不含 <code>lowess()</code>
   的穩健疊代（robustifying iterations），所以數字不會跟 lab 完全對上。
-  它示範的是機制，不是重現套件的輸出。</strong></p>
+  可用它觀察局部配適的機制；套件輸出請對照 lab。</strong></p>
 
   <h3 id="dx-low">講義完整實作：<code>statsmodels</code> 的 <code>lowess()</code></h3>
 <div class="deck-extra">
@@ -1448,14 +1448,14 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <span class="line">ax.set_xlabel(<span class="str">&#x27;Age&#x27;</span>, fontsize=<span class="num">20</span>)</span>
   <span class="line">ax.set_ylabel(<span class="str">&#x27;Wage&#x27;</span>, fontsize=<span class="num">20</span>);</span>
   <span class="line">ax.legend(title=<span class="str">&#x27;span&#x27;</span>, fontsize=<span class="num">15</span>);</span></div>
-  <p class="dx-note"><code>frac=span</code> 就是跨距，<code>xvals=age_grid</code> 指定要在哪些點求配適值。lab 用 0.2 與 0.5，畫出來 0.5 明顯比 0.2 平滑。<br>這一格只存了圖沒有存文字輸出，所以這裡不放「預期輸出」——契約規定預期輸出一律逐字取自 lab，沒有就不編。<br>另外注意 lab 的註解：<strong><code>pygam</code> 不支援把局部迴歸當成 GAM 的項</strong>，有些 GAM 實作（例如 R 的 <code>gam</code>）可以。</p>
+  <p class="dx-note"><code>frac=span</code> 就是跨距，<code>xvals=age_grid</code> 指定要在哪些點求配適值。lab 用 0.2 與 0.5，畫出來 0.5 明顯比 0.2 平滑。<br>這一格保存的是圖，閱讀時可對照上面的曲線與原始 lab。<br>另外注意 lab 的註解：<strong><code>pygam</code> 不支援把局部迴歸當成 GAM 的項</strong>，有些 GAM 實作（例如 R 的 <code>gam</code>）可以。</p>
   <span class="dx-src">來源：<code>Ch07-nonlin-lab-zh.ipynb</code> · 儲存格 124、125</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 局部迴歸</div>
   <p>為什麼局部迴歸被叫做「記憶式（memory-based）」方法？</p>
-  <div class="quiz-options" id="qLoOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每換一個 x₀，權重 $K_{i0}$ 全部都變，要重配一次加權迴歸。這跟最近鄰法是同一種性質——模型「就是」資料本身。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(A)</span> 因為每算一次預測都要重新用到全部訓練資料，沒有一組固定的係數可以存起來</div><div class="quiz-opt" data-correct="false" data-fb="不對，方向剛好相反。真正的問題是<strong>沒辦法</strong>先算好——新的 x₀ 可以落在任何地方，都要重新配。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(B)</span> 因為它把每個訓練點的預測值先算好存起來，查表時直接取用</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是<strong>迴歸樣條</strong>的性質（而且樣條配完之後只要留 K + 4 個係數就好）。局部迴歸根本沒有節點。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(C)</span> 因為它需要記住每個節點的位置與對應的係數</div></div>
+  <div class="quiz-options" id="qLoOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每換一個 x₀，權重 $K_{i0}$ 全部都變，要重配一次加權迴歸。這跟最近鄰法是同一種性質——模型「就是」資料本身。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(A)</span> 因為每算一次預測都要重新用到全部訓練資料，沒有一組固定的係數可以存起來</div><div class="quiz-opt" data-correct="false" data-fb="預先查表無法涵蓋所有新位置。新的 x₀ 可以落在任何地方，都要重新配。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(B)</span> 因為它把每個訓練點的預測值先算好存起來，查表時直接取用</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是<strong>迴歸樣條</strong>的性質（而且樣條配完之後只要留 K + 4 個係數就好）。局部迴歸以目標點周圍的資料配適，沒有固定節點。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(C)</span> 因為它需要記住每個節點的位置與對應的係數</div></div>
   <div class="quiz-feedback" id="qLoFeedback"></div>
 </div>
 </section>
@@ -1550,7 +1550,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴帶大到看不出東西，
   因為<strong>那個層級裡一個高收入者都沒有</strong>（lab 儲存格 105 的交叉表：268 個人、0 個高收入者）。
   拿掉那群人重配就正常了（圖 7.14）。<strong>這是很典型的一課：
-  模型爆掉的時候先去看列聯表，不要先怪演算法。</strong></p>
+  模型配適異常時，先檢查列聯表中的類別計數。</strong></p>
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
@@ -1625,7 +1625,7 @@ github.com/dswah/pyGAM/issues/163
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · GAM 的加法性</div>
   <p>如果真實情況是「大學畢業者的薪水在 40 歲達到高峰，高中畢業者在 30 歲」，(7.16) 這個 GAM 會發生什麼事？</p>
-  <div class="quiz-options" id="qGamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這就是 GAM 唯一的重大限制。要處理的話得手動加 age × education 的交互作用項，或改用第 8 章會自動抓交互作用的樹狀集成方法。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(A)</span> 抓不到。它只會給一條平均起來的 f̂(age)，因為加法性假設 age 的效果與 education 無關</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是把兩件事混在一起了。<strong>非線性</strong>講的是「單一變數的效果不是直線」；<strong>交互作用</strong>講的是「一個變數的效果會隨另一個變數改變」。GAM 給你前者，預設沒有後者。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(B)</span> 會抓到，因為 f̂(age) 是非線性的，非線性本身就包含了交互作用</div><div class="quiz-opt" data-correct="false" data-fb="不對。$f_3(\text{education})$ 只是每個層級一個<strong>常數位移</strong>，它把整條 age 曲線上下平移，不會改變曲線的形狀或峰值位置。要各層級各一條曲線，那已經是交互作用了。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(C)</span> 會抓到，因為 education 是類別變數，f̂₃ 會為每個層級各配一條 age 曲線</div></div>
+  <div class="quiz-options" id="qGamOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這就是 GAM 唯一的重大限制。要處理的話得手動加 age × education 的交互作用項，或改用第 8 章會自動抓交互作用的樹狀集成方法。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(A)</span> 抓不到。它只會給一條平均起來的 f̂(age)，因為加法性假設 age 的效果與 education 無關</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是把兩件事混在一起了。<strong>非線性</strong>講的是「單一變數的效果呈非線性形狀」；<strong>交互作用</strong>講的是「一個變數的效果會隨另一個變數改變」。GAM 給你前者，預設沒有後者。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(B)</span> 會抓到，因為 f̂(age) 是非線性的，非線性本身就包含了交互作用</div><div class="quiz-opt" data-correct="false" data-fb="不對。$f_3(\text{education})$ 只是每個層級一個<strong>常數位移</strong>，它把整條 age 曲線上下平移，不會改變曲線的形狀或峰值位置。要各層級各一條曲線，那已經是交互作用了。" onclick="quizCheck('qGam', this)"><span class="opt-letter">(C)</span> 會抓到，因為 education 是類別變數，f̂₃ 會為每個層級各配一條 age 曲線</div></div>
   <div class="quiz-feedback" id="qGamFeedback"></div>
 </div>
 </section>
@@ -1634,14 +1634,14 @@ github.com/dswah/pyGAM/issues/163
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：教科書第 7 章精選題 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.9 節 習題</a></span></h2>
   <p>下面幾題取自 ISLP §7.9 的課後習題，題號都對得回課本。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。想看完整解答再對照下面3個站。</p>
+  每個選項都有解說；需要完整解答時，可查閱下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter7/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch07.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 7.9 第 1 題（c)(d)(e)</div>
   <p>第 1 題要你證明 $f(x) = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \beta_4 (x-\xi)^3_+$ 真的是立方樣條。為什麼加上 $\beta_4 (x-\xi)^3_+$ 這一項不會破壞 ξ 上的連續性與一、二階導數連續？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。$(x-\xi)^3$、$3(x-\xi)^2$、$6(x-\xi)$ 在 $x=\xi$ 全是 0，所以左右兩段的 f、f′、f″ 在 ξ 上一致；第三階導數從 $6\beta_3$ 跳到 $6(\beta_3+\beta_4)$。這正是截斷冪基底被設計成三次的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 因為 $(x-\xi)^3$ 本身與它的一階、二階導數在 $x = \xi$ 都等於 0，只有三階導數會跳</div><div class="quiz-opt" data-correct="false" data-fb="不對。這一題要的是<strong>對任何</strong> $\beta_0, \ldots, \beta_4$ 都成立的恆等式（題幹寫了 regardless of the values），不是「近似成立」。$\beta_4$ 再大也不會破壞連續性。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 因為 $\beta_4$ 通常估出來很小，所以造成的跳躍可以忽略</div><div class="quiz-opt" data-correct="false" data-fb="混淆了。$(x-\xi)^3_+$ 確實可以寫成 $(x-\xi)^3 I(x>\xi)$，但單獨的 $I(x>\xi)$ 會讓函數<strong>跳</strong>（本頁 P04 那個元件的「不連續」層級就是把它加進來）。連續性來自 $(x-\xi)^3$ 這個因子在 ξ 歸零，不是來自指示函數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 因為指示函數 $I(x > \xi)$ 在 ξ 上有定義，所以函數在該點連續</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。$(x-\xi)^3$、$3(x-\xi)^2$、$6(x-\xi)$ 在 $x=\xi$ 全是 0，所以左右兩段的 f、f′、f″ 在 ξ 上一致；第三階導數從 $6\beta_3$ 跳到 $6(\beta_3+\beta_4)$。這正是截斷冪基底被設計成三次的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 因為 $(x-\xi)^3$ 本身與它的一階、二階導數在 $x = \xi$ 都等於 0，只有三階導數會跳</div><div class="quiz-opt" data-correct="false" data-fb="不對。這一題要的是<strong>對任何</strong> $\beta_0, \ldots, \beta_4$ 都成立的恆等式（題幹寫了 regardless of the values）；它要求精確相等。$\beta_4$ 再大也不會破壞連續性。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 因為 $\beta_4$ 通常估出來很小，所以造成的跳躍可以忽略</div><div class="quiz-opt" data-correct="false" data-fb="混淆了。$(x-\xi)^3_+$ 確實可以寫成 $(x-\xi)^3 I(x>\xi)$，但單獨的 $I(x>\xi)$ 會讓函數<strong>跳</strong>（本頁 P04 那個元件的「不連續」層級就是把它加進來）。連續性來自 $(x-\xi)^3$ 這個因子在 ξ 歸零，使整個截斷項連續。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 因為指示函數 $I(x > \xi)$ 在 ξ 上有定義，所以函數在該點連續</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1662,7 +1662,7 @@ github.com/dswah/pyGAM/issues/163
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 7.9 第 5 題（a)</div>
   <p>第 5 題比較兩個平滑器：$\hat g_1$ 懲罰 $\int \left[g^{{(3)}}\right]^2$，$\hat g_2$ 懲罰 $\int \left[g^{{(4)}}\right]^2$。$\lambda \to \infty$ 時，哪一個的<strong>訓練</strong> RSS 較小？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。$\lambda \to \infty$ 讓 $g^{(4)} \equiv 0$（三次多項式）或 $g^{(3)} \equiv 0$（二次多項式）。三次多項式的函數空間包含二次多項式，參數多一個，所以訓練 RSS 一定不會更大。第 (b) 小題的答案是「說不出來」——測試 RSS 取決於真實函數；第 (c) 小題 λ = 0 時兩者都內插，訓練與測試 RSS 都相同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> $\hat g_2$，因為它被逼成三次多項式，比被逼成二次多項式的 $\hat g_1$ 更有彈性</div><div class="quiz-opt" data-correct="false" data-fb="反了。懲罰<strong>低</strong>階導數是<strong>更強</strong>的約束：要求 $g'''=0$ 只剩二次多項式，要求 $g^{(4)}=0$ 還可以是三次多項式。階數愈高，被允許的函數族愈大。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> $\hat g_1$，因為懲罰的導數階數較低，代表約束較弱</div><div class="quiz-opt" data-correct="false" data-fb="不對。兩個懲罰<em>積分值</em>都被壓到 0，但被壓成 0 的是<strong>不同的導數</strong>，留下的函數族不一樣（二次 vs 三次）。同樣的邏輯：m = 0 會把 $\hat g$ 壓成常數 0，也不是「跟別人一樣」。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩者相同，因為 $\lambda \to \infty$ 時兩個懲罰項都趨近於 0，模型退化成同一個</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。$\lambda \to \infty$ 讓 $g^{(4)} \equiv 0$（三次多項式）或 $g^{(3)} \equiv 0$（二次多項式）。三次多項式的函數空間包含二次多項式，參數多一個，所以訓練 RSS 一定不會更大。第 (b) 小題的答案是「說不出來」——測試 RSS 取決於真實函數；第 (c) 小題 λ = 0 時兩者都內插，訓練與測試 RSS 都相同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> $\hat g_2$，因為它被逼成三次多項式，比被逼成二次多項式的 $\hat g_1$ 更有彈性</div><div class="quiz-opt" data-correct="false" data-fb="反了。懲罰<strong>低</strong>階導數是<strong>更強</strong>的約束：要求 $g'''=0$ 只剩二次多項式，要求 $g^{(4)}=0$ 還可以是三次多項式。階數愈高，被允許的函數族愈大。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> $\hat g_1$，因為懲罰的導數階數較低，代表約束較弱</div><div class="quiz-opt" data-correct="false" data-fb="不對。兩個懲罰<em>積分值</em>都被壓到 0，但被壓成 0 的是<strong>不同的導數</strong>，留下的函數族不一樣（二次 vs 三次）。同樣的邏輯：m = 0 會把 $\hat g$ 壓成常數 0，與前述函數族仍不同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩者相同，因為 $\lambda \to \infty$ 時兩個懲罰項都趨近於 0，模型退化成同一個</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1701,19 +1701,19 @@ github.com/dswah/pyGAM/issues/163
   <h3>公式速查</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>名稱</th><th>式子</th><th>備註</th></tr></thead>
-  <tbody><tr><td>多項式迴歸</td><td>$y = \beta_0 + \beta_1 x + \cdots + \beta_d x^d + \varepsilon$</td><td>式 7.1</td></tr><tr><td>配適值的變異</td><td>$\widehat{\operatorname{Var}}[\hat f(x_0)] = \ell_0^{\mathsf T} \hat C \ell_0$</td><td>式 7.2 腳註；信賴帶的來源</td></tr><tr><td>階梯函數</td><td>$y = \beta_0 + \beta_1 C_1(x) + \cdots + \beta_K C_K(x) + \varepsilon$</td><td>式 7.5；丟掉 $C_0$</td></tr><tr><td>基底函數框架</td><td>$y = \beta_0 + \sum_{k=1}^{K} \beta_k b_k(x) + \varepsilon$</td><td>式 7.7；整章的骨架</td></tr><tr><td>截斷冪基底</td><td>$h(x, \xi) = (x-\xi)^3_+$</td><td>式 7.10；每個節點加一個</td></tr><tr><td>立方樣條的自由度</td><td>K + 4</td><td>K 個內部節點，含截距</td></tr><tr><td>自然樣條的自由度</td><td>K + 2</td><td>兩端各 2 個線性約束</td></tr><tr><td>平滑樣條</td><td>$\min_g \sum_i (y_i - g(x_i))^2 + \lambda \int g''(t)^2 dt$</td><td>式 7.11；損失＋懲罰</td></tr><tr><td>有效自由度</td><td>$\mathrm{df}_\lambda = \sum_i \{S_\lambda\}_{ii}$，$\hat g_\lambda = S_\lambda y$</td><td>式 7.12–7.13；λ: 0→∞ 時 df: n→2</td></tr><tr><td>平滑樣條的 LOOCV</td><td>$\sum_i \left[\dfrac{y_i - \hat g_\lambda(x_i)}{1 - \{S_\lambda\}_{ii}}\right]^2$</td><td>配一次就算完，對照式 5.2</td></tr><tr><td>局部迴歸</td><td>$\min_{\beta_0,\beta_1} \sum_i K_{i0}(y_i - \beta_0 - \beta_1 x_i)^2$</td><td>式 7.14；演算法 7.1</td></tr><tr><td>GAM（迴歸）</td><td>$y = \beta_0 + \sum_j f_j(x_j) + \varepsilon$</td><td>式 7.15–7.16</td></tr><tr><td>GAM（分類）</td><td>$\log\dfrac{p(X)}{1-p(X)} = \beta_0 + \sum_j f_j(X_j)$</td><td>式 7.18</td></tr></tbody>
+  <tbody><tr><td>多項式迴歸</td><td>$y = \beta_0 + \beta_1 x + \cdots + \beta_d x^d + \varepsilon$</td><td>式 7.1</td></tr><tr><td>配適值的變異</td><td>$\widehat{\operatorname{Var}}[\hat f(x_0)] = \ell_0^{\mathsf T} \hat C \ell_0$</td><td>式 7.2 腳註；信賴帶的來源</td></tr><tr><td>階梯函數</td><td>$y = \beta_0 + \beta_1 C_1(x) + \cdots + \beta_K C_K(x) + \varepsilon$</td><td>式 7.5；丟掉 $C_0$</td></tr><tr><td>基底函數框架</td><td>$y = \beta_0 + \sum_{k=1}^{K} \beta_k b_k(x) + \varepsilon$</td><td>式 7.7；基底函數表示</td></tr><tr><td>截斷冪基底</td><td>$h(x, \xi) = (x-\xi)^3_+$</td><td>式 7.10；每個節點加一個</td></tr><tr><td>立方樣條的自由度</td><td>K + 4</td><td>K 個內部節點，含截距</td></tr><tr><td>自然樣條的自由度</td><td>K + 2</td><td>兩端各 2 個線性約束</td></tr><tr><td>平滑樣條</td><td>$\min_g \sum_i (y_i - g(x_i))^2 + \lambda \int g''(t)^2 dt$</td><td>式 7.11；損失＋懲罰</td></tr><tr><td>有效自由度</td><td>$\mathrm{df}_\lambda = \sum_i \{S_\lambda\}_{ii}$，$\hat g_\lambda = S_\lambda y$</td><td>式 7.12–7.13；λ: 0→∞ 時 df: n→2</td></tr><tr><td>平滑樣條的 LOOCV</td><td>$\sum_i \left[\dfrac{y_i - \hat g_\lambda(x_i)}{1 - \{S_\lambda\}_{ii}}\right]^2$</td><td>配一次就算完，對照式 5.2</td></tr><tr><td>局部迴歸</td><td>$\min_{\beta_0,\beta_1} \sum_i K_{i0}(y_i - \beta_0 - \beta_1 x_i)^2$</td><td>式 7.14；演算法 7.1</td></tr><tr><td>GAM（迴歸）</td><td>$y = \beta_0 + \sum_j f_j(x_j) + \varepsilon$</td><td>式 7.15–7.16</td></tr><tr><td>GAM（分類）</td><td>$\log\dfrac{p(X)}{1-p(X)} = \beta_0 + \sum_j f_j(X_j)$</td><td>式 7.18</td></tr></tbody>
 </table></div>
 
 <div class="info-box">
-  <span class="info-label">三個一定要記住的觀念</span>
+  <span class="info-label">重點回顧</span>
   <strong>1. 多項式、階梯函數、樣條都是同一個基底函數框架的特例。</strong>
   換掉 $b_k(\cdot)$ 就換掉方法，配適的機器（最小平方）從頭到尾沒變，
   第 3 章的推論工具全部照用。<br>
   <strong>2. 樣條把次數鎖在 3、靠加節點取得彈性；多項式只能拉高次數，代價全落在邊界。</strong>
   自然樣條再加兩端線性約束，實測把 80 歲那端的信賴帶從 65.8 砍到 37.1。<br>
   <strong>3. 「自由度」在這一章有兩種身分。</strong>
-  多項式的 d 與樣條的 K + 4 是老實的參數計數；平滑樣條的 df$_\lambda$ 是平滑矩陣的跡，
-  是連續值。它們可以放在同一把尺上比較彈性，但不是同一個東西。
+  多項式的 d 與樣條的 K + 4 是參數個數；平滑樣條的 df$_\lambda$ 是平滑矩陣的跡，
+  是連續值。它們都能描述彈性，使用時仍要區分各自的定義。
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
@@ -1723,7 +1723,7 @@ github.com/dswah/pyGAM/issues/163
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 28 張</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 7 章，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
@@ -2321,7 +2321,6 @@ HC.initFlashcards = () => {
 <!-- GEN:END sharedjs -->
 <!-- PAGEJS:BEGIN -->
 <script>
-/* ===== 烘焙資料（tools/frames/gen_nonlin.py，固定種子）===== */
 const FRAMES_w08wage = {"meta":{"src":"ISLP Wage（Ch07-nonlin-lab-zh.ipynb 儲存格 11 的同一份資料）的 90 筆隨機子樣本","seed":"np.random.default_rng(524)，size=90, replace=False","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2 · pygam 0.10.1","gen":"tools/frames/gen_nonlin.py","note":"只從 wage ≤ 250 的 2921 筆抽——ISLP 圖 7.3／7.4 用的子集也在這個範圍內，另外 79 筆 wage>250 的高收入者依 §7.1 是另一群母體。step／basis／knot／loess 四個 live 元件都在這 90 點上即時重算，所以拖動時看到的數字是瀏覽器算的，不是這裡烘焙的"},"n":90,"age":[51.0,44.0,37.0,56.0,47.0,49.0,34.0,47.0,41.0,58.0,25.0,38.0,43.0,27.0,46.0,31.0,55.0,50.0,49.0,31.0,62.0,42.0,46.0,55.0,29.0,42.0,59.0,32.0,33.0,35.0,45.0,48.0,35.0,32.0,26.0,63.0,49.0,62.0,53.0,64.0,30.0,34.0,22.0,44.0,53.0,47.0,41.0,43.0,60.0,57.0,34.0,46.0,62.0,33.0,36.0,28.0,33.0,40.0,80.0,33.0,36.0,31.0,44.0,54.0,19.0,45.0,32.0,47.0,62.0,28.0,73.0,44.0,30.0,30.0,41.0,43.0,40.0,50.0,25.0,30.0,44.0,43.0,48.0,37.0,38.0,30.0,51.0,32.0,29.0,29.0],"wage":[101.4,88.0,106.9,99.7,134.7,65.1,118.9,65.1,110.8,104.9,81.3,154.7,134.7,102.9,118.9,92.0,109.8,98.3,177.0,81.3,99.7,99.7,114.5,142.6,89.5,91.6,102.9,94.1,99.3,114.5,65.1,160.6,65.1,134.7,38.2,75.0,139.2,25.3,82.7,109.8,70.8,99.7,99.7,113.6,109.8,85.4,131.0,90.5,138.3,88.0,160.6,105.9,94.1,98.6,94.7,109.8,94.1,91.7,88.0,88.0,94.1,108.9,88.0,90.5,31.4,36.7,73.8,99.7,169.8,72.2,40.2,125.1,118.9,114.5,117.1,72.2,85.1,127.1,94.1,148.4,109.8,200.5,107.9,182.0,89.5,63.2,59.0,84.0,73.8,112.6],"ageMin":18.0,"ageMax":80.0,"nFull":3000,"nPool":2921};
 const FRAMES_w08poly = {"meta":{"src":"ISLP Wage age–wage · 自算（對照 Ch07-nonlin-lab-zh.ipynb 儲存格 14 的 degree 4）","seed":"KFold(n_splits=10, shuffle=True, random_state=0)，各 degree 共用同一組分割","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2 · pygam 0.10.1","gen":"tools/frames/gen_nonlin.py","note":"age 先線性壓到 [-1,1] 再取冪次；與 poly() 的正交基底張出同一空間，degree 4 的配適值最大差 5.97e-13"},"grid":[18.0,19.6,21.2,22.8,24.4,25.9,27.5,29.1,30.7,32.3,33.9,35.5,37.1,38.7,40.3,41.8,43.4,45.0,46.6,48.2,49.8,51.4,53.0,54.6,56.2,57.7,59.3,60.9,62.5,64.1,65.7,67.3,68.9,70.5,72.1,73.6,75.2,76.8,78.4,80.0],"degrees":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"fit":{"1":[94.4,95.6,96.7,97.8,98.9,100.1,101.2,102.3,103.4,104.6,105.7,106.8,107.9,109.1,110.2,111.3,112.4,113.6,114.7,115.8,116.9,118.0,119.2,120.3,121.4,122.5,123.7,124.8,125.9,127.0,128.2,129.3,130.4,131.5,132.7,133.8,134.9,136.0,137.2,138.3],"2":[67.7,72.9,77.9,82.6,87.1,91.3,95.2,98.8,102.2,105.3,108.1,110.7,113.0,115.0,116.8,118.3,119.5,120.5,121.2,121.6,121.8,121.7,121.3,120.6,119.7,118.5,117.1,115.4,113.4,111.1,108.6,105.8,102.8,99.4,95.8,92.0,87.9,83.5,78.8,73.9],"3":[58.7,66.3,73.3,79.7,85.6,90.9,95.7,100.0,103.8,107.2,110.2,112.7,114.9,116.7,118.1,119.2,120.0,120.5,120.7,120.7,120.4,120.0,119.3,118.5,117.5,116.5,115.3,114.0,112.6,111.3,109.9,108.4,107.0,105.7,104.4,103.2,102.1,101.1,100.2,99.5],"4":[51.9,62.1,71.1,79.0,86.0,91.9,97.1,101.5,105.3,108.5,111.1,113.3,115.0,116.4,117.5,118.3,118.9,119.3,119.6,119.6,119.6,119.4,119.1,118.8,118.3,117.7,116.9,116.0,115.0,113.8,112.3,110.6,108.6,106.2,103.5,100.3,96.5,92.2,87.3,81.6],"5":[55.3,63.7,71.5,78.7,85.2,91.1,96.4,101.0,105.0,108.4,111.3,113.6,115.5,117.0,118.0,118.8,119.2,119.5,119.5,119.4,119.2,118.9,118.5,118.2,117.8,117.3,116.9,116.3,115.7,114.9,113.8,112.5,110.7,108.4,105.4,101.5,96.6,90.4,82.7,73.3],"6":[61.6,65.5,70.9,77.1,83.5,89.9,95.8,101.0,105.6,109.3,112.4,114.6,116.3,117.4,118.1,118.5,118.6,118.6,118.6,118.5,118.5,118.6,118.6,118.7,118.7,118.6,118.2,117.6,116.6,115.2,113.2,110.7,107.6,104.1,100.1,96.1,92.1,88.7,86.3,85.8],"7":[56.6,65.1,72.3,78.7,84.6,90.2,95.4,100.2,104.6,108.5,111.8,114.5,116.5,118.0,118.9,119.2,119.3,119.0,118.6,118.2,117.9,117.7,117.8,117.9,118.3,118.6,118.9,118.8,118.3,117.0,114.9,111.8,107.7,102.6,96.9,91.1,86.2,83.6,85.0,93.1],"8":[55.5,65.2,72.7,79.0,84.7,90.0,95.1,100.0,104.5,108.5,111.9,114.7,116.7,118.1,119.0,119.3,119.2,118.9,118.5,118.1,117.8,117.7,117.8,118.1,118.5,118.8,119.0,118.8,118.1,116.6,114.4,111.2,107.1,102.3,97.1,92.0,87.8,85.4,86.3,91.9],"9":[63.1,62.3,69.1,77.8,85.7,92.0,96.9,100.8,104.1,107.3,110.4,113.4,116.1,118.3,119.7,120.4,120.4,119.7,118.7,117.6,116.7,116.4,116.6,117.4,118.7,119.9,120.8,120.8,119.5,116.6,112.3,106.8,101.2,96.5,94.0,94.7,98.6,103.3,103.0,85.9],"10":[63.2,62.2,69.1,77.8,85.7,92.1,96.9,100.7,104.1,107.3,110.4,113.4,116.1,118.3,119.8,120.5,120.4,119.7,118.7,117.6,116.7,116.4,116.6,117.5,118.7,120.0,120.8,120.8,119.4,116.6,112.2,106.8,101.2,96.6,94.1,94.8,98.4,102.9,102.5,85.9],"11":[62.4,62.9,69.3,77.6,85.5,92.0,97.0,100.9,104.3,107.3,110.3,113.2,116.0,118.2,119.8,120.6,120.5,119.8,118.7,117.5,116.6,116.2,116.5,117.5,118.8,120.2,121.0,120.9,119.3,116.2,111.7,106.4,101.1,97.0,95.0,95.5,98.0,100.5,98.7,86.3],"12":[62.3,63.0,69.3,77.5,85.4,92.0,97.1,101.0,104.3,107.3,110.3,113.2,116.0,118.2,119.8,120.6,120.5,119.8,118.7,117.5,116.6,116.2,116.6,117.5,118.8,120.2,121.0,120.8,119.3,116.2,111.8,106.6,101.3,97.0,94.8,95.2,98.0,101.1,100.0,86.2],"13":[61.5,63.8,69.0,77.1,85.5,92.3,97.3,101.0,104.0,107.0,110.2,113.3,116.2,118.4,119.9,120.5,120.3,119.6,118.6,117.6,116.8,116.4,116.6,117.4,118.6,119.9,120.9,121.0,119.7,116.6,111.8,105.9,100.3,96.3,95.2,96.8,99.0,97.6,90.3,86.4],"14":[60.7,64.5,68.5,76.8,85.8,92.7,97.4,100.7,103.7,107.0,110.4,113.6,116.4,118.4,119.7,120.3,120.2,119.7,118.8,117.8,116.8,116.3,116.4,117.2,118.6,120.2,121.3,121.2,119.5,116.0,111.1,105.8,101.0,97.5,95.6,95.3,97.2,101.5,104.9,86.2],"15":[61.8,63.7,69.8,76.9,84.9,92.3,97.8,101.3,103.9,106.6,109.9,113.4,116.6,118.9,120.0,120.2,119.9,119.3,118.6,118.0,117.3,116.6,116.3,116.8,118.1,120.0,121.6,121.9,119.9,115.5,109.6,104.2,100.7,99.2,97.4,93.9,93.1,107.8,139.4,86.1]},"lo":{"1":[91.0,92.3,93.6,94.9,96.2,97.5,98.8,100.1,101.3,102.6,103.9,105.1,106.3,107.5,108.7,109.8,111.0,112.0,113.1,114.2,115.2,116.2,117.2,118.2,119.1,120.1,121.1,122.0,123.0,123.9,124.9,125.8,126.8,127.7,128.6,129.6,130.5,131.4,132.4,133.3],"2":[62.2,68.1,73.6,78.9,83.8,88.4,92.6,96.6,100.1,103.4,106.3,108.9,111.2,113.2,115.0,116.5,117.7,118.6,119.3,119.7,119.9,119.7,119.3,118.6,117.5,116.1,114.3,112.3,109.8,107.1,104.1,100.7,97.0,93.0,88.6,84.0,79.0,73.7,68.1,62.2],"3":[50.8,59.9,68.1,75.5,82.1,88.0,93.1,97.6,101.5,105.0,108.0,110.5,112.7,114.6,116.1,117.3,118.1,118.6,118.8,118.7,118.4,117.8,117.0,116.0,114.9,113.7,112.3,110.8,109.1,107.3,105.2,103.1,100.7,98.1,95.4,92.6,89.5,86.4,83.1,79.7],"4":[41.5,54.5,65.5,74.8,82.5,88.9,94.2,98.7,102.6,105.9,108.7,111.0,112.9,114.3,115.5,116.2,116.8,117.2,117.4,117.4,117.4,117.2,116.8,116.3,115.5,114.6,113.5,112.2,110.7,109.0,107.1,104.8,102.0,98.7,94.5,89.2,82.8,75.1,65.8,54.8],"5":[42.6,55.3,65.8,74.4,81.4,87.6,93.0,97.9,102.2,105.9,108.8,111.2,113.1,114.6,115.7,116.5,117.0,117.3,117.3,117.1,116.8,116.4,115.9,115.4,114.8,114.2,113.5,112.4,111.2,109.6,107.6,105.4,102.7,99.5,95.4,90.2,82.9,72.8,59.1,41.1],"6":[46.6,56.8,65.2,72.3,79.2,86.0,92.3,98.0,102.7,106.5,109.6,111.9,113.7,115.0,115.8,116.2,116.3,116.2,116.1,116.0,116.0,116.0,116.0,115.8,115.5,115.1,114.4,113.4,112.0,109.9,107.0,103.2,98.7,93.7,88.3,82.9,77.3,71.0,62.3,50.0],"7":[39.7,56.4,66.2,73.3,80.0,86.2,91.9,96.9,101.4,105.4,108.9,111.8,113.9,115.4,116.2,116.6,116.7,116.5,116.2,115.7,115.2,114.9,114.8,114.9,115.1,115.1,114.9,114.2,112.9,111.0,108.1,104.2,98.8,92.0,84.0,75.9,68.9,64.2,60.9,55.5],"8":[37.1,56.5,65.9,73.2,80.0,86.0,91.3,96.3,101.1,105.4,108.9,111.7,113.8,115.3,116.2,116.7,116.6,116.2,115.7,115.3,115.0,114.9,114.8,114.8,114.9,115.0,114.9,114.2,112.6,110.0,106.5,102.2,97.3,91.4,84.1,75.6,67.4,62.1,60.6,53.5],"9":[43.4,53.1,61.5,71.9,81.0,87.6,92.7,97.0,100.7,104.0,107.1,110.2,113.1,115.4,116.9,117.6,117.6,116.9,115.9,114.8,113.8,113.2,113.4,114.1,115.1,116.0,116.4,115.9,113.9,110.0,104.2,97.0,89.9,84.3,80.8,78.2,75.8,74.6,72.9,47.1],"10":[42.4,52.2,60.9,71.9,80.6,87.3,92.7,96.9,100.4,103.7,107.1,110.2,113.0,115.2,116.8,117.6,117.5,116.8,115.7,114.5,113.7,113.2,113.3,113.8,114.8,115.9,116.4,115.6,113.3,109.4,103.9,97.0,89.5,83.2,79.6,78.1,74.6,68.8,65.2,47.0],"11":[40.7,51.7,61.0,71.5,79.9,87.1,92.7,96.8,100.4,103.7,106.9,109.8,112.6,115.1,116.8,117.5,117.5,116.8,115.7,114.4,113.3,112.8,113.0,113.8,114.9,115.8,116.3,115.7,113.1,108.4,102.4,95.9,89.4,83.2,79.1,77.9,74.0,61.4,50.9,47.2],"12":[39.9,50.8,61.0,71.0,79.8,87.1,92.4,96.7,100.4,103.6,106.6,109.6,112.6,115.0,116.6,117.5,117.5,116.7,115.4,114.2,113.3,112.8,112.9,113.6,114.8,115.8,116.0,115.2,112.9,108.4,101.9,94.8,88.6,83.2,78.0,75.7,73.9,57.5,37.2,47.1],"13":[38.7,50.8,60.6,70.2,79.8,87.1,92.5,96.7,100.0,103.1,106.4,109.7,112.6,115.0,116.6,117.3,117.0,116.3,115.4,114.3,113.3,112.8,112.9,113.4,114.3,115.3,115.9,115.3,112.9,108.5,101.9,93.7,86.4,81.8,78.2,75.3,74.2,49.7,6.9,47.3],"14":[37.7,51.1,59.6,69.7,79.9,87.1,92.5,96.2,99.4,103.0,106.5,109.7,112.6,115.0,116.3,116.9,116.9,116.4,115.4,114.3,113.3,112.6,112.4,113.1,114.3,115.4,116.0,115.4,112.5,107.2,100.7,93.6,86.6,81.9,78.5,72.5,70.7,49.9,-6.2,47.1],"15":[38.6,50.0,60.2,69.8,78.7,86.7,92.8,96.5,99.6,102.6,105.8,109.5,112.8,115.2,116.5,116.8,116.4,115.7,115.2,114.5,113.6,112.8,112.4,112.5,113.5,115.1,116.2,115.8,112.9,106.7,98.4,91.2,86.4,82.8,79.6,70.7,64.3,53.3,-7.2,46.9]},"hi":{"1":[97.9,98.8,99.8,100.7,101.7,102.6,103.6,104.5,105.5,106.5,107.5,108.5,109.5,110.6,111.7,112.8,113.9,115.1,116.2,117.4,118.7,119.9,121.2,122.4,123.7,125.0,126.3,127.6,128.9,130.2,131.5,132.8,134.1,135.4,136.7,138.0,139.3,140.6,142.0,143.3],"2":[73.2,77.8,82.2,86.4,90.4,94.1,97.7,101.1,104.2,107.2,109.9,112.5,114.8,116.8,118.6,120.1,121.4,122.3,123.0,123.5,123.6,123.6,123.2,122.7,122.0,121.0,119.8,118.5,116.9,115.1,113.2,111.0,108.5,105.9,103.1,100.0,96.7,93.2,89.5,85.5],"3":[66.6,72.7,78.5,83.9,89.0,93.8,98.2,102.4,106.1,109.5,112.4,114.9,117.0,118.7,120.1,121.1,121.8,122.3,122.6,122.6,122.5,122.1,121.6,121.0,120.2,119.2,118.2,117.2,116.2,115.3,114.5,113.8,113.4,113.2,113.3,113.8,114.6,115.7,117.3,119.3],"4":[62.3,69.8,76.7,83.3,89.4,95.0,100.0,104.4,108.0,111.0,113.5,115.5,117.2,118.5,119.6,120.4,121.1,121.5,121.8,121.8,121.8,121.7,121.5,121.2,121.0,120.7,120.3,119.9,119.3,118.5,117.5,116.4,115.1,113.8,112.5,111.3,110.2,109.3,108.7,108.3],"5":[68.1,72.1,77.1,83.0,89.0,94.7,99.7,104.1,107.8,111.0,113.7,116.0,117.9,119.4,120.4,121.1,121.5,121.7,121.7,121.7,121.6,121.4,121.2,121.0,120.7,120.5,120.3,120.2,120.2,120.2,120.0,119.6,118.7,117.3,115.3,112.8,110.2,108.0,106.3,105.6],"6":[76.5,74.2,76.6,81.8,87.9,93.8,99.2,104.1,108.4,112.2,115.1,117.4,118.9,119.9,120.5,120.8,121.0,121.1,121.1,121.0,121.0,121.1,121.3,121.5,121.8,122.0,122.1,121.8,121.3,120.5,119.4,118.1,116.5,114.5,112.0,109.2,106.9,106.4,110.4,121.5],"7":[73.4,73.8,78.4,84.1,89.3,94.1,98.8,103.5,107.8,111.6,114.7,117.2,119.2,120.6,121.5,121.8,121.8,121.5,121.1,120.8,120.6,120.6,120.7,121.0,121.5,122.1,122.8,123.4,123.6,123.1,121.7,119.5,116.5,113.2,109.8,106.4,103.6,103.0,109.1,130.6],"8":[73.9,74.0,79.6,84.8,89.3,94.1,99.0,103.7,107.9,111.6,114.9,117.6,119.7,121.0,121.7,121.9,121.8,121.5,121.2,120.9,120.6,120.6,120.9,121.4,122.0,122.6,123.1,123.4,123.5,123.3,122.2,120.1,116.9,113.1,110.0,108.4,108.2,108.8,112.0,130.3],"9":[82.8,71.5,76.7,83.7,90.5,96.5,101.1,104.5,107.5,110.6,113.7,116.6,119.1,121.1,122.6,123.3,123.2,122.5,121.4,120.4,119.7,119.5,119.8,120.8,122.2,123.9,125.2,125.8,125.1,123.3,120.4,116.6,112.4,108.6,107.3,111.3,121.3,132.0,133.1,124.6],"10":[84.0,72.2,77.2,83.7,90.9,96.8,101.1,104.5,107.7,110.8,113.7,116.6,119.2,121.4,122.8,123.3,123.2,122.6,121.6,120.6,119.8,119.5,120.0,121.1,122.5,124.0,125.2,126.0,125.6,123.7,120.5,116.7,113.0,110.0,108.6,111.4,122.3,137.0,139.9,124.9],"11":[84.1,74.0,77.6,83.7,91.0,96.8,101.3,105.1,108.1,110.9,113.7,116.7,119.3,121.4,122.8,123.6,123.6,122.9,121.7,120.6,119.8,119.6,120.0,121.1,122.8,124.5,125.7,126.1,125.6,124.0,121.0,116.8,112.9,110.8,110.9,113.1,122.1,139.5,146.4,125.3],"12":[84.6,75.2,77.6,84.1,91.1,96.9,101.7,105.3,108.1,111.0,114.0,116.8,119.3,121.5,123.1,123.8,123.6,122.9,121.9,120.7,119.8,119.6,120.2,121.4,122.9,124.5,125.9,126.4,125.6,124.0,121.7,118.3,113.9,110.9,111.6,114.8,122.1,144.8,162.8,125.3],"13":[84.2,76.8,77.5,84.1,91.1,97.5,102.2,105.3,108.1,111.0,113.9,116.9,119.8,121.9,123.1,123.7,123.6,122.9,121.8,120.9,120.2,120.0,120.3,121.4,122.9,124.5,125.9,126.7,126.5,124.7,121.7,118.2,114.2,110.8,112.1,118.4,123.8,145.6,173.8,125.5],"14":[83.8,78.0,77.4,83.9,91.6,98.3,102.2,105.2,108.1,110.9,114.2,117.5,120.1,121.9,123.1,123.7,123.6,123.0,122.2,121.2,120.3,120.0,120.3,121.3,122.9,125.0,126.6,127.0,126.4,124.7,121.6,118.0,115.4,113.1,112.6,118.2,123.6,153.0,216.0,125.4],"15":[85.1,77.4,79.4,84.1,91.2,98.0,102.8,106.1,108.3,110.7,113.9,117.3,120.3,122.5,123.5,123.6,123.4,122.8,122.1,121.5,120.9,120.4,120.3,121.0,122.6,124.8,127.0,128.1,127.0,124.3,120.9,117.2,115.1,115.5,115.2,117.1,121.9,162.3,285.9,125.2]},"trainMSE":[1674.07,1597.81,1592.56,1590.53,1590.11,1588.8,1587.94,1587.9,1585.57,1585.57,1585.53,1585.53,1585.47,1585.39,1585.12],"cvMSE":[1676.7,1600.76,1596.69,1595.99,1597.08,1596.17,1596.6,1597.21,1596.16,1597.31,1598.72,1600.04,1601.35,1602.33,1603.31]};
 const FRAMES_w08nat = {"meta":{"src":"ISLP 圖 7.4 · Wage 全體 n=3000，兩者都用內部節點 25／40／60","seed":"無隨機性（最小平方閉式解）","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2 · pygam 0.10.1","gen":"tools/frames/gen_nonlin.py","note":"立方樣條 7 個參數、自然樣條 5 個參數；BSpline／NaturalSpline 取自 ISLP.transforms（Ch07-nonlin-lab-zh.ipynb 儲存格 44、56 用的同一組）"},"grid":[18.0,18.8,19.6,20.4,21.1,21.9,22.7,23.5,24.3,25.1,25.8,26.6,27.4,28.2,29.0,29.8,30.6,31.3,32.1,32.9,33.7,34.5,35.3,36.1,36.8,37.6,38.4,39.2,40.0,40.8,41.5,42.3,43.1,43.9,44.7,45.5,46.3,47.0,47.8,48.6,49.4,50.2,51.0,51.7,52.5,53.3,54.1,54.9,55.7,56.5,57.2,58.0,58.8,59.6,60.4,61.2,61.9,62.7,63.5,64.3,65.1,65.9,66.7,67.4,68.2,69.0,69.8,70.6,71.4,72.2,72.9,73.7,74.5,75.3,76.1,76.9,77.6,78.4,79.2,80.0],"knots":[25.0,40.0,60.0],"cubic":{"fit":[60.5,62.2,64.4,67.1,70.2,73.5,77.0,80.6,84.1,87.5,90.6,93.5,96.2,98.7,101.1,103.2,105.1,106.9,108.4,109.9,111.2,112.4,113.4,114.3,115.2,115.9,116.5,117.1,117.6,118.0,118.4,118.7,119.0,119.2,119.3,119.5,119.5,119.6,119.6,119.6,119.5,119.4,119.3,119.1,118.9,118.7,118.5,118.3,118.0,117.7,117.4,117.2,116.9,116.6,116.3,115.9,115.6,115.3,114.9,114.4,113.9,113.3,112.7,111.9,111.0,110.0,108.9,107.6,106.2,104.6,102.8,100.9,98.7,96.4,93.8,90.9,87.9,84.6,81.0,77.1],"lo":[41.9,49.8,55.9,60.2,63.7,67.2,71.1,75.3,79.5,83.6,87.1,90.2,93.0,95.5,97.8,99.9,101.9,103.7,105.4,107.0,108.5,109.8,111.0,112.0,112.8,113.5,114.2,114.7,115.1,115.5,115.9,116.2,116.5,116.8,117.0,117.2,117.3,117.4,117.4,117.3,117.2,117.0,116.8,116.5,116.3,115.9,115.6,115.3,114.9,114.6,114.2,113.9,113.5,113.1,112.6,112.1,111.4,110.6,109.7,108.7,107.6,106.4,105.2,104.0,102.6,101.2,99.8,98.2,96.4,94.5,92.2,89.5,86.3,82.5,78.1,72.9,66.9,60.2,52.6,44.2],"hi":[79.0,74.5,72.9,74.0,76.7,79.8,82.9,85.9,88.6,91.4,94.1,96.9,99.5,102.0,104.3,106.4,108.3,110.0,111.5,112.8,113.9,114.9,115.9,116.7,117.5,118.2,118.9,119.5,120.0,120.5,120.9,121.2,121.4,121.6,121.7,121.8,121.8,121.8,121.8,121.8,121.8,121.7,121.7,121.7,121.6,121.5,121.4,121.2,121.1,120.9,120.6,120.4,120.2,120.0,119.9,119.8,119.9,119.9,120.1,120.2,120.2,120.2,120.1,119.8,119.4,118.8,118.0,117.1,116.0,114.7,113.5,112.2,111.1,110.2,109.4,109.0,108.8,108.9,109.3,110.0],"df":7},"natural":{"fit":[54.8,58.8,62.9,66.9,70.8,74.6,78.3,81.8,85.2,88.4,91.3,94.1,96.6,99.0,101.1,103.1,105.0,106.6,108.1,109.5,110.8,111.9,112.9,113.8,114.7,115.4,116.1,116.7,117.2,117.7,118.1,118.5,118.9,119.2,119.4,119.6,119.8,119.9,120.0,120.0,120.0,120.0,119.9,119.7,119.6,119.3,119.1,118.8,118.4,118.1,117.6,117.2,116.7,116.1,115.6,114.9,114.3,113.6,112.9,112.2,111.4,110.6,109.7,108.9,108.0,107.1,106.2,105.2,104.3,103.3,102.3,101.3,100.3,99.3,98.2,97.2,96.1,95.1,94.0,93.0],"lo":[44.7,49.9,55.0,60.0,64.9,69.5,73.9,78.0,81.7,85.1,88.1,90.9,93.4,95.8,98.0,100.0,102.0,103.7,105.4,106.9,108.3,109.5,110.6,111.6,112.5,113.2,113.8,114.4,114.8,115.3,115.7,116.1,116.5,116.8,117.1,117.4,117.6,117.8,117.9,117.9,117.9,117.8,117.7,117.4,117.2,116.8,116.4,116.0,115.5,115.0,114.5,114.0,113.4,112.7,112.1,111.4,110.6,109.8,108.9,107.9,106.8,105.6,104.4,103.1,101.6,100.2,98.6,97.0,95.3,93.6,91.8,90.0,88.1,86.2,84.3,82.4,80.4,78.4,76.4,74.4],"hi":[64.8,67.8,70.7,73.7,76.7,79.7,82.7,85.7,88.7,91.7,94.6,97.3,99.8,102.2,104.3,106.2,108.0,109.5,110.9,112.1,113.3,114.3,115.2,116.1,116.9,117.6,118.3,118.9,119.5,120.1,120.5,120.9,121.2,121.5,121.7,121.9,122.0,122.1,122.1,122.1,122.1,122.1,122.1,122.1,122.0,121.9,121.7,121.6,121.3,121.1,120.8,120.4,120.0,119.5,119.0,118.5,118.0,117.5,116.9,116.4,115.9,115.5,115.1,114.7,114.4,114.1,113.8,113.5,113.3,113.0,112.8,112.6,112.5,112.3,112.2,112.0,111.9,111.7,111.6,111.5],"df":5},"widthCubic":[37.1,65.83],"widthNatural":[20.15,37.06]};
@@ -3008,7 +3007,7 @@ function w08gamDraw() {
     + ' → 總有效自由度 ' + HC.fmt(cell.edof, 2) + '、Pseudo R² ' + HC.fmt(cell.r2, 4)
     + '、GCV ' + HC.fmt(cell.gcv, 1) + '。'
     + (isRef ? '這就是 lab 儲存格 86／98 的那一組：EDoF 12.99、GCV 1246.1、R² 0.2928。'
-             : 'year 的 df 幾乎不影響 R²，age 的 df 才有感——這一頁 P08 的 ANOVA 說的就是這件事。'));
+             : 'year 的 df 幾乎不影響 R²，age 的 df 影響較明顯；可對照本頁 P08 的 ANOVA。'));
 }
 function w08gamSet() { w08gamDraw(); }
 function w08gamReset() {
@@ -3042,7 +3041,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"多項式迴歸（Polynomial Regression）","back":"把 x, x², …, x^d 當成新的預測變數丟進線性模型。係數照樣用最小平方估，但個別係數沒有解讀價值，要看的是整條配適曲線。d 通常不超過 3 或 4，太高次在資料邊界會出現很怪的形狀。"},{"front":"階梯函數（Step Function）","back":"把 x 的範圍切成幾個區間，每個區間配一個常數。等於把連續變數轉成有序類別變數，再用虛擬變數做迴歸。好處是完全不假設全域形狀，壞處是沒有自然切點時會漏掉趨勢。"},{"front":"切點（Cutpoint）","back":"階梯函數把 x 切段的位置 c₁, …, c_K，切出 K+1 個區間。每一段的配適值就是該段樣本的平均值（模型只有 x 一個變數時）。"},{"front":"指示函數（Indicator Function）","back":"I(條件)，條件成立回傳 1、否則回傳 0。階梯函數的基底就是 I(c_j ≤ x < c_{j+1})；截斷冪基底也用它把 x 超過節點以後的部分挑出來。"},{"front":"基底函數（Basis Function）","back":"事先選定、固定且已知的一組轉換 b₁(x), …, b_K(x)，然後配 y = β₀ + Σ βₖ bₖ(x) + ε。多項式、階梯函數、樣條全都是這個框架的特例，所以第 3 章的標準誤與 F 檢定全部照用。"},{"front":"分段多項式（Piecewise Polynomial）","back":"在 x 的不同區段各配一個低次多項式，不同區段的係數可以不同。K 個節點就有 K+1 段。完全不加約束的話函數會在節點斷開，看起來很荒謬。"},{"front":"節點（Knot）","back":"分段多項式換係數的位置。節點愈多、曲線愈有彈性。實務上常放在資料的均勻分位數處，節點數（或等價的自由度）用交叉驗證選。"},{"front":"立方樣條（Cubic Spline）","back":"分段三次多項式，且在每個節點上函數值、一階導數、二階導數都連續。K 個節點用掉 K+4 個自由度。三階導數才允許跳，而人眼幾乎看不出三階導數的不連續，所以看起來很平滑。"},{"front":"線性樣條（Linear Spline）","back":"分段一次多項式，只要求在節點上連續。K 個節點用掉 K+2 個自由度。一般而言 d 次樣條就是分段 d 次多項式加上「導數連續到 d−1 階」。"},{"front":"截斷冪基底（Truncated Power Basis）","back":"h(x, ξ) = (x−ξ)³₊，也就是 x > ξ 時等於 (x−ξ)³、否則等於 0。每個節點加一個這種項，就能讓函數在該節點只有三階導數跳、值與一二階導數都保持連續。"},{"front":"迴歸樣條（Regression Spline）","back":"先指定節點、產生對應的基底矩陣，再用最小平方估係數。彈性靠「加節點」而不是「拉高次數」來取得，所以比高次多項式穩定得多。"},{"front":"自然樣條（Natural Spline）","back":"立方樣條再加上邊界約束：在最小節點以左、最大節點以右要求函數是線性的。兩端各少兩個自由度，換來邊界處明顯窄很多的信賴帶。"},{"front":"邊界節點（Boundary Knot）","back":"資料範圍兩端的節點，跟內部節點分開算。含邊界節點的五節點立方樣條有 9 個自由度，自然樣條在兩端各加兩個線性約束後剩 5 個，扣掉被截距吸收的常數就記成 4 個自由度。"},{"front":"B-樣條（B-spline）","back":"樣條空間的另一組基底，每一列只有 degree+1 個非零元素。條件數低、數值穩定，跟多項式的 Vandermonde 矩陣完全相反。與截斷冪基底張出同一個函數空間，配出來的曲線一樣。"},{"front":"Runge 現象（Runge Phenomenon）","back":"用高次多項式配適時，曲線在資料邊界劇烈振盪的現象。次數愈高愈嚴重。樣條把次數固定在 3、改用增加節點取得彈性，就避開了這個問題。"},{"front":"自由度（Degrees of Freedom）","back":"模型裡自由參數的個數。這一章有三個地方用到它：多項式的次數 d、樣條的 K+4（節點數決定），以及平滑樣條的有效自由度。前兩者是整數的參數計數，第三者不是。"},{"front":"平滑樣條（Smoothing Spline）","back":"最小化「RSS + λ∫g″(t)²dt」的函數 g。它的解是在每一個相異 xᵢ 上都有節點的自然立方樣條，但係數被 λ 收縮過。不必選節點位置，只要選 λ。"},{"front":"損失＋懲罰（Loss + Penalty）","back":"平滑樣條的目標函數形式：前項要求配得好，後項 λ∫g″(t)²dt 懲罰彎曲程度。跟第 6 章的脊迴歸與 lasso 同一個套路，λ 控制偏差與變異的取捨。"},{"front":"有效自由度（Effective Degrees of Freedom, df_λ）","back":"平滑矩陣 S_λ 的對角線元素之和。λ 從 0 增到無限大時，df_λ 從 n 降到 2。它是連續值而不是整數，用來描述平滑樣條的彈性。"},{"front":"平滑矩陣（Smoother Matrix）","back":"把配適值寫成 ĝ_λ = S_λ y 的那個 n×n 矩陣。它的跡（對角線之和）就是有效自由度，對角元素 {S_λ}ᵢᵢ 也讓 LOOCV 有一次配適就算完的捷徑公式。"},{"front":"廣義交叉驗證（Generalized Cross-Validation, GCV）","back":"用平滑矩陣的跡近似留一交叉驗證誤差的準則，只配一次模型就算得出來。pygam 的 gridsearch 就是照 GCV 挑 λ，跟課本圖 7.8 用 LOOCV 挑出來的答案通常很接近但不會完全相同。"},{"front":"局部迴歸（Local Regression）","back":"在每個目標點 x₀ 只用附近的樣本，以距離遞減的權重配一條加權最小平方直線，取它在 x₀ 的值當 f̂(x₀)。每換一個 x₀ 就要重配一次，所以需要一直留著全部訓練資料。"},{"front":"跨距（Span, s）","back":"局部迴歸在每個目標點用掉的樣本比例 s = k/n。s 小則局部、曲線抖；s 大通常更平滑，可用交叉驗證選。即使 s = 1 使用全部資料，距離權重仍隨目標點改變，不一定成為全域 OLS 直線。"},{"front":"記憶式方法（Memory-based Procedure）","back":"像最近鄰法與局部迴歸這種「每次預測都要重新用到全部訓練資料」的做法。沒有一組固定的係數可以存下來，所以模型體積等於資料體積。"},{"front":"廣義加法模型（Generalized Additive Model, GAM）","back":"把多元線性迴歸的每個 βⱼxⱼ 換成各自的非線性函數 fⱼ(xⱼ) 再加起來：y = β₀ + Σ fⱼ(xⱼ) + ε。每個 fⱼ 可以用樣條、平滑樣條或局部迴歸來配，也可以推廣到分類（logit 是加法的）。"},{"front":"加法性（Additivity）","back":"GAM 保住的性質：各變數的貢獻是相加的，所以可以固定其他變數、單獨看某一個變數的效果。代價是預設沒有交互作用，要的話得手動加 xⱼ×xₖ 或二維的 fⱼₖ 項。"},{"front":"逆向配適（Backfitting）","back":"配 GAM 的標準演算法：輪流更新每一個 fⱼ，更新時把其他項固定，對偏殘差 rᵢ = yᵢ − Σ_{k≠j} f̂ₖ(xᵢₖ) 做一次單變數平滑。這樣只要有單變數的配適工具就能配多變數加法模型。"},{"front":"偏依賴圖（Partial Dependence Plot）","back":"把其他變數固定在平均值、只讓一個變數在格點上變動，畫出它對反應的邊際效果與逐點標準誤。GAM 的每個 f̂ⱼ 就是這樣呈現的，也是解讀 GAM 的主要工具。"}];
+const FLASHCARDS = [{"front":"多項式迴歸（Polynomial Regression）","back":"把 x, x², …, x^d 當成新的預測變數丟進線性模型。係數照樣用最小平方估；解讀時看整條配適曲線，因為個別係數受到基底選擇影響。d 通常不超過 3 或 4，太高次在資料邊界會出現很怪的形狀。"},{"front":"階梯函數（Step Function）","back":"把 x 的範圍切成幾個區間，每個區間配一個常數。等於把連續變數轉成有序類別變數，再用虛擬變數做迴歸。好處是完全不假設全域形狀，壞處是沒有自然切點時會漏掉趨勢。"},{"front":"切點（Cutpoint）","back":"階梯函數把 x 切段的位置 c₁, …, c_K，切出 K+1 個區間。每一段的配適值就是該段樣本的平均值（模型只有 x 一個變數時）。"},{"front":"指示函數（Indicator Function）","back":"I(條件)，條件成立回傳 1、否則回傳 0。階梯函數的基底就是 I(c_j ≤ x < c_{j+1})；截斷冪基底也用它把 x 超過節點以後的部分挑出來。"},{"front":"基底函數（Basis Function）","back":"事先選定、固定且已知的一組轉換 b₁(x), …, b_K(x)，然後配 y = β₀ + Σ βₖ bₖ(x) + ε。多項式、階梯函數、樣條全都是這個框架的特例，所以第 3 章的標準誤與 F 檢定全部照用。"},{"front":"分段多項式（Piecewise Polynomial）","back":"在 x 的不同區段各配一個低次多項式，不同區段的係數可以不同。K 個節點就有 K+1 段。完全不加約束的話函數會在節點斷開，看起來很荒謬。"},{"front":"節點（Knot）","back":"分段多項式換係數的位置。節點愈多、曲線愈有彈性。實務上常放在資料的均勻分位數處，節點數（或等價的自由度）用交叉驗證選。"},{"front":"立方樣條（Cubic Spline）","back":"分段三次多項式，且在每個節點上函數值、一階導數、二階導數都連續。K 個節點用掉 K+4 個自由度。三階導數才允許跳，而人眼幾乎看不出三階導數的不連續，所以看起來很平滑。"},{"front":"線性樣條（Linear Spline）","back":"分段一次多項式，只要求在節點上連續。K 個節點用掉 K+2 個自由度。一般而言 d 次樣條就是分段 d 次多項式加上「導數連續到 d−1 階」。"},{"front":"截斷冪基底（Truncated Power Basis）","back":"h(x, ξ) = (x−ξ)³₊，也就是 x > ξ 時等於 (x−ξ)³、否則等於 0。每個節點加一個這種項，就能讓函數在該節點只有三階導數跳、值與一二階導數都保持連續。"},{"front":"迴歸樣條（Regression Spline）","back":"先指定節點、產生對應的基底矩陣，再用最小平方估係數。保持較低次數並增加節點，就能提高彈性，所以比高次多項式穩定得多。"},{"front":"自然樣條（Natural Spline）","back":"立方樣條再加上邊界約束：在最小節點以左、最大節點以右要求函數是線性的。兩端各少兩個自由度，換來邊界處明顯窄很多的信賴帶。"},{"front":"邊界節點（Boundary Knot）","back":"資料範圍兩端的節點，跟內部節點分開算。含邊界節點的五節點立方樣條有 9 個自由度，自然樣條在兩端各加兩個線性約束後剩 5 個，扣掉被截距吸收的常數就記成 4 個自由度。"},{"front":"B-樣條（B-spline）","back":"樣條空間的另一組基底，每一列只有 degree+1 個非零元素。條件數低、數值穩定，跟多項式的 Vandermonde 矩陣完全相反。與截斷冪基底張出同一個函數空間，配出來的曲線一樣。"},{"front":"Runge 現象（Runge Phenomenon）","back":"用高次多項式配適時，曲線在資料邊界劇烈振盪的現象。次數愈高愈嚴重。樣條把次數固定在 3、改用增加節點取得彈性，就避開了這個問題。"},{"front":"自由度（Degrees of Freedom）","back":"模型裡自由參數的個數。這一章有三個地方用到它：多項式的次數 d、樣條的 K+4（節點數決定），以及平滑樣條的有效自由度。前兩者是整數的參數計數；第三者由平滑矩陣的跡定義。"},{"front":"平滑樣條（Smoothing Spline）","back":"最小化「RSS + λ∫g″(t)²dt」的函數 g。它的解是在每一個相異 xᵢ 上都有節點的自然立方樣條，但係數被 λ 收縮過。不必選節點位置，只要選 λ。"},{"front":"損失＋懲罰（Loss + Penalty）","back":"平滑樣條的目標函數形式：前項要求配得好，後項 λ∫g″(t)²dt 懲罰彎曲程度。跟第 6 章的脊迴歸與 lasso 同一個套路，λ 控制偏差與變異的取捨。"},{"front":"有效自由度（Effective Degrees of Freedom, df_λ）","back":"平滑矩陣 S_λ 的對角線元素之和。λ 從 0 增到無限大時，df_λ 從 n 降到 2。它可以取連續值，用來描述平滑樣條的彈性。"},{"front":"平滑矩陣（Smoother Matrix）","back":"把配適值寫成 ĝ_λ = S_λ y 的那個 n×n 矩陣。它的跡（對角線之和）就是有效自由度，對角元素 {S_λ}ᵢᵢ 也讓 LOOCV 有一次配適就算完的捷徑公式。"},{"front":"廣義交叉驗證（Generalized Cross-Validation, GCV）","back":"用平滑矩陣的跡近似留一交叉驗證誤差的準則，只配一次模型就算得出來。pygam 的 gridsearch 就是照 GCV 挑 λ，跟課本圖 7.8 用 LOOCV 挑出來的答案通常接近，仍可能因準則不同而有差異。"},{"front":"局部迴歸（Local Regression）","back":"在每個目標點 x₀ 只用附近的樣本，以距離遞減的權重配一條加權最小平方直線，取它在 x₀ 的值當 f̂(x₀)。每換一個 x₀ 就要重配一次，所以需要一直留著全部訓練資料。"},{"front":"跨距（Span, s）","back":"局部迴歸在每個目標點用掉的樣本比例 s = k/n。s 小則局部、曲線抖；s 大通常更平滑，可用交叉驗證選。即使 s = 1 使用全部資料，距離權重仍隨目標點改變，不一定成為全域 OLS 直線。"},{"front":"記憶式方法（Memory-based Procedure）","back":"像最近鄰法與局部迴歸這種「每次預測都要重新用到全部訓練資料」的做法。沒有一組固定的係數可以存下來，所以模型體積等於資料體積。"},{"front":"廣義加法模型（Generalized Additive Model, GAM）","back":"把多元線性迴歸的每個 βⱼxⱼ 換成各自的非線性函數 fⱼ(xⱼ) 再加起來：y = β₀ + Σ fⱼ(xⱼ) + ε。每個 fⱼ 可以用樣條、平滑樣條或局部迴歸來配，也可以推廣到分類（logit 是加法的）。"},{"front":"加法性（Additivity）","back":"GAM 保住的性質：各變數的貢獻是相加的，所以可以固定其他變數、單獨看某一個變數的效果。代價是預設沒有交互作用，要的話得手動加 xⱼ×xₖ 或二維的 fⱼₖ 項。"},{"front":"逆向配適（Backfitting）","back":"配 GAM 的標準演算法：輪流更新每一個 fⱼ，更新時把其他項固定，對偏殘差 rᵢ = yᵢ − Σ_{k≠j} f̂ₖ(xᵢₖ) 做一次單變數平滑。這樣只要有單變數的配適工具就能配多變數加法模型。"},{"front":"偏依賴圖（Partial Dependence Plot）","back":"把其他變數固定在平均值、只讓一個變數在格點上變動，畫出它對反應的邊際效果與逐點標準誤。GAM 的每個 f̂ⱼ 就是這樣呈現的，也是解讀 GAM 的主要工具。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

@@ -729,9 +729,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>一欄是 Series，一張表是 DataFrame <span class="sec-badge">課程 Lab Ch1 · 儲存格 17–28</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>NumPy 的陣列只有數字，沒有欄名。真實資料不是這樣。你會想說「取 mpg 那一欄」，
-  而不是「取第 3 欄」。pandas 就是在陣列上面加了一層<strong>標籤</strong>：
-  一維的叫 Series，二維的叫 DataFrame。</p>
+  <p>pandas 用<strong>標籤</strong>管理資料，讓你可以依欄名「mpg」取值，也可以指定「第 3 欄」這類位置。
+  一維資料稱為 Series，二維資料表稱為 DataFrame。</p>
 
 <div class="info-box">
   <span class="info-label">一句話</span>
@@ -810,7 +809,7 @@ dtype: object</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 00 · 自我檢測</div>
   <p><code>frame['pop']</code> 拿到的是什麼？</p>
-  <div class="quiz-options" id="qSerOptions"><div class="quiz-opt" data-correct="false" data-fb="很接近但不精確。底下確實是 NumPy 陣列，但你拿到的是包了一層索引的 <strong>Series</strong>。要真的拿陣列得再 <code>.to_numpy()</code>。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(A)</span> 一個 NumPy 陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。這就是為什麼 <code>frame['pop'] &amp;gt; 2</code> 的結果也帶索引，可以直接拿回去索引原本的表。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(B)</span> 一個 Series，帶著原本的列索引</div><div class="quiz-opt" data-correct="false" data-fb="不是。用單一個字串取欄拿到的是 Series；要拿只有一欄的 DataFrame 得寫 <code>frame[['pop']]</code>（雙層中括號）。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(C)</span> 一個 DataFrame，只有一欄</div></div>
+  <div class="quiz-options" id="qSerOptions"><div class="quiz-opt" data-correct="false" data-fb="這個寫法回傳帶索引的 <strong>Series</strong>，底下使用 NumPy 陣列。需要轉成陣列時，再呼叫 <code>.to_numpy()</code>。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(A)</span> 一個 NumPy 陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。這就是為什麼 <code>frame['pop'] &amp;gt; 2</code> 的結果也帶索引，可以直接拿回去索引原本的表。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(B)</span> 一個 Series，帶著原本的列索引</div><div class="quiz-opt" data-correct="false" data-fb="不是。用單一個字串取欄拿到的是 Series；要拿只有一欄的 DataFrame 得寫 <code>frame[['pop']]</code>（雙層中括號）。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(C)</span> 一個 DataFrame，只有一欄</div></div>
   <div class="quiz-feedback" id="qSerFeedback"></div>
 </div>
 </section>
@@ -837,7 +836,7 @@ dtype: object</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">四行指令各自告訴你什麼</div>
-      按按鈕，看每一行揭露的是哪一塊資訊。四個都看完才算「認識」了這份資料。
+      按按鈕，看每一行揭露的是哪一塊資訊。四個指令各提供一部分資料資訊，可以互相對照。
     </div>
     <div class="info-card">
       <div class="ic-title">這一行告訴你</div>
@@ -845,7 +844,7 @@ dtype: object</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">順序有意義</div>
-      先 <code>shape</code> 再 <code>dtypes</code>——型別錯了的話，後面 <code>describe()</code> 的數字全部不能信。
+      先 <code>shape</code> 再 <code>dtypes</code>——型別會影響 <code>describe()</code> 彙總哪些欄位，先核對型別再讀摘要。
     </div>
   </div>
 </div>
@@ -903,14 +902,14 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div>
     <div class="qa-a">它預設只算數值欄。如果你期待的欄沒出現，那一欄多半被讀成了字串（object）——這正是下一節 Auto 的 horsepower 會遇到的事。加 <code>describe(include='all')</code> 可以連類別欄一起看。</div>
   </details>
   <details class="qa-item"><summary><code>count</code> 跟 <code>len(df)</code> 差在哪？</summary>
-    <div class="qa-a"><code>len(df)</code> 是列數，<code>count</code> 是<strong>非遺漏</strong>的個數。兩個數字不一樣，就代表那一欄有 NaN。這是最快的遺漏值偵測法。</div>
+    <div class="qa-a"><code>len(df)</code> 是列數，<code>count</code> 是<strong>非遺漏</strong>的個數。兩個數字不一樣，就代表那一欄有 NaN。這可以用來檢查遺漏值。</div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p><code>df.describe()</code> 的輸出裡，某一欄的 <code>count</code> 是 380，但 <code>df.shape</code> 是 <code>(392, 9)</code>。這代表什麼？</p>
-  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>count</code> 只算非 NaN 的個數，392 − 380 = 12。這是最快發現遺漏值的方式，比一欄一欄 <code>isna().sum()</code> 快。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 那一欄有 12 個遺漏值</div><div class="quiz-opt" data-correct="false" data-fb="不會。<code>shape</code> 是實際的列數，不受遺漏值影響。兩個數字不一致本身就是資訊，不是錯誤。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 資料只有 380 列，shape 印錯了</div><div class="quiz-opt" data-correct="false" data-fb="重複值不影響 <code>count</code>。要看重複得用 <code>duplicated()</code> 或 <code>value_counts()</code>。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 那一欄有 12 個重複值</div></div>
+  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>count</code> 只算非 NaN 的個數，392 − 380 = 12。也可以用 <code>isna().sum()</code> 核對各欄的遺漏值數。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 那一欄有 12 個遺漏值</div><div class="quiz-opt" data-correct="false" data-fb="不會。<code>shape</code> 是實際的列數，不受遺漏值影響。兩個數字的差距可以用來檢查遺漏值。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 資料只有 380 列，shape 印錯了</div><div class="quiz-opt" data-correct="false" data-fb="重複值不影響 <code>count</code>。要看重複得用 <code>duplicated()</code> 或 <code>value_counts()</code>。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 那一欄有 12 個重複值</div></div>
   <div class="quiz-feedback" id="qViewFeedback"></div>
 </div>
 </section>
@@ -920,12 +919,12 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div>
   <h2><code>loc</code> 靠名字、<code>iloc</code> 靠位置 <span class="sec-badge">課程 Lab Ch1 · 儲存格 45–56</span></h2>
 <!-- GEN:END sec:select -->
 
-  <p>pandas 有兩套選取語法，混用是新手最大的痛苦來源。規則其實只有一句：
+  <p>pandas 的兩套選取語法使用不同的依據：
   <strong><code>loc</code> 靠名字、<code>iloc</code> 靠位置</strong>。
-  剩下的差別都是從這一句推出來的。</p>
+  選取之前，先確認要用標籤還是位置。</p>
 
 <div class="info-box warm">
-  <span class="info-label">最容易咬人的一條</span>
+  <span class="info-label">留意切片是否包含結尾</span>
   <code>loc</code> 的切片<strong>包含</strong>結尾，<code>iloc</code> 不包含。<code>df.loc['a':'c']</code> 會拿到 c，<code>df.iloc[0:3]</code> 只拿到 0、1、2。因為名字沒有「下一個」可言，含頭不含尾對它沒有意義。
 </div>
 
@@ -1026,7 +1025,7 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
   <h2>Auto 的 horsepower 為什麼是字串？397 筆怎麼變成 392 筆 <span class="sec-badge">課程 Lab Ch2 · 儲存格 185–199</span></h2>
 <!-- GEN:END sec:na -->
 
-  <p>這一節講一個真實故事。課程 lab 讀進 <code>Auto</code> 之後，
+  <p>課程 lab 讀進 <code>Auto</code> 之後，
   <code>horsepower</code> 那一欄<strong>整欄是字串</strong>，因為原始檔用 <code>?</code>
   代表遺漏，pandas 看到問號就把整欄當成文字。這種錯誤不會報錯，只會讓你後面算出來的東西全錯。</p>
 
@@ -1042,7 +1041,7 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">四個步驟</div>
-      按「單步」走一次：發現整欄是字串 → 找出兇手是 <code>?</code> → 在<strong>讀檔時</strong>就宣告它是遺漏 → 決定要不要 dropna。
+      按「單步」走一次：發現整欄是字串 → 找出影響型別的值是 <code>?</code> → 在<strong>讀檔時</strong>就宣告它是遺漏 → 決定要不要 dropna。
     </div>
     <div class="info-card">
       <div class="ic-title">目前</div>
@@ -1056,7 +1055,7 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">找出兇手</div>
+  <div class="dx-label">找出影響型別的值</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">np.unique(Auto[<span class="str">&#x27;horsepower&#x27;</span>])</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([&#x27;100.0&#x27;, &#x27;102.0&#x27;, &#x27;103.0&#x27;, &#x27;105.0&#x27;, &#x27;107.0&#x27;, &#x27;108.0&#x27;, &#x27;110.0&#x27;,
@@ -1125,7 +1124,7 @@ dtype: float64</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
   <p><code>Auto['horsepower'].mean()</code> 在<strong>沒有</strong>加 <code>na_values=['?']</code> 的情況下會發生什麼？</p>
-  <div class="quiz-options" id="qNaOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不知道 <code>?</code> 是遺漏，它只看到一欄字串。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(A)</span> 自動忽略問號，算出正確的平均</div><div class="quiz-opt" data-correct="true" data-fb="對。這是最危險的一種錯誤——<strong>你以為在算平均，其實那一欄根本不是數字</strong>。所以拿到資料先看 <code>dtypes</code>。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(B)</span> 報錯或算出無意義的結果，因為整欄是字串</div><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不會擅自把字串轉成數字，它的選擇是把整欄保持成 object。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(C)</span> 把問號當成 0 來算</div></div>
+  <div class="quiz-options" id="qNaOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不知道 <code>?</code> 是遺漏，它只看到一欄字串。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(A)</span> 自動忽略問號，算出正確的平均</div><div class="quiz-opt" data-correct="true" data-fb="對。計算平均前，要先確認<strong>欄位讀成了數字</strong>。所以拿到資料先看 <code>dtypes</code>。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(B)</span> 報錯或算出無意義的結果，因為整欄是字串</div><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不會擅自把字串轉成數字，它的選擇是把整欄保持成 object。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(C)</span> 把問號當成 0 來算</div></div>
   <div class="quiz-feedback" id="qNaFeedback"></div>
 </div>
 </section>
@@ -1135,7 +1134,7 @@ dtype: float64</pre></div>
   <h2>拆分 → 套用 → 合併：groupby 的三個動作 <span class="sec-badge">課程 Lab Ch1 · 儲存格 76–78</span></h2>
 <!-- GEN:END sec:group -->
 
-  <p><code>groupby</code> 是 pandas 最有價值的一個動作，而它其實是三件事連在一起：
+  <p><code>groupby</code> 用來分組彙總，可以分成三個步驟：
   <strong>拆分</strong>（照某一欄的值把列分堆）→ <strong>套用</strong>（每一堆各算一次）→
   <strong>合併</strong>（把結果疊回一張表）。看懂這三步，所有變形都是同一件事。</p>
 
@@ -1226,9 +1225,8 @@ foo -2.740490  0.700964</pre></div>
   <h2>concat 把切開的表接回去；讀檔的參數決定後面有多痛 <span class="sec-badge">課程 Lab Ch1 · 儲存格 71–72</span></h2>
 <!-- GEN:END sec:join -->
 
-  <p>最後兩件雜事：把切開的表接回去，以及讀檔。讀檔看起來最無聊，
-  但上一節那個 <code>?</code> 的災難就是讀檔沒設好造成的——
-  <strong>讀檔的參數決定你後面有多痛</strong>。</p>
+  <p>這節整理串接與讀檔的用法。上一節的 <code>?</code> 影響欄位型別，提醒我們
+  <strong>讀檔時先確認分隔符與遺漏值設定</strong>。</p>
 
 <div class="deck-extra">
   <div class="dx-label">切成三塊再接回去</div>
@@ -1266,14 +1264,14 @@ foo -2.740490  0.700964</pre></div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">讀檔的參數才是重點</div>
+  <div class="dx-label">設定讀檔參數</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">Auto = pd.read_csv(os.path.join(DATA_PATH,<span class="str">&#x27;Auto.data&#x27;</span>),</span>
   <span class="line">                   na_values=[<span class="str">&#x27;?&#x27;</span>],</span>
   <span class="line">                   sep=<span class="str">r&quot;\s+&quot;</span>)</span>
   <span class="line">Auto[<span class="str">&#x27;horsepower&#x27;</span>].sum()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(40952.0)</pre></div>
-  <p class="dx-note"><code>sep=r&quot;\s+&quot;</code> 是「一個以上的空白當分隔」，<code>na_values</code> 是「這些字算遺漏」。這一行寫對，後面少掉一整輪除錯。</p>
+  <p class="dx-note"><code>sep=r&quot;\s+&quot;</code> 是「一個以上的空白當分隔」，<code>na_values</code> 是「這些字算遺漏」。讀檔時先寫清楚規則，之後較容易核對資料。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 195</span>
 </div>
 
@@ -1315,7 +1313,7 @@ foo -2.740490  0.700964</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
   <p>你要把 500 個小 DataFrame 合成一張大表。哪一種寫法對？</p>
-  <div class="quiz-options" id="qJoinOptions"><div class="quiz-opt" data-correct="false" data-fb="能跑，但每一輪都複製整張大表，500 次下來會慢得離譜。這是很經典的效能陷阱。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(A)</span> 在 for 迴圈裡 <code>big = pd.concat([big, small])</code></div><div class="quiz-opt" data-correct="true" data-fb="對。只複製一次。lab 儲存格 71–72 示範的就是這個形式：先做出 <code>pieces</code> 這個串列，再一次 concat。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(B)</span> 全部收進一個串列，最後 <code>pd.concat(串列)</code> 一次接完</div><div class="quiz-opt" data-correct="false" data-fb="<code>merge</code> 是照鍵配對，不是疊起來，用在這裡是錯的工具。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(C)</span> 用 <code>merge</code> 兩兩合併</div></div>
+  <div class="quiz-options" id="qJoinOptions"><div class="quiz-opt" data-correct="false" data-fb="能跑，但每一輪都複製整張大表，重複 500 次會增加處理時間。可以改成集中後一次串接。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(A)</span> 在 for 迴圈裡 <code>big = pd.concat([big, small])</code></div><div class="quiz-opt" data-correct="true" data-fb="對。只複製一次。lab 儲存格 71–72 示範的就是這個形式：先做出 <code>pieces</code> 這個串列，再一次 concat。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(B)</span> 全部收進一個串列，最後 <code>pd.concat(串列)</code> 一次接完</div><div class="quiz-opt" data-correct="false" data-fb="<code>merge</code> 用來照鍵配對。這題需要沿列串接，應使用 concat。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(C)</span> 用 <code>merge</code> 兩兩合併</div></div>
   <div class="quiz-feedback" id="qJoinFeedback"></div>
 </div>
 </section>
@@ -1324,15 +1322,15 @@ foo -2.740490  0.700964</pre></div>
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
   <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項——<strong>包含錯的</strong>——都寫了為什麼。真的要練手，就去把上面每張
-  程式碼卡在自己的環境跑一次。</p>
+  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
+  程式碼範例，觀察結果。</p>
   <div class="sol-links"><a href="https://pandas.pydata.org/docs/user_guide/10min.html" target="_blank" rel="noopener">🔗 pandas 十分鐘入門</a><a href="https://pandas.pydata.org/docs/user_guide/indexing.html" target="_blank" rel="noopener">🔗 索引與選取資料</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 讀檔</div>
   <p>某個 CSV 用 <code>NA</code> 與 <code>-999</code> 兩種方式表示遺漏。最好的處理時機是？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。一次講清楚，之後每一次重跑都一致。Auto 那個 <code>?</code> 的教訓就是這個，讀進來之後才補救，很容易漏掉某些欄。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 讀檔時寫 <code>na_values=['NA', -999]</code></div><div class="quiz-opt" data-correct="false" data-fb="能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。更糟的是別人重跑你的程式碼時可能漏掉這一步。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 讀完之後用 <code>replace</code> 換掉</div><div class="quiz-opt" data-correct="false" data-fb="太晚了。<code>dropna</code> 只認得 NaN——<code>-999</code> 在它眼裡是一個正常的數字，會被留下來一路算進模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 建模前再用 <code>dropna()</code> 一次處理</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。一次講清楚，之後每一次重跑都一致。Auto 的 <code>?</code> 也是同樣的情況；讀進來之後才處理，很容易漏掉某些欄。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 讀檔時寫 <code>na_values=['NA', -999]</code></div><div class="quiz-opt" data-correct="false" data-fb="能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。別人重跑程式碼時，也可能漏掉這一步。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 讀完之後用 <code>replace</code> 換掉</div><div class="quiz-opt" data-correct="false" data-fb="太晚了。<code>dropna</code> 只認得 NaN——<code>-999</code> 在它眼裡是一個正常的數字，會被留下來一路算進模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 建模前再用 <code>dropna()</code> 一次處理</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1353,7 +1351,7 @@ foo -2.740490  0.700964</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 遺漏值的影響</div>
   <p>一份資料的收入欄有 20% 遺漏，而遺漏的多半是高收入的人。直接 <code>dropna()</code> 會怎樣？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="樣本變小只是表面。真正的問題是<strong>剩下的樣本不再代表原本的母體</strong>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 沒關係，只是樣本變小</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫非隨機遺漏。<code>dropna</code> 的前提是「遺漏跟你關心的變數無關」，這裡明顯不成立。保留遺漏指示可以記錄這件事，卻不能找回未觀測的高收入或自動修正偏差。應查明漏填原因，必要時取得額外資料，並在明說假設後做敏感度分析。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 剩下的樣本會系統性低估收入</div><div class="quiz-opt" data-correct="false" data-fb="不會。<code>dropna</code> 就只是刪掉，沒有任何統計上的補償。怎麼處理是你的判斷，不是套件的。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> pandas 會自動加權補償</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="樣本減少之外，<strong>剩下的樣本也不再代表原本的母體</strong>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 沒關係，只是樣本變小</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫非隨機遺漏。<code>dropna</code> 的前提是「遺漏跟你關心的變數無關」，這裡明顯不成立。遺漏指示的用途是記錄哪些資料缺失。要處理未觀測高收入造成的偏差，應先查明漏填原因，必要時取得額外資料，並在明說假設後做敏感度分析。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 剩下的樣本會系統性低估收入</div><div class="quiz-opt" data-correct="false" data-fb="不會。<code>dropna</code> 就只是刪掉，沒有任何統計上的補償。你需要依資料的遺漏原因決定處理方式。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> pandas 會自動加權補償</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1364,7 +1362,7 @@ foo -2.740490  0.700964</pre></div>
 <div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w17-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
-  <p>三張速查表。第一張是最常查的。</p>
+  <p>三張速查表整理選取語法、資料檢查與分組彙總。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>你想做的事</th><th>寫法</th><th>拿到什麼</th></tr></thead>
@@ -1382,7 +1380,7 @@ foo -2.740490  0.700964</pre></div>
 </table></div>
 
 <div class="info-box">
-  <span class="info-label">三個一定要記住的觀念</span>
+  <span class="info-label">三個閱讀重點</span>
   <strong>1. 拿到資料先看 <code>dtypes</code>。</strong>該是數字的欄變成 object，代表原始檔裡有非數字的東西（例如 Auto 的 <code>?</code>）。<br><strong>2. <code>loc</code> 靠名字、<code>iloc</code> 靠位置；<code>loc</code> 的切片含尾。</strong><br><strong>3. groupby 之後鍵會變成索引。</strong>要它留在欄裡就 <code>as_index=False</code> 或 <code>reset_index()</code>。
 </div>
 
@@ -1393,7 +1391,7 @@ foo -2.740490  0.700964</pre></div>
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 25 張</span></h2>
   <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
-  先看正面、心裡默想定義，再翻面對答案；洗牌後再過一輪，直到每張都能不看答案講出來。</p>
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
@@ -2076,7 +2074,7 @@ const w17peekCases = [
   {cmd: 'df.head()', what: '長什麼樣、欄名對不對', warn: '整欄空白、欄名錯位',
    sel: (i) => i < 3, note: '預設看前五列。'},
   {cmd: 'df.dtypes', what: '每一欄是什麼型別', warn: '該是數字的欄變成 object',
-   sel: (i, j) => j === 0, note: '這一行最重要——型別錯了後面全錯。'},
+   sel: (i, j) => j === 0, note: '先確認欄位型別，再決定可以使用哪些運算。'},
   {cmd: 'df.describe()', what: '範圍與遺漏', warn: 'count 比列數少',
    sel: () => true, note: 'count 那一列不算 NaN。'}
 ];
@@ -2143,8 +2141,8 @@ const w17naSteps = [
   {t: 'object（字串）', r: '397', title: '讀進來，看起來很正常',
    note: '<code>Auto.shape</code> 是 (397, 9)，欄名也都對。看不出問題。'},
   {t: 'object（字串）', r: '397', title: '① dtypes：horsepower 是 object',
-   note: '該是數字的欄變成字串 —— <b>這一步是唯一的預警</b>。'},
-  {t: 'object（字串）', r: '397', title: '② np.unique 找出兇手：那個 ?',
+   note: '檢查型別時發現字串欄，<b>請核對其中的特殊值</b>。'},
+  {t: 'object（字串）', r: '397', title: '② np.unique 找出影響型別的值：那個 ?',
    note: '整欄的值都帶引號，而且裡面混了一個 <code>?</code>。'},
   {t: 'float64', r: '397', title: '③ 讀檔時就宣告 na_values=["?"]',
    note: '型別變成 float64，問號變成 NaN。<b>現在才算讀對了。</b>'},
@@ -2254,7 +2252,7 @@ function w17grpDraw() {
         t.textContent = v;
       });
     });
-    w17grpS.txtPx(310, 212, 'A 已經不是一般的欄了，它是索引',
+    w17grpS.txtPx(310, 212, '分組欄 A 已成為結果的索引',
                   {cls: 'axlab', anchor: 'middle'}, g);
   }
   const names = ['原始的表', '拆分 split', '套用 apply', '合併 combine'];
@@ -2352,7 +2350,7 @@ HC.ready(() => { w17grpChartDraw(); });
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"序列（Series）","back":"有索引的一維資料。可以想成「一個 NumPy 陣列 ＋ 一排標籤」。<code>df['A']</code> 拿到的就是它。"},{"front":"資料框（DataFrame）","back":"共用同一排索引的一疊 Series。每一欄可以是不同型別，這一點跟 NumPy 陣列不同。"},{"front":"索引（Index）","back":"Series 與 DataFrame 的列標籤。它讓兩個物件相加時會<b>照標籤對齊</b>，而不是照位置。"},{"front":"逐欄型別（dtypes）","back":"逐欄的型別。拿到資料的第一個動作就是看它——該是數字的欄變成 <code>object</code>，代表原始檔裡混了非數字的東西。"},{"front":"物件型別（object dtype）","back":"pandas 用來裝字串（或混合型別）的 dtype。數值欄變成 object 幾乎一定是讀檔沒設好，例如 Auto 的 <code>horsepower</code> 混了 <code>?</code>。"},{"front":"看頭尾（head／tail）","back":"看前幾列／後幾列。<code>head()</code> 預設五列。用來確認欄名對不對、有沒有整欄空白。"},{"front":"五數摘要（describe）","back":"數值欄的五數摘要。<code>count</code> 那一列<b>不算遺漏值</b>，所以 count 比列數少就是有 NaN。"},{"front":"依名字選取（loc）","back":"照<b>名字</b>選取。切片<b>包含</b>結尾——<code>df.loc['a':'c']</code> 會拿到 c，因為名字沒有「下一個」可言。"},{"front":"依位置選取（iloc）","back":"照<b>位置</b>選取。切片跟一般 Python 一樣含頭不含尾。索引是日期或字串時，要用位置就一定要用它。"},{"front":"鏈式索引（Chained Indexing）","back":"<code>df[df.A &gt; 0]['B'] = 1</code> 這種連續兩層的寫法。第一層可能給你複本，改了不會反映到原表，pandas 會發 <code>SettingWithCopyWarning</code>。用單一個 <code>loc</code> 寫完整。"},{"front":"布林遮罩選列（Boolean Masking）","back":"<code>df[df['A'] &gt; 0]</code>。裡面的比較是向量化的，結果是一排帶索引的 True／False，長度跟原表一樣。"},{"front":"遺漏值（NaN）","back":"pandas 表示遺漏值的方式（<code>np.nan</code>）。彙總函式預設會跳過它，所以 <code>count</code> 跟列數會不一致。"},{"front":"讀檔時宣告遺漏（na_values）","back":"<code>read_csv</code> 的參數，宣告哪些字串算遺漏。<code>na_values=['?']</code> 是 Auto 那個災難的正確解法——<b>在讀檔時就處理</b>，不要事後補救。"},{"front":"刪除含遺漏的列（dropna）","back":"刪掉含遺漏值的列。Auto 從 397 筆變成 392 筆就是它做的。前提是遺漏跟你關心的變數無關，否則會產生偏差。"},{"front":"非隨機遺漏","back":"遺漏機率與未觀測的值有關，例如高收入者更常漏填收入。加上遺漏指示不能自動恢復收入分布；需查資料收集方式、取得額外資訊，或在明說假設後做敏感度分析。"},{"front":"換索引（reindex）","back":"換一組索引。原本沒有的標籤會補成 NaN——遺漏值不是只有讀檔會產生。"},{"front":"分組彙總（groupby）","back":"三個動作連在一起：<b>拆分</b>（照鍵分堆）→ <b>套用</b>（每堆各算一次）→ <b>合併</b>（疊回一張表）。看懂這三步，所有變形都是同一件事。"},{"front":"鍵留在欄裡（as_index=False）","back":"groupby 之後<b>不要</b>把分組的鍵變成索引。不加的話鍵會變成索引，之後畫圖或 merge 會找不到那個欄名。事後 <code>reset_index()</code> 也可以。"},{"front":"類別計數（value_counts）","back":"數每一類各有幾筆。拿到類別欄的第一個動作——某一類只有兩三筆的話，後面做分類會很吃力。"},{"front":"只算數值欄（numeric_only）","back":"彙總時只算數值欄。表裡有字串欄卻要 <code>sum()</code> 時要加，不然新版 pandas 會警告。"},{"front":"串接（concat）","back":"<b>疊</b>：形狀相容就沿著某個軸接起來，預設沿列。把切開的三塊接回去用它。"},{"front":"配對合併（merge）","back":"<b>對</b>：照某個鍵把兩張表配對，像 SQL 的 join。跟 concat 是不同的動作，別混用。"},{"front":"逐列附加的效能陷阱（Row-wise Append）","back":"DataFrame 的欄是連續存放的，加一列等於整張表複製一次。正確做法是把每一塊收進 Python 串列，最後 <code>pd.concat(串列)</code> 一次接完。"},{"front":"空白分隔（sep=r\"\\s+\"）","back":"read_csv 的分隔符設定：一個以上的空白都算分隔。Auto.data 那種用空白對齊的檔案要靠它。"},{"front":"還原成陣列（to_numpy）","back":"把 Series 或 DataFrame 剝掉標籤，還原成 NumPy 陣列。要丟進 scikit-learn 之前常會用到。"}];
+const FLASHCARDS = [{"front":"序列（Series）","back":"有索引的一維資料。可以想成「一個 NumPy 陣列 ＋ 一排標籤」。<code>df['A']</code> 拿到的就是它。"},{"front":"資料框（DataFrame）","back":"共用同一排索引的一疊 Series。每一欄可以是不同型別，這一點跟 NumPy 陣列不同。"},{"front":"索引（Index）","back":"Series 與 DataFrame 的列標籤。兩個物件相加時，會依<b>標籤對齊</b>，位置相同不保證配成一對。"},{"front":"逐欄型別（dtypes）","back":"逐欄的型別。拿到資料的第一個動作就是看它——該是數字的欄變成 <code>object</code>，代表原始檔裡混了非數字的東西。"},{"front":"物件型別（object dtype）","back":"pandas 用來裝字串（或混合型別）的 dtype。數值欄變成 object 幾乎一定是讀檔沒設好，例如 Auto 的 <code>horsepower</code> 混了 <code>?</code>。"},{"front":"看頭尾（head／tail）","back":"看前幾列／後幾列。<code>head()</code> 預設五列。用來確認欄名對不對、有沒有整欄空白。"},{"front":"五數摘要（describe）","back":"數值欄的五數摘要。<code>count</code> 那一列<b>不算遺漏值</b>，所以 count 比列數少就是有 NaN。"},{"front":"依名字選取（loc）","back":"照<b>名字</b>選取。切片<b>包含</b>結尾——<code>df.loc['a':'c']</code> 會拿到 c，因為名字沒有「下一個」可言。"},{"front":"依位置選取（iloc）","back":"照<b>位置</b>選取。切片跟一般 Python 一樣含頭不含尾。索引是日期或字串時，要用位置就一定要用它。"},{"front":"鏈式索引（Chained Indexing）","back":"<code>df[df.A &gt; 0]['B'] = 1</code> 這種連續兩層的寫法。第一層可能給你複本，改了不會反映到原表，pandas 會發 <code>SettingWithCopyWarning</code>。用單一個 <code>loc</code> 寫完整。"},{"front":"布林遮罩選列（Boolean Masking）","back":"<code>df[df['A'] &gt; 0]</code>。裡面的比較是向量化的，結果是一排帶索引的 True／False，長度跟原表一樣。"},{"front":"遺漏值（NaN）","back":"pandas 表示遺漏值的方式（<code>np.nan</code>）。彙總函式預設會跳過它，所以 <code>count</code> 跟列數會不一致。"},{"front":"讀檔時宣告遺漏（na_values）","back":"<code>read_csv</code> 的參數，用來宣告哪些字串表示遺漏。Auto 可用 <code>na_values=['?']</code> 在讀檔時辨認問號，讓後續運算使用正確的遺漏值表示。"},{"front":"刪除含遺漏的列（dropna）","back":"刪掉含遺漏值的列。Auto 從 397 筆變成 392 筆就是它做的。前提是遺漏跟你關心的變數無關，否則會產生偏差。"},{"front":"非隨機遺漏","back":"遺漏機率與未觀測的值有關，例如高收入者更常漏填收入。加上遺漏指示不能自動恢復收入分布；需查資料收集方式、取得額外資訊，或在明說假設後做敏感度分析。"},{"front":"換索引（reindex）","back":"改用一組索引標籤；原本不存在的標籤會補上 NaN，因此換索引也可能產生遺漏值。"},{"front":"分組彙總（groupby）","back":"依序進行三個動作：<b>拆分</b>（照鍵分堆）→ <b>套用</b>（每堆各算一次）→ <b>合併</b>（疊回一張表）。其他分組彙總也可按這三步理解。"},{"front":"鍵留在欄裡（as_index=False）","back":"groupby 之後<b>不要</b>把分組的鍵變成索引。不加的話鍵會變成索引，之後畫圖或 merge 會找不到那個欄名。事後 <code>reset_index()</code> 也可以。"},{"front":"類別計數（value_counts）","back":"數每一類各有幾筆。拿到類別欄的第一個動作——某一類只有兩三筆的話，後面做分類會很吃力。"},{"front":"只算數值欄（numeric_only）","back":"彙總時只算數值欄。表裡有字串欄卻要 <code>sum()</code> 時要加，不然新版 pandas 會警告。"},{"front":"串接（concat）","back":"<b>疊</b>：形狀相容就沿著某個軸接起來，預設沿列。把切開的三塊接回去用它。"},{"front":"配對合併（merge）","back":"<b>對</b>：照某個鍵把兩張表配對，像 SQL 的 join。跟 concat 是不同的動作，別混用。"},{"front":"逐列附加的效能陷阱（Row-wise Append）","back":"DataFrame 的欄是連續存放的，加一列等於整張表複製一次。正確做法是把每一塊收進 Python 串列，最後 <code>pd.concat(串列)</code> 一次接完。"},{"front":"空白分隔（sep=r\"\\s+\"）","back":"read_csv 的分隔符設定：一個以上的空白都算分隔。Auto.data 那種用空白對齊的檔案要靠它。"},{"front":"還原成陣列（to_numpy）","back":"把 Series 或 DataFrame 剝掉標籤，還原成 NumPy 陣列。要丟進 scikit-learn 之前常會用到。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

@@ -14,14 +14,14 @@
 {"front": "向量化與迴圈（Vectorization vs Loop）", "back": "對整排數字做同一件事就用 NumPy／pandas 的向量化寫法。迴圈留給「每一圈內容真的不一樣」的情況——試不同參數、抽不同樣本。"},
 {"front": "函式（Function）", "back": "把一段流程封起來，取個名字。三個部分：名字、參數、回傳值。用的人只要知道這三件事。"},
 {"front": "參數與引數（Parameter／Argument）", "back": "定義時寫的名字叫參數，呼叫時傳進去的值叫引數。日常對話常混用。"},
-{"front": "回傳值（return）", "back": "碰到它函式立刻結束並交出值，後面的行不會執行。<b>沒寫 return 的函式回傳 None</b>——這是很難查的 bug。"},
+{"front": "回傳值（return）", "back": "碰到 return 時，函式立刻結束並交出值，後面的行不會執行。<b>沒寫 return 的函式回傳 None</b>；呼叫端要確認這符合預期。"},
 {"front": "預設引數（Default Argument）", "back": "<code>def f(a, B=1000)</code>：呼叫時不給就用預設值。<b>有預設值的參數一定要放在沒有預設值的後面。</b>"},
-{"front": "關鍵字引數（Keyword Argument）", "back": "<code>f(x, B=2000)</code>：用名字指定而不是靠位置。參數多的時候一律用它，順序不會錯，讀的人也知道每個數字是什麼。"},
+{"front": "關鍵字引數（Keyword Argument）", "back": "<code>f(x, B=2000)</code>：依參數名稱給值。參數多時，這種寫法方便辨認每個值的用途，也較容易核對順序。"},
 {"front": "可變預設值的陷阱（Mutable Default）", "back": "<code>def f(acc=[])</code> 的那個空串列<b>只建立一次</b>，所有呼叫共用，會越積越多。要用就寫 <code>acc=None</code> 再在函式裡建立。"},
 {"front": "作用域（Scope）", "back": "一個名字在哪裡看得到。<b>函式裡看得到外面，外面看不到裡面</b>；一旦在函式裡指派同名變數，那就是新的區域變數。"},
-{"front": "副作用（Side Effect）", "back": "函式除了回傳值之外，還改動外部可觀察的狀態，例如修改傳入的串列、全域資料或檔案。把資料作為參數傳入有助重用，卻不能單靠這點保證沒有副作用。"},
+{"front": "副作用（Side Effect）", "back": "函式除了回傳值之外，還改動外部可觀察的狀態，例如修改傳入的串列、全域資料或檔案。判斷是否有副作用，要檢查函式對這些狀態的操作；資料由參數傳入時也要檢查。"},
 {"front": "追溯訊息（Traceback）", "back": "報錯時印出的那一長串。<b>從最後一行開始讀</b>：最後一行是錯誤種類與說明，往上是它發生在哪一行。"},
 {"front": "常見的四種錯誤（Common Exceptions）", "back": "<code>NameError</code> 名字沒定義（多半是儲存格沒跑）、<code>KeyError</code> 欄名不存在、<code>IndexError</code> 索引超出範圍、<code>ValueError</code> 型別對但值不合理（形狀對不上）。"},
-{"front": "例外處理（try／except）", "back": "只有在你<b>知道會發生什麼錯、也知道怎麼處理</b>時才用。<code>except: pass</code> 把錯誤吞掉，等於製造沉默的錯。"},
-{"front": "沉默的錯（Silent Error）", "back": "程式跑完了、有數字、但數字是錯的。重複貼上的程式碼與被吞掉的例外都是它的溫床。報錯反而是好事。"}
+{"front": "例外處理（try／except）", "back": "使用前先確認<b>預期的錯誤與處理方式</b>。<code>except: pass</code> 會略過錯誤訊息，後續結果仍可能出錯。"},
+{"front": "沉默的錯（Silent Error）", "back": "程式完成執行並產生數字，結果卻有錯。多份程式修改不一致或例外被忽略，都可能造成這種情況；因此仍要核對輸出。"}
 ]

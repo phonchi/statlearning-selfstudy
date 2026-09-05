@@ -40,13 +40,13 @@ BODIES["prologue"] = f"""
   <p>Python 做統計建模有兩套主流工具，這門課兩套都會用到。它們算的東西常常一模一樣，
   但<strong>回答的問題不同</strong>：statsmodels 給你係數、標準誤與 p 值，
   是為了讓你<em>解釋</em>；scikit-learn 給你 <code>fit</code>／<code>predict</code>／
-  <code>score</code>，是為了讓你<em>預測</em>並且評估得誠實。</p>
+  <code>score</code>，用來<em>預測</em>並核對模型表現。</p>
 
-{info("這一頁最值得記住的一件事",
+{info("比較同一模型的兩套輸出",
       "同一個模型在兩套 API 底下<strong>係數完全一樣</strong>——"
       "課程 lab 裡 statsmodels 給 34.5538 與 −0.9500，sklearn 給 "
       "34.5538408793831 與 −0.95004935，對 lstat = 5、10、15 的預測值逐位相同。"
-      "所以「選哪一套」不是精度問題，是<strong>你要什麼輸出</strong>的問題。")}
+      "因此，這裡可以依<strong>需要的輸出</strong>選擇工具。")}
 
 {viz(svg("w19apiSvg", 340),
      [info_card("按按鈕比較",
@@ -69,7 +69,7 @@ BODIES["prologue"] = f"""
      provenance=("course-data", "依 Ch03 lab 的 statsmodels 與 scikit-learn 同一 lstat 模型逐步對照。"))}
 
 {card("statsmodels：截距要自己放進 X", C(3, 22), O(3, 22), src=S(3, 22),
-      note="那一欄全是 1 的 <code>intercept</code> 不是裝飾——"
+      note="全是 1 的 <code>intercept</code> 欄用來表示截距。"
            "<code>sm.OLS</code> <strong>不會</strong>自動加截距，忘了就是配一條過原點的線。")}
 
 {card("配適之後的係數表", C(3, 26), O(3, 26), src=S(3, 26),
@@ -83,8 +83,8 @@ BODIES["prologue"] = f"""
         "而 sklearn 的 <code>LinearRegression</code> 只給 "
         "<code>coef_</code>，沒有標準誤、沒有 p 值、沒有信賴區間。"),
        (False, "scikit-learn，因為它比較新",
-        "新舊不是判準。sklearn 刻意不提供推論用的統計量——"
-        "它的設計目標是預測與模型選擇，不是推論。"),
+        "這題需要推論用的統計量，而 sklearn 沒有提供這些輸出。"
+        "這裡使用的介面著重預測與模型選擇。"),
        (False, "兩套都可以，反正係數一樣",
         "係數確實一樣，但<strong>「有多確定」那一半 sklearn 沒有給</strong>。"
         "題目問的正是那一半。")])}
@@ -92,7 +92,7 @@ BODIES["prologue"] = f"""
 
 # ── P01 設計矩陣 ────────────────────────────────────────────────────────
 BODIES["design"] = f"""
-  <p>模型看到的從來不是你的資料框，而是一個矩陣 <strong>X</strong>：
+  <p>先將資料整理成模型使用的設計矩陣 <strong>X</strong>：
   第一欄通常是全 1 的截距，後面每一欄是一個預測變數。
   類別變數要先展開成 0／1 的欄，交互作用要先乘起來變成新的一欄。
   <code>MS()</code>（ModelSpec）就是幫你做這件事的。</p>
@@ -109,7 +109,7 @@ BODIES["design"] = f"""
                 "<code>fit_transform</code> 在<strong>訓練資料</strong>上學會"
                 "「有哪些欄、類別有哪幾種」；之後對新資料一律用 "
                 "<code>transform</code>，不要再 fit 一次——"
-                "不然兩邊的欄可能對不起來。這條規矩在最後一節會變成關鍵。")],
+                "不然兩邊的欄可能對不起來。最後一節會用這個區分說明資料洩漏。")],
      "w19dsStatus", "先猜加了交互作用之後 X 有幾欄，再按按鈕。",
      '<button class="btn btn-toggle" onclick="w19dsSet(0)">MS([&quot;lstat&quot;])</button>'
      '<button class="btn btn-toggle" onclick="w19dsSet(1)">加 age</button>'
@@ -123,7 +123,7 @@ BODIES["design"] = f"""
 
 {card("對新資料要用 transform", C(3, 39), O(3, 39), src=S(3, 39),
       note="三筆新的 lstat 值，經過同一個 <code>design</code> 之後"
-           "自動長出 intercept 欄。<strong>這就是為什麼要保留那個物件。</strong>")}
+           "自動加入 intercept 欄。<strong>保留這個物件，就能對新資料套用相同規格。</strong>")}
 
 {card("預測值", C(3, 41), O(3, 41), src=S(3, 41),
       note="lstat = 5、10、15 對應的預測 medv。記住這三個數字，"
@@ -143,8 +143,7 @@ BODIES["design"] = f"""
 
 # ── P02 讀 summary 表 ──────────────────────────────────────────────────
 BODIES["summary"] = f"""
-  <p><code>summarize(results)</code> 給你四個欄位。很多人只看最後一欄的 p 值，
-  這是最浪費的讀法——<strong>係數告訴你效果多大，標準誤告訴你這個估計多穩</strong>，
+  <p><code>summarize(results)</code> 給你四個欄位。可以依序閱讀：<strong>係數告訴你效果多大，標準誤告訴你這個估計多穩</strong>，
   p 值只是這兩者的比值換算出來的。</p>
 
 {viz(svg("w19smSvg", 320),
@@ -200,7 +199,7 @@ BODIES["summary"] = f"""
 
 # ── P03 scikit-learn 的三個動詞 ────────────────────────────────────────
 BODIES["skl"] = f"""
-  <p>scikit-learn 的整個設計就是一句話：<strong>每一個模型都長一樣</strong>。
+  <p>scikit-learn 的預測模型使用<strong>一致的介面</strong>。
   線性迴歸、隨機森林、支持向量機，都是
   <code>fit(X, y)</code> 學參數、<code>predict(X)</code> 給預測、<code>score</code> 算分數。
   換模型只要換建構子那一行，後面完全不用改。</p>
@@ -255,16 +254,16 @@ BODIES["split"] = f"""
   一定偏樂觀。模型可以把訓練資料背下來，那個分數不代表它對沒看過的資料有用。
   解法是把資料切成兩份：一份學、一份考。</p>
 
-{info("這是整門課的分水嶺",
+{info("用未見資料評估模型",
       "第 2 章的訓練 MSE 對測試 MSE、第 5 章的交叉驗證、第 6 章的模型選擇，"
-      "全部建立在這一句上：<strong>評估要用模型沒看過的資料</strong>。", "warm")}
+      "都會使用同一項原則：<strong>評估要用模型沒看過的資料</strong>。", "warm")}
 
 {card("切一刀", C(5, 16), src=S(5, 16),
       note="<code>random_state=0</code> 固定切法。不固定的話你今天的 MSE "
            "跟明天的不一樣，就沒辦法比較模型了。")}
 
 {card("在驗證集上算 MSE", C(5, 20), O(5, 20), src=S(5, 20),
-      note="25.57，比訓練資料上的分數誠實。這個數字後面會一直出現。")}
+      note="25.57 是驗證資料上的誤差；後面會繼續用這個數字比較模型。")}
 
 {card("三種常見的誤差指標", C(5, 22), O(5, 22), src=S(5, 22),
       note="MAE 3.99、MSE 25.57、RMSE 5.06。"
@@ -313,7 +312,7 @@ BODIES["cv"] = f"""
   但用它之前得先弄清楚一件事——<strong>前處理要在切分的哪一邊做</strong>。</p>
 
 {viz(svg("w19leakSvg", 340),
-     [info_card("兩條路，一條是錯的",
+     [info_card("比較前處理的順序",
                 "左邊：先標準化整份資料、再切分。"
                 "右邊：先切分、只用訓練集學標準化的參數。"
                 "按「單步」看差別在哪一步發生。"),
@@ -324,7 +323,7 @@ BODIES["cv"] = f"""
       info_card("為什麼這叫洩漏",
                 "先標準化的話，訓練集的每一筆都間接知道了測試集的平均與標準差。"
                 "評估已經不再是乾淨的 out-of-sample 比較；"
-                "分數可能被扭曲，卻不能只憑洩漏就預告一定改善多少。"
+                "洩漏可能影響分數；影響方向與大小需要依模型及資料檢查。"
                 "Pipeline 可以把這些前處理放進每一折，但仍要檢查管線外的處理與切分方式。")],
      "w19lkStatus", "先找出哪條路在切分前看過測試集資訊。",
      '<button class="btn btn-toggle" onclick="w19lkSet(0)">先標準化再切分 ✗</button>'
@@ -338,9 +337,9 @@ BODIES["cv"] = f"""
            "但要配適 n 次，資料大的時候很貴。")}
 
 {card("重複切分：看平均，也看標準差", C(5, 46), O(5, 46), src=S(5, 46),
-      note="平均 23.80、標準差 1.42。<strong>那個 1.42 才是重點</strong>："
-           "它告訴你單切一刀的結果可以晃動多少，"
-           "但不能用單一模型的標準差判定兩個模型是否有差別；還要看相同切分下的配對差異。")}
+      note="平均 23.80、標準差 1.42。<strong>1.42 描述不同切分下的分數變動</strong>。"
+           "比較兩個模型時，需要查看相同切分下的配對差異，"
+           "再判斷差距是否穩定。")}
 
 {table(["順序", "標準化參數從哪裡估", "評估能否解讀", "判定"],
        [["先標準化 → 再切分", "全部資料（含之後的測試資料）",
@@ -350,15 +349,15 @@ BODIES["cv"] = f"""
         ["<code>Pipeline</code> ＋ <code>cross_validate</code>", "每一折各自的訓練部分",
          "可彙整各折的驗證表現", "✓ 最推薦"]])}
 
-{info("Pipeline 是紀律，不是語法糖",
+{info("用 Pipeline 固定前處理流程",
       "把 <code>StandardScaler</code> 與模型包成 <code>Pipeline</code> 之後丟進 "
       "<code>cross_validate</code>，sklearn 會<strong>在每一折內部</strong>重新 fit "
       "那個 scaler。但放在 Pipeline 外的補值、選欄位或不當切分仍可能洩漏。第 6 章的收縮方法通常要標準化，"
-      "那時這件事就從「好習慣」變成「非做不可」。")}
+      "練習那些模型時，也要維持相同的前處理順序。")}
 
 {qa("觀念釐清", [
     ("交叉驗證跟測試集是不是同一件事？",
-     "不是。交叉驗證是在<strong>訓練資料內部</strong>切來切去，用來選模型與調參數；"
+     "兩者的用途不同。交叉驗證是在<strong>訓練資料內部</strong>切來切去，用來選模型與調參數；"
      "測試集是最後才動一次的、完全獨立的一份，用來報告最終效能。"
      "拿測試集去選模型，等於把它變成訓練資料的一部分。"),
     ("留一交叉驗證為什麼只列一個數字？",
@@ -375,12 +374,12 @@ BODIES["cv"] = f"""
         "也不能把測試資料納入前處理參數的估計。"),
        (True, "它不再是嚴格獨立的評估；偏差方向與大小不能只靠『有洩漏』判定",
         "對。測試集的平均與標準差已經透過 scaler 進到訓練流程裡了，"
-        "因此這個 MSE 不能當成乾淨的 out-of-sample 證據；但不能憑這件事"
-        "直接宣稱它一定降低多少。"
+        "這個 MSE 已受測試資訊參與訓練的影響，無法作為乾淨的 out-of-sample 證據。"
+        "分數改變的方向與大小，還需要依模型和資料檢查。"
         "正確做法是把 scaler 與模型包成 <code>Pipeline</code>，"
         "讓每一折自己 fit 自己的 scaler。"),
        (False, "應該改用 MinMaxScaler",
-        "換哪一種 scaler 都一樣。問題出在<strong>順序</strong>，不是選哪個轉換器。")])}
+        "換成其他 scaler 也需要遵守相同<strong>順序</strong>：先切分，再從訓練資料估參數。")])}
 
 {hook("這在本站哪一章會用到",
       '第 5 章整章都在講交叉驗證與自助法，第 6 章用交叉驗證挑收縮的強度 λ，'
@@ -402,7 +401,7 @@ BODIES["exercises"] = f"""
         "選定模型之後再用它報告係數是合理的。"),
        (False, "手寫迴圈，最有彈性",
         "彈性換來的是每一次都要自己記得「先切分再轉換」。"
-        "Pipeline 存在的理由就是讓你不必依賴記憶力。")])}
+        "Pipeline 可以將這個順序寫進流程，減少每次手動安排的負擔。")])}
 
 {quiz("qEx2", "EXERCISE 2 · 截距",
       "<code>sm.OLS(y, Boston[['lstat']]).fit()</code> 少做了一件事。少了什麼？",
@@ -420,7 +419,7 @@ BODIES["exercises"] = f"""
 {quiz("qEx3", "EXERCISE 3 · 誤差的不確定性",
       "相同十次切分中，模型 A 的 MSE 平均是 23.8（標準差 1.4），模型 B 是 23.4（標準差 1.5）。這些摘要能告訴你什麼？",
       [(False, "B 的真實預測表現一定較好",
-        "B 在這次評估的平均較低，但單憑這些摘要不能判斷差距是否穩定，也不能保證新資料的排序。"),
+        "這些摘要顯示 B 在本次評估的平均較低。差距是否穩定、新資料上是否維持同樣排序，仍需要其他評估證據。"),
        (True, "B 的平均較低；還要查看相同切分下兩模型的配對差異與評估設計",
         "對。兩個模型各自的標準差，不等於模型差異的不確定性。要保留每次切分的配對結果，並考慮切分之間的相依性。"),
        (False, "差距小於各自標準差，所以兩模型已證明一樣好",
@@ -441,7 +440,7 @@ BODIES["exercises"] = f"""
 
 # ── REF 總覽 ────────────────────────────────────────────────────────────
 BODIES["reference"] = f"""
-  <p>兩套 API 的對照表，以及最後那條不能違反的順序。</p>
+  <p>下表整理兩套 API 的用法與前處理順序。</p>
 
 {table(["你要做的事", "statsmodels", "scikit-learn"],
        [["準備 X", "<code>MS([...]).fit_transform(df)</code>（截距要自己有）",
@@ -467,7 +466,7 @@ BODIES["reference"] = f"""
         ["RMSE", "MSE 開根號", "跟 y 同單位，最好解釋"],
         ["R²", "被解釋的變異比例", "跟其他模型比較時方便，但會隨變數增加而虛高"]])}
 
-{info("三個一定要記住的觀念",
+{info("三個閱讀重點",
       "<strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>"
       "要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br>"
       "<strong>2. sklearn 的一切都是 fit / predict / score。</strong>"
@@ -548,7 +547,7 @@ const w19dsCases = [
    note: '多一個變數就多一欄。'},
   {spec: "MS(['lstat', 'age', ('lstat','age')])",
    cols: ['intercept', 'lstat', 'age', 'lstat:age'], shape: '(506, 4)',
-   note: '交互作用是<b>兩欄相乘出來的新一欄</b>，不是什麼特別的機制。'},
+   note: '將<b>兩欄相乘</b>，建立交互作用項。'},
   {spec: "MS(['region'])（4 個類別）",
    cols: ['intercept', 'region[B]', 'region[C]', 'region[D]'], shape: '(506, 4)',
    note: '4 個類別展開成 <b>3</b> 欄，A 當基準——4 欄會跟截距共線。'}
@@ -596,7 +595,7 @@ const w19smRows = [['intercept', '34.5538', '0.563', '61.415', '0.0'],
                    ['lstat', '-0.9500', '0.039', '-24.528', '0.0']];
 const w19smInfo = [
   {w: '效果的大小與方向', n: '符號跟預期相反、或大到不合理',
-   note: 'lstat 每多 1，medv 平均少 0.95（千美元）。這是你真正要報告的東西。'},
+   note: 'lstat 每多 1，medv 平均少 0.95（千美元）。報告係數時，要一起說明這個單位與方向。'},
   {w: '這個係數估得多穩', n: '大到讓信賴區間涵蓋 0',
    note: '樣本變大、或變數之間不共線時，標準誤會變小。'},
   {w: '係數是標準誤的幾倍', n: '絕對值小於 2',
@@ -650,7 +649,7 @@ PAGEJS += r"""
 const w19flS = HC.svg('w19flowSvg', {h: 340});
 const w19flSteps = [
   {w: '還沒開始', where: '—', note: '模型剛建構出來，coef_ 還不存在。'},
-  {w: 'fit(X, y)：唯一會看 y 的一步', where: 'model.coef_、model.intercept_',
+  {w: 'fit(X, y)：使用訓練資料學參數', where: 'model.coef_、model.intercept_',
    note: '學到的參數存在<b>結尾有底線</b>的屬性裡。'},
   {w: 'predict(X_new)：只吃 X', where: '回傳一個預測值陣列',
    note: '不會改動模型，也不需要 y —— 真實世界裡本來就沒有 y。'},

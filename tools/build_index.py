@@ -76,7 +76,7 @@ def build_html():
         pre_block = f"""  <section id="pre">
     <h2>課前準備</h2>
     <p>三頁，可依需要選讀。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
-    把環境弄好、再學會怎麼跟 AI 協作而不把判斷外包。
+    準備執行環境，練習與 AI 分工、核對分析結果。
     這三頁不需要任何程式基礎，選讀，不列入評分。
     共 {len(pre)} 頁、{pre_widgets} 個視覺區塊。</p>
     <p><strong>期中考使用電腦教室的電腦。</strong>平時可用 Colab；若在自己的電腦練習，
@@ -98,7 +98,7 @@ def build_html():
   <section id="appendix">
     <h2>附錄 · Python 先備知識</h2>
     <p>沒寫過 Python，或只會一點點？這六頁把正課會用到的語法與套件講一遍，
-    程式碼全部逐字取自課程 lab notebook。<strong>查閱用</strong>——
+    程式碼取自課程 lab notebook。這些頁面供你<strong>隨時查閱</strong>，
     正課讀到卡住再回來翻，不必先讀完。選讀，不列入評分。
     共 {len(app)} 頁、{app_widgets} 個視覺區塊。</p>
     <div class="ch-grid">
@@ -137,7 +137,7 @@ def build_html():
       <p>本站以 <cite>An Introduction to Statistical Learning with Applications in Python</cite>（簡稱 ISLP）
       與課程講義為主教材。<strong>先用例子理解問題，再動手驗證直覺。</strong>
       章節旁的中文來源標記列出課本節號或講義頁碼，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
-      最後一章標了「補充」——本課沒有教 ISLP 第 10 章，那一頁的出處改用課本官方的英文 lab，其餘規格相同。<br>
+      深度學習對應 ISLP 第 10 章，列為課外補充，程式與輸出引用課本官方的英文 lab。<br>
       <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（不需要程式基礎）；
       <strong>沒寫過 Python？</strong>正課讀到卡住就翻<a href="#appendix">附錄</a>。兩區都是選讀，不列入評分。</p>
       <div class="loop-steps">
@@ -151,7 +151,7 @@ def build_html():
 
 {pre_block}  <section id="core">
     <h2>正課 · 十一章</h2>
-    <p>順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
+    <p>章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
     共 {len(core)} 章、{total_widgets} 個視覺區塊、{total_cards} 張詞彙卡。</p>
     <div class="ch-grid">
 {cards}
@@ -241,7 +241,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 |---|------|------|------|--------|
 {table}
 
-順序照課堂進度，不是 ISLP 的章號順序——非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
+章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
 集成學習那一週折進「樹狀方法與集成學習」。
 
 ## 附錄：Python 先備知識（選讀，不列入評分）
@@ -253,7 +253,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 |---|------|------|--------|
 {app_table}
 
-真的想先打底再進正課的話：P1 → P2 → P3 → P4 → P5 → P6；
+想先練習 Python 再進正課，可以依序閱讀：P1 → P2 → P3 → P4 → P5 → P6；
 寫過程式、只是沒碰過資料科學套件的，從 P3 開始就好。
 
 ## 內容出處

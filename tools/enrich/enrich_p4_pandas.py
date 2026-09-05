@@ -35,9 +35,8 @@ BODIES = {}
 
 # ── PROLOGUE Series 與 DataFrame ───────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>NumPy 的陣列只有數字，沒有欄名。真實資料不是這樣。你會想說「取 mpg 那一欄」，
-  而不是「取第 3 欄」。pandas 就是在陣列上面加了一層<strong>標籤</strong>：
-  一維的叫 Series，二維的叫 DataFrame。</p>
+  <p>pandas 用<strong>標籤</strong>管理資料，讓你可以依欄名「mpg」取值，也可以指定「第 3 欄」這類位置。
+  一維資料稱為 Series，二維資料表稱為 DataFrame。</p>
 
 {info("一句話", "<strong>Series ≈ 有索引的一維陣列</strong>，"
       "<strong>DataFrame ≈ 共用同一個索引的一疊 Series</strong>。"
@@ -72,8 +71,8 @@ BODIES["prologue"] = f"""
 {quiz("qSer", "PART 00 · 自我檢測",
       "<code>frame['pop']</code> 拿到的是什麼？",
       [(False, "一個 NumPy 陣列",
-        "很接近但不精確。底下確實是 NumPy 陣列，但你拿到的是包了一層索引的 "
-        "<strong>Series</strong>。要真的拿陣列得再 <code>.to_numpy()</code>。"),
+        "這個寫法回傳帶索引的 <strong>Series</strong>，底下使用 NumPy 陣列。"
+        "需要轉成陣列時，再呼叫 <code>.to_numpy()</code>。"),
        (True, "一個 Series，帶著原本的列索引",
         "對。這就是為什麼 <code>frame['pop'] &gt; 2</code> 的結果也帶索引，"
         "可以直接拿回去索引原本的表。"),
@@ -92,14 +91,14 @@ BODIES["view"] = f"""
 {viz(svg("w17peekSvg", 300),
      [info_card("四行指令各自告訴你什麼",
                 "按按鈕，看每一行揭露的是哪一塊資訊。"
-                "四個都看完才算「認識」了這份資料。"),
+                "四個指令各提供一部分資料資訊，可以互相對照。"),
       rows_card("這一行告訴你",
                 [("指令", "df.shape", "w17peekCmd"),
                  ("揭露什麼", "資料有多大", "w17peekWhat"),
                  ("看到什麼要警覺", "列數比預期少很多", "w17peekWarn")]),
       info_card("順序有意義",
                 "先 <code>shape</code> 再 <code>dtypes</code>——"
-                "型別錯了的話，後面 <code>describe()</code> 的數字全部不能信。")],
+                "型別會影響 <code>describe()</code> 彙總哪些欄位，先核對型別再讀摘要。")],
      "w17peekStatus", "四行指令，按順序看過一遍。",
      '<button class="btn btn-toggle" onclick="w17peekSet(0)">df.shape</button>'
      '<button class="btn btn-toggle" onclick="w17peekSet(1)">df.head()</button>'
@@ -124,7 +123,7 @@ BODIES["view"] = f"""
      "<code>describe(include='all')</code> 可以連類別欄一起看。"),
     ("<code>count</code> 跟 <code>len(df)</code> 差在哪？",
      "<code>len(df)</code> 是列數，<code>count</code> 是<strong>非遺漏</strong>的個數。"
-     "兩個數字不一樣，就代表那一欄有 NaN。這是最快的遺漏值偵測法。"),
+     "兩個數字不一樣，就代表那一欄有 NaN。這可以用來檢查遺漏值。"),
 ])}
 
 {quiz("qView", "PART 01 · 自我檢測",
@@ -132,10 +131,10 @@ BODIES["view"] = f"""
       "但 <code>df.shape</code> 是 <code>(392, 9)</code>。這代表什麼？",
       [(True, "那一欄有 12 個遺漏值",
         "對。<code>count</code> 只算非 NaN 的個數，392 − 380 = 12。"
-        "這是最快發現遺漏值的方式，比一欄一欄 <code>isna().sum()</code> 快。"),
+        "也可以用 <code>isna().sum()</code> 核對各欄的遺漏值數。"),
        (False, "資料只有 380 列，shape 印錯了",
         "不會。<code>shape</code> 是實際的列數，不受遺漏值影響。"
-        "兩個數字不一致本身就是資訊，不是錯誤。"),
+        "兩個數字的差距可以用來檢查遺漏值。"),
        (False, "那一欄有 12 個重複值",
         "重複值不影響 <code>count</code>。要看重複得用 "
         "<code>duplicated()</code> 或 <code>value_counts()</code>。")])}
@@ -143,11 +142,11 @@ BODIES["view"] = f"""
 
 # ── P02 選取列與欄 ──────────────────────────────────────────────────────
 BODIES["select"] = f"""
-  <p>pandas 有兩套選取語法，混用是新手最大的痛苦來源。規則其實只有一句：
+  <p>pandas 的兩套選取語法使用不同的依據：
   <strong><code>loc</code> 靠名字、<code>iloc</code> 靠位置</strong>。
-  剩下的差別都是從這一句推出來的。</p>
+  選取之前，先確認要用標籤還是位置。</p>
 
-{info("最容易咬人的一條",
+{info("留意切片是否包含結尾",
       "<code>loc</code> 的切片<strong>包含</strong>結尾，<code>iloc</code> 不包含。"
       "<code>df.loc['a':'c']</code> 會拿到 c，<code>df.iloc[0:3]</code> 只拿到 0、1、2。"
       "因為名字沒有「下一個」可言，含頭不含尾對它沒有意義。", "warm")}
@@ -205,13 +204,13 @@ BODIES["select"] = f"""
 
 # ── P03 遺漏值 ─────────────────────────────────────────────────────────
 BODIES["na"] = f"""
-  <p>這一節講一個真實故事。課程 lab 讀進 <code>Auto</code> 之後，
+  <p>課程 lab 讀進 <code>Auto</code> 之後，
   <code>horsepower</code> 那一欄<strong>整欄是字串</strong>，因為原始檔用 <code>?</code>
   代表遺漏，pandas 看到問號就把整欄當成文字。這種錯誤不會報錯，只會讓你後面算出來的東西全錯。</p>
 
 {viz(svg("w17naSvg", 340),
      [info_card("四個步驟",
-                "按「單步」走一次：發現整欄是字串 → 找出兇手是 <code>?</code> → "
+                "按「單步」走一次：發現整欄是字串 → 找出影響型別的值是 <code>?</code> → "
                 "在<strong>讀檔時</strong>就宣告它是遺漏 → 決定要不要 dropna。"),
       rows_card("目前",
                 [("步驟", "0 / 4", "w17naStep"),
@@ -226,7 +225,7 @@ BODIES["na"] = f"""
      '<button class="btn btn-reset" onclick="w17naReset()">重置</button>',
      provenance=("course-data", "依 Ch02 lab 的 Auto.data 讀檔、? 遺漏值與 397→392 列流程重繪。"))}
 
-{card("找出兇手", C(2, 192), O(2, 192), src=S(2, 192),
+{card("找出影響型別的值", C(2, 192), O(2, 192), src=S(2, 192),
       note="全部是<strong>帶引號的字串</strong>，輸出末尾就會看到那個 "
            "<code>'?'</code>。整欄因此被讀成 object。")}
 
@@ -255,7 +254,7 @@ BODIES["na"] = f"""
       [(False, "自動忽略問號，算出正確的平均",
         "不會。pandas 不知道 <code>?</code> 是遺漏，它只看到一欄字串。"),
        (True, "報錯或算出無意義的結果，因為整欄是字串",
-        "對。這是最危險的一種錯誤——<strong>你以為在算平均，其實那一欄根本不是數字</strong>。"
+        "對。計算平均前，要先確認<strong>欄位讀成了數字</strong>。"
         "所以拿到資料先看 <code>dtypes</code>。"),
        (False, "把問號當成 0 來算",
         "不會。pandas 不會擅自把字串轉成數字，"
@@ -264,7 +263,7 @@ BODIES["na"] = f"""
 
 # ── P04 分組彙總 ────────────────────────────────────────────────────────
 BODIES["group"] = f"""
-  <p><code>groupby</code> 是 pandas 最有價值的一個動作，而它其實是三件事連在一起：
+  <p><code>groupby</code> 用來分組彙總，可以分成三個步驟：
   <strong>拆分</strong>（照某一欄的值把列分堆）→ <strong>套用</strong>（每一堆各算一次）→
   <strong>合併</strong>（把結果疊回一張表）。看懂這三步，所有變形都是同一件事。</p>
 
@@ -323,9 +322,8 @@ BODIES["group"] = f"""
 
 # ── P05 串接與讀寫 ──────────────────────────────────────────────────────
 BODIES["join"] = f"""
-  <p>最後兩件雜事：把切開的表接回去，以及讀檔。讀檔看起來最無聊，
-  但上一節那個 <code>?</code> 的災難就是讀檔沒設好造成的——
-  <strong>讀檔的參數決定你後面有多痛</strong>。</p>
+  <p>這節整理串接與讀檔的用法。上一節的 <code>?</code> 影響欄位型別，提醒我們
+  <strong>讀檔時先確認分隔符與遺漏值設定</strong>。</p>
 
 {card("切成三塊再接回去", C(1, 71), O(1, 71), src=S(1, 71),
       note="切片給的是三個 DataFrame，裝在一個串列裡。")}
@@ -335,10 +333,10 @@ BODIES["join"] = f"""
            "注意註解裡那句話：<strong>加一欄很快，加一列要複製整張表</strong>——"
            "所以不要在迴圈裡一列一列 append。")}
 
-{card("讀檔的參數才是重點", C(2, 195), O(2, 195), src=S(2, 195),
+{card("設定讀檔參數", C(2, 195), O(2, 195), src=S(2, 195),
       note="<code>sep=r&quot;\\s+&quot;</code> 是「一個以上的空白當分隔」，"
            "<code>na_values</code> 是「這些字算遺漏」。"
-           "這一行寫對，後面少掉一整輪除錯。")}
+           "讀檔時先寫清楚規則，之後較容易核對資料。")}
 
 {viz(svg("w17catSvg", 320),
      [info_card("疊回去",
@@ -369,13 +367,13 @@ BODIES["join"] = f"""
 {quiz("qJoin", "PART 05 · 自我檢測",
       "你要把 500 個小 DataFrame 合成一張大表。哪一種寫法對？",
       [(False, "在 for 迴圈裡 <code>big = pd.concat([big, small])</code>",
-        "能跑，但每一輪都複製整張大表，500 次下來會慢得離譜。"
-        "這是很經典的效能陷阱。"),
+        "能跑，但每一輪都複製整張大表，重複 500 次會增加處理時間。"
+        "可以改成集中後一次串接。"),
        (True, "全部收進一個串列，最後 <code>pd.concat(串列)</code> 一次接完",
         "對。只複製一次。lab 儲存格 71–72 示範的就是這個形式："
         "先做出 <code>pieces</code> 這個串列，再一次 concat。"),
        (False, "用 <code>merge</code> 兩兩合併",
-        "<code>merge</code> 是照鍵配對，不是疊起來，用在這裡是錯的工具。")])}
+        "<code>merge</code> 用來照鍵配對。這題需要沿列串接，應使用 concat。")])}
 """
 
 # ── EX 練習 ─────────────────────────────────────────────────────────────
@@ -384,11 +382,11 @@ BODIES["exercises"] = f"""
       "某個 CSV 用 <code>NA</code> 與 <code>-999</code> 兩種方式表示遺漏。最好的處理時機是？",
       [(True, "讀檔時寫 <code>na_values=['NA', -999]</code>",
         "對。一次講清楚，之後每一次重跑都一致。"
-        "Auto 那個 <code>?</code> 的教訓就是這個，讀進來之後才補救，"
+        "Auto 的 <code>?</code> 也是同樣的情況；讀進來之後才處理，"
         "很容易漏掉某些欄。"),
        (False, "讀完之後用 <code>replace</code> 換掉",
         "能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。"
-        "更糟的是別人重跑你的程式碼時可能漏掉這一步。"),
+        "別人重跑程式碼時，也可能漏掉這一步。"),
        (False, "建模前再用 <code>dropna()</code> 一次處理",
         "太晚了。<code>dropna</code> 只認得 NaN——"
         "<code>-999</code> 在它眼裡是一個正常的數字，會被留下來一路算進模型。")])}
@@ -422,18 +420,18 @@ BODIES["exercises"] = f"""
 {quiz("qEx4", "EXERCISE 4 · 遺漏值的影響",
       "一份資料的收入欄有 20% 遺漏，而遺漏的多半是高收入的人。直接 <code>dropna()</code> 會怎樣？",
       [(False, "沒關係，只是樣本變小",
-        "樣本變小只是表面。真正的問題是<strong>剩下的樣本不再代表原本的母體</strong>。"),
+        "樣本減少之外，<strong>剩下的樣本也不再代表原本的母體</strong>。"),
        (True, "剩下的樣本會系統性低估收入",
         "對。這叫非隨機遺漏。<code>dropna</code> 的前提是「遺漏跟你關心的變數無關」，"
-        "這裡明顯不成立。保留遺漏指示可以記錄這件事，卻不能找回未觀測的高收入或自動修正偏差。應查明漏填原因，必要時取得額外資料，並在明說假設後做敏感度分析。"),
+        "這裡明顯不成立。遺漏指示的用途是記錄哪些資料缺失。要處理未觀測高收入造成的偏差，應先查明漏填原因，必要時取得額外資料，並在明說假設後做敏感度分析。"),
        (False, "pandas 會自動加權補償",
         "不會。<code>dropna</code> 就只是刪掉，沒有任何統計上的補償。"
-        "怎麼處理是你的判斷，不是套件的。")])}
+        "你需要依資料的遺漏原因決定處理方式。")])}
 """
 
 # ── REF 總覽 ────────────────────────────────────────────────────────────
 BODIES["reference"] = f"""
-  <p>三張速查表。第一張是最常查的。</p>
+  <p>三張速查表整理選取語法、資料檢查與分組彙總。</p>
 
 {table(["你想做的事", "寫法", "拿到什麼"],
        [["取一欄", "<code>df['A']</code>", "Series"],
@@ -457,7 +455,7 @@ BODIES["reference"] = f"""
         ["套用（apply）", "每一堆各算一次彙總函式"],
         ["合併（combine）", "把結果疊成一張表，<b>鍵變成索引</b>"]])}
 
-{info("三個一定要記住的觀念",
+{info("三個閱讀重點",
       "<strong>1. 拿到資料先看 <code>dtypes</code>。</strong>"
       "該是數字的欄變成 object，代表原始檔裡有非數字的東西（例如 Auto 的 <code>?</code>）。<br>"
       "<strong>2. <code>loc</code> 靠名字、<code>iloc</code> 靠位置；<code>loc</code> 的切片含尾。</strong><br>"
@@ -555,7 +553,7 @@ const w17peekCases = [
   {cmd: 'df.head()', what: '長什麼樣、欄名對不對', warn: '整欄空白、欄名錯位',
    sel: (i) => i < 3, note: '預設看前五列。'},
   {cmd: 'df.dtypes', what: '每一欄是什麼型別', warn: '該是數字的欄變成 object',
-   sel: (i, j) => j === 0, note: '這一行最重要——型別錯了後面全錯。'},
+   sel: (i, j) => j === 0, note: '先確認欄位型別，再決定可以使用哪些運算。'},
   {cmd: 'df.describe()', what: '範圍與遺漏', warn: 'count 比列數少',
    sel: () => true, note: 'count 那一列不算 NaN。'}
 ];
@@ -624,8 +622,8 @@ const w17naSteps = [
   {t: 'object（字串）', r: '397', title: '讀進來，看起來很正常',
    note: '<code>Auto.shape</code> 是 (397, 9)，欄名也都對。看不出問題。'},
   {t: 'object（字串）', r: '397', title: '① dtypes：horsepower 是 object',
-   note: '該是數字的欄變成字串 —— <b>這一步是唯一的預警</b>。'},
-  {t: 'object（字串）', r: '397', title: '② np.unique 找出兇手：那個 ?',
+   note: '檢查型別時發現字串欄，<b>請核對其中的特殊值</b>。'},
+  {t: 'object（字串）', r: '397', title: '② np.unique 找出影響型別的值：那個 ?',
    note: '整欄的值都帶引號，而且裡面混了一個 <code>?</code>。'},
   {t: 'float64', r: '397', title: '③ 讀檔時就宣告 na_values=["?"]',
    note: '型別變成 float64，問號變成 NaN。<b>現在才算讀對了。</b>'},
@@ -737,7 +735,7 @@ function w17grpDraw() {
         t.textContent = v;
       });
     });
-    w17grpS.txtPx(310, 212, 'A 已經不是一般的欄了，它是索引',
+    w17grpS.txtPx(310, 212, '分組欄 A 已成為結果的索引',
                   {cls: 'axlab', anchor: 'middle'}, g);
   }
   const names = ['原始的表', '拆分 split', '套用 apply', '合併 combine'];
