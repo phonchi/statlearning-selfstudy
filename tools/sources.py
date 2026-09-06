@@ -3,6 +3,9 @@ import html
 import re
 
 BOOKS = {
+    "Seeing-Theory": ("統計入門參考", "Seeing Theory",
+                      "Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿",
+                      "https://seeing-theory.brown.edu/"),
     "ISLP": ("教科書", "An Introduction to Statistical Learning with Applications in Python",
              "James、Witten、Hastie、Tibshirani、Taylor，2023",
              "https://www.statlearning.com/"),
@@ -52,6 +55,9 @@ def badge(page, label):
 
 
 def page_books(page):
+    if page.grounding_mode == "concept":
+        return list(dict.fromkeys(source_key(b.strip()) for s in page.secs
+                                 for b in s.badge.split("|") if source_key(b.strip())))
     keys = ["ISLP"]
     if page.esl_label or any("ESL " in s.badge for s in page.secs):
         keys.append("ESL")
@@ -64,7 +70,7 @@ def introduction(page):
     items = []
     for key in page_books(page):
         role, title, authors, _ = BOOKS[key]
-        suffix = f"（{key}）" if key != "AI-Stats" else "（第三版）"
+        suffix = "" if key == "Seeing-Theory" else (f"（{key}）" if key != "AI-Stats" else "（第三版）")
         items.append(f'{role}：<cite>{title}</cite>{suffix}')
     return '<p class="source-intro">' + "；<br>".join(items) + "。章節旁的來源標記可點到本頁書目。</p>"
 

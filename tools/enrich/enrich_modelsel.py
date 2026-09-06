@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
+from lib import (apply, card, chart, hl, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
 CH = 6
@@ -365,15 +365,39 @@ BODIES["ridge"] = f"""
 
 {card("講義 06 · 用 RidgeCV 選 λ", lab_code(CH, 144), lab_output(CH, 144), src=src("144、145"),
       note="<code>RidgeCV</code> 把「掃 λ ＋ 交叉驗證」包成一步。"
-           "注意 <code>alphas</code> 要給一整排值，而且照慣例是<strong>由大到小</strong>掃，"
-           "因為暖啟動（warm start）從收縮較重的解開始比較快收斂。")}
+           "<code>alphas</code> 接收一組候選值；排列順序本身不表示 <code>RidgeCV</code> 使用暖啟動。"
+           "這張 lab 卡把 scaler 放在內建 CV estimator 外層，因此 scaler 會先對傳入 pipeline 的全部資料配適，"
+           "<code>RidgeCV</code> 才在縮放後的資料內切折。")}
 
 {info("Ridge 之前一定要標準化", '''懲罰項 $\\sum \\beta_j^2$ 對<strong>單位敏感</strong>。
   同一個變數用「元」還是「千元」為單位，最小平方的預測完全一樣（係數等比例調整），
   Ridge 的懲罰會隨係數尺度改變：係數變大 1000 倍，懲罰項就變大 10⁶ 倍，這個變數受到的收縮也會更強。<br><br>
-  所以標準做法是先把每個 $x_j$ 標準化成標準差 1 再配適。<code>scikit-learn</code> 的解法是
-  <code>Pipeline([('scaler', StandardScaler()), ('ridge', Ridge())])</code>，
-  順便解決了 CV 的洩漏問題。''', "warm")}
+  所以標準做法是先把每個 $x_j$ 標準化成標準差 1 再配適。
+  單純把 <code>StandardScaler</code> 放在 <code>RidgeCV</code> 或 <code>ElasticNetCV</code> 外層，
+  只能保證 scaler 不會看到 pipeline 之外的外部測試集；內建 estimator 切 CV 折以前，資料已經縮放完畢。
+  要讓每一折都只用該折訓練部分估平均與標準差，讓 <code>GridSearchCV</code> 搜尋一條包含
+  <code>StandardScaler</code> 與 <code>Ridge</code> 的完整 pipeline。''', "warm")}
+
+  <h3>折內標準化的概念寫法</h3>
+{hl('''from sklearn.linear_model import Ridge
+from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+pipe = Pipeline([
+    ('scaler', StandardScaler()),
+    ('ridge', Ridge())
+])
+grid = GridSearchCV(
+    pipe,
+    {'ridge__alpha': [0.1, 1.0, 10.0]},
+    cv=KFold(5, shuffle=True, random_state=0),
+    scoring='neg_mean_squared_error'
+)
+grid.fit(X_train, Y_train)''')}
+  <p><code>GridSearchCV</code> 會在每一折複製並配適整條 pipeline，因此該折的 scaler
+  只看該折訓練資料。這段概念碼假設已備妥外層訓練資料 <code>X_train</code>、<code>Y_train</code>；
+  三個 α 是示意候選值，這裡以 5 折平均 MSE 選擇。外部測試集留到選模完成後再使用。</p>
 
 {quiz("qRidge", "QUIZ · Ridge",
       "把某個預測變數的單位從「元」改成「千元」（數值除以 1000）。Ridge 的預測會變嗎？",
@@ -508,7 +532,9 @@ BODIES["lambda"] = f"""
 {card("講義 06 · 用 ElasticNetCV 選 λ 並取最小 CV 誤差",
       lab_code(CH, 168), lab_output(CH, 168), src=src("162、168"),
       note="<code>mse_path_</code> 的形狀是（λ 個數 × 折數），"
-           "<code>.mean(1)</code> 先對折取平均、再取最小值，就是 CV 曲線的最低點。")}
+           "<code>.mean(1)</code> 先對折取平均、再取最小值，就是 CV 曲線的最低點。"
+           "這張 lab 卡同樣把 scaler 放在 <code>ElasticNetCV</code> 外層；若要在每一折內重新估縮放統計量，"
+           "改用上面的 <code>GridSearchCV(Pipeline(...))</code> 結構。")}
 
 {quiz("qLam", "QUIZ · 選 λ",
       "用 CV 選好 λ 之後，最終交出的模型應該是？",

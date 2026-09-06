@@ -450,7 +450,7 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
   color:var(--muted);font-size:.74rem;line-height:1.5;}
 .viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
-  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  background:var(--code-bg);color:#fff;font-family:'JetBrains Mono',monospace;
   font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
@@ -1215,7 +1215,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
        1.13137642e-04, 8.96596467e-05, 7.10537367e-05, 5.63088712e-05,
        4.46238174e-05, 3.53636122e-05, 2.80250579e-05, 2.22093791e-05]),
                          cv=KFold(n_splits=5, random_state=0, shuffle=True)))])</pre></div>
-  <p class="dx-note"><code>RidgeCV</code> 把「掃 λ ＋ 交叉驗證」包成一步。注意 <code>alphas</code> 要給一整排值，而且照慣例是<strong>由大到小</strong>掃，因為暖啟動（warm start）從收縮較重的解開始比較快收斂。</p>
+  <p class="dx-note"><code>RidgeCV</code> 把「掃 λ ＋ 交叉驗證」包成一步。<code>alphas</code> 接收一組候選值；排列順序本身不表示 <code>RidgeCV</code> 使用暖啟動。這張 lab 卡把 scaler 放在內建 CV estimator 外層，因此 scaler 會先對傳入 pipeline 的全部資料配適，<code>RidgeCV</code> 才在縮放後的資料內切折。</p>
   <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 144、145</span>
 </div>
 
@@ -1224,10 +1224,34 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   懲罰項 $\sum \beta_j^2$ 對<strong>單位敏感</strong>。
   同一個變數用「元」還是「千元」為單位，最小平方的預測完全一樣（係數等比例調整），
   Ridge 的懲罰會隨係數尺度改變：係數變大 1000 倍，懲罰項就變大 10⁶ 倍，這個變數受到的收縮也會更強。<br><br>
-  所以標準做法是先把每個 $x_j$ 標準化成標準差 1 再配適。<code>scikit-learn</code> 的解法是
-  <code>Pipeline([('scaler', StandardScaler()), ('ridge', Ridge())])</code>，
-  順便解決了 CV 的洩漏問題。
+  所以標準做法是先把每個 $x_j$ 標準化成標準差 1 再配適。
+  單純把 <code>StandardScaler</code> 放在 <code>RidgeCV</code> 或 <code>ElasticNetCV</code> 外層，
+  只能保證 scaler 不會看到 pipeline 之外的外部測試集；內建 estimator 切 CV 折以前，資料已經縮放完畢。
+  要讓每一折都只用該折訓練部分估平均與標準差，讓 <code>GridSearchCV</code> 搜尋一條包含
+  <code>StandardScaler</code> 與 <code>Ridge</code> 的完整 pipeline。
 </div>
+
+  <h3>折內標準化的概念寫法</h3>
+<div class="pseudo-code">
+<span class="line"><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> Ridge</span>
+<span class="line"><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> GridSearchCV, KFold</span>
+<span class="line"><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline</span>
+<span class="line"><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler</span>
+<span class="line"> </span>
+<span class="line">pipe = Pipeline([</span>
+<span class="line">    (<span class="str">&#x27;scaler&#x27;</span>, StandardScaler()),</span>
+<span class="line">    (<span class="str">&#x27;ridge&#x27;</span>, Ridge())</span>
+<span class="line">])</span>
+<span class="line">grid = GridSearchCV(</span>
+<span class="line">    pipe,</span>
+<span class="line">    {<span class="str">&#x27;ridge__alpha&#x27;</span>: [<span class="num">0.1</span>, <span class="num">1.0</span>, <span class="num">10.0</span>]},</span>
+<span class="line">    cv=KFold(<span class="num">5</span>, shuffle=<span class="num">True</span>, random_state=<span class="num">0</span>),</span>
+<span class="line">    scoring=<span class="str">&#x27;neg_mean_squared_error&#x27;</span></span>
+<span class="line">)</span>
+<span class="line">grid.fit(X_train, Y_train)</span></div>
+  <p><code>GridSearchCV</code> 會在每一折複製並配適整條 pipeline，因此該折的 scaler
+  只看該折訓練資料。這段概念碼假設已備妥外層訓練資料 <code>X_train</code>、<code>Y_train</code>；
+  三個 α 是示意候選值，這裡以 5 折平均 MSE 選擇。外部測試集留到選模完成後再使用。</p>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Ridge</div>
@@ -1392,7 +1416,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">np.min(tuned_lasso.mse_path_.mean(<span class="num">1</span>))</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(114690.73118253677)</pre></div>
-  <p class="dx-note"><code>mse_path_</code> 的形狀是（λ 個數 × 折數），<code>.mean(1)</code> 先對折取平均、再取最小值，就是 CV 曲線的最低點。</p>
+  <p class="dx-note"><code>mse_path_</code> 的形狀是（λ 個數 × 折數），<code>.mean(1)</code> 先對折取平均、再取最小值，就是 CV 曲線的最低點。這張 lab 卡同樣把 scaler 放在 <code>ElasticNetCV</code> 外層；若要在每一折內重新估縮放統計量，改用上面的 <code>GridSearchCV(Pipeline(...))</code> 結構。</p>
   <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 162、168</span>
 </div>
 
@@ -2722,7 +2746,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"最佳子集選擇（Best Subset Selection）","back":"把 p 個變數的全部 2^p 種組合都配適一次，在每個模型大小裡挑訓練 RSS 最小的，再用 Cp、BIC 或 CV 從這 p+1 個候選裡選一個。能找到每個大小的最佳組合；p > 40 時，計算量會超過可負擔範圍。"},{"front":"前向逐步選擇（Forward Stepwise Selection）","back":"從空模型開始，每一步在剩下的變數裡加入一個讓 RSS 掉最多的，共配適 1 + p(p+1)/2 個模型。貪婪，所以不保證找到最佳子集——Credit 資料上從大小 3 開始就跟最佳子集分歧。"},{"front":"後向逐步選擇（Backward Stepwise Selection）","back":"從全模型開始，每一步移除一個最沒貢獻的變數。計算量與前向相同。起始全模型要求 n > p，因此適用範圍受樣本數限制。"},{"front":"Cp 統計量（Mallows' Cp）","back":"(RSS + 2dσ̂²)/n，其中 d 是變數個數。每多一個變數罰 2σ̂²。在誤差變異數估得準的前提下，它是測試 MSE 的無偏估計。Credit 上選出 6 個變數。"},{"front":"AIC（Akaike Information Criterion）","back":"從 Kullback–Leibler 散度導出的模型選擇準則。在常態誤差的最小平方模型上與 Cp 成正比，所以兩者選出同一個模型；statsmodels 採用 log-likelihood 版 −2 log L + 2k，與 Cp 的排序則可能不同。"},{"front":"BIC（Bayesian Information Criterion）","back":"(RSS + log(n)·dσ̂²)/n。每多一個變數罰 log(n)·σ̂²，n > 7 時比 Cp 的 2σ̂² 重，所以偏好較小的模型。Credit 上選出 4 個變數，比 Cp 少兩個。"},{"front":"調整後 R²（Adjusted R²）","back":"1 − [RSS/(n−d−1)] / [TSS/(n−1)]。用分母的 n−d−1 對變數個數作輕微懲罰，是這幾個準則裡罰得最輕的，所以傾向選出最大的模型。Credit 上選出 7 個變數。"},{"front":"one-standard-error 規則","back":"先找 CV 誤差最小的模型並算出它的標準誤，然後在「CV 誤差落在最小值加一個標準誤」以內的所有模型裡選最簡單的。立場是：預測能力分不出差別時偏好簡單。Credit 上把 6 個變數降到 4 個。"},{"front":"調整參數（Tuning Parameter）","back":"要另外選定的設定，例如 Ridge 與 Lasso 的 λ、PCR 與 PLS 的成分個數 M、子集選擇的模型大小 k。標準做法是掃一排候選值再用交叉驗證比較。"},{"front":"收縮法（Shrinkage Method）","back":"保留全部 p 個變數，透過目標函數中的懲罰項將係數往零壓，用降低變異來換取一點偏差。Ridge 與 Lasso 是兩個代表。"},{"front":"Ridge 迴歸（Ridge Regression）","back":"最小化 RSS + λ‖β‖₂²。λ = 0 是最小平方；λ → ∞ 時係數逼近 0。一般情況下，有限 λ 會保留非零係數，極限才達到 0。有封閉解，計算很快，適合「很多變數都有小貢獻」的情況。"},{"front":"L2 懲罰（L2 Penalty）","back":"係數平方和 Σβⱼ²。等價的約束區域是圓（高維是球），處處平滑沒有尖角，所以解碰到座標軸是機率 0 的事——這就是 Ridge 不會歸零的幾何理由。"},{"front":"Lasso","back":"最小化 RSS + λ‖β‖₁。λ 夠大時會把一部分係數壓成剛好 0，所以同時做收縮與變數選擇。適合真實係數稀疏的情況。"},{"front":"L1 懲罰（L1 Penalty）","back":"係數絕對值和 Σ|βⱼ|。等價的約束區域是菱形（高維是超菱形），尖角剛好落在座標軸上，橢圓等高線很容易先碰到尖角——那裡有座標等於 0。這是稀疏解的幾何來源。"},{"front":"稀疏（Sparse）","back":"只有少數幾個係數不為零的解。Lasso 產生稀疏解，Ridge 不會。稀疏的好處是模型可以直接說「用到這幾個變數」，壞處是相關變數之間留誰很不穩定。"},{"front":"軟門檻（Soft Thresholding）","back":"Lasso 在正交設計下的封閉解形式：把每個最小平方係數的絕對值減掉 λ，若減到負的就設為 0。「歸零」是這個解的精確性質。"},{"front":"彈性網（Elastic Net）","back":"同時放 L1 與 L2 懲罰的方法，混合比例是另一個調整參數。它兼具 Lasso 的稀疏性與 Ridge 對相關變數「同進同出」的性質，適合不確定係數稀疏與否的情況。"},{"front":"維度縮減法（Dimension Reduction Method）","back":"不動變數而換座標：先把 p 個相關的預測變數壓成 M 個互不相關的方向，再對這 M 個方向做最小平方。PCR 與 PLS 是兩個代表；兩者都不做變數選擇。"},{"front":"主成分迴歸（PCR, Principal Components Regression）","back":"用主成分當新的預測變數。方向完全由 X 的變異決定、沒看 y，所以隱含假設「X 變異大的方向也是跟 y 有關的方向」。M 用 CV 選；M = p 時退回最小平方。"},{"front":"偏最小平方（PLS, Partial Least Squares）","back":"監督式的降維：第一個方向的權重取自各 Xⱼ 與 y 的簡單迴歸係數，跟 y 相關性愈強權重愈大，之後在殘差上重複。降低了偏差但增加了變異，實務上常與 PCR 打成平手。"},{"front":"負荷量（Loading）","back":"把原始變數線性組合成主成分時的權重 φⱼₘ。因為每個負荷量通常都不為零，PCR 的最終模型仍然用到全部 p 個原始變數——這是它跟 Lasso 最重要的差別。"},{"front":"標準化（Standardization）","back":"把每個預測變數減平均、除標準差。Ridge、Lasso、PCR、PLS 之前都必須做，因為它們的目標函數對單位敏感；最小平方不需要。實作上包進 Pipeline 順便解決 CV 的洩漏問題。"},{"front":"係數路徑（Coefficient Path）","back":"把各係數估計值畫成 λ（或相對收縮量 ‖β̂ᴿ‖₂/‖β̂‖₂）的函數。Ridge 的路徑向零靠近，並維持非零係數；Lasso 的路徑會一條一條真的碰到 0 並停住。"},{"front":"對數等距網格（Log-spaced Grid）","back":"選候選 λ 的正確方式，例如 np.logspace(-2, 5, 100)。因為 λ 的作用是乘性的，等距取樣會把幾乎全部的點浪費在「懲罰太重、係數全被壓平」的那一端。"},{"front":"高維度（High-dimensional）","back":"p 接近或超過 n 的設定。設計矩陣列滿秩時，最小平方可讓訓練 RSS = 0，通常有多組係數都能達成。需要說明選解規則，再用獨立資料評估泛化表現。"},{"front":"維度的詛咒（Curse of Dimensionality）","back":"每個變數都需要估計係數，新增估計會帶進變異，也可能增加預測的不確定性。本頁的固定種子模擬顯示，加入更多雜訊變數能改善訓練配適，卻可能增加測試誤差。"},{"front":"選後推論（Post-selection Inference）","back":"先用資料選變數、再對選出來的變數做 t 檢定會嚴重高估顯著性，因為同一份資料用了兩次。誠實的說法是「在這個 λ 之下 Lasso 保留了這些變數」，而不是「這些變數顯著」。"}];
+const FLASHCARDS = [{"front":"最佳子集選擇（Best Subset Selection）","back":"把 p 個變數的全部 2^p 種組合都配適一次，在每個模型大小裡挑訓練 RSS 最小的，再用 Cp、BIC 或 CV 從這 p+1 個候選裡選一個。能找到每個大小的最佳組合；p > 40 時，計算量會超過可負擔範圍。"},{"front":"前向逐步選擇（Forward Stepwise Selection）","back":"從空模型開始，每一步在剩下的變數裡加入一個讓 RSS 掉最多的，共配適 1 + p(p+1)/2 個模型。貪婪，所以不保證找到最佳子集——Credit 資料上從大小 3 開始就跟最佳子集分歧。"},{"front":"後向逐步選擇（Backward Stepwise Selection）","back":"從全模型開始，每一步移除一個最沒貢獻的變數。計算量與前向相同。起始全模型要求 n > p，因此適用範圍受樣本數限制。"},{"front":"Cp 統計量（Mallows' Cp）","back":"(RSS + 2dσ̂²)/n，其中 d 是變數個數。每多一個變數罰 2σ̂²。在誤差變異數估得準的前提下，它是測試 MSE 的無偏估計。Credit 上選出 6 個變數。"},{"front":"AIC（Akaike Information Criterion）","back":"從 Kullback–Leibler 散度導出的模型選擇準則。在常態誤差的最小平方模型上與 Cp 成正比，所以兩者選出同一個模型；statsmodels 採用 log-likelihood 版 −2 log L + 2k，與 Cp 的排序則可能不同。"},{"front":"BIC（Bayesian Information Criterion）","back":"(RSS + log(n)·dσ̂²)/n。每多一個變數罰 log(n)·σ̂²，n > 7 時比 Cp 的 2σ̂² 重，所以偏好較小的模型。Credit 上選出 4 個變數，比 Cp 少兩個。"},{"front":"調整後 R²（Adjusted R²）","back":"1 − [RSS/(n−d−1)] / [TSS/(n−1)]。用分母的 n−d−1 對變數個數作輕微懲罰，是這幾個準則裡罰得最輕的，所以傾向選出最大的模型。Credit 上選出 7 個變數。"},{"front":"one-standard-error 規則","back":"先找 CV 誤差最小的模型並算出它的標準誤，然後在「CV 誤差落在最小值加一個標準誤」以內的所有模型裡選最簡單的。立場是：預測能力分不出差別時偏好簡單。Credit 上把 6 個變數降到 4 個。"},{"front":"調整參數（Tuning Parameter）","back":"要另外選定的設定，例如 Ridge 與 Lasso 的 λ、PCR 與 PLS 的成分個數 M、子集選擇的模型大小 k。標準做法是掃一排候選值再用交叉驗證比較。"},{"front":"收縮法（Shrinkage Method）","back":"保留全部 p 個變數，透過目標函數中的懲罰項將係數往零壓，用降低變異來換取一點偏差。Ridge 與 Lasso 是兩個代表。"},{"front":"Ridge 迴歸（Ridge Regression）","back":"最小化 RSS + λ‖β‖₂²。λ = 0 是最小平方；λ → ∞ 時係數逼近 0。一般情況下，有限 λ 會保留非零係數，極限才達到 0。有封閉解，計算很快，適合「很多變數都有小貢獻」的情況。"},{"front":"L2 懲罰（L2 Penalty）","back":"係數平方和 Σβⱼ²。等價的約束區域是圓（高維是球），處處平滑沒有尖角，所以解碰到座標軸是機率 0 的事——這就是 Ridge 不會歸零的幾何理由。"},{"front":"Lasso","back":"最小化 RSS + λ‖β‖₁。λ 夠大時會把一部分係數壓成剛好 0，所以同時做收縮與變數選擇。適合真實係數稀疏的情況。"},{"front":"L1 懲罰（L1 Penalty）","back":"係數絕對值和 Σ|βⱼ|。等價的約束區域是菱形（高維是超菱形），尖角剛好落在座標軸上，橢圓等高線很容易先碰到尖角——那裡有座標等於 0。這是稀疏解的幾何來源。"},{"front":"稀疏（Sparse）","back":"只有少數幾個係數不為零的解。Lasso 產生稀疏解，Ridge 不會。稀疏的好處是模型可以直接說「用到這幾個變數」，壞處是相關變數之間留誰很不穩定。"},{"front":"軟門檻（Soft Thresholding）","back":"Lasso 在正交設計下的封閉解形式：把每個最小平方係數的絕對值減掉 λ，若減到負的就設為 0。「歸零」是這個解的精確性質。"},{"front":"彈性網（Elastic Net）","back":"同時放 L1 與 L2 懲罰的方法，混合比例是另一個調整參數。它兼具 Lasso 的稀疏性與 Ridge 對相關變數「同進同出」的性質，適合不確定係數稀疏與否的情況。"},{"front":"維度縮減法（Dimension Reduction Method）","back":"不動變數而換座標：先把 p 個相關的預測變數壓成 M 個互不相關的方向，再對這 M 個方向做最小平方。PCR 與 PLS 是兩個代表；兩者都不做變數選擇。"},{"front":"主成分迴歸（PCR, Principal Components Regression）","back":"用主成分當新的預測變數。方向完全由 X 的變異決定、沒看 y，所以隱含假設「X 變異大的方向也是跟 y 有關的方向」。M 用 CV 選；M = p 時退回最小平方。"},{"front":"偏最小平方（PLS, Partial Least Squares）","back":"監督式的降維：第一個方向的權重取自各 Xⱼ 與 y 的簡單迴歸係數，跟 y 相關性愈強權重愈大，之後在殘差上重複。降低了偏差但增加了變異，實務上常與 PCR 打成平手。"},{"front":"負荷量（Loading）","back":"把原始變數線性組合成主成分時的權重 φⱼₘ。因為每個負荷量通常都不為零，PCR 的最終模型仍然用到全部 p 個原始變數——這是它跟 Lasso 最重要的差別。"},{"front":"標準化（Standardization）","back":"把每個預測變數減平均、除標準差。Ridge、Lasso、PCR、PLS 的目標函數對單位敏感，因此要先標準化。做 CV 時，讓 GridSearchCV 搜尋包含 StandardScaler 與模型的完整 Pipeline，每折才會只用該折訓練資料估縮放統計量；把 scaler 放在 RidgeCV 或 ElasticNetCV 外層不具備這個折內範圍。"},{"front":"係數路徑（Coefficient Path）","back":"把各係數估計值畫成 λ（或相對收縮量 ‖β̂ᴿ‖₂/‖β̂‖₂）的函數。Ridge 的路徑向零靠近，並維持非零係數；Lasso 的路徑會一條一條真的碰到 0 並停住。"},{"front":"對數等距網格（Log-spaced Grid）","back":"選候選 λ 的正確方式，例如 np.logspace(-2, 5, 100)。因為 λ 的作用是乘性的，等距取樣會把幾乎全部的點浪費在「懲罰太重、係數全被壓平」的那一端。"},{"front":"高維度（High-dimensional）","back":"p 接近或超過 n 的設定。設計矩陣列滿秩時，最小平方可讓訓練 RSS = 0，通常有多組係數都能達成。需要說明選解規則，再用獨立資料評估泛化表現。"},{"front":"維度的詛咒（Curse of Dimensionality）","back":"每個變數都需要估計係數，新增估計會帶進變異，也可能增加預測的不確定性。本頁的固定種子模擬顯示，加入更多雜訊變數能改善訓練配適，卻可能增加測試誤差。"},{"front":"選後推論（Post-selection Inference）","back":"先用資料選變數、再對選出來的變數做 t 檢定會嚴重高估顯著性，因為同一份資料用了兩次。誠實的說法是「在這個 λ 之下 Lasso 保留了這些變數」，而不是「這些變數顯著」。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

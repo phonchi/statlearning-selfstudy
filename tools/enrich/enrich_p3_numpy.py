@@ -183,8 +183,9 @@ BODIES["reshape"] = f"""
         "唯讀的 view 要另外設 <code>flags.writeable = False</code>。")])}
 
 {hook("這在本站哪一章會用到",
-      '第 3 章把資料組成設計矩陣 X 時，<code>reshape(-1, 1)</code> 幾乎每次都會出現；'
+      '把單一特徵交給 sklearn 時，可用 <code>reshape(-1, 1)</code> 保留二維形狀；'
       '第 12 章做主成分之前要先把資料中心化，靠的就是這裡的 shape 對齊。'
+      '<a href="p6_modeling_api.html#skl">→ P6 · reshape 的操作範例</a>　'
       '<a href="linear_regression.html#mlr">→ 線性迴歸 · 多元迴歸</a>')}
 """
 
@@ -448,8 +449,8 @@ BODIES["rand"] = f"""
                  ("樣本平均", "—", "w16rdMean"),
                  ("樣本標準差", "—", "w16rdSd")]),
       info_card("n 變大會怎樣",
-                "把 n 從 50 拉到 500，樣本平均會越來越靠近 0——"
-                "這就是大數法則。第 5 章的自助法整套建立在這個現象上。")],
+                "在這個獨立常態抽樣模型下，n 較大時平均的抽樣分布更集中；"
+                "單次平均不保證更接近 0。大數法則與抽樣分布見 <a href='s3_distributions.html#clt'>S3</a>；自助法的有放回重抽機制見 <a href='s4_inference.html#bootstrap'>S4</a>。")],
      "w16rdStatus", "先固定種子按兩次重抽，再取消固定按兩次。",
      '<button class="btn btn-play" onclick="w16rdDraw()">▶ 重抽一次</button>'
      '<button class="btn btn-toggle" id="w16rdSeedBtn" onclick="w16rdSeedTog()">固定種子：開</button>'

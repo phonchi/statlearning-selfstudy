@@ -278,7 +278,7 @@ BODIES["group"] = f"""
       info_card("numeric_only=True 是什麼",
                 "有些欄是字串，加總沒有意義。"
                 "<code>sum(numeric_only=True)</code> 明講「只算數值欄」，"
-                "不寫的話新版 pandas 會警告。")],
+                "若未限定欄位，字串也可能被加總成串接結果，而且不一定會警告。")],
      "w17grpStatus", "按「單步」把 groupby 拆成三個動作看。",
      '<button class="btn btn-step" onclick="w17grpStep()">→ 單步</button>'
      '<button class="btn btn-play" onclick="w17grpPlay()">▶ 連續播</button>'

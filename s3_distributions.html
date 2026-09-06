@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<!-- GEN:BEGIN head -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="分布與抽樣 — Distributions and Sampling 互動自學頁。選讀，不列入評分。用算例與互動理解統計，不需要 Python 或微積分基礎。。NSYSU MATH524 統計學習與資料探勘。">
+<title>分布與抽樣 — Distributions and Sampling Interactive</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+             options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+        integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+  --node-white:#ffffff;--node-gray:#bdc3c7;--node-black:#34495e;
+  --node-current:#f39c12;--node-found:#16a085;--node-start:#9b59b6;
+  --edge-default:#95a5a6;--edge-tree:#27ae60;--edge-explore:#f39c12;--edge-mst:#1a6b4a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.9;font-size:17px;}
+
+/* Hero */
+.hero{min-height:62vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:860px;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:.04em;line-height:1.3;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero h1 .purple{color:#bb8fce;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.2rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.05rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Hero mini-graph illustration */
+.hero-graph{position:absolute;right:5%;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;}
+@media(max-width:900px){.hero-graph{display:none;}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.92em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+strong{color:var(--ink);}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:34px;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+
+/* Graph SVG canvas */
+.graph-canvas{position:relative;width:100%;height:380px;background:#fafafa;border-radius:8px;overflow:hidden;border:1px solid #ececec;}
+.graph-canvas svg{width:100%;height:100%;display:block;}
+
+/* SVG elements styles */
+.graph-edge{stroke:var(--edge-default);stroke-width:2;fill:none;transition:stroke .25s, stroke-width .25s;}
+.graph-edge.tree{stroke:var(--edge-tree);stroke-width:3.5;}
+.graph-edge.exploring{stroke:var(--edge-explore);stroke-width:3.5;stroke-dasharray:5 4;animation:dash 1s linear infinite;}
+.graph-edge.mst{stroke:var(--edge-mst);stroke-width:4;}
+.graph-edge.path{stroke:var(--accent);stroke-width:4;}
+.graph-edge.dotted{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 4;}
+@keyframes dash{to{stroke-dashoffset:-18;}}
+
+.edge-label{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;fill:var(--ink);pointer-events:none;}
+.edge-label-bg{fill:#fafafa;stroke:#ececec;stroke-width:1;}
+
+.graph-node{cursor:pointer;}
+.graph-node circle{fill:var(--node-white);stroke:var(--ink);stroke-width:2;transition:fill .25s, stroke .25s, r .2s;}
+.graph-node.gray circle{fill:var(--node-gray);}
+.graph-node.black circle{fill:var(--node-black);stroke:var(--node-black);}
+.graph-node.current circle{fill:var(--node-current);stroke:#d68910;stroke-width:3;}
+.graph-node.start circle{fill:var(--node-start);stroke:#7d3c98;stroke-width:3;}
+.graph-node.found circle{fill:var(--node-found);stroke:#117a65;stroke-width:3;}
+.graph-node.in-mst circle{fill:#82e0aa;stroke:var(--accent3);stroke-width:3;}
+.graph-node text.node-key{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.graph-node.black text.node-key{fill:#fff;}
+.graph-node.current text.node-key{fill:#fff;}
+.graph-node.start text.node-key{fill:#fff;}
+.graph-node.found text.node-key{fill:#fff;}
+.graph-node text.node-meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent);text-anchor:middle;pointer-events:none;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.btn-toggle{background:var(--accent2);color:#fff;}
+.btn-toggle:hover{background:#1f2e5f;}
+.btn-toggle.off{background:#bbb;color:#555;}
+.btn-shuffle{background:#8e44ad;color:#fff;}
+.btn-shuffle:hover{background:#6c3485;}
+
+/* Slider row */
+.slider-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;background:var(--paper);border-radius:8px;margin-bottom:.5rem;}
+.slider-row .slider-label{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent2);font-weight:600;min-width:60px;}
+.slider-row input[type="range"]{flex:1;accent-color:var(--accent3);height:5px;cursor:pointer;}
+.slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;min-width:60px;text-align:right;}
+
+/* Side panel */
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+.info-card .ic-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.83rem;padding:.2rem 0;}
+.info-card .ic-label{color:var(--muted);}
+.info-card .ic-value{color:var(--ink);font-weight:600;}
+.info-card .ic-value.highlight{color:var(--accent);}
+.info-card .ic-value.big{font-size:1.4rem;color:var(--accent2);}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem;}
+.stat-tile{background:var(--paper);border-radius:8px;padding:.5rem .7rem;text-align:center;}
+.stat-tile .stat-label{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+.stat-tile .stat-value{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--accent2);}
+
+/* Queue / Stack / PQ visualization */
+.ds-display{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:var(--paper);border-radius:6px;padding:.5rem .7rem;min-height:36px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;border:1px dashed var(--card-border);}
+.ds-display .ds-empty{color:var(--muted);font-style:italic;}
+.ds-item{background:var(--accent2);color:#fff;padding:2px 8px;border-radius:4px;font-weight:600;}
+.ds-item.front{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.top{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-item.pq{background:var(--accent3);}
+.ds-item.pq.min{background:var(--accent);box-shadow:0 0 0 2px rgba(192,57,43,.3);}
+.ds-arrow{color:var(--muted);}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid var(--node-current);padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+.pseudo-code .str{color:#f1fa8c;}
+
+/* Adjacency table */
+.adj-display{margin:.5rem 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.adj-matrix{border-collapse:collapse;margin:.5rem auto;}
+.adj-matrix td,.adj-matrix th{border:1px solid var(--card-border);padding:6px 10px;text-align:center;min-width:34px;background:#fff;}
+.adj-matrix th{background:var(--accent2);color:#fff;font-weight:700;}
+.adj-matrix td.zero{color:#ccc;}
+.adj-matrix td.nonzero{background:#eafaf1;color:var(--accent3);font-weight:700;}
+.adj-matrix td.highlight{background:#fff3cd;}
+.adj-list{background:var(--card);border:1px solid var(--card-border);border-radius:8px;padding:.7rem 1rem;}
+.adj-list .adj-row{padding:3px 0;border-bottom:1px dashed var(--card-border);}
+.adj-list .adj-row:last-child{border-bottom:none;}
+.adj-list .adj-key{color:var(--accent);font-weight:700;display:inline-block;min-width:32px;}
+.adj-list .adj-arrow{color:var(--muted);margin:0 6px;}
+.adj-list .adj-neighbor{background:#eef2ff;color:var(--accent2);padding:1px 8px;border-radius:4px;margin:1px 3px;display:inline-block;font-weight:600;}
+
+/* Chess board for Knight's tour */
+.chess-board{display:grid;background:#fff;border:2px solid var(--ink);border-radius:6px;overflow:hidden;margin:.5rem auto;width:fit-content;}
+.chess-cell{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;position:relative;transition:background .2s;}
+.chess-cell.light{background:#f0d9b5;color:#666;}
+.chess-cell.dark{background:#b58863;color:#fff;}
+.chess-cell.visited{background:#27ae60 !important;color:#fff;}
+.chess-cell.current{background:#f39c12 !important;color:#fff;box-shadow:inset 0 0 0 3px #d68910;}
+.chess-cell.start{background:#9b59b6 !important;color:#fff;}
+.chess-cell .knight{font-size:1.4em;line-height:1;}
+.chess-cell .step-num{font-size:.7em;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box.purple{background:#f4ecf7;border-color:#8e44ad;}
+.info-box.purple .info-label{background:#8e44ad;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+.pill-gray{background:rgba(0,0,0,.06);color:var(--muted);border:1px solid rgba(0,0,0,.12);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+.legend-item{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .5rem;background:var(--paper);border-radius:5px;}
+.legend-item .lg-swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);}
+.legend-item .lg-edge{width:18px;height:3px;border-radius:2px;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0;}
+.quiz-opt{display:flex;align-items:center;gap:.6rem;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;font-size:.86rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-letter{font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.wrong{background:#fef5e7;border-color:var(--accent);}
+.quiz-opt.wrong .opt-letter{color:var(--accent);}
+.quiz-feedback{margin-top:.7rem;padding:.7rem 1rem;border-radius:8px;font-size:.88rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#eafaf1;color:var(--accent3);border-left:4px solid var(--accent3);}
+.quiz-feedback.wrong{background:#fef5e7;color:var(--accent);border-left:4px solid var(--accent);}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:30px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+
+/* Distance / table inside graph viz */
+.vert-table{margin-top:.6rem;width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.vert-table th,.vert-table td{padding:4px 6px;text-align:center;border:1px solid var(--card-border);}
+.vert-table th{background:var(--accent2);color:#fff;font-weight:600;font-size:.74rem;}
+.vert-table td.tcell-current{background:#fff3cd;font-weight:700;color:var(--accent);}
+.vert-table td.tcell-done{background:#eafaf1;color:var(--accent3);}
+.vert-table td.tcell-inf{color:#ccc;}
+.sec-badge{font-size:.6em;color:var(--muted);border:1px solid var(--card-border);background:var(--card);padding:2px 10px;border-radius:999px;vertical-align:middle;margin-left:.6rem;font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.02em;white-space:nowrap;}
+
+/* Phase 8 shared widgets */
+.bs-stack{display:flex;flex-direction:column-reverse;align-items:center;gap:4px;min-height:180px;justify-content:flex-start;padding:.6rem;}
+.bs-item{width:110px;text-align:center;padding:.4rem .6rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.bs-hl{background:#f39c12;}
+.bs-toplabel,.bq-label{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.bq-row{display:flex;align-items:center;gap:6px;min-height:64px;flex-wrap:wrap;padding:.4rem;}
+.bq-item{min-width:52px;text-align:center;padding:.45rem .5rem;background:#5b7eb8;color:#fff;border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.char-strip{display:flex;gap:3px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;padding:.4rem 0;}
+.char-cell{min-width:30px;text-align:center;padding:.35rem .25rem;border:1px solid var(--card-border);border-radius:5px;background:var(--card);}
+.char-cur{background:#f39c12;color:#fff;border-color:#f39c12;}
+.char-done{background:#e8f5ec;color:#1a6b4a;border-color:#bfe3cd;}
+.char-bad{background:#c0392b;color:#fff;border-color:#c0392b;}
+.token-out{display:flex;gap:4px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;min-height:40px;padding:.3rem 0;}
+.tok{padding:.3rem .55rem;border-radius:5px;background:#2c3e7a;color:#fff;font-weight:600;}
+.tok-op{background:#8e44ad;}
+.tok-new{outline:3px solid #f39c12;}
+.mono{font-family:'JetBrains Mono',monospace;}
+/* ===== 網站化附加樣式（study-guide / flashcards / chapter-nav）===== */
+.study-guide{background:var(--card);border:1px solid var(--card-border);border-left:5px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:0 0 2.2rem;}
+.study-guide .sg-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:1.5px;color:var(--accent3);margin-bottom:.5rem;}
+.study-guide p{font-size:.92rem;margin-bottom:.5rem;}
+.study-guide .sg-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+.study-guide .sg-links a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:var(--accent2);border:1px solid var(--card-border);border-radius:999px;padding:.3rem .85rem;text-decoration:none;transition:all .2s;}
+.study-guide .sg-links a:hover{background:var(--accent2);color:#fff;}
+.fc-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.fc-controls button{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:1px solid var(--card-border);cursor:pointer;background:var(--card);color:var(--ink);transition:all .2s;}
+.fc-controls button:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.fc-card{perspective:900px;height:170px;cursor:pointer;}
+.fc-card .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-card .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.fc-card .fc-front{background:linear-gradient(150deg,var(--accent2),var(--ink));color:#fff;font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.fc-card .fc-front .fc-hint{font-size:.62rem;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.fc-card .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+.chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:2.5rem 0 1rem;}
+.chapter-nav a{display:block;border:1px solid var(--card-border);border-radius:12px;padding:.8rem 1.1rem;text-decoration:none;color:var(--ink);background:var(--card);transition:all .2s;}
+.chapter-nav a:hover{border-color:var(--accent2);box-shadow:0 4px 14px rgba(0,0,0,.08);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--muted);margin-bottom:.2rem;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.95rem;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+.chapter-nav a.home{display:flex;flex-direction:column;justify-content:center;text-align:center;}
+@media(max-width:700px){.chapter-nav{grid-template-columns:1fr;}}
+/* ===== 講義範例卡 ===== */
+.deck-extra{margin:1.2rem 0;}
+.deck-extra .dx-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:1px;color:var(--accent3);margin-bottom:.4rem;}
+.deck-extra .dx-note{font-size:.9rem;margin-top:.6rem;}
+.expected-out{background:var(--card);border:1px solid var(--card-border);border-left:4px solid var(--accent3);border-radius:0 8px 8px 0;padding:.5rem .9rem;margin-top:.5rem;}
+.expected-out .eo-tag{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:1px;color:var(--accent3);display:block;margin-bottom:.2rem;}
+.expected-out pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.55;white-space:pre-wrap;margin:0;}
+.warn-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:.6rem 1rem;margin:.8rem 0;font-size:.9rem;}
+.warn-box b{color:var(--accent);}
+
+/* ============================================================
+   統計學習自學站附加樣式
+   base.css 是從資料結構自學站沿用的共用設計系統，維持不動；
+   這個區塊是統計學習需要的新元件與兩處修正，append-only。
+   ============================================================ */
+
+/* 統計視覺化用的色票（base.css 的 --node-* / --edge-* 保留不動） */
+:root {
+  --pt-train:#2c3e7a;      /* 訓練樣本 */
+  --pt-test:#c0392b;       /* 測試樣本 */
+  --pt-held:#f39c12;       /* 被留作驗證的樣本 */
+  --pt-a:#2c3e7a;          /* 類別 A */
+  --pt-b:#c0392b;          /* 類別 B */
+  --pt-c:#1a6b4a;          /* 類別 C */
+  --fit-line:#c0392b;      /* 配適線／決策邊界 */
+  --fit-true:#1a6b4a;      /* 真實函數／Bayes 邊界 */
+  --resid:#8e44ad;         /* 殘差線段 */
+  --band:rgba(44,62,122,.13);   /* 信賴帶 */
+  --regionA:rgba(44,62,122,.13);
+  --regionB:rgba(192,57,43,.13);
+  --regionC:rgba(26,107,74,.13);
+  --grid-line:#e8e2d6;
+}
+
+/* ---- 修正 base.css：裸 .btn 沒有 background，會變成瀏覽器預設灰 ---- */
+.btn{background:var(--accent2);color:#fff;}
+.btn:hover{filter:brightness(1.12);}
+.btn:disabled{background:#ccc;color:#777;cursor:not-allowed;filter:none;}
+
+/* ---- 觀念釐清 Q&A（hackmd 風格，零 JS） ---- */
+.qa-box{margin:1.4rem 0;}
+.qa-box>.qa-head{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.12em;color:var(--accent);margin-bottom:.6rem;}
+.qa-item{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--accent2);
+  border-radius:8px;margin-bottom:.6rem;overflow:hidden;}
+.qa-item>summary{cursor:pointer;padding:.75rem 1rem;font-weight:500;color:var(--accent2);
+  list-style:none;display:flex;gap:.5rem;align-items:baseline;transition:background .15s;}
+.qa-item>summary::-webkit-details-marker{display:none;}
+.qa-item>summary::before{content:'▸';color:var(--accent);flex:none;transition:transform .15s;}
+.qa-item[open]>summary::before{transform:rotate(90deg);}
+.qa-item>summary:hover{background:var(--highlight);}
+.qa-item[open]>summary{border-bottom:1px solid var(--card-border);}
+.qa-a{padding:.9rem 1rem 1rem 1.9rem;font-size:.95rem;}
+.qa-a p{margin-bottom:.7rem;}
+.qa-a p:last-child{margin-bottom:0;}
+.qa-a ul,.qa-a ol{margin:.4rem 0 .7rem 1.2rem;}
+.qa-a li{margin-bottom:.3rem;}
+
+/* ---- 出處標記：可機器檢查的 grounding ---- */
+.dx-src{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  color:var(--muted);margin-top:.5rem;letter-spacing:.02em;}
+.dx-src a{color:var(--accent2);text-decoration:none;border-bottom:1px dotted var(--accent2);}
+
+/* ---- Chart.js 畫布容器 + 離線退路 ---- */
+.chart-wrap{position:relative;width:100%;height:300px;background:#fafafa;border-radius:8px;
+  border:1px solid #ececec;padding:.4rem;}
+.chart-wrap.tall{height:380px;}
+.chart-wrap.square{height:330px;max-width:360px;margin:0 auto;}
+.chart-wrap canvas{display:block;width:100%!important;height:100%!important;}
+.chart-fallback{position:absolute;inset:.4rem;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1.2rem;font-size:.86rem;line-height:1.7;color:var(--muted);
+  background:var(--card);border-radius:6px;}
+.chart-wrap.ready .chart-fallback{display:none;}
+.chart-fallback b{display:block;color:var(--accent2);margin-bottom:.4rem;font-size:.9rem;}
+
+/* ---- 混淆矩陣（是表格，不是圖表） ---- */
+.cm-table{border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.82rem;margin:.6rem 0;}
+.cm-table th,.cm-table td{border:1px solid var(--card-border);padding:.45rem .7rem;text-align:center;}
+.cm-table thead th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);}
+.cm-table tbody th{background:var(--paper);font-size:.7rem;letter-spacing:.06em;color:var(--accent2);
+  text-align:right;font-weight:600;}
+.cm-table .cm-tp{background:rgba(26,107,74,.14);font-weight:700;}
+.cm-table .cm-tn{background:rgba(26,107,74,.08);font-weight:700;}
+.cm-table .cm-fp{background:rgba(192,57,43,.12);}
+.cm-table .cm-fn{background:rgba(192,57,43,.18);font-weight:700;}
+.cm-note{font-size:.8rem;color:var(--muted);}
+
+/* ---- ESL 進階：可略過的標記 ---- */
+.eslx{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+  letter-spacing:.1em;color:#fff;background:#8e44ad;padding:.1rem .45rem;border-radius:3px;
+  margin-left:.5rem;vertical-align:.1em;}
+.skip-note{font-size:.82rem;color:var(--muted);margin:-.4rem 0 1rem;}
+
+/* ---- 環境版本註記 ---- */
+.ver-note{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;color:var(--muted);
+  background:var(--paper);border:1px dashed var(--card-border);border-radius:6px;
+  padding:.6rem .9rem;margin-top:1.2rem;}
+
+/* ---- 解答連結 pill 排 ---- */
+.sol-links{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+.sol-links a{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:600;
+  color:var(--accent2);background:var(--card);border:1px solid var(--card-border);
+  border-radius:999px;padding:.35rem .8rem;text-decoration:none;transition:all .15s;}
+.sol-links a:hover{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* ---- 資料點圖例（SVG 元件共用） ---- */
+.viz-legend{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:.5rem;font-size:.78rem;color:var(--muted);}
+.viz-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.viz-legend i{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;}
+.viz-legend i.sq{border-radius:2px;}
+.viz-legend i.ln{width:18px;height:0;border-top:3px solid;border-radius:0;}
+
+/* ---- SVG 元件共用樣式 ---- */
+.viz-svg{width:100%;display:block;background:#fafafa;border-radius:8px;border:1px solid #ececec;}
+.viz-svg .ax{stroke:var(--muted);stroke-width:1;}
+.viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
+.viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .dot{stroke:#fff;stroke-width:1;}
+.viz-svg .dot.drag{cursor:grab;}
+.viz-svg .dot.drag:active{cursor:grabbing;}
+.viz-svg .fit{stroke:var(--fit-line);stroke-width:2.5;fill:none;}
+.viz-svg .truef{stroke:var(--fit-true);stroke-width:2;fill:none;stroke-dasharray:6 4;}
+.viz-svg .resid{stroke:var(--resid);stroke-width:1.2;stroke-dasharray:2 2;}
+.viz-svg .band{fill:var(--band);stroke:none;}
+.viz-svg .vlab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--ink);}
+.viz-svg text{user-select:none;}
+.viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
+  color:var(--muted);font-size:.74rem;line-height:1.5;}
+.viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
+  background:var(--code-bg);color:#fff;font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;font-weight:700;letter-spacing:.02em;}
+
+/* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:.5rem 0;}
+.strip .cell{width:20px;height:20px;border-radius:3px;background:var(--card);
+  border:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:9px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;}
+.strip .cell.train{background:var(--pt-train);border-color:var(--pt-train);color:#fff;}
+.strip .cell.held{background:var(--pt-held);border-color:#d68910;color:#fff;font-weight:700;}
+.strip .cell.picked{background:var(--accent3);border-color:var(--accent3);color:#fff;}
+.strip .cell.oob{background:var(--card);border:2px dashed var(--accent);color:var(--accent);}
+
+/* ---- 長內容自己橫向滾動，頁面本體絕不橫向滾動 ---- */
+/* 最後一道保險。該滑的東西（程式碼、公式、表格、圖表）下面都各自有 overflow-x:auto，
+   這一條只負責攔住漏網的幾十個 px——多半來自 MathJax 內部的 mjx-mtable，
+   那是它自己排版出來的盒子，我們沒有選擇器能乾淨地限制它。
+   用 clip 不用 hidden：clip 不會把 body 變成 scroll container，
+   position:fixed 的浮動導覽與 scroll-behavior:smooth 都不受影響。 */
+html,body{overflow-x:clip;}
+/* 程式碼行不換行（.line{white-space:pre}），所以區塊自己要能滑 */
+.pseudo-code{overflow-x:auto;}
+/* MathJax 的行間公式在窄螢幕會撐爆版面，讓它自己可以橫向滑動。
+   注意 !important 是必要的：MathJax 3 是在 runtime 把自己的樣式表 append 到 <head>
+   最後面，比這個 inline <style> 晚，所以同權重的 max-width 會被它蓋掉。
+   帶 \tag{} 的公式更明顯——它會 render 成一個 mjx-mtable，寬度動輒 500–800px。 */
+/* min-width 也要蓋掉：MathJax 對帶 \tag{} 的公式會在 mjx-container 上設 inline
+   min-width（用來把式號推到右緣），min-width 的優先權高於 max-width，
+   所以只寫 max-width 完全沒用——容器還是會撐到 500–800px。 */
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding-bottom:.25rem;
+  max-width:100%!important;min-width:0!important;}
+mjx-container:not([display="true"]){max-width:100%;overflow-x:auto;overflow-y:hidden;}
+mjx-container::-webkit-scrollbar{height:5px;}
+mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px;}
+.expected-out pre{overflow-x:auto;}
+.strip{overflow-x:auto;}
+
+/* ---- 手機版 ---- */
+@media(max-width:700px){
+  .chart-wrap{height:250px;}
+  .chart-wrap.tall{height:300px;}
+  .qa-a{padding-left:1rem;}
+  .viz-svg{min-width:0;}
+  .big-formula{font-size:.85rem;word-break:break-word;}
+  /* 窄螢幕改成左靠：置中的公式一旦比容器寬，捲軸起點會落在被裁掉的左半邊 */
+  mjx-container[display="true"]{justify-content:flex-start!important;}
+}
+
+/* ---- 尊重使用者的減少動態偏好 ---- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;}
+}
+
+/* ---- 列印：隱藏浮動導覽與控制列，深色區塊轉淺 ---- */
+@media print{
+  .float-nav,.controls-bar,.hero-grid,.hero-graph,.scroll-hint,.fc-controls{display:none!important;}
+  .hero{min-height:auto;background:#fff!important;color:var(--ink)!important;padding:1.5rem 0;}
+  .hero h1,.hero .subtitle{color:var(--ink)!important;}
+  .hero .big-formula{background:var(--paper)!important;color:var(--ink)!important;border-color:var(--card-border)!important;}
+  .pseudo-code,.status-banner{background:var(--paper)!important;color:var(--ink)!important;}
+  .pseudo-code .kw,.pseudo-code .fn,.pseudo-code .str,.pseudo-code .num,.pseudo-code .com{color:var(--ink)!important;}
+  .qa-item{break-inside:avoid;}
+  .qa-item>summary::before{content:'';}
+  .qa-a{display:block!important;}
+  section{break-after:auto;border-bottom:none;}
+  a[href^="http"]::after{content:' (' attr(href) ')';font-size:.65rem;color:#666;}
+}
+
+
+/* ---- 章節卡片：首頁與章內靜態導覽共用；放在 stats.css 讓單頁也能使用。 ---- */
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem;margin-top:1.2rem;}
+.ch-card{display:block;text-decoration:none;color:inherit;background:var(--card);
+  border:1px solid var(--card-border);border-radius:12px;padding:1.1rem 1.25rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .18s,box-shadow .18s,border-color .18s;
+  position:relative;overflow:hidden;}
+.ch-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent2);
+  opacity:.55;transition:opacity .18s;}
+.ch-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.09);
+  border-color:var(--accent2);}
+.ch-card:hover::before{opacity:1;}
+.ch-num{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.14em;
+  color:var(--accent3);display:block;margin-bottom:.45rem;}
+.ch-card h3{font-family:'Noto Serif TC',serif;font-size:1.06rem;font-weight:700;color:var(--ink);
+  margin:0 0 .5rem;line-height:1.5;}
+.ch-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:600;
+  color:var(--accent2);background:rgba(44,62,122,.08);border-radius:4px;padding:.12rem .45rem;
+  margin-bottom:.5rem;}
+.ch-meta{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);line-height:1.7;}
+
+
+/* ══ contrast-fix v1 ═══════════════════════════════════════════════
+   base.css 有兩條全域規則：code{color:var(--accent2)}（#2c3e7a）與
+   strong{color:var(--ink)}（#1a1a2e）。它們一旦落進深色底容器就會消失——
+   最糟的是 .cmp-table th 與 .info-box .info-label，底色也是 #2c3e7a，
+   對比 1.00，字跟背景完全同色。
+
+   下面把「深色底容器裡的行內元素」統一改掉。chip 用 rgba(26,26,46,.7)
+   配 #ffe9a8：對本設計系統的每一個深色底，最差的對比是 7.84（在 #f39c12 上），
+   全部過 WCAG AA。單一組值、不分層，才驗得動。
+
+   只列 code/kbd/a/strong/b/em/i 七個標籤，**從不用 * 、從不碰 span**——
+   .pseudo-code 的 .kw/.str/.fn/.com/.num 與 .status-banner 的 .status-icon
+   本來就是為深底調好的，不能被蓋掉。
+
+   容器清單是三站的聯集（多列的在該站只是無效的死規則，漏列才會出事）。
+   真正的把關者是 tools/check_contrast.py，它會逐站掃出所有深色底選擇器再比對這份清單。
+   ═══════════════════════════════════════════════════════════════════════ */
+.adj-matrix th code,.adj-matrix th kbd,.adj-matrix th a,.ai-box .ai-label code,.ai-box .ai-label kbd,
+.ai-box .ai-label a,.bar code,.bar kbd,.bar a,.bar-fill code,.bar-fill kbd,.bar-fill a,.bq-item code,
+.bq-item kbd,.bq-item a,.bs-hl code,.bs-hl kbd,.bs-hl a,.bs-item code,.bs-item kbd,.bs-item a,.btn code,
+.btn kbd,.btn a,.btn-play code,.btn-play kbd,.btn-play a,.btn-shuffle code,.btn-shuffle kbd,.btn-shuffle a,
+.btn-step code,.btn-step kbd,.btn-step a,.btn-toggle code,.btn-toggle kbd,.btn-toggle a,.chain-node code,
+.chain-node kbd,.chain-node a,.char-bad code,.char-bad kbd,.char-bad a,.char-cur code,.char-cur kbd,
+.char-cur a,.chess-cell.current code,.chess-cell.current kbd,.chess-cell.current a,.chess-cell.dark code,
+.chess-cell.dark kbd,.chess-cell.dark a,.chess-cell.start code,.chess-cell.start kbd,.chess-cell.start a,
+.chess-cell.visited code,.chess-cell.visited kbd,.chess-cell.visited a,.cmp-table th code,.cmp-table th kbd,
+.cmp-table th a,.fib-card.memo .bar-fill code,.fib-card.memo .bar-fill kbd,.fib-card.memo .bar-fill a,
+.heap-cell.active code,.heap-cell.active kbd,.heap-cell.active a,.token.active code,.token.active kbd,
+.token.active a,.console code,.console kbd,.console a,.ds-item code,.ds-item kbd,.ds-item a,.eq-card code,
+.eq-card kbd,.eq-card a,.eslx code,.eslx kbd,.eslx a,.fc-card .fc-front code,.fc-card .fc-front kbd,
+.fc-card .fc-front a,.fc-controls button:hover code,.fc-controls button:hover kbd,
+.fc-controls button:hover a,.float-nav a.active code,.float-nav a.active kbd,.float-nav a.active a,
+.game-console code,.game-console kbd,.game-console a,.heap-cell.parent code,.heap-cell.parent kbd,
+.heap-cell.parent a,.heap-cell.swap code,.heap-cell.swap kbd,.heap-cell.swap a,.hero code,.hero kbd,.hero a,
+.info-box .info-label code,.info-box .info-label kbd,.info-box .info-label a,
+.info-card .ic-title .ic-badge code,.info-card .ic-title .ic-badge kbd,.info-card .ic-title .ic-badge a,
+.kv-pair .kv-key code,.kv-pair .kv-key kbd,.kv-pair .kv-key a,.num-cell.sel code,.num-cell.sel kbd,
+.num-cell.sel a,.obj-box .obj-type code,.obj-box .obj-type kbd,.obj-box .obj-type a,.obj-box .tag code,
+.obj-box .tag kbd,.obj-box .tag a,.preset-btn.active code,.preset-btn.active kbd,.preset-btn.active a,
+.pseudo-code code,.pseudo-code kbd,.pseudo-code a,.quiz-box .quiz-code code,.quiz-box .quiz-code kbd,
+.quiz-box .quiz-code a,.quiz-box .quiz-label .multi-badge code,.quiz-box .quiz-label .multi-badge kbd,
+.quiz-box .quiz-label .multi-badge a,.sandbox .sandbox-label code,.sandbox .sandbox-label kbd,
+.sandbox .sandbox-label a,.sandbox-result code,.sandbox-result kbd,.sandbox-result a,
+.seq-cell .order-badge code,.seq-cell .order-badge kbd,.seq-cell .order-badge a,.sol-links a:hover code,
+.sol-links a:hover kbd,.sol-links a:hover a,.sq-code code,.sq-code kbd,.sq-code a,.stack-frame code,
+.stack-frame kbd,.stack-frame a,.status-banner code,.status-banner kbd,.status-banner a,
+.strip .cell.held code,.strip .cell.held kbd,.strip .cell.held a,.strip .cell.picked code,
+.strip .cell.picked kbd,.strip .cell.picked a,.strip .cell.train code,.strip .cell.train kbd,
+.strip .cell.train a,.study-guide .sg-links a:hover code,.study-guide .sg-links a:hover kbd,
+.study-guide .sg-links a:hover a,.t-node code,.t-node kbd,.t-node a,.tok code,.tok kbd,.tok a,.tok-op code,
+.tok-op kbd,.tok-op a,.traceback code,.traceback kbd,.traceback a,.trav-mini .mini-output code,
+.trav-mini .mini-output kbd,.trav-mini .mini-output a,.traversal-output code,.traversal-output kbd,
+.traversal-output a,.tree-node.done code,.tree-node.done kbd,.tree-node.done a,
+.viz-source span code,.viz-source span kbd,.viz-source span a,.vert-table th code,
+.vert-table th kbd,.vert-table th a{background:rgba(26,26,46,.7);color:#ffe9a8;}
+.adj-matrix th strong,.adj-matrix th b,.ai-box .ai-label strong,.ai-box .ai-label b,.bar strong,.bar b,
+.bar-fill strong,.bar-fill b,.bq-item strong,.bq-item b,.bs-hl strong,.bs-hl b,.bs-item strong,.bs-item b,
+.btn strong,.btn b,.btn-play strong,.btn-play b,.btn-shuffle strong,.btn-shuffle b,.btn-step strong,
+.btn-step b,.btn-toggle strong,.btn-toggle b,.chain-node strong,.chain-node b,.char-bad strong,.char-bad b,
+.char-cur strong,.char-cur b,.chess-cell.current strong,.chess-cell.current b,.chess-cell.dark strong,
+.chess-cell.dark b,.chess-cell.start strong,.chess-cell.start b,.chess-cell.visited strong,
+.chess-cell.visited b,.cmp-table th strong,.cmp-table th b,.fib-card.memo .bar-fill strong,
+.fib-card.memo .bar-fill b,.heap-cell.active strong,.heap-cell.active b,.token.active strong,.token.active b,
+.console strong,.console b,.ds-item strong,.ds-item b,.eq-card strong,.eq-card b,.eslx strong,.eslx b,
+.fc-card .fc-front strong,.fc-card .fc-front b,.fc-controls button:hover strong,.fc-controls button:hover b,
+.float-nav a.active strong,.float-nav a.active b,.game-console strong,.game-console b,
+.heap-cell.parent strong,.heap-cell.parent b,.heap-cell.swap strong,.heap-cell.swap b,.hero strong,.hero b,
+.info-box .info-label strong,.info-box .info-label b,.info-card .ic-title .ic-badge strong,
+.info-card .ic-title .ic-badge b,.kv-pair .kv-key strong,.kv-pair .kv-key b,.num-cell.sel strong,
+.num-cell.sel b,.obj-box .obj-type strong,.obj-box .obj-type b,.obj-box .tag strong,.obj-box .tag b,
+.preset-btn.active strong,.preset-btn.active b,.pseudo-code strong,.pseudo-code b,
+.quiz-box .quiz-code strong,.quiz-box .quiz-code b,.quiz-box .quiz-label .multi-badge strong,
+.quiz-box .quiz-label .multi-badge b,.sandbox .sandbox-label strong,.sandbox .sandbox-label b,
+.sandbox-result strong,.sandbox-result b,.seq-cell .order-badge strong,.seq-cell .order-badge b,
+.sol-links a:hover strong,.sol-links a:hover b,.sq-code strong,.sq-code b,.stack-frame strong,.stack-frame b,
+.status-banner strong,.status-banner b,.strip .cell.held strong,.strip .cell.held b,
+.strip .cell.picked strong,.strip .cell.picked b,.strip .cell.train strong,.strip .cell.train b,
+.study-guide .sg-links a:hover strong,.study-guide .sg-links a:hover b,.t-node strong,.t-node b,.tok strong,
+.tok b,.tok-op strong,.tok-op b,.traceback strong,.traceback b,.trav-mini .mini-output strong,
+.trav-mini .mini-output b,.traversal-output strong,.traversal-output b,.tree-node.done strong,
+.tree-node.done b,.viz-source span strong,.viz-source span b,
+.vert-table th strong,.vert-table th b{color:#fff;}
+.adj-matrix th em,.adj-matrix th i,.ai-box .ai-label em,.ai-box .ai-label i,.bar em,.bar i,.bar-fill em,
+.bar-fill i,.bq-item em,.bq-item i,.bs-hl em,.bs-hl i,.bs-item em,.bs-item i,.btn em,.btn i,.btn-play em,
+.btn-play i,.btn-shuffle em,.btn-shuffle i,.btn-step em,.btn-step i,.btn-toggle em,.btn-toggle i,
+.chain-node em,.chain-node i,.char-bad em,.char-bad i,.char-cur em,.char-cur i,.chess-cell.current em,
+.chess-cell.current i,.chess-cell.dark em,.chess-cell.dark i,.chess-cell.start em,.chess-cell.start i,
+.chess-cell.visited em,.chess-cell.visited i,.cmp-table th em,.cmp-table th i,.fib-card.memo .bar-fill em,
+.fib-card.memo .bar-fill i,.heap-cell.active em,.heap-cell.active i,.token.active em,.token.active i,
+.console em,.console i,.ds-item em,.ds-item i,.eq-card em,.eq-card i,.eslx em,.eslx i,.fc-card .fc-front em,
+.fc-card .fc-front i,.fc-controls button:hover em,.fc-controls button:hover i,.float-nav a.active em,
+.float-nav a.active i,.game-console em,.game-console i,.heap-cell.parent em,.heap-cell.parent i,
+.heap-cell.swap em,.heap-cell.swap i,.hero em,.hero i,.info-box .info-label em,.info-box .info-label i,
+.info-card .ic-title .ic-badge em,.info-card .ic-title .ic-badge i,.kv-pair .kv-key em,.kv-pair .kv-key i,
+.num-cell.sel em,.num-cell.sel i,.obj-box .obj-type em,.obj-box .obj-type i,.obj-box .tag em,.obj-box .tag i,
+.preset-btn.active em,.preset-btn.active i,.pseudo-code em,.pseudo-code i,.quiz-box .quiz-code em,
+.quiz-box .quiz-code i,.quiz-box .quiz-label .multi-badge em,.quiz-box .quiz-label .multi-badge i,
+.sandbox .sandbox-label em,.sandbox .sandbox-label i,.sandbox-result em,.sandbox-result i,
+.seq-cell .order-badge em,.seq-cell .order-badge i,.sol-links a:hover em,.sol-links a:hover i,.sq-code em,
+.sq-code i,.stack-frame em,.stack-frame i,.status-banner em,.status-banner i,.strip .cell.held em,
+.strip .cell.held i,.strip .cell.picked em,.strip .cell.picked i,.strip .cell.train em,.strip .cell.train i,
+.study-guide .sg-links a:hover em,.study-guide .sg-links a:hover i,.t-node em,.t-node i,.tok em,.tok i,
+.tok-op em,.tok-op i,.traceback em,.traceback i,.trav-mini .mini-output em,.trav-mini .mini-output i,
+.traversal-output em,.traversal-output i,.tree-node.done em,.tree-node.done i,
+.viz-source span em,.viz-source span i,.vert-table th em,
+.vert-table th i{color:inherit;}
+
+/* status-banner 的 strong 除了顏色還要保留粗體（原本那條規則帶 font-weight） */
+.status-banner strong,.status-banner b{font-weight:700;}
+
+/* Readable source labels remain usable on narrow screens and with a keyboard. */
+.sec-badge{white-space:normal;}
+.sec-badge a{color:inherit;text-decoration:underline;text-underline-offset:.18em;}
+.sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
+.source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
+.source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
+@media(max-width:768px){
+  /* The page contents and chapter links provide navigation without covering text. */
+  .float-nav{display:none;}
+}
+</style>
+</head>
+<!-- GEN:END head -->
+<body>
+<!-- GEN:BEGIN floatnav -->
+<nav class="float-nav" id="floatNav" aria-label="章節導覽">
+  <div class="fn-title">章節導覽</div>
+  <a href="#variables" data-target="variables"><span class="fn-num">P01</span><span class="fn-name">隨機變數與分布</span></a>
+  <a href="#density" data-target="density"><span class="fn-num">P02</span><span class="fn-name">離散與連續</span></a>
+  <a href="#families" data-target="families"><span class="fn-num">P03</span><span class="fn-name">常用分布</span></a>
+  <a href="#sampling" data-target="sampling"><span class="fn-num">P04</span><span class="fn-name">抽樣分布</span></a>
+  <a href="#clt" data-target="clt"><span class="fn-num">P05</span><span class="fn-name">大數法則與中央極限定理</span></a>
+  <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
+  <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
+</nav>
+<!-- GEN:END floatnav -->
+<!-- GEN:BEGIN hero -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <svg class="hero-graph" width="320" height="280" viewBox="0 0 320 280" aria-hidden="true">
+
+  </svg>
+  <div class="hero-content">
+    <h1>分布與抽樣<br><span class="blue">統計先備知識</span></h1>
+    <div class="subtitle">選讀，不列入評分。用算例與互動理解統計，不需要 Python 或微積分基礎。</div>
+    <div class="big-formula">觀察｜機率模型｜抽樣變動｜推論</div>
+    <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
+  </div>
+</div>
+<!-- GEN:END hero -->
+<div class="container">
+<!-- GEN:BEGIN studyguide -->
+<div class="study-guide">
+  <div class="sg-title">📌 本頁使用方式（先備 · S3 統計〔核心路徑〕）</div>
+  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站或講義頁碼；需要更多實驗或推導時再開啟。
+  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
+  <div class="sg-links"><a href="https://seeing-theory.brown.edu/probability-distributions/index.html" target="_blank" rel="noopener">🔗 Seeing Theory 互動原站</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=31" target="_blank" rel="noopener">📖 Seeing Theory 講義</a><a href="introduction.html" target="_blank" rel="noopener">🔗 直接進入正課</a><a href="index.html">🏠 章節總覽</a></div>
+</div>
+<!-- GEN:END studyguide -->
+<!-- GEN:BEGIN toc -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · 內容目錄</div>
+  <div class="toc-grid">
+    <a href="#variables"><span class="toc-num">P01</span>隨機變數與分布</a>
+    <a href="#density"><span class="toc-num">P02</span>離散與連續</a>
+    <a href="#families"><span class="toc-num">P03</span>常用分布</a>
+    <a href="#sampling"><span class="toc-num">P04</span>抽樣分布</a>
+    <a href="#clt"><span class="toc-num">P05</span>大數法則與中央極限定理</a>
+    <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
+    <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
+  </div>
+</div>
+<!-- GEN:END toc -->
+<section id="variables">
+<!-- GEN:BEGIN sec:variables -->
+  <div class="section-number">PART 01 · 隨機變數與分布</div>
+  <h2>隨機變數與分布 <span class="sec-badge"><a href="#w23-source-seeing-theory">統計入門參考 · 第 3 章</a></span></h2>
+<!-- GEN:END sec:variables -->
+
+  <p>隨機變數（random variable）是一條規則：它把每個隨機結果對應到一個數。
+  隨機的是實驗結果；映射規則本身在實驗前已經定好。把結果變成數字後，我們才能談平均、變異數與分佈。</p>
+
+  <p><strong>數值例。</strong>擲兩次公平硬幣，樣本空間是
+  $\Omega=\{HH,HT,TH,TT\}$。令 $X$ 為正面次數，則
+  $X(HH)=2$、$X(HT)=X(TH)=1$、$X(TT)=0$。注意 HT 與 TH 是不同結果，卻映到同一個數值 1。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>原始結果 $\omega$</th><th>HH</th><th>HT</th><th>TH</th><th>TT</th></tr></thead>
+  <tbody><tr><td>$X(\omega)$：正面次數</td><td>2</td><td>1</td><td>1</td><td>0</td></tr><tr><td>結果本身的機率</td><td>$1/4$</td><td>$1/4$</td><td>$1/4$</td><td>$1/4$</td></tr></tbody>
+</table></div>
+
+  <p>把映到相同數值的機率加起來，就得到 $P(X=0)=1/4$、$P(X=1)=1/2$、$P(X=2)=1/4$。
+  這三個機率合起來才是 $X$ 的機率分佈（probability distribution）。</p>
+
+<div class="info-box">
+  <span class="info-label">分清兩層</span>
+  樣本空間列的是實驗結果；隨機變數的取值是數字。兩個不同結果可以有相同的隨機變數值。
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 01 · 自我檢測</div>
+  <p>擲兩次公平硬幣，令 $X$ 為正面次數。$P(X=1)$ 是多少？</p>
+  <div class="quiz-options" id="qVarOptions"><div class="quiz-opt" data-correct="false" data-fb="只有單一結果的機率是 1/4；X=1 包含 HT 與 TH 兩個結果。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(A)</span> $1/4$</div><div class="quiz-opt" data-correct="true" data-fb="對。HT 與 TH 都映到 1，所以機率為 1/4+1/4。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(B)</span> $1/2$</div><div class="quiz-opt" data-correct="false" data-fb="X 的可能值有 0、1、2；所有值的機率加總才是 1。" onclick="quizCheck('qVar', this)"><span class="opt-letter">(C)</span> $1$</div></div>
+  <div class="quiz-feedback" id="qVarFeedback"></div>
+</div>
+<p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Random Variables</a> · <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=31">PDF p.31</a>。本頁文字、例題與圖均重新製作。</p>
+</section>
+<section id="density">
+<!-- GEN:BEGIN sec:density -->
+  <div class="section-number">PART 02 · 離散與連續</div>
+  <h2>離散與連續 <span class="sec-badge"><a href="#w23-source-seeing-theory">統計入門參考 · 第 3 章</a></span></h2>
+<!-- GEN:END sec:density -->
+
+  <p>離散隨機變數只有有限或可數個可能值，使用機率質量函數（probability mass function, PMF）：
+  每根柱子的高度就是某一點的機率。連續隨機變數則使用機率密度函數（probability density function, PDF）：
+  <strong>區間下方的面積</strong>才是機率。</p>
+  $$P(X=x)=p(x)\quad\text{（離散）},\qquad
+    P(a\le X\le b)=\int_a^b f(x)\,dx\quad\text{（連續）}.$$
+
+<div class="info-box warm">
+  <span class="info-label">密度不是點機率</span>
+  連續分佈在任何單一點的機率都是 0；密度 $f(x)$ 可以大於 1，只要整條曲線下的總面積是 1。
+</div>
+
+  <p><strong>數值例。</strong>若 $X\sim U(2,6)$，密度高度為 $1/(6-2)=1/4$。
+  因此 $P(3\le X\le5)$ 是寬 2、高 $1/4$ 的長方形面積，也就是 $1/2$。
+  但 $P(X=4)=0$；單點沒有寬度，因此沒有面積。</p>
+  <p><strong>累積分布函數（cumulative distribution function, CDF）</strong>
+  把左側已累積的機率記成 $F(x)=P(X\le x)$。它對離散與連續變數都適用。</p>
+  $$P(a&lt;X\le b)=F(b)-F(a).$$
+  <p>若是連續分布，端點的機率為 0，上式也等於 $P(a\le X\le b)$。
+  若是離散分布，想把左端點 $a$ 也算入，還要加上 $P(X=a)$。
+  以上面的 $U(2,6)$ 為例，$F(5)=3/4$、$F(3)=1/4$，相減就得到區間機率 $1/2$。
+  公式中的積分符號 ∫ 表示曲線下面積，本頁以長方形與圖形理解，不需要先會積分運算。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>類型</th><th>可能值</th><th>圖的高度代表</th><th>區間機率</th></tr></thead>
+  <tbody><tr><td>離散</td><td>有限或可數</td><td>該點的機率</td><td>把區間內的 PMF 相加</td></tr><tr><td>連續</td><td>一段連續範圍</td><td>每單位長度的機率密度</td><td>對 PDF 積分，即曲線下面積</td></tr></tbody>
+</table></div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 02 · 自我檢測</div>
+  <p>某連續分佈在 $x=2$ 的密度是 1.4。下列哪個判讀正確？</p>
+  <div class="quiz-options" id="qDensityOptions"><div class="quiz-opt" data-correct="false" data-fb="連續變數在單點的機率是 0；密度高度不是點機率。" onclick="quizCheck('qDensity', this)"><span class="opt-letter">(A)</span> $P(X=2)=1.4$</div><div class="quiz-opt" data-correct="true" data-fb="對。很窄的支撐範圍可以有高密度，機率由面積決定。" onclick="quizCheck('qDensity', this)"><span class="opt-letter">(B)</span> 密度可以高於 1，但總面積仍須等於 1</div><div class="quiz-opt" data-correct="false" data-fb="機率不能超過 1，但密度不是機率。需要檢查的是積分總面積。" onclick="quizCheck('qDensity', this)"><span class="opt-letter">(C)</span> 這一定是無效分佈，因為機率不能超過 1</div></div>
+  <div class="quiz-feedback" id="qDensityFeedback"></div>
+</div>
+<p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Discrete and Continuous</a> · <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=34">PDF p.34</a>。本頁文字、例題與圖均重新製作。</p>
+</section>
+<section id="families">
+<!-- GEN:BEGIN sec:families -->
+  <div class="section-number">PART 03 · 常用分布</div>
+  <h2>常用分布 <span class="sec-badge"><a href="#w23-source-seeing-theory">統計入門參考 · 第 3 章</a></span></h2>
+<!-- GEN:END sec:families -->
+
+  <p>分佈族把常見的隨機機制寫成少數參數。Bernoulli 表示一次成敗；二項分佈表示
+  $n$ 次獨立、同成功率的 Bernoulli 試驗中成功幾次；均勻分佈把固定區間內等長區段給相同機率；
+  常態分佈由中心 $\mu$ 與尺度 $\sigma$ 決定。</p>
+
+<div class="viz-layout" data-provenance="illustrative">
+  <div>
+    <div class="viz-panel">
+      <svg role="img" aria-label="所選機率分佈與指定區間機率" class="viz-svg" id="w23distSvg" height="360"></svg>
+      <div class="status-banner" id="w23distStatus"><span class="status-icon">›</span><span class="status-text">Bernoulli：一次成敗，藍色柱表示指定區間內的機率。</span></div>
+      <div class="controls-bar"><label>分佈 <select id="w23distKind" aria-label="選擇機率分佈" onchange="w23distChange()"><option value="bernoulli">Bernoulli</option><option value="binomial">二項</option><option value="uniform">均勻</option><option value="normal">常態</option></select></label><label><span id="w23distALabel">p</span> <input id="w23distA" type="number" step="0.05" value="0.5" aria-label="第一個分佈參數" oninput="w23distDraw()"></label><label><span id="w23distBLabel">未使用</span> <input id="w23distB" type="number" step="1" value="5" aria-label="第二個分佈參數" oninput="w23distDraw()" disabled></label><label>區間左端 <input id="w23distLo" type="number" step="0.1" value="0" aria-label="機率區間左端" oninput="w23distDraw()"></label><label>區間右端 <input id="w23distHi" type="number" step="0.1" value="1" aria-label="機率區間右端" oninput="w23distDraw()"></label><button class="btn btn-reset" onclick="w23distReset()">重置</button></div>
+      <div class="viz-source"><span>自訂概念示意</span>本站自訂即時計算；常態區間機率使用 shared.js 的常態 CDF 近似。</div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">四個分佈族</div>
+      選分佈後調參數，再指定區間。離散分佈把區間內柱子機率相加；連續分佈計算區間下方面積。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前摘要</div>
+      <div class="ic-row"><span class="ic-label">平均值</span><span class="ic-value" id="w23distMean">0.5</span></div><div class="ic-row"><span class="ic-label">變異數</span><span class="ic-value" id="w23distVar">0.25</span></div><div class="ic-row"><span class="ic-label">區間機率</span><span class="ic-value" id="w23distProb">1.0000</span></div><div class="ic-row"><span class="ic-label">計算方式</span><span class="ic-value" id="w23distHow">區間內 PMF 相加</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">參數條件</div>
+      Bernoulli／二項：$0\le p\le1$；二項的 $n$ 為正整數。均勻：$a&lt;b$。常態：$\sigma&gt;0$。元件會把輸入限制在有效範圍。
+    </div>
+  </div>
+</div>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>分佈</th><th>記號與參數</th><th>平均值</th><th>變異數</th><th>常見用途</th></tr></thead>
+  <tbody><tr><td>Bernoulli</td><td>$X\sim\mathrm{{Bernoulli}}(p)$</td><td>$p$</td><td>$p(1-p)$</td><td>一次成敗</td></tr><tr><td>二項</td><td>$X\sim\mathrm{{Binomial}}(n,p)$</td><td>$np$</td><td>$np(1-p)$</td><td>$n$ 次獨立同率試驗的成功數</td></tr><tr><td>均勻</td><td>$X\sim U(a,b)$</td><td>$(a+b)/2$</td><td>$(b-a)^2/12$</td><td>區間內等長範圍等可能</td></tr><tr><td>常態</td><td>$X\sim N(\mu,\sigma^2)$</td><td>$\mu$</td><td>$\sigma^2$</td><td>許多小效應相加的連續量</td></tr></tbody>
+</table></div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 03 · 自我檢測</div>
+  <p>每件產品獨立通過檢驗的機率為 0.8，隨機檢查 10 件並記錄通過件數。哪個模型最合適？</p>
+  <div class="quiz-options" id="qFamilyOptions"><div class="quiz-opt" data-correct="false" data-fb="Bernoulli 只描述一次檢驗；題目記錄 10 次中的通過總數。" onclick="quizCheck('qFamily', this)"><span class="opt-letter">(A)</span> $\mathrm{{Bernoulli}}(0.8)$</div><div class="quiz-opt" data-correct="true" data-fb="對。固定 10 次、各次獨立、成功率相同，並計算成功數。" onclick="quizCheck('qFamily', this)"><span class="opt-letter">(B)</span> $\mathrm{{Binomial}}(10,0.8)$</div><div class="quiz-opt" data-correct="false" data-fb="常態是連續分佈，會產生非整數與範圍外的值；這裡的精確模型是二項。" onclick="quizCheck('qFamily', this)"><span class="opt-letter">(C)</span> $N(0.8,10)$</div></div>
+  <div class="quiz-feedback" id="qFamilyFeedback"></div>
+</div>
+<p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Discrete and Continuous</a> · <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=35">PDF p.35</a>。本頁文字、例題與圖均重新製作。</p>
+</section>
+<section id="sampling">
+<!-- GEN:BEGIN sec:sampling -->
+  <div class="section-number">PART 04 · 抽樣分布</div>
+  <h2>抽樣分布 <span class="sec-badge"><a href="#w23-source-seeing-theory">統計入門參考 · 第 3 章</a></span></h2>
+<!-- GEN:END sec:sampling -->
+
+  <p>母體分佈描述單一觀測 $X$ 可能長什麼樣；抽樣分佈（sampling distribution）描述
+  一個統計量在<strong>重複抽取新樣本</strong>時如何變動。兩者的隨機對象不同。</p>
+
+  <p><strong>數值例。</strong>若一次公平擲骰的平均為 $\mu=3.5$、變異數為
+  $\sigma^2=35/12$，每次獨立擲 25 顆並取平均，則</p>
+  $$E(\bar X)=3.5,\qquad
+    \operatorname{Var}(\bar X)=\frac{35/12}{25}=\frac{7}{60},\qquad
+    \operatorname{SD}(\bar X)\approx0.342.$$
+  <p>單顆骰子的結果仍然散在 1 到 6；25 顆的平均會集中在 3.5 附近。
+  樣本平均的變異數縮小為原來的 $1/n$，標準差縮小為 $1/\sqrt n$。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>分佈</th><th>一次重複實驗記錄什麼</th><th>平均</th><th>標準差</th></tr></thead>
+  <tbody><tr><td>原始分佈</td><td>一個觀測 $X$</td><td>$\mu$</td><td>$\sigma$</td></tr><tr><td>樣本平均的抽樣分佈</td><td>$n$ 個觀測的平均 $\bar X$</td><td>$\mu$</td><td>$\sigma/\sqrt n$</td></tr></tbody>
+</table></div>
+
+<div class="info-box purple">
+  <span class="info-label">🔗 後續用途</span>
+  <a href='linear_regression.html#inference'>線性迴歸的係數推論</a>要理解估計量在重複抽樣下如何變動；<a href='resampling_methods.html#bootstrap'>Bootstrap</a>則用重抽樣近似難以直接推導的抽樣分佈。
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 04 · 自我檢測</div>
+  <p>母體標準差為 12。獨立抽樣 $n=36$ 時，樣本平均的標準差是多少？</p>
+  <div class="quiz-options" id="qSamplingOptions"><div class="quiz-opt" data-correct="false" data-fb="標準差按 1/√n 縮小；按 1/n 縮小的是變異數。" onclick="quizCheck('qSampling', this)"><span class="opt-letter">(A)</span> $12/36=1/3$</div><div class="quiz-opt" data-correct="true" data-fb="對。樣本平均的標準差，也就是標準誤，為 σ/√n。" onclick="quizCheck('qSampling', this)"><span class="opt-letter">(B)</span> $12/\sqrt{{36}}=2$</div><div class="quiz-opt" data-correct="false" data-fb="平均多個獨立觀測會更集中，標準差不會放大。" onclick="quizCheck('qSampling', this)"><span class="opt-letter">(C)</span> $12\sqrt{{36}}=72$</div></div>
+  <div class="quiz-feedback" id="qSamplingFeedback"></div>
+</div>
+<p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Central Limit Theorem 前的抽樣準備</a> · <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=38">PDF p.38</a>。本頁文字、例題與圖均重新製作。</p>
+</section>
+<section id="clt">
+<!-- GEN:BEGIN sec:clt -->
+  <div class="section-number">PART 05 · 大數法則與中央極限定理</div>
+  <h2>大數法則與中央極限定理 <span class="sec-badge"><a href="#w23-source-seeing-theory">統計入門參考 · 第 3 章</a></span></h2>
+<!-- GEN:END sec:clt -->
+
+  <p>中央極限定理（central limit theorem, CLT）描述樣本平均的<strong>分佈形狀</strong>。
+  若 $X_1,X_2,\ldots$ 獨立同分佈（i.i.d.），且有有限平均 $\mu$ 與
+  $0&lt;\sigma^2&lt;\infty$，則</p>
+  $$\frac{\bar X-\mu}{\sigma/\sqrt n}
+    \xrightarrow{d}N(0,1),$$
+  <p>也就是 $n$ 足夠大時，$\bar X$ 的分佈近似 $N(\mu,\sigma^2/n)$。
+  「足夠大」沒有統一門檻；母體愈偏斜或尾端愈重，常態近似通常需要更大的 $n$。</p>
+
+<div class="viz-layout" data-provenance="simulation">
+  <div>
+    <div class="viz-panel">
+      <svg role="img" aria-label="固定種子模擬的樣本平均分佈與常態近似" class="viz-svg" id="w23cltSvg" height="360"></svg>
+      <div class="status-banner" id="w23cltStatus"><span class="status-icon">›</span><span class="status-text">n=1 時，樣本平均就是原始觀測，分佈仍明顯右偏。</span></div>
+      <div class="controls-bar"><label>每組樣本數 <select id="w23cltN" aria-label="每組樣本數" onchange="w23cltDraw()"><option value="1">1</option><option value="2">2</option><option value="5">5</option><option value="10">10</option></select></label><button class="btn btn-step" onclick="w23cltNext()">→ 增加樣本數</button><button class="btn btn-reset" onclick="w23cltReset()">重置</button></div>
+      <div class="viz-source"><span>固定種子模擬</span>固定種子 20260923；每次 160 組，每組最多 10 筆，共最多 1,600 次抽樣。</div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="info-card">
+      <div class="ic-title">固定母體：指數分佈</div>
+      原始 $X$ 右偏，平均與變異數都是 1。每次取 $n$ 個 i.i.d. 觀測的平均，重複 160 次。藍色柱為模擬樣本平均，綠線為同平均、同變異數的常態近似。
+    </div>
+    <div class="info-card">
+      <div class="ic-title">目前模擬</div>
+      <div class="ic-row"><span class="ic-label">每組樣本數 n</span><span class="ic-value" id="w23cltNOut">1</span></div><div class="ic-row"><span class="ic-label">樣本平均的平均</span><span class="ic-value" id="w23cltMean">—</span></div><div class="ic-row"><span class="ic-label">樣本平均的標準差</span><span class="ic-value" id="w23cltSd">—</span></div><div class="ic-row"><span class="ic-label">理論標準差</span><span class="ic-value" id="w23cltTheo">1.000</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">兩個定理回答不同問題</div>
+      大數法則（LLN）說 $\bar X$ 會靠近 $\mu$；CLT 說標準化後的抽樣分佈趨近常態。在條件成立時，對任何固定的正誤差門檻，平均偏離母體平均超過門檻的機率趨近 0；單次路徑不保證每加一筆都更接近。
+    </div>
+  </div>
+</div>
+
+<div class="quiz-box">
+  <div class="quiz-label">PART 05 · 自我檢測</div>
+  <p>下列哪個條件組合符合本頁使用的中央極限定理版本？</p>
+  <div class="quiz-options" id="qCltOptions"><div class="quiz-opt" data-correct="false" data-fb="CLT 的用途之一正是讓非正常母體的樣本平均在大樣本下近似常態。" onclick="quizCheck('qClt', this)"><span class="opt-letter">(A)</span> 觀測值必須本來就是常態分佈</div><div class="quiz-opt" data-correct="true" data-fb="對。正且有限的變異數讓標準化分母有意義；若有依賴或無限變異數，需要其他版本或方法。" onclick="quizCheck('qClt', this)"><span class="opt-letter">(B)</span> 觀測 i.i.d.，母體平均有限，且 $0&lt;\sigma^2&lt;\infty$</div><div class="quiz-opt" data-correct="false" data-fb="LLN 與 CLT 都沒有要求逐步單調；有限樣本的平均可以上下波動。" onclick="quizCheck('qClt', this)"><span class="opt-letter">(C)</span> 樣本平均必須隨每筆新資料單調靠近母體平均</div></div>
+  <div class="quiz-feedback" id="qCltFeedback"></div>
+</div>
+<p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Central Limit Theorem</a> · <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=39">PDF p.39</a>。本頁文字、例題與圖均重新製作。</p>
+</section>
+<section id="exercises">
+<!-- GEN:BEGIN sec:exercises -->
+  <div class="section-number">EXERCISES · 練習</div>
+  <h2>用算例檢查理解 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>以下是依本頁觀念自訂的練習。先寫下判斷與理由，再點選答案；每個選項都有解說。
+  回到互動調整條件，確認你的解釋是否仍然成立。</p>
+  <div class="sol-links"><a href="https://seeing-theory.brown.edu/probability-distributions/index.html" target="_blank" rel="noopener">🔗 本章原站延伸</a></div>
+<!-- GEN:END sec:exercises -->
+
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 1 · 原創</div>
+  <p>擲一顆公平骰子，令 $X=1$ 表示點數大於 4，否則 $X=0$。$X$ 的分佈為何？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。成功結果是 5、6，共占六個等可能結果中的兩個。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> $\mathrm{{Bernoulli}}(1/3)$</div><div class="quiz-opt" data-correct="false" data-fb="只擲一次，所以是一次 Bernoulli；n=6 不是骰子的面數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> $\mathrm{{Binomial}}(6,1/3)$</div><div class="quiz-opt" data-correct="false" data-fb="X 只取 0 或 1；均勻分佈 U(1,6) 是連續模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> $U(1,6)$</div></div>
+  <div class="quiz-feedback" id="qEx1Feedback"></div>
+</div>
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 2 · 原創</div>
+  <p>若 $X\sim U(0,8)$，$P(2\le X\le5)$ 為何？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="區間 [2,5] 的長度是 3，不是左端點 2。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> $2/8$</div><div class="quiz-opt" data-correct="true" data-fb="對。均勻分佈的機率等於子區間長度 3 除以總長度 8。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> $3/8$</div><div class="quiz-opt" data-correct="false" data-fb="5 是右端點，不是區間長度；要用 5−2。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> $5/8$</div></div>
+  <div class="quiz-feedback" id="qEx2Feedback"></div>
+</div>
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 3 · 原創</div>
+  <p>某母體平均為 50、標準差為 18。獨立抽樣 81 筆時，樣本平均的平均與標準差為何？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="樣本平均保留母體平均，但標準差會縮小。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 平均 50、標準差 18</div><div class="quiz-opt" data-correct="true" data-fb="對。E(平均)=50，SD(平均)=18/√81=2。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 平均 50、標準差 2</div><div class="quiz-opt" data-correct="false" data-fb="取平均不會把期望值除以 n；標準差則除以 √n。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 平均 50/81、標準差 18/81</div></div>
+  <div class="quiz-feedback" id="qEx3Feedback"></div>
+</div>
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 4 · 原創</div>
+  <p>增加樣本數後，某次樣本平均反而離母體平均更遠。這與大數法則矛盾嗎？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="大數法則沒有單調保證；單次路徑可以暫時走遠。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 矛盾，因為誤差必須每一步都下降</div><div class="quiz-opt" data-correct="true" data-fb="對。樣本數增加會讓大幅偏離愈來愈不可能，但某一步仍可反向波動。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 不矛盾；定理描述長期機率行為，不保證逐步單調</div><div class="quiz-opt" data-correct="false" data-fb="在條件成立時樣本平均會收斂；錯的是把收斂誤讀成每一步都更近。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 不矛盾，因為樣本平均永遠不會收斂</div></div>
+  <div class="quiz-feedback" id="qEx4Feedback"></div>
+</div>
+  <p class="source-note"><strong>題目來源：</strong>四題均為本站原創，觀念範圍對照
+  <a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章</a>與<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=31">PDF pp.31–40</a>。</p>
+</section>
+<section id="reference">
+<!-- GEN:BEGIN sec:reference -->
+  <div class="section-number">重點速查與來源</div>
+  <h2>分布與抽樣速查表 <span class="sec-badge">先備 · S3 統計〔核心路徑〕</span></h2>
+<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w23-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 3 章。</li></ul></div>
+<!-- GEN:END sec:reference -->
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>概念</th><th>核心式</th><th>常見誤讀</th></tr></thead>
+  <tbody><tr><td>PMF</td><td>$P(X=x)=p(x)$</td><td>柱高就是離散點機率</td></tr><tr><td>PDF</td><td>$P(a\le X\le b)=\int_a^b f(x)dx$</td><td>密度高度不是單點機率</td></tr><tr><td>樣本平均</td><td>$E(\bar X)=\mu$</td><td>平均不會除以 n</td></tr><tr><td>樣本平均的變異</td><td>$\operatorname{{Var}}(\bar X)=\sigma^2/n$</td><td>標準差是 $\sigma/\sqrt n$</td></tr><tr><td>LLN</td><td>$\bar X$ 靠近 $\mu$</td><td>不保證逐步單調</td></tr><tr><td>CLT</td><td>$(\bar X-\mu)/(\sigma/\sqrt n)\Rightarrow N(0,1)$</td><td>描述抽樣分佈，不要求原始母體常態</td></tr></tbody>
+</table></div>
+  <p><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory · Probability Distributions</a>提供隨機變數、離散／連續分佈與 CLT 的原始互動章節；
+  <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=31">Seeing Theory PDF pp.31–40</a>提供定義、分佈族與定理脈絡。</p>
+  <p class="ver-note">本頁例題、測驗與互動圖均為本站原創；CLT 圖使用固定種子 20260923，每次最多模擬 1,600 個觀測。頁面沒有課程 lab 卡，也沒有烘焙圖表；重置會完整回到預設分佈、參數與種子狀態。</p>
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 20 張</span></h2>
+  <p>詞彙卡取自本頁依 Seeing Theory 編寫的概念解說，正面是中文術語（附英文原名）。
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
+  <div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div>
+<!-- GEN:END sec:cards -->
+</section>
+<!-- GEN:BEGIN chapternav -->
+<div class="chapter-nav"><a class="prev" href="s2_conditional.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">條件機率與獨立</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="s4_inference.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">從樣本推論母體</div></a></div>
+<!-- GEN:END chapternav -->
+</div>
+<!-- GEN:BEGIN footer -->
+<footer>
+  互動式分布與抽樣教學 · 參考 Seeing Theory 網站與講義，以原創算例與互動說明<br>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive statistics self-study</span>
+</footer>
+<!-- GEN:END footer -->
+<!-- GEN:BEGIN sharedjs -->
+<script>
+/* ============================================================
+   統計學習自學站共用函式庫
+   由 tools/build_page.py 內嵌到每一頁，十頁完全一致。
+   規則：LaTeX 一律放靜態 HTML，這裡的字串不放 $…$；
+        寫入含數學的 innerHTML 之後要呼叫 HC.retype(el)。
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+
+/* ---------- MathJax：注入後的內容不會自動排版 ---------- */
+const HC = {};
+HC.retype = el => {
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
+  }
+};
+
+/* ---------- quiz ---------- */
+function quizCheck(quizId, optEl) {
+  const isCorrect = optEl.dataset.correct === 'true';
+  optEl.parentElement.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct', 'wrong'));
+  optEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fb = $(quizId + 'Feedback');
+  if (!fb) { console.error('quizCheck: 找不到 #' + quizId + 'Feedback'); return; }
+  fb.classList.remove('correct', 'wrong');
+  fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '<strong>正確 ✓</strong> ' : '<strong>不對 ✗</strong> ') + (optEl.dataset.fb || '');
+  HC.retype(fb);
+}
+
+/* ---------- 程式碼行高亮 ---------- */
+function hlLine(rootId, n) {
+  const root = $(rootId);
+  if (!root) return;
+  root.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+  if (n != null) {
+    const line = root.querySelector('.line[data-l="' + n + '"]');
+    if (line) line.classList.add('active');
+  }
+}
+
+/* ---------- 逐步播放器：frames = [{...}]，apply(frame) 負責渲染 ---------- */
+class Player {
+  constructor({ frames, apply, delayInput, onDone, onIndex }) {
+    this.frames = frames; this.apply = apply;
+    this.delayInput = delayInput; this.i = -1; this.timer = null;
+    this.onDone = onDone || (() => {});
+    this.onIndex = onIndex || (() => {});
+  }
+  get delay() { return this.delayInput ? parseInt(this.delayInput.value, 10) : 700; }
+  step() {
+    if (this.i + 1 >= this.frames.length) { this.stop(); this.onDone(); return false; }
+    this.i += 1; this.apply(this.frames[this.i], this.i); this.onIndex(this.i); return true;
+  }
+  play() {
+    this.stop();
+    const tick = () => { if (this.step()) this.timer = setTimeout(tick, this.delay); };
+    tick();
+  }
+  stop() { if (this.timer) { clearTimeout(this.timer); this.timer = null; } }
+  get playing() { return this.timer !== null; }
+  reset() { this.stop(); this.i = -1; if (this.frames.length) { this.apply(this.frames[0], 0); this.i = 0; } }
+  seek(i) { this.stop(); this.i = Math.max(0, Math.min(i, this.frames.length - 1)); this.apply(this.frames[this.i], this.i); this.onIndex(this.i); }
+}
+HC.Player = Player;
+
+/* ---------- 旁白列 ---------- */
+function setStatus(id, html) {
+  const el = $(id); if (!el) return;
+  const t = el.querySelector('.status-text');
+  if (t) t.innerHTML = html;
+}
+
+/* ============================================================
+   HC：圖表與 SVG 共用 API
+   ============================================================ */
+
+/* 設計 token（讀 CSS 變數，樣式改一處就好） */
+HC.tok = (() => {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue('--' + n).trim();
+  return {
+    ink: g('ink'), paper: g('paper'), accent: g('accent'), accent2: g('accent2'),
+    accent3: g('accent3'), muted: g('muted'), card: g('card'), cardBorder: g('card-border'),
+    grid: g('grid-line') || g('card-border'),
+    train: g('pt-train'), test: g('pt-test'), held: g('pt-held'),
+    a: g('pt-a'), b: g('pt-b'), c: g('pt-c'),
+    fit: g('fit-line'), truef: g('fit-true'), resid: g('resid'),
+  };
+})();
+
+HC.MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+/* 數字格式：固定小數位，去掉負零 */
+HC.fmt = (v, d = 2) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return '—';
+  const s = Number(v).toFixed(d);
+  return s === '-' + (0).toFixed(d) ? (0).toFixed(d) : s;
+};
+HC.pct = (v, d = 1) => HC.fmt(v * 100, d) + '%';
+
+/* canvas 的 strokeStyle 不認得 var(--x)，要先解析成實際色值 */
+HC.color = c => {
+  if (!c) return null;
+  const m = /^var\((--[\w-]+)\)$/.exec(String(c).trim());
+  if (!m) return c;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return v || HC.tok.muted;
+};
+
+/* ---------- Chart.js ---------- */
+HC.hasChart = () => typeof window.Chart !== 'undefined';
+
+/* Chart.js 載入失敗時不要拋錯：讓 .chart-fallback 留在畫面上 */
+HC.ready = fn => {
+  const run = () => {
+    if (!HC.hasChart()) { console.warn('Chart.js 未載入：圖表退回 .chart-fallback 文字'); return; }
+    if (!HC._refReg) { window.Chart.register(HC._refPlugin); HC._refReg = true; }
+    try { fn(); } catch (e) { console.error('圖表初始化失敗', e); }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+};
+
+HC._charts = new Map();
+
+/* 房子的 Chart.js 預設值 */
+HC.base = (type, data, opts = {}) => {
+  const t = HC.tok;
+  const axis = {
+    grid: { color: t.grid, drawTicks: false },
+    border: { color: t.muted },
+    ticks: { font: { family: HC.MONO, size: 11 }, color: t.muted, padding: 6 },
+    title: { font: { family: HC.MONO, size: 11, weight: '600' }, color: t.accent2 },
+  };
+  const deep = (a, b) => {
+    const o = Array.isArray(b) ? b.slice() : Object.assign({}, a);
+    if (Array.isArray(b)) return o;
+    for (const k of Object.keys(b || {})) {
+      o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]))
+        ? deep(a && a[k] ? a[k] : {}, b[k]) : b[k];
+    }
+    return o;
+  };
+  const defaults = {
+    responsive: true, maintainAspectRatio: false, devicePixelRatio: 2,
+    animation: { duration: 250 },
+    interaction: { mode: 'index', intersect: false },
+    layout: { padding: { top: 6, right: 10, bottom: 2, left: 2 } },
+    plugins: {
+      legend: {
+        display: true, position: 'top', align: 'end',
+        labels: { boxWidth: 10, boxHeight: 10, font: { family: HC.MONO, size: 11 }, color: t.ink, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(26,26,46,.92)', titleFont: { family: HC.MONO, size: 11 },
+        bodyFont: { family: HC.MONO, size: 11 }, padding: 8, cornerRadius: 6, displayColors: true,
+      },
+    },
+    scales: { x: deep({}, axis), y: deep({}, axis) },
+    elements: { point: { radius: 3, hoverRadius: 5 }, line: { borderWidth: 2, tension: 0 } },
+  };
+  const cfg = { type, data, options: deep(defaults, opts) };
+  // canvas 不認得 var(--x)：傳進去會靜默變成黑色（第 6 章五條準則線全黑就是這樣）。
+  // 這裡在建構前把所有顏色欄位解析成實際色值，讓這類 bug 不可能發生。
+  HC._resolveColors(cfg);
+  return cfg;
+};
+
+HC._COLOR_KEYS = ['borderColor', 'backgroundColor', 'pointBackgroundColor',
+                  'pointBorderColor', 'hoverBackgroundColor', 'hoverBorderColor', 'color'];
+HC._resolveColors = o => {
+  if (!o || typeof o !== 'object') return o;
+  if (Array.isArray(o)) { o.forEach(HC._resolveColors); return o; }
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (typeof v === 'string' && HC._COLOR_KEYS.indexOf(k) >= 0) o[k] = HC.color(v);
+    else if (Array.isArray(v) && HC._COLOR_KEYS.indexOf(k) >= 0) {
+      o[k] = v.map(x => (typeof x === 'string' ? HC.color(x) : x));
+    } else if (v && typeof v === 'object') HC._resolveColors(v);
+  }
+  return o;
+};
+
+/* 建立或更新（同一個 canvas id 重複呼叫不會洩漏 chart instance） */
+HC.chart = (canvasId, type, data, opts) => {
+  if (!HC.hasChart()) return null;
+  const cv = $(canvasId);
+  if (!cv) { console.error('HC.chart: 找不到 canvas #' + canvasId); return null; }
+  const old = HC._charts.get(canvasId);
+  if (old) old.destroy();
+  const c = new window.Chart(cv, HC.base(type, data, opts));
+  HC._charts.set(canvasId, c);
+  const wrap = cv.closest('.chart-wrap');
+  if (wrap) wrap.classList.add('ready');
+  return c;
+};
+HC.line = (id, data, opts) => HC.chart(id, 'line', data, opts);
+HC.scatter = (id, data, opts) => HC.chart(id, 'scatter', data, opts);
+HC.bar = (id, data, opts) => HC.chart(id, 'bar', data, opts);
+HC.get = id => HC._charts.get(id);
+
+/* 就地改資料再重畫，不重建 chart（滑桿連續拖動時比較順） */
+HC.update = (id, mutate) => {
+  const c = HC._charts.get(id);
+  if (!c) return null;
+  mutate(c);
+  c.update('none');
+  return c;
+};
+
+/* ---------- 參考線與陰影帶：一個全域註冊的 plugin ----------
+   為什麼不是「每張圖各自帶 inline plugin」：Chart.js 4 的 Config.prototype.plugins
+   只有 getter、沒有 setter，所以建構之後寫 `chart.config.plugins = [...]`
+   會**靜默失效**（非嚴格模式下不報錯，畫面上就是什麼都沒有）。
+   實測：Object.getOwnPropertyDescriptor(proto,'plugins') → {get: fn, set: undefined}。
+
+   正確做法是註冊一個全域 plugin，參數放在 options.plugins.hcRef，每次繪製都重讀。
+   HC.hline / HC.vline / HC.vband 因此改成只回傳「標記資料」，不再是 plugin 物件。 */
+
+
+/* row：多條參考線靠得很近時把標籤往下錯開一列，避免疊字 */
+HC.hline = (y, label, color, row) => ({ t: 'h', y: y, label: label, color: color, row: row || 0 });
+HC.vline = (x, label, color, row) => ({ t: 'v', x: x, label: label, color: color, row: row || 0 });
+HC.vband = (x0, x1, fill, label) => ({ t: 'band', x0: x0, x1: x1, fill: fill, label: label });
+
+HC._refPlugin = {
+  id: 'hcRef',
+  beforeDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.filter(m => m && m.t === 'band').forEach(m => {
+      if (!scales.x) return;
+      const a = scales.x.getPixelForValue(m.x0), b = scales.x.getPixelForValue(m.x1);
+      ctx.save();
+      ctx.fillStyle = HC.color(m.fill) || 'rgba(44,62,122,.10)';
+      ctx.fillRect(Math.min(a, b), ca.top, Math.abs(b - a), ca.bottom - ca.top);
+      if (m.label) {
+        ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = HC.tok.muted;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(m.label, (a + b) / 2, ca.top + 2);
+      }
+      ctx.restore();
+    });
+  },
+  afterDatasetsDraw(chart) {
+    const marks = chart.$hcRef || [];
+    const { ctx, chartArea: ca, scales } = chart;
+    marks.forEach(m => {
+      if (!m || m.t === 'band') return;
+      const vert = m.t === 'v';
+      const sc = vert ? scales.x : scales.y;
+      if (!sc) return;
+      const p = sc.getPixelForValue(vert ? m.x : m.y);
+      if (!isFinite(p)) return;
+      if (vert ? (p < ca.left - 1 || p > ca.right + 1) : (p < ca.top - 1 || p > ca.bottom + 1)) return;
+      const col = HC.color(m.color) || (vert ? HC.tok.accent : HC.tok.muted);
+      ctx.save();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = vert ? 1.6 : 1.4;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      if (vert) { ctx.moveTo(p, ca.top); ctx.lineTo(p, ca.bottom); }
+      else { ctx.moveTo(ca.left, p); ctx.lineTo(ca.right, p); }
+      ctx.stroke();
+      if (m.label) {
+        ctx.setLineDash([]); ctx.font = '600 10px ' + HC.MONO; ctx.fillStyle = col;
+        if (vert) {
+          // 靠右邊界的標籤改成向左對齊，才不會被裁掉
+          const near = p > ca.right - 90;
+          ctx.textAlign = near ? 'right' : 'left'; ctx.textBaseline = 'top';
+          ctx.fillText(m.label, p + (near ? -4 : 4), ca.top + 2 + (m.row || 0) * 13);
+        } else {
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(m.label, ca.right - 4, p - 3 - (m.row || 0) * 13);
+        }
+      }
+      ctx.restore();
+    });
+  },
+};
+
+/* 設定某張圖的參考線。markers 可以是單一標記或陣列。
+
+   markers 存在 chart 實例上（chart.$hcRef），**不放進 options.plugins**：
+   Chart.js 4.5.1 會對 plugin options 走一輪 key 解析，把 marker 陣列丟進去會讓它
+   在內部對非字串的 key 呼叫 .startsWith 而爆掉。全域註冊的 plugin 不需要 options
+   就會啟用，所以直接掛在實例上最單純也最不容易壞。 */
+HC.refs = (idOrChart, markers) => {
+  const c = typeof idOrChart === 'string' ? HC.get(idOrChart) : idOrChart;
+  if (!c) return null;
+  c.$hcRef = Array.isArray(markers) ? markers : (markers ? [markers] : []);
+  c.update('none');
+  return c;
+};
+
+/* ============================================================
+   HC.svg：手寫 SVG 元件的座標尺度與繪圖捷徑
+   用法：const s = HC.svg('w03dragSvg', {xd:[0,10], yd:[0,30]});
+        s.grid(5,5); s.dot(x, y, {cls:'dot', fill:HC.tok.train});
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+
+HC.svg = (id, o = {}) => {
+  const host = $(id);
+  if (!host) { console.error('HC.svg: 找不到 #' + id); return null; }
+  const W = o.w || 620, H = o.h || 340;
+  const pad = Object.assign({ l: 46, r: 14, t: 14, b: 34 }, o.pad || {});
+  let el = host;
+  if (host.tagName.toLowerCase() !== 'svg') {
+    el = host.querySelector('svg');
+    if (!el) { el = document.createElementNS(NS, 'svg'); el.setAttribute('class', 'viz-svg'); host.appendChild(el); }
+  }
+  el.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  if (!el.getAttribute('height')) el.setAttribute('height', String(H));
+
+  const s = {
+    el, W, H, pad,
+    xd: (o.xd || [0, 1]).slice(), yd: (o.yd || [0, 1]).slice(),
+    get iw() { return W - pad.l - pad.r; },
+    get ih() { return H - pad.t - pad.b; },
+  };
+  s.domain = (xd, yd) => { if (xd) s.xd = xd.slice(); if (yd) s.yd = yd.slice(); return s; };
+  s.X = v => pad.l + (v - s.xd[0]) / (s.xd[1] - s.xd[0]) * s.iw;
+  s.Y = v => pad.t + s.ih - (v - s.yd[0]) / (s.yd[1] - s.yd[0]) * s.ih;
+  s.ix = px => s.xd[0] + (px - pad.l) / s.iw * (s.xd[1] - s.xd[0]);
+  s.iy = py => s.yd[0] + (pad.t + s.ih - py) / s.ih * (s.yd[1] - s.yd[0]);
+
+  /* client 座標 → viewBox 座標（縮放與 CSS 尺寸都會被吸收） */
+  s.toView = ev => {
+    const r = el.getBoundingClientRect();
+    const cx = ev.clientX !== undefined ? ev.clientX : (ev.touches && ev.touches[0].clientX);
+    const cy = ev.clientY !== undefined ? ev.clientY : (ev.touches && ev.touches[0].clientY);
+    return { px: (cx - r.left) / r.width * W, py: (cy - r.top) / r.height * H };
+  };
+  s.toData = ev => { const p = s.toView(ev); return { x: s.ix(p.px), y: s.iy(p.py) }; };
+
+  s.add = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k of Object.keys(attrs)) {
+      if (attrs[k] === null || attrs[k] === undefined) continue;
+      n.setAttribute(k === 'cls' ? 'class' : k, String(attrs[k]));
+    }
+    (parent || el).appendChild(n);
+    return n;
+  };
+  /* 分層：只清掉自己那層，底圖不用重畫 */
+  s.layer = name => {
+    let g = el.querySelector('g[data-layer="' + name + '"]');
+    if (!g) { g = s.add('g', { 'data-layer': name }); }
+    return g;
+  };
+  s.clearLayer = name => { const g = s.layer(name); while (g.firstChild) g.removeChild(g.firstChild); return g; };
+  s.clear = () => { while (el.firstChild) el.removeChild(el.firstChild); return s; };
+
+  /* 座標軸 + 格線 + 刻度標籤 */
+  s.grid = (nx = 5, ny = 5, opt = {}) => {
+    const g = s.clearLayer('grid');
+    const fx = opt.xfmt || (v => HC.fmt(v, opt.xdec ?? 0));
+    const fy = opt.yfmt || (v => HC.fmt(v, opt.ydec ?? 0));
+    for (let i = 0; i <= nx; i++) {
+      const v = s.xd[0] + (s.xd[1] - s.xd[0]) * i / nx, x = s.X(v);
+      s.add('line', { cls: 'gridl', x1: x, y1: pad.t, x2: x, y2: pad.t + s.ih }, g);
+      s.add('text', { cls: 'axlab', x: x, y: pad.t + s.ih + 14, 'text-anchor': 'middle' }, g).textContent = fx(v);
+    }
+    for (let i = 0; i <= ny; i++) {
+      const v = s.yd[0] + (s.yd[1] - s.yd[0]) * i / ny, y = s.Y(v);
+      s.add('line', { cls: 'gridl', x1: pad.l, y1: y, x2: pad.l + s.iw, y2: y }, g);
+      s.add('text', { cls: 'axlab', x: pad.l - 6, y: y + 3.5, 'text-anchor': 'end' }, g).textContent = fy(v);
+    }
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t + s.ih, x2: pad.l + s.iw, y2: pad.t + s.ih }, g);
+    s.add('line', { cls: 'ax', x1: pad.l, y1: pad.t, x2: pad.l, y2: pad.t + s.ih }, g);
+    if (opt.xtitle) s.add('text', { cls: 'axtitle', x: pad.l + s.iw / 2, y: H - 4, 'text-anchor': 'middle' }, g).textContent = opt.xtitle;
+    if (opt.ytitle) {
+      const t = s.add('text', { cls: 'axtitle', x: 0, y: 0, 'text-anchor': 'middle', transform: 'translate(11,' + (pad.t + s.ih / 2) + ') rotate(-90)' }, g);
+      t.textContent = opt.ytitle;
+    }
+    return s;
+  };
+
+  s.dot = (x, y, a = {}, parent) => s.add('circle', {
+    cls: a.cls || 'dot', cx: s.X(x), cy: s.Y(y), r: a.r ?? 4,
+    fill: a.fill || HC.tok.accent2, stroke: a.stroke, 'stroke-width': a.sw,
+    opacity: a.opacity, 'data-i': a.i,
+  }, parent);
+
+  s.poly = (pts, a = {}, parent) => s.add('polyline', {
+    cls: a.cls || 'fit', points: pts.map(p => s.X(p[0]) + ',' + s.Y(p[1])).join(' '),
+    stroke: a.stroke, 'stroke-width': a.sw, fill: 'none', 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.area = (pts, a = {}, parent) => {
+    const up = pts.map(p => s.X(p[0]) + ',' + s.Y(p[1]));
+    const dn = pts.slice().reverse().map(p => s.X(p[0]) + ',' + s.Y(p[2]));
+    return s.add('polygon', { cls: a.cls || 'band', points: up.concat(dn).join(' '), fill: a.fill }, parent);
+  };
+
+  s.seg = (x1, y1, x2, y2, a = {}, parent) => s.add('line', {
+    cls: a.cls || 'resid', x1: s.X(x1), y1: s.Y(y1), x2: s.X(x2), y2: s.Y(y2),
+    stroke: a.stroke, 'stroke-width': a.sw, 'stroke-dasharray': a.dash,
+  }, parent);
+
+  s.box = (x0, y0, x1, y1, a = {}, parent) => s.add('rect', {
+    x: Math.min(s.X(x0), s.X(x1)), y: Math.min(s.Y(y0), s.Y(y1)),
+    width: Math.abs(s.X(x1) - s.X(x0)), height: Math.abs(s.Y(y1) - s.Y(y0)),
+    fill: a.fill || 'none', stroke: a.stroke, 'stroke-width': a.sw, cls: a.cls, rx: a.rx,
+  }, parent);
+
+  s.txt = (x, y, str, a = {}, parent) => {
+    const n = s.add('text', {
+      cls: a.cls || 'vlab', x: s.X(x) + (a.dx || 0), y: s.Y(y) + (a.dy || 0),
+      'text-anchor': a.anchor || 'middle', fill: a.fill,
+    }, parent);
+    n.textContent = str;
+    return n;
+  };
+  /* 用 viewBox 像素座標直接放字（圖例、標題用） */
+  s.txtPx = (px, py, str, a = {}, parent) => {
+    const n = s.add('text', { cls: a.cls || 'axlab', x: px, y: py, 'text-anchor': a.anchor || 'start', fill: a.fill }, parent);
+    n.textContent = str;
+    return n;
+  };
+  return s;
+};
+
+/* 拖曳：pointer + touch，回呼收到資料座標；會夾在定義域內 */
+HC.drag = (node, svc, onMove, opts = {}) => {
+  const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
+  const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
+  let active = false;
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  };
+  const move = ev => {
+    if (!active) return;
+    const d = svc.toData(ev);
+    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    ev.preventDefault();
+  };
+  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  node.addEventListener('pointerdown', start);
+  node.addEventListener('pointermove', move);
+  node.addEventListener('pointerup', end);
+  node.addEventListener('pointercancel', end);
+  node.style.touchAction = 'none';
+  return () => {
+    node.removeEventListener('pointerdown', start);
+    node.removeEventListener('pointermove', move);
+    node.removeEventListener('pointerup', end);
+    node.removeEventListener('pointercancel', end);
+  };
+};
+
+/* ---------- 統計小工具（各頁元件共用，避免各自重寫） ---------- */
+HC.stat = {
+  mean: a => a.reduce((s, v) => s + v, 0) / a.length,
+  variance(a) { const m = this.mean(a); return a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1); },
+  sd(a) { return Math.sqrt(this.variance(a)); },
+  /* 簡單線性迴歸：回傳 b0, b1, rss, tss, r2, se(b0), se(b1), t 值 */
+  ols(xs, ys) {
+    const n = xs.length, mx = this.mean(xs), my = this.mean(ys);
+    let sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sxx += (xs[i] - mx) ** 2; sxy += (xs[i] - mx) * (ys[i] - my); }
+    const b1 = sxx === 0 ? 0 : sxy / sxx, b0 = my - b1 * mx;
+    let rss = 0, tss = 0;
+    for (let i = 0; i < n; i++) { rss += (ys[i] - b0 - b1 * xs[i]) ** 2; tss += (ys[i] - my) ** 2; }
+    const df = n - 2;
+    const s2 = df > 0 ? rss / df : NaN;
+    const seB1 = sxx > 0 ? Math.sqrt(s2 / sxx) : NaN;
+    const seB0 = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+    return {
+      b0, b1, rss, tss, n, df, rse: Math.sqrt(s2),
+      r2: tss === 0 ? NaN : 1 - rss / tss,
+      seB0, seB1, tB0: b0 / seB0, tB1: b1 / seB1,
+    };
+  },
+  /* RSS(b0,b1)，畫誤差曲面用 */
+  rss(xs, ys, b0, b1) {
+    let r = 0;
+    for (let i = 0; i < xs.length; i++) r += (ys[i] - b0 - b1 * xs[i]) ** 2;
+    return r;
+  },
+  /* 可重現的偽隨機（固定種子，頁面重載結果一樣） */
+  lcg(seed) { let s = (seed >>> 0) || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; },
+  /* Box–Muller 標準常態 */
+  normal(rand) {
+    let u = 0, v = 0;
+    while (u === 0) u = rand();
+    while (v === 0) v = rand();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  /* 標準常態 CDF（Abramowitz–Stegun 7.1.26 誤差函數近似） */
+  pnorm(z) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(z));
+    const p = t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    return z >= 0 ? 1 - d * p : d * p;
+  },
+  dnorm(x, mu = 0, sd = 1) { const z = (x - mu) / sd; return Math.exp(-z * z / 2) / (sd * Math.sqrt(2 * Math.PI)); },
+  quantile(sorted, q) {
+    const h = (sorted.length - 1) * q, lo = Math.floor(h);
+    return sorted[lo] + (h - lo) * ((sorted[Math.min(lo + 1, sorted.length - 1)]) - sorted[lo]);
+  },
+  seq(a, b, n) { return Array.from({ length: n }, (_, i) => a + (b - a) * i / (n - 1)); },
+};
+
+/* ============================================================
+   頁面骨架行為
+   ============================================================ */
+
+/* 浮動導覽 scroll-spy */
+(function setupNav() {
+  const nav = $('floatNav');
+  if (!nav) return;
+  const links = Array.from(nav.querySelectorAll('a[data-target]'));
+  const sections = links.map(a => $(a.dataset.target)).filter(Boolean);
+  const missing = links.filter(a => !$(a.dataset.target)).map(a => a.dataset.target);
+  if (missing.length) console.warn('float-nav 的 data-target 找不到對應 section：', missing);
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) if (s.offsetTop <= y) active = s.id;
+    links.forEach(a => {
+      const on = a.dataset.target === active;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+
+/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
+  d.dataset.mj = '1';
+  HC.retype(d);
+}, true);
+
+/* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
+HC.initFlashcards = () => {
+  const grid = $('fcGrid');
+  if (!grid || typeof FLASHCARDS === 'undefined') return;
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const render = cards => {
+    grid.innerHTML = cards.map(c =>
+      '<div class="fc-card"><div class="fc-inner">'
+      + '<div class="fc-face fc-front"><div>' + esc(c.front) + '</div><div class="fc-hint">CLICK TO FLIP</div></div>'
+      + '<div class="fc-face fc-back">' + esc(c.back) + '</div>'
+      + '</div></div>').join('');
+  };
+  render(FLASHCARDS);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.fc-card');
+    if (card) card.classList.toggle('flipped');
+  });
+  const on = (id, fn) => { const b = $(id); if (b) b.addEventListener('click', fn); };
+  /* 洗牌用固定種子的 Fisher–Yates，每按一次換一個種子 */
+  let shuffleSeed = 20260810;
+  on('fcShuffle', () => {
+    const rand = HC.stat.lcg(shuffleSeed++);
+    const a = FLASHCARDS.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    render(a);
+  });
+  on('fcUnflip', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')));
+  on('fcFlipAll', () => grid.querySelectorAll('.fc-card').forEach(c => c.classList.add('flipped')));
+};
+</script>
+<!-- GEN:END sharedjs -->
+<!-- PAGEJS:BEGIN -->
+<script>
+const w23distS = HC.svg('w23distSvg', {h: 360, pad: {l: 54, r: 18, t: 24, b: 44}});
+
+function w23clip(v, lo, hi, fallback) {
+  const x = Number(v);
+  return Number.isFinite(x) ? Math.max(lo, Math.min(hi, x)) : fallback;
+}
+
+function w23choose(n, k) {
+  if (k < 0 || k > n) return 0;
+  let out = 1;
+  const m = Math.min(k, n - k);
+  for (let i = 1; i <= m; i++) out = out * (n - m + i) / i;
+  return out;
+}
+
+function w23binomPmf(k, n, p) {
+  return w23choose(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+}
+
+function w23distDiscrete(kind, a, b, lo, hi) {
+  const n = kind === 'bernoulli' ? 1 : Math.round(b);
+  const probs = [];
+  for (let k = 0; k <= n; k++) {
+    probs.push(kind === 'bernoulli'
+      ? (k === 1 ? a : 1 - a)
+      : w23binomPmf(k, n, a));
+  }
+  const left = Math.ceil(Math.min(lo, hi)), right = Math.floor(Math.max(lo, hi));
+  let prob = 0;
+  for (let k = Math.max(0, left); k <= Math.min(n, right); k++) prob += probs[k];
+  const ymax = Math.max(0.12, Math.max.apply(null, probs) * 1.18);
+  w23distS.domain([-0.6, n + 0.6], [0, ymax]);
+  w23distS.grid(Math.min(n + 1, 10), 4, {xtitle: 'x', ytitle: 'P(X=x)', ydec: 2});
+  const g = w23distS.clearLayer('main');
+  const width = Math.max(7, Math.min(34, w23distS.iw / (n + 1) * 0.62));
+  probs.forEach((v, k) => {
+    const selected = k >= left && k <= right;
+    const x = w23distS.X(k) - width / 2, y = w23distS.Y(v);
+    w23distS.add('rect', {x: x, y: y, width: width, height: w23distS.Y(0) - y,
+                          rx: 3, fill: selected ? HC.tok.accent2 : HC.tok.cardBorder}, g);
+  });
+  return prob;
+}
+
+function w23distContinuous(kind, a, b, lo, hi) {
+  let xmin, xmax, mean, sd, density, prob;
+  const left = lo, right = hi;
+  if (kind === 'uniform') {
+    xmin = a - (b - a) * 0.15;
+    xmax = b + (b - a) * 0.15;
+    mean = (a + b) / 2;
+    sd = (b - a) / Math.sqrt(12);
+    density = x => (x >= a && x <= b ? 1 / (b - a) : 0);
+    prob = Math.max(0, Math.min(b, right) - Math.max(a, left)) / (b - a);
+  } else {
+    mean = a;
+    sd = b;
+    xmin = mean - 4 * sd;
+    xmax = mean + 4 * sd;
+    density = x => HC.stat.dnorm(x, mean, sd);
+    prob = HC.stat.pnorm((right - mean) / sd) - HC.stat.pnorm((left - mean) / sd);
+  }
+  const ymax = density(mean) * 1.18;
+  w23distS.domain([xmin, xmax], [0, ymax]);
+  w23distS.grid(6, 4, {xtitle: 'x', ytitle: '密度', xdec: 1, ydec: 2});
+  const g = w23distS.clearLayer('main');
+  if (kind === 'uniform') {
+    const height = 1 / (b - a);
+    const shadeLo = Math.max(a, left), shadeHi = Math.min(b, right);
+    if (shadeHi > shadeLo) {
+      w23distS.box(shadeLo, 0, shadeHi, height,
+                   {fill: HC.tok.accent2, stroke: HC.tok.accent2, sw: 0}, g);
+    }
+    w23distS.seg(a, 0, a, height, {cls: 'w23curve', stroke: HC.tok.accent, sw: 3}, g);
+    w23distS.seg(a, height, b, height, {cls: 'w23curve', stroke: HC.tok.accent, sw: 3}, g);
+    w23distS.seg(b, height, b, 0, {cls: 'w23curve', stroke: HC.tok.accent, sw: 3}, g);
+  } else {
+    const xs = HC.stat.seq(xmin, xmax, 121);
+    const pts = xs.map(x => [x, density(x)]);
+    const shadeLo = Math.max(xmin, left), shadeHi = Math.min(xmax, right);
+    if (shadeHi > shadeLo) {
+      const areaPts = HC.stat.seq(shadeLo, shadeHi, 61).map(x => [x, density(x), 0]);
+      w23distS.area(areaPts, {fill: HC.tok.accent2}, g);
+    }
+    w23distS.poly(pts, {cls: 'w23curve', stroke: HC.tok.accent, sw: 3}, g);
+  }
+  return Math.max(0, Math.min(1, prob));
+}
+
+function w23distChange() {
+  const kind = document.getElementById('w23distKind').value;
+  const a = document.getElementById('w23distA');
+  const b = document.getElementById('w23distB');
+  const al = document.getElementById('w23distALabel');
+  const bl = document.getElementById('w23distBLabel');
+  if (kind === 'bernoulli') {
+    al.textContent = 'p'; bl.textContent = '未使用'; a.value = '0.5'; b.value = '5'; b.disabled = true;
+    document.getElementById('w23distLo').value = '0'; document.getElementById('w23distHi').value = '1';
+  } else if (kind === 'binomial') {
+    al.textContent = 'p'; bl.textContent = 'n'; a.value = '0.5'; b.value = '10'; b.disabled = false;
+    document.getElementById('w23distLo').value = '3'; document.getElementById('w23distHi').value = '7';
+  } else if (kind === 'uniform') {
+    al.textContent = 'a'; bl.textContent = 'b'; a.value = '0'; b.value = '8'; b.disabled = false;
+    document.getElementById('w23distLo').value = '2'; document.getElementById('w23distHi').value = '5';
+  } else {
+    al.textContent = 'μ'; bl.textContent = 'σ'; a.value = '0'; b.value = '1'; b.disabled = false;
+    document.getElementById('w23distLo').value = '-1'; document.getElementById('w23distHi').value = '1';
+  }
+  w23distDraw();
+}
+
+function w23distDraw() {
+  if (!w23distS) return;
+  const kind = document.getElementById('w23distKind').value;
+  let a = Number(document.getElementById('w23distA').value);
+  let b = Number(document.getElementById('w23distB').value);
+  let lo = w23clip(document.getElementById('w23distLo').value, -100, 100, 0);
+  let hi = w23clip(document.getElementById('w23distHi').value, -100, 100, 1);
+  if (lo > hi) {
+    const oldLo = lo;
+    lo = hi;
+    hi = oldLo;
+  }
+  document.getElementById('w23distLo').value = String(lo);
+  document.getElementById('w23distHi').value = String(hi);
+  let mean, variance, prob, how, label;
+  if (kind === 'bernoulli' || kind === 'binomial') {
+    a = w23clip(a, 0, 1, 0.5);
+    b = kind === 'bernoulli' ? 1 : Math.round(w23clip(b, 1, 20, 10));
+    document.getElementById('w23distA').value = String(a);
+    if (kind === 'binomial') document.getElementById('w23distB').value = String(b);
+    mean = b * a; variance = b * a * (1 - a);
+    prob = w23distDiscrete(kind, a, b, lo, hi);
+    how = '區間內 PMF 相加';
+    label = kind === 'bernoulli' ? 'Bernoulli：一次成敗' : '二項：' + b + ' 次獨立同率試驗的成功數';
+  } else if (kind === 'uniform') {
+    a = w23clip(a, -50, 49.9, 0);
+    b = w23clip(b, a + 0.1, 50, a + 1);
+    document.getElementById('w23distA').value = String(a);
+    document.getElementById('w23distB').value = String(b);
+    mean = (a + b) / 2; variance = (b - a) * (b - a) / 12;
+    prob = w23distContinuous(kind, a, b, lo, hi);
+    how = '區間長度／總長度'; label = '均勻：等長區間有相同機率';
+  } else {
+    a = w23clip(a, -50, 50, 0);
+    b = w23clip(b, 0.1, 20, 1);
+    document.getElementById('w23distA').value = String(a);
+    document.getElementById('w23distB').value = String(b);
+    mean = a; variance = b * b;
+    prob = w23distContinuous(kind, a, b, lo, hi);
+    how = '常態 CDF 的差'; label = '常態：μ 決定中心，σ 決定尺度；圖窗只顯示 μ±4σ，機率按完整輸入區間計算';
+  }
+  document.getElementById('w23distMean').textContent = HC.fmt(mean, 3);
+  document.getElementById('w23distVar').textContent = HC.fmt(variance, 3);
+  document.getElementById('w23distProb').textContent = HC.fmt(prob, 4);
+  document.getElementById('w23distHow').textContent = how;
+  setStatus('w23distStatus', '<b>' + label + '</b>；著色範圍的機率為 <b>' + HC.fmt(prob, 4) + '</b>。');
+}
+
+function w23distReset() {
+  document.getElementById('w23distKind').value = 'bernoulli';
+  w23distChange();
+}
+
+const w23cltS = HC.svg('w23cltSvg', {h: 360, pad: {l: 54, r: 18, t: 24, b: 44}});
+const w23cltNs = [1, 2, 5, 10];
+
+function w23cltMeans(n) {
+  const rand = HC.stat.lcg(20260923);
+  const out = [];
+  for (let r = 0; r < 160; r++) {
+    let sum = 0;
+    for (let i = 0; i < n; i++) sum += -Math.log(Math.max(rand(), 1e-12));
+    out.push(sum / n);
+  }
+  return out;
+}
+
+function w23cltDraw() {
+  if (!w23cltS) return;
+  const n = Number(document.getElementById('w23cltN').value);
+  const means = w23cltMeans(n);
+  const bins = 18;
+  const observedMax = Math.max.apply(null, means);
+  const xmax = Math.max(2.2, Math.ceil(observedMax * 5) / 5);
+  const width = xmax / bins;
+  const counts = Array(bins).fill(0);
+  means.forEach(v => { counts[Math.min(bins - 1, Math.floor(v / width))] += 1; });
+  const densities = counts.map(c => c / (means.length * width));
+  const theorySd = 1 / Math.sqrt(n);
+  const normalPeak = HC.stat.dnorm(1, 1, theorySd);
+  const ymax = Math.max(normalPeak, Math.max.apply(null, densities)) * 1.16;
+  w23cltS.domain([0, xmax], [0, ymax]);
+  w23cltS.grid(5, 4, {xtitle: '樣本平均', ytitle: '密度', xdec: 1, ydec: 2});
+  const g = w23cltS.clearLayer('main');
+  densities.forEach((v, i) => {
+    const x0 = i * width, x1 = (i + 1) * width;
+    w23cltS.box(x0, 0, x1, v, {fill: HC.tok.accent2, stroke: HC.tok.paper, sw: 0.8}, g);
+  });
+  const curve = HC.stat.seq(0, xmax, 121).map(x => [x, HC.stat.dnorm(x, 1, theorySd)]);
+  w23cltS.poly(curve, {cls: 'w23curve', stroke: HC.tok.accent3, sw: 3}, g);
+  const empiricalMean = HC.stat.mean(means), empiricalSd = HC.stat.sd(means);
+  document.getElementById('w23cltNOut').textContent = String(n);
+  document.getElementById('w23cltMean').textContent = HC.fmt(empiricalMean, 3);
+  document.getElementById('w23cltSd').textContent = HC.fmt(empiricalSd, 3);
+  document.getElementById('w23cltTheo').textContent = HC.fmt(theorySd, 3);
+  setStatus('w23cltStatus', n === 1
+    ? '<b>n=1：</b>樣本平均就是原始觀測，分佈仍明顯右偏。'
+    : '<b>n=' + n + '：</b>平均集中到 1 附近，抽樣分佈逐漸接近綠色常態曲線。');
+}
+
+function w23cltNext() {
+  const el = document.getElementById('w23cltN');
+  const i = w23cltNs.indexOf(Number(el.value));
+  el.value = String(w23cltNs[Math.min(i + 1, w23cltNs.length - 1)]);
+  w23cltDraw();
+}
+
+function w23cltReset() {
+  document.getElementById('w23cltN').value = '1';
+  w23cltDraw();
+}
+
+if (w23distS) w23distReset();
+if (w23cltS) w23cltReset();
+</script>
+<!-- PAGEJS:END -->
+<!-- DATA:BEGIN -->
+<script>
+const FLASHCARDS = [{"front":"隨機變數（Random Variable）","back":"把樣本空間中的每個結果映到一個實數的函式。隨機的是結果；映射規則在實驗前已固定。"},{"front":"機率分佈（Probability Distribution）","back":"列出隨機變數所有可能值及其相對可能性。離散分佈用質量，連續分佈用密度下的面積表達。"},{"front":"離散隨機變數","back":"只取有限或可數多個值，例如投幣正面次數。單點可以有正機率，區間機率靠加總 PMF。"},{"front":"連續隨機變數","back":"可在一段連續範圍內取值，例如時間或身高。任何精確單點的機率為 0，區間才有正機率。"},{"front":"機率質量函數（PMF）","back":"離散變數的 p(x)=P(X=x)。每個值都非負，所有可能值的質量加總為 1。"},{"front":"機率密度函數（PDF）","back":"連續變數的密度 f(x)。密度可大於 1；必須非負且整條曲線下的總面積為 1。"},{"front":"累積分佈函數（CDF）","back":"F(x)=P(X≤x)。F(b)−F(a)=P(a<X≤b)；離散時若要含左端點，再加 P(X=a)，連續時單點機率為 0。"},{"front":"支撐範圍（Support）","back":"隨機變數可能取值的範圍。Bernoulli 的支撐是 {0,1}，U(a,b) 的支撐是 [a,b]。"},{"front":"Bernoulli 分佈","back":"一次成敗試驗：成功取 1 的機率為 p，失敗取 0 的機率為 1−p。平均 p，變異數 p(1−p)。"},{"front":"二項分佈（Binomial Distribution）","back":"n 次獨立、成功率同為 p 的 Bernoulli 試驗之成功總數。平均 np，變異數 np(1−p)。"},{"front":"均勻分佈（Uniform Distribution）","back":"U(a,b) 在 [a,b] 上的密度固定為 1/(b−a)，所以機率只取決於子區間長度。"},{"front":"常態分佈（Normal Distribution）","back":"N(μ,σ²) 是以 μ 為中心的鐘形連續分佈。μ 決定位置，σ 決定尺度，σ² 是變異數。"},{"front":"期望值（Expected Value）","back":"隨機變數的機率加權平均，描述分佈中心。離散時加總 xp(x)，連續時積分 xf(x)。"},{"front":"變異數（Variance）","back":"E[(X−μ)²]，量測隨機變數離平均值的平方距離。標準差是變異數的平方根，與原變數同單位。"},{"front":"獨立同分佈（i.i.d.）","back":"觀測彼此獨立，而且都來自同一個分佈。本站呈現的基本 CLT 以此為明確條件。"},{"front":"統計量（Statistic）","back":"只由樣本計算、不含未知母體參數的函式，例如樣本平均。換一批樣本，統計量通常會改變。"},{"front":"抽樣分佈（Sampling Distribution）","back":"重複抽取新樣本時，某個統計量形成的分佈。它描述的是統計量的變動，不是單一觀測的分佈。"},{"front":"標準誤（Standard Error）","back":"估計量抽樣分佈的標準差。i.i.d. 樣本平均的標準誤為 σ/√n；實務上常以樣本標準差估計 σ。"},{"front":"大數法則（Law of Large Numbers）","back":"在適當條件下，樣本平均隨 n 增加而靠近母體平均。它不保證每加入一筆資料，誤差都單調縮小。"},{"front":"中央極限定理（Central Limit Theorem）","back":"在本站使用的版本中，觀測須 i.i.d.、平均有限，且 0<σ²<∞。此時標準化的樣本平均分佈隨 n 增大而趨近標準常態；它沒有統一的有限樣本門檻。"}];
+HC.initFlashcards();
+</script>
+<!-- DATA:END -->
+</body></html>

@@ -450,7 +450,7 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
   color:var(--muted);font-size:.74rem;line-height:1.5;}
 .viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
-  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  background:var(--code-bg);color:#fff;font-family:'JetBrains Mono',monospace;
   font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
@@ -1029,7 +1029,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <div class="qa-a"><p>平均更多項會更穩，<strong>前提是那些項彼此獨立</strong>。這裡不是。</p><p>算式上看：$\mathrm{Var}(\bar X) = \frac{\sigma^2}{k} + \frac{k-1}{k}\rho\sigma^2$。第一項隨 k 變大而變小，但第二項隨 $\rho$（各折之間的相關）變大而變大。LOOCV 的 $\rho$ 接近 1，第二項就會抵銷第一項隨 k 減小的效果。</p><p>直覺版：LOOCV 的 n 個模型幾乎是同一個模型，所以你其實只有「一個」意見被重複算了 n 次。</p></div>
   </details>
   <details class="qa-item"><summary>Q：跑 CV 之前要不要標準化？在哪一步做？</summary>
-    <div class="qa-a"><p>要，而且<strong>必須在每一折裡面做</strong>：用該折的訓練部分算平均與標準差，再套到驗證部分。</p><p>如果先用全部資料標準化再切折，驗證資料的平均與標準差就洩漏進訓練流程了，CV 誤差會偏低。<code>scikit-learn</code> 的正解是把標準化包進 <code>Pipeline</code>，再把整個 pipeline 丟給 <code>cross_validate</code>。它會自動在每折內重新 fit。這跟下一節的錯誤是同一個病。</p></div>
+    <div class="qa-a"><p>要，而且<strong>必須在每一折裡面做</strong>：用該折的訓練部分算平均與標準差，再套到驗證部分。</p><p>如果先用全部資料標準化再切折，驗證資料的平均與標準差就洩漏進訓練流程了，但 CV 誤差改變的方向與大小取決於模型與資料，不能只憑洩漏判定。例如含截距、未正則化的最小平方在線性縮放下可張出同一模型空間，預測甚至不變。<code>scikit-learn</code> 的正解仍是把標準化包進 <code>Pipeline</code>，再把整個 pipeline 丟給 <code>cross_validate</code>。它會自動在每折內重新 fit。這跟下一節的錯誤是同一個病。</p></div>
   </details>
 </div>
 
@@ -1138,7 +1138,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：只用 X 不看 y 的前處理（例如 PCA、去除零變異特徵），也要關在折裡嗎？</summary>
-    <div class="qa-a"><p>嚴格說要，實務上影響小得多。</p><p>不看 y 的前處理不會直接把答案洩漏進來，所以偏差通常很輕微。但它仍然用到了驗證資料的<strong>分佈</strong>資訊（PCA 的方向、特徵的變異數），而在部署時你不可能先看過未來資料的分佈。既然包進 <code>Pipeline</code> 幾乎沒有額外成本，就一律包進去，不必去分辨哪種洩漏比較嚴重。</p></div>
+    <div class="qa-a"><p>要，因為部署時無法先用未來資料估前處理參數。</p><p>不看 y 的前處理不會直接把標籤洩漏進來，但偏差方向與大小仍取決於模型與資料，有時預測可以完全不變。但它仍然用到了驗證資料的<strong>分佈</strong>資訊（PCA 的方向、特徵的變異數），而在部署時你不可能先看過未來資料的分佈。既然包進 <code>Pipeline</code> 幾乎沒有額外成本，就一律包進去，不必去分辨哪種洩漏比較嚴重。</p></div>
   </details>
   <details class="qa-item"><summary>Q：我用 CV 選超參數，那 CV 誤差可以當成最終模型的測試誤差報出來嗎？</summary>
     <div class="qa-a"><p>不太行，它會偏低。你已經拿 CV 誤差當目標挑過超參數了——被挑中的那組本來就是「在這組折上運氣最好」的那組，這叫做選擇偏差。</p><p>要把調參與評估分開，可以用<strong>嵌套交叉驗證</strong>（nested CV）：外層折只負責評估、完全不參與調參；內層折在外層的訓練部分裡調參。或者更簡單：一開始就切出一份從頭到尾沒碰過的測試集。</p></div>
@@ -1148,7 +1148,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · CV 的錯用</div>
   <p>在 5-fold CV 之前先用<strong>全部</strong>資料把特徵標準化（減平均、除標準差）。這樣有問題嗎？</p>
-  <div class="quiz-options" id="qWrongOptions"><div class="quiz-opt" data-correct="true" data-fb="對。正解是把 <code>StandardScaler</code> 放進 <code>Pipeline</code>，讓它在每折的訓練部分重新 fit。這個偏差通常比「先選特徵」小，但方向一樣。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(A)</span> 有問題：平均與標準差用到了驗證折的資料，屬於洩漏，CV 誤差會偏低</div><div class="quiz-opt" data-correct="false" data-fb="不對。對<em>單一次</em>配適來說它確實只是換單位；但這裡的問題不在變換本身，而在<strong>參數（平均、標準差）是從包含驗證資料的集合算出來的</strong>。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(B)</span> 沒問題：標準化只是線性變換，不改變模型的預測能力</div><div class="quiz-opt" data-correct="false" data-fb="方向對了一半。沒用到 y 讓偏差小很多，但仍然用了驗證資料的分佈資訊。既然包進 Pipeline 沒有成本，就不要留這個破口。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(C)</span> 沒問題：標準化沒有用到 y，所以不算洩漏</div></div>
+  <div class="quiz-options" id="qWrongOptions"><div class="quiz-opt" data-correct="true" data-fb="對。把 <code>StandardScaler</code> 放進 <code>Pipeline</code>，讓它在每折的訓練部分重新 fit。數值偏差可能高、低或為零；含截距且未正則化的最小平方在仿射縮放下甚至可得到相同預測。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(A)</span> 有問題：平均與標準差用到了驗證折；應折內 fit，但誤差偏差方向不能預先斷言</div><div class="quiz-opt" data-correct="false" data-fb="這只對部分模型成立，例如含截距、未正則化的最小平方。一般流程仍不應用驗證折估平均與標準差；正則化、距離式方法等也可能改變預測。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(B)</span> 沒問題：標準化只是線性變換，不改變模型的預測能力</div><div class="quiz-opt" data-correct="false" data-fb="沒用到 y 不等於能用驗證折估參數；它仍用了驗證資料的分佈資訊。應在每折訓練部分 fit，再套到該折驗證部分。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(C)</span> 沒問題：標準化沒有用到 y，所以不算洩漏</div></div>
   <div class="quiz-feedback" id="qWrongFeedback"></div>
 </div>
 </section>
@@ -1159,6 +1159,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:bootstrap -->
 
   <p>換一個問題。前面都在問「模型的預測有多準」；現在問<strong>「我算出來的這個數字有多不確定」</strong>。</p>
+
+  <p class="core-backfill">抽樣分佈與自助法還不熟時，可先回補
+  <a href="s4_inference.html#bootstrap">S4 的 Bootstrap 入門</a>。</p>
 
   <p>ISLP §5.2 的例子：把錢分成比例 α 投資 X、1 − α 投資 Y，要讓報酬的變異最小，最佳比例是</p>
 
@@ -1358,8 +1361,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   兩者都在重抽樣，但問的問題不同，不要混用。<br>
   <strong>2. k = 5 或 10 是偏差、變異、算力三方的折衷。</strong>
   LOOCV 偏差最小但各折高度相關、變異大。<br>
-  <strong>3. 任何用到 y 的步驟都要關在折裡面。</strong>
-  特徵篩選、標準化、填補、過抽樣、目標編碼——包進 <code>Pipeline</code> 就對了。
+  <strong>3. 任何從資料估參數的前處理都要關在折裡面。</strong>
+  特徵篩選、標準化、填補、過抽樣、目標編碼——在每折訓練部分 fit，再套到驗證部分。
+  洩漏造成的數值偏差方向依模型與資料而定。
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>

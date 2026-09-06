@@ -65,6 +65,24 @@ async function checkOne(browser, stem) {
 
   await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
   await new Promise(r => setTimeout(r, 1500));
+  await page.evaluate(async () => {
+    if (window.MathJax?.startup?.promise) await MathJax.startup.promise;
+  });
+  const mathErrors = await page.$$eval('mjx-merror', els => els.map(el => el.textContent));
+  mathErrors.forEach(msg => note(stem, '數學排版錯誤：' + msg));
+
+  // Card JSON and its reader-visible text must agree (including <, > and &).
+  const cardTextProblems = await page.evaluate(() => {
+    if (typeof FLASHCARDS === 'undefined') return [];
+    return [...document.querySelectorAll('.fc-card')].flatMap((el, i) => {
+      const front = el.querySelector('.fc-front > div');
+      const back = el.querySelector('.fc-back');
+      return front?.textContent === FLASHCARDS[i]?.front
+        && back?.textContent === FLASHCARDS[i]?.back && back.childElementCount === 0
+        ? [] : ['詞彙卡 ' + (i + 1) + ' 文字與母檔不符'];
+    });
+  });
+  cardTextProblems.forEach(msg => note(stem, msg));
 
   // Chart.js 是否真的畫了
   const charts = await page.evaluate(() => {

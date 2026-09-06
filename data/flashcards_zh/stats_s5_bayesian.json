@@ -1,0 +1,22 @@
+[
+  {"front": "先驗機率（Prior Probability）", "back": "看到目前資料之前，對事件或參數的機率判斷。它會和概似一起決定後驗。"},
+  {"front": "後驗機率（Posterior Probability）", "back": "看到資料之後更新得到的機率。離散事件用 Bayes 公式；連續參數用正規化後的密度表示。"},
+  {"front": "Bayes 公式（Bayes' Theorem）", "back": "P(A｜B)=P(B｜A)P(A)/P(B)。分子是產生 B 的一條指定路徑，分母加總所有能產生 B 的路徑。"},
+  {"front": "基準率（Base Rate）", "back": "事件在看到新證據前的發生率。罕見疾病檢驗中，即使敏感度高，基準率仍會大幅影響陽性後的患病機率。"},
+  {"front": "敏感度（Sensitivity）", "back": "真正有疾病者呈陽性的機率 P(+｜疾病)。它不是陽性者患病的機率。"},
+  {"front": "偽陽性率（False Positive Rate）", "back": "健康者呈陽性的機率 P(+｜健康)。和盛行率一起決定陽性結果中有多少人其實健康。"},
+  {"front": "概似（Likelihood）", "back": "固定已觀察資料，把參數當成變數後得到的相對支持度。概似不必對參數積分為 1。"},
+  {"front": "概似函數（Likelihood Function）", "back": "硬幣有 s 次正面、f 次反面時，L(p) ∝ p^s(1−p)^f。與 p 無關的常數不影響參數比較。"},
+  {"front": "概似比（Likelihood Ratio）", "back": "同一批資料在兩個參數值下的概似相除，用來比較相對支持度；不是兩個參數的後驗機率比。"},
+  {"front": "最大概似估計（MLE）", "back": "讓概似最大的參數值。硬幣有資料時為 s/(s+f)；零筆資料時所有 p 都達到相同最大值，因此 MLE 不唯一。"},
+  {"front": "先驗分布（Prior Distribution）", "back": "看到資料前，以一整個分布描述未知參數的可能值與不確定性。中心相同的先驗仍可有不同集中程度。"},
+  {"front": "Beta 分布（Beta Distribution）", "back": "定義在 0 到 1 的連續分布，常用來描述 Bernoulli 成功機率。參數 α、β 都為 1 時是均勻分布。"},
+  {"front": "Beta 函數（Beta Function）", "back": "B(α,β) 是 Beta 密度的正規化常數，使密度曲線下面積等於 1。"},
+  {"front": "共軛先驗（Conjugate Prior）", "back": "更新後仍屬於同一分布家族的先驗。Beta 先驗搭配 Bernoulli 或 Binomial 資料後，後驗仍是 Beta。"},
+  {"front": "Beta–Binomial 更新", "back": "Beta(α,β) 先驗加上 s 次成功、f 次失敗後，後驗是 Beta(α+s,β+f)。"},
+  {"front": "後驗平均（Posterior Mean）", "back": "Beta(α+s,β+f) 的平均為 (α+s)/(α+β+s+f)，可讀成先驗平均與資料比例的加權。"},
+  {"front": "相對概似（Relative Likelihood）", "back": "把概似除以其最大值，使曲線最高點為 1。這個縮放方便比較形狀，不會把概似變成機率密度。"},
+  {"front": "正規化（Normalization）", "back": "除以總機率或積分，使結果加總或積分為 1。後驗密度需要正規化，相對概似只把峰值縮放為 1。"},
+  {"front": "先驗總量（Prior Concentration）", "back": "Beta 先驗的 α+β 反映集中程度。平均相同時，總量越大，少量資料造成的後驗移動通常越小。"},
+  {"front": "後驗預測（Posterior Predictive）", "back": "把未知參數依後驗分布平均後得到未來資料的預測。Beta 後驗下，下一次成功機率等於 Beta 的後驗平均。"}
+]

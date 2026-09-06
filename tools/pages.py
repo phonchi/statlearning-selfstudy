@@ -93,8 +93,8 @@ class Page:
     ex_links: list = field(default_factory=list)   # prep 頁 EX 區的 pill（官方文件）
     nav_next: str = ""          # 覆寫 chapter-nav 的下一頁 stem（區與區之間的接縫）
     nav_prev: str = ""          # 覆寫 chapter-nav 的上一頁 stem（同上，反方向）
-    # 顯示分區。空字串→退回 kind。三個值："pre"（課前準備）、"core"（正課）、
-    # "appendix"（Python 先備）。刻意與 kind 分開：kind 管的是「這頁受哪一套檢查」
+    # 顯示分區。空字串→退回 kind。"pre"（課前準備）、"statistics"（統計先備）、"core"（正課）、
+    # "appendix"（Python 先備）。kind 管教學文案，grounding_mode 管來源檢查；group 管位置。
     # （prep 頁要過 check_prep_grounding），group 管的是「這頁排在哪一區」。
     group: str = ""
     deck_url: str = ""         # 單頁引用的講義版本；空字串沿用課程封存站
@@ -102,6 +102,7 @@ class Page:
     deck_note: str = ""
     legacy_anchors: tuple = ()  # 重排後保留在小標題上的既有書籤
     page_css: str = ""         # 僅此頁需要的閱讀版面，避免影響其他章
+    grounding_mode: str = "lab"  # lab：課程程式與輸出；concept：書目、算例與模擬
 
     @property
     def grp(self) -> str:
@@ -1009,6 +1010,12 @@ PAGES = [
 #
 # 分區用 group（"pre"／"core"／"appendix"），不要用 kind——kind 管的是
 # 「這頁受哪一套檢查」（prep 頁要過 check_prep_grounding），兩者刻意分開。
+
+from statistics_pages import make_pages as _statistics_pages
+
+# 統計先備是獨立選讀區；課前準備仍可直接進入正課。
+_core_start = next(i for i, p in enumerate(PAGES) if p.grp == "core")
+PAGES[_core_start:_core_start] = _statistics_pages(Page, Sec)
 
 BY_STEM = {p.stem: p for p in PAGES}
 BY_N = {p.n: p for p in PAGES}

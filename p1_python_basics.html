@@ -450,7 +450,7 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
   color:var(--muted);font-size:.74rem;line-height:1.5;}
 .viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
-  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  background:var(--code-bg);color:#fff;font-family:'JetBrains Mono',monospace;
   font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
@@ -1057,7 +1057,7 @@ dtype: int64</pre></div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
-  <p><code>scores = {{'R2': 0.54}}</code>，執行 <code>scores['MSE']</code> 會怎樣？</p>
+  <p><code>scores = {'R2': 0.54}</code>，執行 <code>scores['MSE']</code> 會怎樣？</p>
   <div class="quiz-options" id="qDictOptions"><div class="quiz-opt" data-correct="true" data-fb="對。鍵不存在就報錯，不會給你 <code>None</code>。想要「找不到就給預設值」得寫 <code>scores.get('MSE', 0)</code>。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(A)</span> 拋 <code>KeyError</code></div><div class="quiz-opt" data-correct="false" data-fb="那是 <code>.get()</code> 的行為。直接用中括號取值找不到時會報錯——這是刻意的，免得你把打錯的欄名一路帶下去。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(B)</span> 回傳 <code>None</code></div><div class="quiz-opt" data-correct="false" data-fb="讀取不會建立。<code>scores['MSE'] = 38.5</code> 這種<strong>賦值</strong>才會。" onclick="quizCheck('qDict', this)"><span class="opt-letter">(C)</span> 自動建一個空的 MSE 項目</div></div>
   <div class="quiz-feedback" id="qDictFeedback"></div>
 </div>
@@ -1083,7 +1083,7 @@ Column &quot;bar&quot; has 25.98% missing values
 Column &quot;pickle&quot; has 29.13% missing values
 Column &quot;snack&quot; has 21.26% missing values
 Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
-  <p class="dx-note"><code>{{1:.2%}}</code> 的意思是「第 1 個引數，用百分比、小數兩位」。所以 0.1654 印出來是 16.54%。這一格同時示範了迴圈與格式化。</p>
+  <p class="dx-note"><code>{1:.2%}</code> 的意思是「第 1 個引數，用百分比、小數兩位」。所以 0.1654 印出來是 16.54%。這一格同時示範了迴圈與格式化。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 244</span>
 </div>
 
@@ -1095,7 +1095,7 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
   <span class="line">    total += value</span>
   <span class="line">print(<span class="str">&#x27;Total is: {0}&#x27;</span>.format(total))</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Total is: 24</pre></div>
-  <p class="dx-note"><code>{{0}}</code> 是「第 0 個引數」。現在更常見的寫法是 f-string：<code>f'Total is: {{total}}'</code>，兩種都會遇到。</p>
+  <p class="dx-note"><code>{0}</code> 是「第 0 個引數」。現在更常見的寫法是 f-string：<code>f'Total is: {total}'</code>，兩種都會遇到。</p>
   <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 236</span>
 </div>
 
@@ -1119,14 +1119,14 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">f-string 是現在的預設寫法</div>
-      <code>f'MSE = {{mse:.2f}}'</code> 把變數直接寫在字串裡，冒號後面接的格式規格跟 <code>format</code> 完全一樣。本站的程式碼卡兩種都會出現，因為課程 lab 兩種都用。
+      <code>f'MSE = {mse:.2f}'</code> 把變數直接寫在字串裡，冒號後面接的格式規格跟 <code>format</code> 完全一樣。本站的程式碼卡兩種都會出現，因為課程 lab 兩種都用。
     </div>
   </div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
-  <p><code>'{{:.2%}}'.format(0.1654)</code> 會印出什麼？</p>
+  <p><code>'{:.2%}'.format(0.1654)</code> 會印出什麼？</p>
   <div class="quiz-options" id="qStrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。百分比格式會<strong>先乘 100 再加百分號</strong>，所以不要自己再乘一次。lab 儲存格 244 算遺漏比例就是用這個。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(A)</span> <code>16.54%</code></div><div class="quiz-opt" data-correct="false" data-fb="格式規格 <code>%</code> 會自己乘 100。如果你先乘了 100 再用 <code>:.2%</code>，就會多乘一次變成 1654%。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(B)</span> <code>0.17%</code></div><div class="quiz-opt" data-correct="false" data-fb="小數兩位是<strong>乘 100 之後</strong>才算的。" onclick="quizCheck('qStr', this)"><span class="opt-letter">(C)</span> <code>0.1654%</code></div></div>
   <div class="quiz-feedback" id="qStrFeedback"></div>
 </div>
@@ -1163,14 +1163,14 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 字典</div>
   <p>你想記錄三個模型的 MSE，之後要能用模型名字查。該用什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="能動，但沒辦法用迴圈處理，也沒辦法「用名字查」——你得記得哪個數字對應哪個模型。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 三個變數 <code>mse1</code>、<code>mse2</code>、<code>mse3</code></div><div class="quiz-opt" data-correct="true" data-fb="對。名字直接當鍵，之後 <code>for name, mse in d.items()</code> 就能一次處理完，印報告也方便。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 一個字典 <code>{{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}}</code></div><div class="quiz-opt" data-correct="false" data-fb="串列能存值但存不了名字，你得另外記「第 0 個是 linear」——用字典可以直接依模型名稱查值。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 一個串列 <code>[25.57, 22.22, 22.67]</code></div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="能動，但沒辦法用迴圈處理，也沒辦法「用名字查」——你得記得哪個數字對應哪個模型。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 三個變數 <code>mse1</code>、<code>mse2</code>、<code>mse3</code></div><div class="quiz-opt" data-correct="true" data-fb="對。名字直接當鍵，之後 <code>for name, mse in d.items()</code> 就能一次處理完，印報告也方便。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 一個字典 <code>{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}</code></div><div class="quiz-opt" data-correct="false" data-fb="串列能存值但存不了名字，你得另外記「第 0 個是 linear」——用字典可以直接依模型名稱查值。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 一個串列 <code>[25.57, 22.22, 22.67]</code></div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 格式化</div>
   <p>MSE 是 25.573878189684412，你想在報告裡印成兩位小數。哪一個寫法對？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。用 <code>'{{:.2f}}'.format(mse)</code> 也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>f'MSE = {{mse:.2f}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="<code>round</code> 不給第二個引數的話會四捨五入到整數，變成 26。它會改變<strong>數值</strong>；格式化保留數值，只調整顯示方式，後者比較安全。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>f'MSE = {{round(mse)}}'</code></div><div class="quiz-opt" data-correct="false" data-fb="少了那個點。<code>2f</code> 的 2 會被當成<strong>總寬度</strong>不是小數位數，結果會印出全部的小數。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>f'MSE = {{mse:2f}}'</code></div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。用 <code>'{:.2f}'.format(mse)</code> 也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>f'MSE = {mse:.2f}'</code></div><div class="quiz-opt" data-correct="false" data-fb="<code>round</code> 不給第二個引數的話會四捨五入到整數，變成 26。它會改變<strong>數值</strong>；格式化保留數值，只調整顯示方式，後者比較安全。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>f'MSE = {round(mse)}'</code></div><div class="quiz-opt" data-correct="false" data-fb="少了那個點。<code>2f</code> 的 2 會被當成<strong>總寬度</strong>不是小數位數，未指定精度時會用預設六位小數，不是題目要的兩位。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>f'MSE = {mse:2f}'</code></div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1181,7 +1181,9 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w14-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
 <!-- GEN:END sec:reference -->
 
-  <p>三張速查表整理串列與字典、切片、格式規格。</p>
+  <p>三張速查表整理串列與字典、切片、格式規格。
+  Python 的「變數」是指向物件的名稱；統計資料的「變數」通常指一個測量特徵或欄位。
+  串列索引是位置；pandas 的 Index 可以是列標籤，兩者的對照見<a href="p4_pandas.html#select">loc 與 iloc</a>。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>你想做的事</th><th>串列</th><th>字典</th></tr></thead>
@@ -1195,7 +1197,7 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>格式規格</th><th>0.1654 印出來</th><th>什麼時候用</th></tr></thead>
-  <tbody><tr><td><code>{{:.2f}}</code></td><td>0.17</td><td>一般統計量</td></tr><tr><td><code>{{:.4f}}</code></td><td>0.1654</td><td>係數、p 值</td></tr><tr><td><code>{{:.2%}}</code></td><td>16.54%</td><td>比例、遺漏率</td></tr><tr><td><code>{{:.3e}}</code></td><td>1.654e-01</td><td>非常大或非常小的數</td></tr><tr><td><code>{{:>10.2f}}</code></td><td>　　　　　0.17</td><td>對齊成一欄</td></tr></tbody>
+  <tbody><tr><td><code>{:.2f}</code></td><td>0.17</td><td>一般統計量</td></tr><tr><td><code>{:.4f}</code></td><td>0.1654</td><td>係數、p 值</td></tr><tr><td><code>{:.2%}</code></td><td>16.54%</td><td>比例、遺漏率</td></tr><tr><td><code>{:.3e}</code></td><td>1.654e-01</td><td>非常大或非常小的數</td></tr><tr><td><code>{:>10.2f}</code></td><td>　　　　　0.17</td><td>對齊成一欄</td></tr></tbody>
 </table></div>
 
 <div class="info-box">
@@ -2088,7 +2090,7 @@ if (w14fmS) w14fmDraw();
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"直譯器（Interpreter）","back":"一行一行讀你的程式碼並執行的東西。Jupyter 的每一個儲存格都是丟給它跑，而且會自動顯示<b>最後一行的值</b>，所以不寫 print 也看得到結果。"},{"front":"變數（Variable）","back":"可以把變數想成貼在物件上的<b>名牌</b>。<code>b = a</code> 讓兩個名字指向同一個物件。"},{"front":"賦值（Assignment）","back":"<code>x = [3, 4, 5]</code>：先建立右邊的物件，再讓左邊的名字指向它。這裡的等號表示賦值。"},{"front":"別名（Alias）","back":"同一個物件有兩個以上的名字。修改共用的資料時，其他名字也會看到改動。需要獨立副本時，明確使用 <code>.copy()</code>。"},{"front":"不可變（Immutable）","back":"整數、浮點數、字串、tuple 不能被就地修改，所以它們沒有別名的問題。串列與字典是可變的，才要小心。"},{"front":"整數（int）","back":"沒有小數的數。樣本數 n、變數個數 p、折數 k 都是它。<code>7 // 2</code> 是整數除法，直接砍掉小數。"},{"front":"浮點數（float）","back":"有小數的數。MSE、係數、p 值幾乎都是。<code>7 / 2</code> 給的就是浮點數 3.5。"},{"front":"字串（str）","back":"用引號包起來的文字，例如欄名、檔名與圖的標題。字串的加號表示<b>串接</b>。"},{"front":"布林（bool）","back":"只有 <code>True</code> 與 <code>False</code>。條件的結果是它，P3 的布林遮罩整排都是它。"},{"front":"串列（list）","back":"有順序的一排東西，用中括號寫，從 <b>0</b> 開始數。常拿來裝一組欄名或一組要試的參數。"},{"front":"索引（Index）","back":"串列裡的位置。想成「離開頭有多遠」——第一個離開頭 0 步，所以從 0 開始。"},{"front":"負索引（Negative Index）","back":"從後面數起：<code>-1</code> 是最後一個、<code>-2</code> 是倒數第二。比 <code>a[len(a)-1]</code> 好讀。"},{"front":"切片（Slice）","back":"<code>起:迄:步長</code>，而且<b>迄不包含</b>。好處是 <code>a[:k]</code> 加 <code>a[k:]</code> 剛好是整個 a，不重疊也不漏。"},{"front":"整段切片（a[:]）","back":"從頭到尾，而且會產生<b>新的一份</b>。跟 <code>b = a</code> 完全不同——後者只是多貼名牌。"},{"front":"字典（dict）","back":"鍵值對的集合，可以用<b>名字</b>取值。統計程式常用它儲存一組具名的結果。"},{"front":"鍵（Key）","back":"字典裡用來查值的名字。必須是不可變的東西（字串、數字、tuple），串列不行。實務上常用字串。"},{"front":"KeyError","back":"字典裡沒有指定的鍵時拋出的錯誤，可以先核對名稱。需要找不到時回傳預設值，可用 <code>d.get(鍵, 預設)</code>。"},{"front":"安全取值（get）","back":"<code>d.get('R2', 0)</code>：找得到就給值，找不到給預設值而不是報錯。"},{"front":"函式呼叫（Function Call）","back":"名字後面加括號，括號裡是要給它的東西。<code>print(x)</code>、<code>len(a)</code>、<code>sm.OLS(y, X)</code> 都是。"},{"front":"格式化（Formatting）","back":"把數字變成人看得懂的字串。<code>f'MSE = {mse:.2f}'</code> 或 <code>'{:.2f}'.format(mse)</code>，冒號後面是格式規格。"},{"front":"格式規格（Format Spec）","back":"冒號後面那一段。<code>.2f</code> 是小數兩位、<code>.2%</code> 是百分比（<b>會自己乘 100</b>）、<code>.3e</code> 是科學記號、<code>&gt;10</code> 是靠右對齊到寬度 10。"},{"front":"f-string","back":"字串前面加 <code>f</code>，就能把變數直接寫在大括號裡：<code>f'n = {n}'</code>。現在的預設寫法，格式規格跟 <code>format</code> 完全一樣。"},{"front":"整數除法（//）","back":"<code>7 // 2</code> 給 3，直接砍掉小數。算折數或索引時用，算統計量千萬別用錯。"},{"front":"Jupyter 儲存格（Cell）","back":"一小塊可以單獨執行的程式碼，會顯示最後一行的值。<b>你可以自行選擇執行順序</b>；亂序執行時，要留意記憶體中殘留的變數。"}];
+const FLASHCARDS = [{"front":"直譯器（Interpreter）","back":"一行一行讀你的程式碼並執行的東西。Jupyter 的每一個儲存格都是丟給它跑，而且會自動顯示最後一行的值，所以不寫 print 也看得到結果。"},{"front":"變數（Variable）","back":"可以把變數想成貼在物件上的名牌。b = a 讓兩個名字指向同一個物件。"},{"front":"賦值（Assignment）","back":"x = [3, 4, 5]：先建立右邊的物件，再讓左邊的名字指向它。這裡的等號表示賦值。"},{"front":"別名（Alias）","back":"同一個物件有兩個以上的名字。修改共用的資料時，其他名字也會看到改動。需要獨立副本時，明確使用 .copy()。"},{"front":"不可變（Immutable）","back":"整數、浮點數、字串、tuple 不能被就地修改，所以它們沒有別名的問題。串列與字典是可變的，才要小心。"},{"front":"整數（int）","back":"沒有小數的數。樣本數 n、變數個數 p、折數 k 都是它。7 // 2 是整數除法，直接砍掉小數。"},{"front":"浮點數（float）","back":"有小數的數。MSE、係數、p 值幾乎都是。7 / 2 給的就是浮點數 3.5。"},{"front":"字串（str）","back":"用引號包起來的文字，例如欄名、檔名與圖的標題。字串的加號表示串接。"},{"front":"布林（bool）","back":"只有 True 與 False。條件的結果是它，P3 的布林遮罩整排都是它。"},{"front":"串列（list）","back":"有順序的一排東西，用中括號寫，從 0 開始數。常拿來裝一組欄名或一組要試的參數。"},{"front":"索引（Index）","back":"串列裡的位置。想成「離開頭有多遠」——第一個離開頭 0 步，所以從 0 開始。"},{"front":"負索引（Negative Index）","back":"從後面數起：-1 是最後一個、-2 是倒數第二。比 a[len(a)-1] 好讀。"},{"front":"切片（Slice）","back":"起:迄:步長，而且迄不包含。好處是 a[:k] 加 a[k:] 剛好是整個 a，不重疊也不漏。"},{"front":"整段切片（a[:]）","back":"從頭到尾，而且會產生新的一份。跟 b = a 完全不同——後者只是多貼名牌。"},{"front":"字典（dict）","back":"鍵值對的集合，可以用名字取值。統計程式常用它儲存一組具名的結果。"},{"front":"鍵（Key）","back":"字典裡用來查值的名字。必須是不可變的東西（字串、數字、tuple），串列不行。實務上常用字串。"},{"front":"KeyError","back":"字典裡沒有指定的鍵時拋出的錯誤，可以先核對名稱。需要找不到時回傳預設值，可用 d.get(鍵, 預設)。"},{"front":"安全取值（get）","back":"d.get('R2', 0)：找得到就給值，找不到給預設值而不是報錯。"},{"front":"函式呼叫（Function Call）","back":"名字後面加括號，括號裡是要給它的東西。print(x)、len(a)、sm.OLS(y, X) 都是。"},{"front":"格式化（Formatting）","back":"把數字變成人看得懂的字串。f'MSE = {mse:.2f}' 或 '{:.2f}'.format(mse)，冒號後面是格式規格。"},{"front":"格式規格（Format Spec）","back":"冒號後面那一段。.2f 是小數兩位、.2% 是百分比（會自己乘 100）、.3e 是科學記號、>10 是靠右對齊到寬度 10。"},{"front":"f-string","back":"字串前面加 f，就能把變數直接寫在大括號裡：f'n = {n}'。現在的預設寫法，格式規格跟 format 完全一樣。"},{"front":"整數除法（//）","back":"7 // 2 給 3，直接砍掉小數。算折數或索引時用，算統計量千萬別用錯。"},{"front":"Jupyter 儲存格（Cell）","back":"一小塊可以單獨執行的程式碼，會顯示最後一行的值。你可以自行選擇執行順序；亂序執行時，要留意記憶體中殘留的變數。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

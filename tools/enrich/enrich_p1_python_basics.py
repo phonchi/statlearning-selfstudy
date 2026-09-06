@@ -273,7 +273,7 @@ BODIES["dict"] = f"""
 ])}
 
 {quiz("qDict", "PART 04 · 自我檢測",
-      "<code>scores = {{'R2': 0.54}}</code>，執行 <code>scores['MSE']</code> 會怎樣？",
+      "<code>scores = {'R2': 0.54}</code>，執行 <code>scores['MSE']</code> 會怎樣？",
       [(True, "拋 <code>KeyError</code>",
         "對。鍵不存在就報錯，不會給你 <code>None</code>。"
         "想要「找不到就給預設值」得寫 <code>scores.get('MSE', 0)</code>。"),
@@ -290,13 +290,10 @@ BODIES["str"] = f"""
   「MSE 是 25.573878189684412」沒有人想讀，你要的是「MSE 是 25.57」。</p>
 
 {card("format 與格式規格", C(2, 244), O(2, 244), src=S(2, 244),
-      note="<code>{{1:.2%}}</code> 的意思是「第 1 個引數，用百分比、小數兩位」。"
-           "所以 0.1654 印出來是 16.54%。這一格同時示範了迴圈與格式化。")}
+      note='<code>{1:.2%}</code> 的意思是「第 1 個引數，用百分比、小數兩位」。所以 0.1654 印出來是 16.54%。這一格同時示範了迴圈與格式化。')}
 
 {card("迴圈裡的格式化", C(2, 236), O(2, 236), src=S(2, 236),
-      note="<code>{{0}}</code> 是「第 0 個引數」。"
-           "現在更常見的寫法是 f-string：<code>f'Total is: {{total}}'</code>，"
-           "兩種都會遇到。")}
+      note="<code>{0}</code> 是「第 0 個引數」。現在更常見的寫法是 f-string：<code>f'Total is: {total}'</code>，兩種都會遇到。")}
 
 {viz(svg("w14fmtSvg", 300),
      [info_card("改格式規格看結果",
@@ -307,9 +304,7 @@ BODIES["str"] = f"""
                  ("輸出", "25.57", "w14fmOut"),
                  ("什麼時候用", "報告統計量", "w14fmWhen")]),
       info_card("f-string 是現在的預設寫法",
-                "<code>f'MSE = {{mse:.2f}}'</code> 把變數直接寫在字串裡，"
-                "冒號後面接的格式規格跟 <code>format</code> 完全一樣。"
-                "本站的程式碼卡兩種都會出現，因為課程 lab 兩種都用。")],
+                "<code>f'MSE = {mse:.2f}'</code> 把變數直接寫在字串裡，冒號後面接的格式規格跟 <code>format</code> 完全一樣。本站的程式碼卡兩種都會出現，因為課程 lab 兩種都用。")],
      "w14fmStatus", "同一個數字，五種格式。",
      '<button class="btn btn-toggle" onclick="w14fmSet(0)">{:.2f}</button>'
      '<button class="btn btn-toggle" onclick="w14fmSet(1)">{:.4f}</button>'
@@ -319,7 +314,7 @@ BODIES["str"] = f"""
      provenance=("course-data", "依 Ch02 lab 的 format 與 f-string 格式規格重繪。"))}
 
 {quiz("qStr", "PART 05 · 自我檢測",
-      "<code>'{{:.2%}}'.format(0.1654)</code> 會印出什麼？",
+      "<code>'{:.2%}'.format(0.1654)</code> 會印出什麼？",
       [(True, "<code>16.54%</code>",
         "對。百分比格式會<strong>先乘 100 再加百分號</strong>，"
         "所以不要自己再乘一次。lab 儲存格 244 算遺漏比例就是用這個。"),
@@ -366,7 +361,7 @@ BODIES["exercises"] = f"""
       [(False, "三個變數 <code>mse1</code>、<code>mse2</code>、<code>mse3</code>",
         "能動，但沒辦法用迴圈處理，也沒辦法「用名字查」——"
         "你得記得哪個數字對應哪個模型。"),
-       (True, "一個字典 <code>{{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}}</code>",
+       (True, "一個字典 <code>{'linear': 25.57, 'quad': 22.22, 'cubic': 22.67}</code>",
         "對。名字直接當鍵，之後 <code>for name, mse in d.items()</code> "
         "就能一次處理完，印報告也方便。"),
        (False, "一個串列 <code>[25.57, 22.22, 22.67]</code>",
@@ -375,21 +370,22 @@ BODIES["exercises"] = f"""
 
 {quiz("qEx4", "EXERCISE 4 · 格式化",
       "MSE 是 25.573878189684412，你想在報告裡印成兩位小數。哪一個寫法對？",
-      [(True, "<code>f'MSE = {{mse:.2f}}'</code>",
-        "對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。"
-        "用 <code>'{{:.2f}}'.format(mse)</code> 也一樣。"),
-       (False, "<code>f'MSE = {{round(mse)}}'</code>",
+      [(True, "<code>f'MSE = {mse:.2f}'</code>",
+        "對。冒號後面是格式規格，<code>.2f</code> 是「浮點數、小數兩位」。用 <code>'{:.2f}'.format(mse)</code> 也一樣。"),
+       (False, "<code>f'MSE = {round(mse)}'</code>",
         "<code>round</code> 不給第二個引數的話會四捨五入到整數，變成 26。"
         "它會改變<strong>數值</strong>；格式化保留數值，只調整顯示方式，"
         "後者比較安全。"),
-       (False, "<code>f'MSE = {{mse:2f}}'</code>",
+       (False, "<code>f'MSE = {mse:2f}'</code>",
         "少了那個點。<code>2f</code> 的 2 會被當成<strong>總寬度</strong>不是小數位數，"
-        "結果會印出全部的小數。")])}
+        "未指定精度時會用預設六位小數，不是題目要的兩位。")])}
 """
 
 # ── REF 總覽 ────────────────────────────────────────────────────────────
 BODIES["reference"] = f"""
-  <p>三張速查表整理串列與字典、切片、格式規格。</p>
+  <p>三張速查表整理串列與字典、切片、格式規格。
+  Python 的「變數」是指向物件的名稱；統計資料的「變數」通常指一個測量特徵或欄位。
+  串列索引是位置；pandas 的 Index 可以是列標籤，兩者的對照見<a href="p4_pandas.html#select">loc 與 iloc</a>。</p>
 
 {table(["你想做的事", "串列", "字典"],
        [["取一個", "<code>a[0]</code>（位置）", "<code>d['R2']</code>（名字）"],
@@ -410,11 +406,11 @@ BODIES["reference"] = f"""
         ["<code>a[::-1]</code>", "整個反過來"]])}
 
 {table(["格式規格", "0.1654 印出來", "什麼時候用"],
-       [["<code>{{:.2f}}</code>", "0.17", "一般統計量"],
-        ["<code>{{:.4f}}</code>", "0.1654", "係數、p 值"],
-        ["<code>{{:.2%}}</code>", "16.54%", "比例、遺漏率"],
-        ["<code>{{:.3e}}</code>", "1.654e-01", "非常大或非常小的數"],
-        ["<code>{{:>10.2f}}</code>", "　　　　　0.17", "對齊成一欄"]])}
+       [['<code>{:.2f}</code>', "0.17", "一般統計量"],
+        ['<code>{:.4f}</code>', "0.1654", "係數、p 值"],
+        ['<code>{:.2%}</code>', "16.54%", "比例、遺漏率"],
+        ['<code>{:.3e}</code>', "1.654e-01", "非常大或非常小的數"],
+        ['<code>{:>10.2f}</code>', "　　　　　0.17", "對齊成一欄"]])}
 
 {info("三個閱讀重點",
       "<strong>1. 變數像貼在物件上的名牌。</strong>"

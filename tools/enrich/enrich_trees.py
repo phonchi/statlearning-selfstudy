@@ -227,6 +227,11 @@ BODIES["prune"] = f"""
     <li>回到完整訓練資料，交出對應 α̂ 的那棵子樹。</li>
   </ol>
 
+  <p>下面的教材 lab 採一個較簡化的實作：先用<strong>完整外層訓練資料</strong>算一次剪枝路徑，
+  把得到的 <code>ccp_alphas</code> 固定成候選格點，再交給 <code>GridSearchCV</code>。
+  每個固定 α 的樹仍會在各折訓練部分重新配適；只有候選格點沒有在每折重建。
+  上述演算法 8.1 的嚴格版本則連候選路徑都在每折的訓練部分重新建立。</p>
+
 {viz(chart("w09pruneChart", "tall",
            "。此圖的重點：訓練 MSE 隨葉子數單調下降，但 CV 與測試 MSE 先降後平——"
            "曲線拉平的位置就是該停的地方。"),
@@ -246,20 +251,22 @@ BODIES["prune"] = f"""
      "w09pruneStatus", "拖動 α：α 愈大，樹被剪得愈小。看三條誤差線怎麼反應。",
      slider("w09pruneAlpha", "α", 0, 10, 1, 3, "—", "w09pruneSet()", "300px")
      + '<button class="btn btn-toggle" onclick="w09pruneJumpCv()">跳到 CV 選出的 α</button>',
-     provenance=("course-data", "Boston 固定 train/test split；成本複雜度路徑與六折 CV 由 generator 計算。"))}
+     provenance=("course-data", "Hitters 固定 train/test split；α 候選格點由完整外層訓練資料的剪枝路徑建立，各固定 α 的六折 CV 由 generator 計算。"))}
 
   <h3 id="dx-ccp">講義完整實作：Boston 上的成本複雜度剪枝</h3>
 {card("講義 08 · cost_complexity_pruning_path ＋ GridSearchCV（迴歸）",
       code(57, 59), lab_output(CH, 59), src=src("57、59"),
-      note="流程完全照演算法 8.1：先拿 <code>ccp_path.ccp_alphas</code> 當候選格點，"
-           "再用 <code>GridSearchCV</code> 在五折上挑，最後 <code>refit=True</code> "
+      note="lab 先從完整外層訓練資料的剪枝路徑取得 <code>ccp_path.ccp_alphas</code>，"
+           "再用 <code>GridSearchCV</code> 在五折上比較這組固定候選值；每折會重配各個固定 α 的樹，"
+           "但不會重建該折自己的候選路徑。最後 <code>refit=True</code> "
            "用全部訓練資料重配。測試 MSE <strong>28.07</strong>，開根號約 5.30，"
            "也就是預測誤差大約在 5,300 美元的量級。")}
 
   <h3 id="dx-cv">講義完整實作：分類樹的剪枝（Carseats）</h3>
 {card("講義 08 · 用 CV 挑 ccp_alpha（分類）", code(37, 39), lab_output(CH, 39),
       src=src("37、39"),
-      note="被選中的樹有 <strong>30 個葉子</strong>（儲存格 43），"
+      note="這裡也先用完整外層訓練資料建立 α 候選格點，再由十折 CV 重配並比較固定 α 的樹。"
+           "被選中的樹有 <strong>30 個葉子</strong>（儲存格 43），"
            "在測試集上的正確率 <strong>0.72</strong>（儲存格 45），"
            "比未剪枝的 0.735 還<em>略差</em>。lab 的原話是：「交叉驗證在這裡對我們的幫助不大」。"
            "<strong>這很正常也很重要</strong>——CV 是無偏的選擇工具，但它自己有變異，"

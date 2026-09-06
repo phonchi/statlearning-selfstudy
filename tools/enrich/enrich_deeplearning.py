@@ -177,13 +177,13 @@ BODIES["single"] = f"""
   n = 263、p = 19，用三分之一當測試集。</p>
 
 {card("lab §10.9.1 · 資料準備與線性迴歸基準",
-      lab_code(CH, 22) + "\\n\\n" + lab_code(CH, 25) + "\\n\\n" + lab_code(CH, 27),
+      lab_code(CH, 22) + "\n\n" + lab_code(CH, 25) + "\n\n" + lab_code(CH, 27),
       lab_output(CH, 27), src=src("22、25、27"),
       note="測試集上的平均絕對誤差是 <strong>259.72</strong>。這是最陽春的基準，"
            "後面每個模型都要跟它比。")}
 
 {card("lab §10.9.1 · lasso 基準（10 折 CV 選 λ）",
-      lab_code(CH, 31) + "\\n\\n" + lab_code(CH, 33) + "\\n\\n" + lab_code(CH, 35),
+      lab_code(CH, 31) + "\n\n" + lab_code(CH, 33) + "\n\n" + lab_code(CH, 35),
       lab_output(CH, 35), src=src("31、33、35"),
       note="lasso 把 MAE 壓到 <strong>235.68</strong>，比最小平方好一截。"
            "注意 <code>lam_max</code> 那一行：它算出「剛好把所有係數壓成 0」的 λ，"
@@ -195,14 +195,14 @@ BODIES["single"] = f"""
   在 <code>forward</code> 裡寫資料怎麼流過去。這個網路是 19 → 50（ReLU、dropout 0.4）→ 1。</p>
 
 {card("lab §10.9.1 · HittersModel 與參數量",
-      lab_code(CH, 37) + "\\n\\n" + lab_code(CH, 42),
+      lab_code(CH, 37) + "\n\n" + lab_code(CH, 42),
       lab_output(CH, 42), src=src("37、42"),
       note="1,000 + 51 = <strong>1,051 個參數</strong>，訓練樣本只有 175 筆。"
-           "參數比樣本多，照第 6 章的直覺應該慘不忍睹——但 dropout 與早停把它救回來了。"
-           "為什麼行得通，PART 06 的雙下降會回頭解釋。")}
+           "模型包含 <code>Dropout(0.4)</code>；這個 lab 固定訓練 50 個 epoch，沒有設定早停。"
+           "單次結果不能把表現歸因於 dropout、雙下降或任何一項正則化機制。")}
 
 {card("lab §10.9.1 · 訓練 50 個 epoch 之後測試",
-      lab_code(CH, 56) + "\\n\\n" + lab_code(CH, 58),
+      lab_code(CH, 56) + "\n\n" + lab_code(CH, 58),
       lab_output(CH, 58), src=src("56、58"),
       note="<code>test_mae</code> = <strong>221.83</strong>，比 lasso 的 235.68 好。"
            "但先別急著下結論——<strong>課本 Table 10.2 裡神經網路是輸的</strong>"
@@ -284,7 +284,7 @@ BODIES["multi"] = f"""
   <h3 id="dx-mn">官方 lab §10.9.2：MNIST 上的兩層網路</h3>
 
 {card("lab §10.9.2 · MNISTModel 與參數量",
-      lab_code(CH, 77) + "\\n\\n" + lab_code(CH, 83),
+      lab_code(CH, 77) + "\n\n" + lab_code(CH, 83),
       lab_output(CH, 83), src=src("77、83"),
       note="兩層的 dropout 比例不一樣（0.4 與 0.3）：靠近輸入的層通常丟得多一點。"
            "<code>nn.Flatten()</code> 把 28×28 攤成 784 的向量，"
@@ -296,7 +296,7 @@ BODIES["multi"] = f"""
            "課本 Table 10.1 報的是 1.8%（dropout 版），差別在訓練得比較久。")}
 
 {card("lab §10.9.2 · 拿多元邏輯斯迴歸當對照",
-      lab_code(CH, 94) + "\\n\\n" + lab_code(CH, 97),
+      lab_code(CH, 94) + "\n\n" + lab_code(CH, 97),
       lab_output(CH, 97), src=src("94、97"),
       note="同一個 torch 框架，把中間兩層拿掉就是多元邏輯斯迴歸，"
            "<code>nn.Linear(784, 10)</code> 加 softmax 而已。準確率 "
@@ -380,7 +380,7 @@ BODIES["cnn"] = f"""
   <h3 id="dx-cnn">官方 lab §10.9.3：CIFAR-100 上的 CNN</h3>
 
 {card("lab §10.9.3 · 一個 building block 疊四次",
-      lab_code(CH, 110) + "\\n\\n" + lab_code(CH, 112), None, src=src("110、112"),
+      lab_code(CH, 110) + "\n\n" + lab_code(CH, 112), None, src=src("110、112"),
       note="<code>BuildingBlock</code> 就是「卷積 → ReLU → 最大池化」三件套。"
            "通道數一路 3 → 32 → 64 → 128 → 256 加倍，空間尺寸則被池化一路砍半："
            "32 → 16 → 8 → 4 → 2。<strong>解析度換通道數</strong>是 CNN 的標準節奏。")}
@@ -391,7 +391,7 @@ BODIES["cnn"] = f"""
            "下一張卡的做法才是資料不多時該走的路。")}
 
 {card("lab §10.9.4 · 直接用預訓練的 ResNet50",
-      lab_code(CH, 136) + "\\n\\n" + lab_code(CH, 138),
+      lab_code(CH, 136) + "\n\n" + lab_code(CH, 138),
       lab_output(CH, 138), src=src("136、138"),
       note="這個模型在 ImageNet 上訓練過，完全沒看過這幾張照片。"
            "紅鶴 0.61、拉薩犬 0.26 都對；但第一張織巢鳥被猜成 jacamar（鶲䴕），"
@@ -456,7 +456,7 @@ BODIES["rnn"] = f"""
   <h3 id="dx-lstm">官方 lab §10.9.6：LSTM 與時間序列</h3>
 
 {card("lab §10.9.6 · LSTM 版的 IMDB 分類",
-      lab_code(CH, 178) + "\\n\\n" + lab_code(CH, 185),
+      lab_code(CH, 178) + "\n\n" + lab_code(CH, 185),
       lab_output(CH, 185), src=src("178、185"),
       note="<strong>0.8400</strong>——比詞袋的 0.8450 還<strong>低一點點</strong>。"
            "ISLP 很誠實地把這個結果放上來：情感分類這個任務，詞序帶來的好處"
@@ -464,7 +464,7 @@ BODIES["rnn"] = f"""
            "映射成 32 維的稠密向量，是這類模型的標準第一步。")}
 
 {card("lab §10.9.6 · NYSE 交易量的自迴歸",
-      lab_code(CH, 196) + "\\n\\n" + lab_code(CH, 200),
+      lab_code(CH, 196) + "\n\n" + lab_code(CH, 200),
       lab_output(CH, 200), src=src("196、200"),
       note="落後 5 期的線性自迴歸模型測試 R² 是 0.4129（儲存格 196），"
            "加上星期幾這個因子之後變成 <strong>0.4596</strong>。"
@@ -539,9 +539,10 @@ BODIES["fitting"] = f"""
   每一批看到的都是不同的子網路，沒有單元能依賴特定同伴。
   ISLP 說它的精神接近隨機森林，都靠隨機性打散相關性。''')}
 
-  <p>還有一個常被忽略的正則化手段：<strong>早停</strong>。
+  <p>另一個常用的正則化手段是<strong>早停</strong>。
   訓練誤差會一路降，驗證誤差則通常先降後升；在轉折點停下來，
-  效果跟加懲罰項類似。官方 lab 的 <code>ErrorTracker</code> 回呼就是在記錄這條曲線。</p>
+  效果跟加懲罰項類似。<code>ErrorTracker</code> 回呼只記錄驗證曲線；官方 Hitters lab
+  仍跑滿 <code>max_epochs=50</code>，沒有 <code>EarlyStopping</code> 回呼或依驗證結果選 epoch。</p>
 
 {qa("觀念釐清", [
     ("Q：非凸為什麼還敢用？局部極小不會害死我們嗎？",
@@ -763,17 +764,17 @@ BODIES["reference"] = f"""
 
   <h3>公式速查</h3>
 {table(["名稱", "式子", "備註"],
-       [["單層網路", "$f(X) = \\\\beta_0 + \\\\sum_k \\\\beta_k g(w_{{k0}} + \\\\sum_j w_{{kj}}X_j)$",
+       [["單層網路", "$f(X) = \\beta_0 + \\sum_k \\beta_k g(w_{k0} + \\sum_j w_{kj}X_j)$",
          "式 10.1"],
-        ["ReLU", "$g(z) = \\\\max(0, z)$", "式 10.5"],
+        ["ReLU", "$g(z) = \\max(0, z)$", "式 10.5"],
         ["Sigmoid", "$g(z) = e^z/(1+e^z)$", "式 10.3，就是邏輯斯函數"],
-        ["Softmax", "$f_m(X) = e^{{Z_m}} / \\\\sum_\\\\ell e^{{Z_\\\\ell}}$", "式 10.13，加常數不變"],
-        ["交叉熵", "$-\\\\sum_i \\\\sum_m y_{{im}} \\\\log f_m(x_i)$", "式 10.14，M = 2 時退回邏輯斯"],
-        ["平方誤差目標", "$R(\\\\theta) = \\\\tfrac12 \\\\sum_i (y_i - f_\\\\theta(x_i))^2$", "式 10.22，非凸"],
-        ["梯度下降更新", "$\\\\theta \\\\leftarrow \\\\theta - \\\\rho \\\\nabla R(\\\\theta)$",
+        ["Softmax", "$f_m(X) = e^{Z_m} / \\sum_\\ell e^{Z_\\ell}$", "式 10.13，加常數不變"],
+        ["交叉熵", "$-\\sum_i \\sum_m y_{im} \\log f_m(x_i)$", "式 10.14，M = 2 時退回邏輯斯"],
+        ["平方誤差目標", "$R(\\theta) = \\tfrac12 \\sum_i (y_i - f_\\theta(x_i))^2$", "式 10.22，非凸"],
+        ["梯度下降更新", "$\\theta \\leftarrow \\theta - \\rho \\nabla R(\\theta)$",
          "式 10.23，ρ 是學習率"],
-        ["全連接層參數量", "$(a+1) \\\\times b$", "a 個輸入接到 b 個輸出，+1 是偏置"],
-        ["卷積層參數量", "$(k^2 c_{{in}} + 1) \\\\times c_{{out}}$", "跟影像大小無關"]])}
+        ["全連接層參數量", "$(a+1) \\times b$", "a 個輸入接到 b 個輸出，+1 是偏置"],
+        ["卷積層參數量", "$(k^2 c_{in} + 1) \\times c_{out}$", "跟影像大小無關"]])}
 
 {info("重點回顧", '''<strong>1. 神經網路是線性模型套非線性再組合一次。</strong>
   把 g 拿掉就退回線性迴歸；非線性只能從 g 進來，加總本身不會產生它。<br>

@@ -214,7 +214,7 @@ Hybrid 最好：烘焙老師的資料，即時重算上層（`w04thr` 就是這�
 由 pilot 頁 `p3_numpy.html`（n=16）凍結。**這一節只適用於 `pages.py` 裡 `kind="prep"` 的頁面**，
 正課十一章完全不受影響。
 
-### 9.1 出處：只引用課程 lab，不新建來源
+### 9.1 Python／課前頁出處（`grounding_mode="lab"`）
 
 課程 lab 本身就是 Python 教材——`lab_ch2.md` 的「實驗：Python 入門」（儲存格 21–176）
 涵蓋 list／ndarray／索引／布林索引／字串格式化／for 迴圈，`lab_ch1.md` 涵蓋 pandas 與
@@ -255,7 +255,7 @@ def S(*ks): return f'<code>{LAB}</code> · 儲存格 ' + "、".join(str(k) for k
 
 ### 教學精簡與難度
 
-- 保留三區與授課章序。課前核心自測不預設已懂模型、檢定或交叉驗證；進階案例明標延伸並連相關章節。
+- 保留授課章序。課前核心自測不預設已懂模型、檢定或交叉驗證；進階案例明標延伸並連相關章節。
 - 同一概念的正文、自測回饋、詞彙卡、題庫與圖旁文字必須同步修訂。
 - 重複語法連回 Python 附錄；PCA 幾何、低秩近似與補值等不同角度的必要遞進應保留。
 - 不以固定表格、程式碼卡或字數目標塞滿頁面；刪除無教學用途的重複內容時仍保留有效來源。
@@ -310,3 +310,36 @@ python3 tools/validate.py        # 全站 0 失敗
 node tools/browser_check.js <stem>
 # 然後用 Read 真的看截圖（§8.9）
 ```
+
+## 10. 統計先備知識（2026-09-06）
+
+依使用者確認新增獨立的 `group="statistics"`，顯示於課前準備與正課之間。
+六頁皆為 `kind="prep", grounding_mode="concept"`；既有頁面維持預設的 `"lab"`。
+S1–S4 為核心查閱路徑，S2 計數選讀；S5–S6 為選讀延伸。全區不列入評分，無 Python 或微積分先備要求。
+
+- 來源為 Seeing Theory 網站與 2018 年 PDF 草稿；`sources.py` 登記完整書目，
+  `statistics_pages.py` 登記六頁與節次。每節另附實際網頁主題／PDF 頁碼連結。
+  網站與 PDF 內容不同，不能把網頁的 CI／bootstrap 說成 PDF 的對應段落。
+- 概念頁不放 `.deck-extra`、`.expected-out` 或課程 lab 執行指示；
+  `.ver-note` 說明自訂算例、模型條件、模擬種子與數值核對。
+  不使用既有 `ver_note()` 的 lab 文案；既有 lab 頁逐字驗證規則維持。
+- 使用原創解說與算例，獨立核對公式、機率方向與成立條件。
+  不複製原站程式或圖片；自訂模型標 `illustrative`，抽樣模型標 `simulation` 並固定種子。
+- 每主節至少一題三選一自測，EX 四題。自測、詞彙卡、公式與圖旁解說的條件須一致。
+  動態圖需區分密度與機率、單側與雙側區域、固定參數與抽樣結果；曲線區域不可越界或錯誤串接。
+- 用 `python3 tools/test_statistics_contract.py` 核對來源模式隔離，
+  用 `node tools/check_statistics_browser.js` 獨立核對機率、CI、Beta 與 OLS 數值／幾何，
+  再跑既有全站驗證與各頁 browser check。
+- 瀏覽器截圖放 `/tmp/statistics-20260906/` 並實際檢視；文字驗證結果放
+  `tools/verification/statistics-20260906/`。全站所有教學視覺仍是 inline，repo 不放圖檔。
+
+
+## 11. 讀者審查後的組裝檢查
+
+- 詞彙卡 JSON 的 front/back 都是純文字，不放 `<code>`、`<b>` 或 `&lt;` 等 entity；
+  rich HTML 只用在原本支援它的正文與 quiz 回饋。不要為了卡片格式直接移除共用 escape。
+- 傳入 quiz/card/table 的普通 Python 字串，不需要為外層 f-string 再加一次大括號或反斜線。
+  生成後須核對學生看見的語法；合併 lab 儲存格使用真正的換行分隔。
+- 修改結論時，同步檢查正文、圖說／JS 狀態、Q&A、速查、詞卡與題庫；
+  期望風險、有限測試誤差，以及程式實際使用的 CV 層次不可混寫。
+- 只改文字可用 `tools/rebuild_content.py` 保留既有 FRAMES；刻意改數值時另走 pinned 產生器與數值驗證。

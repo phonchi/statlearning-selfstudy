@@ -92,6 +92,10 @@
     "back": "把訓練資料完整走過一遍。一個 epoch 包含 n/batch_size 次參數更新。「訓練 30 個 epoch」是說整份資料被看了 30 次。"
   },
   {
+    "front": "早停（Early Stopping）",
+    "back": "訓練時監看驗證指標，在指標不再改善時停止並保留選定 epoch 的模型。只記錄驗證曲線不等於有早停；官方 Hitters lab 的 ErrorTracker 只負責記錄，Trainer 仍跑滿 max_epochs=50。"
+  },
+  {
     "front": "丟棄法（Dropout）",
     "back": "訓練時隨機把一部分單元的值設為 0，剩下的按比例放大。每一批看到的都是不同的子網路，所以沒有單元能依賴特定同伴。ISLP 說它的精神接近隨機森林——都是靠隨機性打散相關性。"
   },

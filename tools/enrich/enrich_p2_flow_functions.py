@@ -239,6 +239,8 @@ BODIES["func"] = f"""
      '<button class="btn btn-reset" onclick="w15fnReset()">重置</button>',
      provenance=("course-data", "依 Ch05 lab 的 evalMSE 函式資料流重繪。"))}
 
+  <p>這裡的函式參數是呼叫時接收輸入的名稱，例如 <code>X_train</code>。
+  <a href="s1_probability.html#population">統計的母體參數</a>則描述母體或機率模型，例如平均數 μ；要由語境分辨。</p>
   <p>這個函式由參數接收資料，較容易換資料重用。是否有副作用，還要看它會不會修改傳入物件、全域狀態或檔案。</p>
 
 {qa("觀念釐清", [

@@ -44,7 +44,7 @@ def head(p: P.Page) -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{p.plain} — {p.title_en} 互動自學頁。{p.subtitle}。NSYSU MATH524 統計學習與資料探勘。">
-<title>{p.plain} — {p.title_en} Interactive（Python）</title>
+<title>{p.plain} — {p.title_en} Interactive{'（Python）' if p.grounding_mode == 'lab' else ''}</title>
 <script>
   MathJax = {{ tex: {{ inlineMath: [['$','$']], displayMath: [['$$','$$']] }},
              options: {{ skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }} }};
@@ -101,7 +101,8 @@ def studyguide(p: P.Page) -> str:
         label = "▶ 課程錄影" if i == 0 else f"▶ 課程錄影 {i + 1}"
         pills.append((label, f"https://www.youtube.com/playlist?list={pl}"))
     pills.extend(p.extra_pills)
-    pills.append(("📖 統計學習教科書（ISLP）", P.BOOK_ISLP))
+    if p.grounding_mode == "lab":
+        pills.append(("📖 統計學習教科書（ISLP）", P.BOOK_ISLP))
     if p.esl_label:
         pills.append(("📗 進階參考書（ESL）", P.BOOK_ESL))
     links = "".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>' for t, u in pills)
@@ -110,7 +111,10 @@ def studyguide(p: P.Page) -> str:
                 if any(s.eslx for s in p.secs) else "")
     deck_bit = f"｜講義 {p.deck_no}" if p.deck else ""
     deck_note = f'\n  <p class="source-intro">{p.deck_note}</p>' if p.deck_note else ""
-    if p.kind == "prep":
+    if p.grounding_mode == "concept":
+        step2 = ("<strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。"
+                 "各節附 Seeing Theory 網站或講義頁碼；需要更多實驗或推導時再開啟。")
+    elif p.kind == "prep":
         step2 = ("<strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）"
                  "與儲存格編號；需要實作時，再打開原始筆記本對照。")
     elif p.deck:
@@ -159,6 +163,12 @@ def prep_ex_head(p: P.Page) -> str:
     pills = "".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>'
                     for t, u in p.ex_links)
     lbl = "課前" if p.grp == "pre" else "先備"
+    if p.grounding_mode == "concept":
+        return f'''  <div class="section-number">EXERCISES · 練習</div>
+  <h2>用算例檢查理解 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>以下是依本頁觀念自訂的練習。先寫下判斷與理由，再點選答案；每個選項都有解說。
+  回到互動調整條件，確認你的解釋是否仍然成立。</p>
+  <div class="sol-links">{pills}</div>'''
     return f"""  <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">{lbl} · 自我檢測</span></h2>
   <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
@@ -206,6 +216,9 @@ def cards_block(p: P.Page) -> str:
     badge = f"課程題庫 · {n} 張" if n else "課程題庫 · 待注入"
     src = ("本頁引用的課程 lab" if p.kind == "prep"
            else f"本章講義與 ISLP 第 {p.islp} 章")
+    if p.grounding_mode == "concept":
+        badge = f"先備 · {n} 張"
+        src = "本頁依 Seeing Theory 編寫的概念解說"
     return f"""  <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">{badge}</span></h2>
   <p>詞彙卡取自{src}，正面是中文術語（附英文原名）。
@@ -239,13 +252,15 @@ def chapternav(p: P.Page) -> str:
 
 def footer(p: P.Page) -> str:
     book = "An Introduction to Statistical Learning with Applications in Python (ISLP)"
-    if p.kind == "prep":
+    if p.grounding_mode == "concept":
+        base = "參考 Seeing Theory 網站與講義，以原創算例與互動說明"
+    elif p.kind == "prep":
         base = "基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件"
     else:
         base = f"基於 {book} 第 {p.islp} 章與 NSYSU MATH524 課程講義"
     return f"""<footer>
   互動式{p.plain}教學 · {base}<br>
-  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive Python self-study</span>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive {'Python' if p.grounding_mode == 'lab' else 'statistics'} self-study</span>
 </footer>"""
 
 

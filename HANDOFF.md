@@ -2,6 +2,9 @@
 
 這份給接手維護的人（含未來的自己）。**先讀這份，再讀 [`tools/STYLE_CONTRACT.md`](tools/STYLE_CONTRACT.md)。**
 
+**2026-09-06 更新：**目前共 26 頁，新增獨立「統計先備知識」六頁。
+最新四區與生成方式見文末 §15；前文三區／20 頁記錄為歷史狀態。
+
 ---
 
 ## 1. 現狀
@@ -427,3 +430,53 @@ Matplotlib 為 3.5.2；清單若更新，需核對 00B 的日期、版本表、�
 新聞以統計學習的應用能力帶出共同基礎。後續撰寫直接說明定義、操作與證據，避免再次加入
 修辭性否定對比、維護歷史與誇大比喻。邏輯否定、公式及資料來源界線保持清楚。
 本輪保留 b93f4be 的 FRAMES 物件，沒有重算資料；所有新文案仍以 enrich／pages／data 母檔為準。
+
+## 15. Seeing Theory 統計先備六頁（2026-09-06）
+
+首頁順序為 **課前準備 → 統計先備知識 → 正課 → Python 附錄**。
+S1 機率、S2 條件機率、S3 分布、S4 推論為核心查閱路徑；S2 計數與 S5 貝氏、S6 迴歸選讀。
+全區選讀、不列入評分，不需要 Python 或微積分基礎。課前準備仍可直接進正課，六個統計頁也各有捷徑。
+
+`tools/statistics_pages.py` 由 `pages.py` 在正課前加入六頁，保留既有 n=1–20，新增 n=21–26。
+各頁母檔為 `tools/enrich/enrich_s1_probability.py` 至 `enrich_s6_regression.py`，
+詞彙卡在 `data/flashcards_zh/stats_s*.json`。共用來源由 `tools/sources.py` 處理。
+
+`Page.grounding_mode` 預設 `lab`，僅新概念頁明設 `concept`，不再強制課程 lab 卡。
+新的 `GROUNDING-CONCEPT` 檢查逐節來源與自測、PDF 頁碼、四題 EX、來源註記，並拒絕未核對的程式輸出卡。
+原有 `GROUNDING-PREP` 仍會核對既有先備頁的每個 lab 儲存格。
+首頁 INDEX-SYNC 已限定真實 `.ch-card`，不會把「直接進正課」捷徑當作章節卡。
+
+六頁的生成：
+
+```bash
+python3 tools/build_page.py
+for script in tools/enrich/enrich_s[1-6]_*.py; do python3 "$script"; done
+python3 tools/inject_data.py
+python3 tools/build_page.py
+python3 tools/build_index.py
+python3 tools/test_statistics_contract.py
+python3 tools/check_visual_claims.py
+python3 tools/validate.py --net
+node tools/check_statistics_browser.js
+SHOT_DIR=/tmp/statistics-20260906/all node tools/browser_check.js s1_probability s2_conditional s3_distributions s4_inference s5_bayesian s6_regression
+```
+
+教學與來源決策見 `tools/STATISTICS_PREREQUISITES.md`，驗證文字紀錄在
+`tools/verification/statistics-20260906/`。截圖依 inline-only 契約放 `/tmp/statistics-20260906/`。
+六頁初稿先完成本機驗證；後續讀者審查修訂與發布方式見 §16。
+
+
+## 16. 全站獨立讀者修訂（2026-09-06）
+
+審查快照在 `tools/READER_AUDIT.md`，F01–F20、S01–S05 的修正與驗證在
+`tools/READER_FIXES.md`。保留四區與授課順序，統一正文／回饋／速查／詞卡的條件，
+修正 P1 字串與 PCA 步驟，說清 CV 示範的內外層界線。來源索引、42 個 FRAMES、187 份保存輸出保持原樣。
+
+詞彙卡母檔現在一律是純文字，`validate.py` 會攔截格式標籤與 entity；`shared.js` 仍維持 escape。
+來源類型標籤的白字修正已放入共用 stats.css。全站 browser check 新增詞卡實際文字與 MathJax error 檢查。
+
+文字修訂可用 `python3 tools/rebuild_content.py [stem ...]` 重用現有 FRAMES；
+若改圖表數字，仍須跑一般 enrich／frames 產生流程。新 regression suite 是 `tools/test_reader_fixes.py`，
+詳細執行環境見修正紀錄。所有輸出由母檔生成，仍不可手改 HTML。
+
+本次依使用者要求將統計先備六頁與讀者修正一併提交至 main 並推送；GitHub Pages 由 main 根目錄建置。

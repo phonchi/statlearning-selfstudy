@@ -1,27 +1,102 @@
 [
-{"front": "序列（Series）", "back": "有索引的一維資料。可以想成「一個 NumPy 陣列 ＋ 一排標籤」。<code>df['A']</code> 拿到的就是它。"},
-{"front": "資料框（DataFrame）", "back": "共用同一排索引的一疊 Series。每一欄可以是不同型別，這一點跟 NumPy 陣列不同。"},
-{"front": "索引（Index）", "back": "Series 與 DataFrame 的列標籤。兩個物件相加時，會依<b>標籤對齊</b>，位置相同不保證配成一對。"},
-{"front": "逐欄型別（dtypes）", "back": "逐欄的型別。拿到資料的第一個動作就是看它——該是數字的欄變成 <code>object</code>，代表原始檔裡混了非數字的東西。"},
-{"front": "物件型別（object dtype）", "back": "pandas 用來裝字串（或混合型別）的 dtype。數值欄變成 object 幾乎一定是讀檔沒設好，例如 Auto 的 <code>horsepower</code> 混了 <code>?</code>。"},
-{"front": "看頭尾（head／tail）", "back": "看前幾列／後幾列。<code>head()</code> 預設五列。用來確認欄名對不對、有沒有整欄空白。"},
-{"front": "五數摘要（describe）", "back": "數值欄的五數摘要。<code>count</code> 那一列<b>不算遺漏值</b>，所以 count 比列數少就是有 NaN。"},
-{"front": "依名字選取（loc）", "back": "照<b>名字</b>選取。切片<b>包含</b>結尾——<code>df.loc['a':'c']</code> 會拿到 c，因為名字沒有「下一個」可言。"},
-{"front": "依位置選取（iloc）", "back": "照<b>位置</b>選取。切片跟一般 Python 一樣含頭不含尾。索引是日期或字串時，要用位置就一定要用它。"},
-{"front": "鏈式索引（Chained Indexing）", "back": "<code>df[df.A &gt; 0]['B'] = 1</code> 這種連續兩層的寫法。第一層可能給你複本，改了不會反映到原表，pandas 會發 <code>SettingWithCopyWarning</code>。用單一個 <code>loc</code> 寫完整。"},
-{"front": "布林遮罩選列（Boolean Masking）", "back": "<code>df[df['A'] &gt; 0]</code>。裡面的比較是向量化的，結果是一排帶索引的 True／False，長度跟原表一樣。"},
-{"front": "遺漏值（NaN）", "back": "pandas 表示遺漏值的方式（<code>np.nan</code>）。彙總函式預設會跳過它，所以 <code>count</code> 跟列數會不一致。"},
-{"front": "讀檔時宣告遺漏（na_values）", "back": "<code>read_csv</code> 的參數，用來宣告哪些字串表示遺漏。Auto 可用 <code>na_values=['?']</code> 在讀檔時辨認問號，讓後續運算使用正確的遺漏值表示。"},
-{"front": "刪除含遺漏的列（dropna）", "back": "刪掉含遺漏值的列。Auto 從 397 筆變成 392 筆就是它做的。前提是遺漏跟你關心的變數無關，否則會產生偏差。"},
-{"front": "非隨機遺漏", "back": "遺漏機率與未觀測的值有關，例如高收入者更常漏填收入。加上遺漏指示不能自動恢復收入分布；需查資料收集方式、取得額外資訊，或在明說假設後做敏感度分析。"},
-{"front": "換索引（reindex）", "back": "改用一組索引標籤；原本不存在的標籤會補上 NaN，因此換索引也可能產生遺漏值。"},
-{"front": "分組彙總（groupby）", "back": "依序進行三個動作：<b>拆分</b>（照鍵分堆）→ <b>套用</b>（每堆各算一次）→ <b>合併</b>（疊回一張表）。其他分組彙總也可按這三步理解。"},
-{"front": "鍵留在欄裡（as_index=False）", "back": "groupby 之後<b>不要</b>把分組的鍵變成索引。不加的話鍵會變成索引，之後畫圖或 merge 會找不到那個欄名。事後 <code>reset_index()</code> 也可以。"},
-{"front": "類別計數（value_counts）", "back": "數每一類各有幾筆。拿到類別欄的第一個動作——某一類只有兩三筆的話，後面做分類會很吃力。"},
-{"front": "只算數值欄（numeric_only）", "back": "彙總時只算數值欄。表裡有字串欄卻要 <code>sum()</code> 時要加，不然新版 pandas 會警告。"},
-{"front": "串接（concat）", "back": "<b>疊</b>：形狀相容就沿著某個軸接起來，預設沿列。把切開的三塊接回去用它。"},
-{"front": "配對合併（merge）", "back": "<b>對</b>：照某個鍵把兩張表配對，像 SQL 的 join。跟 concat 是不同的動作，別混用。"},
-{"front": "逐列附加的效能陷阱（Row-wise Append）", "back": "DataFrame 的欄是連續存放的，加一列等於整張表複製一次。正確做法是把每一塊收進 Python 串列，最後 <code>pd.concat(串列)</code> 一次接完。"},
-{"front": "空白分隔（sep=r\"\\s+\"）", "back": "read_csv 的分隔符設定：一個以上的空白都算分隔。Auto.data 那種用空白對齊的檔案要靠它。"},
-{"front": "還原成陣列（to_numpy）", "back": "把 Series 或 DataFrame 剝掉標籤，還原成 NumPy 陣列。要丟進 scikit-learn 之前常會用到。"}
+  {
+    "front": "序列（Series）",
+    "back": "有索引的一維資料。可以想成「一個 NumPy 陣列 ＋ 一排標籤」。df['A'] 拿到的就是它。"
+  },
+  {
+    "front": "資料框（DataFrame）",
+    "back": "共用同一排索引的一疊 Series。每一欄可以是不同型別，這一點跟 NumPy 陣列不同。"
+  },
+  {
+    "front": "索引（Index）",
+    "back": "Series 與 DataFrame 的列標籤。兩個物件相加時，會依標籤對齊，位置相同不保證配成一對。"
+  },
+  {
+    "front": "逐欄型別（dtypes）",
+    "back": "逐欄的型別。拿到資料的第一個動作就是看它——該是數字的欄變成 object，代表原始檔裡混了非數字的東西。"
+  },
+  {
+    "front": "物件型別（object dtype）",
+    "back": "pandas 用來裝字串（或混合型別）的 dtype。數值欄變成 object 幾乎一定是讀檔沒設好，例如 Auto 的 horsepower 混了 ?。"
+  },
+  {
+    "front": "看頭尾（head／tail）",
+    "back": "看前幾列／後幾列。head() 預設五列。用來確認欄名對不對、有沒有整欄空白。"
+  },
+  {
+    "front": "五數摘要（describe）",
+    "back": "數值欄的五數摘要。count 那一列不算遺漏值，所以 count 比列數少就是有 NaN。"
+  },
+  {
+    "front": "依名字選取（loc）",
+    "back": "照名字選取。切片包含結尾——df.loc['a':'c'] 會拿到 c，因為名字沒有「下一個」可言。"
+  },
+  {
+    "front": "依位置選取（iloc）",
+    "back": "照位置選取。切片跟一般 Python 一樣含頭不含尾。索引是日期或字串時，要用位置就一定要用它。"
+  },
+  {
+    "front": "鏈式索引（Chained Indexing）",
+    "back": "df[df.A > 0]['B'] = 1 這種連續兩層的寫法。第一層可能給你複本，改了不會反映到原表，pandas 會發 SettingWithCopyWarning。用單一個 loc 寫完整。"
+  },
+  {
+    "front": "布林遮罩選列（Boolean Masking）",
+    "back": "df[df['A'] > 0]。裡面的比較是向量化的，結果是一排帶索引的 True／False，長度跟原表一樣。"
+  },
+  {
+    "front": "遺漏值（NaN）",
+    "back": "pandas 表示遺漏值的方式（np.nan）。彙總函式預設會跳過它，所以 count 跟列數會不一致。"
+  },
+  {
+    "front": "讀檔時宣告遺漏（na_values）",
+    "back": "read_csv 的參數，用來宣告哪些字串表示遺漏。Auto 可用 na_values=['?'] 在讀檔時辨認問號，讓後續運算使用正確的遺漏值表示。"
+  },
+  {
+    "front": "刪除含遺漏的列（dropna）",
+    "back": "刪掉含遺漏值的列。Auto 從 397 筆變成 392 筆就是它做的。前提是遺漏跟你關心的變數無關，否則會產生偏差。"
+  },
+  {
+    "front": "非隨機遺漏",
+    "back": "遺漏機率與未觀測的值有關，例如高收入者更常漏填收入。加上遺漏指示不能自動恢復收入分布；需查資料收集方式、取得額外資訊，或在明說假設後做敏感度分析。"
+  },
+  {
+    "front": "換索引（reindex）",
+    "back": "改用一組索引標籤；原本不存在的標籤會補上 NaN，因此換索引也可能產生遺漏值。"
+  },
+  {
+    "front": "分組彙總（groupby）",
+    "back": "依序進行三個動作：拆分（照鍵分堆）→ 套用（每堆各算一次）→ 合併（疊回一張表）。其他分組彙總也可按這三步理解。"
+  },
+  {
+    "front": "鍵留在欄裡（as_index=False）",
+    "back": "groupby 之後不要把分組的鍵變成索引。不加的話鍵會變成索引，之後畫圖或 merge 會找不到那個欄名。事後 reset_index() 也可以。"
+  },
+  {
+    "front": "類別計數（value_counts）",
+    "back": "數每一類各有幾筆。拿到類別欄的第一個動作——某一類只有兩三筆的話，後面做分類會很吃力。"
+  },
+  {
+    "front": "只算數值欄（numeric_only）",
+    "back": "numeric_only=True 明確只彙總數值欄。未限定欄位時，字串可能直接串接而沒有警告，應先確認要彙總的欄位。"
+  },
+  {
+    "front": "串接（concat）",
+    "back": "疊：形狀相容就沿著某個軸接起來，預設沿列。把切開的三塊接回去用它。"
+  },
+  {
+    "front": "配對合併（merge）",
+    "back": "對：照某個鍵把兩張表配對，像 SQL 的 join。跟 concat 是不同的動作，別混用。"
+  },
+  {
+    "front": "逐列附加的效能陷阱（Row-wise Append）",
+    "back": "DataFrame 的欄是連續存放的，加一列等於整張表複製一次。正確做法是把每一塊收進 Python 串列，最後 pd.concat(串列) 一次接完。"
+  },
+  {
+    "front": "空白分隔（sep=r\"\\s+\"）",
+    "back": "read_csv 的分隔符設定：一個以上的空白都算分隔。Auto.data 那種用空白對齊的檔案要靠它。"
+  },
+  {
+    "front": "還原成陣列（to_numpy）",
+    "back": "把 Series 或 DataFrame 剝掉標籤，還原成 NumPy 陣列。要丟進 scikit-learn 之前常會用到。"
+  }
 ]

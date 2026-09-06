@@ -84,8 +84,9 @@ BODIES["prologue"] = f"""
 """
 
 # ── P01 主成分是什麼 ───────────────────────────────────────────────────
-_pca_code = (lab_code(CH, 19) + "\n\n" + lab_code(CH, 21) + "\n"
-             + lab_code(CH, 27) + "\n" + lab_code(CH, 29))
+_pca_code = (lab_code(CH, 19) + "\n\n" + lab_code(CH, 21) + "\n\n"
+             + lab_code(CH, 23) + "\n\n" + lab_code(CH, 27) + "\n\n"
+             + lab_code(CH, 29))
 
 BODIES["pca"] = f"""
   <p>先想一個很現實的問題：p = 10 個變數，兩兩畫散佈圖有 45 張，你看不完；
@@ -143,7 +144,7 @@ BODIES["pca"] = f"""
   所以主成分就是一組互相垂直的新座標軸，總共最多有 $\\min(n-1,\\,p)$ 個。</p>
 
   <h3 id="dx-pca">講義完整實作：標準化 → <code>PCA()</code> → 取出負荷量</h3>
-{card("講義 12 · USArrests 的 PCA", _pca_code, lab_output(CH, 29), src=src("19、21、27、29"),
+{card("講義 12 · USArrests 的 PCA", _pca_code, lab_output(CH, 29), src=src("19、21、23、27、29"),
       out_tag="預期輸出（儲存格 29）",
       note="<code>components_</code> 的<strong>每一列</strong>是一個負荷向量。第一列 "
            "<code>[0.536, 0.583, 0.278, 0.543]</code> 在 Murder／Assault／Rape 上幾乎一樣重、"
@@ -315,8 +316,10 @@ BODIES["pve"] = f"""
   第 m 個主成分的變異是 $\\frac{{1}}{{n}}\\sum_{{i=1}}^{{n}} z_{{im}}^2$，所以</p>
 
   $$\\mathrm{{PVE}}_m
-    = \\frac{{\\sum_{{i=1}}^{{n}} z_{{im}}^2}}{{\\sum_{{j=1}}^{{p}}\\sum_{{i=1}}^{{n}} x_{{ij}}^2}}
-    = 1 - \\frac{{\\mathrm{{RSS}}_M}}{{\\mathrm{{TSS}}}}\\Big|_{{M=m}} - \\text{{（前 }} m-1 \\text{{ 個的部分）}}$$
+    = \\frac{{\\sum_{{i=1}}^{{n}} z_{{im}}^2}}{{\\sum_{{j=1}}^{{p}}\\sum_{{i=1}}^{{n}} x_{{ij}}^2}},
+    \\qquad
+    \\mathrm{{PVE}}_{{1:M}} = \\sum_{{m=1}}^{{M}} \\mathrm{{PVE}}_m
+    = 1 - \\frac{{\\mathrm{{RSS}}_M}}{{\\mathrm{{TSS}}}}$$
 
   <p>所有 $\\min(n-1,p)$ 個 PVE 加起來剛好是 1。累積 PVE 就是「前 M 個主成分留住了幾成」，
   由上一節的式 12.11，它同時也是「用前 M 個主成分近似資料矩陣」的 $R^2$。</p>
@@ -363,7 +366,7 @@ BODIES["pve"] = f"""
       "USArrests 的四個 PVE 是 0.620、0.247、0.089、0.043。如果我只留前兩個主成分，"
       "那 50×4 的資料矩陣被近似得多好？",
       [(True, "近似的 R² 是 0.868，也就是殘差平方和只剩總平方和的 13.2%",
-        "對。累積 PVE = 0.620 + 0.247 = 0.868，而由式 12.11，累積 PVE 就是 1 − RSS/TSS。"
+        "對。累積 PVE = 0.620 + 0.247 = 0.868，而由式 12.11，累積 PVE 就是 1 − RSS<sub>M</sub>/TSS。"
         "所以「解釋了 86.8% 的變異」與「近似的 R² 是 0.868」是同一句話。"),
        (False, "無法判斷，PVE 只說變異被解釋多少，跟近似的好壞沒有關係",
         "這是最常見的誤解。式 12.11 把總變異拆成「前 M 個主成分的變異」加「M 維近似的 MSE」，"
@@ -1044,7 +1047,8 @@ BODIES["exercises"] = f"""
       [(True, "兩邊必須用<strong>同一份</strong>資料：(a) 用標準化後的資料跑 PCA，"
               "(b) 就也得先標準化再套公式",
         "對。式 12.10 的分母是「資料的總平方和」，標準化與否會讓它完全不同。"
-        "這一題的教學意義是：PVE 可以直接由 1 − RSS/TSS 計算。"),
+        "這一題的教學意義是：第 m 個 PVE 用該主成分得分的平方和除以 TSS；"
+        "把前 M 個 PVE 加總後，累積 PVE 才等於 1 − RSS<sub>M</sub>/TSS。"),
        (False, "警告 components_ 的符號可能跟公式的推導相反，要先把符號翻回來",
         "不用。式 12.10 裡負荷量是<strong>平方</strong>後才加總的，符號翻掉結果一樣。"
         "符號在別的地方會咬人（解讀方向、比較兩次分析），但不在這裡。"),
@@ -1081,9 +1085,12 @@ BODIES["reference"] = f"""
         ["得分", "$z_{im} = \\sum_{j=1}^{p} \\phi_{jm} x_{ij}$", "式 12.2、12.4"],
         ["最佳低維近似", "$\\min_{A,B}\\sum_{j}\\sum_i (x_{ij}-\\sum_m a_{im}b_{jm})^2$",
          "式 12.6，解就是主成分"],
-        ["PVE",
-         "$\\dfrac{\\sum_i z_{im}^2}{\\sum_j\\sum_i x_{ij}^2} = 1-\\dfrac{\\mathrm{RSS}}{\\mathrm{TSS}}$",
-         "式 12.10，加起來是 1"],
+        ["第 m 個 PVE",
+         "$\\mathrm{PVE}_m=\\dfrac{\\sum_i z_{im}^2}{\\sum_j\\sum_i x_{ij}^2}$",
+         "式 12.10；所有主成分加總為 1"],
+        ["前 M 個的累積 PVE",
+         "$\\sum_{m=1}^{M}\\mathrm{PVE}_m=1-\\dfrac{\\mathrm{RSS}_M}{\\mathrm{TSS}}$",
+         "式 12.11；M 維近似的 R²"],
         ["變異分解", "總變異 = 前 M 個 PC 的變異 + M 維近似的 MSE", "式 12.11"],
         ["矩陣補全", "$\\min_{A,B}\\sum_{(i,j)\\in\\mathcal O}(x_{ij}-\\sum_m a_{im}b_{jm})^2$",
          "式 12.12，只在觀測格上算"],
@@ -1109,7 +1116,7 @@ BODIES["reference"] = f"""
 
 {info("重點回顧", '''<strong>1. PCA 的兩種解釋是同一件事。</strong>
   「變異最大的方向」＝「離資料最近的低維平面」，式 12.11 就是它們的橋；
-  PVE 因此也可以讀成近似的 R²。<br>
+  前 M 個主成分的累積 PVE 因此也可以讀成 M 維近似的 R²。<br>
   <strong>2. 尺度會決定答案，符號不會。</strong>不標準化，PC1 就退化成變異數最大的那個變數；
   符號整組翻掉則什麼結論都不變（前提是得分與負荷量一起翻）。<br>
   <strong>3. 分群給出的群仍需檢查穩定性與實質意義。</strong>

@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_page as B  # noqa: E402
 import pages as P  # noqa: E402
 import sources as S  # noqa: E402
+from statistics_pages import SOURCE_CHAPTERS  # noqa: E402
 from paths import FLASHCARDS, QUESTIONS, ROOT, SRC_INDEX  # noqa: E402
 
 FAIL, WARN = [], []
@@ -57,7 +58,7 @@ BADGE_RE = re.compile(
     r"|課程 Lab Ch\d+ · "
     r"|(?:Python|NumPy|pandas|Matplotlib|seaborn|SciPy|statsmodels|scikit-learn"
     r"|Colab|conda) 文件 · "
-    r"|先備 · |課前 · |教科書 · |進階參考 · |參考：)")
+    r"|先備 · |課前 · |教科書 · |進階參考 · |參考：|統計入門參考 · )")
 
 
 class Ids(HTMLParser):
@@ -337,34 +338,39 @@ def check_page(p: P.Page):
             fail("GROUNDING", w,
                  f".deck-extra 缺 .dx-src 出處標記（第 {i + 1} 張"
                  f"{'：' + lab.group(1) if lab else ''}）")
-    # 來源 lab 可以有多份（先備頁一頁會引用 lab_ch1 與 lab_ch2）。
-    # 檔案不存在一律 fail —— 舊版是靜默跳過，等於整段檢查無聲失效。
-    src_chs = p.src_labs or (p.islp,)
-    parts = []
-    for ch in src_chs:
-        lab = SRC_INDEX / f"lab_ch{ch}.md"
-        if not lab.exists():
-            fail("GROUNDING", w, f"來源索引 {lab.name} 不存在（跑 tools/extract_lab.py）")
-            continue
-        parts.append(lab.read_text(encoding="utf-8"))
-    labtext = "\n".join(parts)
-    labs_note = "／".join(f"lab_ch{c}.md" for c in src_chs)
-    for m in re.finditer(r'<div class="expected-out">.*?<pre>(.*?)</pre>', src, re.S):
-        body = re.sub(r"<[^>]+>", "", m.group(1))
-        for a, b in (("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'),
-                     ("&#x27;", "'"), ("&#39;", "'"), ("&amp;", "&")):
-            body = body.replace(a, b)
-        body = body.strip()
-        head = next((ln.strip() for ln in body.splitlines() if ln.strip()), "")
-        if head and labtext and head not in labtext:
-            warn("GROUNDING", w, f"預期輸出的首行在 {labs_note} 找不到：「{head[:60]}」")
-    if not re.search(r'class="ver-note"', src):
-        warn("GROUNDING", w, "REF 區缺 .ver-note 環境版本註記")
+    if p.grounding_mode not in {"lab", "concept"}:
+        fail("GROUNDING", w, f"未知 grounding_mode={p.grounding_mode}")
+    if p.grounding_mode == "concept":
+        check_concept_grounding(p, w, src)
+    else:
+        # 來源 lab 可以有多份（先備頁一頁會引用 lab_ch1 與 lab_ch2）。
+        # 檔案不存在一律 fail —— 舊版是靜默跳過，等於整段檢查無聲失效。
+        src_chs = p.src_labs or (p.islp,)
+        parts = []
+        for ch in src_chs:
+            lab = SRC_INDEX / f"lab_ch{ch}.md"
+            if not lab.exists():
+                fail("GROUNDING", w, f"來源索引 {lab.name} 不存在（跑 tools/extract_lab.py）")
+                continue
+            parts.append(lab.read_text(encoding="utf-8"))
+        labtext = "\n".join(parts)
+        labs_note = "／".join(f"lab_ch{c}.md" for c in src_chs)
+        for m in re.finditer(r'<div class="expected-out">.*?<pre>(.*?)</pre>', src, re.S):
+            body = re.sub(r"<[^>]+>", "", m.group(1))
+            for a, b in (("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'),
+                         ("&#x27;", "'"), ("&#39;", "'"), ("&amp;", "&")):
+                body = body.replace(a, b)
+            body = body.strip()
+            head = next((ln.strip() for ln in body.splitlines() if ln.strip()), "")
+            if head and labtext and head not in labtext:
+                warn("GROUNDING", w, f"預期輸出的首行在 {labs_note} 找不到：「{head[:60]}」")
+        if not re.search(r'class="ver-note"', src):
+            warn("GROUNDING", w, "REF 區缺 .ver-note 環境版本註記")
 
-    # GROUNDING-PREP：先備頁的出處要求比正課更硬（fail 等級）。
-    # 整段被 kind=="prep" 包住，正課十一章一行都不會執行，所以不可能製造新的 warn。
-    if p.kind == "prep":
-        check_prep_grounding(p, w, src, labtext)
+        # GROUNDING-PREP：先備頁的出處要求比正課更硬（fail 等級）。
+        # 整段被 kind=="prep" 包住，正課十一章一行都不會執行，所以不可能製造新的 warn。
+        if p.kind == "prep":
+            check_prep_grounding(p, w, src, labtext)
 
     # SIZE
     kb = dest.stat().st_size / 1024
@@ -375,6 +381,45 @@ def check_page(p: P.Page):
     n_todo = src.count("TODO")
     if n_todo:
         warn("TODO", w, f"還有 {n_todo} 處 TODO")
+
+
+def check_concept_grounding(p, w, src):
+    """Concept pages cite primary reading and independently authored examples."""
+    if p.kind != "prep" or p.islp != 0 or p.src_labs:
+        fail("GROUNDING-CONCEPT", w, "概念模式僅供無 lab 的先備頁")
+    if 'class="deck-extra"' in src or 'class="expected-out"' in src:
+        fail("GROUNDING-CONCEPT", w, "概念頁不能使用未經 lab 核對的程式輸出卡")
+    if not S.page_books(p):
+        fail("GROUNDING-CONCEPT", w, "缺少已登記的概念來源")
+    for sec in p.secs:
+        m = re.search(r'<section id="' + re.escape(sec.id) + r'">(.*?)</section>', src, re.S)
+        body = m.group(1) if m else ""
+        if not any(S.source_key(x.strip()) for x in sec.badge.split("|")):
+            fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺書目章節")
+        locators = re.findall(r'href=[\"\'](https://seeing-theory\.brown\.edu/[^\"\']+)', body)
+        chapters = [int(n) for n in re.findall(r'Seeing-Theory Ch\.(\d+)', sec.badge)]
+        allowed = [SOURCE_CHAPTERS[n] for n in chapters if n in SOURCE_CHAPTERS]
+        matched = False
+        for url in locators:
+            pdf = re.fullmatch(r'https://seeing-theory\.brown\.edu/doc/seeing-theory\.pdf#page=(\d+)', url)
+            valid = any((pdf and start <= int(pdf.group(1)) <= end)
+                        or url.split('#')[0] == web for web, start, end in allowed)
+            if valid:
+                matched = True
+            else:
+                fail("GROUNDING-CONCEPT", w, f"#{sec.id} 來源與登記章節不符：{url}")
+        if not matched:
+            fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺原站小節或 PDF 頁碼連結")
+        if 'class="quiz-box"' not in body:
+            fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺自測")
+    for page in re.findall(r'seeing-theory\.pdf#page=(\d+)', src):
+        if not 1 <= int(page) <= 66:
+            fail("GROUNDING-CONCEPT", w, f"PDF 頁碼超出 1–66：{page}")
+    ex = re.search(r'<section id="exercises">(.*?)</section>', src, re.S)
+    if not ex or ex.group(1).count('class="quiz-box"') != 4:
+        fail("GROUNDING-CONCEPT", w, "EX 必須有四題概念練習")
+    if 'class="ver-note"' not in src:
+        fail("GROUNDING-CONCEPT", w, "缺算例與模擬來源註記")
 
 
 # ── 先備入口層的出處檢查 ────────────────────────────────────────────────
@@ -486,6 +531,14 @@ def check_flashcards():
                 continue
             if not str(c["back"]).strip():
                 fail("FLASHCARD", f.name, f"第 {i} 張 back 是空的")
+            # The browser renders flashcards as plain text, unlike rich quiz HTML.
+            import html
+            for side in ("front", "back"):
+                value = str(c[side])
+                markup = re.search(r'</?(?:b|strong|em|i|code|a|span|br|p)(?:\s[^>]*)?>', value)
+                if markup or html.unescape(value) != value:
+                    fail("FLASHCARD-TEXT", f.name,
+                         f"第 {i + 1} 張 {side} 必須是純文字，不能含 HTML 標籤或 entity")
             fronts.append(str(c["front"]))
         dup = [k for k, v in Counter(fronts).items() if v > 1]
         if dup:
@@ -544,7 +597,8 @@ def check_index():
         if not fc.exists():
             continue
         n = len(json.loads(fc.read_text(encoding="utf-8")))
-        m = re.search(re.escape(p.file) + r'".*?class="ch-meta">([^<]*)', src, re.S)
+        m = re.search(r'<a class="ch-card" href="' + re.escape(p.file)
+                      + r'".*?class="ch-meta">([^<]*)', src, re.S)
         if m and f"{n} 張詞彙卡" not in m.group(1):
             fail("INDEX-SYNC", "index.html",
                  f"{p.file} 的 .ch-meta「{m.group(1)}」與 {p.dkey}.json 的 {n} 張不符")

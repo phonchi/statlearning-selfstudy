@@ -450,7 +450,7 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-source{margin-top:.55rem;padding:.42rem .62rem;border-top:1px solid var(--card-border);
   color:var(--muted);font-size:.74rem;line-height:1.5;}
 .viz-source span{display:inline-block;margin-right:.45rem;padding:.08rem .38rem;border-radius:999px;
-  background:var(--code-bg);color:var(--accent2);font-family:'JetBrains Mono',monospace;
+  background:var(--code-bg);color:#fff;font-family:'JetBrains Mono',monospace;
   font-size:.68rem;font-weight:700;letter-spacing:.02em;}
 
 /* ---- 折疊條帶（k-fold、bootstrap 抽樣等） ---- */
@@ -863,7 +863,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：邏輯斯迴歸的係數到底怎麼解讀？「balance 每多一元，違約機率增加 0.0055」對嗎？</summary>
-    <div class="qa-a"><p><strong>不對，這是最常見的誤讀。</strong>0.0055 是 <em>log-odds</em> 的變化，不是機率的變化。正確的說法有兩種：</p><ul><li>「<code>balance</code> 每增加一元，違約的 <strong>log-odds 增加 0.0055</strong>」；</li><li>「違約的 <strong>勝算乘上</strong> $e^{0.0055} = 1.0055$，也就是多 0.55%」。注意是勝算多 0.55%，不是機率多 0.55 個百分點。</li></ul><p>為什麼機率的變化講不出一個數字？因為它取決於你站在哪裡。用表 4.1 的係數算：balance = 1000 時 p̂ = 0.00576；balance = 2000 時 p̂ = 0.586。同樣是多 1000 元，在低 balance 區機率幾乎沒動，在 2000 附近卻是斷崖。S 曲線最陡的地方斜率是 β₁/4。這是唯一能快速估「機率變化」的地方，而且只在 p ≈ 0.5 附近成立。</p><p>順帶一提，這也是為什麼報告邏輯斯迴歸時大家愛講<strong>勝算比</strong>（odds ratio, $e^{\beta_1}$）：它是一個不隨 x 改變的常數，講起來才不會錯。</p></div>
+    <div class="qa-a"><p><strong>不對，這是最常見的誤讀。</strong>0.0055 是 <em>log-odds</em> 的變化，不是機率的變化。正確的說法有兩種：</p><ul><li>「<code>balance</code> 每增加一元，違約的 <strong>log-odds 增加 0.0055</strong>」；</li><li>「違約的 <strong>勝算乘上</strong> $e^{0.0055} = 1.0055$，也就是多 0.55%」。注意是勝算多 0.55%，不是機率多 0.55 個百分點。</li></ul><p>為什麼機率的變化講不出一個數字？因為它取決於你站在哪裡。用表 4.1 的係數算：balance = 1000 時 p̂ = 0.00576；balance = 2000 時 p̂ = 0.586。同樣是多 1000 元，在低 balance 區機率幾乎沒動，在 2000 附近卻是斷崖。S 曲線最陡的地方斜率是 β₁/4。這是唯一能快速估「機率變化」的地方，而且只在 p ≈ 0.5 附近成立。</p><p>順帶一提，這也是為什麼報告邏輯斯迴歸時大家愛講<strong>勝算比</strong>（odds ratio, $e^{\beta_1}$）：它是一個不隨 x 改變的常數，講起來才不會錯。這些係數描述模型中的關聯；沒有因果研究設計與相應假設時，不能解讀成介入 <code>balance</code> 所造成的變化。</p></div>
   </details>
 </div>
 
@@ -909,7 +909,7 @@ Up          457  507</pre></div>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">講義 04 · 用2005 年當測試集</div>
+  <div class="dx-label">講義 04 · 用 2001–2004 配適、在 2005 年比較</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">X_train, X_test = X.loc[train], X.loc[~train]</span>
   <span class="line">y_train, y_test = y.loc[train], y.loc[~train]</span>
@@ -926,7 +926,7 @@ Up          457  507</pre></div>
 Predicted          
 Down         77  97
 Up           34  44</pre></div>
-  <p class="dx-note">用 2001–2004 訓練、2005 測試，正確率掉到 <strong>48.0%</strong>（錯誤率 52.0%，見儲存格 51）——<strong>比丟硬幣還差</strong>。訓練 52.2% 對測試 48.0%，這個落差就是第 5 章重抽樣要處理的主題。</p>
+  <p class="dx-note">用 2001–2004 配適、在 2005 年比較，正確率是 <strong>48.0%</strong>（錯誤率 52.0%，見儲存格 51）。不過前一張卡已用包含 2005 年的完整資料查看係數與 p 值；因此這是課本探索流程的教材示範，2005 年不是從頭到尾未碰的獨立測試集。</p>
   <span class="dx-src">來源：<code>Ch04-classification-lab-zh.ipynb</code> · 儲存格 45、49、51</span>
 </div>
 
@@ -958,7 +958,8 @@ Up           34  44</pre></div>
   <strong>+0.4049 回答的是：</strong>「隨便抓一個學生跟一個非學生比，誰比較容易違約？」——學生。
   因為學生的 <code>balance</code> 整體偏高。<br>
   <strong>−0.6468 回答的是：</strong>「<em>在 balance 相同</em> 的前提下，學生跟非學生誰比較容易違約？」——非學生。<br>
-  多元迴歸的每個係數都是「<strong>控制住其他變數之後</strong>」的效果。
+  多元迴歸的每個係數描述「<strong>控制模型中其他變數後</strong>」的條件關聯。
+  這是模型中的比較，沒有因果設計與相應假設時，不代表改變學生身分會造成違約率改變。
   ISLP 圖 4.3 左圖是前者、右圖（依 balance 分層的箱形圖）是後者。
 </div>
 
@@ -995,7 +996,7 @@ Up           34  44</pre></div>
 
   <h3 id="dx-mul">講義完整實作：只留 <code>Lag1</code> 與 <code>Lag2</code></h3>
 <div class="deck-extra">
-  <div class="dx-label">講義 04 · 砍掉沒用的變數再測一次</div>
+  <div class="dx-label">講義 04 · 探索後只留 Lag1 與 Lag2</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">model = MS([<span class="str">&#x27;Lag1&#x27;</span>, <span class="str">&#x27;Lag2&#x27;</span>]).fit(Smarket)</span>
   <span class="line">X = model.transform(Smarket)</span>
@@ -1012,14 +1013,14 @@ Up           34  44</pre></div>
 Predicted           
 Down         35   35
 Up           76  106</pre></div>
-  <p class="dx-note">六個變數的 p 值都很醜，那就只留看起來最有希望的兩個。測試正確率從 48.0% 升到 <strong>(35 + 106) / 252 = 56.0%</strong>；而且在「模型說會漲」的日子裡，它有 <strong>106 / (106 + 76) = 58.2%</strong> 準（儲存格 55）。不過先別開心：那 252 天裡本來就有 141 天在漲，<strong>每天都猜漲也有 56%</strong>。單看整體正確率，無法看出它是否優於多數類基準。這是下面「閾值與混淆矩陣」那一節的引子。</p>
+  <p class="dx-note">完整資料的 p 值看過 2005 年標籤後，才挑出看起來較有希望的兩個變數。2005 年正確率從 48.0% 升到 <strong>(35 + 106) / 252 = 56.0%</strong>；而且在「模型說會漲」的日子裡，它有 <strong>106 / (106 + 76) = 58.2%</strong> 準（儲存格 55）。不過先別開心：那 252 天裡本來就有 141 天在漲，<strong>每天都猜漲也有 56%</strong>。這組數字適合說明流程與混淆矩陣，不能當成選模後的新測試證據。乾淨評估須只用訓練年份決定變數。</p>
   <span class="dx-src">來源：<code>Ch04-classification-lab-zh.ipynb</code> · 儲存格 53、55</span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 混淆</div>
   <p>只用 <code>student</code> 配時它的係數是正的，加入 <code>balance</code> 後變成負的。該怎麼理解？</p>
-  <div class="quiz-options" id="qMulOptions"><div class="quiz-opt" data-correct="true" data-fb="對。多元迴歸的係數一律是「控制住其他變數之後」的偏效果。學生整體 balance 偏高所以整體違約率高；但同樣的 balance 之下，學生反而比較不容易違約。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(A)</span> 兩個係數在回答不同的問題：後者是「在 balance 相同的前提下」的效果</div><div class="quiz-opt" data-correct="false" data-fb="兩個模型都沒配錯，各自都是它所設定問題的正確答案。「相信變數多的」也不是普遍原則——要看你問的是<strong>邊際</strong>效果還是<strong>偏</strong>效果。想預測「該不該發卡給這個學生」用後者；想知道「學生族群整體風險」用前者。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(B)</span> 其中一個模型配錯了，應該相信變數比較多的那一個</div><div class="quiz-opt" data-correct="false" data-fb="方向不對。<code>student</code> 與 <code>balance</code> 確實相關，但這裡的現象是混淆（confounding）而不是共線性造成的不穩定——係數的標準誤沒有明顯膨脹，符號翻轉是<strong>真實的、可解釋的</strong>。移掉變數會改變控制的條件，也會改變係數所回答的問題。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(C)</span> 這是共線性造成的，把 student 或 balance 移掉一個就好</div></div>
+  <div class="quiz-options" id="qMulOptions"><div class="quiz-opt" data-correct="true" data-fb="對。多元迴歸的係數描述控制模型中其他變數後的條件關聯，不會自動具有因果意義。學生整體 balance 偏高所以整體違約率高；但同樣的 balance 之下，學生反而比較不容易違約。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(A)</span> 兩個係數在回答不同的關聯問題：後者比較 balance 相同的人</div><div class="quiz-opt" data-correct="false" data-fb="兩個模型都沒配錯，各自都是它所設定問題的正確答案。「相信變數多的」也不是普遍原則——要看你問的是<strong>邊際關聯</strong>還是<strong>條件關聯</strong>。想預測「該不該發卡給這個學生」用後者；想知道「學生族群整體風險」用前者。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(B)</span> 其中一個模型配錯了，應該相信變數比較多的那一個</div><div class="quiz-opt" data-correct="false" data-fb="方向不對。<code>student</code> 與 <code>balance</code> 確實相關，但這裡的現象是混淆（confounding）而不是共線性造成的不穩定——係數的標準誤沒有明顯膨脹，符號翻轉可由兩個模型控制條件不同來解釋。移掉變數會改變控制的條件，也會改變係數所回答的問題。" onclick="quizCheck('qMul', this)"><span class="opt-letter">(C)</span> 這是共線性造成的，把 student 或 balance 移掉一個就好</div></div>
   <div class="quiz-feedback" id="qMulFeedback"></div>
 </div>
 </section>
@@ -1229,7 +1230,7 @@ Up           76  106</pre></div>
 Predicted           
 Down         30   20
 Up           81  121</pre></div>
-  <p class="dx-note"><code>covariance_[0]</code>（儲存格 93）是<strong>第一類自己的</strong> Σ̂₁ = <code>[[1.5066, -0.0392], [-0.0392, 1.5356]]</code>——QDA 每類一個，這是它跟 LDA 的分水嶺。QDA 的測試正確率 <strong>0.5992</strong>（儲存格 97／98），比 LDA 的 0.560 高。lab 儲存格 99 提醒：股市資料上多出這幾個百分點，先在更大的測試集上驗證再說。</p>
+  <p class="dx-note"><code>covariance_[0]</code>（儲存格 93）是<strong>第一類自己的</strong> Σ̂₁ = <code>[[1.5066, -0.0392], [-0.0392, 1.5356]]</code>——QDA 每類一個，這是它跟 LDA 的分水嶺。QDA 的 2005 年正確率 <strong>0.5992</strong>（儲存格 97／98），比 LDA 的 0.560 高。lab 儲存格 99 提醒：股市資料上多出這幾個百分點，先在更大的測試集上驗證再說。</p>
   <span class="dx-src">來源：<code>Ch04-classification-lab-zh.ipynb</code> · 儲存格 89、93、95</span>
 </div>
 
@@ -1465,7 +1466,7 @@ Yes         20    9</pre></div>
 Predicted          
 Down         43  58
 Up           68  83</pre></div>
-  <p class="dx-note">K = 1 的測試正確率剛好 <strong>0.500</strong>（儲存格 124）——完全等於丟硬幣。K = 3 升到 0.532（儲存格 127），再加大也沒再改善。lab 儲存格 129 的結論：在 <code>Smarket</code> 上 QDA 最好。K = 1 太彈性，在 n 只有約 1000、訊號又極弱的資料上是純粹的變異。</p>
+  <p class="dx-note">K = 1 的 2005 年正確率剛好 <strong>0.500</strong>（儲存格 124）——完全等於丟硬幣。K = 3 升到 0.532（儲存格 127），再加大也沒再改善。lab 儲存格 129 的結論：在 <code>Smarket</code> 上 QDA 最好。K = 1 太彈性，在 n 只有約 1000、訊號又極弱的資料上是純粹的變異。</p>
   <span class="dx-src">來源：<code>Ch04-classification-lab-zh.ipynb</code> · 儲存格 122、124</span>
 </div>
 
@@ -1646,13 +1647,14 @@ Up           68  83</pre></div>
   數字與課本相同）。ISLP 表 4.8／4.9 的 Naive Bayes 實作與 <code>GaussianNB</code>
   對 <code>student</code> 的處理略有不同，所以本頁烘焙的 NB 混淆矩陣是 9618／49／238／95。</p>
 
-  <h3>Smarket 上五個方法的測試正確率（lab 的實跑結果）</h3>
+  <h3>Smarket 上五個方法的 2005 年正確率（lab 的實跑結果）</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>方法</th><th>測試正確率</th><th>混淆矩陣（預測 × 真實）</th><th>lab 儲存格</th></tr></thead>
+  <thead><tr><th>方法</th><th>2005 年正確率</th><th>混淆矩陣（預測 × 真實）</th><th>lab 儲存格</th></tr></thead>
   <tbody><tr><td>邏輯斯（6 個變數）</td><td>0.4801</td><td>77／97／34／44</td><td>49、51</td></tr><tr><td>邏輯斯（Lag1 + Lag2）</td><td>0.5595</td><td>35／35／76／106</td><td>53、55</td></tr><tr><td>LDA（Lag1 + Lag2）</td><td>0.5595</td><td>35／35／76／106</td><td>79</td></tr><tr><td>QDA（Lag1 + Lag2）</td><td><strong>0.5992</strong></td><td>30／20／81／121</td><td>95、97</td></tr><tr><td>Naive Bayes（Lag1 + Lag2）</td><td>0.5952</td><td>29／20／82／121</td><td>116、117</td></tr><tr><td>KNN，K = 1</td><td>0.5000</td><td>43／58／68／83</td><td>122、124</td></tr><tr><td>KNN，K = 3</td><td>0.5317</td><td>—</td><td>127</td></tr><tr><td>一律猜 Up（基準正確率）</td><td>0.5595</td><td>—</td><td>—</td></tr></tbody>
 </table></div>
   <p style="font-size:.82rem;color:var(--muted);">注意最後一列：<strong>「每天都猜漲」就有 55.95%</strong>。
-  邏輯斯與 LDA 剛好打成平手、沒有贏過它；只有 QDA 與 Naive Bayes 真的多了一點資訊。</p>
+  邏輯斯與 LDA 剛好打成平手、沒有贏過它；QDA 與 Naive Bayes 在這次教材比較中較高。
+  Lag1／Lag2 是看過含 2005 年的完整資料後才選出，因此這張表不能當成選模後的獨立測試證據。</p>
 
   <h3>公式速查</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1663,7 +1665,8 @@ Up           68  83</pre></div>
 <div class="info-box">
   <span class="info-label">三個一定要記住的觀念</span>
   <strong>1. 邏輯斯迴歸線性的是 log-odds，不是機率。</strong>
-  係數 β₁ 要讀成「勝算乘上 e^β₁」；同樣的 β₁ 對機率的影響隨位置而變。<br>
+  係數 β₁ 要讀成「勝算乘上 e^β₁」；同樣的 β₁ 對應的機率差異隨位置而變。
+  係數描述模型中的條件關聯，因果解讀另需研究設計與假設。<br>
   <strong>2. 生成式（LDA／QDA／Naive Bayes）與判別式（邏輯斯）的差別只在係數怎麼來。</strong>
   LDA 的邊界形式跟邏輯斯字面上相同（式 4.32）；差別是前者從常態假設推、後者最大化條件似然。
   共用 Σ 給線性邊界、各自 Σ<sub>k</sub> 給二次邊界、類內獨立給加性邊界。<br>
@@ -2721,7 +2724,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"分類（Classification）","back":"反應變數是類別的監督式學習問題。目標是把每一筆觀測值指派到 K 個類別之一，通常先估出屬於各類的機率，再依某個閾值決定標籤。"},{"front":"勝算（Odds）","back":"p /(1 − p)，發生機率除以不發生機率，範圍是 (0, ∞)。p 很小時勝算約等於機率；p 接近 1 時勝算會衝向無限大。"},{"front":"對數勝算（Log-odds / Logit）","back":"log[p /(1 − p)]，範圍是整個實數線。邏輯斯迴歸的線性函數對應這個量，所以係數要讀成「log-odds 的變化」，不是機率的變化。"},{"front":"邏輯斯函數（Logistic Function）","back":"p(X) = e^(β₀+β₁X) /(1 + e^(β₀+β₁X))。把任意實數壓進 (0, 1)，所以輸出永遠是合法機率，這是它取代線性迴歸的理由。"},{"front":"勝算比（Odds Ratio）","back":"e^β₁。預測變數每增加一單位，勝算要乘上的倍數。它不隨 x 改變，所以是報告邏輯斯迴歸效果時最不容易講錯的量。"},{"front":"最大似然法（Maximum Likelihood）","back":"挑一組參數讓「觀察到手上這批資料」的機率最大。邏輯斯迴歸與 Poisson 迴歸都用它，沒有封閉解要迭代；常態假設下的最大似然就退化成最小平方法。"},{"front":"混淆（Confounding）","back":"只放一個變數與同時放多個變數時，同一個係數可能連正負號都相反。ISLP 的 Default 例子：student 單獨配是 +0.4049，加了 balance 後變 −0.6468。多元迴歸的係數一律是「控制住其他變數之後」的效果。"},{"front":"多元邏輯斯迴歸（Multinomial Logistic Regression）","back":"K 大於 2 時的邏輯斯迴歸。挑一類當基準（baseline），對其餘 K − 1 類各寫一條相對於基準的 log-odds。換基準會讓係數變，但預測值不變。"},{"front":"Softmax 編碼（Softmax Coding）","back":"多類別邏輯斯的等價寫法：不挑基準、K 類對稱，Pr(Y = k|x) 正比於 e^(線性式)。只有兩類係數之差有意義；機器學習與神經網路慣用這種寫法。"},{"front":"生成式模型（Generative Model）","back":"先分別建模每一類裡面 X 的分佈 fₖ(x) 與先驗 πₖ，再用 Bayes 定理翻成後驗機率。LDA、QDA、Naive Bayes 都是這一類，跟直接建模後驗的邏輯斯迴歸（判別式）相對。"},{"front":"先驗機率（Prior Probability）","back":"πₖ，隨便抓一筆觀測值屬於第 k 類的機率。實務上直接用訓練資料裡各類的比例估：π̂ₖ = nₖ / n。"},{"front":"後驗機率（Posterior Probability）","back":"pₖ(x) = Pr(Y = k | X = x)，看到 x 之後它屬於第 k 類的機率。Bayes 分類器把 x 判給後驗機率最大的類，總錯誤率最低。"},{"front":"Bayes 定理（Bayes Theorem）","back":"Pr(Y = k|X = x) = πₖ fₖ(x) / Σ πₗ fₗ(x)。它把「各類裡 X 長什麼樣」翻成「看到這個 X 該猜哪一類」，是所有生成式分類器的骨架。"},{"front":"線性判別分析（LDA, Linear Discriminant Analysis）","back":"假設每一類的 X 服從多變量常態，平均向量各類不同、共變異數矩陣所有類共用。共用讓二次項在相減時抵消，所以決策邊界是線性的。"},{"front":"判別函數（Discriminant Function）","back":"δₖ(x)，把 Bayes 後驗取 log 並丟掉與 k 無關的項之後剩下的量。把 x 判給 δₖ(x) 最大的類。LDA 的 δ 是 x 的一次式，QDA 的是二次式。"},{"front":"二次判別分析（QDA, Quadratic Discriminant Analysis）","back":"放掉共用共變異數，讓每一類有自己的 Σₖ。二次項不再抵消，邊界變成二次曲面。要多估 K·p(p+1)/2 個參數，所以只在 n 大或共用假設明顯不成立時才划算。"},{"front":"Naive Bayes 分類器（Naive Bayes Classifier）","back":"假設在每一類內部 p 個預測變數互相獨立，於是 fₖ(x) 可拆成一維密度的乘積，以結構假設降低估計變異。常態版一般對應各類共變異數為對角的 QDA；變異數再跨類別共用時，才是對角 LDA。"},{"front":"混淆矩陣（Confusion Matrix）","back":"把預測標籤與真實標籤交叉列出的 2 × 2（或 K × K）表。對角是猜對、非對角是猜錯。看到別人的混淆矩陣第一件事是確認哪一軸是真實值，否則靈敏度與精確率會對調。"},{"front":"靈敏度（Sensitivity / Recall）","back":"TP /(TP + FN)，真的是正類的人裡你抓到幾成。分母是真實的正類總數。癌症篩檢在意的就是這個。"},{"front":"特異度（Specificity）","back":"TN /(TN + FP)，真的沒事的人裡你放對幾成。分母是真實的負類總數。1 − 特異度就是假陽率，也就是 ROC 曲線的橫軸。"},{"front":"精確率（Precision / PPV）","back":"TP /(TP + FP)，你喊「有事」的人裡真的有事的比例。分母是你預測為正的總數。垃圾信過濾與行銷名單在意的是這個。"},{"front":"多數類基準（Majority-class Baseline）","back":"一律預測多數類的表現。基準正確率是多數類比例，基準錯誤率是 1 減該比例；例如 Default 分別為 96.67% 與 3.33%。比較模型時要用同一量尺，並查看混淆矩陣及錯誤成本。"},{"front":"決策閾值（Decision Threshold）","back":"把後驗機率切成標籤的那個切點。0.5 只是「總錯誤率最小」的產物；類別不平衡或兩種錯誤成本不同時應該調整。Default 上從 0.5 降到 0.2，漏掉的違約戶從 252 降到 138。"},{"front":"ROC 曲線（ROC Curve）","back":"把所有可能閾值下的（假陽率、真陽率）畫成一條曲線。它呈現分類器在所有閾值下的表現，愈貼左上角愈好。對角線代表隨機猜。"},{"front":"曲線下面積（AUC, Area Under the ROC Curve）","back":"ROC 曲線下的面積，把所有閾值的表現總結成一個數。隨機猜是 0.5、完美是 1。LDA 在 Default 上的 AUC 是 0.95。"},{"front":"Poisson 迴歸（Poisson Regression）","back":"計數型反應變數的 GLM。假設 Y 服從 Poisson 分佈並對 log λ 配線性式，所以 λ 永遠是正的，而且自動帶進「平均等於變異」的關係。係數要用乘法解讀：λ 乘上 e^βⱼ。"},{"front":"廣義線性模型（GLM, Generalized Linear Model）","back":"假設 Y 屬於某個指數族分佈，再用連結函數把 E(Y) 轉換成預測變數的線性組合。線性迴歸（恆等連結）、邏輯斯迴歸（logit）、Poisson 迴歸（log）都是它的特例。"},{"front":"連結函數（Link Function）","back":"η，把 E(Y|X) 轉換成線性組合的那個函數。線性迴歸取 η(μ) = μ、邏輯斯取 log[μ/(1 − μ)]、Poisson 取 log μ。它同時決定了 μ 的合法範圍與係數的解讀方式。"}];
+const FLASHCARDS = [{"front":"分類（Classification）","back":"反應變數是類別的監督式學習問題。目標是把每一筆觀測值指派到 K 個類別之一，通常先估出屬於各類的機率，再依某個閾值決定標籤。"},{"front":"勝算（Odds）","back":"p /(1 − p)，發生機率除以不發生機率，範圍是 (0, ∞)。p 很小時勝算約等於機率；p 接近 1 時勝算會衝向無限大。"},{"front":"對數勝算（Log-odds / Logit）","back":"log[p /(1 − p)]，範圍是整個實數線。邏輯斯迴歸的線性函數對應這個量，所以係數要讀成「log-odds 的變化」，不是機率的變化。"},{"front":"邏輯斯函數（Logistic Function）","back":"p(X) = e^(β₀+β₁X) /(1 + e^(β₀+β₁X))。把任意實數壓進 (0, 1)，所以輸出永遠是合法機率，這是它取代線性迴歸的理由。"},{"front":"勝算比（Odds Ratio）","back":"e^β₁。預測變數每增加一單位，模型中的勝算要乘上的倍數。多元模型須理解為控制其他變數後的條件關聯；沒有因果研究設計與相應假設時，不代表介入該變數會造成結果改變。"},{"front":"最大似然法（Maximum Likelihood）","back":"挑一組參數讓「觀察到手上這批資料」的機率最大。邏輯斯迴歸與 Poisson 迴歸都用它，沒有封閉解要迭代；常態假設下的最大似然就退化成最小平方法。"},{"front":"混淆（Confounding）","back":"只放一個變數與同時放多個變數時，同一個係數可能連正負號都相反。ISLP 的 Default 例子：student 單獨配是 +0.4049，加了 balance 後變 −0.6468。多元模型的係數描述控制模型中其他變數後的條件關聯，不會自動具有因果意義。"},{"front":"多元邏輯斯迴歸（Multinomial Logistic Regression）","back":"K 大於 2 時的邏輯斯迴歸。挑一類當基準（baseline），對其餘 K − 1 類各寫一條相對於基準的 log-odds。換基準會讓係數變，但預測值不變。"},{"front":"Softmax 編碼（Softmax Coding）","back":"多類別邏輯斯的等價寫法：不挑基準、K 類對稱，Pr(Y = k|x) 正比於 e^(線性式)。只有兩類係數之差有意義；機器學習與神經網路慣用這種寫法。"},{"front":"生成式模型（Generative Model）","back":"先分別建模每一類裡面 X 的分佈 fₖ(x) 與先驗 πₖ，再用 Bayes 定理翻成後驗機率。LDA、QDA、Naive Bayes 都是這一類，跟直接建模後驗的邏輯斯迴歸（判別式）相對。"},{"front":"先驗機率（Prior Probability）","back":"πₖ，隨便抓一筆觀測值屬於第 k 類的機率。實務上直接用訓練資料裡各類的比例估：π̂ₖ = nₖ / n。"},{"front":"後驗機率（Posterior Probability）","back":"pₖ(x) = Pr(Y = k | X = x)，看到 x 之後它屬於第 k 類的機率。Bayes 分類器把 x 判給後驗機率最大的類，總錯誤率最低。"},{"front":"Bayes 定理（Bayes Theorem）","back":"Pr(Y = k|X = x) = πₖ fₖ(x) / Σ πₗ fₗ(x)。它把「各類裡 X 長什麼樣」翻成「看到這個 X 該猜哪一類」，是所有生成式分類器的骨架。"},{"front":"線性判別分析（LDA, Linear Discriminant Analysis）","back":"假設每一類的 X 服從多變量常態，平均向量各類不同、共變異數矩陣所有類共用。共用讓二次項在相減時抵消，所以決策邊界是線性的。"},{"front":"判別函數（Discriminant Function）","back":"δₖ(x)，把 Bayes 後驗取 log 並丟掉與 k 無關的項之後剩下的量。把 x 判給 δₖ(x) 最大的類。LDA 的 δ 是 x 的一次式，QDA 的是二次式。"},{"front":"二次判別分析（QDA, Quadratic Discriminant Analysis）","back":"放掉共用共變異數，讓每一類有自己的 Σₖ。二次項不再抵消，邊界變成二次曲面。要多估 K·p(p+1)/2 個參數，所以只在 n 大或共用假設明顯不成立時才划算。"},{"front":"Naive Bayes 分類器（Naive Bayes Classifier）","back":"假設在每一類內部 p 個預測變數互相獨立，於是 fₖ(x) 可拆成一維密度的乘積，以結構假設降低估計變異。常態版一般對應各類共變異數為對角的 QDA；變異數再跨類別共用時，才是對角 LDA。"},{"front":"混淆矩陣（Confusion Matrix）","back":"把預測標籤與真實標籤交叉列出的 2 × 2（或 K × K）表。對角是猜對、非對角是猜錯。看到別人的混淆矩陣第一件事是確認哪一軸是真實值，否則靈敏度與精確率會對調。"},{"front":"靈敏度（Sensitivity / Recall）","back":"TP /(TP + FN)，真的是正類的人裡你抓到幾成。分母是真實的正類總數。癌症篩檢在意的就是這個。"},{"front":"特異度（Specificity）","back":"TN /(TN + FP)，真的沒事的人裡你放對幾成。分母是真實的負類總數。1 − 特異度就是假陽率，也就是 ROC 曲線的橫軸。"},{"front":"精確率（Precision / PPV）","back":"TP /(TP + FP)，你喊「有事」的人裡真的有事的比例。分母是你預測為正的總數。垃圾信過濾與行銷名單在意的是這個。"},{"front":"多數類基準（Majority-class Baseline）","back":"一律預測多數類的表現。基準正確率是多數類比例，基準錯誤率是 1 減該比例；例如 Default 分別為 96.67% 與 3.33%。比較模型時要用同一量尺，並查看混淆矩陣及錯誤成本。"},{"front":"決策閾值（Decision Threshold）","back":"把後驗機率切成標籤的那個切點。0.5 只是「總錯誤率最小」的產物；類別不平衡或兩種錯誤成本不同時應該調整。Default 上從 0.5 降到 0.2，漏掉的違約戶從 252 降到 138。"},{"front":"ROC 曲線（ROC Curve）","back":"把所有可能閾值下的（假陽率、真陽率）畫成一條曲線。它呈現分類器在所有閾值下的表現，愈貼左上角愈好。對角線代表隨機猜。"},{"front":"曲線下面積（AUC, Area Under the ROC Curve）","back":"ROC 曲線下的面積，把所有閾值的表現總結成一個數。隨機猜是 0.5、完美是 1。LDA 在 Default 上的 AUC 是 0.95。"},{"front":"Poisson 迴歸（Poisson Regression）","back":"計數型反應變數的 GLM。假設 Y 服從 Poisson 分佈並對 log λ 配線性式，所以 λ 永遠是正的，而且自動帶進「平均等於變異」的關係。係數要用乘法解讀：λ 乘上 e^βⱼ。"},{"front":"廣義線性模型（GLM, Generalized Linear Model）","back":"假設 Y 屬於某個指數族分佈，再用連結函數把 E(Y) 轉換成預測變數的線性組合。線性迴歸（恆等連結）、邏輯斯迴歸（logit）、Poisson 迴歸（log）都是它的特例。"},{"front":"連結函數（Link Function）","back":"η，把 E(Y|X) 轉換成線性組合的那個函數。線性迴歸取 η(μ) = μ、邏輯斯取 log[μ/(1 − μ)]、Poisson 取 log μ。它同時決定了 μ 的合法範圍與係數的解讀方式。"}];
 HC.initFlashcards();
 </script>
 <script>
