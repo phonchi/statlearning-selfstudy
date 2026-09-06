@@ -93,7 +93,7 @@ class Page:
     ex_links: list = field(default_factory=list)   # prep 頁 EX 區的 pill（官方文件）
     nav_next: str = ""          # 覆寫 chapter-nav 的下一頁 stem（區與區之間的接縫）
     nav_prev: str = ""          # 覆寫 chapter-nav 的上一頁 stem（同上，反方向）
-    # 顯示分區。空字串→退回 kind。"pre"（課前準備）、"statistics"（統計先備）、"core"（正課）、
+    # 顯示分區。空字串→退回 kind。"pre"（課前準備）、"statistics"（統計附錄）、"core"（正課）、
     # "appendix"（Python 先備）。kind 管教學文案，grounding_mode 管來源檢查；group 管位置。
     # （prep 頁要過 check_prep_grounding），group 管的是「這頁排在哪一區」。
     group: str = ""
@@ -1013,9 +1013,9 @@ PAGES = [
 
 from statistics_pages import make_pages as _statistics_pages
 
-# 統計先備是獨立選讀區；課前準備仍可直接進入正課。
-_core_start = next(i for i, p in enumerate(PAGES) if p.grp == "core")
-PAGES[_core_start:_core_start] = _statistics_pages(Page, Sec)
+# 統計與 Python 都是正課後的查閱附錄；保留各自的區內導覽。
+_appendix_start = next(i for i, p in enumerate(PAGES) if p.grp == "appendix")
+PAGES[_appendix_start:_appendix_start] = _statistics_pages(Page, Sec)
 
 BY_STEM = {p.stem: p for p in PAGES}
 BY_N = {p.n: p for p in PAGES}

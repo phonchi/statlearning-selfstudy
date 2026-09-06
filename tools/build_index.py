@@ -92,12 +92,10 @@ def build_html():
 
     stats_cards = "\n".join(card(q, i) for i, q in enumerate(stats, 1))
     stats_block = f'''  <section id="statistics">
-    <h2>統計先備知識</h2>
-    <p>從機率、分布與抽樣走到統計推論。參考 <cite>Seeing Theory</cite> 網站與講義，
-    用本站的算例、核心互動與自測理解觀念，再到原站做延伸實驗。
-    不需要 Python 或微積分基礎；選讀，不列入評分。</p>
-    <p><strong>核心路徑：</strong>S1 → S2 → S3 → S4。S2 的計數可略過；
-    S5 貝氏與 S6 迴歸可在需要時選讀。已熟悉統計的讀者可<a href="introduction.html">直接進入正課</a>。</p>
+    <h2>附錄 · 統計先備知識</h2>
+    <p>正課遇到機率、分布或推論觀念不熟時，可回來<strong>隨時查閱</strong>，不必先讀完。
+    這六頁參考 <cite>Seeing Theory</cite>，提供算例、互動與自測。
+    與 Python 附錄一樣，選讀、不列入評分。</p>
     <div class="ch-grid">{stats_cards}</div>
   </section>
 
@@ -125,7 +123,7 @@ def build_html():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、六頁統計先備知識、十一章教材、六頁 Python 先備知識附錄，以例子、自測與必要的互動驗證觀念。NSYSU MATH524 課程配套。">
+<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、十一章教材，以及統計與 Python 先備知識附錄，以例子、自測與必要的互動驗證觀念。NSYSU MATH524 課程配套。">
 <title>統計學習 × Python 互動自學網站 — NSYSU MATH524</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -153,8 +151,8 @@ def build_html():
       章節旁的中文來源標記列出課本節號或講義頁碼，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
       深度學習對應 ISLP 第 10 章，列為課外補充，程式與輸出引用課本官方的英文 lab。<br>
       <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（不需要程式基礎）；
-      <strong>想補統計基礎？</strong>從<a href="#statistics">統計先備知識</a>開始；
-      <strong>沒寫過 Python？</strong>正課讀到卡住就翻<a href="#appendix">附錄</a>。課前與先備內容都是選讀，不列入評分。</p>
+      正課需要補基礎時，可查<a href="#statistics">統計附錄</a>或<a href="#appendix">Python 附錄</a>。
+      課前準備與兩組附錄都是選讀，不列入評分。</p>
       <div class="loop-steps">
         <div class="step"><b>① 閱讀與驗證</b>逐節閱讀；遇到互動元件時，先預測結果，再操作驗證。</div>
         <div class="step"><b>② 對照教材</b>需要完整推導時回到講義與教科書；實作時，打開課程練習筆記本並核對結果。</div>
@@ -164,22 +162,20 @@ def build_html():
     </div>
   </section>
 
-{pre_block}{stats_block}  <section id="core">
+{pre_block}  <section id="core">
     <h2>正課 · 十一章</h2>
     <p>章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
     共 {len(core)} 章、{total_widgets} 個視覺區塊、{total_cards} 張詞彙卡。</p>
     <div class="ch-grid">
 {cards}
     </div>
-  </section>{app_block}
+  </section>
+
+{stats_block}{app_block}
 
   <section>
     <h2>配套資源</h2>
     <div class="res-list">
-      <div class="res-card"><b>📖 統計入門 Seeing Theory</b>機率與統計的視覺入門。
-      本站統計先備頁提供原創中文解說與核心互動。<br>
-      <a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原站互動</a> ·
-      <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" target="_blank" rel="noopener">PDF 講義</a></div>
       <div class="res-card"><b>📖 教科書 ISLP</b>An Introduction to Statistical Learning with
       Applications in Python（James、Witten、Hastie、Tibshirani、Taylor）。標示「教科書」的來源對應此書章節。<br>
       <a href="{P.BOOK_ISLP}" target="_blank" rel="noopener">statlearning.com（可免費下載）</a></div>
@@ -189,6 +185,10 @@ def build_html():
       <div class="res-card"><b>📑 課程講義與 Lab</b>每章「講義 PDF」與「中文 Lab」都連到課程 repo 的
       投影片與 notebook，是本站內容的完整版來源。<br>
       <a href="https://github.com/{P.COURSE_REPO}" target="_blank" rel="noopener">{P.COURSE_REPO.split("/")[1]}</a></div>
+      <div class="res-card"><b>📖 統計入門 Seeing Theory</b>機率與統計的視覺入門。
+      本站統計先備頁提供原創中文解說與核心互動。<br>
+      <a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原站互動</a> ·
+      <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" target="_blank" rel="noopener">PDF 講義</a></div>
       <div class="res-card"><b>🔗 習題解答</b>課本課後習題的參考解答，EX 區每章都有連結。<br>
       <a href="https://botlnec.github.io/islp/" target="_blank" rel="noopener">botlnec.github.io/islp</a> ·
       <a href="https://github.com/Mohamed-Badry/islp-solutions" target="_blank" rel="noopener">islp-solutions</a> ·
@@ -232,12 +232,12 @@ def build_readme():
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分成四區：
 
 1. **課前準備**（3 頁）——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
-2. **統計先備知識**（6 頁）——參考 Seeing Theory，以算例、核心互動與自測建立統計基礎。
-3. **正課**（11 章）——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
+2. **正課**（11 章）——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
    關鍵詞彙卡與重點速查表。
+3. **附錄：統計先備知識**（6 頁）——參考 Seeing Theory，正課需要時查閱。
 4. **附錄：Python 先備知識**（6 頁）——正課會用到的語法與套件，查閱用。
 
-課前準備、統計先備知識與附錄都是選讀，不列入評分。
+課前準備與兩組附錄都是選讀，不列入評分。
 
 - 線上閱讀：{P.SITE_URL}
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python]({P.BOOK_ISLP})
@@ -256,16 +256,6 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 |---|------|------|--------|
 {pre_table}
 
-## 統計先備知識（選讀，不列入評分）
-
-參考 [Seeing Theory 網站](https://seeing-theory.brown.edu/)與 [PDF 講義](https://seeing-theory.brown.edu/doc/seeing-theory.pdf)。
-不需要 Python 或微積分基礎。核心路徑為 S1 → S2 → S3 → S4，計數可略過；S5–S6 選讀。
-每節有原創算例、自測與來源定位，本站核心互動可獨立使用，原站提供延伸實驗。
-
-| # | 頁面 | 對應 | 內容量 |
-|---|------|------|--------|
-{stats_table}
-
 ## 正課 · 十一章（授課順序）
 
 | # | 頁面 | 對應 | 講義 | 內容量 |
@@ -274,6 +264,16 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
 集成學習那一週折進「樹狀方法與集成學習」。
+
+## 附錄：統計先備知識（選讀，不列入評分）
+
+參考 [Seeing Theory 網站](https://seeing-theory.brown.edu/)與 [PDF 講義](https://seeing-theory.brown.edu/doc/seeing-theory.pdf)。
+與 Python 附錄一樣，正課需要時再查閱，不必先讀完。不需要 Python 或微積分基礎。
+每節有原創算例、自測與來源定位，本站核心互動可獨立使用，原站提供延伸實驗。
+
+| # | 頁面 | 對應 | 內容量 |
+|---|------|------|--------|
+{stats_table}
 
 ## 附錄：Python 先備知識（選讀，不列入評分）
 

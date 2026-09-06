@@ -313,9 +313,9 @@ node tools/browser_check.js <stem>
 
 ## 10. 統計先備知識（2026-09-06）
 
-依使用者確認新增獨立的 `group="statistics"`，顯示於課前準備與正課之間。
+依使用者確認新增獨立的 `group="statistics"`，與 Python 同為正課後的查閱附錄。
 六頁皆為 `kind="prep", grounding_mode="concept"`；既有頁面維持預設的 `"lab"`。
-S1–S4 為核心查閱路徑，S2 計數選讀；S5–S6 為選讀延伸。全區不列入評分，無 Python 或微積分先備要求。
+六頁均在正課需要時查閱、不必先讀完；S2 計數與 S5–S6 可作延伸。全區不列入評分，無 Python 或微積分先備要求。
 
 - 來源為 Seeing Theory 網站與 2018 年 PDF 草稿；`sources.py` 登記完整書目，
   `statistics_pages.py` 登記六頁與節次。每節另附實際網頁主題／PDF 頁碼連結。

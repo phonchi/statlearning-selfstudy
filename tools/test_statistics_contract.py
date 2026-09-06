@@ -57,6 +57,7 @@ class StatisticsContract(unittest.TestCase):
         self.assertEqual([p.n for p in six], list(range(21, 27)))
         self.assertEqual(len({p.dkey for p in six}), 6)
         self.assertIsNone(P.neighbours(six[0])[0])
+        self.assertIsNone(P.neighbours(six[-1])[1])
         for i in range(5):
             self.assertEqual(P.neighbours(six[i])[1], six[i+1])
         self.assertEqual(P.neighbours(P.BY_STEM['00c_ai_assisted'])[1].stem, 'introduction')

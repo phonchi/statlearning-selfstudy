@@ -38,17 +38,16 @@ def make_pages(Page, Sec):
         pages.append(Page(
             n=20+i, stem=stem, slug=f"S{i} · STATISTICS", title_en=en,
             h1=title.replace("〔選讀〕", "") + '<br><span class="blue">統計先備知識</span>',
-            plain=title, subtitle="選讀，不列入評分。用算例與互動理解統計，不需要 Python 或微積分基礎。",
+            plain=title, subtitle="統計附錄，選讀、不列入評分。正課需要時再查閱，不必先讀完。",
             formula="觀察｜機率模型｜抽樣變動｜推論",
             deck="", deck_pages=0, lab="", islp=0,
-            islp_label=f"先備 · S{i} 統計" + ("〔選讀〕" if i >= 5 else "〔核心路徑〕"),
+            islp_label=f"先備 · S{i} 統計",
             esl_label="", playlist="", hero_svg="",
             kind="prep", group="statistics", grounding_mode="concept", data_key="stats_"+stem,
             secs=[Sec(sid, label, label, f"Seeing-Theory Ch.{i}") for sid, label in sections],
             extra_pills=[("🔗 Seeing Theory 互動原站", WEB+web+"/index.html"),
                          ("📖 Seeing Theory 講義", PDF+f"#page={pdf}"),
-                         ("🔗 直接進入正課", "introduction.html")],
+                         ("🔗 正課導論", "introduction.html")],
             ex_links=[("🔗 本章原站延伸", WEB+web+"/index.html")],
-            nav_next="introduction" if i == 6 else "",
         ))
     return pages
