@@ -700,7 +700,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.9｜講義 09）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
@@ -731,12 +731,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>超平面：把分類問題變成幾何問題 <span class="sec-badge"><a href="#w10-source-islp">教科書 · 第 9.1 節</a></span><span class="sec-badge">講義 09</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>前面幾章的分類器都先繞一圈：邏輯斯迴歸去估 $\Pr(Y \mid X)$，LDA 去估
+  <p>前面幾章介紹了不同的分類方式：邏輯斯迴歸去估 $\Pr(Y \mid X)$，LDA 去估
   $\Pr(X \mid Y)$ 再用貝氏定理翻回來，樹去切區塊。這一章換一條路——
   <strong>直接在特徵空間裡找一片把兩類分開的平面</strong>。不估機率、不假設分佈，
   就是幾何。</p>
 
-  <p>講義把整章的劇本寫得很乾淨：先試著找一片<strong>分得開</strong>的平面；
+  <p>講義整理了本章的思路：先試著找一片<strong>分得開</strong>的平面；
   如果找不到，往兩個方向想辦法。<strong>把「分開」的定義放鬆</strong>（軟邊界），
   以及<strong>把特徵空間變大</strong>（核）。這兩招合起來就是支持向量機。</p>
 
@@ -753,7 +753,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </div>
 
   <p>起點是<strong>超平面</strong>（hyperplane）。p 維空間裡的超平面是一個 p − 1 維的
-  平坦仿射子空間；p = 2 就是一條線，p = 3 就是一個平面。它的方程式簡單到有點反高潮：</p>
+  平坦仿射子空間；p = 2 就是一條線，p = 3 就是一個平面。它的方程式是：</p>
 
   $$\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_p X_p = 0$$
 
@@ -806,9 +806,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   兩條規則合成一條，因為 $y_i$ 自己會把符號翻過來。這個 $y_i f(x_i)$ 之後會一直出現，
   它就是<strong>「這一筆分對了嗎、有多篤定」</strong>的度量。</p>
 
-  <h3 id="dx-fit">講義完整實作：造資料、配一個線性 SVC、取出係數</h3>
+  <h3 id="dx-fit">講義完整實作：造資料、擬合一個線性 SVC、取出係數</h3>
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · SVC(kernel='linear') 的第一次配適</div>
+  <div class="dx-label">lab 09 · SVC(kernel='linear') 的第一次擬合</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">rng = np.random.default_rng(<span class="num">1</span>)</span>
   <span class="line">X = rng.standard_normal((<span class="num">50</span>, <span class="num">2</span>))</span>
@@ -825,7 +825,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"> </span>
   <span class="line">svm_linear.coef_</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[1.17303943, 0.77348227]])</pre></div>
-  <p class="dx-note">這 50 筆資料是本章前半的主角，本頁所有烘焙圖都是<strong>重播同一組<code>default_rng(1)</code> 抽樣</strong>算出來的。<code>coef_</code> 就是 (β₁, β₂) = (1.173, 0.773)，<code>intercept_</code> 是 β₀。配適那一格的輸出只是 <code>SVC(C=10, kernel='linear')</code>——sklearn 在這裡顯示估計器的設定。</p>
+  <p class="dx-note">這 50 筆資料是本章前半的主角，本頁所有烘焙圖都是<strong>重播同一組<code>default_rng(1)</code> 抽樣</strong>算出來的。<code>coef_</code> 就是 (β₁, β₂) = (1.173, 0.773)，<code>intercept_</code> 是 β₀。擬合那一格的輸出只是 <code>SVC(C=10, kernel='linear')</code>——sklearn 在這裡顯示估計器的設定。</p>
   <span class="dx-src" data-lab-ch="9" data-lab-cells="14,16,29">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -916,7 +916,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   下一節會用軟邊界改善這種敏感性。
 </div>
 
-  <h3 id="dx-sep">講義完整實作：把兩類推開到剛好可分開，再用超大的 C 配適</h3>
+  <h3 id="dx-sep">講義完整實作：把兩類推開到剛好可分開，再用超大的 C 擬合</h3>
 <div class="deck-extra">
   <div class="dx-label">lab 09 · 剛好線性可分開的情況（C = 10⁵）</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -931,17 +931,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 Predicted        
 -1         25   0
  1          0  25</pre></div>
-  <p class="dx-note"><code>X[y==1] += 1.9</code> 把兩類再推開一點，剛好變成線性可分開。用 <code>C=1e5</code>（sklearn 的 C，見下一節）配出來的分類器沒有任何訓練誤差，而且<strong>只用了 3 個支持向量</strong>。這就是最大邊界超平面。lab 範例 換成 <code>C=0.1</code>，訓練誤差同樣是 0，但支持向量變成 <strong>12 個</strong>、margin 寬得多。ISLP §9.6.1 的評語是：後者「因為點更多所以更穩定」，在測試資料上可能更好。</p>
+  <p class="dx-note"><code>X[y==1] += 1.9</code> 把兩類再推開一點，剛好變成線性可分開。用 <code>C=1e5</code>（sklearn 的 C，見下一節）擬合出來的分類器沒有任何訓練誤差，而且<strong>只用了 3 個支持向量</strong>。這就是最大邊界超平面。lab 範例 換成 <code>C=0.1</code>，訓練誤差同樣是 0，但支持向量變成 <strong>12 個</strong>、margin 寬得多。ISLP §9.6.1 的評語是：後者「因為點更多所以更穩定」，在測試資料上可能更好。</p>
   <span class="dx-src" data-lab-ch="9" data-lab-cells="41,43">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：為什麼叫「支持向量」？為什麼只有它們影響解？</summary>
-    <div class="qa-a"><p>先說「向量」：在 p 維空間裡，一筆觀測值 $x_i$ 就是一個 p 維向量，所以這些點本來就是向量。「支持」則是力學的比喻。它們位於 margin 的兩側，移除其中一點可能改變最優邊界。</p><p><strong>從最佳化的角度看：</strong>最大邊界問題的限制式是 $y_i f(x_i) \ge M$。在最佳解上，只有<strong>取等號</strong>的那些限制式是「緊的」（active）；取嚴格大於的限制式仍有餘裕，把它整條刪掉，解一模一樣。KKT 條件把這件事寫成 $\hat\alpha_i \left(y_i f(x_i) - M\right) = 0$：限制式不緊時 $\hat\alpha_i = 0$，而解只由 $\hat\alpha_i > 0$ 的那些點組成（講義：$\hat\beta = \sum_i \hat\alpha_i y_i x_i$）。</p><p><strong>從損失函數的角度看：</strong>本頁 PART 03 會證明支持向量分類器等價於最小化hinge loss 加上 ridge 懲罰。$y_i f(x_i) > 1$ 的點落在損失曲線的平坦區，不影響目前的最優解；$y_i f(x_i) = 1$ 的點雖然損失也是 0，卻位於折角，仍可能是支撐解的支持向量。</p></div>
+    <div class="qa-a"><p>先說「向量」：在 p 維空間裡，一筆觀測值 $x_i$ 就是一個 p 維向量，所以這些點本來就是向量。「支持」則是力學的比喻。它們位於 margin 的兩側，移除其中一點可能改變最佳邊界。</p><p><strong>從最佳化的角度看：</strong>最大邊界問題的限制式是 $y_i f(x_i) \ge M$。在最佳解上，只有<strong>取等號</strong>的那些限制式是「緊的」（active）；取嚴格大於的限制式仍有餘裕，把它整條刪掉，解一模一樣。KKT 條件把這件事寫成 $\hat\alpha_i \left(y_i f(x_i) - M\right) = 0$：限制式不緊時 $\hat\alpha_i = 0$，而解只由 $\hat\alpha_i > 0$ 的那些點組成（講義：$\hat\beta = \sum_i \hat\alpha_i y_i x_i$）。</p><p><strong>從損失函數的角度看：</strong>本頁 PART 03 會證明支持向量分類器等價於最小化hinge loss 加上 ridge 懲罰。$y_i f(x_i) > 1$ 的點落在損失曲線的平坦區，不影響目前的最佳解；$y_i f(x_i) = 1$ 的點雖然損失也是 0，卻位於折角，仍可能是支撐解的支持向量。</p></div>
   </details>
   <details class="qa-item"><summary>Q：margin 大在測試資料上真的比較好嗎？</summary>
-    <div class="qa-a"><p>直覺上合理：margin 大表示兩類之間有一塊很寬的無人區，新資料落進來也大概不會踩線。ISLP 就是這樣說服讀者的——「我們<em>希望</em>訓練資料上 margin 大的分類器在測試資料上 margin 也大」。</p><p>但它明確加了一句警告：<strong>p 很大的時候最大邊界分類器會過度配適</strong>。維度愈高，愈容易找到一片「剛好」把訓練資料切開的超平面。那片超平面的位置可能完全由雜訊決定。lab 的 <code>Khan</code> 資料就是極端例子：n = 63 而 p = 2308，訓練誤差輕鬆變成 0，「這並不令人驚訝」。</p><p>所以實務上幾乎沒有人用純粹的最大邊界分類器。常用的是加了正則化的軟邊界版本，而且那個調整參數要靠交叉驗證選。</p></div>
+    <div class="qa-a"><p>直覺上合理：margin 大表示兩類之間有一塊很寬的無人區，新資料落進來也大概不會踩線。ISLP 就是這樣說服讀者的——「我們<em>希望</em>訓練資料上 margin 大的分類器在測試資料上 margin 也大」。</p><p>但它明確加了一句警告：<strong>p 很大的時候最大邊界分類器會過度擬合</strong>。維度愈高，愈容易找到一片「剛好」把訓練資料切開的超平面。那片超平面的位置可能完全由雜訊決定。lab 的 <code>Khan</code> 資料就是極端例子：n = 63 而 p = 2308，訓練誤差輕鬆變成 0，「這並不令人驚訝」。</p><p>所以實務上幾乎沒有人用純粹的最大邊界分類器。常用的是加了正則化的軟邊界版本，而且那個調整參數要靠交叉驗證選。</p></div>
   </details>
 </div>
 
@@ -1015,7 +1015,7 @@ Predicted
       </div>
       <div class="status-banner" id="w10softStatus"><span class="status-icon">›</span><span class="status-text">選資料集、推 C 的滑桿，看邊界、margin 帶與支持向量怎麼變。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">資料</label><select id="w10softSel" class="mono" onchange="w10softSetData()"><option value="nonsep" selected>不可分開</option><option value="sep">剛好可分開</option></select><div class="slider-row" style="flex:1 1 240px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:86px;">sklearn 的 C</span><input type="range" id="w10softSl" min="0" max="5" step="1" value="3" oninput="w10softDraw()" onchange="w10softDraw()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w10softSlV" style="min-width:54px;">1</span></div></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Ch09 lab 範例 的線性 SVC 配適。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>Ch09 lab 範例 的線性 SVC 擬合。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1024,7 +1024,7 @@ Predicted
       上圖：<span style="color:var(--pt-a);font-weight:700;">藍</span>與<span style="color:var(--pt-b);font-weight:700;">紅</span>是兩類，紅實線是邊界、虛線是 margin 的兩側、淡藍色帶子是 margin 區域。<strong>加粗描邊的是支持向量</strong>，方框標記的是<strong>被錯誤分類</strong>（εᵢ &gt; 1）的點。<br>下圖：同一組資料掃過六個 C，支持向量個數與違反 margin 的點數。
     </div>
     <div class="info-card">
-      <div class="ic-title">這一格的配適</div>
+      <div class="ic-title">這一格的擬合</div>
       <div class="ic-row"><span class="ic-label">sklearn 的 C</span><span class="ic-value" id="w10softC">—</span></div><div class="ic-row"><span class="ic-label">ISLP 的預算 C 相當於</span><span class="ic-value" id="w10softBudget">—</span></div><div class="ic-row"><span class="ic-label">margin 半寬 1/‖β‖</span><span class="ic-value" id="w10softM">—</span></div><div class="ic-row"><span class="ic-label">支持向量個數</span><span class="ic-value" id="w10softNsv">—</span></div><div class="ic-row"><span class="ic-label">違反 margin 的點</span><span class="ic-value" id="w10softViol">—</span></div><div class="ic-row"><span class="ic-label">被錯誤分類的點</span><span class="ic-value" id="w10softWrong">—</span></div>
     </div>
     <div class="info-card">
@@ -1035,9 +1035,9 @@ Predicted
 </div>
 
   <p>偏差與變異在這張圖上看得很清楚。<strong>C 小（滑桿左端）</strong>：margin 寬、支持向量多，
-  決定邊界的點多，所以<strong>變異小、偏差大</strong>，配得比較鬆。
+  決定邊界的點多，所以<strong>變異小、偏差大</strong>，擬合得比較鬆。
   <strong>C 大（滑桿右端）</strong>：margin 窄、支持向量少，邊界由少數點決定，
-  所以<strong>偏差小、變異大</strong>，配得很緊。C 就是這一章的調整參數，
+  所以<strong>偏差小、變異大</strong>，擬合得很緊。C 就是這一章的調整參數，
   跟 ridge 的 $\lambda$、樹的 $\alpha$ 是同一種東西，一律靠交叉驗證選。</p>
 
   <p>軟邊界仍保留支持向量的性質：<strong>只有落在 margin 上、
@@ -1093,7 +1093,7 @@ Predicted
   <span class="line"> </span>
   <span class="line">grid.cv_results_[(<span class="str">&#x27;mean_test_score&#x27;</span>)]</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([0.46, 0.46, 0.72, 0.74, 0.74, 0.74, 0.74])</pre></div>
-  <p class="dx-note">七個 C 的 5 折交叉驗證準確率是 <code>[0.46, 0.46, 0.72, 0.74, 0.74, 0.74, 0.74]</code>。最佳是 C = 1（lab 範例 的輸出），但後面四個 C 的準確率完全一樣。<strong>這種平台很常見，就挑最簡單（最正則化）的那個</strong>，兩者分別是 0.74 與 0.74，這次結果相同。注意 C = 0.001 與 0.01 的準確率只有 0.46，比亂猜還差：罰得太輕，β 被壓到幾乎是 0，分類器整組崩掉。</p>
+  <p class="dx-note">七個 C 的 5 折交叉驗證準確率是 <code>[0.46, 0.46, 0.72, 0.74, 0.74, 0.74, 0.74]</code>。最佳是 C = 1（lab 範例 的輸出），但後面四個 C 的準確率完全一樣。<strong>這種誤差曲線平坦的情況很常見，就挑最簡單（最正則化）的那個</strong>，兩者分別是 0.74 與 0.74，這次結果相同。注意 C = 0.001 與 0.01 的準確率只有 0.46，比亂猜還差：罰得太輕，β 被壓到幾乎是 0，分類器的預測表現變差。</p>
   <span class="dx-src" data-lab-ch="9" data-lab-cells="31,33">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1114,7 +1114,7 @@ Predicted
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：C 到底是「容忍度」還是「懲罰」？我每次都搞反。</summary>
-    <div class="qa-a"><p>兩個都對，因為那是<strong>兩個不同的 C</strong>。記一個口訣：<strong>ISLP 的 C 在限制式裡，sklearn 的 C 在目標函數裡。</strong></p><p><strong>ISLP（式 9.15）：</strong>$\sum_i \epsilon_i \le C$。C 站在不等式的右邊，是「你最多可以犯多少規」的<strong>預算</strong>。預算多 → 犯規多 → margin 寬。C = 0 就是一毛錢都不准犯規，退回最大邊界分類器。</p><p><strong>sklearn（等價的 primal 式，講義）：</strong>$\min \frac12\lVert\beta\rVert^2 + C\sum_i \epsilon_i$。C 站在目標函數裡乘著犯規總量，是<strong>罰款單價</strong>。單價高 → 沒人敢犯規 → margin 窄。$C \to \infty$ 就是硬邊界。</p><p>所以講義寫「C 與 const 成反比」。實務上你摸到的幾乎都是 sklearn 那個，記住<strong>「C 大 ＝ 配得緊 ＝ 容易過度配適」</strong>就好，跟 ridge 的 λ 剛好反向（λ 大 ＝ 配得鬆）。順便一提，$\lambda$ 在式 9.25 裡的方向與 ISLP 的預算 C 同向。</p></div>
+    <div class="qa-a"><p>兩個都對，因為那是<strong>兩個不同的 C</strong>。記一個口訣：<strong>ISLP 的 C 在限制式裡，sklearn 的 C 在目標函數裡。</strong></p><p><strong>ISLP（式 9.15）：</strong>$\sum_i \epsilon_i \le C$。C 站在不等式的右邊，是「你最多可以犯多少規」的<strong>預算</strong>。預算多 → 犯規多 → margin 寬。C = 0 就是一毛錢都不准犯規，退回最大邊界分類器。</p><p><strong>sklearn（等價的 primal 式，講義）：</strong>$\min \frac12\lVert\beta\rVert^2 + C\sum_i \epsilon_i$。C 站在目標函數裡乘著犯規總量，是<strong>罰款單價</strong>。單價高 → 沒人敢犯規 → margin 窄。$C \to \infty$ 就是硬邊界。</p><p>所以講義寫「C 與 const 成反比」。實務上你摸到的幾乎都是 sklearn 那個，記住<strong>「C 大 ＝ 擬合得緊 ＝ 容易過度擬合」</strong>就好，跟 ridge 的 λ 剛好反向（λ 大 ＝ 擬合得鬆）。順便一提，$\lambda$ 在式 9.25 裡的方向與 ISLP 的預算 C 同向。</p></div>
   </details>
   <details class="qa-item"><summary>Q：SVM 需要標準化嗎？</summary>
     <div class="qa-a"><p>需要，而且比大多數方法更需要。講義講得很直接：<strong>「SVM 的演算法不具尺度不變性，所以強烈建議先縮放你的資料」</strong>。</p><p>理由就在這一章的第一句話：SVM 從頭到尾都在算<strong>距離</strong>與<strong>內積</strong>。一個以「元」為單位的收入變數（範圍幾十萬）和一個以「年」為單位的年齡變數（範圍幾十），在 ‖β‖ 與 margin 裡的權重會差好幾個數量級——收入那一維會完全主導邊界的方向，年齡等於被忽略。RBF 核更嚴重，因為 $\exp(-\gamma \sum_j (x_{ij}-x_{i'j})^2)$ 裡的平方距離會被大尺度的那一維吃光。</p><p>做法跟第 5 章一樣：把 <code>StandardScaler</code> 包進 <code>Pipeline</code>，再交給 <code>GridSearchCV</code>，這樣每一折都會用該折的訓練部分重新算平均與標準差，不會洩漏。順帶一提，這也是為什麼 lab 的 <code>Khan</code> 例子用線性核就好——基因表現量本來就在同一個尺度上。</p></div>
@@ -1124,7 +1124,7 @@ Predicted
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 軟邊界與 C</div>
   <p>在 <code>scikit-learn</code> 裡把 <code>SVC(kernel='linear')</code> 的 C 從 0.1 加到 100，預期會看到什麼？</p>
-  <div class="quiz-options" id="qSoftOptions"><div class="quiz-opt" data-correct="true" data-fb="對。sklearn 的 C 是違反的&lt;strong&gt;懲罰&lt;/strong&gt;，加大就是「不准犯規」，所以 margin 縮窄、只剩少數點頂在 margin 上。lab 範例 的 29 對 36 就是這個現象。偏差變小、變異變大。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(A)</span> margin 變窄、支持向量變少、訓練誤差變小，但過度配適的風險上升</div><div class="quiz-opt" data-correct="false" data-fb="把兩個 C 搞混了。&lt;strong&gt;ISLP 式 9.15 的 C 是預算&lt;/strong&gt;，加大確實會讓 margin 變寬；但 &lt;code&gt;scikit-learn&lt;/code&gt; 的 C 是&lt;strong&gt;懲罰&lt;/strong&gt;，方向相反。講義明說「C 與 const 成反比」。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(B)</span> margin 變寬、支持向量變多，因為 C 是違反量的預算</div><div class="quiz-opt" data-correct="false" data-fb="不對。margin 半寬是 1/‖β‖，而 β 是最佳化的結果——換了 C 就換了目標函數，β 會變、margin 當然跟著變。只有在資料可分開且 C → ∞ 時，margin 才會固定成最大邊界那個值。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(C)</span> margin 不變，只有被判錯的點數會變，因為 margin 由資料的幾何決定</div></div>
+  <div class="quiz-options" id="qSoftOptions"><div class="quiz-opt" data-correct="true" data-fb="對。sklearn 的 C 是違反的&lt;strong&gt;懲罰&lt;/strong&gt;，加大就是「不准犯規」，所以 margin 縮窄、只剩少數點頂在 margin 上。lab 範例 的 29 對 36 就是這個現象。偏差變小、變異變大。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(A)</span> margin 變窄、支持向量變少、訓練誤差變小，但過度擬合的風險上升</div><div class="quiz-opt" data-correct="false" data-fb="把兩個 C 搞混了。&lt;strong&gt;ISLP 式 9.15 的 C 是預算&lt;/strong&gt;，加大確實會讓 margin 變寬；但 &lt;code&gt;scikit-learn&lt;/code&gt; 的 C 是&lt;strong&gt;懲罰&lt;/strong&gt;，方向相反。講義明說「C 與 const 成反比」。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(B)</span> margin 變寬、支持向量變多，因為 C 是違反量的預算</div><div class="quiz-opt" data-correct="false" data-fb="不對。margin 半寬是 1/‖β‖，而 β 是最佳化的結果——換了 C 就換了目標函數，β 會變、margin 當然跟著變。只有在資料可分開且 C → ∞ 時，margin 才會固定成最大邊界那個值。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(C)</span> margin 不變，只有被判錯的點數會變，因為 margin 由資料的幾何決定</div></div>
   <div class="quiz-feedback" id="qSoftFeedback"></div>
 </div>
 </section>
@@ -1147,7 +1147,7 @@ Predicted
 
   <p>這就是全書一直在用的<strong>「損失 + 懲罰」</strong>格式（式 9.26）。
   後面那一項你認得。它就是第 6 章的 ridge 懲罰。前面那一項叫
-  <strong>hinge loss</strong>（合頁損失，因為它的圖長得像門的合頁）：</p>
+  <strong>hinge loss</strong>（鉸鏈損失，因為它的圖長得像門的鉸鏈）：</p>
 
   $$L\left(X, y, \beta\right) = \sum_{i=1}^{n}
     \max\left[0,\; 1 - y_i\left(\beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip}\right)\right]$$
@@ -1187,7 +1187,7 @@ Predicted
 </div>
 
   <p>關鍵在<strong>平坦區與折角的差別</strong>。當 $y_i f(x_i) > 1$，損失在附近恆為 0，
-  梯度也是 0，刪去該點不影響目前的最優解。但 $y_i f(x_i) = 1$ 正好是折角，
+  梯度也是 0，刪去該點不影響目前的最佳解。但 $y_i f(x_i) = 1$ 正好是折角，
   雖然損失為 0，仍可能支撐解。可依下面三區來讀：</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1242,7 +1242,7 @@ Predicted
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Hinge loss</div>
   <p>某一筆觀測值的 y·f(x) = 3。它對式 9.25 那個目標函數的貢獻是多少？把它從訓練資料裡刪掉會發生什麼事？</p>
-  <div class="quiz-options" id="qHingeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。y·f = 3 嚴格大於 1，位於 hinge 的平坦區，梯度為 0。不要把它和 y·f = 1 混在一起：等號處是折角，損失雖為 0，仍可能是支持向量。" onclick="quizCheck('qHinge', this)"><span class="opt-letter">(A)</span> 貢獻是 0；在相同的懲罰設定下，刪掉它仍保留目前的最優解</div><div class="quiz-opt" data-correct="false" data-fb="少看了外面那個 max。hinge loss 是 max(0, 1 − y·f)，&lt;strong&gt;不會是負的&lt;/strong&gt;——損失函數如果可以是負的，最佳化就會去追求「分對得愈誇張愈好」，那沒有意義。" onclick="quizCheck('qHinge', this)"><span class="opt-letter">(B)</span> 貢獻是 −2，因為 1 − y·f(x) = −2</div><div class="quiz-opt" data-correct="false" data-fb="這描述&lt;strong&gt;邏輯斯損失&lt;/strong&gt;；hinge 在此已進入平坦區。log(1 + e^(−3)) ≈ 0.049，仍大於 0；hinge 在這裡是&lt;strong&gt;精確的 0&lt;/strong&gt;。兩者的差別就在這裡：邏輯斯迴歸沒有支持向量的概念。" onclick="quizCheck('qHinge', this)"><span class="opt-letter">(C)</span> 貢獻略大於 0，所以刪掉它解會微微改變</div></div>
+  <div class="quiz-options" id="qHingeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。y·f = 3 嚴格大於 1，位於 hinge 的平坦區，梯度為 0。不要把它和 y·f = 1 混在一起：等號處是折角，損失雖為 0，仍可能是支持向量。" onclick="quizCheck('qHinge', this)"><span class="opt-letter">(A)</span> 貢獻是 0；在相同的懲罰設定下，刪掉它仍保留目前的最佳解</div><div class="quiz-opt" data-correct="false" data-fb="少看了外面那個 max。hinge loss 是 max(0, 1 − y·f)，&lt;strong&gt;不會是負的&lt;/strong&gt;——損失函數如果可以是負的，最佳化就會去追求「分對得愈誇張愈好」，那沒有意義。" onclick="quizCheck('qHinge', this)"><span class="opt-letter">(B)</span> 貢獻是 −2，因為 1 − y·f(x) = −2</div><div class="quiz-opt" data-correct="false" data-fb="這描述&lt;strong&gt;邏輯斯損失&lt;/strong&gt;；hinge 在此已進入平坦區。log(1 + e^(−3)) ≈ 0.049，仍大於 0；hinge 在這裡是&lt;strong&gt;精確的 0&lt;/strong&gt;。兩者的差別就在這裡：邏輯斯迴歸沒有支持向量的概念。" onclick="quizCheck('qHinge', this)"><span class="opt-letter">(C)</span> 貢獻略大於 0，所以刪掉它解會微微改變</div></div>
   <div class="quiz-feedback" id="qHingeFeedback"></div>
 </div>
 </section>
@@ -1257,7 +1257,7 @@ Predicted
   無論 C 調成多少，一條直線都沒救。</p>
 
   <p>第 7 章遇過一模一樣的問題，答案是<strong>特徵擴張</strong>（feature expansion）：
-  把 $X_1^2, X_2^2, X_1X_2, X_1^3, \dots$ 加進特徵裡，在放大的空間配線性分類器，
+  把 $X_1^2, X_2^2, X_1X_2, X_1^3, \dots$ 加進特徵裡，在放大的空間擬合線性分類器，
   映射回原空間就變成彎的邊界。用二次項的話（ISLP 式 9.16）：</p>
 
   $$\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_1^2 + \beta_4 X_2^2
@@ -1315,7 +1315,7 @@ Predicted
       <div class="ic-title">核技巧的三步 <span class="ic-badge">CODE</span></div>
       <div class="pseudo-code" id="w10kernCode" style="font-size:.74rem;"><span class="line" data-l="1">原空間分不開</span>
 <span class="line" data-l="2">映射 φ：x → (x, x²)</span>
-<span class="line" data-l="3">在新空間配線性超平面</span>
+<span class="line" data-l="3">在新空間擬合線性超平面</span>
 <span class="line" data-l="4">映射回去 → 彎的邊界</span>
 <span class="line" data-l="5">核技巧：跳過第 2、3 步，</span>
 <span class="line" data-l="6">直接算 K(x, x′) 就好</span></div>
@@ -1327,7 +1327,7 @@ Predicted
   </div>
 </div>
 
-  <h3 id="dx-map">講義完整實作：手寫一個二次核，跟「先映射再配線性」比對</h3>
+  <h3 id="dx-map">講義完整實作：手寫一個二次核，跟「先映射再擬合線性」比對</h3>
 <div class="deck-extra">
   <div class="dx-label">lab 09 · 特徵映射 vs 自訂核（同心圓資料）</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1385,7 +1385,7 @@ Predicted
   <span class="line">plt.show()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>w= [-0.05481854 -2.53191791 -2.52028513] b= [1.14976292]
 &lt;Figure size 1600x800 with 2 Axes&gt;&lt;figure omitted&gt;</pre></div>
-  <p class="dx-note"><code>feature_map_1</code> 把二維點送到三維 (√2·x₁x₂, x₁², x₂²)，<code>my_kernel_1</code> 則是那個映射的內積，也就是它的核。在三維空間配出來的線性超平面是 <code>w = [-0.0548, -2.5319, -2.5203]</code>、<code>b = 1.1498</code>：第一個係數幾乎是 0（交互項沒用），後兩個幾乎相等且為負。<strong>它學到的其實就是「x₁² + x₂² 小的是內圈」</strong>。</p>
+  <p class="dx-note"><code>feature_map_1</code> 把二維點送到三維 (√2·x₁x₂, x₁², x₂²)，<code>my_kernel_1</code> 則是那個映射的內積，也就是它的核。在三維空間擬合出來的線性超平面是 <code>w = [-0.0548, -2.5319, -2.5203]</code>、<code>b = 1.1498</code>：第一個係數幾乎是 0（交互項沒用），後兩個幾乎相等且為負。<strong>它學到的其實就是「x₁² + x₂² 小的是內圈」</strong>。</p>
   <span class="dx-src" data-lab-ch="9" data-lab-cells="51,52">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1410,7 +1410,7 @@ Accuracy score using feature map  1.0</pre></div>
 
   $$K(x_i, x_{i'}) = \sum_{j=1}^{p} x_{ij} x_{i'j}$$
 
-  <p><strong>d 次多項式核</strong>（式 9.22）等於在 d 次多項式的空間裡配線性分類器：</p>
+  <p><strong>d 次多項式核</strong>（式 9.22）等於在 d 次多項式的空間裡擬合線性分類器：</p>
 
   $$K(x_i, x_{i'}) = \left(1 + \sum_{j=1}^{p} x_{ij} x_{i'j}\right)^{d}$$
 
@@ -1429,20 +1429,20 @@ Accuracy score using feature map  1.0</pre></div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10rbfSvg" height="420"></svg>
       <div class="chart-wrap"><canvas id="w10rbfChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：γ 從 0.25 加到 50，訓練錯誤率一路掉到 0，但測試錯誤率先降後升——γ = 50 時訓練幾乎完美而測試最差，這就是過度配適。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：γ 從 0.25 加到 50，訓練錯誤率一路掉到 0，但測試錯誤率先降後升——γ = 50 時訓練幾乎完美而測試最差，這就是過度擬合。</div></div>
       </div>
       <div class="status-banner" id="w10rbfStatus"><span class="status-icon">›</span><span class="status-text">一次只改一個參數，分清 γ 的局部性與 C 的違規懲罰。</span></div>
       <div class="controls-bar"><label class="slider-label">這次要改</label><select id="w10rbfMode" class="mono" onchange="w10rbfModeChange()"><option value="gamma" selected>γ（C 固定為 1）</option><option value="C">C（γ 固定為 1）</option></select><div class="slider-row" style="flex:1 1 260px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:30px;">設定</span><input type="range" id="w10rbfSl" min="0" max="2" step="1" value="0" oninput="w10rbfDraw()" onchange="w10rbfDraw()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w10rbfSlV" style="min-width:112px;">γ = 0.5</span></div></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Ch09 lab 範例；同一 train/test split 的 SVC 配適。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>Ch09 lab 範例；同一 train/test split 的 SVC 擬合。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看 <span class="ic-badge">圖 9.9</span></div>
-      上圖：填色是 RBF 核 SVM 的決策區域（<strong>烘焙的 40×40 格點</strong>），點是訓練資料。先選只改 γ 或只改 C，再推滑桿；另一個參數全程固定。<strong>在 C=1 下看 γ = 50</strong>：邊界縮成一個個包住單點的小島，訓練錯誤率是 0。此時模型把每個點各自圈起來，訓練滿分仍不足以說明泛化能力。<br>下圖：C = 1 固定，γ 從 0.25 掃到 50 的訓練與測試錯誤率。
+      上圖：填色是 RBF 核 SVM 的決策區域（<strong>預先計算的 40×40 格點</strong>），點是訓練資料。先選只改 γ 或只改 C，再推滑桿；另一個參數全程固定。<strong>在 C=1 下看 γ = 50</strong>：邊界縮成一個個包住單點的小島，訓練錯誤率是 0。此時模型把每個點各自圈起來，訓練滿分仍不足以說明泛化能力。<br>下圖：C = 1 固定，γ 從 0.25 掃到 50 的訓練與測試錯誤率。
     </div>
     <div class="info-card">
-      <div class="ic-title">這一格的配適</div>
+      <div class="ic-title">這一格的擬合</div>
       <div class="ic-row"><span class="ic-label">γ</span><span class="ic-value" id="w10rbfG">—</span></div><div class="ic-row"><span class="ic-label">sklearn 的 C</span><span class="ic-value" id="w10rbfC">—</span></div><div class="ic-row"><span class="ic-label">支持向量個數</span><span class="ic-value" id="w10rbfNsv">—</span></div><div class="ic-row"><span class="ic-label">訓練錯誤率</span><span class="ic-value" id="w10rbfTr">—</span></div><div class="ic-row"><span class="ic-label">測試錯誤率</span><span class="ic-value" id="w10rbfTe">—</span></div><div class="ic-row"><span class="ic-label">這一組的出處</span><span class="ic-value" id="w10rbfWhy">—</span></div>
     </div>
     <div class="info-card">
@@ -1451,7 +1451,7 @@ Accuracy score using feature map  1.0</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">γ 也是一個正則化參數</div>
-      講義：<strong>「γ 也是一個正則化參數，過度配適時應該把它調小」</strong>。γ 小 → 每個支持向量的影響範圍大 → 邊界平滑 → 偏差大變異小；γ 大 → 影響範圍小 → 邊界破碎 → 偏差小變異大。它跟 C 要<strong>一起</strong>用網格搜尋調，因為兩者都在控制彈性。
+      講義：<strong>「γ 也是一個正則化參數，過度擬合時應該把它調小」</strong>。γ 小 → 每個支持向量的影響範圍大 → 邊界平滑 → 偏差大變異小；γ 大 → 影響範圍小 → 邊界破碎 → 偏差小變異大。它跟 C 要<strong>一起</strong>用網格搜尋調，因為兩者都在控制彈性。
     </div>
   </div>
 </div>
@@ -1501,14 +1501,14 @@ Accuracy score using feature map  1.0</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：核技巧「不用真的升維」到底是什麼意思？它省掉了什麼？</summary>
-    <div class="qa-a"><p>省掉的是<strong>把 Φ(x) 算出來、存起來、在高維空間裡做運算</strong>這三件事。</p><p>具體看講義那個例子。要做二次擴張，笨方法是：對每一筆資料算出三維向量 $\Phi(x) = (\sqrt2 x_1x_2, x_1^2, x_2^2)$，存成一個 n × 3 的矩陣，再在三維空間裡配 SVC。核方法是：完全不動原始的 n × 2 資料，需要內積的時候就算 $(x_i^\top x_{i'})^2$。兩者的答案<strong>數學上完全相同</strong>（lab 範例 實測都是 1.0），但後者永遠留在二維。</p><p>二維變三維省不了多少。但 p = 100 做到 d = 3 是 17 萬多維，而 RBF 核對應的特徵空間是<strong>無限維</strong>的（講義：由 Mercer 定理，確切的 Φ 無法明確寫出）。ISLP 指出：那個空間大到「我們本來也不可能在那裡做計算」。核方法讓你使用那個空間，卻永遠不必進去。</p><p>要付的代價是：你拿不到 β 了。線性核可以印 <code>coef_</code> 看哪個變數重要，RBF 核只有 $\alpha_i$ 與支持向量。講義把這列成高斯核的缺點：<strong>「神祕（沒有 w）」</strong>。可解讀性換來了彈性。</p></div>
+    <div class="qa-a"><p>省掉的是<strong>把 Φ(x) 算出來、存起來、在高維空間裡做運算</strong>這三件事。</p><p>具體看講義那個例子。要做二次擴張，直接的做法是：對每一筆資料算出三維向量 $\Phi(x) = (\sqrt2 x_1x_2, x_1^2, x_2^2)$，存成一個 n × 3 的矩陣，再在三維空間裡擬合 SVC。核方法是：完全不動原始的 n × 2 資料，需要內積的時候就算 $(x_i^\top x_{i'})^2$。兩者的答案<strong>數學上完全相同</strong>（lab 範例 實測都是 1.0），但後者永遠留在二維。</p><p>二維變三維省不了多少。但 p = 100 做到 d = 3 是 17 萬多維，而 RBF 核對應的特徵空間是<strong>無限維</strong>的（講義：由 Mercer 定理，確切的 Φ 無法明確寫出）。ISLP 指出：那個空間大到「我們本來也不可能在那裡做計算」。核方法讓你使用那個空間，卻永遠不必進去。</p><p>要付的代價是：你拿不到 β 了。線性核可以印 <code>coef_</code> 看哪個變數重要，RBF 核只有 $\alpha_i$ 與支持向量。講義把這列成高斯核的缺點：<strong>「神祕（沒有 w）」</strong>。可解讀性換來了彈性。</p></div>
   </details>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 核技巧</div>
   <p>用 RBF 核的 SVM 時，把 γ 從 0.5 調到 50，決策邊界會怎麼變？</p>
-  <div class="quiz-options" id="qKernOptions"><div class="quiz-opt" data-correct="true" data-fb="對。γ 大 → 每個支持向量的影響半徑小 → 只有貼著它的地方會被判成它的類別。上面元件的第四格（γ = 50）就是這個樣子，而下面的曲線顯示測試錯誤率在 γ 很大時反而上升。ISLP 圖 9.10／9.11 講的是同一件事。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(A)</span> 邊界從平滑的曲線變成一個個包住訓練點的小島，訓練誤差趨近 0 但測試誤差變差</div><div class="quiz-opt" data-correct="false" data-fb="方向反了。γ 出現在 exp(−γ·距離²) 的指數上，&lt;strong&gt;γ 愈大衰減愈快&lt;/strong&gt;、影響範圍愈小、邊界愈破碎。要平滑就把 γ 調小。講義：「過度配適時應該把它調小」。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(B)</span> 邊界會變得更平滑，因為 γ 是核的平滑參數</div><div class="quiz-opt" data-correct="false" data-fb="不對。決策函數是 f(x) = β₀ + Σ αᵢ K(x, xᵢ)，K 的形狀變了 f 就變了，邊界 f(x) = 0 當然跟著變。γ 控制相似度隨距離衰減的速度，因此會改變核函數的形狀。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(C)</span> 邊界不變，只有支持向量的個數會變，因為 γ 只影響核值的大小</div></div>
+  <div class="quiz-options" id="qKernOptions"><div class="quiz-opt" data-correct="true" data-fb="對。γ 大 → 每個支持向量的影響半徑小 → 只有貼著它的地方會被判成它的類別。上面元件的第四格（γ = 50）就是這個樣子，而下面的曲線顯示測試錯誤率在 γ 很大時反而上升。ISLP 圖 9.10／9.11 講的是同一件事。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(A)</span> 邊界從平滑的曲線變成一個個包住訓練點的小島，訓練誤差趨近 0 但測試誤差變差</div><div class="quiz-opt" data-correct="false" data-fb="方向反了。γ 出現在 exp(−γ·距離²) 的指數上，&lt;strong&gt;γ 愈大衰減愈快&lt;/strong&gt;、影響範圍愈小、邊界愈破碎。要平滑就把 γ 調小。講義：「過度擬合時應該把它調小」。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(B)</span> 邊界會變得更平滑，因為 γ 是核的平滑參數</div><div class="quiz-opt" data-correct="false" data-fb="不對。決策函數是 f(x) = β₀ + Σ αᵢ K(x, xᵢ)，K 的形狀變了 f 就變了，邊界 f(x) = 0 當然跟著變。γ 控制相似度隨距離衰減的速度，因此會改變核函數的形狀。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(C)</span> 邊界不變，只有支持向量的個數會變，因為 γ 只影響核值的大小</div></div>
   <div class="quiz-feedback" id="qKernFeedback"></div>
 </div>
 </section>
@@ -1518,16 +1518,16 @@ Accuracy score using feature map  1.0</pre></div>
   <h2>OVO 與 OVA：兩類的方法怎麼推廣 <span class="sec-badge"><a href="#w10-source-islp">教科書 · 第 9.4 節</a></span><span class="sec-badge">講義 09</span></h2>
 <!-- GEN:END sec:multiclass -->
 
-  <p>到這裡整章都在講兩類。K &gt; 2 怎麼辦？ISLP §9.4 的答案有點掃興：
+  <p>到這裡整章都在講兩類。K &gt; 2 怎麼辦？ISLP §9.4 的說明是：
   <strong>分離超平面這個概念本身沒辦法自然地推廣到多類別</strong>。
-  很多人提過各種做法，但實務上活下來的只有兩個，而且都是「把多類別問題拆成一堆兩類問題」。</p>
+  很多人提過各種做法，但實務上常見的有兩個，而且都是「把多類別問題拆成一堆兩類問題」。</p>
 
-  <p><strong>一對一</strong>（one-versus-one，OVO，也叫 all-pairs）：配
+  <p><strong>一對一</strong>（one-versus-one，OVO，也叫 all-pairs）：擬合
   $\binom{K}{2} = K(K-1)/2$ 個分類器，每個只比較<strong>兩個</strong>類別
   （第 k 類編成 +1、第 k′ 類編成 −1，其餘資料完全不用）。
   測試點交給每一個分類器投一票，<strong>得票最多的類別勝出</strong>。</p>
 
-  <p><strong>一對其餘</strong>（one-versus-all，OVA，也叫 one-versus-rest）：配 K 個分類器，
+  <p><strong>一對其餘</strong>（one-versus-all，OVA，也叫 one-versus-rest）：擬合 K 個分類器，
   第 k 個把第 k 類編成 +1、<strong>其餘 K − 1 類全部</strong>編成 −1。
   測試點指派給 $f_k(x^*) = \beta_{0k} + \beta_{1k}x_1^* + \cdots + \beta_{pk}x_p^*$
   <strong>最大</strong>的那一類，因為那代表最有信心。</p>
@@ -1549,7 +1549,7 @@ Accuracy score using feature map  1.0</pre></div>
 
   <p>OVO 與 OVA 可以給出不同答案，但差異比例取決於資料分布、分類器與調整參數；
   OVO 投票也可能平手，
-  實作時需明訂 tie-breaking 規則。</p>
+  實作時需明訂平手時的處理規則。</p>
 
 <div class="info-box warm">
   <span class="info-label">關於 decision_function_shape 的一個常見誤解</span>
@@ -1558,14 +1558,14 @@ Accuracy score using feature map  1.0</pre></div>
   輸出的形狀，不改變底層的訓練方式</strong>。<code>libsvm</code> 一律用 OVO 訓練
   K(K−1)/2 個分類器；設成 <code>'ovr'</code> 時 sklearn 是把 OVO 的結果<em>換算</em>成 K 個分數。
   真的想要「訓練 K 個一對其餘分類器」，要用 <code>OneVsRestClassifier(SVC(...))</code> 包起來。
-  上面元件的 OVA 那三條線就是這樣配出來的。
+  上面元件的 OVA 那三條線就是這樣擬合出來的。
 </div>
 
-  <p>元件裡的三條線都是<strong>真的</strong> <code>SVC(kernel='linear', C=1)</code> 配適結果
+  <p>元件裡的三條線都是<strong>真的</strong> <code>SVC(kernel='linear', C=1)</code> 擬合結果
   （OVO 的三個只吃兩類的資料、OVA 的三個吃全部資料），係數烘焙進頁面；
   <strong>投票與取最大則由前端在格點上即時算</strong>，所以切換是瞬間的。
   資料是另外造的三團 blob，沒有沿用 lab 範例 那一組。那組是環狀的非線性結構，
-  線性的成對配適在上面沒有意義（lab 自己用的也是 RBF 核）。</p>
+  線性的成對擬合在上面沒有意義（lab 自己用的也是 RBF 核）。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th></th><th>一對一（OVO）</th><th>一對其餘（OVA）</th></tr></thead>
@@ -1640,9 +1640,9 @@ Predicted
   邏輯斯迴歸在完全可分的資料上會讓係數跑到無限大（最大概似不存在），必須靠懲罰救。<br>
   <strong>② 類別重疊很多時，加了 ridge 懲罰的邏輯斯迴歸與 SVC 非常相似。</strong>
   這時選哪個多半只是習慣問題。<br>
-  <strong>③ 想要機率就用邏輯斯迴歸。</strong>SVM 只吐 f(x) 的符號；
+  <strong>③ 想要機率就用邏輯斯迴歸。</strong>SVM 只以 f(x) 的符號決定類別；
   想要機率得再套 Platt scaling（<code>SVC(probability=True)</code>），
-  那是額外做一次交叉驗證去配一個 sigmoid，慢而且不見得校準得好。<br>
+  那是額外做一次交叉驗證去擬合一個 sigmoid，慢而且不見得校準得好。<br>
   <strong>④ 非線性邊界時，核 SVM 是最普及的選擇。</strong>
   邏輯斯迴歸與 LDA 也能使用核，只是計算比較貴、歷史上比較少人做。
 </div>
@@ -1684,7 +1684,7 @@ Predicted
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：SVM 與邏輯斯迴歸該選哪一個？</summary>
-    <div class="qa-a"><p><strong>需要類別機率時，可選邏輯斯迴歸。</strong>它可直接估計類別機率。風險分數、期望成本決策、要調閾值、要跟別的模型做集成——全部需要校準過的機率，SVM 給不了（<code>probability=True</code> 使用事後機率校準，還會慢好幾倍）。</p><p>不要機率的話，看類別分得多開。<strong>分得很開 → SVM</strong>：邏輯斯迴歸在完全可分的資料上係數會發散，而 SVM 的 margin 概念天生就處理這種情形。<strong>重疊很多 → 邏輯斯迴歸</strong>：這時 hinge 的稀疏性沒什麼好處，而邏輯斯迴歸的機率輸出與可解讀性是白拿的。重疊的中間地帶兩者結果會很像，因為損失函數很像。</p><p>另外兩個實務考量。<strong>n 很大</strong>：<code>SVC</code> 是 O(n²)～O(n³) 的，幾萬筆以上就開始痛，這時用 <code>LinearSVC</code>、<code>SGDClassifier</code> 或邏輯斯迴歸。<strong>要看變數重要度</strong>：線性核的 <code>coef_</code> 可以看，RBF 核沒有 β 可看（講義列為高斯核的缺點：「神祕」）。</p></div>
+    <div class="qa-a"><p><strong>需要類別機率時，可選邏輯斯迴歸。</strong>它可直接估計類別機率。風險分數、期望成本決策、要調門檻值、要跟別的模型做集成——全部需要校準過的機率，SVM 給不了（<code>probability=True</code> 使用事後機率校準，還會慢好幾倍）。</p><p>不要機率的話，看類別分得多開。<strong>分得很開 → SVM</strong>：邏輯斯迴歸在完全可分的資料上係數會發散，而 SVM 的 margin 概念天生就處理這種情形。<strong>重疊很多 → 邏輯斯迴歸</strong>：這時 hinge 的稀疏性沒什麼好處，而邏輯斯迴歸的本身就提供機率輸出，係數也可解讀。重疊的中間地帶兩者結果會很像，因為損失函數很像。</p><p>另外兩個實務考量。<strong>n 很大</strong>：<code>SVC</code> 是 O(n²)～O(n³) 的，幾萬筆以上時計算負擔就會增加，這時用 <code>LinearSVC</code>、<code>SGDClassifier</code> 或邏輯斯迴歸。<strong>要看變數重要度</strong>：線性核的 <code>coef_</code> 可以看，RBF 核沒有 β 可看（講義列為高斯核的缺點：「神祕」）。</p></div>
   </details>
   <details class="qa-item"><summary>Q：為什麼核方法特別常用於 SVM？</summary>
     <div class="qa-a"><p>ISLP 明確回答了：<strong>「歷史原因」</strong>。任何只透過內積接觸資料的方法都能核化（核邏輯斯迴歸、核 PCA、核嶺迴歸都存在），但核在 SVM 的脈絡裡遠比在其他地方普及。</p><p>不過也有技術上的理由。SVM 的解是<strong>稀疏</strong>的——只有支持向量的 $\alpha_i$ 非零，所以預測時只要算 |S| 個核值。核邏輯斯迴歸沒有這個性質：每一筆訓練資料的權重都非零，預測一個點要算 n 個核值，訓練還要處理一個 n × n 的核矩陣。n 稍微大一點就吃不消。<strong>hinge loss 那段「剛好等於 0」，換來的正是核方法在計算上的可行性。</strong></p></div>
@@ -1694,7 +1694,7 @@ Predicted
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · SVM vs 邏輯斯迴歸</div>
   <p>一份資料的兩個類別重疊得相當厲害，而且你需要輸出每一筆的違約機率。該選哪個？</p>
-  <div class="quiz-options" id="qVsOptions"><div class="quiz-opt" data-correct="true" data-fb="對，兩個條件都指向邏輯斯迴歸。ISLP：「in more overlapping regimes, logistic regression is often preferred」，而 SVM 本來就不提供機率估計（講義把這列為 SVM 的缺點）。" onclick="quizCheck('qVs', this)"><span class="opt-letter">(A)</span> 邏輯斯迴歸（加 ridge 懲罰）：重疊時兩者表現相近，而機率輸出是它天生就有的</div><div class="quiz-opt" data-correct="false" data-fb="此處採用邏輯斯迴歸較直接。&lt;code&gt;probability=True&lt;/code&gt; 是事後用 Platt scaling 配一個 sigmoid，需要額外的內部交叉驗證（慢好幾倍），而且校準品質不保證。既然重疊時兩者準確度差不多，何必為了機率繞這一大圈。" onclick="quizCheck('qVs', this)"><span class="opt-letter">(B)</span> SVM 配 RBF 核：它比較有彈性，機率可以用 SVC(probability=True) 拿到</div><div class="quiz-opt" data-correct="false" data-fb="把強項說反了。&lt;strong&gt;類別分得很開才是 SVM 的強項&lt;/strong&gt;；重疊很厲害時大部分點都變成支持向量，hinge 的稀疏性優勢消失。而且「忽略遠處的點」在重疊資料上沒什麼可忽略的。" onclick="quizCheck('qVs', this)"><span class="opt-letter">(C)</span> SVM 配線性核：類別重疊正是 hinge loss 的強項，因為它會忽略遠處的點</div></div>
+  <div class="quiz-options" id="qVsOptions"><div class="quiz-opt" data-correct="true" data-fb="對，兩個條件都指向邏輯斯迴歸。ISLP：「in more overlapping regimes, logistic regression is often preferred」，而 SVM 本來就不提供機率估計（講義把這列為 SVM 的缺點）。" onclick="quizCheck('qVs', this)"><span class="opt-letter">(A)</span> 邏輯斯迴歸（加 ridge 懲罰）：重疊時兩者表現相近，而機率輸出是它天生就有的</div><div class="quiz-opt" data-correct="false" data-fb="此處採用邏輯斯迴歸較直接。&lt;code&gt;probability=True&lt;/code&gt; 是事後用 Platt scaling 擬合一個 sigmoid，需要額外的內部交叉驗證（慢好幾倍），而且校準品質不保證。既然重疊時兩者準確度差不多，何必為了機率繞這一大圈。" onclick="quizCheck('qVs', this)"><span class="opt-letter">(B)</span> SVM 使用 RBF 核：它比較有彈性，機率可以用 SVC(probability=True) 拿到</div><div class="quiz-opt" data-correct="false" data-fb="把強項說反了。&lt;strong&gt;類別分得很開才是 SVM 的強項&lt;/strong&gt;；重疊很厲害時大部分點都變成支持向量，hinge 的稀疏性優勢消失。而且「忽略遠處的點」在重疊資料上沒什麼可忽略的。" onclick="quizCheck('qVs', this)"><span class="opt-letter">(C)</span> SVM 擬合線性核：類別重疊正是 hinge loss 的強項，因為它會忽略遠處的點</div></div>
   <div class="quiz-feedback" id="qVsFeedback"></div>
 </div>
 </section>
@@ -1731,7 +1731,7 @@ Predicted
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 9.7 第 6 題</div>
   <p>課本第 6 題要你造一組「剛好可以線性分開」的資料，然後比較大 C 與小 C。課本的主張是什麼，理由是什麼？（這裡的 C 是 <code>sklearn</code> 的 C）</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，這正是 lab 範例 演示的事：C = 10⁵ 訓練誤差 0 但只有 3 個支持向量；C = 0.1 訓練誤差同樣 0，卻用了 12 個支持向量、margin 寬得多。ISLP §9.6.1 的評語是後者「因為數量更多，因此更穩定」，並說「使用大型測試集的簡單實驗會證實這一點」。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 小 C（會錯分幾筆訓練資料）在測試資料上可能贏過大 C，因為大 C 的邊界只由極少數點決定、變異大</div><div class="quiz-opt" data-correct="false" data-fb="訓練誤差 0 仍需配合泛化評估解讀。第 2 章與第 5 章反覆講過這件事。而且在這一題裡&lt;strong&gt;兩個 C 的訓練誤差都是 0&lt;/strong&gt;（lab 範例 與 47 的混淆矩陣一樣），所以訓練誤差無法區分它們的泛化能力。這正是要看交叉驗證與測試誤差的理由。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 大 C 一定更好，因為它的訓練誤差是 0，而訓練誤差 0 表示模型完全學會了資料</div><div class="quiz-opt" data-correct="false" data-fb="「最大邊界超平面唯一」是對的，小 C 則允許違反 margin，配出軟邊界分類器。它願意犧牲那幾個貼著邊界的點去換更寬的 margin，方向會不一樣。兩個不同的超平面，測試誤差沒有理由相同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩者測試誤差會一樣，因為資料可以線性分開，最佳超平面唯一</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，這正是 lab 範例 演示的事：C = 10⁵ 訓練誤差 0 但只有 3 個支持向量；C = 0.1 訓練誤差同樣 0，卻用了 12 個支持向量、margin 寬得多。ISLP §9.6.1 的評語是後者「因為數量更多，因此更穩定」，並說「使用大型測試集的簡單實驗會證實這一點」。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 小 C（會錯分幾筆訓練資料）在測試資料上可能贏過大 C，因為大 C 的邊界只由極少數點決定、變異大</div><div class="quiz-opt" data-correct="false" data-fb="訓練誤差 0 仍需配合泛化評估解讀。第 2 章與第 5 章反覆講過這件事。而且在這一題裡&lt;strong&gt;兩個 C 的訓練誤差都是 0&lt;/strong&gt;（lab 範例 與 47 的混淆矩陣一樣），所以訓練誤差無法區分它們的泛化能力。這正是要看交叉驗證與測試誤差的理由。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 大 C 一定更好，因為它的訓練誤差是 0，而訓練誤差 0 表示模型完全學會了資料</div><div class="quiz-opt" data-correct="false" data-fb="「最大邊界超平面唯一」是對的，小 C 則允許違反 margin，擬合出軟邊界分類器。它願意犧牲那幾個貼著邊界的點去換更寬的 margin，方向會不一樣。兩個不同的超平面，測試誤差沒有理由相同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩者測試誤差會一樣，因為資料可以線性分開，最佳超平面唯一</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1754,13 +1754,13 @@ Predicted
   <h3>三種核</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>核</th><th>式子</th><th>調的參數</th><th>優點</th><th>缺點</th></tr></thead>
-  <tbody><tr><td>線性</td><td>Σⱼ xᵢⱼxᵢ′ⱼ</td><td>只有 C</td><td>快、可以看 coef_、不易過度配適；p ≫ n 的首選</td><td>邊界只能是直的</td></tr><tr><td>d 次多項式</td><td>(1 + Σⱼ xᵢⱼxᵢ′ⱼ)^d</td><td>C、d</td><td>比線性有彈性，d 的意義很具體</td><td>d 大時數值不穩；實務只用小 d</td></tr><tr><td>徑向基（RBF）</td><td>exp(−γ Σⱼ (xᵢⱼ−xᵢ′ⱼ)²)</td><td>C、γ</td><td>最有彈性、有界（數值穩）、只有一個核參數</td><td>沒有 β 可解讀、比線性慢、容易過度配適</td></tr></tbody>
+  <tbody><tr><td>線性</td><td>Σⱼ xᵢⱼxᵢ′ⱼ</td><td>只有 C</td><td>快、可以看 coef_、不易過度擬合；p ≫ n 的首選</td><td>邊界只能是直的</td></tr><tr><td>d 次多項式</td><td>(1 + Σⱼ xᵢⱼxᵢ′ⱼ)^d</td><td>C、d</td><td>比線性有彈性，d 的意義很具體</td><td>d 大時數值不穩；實務只用小 d</td></tr><tr><td>徑向基（RBF）</td><td>exp(−γ Σⱼ (xᵢⱼ−xᵢ′ⱼ)²)</td><td>C、γ</td><td>最有彈性、有界（數值穩）、只有一個核參數</td><td>沒有 β 可解讀、比線性慢、容易過度擬合</td></tr></tbody>
 </table></div>
 
   <h3>lab 上的實測數字（全部逐字取自 <code>Ch09-svm-lab-zh.ipynb</code>）</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>情境</th><th>設定</th><th>支持向量</th><th>結果</th><th>出處</th></tr></thead>
-  <tbody><tr><td>50 筆·不可分開</td><td>C = 10</td><td>29（15 + 14）</td><td>coef_ = [1.173, 0.773]</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 0.1</td><td>36（18 + 18）</td><td>margin 更寬</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>CV 選 C</td><td>—</td><td>best C = 1，準確率 0.74</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 1（測試）</td><td>—</td><td>70% 正確（8 + 6 / 20）</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 0.001（測試）</td><td>—</td><td>60% 正確</td><td>lab 範例</td></tr><tr><td>50 筆·可分開</td><td>C = 10⁵</td><td><strong>3</strong></td><td>訓練誤差 0，margin 極窄</td><td>lab 範例</td></tr><tr><td>50 筆·可分開</td><td>C = 0.1</td><td><strong>12</strong></td><td>訓練誤差 0，margin 寬得多</td><td>lab 範例</td></tr><tr><td>同心圓 100 筆</td><td>二次核</td><td>—</td><td>訓練準確率 1.0</td><td>lab 範例</td></tr><tr><td>200 筆·非線性</td><td>RBF, CV 選 C 與 γ</td><td>—</td><td>best C = 1、γ = 0.5，測試錯誤 12%</td><td>lab 範例</td></tr><tr><td>Khan（4 類）</td><td>線性核, C = 10</td><td>—</td><td>訓練誤差 0；測試 20 筆錯 2 筆</td><td>lab 範例</td></tr><tr><td>200 筆·核近似</td><td>RBFSampler + SGD</td><td>—</td><td>訓練準確率 0.84</td><td>lab 範例</td></tr></tbody>
+  <tbody><tr><td>50 筆·不可分開</td><td>C = 10</td><td>29（15 + 14）</td><td>coef_ = [1.173, 0.773]</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 0.1</td><td>36（18 + 18）</td><td>margin 更寬</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>CV 選 C</td><td>—</td><td>best C = 1，準確率 0.74</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 1（測試）</td><td>—</td><td>70% 正確（8 + 6 / 20）</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 0.001（測試）</td><td>—</td><td>60% 正確</td><td>lab 範例</td></tr><tr><td>50 筆·可分開</td><td>C = 10⁵</td><td><strong>3</strong></td><td>訓練誤差 0，margin 極窄</td><td>lab 範例</td></tr><tr><td>50 筆·可分開</td><td>C = 0.1</td><td><strong>12</strong></td><td>訓練誤差 0，margin 寬得多</td><td>lab 範例</td></tr><tr><td>同心圓 100 筆</td><td>二次核</td><td>—</td><td>訓練準確率 1.0</td><td>lab 範例</td></tr><tr><td>200 筆·非線性</td><td>RBF, CV 選 C 與 γ</td><td>—</td><td>best C = 1、γ = 0.5，測試錯誤 12%</td><td>lab 範例</td></tr><tr><td>Khan（4 類）</td><td>線性核，C = 10</td><td>—</td><td>訓練誤差 0；測試 20 筆錯 2 筆</td><td>lab 範例</td></tr><tr><td>200 筆·核近似</td><td>RBFSampler + SGD</td><td>—</td><td>訓練準確率 0.84</td><td>lab 範例</td></tr></tbody>
 </table></div>
 
   <h3>公式速查</h3>
@@ -1787,11 +1787,11 @@ Predicted
   <span class="info-label">順手提醒</span>
   <strong>SVM 一定要先標準化</strong>（講義：演算法不具尺度不變性），
   而且要包進 <code>Pipeline</code> 才不會洩漏。<strong>C 與核參數要一起用網格搜尋調</strong>，
-  兩者都在控制彈性。<strong>SVM 不吐機率</strong>，需要機率就用邏輯斯迴歸，
+  兩者都在控制彈性。<strong>SVM 不直接輸出機率</strong>，需要機率就用邏輯斯迴歸，
   或接受 <code>probability=True</code> 的額外成本。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -2911,7 +2911,7 @@ function w10kernApply(f) {
   $('w10kernDim').textContent = f.back ? '1' : (f.t > 0.02 ? '2' : '1');
   $('w10kernSep').textContent = f.t > 0.98 && !f.back ? '可以（一條水平線）'
     : (f.back ? '在原空間是兩個門檻' : '不行');
-  $('w10kernNsv').textContent = '—（公式示意，未配適模型）';
+  $('w10kernNsv').textContent = '—（公式示意，未擬合模型）';
   if (f.back && f.done) {
     setStatus('w10kernSvgStatus', '把二維的那條水平線映射回一維，就變成 x = ±'
       + HC.fmt(w10kernThr, 2) + ' 兩個門檻。'
@@ -2924,7 +2924,7 @@ function w10kernApply(f) {
       + '離原點遠的點被抬得高，靠中間的留在低處，兩類於是在高度上分開了。');
   } else {
     setStatus('w10kernSvgStatus', '一維上紅色被藍色從兩邊夾住：'
-      + '任何一個門檻都會切錯一邊。按「開始」看升維怎麼救。');
+      + '任何一個門檻都會切錯一邊。按「開始」看升維如何把兩類分開。');
   }
 }
 function w10kernCircle() {
@@ -2935,7 +2935,7 @@ function w10kernCircle() {
   s.grid(4, 4, { xtitle: 'x₁', ytitle: 'x₂', xdec: 1, ydec: 1 });
   const gg = s.clearLayer('grid2'), gl = s.clearLayer('line'), gp = s.clearLayer('pts');
   w10gridDraw(s, F.rows, { '0': w10REG[0], '1': w10REG[1] }, gg);
-  s.txtPx(110, 22, '二次核 SVM 的決策區域（烘焙 ' + F.n + '×' + F.n + ' 格點）',
+  s.txtPx(110, 22, '二次核 SVM 的決策區域（預先計算 ' + F.n + '×' + F.n + ' 格點）',
           { cls: 'axtitle' }, gl);
   F.pts.forEach(p => {
     s.dot(p[0], p[1], { r: 5.4, fill: w10CLS[p[2] === 1 ? 1 : 0], stroke: '#fff', sw: 1.2 }, gp);
@@ -2947,7 +2947,7 @@ function w10kernCircle() {
   $('w10kernNsv').textContent = String(F.nsv);
   setStatus('w10kernSvgStatus', 'lab 範例 的同心圓資料。'
     + '用自訂的二次核直接在二維算，訓練準確率 <b>' + HC.fmt(F.accKernel, 2)
-    + '</b>，跟「真的升到三維再配線性」的結果一模一樣。'
+    + '</b>，跟「真的升到三維再擬合線性」的結果一模一樣。'
     + 'Z 空間的超平面係數是 [' + FRAMES_w10kern.w.map(v => HC.fmt(v, 3)).join(', ')
     + ']——後兩項幾乎相等，等於在說「x₁² + x₂² 小的是內圈」。');
 }
@@ -3007,7 +3007,7 @@ function w10rbfDraw() {
     + '：訓練錯誤率 <b>' + HC.pct(fr.trainErr, 1) + '</b>、測試錯誤率 <b>'
     + HC.pct(fr.testErr, 1) + '</b>、支持向量 ' + fr.nsv + ' 個。'
     + (fr.gamma >= 50
-      ? ' 邊界已經縮成一個個包住單點的小島——訓練幾乎全對，測試最差，這就是過度配適。'
+      ? ' 邊界已經縮成一個個包住單點的小島——訓練幾乎全對，測試最差，這就是過度擬合。'
       : (fr.C >= 1000
         ? ' C 拉到極大：邊界變得很不規則，因為它不肯放過任何一個訓練點。'
         : ' 邊界較平滑，接下來可檢查未見資料上的表現。')));
@@ -3065,7 +3065,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"超平面（Hyperplane）","back":"p 維空間裡一個 p−1 維的平坦仿射子空間，由 β₀ + β₁X₁ + … + β_pX_p = 0 定義。p = 2 時是一條線，p = 3 時是一個平面。β₀ ≠ 0 表示它不通過原點。"},{"front":"法向量（Normal Vector）","back":"向量 β = (β₁, …, β_p)，方向與超平面垂直。它決定超平面的方向（斜率），β₀ 決定平移量。f(x) 的值除以 ‖β‖ 就是點到超平面的垂直距離。"},{"front":"分離超平面（Separating Hyperplane）","back":"能把兩類訓練資料完全分到兩側的超平面，即對每一筆都有 yᵢ·f(xᵢ) > 0。只要存在一個，就存在無限多個——可以稍微平移或旋轉都還是分得開。"},{"front":"邊界（Margin）","back":"所有訓練點到超平面的垂直距離中最小的那一個。幾何上就是能塞進兩類之間的那塊「板子」的半寬；ISLP 記為 M。"},{"front":"最大邊界分類器（Maximal Margin Classifier）","back":"在所有分離超平面中選邊界最大的那一個，也叫最佳分離超平面。解 max M s.t. Σβⱼ² = 1、yᵢf(xᵢ) ≥ M。只有資料可完全分開時才存在，而且 p 大時容易過度配適。"},{"front":"支持向量（Support Vector）","back":"剛好落在邊界上（或違反邊界）的那些觀測值。它們「支撐」著超平面：移動它們邊界就會動，移動其他點則完全不影響解。這個稀疏性是 SVM 的核心性質。"},{"front":"支持向量分類器（Support Vector Classifier）","back":"最大邊界分類器的推廣，允許部分觀測值違反邊界甚至跑到超平面錯的一側，換取對單一觀測值的穩健性與整體較好的分類。也叫軟邊界分類器。"},{"front":"鬆弛變數（Slack Variable）","back":"ISLP 式 9.14 的 εᵢ，記錄第 i 筆相對於邊界與超平面的位置。εᵢ = 0 在邊界正確一側；εᵢ > 0 違反邊界；εᵢ > 1 落在超平面錯的一側（被錯誤分類）。"},{"front":"違反預算 C（Budget C）","back":"ISLP 式 9.15 中對 Σεᵢ 的上限，是「允許違反多少」的預算。C = 0 退回最大邊界分類器；C 愈大愈容忍違反、邊界愈寬、支持向量愈多、變異愈小偏差愈大。"},{"front":"懲罰參數 C（Penalty C in scikit-learn）","back":"sklearn 的 SVC(C=…) 是對違反的懲罰權重，方向與 ISLP 的預算 C 剛好相反：C 愈大懲罰愈重、愈不容忍違反、邊界愈窄、支持向量愈少。看到 C 一定要先問是哪一種。"},{"front":"決策函數（Decision Function）","back":"f(x) = β₀ + β₁x₁ + … + β_px_p（非線性核時是 f(x) = β₀ + Σ αᵢK(x, xᵢ)）。符號決定預測類別，絕對值大小代表離邊界多遠，也就是這個判斷有多有把握。改變門檻就能畫 ROC 曲線。"},{"front":"支持向量機（Support Vector Machine, SVM）","back":"用核把特徵空間隱式擴大之後的支持向量分類器。用線性核時它就退回成支持向量分類器，因此 SVC 可以視為 SVM 使用線性核時的特例。"},{"front":"特徵擴張（Feature Expansion）","back":"把 X₁², X₁X₂, X₁³ … 這些轉換加進特徵裡，在放大的空間配線性分類器，映射回原空間就得到非線性邊界。這會快速增加維度：二維做到三次就變九維。"},{"front":"內積（Inner Product）","back":"⟨xᵢ, xᵢ′⟩ = Σⱼ xᵢⱼxᵢ′ⱼ。支持向量分類器的解與預測只用得到觀測值之間的內積，用不到觀測值本身——這是核技巧能成立的關鍵事實。"},{"front":"核（Kernel）","back":"衡量兩筆觀測值相似度的函數 K(xᵢ, xᵢ′)，用來取代演算法裡每一處內積。線性核就是普通內積，換成別的核就得到別的（隱式的）特徵空間。"},{"front":"核技巧（Kernel Trick）","back":"只需要算 K(xᵢ, xᵢ′)，不需要真的算出映射 Φ(x)，也不需要在高維空間裡做任何運算。RBF 核對應的特徵空間是無限維的，本來就不可能真的走進去算。"},{"front":"線性核（Linear Kernel）","back":"K(xᵢ, xᵢ′) = Σⱼ xᵢⱼxᵢ′ⱼ，也就是普通內積，等於不做任何擴張。優點是快、可以看 β 解讀、不易過度配適；缺點是邊界只能是直的。p ≫ n 時通常就用它。"},{"front":"多項式核（Polynomial Kernel）","back":"K(xᵢ, xᵢ′) = (1 + Σⱼ xᵢⱼxᵢ′ⱼ)^d（ISLP 式 9.22）。等於在 d 次多項式的空間裡配線性分類器。d = 1 退回線性核；d 大時數值容易不穩，實務上多半只用小的 d。"},{"front":"徑向基核（Radial Basis Kernel, RBF）","back":"K(xᵢ, xᵢ′) = exp(−γ Σⱼ (xᵢⱼ − xᵢ′ⱼ)²)（ISLP 式 9.24）。離得遠的點核值趨近 0，所以行為非常「局部」：只有附近的訓練點會影響一個測試點的預測。"},{"front":"核寬度 γ（Gamma）","back":"RBF 核裡控制局部性的正數。γ 小 → 影響範圍大、邊界平滑；γ 大 → 影響範圍小、邊界縮成包住每個點的小島，就是過度配適。它其實也是一個正則化參數，過度配適時該調小。"},{"front":"Hinge 損失（Hinge Loss）","back":"max(0, 1 − yᵢf(xᵢ))。yᵢf(xᵢ) > 1 位於平坦區，不影響目前的最優解；等於 1 時損失也是 0，但位於折角，仍可能是支持向量；小於 1 則違反 margin。"},{"front":"損失加懲罰（Loss plus Penalty）","back":"ISLP 式 9.25–9.26：支持向量分類器等價於最小化 Σ max(0, 1 − yᵢf(xᵢ)) + λΣβⱼ²。後面那項就是 ridge 懲罰，λ 大 ↔ 預算 C 大 ↔ 邊界寬。"},{"front":"一對一（One-Versus-One, OVO）","back":"K 類問題配 K(K−1)/2 個成對分類器，每個只比較兩類，測試點交給得票最多的類別。分類器多但每個都小、每個只用兩類的資料。K 不太大時 ISLP 建議用這個。"},{"front":"一對其餘（One-Versus-All, OVA）","back":"配 K 個分類器，第 k 個把第 k 類當 +1、其餘全部當 −1，測試點指派給 f_k(x*) 最大的那一類。分類器少，但每個都要處理不平衡且形狀複雜的「其餘」。也叫 one-versus-rest。"},{"front":"對偶問題（Dual Problem）","back":"把 min ½‖β‖² 改寫成對 αᵢ 最大化 Σαᵢ − ½ΣΣ αᵢαᵢ′yᵢyᵢ′⟨xᵢ, xᵢ′⟩。變數個數變成 n（適合 n 小）、只出現內積（所以能換成核），而且 α̂ᵢ > 0 的那些點就是支持向量。"},{"front":"支持向量迴歸（Support Vector Regression, SVR）","back":"把 SVM 搬到數值反應變數上：只有絕對值大於某個正常數的殘差才計入損失，等於把邊界的概念搬到迴歸。落在管子裡的點對解沒有貢獻，稀疏性因此保留。"}];
+const FLASHCARDS = [{"front":"超平面（Hyperplane）","back":"p 維空間裡一個 p−1 維的平坦仿射子空間，由 β₀ + β₁X₁ + … + β_pX_p = 0 定義。p = 2 時是一條線，p = 3 時是一個平面。β₀ ≠ 0 表示它不通過原點。"},{"front":"法向量（Normal Vector）","back":"向量 β = (β₁, …, β_p)，方向與超平面垂直。它決定超平面的方向（斜率），β₀ 決定平移量。f(x) 的值除以 ‖β‖ 就是點到超平面的垂直距離。"},{"front":"分離超平面（Separating Hyperplane）","back":"能把兩類訓練資料完全分到兩側的超平面，即對每一筆都有 yᵢ·f(xᵢ) > 0。只要存在一個，就存在無限多個——可以稍微平移或旋轉都還是分得開。"},{"front":"邊界（Margin）","back":"所有訓練點到超平面的垂直距離中最小的那一個。幾何上就是能塞進兩類之間的那塊「板子」的半寬；ISLP 記為 M。"},{"front":"最大邊界分類器（Maximal Margin Classifier）","back":"在所有分離超平面中選邊界最大的那一個，也叫最佳分離超平面。解 max M s.t. Σβⱼ² = 1、yᵢf(xᵢ) ≥ M。只有資料可完全分開時才存在，而且 p 大時容易過度擬合。"},{"front":"支持向量（Support Vector）","back":"剛好落在邊界上（或違反邊界）的那些觀測值。它們「支撐」著超平面：移動它們邊界就會動，移動其他點則完全不影響解。這個稀疏性是 SVM 的核心性質。"},{"front":"支持向量分類器（Support Vector Classifier）","back":"最大邊界分類器的推廣，允許部分觀測值違反邊界甚至跑到超平面錯的一側，換取對單一觀測值的穩健性與整體較好的分類。也叫軟邊界分類器。"},{"front":"鬆弛變數（Slack Variable）","back":"ISLP 式 9.14 的 εᵢ，記錄第 i 筆相對於邊界與超平面的位置。εᵢ = 0 在邊界正確一側；εᵢ > 0 違反邊界；εᵢ > 1 落在超平面錯的一側（被錯誤分類）。"},{"front":"違反預算 C（Budget C）","back":"ISLP 式 9.15 中對 Σεᵢ 的上限，是「允許違反多少」的預算。C = 0 退回最大邊界分類器；C 愈大愈容忍違反、邊界愈寬、支持向量愈多、變異愈小偏差愈大。"},{"front":"懲罰參數 C（Penalty C in scikit-learn）","back":"sklearn 的 SVC(C=…) 是對違反的懲罰權重，方向與 ISLP 的預算 C 剛好相反：C 愈大懲罰愈重、愈不容忍違反、邊界愈窄、支持向量愈少。看到 C 一定要先問是哪一種。"},{"front":"決策函數（Decision Function）","back":"f(x) = β₀ + β₁x₁ + … + β_px_p（非線性核時是 f(x) = β₀ + Σ αᵢK(x, xᵢ)）。符號決定預測類別，絕對值大小代表離邊界多遠，也就是這個判斷有多有把握。改變門檻就能畫 ROC 曲線。"},{"front":"支持向量機（Support Vector Machine, SVM）","back":"用核把特徵空間隱式擴大之後的支持向量分類器。用線性核時它就退回成支持向量分類器，因此 SVC 可以視為 SVM 使用線性核時的特例。"},{"front":"特徵擴張（Feature Expansion）","back":"把 X₁², X₁X₂, X₁³ … 這些轉換加進特徵裡，在放大的空間擬合線性分類器，映射回原空間就得到非線性邊界。這會快速增加維度：二維做到三次就變九維。"},{"front":"內積（Inner Product）","back":"⟨xᵢ, xᵢ′⟩ = Σⱼ xᵢⱼxᵢ′ⱼ。支持向量分類器的解與預測只用得到觀測值之間的內積，用不到觀測值本身——這是核技巧能成立的關鍵事實。"},{"front":"核（Kernel）","back":"衡量兩筆觀測值相似度的函數 K(xᵢ, xᵢ′)，用來取代演算法裡每一處內積。線性核就是普通內積，換成別的核就得到別的（隱式的）特徵空間。"},{"front":"核技巧（Kernel Trick）","back":"只需要算 K(xᵢ, xᵢ′)，不需要真的算出映射 Φ(x)，也不需要在高維空間裡做任何運算。RBF 核對應的特徵空間是無限維的，本來就不可能真的走進去算。"},{"front":"線性核（Linear Kernel）","back":"K(xᵢ, xᵢ′) = Σⱼ xᵢⱼxᵢ′ⱼ，也就是普通內積，等於不做任何擴張。優點是快、可以看 β 解讀、不易過度擬合；缺點是邊界只能是直的。p ≫ n 時通常就用它。"},{"front":"多項式核（Polynomial Kernel）","back":"K(xᵢ, xᵢ′) = (1 + Σⱼ xᵢⱼxᵢ′ⱼ)^d（ISLP 式 9.22）。等於在 d 次多項式的空間裡擬合線性分類器。d = 1 退回線性核；d 大時數值容易不穩，實務上多半只用小的 d。"},{"front":"徑向基核（Radial Basis Kernel, RBF）","back":"K(xᵢ, xᵢ′) = exp(−γ Σⱼ (xᵢⱼ − xᵢ′ⱼ)²)（ISLP 式 9.24）。離得遠的點核值趨近 0，所以行為非常「局部」：只有附近的訓練點會影響一個測試點的預測。"},{"front":"核寬度 γ（Gamma）","back":"RBF 核裡控制局部性的正數。γ 小 → 影響範圍大、邊界平滑；γ 大 → 影響範圍小、邊界縮成包住每個點的小島，就是過度擬合。它其實也是一個正則化參數，過度擬合時該調小。"},{"front":"Hinge 損失（Hinge Loss）","back":"max(0, 1 − yᵢf(xᵢ))。yᵢf(xᵢ) > 1 位於平坦區，不影響目前的最佳解；等於 1 時損失也是 0，但位於折角，仍可能是支持向量；小於 1 則違反 margin。"},{"front":"損失加懲罰（Loss plus Penalty）","back":"ISLP 式 9.25–9.26：支持向量分類器等價於最小化 Σ max(0, 1 − yᵢf(xᵢ)) + λΣβⱼ²。後面那項就是 ridge 懲罰，λ 大 ↔ 預算 C 大 ↔ 邊界寬。"},{"front":"一對一（One-Versus-One, OVO）","back":"K 類問題擬合 K(K−1)/2 個成對分類器，每個只比較兩類，測試點交給得票最多的類別。分類器多但每個都小、每個只用兩類的資料。K 不太大時 ISLP 建議用這個。"},{"front":"一對其餘（One-Versus-All, OVA）","back":"擬合 K 個分類器，第 k 個把第 k 類當 +1、其餘全部當 −1，測試點指派給 f_k(x*) 最大的那一類。分類器少，但每個都要處理不平衡且形狀複雜的「其餘」。也叫 one-versus-rest。"},{"front":"對偶問題（Dual Problem）","back":"把 min ½‖β‖² 改寫成對 αᵢ 最大化 Σαᵢ − ½ΣΣ αᵢαᵢ′yᵢyᵢ′⟨xᵢ, xᵢ′⟩。變數個數變成 n（適合 n 小）、只出現內積（所以能換成核），而且 α̂ᵢ > 0 的那些點就是支持向量。"},{"front":"支持向量迴歸（Support Vector Regression, SVR）","back":"把 SVM 搬到數值反應變數上：只有絕對值大於某個正常數的殘差才計入損失，等於把邊界的概念搬到迴歸。落在管子裡的點對解沒有貢獻，稀疏性因此保留。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

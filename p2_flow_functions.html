@@ -699,7 +699,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · 流程與函式）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
@@ -782,7 +782,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">忘記括號的下場</div>
-      <code>df['year'] &gt; 80 &amp; df['mpg'] &gt; 30</code> 會被讀成 <code>df['year'] &gt; (80 &amp; df['mpg']) &gt; 30</code>，然後拋一個看起來莫名其妙的錯。<strong>每個條件都包括號</strong>，這條沒有例外。
+      <code>df['year'] &gt; 80 &amp; df['mpg'] &gt; 30</code> 會被讀成 <code>df['year'] &gt; (80 &amp; df['mpg']) &gt; 30</code>，然後拋一個看起來莫名其妙的錯。<strong>每個條件都加上括號</strong>，這條沒有例外。
     </div>
   </div>
 </div>
@@ -975,7 +975,7 @@ ford ranger            2625.0       1</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p><code>Auto[(Auto['year'] &gt; 80) and (Auto['mpg'] &gt; 30)]</code> 會發生什麼？</p>
-  <div class="quiz-options" id="qCondOptions"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;and&lt;/code&gt; 想知道「左邊整體是真還是假」，但左邊是 392 個真假值，Python 不知道該算成什麼，所以拋 &lt;code&gt;ValueError: The truth value of a Series is ambiguous&lt;/code&gt;。改用 &lt;code&gt;&amp;amp;&lt;/code&gt; 就對了。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(A)</span> 報錯：一整排真假值沒辦法縮成單一個真或假</div><div class="quiz-opt" data-correct="false" data-fb="不一樣。&lt;code&gt;and&lt;/code&gt; 是純 Python 的邏輯運算，它不做逐元素的事。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(B)</span> 正常執行，跟用 <code>&amp;</code> 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會悄悄忽略。它會直接報錯。這其實是好事，沉默的錯才可怕。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(C)</span> 只會用到第一個條件</div></div>
+  <div class="quiz-options" id="qCondOptions"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;and&lt;/code&gt; 想知道「左邊整體是真還是假」，但左邊是 392 個真假值，Python 不知道該算成什麼，所以拋 &lt;code&gt;ValueError: The truth value of a Series is ambiguous&lt;/code&gt;。改用 &lt;code&gt;&amp;amp;&lt;/code&gt; 就對了。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(A)</span> 報錯：一整排真假值沒辦法縮成單一個真或假</div><div class="quiz-opt" data-correct="false" data-fb="不一樣。&lt;code&gt;and&lt;/code&gt; 是純 Python 的邏輯運算，它不做逐元素的事。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(B)</span> 正常執行，跟用 <code>&amp;</code> 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會悄悄忽略。它會直接報錯。顯示錯誤訊息，才能及早發現問題。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(C)</span> 只會用到第一個條件</div></div>
   <div class="quiz-feedback" id="qCondFeedback"></div>
 </div>
 </section>
@@ -1087,7 +1087,7 @@ ford ranger            2625.0       1</pre></div>
 <span class="line">    print(above_threshold(value))</span></div>
   <p>這是自訂函式練習。<code>def</code> 定義名字和參數；<code>return</code> 交回真假值，外面的 print 才負責顯示。先改門檻，確認每次呼叫如何使用引數。以下是學完基本語法後的課程應用；OLS、設計矩陣與 MSE 可在 <a href="p6_modeling_api.html">P6</a> 詳讀。</p>
   <p>假設你要比較三種多項式次數的驗證誤差。不寫函式的話，你會把同一段
-  「切分 → 配適 → 預測 → 算 MSE」複製三次，只改中間一個數字。
+  「切分 → 擬合 → 預測 → 算 MSE」複製三次，只改中間一個數字。
   三份幾乎一樣的程式碼，就是<strong>三個各自會出錯、而且改了一份忘了改另外兩份</strong>的地方。</p>
 
 <div class="info-box">
@@ -1380,7 +1380,7 @@ ford ranger            2625.0       1</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 布林運算子</div>
   <p>你要選出「1980 年後、而且 mpg 大於 30」的車。哪一個寫法對？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。逐元素的「且」用 &lt;code&gt;&amp;amp;&lt;/code&gt;，而且&lt;strong&gt;每個條件都包括號&lt;/strong&gt;——因為 &lt;code&gt;&amp;amp;&lt;/code&gt; 的優先順序比 &lt;code&gt;&amp;gt;&lt;/code&gt; 高。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>Auto[(Auto['year'] &gt; 80) &amp; (Auto['mpg'] &gt; 30)]</code></div><div class="quiz-opt" data-correct="false" data-fb="兩個問題：&lt;code&gt;and&lt;/code&gt; 不做逐元素運算，而且沒有括號。會拋 truth value is ambiguous。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>Auto[Auto['year'] &gt; 80 and Auto['mpg'] &gt; 30]</code></div><div class="quiz-opt" data-correct="false" data-fb="運算子對了但少了括號，會被讀成 &lt;code&gt;Auto[&#x27;year&#x27;] &amp;gt; (80 &amp;amp; Auto[&#x27;mpg&#x27;]) &amp;gt; 30&lt;/code&gt;，然後報一個看不懂的錯。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>Auto[Auto['year'] &gt; 80 &amp; Auto['mpg'] &gt; 30]</code></div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。逐元素的「且」用 &lt;code&gt;&amp;amp;&lt;/code&gt;，而且&lt;strong&gt;每個條件都加上括號&lt;/strong&gt;——因為 &lt;code&gt;&amp;amp;&lt;/code&gt; 的優先順序比 &lt;code&gt;&amp;gt;&lt;/code&gt; 高。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>Auto[(Auto['year'] &gt; 80) &amp; (Auto['mpg'] &gt; 30)]</code></div><div class="quiz-opt" data-correct="false" data-fb="兩個問題：&lt;code&gt;and&lt;/code&gt; 不做逐元素運算，而且沒有括號。會拋 truth value is ambiguous。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>Auto[Auto['year'] &gt; 80 and Auto['mpg'] &gt; 30]</code></div><div class="quiz-opt" data-correct="false" data-fb="運算子對了但少了括號，會被讀成 &lt;code&gt;Auto[&#x27;year&#x27;] &amp;gt; (80 &amp;amp; Auto[&#x27;mpg&#x27;]) &amp;gt; 30&lt;/code&gt;，然後報一個看不懂的錯。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>Auto[Auto['year'] &gt; 80 &amp; Auto['mpg'] &gt; 30]</code></div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1431,10 +1431,10 @@ ford ranger            2625.0       1</pre></div>
 
 <div class="info-box">
   <span class="info-label">三個閱讀重點</span>
-  <strong>1. 選資料用 <code>&amp;</code>／<code>|</code>，而且每個條件都包括號。</strong><code>and</code> 一次只判斷一個真假值。<br><strong>2. 同一段程式碼要寫第三次，就該包成函式。</strong>共用一份邏輯，修改時較容易保持一致。<br><strong>3. traceback 從最後一行讀起。</strong>最後一行說錯在哪，往上找是誰呼叫的。
+  <strong>1. 選資料用 <code>&amp;</code>／<code>|</code>，而且每個條件都加上括號。</strong><code>and</code> 一次只判斷一個真假值。<br><strong>2. 同一段程式碼要寫第三次，就該包成函式。</strong>共用一份邏輯，修改時較容易保持一致。<br><strong>3. traceback 從最後一行讀起。</strong>最後一行說錯在哪，往上找是誰呼叫的。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch05）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch05）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -2084,7 +2084,7 @@ function w15whyDraw() {
   document.getElementById('w15whyKind').textContent = copy ? '複製貼上' : '函式 ＋ 迴圈';
   document.getElementById('w15whyCopies').textContent = copy ? n + ' 份' : '1 份';
   document.getElementById('w15whyEdits').textContent = w15whyEdited
-    ? (copy ? '新增一份副本，之後每份都要同步' : '只改迴圈的範圍') : '—';
+    ? (copy ? '新增一份複本，之後每份都要同步' : '只改迴圈的範圍') : '—';
   setStatus('w15whyStatus', w15whyEdited
     ? (copy ? '要多試一個次數，得<b>再複製一整段</b>，而且四份都要記得同步維護。'
             : '要多試一個次數，只改 <b>range 的那個數字</b>。')
@@ -2228,7 +2228,7 @@ const w15fnSteps = [
   {w: '四個引數傳進去', v: 'terms, response, train, test'},
   {w: '用 train 學設計矩陣的規格', v: '＋ mm, X_train, y_train'},
   {w: '對 test 只做 transform', v: '＋ X_test, y_test'},
-  {w: '配適並預測', v: '＋ results, test_pred'},
+  {w: '擬合並預測', v: '＋ results, test_pred'},
   {w: 'return 一個數字，函式結束', v: '全部消失，只有回傳值留下'}
 ];
 let w15fnI = 0, w15fnTimer = null;
@@ -2391,7 +2391,7 @@ if (w15erS) w15erDraw();
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"條件判斷（if）","back":"成立就做這個、否則做那個。Python 用縮排決定哪些行屬於裡面，不用大括號。"},{"front":"邏輯運算子（and／or／not）","back":"純 Python 的邏輯運算，一次只能判斷一個真假值。拿去選 DataFrame 的列會拋「truth value is ambiguous」。"},{"front":"逐元素邏輯（&／|／~）","back":"對一整排真假值逐元素做且／或／非。選資料一律用它，而且每個條件都要包括號——它的優先順序比 > 高。"},{"front":"運算子優先順序（Precedence）","back":"& 比 > 先算，所以 df['a'] > 1 & df['b'] > 2 會被讀成 df['a'] > (1 & df['b']) > 2，然後報一個看不懂的錯。"},{"front":"縮排（Indentation）","back":"Python 用它代替大括號來劃分程式區塊。同一層要對齊，混用空白與 tab 會出事。"},{"front":"迴圈（for）","back":"把同一件事對每一個東西各做一次。統計程式裡它出現在三個地方：試參數、重抽樣、逐欄處理。"},{"front":"整數序列（range）","back":"產生一串整數。range(1, 4) 是 1、2、3（不含 4，跟切片同一套規則）。只是要跑 B 次就寫 for _ in range(B)。"},{"front":"帶位置走訪（enumerate）","back":"走過串列時同時拿到位置與值：for i, x in enumerate(a)。要把結果填進一個陣列時很常用。"},{"front":"配對走訪（zip）","back":"把兩排東西逐位配對並排走。長度不一樣時，短的結束就停。算加權平均就是它的典型用法。"},{"front":"累加賦值（+=）","back":"total += value 是 total = total + value 的簡寫。自助法累積結果時到處都是。"},{"front":"巢狀迴圈（Nested Loop）","back":"迴圈裡面還有迴圈，總次數是相乘。兩層以上通常代表該換個寫法了。"},{"front":"串列生成式（List Comprehension）","back":"[f(x) for x in a]：走一遍並把結果收成一個串列。比先開空串列再 append 好讀。"},{"front":"向量化與迴圈（Vectorization vs Loop）","back":"對整排數字做同一件事就用 NumPy／pandas 的向量化寫法。迴圈留給「每一圈內容真的不一樣」的情況——試不同參數、抽不同樣本。"},{"front":"函式（Function）","back":"把一段流程封起來，取個名字。三個部分：名字、參數、回傳值。用的人只要知道這三件事。"},{"front":"參數與引數（Parameter／Argument）","back":"定義時寫的名字叫參數，呼叫時傳進去的值叫引數。日常對話常混用。"},{"front":"回傳值（return）","back":"碰到 return 時，函式立刻結束並交出值，後面的行不會執行。沒寫 return 的函式回傳 None；呼叫端要確認這符合預期。"},{"front":"預設引數（Default Argument）","back":"def f(a, B=1000)：呼叫時不給就用預設值。有預設值的參數一定要放在沒有預設值的後面。"},{"front":"關鍵字引數（Keyword Argument）","back":"f(x, B=2000)：依參數名稱給值。參數多時，這種寫法方便辨認每個值的用途，也較容易核對順序。"},{"front":"可變預設值的陷阱（Mutable Default）","back":"def f(acc=[]) 的那個空串列只建立一次，所有呼叫共用，會越積越多。要用就寫 acc=None 再在函式裡建立。"},{"front":"作用域（Scope）","back":"一個名字在哪裡看得到。函式裡看得到外面，外面看不到裡面；一旦在函式裡指派同名變數，那就是新的區域變數。"},{"front":"副作用（Side Effect）","back":"函式除了回傳值之外，還改動外部可觀察的狀態，例如修改傳入的串列、全域資料或檔案。判斷是否有副作用，要檢查函式對這些狀態的操作；資料由參數傳入時也要檢查。"},{"front":"追溯訊息（Traceback）","back":"報錯時印出的那一長串。從最後一行開始讀：最後一行是錯誤種類與說明，往上是它發生在哪一行。"},{"front":"常見的四種錯誤（Common Exceptions）","back":"NameError 名字沒定義（多半是儲存格沒跑）、KeyError 欄名不存在、IndexError 索引超出範圍、ValueError 型別對但值不合理（形狀對不上）。"},{"front":"例外處理（try／except）","back":"使用前先確認預期的錯誤與處理方式。except: pass 會略過錯誤訊息，後續結果仍可能出錯。"},{"front":"沉默的錯（Silent Error）","back":"程式完成執行並產生數字，結果卻有錯。多份程式修改不一致或例外被忽略，都可能造成這種情況；因此仍要核對輸出。"}];
+const FLASHCARDS = [{"front":"條件判斷（if）","back":"成立就做這個、否則做那個。Python 用縮排決定哪些行屬於裡面，不用大括號。"},{"front":"邏輯運算子（and／or／not）","back":"純 Python 的邏輯運算，一次只能判斷一個真假值。拿去選 DataFrame 的列會拋「truth value is ambiguous」。"},{"front":"逐元素邏輯（&／|／~）","back":"對一整排真假值逐元素做且／或／非。選資料一律用它，而且每個條件都要加上括號——它的優先順序比 > 高。"},{"front":"運算子優先順序（Precedence）","back":"& 比 > 先算，所以 df['a'] > 1 & df['b'] > 2 會被讀成 df['a'] > (1 & df['b']) > 2，然後報一個看不懂的錯。"},{"front":"縮排（Indentation）","back":"Python 用它代替大括號來劃分程式區塊。同一層要對齊，混用空白與 tab 會出事。"},{"front":"迴圈（for）","back":"把同一件事對每一個東西各做一次。統計程式裡它出現在三個地方：試參數、重抽樣、逐欄處理。"},{"front":"整數序列（range）","back":"產生一串整數。range(1, 4) 是 1、2、3（不含 4，跟切片同一套規則）。只是要跑 B 次就寫 for _ in range(B)。"},{"front":"帶位置走訪（enumerate）","back":"走過串列時同時拿到位置與值：for i, x in enumerate(a)。要把結果填進一個陣列時很常用。"},{"front":"配對走訪（zip）","back":"把兩排東西逐位配對並排走。長度不一樣時，短的結束就停。算加權平均就是它的典型用法。"},{"front":"累加指派（+=）","back":"total += value 是 total = total + value 的簡寫。自助法累積結果時到處都是。"},{"front":"巢狀迴圈（Nested Loop）","back":"迴圈裡面還有迴圈，總次數是相乘。兩層以上通常代表該換個寫法了。"},{"front":"串列生成式（List Comprehension）","back":"[f(x) for x in a]：走一遍並把結果收成一個串列。比先開空串列再 append 好讀。"},{"front":"向量化與迴圈（Vectorization vs Loop）","back":"對整排數字做同一件事就用 NumPy／pandas 的向量化寫法。迴圈留給「每一圈內容真的不一樣」的情況——試不同參數、抽不同樣本。"},{"front":"函式（Function）","back":"把一段流程封起來，取個名字。三個部分：名字、參數、回傳值。用的人只要知道這三件事。"},{"front":"參數與引數（Parameter／Argument）","back":"定義時寫的名字叫參數，呼叫時傳進去的值叫引數。日常對話常混用。"},{"front":"回傳值（return）","back":"碰到 return 時，函式立刻結束並交出值，後面的行不會執行。沒寫 return 的函式回傳 None；呼叫端要確認這符合預期。"},{"front":"預設引數（Default Argument）","back":"def f(a, B=1000)：呼叫時不給就用預設值。有預設值的參數一定要放在沒有預設值的後面。"},{"front":"關鍵字引數（Keyword Argument）","back":"f(x, B=2000)：依參數名稱給值。參數多時，這種寫法方便辨認每個值的用途，也較容易核對順序。"},{"front":"可變預設值的陷阱（Mutable Default）","back":"def f(acc=[]) 的那個空串列只建立一次，所有呼叫共用，會越積越多。要用就寫 acc=None 再在函式裡建立。"},{"front":"作用域（Scope）","back":"一個名字在哪裡看得到。函式裡看得到外面，外面看不到裡面；一旦在函式裡指派同名變數，那就是新的區域變數。"},{"front":"副作用（Side Effect）","back":"函式除了回傳值之外，還改動外部可觀察的狀態，例如修改傳入的串列、全域資料或檔案。判斷是否有副作用，要檢查函式對這些狀態的操作；資料由參數傳入時也要檢查。"},{"front":"追溯訊息（Traceback）","back":"報錯時印出的那一長串。從最後一行開始讀：最後一行是錯誤種類與說明，往上是它發生在哪一行。"},{"front":"常見的四種錯誤（Common Exceptions）","back":"NameError 名字沒定義（多半是儲存格沒跑）、KeyError 欄名不存在、IndexError 索引超出範圍、ValueError 型別對但值不合理（形狀對不上）。"},{"front":"例外處理（try／except）","back":"使用前先確認預期的錯誤與處理方式。except: pass 會略過錯誤訊息，後續結果仍可能出錯。"},{"front":"未顯示訊息的錯誤（Silent Error）","back":"程式完成執行並產生數字，結果卻有錯。多份程式修改不一致或例外被忽略，都可能造成這種情況；因此仍要核對輸出。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

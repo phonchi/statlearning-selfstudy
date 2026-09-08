@@ -10,7 +10,7 @@ _DOCS = "https://islp.readthedocs.io/en/latest/datasets/"
 DATASETS = [
     dict(name="Advertising", description="不同市場的銷售量與電視、廣播、報紙廣告預算。", n=200, p=4, kind="合成", url="https://www.kaggle.com/datasets/ashydv/advertising-dataset"),
     dict(name="Auto", description="汽車油耗、馬力、重量與其他車輛資訊。", n=392, p=9, kind="真實", url=_DOCS + "Auto.html"),
-    dict(name="Bikeshare", description="華盛頓特區共享單車的每小時租借量與天氣資訊。", n=8645, p=15, kind="真實", url=_DOCS + "Bikeshare.html"),
+    dict(name="Bikeshare", description="華盛頓特區公共自行車的每小時租借量與天氣資訊。", n=8645, p=15, kind="真實", url=_DOCS + "Bikeshare.html"),
     dict(name="Boston", description="波士頓人口普查區的住宅價值與地區資訊。", n=506, p=13, kind="真實", url=_DOCS + "Boston.html"),
     dict(name="BrainCancer", description="腦癌病患的存活時間與臨床資訊。", n=88, p=8, kind="真實", url=_DOCS + "BrainCancer.html"),
     dict(name="Caravan", description="顧客的人口特徵、保險持有及露營車保險購買紀錄。", n=5822, p=86, kind="真實", url=_DOCS + "Caravan.html"),
@@ -44,7 +44,7 @@ def dataset_table():
         '<p>依〈統計學習導論〉的順序整理資料集：'
         '點名稱可查資料說明；窄螢幕可左右滑動表格與下方圖形。</p>'
         + table(["名稱", "簡介", "N", "P", "資料性質"], rows, cls="cmp-table w01-catalog")
-        + '<p><strong>N、P 的口徑：</strong>本表沿用講義的資料規模；P 是所採資料表的欄數，'
+        + '<p><strong>N、P 的計算方式：</strong>本表沿用講義的資料規模；P 是所採資料表的欄數，'
         '不是選定模型後的預測變數個數。Credit 不含 ID；Auto 含 name，'
         '套件將 name 設為索引後剩 8 欄；NYSE 含日期，設為索引後剩 5 欄。</p>'
         '<p>Fund 以轉置後的經理人為列（原表為 50 × 2,000）；Khan 列的是 63 筆訓練資料，'

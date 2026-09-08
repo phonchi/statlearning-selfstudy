@@ -73,7 +73,7 @@ BODIES["cond"] = f"""
                 "<code>df['year'] &gt; 80 &amp; df['mpg'] &gt; 30</code> 會被讀成 "
                 "<code>df['year'] &gt; (80 &amp; df['mpg']) &gt; 30</code>，"
                 "然後拋一個看起來莫名其妙的錯。"
-                "<strong>每個條件都包括號</strong>，這條沒有例外。")],
+                "<strong>每個條件都加上括號</strong>，這條沒有例外。")],
      "w15blStatus", "兩個條件，逐列做「且」。",
      '<button class="btn btn-toggle" onclick="w15blSet(0)">year &gt; 80</button>'
      '<button class="btn btn-toggle" onclick="w15blSet(1)">mpg &gt; 30</button>'
@@ -111,7 +111,7 @@ BODIES["cond"] = f"""
        (False, "正常執行，跟用 <code>&amp;</code> 一樣",
         "不一樣。<code>and</code> 是純 Python 的邏輯運算，它不做逐元素的事。"),
        (False, "只會用到第一個條件",
-        "不會悄悄忽略。它會直接報錯。這其實是好事，沉默的錯才可怕。")])}
+        "不會悄悄忽略。它會直接報錯。顯示錯誤訊息，才能及早發現問題。")])}
 """
 
 # ── P02 迴圈 ────────────────────────────────────────────────────────────
@@ -183,7 +183,7 @@ BODIES["func"] = f"""
 {hl("def above_threshold(value, threshold=25):\n    return value >= threshold\n\nfor value in [18, 30, 24]:\n    print(above_threshold(value))")}
   <p>這是自訂函式練習。<code>def</code> 定義名字和參數；<code>return</code> 交回真假值，外面的 print 才負責顯示。先改門檻，確認每次呼叫如何使用引數。以下是學完基本語法後的課程應用；OLS、設計矩陣與 MSE 可在 <a href="p6_modeling_api.html">P6</a> 詳讀。</p>
   <p>假設你要比較三種多項式次數的驗證誤差。不寫函式的話，你會把同一段
-  「切分 → 配適 → 預測 → 算 MSE」複製三次，只改中間一個數字。
+  「切分 → 擬合 → 預測 → 算 MSE」複製三次，只改中間一個數字。
   三份幾乎一樣的程式碼，就是<strong>三個各自會出錯、而且改了一份忘了改另外兩份</strong>的地方。</p>
 
 {info("課程 lab 的做法", "把那一段包成 <code>evalMSE(terms, response, train, test)</code>，"
@@ -392,7 +392,7 @@ BODIES["exercises"] = f"""
 {quiz("qEx1", "EXERCISE 1 · 布林運算子",
       "你要選出「1980 年後、而且 mpg 大於 30」的車。哪一個寫法對？",
       [(True, "<code>Auto[(Auto['year'] &gt; 80) &amp; (Auto['mpg'] &gt; 30)]</code>",
-        "對。逐元素的「且」用 <code>&amp;</code>，而且<strong>每個條件都包括號</strong>——"
+        "對。逐元素的「且」用 <code>&amp;</code>，而且<strong>每個條件都加上括號</strong>——"
         "因為 <code>&amp;</code> 的優先順序比 <code>&gt;</code> 高。"),
        (False, "<code>Auto[Auto['year'] &gt; 80 and Auto['mpg'] &gt; 30]</code>",
         "兩個問題：<code>and</code> 不做逐元素運算，而且沒有括號。"
@@ -463,7 +463,7 @@ BODIES["reference"] = f"""
         ["可變預設值", "<code>def f(acc=None)</code>", "<b>不要寫 <code>acc=[]</code></b>"]])}
 
 {info("三個閱讀重點",
-      "<strong>1. 選資料用 <code>&amp;</code>／<code>|</code>，而且每個條件都包括號。</strong>"
+      "<strong>1. 選資料用 <code>&amp;</code>／<code>|</code>，而且每個條件都加上括號。</strong>"
       "<code>and</code> 一次只判斷一個真假值。<br>"
       "<strong>2. 同一段程式碼要寫第三次，就該包成函式。</strong>"
       "共用一份邏輯，修改時較容易保持一致。<br>"
@@ -520,7 +520,7 @@ function w15whyDraw() {
   document.getElementById('w15whyKind').textContent = copy ? '複製貼上' : '函式 ＋ 迴圈';
   document.getElementById('w15whyCopies').textContent = copy ? n + ' 份' : '1 份';
   document.getElementById('w15whyEdits').textContent = w15whyEdited
-    ? (copy ? '新增一份副本，之後每份都要同步' : '只改迴圈的範圍') : '—';
+    ? (copy ? '新增一份複本，之後每份都要同步' : '只改迴圈的範圍') : '—';
   setStatus('w15whyStatus', w15whyEdited
     ? (copy ? '要多試一個次數，得<b>再複製一整段</b>，而且四份都要記得同步維護。'
             : '要多試一個次數，只改 <b>range 的那個數字</b>。')
@@ -666,7 +666,7 @@ const w15fnSteps = [
   {w: '四個引數傳進去', v: 'terms, response, train, test'},
   {w: '用 train 學設計矩陣的規格', v: '＋ mm, X_train, y_train'},
   {w: '對 test 只做 transform', v: '＋ X_test, y_test'},
-  {w: '配適並預測', v: '＋ results, test_pred'},
+  {w: '擬合並預測', v: '＋ results, test_pred'},
   {w: 'return 一個數字，函式結束', v: '全部消失，只有回傳值留下'}
 ];
 let w15fnI = 0, w15fnTimer = null;

@@ -35,14 +35,14 @@ def _quiz(name, question, correct, feedback, wrong1, fb1, wrong2, fb2):
 def dataset_examples():
     wage = viz(svg('w01ivWageAge', 300) + svg('w01ivWageYear', 270) + svg('w01ivWageEdu', 320),
         [info_card('先看座標，再看分布',
-         '三張圖的薪資單位都是<strong>千美元</strong>。年齡與年份圖都畫全部3000人的觀測值。年齡曲線是四次多項式配適，年份直線是一次線性配適；淡色區域是平均反應的95% bootstrap信賴帶，不是個別薪資的預測區間。'),
+         '三張圖的薪資單位都是<strong>千美元</strong>。年齡與年份圖都畫全部3000人的觀測值。年齡曲線是四次多項式擬合，年份直線是一次線性擬合；淡色區域是平均反應的95% bootstrap信賴帶，不是個別薪資的預測區間。'),
          info_card('第一次讀箱形圖',
          '箱子下緣是第1四分位數（Q1），上緣是第3四分位數（Q3），中線是中位數。'
          '鬚延伸到Q1−1.5×IQR與Q3+1.5×IQR內最遠的觀測值（IQR＝Q3−Q1）；外面的點另外畫出，不代表輸入錯誤。'),
          info_card('不同人之間的比較',
          '各年齡、年份與教育組都是不同人的資料。看到薪資分布不同，還不能說是年齡或教育造成的。')],
         'w01ivWageStatus', '曲線描述平均薪資與輸入的關係；散點呈現同一年齡或年份中個人的差異。', '',
-        provenance=('course-data', 'Wage，對照講義p31與Ch01 lab儲存格145–155；與lab相同的四次／一次配適、95% bootstrap信賴帶與Tukey箱形圖；bootstrap固定seed=0便於重現。'))
+        provenance=('course-data', 'Wage，對照講義p31與Ch01 lab儲存格145–155；與lab相同的四次／一次擬合、95% bootstrap信賴帶與Tukey箱形圖；bootstrap固定seed=0便於重現。'))
     smarket = viz(svg('w01ivSmarketBox', 320) + svg('w01ivSmarketCorr', 470),
         [info_card('箱子依當天的漲跌分組',
          'Lag1、Lag2、Lag3分別是前1、2、3個交易日的報酬（%）。每一組比較<strong>當天跌（紅）／當天漲（綠）</strong>；箱子與鬚沿用上面的定義。'),
@@ -85,7 +85,7 @@ def dataset_examples():
 <h3 id="dx-wage">Wage：薪資與年齡、年份、教育程度</h3>
 <p>資料含3000位男性的薪資與人口特徵。若把wage當預測目標，這是一個迴歸問題；先看分布，還不用急著選模型。</p>
 {wage}
-{card('課程lab · 2004年的平均薪資', lab_code(1, 148), lab_output(1, 148), src=_src(148), note='111.16的單位是千美元，約為11.12萬美元。這是2004年原始樣本平均；年份圖的直線則是使用所有年份共同配適的趨勢。')}
+{card('課程lab · 2004年的平均薪資', lab_code(1, 148), lab_output(1, 148), src=_src(148), note='111.16的單位是千美元，約為11.12萬美元。這是2004年原始樣本平均；年份圖的直線則是使用所有年份共同擬合的趨勢。')}
 {_quiz('Wage', '教育程度較高的組，薪資中位數也較高。這張圖支持哪個說法？', '樣本中不同教育組的薪資分布不同；教育的因果效果仍須其他研究證據', '對。箱形圖比較組間與組內差異，並未控制其他因素。', '同一教育組的人薪資都相同', '不對。箱子、鬚與外面的點正是在呈現組內差異。', '多讀一個教育階段，每個人的薪資都會增加固定金額', '不對。這些是不同人的比較，且教育組之間的差距也不固定。')}
 <h3 id="dx-smarket">Smarket：前幾天的報酬與當天漲跌</h3>
 <p>1250個交易日、9個資料欄。目標Direction是當天漲或跌，屬於分類問題；先比較過去報酬在兩組中的分布。</p>
@@ -142,10 +142,10 @@ function w01ivBox(s, b, x, width, color) {
 }
 function w01ivWageDraw() {
   const f=FRAMES_w01wage;
-  let s=w01ivAxes('w01ivWageAge',[16,82],[0,340],'年齡：全部觀測與四次多項式配適','年齡（歲）','薪資（千美元）',300,6);
+  let s=w01ivAxes('w01ivWageAge',[16,82],[0,340],'年齡：全部觀測與四次多項式擬合','年齡（歲）','薪資（千美元）',300,6);
   w01ivDots(s,f.scatter,'rgba(95,100,105,.1)',2);
   w01ivFit(s,f.ageFit,'#c45e14');
-  s=w01ivAxes('w01ivWageYear',[2003,2009],[0,340],'年份：全部觀測與一次線性配適','年份','薪資（千美元）',270,6);
+  s=w01ivAxes('w01ivWageYear',[2003,2009],[0,340],'年份：全部觀測與一次線性擬合','年份','薪資（千美元）',270,6);
   w01ivDots(s,f.yearScatter,'rgba(95,100,105,.1)',2);
   w01ivFit(s,f.yearFit,'#2c3e7a');
   s=w01ivAxes('w01ivWageEdu',[-.6,4.6],[0,340],'教育程度：薪資分布','教育程度','薪資（千美元）',320,5);

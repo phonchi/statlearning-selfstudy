@@ -20,7 +20,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 可依需要選讀，不需要任何程式基礎。
 
 **期中考使用電腦教室的電腦。** 本機練習建議依[課程提供的版本清單](https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt)
-對齊教室的 Python 與套件版本；平時可用 Colab，考前仍應熟悉教室環境。
+使用與教室相同的 Python 與套件版本；平時可用 Colab，考前仍應熟悉教室環境。
 安裝與核對步驟見[環境安裝：本機與考前準備](00b_setup.html#local)。
 
 | # | 頁面 | 對應 |
@@ -88,7 +88,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 每頁的中文來源標記提供課本章節與講義主題，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
 **逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方可開啟原始筆記本；精確引用位置保存在內部來源資料中。
-圖表用的烘焙資料由 `tools/frames/` 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。
+圖表使用的預先計算資料由 `tools/frames/` 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。
 每個正文視覺另標示它屬於課程資料、講義／課本重繪、固定種子模擬或自訂概念示意；
 自訂值不得解讀成課本或實證結果。
 

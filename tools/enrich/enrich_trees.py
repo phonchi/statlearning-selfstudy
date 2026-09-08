@@ -51,8 +51,8 @@ BODIES = {}
 
 # ── P00 prologue ──────────────────────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>前面幾章的模型都在配一個<strong>式子</strong>：線性迴歸配一條線、樣條配一條彎的曲線、
-  邏輯斯迴歸配一個機率。這一章換一個完全不同的想法——<strong>不配式子，直接把特徵空間切成方塊</strong>，
+  <p>前面幾章的模型都在擬合一個<strong>式子</strong>：線性迴歸擬合一條線、樣條擬合一條彎的曲線、
+  邏輯斯迴歸擬合一個機率。這一章換一個完全不同的想法——<strong>直接把特徵空間切成方塊，各區給出固定預測</strong>，
   每個方塊裡的所有點都給同一個預測值。</p>
 
   <p>ISLP §8.1 的例子是棒球員薪水（<code>Hitters</code>）：用 <code>Years</code>（打了幾年）
@@ -66,11 +66,11 @@ BODIES["prologue"] = f"""
   千美元，也就是約 16.5 萬、40.3 萬、84.5 萬。整個模型可以用一句話講完：
   <strong>資淺的便宜；資深的看安打數</strong>。這種「一句話講得完」的能力，是樹最大的賣點。</p>
 
-{info("先把四個詞釘住", '''<strong>終端節點／葉（terminal node / leaf）：</strong>樹最底下那些不再分裂的節點，
+{info("先認識樹的基本構造", '''<strong>終端節點／葉（terminal node / leaf）：</strong>樹最底下那些不再分裂的節點，
   每一個對應特徵空間的一塊方塊 $R_m$。<br>
   <strong>內部節點（internal node）：</strong>寫著分裂規則（例如 <code>Years &lt; 4.5</code>）的節點。<br>
   <strong>分支（branch）：</strong>連接節點的線段。慣例是<strong>左邊＝條件成立</strong>。<br>
-  <strong>樹是倒著畫的：</strong>根在上、葉在下。這件事第一次看都會愣一下。''')}
+  <strong>樹是倒著畫的：</strong>根在上、葉在下。讀圖時先從上方的根節點開始。''')}
 
   <p>樹的整體形狀就是一個<strong>階梯函數</strong>：</p>
 
@@ -88,7 +88,7 @@ BODIES["prologue"] = f"""
         ["最大弱點", "真實關係非線性時失手", "<strong>不穩定</strong>：資料動一點，樹就長成另一棵"]])}
 
   <p>最後那一列是這一整章後半的動機。單一棵樹的<strong>變異</strong>大得離譜。把訓練資料隨機切成兩半、
-  各配一棵樹，兩棵樹可能完全不像。因此常用<strong>多棵樹的集成</strong>來提高穩定性：bagging、random forest、boosting。
+  各擬合一棵樹，兩棵樹可能完全不像。因此常用<strong>多棵樹的集成</strong>來提高穩定性：bagging、random forest、boosting。
   這一頁的後六節就在講這件事。</p>
 
   <h3 id="dx-high">講義完整實作：把 <code>Sales</code> 變成二元的 <code>High</code></h3>
@@ -99,7 +99,7 @@ BODIES["prologue"] = f"""
            "注意 <code>ShelveLoc</code>、<code>Urban</code>、<code>US</code> 是類別變數——"
            "理論上樹不必編碼，但 <code>scikit-learn</code> 的實作不支援，所以 lab 還是做了 one-hot。")}
 
-{quiz("qWhat", "QUIZ · 樹在幹什麼",
+{quiz("qWhat", "QUIZ · 樹如何預測",
       "一棵迴歸樹對落在同一個葉節點裡的兩個觀測值，會給出什麼預測？",
       [(True, "完全相同的預測值，也就是該葉節點內訓練資料的平均",
         "對。這正是「階梯函數」的意思：同一塊方塊內部完全平坦。所以樹的預測值只有 M 種（M ＝ 葉子數），不管特徵怎麼變。"),
@@ -191,7 +191,7 @@ BODIES["grow"] = f"""
 # ── P02 prune ─────────────────────────────────────────────────────────
 BODIES["prune"] = f"""
   <p>上一節的過程如果不管它，樹會一直長到每個葉子只剩幾個點。訓練誤差很低，
-  測試誤差卻可能很高——<strong>典型的過度配適</strong>。</p>
+  測試誤差卻可能很高——<strong>典型的過度擬合</strong>。</p>
 
   <p>直覺的解法是「RSS 下降量小於某個門檻就停」。<strong>這個解法是錯的</strong>，
   而且錯得很有教育意義：它太短視。一刀本身看起來沒用，
@@ -204,7 +204,7 @@ BODIES["prune"] = f"""
   $$\\sum_{{m=1}}^{{|T|}} \\sum_{{i:\\, x_i \\in R_m}} \\left(y_i - \\hat y_{{R_m}}\\right)^2
     + \\alpha |T|$$
 
-  <p>$|T|$ 是葉子數。左邊是配適程度，右邊是複雜度的罰款——
+  <p>$|T|$ 是葉子數。左邊是擬合程度，右邊是複雜度的罰款——
   <strong>採用第 6 章 lasso 也使用的損失加懲罰形式</strong>：一個要小的目標加上一個乘了調整參數的罰項。
   $\\alpha = 0$ 時罰款是零，最小化的就是訓練誤差，答案是完整的 $T_0$；
   $\\alpha$ 愈大，多留一個葉子愈貴，樹就愈小。</p>
@@ -229,7 +229,7 @@ BODIES["prune"] = f"""
 
   <p>下面的教材 lab 採一個較簡化的實作：先用<strong>完整外層訓練資料</strong>算一次剪枝路徑，
   把得到的 <code>ccp_alphas</code> 固定成候選格點，再交給 <code>GridSearchCV</code>。
-  每個固定 α 的樹仍會在各折訓練部分重新配適；只有候選格點沒有在每折重建。
+  每個固定 α 的樹仍會在各折訓練部分重新擬合；只有候選格點沒有在每折重建。
   上述演算法 8.1 的嚴格版本則連候選路徑都在每折的訓練部分重新建立。</p>
 
 {viz(chart("w09pruneChart", "tall",
@@ -257,15 +257,15 @@ BODIES["prune"] = f"""
 {card("講義 08 · cost_complexity_pruning_path ＋ GridSearchCV（迴歸）",
       code(57, 59), lab_output(CH, 59), src=src("57、59"),
       note="lab 先從完整外層訓練資料的剪枝路徑取得 <code>ccp_path.ccp_alphas</code>，"
-           "再用 <code>GridSearchCV</code> 在五折上比較這組固定候選值；每折會重配各個固定 α 的樹，"
+           "再用 <code>GridSearchCV</code> 在五折上比較這組固定候選值；每折會重新擬合各個固定 α 的樹，"
            "但不會重建該折自己的候選路徑。最後 <code>refit=True</code> "
-           "用全部訓練資料重配。測試 MSE <strong>28.07</strong>，開根號約 5.30，"
+           "用全部訓練資料重新擬合。測試 MSE <strong>28.07</strong>，開根號約 5.30，"
            "也就是預測誤差大約在 5,300 美元的量級。")}
 
   <h3 id="dx-cv">講義完整實作：分類樹的剪枝（Carseats）</h3>
 {card("講義 08 · 用 CV 挑 ccp_alpha（分類）", code(37, 39), lab_output(CH, 39),
       src=src("37、39"),
-      note="這裡也先用完整外層訓練資料建立 α 候選格點，再由十折 CV 重配並比較固定 α 的樹。"
+      note="這裡也先用完整外層訓練資料建立 α 候選格點，再由十折 CV 重新擬合並比較固定 α 的樹。"
            "被選中的樹有 <strong>30 個葉子</strong>（儲存格 43），"
            "在測試集上的正確率 <strong>0.72</strong>（儲存格 45），"
            "比未剪枝的 0.735 還<em>略差</em>。lab 的原話是：「交叉驗證在這裡對我們的幫助不大」。"
@@ -374,7 +374,7 @@ BODIES["classtree"] = f"""
      "錯誤率卻報「跟切法 A 一樣」。純度也影響預測的可信程度："
      "落在純葉子裡的測試點，我們對它的預測有信心；落在 7/11 那個葉子裡的，我們沒有。"
      "這個差別在需要輸出<strong>機率</strong>時尤其要緊，而集成方法（bagging 的多數投票、"
-     "boosting 的加權和）全都靠葉子的機率估計吃飯。</p>"
+     "boosting 的加權和）都依賴葉子的機率估計。</p>"
      "<p>最後補一句實務規則：<strong>分裂用 Gini／交叉熵，剪枝與最終評估用錯誤率</strong>（或 AUC）。"
      "兩者的角色不同，不必統一。</p>"),
 ])}
@@ -413,7 +413,7 @@ BODIES["vslinear"] = f"""
   線性模型除非你手動把交互作用項乘出來，否則永遠抓不到。</p>
 
 {info("用第 5 章的交叉驗證比較模型", '''散佈圖提供初步線索，模型選擇仍需評估。
-  <strong>把兩個都配一次，用交叉驗證比測試誤差</strong>，就這樣。<br>
+  <strong>把兩個都擬合一次，用交叉驗證比測試誤差</strong>，就這樣。<br>
   除了誤差，也要考慮解釋模型的需求：有時候你選樹是因為<strong>要能畫給人看</strong>
   （醫療、法規、風控場景），這時候即使樹的誤差稍差一點也值得。
   反過來，如果只追求準確率，本章後半的集成方法幾乎一定打得贏兩者，
@@ -433,10 +433,10 @@ BODIES["vslinear"] = f"""
   而降變異最古典的手段就是<strong>平均</strong>。這正好是下三節的主題。</p>
 
 {quiz("qVsLin", "QUIZ · 樹 vs 線性模型",
-      "真實的決策邊界是一條斜線 $X_1 + X_2 = 1$。用決策樹去配會發生什麼事？",
+      "真實的決策邊界是一條斜線 $X_1 + X_2 = 1$。用決策樹擬合會發生什麼事？",
       [(True, "樹會用許多軸平行的小台階去逼近那條斜線，能逼近但需要很多刀",
         "對。這是 ISLP 圖 8.7 上排的情境。樹需要較多次分裂才能逼近斜線，刀愈多變異愈大，所以在這種資料上輸給一刀就完事的線性模型。"),
-       (False, "樹完全配不出來，因為它只能表示水平或垂直的邊界",
+       (False, "樹完全擬合不出來，因為它只能表示水平或垂直的邊界",
         "這個說法忽略了多次分裂的效果。單一刀確實只能軸平行，但<strong>很多刀疊起來</strong>可以逼近任何邊界（樹是萬用近似器）。這個比較要看需要多少分裂才能逼近邊界。"),
        (False, "樹會自動找到 X₁ + X₂ 這個組合當新的分裂變數",
         "不會。標準的 CART 每一刀只看<strong>單一個</strong>原始變數。oblique tree／斜樹等變體才會搜尋線性組合。")])}
@@ -444,10 +444,10 @@ BODIES["vslinear"] = f"""
 
 # ── P05 why ───────────────────────────────────────────────────────────
 BODIES["why"] = f"""
-  <p>先看多數投票如何改變分類正確率，再討論如何組合樹。</p>
+  <p>多數投票可以用來組合多個分類器。</p>
 
-  <p>你把一個難題丟給幾千個隨機的路人，把他們的答案彙總起來——
-  彙總的答案常常比一個專家還準。這叫<strong>群眾智慧</strong>（wisdom of the crowd）。
+  <p>把一個難題交給幾千位隨機選出的路人，再彙整他們的答案，
+  彙整的答案常常比一個專家還準。這叫<strong>群眾智慧</strong>（wisdom of the crowd）。
   機器學習版本的說法是：<strong>一群預測器合起來，常常比裡面最好的那一個還準</strong>。
   這一群叫做<strong>集成</strong>（ensemble），做法叫集成方法（ensemble method）。</p>
 
@@ -458,7 +458,7 @@ BODIES["why"] = f"""
   $$P(\\text{{投票正確}}) = \\sum_{{k > M/2}} \\binom{{M}}{{k}} p^k (1-p)^{{M-k}}$$
 
   <p>講義第 31 頁舉的例子：<strong>1000 個只有 51% 正確率的弱學習器</strong>，
-  多數投票之後可望達到 75% 的正確率。這個數字大得不像真的。下面自己算一次。</p>
+  多數投票之後可望達到 75% 的正確率。下方互動可以計算這個機率。</p>
 
 {viz(svg("w09voteSvg", 250) + "\n" + chart("w09voteChart", "",
         "。此圖的重點：只要 p > 0.5，多數投票的正確率隨分類器數量單調上升並趨近 1；"
@@ -475,7 +475,7 @@ BODIES["why"] = f"""
                 '每個方塊是一個分類器在某一筆資料上的表現：'
                 '<span style="color:var(--accent3);font-weight:700;">綠＝答對</span>、'
                 '<span style="color:var(--accent);font-weight:700;">紅＝答錯</span>'
-                '（固定種子的模擬，所以你重載頁面看到的是同一組）。'
+                '（固定種子的模擬，所以你重新載入頁面看到的是同一組）。'
                 '下面那條線是多數投票的結果。<strong>拖 p 到 0.45 看看</strong>——'
                 '紅色一多，投票就開始穩定地答錯。')],
      "w09voteStatus", "拖動 p 與 M：看多數投票的正確率怎麼變。p 拖到 0.5 以下會發生有趣的事。",
@@ -485,7 +485,7 @@ BODIES["why"] = f"""
 
 {info("投票公式的獨立性假設", '''上面那條公式只有在
   <strong>分類器彼此完全獨立、錯的地方互不相關</strong>時才成立。<br>
-  真實世界裡沒這種好事：同一份資料訓練出來的模型，錯的地方通常也一樣，
+  實際資料未必滿足這個條件：同一份資料訓練出來的模型，錯的地方通常也一樣，
   這時候投一百票跟投一票差不多。因此集成方法需要<strong>增加預測器的多樣性</strong>：<br>
   ① 用<strong>不同的演算法</strong>（voting／stacking，PART 11）<br>
   ② 用<strong>不同的資料</strong>（bagging，下一節）<br>
@@ -517,8 +517,8 @@ BODIES["bagging"] = f"""
   第 5 章就講過了：<strong>平均</strong>。給定 $n$ 個獨立的觀測值、每個變異數都是 $\\sigma^2$，
   它們的平均 $\\bar Z$ 的變異數是 $\\sigma^2 / n$。</p>
 
-  <p>所以理想的做法是：蒐集 $B$ 份獨立的訓練資料、各配一棵樹、把預測平均起來。
-  問題是我們只有一份資料。<strong>那就用 bootstrap 假造出 $B$ 份</strong>。
+  <p>所以理想的做法是：蒐集 $B$ 份獨立的訓練資料、各擬合一棵樹、把預測平均起來。
+  問題是我們只有一份資料。<strong>那就用 bootstrap 重抽樣產生 $B$ 份</strong>。
   這就是 <strong>bootstrap aggregation</strong>，簡稱 <strong>bagging</strong>：</p>
 
   $$\\hat f_{{\\text{{bag}}}}(x) = \\frac{{1}}{{B}} \\sum_{{b=1}}^{{B}} \\hat f^{{*b}}(x)$$
@@ -559,7 +559,7 @@ BODIES["bagging"] = f"""
                 '對第 i 筆資料，把「所有沒用到它的那些樹」找出來（大約 B/3 棵），'
                 '用它們預測第 i 筆再平均（或投票），得到一個 OOB 預測。'
                 'n 筆各做一次，就得到 OOB 誤差。<strong>B 夠大時它幾乎等於 LOOCV 誤差</strong>，'
-                '但成本只有一次配適。', "ISLP §8.2.1")],
+                '但成本只有一次擬合。', "ISLP §8.2.1")],
      "w09bagStatus", "按「長一棵樹」看一次有放回重抽：虛線框的球就是這棵樹的袋外樣本。",
      '<button class="btn btn-step" onclick="w09bagOne()">→ 長一棵樹</button>'
      '<button class="btn btn-play" onclick="w09bagMany()">▶ 連長 200 棵</button>'
@@ -568,7 +568,7 @@ BODIES["bagging"] = f"""
 
   <p>還有一件實務上很重要的事：<strong>B 通常設到平均預測已穩定的大小</strong>。
   ISLP 圖 8.8 顯示誤差隨 B 上升而下降、然後平掉就不動了——
-  <strong>B 太大不會過度配適</strong>（只是浪費算力），B 太小才會欠配適。
+  <strong>B 太大不會過度擬合</strong>（只是增加運算成本），B 太小才會欠擬合。
   所以做法是「挑一個大到誤差已經平掉的 B」，通常 100 到 500 就夠。</p>
 
   <h3 id="dx-bag">講義完整實作：Boston 上的 bagging</h3>
@@ -576,7 +576,7 @@ BODIES["bagging"] = f"""
       code(64, 68), lab_output(CH, 68), src=src("64、66、68"),
       note="<code>max_features=X_train.shape[1]</code>（＝12）就是「每次分裂都考慮全部變數」，"
            "也就是 bagging。B = 100 時測試 MSE 是 <strong>14.6347</strong>（儲存格 66），"
-           "B = 500 時 14.6057——<strong>幾乎沒動</strong>，正是「B 大不會過度配適也不會再變好」。"
+           "B = 500 時 14.6057——<strong>幾乎沒動</strong>，正是「B 大不會過度擬合也不會再變好」。"
            "對照單一棵剪枝樹的 28.07：<strong>誤差直接砍半</strong>。")}
 
 {qa("觀念釐清", [
@@ -590,12 +590,12 @@ BODIES["bagging"] = f"""
      "所以偏差 $\\mu(x) - f(x)$ 一動也不動。變異數則被壓成兩項：第一項隨 B 變大而消失，"
      "第二項 $\\rho \\sigma^2$ <strong>不隨 B 消失</strong>。這第二項就是下一節 random forest 要對付的東西。</p>"
      "<p>所以 bagging 的正確用法是：<strong>拿變異很大、偏差很小的東西去平均</strong>。"
-     "長很深不剪枝的樹剛好就是這種東西。它把訓練資料配到幾乎完美（低偏差），"
+     "長很深不剪枝的樹剛好就是這種東西。它把訓練資料擬合到幾乎完美（低偏差），"
      "但資料換一點就長成另一棵（高變異）。反過來，"
      "拿 bagging 去平均一堆線性迴歸幾乎沒有用：線性迴歸本來變異就小，沒什麼可壓的。</p>"),
     ("Q：既然有 OOB 誤差，還需要交叉驗證嗎？",
      "<p>估 bagging／random forest 本身的測試誤差時，OOB 就夠了，而且便宜太多："
-     "配一次模型就順手拿到，不必像 k-fold 那樣配 k 次。ISLP 說 B 夠大時 OOB 誤差"
+     "擬合一次模型就順手拿到，不必像 k-fold 那樣擬合 k 次。ISLP 說 B 夠大時 OOB 誤差"
      "<strong>幾乎等於 LOOCV 誤差</strong>。</p>"
      "<p>要小心的是兩件事。第一，如果你用 OOB 誤差去<strong>挑超參數</strong>"
      "（例如挑 m、挑樹的深度），那被挑中的那組的 OOB 誤差就跟第 5 章講的一樣會偏低，"
@@ -606,9 +606,9 @@ BODIES["bagging"] = f"""
 {quiz("qBag", "QUIZ · Bagging 與 OOB",
       "做 bagging 時，每一棵樹該長多深？",
       [(True, "長到很深、不剪枝——刻意讓每棵樹低偏差高變異，再靠平均壓變異",
-        "對。ISLP §8.2.1 的原話是 <em>These trees are grown deep, and are not pruned</em>。平均能治變異但治不了偏差，所以偏差要在單棵樹的階段就先壓低。"),
-       (False, "用交叉驗證幫每一棵樹各自挑最佳的 ccp_alpha，才不會過度配適",
-        "不對，而且是雙重浪費：算力花在 B 次 CV 上，換來的是一堆偏差偏大的樹，平均之後偏差還是偏大。單棵樹獨立預測時，剪枝用來控制變異；bagging 則靠多棵樹平均控制變異。"),
+        "對。ISLP §8.2.1 的原話是 <em>These trees are grown deep, and are not pruned</em>。平均能降低變異，但無法消除偏差，因此要先讓單棵樹的偏差較低。"),
+       (False, "用交叉驗證幫每一棵樹各自挑最佳的 ccp_alpha，才不會過度擬合",
+        "這會花費 B 次 CV 的運算成本，得到偏差較大的樹；平均之後，偏差仍然較大。單棵樹獨立預測時，剪枝用來控制變異；bagging 則靠多棵樹平均控制變異。"),
        (False, "全部剪成單一分裂的 stump，這樣集成才穩定",
         "淺樹常用於 <strong>boosting</strong>。boosting 是序列式地降偏差，所以每棵樹可以很弱；bagging 是並行地降變異，弱樹平均起來還是弱。")])}
 """
@@ -646,7 +646,7 @@ BODIES["rf"] = f"""
       info_card("怎麼看這張圖",
                 'x 軸是樹的棵數 B（前 B 棵的平均預測），y 軸是測試 MSE。'
                 '右邊列出<strong>測試 MSE 與各棵樹跨測試樣本的預測相關</strong>。'
-                '後者描述這次配適的樹有多相似，<strong>與上式固定 x 的理論 ρ 定義不同</strong>，'
+                '後者描述這次擬合的樹有多相似，<strong>與上式固定 x 的理論 ρ 定義不同</strong>，'
                 '也不保證隨 m 單調改變。', "圖 8.8／8.10"),
       info_card("兩份資料為什麼結論不同",
                 '<strong>Boston</strong>：只有 12 個變數、<code>lstat</code> 與 <code>rm</code> '
@@ -678,7 +678,7 @@ BODIES["rf"] = f"""
      "<p>但限制 m 也可能讓樹錯過有用變數、降低預測能力；"
      "<strong>「樹變弱」不等於「變異數一定增加」</strong>，也可能是偏差增加。"
      "這個取捨不能只看相關性，要用驗證誤差判斷。</p>"
-     "<p>本頁的相關數字是同一次配適中、各棵樹跨測試樣本預測向量的平均相關，"
+     "<p>本頁的相關數字是同一次擬合中、各棵樹跨測試樣本預測向量的平均相關，"
      "只能描述這組樹的相似程度，不能代入上面的理論公式。"
      "<strong>m 是超參數，可從 √p 開始，再用驗證選擇。</strong></p>"),
 ])}
@@ -705,7 +705,7 @@ BODIES["boosting"] = f"""
 {info("梯度提升（regression 版），ISLP 演算法 8.2", '''<strong>1.</strong> 令 $\\hat f(x) = 0$，
   殘差 $r_i = y_i$。<br>
   <strong>2.</strong> 對 $b = 1, 2, \\dots, B$：<br>
-  &nbsp;&nbsp;&nbsp;(a) 用 $(X, r)$ 配一棵只有 $d$ 刀（$d+1$ 個葉子）的<strong>小樹</strong> $\\hat f^b$；<br>
+  &nbsp;&nbsp;&nbsp;(a) 用 $(X, r)$ 擬合一棵只有 $d$ 刀（$d+1$ 個葉子）的<strong>小樹</strong> $\\hat f^b$；<br>
   &nbsp;&nbsp;&nbsp;(b) 把收縮後的它加進去：$\\hat f(x) \\leftarrow \\hat f(x) + \\lambda \\hat f^b(x)$；<br>
   &nbsp;&nbsp;&nbsp;(c) 更新殘差：$r_i \\leftarrow r_i - \\lambda \\hat f^b(x_i)$。<br>
   <strong>3.</strong> 輸出 $\\hat f(x) = \\sum_{b=1}^{B} \\lambda \\hat f^b(x)$。''')}
@@ -719,7 +719,7 @@ BODIES["boosting"] = f"""
      [info_card("虛擬碼", '<div class="pseudo-code" id="w09gbCode" style="font-size:.72rem;">'
                 '<span class="line" data-l="1">f = 0；r = y</span>\n'
                 '<span class="line" data-l="2"><span class="kw">for</span> b <span class="kw">in</span> <span class="kw">range</span>(B):</span>\n'
-                '<span class="line" data-l="3">    tree = 配一棵淺樹(X, r)</span>\n'
+                '<span class="line" data-l="3">    tree = 擬合一棵淺樹(X, r)</span>\n'
                 '<span class="line" data-l="4">    f += λ * tree(X)</span>\n'
                 '<span class="line" data-l="5">    r -= λ * tree(X)</span></div>', "CODE"),
       rows_card("目前狀態",
@@ -728,12 +728,12 @@ BODIES["boosting"] = f"""
                  ("訓練 MSE", "—", "w09gbMse"),
                  ("殘差的標準差", "—", "w09gbSd")]),
       info_card("兩個面板",
-                '<strong>上面</strong>是目前的配適 $\\hat f$（橘線）疊在資料上。'
+                '<strong>上面</strong>是目前的擬合 $\\hat f$（橘線）疊在資料上。'
                 '<strong>下面</strong>是目前的殘差 $r$，以及下一棵樹準備加上去的那個階梯（虛線）。'
                 '注意它總是往殘差最偏的地方去。<br>'
-                '<strong>λ 調小</strong>：每一步只走一點點，需要更多棵樹，但配出來的曲線更平滑；'
+                '<strong>λ 調小</strong>：每一步只走一點點，需要更多棵樹，但擬合出來的曲線更平滑；'
                 '<strong>λ 調到 1</strong>：幾步就衝過去，然後開始抖。')],
-     "w09gbStatus", "直接調 B 看第 b 棵樹後的配適與殘差；自動播放只是可選總覽。",
+     "w09gbStatus", "直接調 B 看第 b 棵樹後的擬合與殘差；自動播放只是可選總覽。",
      slider("w09gbSlLam", "λ", 5, 100, 5, 35, "0.35", "w09gbSetLam()", "200px")
      + slider("w09gbSlB", "B", 0, 40, 1, 0, "0", "w09gbSetB()", "180px")
      + '<label class="slider-label" style="margin:0 .3rem;">深度 d</label>'
@@ -744,15 +744,15 @@ BODIES["boosting"] = f"""
      provenance=("simulation", "固定種子 52408 的非線性迴歸模擬；淺樹、殘差與提升序列由瀏覽器即時計算。"))}
 
   <p>Boosting 有<strong>三個</strong>要調的參數，而且跟 bagging 不同，
-  <strong>它真的會過度配適</strong>：</p>
+  <strong>它真的會過度擬合</strong>：</p>
 
 {table(["參數", "意思", "典型值", "調錯會怎樣"],
        [["<strong>B</strong>（樹的棵數）", "跑幾輪", "由 CV 決定",
-         "<strong>太大會過度配適</strong>（只是通常發生得很慢）。bagging 沒有這個問題"],
+         "<strong>太大會過度擬合</strong>（只是通常發生得很慢）。bagging 沒有這個問題"],
         ["<strong>λ</strong>（學習率／收縮）", "每棵樹只採用 λ 倍", "0.01 或 0.001",
-         "太小 → 需要非常大的 B；太大 → 幾步就衝過頭，開始配雜訊"],
+         "太小 → 需要非常大的 B；太大 → 幾步就衝過頭，開始擬合雜訊"],
         ["<strong>d</strong>（每棵樹幾刀）", "交互作用深度", "常常 1 就夠",
-         "d = 1（stump）的集成是<strong>加法模型</strong>；d 愈大能抓愈高階的交互作用，也愈容易過度配適"]])}
+         "d = 1（stump）的集成是<strong>加法模型</strong>；d 愈大能抓愈高階的交互作用，也愈容易過度擬合"]])}
 
   <p>$B$ 與 $\\lambda$ 是綁在一起的：<strong>λ 砍十倍，B 大約要放大十倍</strong>。
   lab 用的是 <code>n_estimators=5000, learning_rate=0.001</code>，
@@ -795,8 +795,8 @@ BODIES["boosting"] = f"""
                 '<strong>請連續比較多輪的錯誤率。</strong>'),
       info_card("為什麼 boosting 的樹要很淺",
                 '它藉由逐步修正來<strong>降低偏差</strong>。序列裡的每一棵只需要修掉一小塊誤差，'
-                '所以 stump 就夠；樹長深了反而一步就把殘差配光，'
-                '後面的樹只能開始配雜訊。<br>這跟 bagging 剛好互補——'
+                '所以 stump 就夠；樹長深了反而一步就把殘差完全擬合，'
+                '後面的樹只能開始擬合雜訊。<br>這跟 bagging 剛好互補——'
                 'bagging 要深樹低偏差，boosting 要淺樹低變異。', "ISLP §8.2.3")],
      "w09adaStatus", "按「單步」跑一輪 AdaBoost：看答錯的點怎麼變大，切點怎麼被逼著移動。",
      '<button class="btn btn-play" onclick="w09adaStart()">▶ 開始</button>'
@@ -814,7 +814,7 @@ BODIES["boosting"] = f"""
 
 {qa("觀念釐清", [
     ("Q：Bagging 與 Boosting 如何組合樹？",
-     "<p>可比較三個面向：<strong>配適順序、偏差與變異、樹的深度。</strong>"
+     "<p>可比較三個面向：<strong>擬合順序、偏差與變異、樹的深度。</strong>"
      "而第三點是前兩點的必然結果。</p>"
      "<p><strong>Bagging 降變異。</strong>它平均一堆同分佈的估計，期望值不變（偏差不變）、"
      "變異被 $1/B$ 壓下去。既然偏差不會被改善，就必須讓每棵樹的偏差一開始就很低，"
@@ -822,18 +822,18 @@ BODIES["boosting"] = f"""
      "<p><strong>Boosting 降偏差。</strong>它把「還沒解釋掉的部分」（殘差／被放大權重的難樣本）"
      "交給下一棵樹，是一個逐步降低偏差的過程。每一步只需要修一小塊，"
      "所以每棵樹<strong>只要很淺</strong>（ISLP 說 $d = 1$ 常常就夠）。"
-     "反過來，如果第一棵樹就長很深，它會把殘差一次配光——包括雜訊；"
-     "後面 4999 棵就只剩雜訊可配，而每一棵都在增加整體的變異。</p>"
-     "<p>由此還推得幾個實務差別：<strong>bagging／RF 的 B 不會過度配適</strong>"
+     "反過來，如果第一棵樹就長很深，它會把殘差一次完全擬合——包括雜訊；"
+     "後面 4999 棵就只剩雜訊可擬合，而每一棵都在增加整體的變異。</p>"
+     "<p>由此還推得幾個實務差別：<strong>bagging／RF 的 B 不會過度擬合</strong>"
      "（平均更多同分佈的東西只會更穩），所以 B 挑大一點就好；"
-     "<strong>boosting 的 B 會過度配適</strong>，必須用 CV 或 early stopping 挑。"
+     "<strong>boosting 的 B 會過度擬合</strong>，必須用 CV 或 early stopping 挑。"
      "而且 bagging 可以完全平行、boosting 天生序列（這正是 XGBoost 要花那麼多力氣"
      "在工程上加速的原因）。最後：bagging 有 bootstrap 所以有免費的 OOB 誤差，"
      "boosting 沒有 bootstrap，所以沒有 OOB。</p>"),
 ])}
 
 {quiz("qBoost", "QUIZ · Boosting",
-      "梯度提升的第 b 棵樹，配的目標（response）是什麼？",
+      "梯度提升的第 b 棵樹，擬合的目標（response）是什麼？",
       [(True, "由原始 y 減去目前預測得到的殘差 r",
         "對，這是演算法 8.2 步驟 (a)。所以每棵樹只負責「前面還沒解釋掉的部分」，整體逐步降低偏差。"),
        (False, "原始的 y，但只用 bootstrap 抽出來的那份資料",
@@ -848,9 +848,9 @@ BODIES["modern"] = f"""
   第一輪讀可以整節略過，回頭要用套件時再看。</p>
 
   <p>上一節的梯度提升在概念上已經完整了，剩下的全是<strong>工程</strong>與<strong>正則化</strong>。
-  三個套件把這件事推到了工業級：</p>
+  三個常用套件提供了不同的加速與正則化做法：</p>
 
-{table(["", "全名／來源", "核心賣點", "在 lab 的實測"],
+{table(["", "全名／來源", "主要特點", "在 lab 的實測"],
        [["<strong>XGBoost</strong>", "Extreme Gradient Boosting",
          "目標函數<strong>內建正則化</strong>（葉子數與葉值的 L1/L2 罰項）；"
          "用類似<strong>牛頓法</strong>的二階近似，納入梯度與曲率；分位數草圖做近似分裂搜尋、"
@@ -861,7 +861,7 @@ BODIES["modern"] = f"""
          "互斥特徵綁定（EFB）", "13.1 秒（儲存格 185）"],
         ["<strong>CatBoost</strong>", "Yandex",
          "<strong>對稱樹</strong>（同一層用同一個分裂條件，本身就是正則化，預測極快）；"
-         "<strong>ordered boosting</strong> 用另一份子集算殘差以防過度配適；"
+         "<strong>ordered boosting</strong> 用另一份子集算殘差以防過度擬合；"
          "類別變數原生支援", "15.1 秒（儲存格 210）"],
         ["對照組", "<code>sklearn</code> 的 <code>GradientBoostingClassifier</code>",
          "純 Python 迴圈的參考實作", "<strong>624.8 秒</strong>（儲存格 113）"]])}
@@ -880,14 +880,14 @@ BODIES["modern"] = f"""
   「a regularized version of gradient boosting」。''')}
 
   <p>該調哪些超參數？講義第 60–61 頁把三個套件的參數名對照起來，
-  分成「求快」「求準」「防過度配適」三組：</p>
+  分成「求快」「求準」「防過度擬合」三組：</p>
 
 {table(["目的", "XGBoost", "LightGBM", "CatBoost"],
        [["<strong>求快</strong>（抽樣列／欄、少幾棵）",
          "<code>subsample</code> · <code>colsample_bytree</code> · <code>n_estimators</code>",
          "<code>bagging_fraction</code> · <code>feature_fraction</code> · <code>num_iterations</code>",
          "<code>subsample</code> · <code>rsm</code> · <code>iterations</code>"],
-        ["<strong>控制過度配適／求準</strong>",
+        ["<strong>控制過度擬合／求準</strong>",
          "<code>learning_rate</code>（0.01–0.2）· <code>max_depth</code> · "
          "<code>min_child_weight</code> · <code>gamma</code>",
          "<code>learning_rate</code> · <code>max_depth</code> · <code>num_leaves</code> · "
@@ -940,7 +940,7 @@ BODIES["modern"] = f"""
        (False, "它改用 bootstrap 抽樣，所以每棵樹只看部分資料",
         "把 boosting 跟 bagging 搞混了。<code>subsample &lt; 1</code> 確實可以隨機抽列（那叫 stochastic gradient boosting），這是可選的抽樣設定，與有放回的 bootstrap 不同；本題比較的是目標函數。"),
        (False, "它把序列改成並行，B 棵樹可以同時長",
-        "不對。boosting 的第 b 棵樹必須等第 b−1 棵算完殘差，這個相依性沒辦法拿掉。XGBoost 平行化的是<strong>單一次分裂搜尋</strong>（掃各個特徵的候選切點），各棵樹仍依序配適。")])}
+        "不對。boosting 的第 b 棵樹必須等第 b−1 棵算完殘差，這個相依性沒辦法拿掉。XGBoost 平行化的是<strong>單一次分裂搜尋</strong>（掃各個特徵的候選切點），各棵樹仍依序擬合。")])}
 """
 
 # ── P10 stacking ──────────────────────────────────────────────────────
@@ -948,11 +948,11 @@ BODIES["stacking"] = f"""
   <p class="skip-note">這一節是課堂沒細講的延伸（講義 p.66–79、ISLP §8.2.4）：變數重要度的讀法、
   stacking，以及貝氏版的加法樹 BART。第一輪讀可以整節略過。</p>
 
-  <h4 id="dx-vi">變數重要度：把可解釋性買回來一點</h4>
+  <h4 id="dx-vi">變數重要度：輔助解讀集成模型</h4>
 
   <p>單一棵樹最大的優點是可以畫出來給人看。集成之後這個優點就沒了。
   你不可能把 500 棵樹貼在牆上。<strong>變數重要度</strong>（variable importance）
-  是把可解釋性買回來一點點的標準做法：</p>
+  是輔助解讀集成模型的常見做法：</p>
 
   <ul>
     <li><strong>迴歸樹：</strong>把每個變數造成的 <strong>RSS 下降總量</strong>加起來，在 B 棵樹上平均。</li>
@@ -1014,7 +1014,7 @@ BODIES["stacking"] = f"""
   </ol>
 
   <p>第 1 步為什麼一定要用 CV？因為如果拿成員模型在<strong>訓練資料上</strong>的預測去餵合併器，
-  那些預測好得不真實（成員在訓練資料上本來就準），合併器會學到「完全相信最會過度配適的那個成員」。
+  那些預測好得不真實（成員在訓練資料上本來就準），合併器會學到「完全相信最會過度擬合的那個成員」。
   這就是第 5 章那個「所有用到 y 的步驟都要關在折裡面」的老規矩。</p>
 
   <h3 id="dx-stk">講義完整實作：StackingClassifier</h3>
@@ -1038,7 +1038,7 @@ BODIES["stacking"] = f"""
   </ul>
 
   <p>因為每一輪只是微調，BART <strong>每次只作局部修改</strong>，
-  這本身就是防過度配適的機制。要選三個數字：樹的棵數 $K$、迭代次數 $B$、
+  這本身就是防過度擬合的機制。要選三個數字：樹的棵數 $K$、迭代次數 $B$、
   丟掉的暖機輪數 $L$。講義的建議是 $K = 200$、$B = 1000$、$L = 100$，
   最終預測是暖機後的平均</p>
 
@@ -1050,16 +1050,16 @@ BODIES["stacking"] = f"""
 {card("講義 08 · ISLP.bart 在 Boston 上", code(86, 88), lab_output(CH, 88),
       src=src("86、88"),
       note="測試 MSE <strong>22.15</strong>，跟 random forest 的 20.04 同一個量級。"
-           "<strong>注意 <code>burnin=5, ndraw=15</code> 小得離譜</strong>。"
-           "那是為了讓課堂上跑得完，正式用要拉到 $L = 100$、$B = 1000$。"
+           "<strong>注意 <code>burnin=5, ndraw=15</code> 設定得很小</strong>。"
+           "這是為了讓課堂上能完成執行，正式用要拉到 $L = 100$、$B = 1000$。"
            "儲存格 90 的 <code>variable_inclusion_</code> 是 BART 版的變數重要度："
            "算每個變數在整組樹裡出現幾次，<code>lstat</code> 31.0、<code>rm</code> 29.8 最高，"
            "跟上面 random forest 的排名一致。")}
 
 {quiz("qStack", "QUIZ · Stacking 與變數重要度",
       "訓練 stacking 的合併器時，成員模型的預測值一定要用<strong>交叉驗證</strong>產生。為什麼？",
-      [(True, "否則成員在訓練資料上的預測好得不真實，合併器會學成「相信最會過度配適的那個成員」",
-        "對。這就是第 5 章的老規矩：任何用到 y 的步驟都要關在折裡面。<code>StackingClassifier</code> 預設就幫你做了（<code>cv=5</code>）。"),
+      [(True, "否則成員在訓練資料上的預測好得不真實，合併器會學成「相信最會過度擬合的那個成員」",
+        "對。這是第 5 章的原則：任何用到 y 的訓練步驟都必須限於各折的訓練資料。<code>StackingClassifier</code> 預設就幫你做了（<code>cv=5</code>）。"),
        (False, "因為 scikit-learn 的 StackingClassifier API 規定必須傳入 cv 參數",
         "這個 API 設計是為了避免訓練預測帶來的洩漏。使用其他實作時，也要保留相同的資料分離原則。"),
        (False, "因為合併器需要比成員模型更多的訓練資料，CV 可以把資料量放大",
@@ -1079,15 +1079,15 @@ BODIES["exercises"] = f"""
         "尺度不同是真的（錯誤率上限 0.5、Gini 上限 0.5、交叉熵上限 ln 2），這也是很多人畫圖時把熵除以 2 的原因。但尺度不影響「該選哪一刀」——選的是<strong>下降量最大</strong>的那一刀，任何正的縮放都不改變排序。")])}
 
 {quiz("qEx2", "EXERCISE 2 · ISLP 8.4 第 5 題",
-      "十個 bootstrap 樣本各配一棵分類樹，對同一個 X 給出 $P(\\text{{紅}} \\mid X)$ 的十個估計："
+      "十個 bootstrap 樣本各擬合一棵分類樹，對同一個 X 給出 $P(\\text{{紅}} \\mid X)$ 的十個估計："
       "0.1, 0.15, 0.2, 0.2, 0.55, 0.6, 0.6, 0.65, 0.7, 0.75。"
       "用<strong>多數投票</strong>與用<strong>平均機率</strong>，分別會判成哪一類？",
       [(True, "多數投票 → 紅；平均機率 → 綠",
-        "對。超過 0.5 的有六個（0.55、0.6、0.6、0.65、0.7、0.75），六比四，多數投票判紅。但十個數字的平均是 4.50 / 10 = <strong>0.45</strong>，小於 0.5，所以平均機率判綠。<strong>同一組數字，兩種彙總法給出相反答案。</strong>"),
+        "對。超過 0.5 的有六個（0.55、0.6、0.6、0.65、0.7、0.75），六比四，多數投票判紅。但十個數字的平均是 4.50 / 10 = <strong>0.45</strong>，小於 0.5，所以平均機率判綠。<strong>同一組數字，兩種彙整法給出相反答案。</strong>"),
        (False, "兩種方法都判紅",
         "多數投票判紅，平均機率判綠。把十個數加起來是 4.50，除以 10 得 0.45 < 0.5。原因是「紅方」那六票都只勉強過半（0.55–0.75），而「綠方」那四票非常堅決（0.1–0.2）。"),
        (False, "兩種方法都判綠，因為十個估計的中位數是 0.375",
-        "中位數算錯了：排序後第 5、6 個是 0.55 與 0.6，中位數是 0.575。而且本題比較多數投票與平均機率；中位數屬於另一種彙總——多數投票的答案是紅。")])}
+        "中位數算錯了：排序後第 5、6 個是 0.55 與 0.6，中位數是 0.575。而且本題比較多數投票與平均機率；中位數屬於另一種彙整——多數投票的答案是紅。")])}
 
 {quiz("qEx3", "EXERCISE 3 · ISLP 8.4 第 2 題",
       "課本第 2 題要你說明：用<strong>深度 1 的樹（stump）</strong>做 boosting，"
@@ -1103,7 +1103,7 @@ BODIES["exercises"] = f"""
       "課本第 7 題要你在 <code>Boston</code> 上掃過一整片 <code>max_features</code>（m）與 "
       "<code>n_estimators</code>（B）的組合，畫成圖 8.10 那樣。預期會看到什麼？",
       [(True, "每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低",
-        "對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度配適</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\\sqrt{p}$ 只是預設值。"),
+        "對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度擬合</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\\sqrt{p}$ 只是預設值。"),
        (False, "曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B",
         "那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 的原話是 <em>random forests will not overfit if we increase B</em>。"),
        (False, "m 愈小曲線一定愈低，因為去相關永遠讓變異更小",
@@ -1115,16 +1115,16 @@ BODIES["reference"] = f"""
   <p>考前把這一頁掃過去就好。</p>
 
   <h3>五種方法對照</h3>
-{table(["方法", "樹怎麼來", "樹的深度", "主要降的是", "B 會過度配適嗎", "免費驗證集"],
+{table(["方法", "樹怎麼來", "樹的深度", "主要降的是", "B 會過度擬合嗎", "免費驗證集"],
        [["<strong>單一棵樹</strong>", "一棵，貪婪長 + 剪枝", "由 CV 選 α",
          "—（偏差與變異都要自己顧）", "—", "沒有（要 CV）"],
         ["<strong>Bagging</strong>", "B 個 bootstrap，<strong>並行</strong>",
-         "很深、不剪枝", "<strong>變異</strong>", "不會（B 大只是浪費算力）",
+         "很深、不剪枝", "<strong>變異</strong>", "不會（B 大只是增加運算成本）",
          "<strong>有（OOB）</strong>"],
         ["<strong>Random Forest</strong>", "同上 ＋ 每刀只看 m 個變數",
          "很深、不剪枝", "<strong>變異</strong>（多壓了 ρ）", "不會",
          "<strong>有（OOB）</strong>"],
-        ["<strong>Boosting</strong>", "配殘差／調權重，<strong>序列</strong>",
+        ["<strong>Boosting</strong>", "擬合殘差／調權重，<strong>序列</strong>",
          "<strong>很淺</strong>（d 常常 = 1）", "<strong>偏差</strong>",
          "<strong>會</strong>（要用 CV 或 early stopping）", "沒有（沒 bootstrap）"],
         ["<strong>BART</strong>", "微調上一輪的樹，MCMC", "小樹",
@@ -1176,7 +1176,7 @@ BODIES["reference"] = f"""
 {info("重點回顧", '''<strong>1. 樹的分裂用 Gini／交叉熵，不用錯誤率。</strong>
   因為錯誤率是折線、對純度的變化不敏感，會把「生出一個純葉子」的好刀報成「下降量 0」。<br>
   <strong>2. Bagging 降變異、Boosting 降偏差，所以 bagging 的樹要很深，boosting 的樹要很淺。</strong>
-  平均不會改變偏差，序列修正不需要深樹。順帶：bagging 的 B 不會過度配適，boosting 的會。<br>
+  平均不會改變偏差，序列修正不需要深樹。順帶：bagging 的 B 不會過度擬合，boosting 的會。<br>
   <strong>3. Random Forest 的 m 控制樹的多樣性與預測能力的取捨，不能只追求低相關。</strong>
   這裡的模擬資料與 Boston 給出不同結果，正好提醒你用驗證選 m。
   $\\sqrt{p}$ 可作為搜尋的起點。''')}
@@ -1190,7 +1190,7 @@ BODIES["reference"] = f"""
 
 # 最新講義主題補全；維持既有 section 與導覽。
 BODIES['modern'] += r"""
-<h3>類別特徵如何編碼</h3><p>One-hot encoding 用各水準的指示欄表示名目類別；label encoding 將水準編成整數，只有存在自然次序時，數值閾值的順序才有直接意義。對名目類別任意編號會限制數值樹可做的分割。Target encoding 以各類別的目標平均取代類別，可用 $\tilde\mu_c=(n_c\bar y_c+a\bar y)/(n_c+a)$ 向整體平均收縮，避免稀有類別的估計過度波動。</p><p>訓練資料的 target encoding 必須用折外或有順序的估計，不能讓該筆 $y_i$ 進入自己的編碼；驗證與測試資料只使用訓練部分學到的映射，未見類別使用訓練整體平均。CatBoost 的有序類別統計與 ordered boosting 正是在處理這類目標洩漏及預測偏移，仍須保留外層獨立評估。</p>
+<h3>類別特徵如何編碼</h3><p>One-hot encoding 用各水準的指示欄表示名目類別；label encoding 將水準編成整數，只有存在自然次序時，數值門檻值的順序才有直接意義。對名目類別任意編號會限制數值樹可做的分割。Target encoding 以各類別的目標平均取代類別，可用 $\tilde\mu_c=(n_c\bar y_c+a\bar y)/(n_c+a)$ 向整體平均收縮，避免稀有類別的估計過度波動。</p><p>訓練資料的 target encoding 必須用折外或有順序的估計，不能讓該筆 $y_i$ 進入自己的編碼；驗證與測試資料只使用訓練部分學到的映射，未見類別使用訓練整體平均。CatBoost 的有序類別統計與 ordered boosting 正是在處理這類目標洩漏及預測偏移，仍須保留外層獨立評估。</p>
 """
 
 PAGEJS = r"""
@@ -1782,7 +1782,7 @@ function w09rfDraw() {
     ? 'Boston（p = 12，' + S.n + ' 筆訓練／' + S.nTest + ' 筆測試）：'
     : '模擬資料（p = 30，特徵之間平均 |相關| = ' + S.xCorr + '）：')
     + 'B = 300 時最好的是 <strong>m = ' + S.ms[best] + '</strong>（MSE '
-    + HC.fmt(S.curves[best][last], 2) + '）。這次配適的預測向量平均相關：m = ' + S.ms[0] + ' 為 '
+    + HC.fmt(S.curves[best][last], 2) + '）。這次擬合的預測向量平均相關：m = ' + S.ms[0] + ' 為 '
     + HC.fmt(S.rho[0], 3) + '，m = 2 為 '
     + HC.fmt(S.rho[3], 3) + '。這是描述性比較；m 的選擇仍要看驗證誤差。');
 }
@@ -1834,7 +1834,7 @@ function w09vimpDraw() {
 
 PAGEJS += r"""
 
-/* ---------- P09 gb：梯度提升逐步器（淺樹在瀏覽器裡即時配殘差） ---------- */
+/* ---------- P09 gb：梯度提升逐步器（淺樹在瀏覽器裡即時擬合殘差） ---------- */
 const w09gbN = 70;
 const w09gbSteps = 40;
 const w09gbData = (() => {
@@ -1921,7 +1921,7 @@ function w09gbApply(f) {
                           stroke: 'var(--card-border)', 'stroke-width': 1 });
     w09mk(host, 'text', { x: X0, y: p.y - 8, cls: 'axtitle' }, label);
   };
-  box(top, '目前的配適 f（橘線）');
+  box(top, '目前的擬合 f（橘線）');
   box(bot, '目前的殘差 r（灰點）與下一棵樹（虛線階梯）');
   w09mk(host, 'line', { x1: X0, y1: byy(0), x2: X0 + W, y2: byy(0),
                         stroke: 'var(--muted)', 'stroke-width': 1, 'stroke-dasharray': '4 3' });

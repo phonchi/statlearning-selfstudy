@@ -373,6 +373,11 @@ def check_page(p: P.Page):
         if p.kind == "prep":
             check_prep_grounding(p, w, src, labtext)
 
+    # Reader wording is a project contract, including interactive messages.
+    from check_taiwan_wording import check_words
+    for word in check_words(src):
+        fail("WORDING-TW", w, f"讀者文字不採用「{word}」，請依撰寫契約修正")
+
     # SIZE
     kb = dest.stat().st_size / 1024
     if kb > 300:

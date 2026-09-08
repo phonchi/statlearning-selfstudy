@@ -188,7 +188,7 @@ def ver_note(labs=(), include_frames=True):
     import pages as P
     src = ("課程 lab notebook" if not labs else
            "課程 lab notebook（" + "、".join(f"Ch{c:02d}" for c in labs) + "）")
-    frames = (f'圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，'
+    frames = (f'圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，'
               f'環境為 {P.ENV_NOTE}。') if include_frames else (
                   f'考前的 Python 與套件版本請依<a href="{P.CLASSROOM_PACKAGES}">電腦教室版本清單</a>核對。')
     return (f'<p class="ver-note">本頁「預期輸出」逐字取自{src}（老師在課程環境實跑）；'

@@ -127,7 +127,7 @@ def studyguide(p: P.Page) -> str:
                  "細節與完整推導請回課本。")
     return f"""<div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（{p.islp_label}{deck_bit}）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② {step2}
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。{esl_hint}</p>

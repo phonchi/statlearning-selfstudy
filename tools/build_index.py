@@ -134,7 +134,7 @@ def build_html():
 <div class="container">
   <section>
     <div class="loop-box">
-      <div class="lb-title">📌 建議學習迴圈（每一章都照這個節奏）</div>
+      <div class="lb-title">📌 建議的學習方式</div>
       <p>本站以 <cite>An Introduction to Statistical Learning with Applications in Python</cite>（簡稱 ISLP）
       與課程講義為主教材。<strong>先用例子理解問題，再動手驗證直覺。</strong>
       章節旁的中文來源標記列出課本章節與講義主題，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
@@ -163,7 +163,7 @@ def build_html():
 {stats_block}{app_block}
 
   <section>
-    <h2>配套資源</h2>
+    <h2>相關資源</h2>
     <div class="res-list">
       <div class="res-card"><b>📖 教科書 ISLP</b>An Introduction to Statistical Learning with
       Applications in Python（James、Witten、Hastie、Tibshirani、Taylor）。標示「教科書」的來源對應此書章節。<br>
@@ -171,7 +171,7 @@ def build_html():
       <div class="res-card"><b>📗 進階參考 ESL</b>The Elements of Statistical Learning。
       標「ESL 進階」的段落對應這本，課堂沒細講，第一輪可略過。<br>
       <a href="{P.BOOK_ESL}" target="_blank" rel="noopener">hastie.su.domains/ElemStatLearn</a></div>
-      <div class="res-card"><b>📑 課程講義與 Lab</b>每章「講義 PDF」與「中文 Lab」都連到課程 repo 的
+      <div class="res-card"><b>📑 課程講義與 Lab</b>每章「講義 PDF」與「中文 Lab」都連到課程網站的
       投影片與 notebook，是本站內容的完整版來源。<br>
       <a href="https://phonchi.github.io/nsysu-math524/" target="_blank" rel="noopener">現行課程網站</a></div>
       <div class="res-card"><b>📖 統計入門 Seeing Theory</b>機率與統計的視覺入門。
@@ -236,7 +236,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 可依需要選讀，不需要任何程式基礎。
 
 **期中考使用電腦教室的電腦。** 本機練習建議依[課程提供的版本清單]({P.CLASSROOM_PACKAGES})
-對齊教室的 Python 與套件版本；平時可用 Colab，考前仍應熟悉教室環境。
+使用與教室相同的 Python 與套件版本；平時可用 Colab，考前仍應熟悉教室環境。
 安裝與核對步驟見[環境安裝：本機與考前準備](00b_setup.html#local)。
 
 | # | 頁面 | 對應 |
@@ -282,7 +282,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 每頁的中文來源標記提供課本章節與講義主題，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
 **逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方可開啟原始筆記本；精確引用位置保存在內部來源資料中。
-圖表用的烘焙資料由 `tools/frames/` 在固定種子下產生，環境為 {P.ENV_NOTE}。
+圖表使用的預先計算資料由 `tools/frames/` 在固定種子下產生，環境為 {P.ENV_NOTE}。
 每個正文視覺另標示它屬於課程資料、講義／課本重繪、固定種子模擬或自訂概念示意；
 自訂值不得解讀成課本或實證結果。
 

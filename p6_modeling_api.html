@@ -699,7 +699,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · 建模 API）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
@@ -744,7 +744,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <div class="viz-panel">
       <svg class="viz-svg" id="w19apiSvg" height="340"></svg>
       <div class="status-banner" id="w19apiStatus"><span class="status-icon">›</span><span class="status-text">四個步驟，看兩套 API 各自怎麼寫。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w19apiSet(0)">① 準備 X</button><button class="btn btn-toggle" onclick="w19apiSet(1)">② 配適</button><button class="btn btn-toggle" onclick="w19apiSet(2)">③ 看結果</button><button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w19apiSet(0)">① 準備 X</button><button class="btn btn-toggle" onclick="w19apiSet(1)">② 擬合</button><button class="btn btn-toggle" onclick="w19apiSet(2)">③ 看結果</button><button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button></div>
       <div class="viz-source"><span>課程／lab 資料</span>依 Ch03 lab 的 statsmodels 與 scikit-learn 同一 lstat 模型逐步對照。</div>
     </div>
   </div>
@@ -775,12 +775,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 1        1.0   9.14
 2        1.0   4.03
 3        1.0   2.94</pre></div>
-  <p class="dx-note">全是 1 的 <code>intercept</code> 欄用來表示截距。<code>sm.OLS</code> <strong>不會</strong>自動加截距，忘了就是配一條過原點的線。</p>
+  <p class="dx-note">全是 1 的 <code>intercept</code> 欄用來表示截距。<code>sm.OLS</code> <strong>不會</strong>自動加截距，忘了就是擬合一條過原點的線。</p>
   <span class="dx-src" data-lab-ch="3" data-lab-cells="22">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
-  <div class="dx-label">配適之後的係數表</div>
+  <div class="dx-label">擬合之後的係數表</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">summarize(results)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              coef  std err       t  P&gt;|t|
@@ -853,7 +853,7 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 1        1.0   9.14
 2        1.0   4.03
 3        1.0   2.94</pre></div>
-  <p class="dx-note">輸出跟上一節手工做的 X 完全一樣，差別是 <code>MS</code> 會記得規格，之後可以對新資料重放一次。</p>
+  <p class="dx-note">輸出跟上一節手工做的 X 完全一樣，差別是 <code>MS</code> 會記得規格，之後可以對新資料套用相同轉換。</p>
   <span class="dx-src" data-lab-ch="3" data-lab-cells="30,32">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -954,7 +954,7 @@ dtype: float64</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p>兩個模型的 lstat 係數都是 −0.95，但 A 的標準誤是 0.04、B 是 0.60。這代表什麼？</p>
-  <div class="quiz-options" id="qSummaryOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同樣的點估計、不同的精確度。B 的 95% 信賴區間大約是 −0.95 ± 1.2，涵蓋了 0，也就是說 B 甚至不能排除「沒有效果」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(A)</span> 兩者估到的效果一樣大，但 B 的估計不確定得多</div><div class="quiz-opt" data-correct="false" data-fb="效果的大小是 &lt;code&gt;coef&lt;/code&gt; 這一欄，兩者都是 −0.95，一樣大。標準誤講的是「這個 −0.95 有多可信」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(B)</span> B 的效果比較小</div><div class="quiz-opt" data-correct="false" data-fb="配適好壞要看 R² 或殘差圖。標準誤大通常是樣本少、或這個變數跟其他變數共線。那是另一回事。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(C)</span> B 的模型配適得比較差</div></div>
+  <div class="quiz-options" id="qSummaryOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同樣的點估計、不同的精確度。B 的 95% 信賴區間大約是 −0.95 ± 1.2，涵蓋了 0，也就是說 B 甚至不能排除「沒有效果」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(A)</span> 兩者估到的效果一樣大，但 B 的估計不確定得多</div><div class="quiz-opt" data-correct="false" data-fb="效果的大小是 &lt;code&gt;coef&lt;/code&gt; 這一欄，兩者都是 −0.95，一樣大。標準誤講的是「這個 −0.95 有多可信」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(B)</span> B 的效果比較小</div><div class="quiz-opt" data-correct="false" data-fb="擬合好壞要看 R² 或殘差圖。標準誤大通常是樣本少、或這個變數跟其他變數共線。那是另一回事。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(C)</span> B 的模型擬合得比較差</div></div>
   <div class="quiz-feedback" id="qSummaryFeedback"></div>
 </div>
 </section>
@@ -989,7 +989,7 @@ dtype: float64</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">結尾有底線的屬性</div>
-      <code>coef_</code>、<code>intercept_</code>、<code>classes_</code>——sklearn 的慣例是<strong>「配適之後才存在」的屬性結尾加底線</strong>。看到 <code>NotFittedError</code> 就是你還沒 fit 就想用它們。
+      <code>coef_</code>、<code>intercept_</code>、<code>classes_</code>——sklearn 的慣例是<strong>「擬合之後才存在」的屬性結尾加底線</strong>。看到 <code>NotFittedError</code> 就是你還沒 fit 就想用它們。
     </div>
   </div>
 </div>
@@ -1141,7 +1141,7 @@ The RMSE is: 5.0571</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p>訓練集 R² 是 0.95、測試集 R² 是 0.42。最合理的判斷是？</p>
-  <div class="quiz-options" id="qSplitOptions"><div class="quiz-opt" data-correct="true" data-fb="對。它把訓練資料的雜訊也學了進去，換一份資料就失效。第 2 章的偏差—變異取捨、第 6 章的收縮方法都在處理這件事。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(A)</span> 模型過度配適了訓練資料</div><div class="quiz-opt" data-correct="false" data-fb="換到看得順眼為止就等於把測試集當訓練集用。測試集只能&lt;strong&gt;看一次&lt;/strong&gt;，看多了它就失去意義。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(B)</span> 測試集有問題，應該換一個</div><div class="quiz-opt" data-correct="false" data-fb="方向反了。訓練分數遠高於測試分數是&lt;strong&gt;太複雜&lt;/strong&gt;的徵狀，加變數只會更嚴重。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(C)</span> 模型還不夠複雜，應該加更多變數</div></div>
+  <div class="quiz-options" id="qSplitOptions"><div class="quiz-opt" data-correct="true" data-fb="對。它把訓練資料的雜訊也學了進去，換一份資料就失效。第 2 章的偏差—變異取捨、第 6 章的收縮方法都在處理這件事。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(A)</span> 模型過度擬合了訓練資料</div><div class="quiz-opt" data-correct="false" data-fb="換到看得順眼為止就等於把測試集當訓練集用。測試集只能&lt;strong&gt;看一次&lt;/strong&gt;，看多了它就失去意義。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(B)</span> 測試集有問題，應該換一個</div><div class="quiz-opt" data-correct="false" data-fb="方向反了。訓練分數遠高於測試分數是&lt;strong&gt;太複雜&lt;/strong&gt;的徵狀，加變數只會更嚴重。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(C)</span> 模型還不夠複雜，應該加更多變數</div></div>
   <div class="quiz-feedback" id="qSplitFeedback"></div>
 </div>
 </section>
@@ -1198,7 +1198,7 @@ The RMSE is: 5.0571</pre></div>
   <span class="line">cv_err = np.mean(cv_results[<span class="str">&#x27;test_score&#x27;</span>])</span>
   <span class="line">cv_err</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(24.231513517929226)</pre></div>
-  <p class="dx-note">24.2315 是各留一折誤差的平均。固定資料下的留一切法唯一，仍有各筆誤差與抽樣不確定性；但要配適 n 次，資料大的時候很貴。</p>
+  <p class="dx-note">24.2315 是各留一折誤差的平均。固定資料下的留一切法唯一，仍有各筆誤差與抽樣不確定性；但要擬合 n 次，資料大的時候很貴。</p>
   <span class="dx-src" data-lab-ch="5" data-lab-cells="34">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1234,7 +1234,7 @@ The RMSE is: 5.0571</pre></div>
     <div class="qa-a">兩者的用途不同。交叉驗證是在<strong>訓練資料內部</strong>切來切去，用來選模型與調參數；測試集是最後才動一次的、完全獨立的一份，用來報告最終效能。拿測試集去選模型，等於把它變成訓練資料的一部分。</div>
   </details>
   <details class="qa-item"><summary>留一交叉驗證為什麼只列一個數字？</summary>
-    <div class="qa-a">這個 lab 把每一個留一折的損失取平均，所以只顯示平均值；不是所有損失都一樣。固定資料與配適程序下，LOOCV 沒有切分的隨機性，仍有資料抽樣的不確定性。上面的 ShuffleSplit 是十次隨機留出一半資料，並非把資料分成十個互斥的折。</div>
+    <div class="qa-a">這個 lab 把每一個留一折的損失取平均，所以只顯示平均值；不是所有損失都一樣。固定資料與擬合程序下，LOOCV 沒有切分的隨機性，仍有資料抽樣的不確定性。上面的 ShuffleSplit 是十次隨機留出一半資料，並非把資料分成十個互斥的折。</div>
   </details>
 </div>
 
@@ -1263,14 +1263,14 @@ The RMSE is: 5.0571</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 選工具</div>
   <p>你要比較五個模型並挑一個，中間需要標準化與多項式展開。該用哪一套？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。要比較模型就需要一致的評估流程，這正是 sklearn 的設計目的。Pipeline 讓其中的前處理隨每一折配適；管線外的資料處理仍需檢查。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> scikit-learn，把前處理與模型包成 Pipeline 再交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="那些統計量在「比較五個模型」這件事上幫不上忙，而且 statsmodels 沒有 Pipeline 與 &lt;code&gt;cross_validate&lt;/code&gt;。選定模型之後再用它報告係數是合理的。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> statsmodels，因為它給的統計量比較完整</div><div class="quiz-opt" data-correct="false" data-fb="彈性換來的是每一次都要自己記得「先切分再轉換」。Pipeline 可以將這個順序寫進流程，減少每次手動安排的負擔。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 手寫迴圈，最有彈性</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。要比較模型就需要一致的評估流程，這正是 sklearn 的設計目的。Pipeline 讓其中的前處理隨每一折擬合；管線外的資料處理仍需檢查。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> scikit-learn，把前處理與模型包成 Pipeline 再交叉驗證</div><div class="quiz-opt" data-correct="false" data-fb="那些統計量在「比較五個模型」這件事上幫不上忙，而且 statsmodels 沒有 Pipeline 與 &lt;code&gt;cross_validate&lt;/code&gt;。選定模型之後再用它報告係數是合理的。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> statsmodels，因為它給的統計量比較完整</div><div class="quiz-opt" data-correct="false" data-fb="彈性換來的是每一次都要自己記得「先切分再轉換」。Pipeline 可以將這個順序寫進流程，減少每次手動安排的負擔。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 手寫迴圈，最有彈性</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · 截距</div>
   <p><code>sm.OLS(y, Boston[['lstat']]).fit()</code> 少做了一件事。少了什麼？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;sm.OLS&lt;/code&gt; 不會自動加截距，要自己放一欄全 1（或用 &lt;code&gt;MS()&lt;/code&gt;／&lt;code&gt;sm.add_constant&lt;/code&gt;）。lab 範例 那一欄 &lt;code&gt;intercept&lt;/code&gt; 就是在做這件事。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 沒有截距欄，配出來的是一條過原點的線</div><div class="quiz-opt" data-correct="false" data-fb="線性迴歸不需要標準化，標準化不改變配適，只改變係數的單位。（第 6 章的收縮方法才非標準化不可。）" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 沒有標準化 lstat</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;sm.OLS&lt;/code&gt; 的簽名就是 &lt;code&gt;(y, X)&lt;/code&gt;，順序是對的。倒是 sklearn 的 &lt;code&gt;fit(X, y)&lt;/code&gt; 反過來，兩套要記清楚。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> y 應該放後面</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;sm.OLS&lt;/code&gt; 不會自動加截距，要自己放一欄全 1（或用 &lt;code&gt;MS()&lt;/code&gt;／&lt;code&gt;sm.add_constant&lt;/code&gt;）。lab 範例 那一欄 &lt;code&gt;intercept&lt;/code&gt; 就是在做這件事。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 沒有截距欄，擬合出來的是一條過原點的線</div><div class="quiz-opt" data-correct="false" data-fb="線性迴歸不需要標準化，標準化不改變擬合，只改變係數的單位。（第 6 章的收縮方法才非標準化不可。）" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 沒有標準化 lstat</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;sm.OLS&lt;/code&gt; 的引數順序就是 &lt;code&gt;(y, X)&lt;/code&gt;，順序是對的。倒是 sklearn 的 &lt;code&gt;fit(X, y)&lt;/code&gt; 反過來，兩套要記清楚。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> y 應該放後面</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
@@ -1299,7 +1299,7 @@ The RMSE is: 5.0571</pre></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>你要做的事</th><th>statsmodels</th><th>scikit-learn</th></tr></thead>
-  <tbody><tr><td>準備 X</td><td><code>MS([...]).fit_transform(df)</code>（截距要自己有）</td><td><code>X.values.reshape(-1,1)</code>；截距用 <code>fit_intercept=True</code></td></tr><tr><td>配適</td><td><code>sm.OLS(y, X).fit()</code></td><td><code>model.fit(X, y)</code></td></tr><tr><td>看係數</td><td><code>summarize(results)</code>、<code>results.params</code></td><td><code>model.coef_</code>、<code>model.intercept_</code></td></tr><tr><td>標準誤與 p 值</td><td>有</td><td><b>沒有</b></td></tr><tr><td>預測</td><td><code>results.get_prediction(newX)</code></td><td><code>model.predict(X)</code></td></tr><tr><td>評分</td><td><code>results.rsquared</code></td><td><code>model.score(X, y)</code></td></tr><tr><td>交叉驗證</td><td>包成 <code>sklearn_sm</code> 才有</td><td><code>cross_validate</code></td></tr><tr><td>串前處理</td><td>沒有</td><td><code>Pipeline</code></td></tr></tbody>
+  <tbody><tr><td>準備 X</td><td><code>MS([...]).fit_transform(df)</code>（截距要自己有）</td><td><code>X.values.reshape(-1,1)</code>；截距用 <code>fit_intercept=True</code></td></tr><tr><td>擬合</td><td><code>sm.OLS(y, X).fit()</code></td><td><code>model.fit(X, y)</code></td></tr><tr><td>看係數</td><td><code>summarize(results)</code>、<code>results.params</code></td><td><code>model.coef_</code>、<code>model.intercept_</code></td></tr><tr><td>標準誤與 p 值</td><td>有</td><td><b>沒有</b></td></tr><tr><td>預測</td><td><code>results.get_prediction(newX)</code></td><td><code>model.predict(X)</code></td></tr><tr><td>評分</td><td><code>results.rsquared</code></td><td><code>model.score(X, y)</code></td></tr><tr><td>交叉驗證</td><td>包成 <code>sklearn_sm</code> 才有</td><td><code>cross_validate</code></td></tr><tr><td>串前處理</td><td>沒有</td><td><code>Pipeline</code></td></tr></tbody>
 </table></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1314,10 +1314,10 @@ The RMSE is: 5.0571</pre></div>
 
 <div class="info-box">
   <span class="info-label">三個閱讀重點</span>
-  <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，那個分數就不再是乾淨的 out-of-sample 評估；用 Pipeline 固定正確順序。
+  <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是擬合之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，那個分數就不再是乾淨的 out-of-sample 評估；用 Pipeline 固定正確順序。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch03、Ch05）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch03、Ch05）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1958,7 +1958,7 @@ let w19apiI = 0;
 function w19apiDraw() {
   const g = w19apiS.clearLayer('main');
   const c = w19apiCases[w19apiI];
-  const names = ['① 準備 X', '② 配適', '③ 看結果', '④ 預測'];
+  const names = ['① 準備 X', '② 擬合', '③ 看結果', '④ 預測'];
   w19apiS.txtPx(24, 34, names[w19apiI], {cls: 'axtitle', fill: HC.tok.accent}, g);
   ['statsmodels', 'scikit-learn'].forEach((nm, i) => {
     const y = 66 + i * 118;
@@ -2089,7 +2089,7 @@ if (w19smS) w19smDraw();
 /* ═══ w19fl fit / predict / score（本頁招牌之一）═══ */
 const w19flS = HC.svg('w19flowSvg', {h: 340});
 const w19flSteps = [
-  {w: '還沒開始', where: '—', note: '模型剛建構出來，coef_ 還不存在。'},
+  {w: '還沒開始', where: '—', note: '模型物件剛建立，coef_ 還不存在。'},
   {w: 'fit(X, y)：使用訓練資料學參數', where: 'model.coef_、model.intercept_',
    note: '學到的參數存在<b>結尾有底線</b>的屬性裡。'},
   {w: 'predict(X_new)：只吃 X', where: '回傳一個預測值陣列',
@@ -2104,7 +2104,7 @@ function w19flDraw() {
   const act = (k) => (st === k ? HC.tok.accent : HC.tok.muted);
   w19box(w19flS, g, 40, 60, 118, 58, 'X_train', st >= 1 ? HC.tok.accent2 : HC.tok.muted);
   w19box(w19flS, g, 40, 136, 118, 58, 'y_train', st >= 1 ? HC.tok.accent2 : HC.tok.muted);
-  w19box(w19flS, g, 246, 98, 130, 58, 'model', act(1), st >= 1 ? 'coef_ 已學到' : '尚未配適');
+  w19box(w19flS, g, 246, 98, 130, 58, 'model', act(1), st >= 1 ? 'coef_ 已學到' : '尚未擬合');
   if (st >= 1) {
     w19arrow(w19flS, g, 162, 89, 242, HC.tok.accent2);
     w19arrow(w19flS, g, 162, 165, 242, HC.tok.accent2);
@@ -2213,7 +2213,7 @@ function w19lkDraw() {
     if (st >= 3) {
       w19lkS.txtPx(310, 250, '測試資料只套用訓練集學到的轉換：評估仍可解讀',
                    {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
-      w19lkS.txtPx(310, 282, 'Pipeline 在每折配適其中的步驟；仍需檢查管線外處理',
+      w19lkS.txtPx(310, 282, 'Pipeline 在每折擬合其中的步驟；仍需檢查管線外處理',
                    {cls: 'axlab', anchor: 'middle'}, g);
     }
   }
@@ -2262,7 +2262,7 @@ HC.ready(() => { w19cvDraw(); });
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"設計矩陣（Design Matrix）","back":"模型使用的矩陣：第一欄通常是全 1 的截距，後面每一欄是一個預測變數。類別變數與交互作用在這裡展開成數字欄。"},{"front":"模型規格（ModelSpec, MS）","back":"ISLP 提供的設計矩陣建構器。MS(['lstat']).fit_transform(df) 會自動加上截距欄，而且記得規格，之後可以對新資料 transform 重放一次。"},{"front":"截距（Intercept）","back":"sm.OLS 不會自動加。忘了放那一欄全 1，配出來的就是一條被迫過原點的線。sklearn 則是用 fit_intercept=True 處理。"},{"front":"係數（coef）","back":"summary 表的第一欄，表示效果的大小與方向。lstat 的 −0.9500 表示「lstat 每多 1，medv 平均少 0.95」；報告時要一起說明這個關係。"},{"front":"標準誤（Standard Error）","back":"估計量本身的分散程度，不是個別觀測的分散程度（那是標準差）。樣本變大時標準誤會變小，標準差不會。"},{"front":"t 值（t-statistic）","back":"coef / std err，也就是「係數是標準誤的幾倍」。lstat 的 −0.9500 ÷ 0.039 ≈ −24.5。所以 summary 的四欄裡只有前兩欄是獨立資訊。"},{"front":"p 值（p-value）","back":"在模型假設及零係數假設成立時，出現目前或更極端檢定統計量的機率。小 p 值是反對零假設的證據，不是零假設為假的機率，也不衡量效果大小。"},{"front":"虛擬變數編碼（Dummy Coding）","back":"k 個類別展開成 k−1 欄，留一個當參考組。展成 k 欄會跟截距共線，矩陣不滿秩。其他欄的係數都是「相對於參考組」的差。"},{"front":"估計器（Estimator）","back":"scikit-learn 裡會學參數的物件：fit(X, y)、predict(X)、score(X, y)。換模型只要換建構子那一行。"},{"front":"轉換器（Transformer）","back":"只做資料轉換的物件：fit(X) 學參數、transform(X) 套用、fit_transform 兩步合一。StandardScaler、PCA、SimpleImputer 都是。"},{"front":"結尾底線屬性（Trailing Underscore）","back":"sklearn 的慣例：coef_、intercept_、classes_ 這種結尾有底線的屬性，代表配適之後才存在。沒 fit 就用會拋 NotFittedError。"},{"front":"引數順序（Argument Order）","back":"sm.OLS(y, X) 是 y 在前，model.fit(X, y) 是 X 在前。切換兩套 API 時，先核對引數順序。"},{"front":"訓練與測試切分（train_test_split）","back":"將資料分作訓練與評估。固定 random_state 可以重現切分，方便在相同資料安排下比較模型。"},{"front":"樂觀偏誤（Optimistic Bias）","back":"在訓練資料上評估自己一定會太好看，因為模型可以把雜訊也背下來。整門課的評估紀律都建立在「用沒看過的資料」這一句上。"},{"front":"平均絕對誤差（MAE）","back":"誤差取絕對值再平均。跟 y 同單位，而且對離群值比 MSE 不敏感。"},{"front":"均方誤差（MSE）","back":"誤差平方再平均。數學上好處理（可微、可分解成偏差與變異），是整門課的預設指標。"},{"front":"均方根誤差（RMSE）","back":"MSE 開根號，回到 y 的單位。要跟別人解釋「大概差多少」時最好用。"},{"front":"決定係數（R²）","back":"被模型解釋掉的變異比例。方便比較，但會隨著變數增加而虛高——第 6 章的調整後 R² 與資訊準則就是在修這件事。"},{"front":"交叉驗證（Cross-Validation）","back":"把訓練資料輪流當驗證集，每一筆都當過一次。比單切一刀穩定，而且用到了全部資料。它是在訓練資料內部做的，不是測試集。"},{"front":"留一交叉驗證（LOOCV）","back":"固定資料下，每筆各留出一次的切法唯一。通常報各留一折損失的平均；切法固定不代表各筆損失相同，也不代表沒有抽樣不確定性。"},{"front":"重複切分（ShuffleSplit）","back":"反覆隨機留出一部分資料作驗證，驗證樣本可以重複，並非互斥的 k 折。比較模型時要保留相同切分下的配對分數；各自的標準差不是差值的不確定性。"},{"front":"資料洩漏（Data Leakage）","back":"測試資料的資訊經由某個步驟進到訓練流程，例如先對整份資料標準化再切分。此時測試分數已受到測試資訊參與訓練的影響。"},{"front":"管線（Pipeline）","back":"把前處理與模型串在一起。交叉驗證會在每一折內重新配適管線中的步驟；管線外的補值、選欄位或不當切分仍可能洩漏。"},{"front":"先切分再轉換（Fit on Train Only）","back":"fit 只使用訓練集，transform 對兩邊套用同一組參數。先切分再估計轉換參數，才能避免這一步使用測試資訊。"},{"front":"sklearn_sm 包裝器","back":"ISLP 提供的轉接頭，把 statsmodels 的模型包成 sklearn 的估計器，好丟進 cross_validate。兩套 API 是可以混用的。"}];
+const FLASHCARDS = [{"front":"設計矩陣（Design Matrix）","back":"模型使用的矩陣：第一欄通常是全 1 的截距，後面每一欄是一個預測變數。類別變數與交互作用在這裡展開成數字欄。"},{"front":"模型規格（ModelSpec, MS）","back":"ISLP 提供的設計矩陣建構器。MS(['lstat']).fit_transform(df) 會自動加上截距欄，而且記得規格，之後可以對新資料用 transform 套用相同轉換。"},{"front":"截距（Intercept）","back":"sm.OLS 不會自動加。忘了放那一欄全 1，擬合出來的就是一條被迫過原點的線。sklearn 則是用 fit_intercept=True 處理。"},{"front":"係數（coef）","back":"summary 表的第一欄，表示效果的大小與方向。lstat 的 −0.9500 表示「lstat 每多 1，medv 平均少 0.95」；報告時要一起說明這個關係。"},{"front":"標準誤（Standard Error）","back":"估計量本身的分散程度，不是個別觀測的分散程度（那是標準差）。樣本變大時標準誤會變小，標準差不會。"},{"front":"t 值（t-statistic）","back":"coef / std err，也就是「係數是標準誤的幾倍」。lstat 的 −0.9500 ÷ 0.039 ≈ −24.5。所以 summary 的四欄裡只有前兩欄是獨立資訊。"},{"front":"p 值（p-value）","back":"在模型假設及零係數假設成立時，出現目前或更極端檢定統計量的機率。小 p 值是反對零假設的證據，不是零假設為假的機率，也不衡量效果大小。"},{"front":"虛擬變數編碼（Dummy Coding）","back":"k 個類別展開成 k−1 欄，留一個當參考組。展成 k 欄會跟截距共線，矩陣不滿秩。其他欄的係數都是「相對於參考組」的差。"},{"front":"估計器（Estimator）","back":"scikit-learn 裡會學參數的物件：fit(X, y)、predict(X)、score(X, y)。換模型只要換建構子那一行。"},{"front":"轉換器（Transformer）","back":"只做資料轉換的物件：fit(X) 學參數、transform(X) 套用、fit_transform 兩步合一。StandardScaler、PCA、SimpleImputer 都是。"},{"front":"結尾底線屬性（Trailing Underscore）","back":"sklearn 的慣例：coef_、intercept_、classes_ 這種結尾有底線的屬性，代表擬合之後才存在。沒 fit 就用會拋 NotFittedError。"},{"front":"引數順序（Argument Order）","back":"sm.OLS(y, X) 是 y 在前，model.fit(X, y) 是 X 在前。切換兩套 API 時，先核對引數順序。"},{"front":"訓練與測試切分（train_test_split）","back":"將資料分作訓練與評估。固定 random_state 可以重現切分，方便在相同資料安排下比較模型。"},{"front":"樂觀偏誤（Optimistic Bias）","back":"在訓練資料上評估自己一定會太好看，因為模型可以把雜訊也背下來。整門課的評估紀律都建立在「用沒看過的資料」這一句上。"},{"front":"平均絕對誤差（MAE）","back":"誤差取絕對值再平均。跟 y 同單位，而且對離群值比 MSE 不敏感。"},{"front":"均方誤差（MSE）","back":"誤差平方再平均。數學上好處理（可微、可分解成偏差與變異），是整門課的預設指標。"},{"front":"均方根誤差（RMSE）","back":"MSE 開根號，回到 y 的單位。要跟別人解釋「大概差多少」時最好用。"},{"front":"決定係數（R²）","back":"被模型解釋掉的變異比例。方便比較，但會隨著變數增加而虛高——第 6 章的調整後 R² 與資訊準則就是在修這件事。"},{"front":"交叉驗證（Cross-Validation）","back":"把訓練資料輪流當驗證集，每一筆都當過一次。比單切一刀穩定，而且用到了全部資料。它是在訓練資料內部做的，不是測試集。"},{"front":"留一交叉驗證（LOOCV）","back":"固定資料下，每筆各留出一次的切法唯一。通常報各留一折損失的平均；切法固定不代表各筆損失相同，也不代表沒有抽樣不確定性。"},{"front":"重複切分（ShuffleSplit）","back":"反覆隨機留出一部分資料作驗證，驗證樣本可以重複，並非互斥的 k 折。比較模型時要保留相同切分下的配對分數；各自的標準差不是差值的不確定性。"},{"front":"資料洩漏（Data Leakage）","back":"測試資料的資訊經由某個步驟進到訓練流程，例如先對整份資料標準化再切分。此時測試分數已受到測試資訊參與訓練的影響。"},{"front":"管線（Pipeline）","back":"把前處理與模型串在一起。交叉驗證會在每一折內重新擬合管線中的步驟；管線外的補值、選欄位或不當切分仍可能洩漏。"},{"front":"先切分再轉換（Fit on Train Only）","back":"fit 只使用訓練集，transform 對兩邊套用同一組參數。先切分再估計轉換參數，才能避免這一步使用測試資訊。"},{"front":"sklearn_sm 包裝器","back":"ISLP 提供的轉接頭，把 statsmodels 的模型包成 sklearn 的估計器，好丟進 cross_validate。兩套 API 是可以混用的。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

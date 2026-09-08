@@ -1,0 +1,26 @@
+{
+  "before": [
+    "\n  Auto = pd.read_csv(os.path.join(DATA_PATH,'Auto.data'),\n                     na_values=['?'],\n                     sep=r\"\\s+\")\n  Auto['horsepower'].sum()",
+    "\n  Auto.shape\n   \n  Auto_new = Auto.dropna()\n  Auto_new.shape",
+    "\n  y = x + np.random.normal(loc=50, scale=1, size=50)\n  np.corrcoef(x, y)",
+    "\n  rng = np.random.default_rng(3)\n  y = rng.standard_normal(10)\n  np.mean(y), y.mean()\n  np.var(y), y.var(), np.mean((y - y.mean())**2)",
+    "\n  fig, ax = subplots(figsize=(8, 8))\n  x = np.linspace(-np.pi, np.pi, 50)\n  y = x\n  f = np.multiply.outer(np.cos(y), 1 / (1 + x**2))\n  ax.contour(x, y, f);",
+    "\n  Auto[['mpg', 'weight']].describe()",
+    "\n  pd.plotting.scatter_matrix(Auto[['mpg',\n                                   'displacement',\n                                   'weight']]);",
+    "\nfor d in 彈性度清單:\n    for m in range(M):            # M = 300 組訓練集\n        y = f(x_train) + rng.normal(0, sigma)\n        fhat[m] = 用 d 配適(x_train, y).predict(x_test)\n    bias2 = mean((fhat.mean(axis=0) - f(x_test))**2)\n    var   = mean(fhat.var(axis=0))\n    total = bias2 + var + sigma**2\n    ",
+    "\n  keep_rows[[1,3]] = True\n  keep_rows\n   \n  A[keep_rows]",
+    "\n  for col in D.columns:\n      template = 'Column \"{0}\" has {1:.2%} missing values'\n      print(template.format(col,\n            np.isnan(D[col]).mean()))"
+  ],
+  "after": [
+    "\n  Auto = pd.read_csv(os.path.join(DATA_PATH,'Auto.data'),\n                     na_values=['?'],\n                     sep=r\"\\s+\")\n  Auto['horsepower'].sum()",
+    "\n  Auto.shape\n   \n  Auto_new = Auto.dropna()\n  Auto_new.shape",
+    "\n  y = x + np.random.normal(loc=50, scale=1, size=50)\n  np.corrcoef(x, y)",
+    "\n  rng = np.random.default_rng(3)\n  y = rng.standard_normal(10)\n  np.mean(y), y.mean()\n  np.var(y), y.var(), np.mean((y - y.mean())**2)",
+    "\n  fig, ax = subplots(figsize=(8, 8))\n  x = np.linspace(-np.pi, np.pi, 50)\n  y = x\n  f = np.multiply.outer(np.cos(y), 1 / (1 + x**2))\n  ax.contour(x, y, f);",
+    "\n  Auto[['mpg', 'weight']].describe()",
+    "\n  pd.plotting.scatter_matrix(Auto[['mpg',\n                                   'displacement',\n                                   'weight']]);",
+    "\nfor d in 彈性度清單:\n    for m in range(M):            # M = 300 組訓練集\n        y = f(x_train) + rng.normal(0, sigma)\n        fhat[m] = 用 d 擬合(x_train, y).predict(x_test)\n    bias2 = mean((fhat.mean(axis=0) - f(x_test))**2)\n    var   = mean(fhat.var(axis=0))\n    total = bias2 + var + sigma**2\n    ",
+    "\n  keep_rows[[1,3]] = True\n  keep_rows\n   \n  A[keep_rows]",
+    "\n  for col in D.columns:\n      template = 'Column \"{0}\" has {1:.2%} missing values'\n      print(template.format(col,\n            np.isnan(D[col]).mean()))"
+  ]
+}

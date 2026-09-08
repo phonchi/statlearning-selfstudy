@@ -704,7 +704,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.12｜講義 12）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。</p>
@@ -739,7 +739,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>沒有現成標籤，該怎麼評估找到的結構？ <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.1 節</a></span><span class="sec-badge">講義 12</span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>前面十幾週，每一章都有一個 <span class="orange">y</span>。有了 y，一切都好辦：
+  <p>前面十幾週，每一章都有一個 <span class="orange">y</span>。有了 y，就能用預測誤差評估模型：
   切出測試集、算 MSE 或錯誤率、用交叉驗證挑超參數——<strong>「哪個模型比較好」有客觀答案</strong>。</p>
 
   <p>這一章把 y 拿掉。手上只剩 X₁, X₂, …, X<sub>p</sub>，問題變成：
@@ -811,7 +811,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>括號裡的東西就是第 i 筆資料投影到 $\phi_1$ 上的值，叫做<strong>得分</strong>（score）
   $z_{i1}$。因為資料置中過，得分的平均是 0，所以上式就是得分的樣本變異數。
-  <strong>負荷向量是新座標軸的方向，得分是每筆資料在新座標軸上的位置</strong>。這兩個詞不要混。</p>
+  <strong>負荷向量是新座標軸的方向，得分是每筆資料在新座標軸上的位置</strong>。請區分負荷向量與得分。</p>
 
   <p>下面這個元件就是把上面那個最佳化問題「用手轉一遍」：拖動角度，看投影後的變異數怎麼變。</p>
 
@@ -863,7 +863,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
        [-0.41818087, -0.1879856 ,  0.87280619,  0.16731864],
        [-0.34123273, -0.26814843, -0.37801579,  0.81777791],
        [-0.6492278 ,  0.74340748, -0.13387773, -0.08902432]])</pre></div>
-  <p class="dx-note"><code>components_</code> 的<strong>每一列</strong>是一個負荷向量。第一列 <code>[0.536, 0.583, 0.278, 0.543]</code> 在 Murder／Assault／Rape 上幾乎一樣重、UrbanPop 明顯較輕，所以 PC1 大致就是「整體暴力犯罪率」。第二列幾乎全押在 UrbanPop（0.873），那是「都市化程度」。注意 <code>PCA()</code> 預設只置中、不縮放，所以先用 <code>StandardScaler</code> 標準化，再配適 PCA。</p>
+  <p class="dx-note"><code>components_</code> 的<strong>每一列</strong>是一個負荷向量。第一列 <code>[0.536, 0.583, 0.278, 0.543]</code> 在 Murder／Assault／Rape 上幾乎一樣重、UrbanPop 明顯較輕，所以 PC1 大致就是「整體暴力犯罪率」。第二列幾乎全押在 UrbanPop（0.873），那是「都市化程度」。注意 <code>PCA()</code> 預設只置中、不縮放，所以先用 <code>StandardScaler</code> 標準化，再擬合 PCA。</p>
   <span class="dx-src" data-lab-ch="12" data-lab-cells="19,21,23,27,29">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -940,7 +940,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">    ax.text(s_*pcaUS.components_[i,k],</span>
   <span class="line">            s_*pcaUS.components_[j,k],</span>
   <span class="line">            USArrests.columns[k])</span></div>
-  <p class="dx-note"><code>scikit-learn</code> 沒有內建 biplot，所以 lab 用 <code>ax.scatter</code> 畫得分、<code>ax.arrow</code> 畫負荷量，再用 <code>s_ = 2</code> 把箭頭放長一點（否則負荷量都在 ±1 以內，跟得分的尺度差太多，會縮成一小坨）。<strong>整組箭頭同乘一個正的顯示倍率，方向不變。</strong><br>第 2 行與第 3 行把第二個主成分的得分與負荷量同時乘上 −1。同時翻兩邊，圖只是上下鏡射，任何結論都不變。這正是 P05 要講的符號不唯一。本頁的 biplot 直接用lab 範例 那組負荷量，跟課本表 12.1 的數字逐位相同。</p>
+  <p class="dx-note"><code>scikit-learn</code> 沒有內建 biplot，所以 lab 用 <code>ax.scatter</code> 畫得分、<code>ax.arrow</code> 畫負荷量，再用 <code>s_ = 2</code> 把箭頭放長一點（否則負荷量都在 ±1 以內，跟得分的尺度差太多，會擠在原點附近）。<strong>整組箭頭同乘一個正的顯示倍率，方向不變。</strong><br>第 2 行與第 3 行把第二個主成分的得分與負荷量同時乘上 −1。同時翻兩邊，圖只是上下鏡射，任何結論都不變。這正是 P05 要講的符號不唯一。本頁的 biplot 直接用lab 範例 那組負荷量，跟課本表 12.1 的數字逐位相同。</p>
   <span class="dx-src" data-lab-ch="12" data-lab-cells="31,33">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1021,7 +1021,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 最佳低維近似</div>
   <p>式 12.11 說「總變異 = 前 M 個主成分的變異 + M 維近似的 MSE」。由此可以推出什麼？</p>
-  <div class="quiz-options" id="qLowOptions"><div class="quiz-opt" data-correct="true" data-fb="對。左邊那項只跟資料有關、是固定的，所以右邊兩項是零和的。這就是「變異最大」與「近似最近」兩種說法等價的代數證明。" onclick="quizCheck('qLow', this)"><span class="opt-letter">(A)</span> 把前 M 個主成分的變異最大化，等於把 M 維近似的誤差最小化</div><div class="quiz-opt" data-correct="false" data-fb="方向剛好反了。M 愈大，第二項愈大 ⇒ 第三項（誤差）愈&lt;strong&gt;小&lt;/strong&gt;。M = min(n−1, p) 時誤差為 0，近似變成完全相等。" onclick="quizCheck('qLow', this)"><span class="opt-letter">(B)</span> M 愈大，前 M 個主成分的變異愈大，所以近似誤差也愈大</div><div class="quiz-opt" data-correct="false" data-fb="不對。這個等式只需要每一欄&lt;strong&gt;置中&lt;/strong&gt;（平均為 0），不需要縮放。標準化影響的是主成分本身長什麼樣（P05 會講），不影響這個分解成不成立。" onclick="quizCheck('qLow', this)"><span class="opt-letter">(C)</span> 只有在資料標準化過的情況下這個等式才成立</div></div>
+  <div class="quiz-options" id="qLowOptions"><div class="quiz-opt" data-correct="true" data-fb="對。左邊那項只跟資料有關、是固定的，所以右邊兩項是零和的。這就是「變異最大」與「近似最近」兩種說法等價的代數證明。" onclick="quizCheck('qLow', this)"><span class="opt-letter">(A)</span> 把前 M 個主成分的變異最大化，等於把 M 維近似的誤差最小化</div><div class="quiz-opt" data-correct="false" data-fb="方向剛好反了。M 愈大，第二項愈大 ⇒ 第三項（誤差）愈&lt;strong&gt;小&lt;/strong&gt;。M = min(n−1, p) 時誤差為 0，近似變成完全相等。" onclick="quizCheck('qLow', this)"><span class="opt-letter">(B)</span> M 愈大，前 M 個主成分的變異愈大，所以近似誤差也愈大</div><div class="quiz-opt" data-correct="false" data-fb="不對。這個等式只需要每一欄&lt;strong&gt;置中&lt;/strong&gt;（平均為 0），不需要縮放。標準化影響的是主成分本身長什麼樣（P05 會講），不影響這個分解是否成立。" onclick="quizCheck('qLow', this)"><span class="opt-letter">(C)</span> 只有在資料標準化過的情況下這個等式才成立</div></div>
   <div class="quiz-feedback" id="qLowFeedback"></div>
 </div>
 </section>
@@ -1126,7 +1126,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>情況</th><th>要不要標準化</th><th>為什麼</th></tr></thead>
-  <tbody><tr><td>變數單位不同（USArrests、房價資料）</td><td><strong>要</strong></td><td>否則 PC1 只是「數字最大的那個變數」</td></tr><tr><td>同單位但量級差很多（收入 vs 年齡）</td><td><strong>要</strong></td><td>同上，量級差就是單位差的變形</td></tr><tr><td>同單位、尺度差異有意義（基因表現、像素）</td><td>看情況</td><td>縮放會把真實的變異差異抹掉</td></tr><tr><td>已經是比例或分數（0–1 之間）</td><td>通常不用</td><td>尺度已經可比</td></tr><tr><td>變數是 0/1 指示變數</td><td>小心</td><td>標準化會放大罕見類別，考慮別的方法</td></tr></tbody>
+  <tbody><tr><td>變數單位不同（USArrests、房價資料）</td><td><strong>要</strong></td><td>否則 PC1 只是「數字最大的那個變數」</td></tr><tr><td>同單位但量級差很多（收入 vs 年齡）</td><td><strong>要</strong></td><td>同上，量級差就是單位差的變形</td></tr><tr><td>同單位、尺度差異有意義（基因表現、畫素）</td><td>看情況</td><td>縮放會把真實的變異差異抹掉</td></tr><tr><td>已經是比例或分數（0–1 之間）</td><td>通常不用</td><td>尺度已經可比</td></tr><tr><td>變數是 0/1 指示變數</td><td>小心</td><td>標準化會放大罕見類別，考慮別的方法</td></tr></tbody>
 </table></div>
 
   <h3>二、符號：翻掉不影響任何結論</h3>
@@ -1164,7 +1164,7 @@ dtype: float64</pre></div>
     <div class="qa-a"><p>因為最佳化問題只約束了「方向」與「長度」，沒有約束「朝哪一邊」。$\phi_1$ 與 $-\phi_1$ 定義同一條直線；投影後 $Z_1$ 與 $-Z_1$ 的變異數相同，所以兩者都是最佳解，套件回傳哪一個取決於底層的 LAPACK 實作。同一份資料用 <code>numpy.linalg.svd</code> 與 <code>sklearn</code> 的 <code>PCA()</code> 跑，就可能拿到整組相反的符號（lab 範例 與 51 就差在這裡）。</p><p><strong>不影響任何實質結論</strong>，但會影響你「怎麼說」。如果 PC1 的負荷量全是正的，你會說「PC1 高 = 犯罪率高」；符號翻掉之後，同一個主成分要說成「PC1 高 = 犯罪率低」。得分也一起翻，所以哪些州靠在一起、哪些州離得遠——完全一樣。</p><p>實務上的兩個建議：（1）自己定一個約定並寫在報告裡，例如「讓負荷量總和為正」或「讓某個指標變數的負荷量為正」；（2）比較兩次分析的結果時，先對齊符號再比，不然會誤以為結果不穩定。</p></div>
   </details>
   <details class="qa-item"><summary>Q：為什麼 PCA 之前幾乎一定要標準化？什麼情況下不該標準化？</summary>
-    <div class="qa-a"><p>因為 PCA 的目標函數是變異數，而變異數的大小跟單位有關。USArrests 的 Assault 變異數 6945、Murder 只有 18.97，不標準化的話 PC1 的負荷量在 Assault 上是 0.995、在 Murder 上是 0.042——第一主成分退化成「Assault 換個名字」，PCA 什麼都沒做。</p><p>更關鍵的是：這個結果會隨著單位改變。把 Assault 的單位從「每十萬人」改成「每百人」，它的變異數變成百萬分之一，立刻讓位給 UrbanPop。<strong>結論不該取決於資料當初是用什麼單位記錄的</strong>，所以這裡先標準化，讓各變數以相同尺度參與分析。</p><p>不該標準化的情形：變數同單位、而且變異數的差異本身是你想保留的資訊。基因表現量、影像的像素值、同一種感測器的多個通道都屬於這一類。還有一種情形是資料已經是比例（每欄都在 0 到 1 之間），再標準化沒什麼好處。判斷的準則很簡單：<strong>問自己「如果某一欄乘上 1000，我希望結論改變嗎？」</strong>不希望就標準化。</p></div>
+    <div class="qa-a"><p>因為 PCA 的目標函數是變異數，而變異數的大小跟單位有關。USArrests 的 Assault 變異數 6945、Murder 只有 18.97，不標準化的話 PC1 的負荷量在 Assault 上是 0.995、在 Murder 上是 0.042——第一主成分退化成「Assault 換個名字」，PCA 什麼都沒做。</p><p>更關鍵的是：這個結果會隨著單位改變。把 Assault 的單位從「每十萬人」改成「每百人」，它的變異數變成百萬分之一，立刻讓位給 UrbanPop。<strong>結論不該取決於資料當初是用什麼單位記錄的</strong>，所以這裡先標準化，讓各變數以相同尺度參與分析。</p><p>不該標準化的情形：變數同單位、而且變異數的差異本身是你想保留的資訊。基因表現量、影像的畫素值、同一種感測器的多個通道都屬於這一類。還有一種情形是資料已經是比例（每欄都在 0 到 1 之間），再標準化沒什麼好處。判斷的準則很簡單：<strong>問自己「如果某一欄乘上 1000，我希望結論改變嗎？」</strong>不希望就標準化。</p></div>
   </details>
 </div>
 
@@ -1228,7 +1228,7 @@ dtype: float64</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">本頁模擬的數值來源 <span class="ic-badge">ISLP §12.3</span></div>
-      缺失位置由前端的固定種子決定，跟 lab 的 <code>np.random.seed(15)</code> 不同，所以相關係數不會剛好是 0.7114。lab 的實跑數字在下面的 .deck-extra 卡裡。<br>課本另外報告了 100 次重複的平均：相關 <strong>0.63 ± 0.11</strong>；如果作弊用完整資料算，是 0.79 ± 0.08。
+      缺失位置由前端的固定種子決定，跟 lab 的 <code>np.random.seed(15)</code> 不同，所以相關係數不會剛好是 0.7114。lab 的實際執行結果列在下方程式碼卡。<br>課本另外報告了 100 次重複的平均：相關 <strong>0.63 ± 0.11</strong>；如果作弊用完整資料算，是 0.79 ± 0.08。
     </div>
   </div>
 </div>
@@ -1238,9 +1238,9 @@ dtype: float64</pre></div>
   <strong>1. 缺失必須是隨機的</strong>（missing at random）。
   「電子秤剛好沒電」可以補；「病人太重上不了秤」不行——缺失本身帶著資訊，
   補出來的值會系統性偏低。<br>
-  <strong>2. 變數之間要有相關。</strong>低秩近似能work是因為欄與欄之間可以互相預測；
+  <strong>2. 變數之間要有相關。</strong>低秩近似能發揮作用是因為欄與欄之間可以互相預測；
   四個互相獨立的變數，補值不會比欄平均好。<br>
-  <strong>3. M 要選。</strong>選太小補不出細節，選太大會把雜訊也配進去。
+  <strong>3. M 要選。</strong>選太小補不出細節，選太大會把雜訊也擬合進去。
   課本第 11 題就是叫你把缺失比例從 5% 掃到 30%、M 從 1 掃到 8，看誤差怎麼變。
 </div>
 
@@ -1296,7 +1296,7 @@ Iteration: 6, MSS:0.381, Rel.Err 4.22e-06
 Iteration: 7, MSS:0.381, Rel.Err 7.65e-07
 Iteration: 8, MSS:0.381, Rel.Err 1.48e-07
 Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
-  <p class="dx-note">讀法：<code>low_rank(Xhat, M=1)</code> 是步驟 2(a)（用 SVD 取秩一近似）、<code>Xhat[ismiss] = Xapp[ismiss]</code> 是 2(b)（<strong>只覆蓋缺失格</strong>）、<code>mss</code> 是 2(c) 的目標函數。<br>MSS 從 0.395 掉到 0.381 就幾乎不動了，第 8 輪相對誤差跌破 <code>1e-7</code> 收工。相對改善的分母使用初始值 <code>mss0</code>；<code>mss</code> 是目前值。這樣收斂輪數就不會因為把整個 X 乘上一個常數而改變。<br>挖法也有講究：先隨機選 20 個州、每州再隨機挑一個變數，所以<strong>每一列至少留三個觀測值</strong>。整列都空的話，什麼方法都補不出來。</p>
+  <p class="dx-note">讀法：<code>low_rank(Xhat, M=1)</code> 是步驟 2(a)（用 SVD 取秩一近似）、<code>Xhat[ismiss] = Xapp[ismiss]</code> 是 2(b)（<strong>只覆蓋缺失格</strong>）、<code>mss</code> 是 2(c) 的目標函數。<br>MSS 從 0.395 掉到 0.381 就幾乎不動了，第 8 輪相對誤差低於 <code>1e-7</code> 時停止。相對改善的分母使用初始值 <code>mss0</code>；<code>mss</code> 是目前值。這樣收斂輪數就不會因為把整個 X 乘上一個常數而改變。<br>挖法也有講究：先隨機選 20 個州、每州再隨機挑一個變數，所以<strong>每一列至少留三個觀測值</strong>。整列都空的話，什麼方法都補不出來。</p>
   <span class="dx-src" data-lab-ch="12" data-lab-cells="56,58,60,62,64">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1305,7 +1305,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">np.corrcoef(Xapp[ismiss], X[ismiss])[<span class="num">0</span>,<span class="num">1</span>]</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.7113567434297361)</pre></div>
-  <p class="dx-note">20 個補值與真值的相關係數 <strong>0.711</strong>。lab 範例 換成 <code>fancyimpute</code> 的 <code>SoftImpute(max_rank=1)</code> 再跑一次，相關係數幾乎一樣——說明這支三十行的迴圈沒有偷工減料，而真的要上線時直接用套件（它有更好的收斂控制與正則化）就好。</p>
+  <p class="dx-note">20 個補值與真值的相關係數 <strong>0.711</strong>。lab 範例 換成 <code>fancyimpute</code> 的 <code>SoftImpute(max_rank=1)</code> 再跑一次，相關係數幾乎一樣——這個簡短迴圈也得到了相近的結果，而真的要上線時直接用套件（它有更好的收斂控制與正則化）就好。</p>
   <span class="dx-src" data-lab-ch="12" data-lab-cells="66,68,69">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1335,8 +1335,8 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   $$\frac{1}{|C_k|} \sum_{i,i' \in C_k} \sum_{j=1}^{p} (x_{ij} - x_{i'j})^2
     = 2 \sum_{i \in C_k} \sum_{j=1}^{p} (x_{ij} - \bar x_{kj})^2$$
 
-  <p>右邊只需要算每個點<strong>到群心的距離</strong>。這個恆等式不只省算力，
-  它直接告訴你演算法該長什麼樣：</p>
+  <p>右邊只需要算每個點<strong>到群心的距離</strong>。這個恆等式能減少計算量，
+  也說明了演算法為何反覆更新群心與各點的分組：</p>
 
 <div class="info-box">
   <span class="info-label">演算法 12.2（K-means）</span>
@@ -1441,7 +1441,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   階層式分群不必。它一次把 1 到 n 群的所有結果都算出來，畫成一棵樹，
   你要幾群就切在對應的高度。</p>
 
-  <p>做法（凝聚式，agglomerative，也叫 bottom-up）簡單到不像演算法：</p>
+  <p>凝聚式（agglomerative，也叫 bottom-up）的做法如下：</p>
 
 <div class="info-box">
   <span class="info-label">演算法 12.3（階層式分群）</span>
@@ -1453,7 +1453,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   &nbsp;&nbsp;<strong>(b)</strong> 重算剩下 i − 1 群之間的相異度。
 </div>
 
-  <p>樹狀圖（dendrogram）的讀法有一條鐵律，很多人第一次都會讀錯：</p>
+  <p>讀樹狀圖（dendrogram）時，要區分合併高度與水平位置：</p>
 
 <div class="info-box warm">
   <span class="info-label">用合併高度讀樹狀圖</span>
@@ -1474,7 +1474,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07dendroSvg" height="350"></svg>
-      <div class="status-banner" id="w07dendroStatus"><span class="status-icon">›</span><span class="status-text">拖動橘色切線改變群數，換 select 看四種 linkage 的差別。</span></div>
+      <div class="status-banner" id="w07dendroStatus"><span class="status-icon">›</span><span class="status-text">拖動橘色切線改變群數，用下拉選單比較四種 linkage。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">linkage</label><select id="w07dendroSel" class="mono" onchange="w07dendroSetLk()"><option value="complete" selected>complete</option><option value="average">average</option><option value="single">single</option><option value="centroid">centroid</option></select><label class="slider-label" style="margin:0 .3rem 0 .5rem;">切線高度</label><input type="range" id="w07dendroSlider" min="2" max="98" step="1" value="55" oninput="w07dendroFromSlider()" style="width:120px;accent-color:var(--accent3);"><button class="btn btn-reset" onclick="w07dendroReset()">重置</button></div>
       <div class="viz-source"><span>固定種子模擬</span>固定種子 12 的三群模擬；linkage matrix 由 scipy 計算，形狀比照 ISLP 圖 12.10。</div>
     </div>
@@ -1486,11 +1486,11 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
     </div>
     <div class="info-card">
       <div class="ic-title">怎麼玩</div>
-      拖動<strong>橘色虛線</strong>（或用滑桿）上下移動切線，左邊的散佈圖會同步上色。往上切群數變少、往下切變多。<br>重點在那個 <code>select</code>：把 linkage 換成 <strong>single</strong>，看樹的形狀怎麼垮掉。
+      拖動<strong>橘色虛線</strong>（或用滑桿）上下移動切線，左邊的散佈圖會同步上色。往上切群數變少、往下切變多。<br>用下拉選單比較：把 linkage 換成 <strong>single</strong>，觀察樹狀圖如何變成鏈狀。
     </div>
     <div class="info-card">
       <div class="ic-title">single linkage 的鏈狀效應 <span class="ic-badge">圖 12.14</span></div>
-      single 取兩群之間<strong>最小</strong>的距離，所以只要有一個點靠近某個大群，整群就被拉過去。結果是一個很大的群不斷把單一觀測值一顆一顆黏上去（trailing cluster），切下去往往得到「一大群 + 幾個孤兒」。<strong>右側那個「一次只黏一顆」的次數就是在量這件事。</strong>
+      single 取兩群之間<strong>最小</strong>的距離，所以只要有一個點靠近某個大群，整群就被拉過去。結果是一個很大的群不斷把單一觀測值一顆一顆黏上去（trailing cluster），切下去往往得到「一大群 + 幾個單點群」。<strong>右側那個「一次只黏一顆」的次數就是在量這件事。</strong>
     </div>
     <div class="info-card">
       <div class="ic-title">centroid 的反轉</div>
@@ -1501,7 +1501,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>Linkage</th><th>群間相異度的定義</th><th>樹的形狀</th><th>評語</th></tr></thead>
-  <tbody><tr><td><strong>Complete</strong></td><td>兩群之間<strong>最大</strong>的那個距離</td><td>平衡、群大小相近</td><td>最常用；對離群值不算敏感</td></tr><tr><td><strong>Average</strong></td><td>所有跨群配對距離的<strong>平均</strong></td><td>平衡</td><td>最常用；統計上性質較好</td></tr><tr><td><strong>Single</strong></td><td>兩群之間<strong>最小</strong>的那個距離</td><td>鏈狀、拖尾</td><td>容易產生一大群 + 一堆孤兒，少用</td></tr><tr><td><strong>Centroid</strong></td><td>兩群<strong>形心</strong>之間的距離</td><td>可能出現反轉</td><td>基因體學常用，但反轉讓樹難以解讀</td></tr></tbody>
+  <tbody><tr><td><strong>Complete</strong></td><td>兩群之間<strong>最大</strong>的那個距離</td><td>平衡、群大小相近</td><td>最常用；對離群值不算敏感</td></tr><tr><td><strong>Average</strong></td><td>所有跨群配對距離的<strong>平均</strong></td><td>平衡</td><td>最常用；統計上性質較好</td></tr><tr><td><strong>Single</strong></td><td>兩群之間<strong>最小</strong>的那個距離</td><td>鏈狀、拖尾</td><td>容易產生一大群 + 多個單點群，少用</td></tr><tr><td><strong>Centroid</strong></td><td>兩群<strong>形心</strong>之間的距離</td><td>可能出現反轉</td><td>基因體學常用，但反轉讓樹難以解讀</td></tr></tbody>
 </table></div>
 
   <h3>相異度也要選：歐氏距離還是相關係數？</h3>
@@ -1552,7 +1552,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <h2>要不要標準化、離群值怎麼辦、結果穩不穩 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.4.3 節</a></span><span class="sec-badge">講義 12</span></h2>
 <!-- GEN:END sec:practical -->
 
-  <p>演算法都很乾淨，麻煩全在做決定的地方。ISLP §12.4.3 把它們列成一張清單，
+  <p>實際分群時，前處理與參數選擇都會影響結果。ISLP §12.4.3 把它們列成一張清單，
   每一項都會實質改變結果：</p>
 
   <ul>
@@ -1586,12 +1586,12 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
       <strong>原始次數：</strong>襪子 0–11 雙、電腦 0–1 台。襪子的變異大得多，距離幾乎只由襪子決定，電腦等於沒參與。<br><strong>標準化：</strong>兩個變數都變成變異數 1，電腦終於有影響力——分群變成「有買電腦」與「沒買電腦」。<br><strong>花費金額：</strong>電腦一台 1400 元、襪子一雙 2 元，換算成金額之後<strong>反過來由電腦主宰</strong>。
     </div>
     <div class="info-card">
-      <div class="ic-title">離群值那個 toggle</div>
+      <div class="ic-title">加入離群值</div>
       按下去會加入第 9 位顧客：買了 60 雙襪子、沒買電腦。K-means <strong>一定要把每一點分進某一群</strong>，所以這一個點會硬生生把一整群拉過去，剩下八位全部被擠進另一群。<br>課本的建議是改用混合模型（mixture model，K-means 的「軟」版本），或者先把明顯的離群值挑出來單獨處理。
     </div>
     <div class="info-card">
       <div class="ic-title">課本第 5 題就是這一題 <span class="ic-badge">第 5 題</span></div>
-      ISLP 第 12.6 節第 5 題：「用圖 12.16 的三種尺度各跑一次 K = 2，描述你預期看到什麼。」把上面的 select 切三次就是答案。
+      ISLP 第 12.6 節第 5 題：「用圖 12.16 的三種尺度各跑一次 K = 2，描述你預期看到什麼。」用上方選單切換三種尺度，就能比較結果。
     </div>
   </div>
 </div>
@@ -1629,7 +1629,7 @@ HClust
 1        0   7   0  0
 2        8   0   0  0
 3        0   0   9  0</pre></div>
-  <p class="dx-note">同一份 NCI60（64 個細胞株 × 6830 個基因）、同樣切 4 群，兩種方法的結果<strong>略有不同</strong>：K-means 的第 3 群等於階層式的第 2 群，但 K-means 的第 0 群混了階層式第 0 群的一部分加上整個第 1 群。<br>先看群編號是任意的（可用 <code>crosstab</code> 對照群的成員；直接比較編號會受任意命名影響）。lab 範例 另外把階層式的 4 群對上真實癌症類型：所有白血病落在同一群，但乳癌散在三群——<strong>分群抓到了部分結構，仍有型別分散在不同群中。</strong></p>
+  <p class="dx-note">同一份 NCI60（64 個細胞株 × 6830 個基因）、同樣切 4 群，兩種方法的結果<strong>略有不同</strong>：K-means 的第 3 群等於階層式的第 2 群，但 K-means 的第 0 群混了階層式第 0 群的一部分加上整個第 1 群。<br>先看群編號是任意的（可用 <code>crosstab</code> 對照群的成員；直接比較編號會受任意命名影響）。lab 範例 另外把階層式的 4 群對上真實癌症類型：所有白血病落在同一群，但乳癌散在三群——<strong>分群抓到了部分結構，仍有癌症類型分散在不同群中。</strong></p>
   <span class="dx-src" data-lab-ch="12" data-lab-cells="152,172,176">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1651,8 +1651,8 @@ HClust
 </div>
 
 <h3>密度分群：DBSCAN、OPTICS 與 HDBSCAN</h3><p>DBSCAN 以半徑 $\varepsilon$ 與最少點數 minPts 定義密度：含自身的鄰域至少有 minPts 筆就是核心點。從核心點沿核心鄰接關係擴張成群；非核心但落在核心鄰域內的是邊界點，其餘標為雜訊。邊界點不再向外擴張，否則稀疏的橋接點會把不同群錯接起來。它能找非球狀群，也不用先給群數，但同一密度門檻不適合差異很大的密度。</p><p>OPTICS 以可達距離的排序保留多種密度尺度。HDBSCAN 以核心距離修正點間距離，建立密度階層，再依群在不同尺度的穩定性選群；min_cluster_size 控制最小群大小，min_samples 也影響對雜訊的保守程度。這些方法能留下雜訊點，仍需檢查尺度、距離、參數與重抽樣的穩定性。</p>
-<h3>Mean shift、混合模型與譜分群</h3><p>Mean shift 把候選中心移到鄰近點的加權平均，反覆向核密度的高處移動；收斂到相近模態的起點併為一群。頻寬決定平滑程度與可辨識的模態數，不必預先指定 K，卻仍需選頻寬。高斯混合模型以多個高斯成分的加權密度表示資料，EM 交替更新後驗群責任與參數，允許軟分群；一般高斯混合仍為每點分配責任，若要處理離群值需另外設計雜訊成分或穩健模型。變分貝氏混合在成分權重與參數上加入先驗，以近似後驗估計不確定性。</p><p>譜分群（spectral clustering）先建立相似度圖，利用圖 Laplacian 的特徵向量嵌入，再於嵌入座標分群。鄰接圖、核尺度與群數會改變答案；它與 DBSCAN 都能處理某些非球狀群，但一般並非同一演算法。</p>
-<h3>混合型資料與分群後的用途</h3><p>名目類別不可任意編號後直接套歐氏距離。可只用連續特徵、對類別做適當編碼並控制權重、使用結合數值距離與類別不匹配成本的 k-prototypes，或先用混合資料因素分析得到連續座標。這些選擇代表不同的「相似」定義，需要連同結果報告。</p><p>分群標籤、到各群中心的距離及特徵聚合都能當作監督式模型的輸入；群標籤本身通常應視為類別。評估時分群也要只在訓練折配適。少量標記時，可優先標註群中心附近的代表樣本，再在群內傳播標籤；這依賴群大致對應真實類別的假設，群跨越類別時會放大錯誤。</p>
+<h3>Mean shift、混合模型與譜分群</h3><p>Mean shift 把候選中心移到鄰近點的加權平均，反覆向核密度的高處移動；收斂到相近模態的起點併為一群。頻寬決定平滑程度與可辨識的模態數，不必預先指定 K，卻仍需選頻寬。高斯混合模型以多個高斯成分的加權密度表示資料，EM 交替更新各點屬於各群的後驗機率（責任值）與參數，允許軟分群；一般高斯混合仍會為每個點計算各群的責任值，若要處理離群值需另外設計雜訊成分或穩健模型。變分貝氏混合在成分權重與參數上加入先驗，以近似後驗估計不確定性。</p><p>譜分群（spectral clustering）先建立相似度圖，利用圖 Laplacian 的特徵向量嵌入，再於嵌入座標分群。鄰接圖、核尺度與群數會改變答案；它與 DBSCAN 都能處理某些非球狀群，但一般並非同一演算法。</p>
+<h3>混合型資料與分群後的用途</h3><p>名目類別不可任意編號後直接套歐氏距離。可只用連續特徵、對類別做適當編碼並控制權重、使用結合數值距離與類別不一致的成本的 k-prototypes，或先用混合資料因素分析得到連續座標。這些選擇代表不同的「相似」定義，需要連同結果報告。</p><p>分群標籤、到各群中心的距離及特徵聚合都能當作監督式模型的輸入；群標籤本身通常應視為類別。評估時分群也要只在訓練折擬合。少量標記時，可優先標註群中心附近的代表樣本，再在群內傳播標籤；這依賴群大致對應真實類別的假設，群跨越類別時會放大錯誤。</p>
 </section>
 <section id="manifold">
 <!-- GEN:BEGIN sec:manifold -->
@@ -1661,7 +1661,7 @@ HClust
 <!-- GEN:END sec:manifold -->
 
   <p class="skip-note">這一節是課堂沒細講的延伸（講義 12），第一輪可以直接跳過去看
-  <a href="#exercises">EX 練習</a>。t-SNE 在論文裡到處都是，值得知道它會怎麼騙人。</p>
+  <a href="#exercises">EX 練習</a>。t-SNE 在論文裡到處都是，解讀前應先了解它的限制。</p>
 
   <p>PCA 是<strong>線性</strong>投影：它只能把資料壓到一個平面上。
   可是很多高維資料的結構是彎的——想像一張捲起來的紙，
@@ -1751,7 +1751,7 @@ HClust
 </div>
 
 <h3>t-SNE 的目標與調整參數</h3><p>高維條件鄰居機率可寫成 $p_{j\mid i}\propto\exp(-\|x_i-x_j\|^2/(2\sigma_i^2))$，其中排除 $i=j$ 並逐列正規化。以 $\mathrm{Perp}(P_i)=2^{H(P_i)}$、$H(P_i)=-\sum_jp_{j\mid i}\log_2p_{j\mid i}$ 指定有效鄰居數，再搜尋各點的 $\sigma_i$。對稱化 $p_{ij}=(p_{j\mid i}+p_{i\mid j})/(2n)$，低維則用 $q_{ij}\propto(1+\|z_i-z_j\|^2)^{-1}$，最小化 $\sum_{i\ne j}p_{ij}\log(p_{ij}/q_{ij})$。梯度同時含吸引與排斥作用，不能說只懲罰鄰居被拉遠。</p><p>Early exaggeration 在初期增強吸引作用，learning rate 決定更新幅度，迭代次數決定最佳化進度；Barnes–Hut 的 angle 取捨近似精度與速度。Perplexity、初始值及亂數種子改變圖形時，應比較局部鄰居是否穩定，不能挑一張最漂亮的圖作結論。PCA 保留全域線性變異；Isomap 以鄰接圖最短路近似流形距離，LLE 保留局部重建權重，UMAP 以鄰接關係建構嵌入並可轉換新點。</p>
-<h3>講義延伸方向</h3><p>張量分解將樣本、空間、時間等多個軸一起表示，例如 CP 用秩一張量之和，Tucker 用各軸因子與核心張量；相比先攤平成矩陣，可保留軸的結構。自監督學習從資料本身設計預測任務，例如遮住部分輸入再重建，或讓同一資料的不同增強視圖接近；訓練目標雖由資料產生，取得的表徵仍須在目標任務驗證。</p>
+<h3>講義延伸方向</h3><p>張量分解將樣本、空間、時間等多個軸一起表示，例如 CP 用秩一張量之和，Tucker 用各軸因子與核心張量；相比先攤平成矩陣，可保留軸的結構。自監督學習從資料本身設計預測任務，例如遮住部分輸入再重建，或讓同一資料的經過不同資料擴增的版本接近；訓練目標雖由資料產生，取得的表徵仍須在目標任務驗證。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -1779,7 +1779,7 @@ HClust
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP §12.6 第 5 題</div>
   <p>課本第 5 題：用圖 12.16 的三種尺度各跑一次 K = 2（襪子與電腦），分別預期看到什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。三個答案剛好對應「變異數最大的那個變數主宰歐氏距離」這一件事。本頁 P09 的元件把三種尺度都跑給你看了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 原始次數 → 由襪子決定；標準化 → 變成「有買電腦 / 沒買電腦」；花費金額 → 由電腦決定</div><div class="quiz-opt" data-correct="false" data-fb="不對。K-means 對&lt;strong&gt;整體&lt;/strong&gt;的旋轉平移不變，但對&lt;strong&gt;逐變數&lt;/strong&gt;乘不同常數&lt;em&gt;不&lt;/em&gt;不變。那會改變各變數在距離裡的權重。線性迴歸的配適值具有這種尺度不變性；K-means 使用的距離會受尺度影響。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 三種尺度會給同樣的分群，因為 K-means 對線性變換是不變的</div><div class="quiz-opt" data-correct="false" data-fb="方向剛好相反。標準化把兩個變數的變異數都設成 1，電腦是從「幾乎沒有影響」變成「影響力跟襪子相同」，仍然參與分群。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 標準化之後電腦的影響會消失，因為 0/1 變數標準化後變異數變成 1 太小</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。三個答案剛好對應「變異數最大的那個變數主宰歐氏距離」這一件事。本頁 P09 的元件把三種尺度都跑給你看了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 原始次數 → 由襪子決定；標準化 → 變成「有買電腦 / 沒買電腦」；花費金額 → 由電腦決定</div><div class="quiz-opt" data-correct="false" data-fb="不對。K-means 對&lt;strong&gt;整體&lt;/strong&gt;的旋轉平移不變，但對&lt;strong&gt;逐變數&lt;/strong&gt;乘不同常數&lt;em&gt;不&lt;/em&gt;不變。那會改變各變數在距離裡的權重。線性迴歸的擬合值具有這種尺度不變性；K-means 使用的距離會受尺度影響。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 三種尺度會給同樣的分群，因為 K-means 對線性變換是不變的</div><div class="quiz-opt" data-correct="false" data-fb="方向剛好相反。標準化把兩個變數的變異數都設成 1，電腦是從「幾乎沒有影響」變成「影響力跟襪子相同」，仍然參與分群。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 標準化之後電腦的影響會消失，因為 0/1 變數標準化後變異數變成 1 太小</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -1840,7 +1840,7 @@ HClust
   結果對標準化與 linkage 都很敏感。換設定多跑幾次，看什麼結構每次都出現。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->

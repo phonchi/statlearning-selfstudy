@@ -701,7 +701,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · NumPy 陣列）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
@@ -734,7 +734,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:prologue -->
 
   <p>統計程式經常需要<strong>對一整排數字做同一個運算</strong>。
-  算殘差是每一筆都減掉配適值，算標準化是每一筆都減平均再除標準差。
+  算殘差是每一筆都減掉擬合值，算標準化是每一筆都減平均再除標準差。
   Python 內建的串列（list）做不到這件事。它的 <code>+</code> 是「接起來」，不是「加起來」。</p>
 
 <div class="info-box">
@@ -1053,7 +1053,7 @@ array([[ 0,  2],
        [12, 14]])
 array([[ 4,  6,  7],
        [12, 14, 15]])</pre></div>
-  <p class="dx-note"><code>A[[1,3]][:,[0,2]]</code> 會產生一個中間陣列；<code>np.ix_</code> 一步到位。</p>
+  <p class="dx-note"><code>A[[1,3]][:,[0,2]]</code> 會產生一個中間陣列；<code>np.ix_</code> 可一次指定列與欄的索引。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="154,156">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1328,7 +1328,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 
 <div class="info-box purple">
   <span class="info-label">🔗 這在本站哪一章會用到</span>
-  第 2 章算訓練 MSE 與測試 MSE，就是 <code>((y - yhat)**2).mean()</code>；偏差—變異分解的每一項都是沿某個 axis 的平均。<a href="statistical_learning.html#mse">→ 統計學習 · 評估配適品質</a>
+  第 2 章算訓練 MSE 與測試 MSE，就是 <code>((y - yhat)**2).mean()</code>；偏差—變異分解的每一項都是沿某個 axis 的平均。<a href="statistical_learning.html#mse">→ 統計學習 · 評估擬合品質</a>
 </div>
 </section>
 <section id="rand">
@@ -1441,14 +1441,14 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 廣播</div>
   <p><code>a.shape</code> 是 <code>(3, 1)</code>、<code>b.shape</code> 是 <code>(1, 4)</code>，<code>(a + b).shape</code> 是什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="廣播不要求形狀相同，只要求每一維&lt;strong&gt;要嘛相等、要嘛有一邊是 1&lt;/strong&gt;。這裡兩維都有一邊是 1。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 會報錯，形狀完全不同</div><div class="quiz-opt" data-correct="true" data-fb="對。第一維是 3 與 1 → 拉伸成 3；第二維是 1 與 4 → 拉伸成 4。這種「行向量加欄向量得到矩陣」的寫法在算距離矩陣時很常用。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> <code>(3, 4)</code></div><div class="quiz-opt" data-correct="false" data-fb="廣播的結果是&lt;strong&gt;兩邊各維取較大者&lt;/strong&gt;，不會停在其中一個的形狀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> <code>(3, 1)</code></div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="廣播不要求形狀相同，只要求每一維&lt;strong&gt;要嘛相等、要嘛有一邊是 1&lt;/strong&gt;。這裡兩維都有一邊是 1。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 會報錯，形狀完全不同</div><div class="quiz-opt" data-correct="true" data-fb="對。第一維是 3 與 1 → 拉伸成 3；第二維是 1 與 4 → 拉伸成 4。這種「列向量加欄向量得到矩陣」的寫法在算距離矩陣時很常用。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> <code>(3, 4)</code></div><div class="quiz-opt" data-correct="false" data-fb="廣播的結果是&lt;strong&gt;兩邊各維取較大者&lt;/strong&gt;，不會停在其中一個的形狀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> <code>(3, 1)</code></div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 檢視與複本</div>
   <p>沿用本頁連續儲存的 A 矩陣，下列哪一個操作<strong>會</strong>複製一份資料？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="基本切片給的是檢視，改 B 會動到 A。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>B = A[1:3]</code></div><div class="quiz-opt" data-correct="false" data-fb="本例的 reshape 共用原資料；一般情況也可能需要複製。lab 範例 示範過改一個另一個跟著變。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>B = A.reshape((2, 8))</code></div><div class="quiz-opt" data-correct="true" data-fb="會。用整數串列的&lt;strong&gt;花式索引&lt;/strong&gt;沒辦法用「同一塊記憶體的不同讀法」表示，所以 NumPy 一定會配一塊新的。布林索引也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>B = A[[1, 3]]</code></div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="基本切片給的是檢視，改 B 會動到 A。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>B = A[1:3]</code></div><div class="quiz-opt" data-correct="false" data-fb="本例的 reshape 共用原資料；一般情況也可能需要複製。lab 範例 示範過改一個另一個跟著變。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>B = A.reshape((2, 8))</code></div><div class="quiz-opt" data-correct="true" data-fb="會。用整數串列的&lt;strong&gt;花式索引&lt;/strong&gt;沒辦法用「同一塊記憶體的不同讀法」表示，所以 NumPy 一定會配置一塊新的記憶體。布林索引也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>B = A[[1, 3]]</code></div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1481,7 +1481,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
   <strong>1. shape 是 (列, 欄)，列在前。</strong>看不懂錯誤訊息就先印 shape。<br><strong>2. 基本切片給的是檢視；reshape 可行時共用資料，否則複製。花式索引與布林索引給的是複本。</strong>不確定就 <code>.copy()</code>。<br><strong>3. axis 指的是被摺掉的那一維。</strong>axis=0 往下摺得到欄的統計量，axis=1 往右摺得到列的統計量。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->

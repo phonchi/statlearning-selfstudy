@@ -1,6 +1,6 @@
 [
-  {"front": "最佳子集選擇（Best Subset Selection）", "back": "把 p 個變數的全部 2^p 種組合都配適一次，在每個模型大小裡挑訓練 RSS 最小的，再用 Cp、BIC 或 CV 從這 p+1 個候選裡選一個。能找到每個大小的最佳組合；p > 40 時，計算量會超過可負擔範圍。"},
-  {"front": "前向逐步選擇（Forward Stepwise Selection）", "back": "從空模型開始，每一步在剩下的變數裡加入一個讓 RSS 掉最多的，共配適 1 + p(p+1)/2 個模型。貪婪，所以不保證找到最佳子集——Credit 資料上從大小 3 開始就跟最佳子集分歧。"},
+  {"front": "最佳子集選擇（Best Subset Selection）", "back": "把 p 個變數的全部 2^p 種組合都擬合一次，在每個模型大小裡挑訓練 RSS 最小的，再用 Cp、BIC 或 CV 從這 p+1 個候選裡選一個。能找到每個大小的最佳組合；p > 40 時，計算量會超過可負擔範圍。"},
+  {"front": "前向逐步選擇（Forward Stepwise Selection）", "back": "從空模型開始，每一步在剩下的變數裡加入一個讓 RSS 掉最多的，共擬合 1 + p(p+1)/2 個模型。貪婪，所以不保證找到最佳子集——Credit 資料上從大小 3 開始就跟最佳子集分歧。"},
   {"front": "後向逐步選擇（Backward Stepwise Selection）", "back": "從全模型開始，每一步移除一個最沒貢獻的變數。計算量與前向相同。起始全模型要求 n > p，因此適用範圍受樣本數限制。"},
   {"front": "Cp 統計量（Mallows' Cp）", "back": "(RSS + 2dσ̂²)/n，其中 d 是變數個數。每多一個變數罰 2σ̂²。在誤差變異數估得準的前提下，它是測試 MSE 的無偏估計。Credit 上選出 6 個變數。"},
   {"front": "AIC（Akaike Information Criterion）", "back": "從 Kullback–Leibler 散度導出的模型選擇準則。在常態誤差的最小平方模型上與 Cp 成正比，所以兩者選出同一個模型；statsmodels 採用 log-likelihood 版 −2 log L + 2k，與 Cp 的排序則可能不同。"},
@@ -18,12 +18,12 @@
   {"front": "彈性網（Elastic Net）", "back": "同時放 L1 與 L2 懲罰的方法，混合比例是另一個調整參數。它兼具 Lasso 的稀疏性與 Ridge 對相關變數「同進同出」的性質，適合不確定係數稀疏與否的情況。"},
   {"front": "維度縮減法（Dimension Reduction Method）", "back": "不動變數而換座標：先把 p 個相關的預測變數壓成 M 個互不相關的方向，再對這 M 個方向做最小平方。PCR 與 PLS 是兩個代表；兩者都不做變數選擇。"},
   {"front": "主成分迴歸（PCR, Principal Components Regression）", "back": "用主成分當新的預測變數。方向完全由 X 的變異決定、沒看 y，所以隱含假設「X 變異大的方向也是跟 y 有關的方向」。M 用 CV 選；M = p 時退回最小平方。"},
-  {"front": "偏最小平方（PLS, Partial Least Squares）", "back": "監督式的降維：第一個方向的權重取自各 Xⱼ 與 y 的簡單迴歸係數，跟 y 相關性愈強權重愈大，之後在殘差上重複。降低了偏差但增加了變異，實務上常與 PCR 打成平手。"},
+  {"front": "偏最小平方（PLS, Partial Least Squares）", "back": "監督式的降維：第一個方向的權重取自各 Xⱼ 與 y 的簡單迴歸係數，跟 y 相關性愈強權重愈大，之後在殘差上重複。降低了偏差但增加了變異，實務上常與 PCR 表現相近。"},
   {"front": "負荷量（Loading）", "back": "把原始變數線性組合成主成分時的權重 φⱼₘ。因為每個負荷量通常都不為零，PCR 的最終模型仍然用到全部 p 個原始變數——這是它跟 Lasso 最重要的差別。"},
   {"front": "標準化（Standardization）", "back": "把每個預測變數減平均、除標準差。Ridge、Lasso、PCR、PLS 的目標函數對單位敏感，因此要先標準化。做 CV 時，讓 GridSearchCV 搜尋包含 StandardScaler 與模型的完整 Pipeline，每折才會只用該折訓練資料估縮放統計量；把 scaler 放在 RidgeCV 或 ElasticNetCV 外層不具備這個折內範圍。"},
   {"front": "係數路徑（Coefficient Path）", "back": "把各係數估計值畫成 λ（或相對收縮量 ‖β̂ᴿ‖₂/‖β̂‖₂）的函數。Ridge 的路徑向零靠近，並維持非零係數；Lasso 的路徑會一條一條真的碰到 0 並停住。"},
   {"front": "對數等距網格（Log-spaced Grid）", "back": "選候選 λ 的正確方式，例如 np.logspace(-2, 5, 100)。因為 λ 的作用是乘性的，等距取樣會把幾乎全部的點浪費在「懲罰太重、係數全被壓平」的那一端。"},
   {"front": "高維度（High-dimensional）", "back": "p 接近或超過 n 的設定。設計矩陣列滿秩時，最小平方可讓訓練 RSS = 0，通常有多組係數都能達成。需要說明選解規則，再用獨立資料評估泛化表現。"},
-  {"front": "維度的詛咒（Curse of Dimensionality）", "back": "每個變數都需要估計係數，新增估計會帶進變異，也可能增加預測的不確定性。本頁的固定種子模擬顯示，加入更多雜訊變數能改善訓練配適，卻可能增加測試誤差。"},
+  {"front": "維度的詛咒（Curse of Dimensionality）", "back": "每個變數都需要估計係數，新增估計會帶進變異，也可能增加預測的不確定性。本頁的固定種子模擬顯示，加入更多雜訊變數能改善訓練擬合，卻可能增加測試誤差。"},
   {"front": "選後推論（Post-selection Inference）", "back": "先用資料選變數、再對選出來的變數做 t 檢定會嚴重高估顯著性，因為同一份資料用了兩次。誠實的說法是「在這個 λ 之下 Lasso 保留了這些變數」，而不是「這些變數顯著」。"}
 ]

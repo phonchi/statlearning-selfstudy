@@ -674,7 +674,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#multi" data-target="multi"><span class="fn-num">P02</span><span class="fn-name">多層與 MNIST</span></a>
   <a href="#cnn" data-target="cnn"><span class="fn-num">P03</span><span class="fn-name">卷積神經網路</span></a>
   <a href="#rnn" data-target="rnn"><span class="fn-num">P04</span><span class="fn-name">文件分類與 RNN</span></a>
-  <a href="#fitting" data-target="fitting"><span class="fn-num">P05</span><span class="fn-name">怎麼配適</span></a>
+  <a href="#fitting" data-target="fitting"><span class="fn-num">P05</span><span class="fn-name">怎麼擬合</span></a>
   <a href="#doubledesc" data-target="doubledesc"><span class="fn-num">P06</span><span class="fn-name">雙下降與該不該用</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
   <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
@@ -700,7 +700,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.10 · 補充）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照課本</strong>：章節旁標示課本節號，細節與完整推導請回課本。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
@@ -717,7 +717,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#multi"><span class="toc-num">P02</span>多層與 MNIST</a>
     <a href="#cnn"><span class="toc-num">P03</span>卷積神經網路</a>
     <a href="#rnn"><span class="toc-num">P04</span>文件分類與 RNN</a>
-    <a href="#fitting"><span class="toc-num">P05</span>怎麼配適</a>
+    <a href="#fitting"><span class="toc-num">P05</span>怎麼擬合</a>
     <a href="#doubledesc"><span class="toc-num">P06</span>雙下降與該不該用</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
     <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
@@ -733,7 +733,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p><strong>本課沒有教第 10 章</strong>。它不在考試範圍，
   也沒有對應的講義與 lab。放上來是因為前面九章把「線性模型 → 加彈性 → 加正則化 →
-  換基底 → 集成」這條線走完之後，深度學習正好是同一條線的下一步，缺了它整本書會斷掉。</p>
+  換基底 → 集成」這條線走完之後，深度學習正好是同一條線的下一步，可以銜接前面的內容。</p>
 
   <p>ISLP 從模型形式介紹神經網路：把式子攤開來看，它就是
   <strong>線性模型套一層非線性再線性組合一次</strong>。單層網路的預測函數長這樣：</p>
@@ -747,10 +747,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="info-box">
   <span class="info-label">這一章的六個主題</span>
   <strong>1. 單層網路（§10.1）：</strong>一層隱藏層，非線性從哪裡進來。<br>
-  <strong>2. 多層與 MNIST（§10.2）：</strong>疊第二層、softmax 輸出、參數量開始失控。<br>
+  <strong>2. 多層與 MNIST（§10.2）：</strong>疊第二層、softmax 輸出、參數量快速增加。<br>
   <strong>3. 卷積網路（§10.3）：</strong>權重共享與池化，把影像的結構寫進架構裡。<br>
   <strong>4. 文件分類與 RNN（§10.4–10.5）：</strong>順序有意義的時候，詞袋不夠用。<br>
-  <strong>5. 怎麼配適（§10.7）：</strong>反向傳播、SGD、dropout。<br>
+  <strong>5. 怎麼擬合（§10.7）：</strong>反向傳播、SGD、dropout。<br>
   <strong>6. 雙下降（§10.8）：</strong>參數比樣本還多，測試誤差為什麼還會再降一次。
 </div>
 
@@ -766,7 +766,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 非線性從哪裡來</div>
   <p>式 10.1 裡如果把 g(z) 換成恆等函數 g(z) = z，這個「神經網路」會變成什麼？</p>
-  <div class="quiz-options" id="qWhyNNOptions"><div class="quiz-opt" data-correct="true" data-fb="對。代進去展開會得到 β₀ + Σₖ βₖwₖ₀ + Σⱼ (Σₖ βₖwₖⱼ) Xⱼ，括號裡那一坨就是 Xⱼ 的新係數。不管疊幾層都一樣：&lt;strong&gt;線性組合的線性組合還是線性組合&lt;/strong&gt;。這就是為什麼 g 非得是非線性的。" onclick="quizCheck('qWhyNN', this)"><span class="opt-letter">(A)</span> 退化成 X₁, …, X_p 的線性模型，隱藏層完全白費</div><div class="quiz-opt" data-correct="false" data-fb="「多」不等於「非線性」。K 個單元各自算一個線性函數，加總起來仍然是線性函數。非線性只能從每個單元裡那個 g 進來，加總這個動作本身不會產生它。" onclick="quizCheck('qWhyNN', this)"><span class="opt-letter">(B)</span> 還是非線性的，因為有 K 個隱藏單元在加總</div><div class="quiz-opt" data-correct="false" data-fb="多項式要有乘冪才會出現。式 10.1 從頭到尾只有加法與乘常數，g 是恆等函數時連二次項都生不出來。順帶一提，g 若取 g(z) = z² 倒是真的會生出交互項，ISLP §10.1 式 10.8 就示範了 (X₁+X₂)²/4 − (X₁−X₂)²/4 = X₁X₂。" onclick="quizCheck('qWhyNN', this)"><span class="opt-letter">(C)</span> 會變成 K 次多項式迴歸，因為有 K 個隱藏單元</div></div>
+  <div class="quiz-options" id="qWhyNNOptions"><div class="quiz-opt" data-correct="true" data-fb="對。代進去展開會得到 β₀ + Σₖ βₖwₖ₀ + Σⱼ (Σₖ βₖwₖⱼ) Xⱼ，括號裡的和式就是 Xⱼ 的新係數。不管疊幾層都一樣：&lt;strong&gt;線性組合的線性組合還是線性組合&lt;/strong&gt;。這就是為什麼 g 非得是非線性的。" onclick="quizCheck('qWhyNN', this)"><span class="opt-letter">(A)</span> 退化成 X₁, …, X_p 的線性模型，隱藏層完全白費</div><div class="quiz-opt" data-correct="false" data-fb="「多」不等於「非線性」。K 個單元各自算一個線性函數，加總起來仍然是線性函數。非線性只能從每個單元裡那個 g 進來，加總這個動作本身不會產生它。" onclick="quizCheck('qWhyNN', this)"><span class="opt-letter">(B)</span> 還是非線性的，因為有 K 個隱藏單元在加總</div><div class="quiz-opt" data-correct="false" data-fb="多項式要有乘冪才會出現。式 10.1 從頭到尾只有加法與乘常數，g 是恆等函數時連二次項都生不出來。順帶一提，g 若取 g(z) = z² 倒是真的會生出交互項，ISLP §10.1 式 10.8 就示範了 (X₁+X₂)²/4 − (X₁−X₂)²/4 = X₁X₂。" onclick="quizCheck('qWhyNN', this)"><span class="opt-letter">(C)</span> 會變成 K 次多項式迴歸，因為有 K 個隱藏單元</div></div>
   <div class="quiz-feedback" id="qWhyNNFeedback"></div>
 </div>
 </section>
@@ -982,13 +982,13 @@ Estimated Total Size (MB): 0.09
     A^{(2)}_\ell = g\!\left(w^{(2)}_{\ell 0}
       + \sum_k w^{(2)}_{\ell k} A^{(1)}_k\right)$$
 
-  <p>MNIST 是十類別的問題，所以輸出層要吐十個數字再轉成機率。用的是
+  <p>MNIST 是十類別的問題，所以輸出層要輸出十個數字再轉成機率。用的是
   <strong>softmax</strong>：</p>
 
   $$f_m(X) = \Pr(Y = m \mid X)
     = \frac{e^{Z_m}}{\sum_{\ell=0}^{9} e^{Z_\ell}} \tag{10.13}$$
 
-  <p>損失函數則是負的多項式對數似然，也就是<strong>交叉熵</strong>：</p>
+  <p>損失函數則是負的多項式對數概似，也就是<strong>交叉熵</strong>：</p>
 
   $$-\sum_{i=1}^{n} \sum_{m=0}^{9} y_{im} \log f_m(x_i) \tag{10.14}$$
 
@@ -1000,7 +1000,7 @@ Estimated Total Size (MB): 0.09
   同樣的事在第 4 章的多元邏輯斯迴歸也發生過，那裡的處理方式是挑一個類別當基準。
 </div>
 
-  <p>參數量是這一節的重點。MNIST 的輸入是 28×28 = 784 個像素，
+  <p>參數量是這一節的重點。MNIST 的輸入是 28×28 = 784 個畫素，
   ISLP 用的架構是 784 → 256 → 128 → 10。光第一層就有 784×256 + 256 = 200,960 個參數，
   三層加起來 <strong>235,146</strong> 個。對照組多元邏輯斯迴歸只需要 785×9 = 7,065 個，
   差了 33 倍。</p>
@@ -1017,7 +1017,7 @@ Estimated Total Size (MB): 0.09
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼玩 <span class="ic-badge">LIVE</span></div>
-      拖滑桿改每一層的寬度，右邊即時算出參數量。<strong>參數幾乎都集中在第一層</strong>，因為 784 這個輸入維度最大。把第一層從 256 降到 64，總參數量會掉掉四分之三，但測試準確率通常掉不了多少。這就是 CNN 想解決的浪費。
+      拖滑桿改每一層的寬度，右邊即時算出參數量。<strong>參數幾乎都集中在第一層</strong>，因為 784 這個輸入維度最大。把第一層從 256 降到 64，總參數量會減少四分之三，但測試準確率通常掉不了多少。這就是 CNN 想解決的浪費。
     </div>
     <div class="info-card">
       <div class="ic-title">參數量</div>
@@ -1085,7 +1085,7 @@ Forward/backward pass size (MB): 0.81
 Params size (MB): 0.94
 Estimated Total Size (MB): 2.55
 ===================================================================================================================</pre></div>
-  <p class="dx-note">兩層的 dropout 比例不一樣（0.4 與 0.3）：靠近輸入的層通常丟得多一點。<code>nn.Flatten()</code> 把 28×28 攤成 784 的向量，<strong>這個動作把像素的空間關係整個丟掉了</strong>，下一節的卷積網路就是為了把它找回來。</p>
+  <p class="dx-note">兩層的 dropout 比例不一樣（0.4 與 0.3）：靠近輸入的層通常丟得多一點。<code>nn.Flatten()</code> 把 28×28 攤成 784 的向量，<strong>這個動作把畫素的空間關係整個丟掉了</strong>，下一節的卷積網路就是為了把它找回來。</p>
   <span class="dx-src" data-lab-ch="10" data-lab-cells="77,83">來源：<a href="https://github.com/intro-stat-learning/ISLP_labs/blob/main/Ch10-deeplearning-lab.ipynb" target="_blank" rel="noopener"><code>Ch10-deeplearning-lab.ipynb</code></a></span>
 </div>
 
@@ -1148,7 +1148,7 @@ Estimated Total Size (MB): 2.55
   <h2>把「哪裡」的資訊丟掉一部分：卷積與池化 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.3 節</a></span></h2>
 <!-- GEN:END sec:cnn -->
 
-  <p>上一節把 28×28 攤平成 784 的那一刻，「這兩個像素相鄰」的資訊就沒了。
+  <p>上一節把 28×28 攤平成 784 的那一刻，「這兩個畫素相鄰」的資訊就沒了。
   對影像來說這很浪費：一隻貓的耳朵出現在左上角還是右下角，都應該算是耳朵。
   卷積網路把這個先驗直接寫進架構，做法有兩個。</p>
 
@@ -1165,15 +1165,15 @@ Estimated Total Size (MB): 2.55
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w11convSvg" height="420"></svg>
-      <div class="status-banner" id="w11convSvgStatus"><span class="status-icon">›</span><span class="status-text">拖列與行，直接檢查任一卷積視窗和對應輸出。</span></div>
-      <div class="controls-bar"><label class="slider-label">濾波器</label><select id="w11convSel" class="mono" onchange="w11convSetK()"><option value="vedge" selected>垂直邊緣</option><option value="hedge">水平邊緣</option><option value="blur">平均（模糊）</option><option value="sharp">銳化</option></select><label class="slider-label">列</label><input id="w11convRow" type="range" min="1" max="6" value="1" oninput="w11convSelect()"><label class="slider-label">行</label><input id="w11convCol" type="range" min="1" max="6" value="1" oninput="w11convSelect()"><label class="slider-label"><input id="w11convPool" type="checkbox" onchange="w11convSelect()"> 顯示 2×2 最大池化</label><button class="btn btn-reset" onclick="w11convReset()">重置</button></div>
+      <div class="status-banner" id="w11convSvgStatus"><span class="status-icon">›</span><span class="status-text">拖列與欄，直接檢查任一卷積視窗和對應輸出。</span></div>
+      <div class="controls-bar"><label class="slider-label">濾波器</label><select id="w11convSel" class="mono" onchange="w11convSetK()"><option value="vedge" selected>垂直邊緣</option><option value="hedge">水平邊緣</option><option value="blur">平均（模糊）</option><option value="sharp">銳化</option></select><label class="slider-label">列</label><input id="w11convRow" type="range" min="1" max="6" value="1" oninput="w11convSelect()"><label class="slider-label">欄</label><input id="w11convCol" type="range" min="1" max="6" value="1" oninput="w11convSelect()"><label class="slider-label"><input id="w11convPool" type="checkbox" onchange="w11convSelect()"> 顯示 2×2 最大池化</label><button class="btn btn-reset" onclick="w11convReset()">重置</button></div>
       <div class="viz-source"><span>自訂概念示意</span>8×8 自訂影像與標準 3×3 濾波器；只示範卷積、共享權重與池化。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼玩 <span class="ic-badge">LIVE</span></div>
-      直接拖「列／行」選擇 3×3 濾波器目前對齊的位置。左邊框線標出輸入視窗，右邊同步標出對應的特徵圖格子與內積。換濾波器看看：<strong>垂直邊緣</strong>只對左右明暗交界有反應。
+      直接拖「列／欄」選擇 3×3 濾波器目前對齊的位置。左邊框線標出輸入視窗，右邊同步標出對應的特徵圖格子與內積。換濾波器看看：<strong>垂直邊緣</strong>只對左右明暗交界有反應。
     </div>
     <div class="info-card">
       <div class="ic-title">目前這一步</div>
@@ -1189,7 +1189,7 @@ Estimated Total Size (MB): 2.55
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：池化為什麼要「丟掉資訊」？這樣有什麼好處？</summary>
-    <div class="qa-a"><p>丟掉的是位置的精度，留下的是「這個特徵存不存在」。對分類來說後者才是重點——你要判斷這是不是一隻貓，不需要知道耳朵精確在第 137 個像素。</p><p>更實際的理由是它讓後面的層看得更廣。經過一次 2×2 池化，同樣一個 3×3 濾波器在原圖上涵蓋的範圍就變成兩倍。<strong>堆疊「卷積＋池化」等於一步步擴大視野</strong>：前面的層看邊緣與紋理，後面的層看得到整隻動物。官方 lab 的 <code>CIFARModel</code> 疊了四組，32×32 因此縮成 2×2。</p></div>
+    <div class="qa-a"><p>丟掉的是位置的精度，留下的是「這個特徵存不存在」。對分類來說後者才是重點——你要判斷這是不是一隻貓，不需要知道耳朵精確在第 137 個畫素。</p><p>更實際的理由是它讓後面的層看得更廣。經過一次 2×2 池化，同樣一個 3×3 濾波器在原圖上涵蓋的範圍就變成兩倍。<strong>堆疊「卷積＋池化」等於一步步擴大視野</strong>：前面的層看邊緣與紋理，後面的層看得到整隻動物。官方 lab 的 <code>CIFARModel</code> 疊了四組，32×32 因此縮成 2×2。</p></div>
   </details>
   <details class="qa-item"><summary>Q：資料擴增算正則化嗎？</summary>
     <div class="qa-a"><p>算，而且 ISLP §10.3.4 就是這樣定位它的。把訓練影像隨機翻轉、平移、縮放之後標籤不變，等於在告訴模型「這些變化不該影響答案」。這是一個很強的約束，跟嶺迴歸用懲罰項限制係數是同一種事，都在縮小模型能選的函數空間。</p><p>差別在於它是<strong>用資料表達</strong>的約束。好處是很容易加進任何模型；壞處是你得知道哪些變化是無害的（影像可以左右翻，手寫數字的 6 跟 9 就不能上下翻）。</p></div>
@@ -1237,7 +1237,7 @@ Estimated Total Size (MB): 2.55
   <span class="line">        val = <span class="kw">self</span>.conv(x)</span>
   <span class="line">        val = torch.flatten(val, start_dim=<span class="num">1</span>)</span>
   <span class="line">        <span class="kw">return</span> <span class="kw">self</span>.output(val)</span></div>
-  <p class="dx-note"><code>BuildingBlock</code> 就是「卷積 → ReLU → 最大池化」三件套。通道數一路 3 → 32 → 64 → 128 → 256 加倍，空間尺寸則被池化一路砍半：32 → 16 → 8 → 4 → 2。<strong>解析度換通道數</strong>是 CNN 的標準節奏。</p>
+  <p class="dx-note"><code>BuildingBlock</code> 就是「卷積 → ReLU → 最大池化」三個步驟。通道數一路 3 → 32 → 64 → 128 → 256 加倍，空間尺寸則被池化一路砍半：32 → 16 → 8 → 4 → 2。<strong>解析度換通道數</strong>是 CNN 的標準節奏。</p>
   <span class="dx-src" data-lab-ch="10" data-lab-cells="110,112">來源：<a href="https://github.com/intro-stat-learning/ISLP_labs/blob/main/Ch10-deeplearning-lab.ipynb" target="_blank" rel="noopener"><code>Ch10-deeplearning-lab.ipynb</code></a></span>
 </div>
 
@@ -1311,7 +1311,7 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 卷積的參數量</div>
   <p>輸入是 32×32 的灰階影像，一個卷積層有三個 5×5 濾波器、不做邊界填補。這一層要估幾個參數？</p>
-  <div class="quiz-options" id="qConvOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每個濾波器 25 個權重加 1 個偏置，三個就是 78。&lt;strong&gt;跟輸入影像多大完全無關&lt;/strong&gt;，這正是權重共享的意思。順帶算一下輸出：不填補時每張特徵圖是 (32−5+1)² = 28×28，三張共 2,352 個隱藏單元。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(A)</span> 78 個：3 × (5×5 + 1)</div><div class="quiz-opt" data-correct="false" data-fb="這個數字計算的是&lt;strong&gt;單元&lt;/strong&gt;；&lt;strong&gt;參數&lt;/strong&gt;還需依共用權重計數。這 2,352 個單元全都由同樣的 78 個參數算出來，它們共享權重，只是對齊到影像的不同位置。這個區別是習題 4(c) 的重點。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(B)</span> 2,352 個，因為輸出有 3 × 28 × 28 個隱藏單元</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;拿掉權重共享之後&lt;/strong&gt;的答案，也就是習題 4(d) 問的那個數字（2,352 × 1,024）。卷積層之所以叫「加了限制的全連接層」，就是因為它把這兩百多萬個權重綁成只有 78 個自由參數。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(C)</span> 2,408,448 個，每個隱藏單元都要連到全部 1,024 個像素</div></div>
+  <div class="quiz-options" id="qConvOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每個濾波器 25 個權重加 1 個偏置，三個就是 78。&lt;strong&gt;跟輸入影像多大完全無關&lt;/strong&gt;，這正是權重共享的意思。順帶算一下輸出：不填補時每張特徵圖是 (32−5+1)² = 28×28，三張共 2,352 個隱藏單元。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(A)</span> 78 個：3 × (5×5 + 1)</div><div class="quiz-opt" data-correct="false" data-fb="這個數字計算的是&lt;strong&gt;單元&lt;/strong&gt;；&lt;strong&gt;參數&lt;/strong&gt;還需依共用權重計數。這 2,352 個單元全都由同樣的 78 個參數算出來，它們共享權重，只是對齊到影像的不同位置。這個區別是習題 4(c) 的重點。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(B)</span> 2,352 個，因為輸出有 3 × 28 × 28 個隱藏單元</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;拿掉權重共享之後&lt;/strong&gt;的答案，也就是習題 4(d) 問的那個數字（2,352 × 1,024）。卷積層之所以叫「加了限制的全連接層」，就是因為它把這兩百多萬個權重綁成只有 78 個自由參數。" onclick="quizCheck('qConv', this)"><span class="opt-letter">(C)</span> 2,408,448 個，每個隱藏單元都要連到全部 1,024 個畫素</div></div>
   <div class="quiz-feedback" id="qConvFeedback"></div>
 </div>
 </section>
@@ -1322,7 +1322,7 @@ Image: book_images/Sleeping_Cat.jpg
 <!-- GEN:END sec:rnn -->
 
   <p>影像的結構是空間上的，文字與股價的結構是<strong>順序上的</strong>。
-  ISLP 用 IMDB 影評的正負評分類當例子，先示範最笨的做法：<strong>詞袋</strong>。
+  ISLP 用 IMDB 影評的正負評分類當例子，先示範最簡單的做法：<strong>詞袋</strong>。
   把每篇評論表示成「字典裡每個詞出現了沒有」的長向量，
   然後就當成普通的分類問題丟給 lasso 或神經網路。</p>
 
@@ -1367,7 +1367,7 @@ Image: book_images/Sleeping_Cat.jpg
 
 <div class="info-box">
   <span class="info-label">架構與模型表現</span>
-  這裡只解釋 ISLP §10.5 的 recurrence 結構；模型表現回到下面官方 lab 的 LSTM 與詞袋實跑結果比較。公式說明架構，lab 結果提供這次配適的表現。
+  這裡只解釋 ISLP §10.5 的 recurrence 結構；模型表現回到下面官方 lab 的 LSTM 與詞袋實跑結果比較。公式說明架構，lab 結果提供這次擬合的表現。
 </div>
 
   <h3 id="dx-lstm">官方 lab §10.9.6：LSTM 與時間序列</h3>
@@ -1395,7 +1395,7 @@ Image: book_images/Sleeping_Cat.jpg
         test_loss            0.849097490310669
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 [{&#x27;test_loss&#x27;: 0.849097490310669, &#x27;test_accuracy&#x27;: 0.8400400280952454}]</pre></div>
-  <p class="dx-note"><strong>0.8400</strong>——比詞袋的 0.8450 還<strong>低一點點</strong>。ISLP 很誠實地把這個結果放上來：情感分類這個任務，詞序帶來的好處沒有想像中大。<code>nn.Embedding</code> 那一層把每個詞的整數編號映射成 32 維的稠密向量，是這類模型的標準第一步。</p>
+  <p class="dx-note"><strong>0.8400</strong>——比詞袋的 0.8450 還<strong>低一點點</strong>。ISLP 的這個結果顯示：情感分類這個任務，詞序帶來的好處沒有想像中大。<code>nn.Embedding</code> 那一層把每個詞的整數編號映射成 32 維的稠密向量，是這類模型的標準第一步。</p>
   <span class="dx-src" data-lab-ch="10" data-lab-cells="178,185">來源：<a href="https://github.com/intro-stat-learning/ISLP_labs/blob/main/Ch10-deeplearning-lab.ipynb" target="_blank" rel="noopener"><code>Ch10-deeplearning-lab.ipynb</code></a></span>
 </div>
 
@@ -1416,13 +1416,13 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 詞袋輸給 RNN 了嗎</div>
   <p>IMDB 上詞袋加兩層網路是 0.8450，LSTM 是 0.8400。下面哪一句最站得住腳？</p>
-  <div class="quiz-options" id="qSeqOptions"><div class="quiz-opt" data-correct="true" data-fb="對。情感分類很大程度上是關鍵詞偵測，&lt;em&gt;terrible&lt;/em&gt;、&lt;em&gt;masterpiece&lt;/em&gt; 出現與否就決定大半。ISLP 的立場一貫：&lt;strong&gt;先試簡單的，複雜模型要證明自己值得&lt;/strong&gt;。順帶一提，0.845 與 0.840 這種差距在 25,000 筆測試集上也接近雜訊。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(A)</span> 這個任務的訊號多半在「有沒有出現某些詞」，詞序能加的資訊有限，所以兩者打平不奇怪</div><div class="quiz-opt" data-correct="false" data-fb="一個任務與一次訓練不足以判斷整個架構的適用性。RNN 與其後繼者在機器翻譯、語音辨識上的優勢很清楚：那些任務的輸出本身就是序列，詞序是完成這些任務的必要資訊。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(B)</span> LSTM 比較差，代表遞迴架構不適合處理文字</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個推測，而且它把問題想反了：訓練更久通常先過度配適。要主張 LSTM 有潛力，該做的是畫學習曲線看驗證誤差還有沒有在降，再根據驗證結果判斷是否繼續訓練。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(C)</span> 因為 LSTM 只訓練了很少的 epoch，訓練久一點就會贏</div></div>
+  <div class="quiz-options" id="qSeqOptions"><div class="quiz-opt" data-correct="true" data-fb="對。情感分類很大程度上是關鍵詞偵測，&lt;em&gt;terrible&lt;/em&gt;、&lt;em&gt;masterpiece&lt;/em&gt; 出現與否就決定大半。ISLP 的立場一貫：&lt;strong&gt;先試簡單的，複雜模型要證明自己值得&lt;/strong&gt;。順帶一提，0.845 與 0.840 這種差距在 25,000 筆測試集上也接近雜訊。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(A)</span> 這個任務的訊號多半在「有沒有出現某些詞」，詞序能加的資訊有限，所以兩者打平不奇怪</div><div class="quiz-opt" data-correct="false" data-fb="一個任務與一次訓練不足以判斷整個架構的適用性。RNN 與其後繼者在機器翻譯、語音辨識上的優勢很清楚：那些任務的輸出本身就是序列，詞序是完成這些任務的必要資訊。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(B)</span> LSTM 比較差，代表遞迴架構不適合處理文字</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個推測，而且它把問題想反了：訓練更久通常先過度擬合。要主張 LSTM 有潛力，該做的是畫學習曲線看驗證誤差還有沒有在降，再根據驗證結果判斷是否繼續訓練。" onclick="quizCheck('qSeq', this)"><span class="opt-letter">(C)</span> 因為 LSTM 只訓練了很少的 epoch，訓練久一點就會贏</div></div>
   <div class="quiz-feedback" id="qSeqFeedback"></div>
 </div>
 </section>
 <section id="fitting">
 <!-- GEN:BEGIN sec:fitting -->
-  <div class="section-number">PART 05 · 怎麼配適</div>
+  <div class="section-number">PART 05 · 怎麼擬合</div>
   <h2>反向傳播、SGD、dropout：神經網路的訓練流程 <span class="sec-badge"><a href="#w11-source-islp">教科書 · 第 10.7 節</a></span><span class="sec-badge"><a href="#w11-source-esl">進階參考 · 第 11.4 節 · 進階</a></span></h2>
 <!-- GEN:END sec:fitting -->
 
@@ -1432,9 +1432,9 @@ Image: book_images/Sleeping_Cat.jpg
     \left(y_i - f_\theta(x_i)\right)^2 \tag{10.22}$$
 
   <p>問題在於這個 R(θ) <strong>不是凸函數</strong>。線性迴歸有閉式解、
-  邏輯斯迴歸的對數似然是凹的所以有唯一最大值，神經網路兩個都沒有：
+  邏輯斯迴歸的對數概似是凹的所以有唯一最大值，神經網路兩個都沒有：
   它有很多局部極小，而我們只能用梯度下降慢慢滑下去、
-  以找到足夠好的解為目標，保留全域最優性尚未確定的限制。</p>
+  以找到足夠好的解為目標，但無法保證找到全域最佳解。</p>
 
 <div class="viz-layout" data-provenance="book-redraw">
   <div>
@@ -1482,8 +1482,8 @@ Image: book_images/Sleeping_Cat.jpg
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
-  <details class="qa-item"><summary>Q：非凸為什麼還敢用？局部極小不會害死我們嗎？</summary>
-    <div class="qa-a"><p>會。以下幾個因素有助於找到可用的解。</p><p>第一，實務上在高維空間裡，會嚴重影響結果的局部極小相對較少：更常見的是鞍點，而 SGD 的雜訊很容易把你推離鞍點。第二，學習的目標是降低<strong>測試</strong>誤差；訓練誤差的全域最小值本身不足以衡量泛化；訓練誤差的全域最小很可能就是嚴重過度配適的那個點。</p><p>第三，這是誠實的部分：<strong>它就是會隨機。</strong>同一份資料換一個隨機種子，跑出來的網路不一樣、測試誤差也不一樣。官方 lab 每次訓練前都呼叫 <code>seed_everything</code>，並在 <code>Trainer</code> 裡設 <code>deterministic=True</code>，就是為了讓結果可重現。</p></div>
+  <details class="qa-item"><summary>Q：非凸最佳化會受局部極小影響，為什麼仍可用來訓練模型？</summary>
+    <div class="qa-a"><p>局部極小會影響結果，但仍有幾個因素有助於找到可用的解。</p><p>第一，實務上在高維空間裡，會嚴重影響結果的局部極小相對較少：更常見的是鞍點，而 SGD 的雜訊很容易把你推離鞍點。第二，學習的目標是降低<strong>測試</strong>誤差；訓練誤差的全域最小值本身不足以衡量泛化；訓練誤差的全域最小很可能就是嚴重過度擬合的那個點。</p><p>此外，<strong>訓練結果會受隨機性影響。</strong>同一份資料換一個隨機種子，跑出來的網路不一樣、測試誤差也不一樣。官方 lab 每次訓練前都呼叫 <code>seed_everything</code>，並在 <code>Trainer</code> 裡設 <code>deterministic=True</code>，就是為了讓結果可重現。</p></div>
   </details>
   <details class="qa-item"><summary>Q：dropout 為什麼要「按比例放大」？</summary>
     <div class="qa-a"><p>因為訓練與預測時的行為必須對得起來。訓練時如果丟掉 40% 的單元，下一層收到的加總平均就只剩 60%；預測時所有單元都在，加總會突然變大 1/0.6 倍，模型等於面對一個沒見過的輸入分布。</p><p>解法是訓練時把留下來的值除以 0.6，讓期望值維持不變，預測時就什麼都不用做。這叫 inverted dropout，也是 <code>nn.Dropout</code> 的做法。順帶一提，這就是為什麼 <code>model.eval()</code> 很重要——它會關掉 dropout；忘了呼叫的話預測會帶著隨機性。</p></div>
@@ -1493,7 +1493,7 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · minibatch 的大小</div>
   <p>把批次大小從 32 改成整個訓練集（也就是每一步都用全部資料算梯度），會發生什麼？</p>
-  <div class="quiz-options" id="qSgdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。梯度更準不等於學得更好：&lt;strong&gt;參數更新的次數大幅減少&lt;/strong&gt;，同樣的 epoch 數下走的路短很多。而且 SGD 的取樣雜訊是有用的：它幫忙跳出不好的局部極小，也讓解偏向比較平坦、泛化比較好的區域。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(A)</span> 每一步的梯度更準，但一個 epoch 只更新一次參數，而且失去了雜訊帶來的正則化</div><div class="quiz-opt" data-correct="false" data-fb="期望值確實一樣，但最佳化還受到梯度變動的影響。&lt;strong&gt;變異數也是演算法行為的一部分&lt;/strong&gt;——雜訊改變了它會走到哪裡去。而且更新次數差了 n/32 倍，這一點跟期望值無關。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(B)</span> 完全一樣，因為梯度的期望值不變</div><div class="quiz-opt" data-correct="false" data-fb="算一次全資料的梯度本來就比算一個批次貴 n/32 倍，總計算量沒有變少。而且大批次沒辦法塞進記憶體是很常見的實際限制，minibatch 一開始就是為了這個而發明的。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(C)</span> 會更快，因為少了每個批次的額外開銷</div></div>
+  <div class="quiz-options" id="qSgdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。梯度更準不等於學得更好：&lt;strong&gt;參數更新的次數大幅減少&lt;/strong&gt;，同樣的 epoch 數下走的路短很多。而且 SGD 的取樣雜訊是有用的：它幫忙跳出不好的局部極小，也讓解偏向比較平坦、泛化比較好的區域。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(A)</span> 每一步的梯度更準，但一個 epoch 只更新一次參數，而且失去了雜訊帶來的正則化</div><div class="quiz-opt" data-correct="false" data-fb="期望值確實一樣，但最佳化還受到梯度變動的影響。&lt;strong&gt;變異數也是演算法行為的一部分&lt;/strong&gt;——雜訊改變了它會走到哪裡去。而且更新次數差了 n/32 倍，這一點跟期望值無關。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(B)</span> 完全一樣，因為梯度的期望值不變</div><div class="quiz-opt" data-correct="false" data-fb="算一次全資料的梯度本來就比算一個批次貴 n/32 倍，總計算量沒有變少。而且大批次沒辦法塞進記憶體是很常見的實際限制，minibatch 一開始就是為了這個而發明的。" onclick="quizCheck('qSgd', this)"><span class="opt-letter">(C)</span> 會更快，因為少了每個批次的額外成本</div></div>
   <div class="quiz-feedback" id="qSgdFeedback"></div>
 </div>
 </section>
@@ -1508,7 +1508,7 @@ Image: book_images/Sleeping_Cat.jpg
 
   <p>設定很簡單，用的還是第 7 章的自然樣條，跟神經網路無關：
   n = 20 筆資料來自 Y = sin(X) + ε，X 均勻分布在 [−5, 5]、ε 的標準差是 0.3。
-  然後配自由度 d 的自然樣條，讓 d 從 2 一路加到 100。</p>
+  然後擬合自由度 d 的自然樣條，讓 d 從 2 一路加到 100。</p>
 
   <p>d = 20 時自由度等於樣本數，樣條剛好穿過每一個點，訓練誤差變成 0：
   這就是<strong>內插門檻</strong>。d 再往上，最小平方解不再唯一（有無限多組係數都能穿過），
@@ -1521,14 +1521,14 @@ Image: book_images/Sleeping_Cat.jpg
         <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：測試誤差在 d = n = 20 附近衝到最高，然後隨著自由度繼續增加又降下來，這就是雙下降。訓練誤差則在 d = 20 之後一直是 0。</div></div>
       </div>
       <div class="status-banner" id="w11ddStatus"><span class="status-icon">›</span><span class="status-text">紅線是測試誤差、藍線是訓練誤差。注意 d = 20 那根尖峰。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" onclick="w11ddShow(&quot;err&quot;)">誤差曲線</button><button class="btn btn-toggle" onclick="w11ddShow(&quot;fit&quot;)">看配適曲線</button><label class="slider-label">面板 d</label><select id="w11ddSel" class="mono" onchange="w11ddShow(&quot;fit&quot;)"><option value="8">d = 8</option><option value="20" selected>d = 20</option><option value="42">d = 42</option><option value="80">d = 80</option></select></div>
+      <div class="controls-bar"><button class="btn btn-toggle" onclick="w11ddShow(&quot;err&quot;)">誤差曲線</button><button class="btn btn-toggle" onclick="w11ddShow(&quot;fit&quot;)">看擬合曲線</button><label class="slider-label">面板 d</label><select id="w11ddSel" class="mono" onchange="w11ddShow(&quot;fit&quot;)"><option value="8">d = 8</option><option value="20" selected>d = 20</option><option value="42">d = 42</option><option value="80">d = 80</option></select></div>
       <div class="viz-source"><span>固定種子模擬</span>依 ISLP 圖 10.20／10.21 的設定以固定種子重新模擬；數值為本站計算。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 10.20／10.21</span></div>
-      橫軸是自然樣條的自由度 d，縱軸是誤差（對數刻度）。<strong>藍線訓練誤差</strong>在 d = 20 之後貼著 0；<strong>紅線測試誤差</strong>先 U 形、在 d = 20 衝高、然後第二次下降。按「看配適曲線」切換到課本圖 10.21 的四個面板。
+      橫軸是自然樣條的自由度 d，縱軸是誤差（對數刻度）。<strong>藍線訓練誤差</strong>在 d = 20 之後貼著 0；<strong>紅線測試誤差</strong>先 U 形、在 d = 20 衝高、然後第二次下降。按「看擬合曲線」切換到課本圖 10.21 的四個面板。
     </div>
     <div class="info-card">
       <div class="ic-title">幾個位置</div>
@@ -1536,7 +1536,7 @@ Image: book_images/Sleeping_Cat.jpg
     </div>
     <div class="info-card">
       <div class="ic-title">兩個要注意的地方</div>
-      d = 20 只有一種方式穿過 20 個點，而那一種很極端；d = 42 有無限多種，挑出的平滑解有較小的起伏。切到配適曲線會看到 Σβ² <strong>在 d = 20 最大、之後反而變小</strong>。<br>另外，訓練誤差在 d ≥ 20 之後<strong>真的是 0</strong>（10⁻²⁸ 量級），但對數軸畫不出 0，所以藍線被壓在 10⁻⁵ 的底線上。
+      d = 20 只有一種方式穿過 20 個點，而那一種很極端；d = 42 有無限多種，挑出的平滑解有較小的起伏。切到擬合曲線會看到 Σβ² <strong>在 d = 20 最大、之後反而變小</strong>。<br>另外，訓練誤差在 d ≥ 20 之後<strong>真的是 0</strong>（10⁻²⁸ 量級），但對數軸畫不出 0，所以藍線被壓在 10⁻⁵ 的底線上。
     </div>
   </div>
 </div>
@@ -1548,7 +1548,7 @@ Image: book_images/Sleeping_Cat.jpg
   變異其實比 d = 20 的樣條<strong>小</strong>，它只是用比較多的基底去表達一個比較平滑的函數。<br>
   另外兩件要記住的事：<strong>這本書裡大多數方法不會出現雙下降</strong>
   （正則化方法通常不內插資料）；而且在這個例子裡，
-  如果改用嶺迴歸配樣條並好好選懲罰項，測試誤差還會更低。
+  如果改用嶺迴歸擬合樣條並好好選懲罰項，測試誤差還會更低。
   <strong>判斷模型大小時，仍需比較正則化與測試誤差。</strong>
 </div>
 
@@ -1566,7 +1566,7 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 雙下降在說什麼</div>
   <p>下面哪一句符合 ISLP §10.8 的說明？</p>
-  <div class="quiz-options" id="qDdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。參數變多之後，&lt;strong&gt;有多個內插解可供選擇&lt;/strong&gt;，在這個樣條基底與資料設定下，最小範數選解呈現較平滑的曲線；滿秩的 d = n 系統只有唯一內插解。最小係數範數依賴基底，不是所有函數空間都保證最小曲率。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(A)</span> 測試誤差的第二次下降，是因為 d > n 時我們挑了最小範數解，而它比 d = n 的唯一內插解平滑得多</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 明確反駁了這個讀法。取捨仍然成立，只是橫軸那個「基底個數」沒有正確衡量彈性。而且課本自己說了，同一個例子改用嶺迴歸會得到&lt;strong&gt;更低&lt;/strong&gt;的測試誤差。增加模型大小仍有配適與泛化的取捨。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(B)</span> 偏差–變異取捨在深度學習裡不成立，模型愈大測試誤差就愈低</div><div class="quiz-opt" data-correct="false" data-fb="順序反了。d = 20 就已經把訓練誤差壓到 0，而那正是測試誤差最糟的地方。零訓練誤差是必要條件；要出現這裡的第二次下降，仍需選到夠平滑的內插解。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(C)</span> 只要把訓練誤差壓到 0，測試誤差就會開始下降</div></div>
+  <div class="quiz-options" id="qDdOptions"><div class="quiz-opt" data-correct="true" data-fb="對。參數變多之後，&lt;strong&gt;有多個內插解可供選擇&lt;/strong&gt;，在這個樣條基底與資料設定下，最小範數選解呈現較平滑的曲線；滿秩的 d = n 系統只有唯一內插解。最小係數範數依賴基底，不是所有函數空間都保證最小曲率。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(A)</span> 測試誤差的第二次下降，是因為 d > n 時我們挑了最小範數解，而它比 d = n 的唯一內插解平滑得多</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 明確反駁了這個讀法。取捨仍然成立，只是橫軸那個「基底個數」沒有正確衡量彈性。而且課本自己說了，同一個例子改用嶺迴歸會得到&lt;strong&gt;更低&lt;/strong&gt;的測試誤差。增加模型大小仍有擬合與泛化的取捨。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(B)</span> 偏差–變異取捨在深度學習裡不成立，模型愈大測試誤差就愈低</div><div class="quiz-opt" data-correct="false" data-fb="順序反了。d = 20 就已經把訓練誤差壓到 0，而那正是測試誤差最糟的地方。零訓練誤差是必要條件；要出現這裡的第二次下降，仍需選到夠平滑的內插解。" onclick="quizCheck('qDd', this)"><span class="opt-letter">(C)</span> 只要把訓練誤差壓到 0，測試誤差就會開始下降</div></div>
   <div class="quiz-feedback" id="qDdFeedback"></div>
 </div>
 </section>
@@ -1596,7 +1596,7 @@ Image: book_images/Sleeping_Cat.jpg
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 10.10 第 4 題（b）（d）</div>
   <p>輸入是 32×32 灰階影像，一個卷積層有三個 5×5 濾波器、不做邊界填補。「這一層的參數量」與「拿掉權重共享後的權重數」分別是多少？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。共享時是 3 × (5×5 + 1) = 78。拿掉共享的話，輸出有 3 × 28 × 28 = 2,352 個隱藏單元（32 − 5 + 1 = 28），每個都要連到全部 32 × 32 = 1,024 個像素，得到 2,352 × 1,024 = &lt;strong&gt;2,408,448&lt;/strong&gt;。差了三萬倍。卷積層就是一個被綁得很緊的全連接層。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 78 個與 2,408,448 個</div><div class="quiz-opt" data-correct="false" data-fb="前半對、後半把題目讀反了。(d) 問的正是「&lt;strong&gt;如果沒有&lt;/strong&gt;那些限制」會有幾個權重，也就是把每條連線都放開來各自估。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 78 個與 78 個，因為權重共享不改變參數量</div><div class="quiz-opt" data-correct="false" data-fb="75 是漏了偏置（3 × 25）。2,352 則是隱藏&lt;strong&gt;單元&lt;/strong&gt;的個數，這個數字計算單元，每個單元還要各自連到 1,024 個像素。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 75 個與 2,352 個</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。共享時是 3 × (5×5 + 1) = 78。拿掉共享的話，輸出有 3 × 28 × 28 = 2,352 個隱藏單元（32 − 5 + 1 = 28），每個都要連到全部 32 × 32 = 1,024 個畫素，得到 2,352 × 1,024 = &lt;strong&gt;2,408,448&lt;/strong&gt;。差了三萬倍。卷積層就是一個被綁得很緊的全連接層。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 78 個與 2,408,448 個</div><div class="quiz-opt" data-correct="false" data-fb="前半對、後半把題目讀反了。(d) 問的正是「&lt;strong&gt;如果沒有&lt;/strong&gt;那些限制」會有幾個權重，也就是把每條連線都放開來各自估。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 78 個與 78 個，因為權重共享不改變參數量</div><div class="quiz-opt" data-correct="false" data-fb="75 是漏了偏置（3 × 25）。2,352 則是隱藏&lt;strong&gt;單元&lt;/strong&gt;的個數，這個數字計算單元，每個單元還要各自連到 1,024 個畫素。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 75 個與 2,352 個</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -1643,7 +1643,7 @@ Image: book_images/Sleeping_Cat.jpg
   <span class="info-label">重點回顧</span>
   <strong>1. 神經網路是線性模型套非線性再組合一次。</strong>
   把 g 拿掉就退回線性迴歸；非線性只能從 g 進來，加總本身不會產生它。<br>
-  <strong>2. 權重共享是 CNN 與 RNN 的共同心臟。</strong>
+  <strong>2. CNN 與 RNN 都使用權重共享。</strong>
   一個在空間上共享、一個在時間上共享，兩者都透過架構指定權重共享的方式。<br>
   <strong>3. 雙下降需要連同解的選擇方式一起看。</strong>
   第二次下降與最小範數解比較平滑有關；增加參數後如何選解也需交代；
@@ -2416,7 +2416,7 @@ function w11fwdDraw() {
   let msg = '目前 g 是 ' + w11actName(kind) + '。輸出 f(X) = ' + HC.fmt(out, 3) + '。';
   if (kind === 'id') {
     msg += ' <b>g 是恆等函數時，整個網路其實只是 X₁–X₄ 的一個線性函數</b>'
-      + '——隱藏層完全沒有加到任何東西。';
+      + '——隱藏層沒有增加非線性。';
   } else if (dead > 0) {
     msg += ' <b>有 ' + dead + ' 個單元死掉了</b>（A = 0）：它的加權和是負的，'
       + 'ReLU 把它壓成 0，導數也是 0，所以那個單元在訓練時學不動。';
@@ -2643,7 +2643,7 @@ function w11convApply(f) {
     + '　（3×3，掃過整張圖都用同一組權重）', { cls: 'axtitle' }, gl);
 
   $('w11convK').textContent = w11convKernels[w11convKey].t;
-  $('w11convPos').textContent = '第 ' + (rr + 1) + ' 列、第 ' + (cc + 1) + ' 行';
+  $('w11convPos').textContent = '第 ' + (rr + 1) + ' 列、第 ' + (cc + 1) + ' 欄';
   $('w11convVal').textContent = HC.fmt(fm[rr][cc], 3);
   $('w11convSize').textContent = f.pool ? '6×6 → 池化後 3×3' : '(8−3+1)² = 6×6';
   $('w11convNp').textContent = '3×3 + 1 = 10 個';
@@ -2656,7 +2656,7 @@ function w11convApply(f) {
       + '整層從頭到尾只有 10 個參數，跟影像多大無關。');
   } else {
     setStatus('w11convSvgStatus',
-      '濾波器對齊第 ' + (rr + 1) + ' 列第 ' + (cc + 1) + ' 行，內積是 '
+      '濾波器對齊第 ' + (rr + 1) + ' 列第 ' + (cc + 1) + ' 欄，內積是 '
       + HC.fmt(fm[rr][cc], 3) + '。'
       + '<b>每一格都用同一組 9 個權重</b>，換位置不換權重，這就是權重共享。');
   }
@@ -2810,7 +2810,7 @@ function w11ddShow(mode) {
         { label: '資料生成函數 f(X) = sin(X)', data: F.grid.map((x, i) => ({ x: x, y: F.truth[i] })),
           borderColor: HC.tok.truef, backgroundColor: HC.tok.truef, borderWidth: 2.4,
           pointRadius: 0, borderDash: [7, 4], fill: false },
-        { label: '配適的樣條（d = ' + d + '）',
+        { label: '擬合的樣條（d = ' + d + '）',
           data: F.grid.map((x, i) => ({ x: x, y: fit.y[i] })),
           borderColor: HC.tok.accent3, backgroundColor: HC.tok.accent3, borderWidth: 3,
           pointRadius: 0, fill: false },
@@ -2830,7 +2830,7 @@ function w11ddShow(mode) {
         ? '——同樣穿過每一個點，但這是無限多種穿法裡最平滑的那一種'
         : '——自由度不夠，它沒有穿過每一個點');
     setStatus('w11ddStatus',
-      'd = ' + d + ' 的配適曲線，係數平方和 Σβ² = ' + fit.l2 + wild + '。'
+      'd = ' + d + ' 的擬合曲線，係數平方和 Σβ² = ' + fit.l2 + wild + '。'
       + '切到 d = 20 再切到 d = 42，比較那條橘線的起伏。');
   }
 }
@@ -2866,7 +2866,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"神經網路（Neural Network）","back":"把輸入先做 K 個線性組合、各自過一個非線性函數 g，再把結果線性組合成輸出的模型。式 10.1：f(X) = β₀ + Σₖ βₖ g(wₖ₀ + Σⱼ wₖⱼXⱼ)。把 g 拿掉就退回線性迴歸。"},{"front":"隱藏層（Hidden Layer）","back":"輸入與輸出之間那一排單元。隱藏單元表示模型根據輸入算出的中間量 Aₖ。層數與每層寬度由建模者選擇。"},{"front":"隱藏單元（Hidden Unit）","back":"隱藏層裡的一個節點，值 Aₖ = g(wₖ₀ + Σⱼ wₖⱼXⱼ)。ISLP 稱它為 activation。所有 Aₖ 共用同一個 g，差別只在權重 wₖⱼ。"},{"front":"激發函數（Activation Function）","back":"隱藏單元上的非線性函數 g(z)。非線性是整個模型的關鍵：g 若是恆等函數，兩層線性組合疊起來還是線性組合，模型就退化成線性迴歸。"},{"front":"修正線性單元（ReLU）","back":"g(z) = max(0, z)。負的壓成 0、正的原樣通過。現代網路的預設選擇：算得快、導數取 0 或 1，梯度不會像 sigmoid 那樣在兩端消失。"},{"front":"S 型函數（Sigmoid）","back":"g(z) = eᶻ/(1+eᶻ)，把任意實數壓進 (0, 1)。早期網路的標準激發函數，也正是邏輯斯迴歸用的那個函數。缺點是 |z| 大時曲線幾乎平掉，梯度趨近 0、學不動。"},{"front":"偏置（Bias）","back":"式 10.2 裡的截距項 wₖ₀ 與 β₀。注意這個「bias」跟偏差–變異取捨的偏差沒有關係，ISLP 特別在註腳提醒不要混淆——是機器學習圈自己的用法。"},{"front":"前向傳播（Forward Propagation）","back":"給定權重，從輸入層依序算到輸出層的過程：每一層做一次「線性組合再過 g」。預測就只是跑一次前向傳播，成本很低——貴的是訓練。"},{"front":"Softmax 函數（Softmax）","back":"把 M 個實數 Zₘ 轉成加總為 1 的機率：fₘ(X) = e^Zₘ / Σₗ e^Zₗ。多類別分類的輸出層用它。它是過度參數化的——每個 Zₘ 同加一個常數 c，機率完全不變（習題 2a）。"},{"front":"交叉熵（Cross-Entropy）","back":"分類問題的損失函數，即負的多項式對數似然：−Σᵢ Σₘ yᵢₘ log fₘ(xᵢ)。M = 2 時它就退回邏輯斯迴歸的負對數似然（習題 3）。量化反應則改用平方誤差。"},{"front":"卷積神經網路（CNN）","back":"為影像設計的網路：交替堆疊卷積層與池化層，最後接幾層全連接。它把「同一個特徵在畫面哪裡都算數」這個先驗寫進了架構，所以參數遠少於同等能力的全連接網路。"},{"front":"卷積層（Convolution Layer）","back":"用一組小濾波器掃過整張影像，每個位置算一次內積。關鍵是權重共享：同一個濾波器在所有位置用同一組權重，等於一個「加了限制」的全連接層（習題 4c）。"},{"front":"濾波器（Filter）","back":"卷積層裡的小權重矩陣（例如 5×5）。它偵測的是一種局部樣式——邊緣、色塊、紋理。濾波器的值由訓練資料學得。"},{"front":"特徵圖（Feature Map）","back":"一個濾波器掃完整張影像後產生的輸出矩陣，記錄「這個樣式在每個位置出現得多強」。一個卷積層有幾個濾波器，就產生幾張特徵圖。"},{"front":"池化（Pooling）","back":"把相鄰的一小塊（例如 2×2）濃縮成一個值，最大池化取其中最大者。它降低解析度、也讓結果對小幅平移不敏感——刻意丟掉一部分「在哪裡」的資訊，換取「有沒有」的穩健。"},{"front":"資料擴增（Data Augmentation）","back":"訓練時把每張影像隨機翻轉、平移、縮放、變形，當成新樣本餵進去。標籤不變，所以等於免費放大訓練集。ISLP §10.3.4 把它看成一種正則化：它在告訴模型哪些變化不該影響答案。"},{"front":"預訓練模型（Pretrained Model）","back":"別人在大資料集（如 ImageNet）上訓練好的網路，例如 ResNet50。可以直接拿來預測，也可以只換掉最後一層再用自己的小資料微調——資料不多時這幾乎一定比從頭訓練好。"},{"front":"詞袋（Bag-of-Words）","back":"把一篇文件表示成「字典裡每個詞有沒有出現（或出現幾次）」的長向量。它完全丟掉詞序，所以「不好看」跟「好看不」是同一個向量。§10.4 的 IMDB 例子先用它，§10.5 才用 RNN 把順序找回來。"},{"front":"遞迴神經網路（RNN）","back":"處理序列的網路：依序讀入 X₁, X₂, …，每一步用同一組權重更新一個隱藏狀態 Aℓ，讓它攜帶前面看過的資訊。權重在時間上共享，就像 CNN 在空間上共享。"},{"front":"長短期記憶（LSTM）","back":"RNN 的一種，除了短期的隱藏狀態之外另外維護一條長期記憶通道，用閘門決定要記住還是遺忘。它讓「很前面出現過的詞」也能影響現在的輸出，緩解了樸素 RNN 的梯度消失。"},{"front":"反向傳播（Backpropagation）","back":"用連鎖律由輸出往回逐層算梯度的方法。它負責有效率地計算梯度，重複利用前一層已經算好的中間結果，成本跟一次前向傳播同一個量級。"},{"front":"隨機梯度下降（SGD）","back":"每一步抽一小批（minibatch）樣本來估計全資料的梯度。除了便宜之外，取樣帶來的雜訊本身有正則化效果，也幫忙跳出不好的局部極小。深度學習實務上幾乎只用它。"},{"front":"週期（Epoch）","back":"把訓練資料完整走過一遍。一個 epoch 包含 n/batch_size 次參數更新。「訓練 30 個 epoch」是說整份資料被看了 30 次。"},{"front":"早停（Early Stopping）","back":"訓練時監看驗證指標，在指標不再改善時停止並保留選定 epoch 的模型。只記錄驗證曲線不等於有早停；官方 Hitters lab 的 ErrorTracker 只負責記錄，Trainer 仍跑滿 max_epochs=50。"},{"front":"丟棄法（Dropout）","back":"訓練時隨機把一部分單元的值設為 0，剩下的按比例放大。每一批看到的都是不同的子網路，所以沒有單元能依賴特定同伴。ISLP 說它的精神接近隨機森林——都是靠隨機性打散相關性。"},{"front":"雙下降（Double Descent）","back":"測試誤差在內插門檻之前呈 U 形、在門檻附近衝高，然後隨模型再變大又降下來的現象。它沒有推翻偏差–變異取捨：x 軸畫的是基底函數個數，而那並沒有正確反映內插模型實際的彈性。"},{"front":"內插門檻（Interpolation Threshold）","back":"參數個數剛好夠把訓練資料完全穿過去的那一點（例中 d = n = 20）。訓練誤差在此降到 0，測試誤差在此最糟——因為用剛好 20 個基底穿過 20 個點的方法只有一種，而那一種很極端。"},{"front":"最小範數解（Minimum-Norm Solution）","back":"最小平方解不唯一時，取係數平方和 Σβ̂ⱼ² 最小者。它依賴基底，未必是曲率最小的解。本站樣條模擬中，增加基底後此選解較平滑；一般神經網路的 SGD 不保證得到最小範數解。"}];
+const FLASHCARDS = [{"front":"神經網路（Neural Network）","back":"把輸入先做 K 個線性組合、各自過一個非線性函數 g，再把結果線性組合成輸出的模型。式 10.1：f(X) = β₀ + Σₖ βₖ g(wₖ₀ + Σⱼ wₖⱼXⱼ)。把 g 拿掉就退回線性迴歸。"},{"front":"隱藏層（Hidden Layer）","back":"輸入與輸出之間那一排單元。隱藏單元表示模型根據輸入算出的中間量 Aₖ。層數與每層寬度由建模者選擇。"},{"front":"隱藏單元（Hidden Unit）","back":"隱藏層裡的一個節點，值 Aₖ = g(wₖ₀ + Σⱼ wₖⱼXⱼ)。ISLP 稱它為 activation。所有 Aₖ 共用同一個 g，差別只在權重 wₖⱼ。"},{"front":"激發函數（Activation Function）","back":"隱藏單元上的非線性函數 g(z)。非線性是整個模型的關鍵：g 若是恆等函數，兩層線性組合疊起來還是線性組合，模型就退化成線性迴歸。"},{"front":"修正線性單元（ReLU）","back":"g(z) = max(0, z)。負的壓成 0、正的原樣通過。現代網路的預設選擇：算得快、導數取 0 或 1，梯度不會像 sigmoid 那樣在兩端消失。"},{"front":"S 型函數（Sigmoid）","back":"g(z) = eᶻ/(1+eᶻ)，把任意實數壓進 (0, 1)。早期網路的標準激發函數，也正是邏輯斯迴歸用的那個函數。缺點是 |z| 大時曲線幾乎平掉，梯度趨近 0、學不動。"},{"front":"偏置（Bias）","back":"式 10.2 裡的截距項 wₖ₀ 與 β₀。注意這個「bias」跟偏差–變異取捨的偏差沒有關係，ISLP 特別在註腳提醒不要混淆——是機器學習圈自己的用法。"},{"front":"前向傳播（Forward Propagation）","back":"給定權重，從輸入層依序算到輸出層的過程：每一層做一次「線性組合再過 g」。預測就只是跑一次前向傳播，成本很低——貴的是訓練。"},{"front":"Softmax 函數（Softmax）","back":"把 M 個實數 Zₘ 轉成加總為 1 的機率：fₘ(X) = e^Zₘ / Σₗ e^Zₗ。多類別分類的輸出層用它。它是過度參數化的——每個 Zₘ 同加一個常數 c，機率完全不變（習題 2a）。"},{"front":"交叉熵（Cross-Entropy）","back":"分類問題的損失函數，即負的多項式對數概似：−Σᵢ Σₘ yᵢₘ log fₘ(xᵢ)。M = 2 時它就退回邏輯斯迴歸的負對數概似（習題 3）。量化反應則改用平方誤差。"},{"front":"卷積神經網路（CNN）","back":"為影像設計的網路：交替堆疊卷積層與池化層，最後接幾層全連接。它把「同一個特徵在畫面哪裡都算數」這個先驗寫進了架構，所以參數遠少於同等能力的全連接網路。"},{"front":"卷積層（Convolution Layer）","back":"用一組小濾波器掃過整張影像，每個位置算一次內積。關鍵是權重共享：同一個濾波器在所有位置用同一組權重，等於一個「加了限制」的全連接層（習題 4c）。"},{"front":"濾波器（Filter）","back":"卷積層裡的小權重矩陣（例如 5×5）。它偵測的是一種局部樣式——邊緣、色塊、紋理。濾波器的值由訓練資料學得。"},{"front":"特徵圖（Feature Map）","back":"一個濾波器掃完整張影像後產生的輸出矩陣，記錄「這個樣式在每個位置出現得多強」。一個卷積層有幾個濾波器，就產生幾張特徵圖。"},{"front":"池化（Pooling）","back":"把相鄰的一小塊（例如 2×2）濃縮成一個值，最大池化取其中最大者。它降低解析度、也讓結果對小幅平移不敏感——刻意丟掉一部分「在哪裡」的資訊，換取「有沒有」的穩健。"},{"front":"資料擴增（Data Augmentation）","back":"訓練時把每張影像隨機翻轉、平移、縮放、變形，當成新樣本餵進去。標籤不變，所以等於免費放大訓練集。ISLP §10.3.4 把它看成一種正則化：它在告訴模型哪些變化不該影響答案。"},{"front":"預訓練模型（Pretrained Model）","back":"別人在大資料集（如 ImageNet）上訓練好的網路，例如 ResNet50。可以直接拿來預測，也可以只換掉最後一層再用自己的小資料微調——資料不多時這幾乎一定比從頭訓練好。"},{"front":"詞袋（Bag-of-Words）","back":"把一篇文件表示成「字典裡每個詞有沒有出現（或出現幾次）」的長向量。它完全丟掉詞序，所以「不好看」跟「好看不」是同一個向量。§10.4 的 IMDB 例子先用它，§10.5 才用 RNN 把順序找回來。"},{"front":"遞迴神經網路（RNN）","back":"處理序列的網路：依序讀入 X₁, X₂, …，每一步用同一組權重更新一個隱藏狀態 Aℓ，讓它攜帶前面看過的資訊。權重在時間上共享，就像 CNN 在空間上共享。"},{"front":"長短期記憶（LSTM）","back":"RNN 的一種，除了短期的隱藏狀態之外另外維護一條長期記憶通道，用閘門決定要記住還是遺忘。它讓「很前面出現過的詞」也能影響現在的輸出，緩解了樸素 RNN 的梯度消失。"},{"front":"反向傳播（Backpropagation）","back":"用連鎖律由輸出往回逐層算梯度的方法。它負責有效率地計算梯度，重複利用前一層已經算好的中間結果，成本跟一次前向傳播同一個量級。"},{"front":"隨機梯度下降（SGD）","back":"每一步抽一小批（minibatch）樣本來估計全資料的梯度。除了便宜之外，取樣帶來的雜訊本身有正則化效果，也幫忙跳出不好的局部極小。深度學習實務上幾乎只用它。"},{"front":"週期（Epoch）","back":"把訓練資料完整走過一遍。一個 epoch 包含 n/batch_size 次參數更新。「訓練 30 個 epoch」是說整份資料被看了 30 次。"},{"front":"早停（Early Stopping）","back":"訓練時監看驗證指標，在指標不再改善時停止並保留選定 epoch 的模型。只記錄驗證曲線不等於有早停；官方 Hitters lab 的 ErrorTracker 只負責記錄，Trainer 仍跑滿 max_epochs=50。"},{"front":"丟棄法（Dropout）","back":"訓練時隨機把一部分單元的值設為 0，剩下的按比例放大。每一批看到的都是不同的子網路，所以沒有單元能依賴特定同伴。ISLP 說它的精神接近隨機森林——都是靠隨機性打散相關性。"},{"front":"雙下降（Double Descent）","back":"測試誤差在內插門檻之前呈 U 形、在門檻附近衝高，然後隨模型再變大又降下來的現象。它沒有推翻偏差–變異取捨：x 軸畫的是基底函數個數，而那並沒有正確反映內插模型實際的彈性。"},{"front":"內插門檻（Interpolation Threshold）","back":"參數個數剛好夠把訓練資料完全穿過去的那一點（例中 d = n = 20）。訓練誤差在此降到 0，測試誤差在此最糟——因為用剛好 20 個基底穿過 20 個點的方法只有一種，而那一種很極端。"},{"front":"最小範數解（Minimum-Norm Solution）","back":"最小平方解不唯一時，取係數平方和 Σβ̂ⱼ² 最小者。它依賴基底，未必是曲率最小的解。本站樣條模擬中，增加基底後此選解較平滑；一般神經網路的 SGD 不保證得到最小範數解。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

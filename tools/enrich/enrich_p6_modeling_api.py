@@ -63,16 +63,16 @@ BODIES["prologue"] = f"""
                 "包成 sklearn 的估計器，好丟進 <code>cross_validate</code>。")],
      "w19apiStatus", "四個步驟，看兩套 API 各自怎麼寫。",
      '<button class="btn btn-toggle" onclick="w19apiSet(0)">① 準備 X</button>'
-     '<button class="btn btn-toggle" onclick="w19apiSet(1)">② 配適</button>'
+     '<button class="btn btn-toggle" onclick="w19apiSet(1)">② 擬合</button>'
      '<button class="btn btn-toggle" onclick="w19apiSet(2)">③ 看結果</button>'
      '<button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button>',
      provenance=("course-data", "依 Ch03 lab 的 statsmodels 與 scikit-learn 同一 lstat 模型逐步對照。"))}
 
 {card("statsmodels：截距要自己放進 X", C(3, 22), O(3, 22), src=S(3, 22),
       note="全是 1 的 <code>intercept</code> 欄用來表示截距。"
-           "<code>sm.OLS</code> <strong>不會</strong>自動加截距，忘了就是配一條過原點的線。")}
+           "<code>sm.OLS</code> <strong>不會</strong>自動加截距，忘了就是擬合一條過原點的線。")}
 
-{card("配適之後的係數表", C(3, 26), O(3, 26), src=S(3, 26),
+{card("擬合之後的係數表", C(3, 26), O(3, 26), src=S(3, 26),
       note="四個欄位：係數、標準誤、t 值、p 值。下一節逐欄拆開講。")}
 
 {quiz("qApi", "PART 00 · 自我檢測",
@@ -119,7 +119,7 @@ BODIES["design"] = f"""
 
 {card("MS 幫你把資料框變成 X", C(3, 30, 32), f"{O(3, 30)}\n{O(3, 32)}", src=S(3, 30, 32),
       note="輸出跟上一節手工做的 X 完全一樣，差別是 <code>MS</code> "
-           "會記得規格，之後可以對新資料重放一次。")}
+           "會記得規格，之後可以對新資料套用相同轉換。")}
 
 {card("對新資料要用 transform", C(3, 39), O(3, 39), src=S(3, 39),
       note="三筆新的 lstat 值，經過同一個 <code>design</code> 之後"
@@ -192,8 +192,8 @@ BODIES["summary"] = f"""
        (False, "B 的效果比較小",
         "效果的大小是 <code>coef</code> 這一欄，兩者都是 −0.95，一樣大。"
         "標準誤講的是「這個 −0.95 有多可信」。"),
-       (False, "B 的模型配適得比較差",
-        "配適好壞要看 R² 或殘差圖。標準誤大通常是樣本少、"
+       (False, "B 的模型擬合得比較差",
+        "擬合好壞要看 R² 或殘差圖。標準誤大通常是樣本少、"
         "或這個變數跟其他變數共線。那是另一回事。")])}
 """
 
@@ -214,7 +214,7 @@ BODIES["skl"] = f"""
                  ("學到的東西存在哪", "—", "w19flWhere")]),
       info_card("結尾有底線的屬性",
                 "<code>coef_</code>、<code>intercept_</code>、<code>classes_</code>——"
-                "sklearn 的慣例是<strong>「配適之後才存在」的屬性結尾加底線</strong>。"
+                "sklearn 的慣例是<strong>「擬合之後才存在」的屬性結尾加底線</strong>。"
                 "看到 <code>NotFittedError</code> 就是你還沒 fit 就想用它們。")],
      "w19flStatus", "按「單步」走一次 fit → predict → score。",
      '<button class="btn btn-step" onclick="w19flStep()">→ 單步</button>'
@@ -294,7 +294,7 @@ BODIES["split"] = f"""
 
 {quiz("qSplit", "PART 04 · 自我檢測",
       "訓練集 R² 是 0.95、測試集 R² 是 0.42。最合理的判斷是？",
-      [(True, "模型過度配適了訓練資料",
+      [(True, "模型過度擬合了訓練資料",
         "對。它把訓練資料的雜訊也學了進去，換一份資料就失效。"
         "第 2 章的偏差—變異取捨、第 6 章的收縮方法都在處理這件事。"),
        (False, "測試集有問題，應該換一個",
@@ -334,7 +334,7 @@ BODIES["cv"] = f"""
 
 {card("留一交叉驗證", C(5, 34), O(5, 34), src=S(5, 34),
       note="24.2315 是各留一折誤差的平均。固定資料下的留一切法唯一，仍有各筆誤差與抽樣不確定性；"
-           "但要配適 n 次，資料大的時候很貴。")}
+           "但要擬合 n 次，資料大的時候很貴。")}
 
 {card("重複切分：看平均，也看標準差", C(5, 46), O(5, 46), src=S(5, 46),
       note="平均 23.80、標準差 1.42。<strong>1.42 描述不同切分下的分數變動</strong>。"
@@ -362,7 +362,7 @@ BODIES["cv"] = f"""
      "拿測試集去選模型，等於把它變成訓練資料的一部分。"),
     ("留一交叉驗證為什麼只列一個數字？",
      "這個 lab 把每一個留一折的損失取平均，所以只顯示平均值；不是所有損失都一樣。"
-     "固定資料與配適程序下，LOOCV 沒有切分的隨機性，仍有資料抽樣的不確定性。"
+     "固定資料與擬合程序下，LOOCV 沒有切分的隨機性，仍有資料抽樣的不確定性。"
      "上面的 ShuffleSplit 是十次隨機留出一半資料，並非把資料分成十個互斥的折。"),
 ])}
 
@@ -394,7 +394,7 @@ BODIES["exercises"] = f"""
       "你要比較五個模型並挑一個，中間需要標準化與多項式展開。該用哪一套？",
       [(True, "scikit-learn，把前處理與模型包成 Pipeline 再交叉驗證",
         "對。要比較模型就需要一致的評估流程，這正是 sklearn 的設計目的。"
-        "Pipeline 讓其中的前處理隨每一折配適；管線外的資料處理仍需檢查。"),
+        "Pipeline 讓其中的前處理隨每一折擬合；管線外的資料處理仍需檢查。"),
        (False, "statsmodels，因為它給的統計量比較完整",
         "那些統計量在「比較五個模型」這件事上幫不上忙，"
         "而且 statsmodels 沒有 Pipeline 與 <code>cross_validate</code>。"
@@ -405,15 +405,15 @@ BODIES["exercises"] = f"""
 
 {quiz("qEx2", "EXERCISE 2 · 截距",
       "<code>sm.OLS(y, Boston[['lstat']]).fit()</code> 少做了一件事。少了什麼？",
-      [(True, "沒有截距欄，配出來的是一條過原點的線",
+      [(True, "沒有截距欄，擬合出來的是一條過原點的線",
         "對。<code>sm.OLS</code> 不會自動加截距，"
         "要自己放一欄全 1（或用 <code>MS()</code>／<code>sm.add_constant</code>）。"
         "lab 儲存格 22 那一欄 <code>intercept</code> 就是在做這件事。"),
        (False, "沒有標準化 lstat",
-        "線性迴歸不需要標準化，標準化不改變配適，只改變係數的單位。"
+        "線性迴歸不需要標準化，標準化不改變擬合，只改變係數的單位。"
         "（第 6 章的收縮方法才非標準化不可。）"),
        (False, "y 應該放後面",
-        "<code>sm.OLS</code> 的簽名就是 <code>(y, X)</code>，順序是對的。"
+        "<code>sm.OLS</code> 的引數順序就是 <code>(y, X)</code>，順序是對的。"
         "倒是 sklearn 的 <code>fit(X, y)</code> 反過來，兩套要記清楚。")])}
 
 {quiz("qEx3", "EXERCISE 3 · 誤差的不確定性",
@@ -445,7 +445,7 @@ BODIES["reference"] = f"""
 {table(["你要做的事", "statsmodels", "scikit-learn"],
        [["準備 X", "<code>MS([...]).fit_transform(df)</code>（截距要自己有）",
          "<code>X.values.reshape(-1,1)</code>；截距用 <code>fit_intercept=True</code>"],
-        ["配適", "<code>sm.OLS(y, X).fit()</code>", "<code>model.fit(X, y)</code>"],
+        ["擬合", "<code>sm.OLS(y, X).fit()</code>", "<code>model.fit(X, y)</code>"],
         ["看係數", "<code>summarize(results)</code>、<code>results.params</code>",
          "<code>model.coef_</code>、<code>model.intercept_</code>"],
         ["標準誤與 p 值", "有", "<b>沒有</b>"],
@@ -470,7 +470,7 @@ BODIES["reference"] = f"""
       "<strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>"
       "要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br>"
       "<strong>2. sklearn 的一切都是 fit / predict / score。</strong>"
-      "換模型只要換建構子那一行；結尾有底線的屬性是配適之後才存在的。<br>"
+      "換模型只要換建構子那一行；結尾有底線的屬性是擬合之後才存在的。<br>"
       "<strong>3. 先切分，再轉換。</strong>"
       "順序反了，那個分數就不再是乾淨的 out-of-sample 評估；用 Pipeline 固定正確順序。")}
 
@@ -515,7 +515,7 @@ let w19apiI = 0;
 function w19apiDraw() {
   const g = w19apiS.clearLayer('main');
   const c = w19apiCases[w19apiI];
-  const names = ['① 準備 X', '② 配適', '③ 看結果', '④ 預測'];
+  const names = ['① 準備 X', '② 擬合', '③ 看結果', '④ 預測'];
   w19apiS.txtPx(24, 34, names[w19apiI], {cls: 'axtitle', fill: HC.tok.accent}, g);
   ['statsmodels', 'scikit-learn'].forEach((nm, i) => {
     const y = 66 + i * 118;
@@ -648,7 +648,7 @@ PAGEJS += r"""
 /* ═══ w19fl fit / predict / score（本頁招牌之一）═══ */
 const w19flS = HC.svg('w19flowSvg', {h: 340});
 const w19flSteps = [
-  {w: '還沒開始', where: '—', note: '模型剛建構出來，coef_ 還不存在。'},
+  {w: '還沒開始', where: '—', note: '模型物件剛建立，coef_ 還不存在。'},
   {w: 'fit(X, y)：使用訓練資料學參數', where: 'model.coef_、model.intercept_',
    note: '學到的參數存在<b>結尾有底線</b>的屬性裡。'},
   {w: 'predict(X_new)：只吃 X', where: '回傳一個預測值陣列',
@@ -663,7 +663,7 @@ function w19flDraw() {
   const act = (k) => (st === k ? HC.tok.accent : HC.tok.muted);
   w19box(w19flS, g, 40, 60, 118, 58, 'X_train', st >= 1 ? HC.tok.accent2 : HC.tok.muted);
   w19box(w19flS, g, 40, 136, 118, 58, 'y_train', st >= 1 ? HC.tok.accent2 : HC.tok.muted);
-  w19box(w19flS, g, 246, 98, 130, 58, 'model', act(1), st >= 1 ? 'coef_ 已學到' : '尚未配適');
+  w19box(w19flS, g, 246, 98, 130, 58, 'model', act(1), st >= 1 ? 'coef_ 已學到' : '尚未擬合');
   if (st >= 1) {
     w19arrow(w19flS, g, 162, 89, 242, HC.tok.accent2);
     w19arrow(w19flS, g, 162, 165, 242, HC.tok.accent2);
@@ -772,7 +772,7 @@ function w19lkDraw() {
     if (st >= 3) {
       w19lkS.txtPx(310, 250, '測試資料只套用訓練集學到的轉換：評估仍可解讀',
                    {cls: 'axtitle', anchor: 'middle', fill: HC.tok.accent2}, g);
-      w19lkS.txtPx(310, 282, 'Pipeline 在每折配適其中的步驟；仍需檢查管線外處理',
+      w19lkS.txtPx(310, 282, 'Pipeline 在每折擬合其中的步驟；仍需檢查管線外處理',
                    {cls: 'axlab', anchor: 'middle'}, g);
     }
   }

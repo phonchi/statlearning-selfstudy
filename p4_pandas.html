@@ -699,7 +699,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN studyguide -->
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · pandas 資料框）</div>
-  <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
+  <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
@@ -1189,7 +1189,7 @@ dtype: float64</pre></div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>做法</th><th>什麼時候用</th><th>風險</th></tr></thead>
-  <tbody><tr><td><code>na_values=[…]</code>（讀檔時）</td><td>原始檔用特殊符號表示遺漏</td><td>幾乎沒有，應該是預設動作</td></tr><tr><td><code>dropna()</code></td><td>遺漏很少、而且看起來是隨機遺漏</td><td>遺漏不是隨機時會產生偏差</td></tr><tr><td><code>fillna(中位數)</code></td><td>想保留樣本數</td><td>低估變異、稀釋相關性</td></tr><tr><td>當成一個類別（缺失指示變數）</td><td>「有沒有填」本身可能幫助預測</td><td>不能單靠指示變數修正非隨機遺漏的偏差</td></tr></tbody>
+  <tbody><tr><td><code>na_values=[…]</code>（讀檔時）</td><td>原始檔用特殊符號表示遺漏</td><td>幾乎沒有，應該是預設動作</td></tr><tr><td><code>dropna()</code></td><td>遺漏很少、而且看起來是隨機遺漏</td><td>遺漏不是隨機時會產生偏差</td></tr><tr><td><code>fillna(中位數)</code></td><td>想保留樣本數</td><td>低估變異、稀釋相關性</td></tr><tr><td>當成一個類別（遺漏指示變數）</td><td>「有沒有填」本身可能幫助預測</td><td>不能單靠指示變數修正非隨機遺漏的偏差</td></tr></tbody>
 </table></div>
 
 <div class="quiz-box">
@@ -1422,7 +1422,7 @@ foo -2.740490  0.700964</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 遺漏值的影響</div>
   <p>一份資料的收入欄有 20% 遺漏，而遺漏的多半是高收入的人。直接 <code>dropna()</code> 會怎樣？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="樣本減少之外，&lt;strong&gt;剩下的樣本也不再代表原本的母體&lt;/strong&gt;。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 沒關係，只是樣本變小</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫非隨機遺漏。&lt;code&gt;dropna&lt;/code&gt; 的前提是「遺漏跟你關心的變數無關」，這裡明顯不成立。遺漏指示的用途是記錄哪些資料缺失。要處理未觀測高收入造成的偏差，應先查明漏填原因，必要時取得額外資料，並在明說假設後做敏感度分析。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 剩下的樣本會系統性低估收入</div><div class="quiz-opt" data-correct="false" data-fb="不會。&lt;code&gt;dropna&lt;/code&gt; 就只是刪掉，沒有任何統計上的補償。你需要依資料的遺漏原因決定處理方式。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> pandas 會自動加權補償</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="樣本減少之外，&lt;strong&gt;剩下的樣本也不再代表原本的母體&lt;/strong&gt;。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 沒關係，只是樣本變小</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫非隨機遺漏。&lt;code&gt;dropna&lt;/code&gt; 的前提是「遺漏跟你關心的變數無關」，這裡明顯不成立。遺漏指示的用途是記錄哪些資料遺漏。要處理未觀測高收入造成的偏差，應先查明漏填原因，必要時取得額外資料，並在明說假設後做敏感度分析。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 剩下的樣本會系統性低估收入</div><div class="quiz-opt" data-correct="false" data-fb="不會。&lt;code&gt;dropna&lt;/code&gt; 就只是刪掉，沒有任何統計上的補償。你需要依資料的遺漏原因決定處理方式。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> pandas 會自動加權補償</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1455,7 +1455,7 @@ foo -2.740490  0.700964</pre></div>
   <strong>1. 拿到資料先看 <code>dtypes</code>。</strong>該是數字的欄變成 object，代表原始檔裡有非數字的東西（例如 Auto 的 <code>?</code>）。<br><strong>2. <code>loc</code> 靠名字、<code>iloc</code> 靠位置；<code>loc</code> 的切片含尾。</strong><br><strong>3. groupby 之後鍵會變成索引。</strong>要它留在欄裡就 <code>as_index=False</code> 或 <code>reset_index()</code>。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->

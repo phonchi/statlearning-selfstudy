@@ -51,29 +51,29 @@ BODIES["prologue"] = f"""
   本章用 ISLP 的 <code>Default</code> 資料（n = 10000，違約率 3.33%）與課程 lab 的
   <code>Smarket</code> 資料當主線。</p>
 
-  <p>直覺會說：把類別編成數字，然後照第 3 章配線性迴歸就好。<strong>這條路在兩個地方會撞牆</strong>，
+  <p>直覺會說：把類別編成數字，然後照第 3 章擬合線性迴歸就好。<strong>這樣做會遇到兩個問題</strong>，
   這兩個問題都會影響結果的解讀。</p>
 
 {info("線性迴歸用在類別上的兩個問題", '''<strong>1. 多於兩類時，編碼本身就帶進了假設。</strong>
   把「中風 = 1、藥物過量 = 2、癲癇 = 3」丟進迴歸，等於宣告這三種病有順序，
   而且「中風到藥物過量」的距離等於「藥物過量到癲癇」的距離。換一個編碼順序，模型就變了。<br>
   <strong>2. 只有兩類時編碼沒問題，但輸出會跑出 [0, 1]。</strong>直線沒有上下界，
-  一定會有某些 x 讓配出來的「機率」是負的或大於 1。''', "warm")}
+  一定會有某些 x 讓擬合出來的「機率」是負的或大於 1。''', "warm")}
 
-  <p>第二點值得寫成式子。把 y 編成 0／1，然後配 $p(X) = \\beta_0 + \\beta_1 X$：</p>
+  <p>第二點值得寫成式子。把 y 編成 0／1，然後擬合 $p(X) = \\beta_0 + \\beta_1 X$：</p>
 
   $$\\hat p(\\texttt{{balance}}) = -0.0752 + 0.00013 \\times \\texttt{{balance}}$$
 
-  <p>這是 <code>Default</code> 資料上真的配出來的直線。把 <code>balance</code> 代 300 進去
+  <p>這是 <code>Default</code> 資料上真的擬合出來的直線。把 <code>balance</code> 代 300 進去
   得到 −0.036——<strong>負的機率</strong>。ISLP 圖 4.2 左圖畫的就是這件事。
-  右圖換成邏輯斯迴歸，整條曲線就乖乖待在 0 與 1 之間。</p>
+  右圖換成邏輯斯迴歸，整條曲線就維持在 0 與 1 之間。</p>
 
 {viz(svg("w04whySvg", 330),
      [info_card("怎麼看這張圖",
                 '橫軸是 <code>balance</code>，上下兩排短刻度是真實資料：'
                 '<span style="color:var(--pt-b);font-weight:700;">上排（y = 1）</span>是違約的人，'
                 '<span style="color:var(--pt-a);font-weight:700;">下排（y = 0）</span>是沒違約的人。'
-                '紅線是線性迴歸的配適，綠線是邏輯斯迴歸。'
+                '紅線是線性迴歸的擬合，綠線是邏輯斯迴歸。'
                 '<strong>紅色陰影是線性版給出負機率的區段。</strong>', "圖 4.2"),
       rows_card("在這個 balance 上",
                 [("balance", "1000", "w04whyBal2"),
@@ -94,24 +94,24 @@ BODIES["prologue"] = f"""
 
   <h3>三類的編碼實驗：換個順序，模型就換了</h3>
   <p>下面同一批急診病人，只是換了編碼順序。線性迴歸看到的是「數字」，
-  所以它會認真去配這些完全人造的順序與間距：</p>
+  所以它會擬合這些完全人造的順序與間距：</p>
 
 {table(["編碼方式", "中風", "藥物過量", "癲癇", "這個編碼隱含的假設"],
        [["編碼 A", "1", "2", "3",
          "三種病有順序，而且「中風→藥物過量」與「藥物過量→癲癇」的差距一樣大"],
         ["編碼 B", "1", "3", "2",
-         "順序變成中風 &lt; 癲癇 &lt; 藥物過量——同一份資料，配出完全不同的模型"],
+         "順序變成中風 &lt; 癲癇 &lt; 藥物過量——同一份資料，擬合出完全不同的模型"],
         ["編碼 C", "2", "1", "3", "又是另一個模型。哪一個才對？<strong>都不對。</strong>"]])}
 
   <p>這些<strong>類別沒有順序也沒有距離</strong>，數字編碼卻加入了順序與等距的假設。
   正解是邏輯斯迴歸（兩類）與多元邏輯斯迴歸（多類），或者本章後半的生成式模型。</p>
 
 {quiz("qWhy", "QUIZ · 為什麼不用迴歸",
-      "把二元反應編成 0／1 之後配線性迴歸，跟邏輯斯迴歸比，最根本的問題是什麼？",
-      [(True, "配出來的「機率」沒有上下界，一定有某些 x 給出小於 0 或大於 1 的值",
+      "把二元反應編成 0／1 之後擬合線性迴歸，跟邏輯斯迴歸比，最根本的問題是什麼？",
+      [(True, "擬合出來的「機率」沒有上下界，一定有某些 x 給出小於 0 或大於 1 的值",
         "對。直線的值域是整個實數線，而機率必須落在 [0, 1]。ISLP 圖 4.2 左圖就是這個現象。"
         "邏輯斯函數把線性式子壓進 (0, 1)，這是它存在的理由。"),
-       (False, "係數沒辦法用最小平方法估計，必須改用最大似然法",
+       (False, "係數沒辦法用最小平方法估計，必須改用最大概似法",
         "不對。用最小平方法<strong>估得出來</strong>。上面那條 −0.0752 + 0.00013 × balance 就是。"
         "問題不在估不出來，而在估出來的東西不能當機率用。"),
        (False, "二元反應違反常態誤差假設，所以 p 值與信賴區間都不能用",
@@ -141,9 +141,9 @@ BODIES["logistic"] = f"""
   所以邏輯斯迴歸的 <strong>log-odds 是線性函數</strong>；機率則隨 x 呈 S 形變化，係數須依 log-odds 解讀。</p>
 
 {info("三個一句話的重點", '''<strong>1. β₁ 是 log-odds 的斜率。</strong>x 增加一單位，log-odds 增加 β₁，
-  勝算乘上 e^β₁。<strong>機率增加多少則要看你站在哪裡</strong>——同樣的 β₁，在 p ≈ 0.5 附近影響最大。<br>
-  <strong>2. 係數用最大似然法（maximum likelihood）估。</strong>找一組 β 讓「觀察到的這批 0／1
-  出現的機率」最大，沒有封閉解，要迭代。最小平方法只是常態假設下的最大似然特例。<br>
+  勝算乘上 e^β₁。<strong>機率增加多少則取決於目前的 x 值</strong>——同樣的 β₁，在 p ≈ 0.5 附近影響最大。<br>
+  <strong>2. 係數用最大概似法（maximum likelihood）估。</strong>找一組 β 讓「觀察到的這批 0／1
+  出現的機率」最大，沒有封閉解，要反覆更新參數。最小平方法只是常態假設下的最大概似特例。<br>
   <strong>3. z 統計量和第 3 章的 t 統計量有相同的「估計值／標準誤」形式。</strong>β̂ 除以它的標準誤，其絕對值大時支持拒絕 β = 0；這裡以漸近標準常態分佈校準，而非有限樣本的 t 分佈。''')}
 
 {viz(svg("w04shapeSvg", 250) + "\n" + svg("w04shapeSvg2", 220),
@@ -174,9 +174,9 @@ BODIES["logistic"] = f"""
      "<ul><li>「<code>balance</code> 每增加一元，違約的 <strong>log-odds 增加 0.0055</strong>」；</li>"
      "<li>「違約的 <strong>勝算乘上</strong> $e^{0.0055} = 1.0055$，也就是多 0.55%」。"
      "注意是勝算多 0.55%，不是機率多 0.55 個百分點。</li></ul>"
-     "<p>為什麼機率的變化講不出一個數字？因為它取決於你站在哪裡。用表 4.1 的係數算："
+     "<p>為什麼機率的變化講不出一個數字？因為它取決於目前的 x 值。用表 4.1 的係數算："
      "balance = 1000 時 p̂ = 0.00576；balance = 2000 時 p̂ = 0.586。"
-     "同樣是多 1000 元，在低 balance 區機率幾乎沒動，在 2000 附近卻是斷崖。"
+     "同樣是多 1000 元，在低 balance 區機率幾乎沒動，在 2000 附近卻變化很大。"
      "S 曲線最陡的地方斜率是 β₁/4。這是唯一能快速估「機率變化」的地方，"
      "而且只在 p ≈ 0.5 附近成立。</p>"
      "<p>順帶一提，這也是為什麼報告邏輯斯迴歸時大家愛講<strong>勝算比</strong>（odds ratio, $e^{\\beta_1}$）："
@@ -184,7 +184,7 @@ BODIES["logistic"] = f"""
      "沒有因果研究設計與相應假設時，不能解讀成介入 <code>balance</code> 所造成的變化。</p>"),
 ])}
 
-  <h3 id="dx-log">講義完整實作：在 <code>Smarket</code> 上配邏輯斯迴歸</h3>
+  <h3 id="dx-log">講義完整實作：在 <code>Smarket</code> 上擬合邏輯斯迴歸</h3>
 {card("講義 04 · sm.GLM + Binomial（六個預測變數）", _log_code1, lab_output(CH, 25),
       src=src("25"),
       note="<code>family=sm.families.Binomial()</code> 是關鍵——同一支 <code>sm.GLM()</code>"
@@ -195,13 +195,13 @@ BODIES["logistic"] = f"""
 {card("講義 04 · 從機率到標籤，再到混淆矩陣", _log_code2, lab_output(CH, 35),
       src=src("31、33、35"),
       note="<code>predict()</code> 回傳的是<strong>機率</strong>，不是標籤；"
-           "要自己挑一個閾值把它切成 <code>Up</code>／<code>Down</code>。"
+           "要自己挑一個門檻值把它切成 <code>Up</code>／<code>Down</code>。"
            "這裡用 0.5，正確率 (507 + 145) / 1250 = 52.2%，但這是<strong>訓練</strong>正確率，"
            "同一批資料又訓練又測試，一定太樂觀。")}
 
-{card("講義 04 · 用 2001–2004 配適、在 2005 年比較", _log_code3, lab_output(CH, 49),
+{card("講義 04 · 用 2001–2004 擬合、在 2005 年比較", _log_code3, lab_output(CH, 49),
       src=src("45、49、51"),
-      note="用 2001–2004 配適、在 2005 年比較，正確率是 <strong>48.0%</strong>（錯誤率 52.0%）。不過前一張卡已用包含 2005 年的完整資料查看係數與 p 值；"
+      note="用 2001–2004 擬合、在 2005 年比較，正確率是 <strong>48.0%</strong>（錯誤率 52.0%）。不過前一張卡已用包含 2005 年的完整資料查看係數與 p 值；"
            "因此這是課本探索流程的教材示範，2005 年不是從頭到尾未碰的獨立測試集。")}
 
 {quiz("qLog", "QUIZ · 係數的解讀",
@@ -222,7 +222,7 @@ BODIES["multinomial"] = f"""
   <p>把一個預測變數換成 p 個，式子幾乎不用改——線性部分變成 $\\beta_0 + \\beta_1 X_1 + \\cdots + \\beta_p X_p$
   就好。加入變數後，<strong>原有係數可能變號</strong>。</p>
 
-  <p>ISLP 的 <code>Default</code> 例子最經典。只用 <code>student</code> 一個變數配（表 4.2），
+  <p>ISLP 的 <code>Default</code> 例子最經典。只用 <code>student</code> 一個變數擬合（表 4.2），
   <code>student[Yes]</code> 的係數是 <strong>+0.4049</strong>：學生比較容易違約。
   可是把 <code>balance</code> 與 <code>income</code> 一起放進去（表 4.3），
   同一個 <code>student[Yes]</code> 變成 <strong>−0.6468</strong>：學生比較不容易違約。
@@ -261,7 +261,7 @@ BODIES["multinomial"] = f"""
         ["常見於", "統計軟體（<code>statsmodels</code>）", "機器學習與神經網路（第 10 章會再遇到）"]])}
 
 {info("兩種寫法給的預測值完全一樣", '''ISLP §4.3.5 講得很清楚：換基準類、或用 softmax，
-  <strong>配適值、任兩類之間的 log-odds、以及其他關鍵輸出都不變</strong>，變的只有係數本身的數值。
+  <strong>擬合值、任兩類之間的 log-odds、以及其他關鍵輸出都不變</strong>，變的只有係數本身的數值。
   所以看到別人的多類別邏輯斯係數時，第一件事是問「基準是哪一類」——
   不問清楚就沒辦法解讀。''')}
 
@@ -275,13 +275,13 @@ BODIES["multinomial"] = f"""
            "這組數字適合說明流程與混淆矩陣，不能當成選模後的新測試證據。乾淨評估須只用訓練年份決定變數。")}
 
 {quiz("qMul", "QUIZ · 混淆",
-      "只用 <code>student</code> 配時它的係數是正的，加入 <code>balance</code> 後變成負的。"
+      "只用 <code>student</code> 擬合時它的係數是正的，加入 <code>balance</code> 後變成負的。"
       "該怎麼理解？",
       [(True, "兩個係數在回答不同的關聯問題：後者比較 balance 相同的人",
         "對。多元迴歸的係數描述控制模型中其他變數後的條件關聯，不會自動具有因果意義。"
         "學生整體 balance 偏高所以整體違約率高；但同樣的 balance 之下，學生反而比較不容易違約。"),
-       (False, "其中一個模型配錯了，應該相信變數比較多的那一個",
-        "兩個模型都沒配錯，各自都是它所設定問題的正確答案。「相信變數多的」也不是普遍原則——"
+       (False, "其中一個模型擬合錯了，應該相信變數比較多的那一個",
+        "兩個模型都沒擬合錯，各自都是它所設定問題的正確答案。「相信變數多的」也不是普遍原則——"
         "要看你問的是<strong>邊際關聯</strong>還是<strong>條件關聯</strong>。想預測「該不該發卡給這個學生」用後者；"
         "想知道「學生族群整體風險」用前者。"),
        (False, "這是共線性造成的，把 student 或 balance 移掉一個就好",
@@ -296,16 +296,16 @@ _lda_code2 = lab_code(CH, 74) + "\n\n" + lab_code(CH, 77) + "\n\n" + lab_code(CH
 
 BODIES["lda"] = f"""
   <p>邏輯斯迴歸是直接建模 $\\Pr(Y = k \\mid X = x)$。這一節換一條路：
-  <strong>先分別建模「每一類裡面 X 長什麼樣子」，再用 Bayes 定理翻回去</strong>。
+  <strong>先分別建模「每一類裡面 X 長什麼樣子」，再用 Bayes 定理求後驗機率</strong>。
   這類方法叫<strong>生成式模型</strong>（generative model）。</p>
 
-  <p>設 $\\pi_k$ 是第 k 類的<strong>先驗機率</strong>（prior，隨便抓一筆資料屬於第 k 類的機率），
+  <p>設 $\\pi_k$ 是第 k 類的<strong>先驗機率</strong>（prior，隨機抽一筆資料屬於第 k 類的機率），
   $f_k(x) = \\Pr(X = x \\mid Y = k)$ 是第 k 類裡 X 的密度。Bayes 定理說：</p>
 
   $$\\Pr(Y = k \\mid X = x) = \\frac{{\\pi_k f_k(x)}}{{\\sum_{{l=1}}^{{K}} \\pi_l f_l(x)}}$$
 
 {info("為什麼還要別的方法？ISLP §4.4 開頭給了三個理由", '''<strong>1. 兩類分得很開的時候，
-  邏輯斯迴歸的係數估計可能發散。</strong>完美可分時最大似然沒有有限解，係數往無限大跑。生成式模型不會。<br>
+  邏輯斯迴歸的係數估計可能發散。</strong>完美可分時最大概似沒有有限解，係數往無限大跑。生成式模型不會。<br>
   <strong>2. n 小而各類內的 X 近似常態時，生成式模型更準。</strong>它用上了「常態」這個額外資訊。<br>
   <strong>3. K &gt; 2 時很自然。</strong>不用挑基準類，每一類算一個 δ<sub>k</sub>(x) 比大小就好。''')}
 
@@ -335,11 +335,11 @@ BODIES["lda"] = f"""
                 'Bayes 分類器比的是 π<sub>k</sub>f<sub>k</sub>(x) 的大小，'
                 '所以把先驗乘進去畫，<strong>交點在哪裡、邊界就在哪裡</strong>，'
                 '不用另外算。把 π₁ 拉大你會看到邊界往右跑。先驗大的那一類'
-                '搶到更多地盤。', "圖 4.4"),
+                '會有較大的決策區域。', "圖 4.4"),
       info_card("勾了「允許不同 σ」就變成 QDA",
                 '共用 σ 時 x² 的係數在相減時剛好抵消，只剩一次項，所以邊界是<strong>一個點</strong>。'
                 '一旦 σ₁ ≠ σ₂，x² 的係數不再抵消，邊界變成二次方程式的根——'
-                '<strong>可能有兩個點</strong>。這就是 QDA 與 LDA 的全部差別。')],
+                '<strong>可能有兩個點</strong>。這就是兩者決策邊界不同的原因。')],
      "w04lda1Status", "推 μ 與 σ 的滑桿看兩個常態密度怎麼動，虛線是決策邊界。",
      slider("w04lda1M1", "μ₁", -4, 1, 0.1, -1.25, "w04lda1Draw")
      + slider("w04lda1M2", "μ₂", -1, 4, 0.1, 1.25, "w04lda1Draw")
@@ -367,21 +367,21 @@ BODIES["lda"] = f"""
      "<p>兩邊的<strong>函數形式一模一樣</strong>，都是 x 的線性函數。差別是："
      "LDA 的 $a_k, b_{kj}$ 是「假設各類 X 服從共用共變異數的常態」之後，"
      "由 $\\hat\\pi_k, \\hat\\mu_k, \\hat\\Sigma$ 算出來的；"
-     "邏輯斯迴歸的係數則是直接讓<strong>條件似然</strong>最大。它對 X 的分佈完全不做假設。</p>"
+     "邏輯斯迴歸的係數則是直接讓<strong>條件概似</strong>最大。它對 X 的分佈完全不做假設。</p>"
      "<p>所以取捨很清楚：</p>"
      "<ul><li><strong>各類內的 X 真的近似常態、n 又小</strong>：選 LDA。它多用了分佈資訊，"
      "變異較小。ISLP 情境 1 裡 LDA 表現最好。</li>"
      "<li><strong>X 明顯不常態（重尾、類別型變數、極端值多）</strong>：選邏輯斯迴歸。"
      "ISLP 情境 3 把資料換成 t 分佈，邏輯斯就贏了 LDA。</li>"
-     "<li><strong>兩類分得很開</strong>：LDA（邏輯斯的最大似然會發散）。</li>"
+     "<li><strong>兩類分得很開</strong>：LDA（邏輯斯的最大概似會發散）。</li>"
      "<li><strong>要做推論、要 p 值、要處理類別型預測變數</strong>：邏輯斯迴歸的工具鏈成熟得多。</li></ul>"
-     "<p>實務上兩者的預測往往幾乎一樣。以 Lag1、Lag2 配適的 LDA 混淆矩陣"
+     "<p>實務上兩者的預測往往幾乎一樣。以 Lag1、Lag2 擬合的 LDA 混淆矩陣"
      "（35／35／76／106）跟使用相同變數的邏輯斯<strong>一個數字都沒差</strong>。"
      "這是這份資料上的結果。式 4.32 只說兩者的 log-odds 都是線性形式；估計係數的方法不同，並不保證預測機率、分類結果或混淆矩陣相同。</p>"),
 ])}
 
   <h3 id="dx-lda">講義完整實作：<code>LinearDiscriminantAnalysis</code></h3>
-{card("講義 04 · 配 LDA 並讀出估計的參數", _lda_code1, lab_output(CH, 68),
+{card("講義 04 · 擬合 LDA 並讀出估計的參數", _lda_code1, lab_output(CH, 68),
       src=src("66、68、72"),
       note="<code>means_</code> 是 μ̂₁、μ̂₂（每一列一類、每一欄一個變數）："
            "市場下跌的日子前兩天報酬偏正，上漲的日子前兩天偏負。"
@@ -449,19 +449,19 @@ LDA 分數差中的 $\hat\Sigma^{-1}(\bar x_1-\bar x_2)$ 和 Fisher 方向平行
 在白化空間中，各類中心都落在至多 K−1 維的仿射子空間。垂直於這個子空間的距離，
 對每一類都相同，在比較分數時抵消。保留完整的判別子空間，並保留同樣的尺度與先驗，便可重現原 LDA 分類。</p>
 <p>若只保留前 $L&lt;\operatorname{rank}(B)$ 個方向，就得到<strong>降秩 LDA（reduced-rank LDA）</strong>。
-它依 Fisher 準則保留分離最強的方向；在共用常態模型下可連結到類平均的秩受限最大似然估計。
+它依 Fisher 準則保留分離最強的方向；在共用常態模型下可連結到類平均的秩受限最大概似估計。
 刪去非零判別方向可能改變分類與後驗機率。K 大於 3 時的二維圖因此通常只是近似視圖。
 用 $W$ 規範的座標做最近中心分類前，還須換成共變異數白化尺度；先驗項不能隨意和距離乘上不同倍數。
 若 $W$ 奇異，須先處理共線性、降維或使用正則化，不能直接套逆矩陣公式。</p>
 <h4>講義的 Iris 例子</h4>
 <p>Iris 有花萼長、花萼寬、花瓣長、花瓣寬四個變數；Setosa、Versicolor、Virginica 各 50 筆。
 三類最多兩個判別方向，因此完整二維判別圖能保留這個 LDA 分類規則。
-使用全部 150 筆配適、經驗先驗各 1/3，訓練混淆矩陣如下（列是真實類別，欄是預測類別）：</p>
+使用全部 150 筆擬合、經驗先驗各 1/3，訓練混淆矩陣如下（列是真實類別，欄是預測類別）：</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;"><thead><tr><th>真實／預測</th><th>Setosa</th><th>Versicolor</th><th>Virginica</th></tr></thead><tbody>
 <tr><th>Setosa</th><td>50</td><td>0</td><td>0</td></tr>
 <tr><th>Versicolor</th><td>0</td><td>48</td><td>2</td></tr>
 <tr><th>Virginica</th><td>0</td><td>1</td><td>49</td></tr></tbody></table></div>
-<p>合計錯 3 筆，訓練正確率 98%，與講義一致。這是對配適資料的回算，不能當作新花朵的測試正確率。
+<p>合計錯 3 筆，訓練正確率 98%，與講義一致。這是對擬合資料的回算，不能當作新花朵的測試正確率。
 兩個非零廣義特徵值約 32.191929、0.285391；它們衡量類間與類內散布比，不是原始資料的 PCA 解釋變異比。</p>
 """ + quiz("qFisher", "QUIZ · 判別方向與分類", "三類、四個變數的 LDA，保留兩個判別方向一定可以解讀成什麼？", [
 (True, "使用相同尺度與先驗，可保留完整 LDA 決策所需的類平均差異", "類間散布的秩至多為 2；完整白化判別子空間以外的距離對各類相同。"),
@@ -474,7 +474,7 @@ _nb_code = (lab_code(CH, 102) + "\n\n" + lab_code(CH, 110) + "\n\n"
             + lab_code(CH, 116) + "\n\n" + lab_code(CH, 117))
 
 BODIES["qda"] = f"""
-  <p>LDA 逼所有類共用同一個 $\\Sigma$。<strong>QDA</strong>（quadratic discriminant analysis）
+  <p>LDA 要求所有類共用同一個 $\\Sigma$。<strong>QDA</strong>（quadratic discriminant analysis）
   放掉這一條：讓每一類有自己的 $\\Sigma_k$。判別函數立刻多出二次項：</p>
 
   $$\\delta_k(x) = -\\frac{{1}}{{2}}(x - \\mu_k)^{{\\mathsf{{T}}}} \\Sigma_k^{{-1}} (x - \\mu_k)
@@ -483,12 +483,12 @@ BODIES["qda"] = f"""
   <p>展開之後會出現 $x^{{\\mathsf{{T}}}} \\Sigma_k^{{-1}} x$。<strong>因為 $\\Sigma_k$ 隨 k 不同，
   這一項在兩類相減時不會抵消</strong>，所以邊界是 x 的二次曲面——名字裡的「二次」就是這麼來的。</p>
 
-{info("要不要共用 Σ，本質是偏差–變異取捨", '''<strong>參數量：</strong>LDA 只估一個 Σ，
+{info("共用 Σ 與否，涉及偏差–變異取捨", '''<strong>參數量：</strong>LDA 只估一個 Σ，
   要 p(p+1)/2 個數；QDA 每類一個，要 K·p(p+1)/2 個。p = 50、K = 2 時是
   1275 對 <strong>2550</strong>。<br>
   <strong>所以：</strong>訓練資料少 → LDA（降變異優先）；訓練資料很多，
   或「共用共變異數」明顯站不住腳 → QDA。<br>
-  ISLP 圖 4.9 兩張圖說得最白：左圖真實邊界是線性的，LDA 贏（QDA 白付了變異的代價）；
+  ISLP 圖 4.9 兩張圖可直接比較這個差異：左圖真實邊界是線性的，LDA 贏（QDA 增加了估計變異）；
   右圖兩類的相關係數一個 +0.7 一個 −0.7，真實邊界是彎的，QDA 贏。''', "warm")}
 
 {viz(svg("w04lda2Svg", 360),
@@ -520,13 +520,13 @@ BODIES["qda"] = f"""
   <h3>Naive Bayes：不猜分佈的形狀，改猜「互相獨立」</h3>
 
   <p>LDA 與 QDA 都在猜 $f_k(x)$ 的<strong>形狀</strong>（多變量常態）。
-  Naive Bayes 換一個方向：形狀隨便你，但假設<strong>在每一類裡面，p 個預測變數互相獨立</strong>：</p>
+  Naive Bayes 換一個方向：各變數的分佈形式可以不同，但假設<strong>在每一類裡面，p 個預測變數互相獨立</strong>：</p>
 
   $$f_k(x) = f_{{k1}}(x_1) \\times f_{{k2}}(x_2) \\times \\cdots \\times f_{{kp}}(x_p)$$
 
   <p>這個假設幾乎一定是錯的。我們也知道它是錯的。但它把「估一個 p 維密度」這件難事
   換成「估 p 個一維密度」，<strong>用一點偏差換掉一大堆變異</strong>。
-  p 大、n 小的時候這筆交易非常划算。</p>
+  p 大、n 小的時候這種取捨通常有利於預測。</p>
 
 {table(["", "對 f<sub>k</sub>(x) 的假設", "邊界形狀", "參數量（p 大時）", "什麼時候最強"],
        [["LDA", "多變量常態，Σ 共用", "線性", "少", "真實邊界線性、各類近常態、n 小"],
@@ -556,7 +556,7 @@ BODIES["qda"] = f"""
       "只有 n = 40 筆訓練資料、p = 2，而且你有理由相信真實的決策邊界是線性的。該選哪個？",
       [(True, "LDA。真實邊界既然是線性的，QDA 多出來的彈性只會帶來變異、換不到偏差的減少",
         "對。這正是 ISLP 圖 4.9 左圖與習題 4.8 第 5 題 (d) 的答案："
-        "邊界是線性時 QDA 雖然「配得下」線性邊界，但它要估兩個 Σ，n = 40 時估計較不穩定，"
+        "邊界是線性時 QDA 雖然「擬合得下」線性邊界，但它要估兩個 Σ，n = 40 時估計較不穩定，"
         "測試誤差反而會變差。"),
        (False, "QDA。它比較有彈性，線性邊界是二次邊界的特例，所以不會更差",
         "「線性是二次的特例」這句話沒錯，但「所以不會更差」錯了。<strong>模型空間包含真解 ≠ 估得準</strong>——"
@@ -593,56 +593,56 @@ _CM = ('<div style="overflow-x:auto;">\n'
 BODIES["threshold"] = f"""
   <p>前面所有方法的最後一步都是同一句話：「後驗機率大於 <strong>0.5</strong> 就判成正類」。
   這個 0.5 來自 Bayes 分類器，<strong>而 Bayes 分類器最小化的是「總」錯誤率</strong>，
-  它完全不管兩種錯誤誰比較痛。</p>
+  它完全不管兩種錯誤哪一種代價較高。</p>
 
-  <p>ISLP 的 <code>Default</code> 例子把這件事講得很殘忍。LDA 在 10000 筆訓練資料上的錯誤率是
-  <strong>2.75%</strong>，聽起來很棒。但是：</p>
+  <p>ISLP 的 <code>Default</code> 例子把這個問題呈現得很清楚。LDA 在 10000 筆訓練資料上的錯誤率是
+  <strong>2.75%</strong>，但還要檢查錯誤集中在哪一類：</p>
 
   <ul>
     <li>資料裡只有 3.33% 的人違約，所以<strong>「一律預測不會違約」這個什麼都沒學的分類器，
     錯誤率是 3.33%</strong>。2.75% 只比它好一點點。</li>
     <li>333 個真的違約的人裡面，LDA <strong>漏掉了 252 個</strong>（75.7%）。
-    對信用卡公司來說，這叫做完全失效。</li>
+    這個模型漏掉了大部分違約戶。</li>
   </ul>
 
 {info("兩種錯誤有名字，而且權重通常不一樣", '''把「違約 / 有病 / 是垃圾信」當成正類（+）：<br>
   <strong>FP（假陽性）</strong>＝其實沒事，被你判成有事。<br>
   <strong>FN（假陰性）</strong>＝其實有事，被你放過。<br>
-  <strong>靈敏度</strong>（sensitivity, recall）= TP/(TP+FN)＝真的有事的人裡你抓到幾成。<br>
+  <strong>敏感度</strong>（sensitivity, recall）= TP/(TP+FN)＝真的有事的人裡你抓到幾成。<br>
   <strong>特異度</strong>（specificity）= TN/(TN+FP)＝真的沒事的人裡你放對幾成。<br>
   <strong>精確率</strong>（precision）= TP/(TP+FP)＝你喊「有事」的人裡真的有事的比例。''', "warm")}
 
-  <p>閾值就是調節這兩種錯誤的旋鈕。把 0.5 降到 0.2：</p>
+  <p>門檻值就是調節這兩種錯誤比例的設定。把 0.5 降到 0.2：</p>
 
   $$\\Pr(\\texttt{{default}} = \\text{{Yes}} \\mid X = x) > 0.2
     \\;\\Longrightarrow\\; \\text{{判為違約}}$$
 
-  <p>ISLP 表 4.5 的結果是：漏掉的違約戶從 252 掉到 <strong>138</strong>（靈敏度從 24.3% 升到 58.6%），
+  <p>ISLP 表 4.5 的結果是：漏掉的違約戶從 252 掉到 <strong>138</strong>（敏感度從 24.3% 升到 58.6%），
   代價是誤報從 23 升到 <strong>235</strong>，總錯誤率從 2.75% 微升到 3.73%。
   <strong>對信用卡公司，這是划算的交易。</strong>自己動一下滑桿看看：</p>
 
 {viz(_CM + "\n" + chart("w04thrRoc", "square",
                         "。此圖的重點：LDA 在 Default 上的 ROC 曲線緊貼左上角，AUC = 0.95；"
-                        "把閾值從 0.5 調到 0.2，工作點沿曲線往右上移動——靈敏度換來假陽率。"),
-     [rows_card("目前的閾值下",
-                [("閾值", "0.500", "w04thrT"),
+                        "把門檻值從 0.5 調到 0.2，工作點沿曲線往右上移動——敏感度換來假陽率。"),
+     [rows_card("目前的門檻值下",
+                [("門檻值", "0.500", "w04thrT"),
                  ("預測會違約的人數", "104", "w04thrNP"),
-                 ("靈敏度（抓到幾成違約戶）", "24.3%", "w04thrSens"),
+                 ("敏感度（抓到幾成違約戶）", "24.3%", "w04thrSens"),
                  ("特異度", "99.8%", "w04thrSpec"),
                  ("精確率", "77.9%", "w04thrPrec"),
                  ("總錯誤率", "2.75%", "w04thrErr")]),
       info_card("三個一定要記住的數字",
-                '<strong>閾值 0.5：</strong>錯誤率 2.75%，但漏掉 252 / 333 = 75.7% 的違約戶。<br>'
-                '<strong>閾值 0.2：</strong>錯誤率 3.73%，只漏掉 138 個（41.4%）。<br>'
+                '<strong>門檻值 0.5：</strong>錯誤率 2.75%，但漏掉 252 / 333 = 75.7% 的違約戶。<br>'
+                '<strong>門檻值 0.2：</strong>錯誤率 3.73%，只漏掉 138 個（41.4%）。<br>'
                 '<strong>一律猜不違約：</strong>錯誤率 3.33%，漏掉全部 333 個。<br>'
                 '這三行分別呈現總錯誤率與兩種錯誤，讓你依用途比較。', "表 4.4／4.5"),
       info_card("ROC 與 AUC",
-                'ROC 曲線把<strong>所有</strong>閾值的（假陽率、真陽率）畫成一條線，'
-                '所以它呈現分類器在所有閾值下的表現。'
+                'ROC 曲線把<strong>所有</strong>門檻值的（假陽率、真陽率）畫成一條線，'
+                '所以它呈現分類器在所有門檻值下的表現。'
                 '<strong>AUC = 0.95</strong>（ISLP §4.4.2）；隨機猜是 0.5，完美是 1。'
-                '紅點是你現在選的閾值在曲線上的位置。')],
-     "w04thrStatus", "拖動閾值：混淆矩陣、四個指標與 ROC 上的紅點會同步重算。",
-     slider("w04thrSlider", "閾值", 0, 1, 0.005, 0.5, "w04thrMove")
+                '紅點是你現在選的門檻值在曲線上的位置。')],
+     "w04thrStatus", "拖動門檻值：混淆矩陣、四個指標與 ROC 上的紅點會同步重算。",
+     slider("w04thrSlider", "門檻值", 0, 1, 0.005, 0.5, "w04thrMove")
      + '<button class="btn btn-step" onclick="w04thrSet(0.5)">→ 回到 0.5</button>'
      + '<button class="btn btn-step" onclick="w04thrSet(0.2)">→ 調到 0.2</button>'
      + '<button class="btn btn-reset" onclick="w04thrReset()">重置</button>',
@@ -650,35 +650,35 @@ BODIES["threshold"] = f"""
 
 {qa("觀念釐清", [
     ("Q：類別不平衡時，「準確率 99%」為什麼可能一文不值？該看什麼？",
-     "<p>因為<strong>準確率的分母被多數類綁死了</strong>。假設 1000 個人裡有 10 個得病，"
+     "<p>因為<strong>多數類的比例很高，一律預測多數類也能得到高正確率</strong>。假設 1000 個人裡有 10 個得病，"
      "你寫一支 <code>return '沒病'</code> 的程式，準確率就是 99%。它一個病人都沒抓到。</p>"
      "<p>這是<strong>多數類基準正確率</strong>；對應的<strong>多數類基準錯誤率</strong>則是 1%。兩者互為 1 減對方，報告時要跟模型用同一種量尺。"
      "ISLP 用 <code>Default</code> 示範：基準錯誤率 3.33%，LDA 的 2.75% 只是小勝。"
      "lab 的 <code>Caravan</code> 例子更誇張——只有 6% 的人買保險，"
      "KNN 的錯誤率 11.1% 比「全猜不買」的 6.7% <strong>還差</strong>。</p>"
      "<p>該看什麼？先問「哪一種錯誤比較貴」，再挑指標：</p>"
-     "<ul><li><strong>怕漏掉正類</strong>（癌症篩檢、詐欺偵測）：看<strong>靈敏度／recall</strong>，"
-     "並且把閾值往下調。</li>"
-     "<li><strong>怕誤報</strong>（垃圾信過濾、發送行銷成本）：看<strong>精確率</strong>，閾值往上調。</li>"
-     "<li><strong>要一個不挑閾值的總結</strong>：看 <strong>AUC</strong>，"
+     "<ul><li><strong>怕漏掉正類</strong>（癌症篩檢、詐欺偵測）：看<strong>敏感度／recall</strong>，"
+     "並且把門檻值往下調。</li>"
+     "<li><strong>怕誤報</strong>（垃圾信過濾、發送行銷成本）：看<strong>精確率</strong>，門檻值往上調。</li>"
+     "<li><strong>要一個不挑門檻值的總結</strong>：看 <strong>AUC</strong>，"
      "或在極不平衡時看 PR 曲線下面積。</li>"
      "<li><strong>兩邊都要顧</strong>：F1（精確率與 recall 的調和平均），或平衡準確率。</li></ul>"
-     "<p>最後一句：<strong>把同一量尺的多數類基準一起報出來</strong>。沒有基準線的準確率是沒有資訊的數字。</p>"),
+     "<p>報告結果時，<strong>把同一量尺的多數類基準一起報出來</strong>。沒有基準線的準確率是沒有資訊的數字。</p>"),
     ("Q：TP / FP / FN / TN 跟那三個比率的關係是什麼？為什麼醫學篩檢跟垃圾信過濾在意的方向剛好相反？",
-     "<p>先把四格與三個比率的<strong>分母</strong>釘死，這是最容易搞混的地方：</p>"
-     "<ul><li><strong>靈敏度</strong> = TP/(TP+FN)：分母是<strong>真實</strong>的正類總數（縱向看）。</li>"
+     "<p>先把四格與三個比率的<strong>分母</strong>分清楚，這是最容易搞混的地方：</p>"
+     "<ul><li><strong>敏感度</strong> = TP/(TP+FN)：分母是<strong>真實</strong>的正類總數（縱向看）。</li>"
      "<li><strong>特異度</strong> = TN/(TN+FP)：分母是<strong>真實</strong>的負類總數（縱向看）。</li>"
      "<li><strong>精確率</strong> = TP/(TP+FP)：分母是<strong>你預測</strong>為正的總數（橫向看）。</li></ul>"
-     "<p>ISLP 表 4.7 還給了對照的別名：假陽率就是型一錯誤、真陽率就是檢定力（power）、"
+     "<p>ISLP 表 4.7 還給了對照的別名：假陽率就是第一型錯誤、真陽率就是檢定力（power）、"
      "精確率就是正預測值（PPV）。同一個表格，不同學科各叫一套名字。</p>"
      "<p><strong>方向相反是因為兩種錯誤的成本結構不同。</strong></p>"
      "<ul><li><strong>癌症篩檢</strong>：漏掉一個病人（FN）可能致命；誤報（FP）的代價是再做一次檢查。"
-     "所以把閾值調低、犧牲特異度換<strong>高靈敏度</strong>。篩檢工具本來就設計成「寧可多抓」。</li>"
+     "所以把門檻值調低、犧牲特異度換<strong>高敏感度</strong>。篩檢工具本來就設計成「寧可多抓」。</li>"
      "<li><strong>垃圾信過濾</strong>：把重要信件丟進垃圾桶（FP，如果正類＝垃圾信）代價很高；"
-     "漏掉一封垃圾信只是煩。所以閾值調高、追求<strong>高精確率</strong>。</li></ul>"
+     "漏掉一封垃圾信只是煩。所以門檻值調高、追求<strong>高精確率</strong>。</li></ul>"
      "<p>lab 的 <code>Caravan</code> 是第三種情況：業務員拜訪一個人有成本，"
      "所以在意的是「被我挑中的人裡有幾成真的會買」。那是<strong>精確率</strong>。"
-     "把閾值從 0.5 降到 0.25，挑出 29 個人、9 個真的買，精確率 31%，"
+     "把門檻值從 0.5 降到 0.25，挑出 29 個人、9 個真的買，精確率 31%，"
      "是隨機猜（6%）的五倍。</p>"),
 ])}
 
@@ -687,33 +687,33 @@ BODIES["threshold"] = f"""
       lab_output(CH, 58), src=src("57、58"),
       note="注意 <code>confusion_matrix(真實, 預測)</code> 與 ISLP 的 "
            "<code>confusion_table(預測, 真實)</code> <strong>參數順序相反、矩陣也是轉置的</strong>。"
-           "看到別人的混淆矩陣第一件事就是確認哪一軸是真實值，否則靈敏度與精確率會對調。"
-           "這裡靈敏度 0.752 很高，但假陽率也高達 0.685——模型幾乎什麼都猜 Up。")}
+           "看到別人的混淆矩陣第一件事就是確認哪一軸是真實值，否則敏感度與精確率會對調。"
+           "這裡敏感度 0.752 很高，但假陽率也高達 0.685——模型幾乎什麼都猜 Up。")}
 
-{card("講義 04 · Caravan：把閾值從 0.5 降到 0.25", _thr_code2,
+{card("講義 04 · Caravan：把門檻值從 0.5 降到 0.25", _thr_code2,
       lab_output(CH, 158), src=src("156、158、159"),
-      note="閾值 0.5 時只有 2 個人被預測會買保險，而且<strong>兩個都猜錯</strong>"
-           "（閾值 0.5 的混淆矩陣為 931／67／2／0）——模型等於沒有產出。"
+      note="門檻值 0.5 時只有 2 個人被預測會買保險，而且<strong>兩個都猜錯</strong>"
+           "（門檻值 0.5 的混淆矩陣為 931／67／2／0）——模型沒有找出任何實際購買者。"
            "降到 0.25 之後挑出 29 個人、其中 9 個真的買了，"
            "精確率 <strong>9/(20+9) = 31.0%</strong>，是隨機猜 6% 的五倍。"
-           "<strong>同一個模型、同一組係數，只換了一個閾值。</strong>")}
+           "<strong>同一個模型、同一組係數，只換了一個門檻值。</strong>")}
 
-{quiz("qThr", "QUIZ · 閾值",
-      "把分類閾值從 0.5 降到 0.2，下面哪一組變化一定會發生？",
-      [(True, "靈敏度上升（或持平）、特異度下降（或持平）；總錯誤率不保證變好",
-        "對。閾值降低 → 更多人被判為正類 → TP 與 FP 都只會增加、FN 與 TN 都只會減少。"
-        "所以靈敏度單調上升、特異度單調下降。總錯誤率則不一定："
-        "Default 的例子從 2.75% 升到 3.73%（變差），但這是為了換靈敏度而刻意付的代價。"),
-       (False, "靈敏度與精確率都上升，因為抓到的正類變多了",
-        "靈敏度確實上升，但<strong>精確率通常會下降</strong>。精確率的分母是「你預測為正的人數」，"
-        "閾值放寬後這個分母漲得比 TP 快。Default 的例子：精確率從 81/104 = 77.9% 掉到 195/430 = 45.3%。"),
+{quiz("qThr", "QUIZ · 門檻值",
+      "把分類門檻值從 0.5 降到 0.2，下面哪一組變化一定會發生？",
+      [(True, "敏感度上升（或持平）、特異度下降（或持平）；總錯誤率不保證變好",
+        "對。門檻值降低 → 更多人被判為正類 → TP 與 FP 都只會增加、FN 與 TN 都只會減少。"
+        "所以敏感度單調上升、特異度單調下降。總錯誤率則不一定："
+        "Default 的例子從 2.75% 升到 3.73%（變差），但這是為了換敏感度而刻意付的代價。"),
+       (False, "敏感度與精確率都上升，因為抓到的正類變多了",
+        "敏感度確實上升，但<strong>精確率通常會下降</strong>。精確率的分母是「你預測為正的人數」，"
+        "門檻值放寬後這個分母漲得比 TP 快。Default 的例子：精確率從 81/104 = 77.9% 掉到 195/430 = 45.3%。"),
        (False, "總錯誤率一定下降，因為模型抓到更多真正的正類",
-        "不對，方向反了。0.5 這個閾值<strong>就是</strong>讓總錯誤率最小的那個（Bayes 分類器的性質），"
+        "不對，方向反了。0.5 這個門檻值<strong>就是</strong>讓總錯誤率最小的那個（Bayes 分類器的性質），"
         "所以離開 0.5 通常會讓總錯誤率變差。我們願意付這個代價，是因為兩種錯誤的成本不一樣。")])}
 
 {table(["名稱", "定義", "別名", "分母是誰"],
-       [["假陽率 FPR", "FP / N", "型一錯誤、1 − 特異度", "真實的負類"],
-        ["真陽率 TPR", "TP / P", "靈敏度、recall、檢定力、1 − 型二錯誤", "真實的正類"],
+       [["假陽率 FPR", "FP / N", "第一型錯誤、1 − 特異度", "真實的負類"],
+        ["真陽率 TPR", "TP / P", "敏感度、recall、檢定力、1 − 第二型錯誤", "真實的正類"],
         ["正預測值 PPV", "TP / P*", "精確率、1 − 錯誤發現比例", "預測為正的"],
         ["負預測值 NPV", "TN / N*", "—", "預測為負的"]])}
   <p style="font-size:.82rem;color:var(--muted);">對照 ISLP 表 4.6／4.7。
@@ -734,7 +734,7 @@ BODIES["compare"] = f"""
   $$\\text{{Naive Bayes：}}\\;\\log\\!\\left(\\frac{{\\Pr(Y = k \\mid x)}}{{\\Pr(Y = K \\mid x)}}\\right)
     = a_k + \\sum_{{j=1}}^{{p}} g_{{kj}}(x_j)$$
 
-  <p>三行擺在一起，四個結論就掉出來了：</p>
+  <p>比較這三種形式，可得以下四個關係：</p>
 
 {info("四個等價關係（ISLP §4.5.1）", '''<strong>1. LDA 是 QDA 的特例</strong>（所有 c<sub>kjl</sub> = 0）。
   不意外，LDA 就是加了 Σ₁ = ⋯ = Σ<sub>K</sub> 的 QDA。<br>
@@ -746,14 +746,14 @@ BODIES["compare"] = f"""
   但它是純加性的、<strong>永遠沒有 x<sub>j</sub>x<sub>l</sub> 交互項</strong>；QDA 有交互項但被鎖在二次式裡。''')}
 
   <p>邏輯斯迴歸呢？多元邏輯斯迴歸的形式跟 LDA 的第一行<strong>字面上完全一樣</strong>。
-  差別只在係數怎麼來：LDA 從常態假設推出來，邏輯斯迴歸直接最大化條件似然。
+  差別只在係數怎麼來：LDA 從常態假設推出來，邏輯斯迴歸直接最大化條件概似。
   所以「X 近似常態 → LDA 較好，否則 → 邏輯斯較好」。</p>
 
   <p>KNN 是唯一完全在框架外的：它不寫任何 log-odds 的式子，直接看鄰居投票。
   代價是（a）需要 n ≫ p，（b）不告訴你哪個變數重要。</p>
 
-  <p>Default 上四個方法的 AUC 幾乎相同；上面的閾值元件已經完整呈現 ROC 與 AUC，
-  可用這個元件比較不同閾值下的表現。選擇方法時，把候選方法放進
+  <p>Default 上四個方法的 AUC 幾乎相同；上面的門檻值元件已經完整呈現 ROC 與 AUC，
+  可用這個元件比較不同門檻值下的表現。選擇方法時，把候選方法放進
   同一個重抽樣流程，依未見資料的表現與問題的錯誤成本判斷。</p>
 
   <h3 id="dx-knn">講義完整實作：KNN，唯一的無母數方法</h3>
@@ -791,36 +791,36 @@ BODIES["compare"] = f"""
         "而且方向反了。「LDA 是 Naive Bayes 的特例」對<strong>任意</strong> Σ 都成立，不必是對角的，"
         "因為決定的是邊界的函數形式，不是相關結構。"),
        (False, "這句話只在 p = 1 時成立，p ≥ 2 時兩者沒有包含關係",
-        "不對。p = 1 時獨立假設是空的、結論太廉價；ISLP 那條結論對一般 p 都成立。"
+        "不對。p = 1 時獨立假設是空的、結論過於簡單；ISLP 那條結論對一般 p 都成立。"
         "「QDA 與 Naive Bayes 誰都不是誰的特例」表示兩者的函數族沒有包含關係。")])}
 """
 
 # ── P07 Poisson / GLM ─────────────────────────────────────────────────
 BODIES["poisson"] = f"""
   <p class="skip-note">這一節是課堂沒細講的延伸（講義 04 · p.49–56 對應 ISLP §4.6）。
-  它把「線性迴歸／邏輯斯迴歸」收進 GLM 這個大框架裡，觀念很漂亮但不影響前面各節的理解，
+  它把「線性迴歸／邏輯斯迴歸」收進 GLM 這個大框架裡，這個觀念不影響前面各節的理解，
   第一輪可以先跳過，之後回來看。</p>
 
   <p>前面兩種 y：連續的（第 3 章）與類別的（本章）。還有第三種常見的 y——<strong>計數</strong>。
   ISLP 用 <code>Bikeshare</code>（華盛頓特區每小時的單車租借數，n = 8645）示範。</p>
 
-  <p>直接對計數配線性迴歸會踩三個坑：</p>
+  <p>直接對計數擬合線性迴歸會遇到三個問題：</p>
 
   <ul>
     <li><strong>會預測出負數。</strong>ISLP 說 <code>Bikeshare</code> 上有 <strong>9.6%</strong>
-    的配適值是負的——負的租借數沒有意義。</li>
+    的擬合值是負的——負的租借數沒有意義。</li>
     <li><strong>變異數不是常數。</strong>清晨下雨的時段平均 5.05 人、標準差 3.73；
     春天早上晴天的時段平均 243.59 人、標準差 131.7。<strong>平均大變異也大</strong>，
     這直接違反線性模型的同質變異假設。</li>
     <li><strong>y 是整數。</strong>線性模型的誤差是連續的，所以 y 必然被當成連續量。</li>
   </ul>
 
-  <p>Poisson 分佈天生就長成計數的樣子：</p>
+  <p>Poisson 分佈可用來描述計數：</p>
 
   $$\\Pr(Y = k) = \\frac{{e^{{-\\lambda}} \\lambda^k}}{{k!}}, \\qquad k = 0, 1, 2, \\ldots
     \\qquad\\text{{而且}}\\quad \\mathbb{{E}}(Y) = \\mathrm{{Var}}(Y) = \\lambda$$
 
-  <p><strong>Poisson 迴歸</strong>讓 λ 隨預測變數而變，而且是對 <strong>log λ</strong> 配線性式：</p>
+  <p><strong>Poisson 迴歸</strong>讓 λ 隨預測變數而變，而且是對 <strong>log λ</strong> 擬合線性式：</p>
 
   $$\\log \\lambda(X_1, \\ldots, X_p) = \\beta_0 + \\beta_1 X_1 + \\cdots + \\beta_p X_p
     \\qquad\\Longleftrightarrow\\qquad
@@ -859,7 +859,7 @@ BODIES["poisson"] = f"""
   <h3 id="dx-poi">講義完整實作：用 <code>sm.GLM()</code> 建立三種模型</h3>
 {card("講義 04 · Poisson 迴歸（Bikeshare）",
       lab_code(CH, 188) + "\n\n" + lab_code(CH, 190), None, src=src("188、190"),
-      note="跟前面配邏輯斯迴歸的那一行比一比："
+      note="跟前面擬合邏輯斯迴歸的那一行比一比："
            "<code>family=sm.families.Binomial()</code> 換成 "
            "<code>family=sm.families.Poisson()</code>，其他一個字都沒改。"
            "係數的補齊步驟（<code>mnth[Dec]</code> 取其餘月份的負和）是因為用了 "
@@ -868,25 +868,25 @@ BODIES["poisson"] = f"""
            "這一格 lab 沒有存下輸出，數字請看課本表 4.11：intercept 4.12、temp 0.79、"
            "weathersit[light rain/snow] −0.58。")}
 
-{info("Poisson 迴歸的一個坑：過度分散", '''Poisson 模型硬性要求 Var(Y) = E(Y)。
+{info("Poisson 迴歸的限制：過度分散", '''Poisson 模型硬性要求 Var(Y) = E(Y)。
   真實資料常常變異遠大於平均，這叫<strong>過度分散</strong>（overdispersion）。
-  ISLP 的腳註坦承 <code>Bikeshare</code> 就有這個問題，
+  ISLP 的腳註指出 <code>Bikeshare</code> 就有這個問題，
   <strong>導致表 4.11 的 z 值被高估</strong>（看起來比實際更顯著）。<br>
-  補救方式是 quasi-Poisson 或負二項迴歸——超出本章範圍，但知道有這個坑很重要：
+  補救方式是 quasi-Poisson 或負二項迴歸——超出本章範圍，但解讀結果時仍須留意：
   <strong>係數還可信，標準誤與 p 值不可信。</strong>''', "warm")}
 
 {quiz("qPoi", "QUIZ · Poisson 迴歸",
-      "Poisson 迴歸配的是 log λ 而不是 λ 本身。最主要的理由是什麼？",
+      "Poisson 迴歸擬合的是 log λ 而不是 λ 本身。最主要的理由是什麼？",
       [(True, "取 log 之後 λ = e^(線性式) 永遠是正的，計數的平均值不會被預測成負數",
-        "對。這正是線性迴歸在 <code>Bikeshare</code> 上 9.6% 配適值變成負數的病根。"
+        "對。這正是線性迴歸在 <code>Bikeshare</code> 上 9.6% 擬合值變成負數的原因。"
         "順帶的好處是係數變成乘法解讀（λ 乘上 e^βⱼ），跟邏輯斯迴歸的勝算比同一個模式。"),
        (False, "因為 log 轉換會讓計數資料變成常態分佈，這樣才能用最小平方法",
-        "不對。Poisson 迴歸<strong>不做</strong>「把 y 取 log 再配線性模型」這件事。"
-        "那是另一種做法（而且 y = 0 時就爆了）。這裡取 log 的對象是<strong>平均值 λ</strong>，"
-        "不是 y；估計用的是最大似然，不是最小平方。"),
+        "不對。Poisson 迴歸<strong>不做</strong>「把 y 取 log 再擬合線性模型」這件事。"
+        "那是另一種做法（而且 y = 0 時無法取 log）。這裡取 log 的對象是<strong>平均值 λ</strong>，"
+        "不是 y；估計用的是最大概似，不是最小平方。"),
        (False, "因為 log 是唯一能讓 Poisson 迴歸有封閉解的連結函數",
-        "不對。Poisson 迴歸<strong>沒有</strong>封閉解，跟邏輯斯迴歸一樣要迭代。"
-        "log 之所以是預設（正規連結），是因為它讓 μ 落在 (0, ∞) 又讓數學最漂亮，不是因為有封閉解。")])}
+        "不對。Poisson 迴歸<strong>沒有</strong>封閉解，跟邏輯斯迴歸一樣要反覆更新參數。"
+        "log 之所以是預設（正規連結），是因為它讓 μ 落在 (0, ∞) 也便於數學推導，不是因為有封閉解。")])}
 """
 
 # ── EX ────────────────────────────────────────────────────────────────
@@ -936,7 +936,7 @@ BODIES["exercises"] = f"""
 
 {quiz("qEx4", "EXERCISE 4 · ISLP 4.8 第 5 題（a）（d）",
       "（a）Bayes 決策邊界是<strong>線性</strong>時，LDA 與 QDA 誰在訓練集上比較好？測試集呢？"
-      "（d）「就算邊界是線性的，QDA 彈性夠大也配得下，所以測試誤差還是會比較好」——對嗎？",
+      "（d）「就算邊界是線性的，QDA 彈性夠大也擬合得下，所以測試誤差還是會比較好」——對嗎？",
       [(True, "訓練集 QDA 通常較好，測試集 LDA 較好；(d) 是錯的",
         "對。QDA 比較有彈性，所以<strong>訓練</strong>誤差通常較低（甚至一定不會更高）。"
         "但邊界既然是線性的，多出來的彈性只帶來變異、換不到偏差的減少，"
@@ -949,7 +949,7 @@ BODIES["exercises"] = f"""
        (False, "兩個集合都是 QDA 較好，因為線性邊界是二次邊界的特例",
         "訓練集對，測試集錯，而且理由正是課本第 (d) 小題要釐清的差別。"
         "「特例」保證的是<strong>偏差</strong>不會更差，完全沒有保證變異——"
-        "而測試誤差 = 偏差² + 變異 + 不可約誤差。")])}
+        "而測試誤差 = 偏差² + 變異 + 不可縮減誤差。")])}
 """
 
 # ── REF ───────────────────────────────────────────────────────────────
@@ -970,17 +970,17 @@ BODIES["reference"] = f"""
          "邊界極度彎曲且 n ≫ p"]])}
 
   <h3>Default 資料上的實測數字（可以直接對回課本）</h3>
-{table(["", "TN", "FP", "FN", "TP", "錯誤率", "靈敏度", "出處"],
-       [["LDA，閾值 0.5", "9644", "23", "<strong>252</strong>", "81", "2.75%", "24.3%", "ISLP 表 4.4"],
-        ["LDA，閾值 0.2", "9432", "235", "<strong>138</strong>", "195", "3.73%", "58.6%", "ISLP 表 4.5"],
-        ["Naive Bayes，閾值 0.5", "9621", "46", "244", "89", "2.90%", "26.7%", "ISLP 表 4.8"],
-        ["Naive Bayes，閾值 0.2", "9339", "328", "130", "203", "4.58%", "61.0%", "ISLP 表 4.9"],
+{table(["", "TN", "FP", "FN", "TP", "錯誤率", "敏感度", "出處"],
+       [["LDA，門檻值 0.5", "9644", "23", "<strong>252</strong>", "81", "2.75%", "24.3%", "ISLP 表 4.4"],
+        ["LDA，門檻值 0.2", "9432", "235", "<strong>138</strong>", "195", "3.73%", "58.6%", "ISLP 表 4.5"],
+        ["Naive Bayes，門檻值 0.5", "9621", "46", "244", "89", "2.90%", "26.7%", "ISLP 表 4.8"],
+        ["Naive Bayes，門檻值 0.2", "9339", "328", "130", "203", "4.58%", "61.0%", "ISLP 表 4.9"],
         ["一律預測「不違約」", "9667", "0", "333", "0", "3.33%", "0.0%", "基準錯誤率"]])}
-  <p style="font-size:.82rem;color:var(--muted);">本頁 <code>w04thr</code> 元件的 2×2 表在閾值
+  <p style="font-size:.82rem;color:var(--muted);">本頁 <code>w04thr</code> 元件的 2×2 表在門檻值
   0.5 與 0.2 會<strong>逐格</strong>重現前兩列（我們用 <code>scikit-learn</code> 的
   <code>LinearDiscriminantAnalysis</code> 在 <code>balance</code> + <code>student</code> 上重算，
   數字與課本相同）。ISLP 表 4.8／4.9 的 Naive Bayes 實作與 <code>GaussianNB</code>
-  對 <code>student</code> 的處理略有不同，所以本頁烘焙的 NB 混淆矩陣是 9618／49／238／95。</p>
+  對 <code>student</code> 的處理略有不同，所以本頁預先計算的 NB 混淆矩陣是 9618／49／238／95。</p>
 
   <h3>Smarket 上五個方法的 2005 年正確率（lab 的實跑結果）</h3>
 {table(["方法", "2005 年正確率", "混淆矩陣（預測 × 真實）", "lab 儲存格"],
@@ -1023,10 +1023,10 @@ BODIES["reference"] = f"""
   係數 β₁ 要讀成「勝算乘上 e^β₁」；同樣的 β₁ 對應的機率差異隨位置而變。
   係數描述模型中的條件關聯，因果解讀另需研究設計與假設。<br>
   <strong>2. 生成式（LDA／QDA／Naive Bayes）與判別式（邏輯斯）的差別只在係數怎麼來。</strong>
-  LDA 的邊界形式跟邏輯斯字面上相同（式 4.32）；差別是前者從常態假設推、後者最大化條件似然。
+  LDA 的邊界形式跟邏輯斯字面上相同（式 4.32）；差別是前者從常態假設推、後者最大化條件概似。
   共用 Σ 給線性邊界、各自 Σ<sub>k</sub> 給二次邊界、類內獨立給加性邊界。<br>
-  <strong>3. 0.5 這個閾值只是「總錯誤率最小」的產物。</strong>
-  類別不平衡或兩種錯誤成本不同時，先問「哪種錯誤比較貴」，再調閾值，
+  <strong>3. 0.5 這個門檻值只是「總錯誤率最小」的產物。</strong>
+  類別不平衡或兩種錯誤成本不同時，先問「哪種錯誤比較貴」，再調門檻值，
   並且把同一量尺的多數類基準與混淆矩陣一起報出來。''')}
 
 {ver_note()}
@@ -1057,7 +1057,7 @@ function w04clip(s, pts, attrs, g) {
   if (run.length > 1) s.poly(run, attrs, g);
 }
 
-/* ---------- P00 為什麼不用迴歸（hybrid：烘焙 Default 的兩組配適，即時讀值）---------- */
+/* ---------- P00 為什麼不用迴歸（hybrid：烘焙 Default 的兩組擬合，即時讀值）---------- */
 let w04whySvc = null, w04whyOnlyLog = false;
 function w04whySetup() {
   w04whySvc = HC.svg('w04whySvg', { xd: [0, 2700], yd: [-0.32, 1.16], h: 330 });
@@ -1107,7 +1107,7 @@ function w04whyDraw() {
   setStatus('w04whyStatus', 'balance = ' + b.toFixed(0) + ' 時，線性迴歸給 '
     + HC.fmt(el, 4) + '，邏輯斯給 ' + HC.fmt(eg, 4) + '。'
     + (el < 0 ? '<strong>線性版是負數——這不是機率。</strong>'
-      : '兩者都落在 [0,1] 裡，但線性版只是運氣好：往左推就破了。'));
+      : '兩者都落在 [0,1] 裡，但線性模型的預測並未限制在此範圍內；往左移動滑桿就會出現負值。'));
 }
 function w04whyMove() { w04whyDraw(); }
 function w04whyJump(v) { $('w04whyBal').value = String(v); w04whyDraw(); }
@@ -1406,7 +1406,7 @@ function w04thrDrawRoc() {
     datasets: [
       { label: 'LDA 的 ROC', data: w04thrRocPts, borderColor: HC.tok.accent2,
         borderWidth: 2.4, pointRadius: 0, fill: false },
-      { label: '目前閾值', data: [{ x: 0, y: 0 }], borderColor: HC.tok.accent,
+      { label: '目前門檻值', data: [{ x: 0, y: 0 }], borderColor: HC.tok.accent,
         backgroundColor: HC.tok.accent, pointRadius: 6.5, showLine: false },
       { label: '隨機猜', data: [{ x: 0, y: 0 }, { x: 1, y: 1 }], borderColor: HC.tok.muted,
         borderWidth: 1.2, borderDash: [5, 4], pointRadius: 0, fill: false },
@@ -1415,7 +1415,7 @@ function w04thrDrawRoc() {
     interaction: { mode: 'nearest', intersect: true },
     scales: {
       x: { type: 'linear', min: 0, max: 1, title: { display: true, text: '假陽率 FPR = 1 − 特異度' } },
-      y: { min: 0, max: 1, title: { display: true, text: '真陽率 TPR = 靈敏度' } },
+      y: { min: 0, max: 1, title: { display: true, text: '真陽率 TPR = 敏感度' } },
     },
   });
 }
@@ -1430,8 +1430,8 @@ function w04thrApply(s) {
   w04tx('w04thrPrec', Number.isNaN(s.prec) ? '—（沒有人被判為違約）' : HC.pct(s.prec, 1));
   w04tx('w04thrErr', HC.pct(s.err, 2));
   HC.update('w04thrRoc', c => { c.data.datasets[1].data = [{ x: s.fpr, y: s.sens }]; });
-  setStatus('w04thrStatus', '閾值 ' + HC.fmt(s.t, 3) + '：預測會違約 ' + (s.fp + s.tp)
-    + ' 人，抓到 ' + s.tp + ' / ' + FRAMES_w04thr.nPos + ' 個真違約戶（靈敏度 '
+  setStatus('w04thrStatus', '門檻值 ' + HC.fmt(s.t, 3) + '：預測會違約 ' + (s.fp + s.tp)
+    + ' 人，抓到 ' + s.tp + ' / ' + FRAMES_w04thr.nPos + ' 個真違約戶（敏感度 '
     + HC.pct(s.sens, 1) + '），誤報 ' + s.fp + ' 人，總錯誤率 ' + HC.pct(s.err, 2) + '。');
 }
 function w04thrMove() {

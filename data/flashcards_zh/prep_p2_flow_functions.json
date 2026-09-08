@@ -1,14 +1,14 @@
 [
 {"front": "條件判斷（if）", "back": "成立就做這個、否則做那個。Python 用縮排決定哪些行屬於裡面，不用大括號。"},
 {"front": "邏輯運算子（and／or／not）", "back": "純 Python 的邏輯運算，一次只能判斷一個真假值。拿去選 DataFrame 的列會拋「truth value is ambiguous」。"},
-{"front": "逐元素邏輯（&／|／~）", "back": "對一整排真假值逐元素做且／或／非。選資料一律用它，而且每個條件都要包括號——它的優先順序比 > 高。"},
+{"front": "逐元素邏輯（&／|／~）", "back": "對一整排真假值逐元素做且／或／非。選資料一律用它，而且每個條件都要加上括號——它的優先順序比 > 高。"},
 {"front": "運算子優先順序（Precedence）", "back": "& 比 > 先算，所以 df['a'] > 1 & df['b'] > 2 會被讀成 df['a'] > (1 & df['b']) > 2，然後報一個看不懂的錯。"},
 {"front": "縮排（Indentation）", "back": "Python 用它代替大括號來劃分程式區塊。同一層要對齊，混用空白與 tab 會出事。"},
 {"front": "迴圈（for）", "back": "把同一件事對每一個東西各做一次。統計程式裡它出現在三個地方：試參數、重抽樣、逐欄處理。"},
 {"front": "整數序列（range）", "back": "產生一串整數。range(1, 4) 是 1、2、3（不含 4，跟切片同一套規則）。只是要跑 B 次就寫 for _ in range(B)。"},
 {"front": "帶位置走訪（enumerate）", "back": "走過串列時同時拿到位置與值：for i, x in enumerate(a)。要把結果填進一個陣列時很常用。"},
 {"front": "配對走訪（zip）", "back": "把兩排東西逐位配對並排走。長度不一樣時，短的結束就停。算加權平均就是它的典型用法。"},
-{"front": "累加賦值（+=）", "back": "total += value 是 total = total + value 的簡寫。自助法累積結果時到處都是。"},
+{"front": "累加指派（+=）", "back": "total += value 是 total = total + value 的簡寫。自助法累積結果時到處都是。"},
 {"front": "巢狀迴圈（Nested Loop）", "back": "迴圈裡面還有迴圈，總次數是相乘。兩層以上通常代表該換個寫法了。"},
 {"front": "串列生成式（List Comprehension）", "back": "[f(x) for x in a]：走一遍並把結果收成一個串列。比先開空串列再 append 好讀。"},
 {"front": "向量化與迴圈（Vectorization vs Loop）", "back": "對整排數字做同一件事就用 NumPy／pandas 的向量化寫法。迴圈留給「每一圈內容真的不一樣」的情況——試不同參數、抽不同樣本。"},
@@ -23,5 +23,5 @@
 {"front": "追溯訊息（Traceback）", "back": "報錯時印出的那一長串。從最後一行開始讀：最後一行是錯誤種類與說明，往上是它發生在哪一行。"},
 {"front": "常見的四種錯誤（Common Exceptions）", "back": "NameError 名字沒定義（多半是儲存格沒跑）、KeyError 欄名不存在、IndexError 索引超出範圍、ValueError 型別對但值不合理（形狀對不上）。"},
 {"front": "例外處理（try／except）", "back": "使用前先確認預期的錯誤與處理方式。except: pass 會略過錯誤訊息，後續結果仍可能出錯。"},
-{"front": "沉默的錯（Silent Error）", "back": "程式完成執行並產生數字，結果卻有錯。多份程式修改不一致或例外被忽略，都可能造成這種情況；因此仍要核對輸出。"}
+{"front": "未顯示訊息的錯誤（Silent Error）", "back": "程式完成執行並產生數字，結果卻有錯。多份程式修改不一致或例外被忽略，都可能造成這種情況；因此仍要核對輸出。"}
 ]
