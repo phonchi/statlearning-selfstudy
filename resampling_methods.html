@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -702,11 +702,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.5｜講義 05）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/05_Resampling_Methods.pdf" target="_blank" rel="noopener">📑 講義 05 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch05 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/05_Resampling_Methods.pdf" target="_blank" rel="noopener">📑 講義 05 PDF</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch05 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -730,7 +730,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>用重抽樣評估模型在新資料上的表現 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5 章開頭</a></span><span class="sec-badge">講義 05 · p.2–6</span></h2>
+  <h2>用重抽樣評估模型在新資料上的表現 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5 章開頭</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>你已經會配模型了。現在的問題換成：<strong>這個模型在沒見過的資料上會有多準？</strong>
@@ -759,14 +759,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 為什麼不能用訓練誤差</div>
   <p>為什麼「訓練誤差」不能拿來當測試誤差的估計？</p>
-  <div class="quiz-options" id="qWhyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。訓練誤差是「已經被最佳化過的目標值」，它衡量的是配適程度，不是預測能力。模型愈有彈性，這個偏差愈大。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(A)</span> 模型的參數是照著這批資料挑出來的，誤差已經被最小化過，所以會系統性偏低</div><div class="quiz-opt" data-correct="false" data-fb="不對。樣本少會增加誤差估計的變異；訓練誤差還有<strong>系統性偏低</strong>的偏差。增加訓練資料後，用配適資料自評造成的偏差仍然存在。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(B)</span> 訓練資料的樣本數太少，誤差的變異太大</div><div class="quiz-opt" data-correct="false" data-fb="不對。兩邊可以用完全相同的指標；差別在於<strong>算誤差的資料有沒有參與過配適</strong>，不在於指標。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(C)</span> 訓練誤差用的是 MSE，測試誤差用的是別的指標，兩者不能比</div></div>
+  <div class="quiz-options" id="qWhyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。訓練誤差是「已經被最佳化過的目標值」，它衡量的是配適程度，不是預測能力。模型愈有彈性，這個偏差愈大。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(A)</span> 模型的參數是照著這批資料挑出來的，誤差已經被最小化過，所以會系統性偏低</div><div class="quiz-opt" data-correct="false" data-fb="不對。樣本少會增加誤差估計的變異；訓練誤差還有&lt;strong&gt;系統性偏低&lt;/strong&gt;的偏差。增加訓練資料後，用配適資料自評造成的偏差仍然存在。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(B)</span> 訓練資料的樣本數太少，誤差的變異太大</div><div class="quiz-opt" data-correct="false" data-fb="不對。兩邊可以用完全相同的指標；差別在於&lt;strong&gt;算誤差的資料有沒有參與過配適&lt;/strong&gt;，不在於指標。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(C)</span> 訓練誤差用的是 MSE，測試誤差用的是別的指標，兩者不能比</div></div>
   <div class="quiz-feedback" id="qWhyFeedback"></div>
 </div>
 </section>
 <section id="validation">
 <!-- GEN:BEGIN sec:validation -->
   <div class="section-number">PART 01 · 驗證集法</div>
-  <h2>驗證集法：觀察資料切分帶來的變動 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.1 節</a></span><span class="sec-badge">講義 05 · p.7–9</span></h2>
+  <h2>驗證集法：觀察資料切分帶來的變動 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.1 節</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:validation -->
 
   <p>最直接的做法：把資料隨機切成兩半，一半訓練、一半當<strong>驗證集</strong>（validation set，
@@ -818,7 +818,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">np.mean((y_valid - valid_pred)**<span class="num">2</span>)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(25.57387818968441)</pre></div>
   <p class="dx-note">這個 <strong>25.57</strong> 就是課本 §5.1.1 引用的數字。注意 <code>random_state=rng</code>——換掉它，下面的數字就會不一樣。</p>
-  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 16、20</span>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="16,20">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -836,7 +836,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">MSE</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([20.75540796, 16.94510676, 16.97437833])</pre></div>
   <p class="dx-note">degree 1／2／3 的驗證 MSE 從 <code>[25.57, 22.22, 22.67]</code> 變成 <code>[20.76, 16.95, 16.97]</code>。<strong>同一份資料、同一個模型，只是切法不同，數字差了快 5。</strong>但兩次都指向同一個結論：二次比一次好，三次沒有再更好。</p>
-  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 26、28</span>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="26,28">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
@@ -852,14 +852,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 驗證集法</div>
   <p>驗證集法有兩個公認的缺點。下面哪一組說對了？</p>
-  <div class="quiz-options" id="qValOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP §5.1.1 講的就是這兩點，而 k-fold CV 兩點都改善了。" onclick="quizCheck('qVal', this)"><span class="opt-letter">(A)</span> ① 估計值變異大（換切法就變）② 只用一半資料訓練，所以高估測試誤差</div><div class="quiz-opt" data-correct="false" data-fb="都不對。驗證集法是這幾種方法裡<strong>最省算力</strong>的（只配一次模型）；而它把 MSE 換成錯誤率就能用在分類。" onclick="quizCheck('qVal', this)"><span class="opt-letter">(B)</span> ① 計算量太大 ② 只能用在迴歸，不能用在分類</div><div class="quiz-opt" data-correct="false" data-fb="都不對。驗證集完全沒參與配適，所以沒有洩漏；而且整套做法不需要任何分佈假設。這正是重抽樣方法的優點。" onclick="quizCheck('qVal', this)"><span class="opt-letter">(C)</span> ① 會用到測試資料的資訊 ② 需要假設誤差是常態分佈</div></div>
+  <div class="quiz-options" id="qValOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP §5.1.1 講的就是這兩點，而 k-fold CV 兩點都改善了。" onclick="quizCheck('qVal', this)"><span class="opt-letter">(A)</span> ① 估計值變異大（換切法就變）② 只用一半資料訓練，所以高估測試誤差</div><div class="quiz-opt" data-correct="false" data-fb="都不對。驗證集法是這幾種方法裡&lt;strong&gt;最省算力&lt;/strong&gt;的（只配一次模型）；而它把 MSE 換成錯誤率就能用在分類。" onclick="quizCheck('qVal', this)"><span class="opt-letter">(B)</span> ① 計算量太大 ② 只能用在迴歸，不能用在分類</div><div class="quiz-opt" data-correct="false" data-fb="都不對。驗證集完全沒參與配適，所以沒有洩漏；而且整套做法不需要任何分佈假設。這正是重抽樣方法的優點。" onclick="quizCheck('qVal', this)"><span class="opt-letter">(C)</span> ① 會用到測試資料的資訊 ② 需要假設誤差是常態分佈</div></div>
   <div class="quiz-feedback" id="qValFeedback"></div>
 </div>
 </section>
 <section id="loocv">
 <!-- GEN:BEGIN sec:loocv -->
   <div class="section-number">PART 02 · LOOCV</div>
-  <h2>每次保留一筆資料的交叉驗證 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.2 節</a></span><span class="sec-badge">講義 05 · p.10–12</span></h2>
+  <h2>每次保留一筆資料的交叉驗證 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.2 節</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:loocv -->
 
   <p>驗證集法浪費了一半的資料，而且答案會跳。把它推到極端：
@@ -899,7 +899,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">cv_err</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(24.23151351792922)</pre></div>
   <p class="dx-note"><strong>24.2315</strong> 就是 degree 1 的 LOOCV 估計。跟上面驗證集法的 25.57／20.76 比一比：LOOCV 只有一個答案，不會因為切法而跳。</p>
-  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 32</span>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="32">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="info-box warm">
@@ -924,14 +924,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · LOOCV</div>
   <p>同一份資料上，把 LOOCV 跑兩次，會得到一樣的答案嗎？</p>
-  <div class="quiz-options" id="qLooOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 LOOCV 相對於驗證集法與 k-fold 的一個明確優點：結果完全可重現，沒有 seed 要煩。" onclick="quizCheck('qLoo', this)"><span class="opt-letter">(A)</span> 會，因為 n 種「留一」分割是枚舉出來的，沒有隨機性</div><div class="quiz-opt" data-correct="false" data-fb="不對。每輪的訓練集確實不同，但那是<strong>固定</strong>的 n 種分割（第 1 輪必定留第 1 筆），不是隨機抽的。" onclick="quizCheck('qLoo', this)"><span class="opt-letter">(B)</span> 不會，因為每輪的訓練集不同，隨機性會累積</div><div class="quiz-opt" data-correct="false" data-fb="不對。LOOCV 沒有 <code>random_state</code> 可以設——<code>LeaveOneOut()</code> 不接受這個參數，因為它不需要。" onclick="quizCheck('qLoo', this)"><span class="opt-letter">(C)</span> 不一定，取決於有沒有設 random_state</div></div>
+  <div class="quiz-options" id="qLooOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 LOOCV 相對於驗證集法與 k-fold 的一個明確優點：結果完全可重現，沒有 seed 要煩。" onclick="quizCheck('qLoo', this)"><span class="opt-letter">(A)</span> 會，因為 n 種「留一」分割是枚舉出來的，沒有隨機性</div><div class="quiz-opt" data-correct="false" data-fb="不對。每輪的訓練集確實不同，但那是&lt;strong&gt;固定&lt;/strong&gt;的 n 種分割（第 1 輪必定留第 1 筆），不是隨機抽的。" onclick="quizCheck('qLoo', this)"><span class="opt-letter">(B)</span> 不會，因為每輪的訓練集不同，隨機性會累積</div><div class="quiz-opt" data-correct="false" data-fb="不對。LOOCV 沒有 &lt;code&gt;random_state&lt;/code&gt; 可以設——&lt;code&gt;LeaveOneOut()&lt;/code&gt; 不接受這個參數，因為它不需要。" onclick="quizCheck('qLoo', this)"><span class="opt-letter">(C)</span> 不一定，取決於有沒有設 random_state</div></div>
   <div class="quiz-feedback" id="qLooFeedback"></div>
 </div>
 </section>
 <section id="kfold">
 <!-- GEN:BEGIN sec:kfold -->
   <div class="section-number">PART 03 · k-fold CV</div>
-  <h2>折成 k 份輪流當驗證集 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.3 節</a></span><span class="sec-badge">講義 05 · p.13–15</span></h2>
+  <h2>折成 k 份輪流當驗證集 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.3 節</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:kfold -->
 
   <p>LOOCV 要配 n 次模型，n 大就吃不消。折衷方案：把資料<strong>隨機平分成 k 份</strong>，
@@ -963,20 +963,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">    cv_error[i] = np.mean(M_CV[<span class="str">&#x27;test_score&#x27;</span>])</span>
   <span class="line">cv_error</span></div>
   <p class="dx-note"><code>shuffle=True</code> 很重要：如果原始資料有排序（例如 <code>Auto</code> 按年份），不打亂就會讓每一折的分佈完全不同。<code>random_state=0</code> 是為了<strong>讓不同 degree 用同一組分割</strong>。這樣比較才公平。這格 lab 沒存下輸出，下一節的圖用同樣設定重算了一次。</p>
-  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 41</span>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="41">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · k-fold</div>
   <p>比較不同模型（例如 degree 1 到 10）的 CV 誤差時，為什麼要讓每個模型用<strong>同一組</strong>折分割？</p>
-  <div class="quiz-options" id="qKfOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 <code>random_state=0</code> 的用意。不然你比到的是「degree 2 加上運氣好的分割」對上「degree 3 加上運氣差的分割」。" onclick="quizCheck('qKf', this)"><span class="opt-letter">(A)</span> 否則模型之間的差異會混進「分割不同」造成的雜訊，可能比模型本身的差異還大</div><div class="quiz-opt" data-correct="false" data-fb="不對，<code>cross_validate</code> 每次呼叫都可以給不同的 cv 物件。使用相同分割能減少比較時混入的隨機變動。" onclick="quizCheck('qKf', this)"><span class="opt-letter">(B)</span> 因為 scikit-learn 要求 cv 物件必須重複使用</div><div class="quiz-opt" data-correct="false" data-fb="不對。用不同分割每個模型的 CV 誤差仍然是各自無偏的；問題出在<strong>比較</strong>時多了不必要的變異，不是偏差。" onclick="quizCheck('qKf', this)"><span class="opt-letter">(C)</span> 因為用不同分割會讓 CV 誤差變成有偏估計</div></div>
+  <div class="quiz-options" id="qKfOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 &lt;code&gt;random_state=0&lt;/code&gt; 的用意。不然你比到的是「degree 2 加上運氣好的分割」對上「degree 3 加上運氣差的分割」。" onclick="quizCheck('qKf', this)"><span class="opt-letter">(A)</span> 否則模型之間的差異會混進「分割不同」造成的雜訊，可能比模型本身的差異還大</div><div class="quiz-opt" data-correct="false" data-fb="不對，&lt;code&gt;cross_validate&lt;/code&gt; 每次呼叫都可以給不同的 cv 物件。使用相同分割能減少比較時混入的隨機變動。" onclick="quizCheck('qKf', this)"><span class="opt-letter">(B)</span> 因為 scikit-learn 要求 cv 物件必須重複使用</div><div class="quiz-opt" data-correct="false" data-fb="不對。用不同分割每個模型的 CV 誤差仍然是各自無偏的；問題出在&lt;strong&gt;比較&lt;/strong&gt;時多了不必要的變異，不是偏差。" onclick="quizCheck('qKf', this)"><span class="opt-letter">(C)</span> 因為用不同分割會讓 CV 誤差變成有偏估計</div></div>
   <div class="quiz-feedback" id="qKfFeedback"></div>
 </div>
 </section>
 <section id="kbias">
 <!-- GEN:BEGIN sec:kbias -->
   <div class="section-number">PART 04 · k 該取多少</div>
-  <h2>k 的偏差–變異取捨：為什麼實務上取 5 或 10 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.4 節</a></span><span class="sec-badge">講義 05 · p.16</span></h2>
+  <h2>k 的偏差–變異取捨：為什麼實務上取 5 或 10 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.4 節</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:kbias -->
 
   <p>k 該取多少？兩個方向在拉扯：</p>
@@ -1036,14 +1036,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · k 的取捨</div>
   <p>為什麼實務上不直接用偏差最小的 LOOCV，而多半選 k = 5 或 10？</p>
-  <div class="quiz-options" id="qKOptions"><div class="quiz-opt" data-correct="true" data-fb="對。偏差、變異、算力三者的折衷，5 或 10 在三個面向上都可接受。" onclick="quizCheck('qK', this)"><span class="opt-letter">(A)</span> LOOCV 的各折高度相關，平均後變異較大；而且要配 n 次模型</div><div class="quiz-opt" data-correct="false" data-fb="不對。LOOCV 每輪都完全不看被留下的那一筆，沒有洩漏問題。它的主要代價是估計變異與計算量。" onclick="quizCheck('qK', this)"><span class="opt-letter">(B)</span> 因為 LOOCV 會用到驗證資料的資訊，估計不誠實</div><div class="quiz-opt" data-correct="false" data-fb="不對。LOOCV 對任何模型都能做（只是慢）。<em>有捷徑公式</em>（式 5.2）的才限線性最小平方，這個公式提供加速方式；一般 LOOCV 的適用範圍更廣。" onclick="quizCheck('qK', this)"><span class="opt-letter">(C)</span> 因為 LOOCV 只能用在線性模型上</div></div>
+  <div class="quiz-options" id="qKOptions"><div class="quiz-opt" data-correct="true" data-fb="對。偏差、變異、算力三者的折衷，5 或 10 在三個面向上都可接受。" onclick="quizCheck('qK', this)"><span class="opt-letter">(A)</span> LOOCV 的各折高度相關，平均後變異較大；而且要配 n 次模型</div><div class="quiz-opt" data-correct="false" data-fb="不對。LOOCV 每輪都完全不看被留下的那一筆，沒有洩漏問題。它的主要代價是估計變異與計算量。" onclick="quizCheck('qK', this)"><span class="opt-letter">(B)</span> 因為 LOOCV 會用到驗證資料的資訊，估計不誠實</div><div class="quiz-opt" data-correct="false" data-fb="不對。LOOCV 對任何模型都能做（只是慢）。&lt;em&gt;有捷徑公式&lt;/em&gt;（式 5.2）的才限線性最小平方，這個公式提供加速方式；一般 LOOCV 的適用範圍更廣。" onclick="quizCheck('qK', this)"><span class="opt-letter">(C)</span> 因為 LOOCV 只能用在線性模型上</div></div>
   <div class="quiz-feedback" id="qKFeedback"></div>
 </div>
 </section>
 <section id="cvclass">
 <!-- GEN:BEGIN sec:cvclass -->
   <div class="section-number">PART 05 · 分類問題上的 CV</div>
-  <h2>把 MSE 換成錯誤率，其餘一樣 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.5 節</a></span><span class="sec-badge">講義 05 · p.17–18</span></h2>
+  <h2>把 MSE 換成錯誤率，其餘一樣 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.1.5 節</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:cvclass -->
 
   <p>整套邏輯搬到分類問題只要換一件事：把 MSE 換成<strong>錯誤率</strong>。</p>
@@ -1081,14 +1081,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 分類上的 CV</div>
   <p>一份資料裡正例只佔 2%。用普通的 <code>KFold(n_splits=10)</code> 會有什麼風險？</p>
-  <div class="quiz-options" id="qClsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這時要用 <code>StratifiedKFold</code> 保住每折的類別比例。順便一提，這種資料也不該只看錯誤率——全猜負例就有 98%。" onclick="quizCheck('qCls', this)"><span class="opt-letter">(A)</span> 某些折可能幾乎（或完全）沒有正例，那一折的錯誤率就沒有意義</div><div class="quiz-opt" data-correct="false" data-fb="不對。錯誤率的定義沒有任何問題，它照樣算得出來；問題是它<strong>不是個有用的指標</strong>，以及分割可能退化。改用 MSE 並不能解決任何一個。" onclick="quizCheck('qCls', this)"><span class="opt-letter">(B)</span> 錯誤率的公式在不平衡資料上不成立，要改用 MSE</div><div class="quiz-opt" data-correct="false" data-fb="不對。程式跑得起來。這正是危險的地方：它不會報錯，只會安靜地給你一個沒有意義的數字。" onclick="quizCheck('qCls', this)"><span class="opt-letter">(C)</span> k 必須小於少數類別的樣本數，否則 CV 無法執行</div></div>
+  <div class="quiz-options" id="qClsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這時要用 &lt;code&gt;StratifiedKFold&lt;/code&gt; 保住每折的類別比例。順便一提，這種資料也不該只看錯誤率——全猜負例就有 98%。" onclick="quizCheck('qCls', this)"><span class="opt-letter">(A)</span> 某些折可能幾乎（或完全）沒有正例，那一折的錯誤率就沒有意義</div><div class="quiz-opt" data-correct="false" data-fb="不對。錯誤率的定義沒有任何問題，它照樣算得出來；問題是它&lt;strong&gt;不是個有用的指標&lt;/strong&gt;，以及分割可能退化。改用 MSE 並不能解決任何一個。" onclick="quizCheck('qCls', this)"><span class="opt-letter">(B)</span> 錯誤率的公式在不平衡資料上不成立，要改用 MSE</div><div class="quiz-opt" data-correct="false" data-fb="不對。程式跑得起來。這正是危險的地方：它不會報錯，只會安靜地給你一個沒有意義的數字。" onclick="quizCheck('qCls', this)"><span class="opt-letter">(C)</span> k 必須小於少數類別的樣本數，否則 CV 無法執行</div></div>
   <div class="quiz-feedback" id="qClsFeedback"></div>
 </div>
 </section>
 <section id="cvwrong">
 <!-- GEN:BEGIN sec:cvwrong -->
   <div class="section-number">PART 06 · CV 的對與錯</div>
-  <h2>特徵選擇與交叉驗證的正確順序 <span class="sec-badge"><a href="#w05-source-esl">進階參考 · 第 7.10.2 節</a></span><span class="sec-badge">講義 05 · p.19–21</span></h2>
+  <h2>特徵選擇與交叉驗證的正確順序 <span class="sec-badge"><a href="#w05-source-esl">進階參考 · 第 7.10.2 節</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:cvwrong -->
 
   <p>先篩選特徵再做 CV，可能讓驗證資料的資訊提前進入訓練流程；程式仍會正常執行。</p>
@@ -1148,14 +1148,21 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · CV 的錯用</div>
   <p>在 5-fold CV 之前先用<strong>全部</strong>資料把特徵標準化（減平均、除標準差）。這樣有問題嗎？</p>
-  <div class="quiz-options" id="qWrongOptions"><div class="quiz-opt" data-correct="true" data-fb="對。把 <code>StandardScaler</code> 放進 <code>Pipeline</code>，讓它在每折的訓練部分重新 fit。數值偏差可能高、低或為零；含截距且未正則化的最小平方在仿射縮放下甚至可得到相同預測。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(A)</span> 有問題：平均與標準差用到了驗證折；應折內 fit，但誤差偏差方向不能預先斷言</div><div class="quiz-opt" data-correct="false" data-fb="這只對部分模型成立，例如含截距、未正則化的最小平方。一般流程仍不應用驗證折估平均與標準差；正則化、距離式方法等也可能改變預測。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(B)</span> 沒問題：標準化只是線性變換，不改變模型的預測能力</div><div class="quiz-opt" data-correct="false" data-fb="沒用到 y 不等於能用驗證折估參數；它仍用了驗證資料的分佈資訊。應在每折訓練部分 fit，再套到該折驗證部分。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(C)</span> 沒問題：標準化沒有用到 y，所以不算洩漏</div></div>
+  <div class="quiz-options" id="qWrongOptions"><div class="quiz-opt" data-correct="true" data-fb="對。把 &lt;code&gt;StandardScaler&lt;/code&gt; 放進 &lt;code&gt;Pipeline&lt;/code&gt;，讓它在每折的訓練部分重新 fit。數值偏差可能高、低或為零；含截距且未正則化的最小平方在仿射縮放下甚至可得到相同預測。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(A)</span> 有問題：平均與標準差用到了驗證折；應折內 fit，但誤差偏差方向不能預先斷言</div><div class="quiz-opt" data-correct="false" data-fb="這只對部分模型成立，例如含截距、未正則化的最小平方。一般流程仍不應用驗證折估平均與標準差；正則化、距離式方法等也可能改變預測。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(B)</span> 沒問題：標準化只是線性變換，不改變模型的預測能力</div><div class="quiz-opt" data-correct="false" data-fb="沒用到 y 不等於能用驗證折估參數；它仍用了驗證資料的分佈資訊。應在每折訓練部分 fit，再套到該折驗證部分。" onclick="quizCheck('qWrong', this)"><span class="opt-letter">(C)</span> 沒問題：標準化沒有用到 y，所以不算洩漏</div></div>
   <div class="quiz-feedback" id="qWrongFeedback"></div>
 </div>
+
+<h3>分折也要反映未來的預測情境</h3>
+<p>獨立同分佈資料可先打散再分折；類別不平衡時可分層保持類別比例。
+同一人的多筆資料應整組分到同一側，避免模型在驗證集認出訓練過的人。
+時間序列用較早資料訓練、較晚資料驗證，可採擴張或滑動訓練窗；任意打散會把未來資訊送進過去。</p>
+<p>需要精確控制驗證比例時，可採重複隨機切分（ShuffleSplit），每次獨立指定訓練與驗證大小。
+不同輪的驗證集可能重疊，不能當作互相獨立的測試實驗；標準化、補值、特徵選擇與調參都須遵守相同的分割界線。</p>
 </section>
 <section id="bootstrap">
 <!-- GEN:BEGIN sec:bootstrap -->
   <div class="section-number">PART 07 · Bootstrap</div>
-  <h2>有放回地重抽：直接把標準誤算出來 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.2 節</a></span><span class="sec-badge">講義 05 · p.22–35</span></h2>
+  <h2>有放回地重抽：直接把標準誤算出來 <span class="sec-badge"><a href="#w05-source-islp">教科書 · 第 5.2 節</a></span><span class="sec-badge">講義 05</span></h2>
 <!-- GEN:END sec:bootstrap -->
 
   <p>換一個問題。前面都在問「模型的預測有多準」；現在問<strong>「我算出來的這個數字有多不確定」</strong>。</p>
@@ -1213,7 +1220,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">alpha_func(Portfolio, range(<span class="num">100</span>))</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.57583207459283)</pre></div>
   <p class="dx-note">這就是 ISLP 書上的 α̂ = 0.5758。</p>
-  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 53、55</span>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="53,55">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1226,7 +1233,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">                      replace=<span class="num">True</span>))</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.6074452469619004)</pre></div>
   <p class="dx-note"><code>replace=True</code> 是關鍵：有放回，所以同一筆可能被抽到好幾次，也會有一些完全沒被抽到。這一次抽出來的 α̂* = 0.6074，跟 0.5758 差了不少。這個「差」正是我們要量化的東西。</p>
-  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 57</span>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="57">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1248,8 +1255,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">        first_ += value</span>
   <span class="line">        second_ += value**<span class="num">2</span></span>
   <span class="line">    <span class="kw">return</span> np.sqrt(second_ / B - (first_ / B)**<span class="num">2</span>)</span></div>
-  <p class="dx-note">lab 的第 62 格寫著：SE(α̂) 的 bootstrap 估計是 <strong>0.0912</strong>。注意這支函式用 $E[\theta^2] - (E[\theta])^2$ 累加，不必存下 1000 個值。</p>
-  <span class="dx-src">來源：<code>Ch05-resample-lab-zh.ipynb</code> · 儲存格 59、61</span>
+  <p class="dx-note">在 Portfolio 資料上，SE(α̂) 的 bootstrap 估計是 <strong>0.0912</strong>。注意這支函式用 $E[\theta^2] - (E[\theta])^2$ 累加，不必存下 1000 個值。</p>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="59,61">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
   <h4 id="dx-632">一個漂亮的事實：bootstrap 樣本只含約 63.2% 的原始樣本</h4>
@@ -1271,7 +1278,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：Bootstrap 可以用來估「預測誤差」嗎？</summary>
-    <div class="qa-a"><p>可以，但要很小心，而且通常比不上交叉驗證。</p><p>問題出在重疊：bootstrap 樣本平均含有原始資料的 63.2%，所以如果你用 bootstrap 樣本訓練、用原始全部資料當測試，那個「測試集」裡有三分之二的資料模型已經看過了，誤差會嚴重低估。</p><p>補救方式是只用 OOB 的那 36.8% 來評估，這就接近 k-fold 的精神了。所以講義第 36 頁的答案是：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong></p></div>
+    <div class="qa-a"><p>可以，但要很小心，而且通常比不上交叉驗證。</p><p>問題出在重疊：bootstrap 樣本平均含有原始資料的 63.2%，所以如果你用 bootstrap 樣本訓練、用原始全部資料當測試，那個「測試集」裡有三分之二的資料模型已經看過了，誤差會嚴重低估。</p><p>補救方式是只用 OOB 的那 36.8% 來評估，這就接近 k-fold 的精神了。所以講義的答案是：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong></p></div>
   </details>
   <details class="qa-item"><summary>Q：B 要取多少？</summary>
     <div class="qa-a"><p>估標準誤時 B = 1000 通常就很夠；要估信賴區間的尾端分位數（例如 2.5% 與 97.5%），B 建議拉到 2000 以上，因為尾端需要更多樣本才穩。</p><p>注意 B 大只會讓「bootstrap 對真實 SE 的估計」更穩定，<strong>不會讓原始資料變多</strong>。n 小的時候 bootstrap 本身就不可靠，拉高 B 也救不了。它只是把同一份薄薄的資訊算得更精確而已。</p></div>
@@ -1284,9 +1291,35 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Bootstrap</div>
   <p>n = 100 時，一筆特定的觀測值<strong>完全沒有</strong>出現在某個 bootstrap 樣本裡的機率約為多少？</p>
-  <div class="quiz-options" id="qBootOptions"><div class="quiz-opt" data-correct="true" data-fb="對。$(1-1/100)^{100} \approx 0.366$，很接近極限 $e^{-1} \approx 0.368$。沒被抽到的那些就是 OOB 樣本。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(A)</span> 約 0.366</div><div class="quiz-opt" data-correct="false" data-fb="這是「某一次抽籤剛好抽到它」的機率 1/100，不是「一百次都沒抽到」。要一百次都躲掉，是 $(1-1/100)^{100}$。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(B)</span> 約 0.01</div><div class="quiz-opt" data-correct="false" data-fb="不對。有放回意味著同一筆可以被抽到好幾次，也就意味著<strong>一定有一些筆完全沒被抽到</strong>——平均約 36.8%。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(C)</span> 0，因為有放回抽 n 次一定會抽到每一筆</div></div>
+  <div class="quiz-options" id="qBootOptions"><div class="quiz-opt" data-correct="true" data-fb="對。$(1-1/100)^{100} \approx 0.366$，很接近極限 $e^{-1} \approx 0.368$。沒被抽到的那些就是 OOB 樣本。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(A)</span> 約 0.366</div><div class="quiz-opt" data-correct="false" data-fb="這是「某一次抽籤剛好抽到它」的機率 1/100，不是「一百次都沒抽到」。要一百次都躲掉，是 $(1-1/100)^{100}$。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(B)</span> 約 0.01</div><div class="quiz-opt" data-correct="false" data-fb="不對。有放回意味著同一筆可以被抽到好幾次，也就意味著&lt;strong&gt;一定有一些筆完全沒被抽到&lt;/strong&gt;——平均約 36.8%。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(C)</span> 0，因為有放回抽 n 次一定會抽到每一筆</div></div>
   <div class="quiz-feedback" id="qBootFeedback"></div>
 </div>
+
+<h3>從標準誤到信賴區間與預測區間</h3>
+<p>把 B 次估計值排序，取 5% 與 95% 分位數可得近似 90% percentile 信賴區間。
+迴歸曲線則在每次重抽觀測對並重新配適後，用固定 x 網格收集預測，再逐點取分位數。
+逐點區間不是整條曲線的同時信賴帶；估計偏差、樣本太少或統計量不規則時，簡單 percentile 法的涵蓋率也可能不足。</p>
+<p><strong>預測區間</strong>還須包含新觀測的隨機誤差。在獨立、同變異數的迴歸設定，可在每次重配的均值預測上
+加入從適當中心化殘差抽到的新誤差，再取預測分位數。只重抽係數或均值曲線會漏掉這一項。
+異變異數、群聚或時間相依資料需要對應的殘差模型或重抽設計；block bootstrap 以連續區塊保留部分時間相依性。</p>
+<h3>Jackknife：逐筆刪除，估計量會變多少？</h3>
+<p>令 $\hat\theta_{(-i)}$ 是刪去第 i 筆後的估計，$\bar\theta_{(-)}$ 是這 n 個估計的平均。
+Jackknife 的標準誤估計為</p>
+$$\widehat{SE}_{jack}=\sqrt{\frac{n-1}{n}\sum_i(\hat\theta_{(-i)}-\bar\theta_{(-)})^2}.$$
+<p>它和 LOOCV 都逐筆刪除，但這裡比較估計量本身的變化，LOOCV 則記錄被留下觀測的預測誤差。
+Jackknife 適合較平滑的統計量；對最大值等不平滑統計量不能期待一般公式可靠。</p>
+<h3>Permutation test：假如 X 與標籤沒有關聯？</h3>
+<p>Bootstrap 近似估計量的抽樣分佈；<strong>置換檢定（permutation test）</strong>則利用虛無假設下的可交換性建立參考分佈。
+例如以兩組平均差為 T，在組別標籤可交換的虛無假設下打亂標籤，重算 T。
+雙尾檢定比較 $|T_b|\ge|T_{obs}|$，不能只把觀察統計量取絕對值而忽略置換統計量的負尾。</p>
+<p>若隨機抽 B 次置換，常用避免零 p 值的估計為</p>
+$$\hat p=\frac{1+\sum_{b=1}^B I(|T_b|\ge|T_{obs}|)}{B+1}.$$
+<p>分類器可用交叉驗證正確率作 T：保留 X、打亂 y，每次重新訓練並執行相同評估流程，
+比較置換得分是否大於等於原始得分（此時是右尾，無須取絕對值）。有監督的特徵選擇或調參亦須在每次置換內重做。
+若使用損失當統計量，較小才是較好的表現，尾端方向須一起改變。</p>
+<p>小 p 值表示這個流程觀察到的表現難以用無關聯的置換資料解釋；大 p 值可能是沒有關聯，也可能是分類器未能抓到關聯。
+配對、群聚與時間資料不能任意逐筆置換，應使用符合虛無假設及設計的限制置換。
+由信賴區間是否包含虛無值所形成的 bootstrap 檢定，與置換的虛無分佈也不是同一程序。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -1300,28 +1333,28 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 5.4 第 2 題（a)(b)</div>
   <p>從 n 筆資料中<strong>有放回</strong>地抽第一筆時，抽到的<em>不是</em>第 j 筆觀測值的機率是多少？第二筆呢？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。有放回意味著每一次抽籤的條件都一樣（獨立且同分佈），所以第 1 次與第 2 次的機率完全相同。這正是第 (c) 小題能把它們乘起來變成 $(1-1/n)^n$ 的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 兩次都是 (n−1)/n</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>不</strong>放回的答案。抽出不放回時母體會縮小，機率才會變。bootstrap 是有放回的。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 第一次 (n−1)/n，第二次 (n−2)/(n−1)</div><div class="quiz-opt" data-correct="false" data-fb="這是「抽到第 j 筆」的機率，題目問的是「<em>不是</em>第 j 筆」，要取補集。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 第一次 1/n，第二次 1/n</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。有放回意味著每一次抽籤的條件都一樣（獨立且同分佈），所以第 1 次與第 2 次的機率完全相同。這正是第 (c) 小題能把它們乘起來變成 $(1-1/n)^n$ 的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 兩次都是 (n−1)/n</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;不&lt;/strong&gt;放回的答案。抽出不放回時母體會縮小，機率才會變。bootstrap 是有放回的。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 第一次 (n−1)/n，第二次 (n−2)/(n−1)</div><div class="quiz-opt" data-correct="false" data-fb="這是「抽到第 j 筆」的機率，題目問的是「&lt;em&gt;不是&lt;/em&gt;第 j 筆」，要取補集。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 第一次 1/n，第二次 1/n</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · ISLP 5.4 第 3 題（b)</div>
   <p>相對於<strong>驗證集法</strong>，k-fold CV 的優點是什麼？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對，兩個缺點都改善了。代價只是要配 k 次模型而不是 1 次。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 偏差較小（每輪用 n(k−1)/k 筆訓練，多於 n/2），而且做 k 輪平均後變異也較小</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是 <strong>LOOCV</strong> 的性質。k-fold 要隨機分折，換 <code>random_state</code> 答案還是會動，只是幅度比驗證集法小很多。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> k-fold CV 完全沒有隨機性，驗證集法有</div><div class="quiz-opt" data-correct="false" data-fb="不對。每一輪都還是切開的（k−1 折訓練、1 折驗證）。差別在於「每一筆資料都輪到當一次驗證資料」，不是「不用切」。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> k-fold CV 不需要把資料切開，所以能用到全部資料訓練</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對，兩個缺點都改善了。代價只是要配 k 次模型而不是 1 次。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 偏差較小（每輪用 n(k−1)/k 筆訓練，多於 n/2），而且做 k 輪平均後變異也較小</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是 &lt;strong&gt;LOOCV&lt;/strong&gt; 的性質。k-fold 要隨機分折，換 &lt;code&gt;random_state&lt;/code&gt; 答案還是會動，只是幅度比驗證集法小很多。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> k-fold CV 完全沒有隨機性，驗證集法有</div><div class="quiz-opt" data-correct="false" data-fb="不對。每一輪都還是切開的（k−1 折訓練、1 折驗證）。差別在於「每一筆資料都輪到當一次驗證資料」，不是「不用切」。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> k-fold CV 不需要把資料切開，所以能用到全部資料訓練</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 5.4 第 8 題</div>
   <p>課本第 8 題在模擬資料上跑 degree 1 到 4 的 LOOCV，真實模型是二次的。預期會看到什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。這也是本頁 P04 那張 Auto 圖的形狀：真實複雜度以下，加彈性有幫助；超過之後只是在配適雜訊。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> degree 1 到 2 誤差大幅下降，之後幾乎不再改善（甚至微幅上升）</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>訓練</strong>誤差的形狀。CV 誤差是估測試誤差的，過了真實複雜度就不會再降。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 誤差隨 degree 單調下降，degree 4 最低</div><div class="quiz-opt" data-correct="false" data-fb="不對。CV 的整個用途就是偵測複雜度的影響；如果它不敏感，就沒有人會用它選模型了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 四個 degree 的 LOOCV 誤差幾乎相同，因為 LOOCV 對模型複雜度不敏感</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。這也是本頁 P04 那張 Auto 圖的形狀：真實複雜度以下，加彈性有幫助；超過之後只是在配適雜訊。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> degree 1 到 2 誤差大幅下降，之後幾乎不再改善（甚至微幅上升）</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;訓練&lt;/strong&gt;誤差的形狀。CV 誤差是估測試誤差的，過了真實複雜度就不會再降。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 誤差隨 degree 單調下降，degree 4 最低</div><div class="quiz-opt" data-correct="false" data-fb="不對。CV 的整個用途就是偵測複雜度的影響；如果它不敏感，就沒有人會用它選模型了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 四個 degree 的 LOOCV 誤差幾乎相同，因為 LOOCV 對模型複雜度不敏感</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 5.4 第 9 題</div>
   <p>課本第 9 題要對 <code>Boston</code> 的 <code>medv</code> 平均值做 bootstrap，並跟公式解 $\mathrm{{SE}}(\bar\mu) = s/\sqrt{{n}}$ 比較。預期結果是？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。這一題的教學意義就在這裡：在<em>有</em>公式的簡單情況下驗證 bootstrap 是對的，這樣你才敢在<em>沒有</em>公式的情況（例如 α̂、中位數、分位數）放心用它。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 兩個數字會很接近，因為 bootstrap 不需要公式也能重現公式給的答案</div><div class="quiz-opt" data-correct="false" data-fb="不對。重複使用資料不會讓 SE 系統性變小；bootstrap 估的就是同一個抽樣變異，兩者會很接近。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> bootstrap 的 SE 會明顯較小，因為它重複用了同一份資料</div><div class="quiz-opt" data-correct="false" data-fb="不對。bootstrap 幾乎對任何估計量都能用。這正是它最大的優點。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 無法比較，因為 bootstrap 只能用在迴歸係數上</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。這一題的教學意義就在這裡：在&lt;em&gt;有&lt;/em&gt;公式的簡單情況下驗證 bootstrap 是對的，這樣你才敢在&lt;em&gt;沒有&lt;/em&gt;公式的情況（例如 α̂、中位數、分位數）放心用它。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 兩個數字會很接近，因為 bootstrap 不需要公式也能重現公式給的答案</div><div class="quiz-opt" data-correct="false" data-fb="不對。重複使用資料不會讓 SE 系統性變小；bootstrap 估的就是同一個抽樣變異，兩者會很接近。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> bootstrap 的 SE 會明顯較小，因為它重複用了同一份資料</div><div class="quiz-opt" data-correct="false" data-fb="不對。bootstrap 幾乎對任何估計量都能用。這正是它最大的優點。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 無法比較，因為 bootstrap 只能用在迴歸係數上</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1343,11 +1376,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <h3>Auto 資料上的實測數字</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>degree</th><th>1</th><th>2</th><th>3</th><th>5</th><th>10</th></tr></thead>
-  <tbody><tr><td>LOOCV</td><td>24.23</td><td>19.25</td><td>19.34</td><td>19.03</td><td>19.91</td></tr><tr><td>10-fold CV</td><td>24.21</td><td>19.19</td><td>19.28</td><td>19.14</td><td>19.87</td></tr><tr><td>驗證集（seed 0）</td><td>23.62</td><td>18.76</td><td>18.80</td><td>18.45</td><td>19.07</td></tr></tbody>
+  <thead><tr><th>degree</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+  <tbody><tr><td>LOOCV</td><td>24.23</td><td>19.25</td><td>19.34</td><td>19.42</td><td>19.03</td></tr><tr><td>10-fold CV</td><td>24.21</td><td>19.19</td><td>19.28</td><td>19.48</td><td>19.14</td></tr><tr><td>驗證集（seed 0）</td><td>23.62</td><td>18.76</td><td>18.80</td><td>18.78</td><td>18.45</td></tr></tbody>
 </table></div>
-  <p style="font-size:.82rem;color:var(--muted);">degree 1 的 LOOCV = 24.2315，跟 lab 儲存格 32
-  的 <code>np.float64(24.23151351792922)</code> 相符。三列都在 degree 2 之後就拉平了。</p>
+  <p style="font-size:.82rem;color:var(--muted);">degree 1 的 LOOCV = 24.2315，與 lab 中一次模型的 LOOCV 輸出
+   <code>np.float64(24.23151351792922)</code> 相符。三列都在 degree 2 之後就拉平了。</p>
 
   <h3>公式速查</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1366,12 +1399,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   洩漏造成的數值偏差方向依模型與資料而定。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 23 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 5 章，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
@@ -1971,10 +2004,10 @@ HC.initFlashcards = () => {
 <!-- GEN:END sharedjs -->
 <!-- PAGEJS:BEGIN -->
 <script>
-const FRAMES_w05val = {"meta":{"src":"ISLP Auto · 自算（對照 Ch05-resample-lab-zh.ipynb 儲存格 26／28）","seed":"train_test_split(test_size=196, random_state=0..9)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_resampling.py"},"degrees":[1,2,3,4,5,6,7,8,9,10],"curves":[[23.6166,18.763,18.7969,18.7785,18.4491,18.6492,18.6897,18.6031,18.6399,19.0675],[24.8021,18.8483,18.8051,18.7117,18.3242,18.4668,18.5042,18.4315,18.5659,19.2039],[23.4426,18.5502,18.5952,18.5927,18.308,18.3077,18.2858,18.295,18.491,19.0412],[20.7554,16.9451,16.9744,16.8959,16.737,16.8005,16.8082,16.9654,17.5152,18.5334],[25.3134,20.644,20.7011,20.646,20.0322,20.2035,20.2704,20.1622,20.3028,20.9834],[29.5886,24.1473,24.0989,24.2021,23.4838,23.7571,23.8401,23.7841,24.005,24.9155],[24.0968,18.3852,18.6613,18.7106,18.0042,18.2252,18.2607,18.1992,18.4624,19.5251],[25.4679,20.0109,19.959,20.0679,19.9217,19.8319,19.726,19.6764,19.9526,20.7999],[22.7125,16.3016,16.9291,17.1283,17.4015,16.8506,16.4625,16.3688,16.6227,17.3657],[27.7304,20.7182,20.6982,21.0499,21.4809,22.2873,21.6323,20.2962,22.6039,30.1986]],"labRng42":[25.57387819,22.21802005,22.66767544],"labSeed3":[20.75540796,16.94510676,16.97437833]};
-const FRAMES_w05cv = {"meta":{"src":"Ch05-resample-lab-zh.ipynb 儲存格 37／41（該格未存輸出，用同設定重算）","seed":"KFold(n_splits=10, shuffle=True, random_state=0)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_resampling.py","note":"degree 1 的 LOOCV = 24.2315，與 lab 儲存格 32 的 24.2315 相符"},"degrees":[1,2,3,4,5,6,7,8,9,10],"loocv":[24.2315,19.2482,19.335,19.4244,19.0332,19.1665,19.1272,19.0122,19.1725,19.9059],"kfold10":[24.2077,19.1853,19.2763,19.4785,19.1372,19.2552,19.1501,18.9624,19.0994,19.8657]};
-const FRAMES_w05boot = {"meta":{"src":"ISLP Portfolio（ISLP §5.2 的 α 範例）","seed":"np.random.default_rng(0)，B = 1000","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_resampling.py"},"n":100,"x":[-0.8952508891,-1.5624543275,-0.4170898831,1.0443557253,-0.3155684067,-1.737123849,1.9664131572,2.152867898,-0.0812080268,-0.891781794,-0.293201702,0.5057791711,0.5267512541,1.066469321,0.2940158951,0.0425492998,1.8309695806,-0.3269374989,0.5214804158,1.3998683473,-0.6454475965,-0.9043518784,-1.7645860696,-1.8104846382,-1.1698989138,-0.6853757354,1.0909180318,-0.432340114,0.2688147754,-0.8518407535,-1.497084172,0.088774746,-1.6017243096,-1.2468572403,-1.0629891283,-0.2662830553,1.6765838326,0.1195725714,-0.0860079873,0.3680802897,-0.2714942069,-0.0859264619,-0.1907501537,-0.7816797684,0.7924363465,-0.2828698862,-0.2366255319,1.171830091,0.4969427685,-0.8873709795,-1.3069531584,-2.4327641204,-0.407188961,-0.2856652995,1.5222148831,-0.9981069074,-0.2899737261,-1.236839243,-0.3595069621,0.543559153,-0.4036472829,1.3033089327,-0.7171172434,-1.0127078841,0.8319929022,1.337643596,0.6016935099,1.3028509805,-0.8817005789,-0.8245290713,-0.9843565185,-1.3849915072,-0.3588425604,-0.2266182295,-0.9410774367,2.4603359481,0.7167972814,-0.2480870232,1.0107728894,2.3130486345,0.8351797974,-1.0719033391,-1.6505261438,-0.6004856903,-0.058529383,0.0757267446,-1.1578315614,1.6736060879,-1.0439882398,0.0146874766,0.6753219704,1.7783423099,-1.2957636394,0.0796020218,2.2608577144,0.4790909232,-0.5350199974,-0.7731293306,0.403634339,-0.5884964387],"y":[-0.2349235258,-0.885175993,0.271888018,-0.7341975041,0.84198343,-2.0371910407,1.4529566619,-0.4341386282,1.4508085022,0.8210162345,-1.0423911218,0.6084778258,-0.2224933433,1.2313566753,0.62858948,-1.2675736176,-0.5727516055,-0.487472465,2.5659852873,-0.3578361275,-1.4124313895,-0.568304791,-0.7462725621,0.4937473594,-2.7252814949,-0.4576157343,0.0144945075,-0.3998310235,-0.2016083502,-1.7418292859,-0.8260333294,-0.8873607127,-0.695299046,-1.5295848845,-0.1106374474,0.0451634696,2.5200528826,0.535542781,1.3635958281,1.72937251,1.3792673274,-0.1276625738,-0.4613333578,1.0223978773,-0.8142980887,-1.038468807,0.9284505531,1.72983145,-0.9251398259,-2.2834979594,-2.3816005812,-2.0255455851,-0.3350986433,-1.3087813127,1.2010031533,-0.9462689001,0.2062565799,-0.6754475073,-2.7001544702,0.4225475521,-0.0543899229,1.3289674739,1.331379798,-0.9247692308,2.2477458689,0.8682564575,-0.1982175631,1.104666376,-1.5406847852,-1.3370078772,-1.1391602659,0.7026999329,-1.6945127698,0.8019385476,-0.7331887089,-0.048372817,0.6023367599,-1.0184903738,0.0529780222,1.7523588792,0.9857148757,-1.2472978732,0.2154645296,-0.420940527,0.1276208741,-0.522149221,0.5908937422,0.1146233161,-0.4189442843,-0.5587466207,1.4826297876,0.9427741114,-1.0852038131,-0.5391008141,0.6732248403,1.4547744609,-0.3991748113,-0.9571748495,1.396038169,-0.4972850908],"alphaHat":0.575832,"bootMean":0.582144,"bootSE":0.091227,"hist":[1,3,7,11,22,25,58,64,86,103,116,104,100,95,49,61,38,24,10,11,8,2,1,1],"edges":[0.303,0.328,0.3529,0.3779,0.4029,0.4279,0.4529,0.4779,0.5028,0.5278,0.5528,0.5778,0.6028,0.6278,0.6527,0.6777,0.7027,0.7277,0.7527,0.7777,0.8026,0.8276,0.8526,0.8776,0.9026]};
-const FRAMES_w05misuse = {"meta":{"src":"純噪音模擬（y 與 X 完全獨立）","seed":"np.random.default_rng(7000..7099)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1","gen":"tools/frames/gen_resampling.py","note":"報告 100 次獨立模擬的平均、中位數與 10–90 百分位，不以單次結果作一般結論"},"n":50,"p":500,"kSel":10,"reps":100,"wrong":{"mean":0.1702,"median":0.16,"q10":0.098,"q90":0.24},"right":{"mean":0.4886,"median":0.5,"q10":0.36,"q90":0.582}};
+const FRAMES_w05val = {"meta":{"src":"ISLP Auto · 自算（對照 Ch05-resample-lab-zh.ipynb 儲存格 26／28）","seed":"train_test_split(test_size=196, random_state=0..9)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_resampling.py"},"degrees":[1,2,3,4,5],"curves":[[23.6166,18.763,18.7969,18.7785,18.4491],[24.8021,18.8483,18.8051,18.7117,18.3242],[23.4426,18.5502,18.5952,18.5927,18.308],[20.7554,16.9451,16.9744,16.8959,16.737],[25.3134,20.644,20.7011,20.646,20.0322],[29.5886,24.1473,24.0989,24.2021,23.4838],[24.0968,18.3852,18.6613,18.7106,18.0042],[25.4679,20.0109,19.959,20.0679,19.9217],[22.7125,16.3016,16.9291,17.1283,17.4015],[27.7304,20.7182,20.6982,21.0499,21.4809]],"labRng42":[25.57387819,22.21802005,22.66767544],"labSeed3":[20.75540796,16.94510676,16.97437833]};
+const FRAMES_w05cv = {"meta":{"src":"Ch05-resample-lab-zh.ipynb 儲存格 37／41（該格未存輸出，用同設定重算）","seed":"KFold(n_splits=10, shuffle=True, random_state=0)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_resampling.py","note":"degree 1 的 LOOCV = 24.2315，與 lab 儲存格 32 的 24.2315 相符"},"degrees":[1,2,3,4,5],"loocv":[24.2315,19.2482,19.335,19.4244,19.0332],"kfold10":[24.2077,19.1853,19.2763,19.4785,19.1372]};
+const FRAMES_w05boot = {"meta":{"src":"ISLP Portfolio（ISLP §5.2 的 α 範例）","seed":"np.random.default_rng(0)，B = 1000","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_resampling.py"},"n":100,"x":[-0.8952508891,-1.5624543275,-0.4170898831,1.0443557253,-0.3155684067,-1.737123849,1.9664131572,2.152867898,-0.0812080268,-0.891781794,-0.293201702,0.5057791711,0.5267512541,1.066469321,0.2940158951,0.0425492998,1.8309695806,-0.3269374989,0.5214804158,1.3998683473,-0.6454475965,-0.9043518784,-1.7645860696,-1.8104846382,-1.1698989138,-0.6853757354,1.0909180318,-0.432340114,0.2688147754,-0.8518407535,-1.497084172,0.088774746,-1.6017243096,-1.2468572403,-1.0629891283,-0.2662830553,1.6765838326,0.1195725714,-0.0860079873,0.3680802897,-0.2714942069,-0.0859264619,-0.1907501537,-0.7816797684,0.7924363465,-0.2828698862,-0.2366255319,1.171830091,0.4969427685,-0.8873709795,-1.3069531584,-2.4327641204,-0.407188961,-0.2856652995,1.5222148831,-0.9981069074,-0.2899737261,-1.236839243,-0.3595069621,0.543559153,-0.4036472829,1.3033089327,-0.7171172434,-1.0127078841,0.8319929022,1.337643596,0.6016935099,1.3028509805,-0.8817005789,-0.8245290713,-0.9843565185,-1.3849915072,-0.3588425604,-0.2266182295,-0.9410774367,2.4603359481,0.7167972814,-0.2480870232,1.0107728894,2.3130486345,0.8351797974,-1.0719033391,-1.6505261438,-0.6004856903,-0.058529383,0.0757267446,-1.1578315614,1.6736060879,-1.0439882398,0.0146874766,0.6753219704,1.7783423099,-1.2957636394,0.0796020218,2.2608577144,0.4790909232,-0.5350199974,-0.7731293306,0.403634339,-0.5884964387],"y":[-0.2349235258,-0.885175993,0.271888018,-0.7341975041,0.84198343,-2.0371910407,1.4529566619,-0.4341386282,1.4508085022,0.8210162345,-1.0423911218,0.6084778258,-0.2224933433,1.2313566753,0.62858948,-1.2675736176,-0.5727516055,-0.487472465,2.5659852873,-0.3578361275,-1.4124313895,-0.568304791,-0.7462725621,0.4937473594,-2.7252814949,-0.4576157343,0.0144945075,-0.3998310235,-0.2016083502,-1.7418292859,-0.8260333294,-0.8873607127,-0.695299046,-1.5295848845,-0.1106374474,0.0451634696,2.5200528826,0.535542781,1.3635958281,1.72937251,1.3792673274,-0.1276625738,-0.4613333578,1.0223978773,-0.8142980887,-1.038468807,0.9284505531,1.72983145,-0.9251398259,-2.2834979594,-2.3816005812,-2.0255455851,-0.3350986433,-1.3087813127,1.2010031533,-0.9462689001,0.2062565799,-0.6754475073,-2.7001544702,0.4225475521,-0.0543899229,1.3289674739,1.331379798,-0.9247692308,2.2477458689,0.8682564575,-0.1982175631,1.104666376,-1.5406847852,-1.3370078772,-1.1391602659,0.7026999329,-1.6945127698,0.8019385476,-0.7331887089,-0.048372817,0.6023367599,-1.0184903738,0.0529780222,1.7523588792,0.9857148757,-1.2472978732,0.2154645296,-0.420940527,0.1276208741,-0.522149221,0.5908937422,0.1146233161,-0.4189442843,-0.5587466207,1.4826297876,0.9427741114,-1.0852038131,-0.5391008141,0.6732248403,1.4547744609,-0.3991748113,-0.9571748495,1.396038169,-0.4972850908],"alphaHat":0.575832,"bootMean":0.582144,"bootSE":0.091227,"hist":[1,3,7,11,22,25,58,64,86,103,116,104,100,95,49,61,38,24,10,11,8,2,1,1],"edges":[0.303,0.328,0.3529,0.3779,0.4029,0.4279,0.4529,0.4779,0.5028,0.5278,0.5528,0.5778,0.6028,0.6278,0.6527,0.6777,0.7027,0.7277,0.7527,0.7777,0.8026,0.8276,0.8526,0.8776,0.9026]};
+const FRAMES_w05misuse = {"meta":{"src":"純噪音模擬（y 與 X 完全獨立）","seed":"np.random.default_rng(7000..7099)","versions":"numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · statsmodels 0.14.2","gen":"tools/frames/gen_resampling.py","note":"報告 100 次獨立模擬的平均、中位數與 10–90 百分位，不以單次結果作一般結論"},"n":50,"p":500,"kSel":10,"reps":100,"wrong":{"mean":0.1702,"median":0.16,"q10":0.098,"q90":0.24},"right":{"mean":0.4886,"median":0.5,"q10":0.36,"q90":0.582}};
 
 
 /* ===== resampling_methods 本頁元件（id 與全域一律 w05 前綴）===== */
@@ -2178,7 +2211,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"重抽樣方法（Resampling Method）","back":"反覆從同一份訓練資料中抽取子樣本、對每個子樣本重新配適模型的做法。目的是估計模型的預測誤差，或估計某個統計量的不確定性。"},{"front":"訓練誤差（Training Error）","back":"用配適模型時所使用的那批資料算出的誤差。因為參數是照著這批資料最小化出來的，它會系統性低於測試誤差，模型愈有彈性低估愈嚴重。"},{"front":"測試誤差（Test Error）","back":"模型在完全沒參與配適的新資料上的平均誤差。重抽樣方法可在沒有額外測試資料時，估計這個量。"},{"front":"驗證集法（Validation Set Approach）","back":"把資料隨機切成兩半，一半訓練、一半當驗證集，用驗證集上的誤差估測試誤差。優點是簡單快；缺點是估計值變異大，而且只用一半資料訓練會高估測試誤差。"},{"front":"留出集（Hold-out Set）","back":"驗證集的另一個說法：從訓練流程中「留出來」、完全不參與配適的那批資料。"},{"front":"交叉驗證（Cross-Validation, CV）","back":"把資料切成若干折，輪流讓每一折當驗證集、其餘當訓練集，再把各折的誤差平均。讓每一筆資料都恰好當過一次驗證資料。"},{"front":"留一交叉驗證（LOOCV, Leave-One-Out CV）","back":"k = n 的交叉驗證：每次只留一筆當驗證集，配 n 次模型再平均。偏差最小、沒有隨機性（分割是枚舉出來的），但各折高度相關使變異偏大，而且要配 n 次模型。"},{"front":"k 折交叉驗證（k-Fold Cross-Validation）","back":"把資料隨機平分成 k 份，每次拿一份當驗證集、其餘 k−1 份訓練，做 k 輪後平均。實務上取 k = 5 或 10，是偏差、變異、算力三方的折衷。"},{"front":"折（Fold）","back":"交叉驗證中把資料分成的每一等份。第 j 折輪到當驗證集時，其餘 k−1 折合起來當訓練集。"},{"front":"槓桿值（Leverage, hᵢ）","back":"衡量第 i 筆觀測值的 x 有多偏離其他點。線性最小平方的 LOOCV 有捷徑公式（ISLP 式 5.2）用得到它：只配一次模型，拿殘差與 hᵢ 就能算出 LOOCV。"},{"front":"偏差–變異取捨（Bias–Variance Trade-off）","back":"在交叉驗證的脈絡裡指 k 的選擇：k 愈大每輪訓練資料愈多、偏差愈小，但各折訓練集重疊愈多、彼此相關性愈高，平均後變異愈大。"},{"front":"分層交叉驗證（Stratified Cross-Validation）","back":"分折時保持每一折的類別比例與整體一致。類別不平衡時必須用，否則可能切出某一折完全沒有少數類別的情況。"},{"front":"巢狀交叉驗證（Nested Cross-Validation）","back":"外層折只負責評估、完全不參與調參，內層折在外層的訓練部分裡選超參數。用來避免「拿 CV 誤差調參又拿它當最終估計」造成的選擇偏差。"},{"front":"資料洩漏（Data Leakage）","back":"驗證資料的資訊在不該的時候進到訓練流程。最典型的是先用全部資料挑特徵或算標準化的平均與標準差再做 CV——CV 誤差會嚴重偏低，而且不會有任何錯誤訊息。"},{"front":"管線（Pipeline）","back":"把前處理與模型串成一個物件，交給 cross_validate 後會在每一折的訓練部分重新配適前處理步驟。這是避免資料洩漏的標準做法。"},{"front":"自助法（Bootstrap）","back":"把手上的資料當成母體，有放回地抽 n 筆當作一份「新」資料集，重算感興趣的統計量；重複 B 次後用這 B 個值的標準差估標準誤。不需要任何分佈假設或公式推導。"},{"front":"有放回抽樣（Sampling with Replacement）","back":"每抽一筆後放回母體再抽下一筆，所以同一筆可能被抽到多次、也會有一些完全沒被抽到。這是 bootstrap 的核心機制。"},{"front":"袋外樣本（Out-of-Bag, OOB）","back":"某一次 bootstrap 重抽中完全沒被抽到的那些觀測值，平均約佔 36.8%。它們對這一輪的模型是天然的驗證集，第 8 章的 bagging 與隨機森林就靠它免費取得測試誤差估計。"},{"front":"0.632 法則","back":"有放回抽 n 次，某一筆至少被抽中一次的機率是 1−(1−1/n)ⁿ，n 大時趨近 1−e⁻¹ ≈ 0.632。所以 bootstrap 樣本平均只含原始資料的約 63.2%。"},{"front":"自助法標準誤（Bootstrap Standard Error）","back":"B 個 bootstrap 重抽算出的統計量 θ̂* 的樣本標準差，用來估 SE(θ̂)。估標準誤時 B = 1000 通常夠；要估信賴區間的尾端分位數建議 B ≥ 2000。"},{"front":"區塊自助法（Block Bootstrap）","back":"資料有時間或空間相關時，改成整段（區塊）重抽而不是逐筆重抽，以保留相關結構。逐筆有放回抽樣會破壞這種結構，使標準誤失真。"},{"front":"最小變異配置 α","back":"把資金按 α 比例投資 X、1−α 投資 Y 使報酬變異最小時的比例，α = (σ²_Y − σ_XY) / (σ²_X + σ²_Y − 2σ_XY)。它沒有現成的標準誤公式，是 ISLP §5.2 用來示範 bootstrap 的例子。"},{"front":"蒙地卡羅變異（Monte Carlo Variability）","back":"由於程序本身用到隨機數（隨機切分、隨機重抽）而產生的結果波動，跟資料的抽樣變異是兩件事。重跑 ShuffleSplit 得到不同的 CV 誤差，反映的是這一種變異。"}];
+const FLASHCARDS = [{"front":"重抽樣方法（Resampling Method）","back":"反覆從同一份訓練資料中抽取子樣本、對每個子樣本重新配適模型的做法。目的是估計模型的預測誤差，或估計某個統計量的不確定性。"},{"front":"訓練誤差（Training Error）","back":"用配適模型時所使用的那批資料算出的誤差。因為參數是照著這批資料最小化出來的，它會系統性低於測試誤差，模型愈有彈性低估愈嚴重。"},{"front":"測試誤差（Test Error）","back":"模型在完全沒參與配適的新資料上的平均誤差。重抽樣方法可在沒有額外測試資料時，估計這個量。"},{"front":"驗證集法（Validation Set Approach）","back":"把資料隨機切成兩半，一半訓練、一半當驗證集，用驗證集上的誤差估測試誤差。優點是簡單快；缺點是估計值變異大，而且只用一半資料訓練會高估測試誤差。"},{"front":"留出集（Hold-out Set）","back":"驗證集的另一個說法：從訓練流程中「留出來」、完全不參與配適的那批資料。"},{"front":"交叉驗證（Cross-Validation, CV）","back":"把資料切成若干折，輪流讓每一折當驗證集、其餘當訓練集，再把各折的誤差平均。讓每一筆資料都恰好當過一次驗證資料。"},{"front":"留一交叉驗證（LOOCV, Leave-One-Out CV）","back":"k = n 的交叉驗證：每次只留一筆當驗證集，配 n 次模型再平均。偏差最小、沒有隨機性（分割是枚舉出來的），但各折高度相關使變異偏大，而且要配 n 次模型。"},{"front":"k 折交叉驗證（k-Fold Cross-Validation）","back":"把資料隨機平分成 k 份，每次拿一份當驗證集、其餘 k−1 份訓練，做 k 輪後平均。實務上取 k = 5 或 10，是偏差、變異、算力三方的折衷。"},{"front":"折（Fold）","back":"交叉驗證中把資料分成的每一等份。第 j 折輪到當驗證集時，其餘 k−1 折合起來當訓練集。"},{"front":"槓桿值（Leverage, hᵢ）","back":"衡量第 i 筆觀測值的 x 有多偏離其他點。線性最小平方的 LOOCV 有捷徑公式（ISLP 式 5.2）用得到它：只配一次模型，拿殘差與 hᵢ 就能算出 LOOCV。"},{"front":"偏差–變異取捨（Bias–Variance Trade-off）","back":"在交叉驗證的脈絡裡指 k 的選擇：k 愈大每輪訓練資料愈多、偏差愈小，但各折訓練集重疊愈多、彼此相關性愈高，平均後變異愈大。"},{"front":"分層交叉驗證（Stratified Cross-Validation）","back":"分折時保持每一折的類別比例與整體一致。類別不平衡時必須用，否則可能切出某一折完全沒有少數類別的情況。"},{"front":"巢狀交叉驗證（Nested Cross-Validation）","back":"外層折只負責評估、完全不參與調參，內層折在外層的訓練部分裡選超參數。用來避免「拿 CV 誤差調參又拿它當最終估計」造成的選擇偏差。"},{"front":"資料洩漏（Data Leakage）","back":"驗證資料的資訊在不該的時候進到訓練流程。最典型的是先用全部資料挑特徵或算標準化的平均與標準差再做 CV——CV 誤差會嚴重偏低，而且不會有任何錯誤訊息。"},{"front":"管線（Pipeline）","back":"把前處理與模型串成一個物件，交給 cross_validate 後會在每一折的訓練部分重新配適前處理步驟。這是避免資料洩漏的標準做法。"},{"front":"自助法（Bootstrap）","back":"把手上的資料當成母體，有放回地抽 n 筆當作一份「新」資料集，重算感興趣的統計量；重複 B 次後用這 B 個值的標準差估標準誤。不需要任何分佈假設或公式推導。"},{"front":"有放回抽樣（Sampling with Replacement）","back":"每抽一筆後放回母體再抽下一筆，所以同一筆可能被抽到多次、也會有一些完全沒被抽到。這是 bootstrap 的核心機制。"},{"front":"袋外樣本（Out-of-Bag, OOB）","back":"某一次 bootstrap 重抽中完全沒被抽到的那些觀測值，平均約佔 36.8%。它們對這一輪的模型是天然的驗證集，第 8 章的 bagging 與隨機森林就靠它免費取得測試誤差估計。"},{"front":"0.632 法則","back":"有放回抽 n 次，某一筆至少被抽中一次的機率是 1−(1−1/n)ⁿ，n 大時趨近 1−e⁻¹ ≈ 0.632。所以 bootstrap 樣本平均只含原始資料的約 63.2%。"},{"front":"自助法標準誤（Bootstrap Standard Error）","back":"B 個 bootstrap 重抽算出的統計量 θ̂* 的樣本標準差，用來估 SE(θ̂)。估標準誤時 B = 1000 通常夠；要估信賴區間的尾端分位數建議 B ≥ 2000。"},{"front":"區塊自助法（Block Bootstrap）","back":"資料有時間或空間相關時，改成整段（區塊）重抽而不是逐筆重抽，以保留相關結構。逐筆有放回抽樣會破壞這種結構，使標準誤失真。"},{"front":"最小變異配置 α","back":"把資金按 α 比例投資 X、1−α 投資 Y 使報酬變異最小時的比例，α = (σ²_Y − σ_XY) / (σ²_X + σ²_Y − 2σ_XY)。它沒有現成的標準誤公式，是 ISLP §5.2 用來示範 bootstrap 的例子。"},{"front":"蒙地卡羅變異（Monte Carlo Variability）","back":"由於程序本身用到隨機數（隨機切分、隨機重抽）而產生的結果波動，跟資料的抽樣變異是兩件事。重跑 ShuffleSplit 得到不同的 CV 誤差，反映的是這一種變異。"},{"front":"置換檢定","back":"在虛無假設允許的可交換性下打亂標籤，重算統計量以建立虛無分佈。雙尾用兩側絕對值比較；有調參或特徵選擇時，每次置換須重做整個流程。"},{"front":"Jackknife","back":"每次刪一筆，利用估計量的變化估標準誤；LOOCV 同樣刪一筆，但評估的是被留下觀測的預測誤差。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

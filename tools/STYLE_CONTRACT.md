@@ -36,7 +36,7 @@ node tools/browser_check.js <stem>
 | 規則 | 為什麼 |
 |---|---|
 | 每個 `<h2>` 至少一個 `.sec-badge`；書籍標記顯示中文來源角色／主題與章節，可跳到同頁完整書目 | `pages.py` 保存節號，`sources.py` 統一呈現；不要在內文手加不明縮寫 |
-| 每張 `.deck-extra` 一定要 `.dx-src`，內容是 `<code>ChNN-…-zh.ipynb</code> · 儲存格 k` | 可機器檢查 |
+| 每張 `.deck-extra` 一定要 `.dx-src`；顯示 notebook 連結，精確位置存 `data-lab-ch`／`data-lab-cells` | 可機器檢查，學生頁面不顯示定位編號 |
 | `.expected-out` 一律 `lab_output(CH, cell)` 逐字取，**不要自己打字、不要重跑** | 本機環境與課程環境不同；notebook 裡已經是老師本人跑的結果 |
 | 程式碼一律 `lab_code(CH, cell)` 取，或至少能對回某一格 | 同上 |
 | 自己產生的圖表資料一定放 `FRAMES_w<NN>*`，`meta` 要有 `src` / `seed` / `versions` / `gen` | 任何數字都要能重生與 diff |
@@ -343,3 +343,15 @@ node tools/browser_check.js <stem>
 - 修改結論時，同步檢查正文、圖說／JS 狀態、Q&A、速查、詞卡與題庫；
   期望風險、有限測試誤差，以及程式實際使用的 CV 層次不可混寫。
 - 只改文字可用 `tools/rebuild_content.py` 保留既有 FRAMES；刻意改數值時另走 pinned 產生器與數值驗證。
+
+
+## 12. 現行教材對齊（2026-09-08；取代較早的顯示定位規則）
+
+- 教材取自現行 `phonchi/nsysu-math524`；先同步遠端並記錄 commit、PDF/notebook hash，保留既有未提交修改。`M524_COURSE` 可指定獨立教材快照；不得回退 2025 封存來源。
+- `src(...)` 可繼續傳內部 cell 定位字串，`hl.card` 統一轉成機器可讀來源屬性與現行 notebook 連結。`reader_sources.fragment` 處理來源位置，保護程式碼及已存輸出。學生文字、回饋與連結不得依賴講義頁碼或 lab cell 編號。
+- 首頁、教學頁與 README 不顯示節數、圖數、題數、卡片數的介紹標語；保留實際學習元件及必要的操作進度。表格中若「儲存格」表示 notebook 操作概念，使用具體名稱（例如「執行序號」），不得與來源定位欄混用。
+- 課程資料圖須依 lab 的資料範圍、前處理、估計方法、參數與圖層呈現；不可自行抽樣、改分箱平均、合併類別或省略密度／信賴帶。額外的概念互動需明確標示用途。
+- 原 lab 未設 seed 的隨機圖層可固定 seed 重現同一方法；記錄差異，不宣稱隨機輸出逐像素相同。
+- 數值變更須重新執行產生器。已保存的新 FRAMES 可透過 `rebuild_content.py --frames-file STEM=PATH` 組裝；不能以保留舊 FRAMES 的重建取代重新計算。
+- 執行 `check_reader_contract.py`、`check_lab_rendered.py`、`test_reader_sources.py` 及原有內容／瀏覽器檢查。`check_lab_rendered.py` 使用 BeautifulSoup 核對完整呈現的程式及輸出，保留縮排。
+- 驗證截圖與 log 持久保存於 `tools/verification/<本次主題>/`；此目錄的圖像是驗收證據，不受「網站視覺必須 inline」規則限制。網站本身仍不用外掛圖檔。

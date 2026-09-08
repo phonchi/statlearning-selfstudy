@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -701,11 +701,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.2｜講義 02）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/02_Statistical_Learning.pdf" target="_blank" rel="noopener">📑 講義 02 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch02 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87OBZ1ggt-ZMj3gK2LfUufD" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/02_Statistical_Learning.pdf" target="_blank" rel="noopener">📑 講義 02 PDF</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch02 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87OBZ1ggt-ZMj3gK2LfUufD" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -728,7 +728,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>把「學習」寫成一條式子：Y = f(X) + ε <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1 節</a></span><span class="sec-badge">講義 02 · p.2–9</span></h2>
+  <h2>把「學習」寫成一條式子：Y = f(X) + ε <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1 節</a></span><span class="sec-badge">講義 02</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>第 1 章告訴你統計學習是幹什麼的。這一章要把它<strong>寫成一條式子</strong>，
@@ -778,8 +778,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">                   sep=<span class="str">r&quot;\s+&quot;</span>)</span>
   <span class="line">Auto[<span class="str">&#x27;horsepower&#x27;</span>].sum()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(40952.0)</pre></div>
-  <p class="dx-note"><code>Auto.data</code> 裡的遺漏值是用 <code>?</code> 編碼的，不告訴 <code>pd.read_csv()</code> 這件事，整個 <code>horsepower</code> 欄位就會被讀成字串（lab 儲存格 190、192 示範了這個結果）。<code>na_values=['?']</code> 之後才加得起來，總和是 <strong>40952.0</strong>。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 195</span>
+  <p class="dx-note"><code>Auto.data</code> 裡的遺漏值是用 <code>?</code> 編碼的，不告訴 <code>pd.read_csv()</code> 這件事，整個 <code>horsepower</code> 欄位就會被讀成字串（lab 的 Auto 匯入範例示範了這個結果）。<code>na_values=['?']</code> 之後才加得起來，總和是 <strong>40952.0</strong>。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="195">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -791,20 +791,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">Auto_new.shape</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(392, 9)</pre></div>
   <p class="dx-note">原始資料 397 列、9 欄；丟掉含遺漏值的 5 列之後是 <strong>392 × 9</strong>。如果要用 <code>mpg</code> 當 Y、其他數值欄當 X，那就是 n = 392、p = 7（扣掉 <code>mpg</code> 與文字欄 <code>name</code>）。本章的符號約定就是這樣對上真實資料的。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 197、199</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="197,199">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Y = f(X) + ε</div>
   <p>下列哪一句話正確描述了式子 <em>Y</em> = <em>f</em>(<em>X</em>) + ε 裡的 <em>f</em>？</p>
-  <div class="quiz-options" id="qEstOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<strong>固定</strong>（不隨樣本改變）、<strong>未知</strong>（我們只能估）、<strong>系統性</strong>（隨機的那部分被丟進 ε）。整本書都在找它的估計 f̂。" onclick="quizCheck('qEst', this)"><span class="opt-letter">(A)</span> f 是固定但未知的函數，代表 X 對 Y 提供的系統性資訊</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是 <strong>f̂</strong>（f hat）。f 是真實世界的那個函數，換一份訓練資料它不會變；會變的是我們的估計 f̂——而「它變多少」正是後面「變異」的定義。" onclick="quizCheck('qEst', this)"><span class="opt-letter">(B)</span> f 是我們配出來的模型，會隨著訓練資料改變</div><div class="quiz-opt" data-correct="false" data-fb="不對。f 只用得到 <em>X 裡面有的</em>資訊。沒量到的變數影響再大，也只能被歸進 ε，所以 ε 也包含未量到的變數所造成的變動。" onclick="quizCheck('qEst', this)"><span class="opt-letter">(C)</span> f 包含了所有影響 Y 的因素，所以 ε 只是量測誤差</div></div>
+  <div class="quiz-options" id="qEstOptions"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;strong&gt;固定&lt;/strong&gt;（不隨樣本改變）、&lt;strong&gt;未知&lt;/strong&gt;（我們只能估）、&lt;strong&gt;系統性&lt;/strong&gt;（隨機的那部分被丟進 ε）。整本書都在找它的估計 f̂。" onclick="quizCheck('qEst', this)"><span class="opt-letter">(A)</span> f 是固定但未知的函數，代表 X 對 Y 提供的系統性資訊</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是 &lt;strong&gt;f̂&lt;/strong&gt;（f hat）。f 是真實世界的那個函數，換一份訓練資料它不會變；會變的是我們的估計 f̂——而「它變多少」正是後面「變異」的定義。" onclick="quizCheck('qEst', this)"><span class="opt-letter">(B)</span> f 是我們配出來的模型，會隨著訓練資料改變</div><div class="quiz-opt" data-correct="false" data-fb="不對。f 只用得到 &lt;em&gt;X 裡面有的&lt;/em&gt;資訊。沒量到的變數影響再大，也只能被歸進 ε，所以 ε 也包含未量到的變數所造成的變動。" onclick="quizCheck('qEst', this)"><span class="opt-letter">(C)</span> f 包含了所有影響 Y 的因素，所以 ε 只是量測誤差</div></div>
   <div class="quiz-feedback" id="qEstFeedback"></div>
 </div>
 </section>
 <section id="irreducible">
 <!-- GEN:BEGIN sec:irreducible -->
   <div class="section-number">PART 01 · 兩種誤差</div>
-  <h2>可縮減與<strong>不可縮減</strong>誤差的來源 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1.1 節</a></span><span class="sec-badge">講義 02 · p.10–15</span></h2>
+  <h2>可縮減與<strong>不可縮減</strong>誤差的來源 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1.1 節</a></span><span class="sec-badge">講義 02</span></h2>
 <!-- GEN:END sec:irreducible -->
 
   <p>先問一個看似哲學、其實非常實用的問題：<strong>如果你猜對了 f，誤差會是 0 嗎？</strong>
@@ -830,7 +830,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   $$f(x) = E\left[Y \mid X = x\right], \qquad
     \varepsilon = Y - f(x)$$
 
-  <p>講義第 11 頁畫的就是這個：在 $x$ 這條垂直線上，$Y$ 有一整個分佈，
+  <p>講義畫的就是這個：在 $x$ 這條垂直線上，$Y$ 有一整個分佈，
   $f(x)$ 是那個分佈的平均。剩下的上下散開就是 $\varepsilon$，誰也拿不走。</p>
 
 <div class="viz-layout" data-provenance="simulation">
@@ -858,7 +858,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
 </div>
 
-  <p>講義第 12–15 頁接著問：那要怎麼估 $E[Y \mid X = x]$？最直覺的辦法是
+  <p>講義接著問：那要怎麼估 $E[Y \mid X = x]$？最直覺的辦法是
   <strong>最近鄰平均</strong>（nearest neighbor averaging）。把 $x$ 附近一小塊區域裡的
   $y$ 平均起來當作 $f(x)$。一維、二維時這招很好用，可是</p>
 
@@ -869,7 +869,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   p = 10 要 <strong>80%</strong>，p = 20 要 <strong>89%</strong>。
   也就是說「最近的那幾個鄰居」其實離得非常遠，鄰域裡的 f 早就不是近似常數了，
   平均出來的東西沒有偏差保證。<br>
-  這就是講義第 13–15 頁的維度詛咒（curse of dimensionality），
+  這就是講義的維度詛咒（curse of dimensionality），
   也是高維問題偏好參數式模型（下一節）的根本理由。
 </div>
 
@@ -882,8 +882,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">np.corrcoef(x, y)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[1.        , 0.78689588],
        [0.78689588, 1.        ]])</pre></div>
-  <p class="dx-note">儲存格 74 先產生 50 個標準常態的 <code>x</code>。這裡的 <code>y = x + N(50, 1)</code> 意思是<strong>真實的 f(x) = x + 50，一點都沒錯</strong>，而 ε 是標準差 1 的常態。既然 f 完全正確，相關係數為什麼不是 1？因為 Var(x) = 1、Var(ε) = 1，理論相關是 1/√2 ≈ 0.707，實測 <strong>0.787</strong>（50 筆的抽樣波動）。<strong>那個缺口就是不可縮減誤差。</strong></p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 74、76、78</span>
+  <p class="dx-note">lab 的相關係數範例先產生 50 個標準常態的 <code>x</code>。這裡的 <code>y = x + N(50, 1)</code> 意思是<strong>真實的 f(x) = x + 50，一點都沒錯</strong>，而 ε 是標準差 1 的常態。既然 f 完全正確，相關係數為什麼不是 1？因為 Var(x) = 1、Var(ε) = 1，理論相關是 1/√2 ≈ 0.707，實測 <strong>0.787</strong>（50 筆的抽樣波動）。<strong>那個缺口就是不可縮減誤差。</strong></p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="74,76,78">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -896,8 +896,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(np.float64(2.7243406406465125),
  np.float64(2.7243406406465125),
  np.float64(2.7243406406465125))</pre></div>
-  <p class="dx-note">儲存格 84 另起一個例子，把 <code>y</code> 重新設成 10 個標準常態樣本；它不是前一張卡的 x 加雜訊。三個寫法給出同一個數字 <strong>2.7243406406465125</strong>，因為它們算的是同一件事：<code>np.mean((y - y.mean())**2)</code>。MSE 也是「平方的平均」，同一個動作。注意 <code>np.var()</code> 預設除以 n 而不是 n − 1（看 <code>ddof</code> 參數）——估 Var(ε) 時這個差別在小樣本上是會被抓出來的。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 84、85</span>
+  <p class="dx-note">下一個變異數範例，把 <code>y</code> 重新設成 10 個標準常態樣本；它不是前一張卡的 x 加雜訊。三個寫法給出同一個數字 <strong>2.7243406406465125</strong>，因為它們算的是同一件事：<code>np.mean((y - y.mean())**2)</code>。MSE 也是「平方的平均」，同一個動作。注意 <code>np.var()</code> 預設除以 n 而不是 n − 1（看 <code>ddof</code> 參數）——估 Var(ε) 時這個差別在小樣本上是會被抓出來的。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="84,85">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
@@ -910,14 +910,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 兩種誤差</div>
   <p>你把模型從線性迴歸換成一個非常彈性的方法，母體的期望測試 MSE 從 5.2 降到 2.4。已知 Var(ε) = 2.0。下列哪個判斷最合理？</p>
-  <div class="quiz-options" id="qIrrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。期望測試 MSE 減掉 Var(ε) 就是可縮減那一塊：5.2 − 2.0 = 3.2 → 2.4 − 2.0 = 0.4。已經減少 87%，繼續加彈性的邊際效益很低，而且風險是開始過度配適。" onclick="quizCheck('qIrr', this)"><span class="opt-letter">(A)</span> 可縮減誤差從約 3.2 降到約 0.4，剩下的空間已經很小，可優先考慮蒐集新變數</div><div class="quiz-opt" data-correct="false" data-fb="不對。三項拆解裡 Var(ε) = 2.0 是加在最後的常數，<strong>母體的期望測試 MSE 不可能低於 2.0</strong>，不管方法多彈性。訓練 MSE 才有辦法被壓到接近 0，但那是另一回事。" onclick="quizCheck('qIrr', this)"><span class="opt-letter">(B)</span> 還能再降到 0，因為彈性可以無限提高</div><div class="quiz-opt" data-correct="false" data-fb="方向錯了。重新蒐集<strong>同樣的變數</strong>不會改變 Var(ε)，它是母體的性質。要壓低它得<strong>多量一些變數</strong>，把原本躲在 ε 裡的系統性成分挖出來。" onclick="quizCheck('qIrr', this)"><span class="opt-letter">(C)</span> Var(ε) = 2.0 表示資料品質太差，應該重新蒐集同樣的資料</div></div>
+  <div class="quiz-options" id="qIrrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。期望測試 MSE 減掉 Var(ε) 就是可縮減那一塊：5.2 − 2.0 = 3.2 → 2.4 − 2.0 = 0.4。已經減少 87%，繼續加彈性的邊際效益很低，而且風險是開始過度配適。" onclick="quizCheck('qIrr', this)"><span class="opt-letter">(A)</span> 可縮減誤差從約 3.2 降到約 0.4，剩下的空間已經很小，可優先考慮蒐集新變數</div><div class="quiz-opt" data-correct="false" data-fb="不對。三項拆解裡 Var(ε) = 2.0 是加在最後的常數，&lt;strong&gt;母體的期望測試 MSE 不可能低於 2.0&lt;/strong&gt;，不管方法多彈性。訓練 MSE 才有辦法被壓到接近 0，但那是另一回事。" onclick="quizCheck('qIrr', this)"><span class="opt-letter">(B)</span> 還能再降到 0，因為彈性可以無限提高</div><div class="quiz-opt" data-correct="false" data-fb="方向錯了。重新蒐集&lt;strong&gt;同樣的變數&lt;/strong&gt;不會改變 Var(ε)，它是母體的性質。要壓低它得&lt;strong&gt;多量一些變數&lt;/strong&gt;，把原本躲在 ε 裡的系統性成分挖出來。" onclick="quizCheck('qIrr', this)"><span class="opt-letter">(C)</span> Var(ε) = 2.0 表示資料品質太差，應該重新蒐集同樣的資料</div></div>
   <div class="quiz-feedback" id="qIrrFeedback"></div>
 </div>
 </section>
 <section id="parametric">
 <!-- GEN:BEGIN sec:parametric -->
   <div class="section-number">PART 02 · 參數式與非參數式</div>
-  <h2>參數式與非參數式方法如何描述資料關係 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1.2 節</a></span><span class="sec-badge">講義 02 · p.16–21</span></h2>
+  <h2>參數式與非參數式方法如何描述資料關係 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1.2 節</a></span><span class="sec-badge">講義 02</span></h2>
 <!-- GEN:END sec:parametric -->
 
   <p>知道要估 $f$ 了，接下來的分岔是：<strong>要不要先假設 f 的形狀？</strong>
@@ -965,20 +965,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">f = np.multiply.outer(np.cos(y), <span class="num">1</span> / (<span class="num">1</span> + x**<span class="num">2</span>))</span>
   <span class="line">ax.contour(x, y, f);</span></div>
   <p class="dx-note">這一格自己指定了 <code>f = cos(y) / (1 + x²)</code>，然後把它畫成等高線圖。這只是把<strong>指定函數的形狀</strong>畫出來，還沒有用資料估計參數。真正的參數式配適還要指定未知係數，再依資料選出它們；下一章的線性迴歸會完整示範。順帶記住 <code>np.multiply.outer</code> 與 <code>ax.contour</code>：第 4、9 章畫決策邊界會一直用到。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 121</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="121">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 參數式與非參數式</div>
   <p>你有 n = 60 筆資料、p = 12 個預測變數，而且懷疑關係不是線性的。直接上一個很彈性的非參數式方法，主要的風險是什麼？</p>
-  <div class="quiz-options" id="qParOptions"><div class="quiz-opt" data-correct="true" data-fb="對。非參數式方法少了固定函數形式的限制，但仍以平滑或局部相似性為前提，並用<strong>資料量</strong>換取彈性。n = 60、p = 12 時資料不足以支持高度彈性的估計，可考慮有結構的參數式模型，例如線性模型加上幾個你有理由懷疑的非線性項。" onclick="quizCheck('qPar', this)"><span class="opt-letter">(A)</span> p = 12 而 n = 60，非參數式方法在這種維度下沒有足夠的鄰居可以平均，會配出一個變異極大的 f̂</div><div class="quiz-opt" data-correct="false" data-fb="不對。「非參數」指的是<strong>不把 f 化簡成固定個數的參數</strong>，不是「沒有東西可以估」。它照樣預測，KNN 就是最簡單的例子。" onclick="quizCheck('qPar', this)"><span class="opt-letter">(B)</span> 非參數式方法沒有參數，所以沒辦法做預測</div><div class="quiz-opt" data-correct="false" data-fb="反了。非參數式方法因不固定函數形式，<strong>偏差通常較小</strong>；它在小樣本上不準是因為<strong>變異大</strong>。這兩者的分工是 P05 的主題。" onclick="quizCheck('qPar', this)"><span class="opt-letter">(C)</span> 非參數式方法一定比參數式方法偏差大，所以在小樣本上更不準</div></div>
+  <div class="quiz-options" id="qParOptions"><div class="quiz-opt" data-correct="true" data-fb="對。非參數式方法少了固定函數形式的限制，但仍以平滑或局部相似性為前提，並用&lt;strong&gt;資料量&lt;/strong&gt;換取彈性。n = 60、p = 12 時資料不足以支持高度彈性的估計，可考慮有結構的參數式模型，例如線性模型加上幾個你有理由懷疑的非線性項。" onclick="quizCheck('qPar', this)"><span class="opt-letter">(A)</span> p = 12 而 n = 60，非參數式方法在這種維度下沒有足夠的鄰居可以平均，會配出一個變異極大的 f̂</div><div class="quiz-opt" data-correct="false" data-fb="不對。「非參數」指的是&lt;strong&gt;不把 f 化簡成固定個數的參數&lt;/strong&gt;，不是「沒有東西可以估」。它照樣預測，KNN 就是最簡單的例子。" onclick="quizCheck('qPar', this)"><span class="opt-letter">(B)</span> 非參數式方法沒有參數，所以沒辦法做預測</div><div class="quiz-opt" data-correct="false" data-fb="反了。非參數式方法因不固定函數形式，&lt;strong&gt;偏差通常較小&lt;/strong&gt;；它在小樣本上不準是因為&lt;strong&gt;變異大&lt;/strong&gt;。這兩者的分工是 P05 的主題。" onclick="quizCheck('qPar', this)"><span class="opt-letter">(C)</span> 非參數式方法一定比參數式方法偏差大，所以在小樣本上更不準</div></div>
   <div class="quiz-feedback" id="qParFeedback"></div>
 </div>
 </section>
 <section id="tradeoff">
 <!-- GEN:BEGIN sec:tradeoff -->
   <div class="section-number">PART 03 · 彈性與可解釋性</div>
-  <h2>模型彈性、預測表現與可解釋性 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1.3 節</a></span><span class="sec-badge">講義 02 · p.22–26</span></h2>
+  <h2>模型彈性、預測表現與可解釋性 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.1.3 節</a></span><span class="sec-badge">講義 02</span></h2>
 <!-- GEN:END sec:tradeoff -->
 
   <p>把上一節的分岔攤開，其實是一條連續的光譜。一端是<strong>彈性低但看得懂</strong>，
@@ -1014,7 +1014,7 @@ min      9.000000  1613.000000
 75%     29.000000  3614.750000
 max     46.600000  5140.000000</pre></div>
   <p class="dx-note"><code>describe()</code> 一次給你 count／mean／std／五分位。<code>mpg</code> 的標準差 7.805 是「什麼都不做、直接猜平均」的誤差尺度——平方起來約 <strong>60.9</strong>。任何模型的測試 MSE 都要拿它當基準線比：比不過它，那個模型就沒有存在的必要。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 271</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="271">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1024,20 +1024,20 @@ max     46.600000  5140.000000</pre></div>
   <span class="line">                                 <span class="str">&#x27;displacement&#x27;</span>,</span>
   <span class="line">                                 <span class="str">&#x27;weight&#x27;</span>]]);</span></div>
   <p class="dx-note"><code>pd.plotting.scatter_matrix()</code> 把所有兩兩關係一次畫出來。<code>mpg</code> 對 <code>weight</code> 明顯是彎的。這就是「線性假設可能不夠」的第一手證據，也是決定要不要往彈性端走的依據。第 3 章會把這個觀察變成正式的殘差診斷。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 267、269</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="267,269">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 彈性與可解釋性</div>
   <p>下列哪一組方法在 ISLP 圖 2.7 上「彈性最低、可解釋性最高」？</p>
-  <div class="quiz-options" id="qFlexOptions"><div class="quiz-opt" data-correct="true" data-fb="對。兩者都基於線性模型，而且會把變數挑掉／把係數壓成 0，所以能生出的形狀比一般最小平方<strong>更少</strong>，最終模型也更好講。" onclick="quizCheck('qFlex', this)"><span class="opt-letter">(A)</span> 子集選擇與 lasso</div><div class="quiz-opt" data-correct="false" data-fb="最小平方會用上<strong>所有</strong>變數，而子集選擇與 lasso 會把一部分丟掉——形狀更受限、模型更精簡，所以在圖上更靠左上角。" onclick="quizCheck('qFlex', this)"><span class="opt-letter">(B)</span> 最小平方線性迴歸</div><div class="quiz-opt" data-correct="false" data-fb="不對，它們在圖的中段。GAM 允許每個變數各有一條曲線、樹允許切分區塊，都比線性模型彈性高，可解釋性也因此下降了一些。" onclick="quizCheck('qFlex', this)"><span class="opt-letter">(C)</span> 廣義加法模型（GAM）與決策樹</div></div>
+  <div class="quiz-options" id="qFlexOptions"><div class="quiz-opt" data-correct="true" data-fb="對。兩者都基於線性模型，而且會把變數挑掉／把係數壓成 0，所以能生出的形狀比一般最小平方&lt;strong&gt;更少&lt;/strong&gt;，最終模型也更好講。" onclick="quizCheck('qFlex', this)"><span class="opt-letter">(A)</span> 子集選擇與 lasso</div><div class="quiz-opt" data-correct="false" data-fb="最小平方會用上&lt;strong&gt;所有&lt;/strong&gt;變數，而子集選擇與 lasso 會把一部分丟掉——形狀更受限、模型更精簡，所以在圖上更靠左上角。" onclick="quizCheck('qFlex', this)"><span class="opt-letter">(B)</span> 最小平方線性迴歸</div><div class="quiz-opt" data-correct="false" data-fb="不對，它們在圖的中段。GAM 允許每個變數各有一條曲線、樹允許切分區塊，都比線性模型彈性高，可解釋性也因此下降了一些。" onclick="quizCheck('qFlex', this)"><span class="opt-letter">(C)</span> 廣義加法模型（GAM）與決策樹</div></div>
   <div class="quiz-feedback" id="qFlexFeedback"></div>
 </div>
 </section>
 <section id="mse">
 <!-- GEN:BEGIN sec:mse -->
   <div class="section-number">PART 04 · 訓練與測試 MSE</div>
-  <h2>用訓練 MSE 與測試 MSE 比較模型彈性 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.2.1 節</a></span><span class="sec-badge">講義 02 · p.27–29</span></h2>
+  <h2>用訓練 MSE 與測試 MSE 比較模型彈性 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.2.1 節</a></span><span class="sec-badge">講義 02</span></h2>
 <!-- GEN:END sec:mse -->
 
   <p>要比較方法，得先有量尺。迴歸問題最常用的是<strong>均方誤差</strong>（MSE）：</p>
@@ -1107,7 +1107,7 @@ max     46.600000  5140.000000</pre></div>
   <p>期望值是依機率加權的平均；MSE 則是把平方誤差平均。
   重點是<strong>對哪些隨機量取平均</strong>：只對新觀測值的誤差取平均，與連訓練資料也重抽後取平均，
   是不同的問題。若需要複習加權平均的程式寫法，可看
-  <a href="p2_flow_functions.html#loop">附錄：流程控制中的 zip 與加權平均</a>（課程 Lab Ch2，儲存格 240）。</p>
+  <a href="p2_flow_functions.html#loop">附錄：流程控制中的 zip 與加權平均</a>（課程 Lab Ch2 的迴圈範例）。</p>
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
@@ -1119,7 +1119,7 @@ max     46.600000  5140.000000</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 訓練與測試 MSE</div>
   <p>手上有兩個模型：A 的訓練 MSE = 0.20、測試 MSE = 1.90；B 的訓練 MSE = 0.95、測試 MSE = 1.05。應該選哪一個？為什麼？</p>
-  <div class="quiz-options" id="qMSEOptions"><div class="quiz-opt" data-correct="true" data-fb="對。A 的訓練 MSE 只有 B 的五分之一，但測試 MSE 幾乎是 B 的兩倍。這就是過度配適的典型指紋。決策一律看測試誤差。" onclick="quizCheck('qMSE', this)"><span class="opt-letter">(A)</span> 選 B。我們要的是在新資料上的表現，A 的訓練與測試差距顯示它在配適雜訊</div><div class="quiz-opt" data-correct="false" data-fb="不對。訓練 MSE 小只表示它<strong>貼合了這批資料</strong>，而其中一部分是隨機的巧合。把彈性拉滿可以讓訓練 MSE 變成 0，那並不代表學到了任何東西。" onclick="quizCheck('qMSE', this)"><span class="opt-letter">(B)</span> 選 A。訓練 MSE 小表示它真的學到了資料裡的結構</div><div class="quiz-opt" data-correct="false" data-fb="不對。訓練 MSE 的差距對「該選哪個」這個問題沒有參考價值；它甚至<strong>系統性地偏好較彈性的模型</strong>。有測試 MSE 可以看的時候，直接看它就好。" onclick="quizCheck('qMSE', this)"><span class="opt-letter">(C)</span> 資訊不足，還要看兩個模型的訓練 MSE 差距是否顯著</div></div>
+  <div class="quiz-options" id="qMSEOptions"><div class="quiz-opt" data-correct="true" data-fb="對。A 的訓練 MSE 只有 B 的五分之一，但測試 MSE 幾乎是 B 的兩倍。這就是過度配適的典型指紋。決策一律看測試誤差。" onclick="quizCheck('qMSE', this)"><span class="opt-letter">(A)</span> 選 B。我們要的是在新資料上的表現，A 的訓練與測試差距顯示它在配適雜訊</div><div class="quiz-opt" data-correct="false" data-fb="不對。訓練 MSE 小只表示它&lt;strong&gt;貼合了這批資料&lt;/strong&gt;，而其中一部分是隨機的巧合。把彈性拉滿可以讓訓練 MSE 變成 0，那並不代表學到了任何東西。" onclick="quizCheck('qMSE', this)"><span class="opt-letter">(B)</span> 選 A。訓練 MSE 小表示它真的學到了資料裡的結構</div><div class="quiz-opt" data-correct="false" data-fb="不對。訓練 MSE 的差距對「該選哪個」這個問題沒有參考價值；它甚至&lt;strong&gt;系統性地偏好較彈性的模型&lt;/strong&gt;。有測試 MSE 可以看的時候，直接看它就好。" onclick="quizCheck('qMSE', this)"><span class="opt-letter">(C)</span> 資訊不足，還要看兩個模型的訓練 MSE 差距是否顯著</div></div>
   <div class="quiz-feedback" id="qMSEFeedback"></div>
 </div>
 </section>
@@ -1207,7 +1207,7 @@ max     46.600000  5140.000000</pre></div>
   <p>這張圖用固定種子抽取 300 組訓練資料，讓比較可以重現。
   固定種子不會消除資料本身的不確定性；它只是讓同一個模擬流程重跑時得到相同結果。
   語法可回看<a href="p3_numpy.html#rand">附錄：NumPy 的隨機抽樣與種子</a>
-  （課程 Lab Ch2，儲存格 80、82），這裡專注看下面如何跨訓練集算偏差與變異。</p>
+  （課程 Lab Ch2 的平均與標準差範例），這裡專注看下面如何跨訓練集算偏差與變異。</p>
 
   <div class="info-card" style="margin:1.2rem 0;">
     <div class="ic-title">蒙地卡羅拆解的虛擬碼 <span class="ic-badge">CODE</span></div>
@@ -1242,7 +1242,7 @@ max     46.600000  5140.000000</pre></div>
 <section id="bayes">
 <!-- GEN:BEGIN sec:bayes -->
   <div class="section-number">PART 06 · Bayes 分類器與 KNN</div>
-  <h2>分類設定：Bayes 錯誤率與 KNN 的 K 如何影響預測 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.2.3 節</a></span><span class="sec-badge">講義 02 · p.31–41</span></h2>
+  <h2>分類設定：Bayes 錯誤率與 KNN 的 K 如何影響預測 <span class="sec-badge"><a href="#w02-source-islp">教科書 · 第 2.2.3 節</a></span><span class="sec-badge">講義 02</span></h2>
 <!-- GEN:END sec:bayes -->
 
   <p>前面全都在講迴歸。搬到分類問題，觀念一個都不用丟，只要換掉量尺：
@@ -1365,8 +1365,8 @@ max     46.600000  5140.000000</pre></div>
   <span class="line">A[keep_rows]</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[ 4,  5,  6,  7],
        [12, 13, 14, 15]])</pre></div>
-  <p class="dx-note"><code>keep_rows</code> 是一個布林陣列，<code>A[keep_rows]</code> 只留下 <code>True</code> 的那幾列。KNN 在數「鄰居裡有幾個屬於類別 j」時做的就是這件事：先算出一個布林陣列，再數它。注意 lab 儲存格 169 的對照：<code>np.array([0,1,0,1])</code> 雖然跟 <code>keep_rows</code> 用 <code>==</code> 比是相等的，但當索引用時 <strong>numpy 會把整數當位置、把布林當遮罩</strong>，結果完全不同。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 162、164、171</span>
+  <p class="dx-note"><code>keep_rows</code> 是一個布林陣列，<code>A[keep_rows]</code> 只留下 <code>True</code> 的那幾列。KNN 在數「鄰居裡有幾個屬於類別 j」時做的就是這件事：先算出一個布林陣列，再數它。注意 lab 的整數索引與布林索引對照：<code>np.array([0,1,0,1])</code> 雖然跟 <code>keep_rows</code> 用 <code>==</code> 比是相等的，但當索引用時 <strong>numpy 會把整數當位置、把布林當遮罩</strong>，結果完全不同。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="162,164,171">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1382,7 +1382,7 @@ Column &quot;pickle&quot; has 29.13% missing values
 Column &quot;snack&quot; has 21.26% missing values
 Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
   <p class="dx-note"><code>np.isnan(D[col]).mean()</code>：對布林陣列取平均，<code>True</code> 當 1、<code>False</code> 當 0，算出來就是「成立的比例」。錯誤率 (1/n)ΣI(yᵢ ≠ ŷᵢ) 完全是同一個動作，程式上寫成 <code>(y != y_hat).mean()</code>。指示變數 I(·) 在 Python 裡就是一個布林陣列。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 243、244</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="243,244">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
@@ -1395,7 +1395,7 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Bayes 分類器與 KNN</div>
   <p>在一份二維兩類資料上，你發現 K = 1 的測試錯誤率比 K = 25 高很多。最合理的解讀是什麼？</p>
-  <div class="quiz-options" id="qKnnOptions"><div class="quiz-opt" data-correct="true" data-fb="對。K 小 → 低偏差、高變異。當 Bayes 邊界不是特別破碎、而資料又有相當的重疊時，平滑一點反而更接近真相。這就是 ISLP 圖 2.17 那條 U 型測試曲線的左半邊。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(A)</span> K = 1 太有彈性，決策邊界抓到了訓練資料的雜訊；K = 25 平滑掉雜訊後更接近真實邊界</div><div class="quiz-opt" data-correct="false" data-fb="兩個「一定」都不成立。K = 1 的訓練錯誤率即使是 0，也要看到較不彈性模型的測試表現更好，才能判定過度配適。K 一直加大還會走到另一個極端：本頁的模擬裡 K = 150 的測試錯誤率是 0.2270，比 K = 1 的 0.1964 還糟。本頁模擬的測試錯誤率呈 U 型，兩端都不好。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(B)</span> K = 1 的訓練錯誤率是 0，所以它一定過度配適；K 愈大一定愈好</div><div class="quiz-opt" data-correct="false" data-fb="不對。Bayes 錯誤率高會讓<strong>所有</strong> K 的錯誤率一起抬高，K = 1 與 K = 25 之間的差距則來自方法的偏差與變異，跟不可縮減的那一塊無關。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(C)</span> 這表示資料的 Bayes 錯誤率很高，換任何 K 都沒有用</div></div>
+  <div class="quiz-options" id="qKnnOptions"><div class="quiz-opt" data-correct="true" data-fb="對。K 小 → 低偏差、高變異。當 Bayes 邊界不是特別破碎、而資料又有相當的重疊時，平滑一點反而更接近真相。這就是 ISLP 圖 2.17 那條 U 型測試曲線的左半邊。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(A)</span> K = 1 太有彈性，決策邊界抓到了訓練資料的雜訊；K = 25 平滑掉雜訊後更接近真實邊界</div><div class="quiz-opt" data-correct="false" data-fb="兩個「一定」都不成立。K = 1 的訓練錯誤率即使是 0，也要看到較不彈性模型的測試表現更好，才能判定過度配適。K 一直加大還會走到另一個極端：本頁的模擬裡 K = 150 的測試錯誤率是 0.2270，比 K = 1 的 0.1964 還糟。本頁模擬的測試錯誤率呈 U 型，兩端都不好。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(B)</span> K = 1 的訓練錯誤率是 0，所以它一定過度配適；K 愈大一定愈好</div><div class="quiz-opt" data-correct="false" data-fb="不對。Bayes 錯誤率高會讓&lt;strong&gt;所有&lt;/strong&gt; K 的錯誤率一起抬高，K = 1 與 K = 25 之間的差距則來自方法的偏差與變異，跟不可縮減的那一塊無關。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(C)</span> 這表示資料的 Bayes 錯誤率很高，換任何 K 都沒有用</div></div>
   <div class="quiz-feedback" id="qKnnFeedback"></div>
 </div>
 </section>
@@ -1411,28 +1411,28 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 2.4 第 1 題（b)(d)</div>
   <p>第 1 題問「彈性方法會比不彈性方法好還是差」。考慮 (b) p 極大而 n 很小，以及 (d) 誤差項的變異 σ² = Var(ε) 極大。這兩種情況呢？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。(b) n 小 p 大時，彈性方法的變異會很大，這是維度詛咒的直接後果。(d) σ² 大表示資料裡的隨機成分多，彈性方法會把那些隨機起伏當成訊號學進去——而那些起伏在測試資料上完全不會重現。順便記住另兩小題：(a) n 極大 p 小 → 彈性<strong>較好</strong>；(c) 關係高度非線性 → 彈性<strong>較好</strong>。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 兩種情況都<strong>比較差</strong>：(b) 資料不夠支撐彈性方法，(d) 彈性方法會去配雜訊</div><div class="quiz-opt" data-correct="false" data-fb="(d) 的判斷剛好相反。雜訊大的時候那些「細節」<strong>就是雜訊</strong>，捕捉它們只會讓測試誤差變大。σ² 大時應該更保守，選偏差稍高但變異低的方法。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> (b) 較差、(d) 較好，因為雜訊大的時候更需要彈性去捕捉細節</div><div class="quiz-opt" data-correct="false" data-fb="不對。彈性方法的優勢建立在「有足夠資料」與「訊號比雜訊強」這兩個前提上。兩個前提都不成立時（正是 (b) 與 (d)），它會輸給簡單模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 兩種情況都<strong>比較好</strong>，因為彈性方法適用範圍更廣</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。(b) n 小 p 大時，彈性方法的變異會很大，這是維度詛咒的直接後果。(d) σ² 大表示資料裡的隨機成分多，彈性方法會把那些隨機起伏當成訊號學進去——而那些起伏在測試資料上完全不會重現。順便記住另兩小題：(a) n 極大 p 小 → 彈性&lt;strong&gt;較好&lt;/strong&gt;；(c) 關係高度非線性 → 彈性&lt;strong&gt;較好&lt;/strong&gt;。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 兩種情況都<strong>比較差</strong>：(b) 資料不夠支撐彈性方法，(d) 彈性方法會去配雜訊</div><div class="quiz-opt" data-correct="false" data-fb="(d) 的判斷剛好相反。雜訊大的時候那些「細節」&lt;strong&gt;就是雜訊&lt;/strong&gt;，捕捉它們只會讓測試誤差變大。σ² 大時應該更保守，選偏差稍高但變異低的方法。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> (b) 較差、(d) 較好，因為雜訊大的時候更需要彈性去捕捉細節</div><div class="quiz-opt" data-correct="false" data-fb="不對。彈性方法的優勢建立在「有足夠資料」與「訊號比雜訊強」這兩個前提上。兩個前提都不成立時（正是 (b) 與 (d)），它會輸給簡單模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 兩種情況都<strong>比較好</strong>，因為彈性方法適用範圍更廣</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · ISLP 2.4 第 2 題（a)</div>
   <p>第 2 題 (a)：蒐集美國前 500 大公司的資料，每家記錄「利潤、員工數、產業、CEO 薪水」，想了解<strong>哪些因素影響 CEO 薪水</strong>。這是什麼問題、n 與 p 是多少？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。CEO 薪水是連續的數值 → 迴歸；「想了解哪些因素影響」是典型的推論而非預測。反應變數是 CEO 薪水，剩下三個（利潤、員工數、產業）是預測變數，所以 p = 3、n = 500。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 迴歸問題、目的是推論，n = 500、p = 3</div><div class="quiz-opt" data-correct="false" data-fb="兩處都錯。反應變數是薪水（連續數值），不是類別，所以是迴歸；而 p 要<strong>扣掉反應變數本身</strong>，四個欄位裡有一個是 Y，所以 p = 3。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 分類問題、目的是預測，n = 500、p = 4</div><div class="quiz-opt" data-correct="false" data-fb="n 與 p 對了，但目的判斷錯。題目說的是「understanding which factors affect」——目的是理解因素與薪水的關係，屬於推論。如果題目改成「猜這位新任 CEO 會拿多少」，那才是預測。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 迴歸問題、目的是預測，n = 500、p = 3</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。CEO 薪水是連續的數值 → 迴歸；「想了解哪些因素影響」是典型的推論而非預測。反應變數是 CEO 薪水，剩下三個（利潤、員工數、產業）是預測變數，所以 p = 3、n = 500。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 迴歸問題、目的是推論，n = 500、p = 3</div><div class="quiz-opt" data-correct="false" data-fb="兩處都錯。反應變數是薪水（連續數值），不是類別，所以是迴歸；而 p 要&lt;strong&gt;扣掉反應變數本身&lt;/strong&gt;，四個欄位裡有一個是 Y，所以 p = 3。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 分類問題、目的是預測，n = 500、p = 4</div><div class="quiz-opt" data-correct="false" data-fb="n 與 p 對了，但目的判斷錯。題目說的是「understanding which factors affect」——目的是理解因素與薪水的關係，屬於推論。如果題目改成「猜這位新任 CEO 會拿多少」，那才是預測。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 迴歸問題、目的是預測，n = 500、p = 3</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 2.4 第 3 題（a)(b)</div>
   <p>第 3 題要你在同一張圖上畫五條曲線（偏差²、變異、訓練誤差、測試誤差、Bayes／不可縮減誤差），橫軸是彈性。哪一組形狀是對的？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對，這就是本頁 P05 那張圖再加上訓練誤差。三個關鍵：期望測試誤差 = 偏差² + 變異 + 不可縮減，所以它<strong>不低於那條水平線</strong>；訓練誤差<strong>可以</strong>降到水平線之下（甚至到 0），因為這些資料已參與配適；測試誤差的最低點就在「偏差²下降速度 = 變異上升速度」的地方。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 偏差²單調下降、變異單調上升、訓練誤差單調下降、測試誤差 U 型、不可縮減誤差是一條水平線</div><div class="quiz-opt" data-correct="false" data-fb="兩處錯。變異隨彈性<strong>上升</strong>（愈彈性的模型換一份資料就變一個樣）；訓練誤差<strong>單調下降</strong>不會回頭——模型空間變大，最小值只可能更小。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 偏差²與變異都單調下降，訓練誤差與測試誤差都是 U 型</div><div class="quiz-opt" data-correct="false" data-fb="不對，兩者的差距<strong>隨彈性擴大</strong>。彈性極高時訓練誤差趨近 0，測試誤差卻因為變異暴增而上升。它們永遠不會會合。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 訓練誤差與測試誤差最後會收斂到同一條線，因為彈性夠高就能學到真實的 f</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對，這就是本頁 P05 那張圖再加上訓練誤差。三個關鍵：期望測試誤差 = 偏差² + 變異 + 不可縮減，所以它&lt;strong&gt;不低於那條水平線&lt;/strong&gt;；訓練誤差&lt;strong&gt;可以&lt;/strong&gt;降到水平線之下（甚至到 0），因為這些資料已參與配適；測試誤差的最低點就在「偏差²下降速度 = 變異上升速度」的地方。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 偏差²單調下降、變異單調上升、訓練誤差單調下降、測試誤差 U 型、不可縮減誤差是一條水平線</div><div class="quiz-opt" data-correct="false" data-fb="兩處錯。變異隨彈性&lt;strong&gt;上升&lt;/strong&gt;（愈彈性的模型換一份資料就變一個樣）；訓練誤差&lt;strong&gt;單調下降&lt;/strong&gt;不會回頭——模型空間變大，最小值只可能更小。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 偏差²與變異都單調下降，訓練誤差與測試誤差都是 U 型</div><div class="quiz-opt" data-correct="false" data-fb="不對，兩者的差距&lt;strong&gt;隨彈性擴大&lt;/strong&gt;。彈性極高時訓練誤差趨近 0，測試誤差卻因為變異暴增而上升。它們永遠不會會合。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 訓練誤差與測試誤差最後會收斂到同一條線，因為彈性夠高就能學到真實的 f</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 2.4 第 7 題（b）（c）</div>
   <p>第 7 題給了六筆資料（X₁, X₂, X₃, Y）：(0,3,0,紅)、(2,0,0,紅)、(0,1,3,紅)、(0,1,2,綠)、(−1,0,1,綠)、(1,1,1,紅)。要在測試點 X₁ = X₂ = X₃ = 0 上用 KNN 預測。K = 1 與 K = 3 分別預測什麼？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。到原點的歐氏距離依序是 3、2、√10 ≈ 3.16、√5 ≈ 2.24、√2 ≈ 1.41、√3 ≈ 1.73。最近的是第 5 筆（√2，綠）→ K = 1 預測<strong>綠</strong>。最近的三筆是第 5（√2，綠）、第 6（√3，紅）、第 2（2，紅）→ 二比一，K = 3 預測<strong>紅</strong>。順帶 (d)：Bayes 邊界高度非線性時應該選<strong>小</strong>的 K，因為小 K 的決策邊界才彎得起來。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> K = 1 預測綠，K = 3 預測紅</div><div class="quiz-opt" data-correct="false" data-fb="K = 1 錯了。第 2 筆的距離為 2；最近的是第 5 筆 (−1,0,1)，距離 √((−1)² + 0² + 1²) = √2 ≈ 1.41，它的類別是<strong>綠</strong>。算距離的時候不要漏掉負號那一維。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> K = 1 預測紅，K = 3 預測紅</div><div class="quiz-opt" data-correct="false" data-fb="K = 3 錯了。最近三筆是第 5（綠）、第 6（紅）、第 2（紅），紅佔 2/3。KNN 是<strong>多數決</strong>，所以預測紅。第 4 筆 (0,1,2) 的距離是 √5 ≈ 2.24，排第四，沒進前三名。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> K = 1 預測綠，K = 3 預測綠</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。到原點的歐氏距離依序是 3、2、√10 ≈ 3.16、√5 ≈ 2.24、√2 ≈ 1.41、√3 ≈ 1.73。最近的是第 5 筆（√2，綠）→ K = 1 預測&lt;strong&gt;綠&lt;/strong&gt;。最近的三筆是第 5（√2，綠）、第 6（√3，紅）、第 2（2，紅）→ 二比一，K = 3 預測&lt;strong&gt;紅&lt;/strong&gt;。順帶 (d)：Bayes 邊界高度非線性時應該選&lt;strong&gt;小&lt;/strong&gt;的 K，因為小 K 的決策邊界才彎得起來。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> K = 1 預測綠，K = 3 預測紅</div><div class="quiz-opt" data-correct="false" data-fb="K = 1 錯了。第 2 筆的距離為 2；最近的是第 5 筆 (−1,0,1)，距離 √((−1)² + 0² + 1²) = √2 ≈ 1.41，它的類別是&lt;strong&gt;綠&lt;/strong&gt;。算距離的時候不要漏掉負號那一維。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> K = 1 預測紅，K = 3 預測紅</div><div class="quiz-opt" data-correct="false" data-fb="K = 3 錯了。最近三筆是第 5（綠）、第 6（紅）、第 2（紅），紅佔 2/3。KNN 是&lt;strong&gt;多數決&lt;/strong&gt;，所以預測紅。第 4 筆 (0,1,2) 的距離是 √5 ≈ 2.24，排第四，沒進前三名。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> K = 1 預測綠，K = 3 預測綠</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1465,7 +1465,7 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
 </table></div>
   <p style="font-size:.82rem;color:var(--muted);">σ = 1，所以 Var(ε) = 1.00 是三列期望測試 MSE 的下限；
   單一有限測試集的 MSE 可能因抽樣波動低於它。
-  三個情境的最佳 df 分別是 2、7、18。這就是「沒有一個放諸四海皆準的彈性度」。
+  情境 A、B、C 的最佳 df 分別是 7、2、18。這就是「沒有一個放諸四海皆準的彈性度」。
   數字由 <code>tools/frames/gen_statlearn.py</code> 在 <code>default_rng(524)</code>、
   M = 300 下產生。</p>
 
@@ -1498,12 +1498,12 @@ Column &quot;popcorn&quot; has 22.83% missing values</pre></div>
   真實資料上兩者無法分開估，只能估總和（第 5 章的交叉驗證）。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 26 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 2 章，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
@@ -2399,7 +2399,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"統計學習（Statistical Learning）","back":"一整套用來估計輸入 X 與輸出 Y 之間關係的工具。寫成 Y = f(X) + ε 時，f(X) = E[Y｜X] 是條件平均，ε = Y − f(X) 滿足 E[ε｜X] = 0；這不要求 ε 與 X 完全獨立。"},{"front":"訓練資料（Training Data）","back":"用來配適模型的那 n 筆觀測值 (x₁,y₁)…(xₙ,yₙ)。名字的意思就是「拿這批資料教方法怎麼估 f」。凡是拿訓練資料算出來的誤差，都已經被最佳化過，會系統性偏低。"},{"front":"迴歸函數（Regression Function）","back":"f(x) = E[Y | X = x]，也就是在 X = x 這個位置上 Y 的條件期望值。它是平方誤差意義下最好的預測函數；剩下無法解釋的部分就是 ε = Y − f(x)。"},{"front":"不可縮減誤差（Irreducible Error）","back":"Var(ε)。給定同一組 X，就算 f̂ 等於真實的 f，期望測試 MSE 仍含這一項。它是母體期望風險的下限；有限測試集算出的 MSE 會波動，可能暫時低於 Var(ε)。"},{"front":"可縮減誤差（Reducible Error）","back":"[f(X) − f̂(X)]²，也就是 f̂ 沒學對 f 所造成的那一塊誤差。選更合適的方法、蒐集更多資料、加入有用的變數，都能減少這部分誤差。"},{"front":"預測與推論（Prediction vs Inference）","back":"預測只在意 Ŷ 準不準，f̂ 可以是黑盒子；推論要知道 f̂ 的長相，回答「哪些變數有關係」「關係是正還是負」「能不能用一條直線描述」。目標不同，該選的方法也不同。"},{"front":"參數式方法（Parametric Method）","back":"兩步走：先假設 f 的函數形狀（例如線性 f(X)=β₀+β₁X₁+…+βₚXₚ），再用訓練資料估那幾個參數。好處是把「估一個任意函數」化簡成「估 p+1 個數字」，資料不多也做得動；壞處是假設錯了就一路錯。"},{"front":"非參數式方法（Non-parametric Method）","back":"不預設固定維度的函數形式，但仍要假設某種平滑性或局部相似性，也要選距離、尺度或平滑程度。它能配適的形狀較廣，通常需要更多觀測值，且在高維空間容易受維度詛咒影響。"},{"front":"薄板樣條（Thin-plate Spline）","back":"ISLP 用來示範非參數式配適的方法（圖 2.5、2.6）。使用者要選平滑程度：過度平滑會漏掉結構；平滑限制太弱時可能穿過每個訓練點，使訓練誤差為 0，並可能過度配適。"},{"front":"彈性（Flexibility）","back":"一個方法能產生的函數形狀有多廣。彈性上升時偏差通常下降、變異通常上升；對依序擴大的巢狀模型，同一訓練目標單調不增。測試風險常呈 U 型，最低點也可能落在端點。"},{"front":"自由度（Degrees of Freedom）","back":"用來量化一條曲線彈性的數字，大致上是配適時要估的參數個數。線性迴歸在最不彈性的那一端，自由度是 2；平滑樣條的自由度愈大曲線愈能扭動。ISLP 圖 2.9 右圖的橫軸就是它。"},{"front":"可解釋性（Interpretability）","back":"能不能講清楚每個預測變數如何與反應變數關聯。一般而言彈性愈高、可解釋性愈低（ISLP 圖 2.7）。若要作因果解讀，還需要合適的研究設計與額外假設。"},{"front":"均方誤差（Mean Squared Error）","back":"MSE = (1/n)Σ(yᵢ − f̂(xᵢ))²，迴歸問題最常用的配適品質量尺。預測貼近觀測值時它小，差得遠時它大。注意：算它用的是哪一批資料，決定了它叫訓練 MSE 還是測試 MSE。"},{"front":"訓練 MSE（Training MSE）","back":"用配適時那批資料算出的 MSE。若模型空間依序擴大、每次都把同一個訓練 MSE 最小化，最小值只會下降或不變；這個單調性不能直接套到任意方法或不同訓練目標。"},{"front":"測試 MSE（Test MSE）","back":"把模型套到完全沒參與配適的新資料上算出的平均平方誤差。它估計新資料上的表現，會有有限樣本波動。隨彈性變化時常呈 U 型，最低點也可能在最簡單或最複雜的一端。"},{"front":"過度配適（Overfitting）","back":"訓練 MSE 很小但測試 MSE 很大的情形：方法太用力在訓練資料裡找規律，把純粹來自隨機的巧合也學了進去。嚴格的定義是「存在一個較不彈性的模型，測試 MSE 反而更小」。"},{"front":"偏差（Bias）","back":"估計量在重複抽樣下的平均與真值之差：E[f̂(x₀)] − f(x₀)。模型形狀太受限是偏差的常見來源，但偏差也可能隨樣本數與估計方法改變；不能只因模型類別固定，就斷言偏差與 n 無關。"},{"front":"變異（Variance）","back":"換一組訓練資料重配一次，f̂ 會變動多少。彈性高的方法緊貼著資料跑，動一個點就整條曲線改變，變異大；線性迴歸移動一個點只讓直線微幅偏移，變異小。"},{"front":"偏差–變異拆解（Bias–Variance Decomposition）","back":"在 x₀ 的期望測試 MSE = Var(f̂(x₀)) + [Bias(f̂(x₀))]² + Var(ε)（ISLP 式 2.7、ESL 式 7.9）。三項都非負，所以期望測試 MSE 不低於 Var(ε)；有限測試集的 MSE 可能低於它。期望值涵蓋重複抽取訓練集與新反應值。"},{"front":"錯誤率（Error Rate）","back":"分類問題把 MSE 換成的量尺：(1/n)ΣI(yᵢ ≠ ŷᵢ)，也就是分錯的比例。用訓練資料算叫訓練錯誤率，用沒見過的資料算叫測試錯誤率；跟迴歸一樣，我們在意的是後者。"},{"front":"指示變數（Indicator Variable）","back":"I(·)：條件成立時是 1、不成立時是 0。有了它，「分錯的比例」就可以寫成一個平均值。程式上等於對一個布林陣列取平均——lab 裡 np.isnan(D[col]).mean() 用的就是同一招。"},{"front":"Bayes 分類器（Bayes Classifier）","back":"把每一筆觀測指派給條件機率 Pr(Y = j | X = x₀) 最大的類別。它讓母體的期望分類錯誤率最小。真實條件分佈通常未知，因此它主要作為理論與模擬研究的比較基準。"},{"front":"Bayes 決策邊界（Bayes Decision Boundary）","back":"兩類問題中 Pr(Y = 1 | X) 恰好等於 0.5 的那條線（面）。跨過它預測就換一個類別。它的形狀決定了問題本身有多難：邊界高度非線性時，只能畫直線的方法先天就吃虧。"},{"front":"Bayes 錯誤率（Bayes Error Rate）","back":"1 − E[maxⱼ Pr(Y = j | X)]，是所有分類器母體期望錯誤率的下限。有限測試集觀察到的錯誤率會波動，可能暫時低於它。"},{"front":"K 最近鄰分類器（K-Nearest Neighbors）","back":"找出離 x₀ 最近的 K 個訓練點，以類別比例估 Pr(Y = j | X = x₀)。它依賴距離、尺度與局部相似性。K = 1 在訓練集上不保證永遠零錯誤，例如相同 X 可有相反標籤；零訓練錯誤本身也不能證明過度配適。"},{"front":"維度詛咒（Curse of Dimensionality）","back":"維度 p 一高，「最近的 K 個鄰居」其實離得非常遠，鄰域內的 f 不再近似常數，KNN 這類靠局部平均的方法就失效了。這是講義第 13–15 頁的重點，也是高維問題偏好參數式模型的理由。"}];
+const FLASHCARDS = [{"front":"統計學習（Statistical Learning）","back":"一整套用來估計輸入 X 與輸出 Y 之間關係的工具。寫成 Y = f(X) + ε 時，f(X) = E[Y｜X] 是條件平均，ε = Y − f(X) 滿足 E[ε｜X] = 0；這不要求 ε 與 X 完全獨立。"},{"front":"訓練資料（Training Data）","back":"用來配適模型的那 n 筆觀測值 (x₁,y₁)…(xₙ,yₙ)。名字的意思就是「拿這批資料教方法怎麼估 f」。凡是拿訓練資料算出來的誤差，都已經被最佳化過，會系統性偏低。"},{"front":"迴歸函數（Regression Function）","back":"f(x) = E[Y | X = x]，也就是在 X = x 這個位置上 Y 的條件期望值。它是平方誤差意義下最好的預測函數；剩下無法解釋的部分就是 ε = Y − f(x)。"},{"front":"不可縮減誤差（Irreducible Error）","back":"Var(ε)。給定同一組 X，就算 f̂ 等於真實的 f，期望測試 MSE 仍含這一項。它是母體期望風險的下限；有限測試集算出的 MSE 會波動，可能暫時低於 Var(ε)。"},{"front":"可縮減誤差（Reducible Error）","back":"[f(X) − f̂(X)]²，也就是 f̂ 沒學對 f 所造成的那一塊誤差。選更合適的方法、蒐集更多資料、加入有用的變數，都能減少這部分誤差。"},{"front":"預測與推論（Prediction vs Inference）","back":"預測只在意 Ŷ 準不準，f̂ 可以是黑盒子；推論要知道 f̂ 的長相，回答「哪些變數有關係」「關係是正還是負」「能不能用一條直線描述」。目標不同，該選的方法也不同。"},{"front":"參數式方法（Parametric Method）","back":"兩步走：先假設 f 的函數形狀（例如線性 f(X)=β₀+β₁X₁+…+βₚXₚ），再用訓練資料估那幾個參數。好處是把「估一個任意函數」化簡成「估 p+1 個數字」，資料不多也做得動；壞處是假設錯了就一路錯。"},{"front":"非參數式方法（Non-parametric Method）","back":"不預設固定維度的函數形式，但仍要假設某種平滑性或局部相似性，也要選距離、尺度或平滑程度。它能配適的形狀較廣，通常需要更多觀測值，且在高維空間容易受維度詛咒影響。"},{"front":"薄板樣條（Thin-plate Spline）","back":"ISLP 用來示範非參數式配適的方法（圖 2.5、2.6）。使用者要選平滑程度：過度平滑會漏掉結構；平滑限制太弱時可能穿過每個訓練點，使訓練誤差為 0，並可能過度配適。"},{"front":"彈性（Flexibility）","back":"一個方法能產生的函數形狀有多廣。彈性上升時偏差通常下降、變異通常上升；對依序擴大的巢狀模型，同一訓練目標單調不增。測試風險常呈 U 型，最低點也可能落在端點。"},{"front":"自由度（Degrees of Freedom）","back":"用來量化一條曲線彈性的數字，大致上是配適時要估的參數個數。線性迴歸在最不彈性的那一端，自由度是 2；平滑樣條的自由度愈大曲線愈能扭動。ISLP 圖 2.9 右圖的橫軸就是它。"},{"front":"可解釋性（Interpretability）","back":"能不能講清楚每個預測變數如何與反應變數關聯。一般而言彈性愈高、可解釋性愈低（ISLP 圖 2.7）。若要作因果解讀，還需要合適的研究設計與額外假設。"},{"front":"均方誤差（Mean Squared Error）","back":"MSE = (1/n)Σ(yᵢ − f̂(xᵢ))²，迴歸問題最常用的配適品質量尺。預測貼近觀測值時它小，差得遠時它大。注意：算它用的是哪一批資料，決定了它叫訓練 MSE 還是測試 MSE。"},{"front":"訓練 MSE（Training MSE）","back":"用配適時那批資料算出的 MSE。若模型空間依序擴大、每次都把同一個訓練 MSE 最小化，最小值只會下降或不變；這個單調性不能直接套到任意方法或不同訓練目標。"},{"front":"測試 MSE（Test MSE）","back":"把模型套到完全沒參與配適的新資料上算出的平均平方誤差。它估計新資料上的表現，會有有限樣本波動。隨彈性變化時常呈 U 型，最低點也可能在最簡單或最複雜的一端。"},{"front":"過度配適（Overfitting）","back":"訓練 MSE 很小但測試 MSE 很大的情形：方法太用力在訓練資料裡找規律，把純粹來自隨機的巧合也學了進去。嚴格的定義是「存在一個較不彈性的模型，測試 MSE 反而更小」。"},{"front":"偏差（Bias）","back":"估計量在重複抽樣下的平均與真值之差：E[f̂(x₀)] − f(x₀)。模型形狀太受限是偏差的常見來源，但偏差也可能隨樣本數與估計方法改變；不能只因模型類別固定，就斷言偏差與 n 無關。"},{"front":"變異（Variance）","back":"換一組訓練資料重配一次，f̂ 會變動多少。彈性高的方法緊貼著資料跑，動一個點就整條曲線改變，變異大；線性迴歸移動一個點只讓直線微幅偏移，變異小。"},{"front":"偏差–變異拆解（Bias–Variance Decomposition）","back":"在 x₀ 的期望測試 MSE = Var(f̂(x₀)) + [Bias(f̂(x₀))]² + Var(ε)（ISLP 式 2.7、ESL 式 7.9）。三項都非負，所以期望測試 MSE 不低於 Var(ε)；有限測試集的 MSE 可能低於它。期望值涵蓋重複抽取訓練集與新反應值。"},{"front":"錯誤率（Error Rate）","back":"分類問題把 MSE 換成的量尺：(1/n)ΣI(yᵢ ≠ ŷᵢ)，也就是分錯的比例。用訓練資料算叫訓練錯誤率，用沒見過的資料算叫測試錯誤率；跟迴歸一樣，我們在意的是後者。"},{"front":"指示變數（Indicator Variable）","back":"I(·)：條件成立時是 1、不成立時是 0。有了它，「分錯的比例」就可以寫成一個平均值。程式上等於對一個布林陣列取平均——lab 裡 np.isnan(D[col]).mean() 用的就是同一招。"},{"front":"Bayes 分類器（Bayes Classifier）","back":"把每一筆觀測指派給條件機率 Pr(Y = j | X = x₀) 最大的類別。它讓母體的期望分類錯誤率最小。真實條件分佈通常未知，因此它主要作為理論與模擬研究的比較基準。"},{"front":"Bayes 決策邊界（Bayes Decision Boundary）","back":"兩類問題中 Pr(Y = 1 | X) 恰好等於 0.5 的那條線（面）。跨過它預測就換一個類別。它的形狀決定了問題本身有多難：邊界高度非線性時，只能畫直線的方法先天就吃虧。"},{"front":"Bayes 錯誤率（Bayes Error Rate）","back":"1 − E[maxⱼ Pr(Y = j | X)]，是所有分類器母體期望錯誤率的下限。有限測試集觀察到的錯誤率會波動，可能暫時低於它。"},{"front":"K 最近鄰分類器（K-Nearest Neighbors）","back":"找出離 x₀ 最近的 K 個訓練點，以類別比例估 Pr(Y = j | X = x₀)。它依賴距離、尺度與局部相似性。K = 1 在訓練集上不保證永遠零錯誤，例如相同 X 可有相反標籤；零訓練錯誤本身也不能證明過度配適。"},{"front":"維度詛咒（Curse of Dimensionality）","back":"維度 p 一高，「最近的 K 個鄰居」其實離得非常遠，鄰域內的 f 不再近似常數，KNN 這類靠局部平均的方法就失效了。這是講義的重點，也是高維問題偏好參數式模型的理由。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

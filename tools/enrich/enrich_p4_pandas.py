@@ -831,4 +831,21 @@ function w17grpCol(k) { w17grpColCur = k; w17grpChartDraw(); }
 HC.ready(() => { w17grpChartDraw(); });
 """
 
+# Complete the introductory lab's table operations without inventing saved outputs.
+BODIES["view"] += f"""
+<h3 id="dx-sort">依標籤或資料值排序</h3>
+<p><code>sort_index</code> 排列列／欄的標籤；<code>sort_values</code> 按指定欄的數值排列資料列。
+<code>axis=1</code> 指欄方向，<code>ascending=False</code> 指遞減順序。排序後標籤仍跟著原本的資料走。</p>
+{card("欄名排序與資料值排序", C(1,40,42), O(1,40)+"\n"+O(1,42), src=S(1,40,42))}
+<h3 id="dx-calc">摘要、逐元素運算與累積量</h3>
+<p><code>mean()</code> 預設沿列計算各欄平均；DataFrame 相加會先對齊列與欄標籤，再逐元素相加。
+<code>apply(np.cumsum)</code> 在這個數值表上逐欄累積加總，因此每一列表示從開頭累積到該列的總量。</p>
+{card("數值表的三種運算", C(1,64,66,68), O(1,64)+"\n"+O(1,66)+"\n"+O(1,68), src=S(1,64,66,68))}
+<h3 id="dx-save">讀入與輸出資料表</h3>
+<p><code>read_csv</code>、<code>read_excel</code> 將檔案讀為資料表；<code>to_csv</code>、<code>to_excel</code>
+將目前的表輸出到檔案。下列兩個命令會在執行目錄建立檔案，檔名已存在時會覆寫；預設也會寫出列索引。
+只想保留資料欄時可指定 <code>index=False</code>。Excel 讀寫另需要相容的引擎，例如 <code>openpyxl</code>。</p>
+{card("將資料表存成 Excel 與 CSV", C(1,81,82), None, src=S(1,81,82), note="這兩個命令的結果是檔案；lab未保存文字輸出。")}
+"""
+
 apply("p4_pandas", BODIES, PAGEJS)

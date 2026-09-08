@@ -4,7 +4,7 @@ from pathlib import Path
 
 from lib import card, info_card, lab_code, lab_output, quiz, svg as _svg, viz
 
-LAB_URL = "https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb"
+LAB_URL = "https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb"
 
 
 def svg(sid, height):
@@ -35,14 +35,14 @@ def _quiz(name, question, correct, feedback, wrong1, fb1, wrong2, fb2):
 def dataset_examples():
     wage = viz(svg('w01ivWageAge', 300) + svg('w01ivWageYear', 270) + svg('w01ivWageEdu', 320),
         [info_card('先看座標，再看分布',
-         '三張圖的薪資單位都是<strong>千美元</strong>。年齡圖的灰點固定抽600人，橘線用全部3000人的4歲分箱平均；它<strong>不是lab的多項式配適線</strong>。年份圖也只畫各年平均。'),
+         '三張圖的薪資單位都是<strong>千美元</strong>。年齡與年份圖都畫全部3000人的觀測值。年齡曲線是四次多項式配適，年份直線是一次線性配適；淡色區域是平均反應的95% bootstrap信賴帶，不是個別薪資的預測區間。'),
          info_card('第一次讀箱形圖',
          '箱子下緣是第1四分位數（Q1），上緣是第3四分位數（Q3），中線是中位數。'
          '鬚延伸到Q1−1.5×IQR與Q3+1.5×IQR內最遠的觀測值（IQR＝Q3−Q1）；外面的點另外畫出，不代表輸入錯誤。'),
          info_card('不同人之間的比較',
          '各年齡、年份與教育組都是不同人的資料。看到薪資分布不同，還不能說是年齡或教育造成的。')],
-        'w01ivWageStatus', '看中央趨勢，也看同組內的差異：一條平均線不能代表每個人。', '',
-        provenance=('course-data', 'Wage，對照講義p31與Ch01 lab儲存格145–155；本站計算分箱平均、年份平均與Tukey箱形圖。'))
+        'w01ivWageStatus', '曲線描述平均薪資與輸入的關係；散點呈現同一年齡或年份中個人的差異。', '',
+        provenance=('course-data', 'Wage，對照講義p31與Ch01 lab儲存格145–155；與lab相同的四次／一次配適、95% bootstrap信賴帶與Tukey箱形圖；bootstrap固定seed=0便於重現。'))
     smarket = viz(svg('w01ivSmarketBox', 320) + svg('w01ivSmarketCorr', 470),
         [info_card('箱子依當天的漲跌分組',
          'Lag1、Lag2、Lag3分別是前1、2、3個交易日的報酬（%）。每一組比較<strong>當天跌（紅）／當天漲（綠）</strong>；箱子與鬚沿用上面的定義。'),
@@ -54,37 +54,38 @@ def dataset_examples():
          'Today是當天報酬，與Direction同時才知道，不能拿它預測當天漲跌。')],
         'w01ivSmarketStatus', '先讀分布，再讀線性相關；預測能力還要用未見資料檢查。', '',
         provenance=('course-data', 'Smarket，對照講義p32與Ch01 lab儲存格157–162；箱形圖使用1.5IQR鬚，熱圖使用numeric_only的Pearson相關。'))
-    nci = viz(svg('w01ivNci', 390),
+    nci = viz(svg('w01ivNci', 470) + svg('w01ivNci3', 340),
         [info_card('一點代表一個細胞株',
-         '每筆原本有6830個基因表現值，這裡壓成兩個座標方便閱讀。現在只要懂「把高維資料畫在平面上」，PCA的推導留到非監督式學習章。'),
+         '每筆原本有6830個基因表現值，兩張圖分別看第一、第二主成分與第一、第三主成分。現在只要懂「把高維資料畫在平面上」，PCA的推導留到非監督式學習章。'),
          info_card('位置先算，顏色後加',
-         '投影只用基因表現量，沒有使用癌症型別。顏色是事後對照；少於5筆的型別合稱「其他型別」，不表示它們原本是一類。'
+         '投影只用基因表現量，沒有使用癌症型別。顏色保留全部14種原始型別，供事後對照。第一張圖依lab將第二主成分乘上−1；主成分符號可反轉，不改變距離或解釋變異。'
          '部分同色點靠近，部分仍混在一起；平面也會遺失資訊。')],
         'w01ivNciStatus', '64個細胞株、6830個基因；型別未參與投影計算。', '',
-        provenance=('course-data', 'NCI60，對照講義p33與Ch01 lab儲存格164–170；每個基因標準化後取前兩個主成分，最後才按型別上色。'))
-    auto = viz(svg('w01ivAutoHist', 290) + svg('w01ivAutoScatter', 300),
+        provenance=('course-data', 'NCI60，對照講義p33與Ch01 lab儲存格164–170；每個基因標準化後進行PCA，畫PC1對−PC2及PC1對PC3，再按原始型別上色。'))
+    auto = viz(svg('w01ivAutoHist', 290) + svg('w01ivAutoJoint', 380) + svg('w01ivAutoPairs', 650),
         [info_card('單一變數與兩個變數',
-         '直方圖回答「mpg通常落在哪裡」：每箱寬5 mpg，縱軸是車輛筆數。散佈圖回答「馬力與mpg如何一起變動」：一點是一輛車。'
+         '直方圖回答「mpg通常落在哪裡」：縱軸是密度，各柱面積加總為1，橘線是核密度估計（KDE）。分箱與平滑設定沿用lab的seaborn預設值。聯合圖也畫出汽缸數與mpg各自的邊際直方圖。成對散佈圖回答「馬力與mpg如何一起變動」：一點是一輛車。'
          'mpg是每加侖可行駛的英里數，數值高表示較省油。'),
-         info_card('回lab看完整pairplot',
-         '這裡只取horsepower與mpg這一對。lab儲存格176另比較排氣量、車重與汽缸數；'
+         info_card('完整成對關係',
+         '成對圖比較mpg、排氣量、馬力與車重，以汽缸數上色。對角線是各汽缸組的KDE，其他格是一對變數的散佈圖；'
          '完整成對圖可幫助找出候選關係；因果判斷還需要研究設計與其他證據。')],
         'w01ivAutoStatus', '392筆車輛、8個資料欄；name是列索引。直方圖與散佈圖回答不同問題。', '',
-        provenance=('course-data', 'Auto，對照講義p34與Ch01 lab儲存格172–176；全部392筆，本站直方圖畫筆數，不含lab的密度曲線。'))
-    bike = viz(svg('w01ivBike', 300),
-        [info_card('先讀原始資料的平均',
-         '將8645筆每小時紀錄按hr（0到23時）分組，每組計算bikers的算術平均。不同小時的紀錄數可能不同。'),
-         info_card('這條線呈現各小時的平均租借量',
-         '這是<strong>本站EDA補充</strong>，沒有控制工作日、天氣或季節。講義p35畫的是模型中的小時效果，兩者不能互換解讀。')],
-        'w01ivBikeStatus', '橫軸是一天中的小時，縱軸是該小時的平均租借量；不是同一天的24小時紀錄。', '',
-        provenance=('course-data', 'Bikeshare，Ch01 lab儲存格178–179所載資料；本站依hr分組平均的EDA補充，不是講義p35的模型係數線。'))
+        provenance=('course-data', 'Auto，對照講義p34與Ch01 lab儲存格172–176；全部392筆，seaborn密度直方圖與KDE、汽缸數聯合圖，以及以汽缸數上色的完整pairplot。'))
+    bike = viz(svg('w01ivBikeMonth', 300) + svg('w01ivBike', 320),
+        [info_card('月份與小時的模型係數',
+         '講義的兩條線來自同一個線性迴歸：以月份、小時、工作日、溫度與天氣預測每小時租借量。月份與小時採總和為零的編碼，各自的係數加總為0。'),
+         info_card('讀取調整後的差異',
+         '固定模型中的其他變數後，比較兩個月份或小時的係數差，就是模型預測的租借量差。負係數表示低於該因子的平均水準，並不表示租借量為負。'
+         '這些是觀察資料的條件關係，因果效果仍需其他證據。')],
+        'w01ivBikeStatus', '縱軸是線性模型係數；月份與小時各自採總和為零的編碼。', '',
+        provenance=('course-data', 'Bikeshare；依導論講義與分類lab的線性迴歸重建，使用全部8645筆與sum contrasts。'))
     auto_code = lab_code(1, 175) + '\n\n' + lab_code(1, 176)
     return f'''
 <p>先用五份真實資料練習讀圖：看清一點、一個箱子或一條線代表什麼，再判斷圖能回答哪個問題。</p>
 <h3 id="dx-wage">Wage：薪資與年齡、年份、教育程度</h3>
 <p>資料含3000位男性的薪資與人口特徵。若把wage當預測目標，這是一個迴歸問題；先看分布，還不用急著選模型。</p>
 {wage}
-{card('課程lab · 2004年的平均薪資', lab_code(1, 148), lab_output(1, 148), src=_src(148), note='111.16的單位是千美元，約為11.12萬美元。請在年份圖找到2004年的位置。')}
+{card('課程lab · 2004年的平均薪資', lab_code(1, 148), lab_output(1, 148), src=_src(148), note='111.16的單位是千美元，約為11.12萬美元。這是2004年原始樣本平均；年份圖的直線則是使用所有年份共同配適的趨勢。')}
 {_quiz('Wage', '教育程度較高的組，薪資中位數也較高。這張圖支持哪個說法？', '樣本中不同教育組的薪資分布不同；教育的因果效果仍須其他研究證據', '對。箱形圖比較組間與組內差異，並未控制其他因素。', '同一教育組的人薪資都相同', '不對。箱子、鬚與外面的點正是在呈現組內差異。', '多讀一個教育階段，每個人的薪資都會增加固定金額', '不對。這些是不同人的比較，且教育組之間的差距也不固定。')}
 <h3 id="dx-smarket">Smarket：前幾天的報酬與當天漲跌</h3>
 <p>1250個交易日、9個資料欄。目標Direction是當天漲或跌，屬於分類問題；先比較過去報酬在兩組中的分布。</p>
@@ -99,12 +100,12 @@ def dataset_examples():
 <h3 id="dx-auto">Auto：油耗分布與馬力的關係</h3>
 <p>先用直方圖看mpg的分布，再看馬力與mpg的散佈圖。這兩種圖分別回答「單一變數如何分布」與「兩個變數有什麼關係」。</p>
 {auto}
-{card('課程lab · 從直方圖到完整pairplot', auto_code, None, src=_src(175, 176), note=f'完整成對圖請回<a href="{LAB_URL}" target="_blank" rel="noopener">課程lab儲存格176</a>閱讀；本站保留一對關係作為入門示範。')}
-{_quiz('Auto', '散佈圖中，馬力較大的車通常落在較低mpg的位置。哪個解讀合理？', '樣本中馬力與mpg呈負向關係，其他車輛特徵仍可能影響這個關係', '對。散佈圖描述觀察到的關係，不直接證明因果。', 'mpg愈低代表車愈省油', '不對。mpg是每加侖行駛英里數，愈高才表示較省油。', '直方圖的柱高就是每輛車的馬力', '不對。這張直方圖的柱高是落在該mpg區間的車輛筆數。')}
+{card('課程lab · 從直方圖到完整pairplot', auto_code, None, src=_src(175, 176), note=f'上方重建相同的密度圖與成對圖；可在<a href="{LAB_URL}" target="_blank" rel="noopener">課程lab</a>操作原始程式。')}
+{_quiz('Auto', '散佈圖中，馬力較大的車通常落在較低mpg的位置。哪個解讀合理？', '樣本中馬力與mpg呈負向關係，其他車輛特徵仍可能影響這個關係', '對。散佈圖描述觀察到的關係，不直接證明因果。', 'mpg愈低代表車愈省油', '不對。mpg是每加侖行駛英里數，愈高才表示較省油。', '直方圖的柱高就是每輛車的馬力', '不對。這張直方圖的柱高是密度；柱高乘上箱寬才是該區間的樣本比例。')}
 <h3 id="dx-bike">Bikeshare：一天中哪些時段租借較多？</h3>
-<p>bikers是每小時的租借量，可以作為迴歸目標。現在先做原始資料的分組摘要，了解一天中的租借形狀。</p>
+<p>bikers是每小時的租借量，可以作為迴歸目標。講義先展示線性模型的月份與小時係數，後續在分類章的廣義線性模型段落比較線性與Poisson迴歸。</p>
 {bike}
-{_quiz('Bikeshare', '曲線在某些小時較高，這些點代表什麼？', '跨不同日期、同一小時的租借量平均', '對。這是按hr分組的原始平均，不是某一天的紀錄或控制其他變數後的效果。', '這是講義模型控制其他變數後的小時係數', '不對。本站這條EDA補充線沒有配適模型，不能當成講義p35的係數線。', '每天到了這個小時都會出現完全相同的租借量', '不對。平均值概括許多天，每一天仍可能受天氣、工作日與季節影響。')}
+{_quiz('Bikeshare', '某小時的模型係數較高，應如何解讀？', '其他模型變數固定時，該小時的預測租借量較高', '對。兩個小時的係數差是固定其餘模型輸入時的預測差，仍不代表因果效果。', '這是跨不同日期、同一小時的原始平均租借量', '原始平均未調整月份、工作日、溫度與天氣，與這張係數圖不同。', '負係數代表那個小時的租借量是負數', '預測還要加上截距及其他變數的貢獻；單一負係數並非負的租借量。')}
 '''
 
 
@@ -141,11 +142,12 @@ function w01ivBox(s, b, x, width, color) {
 }
 function w01ivWageDraw() {
   const f=FRAMES_w01wage;
-  let s=w01ivAxes('w01ivWageAge',[16,82],[0,340],'年齡：個別觀測與4歲分箱平均','年齡（歲）','薪資（千美元）',300,6);
-  w01ivDots(s,f.scatter,'rgba(95,100,105,.35)',2);
-  w01ivLine(s,f.ageCurve,'#c45e14');
-  s=w01ivAxes('w01ivWageYear',[2003,2009],[0,140],'年份：各年平均薪資','年份','平均薪資（千美元）',270,6);
-  w01ivLine(s,f.yearMean,'#2c3e7a');
+  let s=w01ivAxes('w01ivWageAge',[16,82],[0,340],'年齡：全部觀測與四次多項式配適','年齡（歲）','薪資（千美元）',300,6);
+  w01ivDots(s,f.scatter,'rgba(95,100,105,.1)',2);
+  w01ivFit(s,f.ageFit,'#c45e14');
+  s=w01ivAxes('w01ivWageYear',[2003,2009],[0,340],'年份：全部觀測與一次線性配適','年份','薪資（千美元）',270,6);
+  w01ivDots(s,f.yearScatter,'rgba(95,100,105,.1)',2);
+  w01ivFit(s,f.yearFit,'#2c3e7a');
   s=w01ivAxes('w01ivWageEdu',[-.6,4.6],[0,340],'教育程度：薪資分布','教育程度','薪資（千美元）',320,5);
   // Replace numeric x ticks with short educational categories.
   const names=['高中以下','高中','大學未畢','大學畢業','研究所'];
@@ -177,27 +179,63 @@ function w01ivSmarketDraw() {
   });
   w01ivText(h,left,440,'紅：負相關　　白：接近0　　藍：正相關',{'font-size':13});
 }
+function w01ivFit(s,f,color) {
+  s.add('polygon',{points:f.band.map(p=>s.X(p[0])+','+s.Y(p[1])).join(' '),stroke:'none',fill:color,cls:'w01iv-band','fill-opacity':.18});
+  s.poly(f.line,{stroke:color,sw:2.6,fill:'none',cls:'w01iv-line'});
+}
 function w01ivNciDraw() {
-  const f=FRAMES_w01nci, xs=f.pts.map(p=>p.x),ys=f.pts.map(p=>p.y);
-  const s=HC.svg('w01ivNci',{xd:[Math.min(...xs)-5,Math.max(...xs)+5],yd:[Math.min(...ys)-5,Math.max(...ys)+5],w:620,h:390,pad:{l:60,r:20,t:102,b:46}});
-  s.clear();s.grid(5,4,{xtitle:'投影座標1',ytitle:'投影座標2',xdec:0,ydec:0});
-  const groups=[...new Set(f.pts.map(p=>p.g))],pal=['#2c3e7a','#c0392b','#1a6b4a','#8e44ad','#b66c00','#167c85','#873b1a','#567b13','#777'];
-  groups.forEach((name,i)=>{const x=65+(i%3)*180,y=20+Math.floor(i/3)*23;s.add('circle',{cx:x,cy:y,r:4,fill:pal[i]});w01ivText(s,x+10,y+4,name,{'font-size':12});});
-  f.pts.forEach(p=>s.dot(p.x,p.y,{r:4.4,fill:pal[groups.indexOf(p.g)],stroke:'#fff',sw:1,cls:'w01iv-nci-point'}));
+  const f=FRAMES_w01nci, groups=[...new Set(f.pts.map(p=>p.g))];
+  const pal=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf','#393b79','#637939','#8c6d31','#843c39'];
+  ['y','z'].forEach((key,k)=>{
+    const xs=f.pts.map(p=>p.x),ys=f.pts.map(p=>p[key]);
+    const s=HC.svg(k?'w01ivNci3':'w01ivNci',{xd:[Math.min(...xs)-5,Math.max(...xs)+5],yd:[Math.min(...ys)-5,Math.max(...ys)+5],w:620,h:k?340:470,pad:{l:60,r:20,t:k?30:145,b:46}});
+    s.clear();s.grid(5,4,{xtitle:'Z1（第一主成分）',ytitle:k?'Z3（第三主成分）':'Z2（第二主成分反向）',xdec:0,ydec:0});
+    if(!k)groups.forEach((name,i)=>{const x=65+(i%3)*180,y=20+Math.floor(i/3)*23;s.add('circle',{cx:x,cy:y,r:4,fill:pal[i]});w01ivText(s,x+10,y+4,name,{'font-size':12});});
+    f.pts.forEach(p=>s.dot(p.x,p[key],{r:4.4,fill:pal[groups.indexOf(p.g)],stroke:'#fff',sw:1,cls:'w01iv-nci-point'}).setAttribute('opacity','.5'));
+  });
 }
 function w01ivAutoDraw() {
-  const f=FRAMES_w01auto, max=Math.max(...f.hist.map(p=>p[2]));
-  let s=w01ivAxes('w01ivAutoHist',[5,50],[0,Math.ceil(max/10)*10],'mpg直方圖：每箱5 mpg','mpg（英里／加侖）','車輛筆數',290,9);
+  const f=FRAMES_w01auto, max=Math.max(...f.hist.map(p=>p[2]),...f.kde.map(p=>p[1]));
+  let s=w01ivAxes('w01ivAutoHist',[5,50],[0,max*1.15],'mpg密度直方圖與核密度估計','mpg（英里／加侖）','密度',290,9);
+  s.clear();s.grid(9,4,{xtitle:'mpg（英里／加侖）',ytitle:'密度',xdec:0,ydec:2});
+  w01ivText(s,68,22,'mpg密度直方圖與核密度估計',{'font-size':15,'font-weight':600});
   f.hist.forEach(b=>s.box(b[0],0,b[1],b[2],{fill:'#2c3e7a',stroke:'#fff',sw:1,cls:'w01iv-hist'}));
-  s=w01ivAxes('w01ivAutoScatter',[40,240],[0,50],'馬力與mpg：全部392筆車輛','horsepower（馬力）','mpg（英里／加侖）',300,5);
-  w01ivDots(s,f.scatter,'rgba(26,107,74,.5)',2.7);
+  s.poly(f.kde,{stroke:'#c45e14',sw:2.6,fill:'none',cls:'w01iv-line'});
+  s=HC.svg('w01ivAutoJoint',{w:620,h:380});s.clear();
+  const px=v=>65+(v-2.5)/6*415,py=v=>310-(v-5)/45*215;
+  s.add('rect',{x:65,y:95,width:415,height:215,fill:'none',stroke:HC.tok.muted});
+  f.pairData.forEach(r=>s.add('circle',{cx:px(r[4]),cy:py(r[0]),r:2.5,fill:'#2c3e7a',opacity:.45}));
+  const mx=Math.max(...f.jointX.map(b=>b[2])),my=Math.max(...f.jointY.map(b=>b[2]));
+  f.jointX.forEach(b=>s.add('rect',{x:px(b[0]),y:85-b[2]/mx*55,width:px(b[1])-px(b[0]),height:b[2]/mx*55,fill:'#2c3e7a',stroke:'#fff'}));
+  f.jointY.forEach(b=>s.add('rect',{x:490,y:py(b[1]),width:b[2]/my*70,height:py(b[0])-py(b[1]),fill:'#2c3e7a',stroke:'#fff'}));
+  [3,4,5,6,8].forEach(v=>w01ivText(s,px(v),332,String(v),{'text-anchor':'middle'}));
+  [10,20,30,40].forEach(v=>w01ivText(s,55,py(v)+4,String(v),{'text-anchor':'end'}));
+  w01ivText(s,180,360,'cylinders（汽缸數）');w01ivText(s,12,205,'mpg');w01ivText(s,70,18,'聯合散佈圖與邊際筆數直方圖',{'font-size':15});
+  s=HC.svg('w01ivAutoPairs',{w:620,h:650});s.clear();
+  const pal=['#440154','#3b528b','#21918c','#5ec962','#fde725'];
+  f.pairGroups.forEach((g,i)=>{s.add('circle',{cx:75+i*100,cy:20,r:4,fill:pal[i]});w01ivText(s,85+i*100,24,g+' 汽缸',{'font-size':11});});
+  const ranges=f.pairColumns.map((_,j)=>{const a=f.pairData.map(r=>r[j]);return [Math.min(...a),Math.max(...a)];});
+  for(let y=0;y<4;y++)for(let x=0;x<4;x++){
+    const l=68+x*133,t=48+y*143,w=122,h=126,xd=f.pairLimits[y][x].x,yd=f.pairLimits[y][x].y;
+    const X=v=>l+(v-xd[0])/(xd[1]-xd[0])*w,Y=v=>t+h-(v-yd[0])/(yd[1]-yd[0])*h;
+    s.add('rect',{x:l,y:t,width:w,height:h,fill:'none',stroke:HC.tok.muted,'stroke-width':.5});
+    if(x===y){
+      const polys=f.pairKdes[x],low=xd[0],high=xd[1],peak=Math.max(...polys.flatMap(a=>a.map(p=>p[1])));
+      polys.forEach((a,i)=>s.add('polygon',{points:a.map(p=>(l+(p[0]-low)/(high-low)*w)+','+(t+h-p[1]/peak*h)).join(' '),fill:pal[pal.length-1-i],opacity:.25,stroke:pal[pal.length-1-i],'stroke-width':1}));
+    }else f.pairData.forEach(r=>s.add('circle',{cx:X(r[x]),cy:Y(r[y]),r:1.5,fill:pal[f.pairGroups.indexOf(r[4])],opacity:.45}));
+    if(y===3){w01ivText(s,l+w/2,t+h+16,f.pairColumns[x],{'text-anchor':'middle','font-size':11});w01ivText(s,l,t+h+32,xd[0].toFixed(0),{'font-size':10});w01ivText(s,l+w,t+h+32,xd[1].toFixed(0),{'font-size':10,'text-anchor':'end'});}
+    if(x===0){w01ivText(s,19,t+h/2,f.pairColumns[y],{'text-anchor':'middle','font-size':11,transform:'rotate(-90 19 '+(t+h/2)+')'});if(y!==x){w01ivText(s,62,t+10,yd[1].toFixed(0),{'text-anchor':'end','font-size':9});w01ivText(s,62,t+h,yd[0].toFixed(0),{'text-anchor':'end','font-size':9});}}
+  }
 }
 function w01ivBikeDraw() {
-  const f=FRAMES_w01bike, max=Math.max(...f.hourMean.map(p=>p[1]));
-  const s=w01ivAxes('w01ivBike',[0,23],[0,Math.ceil(max/50)*50],'原始資料依小時平均：本站EDA補充','hr（0–23時）','平均每小時租借量',300,6);
-  s.grid(6,4,{xtitle:'hr（0–23時）',ytitle:'平均每小時租借量',xfmt:()=>'',ydec:0});
-  [0,4,8,12,16,20,23].forEach(hr=>w01ivText(s,s.X(hr),s.H-s.pad.b+18,String(hr),{'text-anchor':'middle'}));
-  w01ivLine(s,f.hourMean,'#c45e14');
+  const f=FRAMES_w01bike;
+  [['w01ivBikeMonth',f.monthCoefs,'月份','月份係數',300],['w01ivBike',f.hourCoefs,'小時（0–23時）','小時係數',320]].forEach(([id,values,label,title,height])=>{
+    const isMonth=id==='w01ivBikeMonth';
+    const s=w01ivAxes(id,[0,values.length-1],[Math.floor(Math.min(...values)/20)*20,Math.ceil(Math.max(...values)/20)*20],title+'：總和為零的編碼',label,'係數（租借量）',height,6);
+    w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');
+    s.seg(0,0,values.length-1,0,{stroke:HC.tok.muted,sw:1,cls:'w01iv-zero'});
+    if(isMonth){s.clear();s.grid(6,4,{xtitle:'月份',ytitle:'係數（租借量）',xfmt:()=>'',ydec:0});w01ivText(s,68,22,title+'：總和為零的編碼',{'font-size':15});w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');values.forEach((_,i)=>w01ivText(s,s.X(i),s.H-s.pad.b+18,String(i+1),{'text-anchor':'middle','font-size':12}));}
+  });
 }
 w01ivWageDraw();
 w01ivSmarketDraw();

@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -700,8 +700,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（課前 · 環境安裝）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）與儲存格編號；需要實作時，再打開原始筆記本對照。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
   <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
@@ -726,7 +726,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>從開啟筆記本到跑出第一張圖 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–5</span></h2>
+  <h2>從開啟筆記本到跑出第一張圖 <span class="sec-badge">課程 Lab Ch1 · lab 範例</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>先完成讀取資料與繪圖的練習：開課程 notebook、讀入 Auto 汽車資料，畫出馬力對 mpg 的散佈圖。平時可以先用 Colab 練習；本地端版本則建議和電腦教室一致，考前要熟悉教室的操作環境。</p>
@@ -736,7 +736,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </div>
 <div class="info-box">
   <span class="info-label">第一次上手路徑</span>
-  開啟 <a href="https://colab.research.google.com/github/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb">Ch02 中文課程 notebook（Colab）</a>，選「在雲端硬碟中儲存副本」。先執行安裝套件與 imports；第一次使用 CPU 即可，先跳過 cudf／cuml 的 GPU 擴充。接著照下方「資料放哪裡」取得 Auto.csv，完成第一張圖。
+  開啟 <a href="https://colab.research.google.com/github/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb">Ch02 中文課程 notebook（Colab）</a>，選「在雲端硬碟中儲存副本」。先執行安裝套件與 imports；第一次使用 CPU 即可，先跳過 cudf／cuml 的 GPU 擴充。接著照下方「資料放哪裡」取得 Auto.csv，完成第一張圖。
 </div>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>環境</th><th>啟動成本</th><th>適合情境</th><th>主要代價</th></tr></thead>
@@ -748,7 +748,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">%pip install ISLP</span></div>
   <p class="dx-note"><code>%pip</code> 開頭的百分比符號是 Jupyter 的魔術指令，意思是「裝到<strong>這個 notebook 正在用的</strong> Python 裡」——比在終端機打 <code>pip install</code> 保險。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 3</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="3">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -756,7 +756,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">%pip install ISLP</span></div>
   <p class="dx-note">安裝輸出通常很長，沒有必要逐行閱讀。確認最後沒有紅色錯誤；若 Colab 要求重啟執行階段，照做即可。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 8</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="8">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
@@ -769,7 +769,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="colab">
 <!-- GEN:BEGIN sec:colab -->
   <div class="section-number">PART 01 · Colab 工作流</div>
-  <h2>筆記本會保存，執行階段會回收 <span class="sec-badge">課程 Lab Ch1 · 儲存格 3–4</span></h2>
+  <h2>筆記本會保存，執行階段會回收 <span class="sec-badge">課程 Lab Ch1 · lab 範例</span></h2>
 <!-- GEN:END sec:colab -->
 
   <p>Colab 是跑在 Google 機器上的 Jupyter notebook。你可以直接在瀏覽器使用；
@@ -788,7 +788,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">%load_ext cuml.accel</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>cuML: Accelerator installed.</pre></div>
   <p class="dx-note">這兩行是課程 lab 拿來開 GPU 加速的（<code>cudf</code> 加速 pandas、<code>cuml</code> 加速 scikit-learn）。本機沒有 NVIDIA 顯卡的話會失敗，<strong>刪掉這兩行照樣能跑</strong>，只是慢一點。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 4</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="4">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="viz-layout" data-provenance="illustrative">
@@ -796,7 +796,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p><strong>自己決定三格的執行順序。</strong>每按一次，就等於在 notebook 執行那一格；
   左邊的 <code>[n]</code> 是執行次序，不是儲存格位置。</p>
   <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>儲存格</th><th>程式</th><th>執行</th></tr></thead>
+  <thead><tr><th>執行序號</th><th>程式</th><th>執行</th></tr></thead>
   <tbody><tr><td><code id="w13clN0">[ ]</code></td><td><code>x = 10</code></td><td><button class="btn btn-step" onclick="w13clRun(0)">執行第 1 格</button></td></tr><tr><td><code id="w13clN1">[ ]</code></td><td><code>x = x * 2</code></td><td><button class="btn btn-step" onclick="w13clRun(1)">執行第 2 格</button></td></tr><tr><td><code id="w13clN2">[ ]</code></td><td><code>print(x)</code></td><td><button class="btn btn-step" onclick="w13clRun(2)">執行第 3 格</button></td></tr></tbody>
 </table></div>
   <div class="status-banner" id="w13clStatus"><span class="status-icon">›</span>
@@ -823,14 +823,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p>你昨天在 Colab 跑得好好的 notebook，今天打開第一格就報 <code>ModuleNotFoundError: No module named 'ISLP'</code>。為什麼？</p>
-  <div class="quiz-options" id="qColabOptions"><div class="quiz-opt" data-correct="true" data-fb="對。Colab 的環境是暫時的。把 <code>%pip install ISLP</code> 留在第一格，每次重新連線先跑它就好。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(A)</span> 執行階段被回收了，套件要重裝</div><div class="quiz-opt" data-correct="false" data-fb="這個錯誤表示當前環境找不到套件，請先檢查執行階段與安裝狀態。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(B)</span> notebook 檔案壞掉了</div><div class="quiz-opt" data-correct="false" data-fb="先檢查當前環境是否裝好套件，再確認套件來源。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(C)</span> ISLP 這個套件被下架了</div></div>
+  <div class="quiz-options" id="qColabOptions"><div class="quiz-opt" data-correct="true" data-fb="對。Colab 的環境是暫時的。把 &lt;code&gt;%pip install ISLP&lt;/code&gt; 留在第一格，每次重新連線先跑它就好。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(A)</span> 執行階段被回收了，套件要重裝</div><div class="quiz-opt" data-correct="false" data-fb="這個錯誤表示當前環境找不到套件，請先檢查執行階段與安裝狀態。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(B)</span> notebook 檔案壞掉了</div><div class="quiz-opt" data-correct="false" data-fb="先檢查當前環境是否裝好套件，再確認套件來源。" onclick="quizCheck('qColab', this)"><span class="opt-letter">(C)</span> ISLP 這個套件被下架了</div></div>
   <div class="quiz-feedback" id="qColabFeedback"></div>
 </div>
 </section>
 <section id="imports">
 <!-- GEN:BEGIN sec:imports -->
   <div class="section-number">PART 02 · 匯入套件</div>
-  <h2>先執行本份筆記本的匯入程式 <span class="sec-badge">課程 Lab Ch2 · 儲存格 3–8</span></h2>
+  <h2>先執行本份筆記本的匯入程式 <span class="sec-badge">課程 Lab Ch2 · lab 範例</span></h2>
 <!-- GEN:END sec:imports -->
 
   <p>每一份課程 lab 的第一格都長得差不多：把要用的套件全部 import 進來。
@@ -849,7 +849,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="kw">except</span> Exception:</span>
   <span class="line">    drive = <span class="num">None</span>  <span class="com"># 非 Colab 環境</span></span></div>
   <p class="dx-note">注意最後那段 <code>try / except</code>：<code>google.colab</code> 只有在 Colab 上才有，本機跑的時候讓它安靜地把 <code>drive</code> 設成 None 就好。<strong>這是 try/except 的正確用法</strong>。你知道會發生什麼錯、也知道怎麼處理。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 3</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="3">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -871,7 +871,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="kw">except</span> Exception:</span>
   <span class="line">    drive = <span class="num">None</span>  <span class="com"># 非 Colab 環境</span></span></div>
   <p class="dx-note">每個 import 後面都有一句中文註解，說明那個套件負責什麼。先掃過一遍，之後看到 <code>sns.</code> 或 <code>sm.</code> 開頭就知道是誰。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 5</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -882,20 +882,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p>你跳過第一格直接跑第三格，得到 <code>NameError: name 'np' is not defined</code>。該怎麼辦？</p>
-  <div class="quiz-options" id="qImpOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>np</code> 是 <code>import numpy as np</code> 建立的名字，那一格沒跑，這個名字就不存在。也要確認建立變數的儲存格是否已經執行。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(A)</span> 回去把第一格跑一次</div><div class="quiz-opt" data-correct="false" data-fb="套件裝得好好的，只是<strong>還沒 import</strong>。重裝不會建立 <code>np</code> 這個名字。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(B)</span> 重新安裝 numpy</div><div class="quiz-opt" data-correct="false" data-fb="那要先 <code>import numpy</code>。而且改了之後跟課程 lab 的寫法就不一致了。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(C)</span> 把 np 改成 numpy</div></div>
+  <div class="quiz-options" id="qImpOptions"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;np&lt;/code&gt; 是 &lt;code&gt;import numpy as np&lt;/code&gt; 建立的名字，那一格沒跑，這個名字就不存在。也要確認建立變數的儲存格是否已經執行。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(A)</span> 回去把第一格跑一次</div><div class="quiz-opt" data-correct="false" data-fb="套件裝得好好的，只是&lt;strong&gt;還沒 import&lt;/strong&gt;。重裝不會建立 &lt;code&gt;np&lt;/code&gt; 這個名字。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(B)</span> 重新安裝 numpy</div><div class="quiz-opt" data-correct="false" data-fb="那要先 &lt;code&gt;import numpy&lt;/code&gt;。而且改了之後跟課程 lab 的寫法就不一致了。" onclick="quizCheck('qImp', this)"><span class="opt-letter">(C)</span> 把 np 改成 numpy</div></div>
   <div class="quiz-feedback" id="qImpFeedback"></div>
 </div>
 </section>
 <section id="data">
 <!-- GEN:BEGIN sec:data -->
   <div class="section-number">PART 03 · 資料放哪裡</div>
-  <h2>掛 Drive、或直接讀網址 <span class="sec-badge">課程 Lab Ch2 · 儲存格 183–187</span></h2>
+  <h2>掛 Drive、或直接讀網址 <span class="sec-badge">課程 Lab Ch2 · lab 範例</span></h2>
 <!-- GEN:END sec:data -->
 
   <p>資料不會因為掛載 Drive 就自動出現。第一次請依序完成下面四步：</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>步驟</th><th>操作與完成標準</th></tr></thead>
-  <tbody><tr><td>1. 取得資料</td><td><a href="https://raw.githubusercontent.com/phonchi/nsysu-math524-2025/main/static_files/assignments/Auto.csv">下載課程 Auto.csv</a>。若瀏覽器顯示文字，另存為 Auto.csv，保留副檔名。</td></tr><tr><td>2. 放進自己的 Drive</td><td>在 Google Drive 建立 Lab/Data 資料夾，將 Auto.csv 上傳到裡面。</td></tr><tr><td>3. 掛載並設定路徑</td><td>在 Colab 執行下方掛載儲存格；DATA_PATH 改成 /content/drive/MyDrive/Lab/Data/，或你實際建立的資料夾。</td></tr><tr><td>4. 讀取、檢查、畫圖</td><td>先確認有 horsepower 與 mpg 欄，再執行下方繪圖步驟。成功時會看到橫軸 horsepower、縱軸 mpg 的散佈圖。</td></tr></tbody>
+  <tbody><tr><td>1. 取得資料</td><td><a href="https://raw.githubusercontent.com/phonchi/nsysu-math524/main/static_files/assignments/Auto.csv">下載課程 Auto.csv</a>。若瀏覽器顯示文字，另存為 Auto.csv，保留副檔名。</td></tr><tr><td>2. 放進自己的 Drive</td><td>在 Google Drive 建立 Lab/Data 資料夾，將 Auto.csv 上傳到裡面。</td></tr><tr><td>3. 掛載並設定路徑</td><td>在 Colab 執行下方掛載儲存格；DATA_PATH 改成 /content/drive/MyDrive/Lab/Data/，或你實際建立的資料夾。</td></tr><tr><td>4. 讀取、檢查、畫圖</td><td>先確認有 horsepower 與 mpg 欄，再執行下方繪圖步驟。成功時會看到橫軸 horsepower、縱軸 mpg 的散佈圖。</td></tr></tbody>
 </table></div>
   <p>另可下載課本的 <a href="https://www.statlearning.com/s/ALL-CSV-FILES-2nd-Edition-corrected.zip">官方 CSV 資料壓縮檔</a>，解壓後取得 Auto.csv。不同來源可能已做過清理，列數與特殊值不一定一樣；本頁起步與 00C 的清理練習都使用上面的<strong>課程 Auto.csv</strong>，不要混用不同檔案的輸出。</p>
 
@@ -905,7 +905,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">drive.mount(<span class="str">&#x27;/content/drive&#x27;</span>)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Mounted at /content/drive</pre></div>
   <p class="dx-note">第一次會跳出授權視窗，選你的 Google 帳號按同意。掛好之後 Drive 就出現在 <code>/content/drive/MyDrive/</code> 底下。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 183</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="183">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -914,7 +914,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># Replace DATA_PATH with your path</span></span>
   <span class="line">DATA_PATH = <span class="str">&quot;/content/drive/MyDrive/00_Statistical_learning/Lab/Data/&quot;</span></span></div>
   <p class="dx-note"><strong>這一行要改成你自己的路徑。</strong>把路徑存成變數，換資料夾時只要改一個地方。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 184</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="184">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -950,7 +950,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 [392 rows x 10 columns]</pre></div>
   <p class="dx-note"><code>os.path.join</code> 幫你處理斜線，比自己用加號接字串保險。下方保存的是老師當時檔案的輸出；你的檔案若少了 Unnamed: 0 這類索引欄，先核對來源，不要手動補造資料。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 185</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="185">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
   <p>接著以指定的特殊值規則重新讀取，讓 horsepower 能作數值運算。請在自己的檔案執行這段設定並查看輸出；<a href="p4_pandas.html#na">P4</a> 會說明參數的作用。</p>
@@ -965,13 +965,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">ax = Auto.plot.scatter(<span class="str">&#x27;horsepower&#x27;</span>, <span class="str">&#x27;mpg&#x27;</span>)</span>
   <span class="line">ax.set_title(<span class="str">&#x27;Horsepower vs. MPG&#x27;</span>);</span></div>
   <p class="dx-note">在上面的 Auto 已讀取後執行。圖的橫軸是 horsepower、縱軸是 mpg。含缺值的觀測不會畫成點；圖能出現只表示操作成功，還不能取代資料清理與統計判斷。</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 252</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="252">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
   <p><code>FileNotFoundError: /content/drive/MyDrive/Lab/Data/Auto.csv</code>。最可能的原因是？</p>
-  <div class="quiz-options" id="qDataOptions"><div class="quiz-opt" data-correct="true" data-fb="對。lab 裡那一行是老師的路徑，你的 Drive 結構多半不一樣。在 Colab 左側的檔案窗格點開資料夾，右鍵可以複製正確的路徑。" onclick="quizCheck('qData', this)"><span class="opt-letter">(A)</span> DATA_PATH 沒改成你自己的資料夾位置</div><div class="quiz-opt" data-correct="false" data-fb="有可能，但掛載失敗會在 <code>drive.mount</code> 那一格就報錯，而不是等到讀檔。" onclick="quizCheck('qData', this)"><span class="opt-letter">(B)</span> Drive 掛載失敗</div><div class="quiz-opt" data-correct="false" data-fb="格式不對是 <code>ParserError</code> 或讀出奇怪的欄，<code>FileNotFoundError</code> 講的是<strong>檔案不在那裡</strong>。" onclick="quizCheck('qData', this)"><span class="opt-letter">(C)</span> 檔案格式不對</div></div>
+  <div class="quiz-options" id="qDataOptions"><div class="quiz-opt" data-correct="true" data-fb="對。lab 裡那一行是老師的路徑，你的 Drive 結構多半不一樣。在 Colab 左側的檔案窗格點開資料夾，右鍵可以複製正確的路徑。" onclick="quizCheck('qData', this)"><span class="opt-letter">(A)</span> DATA_PATH 沒改成你自己的資料夾位置</div><div class="quiz-opt" data-correct="false" data-fb="有可能，但掛載失敗會在 &lt;code&gt;drive.mount&lt;/code&gt; 那一格就報錯，而不是等到讀檔。" onclick="quizCheck('qData', this)"><span class="opt-letter">(B)</span> Drive 掛載失敗</div><div class="quiz-opt" data-correct="false" data-fb="格式不對是 &lt;code&gt;ParserError&lt;/code&gt; 或讀出奇怪的欄，&lt;code&gt;FileNotFoundError&lt;/code&gt; 講的是&lt;strong&gt;檔案不在那裡&lt;/strong&gt;。" onclick="quizCheck('qData', this)"><span class="opt-letter">(C)</span> 檔案格式不對</div></div>
   <div class="quiz-feedback" id="qDataFeedback"></div>
 </div>
 </section>
@@ -1022,7 +1022,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p>你在終端機 <code>pip install ISLP</code> 裝好了，但 Jupyter 裡還是 <code>ModuleNotFoundError</code>。最可能的原因？</p>
-  <div class="quiz-options" id="qLocalOptions"><div class="quiz-opt" data-correct="true" data-fb="對。安裝套件的環境與 notebook 的 kernel 要一致。先選擇已依課程清單安裝套件的 kernel，再核對 <code>sys.executable</code>；若確實缺套件，再依官方版本安裝，避免意外換版。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(A)</span> Jupyter 用的 kernel 不是你剛剛裝套件的那個環境</div><div class="quiz-opt" data-correct="false" data-fb="請先核對 Python 環境：套件可能<strong>裝到了另一個 Python</strong>，重開電腦不會改變安裝位置。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(B)</span> 要重開電腦</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 是純 Python 套件，跨平台。先檢查環境，再懷疑套件。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(C)</span> ISLP 不支援你的作業系統</div></div>
+  <div class="quiz-options" id="qLocalOptions"><div class="quiz-opt" data-correct="true" data-fb="對。安裝套件的環境與 notebook 的 kernel 要一致。先選擇已依課程清單安裝套件的 kernel，再核對 &lt;code&gt;sys.executable&lt;/code&gt;；若確實缺套件，再依官方版本安裝，避免意外換版。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(A)</span> Jupyter 用的 kernel 不是你剛剛裝套件的那個環境</div><div class="quiz-opt" data-correct="false" data-fb="請先核對 Python 環境：套件可能&lt;strong&gt;裝到了另一個 Python&lt;/strong&gt;，重開電腦不會改變安裝位置。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(B)</span> 要重開電腦</div><div class="quiz-opt" data-correct="false" data-fb="ISLP 是純 Python 套件，跨平台。先檢查環境，再懷疑套件。" onclick="quizCheck('qLocal', this)"><span class="opt-letter">(C)</span> ISLP 不支援你的作業系統</div></div>
   <div class="quiz-feedback" id="qLocalFeedback"></div>
 </div>
 </section>
@@ -1057,7 +1057,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
   <p>同一份 notebook，你跑出來的 MSE 是 25.57，同學是 23.80。程式碼一模一樣。為什麼？</p>
-  <div class="quiz-options" id="qFixOptions"><div class="quiz-opt" data-correct="true" data-fb="對。相同文字不保證相同執行狀態，也不代表讀到同一份資料。先做可重現的完整重跑，再逐項比對；若流程含隨機切分或重抽樣，才進一步檢查 <code>random_state</code> 或 <code>seed</code>。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(A)</span> 先從乾淨 kernel 全部重跑，再比資料、前處理、版本與 seed</div><div class="quiz-opt" data-correct="false" data-fb="需要檢查 seed，也要核對資料版本、前處理、套件版本、kernel 與亂序執行都可能造成差異，不能只由兩個 MSE 反推原因。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(B)</span> 一定是其中一邊沒有固定 seed</div><div class="quiz-opt" data-correct="false" data-fb="平均不會找出差異來源。先確認兩邊執行的分析與資料是否一致。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(C)</span> 直接把兩人的 MSE 平均起來</div></div>
+  <div class="quiz-options" id="qFixOptions"><div class="quiz-opt" data-correct="true" data-fb="對。相同文字不保證相同執行狀態，也不代表讀到同一份資料。先做可重現的完整重跑，再逐項比對；若流程含隨機切分或重抽樣，才進一步檢查 &lt;code&gt;random_state&lt;/code&gt; 或 &lt;code&gt;seed&lt;/code&gt;。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(A)</span> 先從乾淨 kernel 全部重跑，再比資料、前處理、版本與 seed</div><div class="quiz-opt" data-correct="false" data-fb="需要檢查 seed，也要核對資料版本、前處理、套件版本、kernel 與亂序執行都可能造成差異，不能只由兩個 MSE 反推原因。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(B)</span> 一定是其中一邊沒有固定 seed</div><div class="quiz-opt" data-correct="false" data-fb="平均不會找出差異來源。先確認兩邊執行的分析與資料是否一致。" onclick="quizCheck('qFix', this)"><span class="opt-letter">(C)</span> 直接把兩人的 MSE 平均起來</div></div>
   <div class="quiz-feedback" id="qFixFeedback"></div>
 </div>
 
@@ -1079,7 +1079,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 裝套件</div>
   <p>在 Colab 的儲存格裡裝套件，該用哪一個？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。百分比開頭的魔術指令會裝到<strong>當前 kernel</strong> 的 Python 裡，不會裝錯環境。課程 lab 用的就是這個寫法。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>%pip install ISLP</code></div><div class="quiz-opt" data-correct="false" data-fb="驚嘆號是「丟給系統的 shell 跑」，在 Colab 上多半也會成功，但在本機的多環境情況下可能裝到別的 Python 去。<code>%pip</code> 比較保險。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>!pip install ISLP</code></div><div class="quiz-opt" data-correct="false" data-fb="import 是「使用已經裝好的套件」，它不會去下載任何東西。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>import ISLP</code></div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。百分比開頭的魔術指令會裝到&lt;strong&gt;當前 kernel&lt;/strong&gt; 的 Python 裡，不會裝錯環境。課程 lab 用的就是這個寫法。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>%pip install ISLP</code></div><div class="quiz-opt" data-correct="false" data-fb="驚嘆號是「丟給系統的 shell 跑」，在 Colab 上多半也會成功，但在本機的多環境情況下可能裝到別的 Python 去。&lt;code&gt;%pip&lt;/code&gt; 比較保險。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>!pip install ISLP</code></div><div class="quiz-opt" data-correct="false" data-fb="import 是「使用已經裝好的套件」，它不會去下載任何東西。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>import ISLP</code></div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1093,14 +1093,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 版本</div>
   <p>為什麼本地端練習建議依官方清單固定 Python 與套件版本？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。版本一改，某些預設值與演算法細節就可能不同，固定核心版本能減少差異，但仍要核對資料、相依套件與 kernel，並在教室電腦實際練習。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 減少本地端與電腦教室的環境差異</div><div class="quiz-opt" data-correct="false" data-fb="固定版本是為了和教室環境保持<strong>一致</strong>，並未判定新版有問題。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 新版本有 bug</div><div class="quiz-opt" data-correct="false" data-fb="跟速度無關。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 舊版本比較快</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。版本一改，某些預設值與演算法細節就可能不同，固定核心版本能減少差異，但仍要核對資料、相依套件與 kernel，並在教室電腦實際練習。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 減少本地端與電腦教室的環境差異</div><div class="quiz-opt" data-correct="false" data-fb="固定版本是為了和教室環境保持&lt;strong&gt;一致&lt;/strong&gt;，並未判定新版有問題。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 新版本有 bug</div><div class="quiz-opt" data-correct="false" data-fb="跟速度無關。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 舊版本比較快</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 假故障</div>
   <p>你在本機的 conda 環境裝好了全部套件，但 Jupyter 裡 import 還是失敗。第一件要檢查的事是？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。kernel 選錯是最常見的假故障：你裝在 m524，Jupyter 卻用 base 在跑。在 notebook 裡跑 <code>import sys; print(sys.executable)</code> 就知道當前用的是哪一個 Python。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> Jupyter 右上角顯示的 kernel 是不是那個環境</div><div class="quiz-opt" data-correct="false" data-fb="先核對 kernel 使用的 Python，再決定是否需要重裝。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 重裝 Anaconda</div><div class="quiz-opt" data-correct="false" data-fb="可以繞過問題，但你不會學到怎麼修，而且下次還會遇到。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 改用 Colab</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。kernel 選錯是最常見的假故障：你裝在 m524，Jupyter 卻用 base 在跑。在 notebook 裡跑 &lt;code&gt;import sys; print(sys.executable)&lt;/code&gt; 就知道當前用的是哪一個 Python。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> Jupyter 右上角顯示的 kernel 是不是那個環境</div><div class="quiz-opt" data-correct="false" data-fb="先核對 kernel 使用的 Python，再決定是否需要重裝。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 重裝 Anaconda</div><div class="quiz-opt" data-correct="false" data-fb="可以繞過問題，但你不會學到怎麼修，而且下次還會遇到。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 改用 Colab</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1133,12 +1133,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>1. 平時可用 Colab；考前熟悉教室環境。</strong>本地端版本依官方清單設定，並在教室電腦完整跑過練習。<br><strong>2. 跑不動時，先檢查環境與執行順序。</strong>先重啟 kernel 並全部重跑，確認執行狀態。<br><strong>3. 交作業前一定要從頭重跑一次。</strong>不然你交的是「只有你那台機器跑得出來」的東西。
 </div>
 
-  <p class="ver-note">本頁程式碼卡與保存輸出取自課程 Ch01、Ch02 lab，各卡標有來源儲存格。保存輸出反映老師當時使用的資料與環境；本地練習與期中準備的現行版本，以 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方電腦教室套件清單</a> 為準。</p>
+  <p class="ver-note">本頁程式碼卡與保存輸出取自課程 Ch01、Ch02 lab，各卡附有來源筆記本連結。保存輸出反映老師當時使用的資料與環境；本地練習與期中準備的現行版本，以 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方電腦教室套件清單</a> 為準。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 24 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">

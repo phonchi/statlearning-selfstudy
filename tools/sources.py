@@ -1,6 +1,7 @@
 """Reader-facing book names and links; metadata keeps its existing source keys."""
 import html
 import re
+from reader_sources import prose
 
 BOOKS = {
     "Seeing-Theory": ("統計入門參考", "Seeing Theory",
@@ -43,7 +44,7 @@ def label_text(label):
         loc = re.sub(r"§([\d.]+(?:[–-][\d.]+)?)", r"第 \1 節", loc)
         loc = re.sub(r"Ch\.([\d]+)", r"第 \1 章", loc)
         return BOOKS[key][0] + " · " + loc
-    return label
+    return prose(label)
 
 
 def badge(page, label):

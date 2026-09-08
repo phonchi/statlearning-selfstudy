@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -703,11 +703,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.3｜講義 03）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/03_Regression.pdf" target="_blank" rel="noopener">📑 講義 03 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch03 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87GVk0NXHo19GPagNc7g-ba" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/03_Regression.pdf" target="_blank" rel="noopener">📑 講義 03 PDF</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch03 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-87GVk0NXHo19GPagNc7g-ba" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -732,7 +732,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>Advertising 資料要回答的四件事 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3 章開頭</a></span><span class="sec-badge">講義 03 · p.2–3</span></h2>
+  <h2>Advertising 資料要回答的四件事 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3 章開頭</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>桌上只有一張表：200 個市場，每個市場在<strong>電視、廣播、報紙</strong>上各花了多少錢
@@ -777,14 +777,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 四個問題各配哪個工具</div>
   <p>「三種媒體裡，<strong>哪些</strong>跟銷售量有關？」這個問題該看哪個統計量？</p>
-  <div class="quiz-options" id="qFourOptions"><div class="quiz-opt" data-correct="true" data-fb="對。個別 t 檢定評估的是控制其他變數後的一個係數。整體 F 檢定可先評估是否有整體證據，但通過 F 不等於每個小 p 值都是可靠發現；同時檢定很多係數仍要處理多重比較。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(A)</span> 多元迴歸裡<strong>每一個</strong>係數各自的 <em>t</em> 統計量與 p 值</div><div class="quiz-opt" data-correct="false" data-fb="不對。<em>F</em> 回答的是「<strong>至少有一個</strong>變數有用嗎」，它給你一個是／否，不會告訴你是哪一個。它提供整體證據，不能替個別變數下結論。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(B)</span> 整個模型的 <em>F</em> 統計量</div><div class="quiz-opt" data-correct="false" data-fb="不對。R² 是整體配適程度，跟「有幾個變數有關」沒有對應關係。在同一份訓練資料上比較含截距的巢狀最小平方模型時，加變數只會讓 R² 上升或不變（P03 會算給你看）。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(C)</span> R²，值愈高就代表愈多媒體有關</div></div>
+  <div class="quiz-options" id="qFourOptions"><div class="quiz-opt" data-correct="true" data-fb="對。個別 t 檢定評估的是控制其他變數後的一個係數。整體 F 檢定可先評估是否有整體證據，但通過 F 不等於每個小 p 值都是可靠發現；同時檢定很多係數仍要處理多重比較。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(A)</span> 多元迴歸裡<strong>每一個</strong>係數各自的 <em>t</em> 統計量與 p 值</div><div class="quiz-opt" data-correct="false" data-fb="不對。&lt;em&gt;F&lt;/em&gt; 回答的是「&lt;strong&gt;至少有一個&lt;/strong&gt;變數有用嗎」，它給你一個是／否，不會告訴你是哪一個。它提供整體證據，不能替個別變數下結論。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(B)</span> 整個模型的 <em>F</em> 統計量</div><div class="quiz-opt" data-correct="false" data-fb="不對。R² 是整體配適程度，跟「有幾個變數有關」沒有對應關係。在同一份訓練資料上比較含截距的巢狀最小平方模型時，加變數只會讓 R² 上升或不變（P03 會算給你看）。" onclick="quizCheck('qFour', this)"><span class="opt-letter">(C)</span> R²，值愈高就代表愈多媒體有關</div></div>
   <div class="quiz-feedback" id="qFourFeedback"></div>
 </div>
 </section>
 <section id="slr">
 <!-- GEN:BEGIN sec:slr -->
   <div class="section-number">PART 01 · 簡單線性迴歸</div>
-  <h2>最小平方法：讓 RSS 最小的那條線 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.1 節</a></span><span class="sec-badge">講義 03 · p.4–6</span></h2>
+  <h2>最小平方法：讓 RSS 最小的那條線 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.1 節</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:slr -->
 
   <p>先只用一個變數。假設 sales 跟 TV 預算大致是一條直線：</p>
@@ -903,7 +903,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 intercept  34.5538    0.563  61.415    0.0
 lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   <p class="dx-note">lab 用 <code>Boston</code> 的 <code>medv</code>（房價中位數）對 <code>lstat</code>（低社經地位家庭百分比）示範。注意兩件事：<strong>① <code>sm.OLS()</code> 不會自己加截距</strong>，所以要手動放一欄全是 1 的 <code>intercept</code>；② <code>sm.OLS()</code> 只是<em>指定</em>模型，真正配適的是 <code>.fit()</code>。斜率 −0.95 的意思是「lstat 每高 1 個百分點，medv 平均低 0.95 千美元」。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 22、24、26</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="22,24,26">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -923,20 +923,20 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 2        1.0   4.03
 3        1.0   2.94</pre></div>
   <p class="dx-note"><code>MS()</code> 就是 <code>ModelSpec()</code>，它把「要放哪些項」跟「怎麼算出矩陣」分開：<code>fit()</code> 記住要做什麼、<code>transform()</code> 真的做出矩陣，兩步可以合成 <code>fit_transform()</code>。手動建 <code>X</code> 只有單變數時輕鬆；等到要放交互作用、多項式、類別變數的虛擬欄，<code>MS()</code> 的價值就出來了（P04、P05 會看到）。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 30、32</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="30,32">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 最小平方法</div>
   <p>把資料裡<strong>某一個</strong>點沿著<em>垂直</em>方向往上移動，最小平方線一定會怎麼變？</p>
-  <div class="quiz-options" id="qOlsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。RSS 對每一筆的貢獻是殘差<strong>平方</strong>，所以離線遠的點權重特別重；而 β̂₁ 的公式裡每一筆的權重是 (xᵢ−x̄)，離 x̄ 愈遠的點對斜率的話語權愈大。上面拖著玩就看得到。" onclick="quizCheck('qOls', this)"><span class="opt-letter">(A)</span> 整條線會往那個點的方向轉／移，而且那個點離 x̄ 愈遠、影響愈大</div><div class="quiz-opt" data-correct="false" data-fb="只有一種特例成立：那個點剛好在 x = x̄ 上。一般情況下 β̂₁ 的分子 Σ(xᵢ−x̄)(yᵢ−ȳ) 會跟著 yᵢ 變，斜率也會動。" onclick="quizCheck('qOls', this)"><span class="opt-letter">(B)</span> 只有截距會變，斜率不變</div><div class="quiz-opt" data-correct="false" data-fb="剛好相反。最小平方法對單一個點<strong>非常</strong>敏感，正因為它罰的是殘差平方而不是絕對值。這是 P06 要討論離群值與高槓桿點的理由。" onclick="quizCheck('qOls', this)"><span class="opt-letter">(C)</span> 線不會變，因為最小平方法對單一個點不敏感</div></div>
+  <div class="quiz-options" id="qOlsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。RSS 對每一筆的貢獻是殘差&lt;strong&gt;平方&lt;/strong&gt;，所以離線遠的點權重特別重；而 β̂₁ 的公式裡每一筆的權重是 (xᵢ−x̄)，離 x̄ 愈遠的點對斜率的話語權愈大。上面拖著玩就看得到。" onclick="quizCheck('qOls', this)"><span class="opt-letter">(A)</span> 整條線會往那個點的方向轉／移，而且那個點離 x̄ 愈遠、影響愈大</div><div class="quiz-opt" data-correct="false" data-fb="只有一種特例成立：那個點剛好在 x = x̄ 上。一般情況下 β̂₁ 的分子 Σ(xᵢ−x̄)(yᵢ−ȳ) 會跟著 yᵢ 變，斜率也會動。" onclick="quizCheck('qOls', this)"><span class="opt-letter">(B)</span> 只有截距會變，斜率不變</div><div class="quiz-opt" data-correct="false" data-fb="剛好相反。最小平方法對單一個點&lt;strong&gt;非常&lt;/strong&gt;敏感，正因為它罰的是殘差平方而不是絕對值。這是 P06 要討論離群值與高槓桿點的理由。" onclick="quizCheck('qOls', this)"><span class="opt-letter">(C)</span> 線不會變，因為最小平方法對單一個點不敏感</div></div>
   <div class="quiz-feedback" id="qOlsFeedback"></div>
 </div>
 </section>
 <section id="inference">
 <!-- GEN:BEGIN sec:inference -->
   <div class="section-number">PART 02 · 係數的不確定性</div>
-  <h2>SE、信賴區間與 t 檢定：這個斜率可信嗎 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.2 節</a></span><span class="sec-badge">講義 03 · p.7–11</span></h2>
+  <h2>SE、信賴區間與 t 檢定：這個斜率可信嗎 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.2 節</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:inference -->
 
   <p>β̂₁ = 0.0475 這個數字，可信嗎？先弄清楚在問什麼。真實世界裡有一條看不到的
@@ -1059,7 +1059,7 @@ Kurtosis:                       5.319   Cond. No.                         29.7
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</pre></div>
   <p class="dx-note">這一張表整理了整個模型的估計與檢定結果。左上是模型資訊，右上有 <code>R-squared 0.544</code>、<code>F-statistic 601.6</code>、<code>Prob (F-statistic) 5.08e-88</code>；中間那塊每一列是一個係數的 <code>coef</code>／<code>std err</code>／<code>t</code>／<code>P&gt;|t|</code>／95% 信賴區間 <code>[0.025 0.975]</code>。<code>lstat</code> 的區間是 [−1.026, −0.874]，離 0 很遠。下面那塊 <code>Omnibus</code>、<code>Jarque-Bera</code> 是常態性檢定，<code>Durbin-Watson 0.892</code> 是殘差自相關的指標（理想值 2，這裡明顯偏低——P06 第 2 個問題）。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 35</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="35">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1079,20 +1079,27 @@ Notes:
        [12.82762635, 37.27906833],
        [ 8.0777421 , 32.52845905]])</pre></div>
   <p class="dx-note">在 <code>lstat = 10</code> 這一點，預測值都是 <strong>25.05</strong>，但：<strong>信賴區間</strong> (24.47, 25.63) 問的是「所有 lstat = 10 的社區，<em>平均</em> medv 是多少」；<strong>預測區間</strong> (12.83, 37.28) 問的是「<em>某一個</em> lstat = 10 的社區，medv 是多少」。後者寬得多，因為它還要算進個別觀測值自己的隨機誤差 ε。<code>conf_int(obs=True)</code> 就是切換這兩者的開關。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 39、41、43、45</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="39,41,43,45">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 標準誤</div>
   <p>同一份資料，你把預測變數 x 的單位從「元」換成「千元」（也就是全部除以 1000）。β̂₁ 與它的 <em>t</em> 統計量會怎麼變？</p>
-  <div class="quiz-options" id="qSeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。單位換算只是把 x 乘上一個常數，配適值、殘差、RSS 一個都沒動，所以 R² 與 RSE 也不變。β̂₁ 與 SE(β̂₁) 同比例放大，比值 t 就被消掉了——<strong>顯著性不會因為換單位而改變</strong>，這也是為什麼不能靠「係數大小」判斷變數重不重要。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(A)</span> β̂₁ 變成 1000 倍，SE(β̂₁) 也變成 1000 倍，<em>t</em> 完全不變</div><div class="quiz-opt" data-correct="false" data-fb="不對。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)²，分母裡的 x 也跟著縮小 1000 倍，所以 Σ(xᵢ−x̄)² 縮小 10⁶ 倍、SE 放大 1000 倍。SE 不可能不動。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(B)</span> β̂₁ 變成 1000 倍，SE 不變，所以 <em>t</em> 也變成 1000 倍</div><div class="quiz-opt" data-correct="false" data-fb="只有<strong>無單位</strong>的量（t、p、R²）免疫。有單位的量（β̂₁、SE、信賴區間的端點）一定會跟著單位變。它們的單位是「y 的單位 ÷ x 的單位」。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(C)</span> 兩個都不變，因為線性迴歸對單位免疫</div></div>
+  <div class="quiz-options" id="qSeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。單位換算只是把 x 乘上一個常數，配適值、殘差、RSS 一個都沒動，所以 R² 與 RSE 也不變。β̂₁ 與 SE(β̂₁) 同比例放大，比值 t 就被消掉了——&lt;strong&gt;顯著性不會因為換單位而改變&lt;/strong&gt;，這也是為什麼不能靠「係數大小」判斷變數重不重要。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(A)</span> β̂₁ 變成 1000 倍，SE(β̂₁) 也變成 1000 倍，<em>t</em> 完全不變</div><div class="quiz-opt" data-correct="false" data-fb="不對。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)²，分母裡的 x 也跟著縮小 1000 倍，所以 Σ(xᵢ−x̄)² 縮小 10⁶ 倍、SE 放大 1000 倍。SE 不可能不動。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(B)</span> β̂₁ 變成 1000 倍，SE 不變，所以 <em>t</em> 也變成 1000 倍</div><div class="quiz-opt" data-correct="false" data-fb="只有&lt;strong&gt;無單位&lt;/strong&gt;的量（t、p、R²）免疫。有單位的量（β̂₁、SE、信賴區間的端點）一定會跟著單位變。它們的單位是「y 的單位 ÷ x 的單位」。" onclick="quizCheck('qSe', this)"><span class="opt-letter">(C)</span> 兩個都不變，因為線性迴歸對單位免疫</div></div>
   <div class="quiz-feedback" id="qSeFeedback"></div>
 </div>
+
+<h3>用 bootstrap 建立迴歸曲線的信賴帶</h3>
+<p>若觀測對 $(x_i,y_i)$ 是獨立同分佈，可有放回地抽 n 對資料，重新配適迴歸，並在同一組固定 x 網格預測。
+重複 B 次後，在每個網格點取預測分佈的 2.5% 與 97.5% 分位數，就得到逐點的近似 95% percentile 信賴區間。
+它描述平均反應曲線的估計不確定性，沒有自動包含新觀測的誤差，也不是整條曲線同時被涵蓋的 95% 保證。
+固定設計或有時間相依的資料須另選適合的重抽方式；自助法的抽樣單位要配合研究設計。
+<a href="resampling_methods.html#bootstrap">重抽樣章</a>進一步說明標準誤、信賴區間與預測區間的差別。</p>
 </section>
 <section id="accuracy">
 <!-- GEN:BEGIN sec:accuracy -->
   <div class="section-number">PART 03 · 模型準確度</div>
-  <h2>RSE 與 R²：擬合得好不好 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.3 節</a></span><span class="sec-badge">講義 03 · p.12–13</span></h2>
+  <h2>RSE 與 R²：擬合得好不好 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.1.3 節</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:accuracy -->
 
   <p>檢定過關（「有關係」）之後，下一個問題是「配得<strong>多好</strong>」。
@@ -1159,20 +1166,20 @@ Notes:
 Ex. Var : 0.5441462975864798
 MSE : 38.48296722989415</pre></div>
   <p class="dx-note"><code>R2 : 0.5441</code> 跟前面 <code>summary()</code> 的 <code>R-squared: 0.544</code> 是同一個數，只是換了套件算。<code>MSE : 38.483</code> 是 RSS/n（<strong>不</strong>除 n−2），所以 <code>np.sqrt(results.scale)</code> 給的 RSE 會比 <code>np.sqrt(MSE)</code> 稍大一點——差別就是自由度校正。另外 <code>Ex. Var</code>（explained variance）在有截距的最小平方下會等於 R²，兩者的定義只差殘差平均是否為 0 這一項。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 110、113</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="110,113">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · R² 與 RSE</div>
   <p>你在模型裡加了一個<strong>完全隨機、跟 y 無關</strong>的變數。訓練資料上會發生什麼？</p>
-  <div class="quiz-options" id="qR2Options"><div class="quiz-opt" data-correct="true" data-fb="對。RSS 只會下降（最壞就是係數配到 0），所以 R² = 1 − RSS/TSS 只會上升。但 RSE 的分母 n−p−1 少了 1，分子幾乎不動，所以 RSE 通常反而變差。這正是 Advertising 加入 newspaper 的情況。" onclick="quizCheck('qR2', this)"><span class="opt-letter">(A)</span> R² 一定上升（或不變），RSE 通常上升</div><div class="quiz-opt" data-correct="false" data-fb="R² 那半錯了。「沒有用」是<em>母體</em>層次的話；在<em>這一份</em>樣本上，最小平方法一定能靠它多刮掉一點 RSS（哪怕只是配到雜訊），所以訓練 R² 一定上升。" onclick="quizCheck('qR2', this)"><span class="opt-letter">(B)</span> R² 與 RSE 都會變差，因為變數沒有用</div><div class="quiz-opt" data-correct="false" data-fb="不對。最小平方法沒有這種機制，它會給出一個剛好最貼合這份樣本雜訊的非零係數。「把沒用的係數壓成 0」要等到第 6 章的 lasso。" onclick="quizCheck('qR2', this)"><span class="opt-letter">(C)</span> 兩個都不變，因為最小平方法會自動把它的係數設成 0</div></div>
+  <div class="quiz-options" id="qR2Options"><div class="quiz-opt" data-correct="true" data-fb="對。RSS 只會下降（最壞就是係數配到 0），所以 R² = 1 − RSS/TSS 只會上升。但 RSE 的分母 n−p−1 少了 1，分子幾乎不動，所以 RSE 通常反而變差。這正是 Advertising 加入 newspaper 的情況。" onclick="quizCheck('qR2', this)"><span class="opt-letter">(A)</span> R² 一定上升（或不變），RSE 通常上升</div><div class="quiz-opt" data-correct="false" data-fb="R² 那半錯了。「沒有用」是&lt;em&gt;母體&lt;/em&gt;層次的話；在&lt;em&gt;這一份&lt;/em&gt;樣本上，最小平方法一定能靠它多刮掉一點 RSS（哪怕只是配到雜訊），所以訓練 R² 一定上升。" onclick="quizCheck('qR2', this)"><span class="opt-letter">(B)</span> R² 與 RSE 都會變差，因為變數沒有用</div><div class="quiz-opt" data-correct="false" data-fb="不對。最小平方法沒有這種機制，它會給出一個剛好最貼合這份樣本雜訊的非零係數。「把沒用的係數壓成 0」要等到第 6 章的 lasso。" onclick="quizCheck('qR2', this)"><span class="opt-letter">(C)</span> 兩個都不變，因為最小平方法會自動把它的係數設成 0</div></div>
   <div class="quiz-feedback" id="qR2Feedback"></div>
 </div>
 </section>
 <section id="mlr">
 <!-- GEN:BEGIN sec:mlr -->
   <div class="section-number">PART 04 · 多元迴歸與 F 檢定</div>
-  <h2>同時放進多個變數：F 檢定在問什麼 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.2 節</a></span><span class="sec-badge">講義 03 · p.15–24</span></h2>
+  <h2>同時放進多個變數：F 檢定在問什麼 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.2 節</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:mlr -->
 
   <p>三個媒體要不要各配一條簡單迴歸，然後把結論拼起來？<strong>不行。</strong>
@@ -1235,7 +1242,7 @@ intercept  33.2228    0.731  45.458  0.000
 lstat      -1.0321    0.048 -21.416  0.000
 age         0.0345    0.012   2.826  0.005</pre></div>
   <p class="dx-note"><code>age</code> 的 <em>t</em> = 2.826、p = 0.005，在這個模型裡是顯著的。先記住這個數字，看下一張卡。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 74</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="74">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1260,8 +1267,8 @@ rad         0.2894    0.067   4.325  0.000
 tax        -0.0127    0.004  -3.337  0.001
 ptratio    -0.9375    0.132  -7.091  0.000
 lstat      -0.5520    0.051 -10.897  0.000</pre></div>
-  <p class="dx-note">同一個 <code>age</code>，<em>t</em> 從 2.826 掉到 <strong>0.271</strong>、p 從 0.005 變成 0.787。這就是上面 Q&amp;A 講的現象在 lab 裡的實例，跟 Advertising 的 newspaper 是同一個病。<code>indus</code>（p = 0.829）也是。lab 的儲存格 79 接著示範怎麼用 <code>Boston.columns.drop(['medv','age'])</code> 把 <code>age</code> 拿掉重配，拿掉之後 <code>lstat</code> 的 <em>t</em> 從 −10.897 變成 −11.483，SE 從 0.051 縮到 0.048——變數少一個，剩下的反而估得更準。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 75、77</span>
+  <p class="dx-note">同一個 <code>age</code>，<em>t</em> 從 2.826 掉到 <strong>0.271</strong>、p 從 0.005 變成 0.787。這就是上面 Q&amp;A 講的現象在 lab 裡的實例，跟 Advertising 的 newspaper 是同一個病。<code>indus</code>（p = 0.829）也是。lab 的刪除 age 範例接著示範怎麼用 <code>Boston.columns.drop(['medv','age'])</code> 把 <code>age</code> 拿掉重配，拿掉之後 <code>lstat</code> 的 <em>t</em> 從 −10.897 變成 −11.483，SE 從 0.051 縮到 0.048——變數少一個，剩下的反而估得更準。</p>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="75,77">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
@@ -1270,11 +1277,32 @@ lstat      -0.5520    0.051 -10.897  0.000</pre></div>
   <div class="quiz-options" id="qFOptions"><div class="quiz-opt" data-correct="true" data-fb="對。整體 F 未拒絕全零假設，不代表已證明每個係數都為零。個別 t 回答另一個問題；如果是在大量檢定後才挑出 0.023，就要處理多重比較，而不能直接宣布發現。" onclick="quizCheck('qF', this)"><span class="opt-letter">(A)</span> 兩者檢定的假設不同，並不矛盾；解讀個別結果還要知道是否事先指定、是否同時檢定很多係數</div><div class="quiz-opt" data-correct="false" data-fb="不對。整體 F 的 5% 第一型錯誤率針對全體係數同時為零的假設。它不會自動校正逐一探索係數造成的假發現。" onclick="quizCheck('qF', this)"><span class="opt-letter">(B)</span> 只要先看過 F，個別 t 的 p 值就已完成多重比較校正</div><div class="quiz-opt" data-correct="false" data-fb="不對。未拒絕不是證明虛無假設成立，而且整體 F 與單一係數 t 的檢定力不同，這兩個結果可以同時出現。" onclick="quizCheck('qF', this)"><span class="opt-letter">(C)</span> F 不顯著證明全部係數都等於零，所以個別 t 一定算錯了</div></div>
   <div class="quiz-feedback" id="qFFeedback"></div>
 </div>
+
+
+<h3>逐步選擇：如何形成候選模型？</h3>
+<p><strong>順向選擇（forward selection）</strong>從只有截距開始，每步加入讓模型改善最多的一個變數；
+<strong>反向選擇（backward selection）</strong>從完整模型開始，每步移除條件貢獻最小的變數。
+<strong>混合選擇（mixed selection）</strong>每次加入後也重新檢查既有變數，允許刪除後來變得多餘的項目。
+傳統做法可用 p 值作停止條件；更完整的比較會使用調整 R²、Cp、AIC、BIC 或交叉驗證，詳見
+<a href="model_selection.html">模型選擇</a>。</p>
+<p>反向最小平方選擇須先能配適完整模型；p 大於等於 n 時通常無法使用一般滿秩版本。
+順向法可以起步，但增加變數仍受設計矩陣秩限制。逐步搜尋是貪婪程序，未必找到所有子集合中的最佳解。
+若用資料選變數，評估時必須把整個選擇步驟放入訓練折；選擇後的普通 p 值也不能直接視為預先指定模型的推論。</p>
+<h3>控制其他變數：CCPR 與部分迴歸圖</h3>
+<p><strong>成分加部分殘差圖（component-plus-residual plot, CCPR）</strong>畫
+$e_i+\hat\beta_jx_{ij}$ 對 $x_{ij}$，並畫出 $\hat\beta_jx_{ij}$ 的線性成分。
+它幫助檢查在其他變數已納入後，這一項是否仍有非線性形狀。</p>
+<p><strong>部分迴歸圖（partial regression／added-variable plot）</strong>則先把 y 與 $X_j$
+各自對其他預測變數及截距迴歸，再把兩組殘差互相作圖。滿秩最小平方下，其斜率等於完整模型的
+$\hat\beta_j$。兩種圖的座標不同，不能把 CCPR 與部分迴歸圖當成同一張圖。
+高度共線性時，CCPR 顯示的散布可能低估係數的不確定性，仍須結合 VIF 與標準誤判讀。</p>
+<p>「其他變數固定，Xj 增加一單位」描述條件關聯。預測變數高度相關時，這種變動可能遠離實際資料範圍；
+觀察資料上的迴歸係數也不能直接當成介入效果。模型的用途要透過診斷與新資料評估確認。</p>
 </section>
 <section id="qualitative">
 <!-- GEN:BEGIN sec:qualitative -->
   <div class="section-number">PART 05 · 質性變數與交互作用</div>
-  <h2>類別變數怎麼進模型，交互作用又是什麼 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.3.1–3.3.2 節</a></span><span class="sec-badge">講義 03 · p.25–36</span></h2>
+  <h2>類別變數怎麼進模型，交互作用又是什麼 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.3.1–3.3.2 節</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:qualitative -->
 
   <p>前面所有的 x 都是數字。可是「貨架位置：好／中／差」、「是不是學生」、
@@ -1377,7 +1405,7 @@ lstat      -1.3921    0.167  -8.313  0.000
 age        -0.0007    0.020  -0.036  0.971
 lstat:age   0.0042    0.002   2.244  0.025</pre></div>
   <p class="dx-note"><code>MS(['lstat', 'age', ('lstat', 'age')])</code> 裡的 tuple <code>('lstat','age')</code> 就是交互作用項，欄名會自動變成 <code>lstat:age</code>。它的 <em>t</em> = 2.244、p = 0.025，顯著；而 <code>age</code> 的主效果 <em>t</em> = −0.036 完全不顯著——<strong>照階層原則，還是要留著它</strong>。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 93</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="93">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1406,24 +1434,24 @@ US[Yes]            -0.1576    0.149  -1.058  0.291
 Income:Advertising  0.0008    0.000   2.698  0.007
 Price:Age           0.0001    0.000   0.801  0.424</pre></div>
   <p class="dx-note"><code>ShelveLoc</code> 有 <code>Bad</code>／<code>Medium</code>／<code>Good</code> 三個水準，<code>MS()</code> 自動產生兩欄 <code>ShelveLoc[Good]</code> 與 <code>ShelveLoc[Medium]</code>——<code>Bad</code> 被丟掉當基準（它是第一個水準）。係數 4.85 與 1.95 都是「相對於 Bad」的差距，順序也符合直覺：好位置 &gt; 中等 &gt; 差位置。這一格同時放了兩個交互作用 <code>Income:Advertising</code>（p = 0.007，顯著）與 <code>Price:Age</code>（p = 0.424，不顯著）。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 103、105</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="103,105">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 質性變數與交互作用</div>
   <p>一個三水準的質性變數，你把基準水準從「差」換成「好」。什麼會變、什麼不會變？</p>
-  <div class="quiz-options" id="qIntOptions"><div class="quiz-opt" data-correct="true" data-fb="對。換基準只是換一組座標來表達同一個模型——模型張出來的空間一模一樣，所以配適值與所有整體指標不變。這正是為什麼「這個質性變數整體有沒有用」要看 F 而不是看某一欄的 p 值。" onclick="quizCheck('qInt', this)"><span class="opt-letter">(A)</span> 個別虛擬欄的係數、SE、p 值都會變；配適值、預測、R²、整體 F 檢定都不變</div><div class="quiz-opt" data-correct="false" data-fb="<strong>配適</strong>不受影響；<strong>係數的意義</strong>則隨比較對象改變：它們是「相對於基準」的差距，換了基準就是換了比較對象，數字當然不同。" onclick="quizCheck('qInt', this)"><span class="opt-letter">(B)</span> 什麼都不會變，因為虛擬變數的編碼方式不影響模型</div><div class="quiz-opt" data-correct="false" data-fb="兩個模型矩陣張出同一個線性空間，所以配適值與 R² 完全相同；換基準會改變係數的比較對象，因此係數會變。" onclick="quizCheck('qInt', this)"><span class="opt-letter">(C)</span> 係數不變，但 R² 會變，因為模型矩陣不同了</div></div>
+  <div class="quiz-options" id="qIntOptions"><div class="quiz-opt" data-correct="true" data-fb="對。換基準只是換一組座標來表達同一個模型——模型張出來的空間一模一樣，所以配適值與所有整體指標不變。這正是為什麼「這個質性變數整體有沒有用」要看 F 而不是看某一欄的 p 值。" onclick="quizCheck('qInt', this)"><span class="opt-letter">(A)</span> 個別虛擬欄的係數、SE、p 值都會變；配適值、預測、R²、整體 F 檢定都不變</div><div class="quiz-opt" data-correct="false" data-fb="&lt;strong&gt;配適&lt;/strong&gt;不受影響；&lt;strong&gt;係數的意義&lt;/strong&gt;則隨比較對象改變：它們是「相對於基準」的差距，換了基準就是換了比較對象，數字當然不同。" onclick="quizCheck('qInt', this)"><span class="opt-letter">(B)</span> 什麼都不會變，因為虛擬變數的編碼方式不影響模型</div><div class="quiz-opt" data-correct="false" data-fb="兩個模型矩陣張出同一個線性空間，所以配適值與 R² 完全相同；換基準會改變係數的比較對象，因此係數會變。" onclick="quizCheck('qInt', this)"><span class="opt-letter">(C)</span> 係數不變，但 R² 會變，因為模型矩陣不同了</div></div>
   <div class="quiz-feedback" id="qIntFeedback"></div>
 </div>
 </section>
 <section id="problems">
 <!-- GEN:BEGIN sec:problems -->
   <div class="section-number">PART 06 · 六個潛在問題</div>
-  <h2>非線性、殘差相關、異質變異、離群、高槓桿、共線性 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.3.3 節</a></span><span class="sec-badge">講義 03 · p.37–52</span></h2>
+  <h2>非線性、殘差相關、異質變異、離群、高槓桿、共線性 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.3.3 節</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:problems -->
 
   <p>線性迴歸配起來很容易，配出<strong>錯的</strong>結論也一樣容易。
-  ISLP §3.3.3 列了六個潛在問題，講義 p.37–52 用了 16 頁講它們。
+  ISLP §3.3.3 與講義整理了六個潛在問題。
   先看全表，再一個一個動手看：</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1555,7 +1583,7 @@ tax      9.002158
 ptratio  1.797060
 lstat    2.870777</pre></div>
   <p class="dx-note"><code>range(1, X.shape[1])</code> 從 1 開始是為了跳過第 0 欄的截距。Boston 的 12 個變數裡最大的是 <code>tax</code> 9.00 與 <code>rad</code> 7.45——這兩個確實相關（稅率高的地區通常離高速公路近），需要留意這兩欄的共線性；Credit 的 160 則顯示更嚴重的情況。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 87、89</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="87,89">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1571,7 +1599,7 @@ poly(lstat, degree=2)[0] -179.2279    6.733 -26.620    0.0
 poly(lstat, degree=2)[1]   72.9908    5.482  13.315    0.0
 age                         0.0703    0.011   6.471    0.0</pre></div>
   <p class="dx-note"><code>poly('lstat', degree=2)</code> 產生的是<strong>正交</strong>多項式基底（為了數值穩定），所以係數 −179.23 與 72.99 不能直接讀成「lstat 與 lstat² 的係數」；要那樣讀得加 <code>raw=True</code>。兩種基底的<strong>配適值完全相同</strong>，只是係數不同。二次項的 p 值實質為 0，表示它確實改善了模型。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 96</span>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="96">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1581,28 +1609,28 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>   df_resid           ssr  df_diff      ss_diff           F        Pr(&gt;F)
 0     503.0  19168.128609      0.0          NaN         NaN           NaN
 1     502.0  14165.613251      1.0  5002.515357  177.278785  7.468491e-35</pre></div>
-  <p class="dx-note">比較「lstat + age」與「poly(lstat,2) + age」兩個巢狀模型。<em>F</em> = <strong>177.28</strong>、p = 7.47e-35，二次項不能省。注意一個漂亮的事實：<strong>177.28 恰好是上一張卡裡二次項 <em>t</em> = 13.315 的平方</strong>（13.315² ≈ 177.3）——巢狀模型只差 1 個自由度時，F 就是 t 的平方。這也解釋了為什麼 P04 說「F 可以檢定一組係數」是 t 檢定的推廣。另外 lab 的儲存格 60 用 <code>np.argmax(infl.hat_matrix_diag)</code> 找出 Boston 裡槓桿值最大的是第 <strong>374</strong> 筆。</p>
-  <span class="dx-src">來源：<code>Ch03-linreg-lab-zh.ipynb</code> · 儲存格 98</span>
+  <p class="dx-note">比較「lstat + age」與「poly(lstat,2) + age」兩個巢狀模型。<em>F</em> = <strong>177.28</strong>、p = 7.47e-35，二次項不能省。注意一個漂亮的事實：<strong>177.28 恰好是上一張卡裡二次項 <em>t</em> = 13.315 的平方</strong>（13.315² ≈ 177.3）——巢狀模型只差 1 個自由度時，F 就是 t 的平方。這也解釋了為什麼 P04 說「F 可以檢定一組係數」是 t 檢定的推廣。另外 lab 的槓桿值診斷用 <code>np.argmax(infl.hat_matrix_diag)</code> 找出 Boston 裡槓桿值最大的是第 <strong>374</strong> 筆。</p>
+  <span class="dx-src" data-lab-ch="3" data-lab-cells="98">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 診斷圖</div>
   <p>殘差對配適值的圖呈明顯的 <strong>U 形</strong>。下面哪個結論是對的？</p>
-  <div class="quiz-options" id="qDiagOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這表示目前的線性條件平均形狀不合適。若 E[ε｜X] = 0 仍成立，誤差相關或異質變異主要使傳統 SE 與檢定失準；若外生性也失敗，係數同樣可能偏掉。修法是加 x²、log x，或第 7 章的樣條。ISLP 圖 3.9 左就是這個病徵，加了 horsepower² 之後 U 形就消失了。" onclick="quizCheck('qDiag', this)"><span class="opt-letter">(A)</span> 線性假設被違反了，係數本身的解讀就已經有問題，要先修模型的形狀</div><div class="quiz-opt" data-correct="false" data-fb="不對，看錯圖了。常態性要看 <strong>Q-Q 圖</strong>，不是殘差 vs 配適值。U 形講的是「模型的形狀錯了」，跟誤差的分佈是兩件事。" onclick="quizCheck('qDiag', this)"><span class="opt-letter">(B)</span> 誤差不是常態分佈，應該對 y 取 log</div><div class="quiz-opt" data-correct="false" data-fb="不對。這裡的 U 形反映<strong>系統性</strong>的結構；刪掉最大的殘差之後，剩下的點仍會排成 U 形。應調整模型的形狀，避免刪除資料後仍留下同樣的問題。" onclick="quizCheck('qDiag', this)"><span class="opt-letter">(C)</span> 有離群值把殘差拉歪了，把最大的幾個殘差刪掉重配就好</div></div>
+  <div class="quiz-options" id="qDiagOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這表示目前的線性條件平均形狀不合適。若 E[ε｜X] = 0 仍成立，誤差相關或異質變異主要使傳統 SE 與檢定失準；若外生性也失敗，係數同樣可能偏掉。修法是加 x²、log x，或第 7 章的樣條。ISLP 圖 3.9 左就是這個病徵，加了 horsepower² 之後 U 形就消失了。" onclick="quizCheck('qDiag', this)"><span class="opt-letter">(A)</span> 線性假設被違反了，係數本身的解讀就已經有問題，要先修模型的形狀</div><div class="quiz-opt" data-correct="false" data-fb="不對，看錯圖了。常態性要看 &lt;strong&gt;Q-Q 圖&lt;/strong&gt;，不是殘差 vs 配適值。U 形講的是「模型的形狀錯了」，跟誤差的分佈是兩件事。" onclick="quizCheck('qDiag', this)"><span class="opt-letter">(B)</span> 誤差不是常態分佈，應該對 y 取 log</div><div class="quiz-opt" data-correct="false" data-fb="不對。這裡的 U 形反映&lt;strong&gt;系統性&lt;/strong&gt;的結構；刪掉最大的殘差之後，剩下的點仍會排成 U 形。應調整模型的形狀，避免刪除資料後仍留下同樣的問題。" onclick="quizCheck('qDiag', this)"><span class="opt-letter">(C)</span> 有離群值把殘差拉歪了，把最大的幾個殘差刪掉重配就好</div></div>
   <div class="quiz-feedback" id="qDiagFeedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 共線性</div>
   <p>兩個預測變數的相關係數是 0.9。它們的 VIF 大約多少？SE 被膨脹幾倍？</p>
-  <div class="quiz-options" id="qVifOptions"><div class="quiz-opt" data-correct="true" data-fb="對。VIF = 1/(1−0.9²) = 1/0.19 ≈ 5.26，SE 的膨脹倍數是 √5.26 ≈ 2.29。剛好踩在「VIF &amp;gt; 5」的警戒線上。注意膨脹的是 SE 而不是 VIF 本身——很多人把 VIF 直接當成 SE 的倍數，那會高估一倍以上。" onclick="quizCheck('qVif', this)"><span class="opt-letter">(A)</span> VIF ≈ 5.3、SE 膨脹約 2.3 倍</div><div class="quiz-opt" data-correct="false" data-fb="不對。VIF 的最小值是 1（完全沒有共線性時），永遠不會小於 1，也不可能讓 SE 變小。把 ρ = 0.9 代進 1/(1−ρ²) 就知道了。" onclick="quizCheck('qVif', this)"><span class="opt-letter">(B)</span> VIF ≈ 0.9、SE 膨脹 0.9 倍</div><div class="quiz-opt" data-correct="false" data-fb="兩個都不對。1/(1−0.81) = 5.26 不是 10；而且 SE 的膨脹倍數是 <strong>√VIF</strong> 不是 VIF——VIF 膨脹的是<strong>變異數</strong>，開根號才是標準誤。" onclick="quizCheck('qVif', this)"><span class="opt-letter">(C)</span> VIF ≈ 10、SE 膨脹 10 倍</div></div>
+  <div class="quiz-options" id="qVifOptions"><div class="quiz-opt" data-correct="true" data-fb="對。VIF = 1/(1−0.9²) = 1/0.19 ≈ 5.26，SE 的膨脹倍數是 √5.26 ≈ 2.29。剛好踩在「VIF &amp;gt; 5」的警戒線上。注意膨脹的是 SE 而不是 VIF 本身——很多人把 VIF 直接當成 SE 的倍數，那會高估一倍以上。" onclick="quizCheck('qVif', this)"><span class="opt-letter">(A)</span> VIF ≈ 5.3、SE 膨脹約 2.3 倍</div><div class="quiz-opt" data-correct="false" data-fb="不對。VIF 的最小值是 1（完全沒有共線性時），永遠不會小於 1，也不可能讓 SE 變小。把 ρ = 0.9 代進 1/(1−ρ²) 就知道了。" onclick="quizCheck('qVif', this)"><span class="opt-letter">(B)</span> VIF ≈ 0.9、SE 膨脹 0.9 倍</div><div class="quiz-opt" data-correct="false" data-fb="兩個都不對。1/(1−0.81) = 5.26 不是 10；而且 SE 的膨脹倍數是 &lt;strong&gt;√VIF&lt;/strong&gt; 不是 VIF——VIF 膨脹的是&lt;strong&gt;變異數&lt;/strong&gt;，開根號才是標準誤。" onclick="quizCheck('qVif', this)"><span class="opt-letter">(C)</span> VIF ≈ 10、SE 膨脹 10 倍</div></div>
   <div class="quiz-feedback" id="qVifFeedback"></div>
 </div>
 </section>
 <section id="vsknn">
 <!-- GEN:BEGIN sec:vsknn -->
   <div class="section-number">PART 07 · 與 KNN 的比較</div>
-  <h2>比較線性模型與 KNN 的適用情境 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.5 節</a></span><span class="sec-badge">講義 03 · p.53–58</span></h2>
+  <h2>比較線性模型與 KNN 的適用情境 <span class="sec-badge"><a href="#w03-source-islp">教科書 · 第 3.5 節</a></span><span class="sec-badge">講義 03</span></h2>
 <!-- GEN:END sec:vsknn -->
 
   <p>線性迴歸是<strong>參數方法</strong>（parametric）：它先假設 f 的形狀
@@ -1647,7 +1675,7 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 線性迴歸 vs KNN</div>
   <p>真實關係<strong>明顯非線性</strong>，n = 50。什麼情況下線性迴歸反而贏過 KNN？</p>
-  <div class="quiz-options" id="qKnnOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP 圖 3.20 的實驗就是這樣：p = 1、2 時 KNN 表現明顯較好，p = 3 打平，p ≥ 4 之後線性迴歸勝，而且差距愈拉愈大。線性迴歸只多估幾個係數，KNN 卻連「誰是鄰居」都算不準了。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(A)</span> 預測變數的個數 p 一多（大約 p ≥ 4）就會贏，因為 KNN 受維度詛咒重傷</div><div class="quiz-opt" data-correct="false" data-fb="不對。KNN 依賴局部鄰居。維度高時，鄰近樣本也可能相距很遠；雜訊變數還會影響距離計算，使選出的鄰居較難代表目標點。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(B)</span> 永遠不會贏，因為 KNN 不做任何形狀假設，一定更接近真相</div><div class="quiz-opt" data-correct="false" data-fb="不對。K 調到極大時 KNN 退化成「全部訓練資料的平均」，那是一個<strong>水平線</strong>，不是線性迴歸。KNN 無論怎麼調 K 都不會變成線性模型。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(C)</span> 只要把 K 調大就會贏，因為 K 大 KNN 就退化成線性迴歸</div></div>
+  <div class="quiz-options" id="qKnnOptions"><div class="quiz-opt" data-correct="true" data-fb="對。ISLP 圖 3.20 的實驗就是這樣：p = 1、2 時 KNN 表現明顯較好，p = 3 打平，p ≥ 4 之後線性迴歸勝，而且差距愈拉愈大。線性迴歸只多估幾個係數，KNN 卻連「誰是鄰居」都算不準了。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(A)</span> 預測變數的個數 p 一多（大約 p ≥ 4）就會贏，因為 KNN 受維度詛咒重傷</div><div class="quiz-opt" data-correct="false" data-fb="不對。KNN 依賴局部鄰居。維度高時，鄰近樣本也可能相距很遠；雜訊變數還會影響距離計算，使選出的鄰居較難代表目標點。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(B)</span> 永遠不會贏，因為 KNN 不做任何形狀假設，一定更接近真相</div><div class="quiz-opt" data-correct="false" data-fb="不對。K 調到極大時 KNN 退化成「全部訓練資料的平均」，那是一個&lt;strong&gt;水平線&lt;/strong&gt;，不是線性迴歸。KNN 無論怎麼調 K 都不會變成線性模型。" onclick="quizCheck('qKnn', this)"><span class="opt-letter">(C)</span> 只要把 K 調大就會贏，因為 K 大 KNN 就退化成線性迴歸</div></div>
   <div class="quiz-feedback" id="qKnnFeedback"></div>
 </div>
 </section>
@@ -1663,28 +1691,28 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 3.7 第 1 題</div>
   <p>課本要你描述表 3.4 的 p 值各自對應什麼虛無假設，並用 sales／TV／radio／newspaper 的語言（不要用係數）講結論。下面哪個描述對了？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。關鍵是「其他變數固定」這五個字——多元迴歸的每個 p 值都是條件式的。所以正確的說法是「在電視與廣播預算已知的情況下，報紙預算對銷售量沒有額外的關聯」，而<strong>不是</strong>「報紙預算跟銷售量無關」（單獨看它其實是顯著的，t = 3.30）。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 每個 p 值對應「在<strong>其他兩個媒體的預算固定</strong>的情況下，這個媒體與 sales 無關」；結論是 TV 與 radio 有關，newspaper 沒有</div><div class="quiz-opt" data-correct="false" data-fb="不對，這正是這一題要糾正的誤解。「單獨」的檢定是表 3.1 與表 3.3 的簡單迴歸，那三個都顯著。表 3.4 的每一個檢定都是<strong>控制住其他變數之後</strong>的檢定。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 每個 p 值對應「這個媒體單獨跟 sales 無關」；結論是 newspaper 跟 sales 無關</div><div class="quiz-opt" data-correct="false" data-fb="不對，你講的是 <em>F</em> 檢定（表 3.6 的 570.3）。表 3.4 裡每一列有自己的 p 值，各自檢定<strong>一個</strong>係數為 0，這是 t 檢定。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 四個 p 值一起對應「三個係數同時為 0」；結論要看整體的 F 檢定</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。關鍵是「其他變數固定」這五個字——多元迴歸的每個 p 值都是條件式的。所以正確的說法是「在電視與廣播預算已知的情況下，報紙預算對銷售量沒有額外的關聯」，而&lt;strong&gt;不是&lt;/strong&gt;「報紙預算跟銷售量無關」（單獨看它其實是顯著的，t = 3.30）。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 每個 p 值對應「在<strong>其他兩個媒體的預算固定</strong>的情況下，這個媒體與 sales 無關」；結論是 TV 與 radio 有關，newspaper 沒有</div><div class="quiz-opt" data-correct="false" data-fb="不對，這正是這一題要糾正的誤解。「單獨」的檢定是表 3.1 與表 3.3 的簡單迴歸，那三個都顯著。表 3.4 的每一個檢定都是&lt;strong&gt;控制住其他變數之後&lt;/strong&gt;的檢定。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 每個 p 值對應「這個媒體單獨跟 sales 無關」；結論是 newspaper 跟 sales 無關</div><div class="quiz-opt" data-correct="false" data-fb="不對，你講的是 &lt;em&gt;F&lt;/em&gt; 檢定（表 3.6 的 570.3）。表 3.4 裡每一列有自己的 p 值，各自檢定&lt;strong&gt;一個&lt;/strong&gt;係數為 0，這是 t 檢定。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 四個 p 值一起對應「三個係數同時為 0」；結論要看整體的 F 檢定</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · ISLP 3.7 第 3 題（a）</div>
   <p>模型是 salary = 50 + 20·GPA + 0.07·IQ + 35·Level + 0.01·(GPA×IQ) − 10·(GPA×Level)，其中 Level = 1 代表大學畢業。固定 IQ 與 GPA，哪個說法對？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。大學減高中的差距是 35 − 10·GPA，GPA &amp;gt; 3.5 時就變成負的。這題的教學點是：<strong>有交互作用時，主效果的係數不能單獨解讀</strong>——35 只是「GPA = 0 時」的差距。順帶把 (b) 也算完：大學、IQ = 110、GPA = 4.0 → 50 + 80 + 7.7 + 35 + 4.4 − 40 = <strong>137.1</strong> 千美元。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> GPA 夠高時，高中畢業生的平均起薪反而比大學畢業生高</div><div class="quiz-opt" data-correct="false" data-fb="不對。35 只有在 GPA = 0 時才是完整的差距；兩組的差距是 35 − 10·GPA，會隨 GPA 遞減，GPA 超過 3.5 就翻轉。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 大學畢業生的平均起薪一定比高中畢業生高，因為 Level 的係數 35 是正的</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是 (c) 小題的陷阱，答案是 False。係數的<strong>大小</strong>取決於變數的單位——IQ 的範圍是 100 上下，GPA 是 0–4，0.01×GPA×IQ 在 GPA = 4、IQ = 110 時是 4.4，不小。判斷有沒有證據要看 <strong>p 值</strong>（也就是係數除以它的 SE），不是看係數本身大不大。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> GPA×IQ 的係數只有 0.01，非常小，所以幾乎沒有交互作用效果</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。大學減高中的差距是 35 − 10·GPA，GPA &amp;gt; 3.5 時就變成負的。這題的教學點是：&lt;strong&gt;有交互作用時，主效果的係數不能單獨解讀&lt;/strong&gt;——35 只是「GPA = 0 時」的差距。順帶把 (b) 也算完：大學、IQ = 110、GPA = 4.0 → 50 + 80 + 7.7 + 35 + 4.4 − 40 = &lt;strong&gt;137.1&lt;/strong&gt; 千美元。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> GPA 夠高時，高中畢業生的平均起薪反而比大學畢業生高</div><div class="quiz-opt" data-correct="false" data-fb="不對。35 只有在 GPA = 0 時才是完整的差距；兩組的差距是 35 − 10·GPA，會隨 GPA 遞減，GPA 超過 3.5 就翻轉。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 大學畢業生的平均起薪一定比高中畢業生高，因為 Level 的係數 35 是正的</div><div class="quiz-opt" data-correct="false" data-fb="不對，這是 (c) 小題的陷阱，答案是 False。係數的&lt;strong&gt;大小&lt;/strong&gt;取決於變數的單位——IQ 的範圍是 100 上下，GPA 是 0–4，0.01×GPA×IQ 在 GPA = 4、IQ = 110 時是 4.4，不小。判斷有沒有證據要看 &lt;strong&gt;p 值&lt;/strong&gt;（也就是係數除以它的 SE），不是看係數本身大不大。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> GPA×IQ 的係數只有 0.01，非常小，所以幾乎沒有交互作用效果</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 3.7 第 4 題（a）（b）</div>
   <p>n = 100、單一預測變數。真實關係<strong>是</strong>線性的。把「線性迴歸」與「三次迴歸」的<strong>訓練</strong> RSS 與<strong>測試</strong> RSS 比一比，預期是什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。訓練 RSS 那半是<strong>數學必然</strong>——線性模型是三次模型的特例（β₂ = β₃ = 0），所以三次模型的最小值不可能更差。測試 RSS 那半是<strong>期望</strong>：真相既然線性，三次項只增加變異而不減少偏差，所以平均而言會更差。這正是第 5 章要用交叉驗證的理由。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 訓練 RSS：三次一定較低（或相等）；測試 RSS：預期線性較低</div><div class="quiz-opt" data-correct="false" data-fb="訓練那半對，測試那半錯。彈性在訓練資料上永遠是優勢，在測試資料上只有「真相真的需要那個彈性」時才是優勢。這裡真相是線性的，多出來的彈性只是在配雜訊。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 兩個都是三次較低，因為三次模型比較有彈性</div><div class="quiz-opt" data-correct="false" data-fb="訓練 RSS 是可以判斷的，而且不需要任何資訊：巢狀模型的訓練 RSS 一定單調不增。只有測試 RSS 才需要「真相是線性」這個前提——而題目已經給了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 資訊不足，兩個都無法判斷</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。訓練 RSS 那半是&lt;strong&gt;數學必然&lt;/strong&gt;——線性模型是三次模型的特例（β₂ = β₃ = 0），所以三次模型的最小值不可能更差。測試 RSS 那半是&lt;strong&gt;期望&lt;/strong&gt;：真相既然線性，三次項只增加變異而不減少偏差，所以平均而言會更差。這正是第 5 章要用交叉驗證的理由。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 訓練 RSS：三次一定較低（或相等）；測試 RSS：預期線性較低</div><div class="quiz-opt" data-correct="false" data-fb="訓練那半對，測試那半錯。彈性在訓練資料上永遠是優勢，在測試資料上只有「真相真的需要那個彈性」時才是優勢。這裡真相是線性的，多出來的彈性只是在配雜訊。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 兩個都是三次較低，因為三次模型比較有彈性</div><div class="quiz-opt" data-correct="false" data-fb="訓練 RSS 是可以判斷的，而且不需要任何資訊：巢狀模型的訓練 RSS 一定單調不增。只有測試 RSS 才需要「真相是線性」這個前提——而題目已經給了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 資訊不足，兩個都無法判斷</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 3.7 第 7 題</div>
   <p>課本要你證明簡單線性迴歸（只有一個 x、有截距）的 R² 等於 x 與 y 相關係數的平方。為什麼這件事在多元迴歸就不能照搬？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。多元的版本是 R² = Cor(Y, Ŷ)²，也就是反應變數與<strong>配適值</strong>的相關係數平方。而且最小平方配出來的 Ŷ 有一個漂亮性質：在所有線性模型中，它讓這個相關係數最大。單變數時 ŷ 是 x 的線性函數，Cor(y, ŷ) = |Cor(y, x)|，兩個版本就對上了。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 多元迴歸有多個 x，沒有單一個「x 與 y 的相關係數」；對應的結果變成 R² = Cor(y, ŷ)²</div><div class="quiz-opt" data-correct="false" data-fb="不對。含截距的最小平方多元迴歸，R² 照樣介於 0 與 1（推理跟簡單迴歸一樣：只用 ȳ 猜是它的一個特例）。會跑出負值的是沒有截距、或在測試資料上算的情況。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 因為多元迴歸的 R² 不再介於 0 與 1 之間</div><div class="quiz-opt" data-correct="false" data-fb="不對。普通 R² 的意義沒有改變（被解釋的變異比例），它只是<strong>不適合用來比較變數個數不同的模型</strong>。調整後 R² 是為了那個特定用途才發明的，不是因為普通 R² 失效。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 因為多元迴歸要用調整後 R²，普通 R² 不再有意義</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。多元的版本是 R² = Cor(Y, Ŷ)²，也就是反應變數與&lt;strong&gt;配適值&lt;/strong&gt;的相關係數平方。而且最小平方配出來的 Ŷ 有一個漂亮性質：在所有線性模型中，它讓這個相關係數最大。單變數時 ŷ 是 x 的線性函數，Cor(y, ŷ) = |Cor(y, x)|，兩個版本就對上了。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 多元迴歸有多個 x，沒有單一個「x 與 y 的相關係數」；對應的結果變成 R² = Cor(y, ŷ)²</div><div class="quiz-opt" data-correct="false" data-fb="不對。含截距的最小平方多元迴歸，R² 照樣介於 0 與 1（推理跟簡單迴歸一樣：只用 ȳ 猜是它的一個特例）。會跑出負值的是沒有截距、或在測試資料上算的情況。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 因為多元迴歸的 R² 不再介於 0 與 1 之間</div><div class="quiz-opt" data-correct="false" data-fb="不對。普通 R² 的意義沒有改變（被解釋的變異比例），它只是&lt;strong&gt;不適合用來比較變數個數不同的模型&lt;/strong&gt;。調整後 R² 是為了那個特定用途才發明的，不是因為普通 R² 失效。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 因為多元迴歸要用調整後 R²，普通 R² 不再有意義</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1731,12 +1759,12 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
   因此要檢查殘差結構並選合適的推論方法。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="bankquiz">
 <!-- GEN:BEGIN sec:bankquiz -->
   <div class="section-number">QUIZ · 自我檢測</div>
-  <h2>本章自我檢測 <span class="sec-badge">課程題庫 ch3 · 6 題</span></h2>
+  <h2>本章自我檢測 <span class="sec-badge">課程題庫</span></h2>
   <p>這些題目取自課程題庫，只給對錯與說明，不計分。答錯就回到對應章節重讀。</p>
 <!-- GEN:END sec:bankquiz -->
   <div id="bqBox"></div>
@@ -1744,7 +1772,7 @@ age                         0.0703    0.011   6.471    0.0</pre></div>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 28 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 3 章，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
@@ -2958,7 +2986,7 @@ HC.ready(function () {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"簡單線性迴歸（Simple Linear Regression）","back":"用單一預測變數 X 預測數值反應變數 Y，假設兩者近似直線關係 Y ≈ β₀ + β₁X。β₀ 是截距、β₁ 是斜率，兩者合稱模型係數。"},{"front":"最小平方法（Least Squares）","back":"挑選讓殘差平方和 RSS 最小的係數。簡單線性迴歸在 x 不全相同時有封閉解；多元矩陣式 β̂ = (XᵀX)⁻¹Xᵀy 還要求含截距的設計矩陣滿欄秩，否則反矩陣不存在且係數未必唯一。"},{"front":"殘差（Residual）","back":"第 i 筆的觀測值與配適值之差 eᵢ = yᵢ − ŷᵢ。含截距的最小平方配適滿足 Σeᵢ = 0；簡單迴歸另有 Σeᵢxᵢ = 0，因此迴歸線通過 (x̄, ȳ)。沒有截距時不能沿用這些結論。"},{"front":"殘差平方和（RSS, Residual Sum of Squares）","back":"RSS = Σ(yᵢ − ŷᵢ)²，是最小平方法的目標。它是凸二次函數；設計矩陣滿欄秩時最小平方係數才唯一。秩不足時配適值仍可唯一，但可有多組係數。"},{"front":"誤差曲面（Error Surface）","back":"把 RSS 看成參數函數所畫出的曲面。線性迴歸的 RSS 是凸二次式；設計矩陣滿欄秩時曲面有唯一最低點，可用封閉解求得。秩不足時最低處會延伸成平坦方向。"},{"front":"母體迴歸線（Population Regression Line）","back":"真實但看不到的 Y = β₀ + β₁X + ε 那條線。最小平方線只是用一份樣本估出來的版本；換一份樣本就會得到不同的最小平方線，但母體迴歸線不動。"},{"front":"無偏（Unbiased）","back":"估計量在重複抽樣下的平均值等於目標真值。最小平方係數的無偏性需要線性條件平均與 E[ε｜X] = 0；誤差若在給定 X 後仍有系統性方向，係數可能偏掉。"},{"front":"標準誤（Standard Error, SE）","back":"估計量在重複抽樣下的標準差。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)² 使用同變異且誤差不相關的公式；σ² 未知時用 RSE² 估計。誤差若相關，傳統 SE 可能偏高或偏低，方向取決於相關結構與設計。"},{"front":"信賴區間（Confidence Interval）","back":"β̂₁ ± t₀.₉₇₅·SE(β̂₁)，實務上近似 β̂₁ ± 2·SE(β̂₁)。解讀是「重複抽樣時有 95% 的區間會蓋住真值」，不是「真值有 95% 的機率落在這個區間」。"},{"front":"預測區間（Prediction Interval）","back":"對「單一筆新觀測值」的區間，比同一點的信賴區間寬，因為它額外算進不可約誤差 ε 的變異。信賴區間只針對平均反應 f(x)。"},{"front":"t 統計量（t-statistic）","back":"t = β̂ⱼ / SE(β̂ⱼ)，衡量係數離 0 有幾個標準誤。在 H₀: βⱼ = 0 下服從自由度 n−p−1 的 t 分佈；n 大時 |t| 超過約 2 就對應 5% 顯著水準。"},{"front":"p 值（p-value）","back":"假設 H₀ 成立時，看到「像現在這麼極端或更極端」的統計量的機率。p 值小表示這種關聯不太可能只是碰巧，於是拒絕 H₀。它不是「H₀ 為真的機率」。"},{"front":"殘差標準誤（RSE, Residual Standard Error）","back":"RSE = √(RSS/(n−p−1))，是誤差標準差 σ 的估計，單位跟 y 一樣。Advertising 用三個媒體的模型 RSE = 1.69，而 sales 平均 14.02，約 12% 的相對誤差。"},{"front":"R²（R-squared）","back":"R² = 1 − RSS/TSS。含截距、在同一訓練集上以最小平方配適並評分時，R² 介於 0 與 1，且加變數只會上升或不變。測試資料上的 R² 以該批 y 的平均為基準，可以為負。"},{"front":"多元線性迴歸（Multiple Linear Regression）","back":"Y = β₀ + β₁X₁ + … + βₚXₚ + ε。βⱼ 描述控制模型中其他變數後，Xⱼ 增加一單位時 Y 的條件平均差。這是模型中的條件關聯；因果解讀需要研究設計與額外假設。"},{"front":"偏迴歸係數（Partial Regression Coefficient）","back":"多元迴歸裡的 βⱼ 描述控制模型中其他變數後的條件平均差。它與單變數係數回答不同問題，可能數值不同甚至換方向；「控制」本身不保證消除混淆或建立因果關係。"},{"front":"F 統計量（F-statistic）","back":"F = ((TSS−RSS)/p) / (RSS/(n−p−1))，檢定 H₀: β₁ = … = βₚ = 0。H₀ 成立時期望值約為 1；F 遠大於 1 表示至少有一個變數有用。它一次檢定全體；模型假設成立且顯著水準為 0.05 時，仍有 5% 第一型錯誤率。通過 F 不等於完成個別係數檢定的多重比較校正。"},{"front":"虛擬變數（Dummy Variable）","back":"把質性變數編成 0／1 的指標欄。k 個水準只要 k−1 個虛擬變數；係數的解讀都是「相對於基準水準的差距」。"},{"front":"基準水準（Baseline Level）","back":"質性變數中沒有分到虛擬變數的那個水準，截距代表它的平均。換一個水準當基準，係數與 p 值都會變，但配適值與預測完全不變。"},{"front":"交互作用（Interaction）","back":"加入乘積項 X₁X₂，讓 X₁ 的條件斜率 β₁ + β₃X₂ 隨 X₂ 改變。Advertising 加入 TV×radio 後，樣本內 R² 從 89.7% 升到 96.8%；這描述模型中的非加法關聯，本身不證明兩種廣告具有因果綜效。"},{"front":"階層原則（Hierarchical Principle）","back":"只要模型放了交互作用項，就要一起放它的主效果，即使主效果的 p 值不顯著。因為乘積項通常與主效果相關，抽掉主效果會改變交互作用項的意義。"},{"front":"異質變異（Heteroscedasticity）","back":"誤差變異數隨 x 或配適值改變，殘差圖常呈漏斗形。若 E[ε｜X] = 0，最小平方係數仍無偏，但傳統 SE、區間與檢定會失準；可考慮轉換、加權最小平方或穩健 SE。"},{"front":"離群值（Outlier）","back":"y 遠離模型預測的點。判準看學生化殘差，絕對值超過 3 就可疑。它會明顯推高 RSE 與拉低 R²，但如果槓桿值不高，對係數的影響可能有限。"},{"front":"學生化殘差（Studentized Residual）","back":"把殘差除以它自己的估計標準差：eᵢ / (RSE·√(1−hᵢ))。因為每筆殘差的變異數不同，直接比較原始殘差並不公平，學生化之後才有共同的尺度。"},{"front":"槓桿值（Leverage）","back":"帽子矩陣的對角元 hᵢ，衡量第 i 筆的 x 有多不尋常。簡單迴歸時 hᵢ = 1/n + (xᵢ−x̄)²/Σ(xⱼ−x̄)²，介於 1/n 與 1，平均恰為 (p+1)/n。遠超過這個平均就是高槓桿點。"},{"front":"共線性（Collinearity）","back":"兩個或多個預測變數彼此高度相關。此時 RSS 的等高線由碗變成狹長的溝，係數組合難以分辨，SE 變大、t 變小，檢定的檢定力下降——變數其實有用卻檢不出來。"},{"front":"變異數膨脹因子（VIF, Variance Inflation Factor）","back":"VIF(β̂ⱼ) = 1/(1−R²_{Xⱼ|X₋ⱼ})，即 Xⱼ 對其他所有變數迴歸的 R² 換算出的膨脹倍數。最小值 1；超過 5 或 10 就代表共線性嚴重。SE 的膨脹倍數是 √VIF。"},{"front":"維度詛咒（Curse of Dimensionality）","back":"p 變大時，任一測試點的「最近鄰」其實都離得很遠，KNN 之類的無母數方法因此迅速退化。線性迴歸只多估幾個係數，退化得慢得多——這是每個變數的樣本數太少時偏好參數方法的理由。"}];
+const FLASHCARDS = [{"front":"簡單線性迴歸（Simple Linear Regression）","back":"用單一預測變數 X 預測數值反應變數 Y，假設兩者近似直線關係 Y ≈ β₀ + β₁X。β₀ 是截距、β₁ 是斜率，兩者合稱模型係數。"},{"front":"最小平方法（Least Squares）","back":"挑選讓殘差平方和 RSS 最小的係數。簡單線性迴歸在 x 不全相同時有封閉解；多元矩陣式 β̂ = (XᵀX)⁻¹Xᵀy 還要求含截距的設計矩陣滿欄秩，否則反矩陣不存在且係數未必唯一。"},{"front":"殘差（Residual）","back":"第 i 筆的觀測值與配適值之差 eᵢ = yᵢ − ŷᵢ。含截距的最小平方配適滿足 Σeᵢ = 0；簡單迴歸另有 Σeᵢxᵢ = 0，因此迴歸線通過 (x̄, ȳ)。沒有截距時不能沿用這些結論。"},{"front":"殘差平方和（RSS, Residual Sum of Squares）","back":"RSS = Σ(yᵢ − ŷᵢ)²，是最小平方法的目標。它是凸二次函數；設計矩陣滿欄秩時最小平方係數才唯一。秩不足時配適值仍可唯一，但可有多組係數。"},{"front":"誤差曲面（Error Surface）","back":"把 RSS 看成參數函數所畫出的曲面。線性迴歸的 RSS 是凸二次式；設計矩陣滿欄秩時曲面有唯一最低點，可用封閉解求得。秩不足時最低處會延伸成平坦方向。"},{"front":"母體迴歸線（Population Regression Line）","back":"真實但看不到的 Y = β₀ + β₁X + ε 那條線。最小平方線只是用一份樣本估出來的版本；換一份樣本就會得到不同的最小平方線，但母體迴歸線不動。"},{"front":"無偏（Unbiased）","back":"估計量在重複抽樣下的平均值等於目標真值。最小平方係數的無偏性需要線性條件平均與 E[ε｜X] = 0；誤差若在給定 X 後仍有系統性方向，係數可能偏掉。"},{"front":"標準誤（Standard Error, SE）","back":"估計量在重複抽樣下的標準差。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)² 使用同變異且誤差不相關的公式；σ² 未知時用 RSE² 估計。誤差若相關，傳統 SE 可能偏高或偏低，方向取決於相關結構與設計。"},{"front":"信賴區間（Confidence Interval）","back":"β̂₁ ± t₀.₉₇₅·SE(β̂₁)，實務上近似 β̂₁ ± 2·SE(β̂₁)。解讀是「重複抽樣時有 95% 的區間會蓋住真值」，不是「真值有 95% 的機率落在這個區間」。"},{"front":"預測區間（Prediction Interval）","back":"對「單一筆新觀測值」的區間，比同一點的信賴區間寬，因為它額外算進不可約誤差 ε 的變異。信賴區間只針對平均反應 f(x)。"},{"front":"t 統計量（t-statistic）","back":"t = β̂ⱼ / SE(β̂ⱼ)，衡量係數離 0 有幾個標準誤。在 H₀: βⱼ = 0 下服從自由度 n−p−1 的 t 分佈；n 大時 |t| 超過約 2 就對應 5% 顯著水準。"},{"front":"p 值（p-value）","back":"假設 H₀ 成立時，看到「像現在這麼極端或更極端」的統計量的機率。p 值小表示這種關聯不太可能只是碰巧，於是拒絕 H₀。它不是「H₀ 為真的機率」。"},{"front":"殘差標準誤（RSE, Residual Standard Error）","back":"RSE = √(RSS/(n−p−1))，是誤差標準差 σ 的估計，單位跟 y 一樣。Advertising 用三個媒體的模型 RSE = 1.69，而 sales 平均 14.02，約 12% 的相對誤差。"},{"front":"R²（R-squared）","back":"R² = 1 − RSS/TSS。含截距、在同一訓練集上以最小平方配適並評分時，R² 介於 0 與 1，且加變數只會上升或不變。測試資料上的 R² 以該批 y 的平均為基準，可以為負。"},{"front":"多元線性迴歸（Multiple Linear Regression）","back":"Y = β₀ + β₁X₁ + … + βₚXₚ + ε。βⱼ 描述控制模型中其他變數後，Xⱼ 增加一單位時 Y 的條件平均差。這是模型中的條件關聯；因果解讀需要研究設計與額外假設。"},{"front":"偏迴歸係數（Partial Regression Coefficient）","back":"多元迴歸裡的 βⱼ 描述控制模型中其他變數後的條件平均差。它與單變數係數回答不同問題，可能數值不同甚至換方向；「控制」本身不保證消除混淆或建立因果關係。"},{"front":"F 統計量（F-statistic）","back":"F = ((TSS−RSS)/p) / (RSS/(n−p−1))，檢定 H₀: β₁ = … = βₚ = 0。H₀ 成立時期望值約為 1；F 遠大於 1 表示至少有一個變數有用。它一次檢定全體；模型假設成立且顯著水準為 0.05 時，仍有 5% 第一型錯誤率。通過 F 不等於完成個別係數檢定的多重比較校正。"},{"front":"虛擬變數（Dummy Variable）","back":"把質性變數編成 0／1 的指標欄。k 個水準只要 k−1 個虛擬變數；係數的解讀都是「相對於基準水準的差距」。"},{"front":"基準水準（Baseline Level）","back":"質性變數中沒有分到虛擬變數的那個水準，截距代表它的平均。換一個水準當基準，係數與 p 值都會變，但配適值與預測完全不變。"},{"front":"交互作用（Interaction）","back":"加入乘積項 X₁X₂，讓 X₁ 的條件斜率 β₁ + β₃X₂ 隨 X₂ 改變。Advertising 加入 TV×radio 後，樣本內 R² 從 89.7% 升到 96.8%；這描述模型中的非加法關聯，本身不證明兩種廣告具有因果綜效。"},{"front":"階層原則（Hierarchical Principle）","back":"只要模型放了交互作用項，就要一起放它的主效果，即使主效果的 p 值不顯著。因為乘積項通常與主效果相關，抽掉主效果會改變交互作用項的意義。"},{"front":"異質變異（Heteroscedasticity）","back":"誤差變異數隨 x 或配適值改變，殘差圖常呈漏斗形。若 E[ε｜X] = 0，最小平方係數仍無偏，但傳統 SE、區間與檢定會失準；可考慮轉換、加權最小平方或穩健 SE。"},{"front":"離群值（Outlier）","back":"y 遠離模型預測的點。判準看學生化殘差，絕對值超過 3 就可疑。它會明顯推高 RSE 與拉低 R²，但如果槓桿值不高，對係數的影響可能有限。"},{"front":"學生化殘差（Studentized Residual）","back":"把殘差除以它自己的估計標準差：eᵢ / (RSE·√(1−hᵢ))。因為每筆殘差的變異數不同，直接比較原始殘差並不公平，學生化之後才有共同的尺度。"},{"front":"槓桿值（Leverage）","back":"帽子矩陣的對角元 hᵢ，衡量第 i 筆的 x 有多不尋常。簡單迴歸時 hᵢ = 1/n + (xᵢ−x̄)²/Σ(xⱼ−x̄)²，介於 1/n 與 1，平均恰為 (p+1)/n。遠超過這個平均就是高槓桿點。"},{"front":"共線性（Collinearity）","back":"兩個或多個預測變數彼此高度相關。此時 RSS 的等高線由碗變成狹長的溝，係數組合難以分辨，SE 變大、t 變小，檢定的檢定力下降——變數其實有用卻檢不出來。"},{"front":"變異數膨脹因子（VIF, Variance Inflation Factor）","back":"VIF(β̂ⱼ) = 1/(1−R²_{Xⱼ|X₋ⱼ})，即 Xⱼ 對其他所有變數迴歸的 R² 換算出的膨脹倍數。最小值 1；超過 5 或 10 就代表共線性嚴重。SE 的膨脹倍數是 √VIF。"},{"front":"維度詛咒（Curse of Dimensionality）","back":"p 變大時，任一測試點的「最近鄰」其實都離得很遠，KNN 之類的無母數方法因此迅速退化。線性迴歸只多估幾個係數，退化得慢得多——這是每個變數的樣本數太少時偏好參數方法的理由。"},{"front":"CCPR 與部分迴歸圖","back":"CCPR 畫 e＋β̂ⱼXⱼ 對 Xⱼ；部分迴歸圖先將 y 與 Xⱼ 各自對其他變數迴歸，再畫兩組殘差。滿秩 OLS 下後者斜率等於完整模型的 β̂ⱼ。"}];
 HC.initFlashcards();
 </script>
 <script>

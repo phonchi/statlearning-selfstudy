@@ -565,7 +565,7 @@ BODIES["mlr"] = f"""
       note="同一個 <code>age</code>，<em>t</em> 從 2.826 掉到 <strong>0.271</strong>、"
            "p 從 0.005 變成 0.787。這就是上面 Q&amp;A 講的現象在 lab 裡的實例，"
            "跟 Advertising 的 newspaper 是同一個病。"
-           "<code>indus</code>（p = 0.829）也是。lab 的儲存格 79 接著示範怎麼用 "
+           "<code>indus</code>（p = 0.829）也是。lab 的刪除 age 範例接著示範怎麼用 "
            "<code>Boston.columns.drop(['medv','age'])</code> 把 <code>age</code> 拿掉重配，"
            "拿掉之後 <code>lstat</code> 的 <em>t</em> 從 −10.897 變成 −11.483，"
            "SE 從 0.051 縮到 0.048——變數少一個，剩下的反而估得更準。")}
@@ -716,7 +716,7 @@ BODIES["qualitative"] = f"""
 # ── P06 problems ──────────────────────────────────────────────────────
 BODIES["problems"] = f"""
   <p>線性迴歸配起來很容易，配出<strong>錯的</strong>結論也一樣容易。
-  ISLP §3.3.3 列了六個潛在問題，講義 p.37–52 用了 16 頁講它們。
+  ISLP §3.3.3 與講義整理了六個潛在問題。
   先看全表，再一個一個動手看：</p>
 
 {table(["#", "問題", "怎麼看出來", "會傷到什麼", "怎麼處理"],
@@ -874,7 +874,7 @@ BODIES["problems"] = f"""
            "<strong>177.28 恰好是上一張卡裡二次項 <em>t</em> = 13.315 的平方</strong>"
            "（13.315² ≈ 177.3）——巢狀模型只差 1 個自由度時，F 就是 t 的平方。"
            "這也解釋了為什麼 P04 說「F 可以檢定一組係數」是 t 檢定的推廣。"
-           "另外 lab 的儲存格 60 用 <code>np.argmax(infl.hat_matrix_diag)</code> 找出 "
+           "另外 lab 的槓桿值診斷用 <code>np.argmax(infl.hat_matrix_diag)</code> 找出 "
            "Boston 裡槓桿值最大的是第 <strong>374</strong> 筆。")}
 
 {quiz("qDiag", "QUIZ · 診斷圖",
@@ -996,6 +996,37 @@ BODIES["exercises"] = f"""
 """
 
 # ── REF ───────────────────────────────────────────────────────────────
+# 講義附錄的變數選擇、部分殘差及自助信賴帶。
+BODIES["mlr"] += r"""
+<h3>逐步選擇：如何形成候選模型？</h3>
+<p><strong>順向選擇（forward selection）</strong>從只有截距開始，每步加入讓模型改善最多的一個變數；
+<strong>反向選擇（backward selection）</strong>從完整模型開始，每步移除條件貢獻最小的變數。
+<strong>混合選擇（mixed selection）</strong>每次加入後也重新檢查既有變數，允許刪除後來變得多餘的項目。
+傳統做法可用 p 值作停止條件；更完整的比較會使用調整 R²、Cp、AIC、BIC 或交叉驗證，詳見
+<a href="model_selection.html">模型選擇</a>。</p>
+<p>反向最小平方選擇須先能配適完整模型；p 大於等於 n 時通常無法使用一般滿秩版本。
+順向法可以起步，但增加變數仍受設計矩陣秩限制。逐步搜尋是貪婪程序，未必找到所有子集合中的最佳解。
+若用資料選變數，評估時必須把整個選擇步驟放入訓練折；選擇後的普通 p 值也不能直接視為預先指定模型的推論。</p>
+<h3>控制其他變數：CCPR 與部分迴歸圖</h3>
+<p><strong>成分加部分殘差圖（component-plus-residual plot, CCPR）</strong>畫
+$e_i+\hat\beta_jx_{ij}$ 對 $x_{ij}$，並畫出 $\hat\beta_jx_{ij}$ 的線性成分。
+它幫助檢查在其他變數已納入後，這一項是否仍有非線性形狀。</p>
+<p><strong>部分迴歸圖（partial regression／added-variable plot）</strong>則先把 y 與 $X_j$
+各自對其他預測變數及截距迴歸，再把兩組殘差互相作圖。滿秩最小平方下，其斜率等於完整模型的
+$\hat\beta_j$。兩種圖的座標不同，不能把 CCPR 與部分迴歸圖當成同一張圖。
+高度共線性時，CCPR 顯示的散布可能低估係數的不確定性，仍須結合 VIF 與標準誤判讀。</p>
+<p>「其他變數固定，Xj 增加一單位」描述條件關聯。預測變數高度相關時，這種變動可能遠離實際資料範圍；
+觀察資料上的迴歸係數也不能直接當成介入效果。模型的用途要透過診斷與新資料評估確認。</p>
+"""
+BODIES["inference"] += r"""
+<h3>用 bootstrap 建立迴歸曲線的信賴帶</h3>
+<p>若觀測對 $(x_i,y_i)$ 是獨立同分佈，可有放回地抽 n 對資料，重新配適迴歸，並在同一組固定 x 網格預測。
+重複 B 次後，在每個網格點取預測分佈的 2.5% 與 97.5% 分位數，就得到逐點的近似 95% percentile 信賴區間。
+它描述平均反應曲線的估計不確定性，沒有自動包含新觀測的誤差，也不是整條曲線同時被涵蓋的 95% 保證。
+固定設計或有時間相依的資料須另選適合的重抽方式；自助法的抽樣單位要配合研究設計。
+<a href="resampling_methods.html#bootstrap">重抽樣章</a>進一步說明標準誤、信賴區間與預測區間的差別。</p>
+"""
+
 BODIES["reference"] = f"""
   <p>考前把這一頁掃過去就好。</p>
 

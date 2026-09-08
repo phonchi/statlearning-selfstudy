@@ -568,7 +568,7 @@ BODIES["reference"] = f"""
 
 {info("三個閱讀重點",
       "<strong>1. shape 是 (列, 欄)，列在前。</strong>看不懂錯誤訊息就先印 shape。<br>"
-      "<strong>2. reshape 與切片給的是檢視，花式索引與布林索引給的是複本。</strong>"
+      "<strong>2. 基本切片給的是檢視；reshape 可行時共用資料，否則複製。花式索引與布林索引給的是複本。</strong>"
       "不確定就 <code>.copy()</code>。<br>"
       "<strong>3. axis 指的是被摺掉的那一維。</strong>"
       "axis=0 往下摺得到欄的統計量，axis=1 往右摺得到列的統計量。")}

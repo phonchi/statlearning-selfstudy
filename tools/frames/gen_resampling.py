@@ -14,13 +14,14 @@ import sys
 
 import numpy as np
 from ISLP import load_data
-from sklearn.linear_model import LinearRegression
+from ISLP.models import ModelSpec as MS, poly, sklearn_sm
+import statsmodels.api as sm
 from sklearn.model_selection import KFold, LeaveOneOut, cross_val_score, train_test_split
 
-VERSIONS = ("numpy {} · pandas {} · scikit-learn {}".format(
-    np.__version__, __import__("pandas").__version__, __import__("sklearn").__version__))
+VERSIONS = ("numpy {} · pandas {} · scikit-learn {} · statsmodels {}".format(
+    np.__version__, __import__("pandas").__version__, __import__("sklearn").__version__, sm.__version__))
 GEN = "tools/frames/gen_resampling.py"
-MAXDEG = 10
+MAXDEG = 5
 
 Auto = load_data("Auto")
 H = np.asarray(Auto["horsepower"], dtype=float)
@@ -28,39 +29,36 @@ Y = np.asarray(Auto["mpg"], dtype=float)
 N = len(Y)
 
 
-def poly_design(h, d):
-    """1, h, h², …, h^d。與 lab 的 np.power.outer(H, np.arange(d+1)) 同構。"""
-    return np.power.outer(h, np.arange(d + 1))[:, 1:]      # sklearn 自帶 intercept
-
-
 def mse(a, b):
     return float(np.mean((a - b) ** 2))
 
 
-# ── 1. 驗證集法：10 種不同切分 × degree 1..10（ISLP 圖 5.2 右）────────────
+# ── 1. 驗證集法：10 種不同切分 × degree 1..5（ISLP 圖 5.2 右）────────────
 val_curves = []
 for seed in range(10):
     tr, te = train_test_split(np.arange(N), test_size=196, random_state=seed)
     row = []
     for d in range(1, MAXDEG + 1):
-        X = poly_design(H, d)
-        m = LinearRegression().fit(X[tr], Y[tr])
-        row.append(round(mse(Y[te], m.predict(X[te])), 4))
+        design = MS([poly("horsepower", d)])
+        Xtr = design.fit_transform(Auto.iloc[tr])
+        Xte = design.transform(Auto.iloc[te])
+        m = sm.OLS(Y[tr], Xtr).fit()
+        row.append(round(mse(Y[te], m.predict(Xte)), 4))
     val_curves.append(row)
 
 # lab 儲存格 26 / 28 的兩組真實數字，頁面上要對得起來
 lab_split_rng42 = [25.57387819, 22.21802005, 22.66767544]
 lab_split_seed3 = [20.75540796, 16.94510676, 16.97437833]
 
-# ── 2. LOOCV 與 10-fold，degree 1..10（lab 儲存格 37 / 41 沒存輸出）──────
+# ── 2. LOOCV 與 10-fold，degree 1..5（lab 儲存格 37 / 41 沒存輸出）──────
 loocv, kf10 = [], []
 loo = LeaveOneOut()
 kf = KFold(n_splits=10, shuffle=True, random_state=0)      # 與 lab 同設定
 for d in range(1, MAXDEG + 1):
-    X = poly_design(H, d)
-    loocv.append(round(-cross_val_score(LinearRegression(), X, Y, cv=loo,
+    X = np.power.outer(H, np.arange(d + 1))
+    loocv.append(round(-cross_val_score(sklearn_sm(sm.OLS), X, Y, cv=loo,
                                         scoring="neg_mean_squared_error").mean(), 4))
-    kf10.append(round(-cross_val_score(LinearRegression(), X, Y, cv=kf,
+    kf10.append(round(-cross_val_score(sklearn_sm(sm.OLS), X, Y, cv=kf,
                                        scoring="neg_mean_squared_error").mean(), 4))
 
 # ── 3. Bootstrap：Portfolio 的 α（ISLP §5.2）────────────────────────────

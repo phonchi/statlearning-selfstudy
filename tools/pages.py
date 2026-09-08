@@ -12,7 +12,7 @@ index.html 卡片與 README 章節表——所以三處編號不可能不同步�
 """
 from dataclasses import dataclass, field
 
-COURSE_REPO = "phonchi/nsysu-math524-2025"   # 凍結的封存 repo，連結不會爛
+COURSE_REPO = "phonchi/nsysu-math524"   # 現行課程教材
 SITE_REPO = "phonchi/statlearning-selfstudy"
 SITE_URL = "https://phonchi.github.io/statlearning-selfstudy/"
 CLASSROOM_PACKAGES = "https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt"
@@ -97,7 +97,7 @@ class Page:
     # "appendix"（Python 先備）。kind 管教學文案，grounding_mode 管來源檢查；group 管位置。
     # （prep 頁要過 check_prep_grounding），group 管的是「這頁排在哪一區」。
     group: str = ""
-    deck_url: str = ""         # 單頁引用的講義版本；空字串沿用課程封存站
+    deck_url: str = ""         # 單頁引用的講義版本；空字串沿用現行課程站
     deck_label: str = ""
     deck_note: str = ""
     legacy_anchors: tuple = ()  # 重排後保留在小標題上的既有書籤
@@ -809,7 +809,7 @@ PAGES = [
         kind="prep", data_key="prep_p1_python_basics", src_labs=(2, 1),
         ex_links=[("🔗 Python 官方教學（中文）", "https://docs.python.org/zh-tw/3/tutorial/"),
                   ("🔗 內建型別", "https://docs.python.org/zh-tw/3/library/stdtypes.html"),
-                  ("📓 Ch02 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                  ("📓 Ch02 中文 Lab", "https://github.com/phonchi/nsysu-math524/blob/main/"
                    "static_files/presentations/Ch02-statlearn-lab-zh.ipynb")],
         secs=[
             Sec("prologue", "第一行程式", "先讓一段課程 lab 的程式碼變得看得懂",
@@ -841,7 +841,7 @@ PAGES = [
         ex_links=[("🔗 Python 控制流程",
                    "https://docs.python.org/zh-tw/3/tutorial/controlflow.html"),
                   ("🔗 例外處理", "https://docs.python.org/zh-tw/3/tutorial/errors.html"),
-                  ("📓 Ch05 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                  ("📓 Ch05 中文 Lab", "https://github.com/phonchi/nsysu-math524/blob/main/"
                    "static_files/presentations/Ch05-resample-lab-zh.ipynb")],
         secs=[
             Sec("prologue", "為什麼要寫函式", "同一段程式碼貼三次，就是三個等著出錯的地方",
@@ -872,7 +872,7 @@ PAGES = [
         kind="prep", data_key="prep_p3_numpy", src_labs=(2, 1),
         ex_links=[("🔗 NumPy 官方教學", "https://numpy.org/doc/stable/user/absolute_beginners.html"),
                   ("🔗 NumPy 廣播規則", "https://numpy.org/doc/stable/user/basics.broadcasting.html"),
-                  ("📓 Ch02 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                  ("📓 Ch02 中文 Lab", "https://github.com/phonchi/nsysu-math524/blob/main/"
                    "static_files/presentations/Ch02-statlearn-lab-zh.ipynb")],
         secs=[
             Sec("prologue", "為什麼不用串列", "串列加串列是接起來，陣列加陣列才是逐元素相加",
@@ -909,7 +909,7 @@ PAGES = [
                    "https://pandas.pydata.org/docs/user_guide/10min.html"),
                   ("🔗 索引與選取資料",
                    "https://pandas.pydata.org/docs/user_guide/indexing.html"),
-                  ("📓 Ch01 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                  ("📓 Ch01 中文 Lab", "https://github.com/phonchi/nsysu-math524/blob/main/"
                    "static_files/presentations/Ch01-lab-zh.ipynb")],
         secs=[
             Sec("prologue", "Series 與 DataFrame", "一欄是 Series，一張表是 DataFrame",
@@ -944,7 +944,7 @@ PAGES = [
         ex_links=[("🔗 seaborn 教學", "https://seaborn.pydata.org/tutorial.html"),
                   ("🔗 Matplotlib 快速入門",
                    "https://matplotlib.org/stable/users/explain/quick_start.html"),
-                  ("📓 Ch01 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                  ("📓 Ch01 中文 Lab", "https://github.com/phonchi/nsysu-math524/blob/main/"
                    "static_files/presentations/Ch01-lab-zh.ipynb")],
         secs=[
             Sec("prologue", "為什麼要先畫圖", "摘要統計一樣，圖可以完全不一樣",
@@ -977,7 +977,7 @@ PAGES = [
                    "https://www.statsmodels.org/stable/gettingstarted.html"),
                   ("🔗 scikit-learn 估計器介面",
                    "https://scikit-learn.org/stable/developers/develop.html"),
-                  ("📓 Ch03 中文 Lab", "https://github.com/phonchi/nsysu-math524-2025/blob/main/"
+                  ("📓 Ch03 中文 Lab", "https://github.com/phonchi/nsysu-math524/blob/main/"
                    "static_files/presentations/Ch03-linreg-lab-zh.ipynb")],
         secs=[
             Sec("prologue", "兩套 API 的分工", "要看係數用 statsmodels，要做預測用 scikit-learn",

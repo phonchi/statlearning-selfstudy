@@ -2,48 +2,48 @@
 
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分成四區：
 
-1. **課前準備**（3 頁）——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
-2. **正課**（11 章）——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
+1. **課前準備**——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
+2. **正課**——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
    關鍵詞彙卡與重點速查表。
-3. **附錄：統計先備知識**（6 頁）——參考 Seeing Theory，正課需要時查閱。
-4. **附錄：Python 先備知識**（6 頁）——正課會用到的語法與套件，查閱用。
+3. **附錄：統計先備知識**——參考 Seeing Theory，正課需要時查閱。
+4. **附錄：Python 先備知識**——正課會用到的語法與套件，查閱用。
 
 課前準備與兩組附錄都是選讀，不列入評分。
 
 - 線上閱讀：https://phonchi.github.io/statlearning-selfstudy/
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python](https://www.statlearning.com/)
 - 進階參考：[ESL — The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)
-- 課程講義：[nsysu-math524-2025](https://github.com/phonchi/nsysu-math524-2025)（各頁「講義 PDF」與「中文 Lab」連結來源）
+- 課程講義：[現行課程網站](https://phonchi.github.io/nsysu-math524/)（各頁「講義 PDF」與「中文 Lab」連結來源）
 
 ## 課前準備（選讀，不列入評分）
 
-三頁，可依需要選讀，不需要任何程式基礎。
+可依需要選讀，不需要任何程式基礎。
 
 **期中考使用電腦教室的電腦。** 本機練習建議依[課程提供的版本清單](https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt)
 對齊教室的 Python 與套件版本；平時可用 Colab，考前仍應熟悉教室環境。
 安裝與核對步驟見[環境安裝：本機與考前準備](00b_setup.html#local)。
 
-| # | 頁面 | 對應 | 內容量 |
-|---|------|------|--------|
-| 1 | [AI 時代的資料分析學習迴圈](00a_why_code.html) | 課前 · AI 學習迴圈 | 5 節 · 0 視覺區塊 · 18 張卡 |
-| 2 | [環境安裝](00b_setup.html) | 課前 · 環境安裝 | 6 節 · 1 視覺區塊 · 24 張卡 |
-| 3 | [AI 輔助統計分析：從提問到驗證](00c_ai_assisted.html) | 課前 · AI 協作 | 6 節 · 0 視覺區塊 · 18 張卡 |
+| # | 頁面 | 對應 |
+|---|------|------|
+| 1 | [AI 時代的資料分析學習迴圈](00a_why_code.html) | 課前 · AI 學習迴圈 |
+| 2 | [環境安裝](00b_setup.html) | 課前 · 環境安裝 |
+| 3 | [AI 輔助統計分析：從提問到驗證](00c_ai_assisted.html) | 課前 · AI 協作 |
 
-## 正課 · 十一章（授課順序）
+## 正課（授課順序）
 
-| # | 頁面 | 對應 | 講義 | 內容量 |
-|---|------|------|------|--------|
-| 01 | [統計學習導論與 EDA](introduction.html) | ISLP Ch.1 | 講義 01 | 9 節 · 5 視覺區塊 · 26 張卡 |
-| 02 | [統計學習的基本框架](statistical_learning.html) | ISLP Ch.2／ESL Ch.2 | 講義 02 | 7 節 · 5 視覺區塊 · 26 張卡 |
-| 03 | [線性迴歸](linear_regression.html) | ISLP Ch.3／ESL §3.1–3.3 | 講義 03 | 8 節 · 6 視覺區塊 · 28 張卡 |
-| 04 | [分類](classification.html) | ISLP Ch.4／ESL §4.1–4.4 | 講義 04 | 8 節 · 5 視覺區塊 · 28 張卡 |
-| 05 | [重抽樣方法](resampling_methods.html) | ISLP Ch.5／ESL §7.1–7.4、7.10–7.11 | 講義 05 | 8 節 · 4 視覺區塊 · 23 張卡 |
-| 06 | [線性模型選擇與正則化](model_selection.html) | ISLP Ch.6／ESL §3.3–3.6、§7.1–7.7 | 講義 06 | 10 節 · 6 視覺區塊 · 27 張卡 |
-| 07 | [非監督式學習](unsupervised_learning.html) | ISLP Ch.12／ESL §13.1–13.3、§14.1–14.3、§14.5–14.9 | 講義 12 | 11 節 · 8 視覺區塊 · 30 張卡 |
-| 08 | [超越線性](beyond_linearity.html) | ISLP Ch.7／ESL §5.1–5.7、§6.1–6.3、§9.1 | 講義 07 | 9 節 · 8 視覺區塊 · 28 張卡 |
-| 09 | [樹狀方法與集成學習](tree_based_methods.html) | ISLP Ch.8／ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3 | 講義 08 | 11 節 · 9 視覺區塊 · 30 張卡 |
-| 10 | [支持向量機](support_vector_machines.html) | ISLP Ch.9／ESL §6.6–6.9、§12.1–12.3 | 講義 09 | 7 節 · 6 視覺區塊 · 26 張卡 |
-| 11 | [深度學習（補充）](deep_learning.html) | ISLP Ch.10 · 補充／ESL Ch.11 | — | 7 節 · 5 視覺區塊 · 28 張卡 |
+| # | 頁面 | 對應 | 講義 |
+|---|------|------|------|
+| 01 | [統計學習導論與 EDA](introduction.html) | ISLP Ch.1 | 講義 01 |
+| 02 | [統計學習的基本框架](statistical_learning.html) | ISLP Ch.2／ESL Ch.2 | 講義 02 |
+| 03 | [線性迴歸](linear_regression.html) | ISLP Ch.3／ESL §3.1–3.3 | 講義 03 |
+| 04 | [分類](classification.html) | ISLP Ch.4／ESL §4.1–4.4 | 講義 04 |
+| 05 | [重抽樣方法](resampling_methods.html) | ISLP Ch.5／ESL §7.1–7.4、7.10–7.11 | 講義 05 |
+| 06 | [線性模型選擇與正則化](model_selection.html) | ISLP Ch.6／ESL §3.3–3.6、§7.1–7.7 | 講義 06 |
+| 07 | [非監督式學習](unsupervised_learning.html) | ISLP Ch.12／ESL §13.1–13.3、§14.1–14.3、§14.5–14.9 | 講義 12 |
+| 08 | [超越線性](beyond_linearity.html) | ISLP Ch.7／ESL §5.1–5.7、§6.1–6.3、§9.1 | 講義 07 |
+| 09 | [樹狀方法與集成學習](tree_based_methods.html) | ISLP Ch.8／ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3 | 講義 08 |
+| 10 | [支持向量機](support_vector_machines.html) | ISLP Ch.9／ESL §6.6–6.9、§12.1–12.3 | 講義 09 |
+| 11 | [深度學習（補充）](deep_learning.html) | ISLP Ch.10 · 補充／ESL Ch.11 | — |
 
 章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
 集成學習那一週折進「樹狀方法與集成學習」。
@@ -54,28 +54,28 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 與 Python 附錄一樣，正課需要時再查閱，不必先讀完。不需要 Python 或微積分基礎。
 每節有原創算例、自測與來源定位，本站核心互動可獨立使用，原站提供延伸實驗。
 
-| # | 頁面 | 對應 | 內容量 |
-|---|------|------|--------|
-| 1 | [機率、平均與變異](s1_probability.html) | 先備 · S1 統計 | 4 節 · 1 視覺區塊 · 20 張卡 |
-| 2 | [條件機率與獨立](s2_conditional.html) | 先備 · S2 統計 | 5 節 · 1 視覺區塊 · 20 張卡 |
-| 3 | [分布與抽樣](s3_distributions.html) | 先備 · S3 統計 | 5 節 · 2 視覺區塊 · 20 張卡 |
-| 4 | [從樣本推論母體](s4_inference.html) | 先備 · S4 統計 | 6 節 · 2 視覺區塊 · 22 張卡 |
-| 5 | [貝氏推論〔選讀〕](s5_bayesian.html) | 先備 · S5 統計 | 4 節 · 1 視覺區塊 · 20 張卡 |
-| 6 | [相關與迴歸〔選讀〕](s6_regression.html) | 先備 · S6 統計 | 4 節 · 1 視覺區塊 · 20 張卡 |
+| # | 頁面 | 對應 |
+|---|------|------|
+| 1 | [機率、平均與變異](s1_probability.html) | 先備 · S1 統計 |
+| 2 | [條件機率與獨立](s2_conditional.html) | 先備 · S2 統計 |
+| 3 | [分布與抽樣](s3_distributions.html) | 先備 · S3 統計 |
+| 4 | [從樣本推論母體](s4_inference.html) | 先備 · S4 統計 |
+| 5 | [貝氏推論〔選讀〕](s5_bayesian.html) | 先備 · S5 統計 |
+| 6 | [相關與迴歸〔選讀〕](s6_regression.html) | 先備 · S6 統計 |
 
 ## 附錄：Python 先備知識（選讀，不列入評分）
 
-沒寫過 Python，或只會一點點？這六頁把正課會用到的語法與套件講一遍，
+沒寫過 Python，或只會一點點？這組附錄把正課會用到的語法與套件講一遍，
 程式碼一樣逐字取自課程 lab notebook。**查閱用**——正課讀到卡住再回來翻，不必先讀完。
 
-| # | 頁面 | 對應 | 內容量 |
-|---|------|------|--------|
-| 1 | [Python 基礎](p1_python_basics.html) | 先備 · Python 基礎 | 6 節 · 6 視覺區塊 · 24 張卡 |
-| 2 | [流程與函式](p2_flow_functions.html) | 先備 · 流程與函式 | 6 節 · 6 視覺區塊 · 25 張卡 |
-| 3 | [NumPy 陣列](p3_numpy.html) | 先備 · NumPy 陣列 | 8 節 · 7 視覺區塊 · 26 張卡 |
-| 4 | [pandas 資料框](p4_pandas.html) | 先備 · pandas 資料框 | 6 節 · 7 視覺區塊 · 25 張卡 |
-| 5 | [視覺化](p5_visualization.html) | 先備 · 視覺化 | 6 節 · 7 視覺區塊 · 28 張卡 |
-| 6 | [建模 API](p6_modeling_api.html) | 先備 · 建模 API | 6 節 · 6 視覺區塊 · 25 張卡 |
+| # | 頁面 | 對應 |
+|---|------|------|
+| 1 | [Python 基礎](p1_python_basics.html) | 先備 · Python 基礎 |
+| 2 | [流程與函式](p2_flow_functions.html) | 先備 · 流程與函式 |
+| 3 | [NumPy 陣列](p3_numpy.html) | 先備 · NumPy 陣列 |
+| 4 | [pandas 資料框](p4_pandas.html) | 先備 · pandas 資料框 |
+| 5 | [視覺化](p5_visualization.html) | 先備 · 視覺化 |
+| 6 | [建模 API](p6_modeling_api.html) | 先備 · 建模 API |
 
 想先練習 Python 再進正課，可以依序閱讀：P1 → P2 → P3 → P4 → P5 → P6；
 寫過程式、只是沒碰過資料科學套件的，從 P3 開始就好。
@@ -86,8 +86,8 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 網站與 PDF 的內容定位分開標示；自訂資料、模擬與詞彙解說由本站編寫，不宣稱取自課程 lab。
 
 
-每頁的中文來源標記提供課本節號或講義頁碼，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
-**逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方的「來源」標了儲存格編號。
+每頁的中文來源標記提供課本章節與講義主題，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
+**逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方可開啟原始筆記本；精確引用位置保存在內部來源資料中。
 圖表用的烘焙資料由 `tools/frames/` 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。
 每個正文視覺另標示它屬於課程資料、講義／課本重繪、固定種子模擬或自訂概念示意；
 自訂值不得解讀成課本或實證結果。

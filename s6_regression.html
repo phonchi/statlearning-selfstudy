@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -698,11 +698,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S6 統計）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站或講義頁碼；需要更多實驗或推導時再開啟。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://seeing-theory.brown.edu/regression-analysis/index.html" target="_blank" rel="noopener">🔗 Seeing Theory 互動原站</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=55" target="_blank" rel="noopener">📖 Seeing Theory 講義</a><a href="introduction.html" target="_blank" rel="noopener">🔗 正課導論</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://seeing-theory.brown.edu/regression-analysis/index.html" target="_blank" rel="noopener">🔗 Seeing Theory 互動原站</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="55" target="_blank" rel="noopener">📖 Seeing Theory 講義</a><a href="introduction.html" target="_blank" rel="noopener">🔗 正課導論</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -747,7 +747,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>把所有 x 值從公尺改成公分（乘以 100），且 100 為正數。相關係數會怎樣？</p>
   <div class="quiz-options" id="qCovarianceOptions"><div class="quiz-opt" data-correct="false" data-fb="共變異數會乘以 100，但相關係數的分子、分母會同時縮放。" onclick="quizCheck('qCovariance', this)"><span class="opt-letter">(A)</span> 也乘以 100</div><div class="quiz-opt" data-correct="true" data-fb="對。正的線性換單位不改變標準化後的相關係數。" onclick="quizCheck('qCovariance', this)"><span class="opt-letter">(B)</span> 保持相同</div><div class="quiz-opt" data-correct="false" data-fb="只要原本 x 有變異，乘以 100 後仍有變異，分母不會變成 0。" onclick="quizCheck('qCovariance', this)"><span class="opt-letter">(C)</span> 變成未定義</div></div>
   <div class="quiz-feedback" id="qCovarianceFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section2">來源：Seeing Theory Ch.6 · Correlation</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=61">講義 p.61–63</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section2">來源：Seeing Theory Ch.6 · Correlation</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="61">講義</a>。</p>
 </section>
 <section id="least_squares">
 <!-- GEN:BEGIN sec:least_squares -->
@@ -792,7 +792,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>目前某條線的五個殘差是 1、−1、0、2、−2。它的 RSS 是多少？</p>
   <div class="quiz-options" id="qLeastSquaresOptions"><div class="quiz-opt" data-correct="false" data-fb="殘差直接相加會正負抵消；OLS 的目標是平方後再加。" onclick="quizCheck('qLeastSquares', this)"><span class="opt-letter">(A)</span> 0</div><div class="quiz-opt" data-correct="false" data-fb="這是殘差絕對值的總和，不是平方和。" onclick="quizCheck('qLeastSquares', this)"><span class="opt-letter">(B)</span> 6</div><div class="quiz-opt" data-correct="true" data-fb="對。$1^2+(-1)^2+0^2+2^2+(-2)^2=10$。" onclick="quizCheck('qLeastSquares', this)"><span class="opt-letter">(C)</span> 10</div></div>
   <div class="quiz-feedback" id="qLeastSquaresFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · Ordinary Least Squares</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=55">講義 p.55–60</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · Ordinary Least Squares</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="55">講義</a>。</p>
 </section>
 <section id="residuals">
 <!-- GEN:BEGIN sec:residuals -->
@@ -823,7 +823,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>含截距的 OLS 訓練殘差加總為 0。這足以證明直線模型正確嗎？</p>
   <div class="quiz-options" id="qResidualsOptions"><div class="quiz-opt" data-correct="false" data-fb="正負殘差會抵消；彎曲或異質變異仍可能同時存在。" onclick="quizCheck('qResiduals', this)"><span class="opt-letter">(A)</span> 足夠，因為平均誤差是 0</div><div class="quiz-opt" data-correct="true" data-fb="對。加總為 0 是 OLS 的代數性質，不能取代診斷。" onclick="quizCheck('qResiduals', this)"><span class="opt-letter">(B)</span> 不足，還要看殘差形狀與模型假設</div><div class="quiz-opt" data-correct="false" data-fb="殘差可正可負；它們在含截距的訓練 OLS 中才會加總為 0。" onclick="quizCheck('qResiduals', this)"><span class="opt-letter">(C)</span> 不足，因為 OLS 殘差永遠都大於 0</div></div>
   <div class="quiz-feedback" id="qResidualsFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · OLS 的誤差平方</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=57">講義 p.57–60</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · OLS 的誤差平方</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="57">講義</a>。</p>
 </section>
 <section id="anova">
 <!-- GEN:BEGIN sec:anova -->
@@ -853,7 +853,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>若三組的組平均完全相同，但各組內仍有變動，ANOVA 的 F 會是多少？</p>
   <div class="quiz-options" id="qAnovaOptions"><div class="quiz-opt" data-correct="true" data-fb="對。組間平方和為 0，分子均方也是 0；組內均方為正時 F=0。" onclick="quizCheck('qAnova', this)"><span class="opt-letter">(A)</span> 0</div><div class="quiz-opt" data-correct="false" data-fb="F=1 代表組間、組內均方相同；組平均完全相同時組間平方和為 0。" onclick="quizCheck('qAnova', this)"><span class="opt-letter">(B)</span> 1</div><div class="quiz-opt" data-correct="false" data-fb="無限大會出現在組內均方趨近 0、組間差異仍存在的情況。" onclick="quizCheck('qAnova', this)"><span class="opt-letter">(C)</span> 無限大</div></div>
   <div class="quiz-feedback" id="qAnovaFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section3">來源：Seeing Theory Ch.6 · Analysis of Variance</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=63">講義 p.63–66</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section3">來源：Seeing Theory Ch.6 · Analysis of Variance</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="63">講義</a>。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -883,7 +883,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>四組、總樣本數 20 的單因子 ANOVA，組間與組內自由度分別是多少？</p>
   <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="組間需扣掉一個總平均限制，所以不是 k。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 4 與 16</div><div class="quiz-opt" data-correct="true" data-fb="對。組間 k−1=3，組內 n−k=16。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 3 與 16</div><div class="quiz-opt" data-correct="false" data-fb="19 是總自由度 n−1；組內還要扣掉四個組平均。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 3 與 19</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">題目依 Seeing Theory Ch.6 的 OLS、Correlation 與 ANOVA 定義重新編寫</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=55">講義 p.55–66</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">題目依 Seeing Theory Ch.6 的 OLS、Correlation 與 ANOVA 定義重新編寫</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="55">講義</a>。</p>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
@@ -905,7 +905,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 20 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡取自本頁依 Seeing Theory 編寫的概念解說，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">

@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -698,11 +698,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S5 統計）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站或講義頁碼；需要更多實驗或推導時再開啟。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html" target="_blank" rel="noopener">🔗 Seeing Theory 互動原站</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=49" target="_blank" rel="noopener">📖 Seeing Theory 講義</a><a href="introduction.html" target="_blank" rel="noopener">🔗 正課導論</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html" target="_blank" rel="noopener">🔗 Seeing Theory 互動原站</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="49" target="_blank" rel="noopener">📖 Seeing Theory 講義</a><a href="introduction.html" target="_blank" rel="noopener">🔗 正課導論</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -743,7 +743,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>某疾病很少見。檢驗呈陽性後，為何不能直接把敏感度當成患病機率？</p>
   <div class="quiz-options" id="qReviewOptions"><div class="quiz-opt" data-correct="false" data-fb="敏感度可以很高；問題在於它是 P(+｜疾病)，方向與題目要的 P(疾病｜+) 相反。" onclick="quizCheck('qReview', this)"><span class="opt-letter">(A)</span> 因為敏感度必定小於 50%</div><div class="quiz-opt" data-correct="true" data-fb="對。真陽性與偽陽性的來源都要放進分母，盛行率決定兩群人原先有多少。" onclick="quizCheck('qReview', this)"><span class="opt-letter">(B)</span> 還要考慮盛行率與偽陽性</div><div class="quiz-opt" data-correct="false" data-fb="陽性通常會改變患病機率，只是改變後的數值還取決於先驗與檢驗表現。" onclick="quizCheck('qReview', this)"><span class="opt-letter">(C)</span> 因為陽性結果完全沒有資訊</div></div>
   <div class="quiz-feedback" id="qReviewFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section1">來源：Seeing Theory Ch.5 · Bayes' Theorem</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=49">講義 p.49–50</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section1">來源：Seeing Theory Ch.5 · Bayes' Theorem</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="49">講義</a>。</p>
 </section>
 <section id="likelihood">
 <!-- GEN:BEGIN sec:likelihood -->
@@ -771,7 +771,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>硬幣 10 次得到 7 次正面。$L(0.7)$ 比 $L(0.5)$ 大，能得出哪個結論？</p>
   <div class="quiz-options" id="qLikelihoodOptions"><div class="quiz-opt" data-correct="false" data-fb="概似不是參數的機率分布；要談參數機率，還需要先驗並做正規化。" onclick="quizCheck('qLikelihood', this)"><span class="opt-letter">(A)</span> $P(p=0.7)=L(0.7)$</div><div class="quiz-opt" data-correct="true" data-fb="對。概似比較的是固定資料在不同參數值下的相對支持度。" onclick="quizCheck('qLikelihood', this)"><span class="opt-letter">(B)</span> 這批資料在 $p=0.7$ 下比在 $p=0.5$ 下更有支持度</div><div class="quiz-opt" data-correct="false" data-fb="估計 $p=0.7$ 仍代表下一次有隨機性，不能推出確定結果。" onclick="quizCheck('qLikelihood', this)"><span class="opt-letter">(C)</span> 下一次一定是正面</div></div>
   <div class="quiz-feedback" id="qLikelihoodFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section2">來源：Seeing Theory Ch.5 · Likelihood Function</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=51">講義 p.51–52</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section2">來源：Seeing Theory Ch.5 · Likelihood Function</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="51">講義</a>。</p>
 </section>
 <section id="posterior">
 <!-- GEN:BEGIN sec:posterior -->
@@ -818,7 +818,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>先驗為 $\operatorname{Beta}(3,4)$，看到 5 次正面與 2 次反面後，後驗是哪一個？</p>
   <div class="quiz-options" id="qPosteriorOptions"><div class="quiz-opt" data-correct="true" data-fb="對。正面次數加到第一個參數，反面次數加到第二個參數。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(A)</span> $\operatorname{Beta}(8,6)$</div><div class="quiz-opt" data-correct="false" data-fb="這只留下資料計數，漏掉了先驗中的參數。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(B)</span> $\operatorname{Beta}(5,2)$</div><div class="quiz-opt" data-correct="false" data-fb="正、反面計數加反了；第一個參數對應正面。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(C)</span> $\operatorname{Beta}(6,9)$</div></div>
   <div class="quiz-feedback" id="qPosteriorFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=52">講義 p.52–54</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="52">講義</a>。</p>
 </section>
 <section id="influence">
 <!-- GEN:BEGIN sec:influence -->
@@ -848,7 +848,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>兩位分析者使用平均都為 0.5 的 Beta(2,2) 與 Beta(40,40) 先驗。看到相同少量資料後，何者後驗移動較少？</p>
   <div class="quiz-options" id="qInfluenceOptions"><div class="quiz-opt" data-correct="false" data-fb="較小的參數總量代表先驗較分散，少量資料就能占較大權重。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(A)</span> Beta(2,2)，因為參數比較小</div><div class="quiz-opt" data-correct="true" data-fb="對。兩者中心相同，但 Beta(40,40) 更集中，等效的先前資訊量較大。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(B)</span> Beta(40,40)，因為先驗總量較大</div><div class="quiz-opt" data-correct="false" data-fb="先驗平均只描述中心；集中程度也會影響更新幅度。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(C)</span> 兩者完全相同，因為先驗平均相同</div></div>
   <div class="quiz-feedback" id="qInfluenceFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=52">講義 p.52–54</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="52">講義</a>。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -878,7 +878,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>後驗是 Beta(9,5)。下一次投擲出現正面的後驗預測機率是多少？</p>
   <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="不需要再加一筆尚未觀察的資料。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> $9/(9+5+1)$</div><div class="quiz-opt" data-correct="true" data-fb="對。Bernoulli 下一次成功的後驗預測機率等於 p 的後驗平均。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> $9/(9+5)$</div><div class="quiz-opt" data-correct="false" data-fb="這是兩個參數的比值，且超過 1，不能是機率。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> $9/5$</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section1">題目依 Seeing Theory Ch.5 的 Bayes、Likelihood 與 Prior to Posterior 定義重新編寫</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=49">講義 p.49–54</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section1">題目依 Seeing Theory Ch.5 的 Bayes、Likelihood 與 Prior to Posterior 定義重新編寫</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="49">講義</a>。</p>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
@@ -890,7 +890,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>先判斷你要算的是事件機率、參數的相對支持度，或參數的後驗分布，再選公式。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>概念</th><th>用途</th><th>Seeing Theory 原站</th><th>講義頁</th></tr></thead>
-  <tbody><tr><td>Bayes 公式</td><td>由結果更新未知狀態</td><td><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section1">Bayes' Theorem</a></td><td><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=49">p.49–50</a></td></tr><tr><td>概似</td><td>固定資料，比較參數</td><td><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section2">Likelihood Function</a></td><td><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=51">p.51–52</a></td></tr><tr><td>先驗到後驗</td><td>結合先驗與資料</td><td><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">Prior to Posterior</a></td><td><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=52">p.52–54</a></td></tr></tbody>
+  <tbody><tr><td>Bayes 公式</td><td>由結果更新未知狀態</td><td><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section1">Bayes' Theorem</a></td><td><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="49">p.49–50</a></td></tr><tr><td>概似</td><td>固定資料，比較參數</td><td><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section2">Likelihood Function</a></td><td><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="51">p.51–52</a></td></tr><tr><td>先驗到後驗</td><td>結合先驗與資料</td><td><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">Prior to Posterior</a></td><td><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="52">p.52–54</a></td></tr></tbody>
 </table></div>
   <p class="ver-note">本頁為不需要 Python 的概念先備頁。原始參數與公式依 Seeing Theory Chapter 5：
   網頁定義「L(θ | x) = P(x | θ)」，並以 Beta(α, β) 先驗更新硬幣正面機率；PDF 印刷頁 49–54。
@@ -899,7 +899,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 20 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡取自本頁依 Seeing Theory 編寫的概念解說，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">

@@ -38,7 +38,7 @@ BODIES = {}
 BODIES["prologue"] = f"""
   <p>先完成讀取資料與繪圖的練習：開課程 notebook、讀入 Auto 汽車資料，畫出馬力對 mpg 的散佈圖。平時可以先用 Colab 練習；本地端版本則建議和電腦教室一致，考前要熟悉教室的操作環境。</p>
 {info("期中考準備：熟悉電腦教室的環境", '期中考使用電腦教室的電腦。平時可用 Colab 學習，但本地端練習建議依 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">課程官方套件版本清單</a> 設定，並在考前用教室電腦完整跑一次練習。下方「本機安裝」說明如何核對 Python、套件與 kernel。', "warm")}
-{info("第一次上手路徑", '開啟 <a href="https://colab.research.google.com/github/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb">Ch02 中文課程 notebook（Colab）</a>，選「在雲端硬碟中儲存副本」。先執行安裝套件與 imports；第一次使用 CPU 即可，先跳過 cudf／cuml 的 GPU 擴充。接著照下方「資料放哪裡」取得 Auto.csv，完成第一張圖。')}
+{info("第一次上手路徑", '開啟 <a href="https://colab.research.google.com/github/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb">Ch02 中文課程 notebook（Colab）</a>，選「在雲端硬碟中儲存副本」。先執行安裝套件與 imports；第一次使用 CPU 即可，先跳過 cudf／cuml 的 GPU 擴充。接著照下方「資料放哪裡」取得 Auto.csv，完成第一張圖。')}
 {table(["環境", "啟動成本", "適合情境", "主要代價"],
        [["<strong>Colab（第一次上手推薦）</strong>", "瀏覽器開啟即可使用",
          "第一次跑 lab、公用電腦、需要臨時 GPU", "執行階段會回收，套件需重裝"],
@@ -87,7 +87,7 @@ BODIES["colab"] = f"""
  <div><div class="viz-panel">
   <p><strong>自己決定三格的執行順序。</strong>每按一次，就等於在 notebook 執行那一格；
   左邊的 <code>[n]</code> 是執行次序，不是儲存格位置。</p>
-  {table(["儲存格", "程式", "執行"],
+  {table(["執行序號", "程式", "執行"],
          [["<code id=\"w13clN0\">[ ]</code>", "<code>x = 10</code>",
            '<button class="btn btn-step" onclick="w13clRun(0)">執行第 1 格</button>'],
           ["<code id=\"w13clN1\">[ ]</code>", "<code>x = x * 2</code>",
@@ -168,7 +168,7 @@ BODIES["imports"] = f"""
 # ── P03 資料放哪裡 ────────────────────────────────────────────────────
 BODIES["data"] = f"""
   <p>資料不會因為掛載 Drive 就自動出現。第一次請依序完成下面四步：</p>
-{table(["步驟", "操作與完成標準"], [["1. 取得資料", '<a href="https://raw.githubusercontent.com/phonchi/nsysu-math524-2025/main/static_files/assignments/Auto.csv">下載課程 Auto.csv</a>。若瀏覽器顯示文字，另存為 Auto.csv，保留副檔名。'], ["2. 放進自己的 Drive", "在 Google Drive 建立 Lab/Data 資料夾，將 Auto.csv 上傳到裡面。"], ["3. 掛載並設定路徑", "在 Colab 執行下方掛載儲存格；DATA_PATH 改成 /content/drive/MyDrive/Lab/Data/，或你實際建立的資料夾。"], ["4. 讀取、檢查、畫圖", "先確認有 horsepower 與 mpg 欄，再執行下方繪圖步驟。成功時會看到橫軸 horsepower、縱軸 mpg 的散佈圖。"]])}
+{table(["步驟", "操作與完成標準"], [["1. 取得資料", '<a href="https://raw.githubusercontent.com/phonchi/nsysu-math524/main/static_files/assignments/Auto.csv">下載課程 Auto.csv</a>。若瀏覽器顯示文字，另存為 Auto.csv，保留副檔名。'], ["2. 放進自己的 Drive", "在 Google Drive 建立 Lab/Data 資料夾，將 Auto.csv 上傳到裡面。"], ["3. 掛載並設定路徑", "在 Colab 執行下方掛載儲存格；DATA_PATH 改成 /content/drive/MyDrive/Lab/Data/，或你實際建立的資料夾。"], ["4. 讀取、檢查、畫圖", "先確認有 horsepower 與 mpg 欄，再執行下方繪圖步驟。成功時會看到橫軸 horsepower、縱軸 mpg 的散佈圖。"]])}
   <p>另可下載課本的 <a href="https://www.statlearning.com/s/ALL-CSV-FILES-2nd-Edition-corrected.zip">官方 CSV 資料壓縮檔</a>，解壓後取得 Auto.csv。不同來源可能已做過清理，列數與特殊值不一定一樣；本頁起步與 00C 的清理練習都使用上面的<strong>課程 Auto.csv</strong>，不要混用不同檔案的輸出。</p>
 
 {card("掛載 Drive", C(2, 183), O(2, 183), src=S(2, 183),

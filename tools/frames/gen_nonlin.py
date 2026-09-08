@@ -62,10 +62,11 @@ def k(v):
 # 0. 共用的 Wage 子樣本：step / basis / knot / loess 四個 live 元件都用它
 #    （ISLP 圖 7.3 也是「a subset of the Wage data」）
 # ══════════════════════════════════════════════════════════════════════
-rng_sub = np.random.default_rng(524)
-POOL = np.flatnonzero(Y <= 250)          # 排除 79 筆 wage>250 的高收入者（ISLP §7.1 說那是另一群）
-SUB = np.sort(rng_sub.choice(POOL, size=90, replace=False))
-sub_age, sub_y = AGE[SUB], Y[SUB]
+# 與 lab 一致：所有模型與散點使用完整 3000 筆 Wage，不刪高收入者。
+POOL = np.arange(N)
+SUB = np.arange(N)
+sub_age, sub_y = AGE, Y
+
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -235,6 +236,10 @@ for _d in list(gam_age.values()) + list(gam_year.values()) + [gam_edu]:
 GAM_YR = [float(np.floor(min(_allv) / 10) * 10), float(np.ceil(max(_allv) / 10) * 10)]
 
 
+LOWESS_GRID = np.linspace(A0, A1, 100)
+LOWESS = {str(span): r(sm.nonparametric.lowess(Y, AGE, frac=span, xvals=LOWESS_GRID), 6)
+          for span in (0.2, 0.5)}
+
 # ══════════════════════════════════════════════════════════════════════
 # 輸出
 # ══════════════════════════════════════════════════════════════════════
@@ -247,15 +252,15 @@ def js(name, obj, src, seed, note=""):
 
 
 out = [
+    js("FRAMES_w08lowess", {"grid": LOWESS_GRID.tolist(), "curves": LOWESS},
+       f"{LAB} 的 lowess：Wage 全部 3000 筆，frac=0.2／0.5，xvals=100 點 age_grid",
+       "無隨機性", "沿用 statsmodels lowess 預設 it=3 的穩健疊代。"),
     js("FRAMES_w08wage",
-       {"n": len(SUB), "age": r(sub_age, 0), "wage": r(sub_y, 1),
+       {"n": len(SUB), "age": sub_age.tolist(), "wage": sub_y.tolist(),
         "ageMin": A0, "ageMax": A1, "nFull": N, "nPool": int(len(POOL))},
-       f"ISLP Wage（{LAB} 儲存格 11 的同一份資料）的 90 筆隨機子樣本",
-       "np.random.default_rng(524)，size=90, replace=False",
-       "只從 wage ≤ 250 的 2921 筆抽——ISLP 圖 7.3／7.4 用的子集也在這個範圍內，"
-       "另外 79 筆 wage>250 的高收入者依 §7.1 是另一群母體。"
-       "step／basis／knot／loess 四個 live 元件都在這 90 點上即時重算，"
-       "所以拖動時看到的數字是瀏覽器算的，不是這裡烘焙的"),
+       f"ISLP Wage（{LAB} 的完整資料）",
+       "無抽樣，所有 3000 筆、保留完整薪資精度",
+       "step／basis／knot／loess 的機制互動與 lab 曲線共用完整資料；不刪除高收入者。"),
     js("FRAMES_w08poly",
        {"grid": r(PGRID, 1), "degrees": DEGS, "fit": poly_fit, "lo": poly_lo, "hi": poly_hi,
         "trainMSE": poly_train, "cvMSE": poly_cv},

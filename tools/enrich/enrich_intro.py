@@ -287,12 +287,13 @@ BODIES["datasets"] = (
 )
 
 BODIES["toolchain"] = f"""
-  <p>知道要問什麼之後，工具才有工作可做。講義的 PyData 工具鏈可以先記成下面四層；
+  <p>知道要問什麼之後，工具才有工作可做。講義的 PyData 工具鏈可以先記成下面幾層；
   你不需要為了讀本章先安裝所有套件。</p>
 
 {table(["工作", "工具", "去哪裡練習"], [
     ["互動執行與保存分析", "Jupyter／IPython；Colab 提供瀏覽器環境", '<a href="00b_setup.html">環境準備</a>'],
     ["陣列與資料表", "NumPy、pandas", '<a href="p3_numpy.html">NumPy</a>、<a href="p4_pandas.html">pandas</a>'],
+    ["編譯與硬體加速", "Numba 提供即時編譯（JIT）、Cython 可預先編譯；RAPIDS 提供 GPU 資料分析工具", "加速既有計算時再選用，需另外確認相容的硬體與環境。"],
     ["摘要視覺化", "Matplotlib、Seaborn", '<a href="p5_visualization.html">視覺化</a>'],
     ["建模、推論與評估", "statsmodels、scikit-learn；ISLP 提供課本資料與輔助工具", '<a href="p6_modeling_api.html">建模 API</a>與各正課 lab'],
 ])}

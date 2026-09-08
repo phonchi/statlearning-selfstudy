@@ -892,7 +892,7 @@ BODIES["modern"] = f"""
          "<code>min_child_weight</code> · <code>gamma</code>",
          "<code>learning_rate</code> · <code>max_depth</code> · <code>num_leaves</code> · "
          "<code>min_data_in_leaf</code>",
-         "<code>learning_rate</code> · <code>depth</code> · <code>l2-leaf-reg</code>"],
+         "<code>learning_rate</code> · <code>depth</code> · <code>l2_leaf_reg</code>"],
         ["<strong>類別變數</strong>", "實驗性支援（建議自己先編碼）",
          "<code>categorical_feature</code>", "<code>cat_features</code> · <code>one_hot_max_size</code>"]])}
 
@@ -1187,6 +1187,12 @@ BODIES["reference"] = f"""
 # ══════════════════════════════════════════════════════════════════════
 # 本頁元件（id 與全域一律 w09 前綴）
 # ══════════════════════════════════════════════════════════════════════
+
+# 最新講義主題補全；維持既有 section 與導覽。
+BODIES['modern'] += r"""
+<h3>類別特徵如何編碼</h3><p>One-hot encoding 用各水準的指示欄表示名目類別；label encoding 將水準編成整數，只有存在自然次序時，數值閾值的順序才有直接意義。對名目類別任意編號會限制數值樹可做的分割。Target encoding 以各類別的目標平均取代類別，可用 $\tilde\mu_c=(n_c\bar y_c+a\bar y)/(n_c+a)$ 向整體平均收縮，避免稀有類別的估計過度波動。</p><p>訓練資料的 target encoding 必須用折外或有順序的估計，不能讓該筆 $y_i$ 進入自己的編碼；驗證與測試資料只使用訓練部分學到的映射，未見類別使用訓練整體平均。CatBoost 的有序類別統計與 ordered boosting 正是在處理這類目標洩漏及預測偏移，仍須保留外層獨立評估。</p>
+"""
+
 PAGEJS = r"""
 /* ===== tree_based_methods 本頁元件（id 與全域一律 w09 前綴）===== */
 

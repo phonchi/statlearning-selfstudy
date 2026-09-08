@@ -189,7 +189,7 @@ BODIES["func"] = f"""
 {info("課程 lab 的做法", "把那一段包成 <code>evalMSE(terms, response, train, test)</code>，"
       "然後用一個迴圈跑三次。程式碼從多份重複變成一份共用邏輯，修改時較容易保持一致。")}
 
-  <p>以下先讀懂函式如何被重用。要實跑，請開啟 <a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb">重抽樣方法的課程筆記本</a>，
+  <p>以下先讀懂函式如何被重用。要實跑，請開啟 <a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb">重抽樣方法的課程筆記本</a>，
   先執行套件安裝與匯入（儲存格 3–4）、Auto 資料載入與切分（儲存格 8–16），再執行下面的函式與呼叫。
   這會準備好 <code>MS</code>、<code>sm</code>、<code>poly</code>、<code>Auto_train</code> 與 <code>Auto_valid</code>。</p>
 

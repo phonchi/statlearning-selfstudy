@@ -21,6 +21,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pages as P  # noqa: E402
 import sources as S  # noqa: E402
+from reader_sources import fragment
 from paths import ROOT, TEMPLATE  # noqa: E402
 
 BEGIN = "<!-- GEN:BEGIN {k} -->"
@@ -28,6 +29,7 @@ END = "<!-- GEN:END {k} -->"
 
 
 def gen(k, body):
+    body = fragment(body)
     return f"{BEGIN.format(k=k)}\n{body}\n{END.format(k=k)}"
 
 
@@ -113,12 +115,12 @@ def studyguide(p: P.Page) -> str:
     deck_note = f'\n  <p class="source-intro">{p.deck_note}</p>' if p.deck_note else ""
     if p.grounding_mode == "concept":
         step2 = ("<strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。"
-                 "各節附 Seeing Theory 網站或講義頁碼；需要更多實驗或推導時再開啟。")
+                 "各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。")
     elif p.kind == "prep":
         step2 = ("<strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）"
-                 "與儲存格編號；需要實作時，再打開原始筆記本對照。")
+                 "；需要實作時，再打開原始筆記本對照。")
     elif p.deck:
-        step2 = ("<strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，"
+        step2 = ("<strong>對照來源</strong>：章節旁標示課本章節與講義主題，"
                  "需要完整推導時，點來源標記查書目，再回課本與講義閱讀。")
     else:
         step2 = ("<strong>對照課本</strong>：章節旁標示課本節號，"
@@ -127,7 +129,7 @@ def studyguide(p: P.Page) -> str:
   <div class="sg-title">📌 本頁使用方式（{p.islp_label}{deck_bit}）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② {step2}
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。{esl_hint}</p>
   {S.introduction(p)}{deck_note}
   <div class="sg-links">{links}</div>
@@ -213,11 +215,11 @@ def data_count(kind: str, p: P.Page) -> int:
 
 def cards_block(p: P.Page) -> str:
     n = data_count("flashcards", p)
-    badge = f"課程題庫 · {n} 張" if n else "課程題庫 · 待注入"
+    badge = "課程詞彙"
     src = ("本頁引用的課程 lab" if p.kind == "prep"
            else f"本章講義與 ISLP 第 {p.islp} 章")
     if p.grounding_mode == "concept":
-        badge = f"先備 · {n} 張"
+        badge = "先備 · 詞彙"
         src = "本頁依 Seeing Theory 編寫的概念解說"
     return f"""  <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">{badge}</span></h2>
@@ -233,7 +235,7 @@ def cards_block(p: P.Page) -> str:
 
 def bankquiz_head(p: P.Page) -> str:
     n = data_count("questions", p)
-    badge = f"課程題庫 {p.dkey} · {n} 題" if n else "課程題庫 · 待注入"
+    badge = "課程題庫"
     return (f'  <div class="section-number">QUIZ · 自我檢測</div>\n'
             f'  <h2>本章自我檢測 <span class="sec-badge">{badge}</span></h2>\n'
             f'  <p>這些題目取自課程題庫，只給對錯與說明，不計分。答錯就回到對應章節重讀。</p>')

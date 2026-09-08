@@ -103,7 +103,8 @@ def card(label, code, output=None, src=None, note=None, fontsize=".78rem",
     if note:
         parts.append(f'  <p class="dx-note">{note}</p>')
     if src:
-        parts.append(f'  <span class="dx-src">來源：{src}</span>')
+        from reader_sources import source_span
+        parts.append('  ' + source_span(src))
     parts.append("</div>")
     return "\n".join(parts)
 

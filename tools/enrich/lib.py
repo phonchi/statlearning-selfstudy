@@ -16,6 +16,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 
 from hl import card, hl  # noqa: E402,F401  （給各章 enrich 腳本 re-export）
+from reader_sources import fragment, prose
 from paths import ROOT, SRC_INDEX  # noqa: E402
 
 GEN_END = "<!-- GEN:END sec:{sid} -->"
@@ -44,7 +45,8 @@ def apply(stem: str, bodies: dict, pagejs: str, frames: str = ""):
     src = dest.read_text(encoding="utf-8")
     before = src
     for sid, body in bodies.items():
-        src = splice_section(src, sid, body)
+        src = splice_section(src, sid, fragment(body))
+    pagejs = prose(pagejs)
     src = splice_pagejs(src, (frames + "\n\n" + pagejs) if frames else pagejs)
     if src != before:
         dest.write_text(src, encoding="utf-8")
@@ -108,6 +110,9 @@ def quiz(qid, label, question, options):
 
 
 def table(headers, rows, cls="cmp-table", fontsize=".85rem"):
+    keep = [i for i, h in enumerate(headers) if h.strip() not in {"儲存格", "lab 儲存格", "Lab cell"}]
+    headers = [headers[i] for i in keep]
+    rows = [[row[i] for i in keep] for row in rows]
     th = "".join(f"<th>{h}</th>" for h in headers)
     tr = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
     return (f'<div style="overflow-x:auto;"><table class="{cls}" '
@@ -188,7 +193,7 @@ def ver_note(labs=(), include_frames=True):
                   f'考前的 Python 與套件版本請依<a href="{P.CLASSROOM_PACKAGES}">電腦教室版本清單</a>核對。')
     return (f'<p class="ver-note">本頁「預期輸出」逐字取自{src}（老師在課程環境實跑）；'
             f'{frames}'
-            f'每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>')
+            f'每張程式碼卡下方可開啟對應的 lab 筆記本。</p>')
 
 
 def hook(title, body):

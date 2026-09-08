@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """由 tools/pages.py 與 data/ 產生 index.html 與 README.md 的章節表。冪等。
 
-卡片上的「N 節」「N 個視覺區塊」「N 張詞彙卡」都是算出來的，不是手打的，
-所以不可能跟實際頁面或母檔不一致。
+首頁以主題導覽，不顯示節數、圖數、題數或詞彙卡數量。
 """
 import json
 import re
@@ -28,15 +27,6 @@ def counts(p: P.Page):
     return parts, cards, qs, widgets
 
 
-def meta_line(p: P.Page):
-    parts, cards, qs, widgets = counts(p)
-    bits = [f"{parts} 節"]
-    if widgets:
-        bits.append(f"{widgets} 個視覺區塊")
-    bits.append(f"題庫自測 {qs} 題" if qs else "每節自測")
-    bits.append(f"{cards} 張詞彙卡" if cards else "詞彙卡待補")
-    return " · ".join(bits)
-
 
 def card(p: P.Page, seq: int):
     """seq 是**區內**序號（1 起算）。刻意不用 p.n —— 重排三區之後 n 與顯示順序脫鉤，
@@ -46,7 +36,6 @@ def card(p: P.Page, seq: int):
             f'        <h3>{p.plain}</h3>\n'
             f'        <span class="ch-badge">{S.label_text(p.islp_label)}'
             f'{" ／ " + S.label_text(p.esl_label) if p.esl_label else ""}</span>\n'
-            f'        <div class="ch-meta">{meta_line(p)}</div>\n'
             f'      </a>')
 
 
@@ -76,10 +65,10 @@ def build_html():
         pre_widgets = sum(counts(q)[3] for q in pre)
         pre_block = f"""  <section id="pre">
     <h2>課前準備</h2>
-    <p>三頁，可依需要選讀。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
+    <p>可依需要選讀。先建立<strong>AI 時代的資料分析學習迴圈</strong>、
     準備執行環境，練習與 AI 分工、核對分析結果。
-    這三頁不需要任何程式基礎，選讀，不列入評分。
-    共 {len(pre)} 頁、{pre_widgets} 個視覺區塊。</p>
+    不需要任何程式基礎，選讀，不列入評分。
+    </p>
     <p><strong>期中考使用電腦教室的電腦。</strong>平時可用 Colab；若在自己的電腦練習，
     建議讓本機 Python 與套件版本和教室一致，依<a href="{P.CLASSROOM_PACKAGES}" target="_blank" rel="noopener">課程提供的版本清單</a>核對。
     考前也要熟悉教室的操作環境；詳見<a href="00b_setup.html#local">本機安裝與考前準備</a>。</p>
@@ -94,7 +83,7 @@ def build_html():
     stats_block = f'''  <section id="statistics">
     <h2>附錄 · 統計先備知識</h2>
     <p>正課遇到機率、分布或推論觀念不熟時，可回來<strong>隨時查閱</strong>，不必先讀完。
-    這六頁參考 <cite>Seeing Theory</cite>，提供算例、互動與自測。
+    內容參考 <cite>Seeing Theory</cite>，提供算例、互動與自測。
     與 Python 附錄一樣，選讀、不列入評分。</p>
     <div class="ch-grid">{stats_cards}</div>
   </section>
@@ -109,10 +98,10 @@ def build_html():
 
   <section id="appendix">
     <h2>附錄 · Python 先備知識</h2>
-    <p>沒寫過 Python，或只會一點點？這六頁把正課會用到的語法與套件講一遍，
+    <p>沒寫過 Python，或只會一點點？這組附錄把正課會用到的語法與套件講一遍，
     程式碼取自課程 lab notebook。這些頁面供你<strong>隨時查閱</strong>，
     正課讀到卡住再回來翻，不必先讀完。選讀，不列入評分。
-    共 {len(app)} 頁、{app_widgets} 個視覺區塊。</p>
+    </p>
     <div class="ch-grid">
 {app_cards}
     </div>
@@ -123,7 +112,7 @@ def build_html():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：三頁課前準備、十一章教材，以及統計與 Python 先備知識附錄，以例子、自測與必要的互動驗證觀念。NSYSU MATH524 課程配套。">
+<meta name="description" content="統計學習與資料探勘（ISLP）互動自學網站：課前準備、正課教材，以及統計與 Python 先備知識附錄，以例子、自測與必要的互動驗證觀念。NSYSU MATH524 課程配套。">
 <title>統計學習 × Python 互動自學網站 — NSYSU MATH524</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -148,9 +137,9 @@ def build_html():
       <div class="lb-title">📌 建議學習迴圈（每一章都照這個節奏）</div>
       <p>本站以 <cite>An Introduction to Statistical Learning with Applications in Python</cite>（簡稱 ISLP）
       與課程講義為主教材。<strong>先用例子理解問題，再動手驗證直覺。</strong>
-      章節旁的中文來源標記列出課本節號或講義頁碼，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
+      章節旁的中文來源標記列出課本章節與講義主題，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
       深度學習對應 ISLP 第 10 章，列為課外補充，程式與輸出引用課本官方的英文 lab。<br>
-      <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>那三頁（不需要程式基礎）；
+      <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>（不需要程式基礎）；
       正課需要補基礎時，可查<a href="#statistics">統計附錄</a>或<a href="#appendix">Python 附錄</a>。
       課前準備與兩組附錄都是選讀，不列入評分。</p>
       <div class="loop-steps">
@@ -163,9 +152,9 @@ def build_html():
   </section>
 
 {pre_block}  <section id="core">
-    <h2>正課 · 十一章</h2>
+    <h2>正課</h2>
     <p>章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
-    共 {len(core)} 章、{total_widgets} 個視覺區塊、{total_cards} 張詞彙卡。</p>
+    </p>
     <div class="ch-grid">
 {cards}
     </div>
@@ -184,7 +173,7 @@ def build_html():
       <a href="{P.BOOK_ESL}" target="_blank" rel="noopener">hastie.su.domains/ElemStatLearn</a></div>
       <div class="res-card"><b>📑 課程講義與 Lab</b>每章「講義 PDF」與「中文 Lab」都連到課程 repo 的
       投影片與 notebook，是本站內容的完整版來源。<br>
-      <a href="https://github.com/{P.COURSE_REPO}" target="_blank" rel="noopener">{P.COURSE_REPO.split("/")[1]}</a></div>
+      <a href="https://phonchi.github.io/nsysu-math524/" target="_blank" rel="noopener">現行課程網站</a></div>
       <div class="res-card"><b>📖 統計入門 Seeing Theory</b>機率與統計的視覺入門。
       本站統計先備頁提供原創中文解說與核心互動。<br>
       <a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原站互動</a> ·
@@ -211,8 +200,7 @@ def build_readme():
         parts, cards, qs, widgets = counts(p)
         對應 = p.islp_label + (f"／{p.esl_label}" if p.esl_label else "")
         講義 = f"講義 {p.deck_no}" if p.deck else "—"     # 補充章沒有講義
-        rows.append(f"| {p.n:02d} | [{p.plain}]({p.file}) | {對應} | {講義} | "
-                    f"{parts} 節 · {widgets} 視覺區塊 · {cards} 張卡 |")
+        rows.append(f"| {p.n:02d} | [{p.plain}]({p.file}) | {對應} | {講義} |")
     table = "\n".join(rows)
 
     def side_table(grp):
@@ -220,8 +208,7 @@ def build_readme():
         for i, q in enumerate([x for x in P.PAGES if x.grp == grp], 1):
             parts, cards, _qs, widgets = counts(q)
             widget_label = "視覺區塊"
-            out.append(f"| {i} | [{q.plain}]({q.file}) | {q.islp_label} | "
-                       f"{parts} 節 · {widgets} {widget_label} · {cards} 張卡 |")
+            out.append(f"| {i} | [{q.plain}]({q.file}) | {q.islp_label} |")
         return "\n".join(out)
 
     pre_table = side_table("pre")
@@ -231,35 +218,35 @@ def build_readme():
 
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分成四區：
 
-1. **課前準備**（3 頁）——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
-2. **正課**（11 章）——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
+1. **課前準備**——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
+2. **正課**——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
    關鍵詞彙卡與重點速查表。
-3. **附錄：統計先備知識**（6 頁）——參考 Seeing Theory，正課需要時查閱。
-4. **附錄：Python 先備知識**（6 頁）——正課會用到的語法與套件，查閱用。
+3. **附錄：統計先備知識**——參考 Seeing Theory，正課需要時查閱。
+4. **附錄：Python 先備知識**——正課會用到的語法與套件，查閱用。
 
 課前準備與兩組附錄都是選讀，不列入評分。
 
 - 線上閱讀：{P.SITE_URL}
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python]({P.BOOK_ISLP})
 - 進階參考：[ESL — The Elements of Statistical Learning]({P.BOOK_ESL})
-- 課程講義：[{P.COURSE_REPO.split("/")[1]}](https://github.com/{P.COURSE_REPO})（各頁「講義 PDF」與「中文 Lab」連結來源）
+- 課程講義：[現行課程網站](https://phonchi.github.io/nsysu-math524/)（各頁「講義 PDF」與「中文 Lab」連結來源）
 
 ## 課前準備（選讀，不列入評分）
 
-三頁，可依需要選讀，不需要任何程式基礎。
+可依需要選讀，不需要任何程式基礎。
 
 **期中考使用電腦教室的電腦。** 本機練習建議依[課程提供的版本清單]({P.CLASSROOM_PACKAGES})
 對齊教室的 Python 與套件版本；平時可用 Colab，考前仍應熟悉教室環境。
 安裝與核對步驟見[環境安裝：本機與考前準備](00b_setup.html#local)。
 
-| # | 頁面 | 對應 | 內容量 |
-|---|------|------|--------|
+| # | 頁面 | 對應 |
+|---|------|------|
 {pre_table}
 
-## 正課 · 十一章（授課順序）
+## 正課（授課順序）
 
-| # | 頁面 | 對應 | 講義 | 內容量 |
-|---|------|------|------|--------|
+| # | 頁面 | 對應 | 講義 |
+|---|------|------|------|
 {table}
 
 章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
@@ -271,17 +258,17 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 與 Python 附錄一樣，正課需要時再查閱，不必先讀完。不需要 Python 或微積分基礎。
 每節有原創算例、自測與來源定位，本站核心互動可獨立使用，原站提供延伸實驗。
 
-| # | 頁面 | 對應 | 內容量 |
-|---|------|------|--------|
+| # | 頁面 | 對應 |
+|---|------|------|
 {stats_table}
 
 ## 附錄：Python 先備知識（選讀，不列入評分）
 
-沒寫過 Python，或只會一點點？這六頁把正課會用到的語法與套件講一遍，
+沒寫過 Python，或只會一點點？這組附錄把正課會用到的語法與套件講一遍，
 程式碼一樣逐字取自課程 lab notebook。**查閱用**——正課讀到卡住再回來翻，不必先讀完。
 
-| # | 頁面 | 對應 | 內容量 |
-|---|------|------|--------|
+| # | 頁面 | 對應 |
+|---|------|------|
 {app_table}
 
 想先練習 Python 再進正課，可以依序閱讀：P1 → P2 → P3 → P4 → P5 → P6；
@@ -293,8 +280,8 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 網站與 PDF 的內容定位分開標示；自訂資料、模擬與詞彙解說由本站編寫，不宣稱取自課程 lab。
 
 
-每頁的中文來源標記提供課本節號或講義頁碼，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
-**逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方的「來源」標了儲存格編號。
+每頁的中文來源標記提供課本章節與講義主題，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
+**逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方可開啟原始筆記本；精確引用位置保存在內部來源資料中。
 圖表用的烘焙資料由 `tools/frames/` 在固定種子下產生，環境為 {P.ENV_NOTE}。
 每個正文視覺另標示它屬於課程資料、講義／課本重繪、固定種子模擬或自訂概念示意；
 自訂值不得解讀成課本或實證結果。

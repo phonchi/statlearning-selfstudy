@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -698,11 +698,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S1 統計）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站或講義頁碼；需要更多實驗或推導時再開啟。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://seeing-theory.brown.edu/basic-probability/index.html" target="_blank" rel="noopener">🔗 Seeing Theory 互動原站</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=5" target="_blank" rel="noopener">📖 Seeing Theory 講義</a><a href="introduction.html" target="_blank" rel="noopener">🔗 正課導論</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://seeing-theory.brown.edu/basic-probability/index.html" target="_blank" rel="noopener">🔗 Seeing Theory 互動原站</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="5" target="_blank" rel="noopener">📖 Seeing Theory 講義</a><a href="introduction.html" target="_blank" rel="noopener">🔗 正課導論</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -746,7 +746,7 @@ $$\bar{x}=\frac{10+15+15+20+40}{5}=20\text{ 分鐘}.$$
   <p>上述五位同學平均通勤 20 分鐘，哪個說法成立？</p>
   <div class="quiz-options" id="qPopulationOptions"><div class="quiz-opt" data-correct="false" data-fb="20 是五人的樣本平均；沒有觀察全班，也尚未交代抽樣代表性。" onclick="quizCheck('qPopulation', this)"><span class="opt-letter">(A)</span> 全班平均一定是 20 分鐘。</div><div class="quiz-opt" data-correct="true" data-fb="先描述樣本，再考慮抽樣方式及不確定性，才能討論母體。" onclick="quizCheck('qPopulation', this)"><span class="opt-letter">(B)</span> 20 分鐘是樣本統計量，可作為推論全班的起點。</div><div class="quiz-opt" data-correct="false" data-fb="只增加同一類受訪者，可能保留原本的選取偏差。" onclick="quizCheck('qPopulation', this)"><span class="opt-letter">(C)</span> 只要增加樣本數，就一定消除抽樣偏差。</div></div>
   <div class="quiz-feedback" id="qPopulationFeedback"></div>
-</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=16" target="_blank" rel="noopener">Seeing Theory 講義 p.16 · Estimation：由樣本了解母體</a>。</p><div class="info-box purple">
+</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="16" target="_blank" rel="noopener">Seeing Theory 講義 · Estimation：由樣本了解母體</a>。</p><div class="info-box purple">
   <span class="info-label">🔗 銜接正課</span>
   正課的<a href="introduction.html#eda">探索式資料分析</a>會進一步用摘要與圖形了解資料。這裡先分清描述樣本與推論母體。
 </div>
@@ -801,7 +801,7 @@ $$0\le P(A)\le 1,\qquad P(\Omega)=1,\qquad P(A^c)=1-P(A).$$
   <p>公平硬幣投 10 次出現 7 次正面，這表示什麼？</p>
   <div class="quiz-options" id="qChanceOptions"><div class="quiz-opt" data-correct="true" data-fb="模型機率描述隨機機制；觀察比例會隨樣本改變。" onclick="quizCheck('qChance', this)"><span class="opt-letter">(A)</span> 這次的觀察比例是 0.7，仍可能來自 p = 0.5 的模型。</div><div class="quiz-opt" data-correct="false" data-fb="公平模型允許 7 次正面，不能只憑一次比例不同就排除模型。" onclick="quizCheck('qChance', this)"><span class="opt-letter">(B)</span> 硬幣不可能公平。</div><div class="quiz-opt" data-correct="false" data-fb="獨立投擲沒有補償義務；每次正面機率仍為 0.5。" onclick="quizCheck('qChance', this)"><span class="opt-letter">(C)</span> 接下來三次必須都是反面。</div></div>
   <div class="quiz-feedback" id="qChanceFeedback"></div>
-</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=5" target="_blank" rel="noopener">Seeing Theory 講義 p.5 · Chance Events</a>。</p>
+</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="5" target="_blank" rel="noopener">Seeing Theory 講義 · Chance Events</a>。</p>
 </section>
 <section id="expectation">
 <!-- GEN:BEGIN sec:expectation -->
@@ -828,7 +828,7 @@ $$E[X]=1\cdot\frac16+2\cdot\frac16+\cdots+6\cdot\frac16=\frac{21}{6}=3.5.$$
   <p>公平骰子的期望值為 3.5，正確解讀是？</p>
   <div class="quiz-options" id="qExpectationOptions"><div class="quiz-opt" data-correct="false" data-fb="骰子只有 1 到 6 點，單次不可能得到 3.5。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(A)</span> 下一次最可能擲出 3.5。</div><div class="quiz-opt" data-correct="false" data-fb="六次仍有隨機波動，不保證六種點數各一次。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(B)</span> 任意六次投擲的平均必須是 3.5。</div><div class="quiz-opt" data-correct="true" data-fb="在同一公平模型下，期望值是長期平均的目標；單次或有限次結果可以不同。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(C)</span> 許多次獨立投擲的平均會趨近 3.5。</div></div>
   <div class="quiz-feedback" id="qExpectationFeedback"></div>
-</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=10" target="_blank" rel="noopener">Seeing Theory 講義 p.10 · Expectation</a>。</p>
+</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="10" target="_blank" rel="noopener">Seeing Theory 講義 · Expectation</a>。</p>
 </section>
 <section id="variation">
 <!-- GEN:BEGIN sec:variation -->
@@ -862,7 +862,7 @@ $$s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2.$$
   <p>X 等機率取 2 或 4，Y 等機率取 0 或 6。哪個說法正確？</p>
   <div class="quiz-options" id="qVarianceOptions"><div class="quiz-opt" data-correct="false" data-fb="兩者平均都是 3，但偏離平均的距離分別是 1 與 3。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(A)</span> 平均相同，所以變異數相同。</div><div class="quiz-opt" data-correct="true" data-fb="X 的變異數為 1，Y 為 9，平方使三倍的偏離對應九倍變異數。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(B)</span> Y 的變異數是 X 的 9 倍。</div><div class="quiz-opt" data-correct="false" data-fb="標準差取平方根，因此 Y 的標準差是 X 的 3 倍。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(C)</span> Y 的標準差是 X 的 9 倍。</div></div>
   <div class="quiz-feedback" id="qVarianceFeedback"></div>
-</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=12" target="_blank" rel="noopener">Seeing Theory 講義 p.12 · Variance</a>。</p><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf#page=17" target="_blank" rel="noopener">Seeing Theory 講義 p.17 · Consistency of Estimators：長期穩定的例子，推導續於 p.18</a>。</p>
+</div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="12" target="_blank" rel="noopener">Seeing Theory 講義 · Variance</a>。</p><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="17" target="_blank" rel="noopener">Seeing Theory 講義 · Consistency of Estimators：長期穩定的例子</a>。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -911,7 +911,7 @@ $$s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2.$$
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 20 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡取自本頁依 Seeing Theory 編寫的概念解說，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">

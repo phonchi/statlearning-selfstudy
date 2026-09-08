@@ -454,7 +454,7 @@ BODIES["model"] = f"""
 
 {card("依類別分別配適", C(1, 135, 136), src=S(1, 135, 136),
       note="<code>lmplot</code> 加 <code>hue</code> 會<strong>每一組各配一條線</strong>。"
-           "兩條線的斜率明顯不同，就是交互作用的視覺證據。" + FIG_NOTE)}
+           "兩條線的斜率若不同，提示可以加入交互作用再檢查；樣本變異也可能造成斜率差，仍需估計不確定性。" + FIG_NOTE)}
 
 {card("相關係數熱圖", C(1, 138), src=S(1, 138),
       note="<code>tips.corr(numeric_only=True)</code> 先算矩陣，"

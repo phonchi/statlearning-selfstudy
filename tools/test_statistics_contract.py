@@ -24,15 +24,15 @@ class StatisticsContract(unittest.TestCase):
         self.assertEqual(S.page_books(self.page), ['Seeing-Theory'])
 
     def test_missing_section_locator_fails(self):
-        broken = self.html.replace('doc/seeing-theory.pdf#page=16', 'doc/seeing-theory.pdf')
+        broken = self.html.replace('doc/seeing-theory.pdf" data-source-page="16', 'doc/seeing-theory.pdf')
         self.assertTrue(any('#population' in msg for msg in self.failures(broken)))
 
     def test_pdf_outside_document_fails(self):
-        self.assertTrue(any('頁碼' in msg for msg in self.failures(
-            self.html.replace('doc/seeing-theory.pdf#page=16', 'doc/seeing-theory.pdf#page=99'))))
+        self.assertTrue(any('章節不符' in msg for msg in self.failures(
+            self.html.replace('doc/seeing-theory.pdf" data-source-page="16', 'doc/seeing-theory.pdf" data-source-page="99'))))
 
     def test_valid_url_for_unrelated_chapter_fails(self):
-        broken = self.html.replace('doc/seeing-theory.pdf#page=16', 'frequentist-inference/index.html')
+        broken = self.html.replace('doc/seeing-theory.pdf" data-source-page="16', 'frequentist-inference/index.html')
         self.assertTrue(any('登記章節不符' in msg for msg in self.failures(broken)))
 
     def test_unverified_output_card_fails(self):

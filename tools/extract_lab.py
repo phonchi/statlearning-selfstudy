@@ -51,12 +51,12 @@ ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
 COURSE_NOTE = [
     "> 由 tools/extract_lab.py 產生。頁面上的程式碼與預期輸出一律從這裡逐字抄，",
-    "> `.dx-src` 要標注這裡的儲存格編號。不要重跑：輸出是課程環境下的實跑結果。",
+    "> `.dx-src` 以內部 data-lab-* 屬性保留來源位置；頁面不顯示儲存格編號。不要重跑：輸出是課程環境下的實跑結果。",
 ]
 
 OFFICIAL_NOTE = [
     "> 由 tools/extract_lab.py 產生。頁面上的程式碼與預期輸出一律從這裡逐字抄，",
-    "> `.dx-src` 要標注這裡的儲存格編號。不要重跑：輸出是課本作者存在 notebook 裡的實跑結果。",
+    "> `.dx-src` 以內部 data-lab-* 屬性保留來源位置；頁面不顯示儲存格編號。不要重跑：輸出是課本作者存在 notebook 裡的實跑結果。",
     ">",
     f"> **來源**：https://github.com/{OFFICIAL_REPO}（{OFFICIAL_LICENSE}）",
     f"> · 分支 `main` · commit `{OFFICIAL_REF}`",

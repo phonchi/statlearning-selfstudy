@@ -2,8 +2,7 @@
 """把 data/flashcards_zh 與 data/questions_zh 注入各頁的 DATA 區段。冪等。
 
 母檔是 JSON，頁面只是它的呈現。改內容請改 JSON 再跑這支，不要直接改 HTML。
-每一節的標題徽章（「N 張」「N 題」）由 build_page.py 讀同一份 JSON 產生，
-所以數字不可能跟母檔不一致。
+實際詞彙卡與題庫保留；標題徽章不顯示數量。
 
 用法：
   python3 tools/inject_data.py                     # 全部
@@ -15,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from reader_sources import prose
 import pages as P  # noqa: E402
 from paths import FLASHCARDS, QUESTIONS, ROOT  # noqa: E402
 
@@ -42,6 +42,16 @@ BANKQUIZ_JS = r"""
 """
 
 
+def reader_data(value):
+    if isinstance(value, str):
+        return prose(value)
+    if isinstance(value, list):
+        return [reader_data(x) for x in value]
+    if isinstance(value, dict):
+        return {k: reader_data(v) for k, v in value.items()}
+    return value
+
+
 def inject(p: P.Page) -> str:
     dest = ROOT / p.file
     src = dest.read_text(encoding="utf-8")
@@ -51,7 +61,7 @@ def inject(p: P.Page) -> str:
     if fc.exists():
         cards = json.loads(fc.read_text(encoding="utf-8"))
         blocks.append("<script>\nconst FLASHCARDS = "
-                      + json.dumps(cards, ensure_ascii=False, separators=(",", ":"))
+                      + json.dumps(reader_data(cards), ensure_ascii=False, separators=(",", ":"))
                       + ";\nHC.initFlashcards();\n</script>")
         msg.append(f"{len(cards)} 張詞彙卡")
 
@@ -60,7 +70,7 @@ def inject(p: P.Page) -> str:
         if qf.exists():
             qs = json.loads(qf.read_text(encoding="utf-8"))
             blocks.append("<script>\nconst BANKQUIZ = "
-                          + json.dumps(qs, ensure_ascii=False, separators=(",", ":"))
+                          + json.dumps(reader_data(qs), ensure_ascii=False, separators=(",", ":"))
                           + ";" + BANKQUIZ_JS + "</script>")
             msg.append(f"{len(qs)} 題題庫")
 

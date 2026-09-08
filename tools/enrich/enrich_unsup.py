@@ -150,7 +150,7 @@ BODIES["pca"] = f"""
            "<code>[0.536, 0.583, 0.278, 0.543]</code> 在 Murder／Assault／Rape 上幾乎一樣重、"
            "UrbanPop 明顯較輕，所以 PC1 大致就是「整體暴力犯罪率」。"
            "第二列幾乎全押在 UrbanPop（0.873），那是「都市化程度」。"
-           "注意 <code>PCA()</code> 預設只置中、不縮放，所以標準化要自己先做（第 19 格）。")}
+           "注意 <code>PCA()</code> 預設只置中、不縮放，所以先用 <code>StandardScaler</code> 標準化，再配適 PCA。")}
 
 {quiz("qPc", "QUIZ · 負荷量與得分",
       "USArrests 的 <code>pcaUS.components_</code> 是 4×4、<code>scores</code> 是 50×4。哪個描述正確？",
@@ -276,7 +276,7 @@ BODIES["lowrank"] = f"""
       note="lab 的變數 <code>V</code> 儲存的是數學上的 Vᵀ（NumPy 的第三個回傳值），"
            "因此它的每一列才是負荷向量，只差符號。跟上一節儲存格 29 的 "
            "<code>components_</code> 比：第 1、3、4 列整列變號，第 2 列一模一樣。<br>"
-           "lab 儲存格 51 又印了一次 <code>components_</code>，但<strong>那時第 33 格已經把 "
+           "lab 儲存格 51 又印了一次 <code>components_</code>，但<strong>前面的 biplot 程式已經把 "
            "PC2 翻號了</strong>，所以第 2 列跟儲存格 29 不同，差異來自同一個物件已被就地修改。"
            "儲存格 53 與 54 也是同一件事：<code>U * D</code> 跟 <code>scores</code> 差整組符號。")}
 
@@ -942,7 +942,7 @@ BODIES["manifold"] = f"""
                  ("原始維度", "8 × 8 = 64", "w07tsneDim"),
                  ("類別數", "10", "w07tsneCls")]),
       info_card("怎麼比",
-                '同一批 500 張手寫數字（<code>load_digits</code>，8×8 灰階）用三種方法壓到 2 維，'
+                '同一批 1797 張手寫數字（<code>load_digits</code>，8×8 灰階）用三種方法壓到 2 維，'
                 '顏色是真實的數字標籤——<strong>標籤沒有參與計算，只用來上色。</strong><br>'
                 '切到 <code>perplexity = 5</code> 再切到 30，看同一份資料可以長得多不一樣。'),
       info_card("t-SNE 的四個陷阱",
@@ -951,13 +951,13 @@ BODIES["manifold"] = f"""
                 '<strong>3. 團之間的距離不可信</strong>，全域結構不保證被保留。<br>'
                 '<strong>4. 換參數就換一張圖</strong>：perplexity、學習率、初始化、隨機種子都會變。'
                 '所以要多跑幾組再下結論。', "講義 p.51–53")],
-     "w07tsneStatus", "同一批 500 張手寫數字，換方法看嵌入結果怎麼變。",
+     "w07tsneStatus", "同一批 1797 張手寫數字，換方法看嵌入結果怎麼變。",
      '<label class="slider-label" style="margin-right:.3rem;">方法</label>'
      '<select id="w07tsneSel" class="mono" onchange="w07tsneSet()">'
      '<option value="pca" selected>PCA</option>'
      '<option value="tsne5">t-SNE · perplexity 5</option>'
-     '<option value="tsne30">t-SNE · perplexity 30</option></select>',
-     provenance=("course-data", "sklearn digits 固定抽樣 500 筆；PCA／t-SNE 與 Ch12 lab 儲存格 71–75 對照。"))}
+     '<option value="tsne30" selected>t-SNE · perplexity 30</option></select>',
+     provenance=("course-data", "sklearn digits 全部 1797 筆；perplexity 30 沿用課程 lab 的 TSNE 設定，PCA 與 perplexity 5 用於方法比較。"))}
 
 {info("t-SNE 的使用範圍", '''<strong>t-SNE 幾乎只能用來「看」。</strong>
   它沒有 <code>transform()</code>（新資料無法投影到既有的嵌入上，
@@ -984,13 +984,13 @@ BODIES["manifold"] = f"""
       "一張 t-SNE 圖上，A 團與 B 團距離很遠，A 團看起來比 B 團大三倍。可以下什麼結論？",
       [(True, "圖無法單獨支持這些推論：t-SNE 不保證保留團的大小與團間距離",
         "對。t-SNE 只在意「局部鄰居關係」，會把稀疏的團擴張、把密的團壓縮，"
-        "全域結構也不保證。能說的只有「A 團內部的點彼此比較像」。"),
+        "全域結構也不保證。應回到原始特徵檢查團內鄰居是否相似。"),
        (False, "A 群的樣本數大約是 B 群的三倍",
         "不對。面積跟樣本數無關——t-SNE 會把密度低的團攤開、密度高的團擠緊，"
-        "所以面積反映的是原始密度，而且還被非線性地扭曲過。要看樣本數就去數點。"),
+        "面積不能直接代表原始密度。要看樣本數就去數點。"),
        (False, "A 與 B 距離遠，代表它們在原始 64 維空間裡也離得很遠",
-        "不能這樣推。t-SNE 的目標函數只懲罰「近的點被畫遠」，"
-        "對「遠的點被畫得多遠」幾乎不管。要談全域距離請用 PCA 或 MDS。")])}
+        "t-SNE 的目標含吸引與排斥作用，但不要求低維的群間距離等於原始距離。"
+        "若需要全域距離資訊，應另外檢查原始距離或評估 MDS 的距離保真度。")])}
 """
 
 # ── EX ────────────────────────────────────────────────────────────────
@@ -1127,6 +1127,26 @@ BODIES["reference"] = f"""
 """
 
 # ══════════════════════════════════════════════════════════════════════
+
+# 最新講義主題補全；維持既有 section 與導覽。
+BODIES['scaling'] += r"""
+<h3>從共變異數到白化</h3>
+<p>本站採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$。主成分方向是 $V$ 的欄，得分為 $XV=UD$；最大化 $v^TSv$ 且限制 $v^Tv=1$，便得到 $Sv=\lambda v$。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
+<p>保留正特徵值方向後，白化得分 $Z=XV\Lambda^{-1/2}$ 的樣本共變異數為單位矩陣。ZCA 白化再乘上 $V^T$ 回到原特徵座標；保留全部正秩方向且滿秩時為 $XV\Lambda^{-1/2}V^T$。白化會把低變異方向放大，因此小特徵值可能放大雜訊；普通 PCR 不需要白化，也不能把白化當成保證改善預測的步驟。</p>
+"""
+BODIES['hclust'] += r"""
+<h3>Ward 與階層假設</h3><p>Ward linkage 每次選擇使群內平方和增加最少的合併：$\Delta(A,B)=\frac{|A||B|}{|A|+|B|}\|\bar x_A-\bar x_B\|^2$。它需要適當的歐氏幾何，不能隨意把相關距離代入。樹狀圖隱含巢狀分群：較細的群必須包含於較粗的群；若最佳二群依性別、最佳三群依國籍，兩者未必能由同一棵樹取得。Centroid linkage 可能發生後次合併高度更低的 inversion，這時水平切線的解讀要特別小心。</p>
+"""
+BODIES['practical'] += r"""
+<h3>密度分群：DBSCAN、OPTICS 與 HDBSCAN</h3><p>DBSCAN 以半徑 $\varepsilon$ 與最少點數 minPts 定義密度：含自身的鄰域至少有 minPts 筆就是核心點。從核心點沿核心鄰接關係擴張成群；非核心但落在核心鄰域內的是邊界點，其餘標為雜訊。邊界點不再向外擴張，否則稀疏的橋接點會把不同群錯接起來。它能找非球狀群，也不用先給群數，但同一密度門檻不適合差異很大的密度。</p><p>OPTICS 以可達距離的排序保留多種密度尺度。HDBSCAN 以核心距離修正點間距離，建立密度階層，再依群在不同尺度的穩定性選群；min_cluster_size 控制最小群大小，min_samples 也影響對雜訊的保守程度。這些方法能留下雜訊點，仍需檢查尺度、距離、參數與重抽樣的穩定性。</p>
+<h3>Mean shift、混合模型與譜分群</h3><p>Mean shift 把候選中心移到鄰近點的加權平均，反覆向核密度的高處移動；收斂到相近模態的起點併為一群。頻寬決定平滑程度與可辨識的模態數，不必預先指定 K，卻仍需選頻寬。高斯混合模型以多個高斯成分的加權密度表示資料，EM 交替更新後驗群責任與參數，允許軟分群；一般高斯混合仍為每點分配責任，若要處理離群值需另外設計雜訊成分或穩健模型。變分貝氏混合在成分權重與參數上加入先驗，以近似後驗估計不確定性。</p><p>譜分群（spectral clustering）先建立相似度圖，利用圖 Laplacian 的特徵向量嵌入，再於嵌入座標分群。鄰接圖、核尺度與群數會改變答案；它與 DBSCAN 都能處理某些非球狀群，但一般並非同一演算法。</p>
+<h3>混合型資料與分群後的用途</h3><p>名目類別不可任意編號後直接套歐氏距離。可只用連續特徵、對類別做適當編碼並控制權重、使用結合數值距離與類別不匹配成本的 k-prototypes，或先用混合資料因素分析得到連續座標。這些選擇代表不同的「相似」定義，需要連同結果報告。</p><p>分群標籤、到各群中心的距離及特徵聚合都能當作監督式模型的輸入；群標籤本身通常應視為類別。評估時分群也要只在訓練折配適。少量標記時，可優先標註群中心附近的代表樣本，再在群內傳播標籤；這依賴群大致對應真實類別的假設，群跨越類別時會放大錯誤。</p>
+"""
+BODIES['manifold'] += r"""
+<h3>t-SNE 的目標與調整參數</h3><p>高維條件鄰居機率可寫成 $p_{j\mid i}\propto\exp(-\|x_i-x_j\|^2/(2\sigma_i^2))$，其中排除 $i=j$ 並逐列正規化。以 $\mathrm{Perp}(P_i)=2^{H(P_i)}$、$H(P_i)=-\sum_jp_{j\mid i}\log_2p_{j\mid i}$ 指定有效鄰居數，再搜尋各點的 $\sigma_i$。對稱化 $p_{ij}=(p_{j\mid i}+p_{i\mid j})/(2n)$，低維則用 $q_{ij}\propto(1+\|z_i-z_j\|^2)^{-1}$，最小化 $\sum_{i\ne j}p_{ij}\log(p_{ij}/q_{ij})$。梯度同時含吸引與排斥作用，不能說只懲罰鄰居被拉遠。</p><p>Early exaggeration 在初期增強吸引作用，learning rate 決定更新幅度，迭代次數決定最佳化進度；Barnes–Hut 的 angle 取捨近似精度與速度。Perplexity、初始值及亂數種子改變圖形時，應比較局部鄰居是否穩定，不能挑一張最漂亮的圖作結論。PCA 保留全域線性變異；Isomap 以鄰接圖最短路近似流形距離，LLE 保留局部重建權重，UMAP 以鄰接關係建構嵌入並可轉換新點。</p>
+<h3>講義延伸方向</h3><p>張量分解將樣本、空間、時間等多個軸一起表示，例如 CP 用秩一張量之和，Tucker 用各軸因子與核心張量；相比先攤平成矩陣，可保留軸的結構。自監督學習從資料本身設計預測任務，例如遮住部分輸入再重建，或讓同一資料的不同增強視圖接近；訓練目標雖由資料產生，取得的表徵仍須在目標任務驗證。</p>
+"""
+
 PAGEJS = r"""
 /* ===== unsupervised_learning 本頁元件（id 與全域一律 w07 前綴）=====
    站內序號 07；ISLP 章號是 12（烘焙資料與 lab 引用都用 12）。 */

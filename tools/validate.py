@@ -54,8 +54,8 @@ NS_URIS = ("http://www.w3.org/",)
 #   先備 · …                  ← islp_label 與 EX 徽章
 #   AI-Stats §N               ← 只指名參考書概念，不引用其內容
 BADGE_RE = re.compile(
-    r"^(ISLP §|ISLP Ch\.|ESL §|ESL Ch\.|講義 \d[\d_]* · p\.|課程題庫"
-    r"|課程 Lab Ch\d+ · "
+    r"^(ISLP §|ISLP Ch\.|ESL §|ESL Ch\.|講義 \d[\d_]*(?: · p\.)?|課程題庫"
+    r"|課程 Lab Ch\d+|課程詞彙"
     r"|(?:Python|NumPy|pandas|Matplotlib|seaborn|SciPy|statsmodels|scikit-learn"
     r"|Colab|conda) 文件 · "
     r"|先備 · |課前 · |教科書 · |進階參考 · |參考：|統計入門參考 · )")
@@ -275,6 +275,7 @@ def check_page(p: P.Page):
               "studyguide": B.studyguide(p), "toc": B.toc(p),
               "chapternav": B.chapternav(p), "footer": B.footer(p), "sharedjs": B.sharedjs(p)}
     for k, body in expect.items():
+        body = B.fragment(body)
         got = region(src, k)
         if got is None:
             fail("GEN-REGION", w, f"缺少 GEN 區段 {k}")
@@ -396,11 +397,16 @@ def check_concept_grounding(p, w, src):
         body = m.group(1) if m else ""
         if not any(S.source_key(x.strip()) for x in sec.badge.split("|")):
             fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺書目章節")
+        # PDF positions are internal metadata; readers use an unpositioned link.
+        body = re.sub(r'href="([^"]+\.pdf)" data-source-page="(\d+)"',
+                      lambda m: 'href="' + m[1] + '#page=' + m[2] + '"', body)
         locators = re.findall(r'href=[\"\'](https://seeing-theory\.brown\.edu/[^\"\']+)', body)
         chapters = [int(n) for n in re.findall(r'Seeing-Theory Ch\.(\d+)', sec.badge)]
         allowed = [SOURCE_CHAPTERS[n] for n in chapters if n in SOURCE_CHAPTERS]
         matched = False
         for url in locators:
+            if url == "https://seeing-theory.brown.edu/doc/seeing-theory.pdf":
+                continue
             pdf = re.fullmatch(r'https://seeing-theory\.brown\.edu/doc/seeing-theory\.pdf#page=(\d+)', url)
             valid = any((pdf and start <= int(pdf.group(1)) <= end)
                         or url.split('#')[0] == web for web, start, end in allowed)
@@ -409,7 +415,7 @@ def check_concept_grounding(p, w, src):
             else:
                 fail("GROUNDING-CONCEPT", w, f"#{sec.id} 來源與登記章節不符：{url}")
         if not matched:
-            fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺原站小節或 PDF 頁碼連結")
+            fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺對應原站章節連結")
         if 'class="quiz-box"' not in body:
             fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺自測")
     for page in re.findall(r'seeing-theory\.pdf#page=(\d+)', src):
@@ -423,9 +429,9 @@ def check_concept_grounding(p, w, src):
 
 
 # ── 先備入口層的出處檢查 ────────────────────────────────────────────────
-DX_SRC_RE = re.compile(r'class="dx-src">來源：<code>Ch(\d+)-[^<]*\.ipynb</code> · 儲存格 ([^<]+)')
+DX_SRC_RE = re.compile(r'class="dx-src" data-lab-ch="(\d+)" data-lab-cells="([\d,]+)"')
 CELL_RE = re.compile(r"\d+")
-PREP_BADGE_RE = re.compile(r"課程 Lab Ch(\d+) · 儲存格 ([^<]+)")
+PREP_BADGE_RE = re.compile(r"課程 Lab Ch(\d+) · 儲存格 ([\d、–—／ /,\-]+)")
 
 
 def _lab_cells(ch: int) -> dict:
@@ -468,7 +474,7 @@ def check_prep_grounding(p, w, src, labtext):
             if 'class="dx-src"' in seg:
                 fail("GROUNDING-PREP", w,
                      f"第 {i + 1} 張 .deck-extra 的 .dx-src 不符文法"
-                     "（要「來源：<code>ChNN-….ipynb</code> · 儲存格 k」）")
+                     "（需 data-lab-ch 與 data-lab-cells 內部來源欄位）")
             continue
         ch = int(m.group(1))
         ks = [int(x) for x in CELL_RE.findall(m.group(2))]
@@ -498,7 +504,7 @@ def check_prep_grounding(p, w, src, labtext):
                      f"第 {i + 1} 張的預期輸出與 lab_ch{ch}.md 儲存格 {ks} 不逐字相同")
     if not n_cited:
         fail("GROUNDING-PREP", w, "整頁沒有任何引用課程 lab 的 .deck-extra")
-    for m in PREP_BADGE_RE.finditer(src):
+    for m in PREP_BADGE_RE.finditer(" | ".join(sec.badge for sec in p.secs)):
         ch = int(m.group(1))
         if ch not in cells:
             fail("GROUNDING-PREP", w, f"徽章指向 Ch{ch:02d}，但它不在 Page.src_labs")
@@ -592,16 +598,8 @@ def check_index():
     for href in cards:
         if not (ROOT / href).exists():
             fail("INDEX-SYNC", "index.html", f"卡片指向不存在的 {href}")
-    for p in P.PAGES:
-        fc = FLASHCARDS / f"{p.dkey}.json"
-        if not fc.exists():
-            continue
-        n = len(json.loads(fc.read_text(encoding="utf-8")))
-        m = re.search(r'<a class="ch-card" href="' + re.escape(p.file)
-                      + r'".*?class="ch-meta">([^<]*)', src, re.S)
-        if m and f"{n} 張詞彙卡" not in m.group(1):
-            fail("INDEX-SYNC", "index.html",
-                 f"{p.file} 的 .ch-meta「{m.group(1)}」與 {p.dkey}.json 的 {n} 張不符")
+    if 'class="ch-meta"' in src:
+        fail("INDEX-SYNC", "index.html", "首頁不應顯示節數、題數或卡片數量標語")
 
 
 def check_contrast_contract():
@@ -626,7 +624,9 @@ def check_repo():
     if not (ROOT / ".nojekyll").exists():
         fail("FORBIDDEN", "repo", "缺 .nojekyll，GitHub Pages 會用 Jekyll 建置")
     for f in ROOT.rglob("*"):
-        if f.is_file() and f.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}:
+        # Persistent screenshots are evidence; student-facing visuals remain inline.
+        if (not f.is_relative_to(ROOT / "tools" / "verification") and f.is_file()
+                and f.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}):
             fail("FORBIDDEN", "repo", f"出現圖檔 {f.relative_to(ROOT)}：所有視覺都要 inline")
         # 素材不進 repo：教科書 PDF 放 ~/statslearning，notebook 只留 data/source_index/ 的 .md
         if f.is_file() and f.suffix.lower() in {".pdf", ".ipynb"}:
@@ -657,15 +657,15 @@ def check_links(base=None):
             if code >= 400:
                 fail("LINKS", u, f"HTTP {code}")
         except urllib.error.HTTPError as e:
-            if e.code == 404:  # Kaggle 等站可能只對 HEAD 回 404；確認一般讀取是否也失敗
+            if e.code in (404, 405):  # Some endpoints reject HEAD; verify an actual GET.
                 try:
                     req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 link-check"})
                     with urllib.request.urlopen(req, timeout=25) as response:
                         if response.status >= 400:
                             fail("LINKS", u, f"GET HTTP {response.status}")
                 except Exception as get_error:
-                    fail("LINKS", u, f"HEAD HTTP 404；GET {get_error}")
-            elif e.code in (403, 405, 429):        # 有些站不接受 HEAD
+                    fail("LINKS", u, f"HEAD HTTP {e.code}；GET {get_error}")
+            elif e.code in (403, 429):        # 有些站不接受 HEAD
                 warn("LINKS", u, f"HTTP {e.code}（可能只是不接受 HEAD）")
             else:
                 fail("LINKS", u, f"HTTP {e.code}")

@@ -84,7 +84,7 @@ BODIES["prologue"] = f"""
       src=src("195"),
       note="<code>Auto.data</code> 裡的遺漏值是用 <code>?</code> 編碼的，"
            "不告訴 <code>pd.read_csv()</code> 這件事，整個 <code>horsepower</code> 欄位就會被"
-           "讀成字串（lab 儲存格 190、192 示範了這個結果）。"
+           "讀成字串（lab 的 Auto 匯入範例示範了這個結果）。"
            "<code>na_values=['?']</code> 之後才加得起來，總和是 <strong>40952.0</strong>。")}
 
 {card("講義 02 · n 與 p 到底是多少", lab_code(CH, 197) + "\n\n" + lab_code(CH, 199),
@@ -174,7 +174,7 @@ BODIES["irreducible"] = f"""
 
 {card("講義 02 · 雜訊讓相關係數到不了 1", lab_code(CH, 76) + "\n" + lab_code(CH, 78),
       lab_output(CH, 78), src=src("74、76、78"),
-      note="儲存格 74 先產生 50 個標準常態的 <code>x</code>。這裡的 "
+      note="lab 的相關係數範例先產生 50 個標準常態的 <code>x</code>。這裡的 "
            "<code>y = x + N(50, 1)</code> 意思是<strong>真實的 f(x) = x + 50，一點都沒錯</strong>，"
            "而 ε 是標準差 1 的常態。既然 f 完全正確，相關係數為什麼不是 1？"
            "因為 Var(x) = 1、Var(ε) = 1，理論相關是 1/√2 ≈ 0.707，"
@@ -183,7 +183,7 @@ BODIES["irreducible"] = f"""
 
 {card("講義 02 · 用樣本變異數估 Var(ε)", lab_code(CH, 84) + "\n" + lab_code(CH, 85),
       lab_output(CH, 85), src=src("84、85"),
-      note="儲存格 84 另起一個例子，把 <code>y</code> 重新設成 10 個標準常態樣本；它不是前一張卡的 x 加雜訊。三個寫法給出同一個數字 <strong>2.7243406406465125</strong>，"
+      note="下一個變異數範例，把 <code>y</code> 重新設成 10 個標準常態樣本；它不是前一張卡的 x 加雜訊。三個寫法給出同一個數字 <strong>2.7243406406465125</strong>，"
            "因為它們算的是同一件事：<code>np.mean((y - y.mean())**2)</code>。"
            "MSE 也是「平方的平均」，同一個動作。"
            "注意 <code>np.var()</code> 預設除以 n 而不是 n − 1（看 <code>ddof</code> 參數）——"
@@ -385,7 +385,7 @@ BODIES["mse"] = f"""
   <p>期望值是依機率加權的平均；MSE 則是把平方誤差平均。
   重點是<strong>對哪些隨機量取平均</strong>：只對新觀測值的誤差取平均，與連訓練資料也重抽後取平均，
   是不同的問題。若需要複習加權平均的程式寫法，可看
-  <a href="p2_flow_functions.html#loop">附錄：流程控制中的 zip 與加權平均</a>（課程 Lab Ch2，儲存格 240）。</p>
+  <a href="p2_flow_functions.html#loop">附錄：流程控制中的 zip 與加權平均</a>（課程 Lab Ch2 的迴圈範例）。</p>
 
 {qa("觀念釐清", [
     ("Q：為什麼這裡的測試 MSE 呈 U 型？訓練 MSE 為什麼不是？",
@@ -496,7 +496,7 @@ BODIES["biasvar"] = f"""
   <p>這張圖用固定種子抽取 300 組訓練資料，讓比較可以重現。
   固定種子不會消除資料本身的不確定性；它只是讓同一個模擬流程重跑時得到相同結果。
   語法可回看<a href="p3_numpy.html#rand">附錄：NumPy 的隨機抽樣與種子</a>
-  （課程 Lab Ch2，儲存格 80、82），這裡專注看下面如何跨訓練集算偏差與變異。</p>
+  （課程 Lab Ch2 的平均與標準差範例），這裡專注看下面如何跨訓練集算偏差與變異。</p>
 
   <div class="info-card" style="margin:1.2rem 0;">
     <div class="ic-title">蒙地卡羅拆解的虛擬碼 <span class="ic-badge">CODE</span></div>
@@ -666,7 +666,7 @@ BODIES["bayes"] = f"""
       note="<code>keep_rows</code> 是一個布林陣列，<code>A[keep_rows]</code> 只留下 "
            "<code>True</code> 的那幾列。KNN 在數「鄰居裡有幾個屬於類別 j」時做的就是這件事："
            "先算出一個布林陣列，再數它。"
-           "注意 lab 儲存格 169 的對照：<code>np.array([0,1,0,1])</code> 雖然跟 "
+           "注意 lab 的整數索引與布林索引對照：<code>np.array([0,1,0,1])</code> 雖然跟 "
            "<code>keep_rows</code> 用 <code>==</code> 比是相等的，"
            "但當索引用時 <strong>numpy 會把整數當位置、把布林當遮罩</strong>，結果完全不同。")}
 
@@ -816,7 +816,7 @@ BODIES["reference"] = f"""
          "<strong>1.336</strong>", "1.486"]])}
   <p style="font-size:.82rem;color:var(--muted);">σ = 1，所以 Var(ε) = 1.00 是三列期望測試 MSE 的下限；
   單一有限測試集的 MSE 可能因抽樣波動低於它。
-  三個情境的最佳 df 分別是 2、7、18。這就是「沒有一個放諸四海皆準的彈性度」。
+  情境 A、B、C 的最佳 df 分別是 7、2、18。這就是「沒有一個放諸四海皆準的彈性度」。
   數字由 <code>tools/frames/gen_statlearn.py</code> 在 <code>default_rng(524)</code>、
   M = 300 下產生。</p>
 

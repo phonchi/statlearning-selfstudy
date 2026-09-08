@@ -1,7 +1,7 @@
 # Ch10-deeplearning-lab.ipynb — ISLP 第 10 章
 
 > 由 tools/extract_lab.py 產生。頁面上的程式碼與預期輸出一律從這裡逐字抄，
-> `.dx-src` 要標注這裡的儲存格編號。不要重跑：輸出是課本作者存在 notebook 裡的實跑結果。
+> `.dx-src` 以內部 data-lab-* 屬性保留來源位置；頁面不顯示儲存格編號。不要重跑：輸出是課本作者存在 notebook 裡的實跑結果。
 >
 > **來源**：https://github.com/intro-stat-learning/ISLP_labs（BSD 2-Clause）
 > · 分支 `main` · commit `6bf6160a3dd180c6651ba06655b453e81f91dc20`

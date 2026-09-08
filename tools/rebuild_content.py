@@ -6,6 +6,7 @@ and its pinned generator instead. Missing baked data is an error, not a fallback
 Usage: python3 tools/rebuild_content.py [page_stem ...]
 """
 import ast
+import argparse
 import json
 import re
 import sys
@@ -34,7 +35,7 @@ class KeepFrames(ast.NodeTransformer):
         return self.generic_visit(node)
 
 
-def rebuild(stems):
+def rebuild(stems, frame_files=None):
     enrich = ROOT / "tools" / "enrich"
     sys.path.insert(0, str(enrich))
     registry = {}
@@ -47,12 +48,22 @@ def rebuild(stems):
         if len(names) != 1:
             raise ValueError(f"Expected one literal apply() target in {script.name}: {names}")
         registry[names.pop()] = (script, tree)
-    for stem in stems or registry:
+    frame_files = frame_files or {}
+    targets = stems or list(registry)
+    if set(frame_files) - set(targets):
+        raise ValueError("Frame overrides must name a selected page")
+    for stem in targets:
         script, tree = registry[stem]
-        existing = (ROOT / f"{stem}.html").read_text(encoding="utf-8")
+        existing = Path(frame_files.get(stem, ROOT / f"{stem}.html")).read_text(encoding="utf-8")
         tree = ast.fix_missing_locations(KeepFrames(frame_declarations(existing)).visit(tree))
         exec(compile(tree, str(script), "exec"), {"__name__": "__main__", "__file__": str(script)})
 
 
 if __name__ == "__main__":
-    rebuild(sys.argv[1:])
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('stems', nargs='*')
+    parser.add_argument('--frames-file', action='append', default=[], metavar='STEM=PATH',
+                        help='Use saved output from a freshly run frame generator')
+    args = parser.parse_args()
+    overrides = dict(value.split('=', 1) for value in args.frames_file)
+    rebuild(args.stems, overrides)

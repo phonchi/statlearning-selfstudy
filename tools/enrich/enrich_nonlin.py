@@ -76,7 +76,7 @@ BODIES["prologue"] = f"""
         ["平滑樣條", "調 λ", "有效自由度 df<sub>λ</sub>（連續）", "好（兩端線性）", "不必選節點，只要選 λ"],
         ["局部迴歸", "調鄰域大小", "跨距 s", "偏糟（單邊資料）", "每次預測都要用到全部資料"]])}
 
-  <p>這一章的講義有 54 頁，順序就是上面這張表。往下每一節都有一個可以拖、可以推的元件。
+  <p>本章依照上表介紹各種方法，搭配例子與互動觀察配適結果。
   <strong>先猜結果再按按鈕</strong>，再對照畫面，檢查自己對參數效果的理解。</p>
 
 {quiz("qNon", "QUIZ · 為什麼它還算線性模型",
@@ -117,7 +117,7 @@ BODIES["poly"] = f"""
 
 {viz(svg("w08polySvg", 300) + "\n" + svg("w08polyMse", 170),
      [info_card("怎麼看這張圖",
-                '上圖：灰點是 <code>Wage</code> 的 90 筆子樣本（只是背景），'
+                '上圖：灰點是 <code>Wage</code> 的全部 3000 筆觀察，'
                 '紅線與淡藍帶是用<strong>全部 3000 筆</strong>配出來的 d 次多項式與 95% 信賴帶。'
                 '下圖：訓練 MSE（藍）一路往下，10-fold CV MSE（紅）在 d = 4 觸底之後回頭往上。',
                 "圖 7.1"),
@@ -137,7 +137,7 @@ BODIES["poly"] = f"""
      slider("w08polySl", "次數 d", 1, 15, 1, 4, "4", "w08polySetDeg()")
      + '<button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴帶：開</button>'
      + '<button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button>',
-     provenance=("course-data", "Wage 全體資料配適與固定 90 筆背景子樣本；曲線、CV MSE 與信賴帶由 generator 計算。"))}
+     provenance=("course-data", "Wage 全體資料配適與完整 3000 筆背景散點；曲線、CV MSE 與信賴帶由 generator 計算。"))}
 
   <h3 id="dx-poly">講義完整實作：四次多項式與它的 t 檢定</h3>
 {card("lab 07 · degree 4 多項式（Wage：age → wage）",
@@ -289,7 +289,7 @@ BODIES["basis"] = f"""
      '<button class="btn btn-step" onclick="w08basisPreset(\'poly\')">預設：三次多項式</button>'
      '<button class="btn btn-step" onclick="w08basisPreset(\'spline\')">預設：立方樣條</button>'
      '<button class="btn btn-step" onclick="w08basisPreset(\'step\')">預設：階梯函數</button>',
-     provenance=("course-data", "Wage 固定子樣本；基底與最小平方配適依 Ch07 lab 的 polynomial／spline／step 表示。"))}
+     provenance=("course-data", "Wage 全部 3000 筆；基底與最小平方配適依 Ch07 lab 的 polynomial／spline／step 表示。"))}
 
   <h3 id="dx-bs0">講義完整實作：把樣條的次數調成 0，就是階梯函數</h3>
 {card("lab 07 · degree=0 的 B-樣條 ≡ 分段常數", lab_code(CH, 53), lab_output(CH, 53),
@@ -365,7 +365,7 @@ BODIES["splines"] = f"""
      '<label class="mono" style="font-size:.76rem;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;">'
      '<input type="radio" id="w08knotLv3" name="w08knotLvl" value="3" checked onchange="w08knotSet(3)"> 二階導數連續</label>'
      '<button class="btn btn-reset" onclick="w08knotReset()">重置（ξ = 50）</button>',
-     provenance=("course-data", "Wage 固定子樣本上的分段多項式；連續性約束依 ISLP 圖 7.3 即時計算。"))}
+     provenance=("course-data", "Wage 全部 3000 筆上的分段多項式；連續性約束依 ISLP 圖 7.3 即時計算。"))}
 
   <p>那要怎麼真的把約束配進去？不必解限制式最小平方——<strong>換基底就好</strong>。
   從三次多項式的基底 $x, x^2, x^3$ 出發，每個節點加一個<strong>截斷冪基底</strong>
@@ -553,7 +553,7 @@ BODIES["smooth"] = f"""
            "。此圖的重點：df = 2 幾乎是直線，df = 19 有明顯起伏；"
            "pygam 依 GCV 選出 df = 5.64，跟課本圖 7.8 用 LOOCV 選出的 6.8 很接近。"),
      [info_card("怎麼看這張圖",
-                '灰點是 90 筆子樣本（背景），曲線是用<strong>全部 3000 筆</strong>配的平滑樣條。'
+                '灰點是全部 3000 筆觀察，曲線是用<strong>全部 3000 筆</strong>配的平滑樣條。'
                 '滑桿以有效自由度 df<sub>λ</sub> 顯示複雜度，每個刻度對應一個 λ，'
                 'df 較容易用來比較複雜度（λ = 5.2×10⁹ 對上 df = 2）。', "圖 7.8"),
       rows_card("這個 df 的成績",
@@ -615,6 +615,11 @@ BODIES["smooth"] = f"""
 
 # ── P07 loess ─────────────────────────────────────────────────────────
 BODIES["loess"] = f"""
+{viz(chart("w08lowessLab", "tall", "。課程 lab 的 LOWESS 使用完整 Wage 資料，跨距 0.2 與 0.5 比較局部平滑程度。"),
+     [info_card("課程 LOWESS", "全部 3000 筆 Wage；span 為 0.2 與 0.5，保留套件預設的三次穩健疊代。年齡以歲、薪資以千美元表示。")],
+     "w08lowessLabStatus", "課程 lab 的 LOWESS 曲線。下方互動再拆解一次局部加權配適。", "",
+     provenance=("course-data", "Ch07 lab 的 statsmodels lowess；完整資料、100 點年齡格點、frac=0.2／0.5。"))}
+
   <p>再換一個想法。前面所有方法都在配一個<strong>全域</strong>的函數形式
   （就算是分段的，段的邊界也是事先定死的）。局部迴歸（local regression）說：
   要預測 $x_0$ 上的值，就只用 $x_0$ 附近的點，配一條加權直線，取它在 $x_0$ 的值。
@@ -662,7 +667,7 @@ BODIES["loess"] = f"""
      + slider("w08loessXSl", "目標點 x₀", 20, 77, 1, 49, "49", "w08loessSetX0()", "200px")
      + '<button class="btn btn-play" onclick="w08loessStart()">▶ 自動掃描（可選）</button>'
      '<button class="btn btn-reset" onclick="w08loessReset()">重置</button>',
-     provenance=("course-data", "Wage 固定 90 筆子樣本；tricube 權重與局部線性最小平方由瀏覽器即時計算。"))}
+     provenance=("course-data", "Wage 全部 3000 筆；tricube 權重與局部線性最小平方由瀏覽器即時計算。"))}
 
 {table(["span s", "鄰域", "曲線", "ISLP 圖 7.10 標的有效自由度"],
        [["0.2", "20% 的資料", "抖，跟著局部起伏", "16.4"],
@@ -719,7 +724,7 @@ BODIES["gam"] = f"""
 
 {info("逆向配適在做什麼", '''輪流更新每一個 $f_j$：更新第 j 個的時候把其他項固定，
   對<strong>偏殘差</strong>（partial residual）做一次單變數平滑。以 p = 3、更新 $f_3$ 為例：<br>
-  $r_i = y_i - \\hat f_1(x_{i1}) - \\hat f_2(x_{i2})$，
+  $r_i = y_i - \\hat\\beta_0 - \\hat f_1(x_{i1}) - \\hat f_2(x_{i2})$，
   然後把 $r_i$ 當反應變數、對 $X_3$ 配一個平滑樣條，得到新的 $\\hat f_3$。<br>
   換下一個變數，重複，直到不再變動。<strong>好處是你只要有單變數的配適工具，
   就能配任意多變數的加法模型。</strong>ISLP §7.9 第 11、12 題用線性迴歸版本讓你手動跑一遍。''')}
@@ -733,7 +738,7 @@ BODIES["gam"] = f"""
      + "\n      </div>",
      [info_card("怎麼看這三張圖",
                 '每一張都是一個 $\\hat f_k$ 的<strong>偏依賴圖</strong>：'
-                '其他變數固定在平均值，只讓這一個變數在格點上跑。'
+                '曲線呈現中心化後的單一加法成分；其餘項的貢獻由截距與其他面板表示。'
                 '虛線是逐點 95% 信賴帶。<strong>三張圖的縱軸都是「對 wage 的效果」</strong>，'
                 '所以可以直接比高低——age 與 education 的擺幅遠大於 year。', "圖 7.11–7.12"),
       rows_card("這一組 df 的成績",
@@ -761,7 +766,7 @@ BODIES["gam"] = f"""
 {table(["GAM 的優點 ✔", "GAM 的限制 ✘"],
        [["每個 $X_j$ 各配一個非線性 $f_j$，不必手動試變換", "<strong>模型被限制成加法的</strong>，變數多的時候會漏掉重要的交互作用"],
         ["非線性配適通常預測更準", "要交互作用得手動加 $X_j \\times X_k$ 或二維的 $f_{jk}$ 項"],
-        ["因為是加法的，可以固定其他變數單獨看某一個變數的效果", "二維平滑器（thin-plate spline 之類）不在這一章的範圍"],
+        ["因為是加法的，可以固定其他變數單獨看某一個變數的效果", "交互作用須加入二維平滑項；本節另說明 thin-plate spline"],
         ["每個 $f_j$ 的平滑程度可以用自由度總結", "完全一般的模型還是得靠第 8 章的隨機森林與提升法"]])}
 
   <p>整套邏輯搬到分類問題只要把 (7.17) 的 logit 換成加法形式：</p>
@@ -867,7 +872,7 @@ BODIES["exercises"] = f"""
       "$\\hat g_2$ 懲罰 $\\int \\left[g^{{(4)}}\\right]^2$。$\\lambda \\to \\infty$ 時，"
       "哪一個的<strong>訓練</strong> RSS 較小？",
       [(True, "$\\hat g_2$，因為它被逼成三次多項式，比被逼成二次多項式的 $\\hat g_1$ 更有彈性",
-        "對。$\\lambda \\to \\infty$ 讓 $g^{(4)} \\equiv 0$（三次多項式）或 $g^{(3)} \\equiv 0$（二次多項式）。三次多項式的函數空間包含二次多項式，參數多一個，所以訓練 RSS 一定不會更大。第 (b) 小題的答案是「說不出來」——測試 RSS 取決於真實函數；第 (c) 小題 λ = 0 時兩者都內插，訓練與測試 RSS 都相同。"),
+        "對。$\\lambda \\to \\infty$ 讓 $g^{(4)} \\equiv 0$（三次多項式）或 $g^{(3)} \\equiv 0$（二次多項式）。三次多項式的函數空間包含二次多項式，參數多一個，所以訓練 RSS 一定不會更大。第 (b) 小題的答案是「說不出來」——測試 RSS 取決於真實函數；第 (c) 小題 λ = 0 時若兩者均能內插，訓練 RSS 都為零；未指定內插解的選擇時，測試預測與測試 RSS 不必相同。"),
        (False, "$\\hat g_1$，因為懲罰的導數階數較低，代表約束較弱",
         "反了。懲罰<strong>低</strong>階導數是<strong>更強</strong>的約束：要求 $g'''=0$ 只剩二次多項式，要求 $g^{(4)}=0$ 還可以是三次多項式。階數愈高，被允許的函數族愈大。"),
        (False, "兩者相同，因為 $\\lambda \\to \\infty$ 時兩個懲罰項都趨近於 0，模型退化成同一個",
@@ -937,6 +942,18 @@ BODIES["reference"] = f"""
 """
 
 # ══════════════════════════════════════════════════════════════════════
+
+# 最新講義主題補全；維持既有 section 與導覽。
+BODIES['natural'] += r"""
+<h3>自然樣條與 B-spline 基底</h3><p>給定有序節點 $\xi_1<\cdots<\xi_K$，可令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。自然立方樣條的一組基底為 $1,x,d_k(x)-d_{K-1}(x)$（$k=1,\ldots,K-2$）；相減消去邊界外的二次、三次項，使兩端保持線性。這裡的 $\xi_1,\xi_K$ 是邊界節點，計數時不可與只算內部節點的記號混用。</p><p>截斷冪基底方便看連續性，但高次冪容易造成數值問題。B-spline 用只在一段節點範圍非零的局部支撐基底，表示相同的樣條空間，通常更適合計算。更換基底不等於更換模型；需保持次數、節點、邊界條件與截距設定一致。</p>
+"""
+BODIES['smooth'] += r"""
+<h3>平滑矩陣與邏輯斯平滑</h3><p>以基底矩陣 $B$ 表示 $f$，令 $\Omega_{jk}=\int b_j''(t)b_k''(t)\,dt$，則 $\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty$，配適值為 $\hat y=S_\lambda y$，其中 $S_\lambda=B(B^TB+\lambda\Omega)^{-1}B^T$。係數與配適值維度不同，不能把 $S_\lambda y$ 寫成係數。有效自由度為 $\operatorname{tr}(S_\lambda)$；懲罰矩陣取單位矩陣時與 Ridge 形式相同。</p><p>二元反應可將 $g(x)$ 放入 logit，最大化 $\sum_i\{y_i g(x_i)-\log(1+e^{g(x_i)})\}-\frac\lambda2\int g''(t)^2dt$。此時使用懲罰的 Newton 或迭代加權最小平方更新，預測機率為 $1/(1+e^{-g(x)})$；不能直接以連續薪資的最小平方法取代。</p>
+"""
+BODIES['gam'] += r"""
+<h3>二維平滑與效果圖的讀法</h3><p>薄板樣條（thin-plate spline）把一維曲率懲罰推廣到平面，最小化 $\sum_i(y_i-g(x_{i1},x_{i2}))^2+\lambda J(g)$，其中 $J(g)=\iint\{g_{11}^2+2g_{12}^2+g_{22}^2\}\,dx_1dx_2$。解由仿射項與以資料點為中心的徑向基底組成，基底可寫為 $r^2\log r$（$r=0$ 取連續極限 0）；係數另受與仿射項正交的限制。把這類 $g(x_j,x_k)$ 加入 GAM 可表示交互作用，複雜度也必須另外控制。</p><p>偏依賴圖（partial dependence plot, PDP）在模型配適後計算 $\hat f_S(x_S)=n^{-1}\sum_i\hat f(x_S,x_C^{(i)})$，是平均其他特徵的預測。固定其他特徵於平均值只是切片，對一般非線性模型兩者不同。加法模型的單一成分圖與回應尺度 PDP 可相差一個常數；分類 GAM 的 link 尺度成分也不能直接當成機率差。特徵高度相關時，PDP 可能評估資料未支持的組合，更不能把曲線直接解讀成因果效果。</p><p>偏殘差圖畫 $e_i+\hat f_j(x_{ij})$ 對 $x_{ij}$，可檢查剩餘非線性。部分迴歸圖則先把 $y$ 與指定 $x_j$ 各自對其他線性項迴歸，再畫兩組殘差；其斜率等於原多元線性模型的係數。含截距的 OLS 滿足 $\sum_i e_i=0$ 與 $X^Te=0$，這是樣本內正交性，不能推成誤差與特徵獨立。</p>
+"""
+
 PAGEJS = r"""
 /* ===== beyond_linearity 本頁元件（站內序號 08 → id 與全域一律 w08 前綴）=====
    ISLP 章號是 7，但頁面命名空間用站內序號 08，兩者刻意不同。 */
@@ -997,7 +1014,7 @@ function w08fitStats(X, y, beta) {
   return { rss, tss, r2: tss > 0 ? 1 - rss / tss : NaN };
 }
 
-/* 共用的 Wage 子樣本（90 筆）與四個 live 元件共用的座標範圍 */
+/* 共用的 Wage 全體（3000 筆）與四個 live 元件共用的座標範圍 */
 const w08sub = (() => {
   const F = FRAMES_w08wage;
   const ylo = Math.floor(Math.min.apply(null, F.wage) / 20) * 20 - 10;
@@ -1331,7 +1348,7 @@ function w08natDraw() {
   const F = FRAMES_w08nat;
   const pts = (arr) => F.grid.map((x, i) => ({ x: x, y: arr[i] }));
   const ds = [];
-  ds.push({ label: 'Wage 子樣本', data: FRAMES_w08wage.age.map((a, i) =>
+  ds.push({ label: 'Wage 全體', data: FRAMES_w08wage.age.map((a, i) =>
               ({ x: a, y: FRAMES_w08wage.wage[i] })),
             backgroundColor: w08GRAY, borderColor: w08GRAY, pointRadius: 2.6,
             showLine: false, order: 9 });
@@ -1399,7 +1416,7 @@ function w08lamDraw() {
   const F = FRAMES_w08lam;
   const i = parseInt($('w08lamSl').value, 10);
   const df = F.dfs[i], key = String(df);
-  const ds = [{ label: 'Wage 子樣本',
+  const ds = [{ label: 'Wage 全體',
                 data: FRAMES_w08wage.age.map((a, k) => ({ x: a, y: FRAMES_w08wage.wage[k] })),
                 backgroundColor: w08GRAY, borderColor: w08GRAY, pointRadius: 2.6,
                 showLine: false, order: 9 }];
@@ -1497,14 +1514,14 @@ function w08loessApply(f) {
     const u = Math.abs(t), wt = Math.pow(1 - u * u * u, 3);
     bell.push([f.x0 + t * r.dmax, s.yd[0] + 6 + wt * (s.yd[1] - s.yd[0]) * 0.16]);
   }
-  s.poly(bell, { stroke: '#d4ac0d', sw: 2, cls: 'fit' }, g);
+  s.poly(bell, { stroke: '#d4ac0d', sw: 2, cls: 'w08localLine' }, g);
   s.seg(f.x0, s.yd[0], f.x0, s.yd[1], { stroke: HC.tok.held, sw: 2, dash: '5 4', cls: 'resid' }, g);
   /* 淡紅：這個 span 的完整曲線 */
-  s.poly(w08loessFull(span), { stroke: 'rgba(192,57,43,.30)', sw: 1.8, cls: 'fit' }, g);
+  s.poly(w08loessFull(span), { stroke: 'rgba(192,57,43,.30)', sw: 1.8, cls: 'w08localLine' }, g);
   /* 局部加權直線（只畫鄰域那一段） */
   const x1 = f.x0 - r.dmax, x2 = f.x0 + r.dmax;
   s.poly([[x1, r.b0 + r.b1 * (x1 - f.x0)], [x2, r.b0 + r.b1 * (x2 - f.x0)]],
-         { stroke: '#d68910', sw: 2.6, cls: 'fit' }, g);
+         { stroke: '#d68910', sw: 2.6, cls: 'w08localLine' }, g);
   if (f.path.length > 1) s.poly(f.path, { cls: 'fit', sw: 3.4 }, g);
   s.dot(f.x0, r.fit, { r: 6, fill: HC.tok.accent, stroke: '#fff', sw: 1.6 }, g);
   s.txtPx(52, 26, 'span = ' + HC.fmt(span, 2) + ' → 鄰域 k = ' + r.k + ' / ' + w08sub.n
@@ -1640,7 +1657,19 @@ w08knotSetup();
 w08knotDraw();
 w08loessSetup();
 w08loessReset();
+
+function w08lowessLabDraw() {
+  const F = FRAMES_w08lowess, W = FRAMES_w08wage;
+  const sets = [{label:'Wage 全部 3000 筆', data:W.age.map((x,i)=>({x:x,y:W.wage[i]})),
+    showLine:false, pointRadius:1.6, backgroundColor:'rgba(120,116,104,.3)'}];
+  ['0.2','0.5'].forEach((span,i)=>sets.push({label:'span = '+span,
+    data:F.grid.map((x,j)=>({x:x,y:F.curves[span][j]})), showLine:true,
+    pointRadius:0, borderWidth:3, borderColor:i?HC.tok.accent2:HC.tok.accent}));
+  HC.scatter('w08lowessLab',{datasets:sets},{scales:{x:{title:{display:true,text:'age（歲）'}},y:{title:{display:true,text:'wage（千美元）'}}}});
+}
+
 HC.ready(() => {
+  w08lowessLabDraw();
   w08natDraw();
   w08lamDraw();
   w08gamDraw();

@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 
@@ -702,8 +702,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · 視覺化）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）與儲存格編號；需要實作時，再打開原始筆記本對照。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
   <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/01_Introduction.pdf" target="_blank" rel="noopener">📑 導論講義</a><a href="https://seaborn.pydata.org/tutorial/function_overview.html" target="_blank" rel="noopener">🔗 Seaborn 圖形分類</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
@@ -728,7 +728,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>摘要統計一樣，圖可以完全不一樣 <span class="sec-badge">課程 Lab Ch1 · 儲存格 88</span></h2>
+  <h2>摘要統計一樣，圖可以完全不一樣 <span class="sec-badge">課程 Lab Ch1 · lab 範例</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>統計課教你算平均、標準差、相關係數。這些數字很有用，但它們<strong>會漏掉形狀</strong>。
@@ -787,7 +787,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 3       23.68  3.31    Male     No  Sun  Dinner     2
 4       24.59  3.61  Female     No  Sun  Dinner     4</pre></div>
   <p class="dx-note">244 筆餐廳帳單。<code>total_bill</code> 與 <code>tip</code> 是數值，<code>day</code>、<code>sex</code>、<code>smoker</code> 是類別——這兩種型別要配不同的圖。</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 88</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="88">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
@@ -800,7 +800,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="anat">
 <!-- GEN:BEGIN sec:anat -->
   <div class="section-number">PART 01 · 圖形層級與 Seaborn 分類</div>
-  <h2>Figure、Axes 與 Seaborn 的圖形分類 <span class="sec-badge">講義 01 · p.29</span><span class="sec-badge">課程 Lab Ch2 · 儲存格 96–114</span><span class="sec-badge">seaborn 文件 · 圖形分類</span></h2>
+  <h2>Figure、Axes 與 Seaborn 的圖形分類 <span class="sec-badge">講義 01</span><span class="sec-badge">課程 Lab Ch2 · lab 範例</span><span class="sec-badge">seaborn 文件 · 圖形分類</span></h2>
 <!-- GEN:END sec:anat -->
 
   <p>使用 matplotlib 時，先分清設定屬於哪一層：
@@ -841,7 +841,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">y = rng.standard_normal(<span class="num">100</span>)</span>
   <span class="line">ax.plot(x, y);</span></div>
   <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 96</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="96">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -850,7 +850,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
   <span class="line">ax.scatter(x, y, marker=<span class="str">&#x27;o&#x27;</span>)</span></div>
   <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 105</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="105">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="viz-layout" data-provenance="course-data">
@@ -888,11 +888,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">axes[<span class="num">1</span>,<span class="num">2</span>].scatter(x, y, marker=<span class="str">&#x27;+&#x27;</span>)</span>
   <span class="line">fig</span></div>
   <p class="dx-note">這一格畫的是圖。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch02-statlearn-lab-zh.ipynb</code> · 儲存格 112、114</span>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="112,114">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
   <h3>Seaborn 函式地圖：先選問題，再選控制層級</h3>
-  <p>導論講義第 29 頁把常用函式分成<strong>關係、分布、類別</strong>三個家族；
+  <p>導論講義把常用函式分成<strong>關係、分布、類別</strong>三個家族；
   這是在分「你想看什麼」。每個家族又有不同控制層級：上層的 Figure-level 入口替你管理整張圖，
   下層的 Axes-level 函式畫到一個座標系。<strong>家族與層級是兩個不同的面向。</strong></p>
 
@@ -950,7 +950,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <span class="line">fig, ax = plt.subplots()</span>
 <span class="line">sns.scatterplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, ax=ax)</span></div>
 
-  <p>講義第 29 頁還列了下面三類。它們分別提供多視角組圖、迴歸與殘差圖，以及矩陣圖；可依用途與控制層級查找。</p>
+  <p>講義還列了下面三類。它們分別提供多視角組圖、迴歸與殘差圖，以及矩陣圖；可依用途與控制層級查找。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>用途</th><th>Axes-level</th><th>Figure-level／回傳的管理物件</th></tr></thead>
   <tbody><tr><td>多個視角：同時看關係與各欄分布</td><td>由管理物件安排多個座標系</td><td><a href="https://seaborn.pydata.org/generated/seaborn.jointplot.html"><code>jointplot</code></a> → JointGrid；<a href="https://seaborn.pydata.org/generated/seaborn.pairplot.html"><code>pairplot</code></a> → PairGrid</td></tr><tr><td>迴歸與殘差：看趨勢及偏離趨勢的情形</td><td><a href="https://seaborn.pydata.org/generated/seaborn.regplot.html"><code>regplot</code></a>、<a href="https://seaborn.pydata.org/generated/seaborn.residplot.html"><code>residplot</code></a></td><td><a href="https://seaborn.pydata.org/generated/seaborn.lmplot.html"><code>lmplot</code></a> → FacetGrid</td></tr><tr><td>矩陣：用顏色看各格數值，需要時依分群排列</td><td><a href="https://seaborn.pydata.org/generated/seaborn.heatmap.html"><code>heatmap</code></a></td><td><a href="https://seaborn.pydata.org/generated/seaborn.clustermap.html"><code>clustermap</code></a> → ClusterGrid</td></tr></tbody>
@@ -958,7 +958,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p><code>jointplot</code> 以一對變數為主，加上兩側的分布；<code>pairplot</code> 組合多對變數，
   兩者各自管理多個 Axes。<code>clustermap</code> 則連同分群樹與熱圖一起管理。
   若你已建立自己的 <code>subplots</code>，應選可接收 <code>ax=</code> 的 Axes-level 函式。</p>
-  <p>分類依據：導論講義第 29 頁與
+  <p>分類依據：導論講義與
   <a href="https://seaborn.pydata.org/tutorial/function_overview.html">Seaborn 官方函式總覽</a>。
   函式名稱都可點回官方 API 文件。</p>
 
@@ -979,14 +979,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p>你用 <code>sns.relplot(...)</code> 畫完圖，接著寫 <code>ax.set_xlim([0, 10])</code>，卻沒有任何效果。最可能的原因是？</p>
-  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。<code>relplot</code>／<code>catplot</code>／<code>lmplot</code> 是 figure-level，它不會畫到你手上那個 <code>ax</code> 上。要放進既有座標系可改用 <code>scatterplot(..., ax=ax)</code>；保留 relplot 時則透過回傳的 Grid 修改它所管理的軸。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。這次設定用到了<strong>另一個 Axes</strong>，請確認要修改的座標系。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
+  <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;relplot&lt;/code&gt;／&lt;code&gt;catplot&lt;/code&gt;／&lt;code&gt;lmplot&lt;/code&gt; 是 figure-level，它不會畫到你手上那個 &lt;code&gt;ax&lt;/code&gt; 上。要放進既有座標系可改用 &lt;code&gt;scatterplot(..., ax=ax)&lt;/code&gt;；保留 relplot 時則透過回傳的 Grid 修改它所管理的軸。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。這次設定用到了&lt;strong&gt;另一個 Axes&lt;/strong&gt;，請確認要修改的座標系。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
   <div class="quiz-feedback" id="qAnatFeedback"></div>
 </div>
 </section>
 <section id="dist">
 <!-- GEN:BEGIN sec:dist -->
   <div class="section-number">PART 02 · 看一個變數的分布</div>
-  <h2>直方圖的 bins 與密度圖的頻寬會改變你的結論 <span class="sec-badge">課程 Lab Ch1 · 儲存格 105–111</span></h2>
+  <h2>直方圖的 bins 與密度圖的頻寬會改變你的結論 <span class="sec-badge">課程 Lab Ch1 · lab 範例</span></h2>
 <!-- GEN:END sec:dist -->
 
   <p>看一個變數的分布有兩種標準做法：直方圖與密度圖。兩者都有一個<strong>你必須自己決定的參數</strong>——
@@ -1029,7 +1029,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.displot(x=<span class="str">&quot;total_bill&quot;</span>, data = tips); <span class="com">#check parameter bins and binwidth</span></span></div>
   <p class="dx-note">lab 的註解就提醒了 <code>bins</code> 這個參數。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 105</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="105">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1040,7 +1040,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：直方圖</span></span>
   <span class="line">sns.histplot(data=tips, x=<span class="str">&quot;day&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>, multiple=<span class="str">&quot;dodge&quot;</span>, shrink=<span class="num">.8</span>);</span></div>
   <p class="dx-note"><code>hue</code> 分色、<code>multiple='stack'</code> 疊起來。分色看得出各組的形狀，堆疊看得出總量——兩種問題。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 106、107</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="106,107">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1051,20 +1051,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：KDE 密度圖</span></span>
   <span class="line">sns.kdeplot(data=tips, x=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;time&quot;</span>, multiple=<span class="str">&quot;stack&quot;</span>);</span></div>
   <p class="dx-note"><code>kdeplot</code> 把每個點換成一個小鐘形再加起來，所以它<strong>一定是平滑的</strong>。平滑程度來自繪圖設定，讀圖時也要留意這項選擇。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 110、111</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="110,111">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 02 · 自我檢測</div>
   <p>同一份資料，bins=5 看起來是一個峰，bins=30 看起來是兩個峰。你該怎麼辦？</p>
-  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="挑圖應依分析問題與資料證據，否則可能只留下符合自己想法的結果。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖可以幫你提出假設，接著要用資料核對。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 <code>hue</code> 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
+  <div class="quiz-options" id="qDistOptions"><div class="quiz-opt" data-correct="false" data-fb="挑圖應依分析問題與資料證據，否則可能只留下符合自己想法的結果。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(A)</span> 選看起來比較漂亮的那一張放進報告</div><div class="quiz-opt" data-correct="true" data-fb="對。圖可以幫你提出假設，接著要用資料核對。如果兩群對應到某個真實的分類（例如吸菸與不吸菸），就用 &lt;code&gt;hue&lt;/code&gt; 分色驗證；驗不出來就不要宣稱有兩群。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(B)</span> 兩張都看，再回頭問「有沒有理由相信這兩群真的存在」</div><div class="quiz-opt" data-correct="false" data-fb="沒有「一定對」的 bins。seaborn 的預設只是一個經驗法則，它不知道你要回答什麼問題。" onclick="quizCheck('qDist', this)"><span class="opt-letter">(C)</span> 用預設的 bins，seaborn 的預設一定是對的</div></div>
   <div class="quiz-feedback" id="qDistFeedback"></div>
 </div>
 </section>
 <section id="rel">
 <!-- GEN:BEGIN sec:rel -->
   <div class="section-number">PART 03 · 看兩個變數的關係</div>
-  <h2>散佈圖、折線圖、joint 與 pair <span class="sec-badge">課程 Lab Ch1 · 儲存格 91–117</span></h2>
+  <h2>散佈圖、折線圖、joint 與 pair <span class="sec-badge">課程 Lab Ch1 · lab 範例</span></h2>
 <!-- GEN:END sec:rel -->
 
   <p>兩個變數的關係圖幾乎都是散佈圖的變形。seaborn 幫你做的事是
@@ -1104,7 +1104,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, style=<span class="str">&quot;smoker&quot;</span>, data=tips); <span class="com"># you can use a different marker style for each class</span></span></div>
   <p class="dx-note"><code>hue</code> 與 <code>style</code> 同時用同一個變數，是為了在黑白列印時也分得出來。這個習慣值得學。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 91、93</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="91,93">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1113,7 +1113,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.relplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, size=<span class="str">&quot;size&quot;</span>, sizes=(<span class="num">15</span>, <span class="num">200</span>), data=tips); <span class="com">#size rather than colors</span></span></div>
   <p class="dx-note"><code>sizes=(15, 200)</code> 明確指定最小與最大的點徑。不指定的話預設範圍很窄，看不出差別。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 95</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="95">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1123,7 +1123,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">fmri = sns.load_dataset(<span class="str">&quot;fmri&quot;</span>)</span>
   <span class="line">sns.lineplot(x=<span class="str">&quot;timepoint&quot;</span>, y=<span class="str">&quot;signal&quot;</span>, hue=<span class="str">&quot;event&quot;</span>, style=<span class="str">&quot;event&quot;</span>, markers=<span class="num">True</span>, dashes=<span class="num">False</span>, data=fmri);</span></div>
   <p class="dx-note"><code>lineplot</code> 對同一個 x 有多筆資料時，會自動畫平均與 95% 信賴帶。那條帶子是 bootstrap 算出來的，第 5 章會講它怎麼來的。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 102</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="102">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1134,20 +1134,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：變數成對關係圖</span></span>
   <span class="line">sns.pairplot(tips);</span></div>
   <p class="dx-note"><code>pairplot</code> 適合一次查看多個變數的關係：所有數值欄兩兩配對，一眼看完。欄多的時候會很慢，先挑幾欄再畫。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 114、117</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="114,117">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
   <p>你想看「小費金額與帳單金額的關係，並區分吸菸與否」。最直接的寫法是？</p>
-  <div class="quiz-options" id="qRelOptions"><div class="quiz-opt" data-correct="true" data-fb="對。兩個數值變數用散佈圖，第三個類別變數用 <code>hue</code> 上色。lab 儲存格 93 就是這一行。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(A)</span> <code>sns.relplot(x='total_bill', y='tip', hue='smoker', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="這張圖只看得到吸菸與否對小費的影響，<strong>total_bill 不見了</strong>——而它才是最主要的解釋變數。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(B)</span> <code>sns.catplot(x='smoker', y='tip', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="可以（那就是 <code>col='smoker'</code>），但要比較兩組時疊在同一張圖上用顏色分比較容易看出差異。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(C)</span> 畫兩張散佈圖，一張吸菸一張不吸菸</div></div>
+  <div class="quiz-options" id="qRelOptions"><div class="quiz-opt" data-correct="true" data-fb="對。兩個數值變數用散佈圖，第三個類別變數用 &lt;code&gt;hue&lt;/code&gt; 上色。lab 範例 就是這一行。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(A)</span> <code>sns.relplot(x='total_bill', y='tip', hue='smoker', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="這張圖只看得到吸菸與否對小費的影響，&lt;strong&gt;total_bill 不見了&lt;/strong&gt;——而它才是最主要的解釋變數。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(B)</span> <code>sns.catplot(x='smoker', y='tip', data=tips)</code></div><div class="quiz-opt" data-correct="false" data-fb="可以（那就是 &lt;code&gt;col=&#x27;smoker&#x27;&lt;/code&gt;），但要比較兩組時疊在同一張圖上用顏色分比較容易看出差異。" onclick="quizCheck('qRel', this)"><span class="opt-letter">(C)</span> 畫兩張散佈圖，一張吸菸一張不吸菸</div></div>
   <div class="quiz-feedback" id="qRelFeedback"></div>
 </div>
 </section>
 <section id="cat">
 <!-- GEN:BEGIN sec:cat -->
   <div class="section-number">PART 04 · 類別變數的圖</div>
-  <h2>盒鬚圖、長條圖、計數圖：各自在講什麼 <span class="sec-badge">課程 Lab Ch1 · 儲存格 120–130</span></h2>
+  <h2>盒鬚圖、長條圖、計數圖：各自在講什麼 <span class="sec-badge">課程 Lab Ch1 · lab 範例</span></h2>
 <!-- GEN:END sec:cat -->
 
   <p>類別變數的圖最容易被誤讀，因為它們看起來都像長條，但講的事情差很多：
@@ -1187,7 +1187,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, kind=<span class="str">&quot;box&quot;</span>, data=tips); <span class="com"># When adding a hue semantic, the box for each level of the semantic variable is moved along the categorical axis so they don’t overlap:b</span></span></div>
   <p class="dx-note">盒子是四分位距、線是中位數、鬚是 1.5 倍 IQR 內的極值，外面的點是離群值。<strong>在本節比較的基本類別圖中，只有盒鬚圖直接標出這些候選離群值。</strong>（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 120、121</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="120,121">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1198,7 +1198,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集</span></span>
   <span class="line">sns.catplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;total_bill&quot;</span>, hue=<span class="str">&quot;sex&quot;</span>, kind=<span class="str">&quot;bar&quot;</span>, data=tips);</span></div>
   <p class="dx-note"><code>barplot</code> 的長條高度是<strong>平均</strong>，上面那條細線是 bootstrap 信賴區間，不是標準差。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 124、125</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="124,125">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1207,7 +1207,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：計數長條圖</span></span>
   <span class="line">sns.countplot(x=<span class="str">&quot;smoker&quot;</span>, data=tips); <span class="com">#simply count the number</span></span></div>
   <p class="dx-note"><code>countplot</code> 只數筆數，跟 <code>value_counts()</code> 是同一件事的圖版。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 127</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="127">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1216,7 +1216,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：點估計圖</span></span>
   <span class="line">sns.pointplot(x=<span class="str">&quot;day&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips, errorbar=(<span class="str">&#x27;ci&#x27;</span>, <span class="num">68</span>));</span></div>
   <p class="dx-note">把長條換成一個點加誤差線。要比較好幾組的平均時，點比長條清楚——長條的面積會搶掉注意力。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 130</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="130">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1231,7 +1231,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p>一張 <code>barplot</code> 顯示週四的小費比週五高。你還需要知道什麼才能下結論？</p>
-  <div class="quiz-options" id="qCatOptions"><div class="quiz-opt" data-correct="false" data-fb="長條的高度是<strong>平均</strong>。兩組平均有差，不代表這個差站得住腳。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(A)</span> 不用，長條比較高就是比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。<code>barplot</code> 預設會畫 bootstrap 信賴區間，各組區間的重疊不能直接代替差值的推論；要為平均差建立適當的區間或檢定。區間寬度也受樣本量與資料變異影響，不能只看長條高度。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(B)</span> 兩組樣本量、誤差線的定義，以及兩組平均差的區間</div><div class="quiz-opt" data-correct="false" data-fb="標準差講的是個別觀測的分散程度，不是<strong>平均</strong>的不確定性。後者是標準誤，跟樣本數有關。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(C)</span> 只要看兩組的標準差</div></div>
+  <div class="quiz-options" id="qCatOptions"><div class="quiz-opt" data-correct="false" data-fb="長條的高度是&lt;strong&gt;平均&lt;/strong&gt;。兩組平均有差，不代表這個差站得住腳。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(A)</span> 不用，長條比較高就是比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;barplot&lt;/code&gt; 預設會畫 bootstrap 信賴區間，各組區間的重疊不能直接代替差值的推論；要為平均差建立適當的區間或檢定。區間寬度也受樣本量與資料變異影響，不能只看長條高度。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(B)</span> 兩組樣本量、誤差線的定義，以及兩組平均差的區間</div><div class="quiz-opt" data-correct="false" data-fb="標準差講的是個別觀測的分散程度，不是&lt;strong&gt;平均&lt;/strong&gt;的不確定性。後者是標準誤，跟樣本數有關。" onclick="quizCheck('qCat', this)"><span class="opt-letter">(C)</span> 只要看兩組的標準差</div></div>
   <div class="quiz-feedback" id="qCatFeedback"></div>
 </div>
 
@@ -1243,7 +1243,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="model">
 <!-- GEN:BEGIN sec:model -->
   <div class="section-number">PART 05 · 把模型畫進圖裡</div>
-  <h2>regplot 與相關係數熱圖 <span class="sec-badge">課程 Lab Ch1 · 儲存格 133–138</span></h2>
+  <h2>regplot 與相關係數熱圖 <span class="sec-badge">課程 Lab Ch1 · lab 範例</span></h2>
 <!-- GEN:END sec:model -->
 
   <p>最後一種圖：<strong>把配適好的模型畫在資料上面</strong>。
@@ -1280,7 +1280,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸散佈圖</span></span>
   <span class="line">sns.regplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, data=tips);</span></div>
   <p class="dx-note"><code>regplot</code> 直接配一條最小平方直線並畫出 95% 信賴帶。那條帶子是<strong>對迴歸線的不確定性</strong>，不是預測區間——第 3 章會分清楚這兩者。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 133</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="133">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1292,8 +1292,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">           logistic=<span class="num">True</span>, y_jitter=<span class="num">.03</span>);</span>
   <span class="line"><span class="com"># 載入範例資料集；Seaborn 視覺化：迴歸關係圖</span></span>
   <span class="line">sns.lmplot(x=<span class="str">&quot;total_bill&quot;</span>, y=<span class="str">&quot;tip&quot;</span>, hue=<span class="str">&quot;smoker&quot;</span>, col=<span class="str">&quot;time&quot;</span>, data=tips);</span></div>
-  <p class="dx-note"><code>lmplot</code> 加 <code>hue</code> 會<strong>每一組各配一條線</strong>。兩條線的斜率明顯不同，就是交互作用的視覺證據。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 135、136</span>
+  <p class="dx-note"><code>lmplot</code> 加 <code>hue</code> 會<strong>每一組各配一條線</strong>。兩條線的斜率若不同，提示可以加入交互作用再檢查；樣本變異也可能造成斜率差，仍需估計不確定性。（產生的是圖，沒有文字輸出可對照。）</p>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="135,136">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1303,7 +1303,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">corr = tips.corr(numeric_only=<span class="num">True</span>)</span>
   <span class="line">sns.heatmap(corr);</span></div>
   <p class="dx-note"><code>tips.corr(numeric_only=True)</code> 先算矩陣，<code>heatmap</code> 只負責上色。共線性的初步檢查常從這裡開始。（產生的是圖，沒有文字輸出可對照。）</p>
-  <span class="dx-src">來源：<code>Ch01-lab-zh.ipynb</code> · 儲存格 138</span>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="138">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
@@ -1319,7 +1319,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">PART 05 · 自我檢測</div>
   <p><code>lmplot</code> 加了 <code>hue='smoker'</code> 之後，兩組的迴歸線斜率明顯不同。這在暗示什麼？</p>
-  <div class="quiz-options" id="qModelOptions"><div class="quiz-opt" data-correct="false" data-fb="斜率描述「<strong>帳單每增加一元，小費增加多少</strong>」。兩組斜率不同，表示這個變化量不同；比較哪組較高，還要看截距與整體位置。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(A)</span> 吸菸者的小費比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。斜率隨另一個變數改變，正是交互作用的定義。第 3 章會教怎麼在模型裡寫出來（<code>total_bill * smoker</code>），並檢定它是不是真的。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(B)</span> 帳單對小費的效果在兩組之間不同，可能有交互作用</div><div class="quiz-opt" data-correct="false" data-fb="離群值會影響斜率。單憑兩組斜率不同，無法確定是否有離群值；可以畫盒鬚圖或殘差圖檢查。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(C)</span> 資料裡有離群值</div></div>
+  <div class="quiz-options" id="qModelOptions"><div class="quiz-opt" data-correct="false" data-fb="斜率描述「&lt;strong&gt;帳單每增加一元，小費增加多少&lt;/strong&gt;」。兩組斜率不同，表示這個變化量不同；比較哪組較高，還要看截距與整體位置。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(A)</span> 吸菸者的小費比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。斜率隨另一個變數改變，正是交互作用的定義。第 3 章會教怎麼在模型裡寫出來（&lt;code&gt;total_bill * smoker&lt;/code&gt;），並檢定它是不是真的。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(B)</span> 帳單對小費的效果在兩組之間不同，可能有交互作用</div><div class="quiz-opt" data-correct="false" data-fb="離群值會影響斜率。單憑兩組斜率不同，無法確定是否有離群值；可以畫盒鬚圖或殘差圖檢查。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(C)</span> 資料裡有離群值</div></div>
   <div class="quiz-feedback" id="qModelFeedback"></div>
 </div>
 </section>
@@ -1330,34 +1330,34 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
   每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
   程式碼範例，觀察結果。</p>
-  <div class="sol-links"><a href="https://seaborn.pydata.org/tutorial.html" target="_blank" rel="noopener">🔗 seaborn 教學</a><a href="https://matplotlib.org/stable/users/explain/quick_start.html" target="_blank" rel="noopener">🔗 Matplotlib 快速入門</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
+  <div class="sol-links"><a href="https://seaborn.pydata.org/tutorial.html" target="_blank" rel="noopener">🔗 seaborn 教學</a><a href="https://matplotlib.org/stable/users/explain/quick_start.html" target="_blank" rel="noopener">🔗 Matplotlib 快速入門</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · 選圖</div>
   <p>你要呈現「三個地區（origin）的 mpg 分布，並讓讀者看得出有沒有離群值」。該畫什麼？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="<code>barplot</code> 只給平均與信賴區間，<strong>離群值完全看不到</strong>。它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。在本節比較的基本類別圖中，盒鬚圖會把超出鬚線的觀測單獨畫成點。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;barplot&lt;/code&gt; 只給平均與信賴區間，&lt;strong&gt;離群值完全看不到&lt;/strong&gt;。它們被平均掉了。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> <code>barplot</code>，三根長條比高低</div><div class="quiz-opt" data-correct="true" data-fb="對。在本節比較的基本類別圖中，盒鬚圖會把超出鬚線的觀測單獨畫成點。組數少、樣本不多的時候再疊一層原始點更誠實。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> <code>boxplot</code>（或加上 <code>stripplot</code> 疊點）</div><div class="quiz-opt" data-correct="false" data-fb="它只數每一組有幾筆，完全沒有用到 mpg 這個變數。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> <code>countplot</code></div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · bins</div>
   <p>把 bins 從 10 調到 60 之後，直方圖出現很多小峰。最合理的解讀是？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。bins 越細，每一格的樣本越少，隨機起伏就越明顯。要判斷是不是真的結構，就用 <code>hue</code> 拿一個候選的分類變數去驗。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 多半是抽樣雜訊，除非那些峰對應到某個真實的分類</div><div class="quiz-opt" data-correct="false" data-fb="較細的 bins 會呈現更細小的起伏，也可能把雜訊畫成峰；仍需用資料確認這些峰的意義。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 資料真的有很多群，應該用 60 這張</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 資料有問題，應該重新收集</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。bins 越細，每一格的樣本越少，隨機起伏就越明顯。要判斷是不是真的結構，就用 &lt;code&gt;hue&lt;/code&gt; 拿一個候選的分類變數去驗。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 多半是抽樣雜訊，除非那些峰對應到某個真實的分類</div><div class="quiz-opt" data-correct="false" data-fb="較細的 bins 會呈現更細小的起伏，也可能把雜訊畫成峰；仍需用資料確認這些峰的意義。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 資料真的有很多群，應該用 60 這張</div><div class="quiz-opt" data-correct="false" data-fb="沒有證據支持這個結論。先換個參數再看，不要跳到最貴的行動。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 資料有問題，應該重新收集</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 圖表誠實度</div>
   <p>一張長條圖把 y 軸截在兩組平均附近，讓小差異看起來大幅放大。這張圖錯在哪？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="「方便觀察」跟「誤導」的界線就在這裡。長條圖用<strong>長度</strong>編碼數值，截斷之後長度的比例不再對應數值的比例。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 沒錯，只是放大了差異方便觀察</div><div class="quiz-opt" data-correct="true" data-fb="對。真的要放大差異，改用點估計圖（<code>pointplot</code>）——點的位置不隱含「從零開始」的承諾，截斷是可以接受的，而且要在圖上標明。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 長條圖用長度表示數量，截斷 y 軸會破壞長度的意義</div><div class="quiz-opt" data-correct="false" data-fb="對數是給跨數量級的資料用的。2.98 與 3.26 差不到 10%，取對數只會更難讀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 應該把 y 軸改成對數尺度</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="「方便觀察」跟「誤導」的界線就在這裡。長條圖用&lt;strong&gt;長度&lt;/strong&gt;編碼數值，截斷之後長度的比例不再對應數值的比例。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 沒錯，只是放大了差異方便觀察</div><div class="quiz-opt" data-correct="true" data-fb="對。真的要放大差異，改用點估計圖（&lt;code&gt;pointplot&lt;/code&gt;）——點的位置不隱含「從零開始」的承諾，截斷是可以接受的，而且要在圖上標明。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 長條圖用長度表示數量，截斷 y 軸會破壞長度的意義</div><div class="quiz-opt" data-correct="false" data-fb="對數是給跨數量級的資料用的。2.98 與 3.26 差不到 10%，取對數只會更難讀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 應該把 y 軸改成對數尺度</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · figure-level 與 axes-level</div>
   <p>你想把四張 seaborn 圖排成 2×2 放進同一張 Figure。下列哪一個函式<strong>做不到</strong>？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。histplot 是 axes-level，接受 <code>ax=</code>；這是函式的介面約定，不能只看名稱結尾。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。<code>relplot</code> 是 figure-level，它會自己開一張新 Figure，它的介面不接受 <code>ax=</code> 來指定既有座標系。要散佈圖就改用 <code>sns.scatterplot</code>。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="做得到。histplot 是 axes-level，接受 &lt;code&gt;ax=&lt;/code&gt;；這是函式的介面約定，不能只看名稱結尾。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>sns.histplot(..., ax=axes[0,0])</code></div><div class="quiz-opt" data-correct="false" data-fb="做得到，同樣是 axes-level。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>sns.boxplot(..., ax=axes[0,1])</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個做不到。&lt;code&gt;relplot&lt;/code&gt; 是 figure-level，它會自己開一張新 Figure，它的介面不接受 &lt;code&gt;ax=&lt;/code&gt; 來指定既有座標系。要散佈圖就改用 &lt;code&gt;sns.scatterplot&lt;/code&gt;。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>sns.relplot(..., ax=axes[1,0])</code></div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1390,12 +1390,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>1. 先畫圖再算數字。</strong>摘要統計會漏掉形狀，相關係數一樣的兩份資料可以長得完全不同。<br><strong>2. bins 與頻寬會影響圖形呈現的細緻程度。</strong>調參數之前先想好要回答什麼問題。<br><strong>3. countplot 講筆數、barplot 講平均、boxplot 講分布。</strong>三種長條講三件事，不要混用。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 28 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">

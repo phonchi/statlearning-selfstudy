@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 # 課程 repo（講義 PDF 與中文 lab notebook 的來源）
-COURSE = Path(os.environ.get("M524_COURSE", Path.home() / "nsysu-math524-2025"))
+COURSE = Path(os.environ.get("M524_COURSE", Path.home() / "nsysu-math524"))
 DECKS = COURSE / "static_files" / "presentations"
 LECTURES = COURSE / "_lectures"
 
@@ -26,6 +26,6 @@ def require(p: Path, what: str) -> Path:
         raise SystemExit(
             f"找不到{what}：{p}\n"
             f"設環境變數 M524_COURSE / M524_BOOKS 指到正確位置，或先 clone 課程 repo："
-            f"\n  gh repo clone phonchi/nsysu-math524-2025 ~/nsysu-math524-2025"
+            f"\n  gh repo clone phonchi/nsysu-math524 ~/nsysu-math524"
         )
     return p

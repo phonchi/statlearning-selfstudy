@@ -127,15 +127,12 @@ for meth in ("complete", "average", "single", "centroid"):
 # ── digits：PCA 與兩種 perplexity 的 t-SNE（對 lab 儲存格 71–75）──────────
 dig = load_digits()
 DX = dig.images.reshape(-1, dig.images.shape[1] * dig.images.shape[2])
-sub = np.random.default_rng(0).choice(len(DX), 500, replace=False)
-sub.sort()
-DXs, DYs = DX[sub], dig.target[sub]
+sub = np.arange(len(DX))
+DXs, DYs = DX, dig.target
 
 
 def norm2d(E):
     E = np.asarray(E, dtype=float)
-    E = E - E.mean(0)
-    E = E / np.abs(E).max()
     return [[round(float(a), 3), round(float(b), 3)] for a, b in E]
 
 
@@ -188,9 +185,9 @@ out = [
        "四種 linkage 的 Z 矩陣格式為 [i, j, 高度, 群大小]，與 scipy 一致；"
        "切 3 群時 complete 的 ARI = 0.90、single 只有 0.49（鏈狀效應）"),
     js("FRAMES_w07tsne", EMB,
-       "sklearn load_digits 隨機取 500 筆 · 對 lab 儲存格 71–75（TSNE init='pca'）",
-       "取樣 np.random.default_rng(0)；TSNE(random_state=0)",
-       "座標各自平移到中心並除以最大絕對值，只保留形狀（t-SNE 的座標本身沒有意義）"),
+       "sklearn load_digits 全部 1797 筆 · 對 lab 儲存格 71–75（TSNE init='pca'）",
+       "無抽樣；TSNE(random_state=0)",
+       "保留套件原始座標（僅輸出小數三位）；perplexity=30 為課程設定，5 與 PCA 為對照"),
     js("FRAMES_w07shop", SHOP,
        "ISLP 圖 12.16（襪子與電腦）· 課本沒有給數值，照圖形的形狀自訂",
        "手動指定，無隨機",

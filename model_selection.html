@@ -658,8 +658,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 .sec-badge a:focus-visible{outline:2px solid currentColor;outline-offset:3px;}
 .source-intro,.source-list{font-size:.85rem;line-height:1.8;overflow-wrap:anywhere;}
 .source-list li{margin-bottom:.8rem;scroll-margin-top:2rem;}
-@media(max-width:768px){
-  /* The page contents and chapter links provide navigation without covering text. */
+@media(max-width:1360px){
+  /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
 </style>
@@ -704,11 +704,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.6｜講義 06）</div>
   <p>① <strong>照節次讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源</strong>：章節旁標示課本節號或講義頁碼，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
-  ③ <strong>每節做自測</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
+  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
-  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/06_Linear_Model_Selection.pdf" target="_blank" rel="noopener">📑 講義 06 PDF</a><a href="https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch06 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-86msOZdtaMyKHwk2mWpOWmu" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
+  <div class="sg-links"><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/06_Linear_Model_Selection.pdf" target="_blank" rel="noopener">📑 講義 06 PDF</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch06 中文 Lab</a><a href="https://www.youtube.com/playlist?list=PLHNZtBNWQ-86msOZdtaMyKHwk2mWpOWmu" target="_blank" rel="noopener">▶ 課程錄影</a><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">📗 進階參考書（ESL）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
 <!-- GEN:END studyguide -->
 <!-- GEN:BEGIN toc -->
@@ -734,7 +734,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>最小平方法什麼時候會不夠用 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6 章開頭</a></span><span class="sec-badge">講義 06 · p.2–5</span></h2>
+  <h2>最小平方法什麼時候會不夠用 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6 章開頭</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:prologue -->
 
   <p>第 3 章的最小平方法很好用：沒有調整參數、有封閉解、係數可以直接解讀。
@@ -772,14 +772,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 為什麼要動手術</div>
   <p>為什麼 p 逼近 n 的時候，「把全部變數丟進去做最小平方」是個壞主意？</p>
-  <div class="quiz-options" id="qWhyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。最小平方在 p ≪ n 時是低偏差、低變異；p 逼近 n 時偏差仍然是 0，但變異大到讓測試誤差很難看。收縮就是拿一點偏差去換掉這塊變異。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(A)</span> 因為係數估計的變異會變得非常大，訓練資料稍微變動一點，配出來的模型就差很多</div><div class="quiz-opt" data-correct="false" data-fb="不對。常態假設是用來做 t 檢定與信賴區間的，跟 p／n 的比例無關；而且就算誤差真的是常態，p 逼近 n 時最小平方照樣會變異很大。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(B)</span> 因為最小平方法假設誤差是常態分佈，變數多了這個假設就不成立</div><div class="quiz-opt" data-correct="false" data-fb="反了。加變數<strong>永遠</strong>不會讓訓練 RSS 變大（多一個變數最差就是係數估成 0）。訓練 RSS 單調下降正是問題所在。它不能用來選模型。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(C)</span> 因為變數多了以後 RSS 會變大，配適品質下降</div></div>
+  <div class="quiz-options" id="qWhyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。最小平方在 p ≪ n 時是低偏差、低變異；p 逼近 n 時偏差仍然是 0，但變異大到讓測試誤差很難看。收縮就是拿一點偏差去換掉這塊變異。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(A)</span> 因為係數估計的變異會變得非常大，訓練資料稍微變動一點，配出來的模型就差很多</div><div class="quiz-opt" data-correct="false" data-fb="不對。常態假設是用來做 t 檢定與信賴區間的，跟 p／n 的比例無關；而且就算誤差真的是常態，p 逼近 n 時最小平方照樣會變異很大。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(B)</span> 因為最小平方法假設誤差是常態分佈，變數多了這個假設就不成立</div><div class="quiz-opt" data-correct="false" data-fb="反了。加變數&lt;strong&gt;永遠&lt;/strong&gt;不會讓訓練 RSS 變大（多一個變數最差就是係數估成 0）。訓練 RSS 單調下降正是問題所在。它不能用來選模型。" onclick="quizCheck('qWhy', this)"><span class="opt-letter">(C)</span> 因為變數多了以後 RSS 會變大，配適品質下降</div></div>
   <div class="quiz-feedback" id="qWhyFeedback"></div>
 </div>
 </section>
 <section id="subset">
 <!-- GEN:BEGIN sec:subset -->
   <div class="section-number">PART 01 · 子集選擇</div>
-  <h2>如何比較 2^p 個候選模型：最佳子集與逐步選擇 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1 節</a></span><span class="sec-badge">講義 06 · p.6–14</span></h2>
+  <h2>如何比較 2^p 個候選模型：最佳子集與逐步選擇 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:subset -->
 
   <p>最直白的想法：<strong>每一種變數組合都試一次，挑最好的</strong>。這就是最佳子集選擇
@@ -864,7 +864,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">Hitters.shape</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(263, 20)</pre></div>
   <p class="dx-note">59 名球員的 <code>Salary</code> 是缺失的，<code>dropna()</code> 之後剩 <strong>263 列、20 欄</strong>（19 個預測變數＋Salary）。整章的 Hitters 結果都建立在這 263 筆上。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 12、13、15</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="12,13,15">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -937,7 +937,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 18 [&#x27;CRBI&#x27;, &#x27;Hits&#x27;, &#x27;PutOuts&#x27;, &#x27;Division[W]&#x27;, &#x27;AtBat&#x27;, &#x27;Walks&#x27;, &#x27;CWalks&#x27;, &#x27;CRuns&#x27;, &#x27;CAtBat&#x27;, &#x27;Assists&#x27;, &#x27;League[N]&#x27;, &#x27;Runs&#x27;, &#x27;Errors&#x27;, &#x27;HmRun&#x27;, &#x27;CHits&#x27;, &#x27;RBI&#x27;, &#x27;NewLeague[N]&#x27;, &#x27;Years&#x27;]
 19 [&#x27;CRBI&#x27;, &#x27;Hits&#x27;, &#x27;PutOuts&#x27;, &#x27;Division[W]&#x27;, &#x27;AtBat&#x27;, &#x27;Walks&#x27;, &#x27;CWalks&#x27;, &#x27;CRuns&#x27;, &#x27;CAtBat&#x27;, &#x27;Assists&#x27;, &#x27;League[N]&#x27;, &#x27;Runs&#x27;, &#x27;Errors&#x27;, &#x27;HmRun&#x27;, &#x27;CHits&#x27;, &#x27;RBI&#x27;, &#x27;NewLeague[N]&#x27;, &#x27;Years&#x27;, &#x27;CHmRun&#x27;]</pre></div>
   <p class="dx-note">讀這段輸出的正確方式是<strong>看每一行是不是前一行的超集合</strong>：<code>CRBI</code> → 加 <code>Hits</code> → 加 <code>PutOuts</code>…一路只加不減。這正是前向逐步的定義，也正是它可能錯過最佳子集的原因。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 33、34</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="33,34">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -962,8 +962,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"> </span>
   <span class="line">np.array(bic_b).argmin()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.int64(7)</pre></div>
-  <p class="dx-note"><code>bic_b</code> 是照 <code>models2</code> 的索引順序（1、2、…、19）收集的，0-based 的 <code>argmin() = 7</code> 指的是<strong>第 8 個</strong>元素，也就是 8 變數模型；而前向那邊（下一節）是 6 變數。<strong>同一份資料、同一個準則，兩個搜尋方向給出不同大小的模型</strong>——講義第 42 頁講的就是這件事。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 40、41</span>
+  <p class="dx-note"><code>bic_b</code> 是照 <code>models2</code> 的索引順序（1、2、…、19）收集的，0-based 的 <code>argmin() = 7</code> 指的是<strong>第 8 個</strong>元素，也就是 8 變數模型；而前向那邊（下一節）是 6 變數。<strong>同一份資料、同一個準則，兩個搜尋方向給出不同大小的模型</strong>——講義講的就是這件事。</p>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="40,41">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -974,14 +974,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 子集選擇</div>
   <p>同一份資料上做最佳子集、前向逐步、後向逐步。<strong>大小同樣是 k</strong> 的三個模型裡，哪一個的訓練 RSS 最小？</p>
-  <div class="quiz-options" id="qSubOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這就是 ISLP 6.6 第 1 題 (a) 的答案。注意這只說訓練 RSS——測試 RSS 誰最小完全說不準，因為窮舉的搜尋空間更大，反而更容易配到雜訊。" onclick="quizCheck('qSub', this)"><span class="opt-letter">(A)</span> 最佳子集的一定最小（或並列最小），因為它窮舉了所有 k 變數子集</div><div class="quiz-opt" data-correct="false" data-fb="不對。都是最小平方沒錯，但<strong>用的變數不同</strong>。逐步法受前幾步的選擇綁住，可能拿不到那個 k 變數的最佳組合——本節的 Credit 格圖就是實例。" onclick="quizCheck('qSub', this)"><span class="opt-letter">(B)</span> 三個一定相同，因為它們都是在同一份資料上做最小平方</div><div class="quiz-opt" data-correct="false" data-fb="不對。從全模型開始只影響搜尋路徑，不代表每個大小都能找到最佳組合。後向逐步同樣是貪婪的，而且它還多一個限制：要能配出全模型，所以需要 n &amp;gt; p。" onclick="quizCheck('qSub', this)"><span class="opt-letter">(C)</span> 後向逐步的最小，因為它從全模型開始，資訊最完整</div></div>
+  <div class="quiz-options" id="qSubOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這就是 ISLP 6.6 第 1 題 (a) 的答案。注意這只說訓練 RSS——測試 RSS 誰最小完全說不準，因為窮舉的搜尋空間更大，反而更容易配到雜訊。" onclick="quizCheck('qSub', this)"><span class="opt-letter">(A)</span> 最佳子集的一定最小（或並列最小），因為它窮舉了所有 k 變數子集</div><div class="quiz-opt" data-correct="false" data-fb="不對。都是最小平方沒錯，但&lt;strong&gt;用的變數不同&lt;/strong&gt;。逐步法受前幾步的選擇綁住，可能拿不到那個 k 變數的最佳組合——本節的 Credit 格圖就是實例。" onclick="quizCheck('qSub', this)"><span class="opt-letter">(B)</span> 三個一定相同，因為它們都是在同一份資料上做最小平方</div><div class="quiz-opt" data-correct="false" data-fb="不對。從全模型開始只影響搜尋路徑，不代表每個大小都能找到最佳組合。後向逐步同樣是貪婪的，而且它還多一個限制：要能配出全模型，所以需要 n &amp;gt; p。" onclick="quizCheck('qSub', this)"><span class="opt-letter">(C)</span> 後向逐步的最小，因為它從全模型開始，資訊最完整</div></div>
   <div class="quiz-feedback" id="qSubFeedback"></div>
 </div>
 </section>
 <section id="criteria">
 <!-- GEN:BEGIN sec:criteria -->
   <div class="section-number">PART 02 · 選模型的準則</div>
-  <h2>Cp、AIC、BIC、調整後 R²：懲罰項在做什麼 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1.3 節</a></span><span class="sec-badge">講義 06 · p.15–24</span></h2>
+  <h2>Cp、AIC、BIC、調整後 R²：懲罰項在做什麼 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1.3 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:criteria -->
 
   <p>第二階段的問題是：<strong>怎麼比較「大小不同」的模型？</strong>訓練 RSS 與 R² 不能用，
@@ -1037,7 +1037,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">bic_f[<span class="num">5</span>]</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(3812.2130777982)</pre></div>
   <p class="dx-note"><code>argmin()</code> 回傳 <strong>5</strong>，而 <code>bic_f</code> 是 0-based 的 list，所以指的是清單的第 6 個元素——<strong>6 變數模型</strong>，BIC = 3812.21。注意下一格的 <code>models1.model[5]</code> 用的是 pandas 的<em>標籤</em>索引，取到的是 5 變數模型（輸出列出 5 個特徵）。同一個 <code>5</code>，兩種索引意義完全不同，讀別人的程式碼時要分清楚。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 36、37</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="36,37">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1066,20 +1066,22 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
  &#x27;PutOuts&#x27;,
  &#x27;Assists&#x27;)</pre></div>
   <p class="dx-note">這是 <code>adjust_r2()</code> 的定義（就是式 6.4）加上在最佳子集前緣上取最大值。Hitters 上調整後 R² 選出 <strong>11 個變數</strong>；BIC 選 6 個。兩個準則差了 5 個變數，反映了它們對模型複雜度採用不同的懲罰強度。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 97、98、101</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="97,98,101">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 選模型的準則</div>
   <p>同一份資料上，BIC 選出的模型大小，跟 Cp 選出的比起來？</p>
-  <div class="quiz-options" id="qCritOptions"><div class="quiz-opt" data-correct="true" data-fb="對。log n > 2 對任何 n > 7 成立，所以 BIC 的懲罰項嚴格較重，最小值只會往左移或不動。Credit 上是 4 vs 6。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(A)</span> 一定小於或等於（n &gt; 7 時），因為 BIC 每多一個變數要罰 log(n)·σ̂² 而 Cp 只罰 2σ̂²</div><div class="quiz-opt" data-correct="false" data-fb="有用變數的多寡會影響<em>兩者各自</em>選幾個，但不會改變「BIC 罰得更重」這個事實。兩條曲線的 RSS 部分完全一樣，只有懲罰斜率不同，所以 BIC 的最小值不可能落在 Cp 的右邊。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(B)</span> 不一定，取決於資料裡有多少真的有用的變數</div><div class="quiz-opt" data-correct="false" data-fb="只有 Cp 是測試 MSE 的無偏估計，BIC 不是——BIC 是從後驗機率近似來的，它刻意罰得更重以便挑出「正確的」模型而不是「預測最準的」模型。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(C)</span> 一定一樣，因為兩者都是測試 MSE 的無偏估計</div></div>
+  <div class="quiz-options" id="qCritOptions"><div class="quiz-opt" data-correct="true" data-fb="對。log n &gt; 2 對任何 n &gt; 7 成立，所以 BIC 的懲罰項嚴格較重，最小值只會往左移或不動。Credit 上是 4 vs 6。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(A)</span> 一定小於或等於（n &gt; 7 時），因為 BIC 每多一個變數要罰 log(n)·σ̂² 而 Cp 只罰 2σ̂²</div><div class="quiz-opt" data-correct="false" data-fb="有用變數的多寡會影響&lt;em&gt;兩者各自&lt;/em&gt;選幾個，但不會改變「BIC 罰得更重」這個事實。兩條曲線的 RSS 部分完全一樣，只有懲罰斜率不同，所以 BIC 的最小值不可能落在 Cp 的右邊。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(B)</span> 不一定，取決於資料裡有多少真的有用的變數</div><div class="quiz-opt" data-correct="false" data-fb="只有 Cp 是測試 MSE 的無偏估計，BIC 不是——BIC 是從後驗機率近似來的，它刻意罰得更重以便挑出「正確的」模型而不是「預測最準的」模型。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(C)</span> 一定一樣，因為兩者都是測試 MSE 的無偏估計</div></div>
   <div class="quiz-feedback" id="qCritFeedback"></div>
 </div>
+
+<h3>分類模型的模型選擇</h3><p>子集搜尋也能套用邏輯斯迴歸等模型，但比較的配適量要改為相應的概似。離差（deviance）定義為 $D=2(\ell_{\mathrm{sat}}-\ell_{\mathrm{fit}})$；它比較配適模型與飽和模型，不能直接把分類誤差率代入 RSS 公式。AIC 為 $-2\ell_{\mathrm{fit}}+2k$，BIC 為 $-2\ell_{\mathrm{fit}}+k\log n$，$k$ 計入實際估計的參數。選定模型後的係數不確定性還受搜尋影響，不能忽略選模就直接沿用事先固定模型的推論。</p>
 </section>
 <section id="onese">
 <!-- GEN:BEGIN sec:onese -->
   <div class="section-number">PART 03 · 用 CV 選模型</div>
-  <h2>驗證與交叉驗證，以及 one-standard-error 規則 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1.3 節</a></span><span class="sec-badge">講義 06 · p.22–24</span></h2>
+  <h2>驗證與交叉驗證，以及 one-standard-error 規則 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.1.3 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:onese -->
 
   <p>Cp、AIC、BIC 都需要估 $\hat\sigma^2$，而在 p 接近 n 的時候那個估計本身就不可靠。
@@ -1114,7 +1116,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Pipeline(steps=[(&#x27;scaler&#x27;, StandardScaler()),
                 (&#x27;ridge&#x27;, Ridge(alpha=np.float64(2.494832928915928)))])</pre></div>
   <p class="dx-note"><code>Pipeline</code> 是關鍵：把標準化包進去，<code>GridSearchCV</code> 就會在每一折的訓練部分重新 fit scaler，而不是用全部資料的平均與標準差。這一步做錯，CV 誤差會偏低而且不會報錯。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 134</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="134">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
@@ -1137,7 +1139,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="ridge">
 <!-- GEN:BEGIN sec:ridge -->
   <div class="section-number">PART 04 · Ridge 迴歸</div>
-  <h2>把係數往零壓：L2 懲罰與係數路徑 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.1 節</a></span><span class="sec-badge">講義 06 · p.25–32</span></h2>
+  <h2>把係數往零壓：L2 懲罰與係數路徑 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.1 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:ridge -->
 
   <p>子集選擇是離散的：一個變數要嘛在、要嘛不在。這讓它<strong>變異很大</strong>——
@@ -1191,7 +1193,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">np.linalg.norm(ridge.coef_)</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(160.42371017725918)</pre></div>
   <p class="dx-note"><code>ElasticNet</code> 的 <code>l1_ratio=0</code> 就是純 Ridge。係數的 L2 範數會隨 λ 單調下降。這個數字就是上圖 x 軸的分子。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 122、124</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="122,124">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1216,7 +1218,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
        4.46238174e-05, 3.53636122e-05, 2.80250579e-05, 2.22093791e-05]),
                          cv=KFold(n_splits=5, random_state=0, shuffle=True)))])</pre></div>
   <p class="dx-note"><code>RidgeCV</code> 把「掃 λ ＋ 交叉驗證」包成一步。<code>alphas</code> 接收一組候選值；排列順序本身不表示 <code>RidgeCV</code> 使用暖啟動。這張 lab 卡把 scaler 放在內建 CV estimator 外層，因此 scaler 會先對傳入 pipeline 的全部資料配適，<code>RidgeCV</code> 才在縮放後的資料內切折。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 144、145</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="144,145">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="info-box warm">
@@ -1256,14 +1258,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Ridge</div>
   <p>把某個預測變數的單位從「元」改成「千元」（數值除以 1000）。Ridge 的預測會變嗎？</p>
-  <div class="quiz-options" id="qRidgeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。係數會變成 1000 倍，懲罰項變成 10⁶ 倍，這個變數於是被壓得特別兇，整個解就不同了。最小平方沒有這個問題。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(A)</span> 會變，因為 L2 懲罰對單位敏感。這正是為什麼要先標準化</div><div class="quiz-opt" data-correct="false" data-fb="<strong>最小平方</strong>的係數等比例調整時，預測保持相同。Ridge 的懲罰項則依調整後的係數計算，換單位會改變懲罰與配適之間的取捨。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(B)</span> 不會，因為線性模型對預測變數的線性變換不變</div><div class="quiz-opt" data-correct="false" data-fb="<code>Ridge</code> 預設<strong>不會</strong>標準化（早期版本的 <code>normalize</code> 參數已經移除）。你得自己包 <code>StandardScaler</code>。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(C)</span> 不會，因為 scikit-learn 會自動標準化</div></div>
+  <div class="quiz-options" id="qRidgeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。係數會變成 1000 倍，懲罰項變成 10⁶ 倍，這個變數於是被壓得特別兇，整個解就不同了。最小平方沒有這個問題。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(A)</span> 會變，因為 L2 懲罰對單位敏感。這正是為什麼要先標準化</div><div class="quiz-opt" data-correct="false" data-fb="&lt;strong&gt;最小平方&lt;/strong&gt;的係數等比例調整時，預測保持相同。Ridge 的懲罰項則依調整後的係數計算，換單位會改變懲罰與配適之間的取捨。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(B)</span> 不會，因為線性模型對預測變數的線性變換不變</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;Ridge&lt;/code&gt; 預設&lt;strong&gt;不會&lt;/strong&gt;標準化（早期版本的 &lt;code&gt;normalize&lt;/code&gt; 參數已經移除）。你得自己包 &lt;code&gt;StandardScaler&lt;/code&gt;。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(C)</span> 不會，因為 scikit-learn 會自動標準化</div></div>
   <div class="quiz-feedback" id="qRidgeFeedback"></div>
 </div>
 </section>
 <section id="lasso">
 <!-- GEN:BEGIN sec:lasso -->
   <div class="section-number">PART 05 · Lasso 與稀疏性</div>
-  <h2>L1 為什麼會把係數壓成剛好 0 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.2 節</a></span><span class="sec-badge">講義 06 · p.33–41</span></h2>
+  <h2>L1 為什麼會把係數壓成剛好 0 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.2 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:lasso -->
 
   <p>Ridge 的缺點是：它留下全部 p 個變數。p = 500 的時候你得到 500 個很小但不為零的係數，
@@ -1358,7 +1360,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
        -126.29986768,   15.70262427,  -59.50157967,   75.24590036,
          21.62698014,  -12.04423675,   -0.        ])</pre></div>
   <p class="dx-note">注意輸出裡有<strong>剛好等於 0</strong> 的係數。這些係數精確等於 0。這是 Lasso 跟 Ridge 最實際的差別：你可以直接說「這些變數被模型丟掉了」。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 162、172</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="162,172">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
@@ -1377,14 +1379,19 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · Lasso 的幾何</div>
   <p>為什麼 L1 約束區域（菱形）會讓解落在座標軸上，而 L2（圓）不會？</p>
-  <div class="quiz-options" id="qLassoOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 ISLP 圖 6.7 的全部內容。維度更高時 L1 是超菱形，尖角與各種低維的稜、面都落在「某些座標為 0」的子空間上，所以稀疏解更容易發生。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(A)</span> 菱形的尖角剛好在座標軸上，橢圓等高線很容易先碰到尖角；圓處處平滑，碰到軸是機率 0 的事</div><div class="quiz-opt" data-correct="false" data-fb="λ 可以調整懲罰強度；稀疏性來自約束區域的<strong>形狀</strong>與尖角。同樣的收縮量下，L2 只是縮短向量，L1 會把它推到軸上。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(B)</span> 因為 L1 懲罰比 L2 懲罰強，把係數壓得更兇</div><div class="quiz-opt" data-correct="false" data-fb="絕對值在 0 是有定義的（等於 0），只是<em>不可微</em>。不可微確實是機制的一部分（次微分在 0 是一整個區間），但「沒有定義」是錯的說法。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(C)</span> 因為 Lasso 用的是絕對值，絕對值函數在 0 沒有定義</div></div>
+  <div class="quiz-options" id="qLassoOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 ISLP 圖 6.7 的全部內容。維度更高時 L1 是超菱形，尖角與各種低維的稜、面都落在「某些座標為 0」的子空間上，所以稀疏解更容易發生。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(A)</span> 菱形的尖角剛好在座標軸上，橢圓等高線很容易先碰到尖角；圓處處平滑，碰到軸是機率 0 的事</div><div class="quiz-opt" data-correct="false" data-fb="λ 可以調整懲罰強度；稀疏性來自約束區域的&lt;strong&gt;形狀&lt;/strong&gt;與尖角。同樣的收縮量下，L2 只是縮短向量，L1 會把它推到軸上。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(B)</span> 因為 L1 懲罰比 L2 懲罰強，把係數壓得更兇</div><div class="quiz-opt" data-correct="false" data-fb="絕對值在 0 是有定義的（等於 0），只是&lt;em&gt;不可微&lt;/em&gt;。不可微確實是機制的一部分（次微分在 0 是一整個區間），但「沒有定義」是錯的說法。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(C)</span> 因為 Lasso 用的是絕對值，絕對值函數在 0 沒有定義</div></div>
   <div class="quiz-feedback" id="qLassoFeedback"></div>
 </div>
+
+<h3>收縮的貝氏解讀與延伸</h3>
+<p>假設誤差為獨立常態、變異數為 $\sigma^2$，且截距不受懲罰。最大後驗估計（MAP）最小化負對數概似與負對數先驗的和。各係數採獨立 $N(0,\tau^2)$ 先驗時，乘上 $2\sigma^2$ 後得到 $\mathrm{RSS}+(\sigma^2/\tau^2)\sum_j\beta_j^2$，因此 Ridge 的 $\lambda=\sigma^2/\tau^2$。改採尺度 $b$ 的 Laplace 先驗，得到 $\mathrm{RSS}+(2\sigma^2/b)\sum_j|\beta_j|$，即 Lasso。這是後驗眾數的關係；Lasso 的後驗平均通常不會精確等於零。</p>
+<p>當中心化設計矩陣滿足 $X^TX=I$，令 $z=X^Ty$，Ridge 解為 $z_j/(1+\lambda)$，Lasso 解為 $\operatorname{sign}(z_j)(|z_j|-\lambda/2)_+$。Ridge 比例收縮、Lasso 軟閾值的差異可直接從這兩式看見；若目標使用 $\mathrm{RSS}/2$，Lasso 的閾值相應改為 $\lambda$。</p>
+<p>最小角度迴歸（least angle regression, LAR）從與殘差相關最大的特徵開始，沿活躍特徵的等角方向前進；其他特徵達到相同相關程度時加入。加上係數過零時退出的規則可追蹤 Lasso 路徑。Group Lasso 則以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰各組係數，讓同一類別變數的一組虛擬變數或同一組基底一起進出；選入的組內係數不必稀疏。</p>
 </section>
 <section id="lambda">
 <!-- GEN:BEGIN sec:lambda -->
   <div class="section-number">PART 06 · 怎麼選 λ</div>
-  <h2>調整參數也要用 CV 選 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.3 節</a></span><span class="sec-badge">講義 06 · p.42–45</span></h2>
+  <h2>調整參數也要用 CV 選 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.2.3 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:lambda -->
 
   <p>λ 是<strong>調整參數</strong>（tuning parameter），不是從資料估出來的參數。
@@ -1417,7 +1424,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">np.min(tuned_lasso.mse_path_.mean(<span class="num">1</span>))</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(114690.73118253677)</pre></div>
   <p class="dx-note"><code>mse_path_</code> 的形狀是（λ 個數 × 折數），<code>.mean(1)</code> 先對折取平均、再取最小值，就是 CV 曲線的最低點。這張 lab 卡同樣把 scaler 放在 <code>ElasticNetCV</code> 外層；若要在每一折內重新估縮放統計量，改用上面的 <code>GridSearchCV(Pipeline(...))</code> 結構。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 162、168</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="162,168">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
@@ -1430,7 +1437,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <section id="pcr">
 <!-- GEN:BEGIN sec:pcr -->
   <div class="section-number">PART 07 · 主成分迴歸 PCR</div>
-  <h2>先降維再迴歸：方向由 X 自己決定 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.3.1 節</a></span><span class="sec-badge">講義 06 · p.46–55</span></h2>
+  <h2>先降維再迴歸：方向由 X 自己決定 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.3.1 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:pcr -->
 
   <p>第三條路：<strong>不動變數，改換座標。</strong>先把 p 個相關的預測變數壓成
@@ -1486,7 +1493,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
              param_grid={&#x27;pca__n_components&#x27;: range(1, 20)},
              scoring=&#x27;neg_mean_squared_error&#x27;)</pre></div>
   <p class="dx-note"><code>pca__n_components</code> 這種雙底線寫法是 <code>Pipeline</code> 的參數命名慣例：步驟名 ＋ <code>__</code> ＋ 該步驟的參數名。標準化同樣包在 pipeline 裡，PCA <strong>必須</strong>在標準化之後做——不然變異數大的變數會主宰第一主成分。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 180、182</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="180,182">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="deck-extra">
@@ -1495,7 +1502,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line">pipe.named_steps[<span class="str">&#x27;pca&#x27;</span>].explained_variance_ratio_</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([0.3831424 , 0.21841076])</pre></div>
   <p class="dx-note"><code>explained_variance_ratio_</code> 就是第 12 章的 PVE。累加起來可以回答「留幾個主成分才夠」。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 188</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="188">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="qa-box">
@@ -1511,14 +1518,18 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · PCR</div>
   <p>PCR 用 M = 2 個主成分。最終模型用到了幾個原始預測變數？</p>
-  <div class="quiz-options" id="qPcrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。PCR 不做變數選擇。這是它跟 Lasso 最重要的差別。它只是把 p 維壓進 M 維，沒有丟掉任何變數。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(A)</span> 全部 p 個，因為每個主成分都是所有原始變數的線性組合</div><div class="quiz-opt" data-correct="false" data-fb="M = 2 指的是<strong>主成分</strong>的個數，不是原始變數的個數。每個主成分的 loading 向量長度都是 p，而且通常每一項都不為零。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(B)</span> 2 個，就是 loadings 最大的那兩個</div><div class="quiz-opt" data-correct="false" data-fb="CV 選的是 M（主成分個數）。不管 M 是多少，只要 M ≥ 1，用到的原始變數就是全部 p 個。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(C)</span> 不確定，要看 CV 選出多少</div></div>
+  <div class="quiz-options" id="qPcrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。PCR 不做變數選擇。這是它跟 Lasso 最重要的差別。它只是把 p 維壓進 M 維，沒有丟掉任何變數。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(A)</span> 全部 p 個，因為每個主成分都是所有原始變數的線性組合</div><div class="quiz-opt" data-correct="false" data-fb="M = 2 指的是&lt;strong&gt;主成分&lt;/strong&gt;的個數，不是原始變數的個數。每個主成分的 loading 向量長度都是 p，而且通常每一項都不為零。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(B)</span> 2 個，就是 loadings 最大的那兩個</div><div class="quiz-opt" data-correct="false" data-fb="CV 選的是 M（主成分個數）。不管 M 是多少，只要 M ≥ 1，用到的原始變數就是全部 p 個。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(C)</span> 不確定，要看 CV 選出多少</div></div>
   <div class="quiz-feedback" id="qPcrFeedback"></div>
 </div>
+
+<h3>從共變異數到白化</h3>
+<p>本站採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$。主成分方向是 $V$ 的欄，得分為 $XV=UD$；最大化 $v^TSv$ 且限制 $v^Tv=1$，便得到 $Sv=\lambda v$。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
+<p>保留正特徵值方向後，白化得分 $Z=XV\Lambda^{-1/2}$ 的樣本共變異數為單位矩陣。ZCA 白化再乘上 $V^T$ 回到原特徵座標；保留全部正秩方向且滿秩時為 $XV\Lambda^{-1/2}V^T$。白化會把低變異方向放大，因此小特徵值可能放大雜訊；普通 PCR 不需要白化，也不能把白化當成保證改善預測的步驟。</p>
 </section>
 <section id="pls">
 <!-- GEN:BEGIN sec:pls -->
   <div class="section-number">PART 08 · 偏最小平方 PLS</div>
-  <h2>讓 y 也參與挑方向 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.3.2 節</a></span><span class="sec-badge">講義 06 · p.56–58</span></h2>
+  <h2>讓 y 也參與挑方向 <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.3.2 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:pls -->
 
   <p>PCR 挑方向時<strong>完全沒看 y</strong>。這有點浪費。我們明明知道 y 是什麼。</p>
@@ -1553,20 +1564,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
              param_grid={&#x27;n_components&#x27;: range(1, 20)},
              scoring=&#x27;neg_mean_squared_error&#x27;)</pre></div>
   <p class="dx-note"><code>PLSRegression</code> 的 <code>n_components</code> 跟 PCR 的 <code>n_components</code> 是同一個角色的調整參數，一樣用 CV 選。注意它預設 <code>scale=True</code>，已經幫你標準化了。</p>
-  <span class="dx-src">來源：<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 192、194</span>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="192,194">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · PLS</div>
   <p>PLS 相對於 PCR 的差別是什麼？</p>
-  <div class="quiz-options" id="qPlsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是「監督式降維」對「非監督式降維」。也因為方向是用 y 估出來的，PLS 的變異比 PCR 大，兩者實務上常打成平手。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(A)</span> 挑方向時用到了 y，所以方向會跟著 y 轉；但降維與不做變數選擇這兩點跟 PCR 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會。歸零是 <strong>Lasso</strong> 的性質。PLS 的每個成分仍然是全部 p 個變數的線性組合。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(B)</span> PLS 會把不重要的變數歸零，所以比 PCR 好解釋</div><div class="quiz-opt" data-correct="false" data-fb="兩者都需要，理由相同（方向的定義對單位敏感）。<code>PLSRegression</code> 只是預設 <code>scale=True</code> 幫你做了。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(C)</span> PLS 不需要標準化，PCR 需要</div></div>
+  <div class="quiz-options" id="qPlsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是「監督式降維」對「非監督式降維」。也因為方向是用 y 估出來的，PLS 的變異比 PCR 大，兩者實務上常打成平手。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(A)</span> 挑方向時用到了 y，所以方向會跟著 y 轉；但降維與不做變數選擇這兩點跟 PCR 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會。歸零是 &lt;strong&gt;Lasso&lt;/strong&gt; 的性質。PLS 的每個成分仍然是全部 p 個變數的線性組合。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(B)</span> PLS 會把不重要的變數歸零，所以比 PCR 好解釋</div><div class="quiz-opt" data-correct="false" data-fb="兩者都需要，理由相同（方向的定義對單位敏感）。&lt;code&gt;PLSRegression&lt;/code&gt; 只是預設 &lt;code&gt;scale=True&lt;/code&gt; 幫你做了。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(C)</span> PLS 不需要標準化，PCR 需要</div></div>
   <div class="quiz-feedback" id="qPlsFeedback"></div>
 </div>
 </section>
 <section id="highdim">
 <!-- GEN:BEGIN sec:highdim -->
   <div class="section-number">PART 09 · 高維度的陷阱</div>
-  <h2>p 逼近 n 時，如何判讀訓練 R² <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.4 節</a></span><span class="sec-badge">講義 06 · p.59–66</span></h2>
+  <h2>p 逼近 n 時，如何判讀訓練 R² <span class="sec-badge"><a href="#w06-source-islp">教科書 · 第 6.4 節</a></span><span class="sec-badge">講義 06</span></h2>
 <!-- GEN:END sec:highdim -->
 
   <p>基因資料、文字資料、感測器資料常常是 <strong>p 遠大於 n</strong>：
@@ -1644,28 +1655,28 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 6.6 第 1 題（b）</div>
   <p>最佳子集、forward stepwise、backward stepwise 各自選出的「k 個變數的最佳模型」中，<strong>測試</strong>誤差最低的會是哪一個？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。第 (a) 小題問的是<strong>訓練</strong> RSS，那個答案很確定（最佳子集必定最小或相等，因為它搜了全部）。測試誤差需要獨立評估；搜尋範圍擴大，也會增加選到恰好貼合訓練雜訊之模型的機會。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 不確定。三者都有可能，因為測試誤差要看運氣，而三者選出的模型未必相同</div><div class="quiz-opt" data-correct="false" data-fb="這是第 (a) 小題「訓練 RSS」的答案。搜尋較廣可降低訓練 RSS，也可能配到更多訓練雜訊；測試誤差仍須另外評估。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 最佳子集，因為它搜遍所有可能的模型</div><div class="quiz-opt" data-correct="false" data-fb="forward stepwise 通常有<em>較低的變異</em>；測試誤差還受偏差與資料影響。題目要求確定指出贏家，這些資訊不足以決定。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> forward stepwise，因為它的搜尋空間小所以變異低</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。第 (a) 小題問的是&lt;strong&gt;訓練&lt;/strong&gt; RSS，那個答案很確定（最佳子集必定最小或相等，因為它搜了全部）。測試誤差需要獨立評估；搜尋範圍擴大，也會增加選到恰好貼合訓練雜訊之模型的機會。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 不確定。三者都有可能，因為測試誤差要看運氣，而三者選出的模型未必相同</div><div class="quiz-opt" data-correct="false" data-fb="這是第 (a) 小題「訓練 RSS」的答案。搜尋較廣可降低訓練 RSS，也可能配到更多訓練雜訊；測試誤差仍須另外評估。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 最佳子集，因為它搜遍所有可能的模型</div><div class="quiz-opt" data-correct="false" data-fb="forward stepwise 通常有&lt;em&gt;較低的變異&lt;/em&gt;；測試誤差還受偏差與資料影響。題目要求確定指出贏家，這些資訊不足以決定。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> forward stepwise，因為它的搜尋空間小所以變異低</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · ISLP 6.6 第 2 題（a）</div>
   <p>相對於最小平方，Lasso 的特性是？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。這是課本要的標準答案句型。三個小題（Lasso／Ridge／非線性方法）的差別只在彈性是低還是高——Lasso 與 Ridge 都是<strong>降低</strong>彈性換取變異的下降。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 彈性較低，因此當「變異的下降」大於「偏差的上升」時，預測準度會更好</div><div class="quiz-opt" data-correct="false" data-fb="這是第 (c) 小題<strong>非線性方法</strong>的答案。Lasso 加了懲罰項，它的彈性比最小平方<em>低</em>，不是高。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 彈性較高，因此當「偏差的下降」大於「變異的上升」時會更好</div><div class="quiz-opt" data-correct="false" data-fb="不一樣。λ = 0 時兩者相同，但 λ > 0 時 Lasso 的解空間被約束住了（‖β‖₁ ≤ s），那就是彈性較低。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 彈性一樣，只是係數的解不同</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。這是課本要的標準答案句型。三個小題（Lasso／Ridge／非線性方法）的差別只在彈性是低還是高——Lasso 與 Ridge 都是&lt;strong&gt;降低&lt;/strong&gt;彈性換取變異的下降。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 彈性較低，因此當「變異的下降」大於「偏差的上升」時，預測準度會更好</div><div class="quiz-opt" data-correct="false" data-fb="這是第 (c) 小題&lt;strong&gt;非線性方法&lt;/strong&gt;的答案。Lasso 加了懲罰項，它的彈性比最小平方&lt;em&gt;低&lt;/em&gt;，不是高。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 彈性較高，因此當「偏差的下降」大於「變異的上升」時會更好</div><div class="quiz-opt" data-correct="false" data-fb="不一樣。λ = 0 時兩者相同，但 λ &gt; 0 時 Lasso 的解空間被約束住了（‖β‖₁ ≤ s），那就是彈性較低。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 彈性一樣，只是係數的解不同</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 6.6 第 4 題</div>
   <p>Ridge 的懲罰參數 λ 從 0 開始往上增加。<strong>訓練</strong> RSS 會怎麼變化？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。λ = 0 時就是最小平方，它<strong>定義上</strong>就是訓練 RSS 的最小值；任何約束都只會讓訓練 RSS 變大或不變。同一題還問了測試 RSS（先降後升的 U 型）、變異（單調下降）、偏差²（單調上升）、不可縮減誤差（不變）。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 單調上升</div><div class="quiz-opt" data-correct="false" data-fb="這是<strong>測試</strong> RSS 的形狀。訓練 RSS 沒有 U 型。它在 λ = 0 就已經是最小的了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 先下降再上升，呈 U 型</div><div class="quiz-opt" data-correct="false" data-fb="方向相反。加懲罰只會讓「訓練 RSS 這個目標」被犧牲掉一部分，換取係數變小。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 單調下降</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。λ = 0 時就是最小平方，它&lt;strong&gt;定義上&lt;/strong&gt;就是訓練 RSS 的最小值；任何約束都只會讓訓練 RSS 變大或不變。同一題還問了測試 RSS（先降後升的 U 型）、變異（單調下降）、偏差²（單調上升）、不可縮減誤差（不變）。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 單調上升</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;測試&lt;/strong&gt; RSS 的形狀。訓練 RSS 沒有 U 型。它在 λ = 0 就已經是最小的了。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 先下降再上升，呈 U 型</div><div class="quiz-opt" data-correct="false" data-fb="方向相反。加懲罰只會讓「訓練 RSS 這個目標」被犧牲掉一部分，換取係數變小。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 單調下降</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 6.6 第 9 題</div>
   <p>課本第 9 題在 <code>College</code> 資料上比較最小平方、Ridge、Lasso、PCR、PLS 的測試誤差。預期會看到什麼？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。這一題的教學意義就在這裡：這些方法各有適合的資料條件。<code>College</code> 的 n 遠大於 p，最小平方本來就不太糟，所以收縮的好處有限。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 五者的測試誤差常常很接近，Ridge 與 Lasso 略勝最小平方；沒有哪一個一致最好</div><div class="quiz-opt" data-correct="false" data-fb="降維在 p 接近或超過 n 時才有明顯好處。<code>College</code> 是 n = 777、p = 17，最小平方毫無壓力，降維反而可能丟掉有用資訊。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> PCR 與 PLS 明顯勝出，因為它們降了維</div><div class="quiz-opt" data-correct="false" data-fb="Lasso 的優勢要在<strong>真實係數稀疏</strong>時才顯現。若很多變數都有小貢獻，把它們歸零反而引入偏差，Ridge 會較好。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> Lasso 一定最好，因為它同時做收縮與變數選擇</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="資料維度與相關結構可提供線索，但不能代替實際的獨立測試。比較前應固定切分，將標準化、降維與調參都留在訓練資料內。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 需以相同資料切分與各自的調參程序比較，不能預先指定勝負</div><div class="quiz-opt" data-correct="false" data-fb="降維可能減少變異，也可能丟失與 y 有關的方向；n 大於 p 並不能保證最小平方或降維模型誰比較好。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> PCR 與 PLS 明顯勝出，因為它們降了維</div><div class="quiz-opt" data-correct="false" data-fb="Lasso 的優勢要在&lt;strong&gt;真實係數稀疏&lt;/strong&gt;時才顯現。若很多變數都有小貢獻，把它們歸零反而引入偏差，Ridge 會較好。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> Lasso 一定最好，因為它同時做收縮與變數選擇</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
@@ -1712,12 +1723,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   只信沒參與過任何選擇的資料上算出來的誤差。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張卡下方的「來源」標了 lab 的儲存格編號，可以直接回去對。</p>
+<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表用的烘焙資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程題庫 · 27 張</span></h2>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡取自本章講義與 ISLP 第 6 章，正面是中文術語（附英文原名）。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">

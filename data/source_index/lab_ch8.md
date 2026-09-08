@@ -1,7 +1,7 @@
 # Ch08-baggboost-lab-zh.ipynb — ISLP 第 8 章
 
 > 由 tools/extract_lab.py 產生。頁面上的程式碼與預期輸出一律從這裡逐字抄，
-> `.dx-src` 要標注這裡的儲存格編號。不要重跑：輸出是課程環境下的實跑結果。
+> `.dx-src` 以內部 data-lab-* 屬性保留來源位置；頁面不顯示儲存格編號。不要重跑：輸出是課程環境下的實跑結果。
 
 ## 儲存格 0 [md]
 
@@ -11,10 +11,10 @@
 
 <table align="left">
   <td>
-    <a href="https://colab.research.google.com/github/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+    <a href="https://colab.research.google.com/github/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
   </td>
   <td>
-    <a target="_blank" href="https://kaggle.com/kernels/welcome?src=https://github.com/phonchi/nsysu-math524-2025/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb"><img src="https://kaggle.com/static/images/open-in-kaggle.svg" /></a>
+    <a target="_blank" href="https://kaggle.com/kernels/welcome?src=https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb"><img src="https://kaggle.com/static/images/open-in-kaggle.svg" /></a>
   </td>
 </table>
 
@@ -2093,7 +2093,9 @@ XGBoost 對類別變數有實驗性支援，我們可以在這裡查看：https:
 Downloading...
 From: https://drive.google.com/uc?id=1WkuxuToarMFAHYIQ85SW20YSXrfJsMEH
 To: /content/melb_data.csv
-  0% 0.00/2.09M [00:00<?, ?B/s]100% 2.09M/2.09M [00:00<00:00, 26.8MB/s]
+
+  0% 0.00/2.09M [00:00<?, ?B/s]
+100% 2.09M/2.09M [00:00<00:00, 26.8MB/s]
 ```
 
 ## 儲存格 170 [code]
