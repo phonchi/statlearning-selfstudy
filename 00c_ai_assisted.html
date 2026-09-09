@@ -677,7 +677,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#record" data-target="record"><span class="fn-num">P05</span><span class="fn-name">反駁、紀錄與資料安全</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
   <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
-  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
 <!-- GEN:END floatnav -->
@@ -702,7 +701,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  ④ 最後用<a href="#reference">重點速查與來源</a>複習。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>AI 協作參考書：<cite>AI-Assisted Statistics for Data Scientists</cite>（第三版）。章節旁的來源標記可點到本頁書目。</p>
   <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
@@ -719,7 +718,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#record"><span class="toc-num">P05</span>反駁、紀錄與資料安全</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
     <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
-    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
 <!-- GEN:END toc -->
@@ -1003,20 +1001,6 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch03、Ch05）（老師在課程環境實跑）；考前的 Python 與套件版本請依<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">電腦教室版本清單</a>核對。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
-</section>
-<section id="cards">
-<!-- GEN:BEGIN sec:cards -->
-  <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
-  <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
-  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
-    <button id="fcShuffle">🔀 洗牌</button>
-    <button id="fcFlipAll">全部翻面</button>
-    <button id="fcUnflip">全部翻回</button>
-  </div>
-  <div class="fc-grid" id="fcGrid"></div>
-<!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
 <div class="chapter-nav"><a class="prev" href="00b_setup.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">環境安裝</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="introduction.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">統計學習導論與 EDA</div></a></div>
@@ -1612,7 +1596,7 @@ HC.initFlashcards = () => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"責任界線（Responsibility Boundary）","back":"AI 可以提方案、寫草稿與指出可能問題；你必須決定問題、資料能代表誰、證據是否足夠，以及結果造成的後果。"},{"front":"任務分流（Task Triage）","back":"先看答案是否明確、核對成本是否低、錯了有什麼後果。越接近標準流程且越容易驗證，越適合交給 AI 起草。"},{"front":"低風險 AI 任務（Low-risk AI Task）","back":"查語法、翻譯 R／Python、解讀錯誤訊息、格式轉換與你已理解的資料整理樣板。共同特徵是有清楚答案，而且能快速核對。"},{"front":"高風險 AI 任務（High-risk AI Task）","back":"因果解釋、族群代表性、模型上線、正式結論與政策建議。這些牽涉研究設計、領域脈絡、倫理或決策後果，必須由人主導。"},{"front":"可驗收的小任務（Bite-size Task）","back":"一次只要求一個明確交付物，附上成功條件與不能破壞的限制。小任務更容易看懂、執行、測試與退回修正。"},{"front":"方向（Direction）","back":"告訴 AI 你現在在哪個分析階段，以及這一次只做什麼。例如：「先檢查欄位型態，不要建模。」"},{"front":"輸出格式（Output Format）","back":"指定工具、交付物與呈現方式，例如「回傳可執行 pandas 程式，並列出轉換前後的 dtype 與缺值數」。"},{"front":"正確小例子（Worked Example）","back":"給一個已知輸入與預期輸出，幫助 AI 對齊規則，也提供第一個可執行測試。接著改變條件，檢查其他輸入是否也符合規則。"},{"front":"資料字典（Data Dictionary）","back":"記錄欄位定義、單位、允許值、特殊代碼與缺值意義。欄名本身不會告訴 AI ? 是遺漏、零或其他狀態。"},{"front":"驗收條件（Acceptance Criteria）","back":"在生成前先寫下怎樣才算完成，例如「列數不變、缺值數已列出、不得自行刪欄」。這比事後憑感覺判斷可靠。"},{"front":"生成—執行—修正迴圈（Generate-Execute-Revise Loop）","back":"生成 → 執行 → 解析錯誤 → 修改 → 重跑。每輪都保留輸入、完整輸出與修改理由；程式沒報錯後，還要確認它做的是你要求的事。"},{"front":"最小重現例（Minimal Reproducible Example）","back":"能重現問題的最少資料與程式。請連同完整錯誤、套件版本與預期行為交給 AI，方便定位原因。"},{"front":"對抗式追問（Adversarial Question）","back":"不要只問「為什麼有效」，要問「假設了什麼？程式有沒有強制？哪些輸入會失敗？什麼證據會推翻結論？」"},{"front":"第二意見的用途（Second Opinion）","back":"另一個 AI 可以提供異議或找遺漏，但兩個模型可能共享同一錯誤。最後要用資料、獨立重算、官方文件與領域判斷裁決。"},{"front":"統計解讀核對（Statistical Interpretation Check）","back":"依序查定義與單位、假設、不確定性、關聯／因果界線、圖與數字一致性，以及評估資料是否未參與訓練。"},{"front":"交叉驗證的變動（Cross-validation Variability）","back":"延伸概念，讀完重抽樣方法再回來：保留各折或重複切分的分數，說明變動來源。比較模型時要看相同切分下的配對結果，不能只拿各模型的標準差判定差異。"},{"front":"資料最小化（Data Minimization）","back":"只把完成任務所需的最少資訊交給工具。敏感資料優先改成合成小例子或摘要，並先確認組織規範與服務資料流向。"},{"front":"AI 協作紀錄（AI Work Log）","back":"保存 prompt、日期、模型／工具、資料版本、程式、環境、seed、完整輸出、驗收結果，以及採納或拒絕建議的理由。這些紀錄讓別人能重跑並核對分析。"}];
+const FLASHCARDS = [];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

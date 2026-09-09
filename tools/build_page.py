@@ -111,6 +111,10 @@ def studyguide(p: P.Page) -> str:
     links += '<a href="index.html">🏠 章節總覽</a>'
     esl_hint = ("標「ESL 進階」的節是課堂沒細講的延伸，第一輪可略過。"
                 if any(s.eslx for s in p.secs) else "")
+    review_step = ('最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 '
+                   '<a href="#reference">重點速查與來源</a>查閱。'
+                   if P.flashcard_count(p) else
+                   '最後用<a href="#reference">重點速查與來源</a>複習。')
     deck_bit = f"｜講義 {p.deck_no}" if p.deck else ""
     deck_note = f'\n  <p class="source-intro">{p.deck_note}</p>' if p.deck_note else ""
     if p.grounding_mode == "concept":
@@ -130,7 +134,7 @@ def studyguide(p: P.Page) -> str:
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② {step2}
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。{esl_hint}</p>
+  ④ {review_step}{esl_hint}</p>
   {S.introduction(p)}{deck_note}
   <div class="sg-links">{links}</div>
 </div>"""
@@ -223,7 +227,7 @@ def cards_block(p: P.Page) -> str:
         src = "本頁依 Seeing Theory 編寫的概念解說"
     return f"""  <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">{badge}</span></h2>
-  <p>詞彙卡取自{src}，正面是中文術語（附英文原名）。
+  <p>詞彙卡整理{src}中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
@@ -308,6 +312,16 @@ def render_new(p: P.Page) -> str:
 def refresh(p: P.Page, src: str):
     """只重繪 GEN 區段；回報哪些區段變了、哪些 section 還沒有。"""
     changed, missing = [], []
+    has_cards = bool(P.flashcard_count(p))
+    cards_pattern = r'\n?<section id="cards">.*?</section>\n?'
+    if not has_cards and re.search(cards_pattern, src, re.S):
+        src = re.sub(cards_pattern, '\n', src, flags=re.S)
+        changed.append("remove-empty-cards")
+    elif has_cards and '<section id="cards">' not in src:
+        marker = BEGIN.format(k="chapternav")
+        section = '<section id="cards">\n' + gen('sec:cards', cards_block(p)) + '\n</section>\n'
+        src = src.replace(marker, section + marker, 1)
+        changed.append("add-cards")
     regions = {"head": head(p), "floatnav": floatnav(p), "hero": hero(p),
                "studyguide": studyguide(p), "toc": toc(p),
                "chapternav": chapternav(p), "footer": footer(p), "sharedjs": sharedjs(p)}

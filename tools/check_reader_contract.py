@@ -5,6 +5,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 from reader_sources import CELL, LECTURE
+import pages as P
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -55,7 +56,12 @@ def main():
             if 'nsysu-math524-2025' in link or '#page=' in link:
                 failures.append(f'{path.name}: stale/positional link: {link}')
         if path.name != 'index.html':
-            for required in ('id="fcGrid"', 'class="quiz-box"', 'const FLASHCARDS = '):
+            required_features = ['class="quiz-box"', 'const FLASHCARDS = ']
+            if P.flashcard_count(P.BY_STEM[path.stem]):
+                required_features.append('id="fcGrid"')
+            elif 'id="fcGrid"' in source or 'href="#cards"' in source:
+                failures.append(f'{path.name}: empty flashcard UI or link')
+            for required in required_features:
                 if required not in source:
                     failures.append(f'{path.name}: missing preserved learning feature {required}')
     readme = (ROOT / 'README.md').read_text()

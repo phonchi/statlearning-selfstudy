@@ -149,16 +149,19 @@ async function checkOne(browser, stem) {
   // 詞彙卡
   const fc = await page.evaluate(() => {
     const grid = document.getElementById('fcGrid');
-    if (!grid) return { n: 0 };
+    const expected = typeof FLASHCARDS === 'undefined' ? null : FLASHCARDS.length;
+    if (!grid) return { n: 0, expected, hasGrid: false };
     const n = grid.children.length;
     if (n) grid.children[0].click();
     const flipped = grid.querySelectorAll('.fc-card.flipped').length;
     const sh = document.getElementById('fcShuffle'); if (sh) sh.click();
     const fa = document.getElementById('fcFlipAll'); if (fa) fa.click();
     const allFlipped = grid.querySelectorAll('.fc-card.flipped').length;
-    return { n, flipped, allFlipped };
+    return { n, flipped, allFlipped, expected, hasGrid: true };
   });
-  if (fc.n === 0) note(stem, '詞彙卡是空的（尚未注入 FLASHCARDS）');
+  if (fc.expected === 0) {
+    if (fc.hasGrid) note(stem, '沒有合適術語時不應顯示空詞彙卡區塊');
+  } else if (fc.n !== fc.expected || fc.n === 0) note(stem, '詞彙卡與資料筆數不符');
   else {
     if (fc.flipped !== 1) note(stem, `點第一張卡沒有翻面（flipped=${fc.flipped}）`);
     if (fc.allFlipped !== fc.n) note(stem, `「全部翻面」只翻了 ${fc.allFlipped}/${fc.n}`);

@@ -991,13 +991,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivWageAge" height="300"></svg></div><div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivWageYear" height="270"></svg></div><div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivWageEdu" height="320"></svg></div>
       <div class="status-banner" id="w01ivWageStatus"><span class="status-icon">›</span><span class="status-text">曲線描述平均薪資與輸入的關係；散點呈現同一年齡或年份中個人的差異。</span></div>
       <div class="controls-bar"></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Wage，對照講義p31與Ch01 lab 範例；與lab相同的四次／一次擬合、95% bootstrap信賴帶與Tukey箱形圖；bootstrap固定seed=0便於重現。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage，全部3000筆資料；依第一章lab的圖形繪製。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">先看座標，再看分布</div>
-      三張圖的薪資單位都是<strong>千美元</strong>。年齡與年份圖都畫全部3000人的觀測值。年齡曲線是四次多項式擬合，年份直線是一次線性擬合；淡色區域是平均反應的95% bootstrap信賴帶，不是個別薪資的預測區間。
+      三張圖的薪資單位都是<strong>千美元</strong>。年齡與年份圖都畫全部3000人的觀測值，線條呈現薪資的整體趨勢。淡色區域是平均薪資的95%信賴區間：區域越寬，表示平均薪資的估計越不確定。它不表示個人薪資會落在哪裡，區間的詳細意義會在後續章節介紹。
     </div>
     <div class="info-card">
       <div class="ic-title">第一次讀箱形圖</div>
@@ -1031,7 +1031,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivSmarketBox" height="320"></svg></div><div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivSmarketCorr" height="470"></svg></div>
       <div class="status-banner" id="w01ivSmarketStatus"><span class="status-icon">›</span><span class="status-text">先讀分布，再讀線性相關；預測能力還要用未見資料檢查。</span></div>
       <div class="controls-bar"></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Smarket，對照講義p32與Ch01 lab 範例；箱形圖使用1.5IQR鬚，熱圖使用numeric_only的Pearson相關。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>Smarket，全部1250筆資料；依第一章lab的箱形圖與相關係數圖繪製。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1072,7 +1072,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivNci" height="470"></svg></div><div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivNci3" height="340"></svg></div>
       <div class="status-banner" id="w01ivNciStatus"><span class="status-icon">›</span><span class="status-text">64個細胞株、6830個基因；型別未參與投影計算。</span></div>
       <div class="controls-bar"></div>
-      <div class="viz-source"><span>課程／lab 資料</span>NCI60，對照講義p33與Ch01 lab 範例；每個基因標準化後進行PCA，畫PC1對−PC2及PC1對PC3，再按原始型別上色。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>NCI60，64個細胞株的基因資料；依第一章lab的投影圖繪製。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1109,7 +1109,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivAutoHist" height="290"></svg></div><div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivAutoJoint" height="380"></svg></div><div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivAutoPairs" height="650"></svg></div>
       <div class="status-banner" id="w01ivAutoStatus"><span class="status-icon">›</span><span class="status-text">392筆車輛、8個資料欄；name是列索引。直方圖與散佈圖回答不同問題。</span></div>
       <div class="controls-bar"></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Auto，對照講義p34與Ch01 lab 範例；全部392筆，seaborn密度直方圖與KDE、汽缸數聯合圖，以及以汽缸數上色的完整pairplot。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>Auto，全部392筆資料；依第一章lab的分布圖與散佈圖繪製。</div>
     </div>
   </div>
   <div class="side-panel">
@@ -1140,32 +1140,32 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-options" id="qIntroAutoOptions"><div class="quiz-opt" data-correct="false" data-fb="不對。這張直方圖的柱高是密度；柱高乘上箱寬才是該區間的樣本比例。" onclick="quizCheck('qIntroAuto', this)"><span class="opt-letter">(A)</span> 直方圖的柱高就是每輛車的馬力</div><div class="quiz-opt" data-correct="true" data-fb="對。散佈圖描述觀察到的關係，不直接證明因果。" onclick="quizCheck('qIntroAuto', this)"><span class="opt-letter">(B)</span> 樣本中馬力與mpg呈負向關係，其他車輛特徵仍可能影響這個關係</div><div class="quiz-opt" data-correct="false" data-fb="不對。mpg是每加侖行駛英里數，愈高才表示較省油。" onclick="quizCheck('qIntroAuto', this)"><span class="opt-letter">(C)</span> mpg愈低代表車愈省油</div></div>
   <div class="quiz-feedback" id="qIntroAutoFeedback"></div>
 </div>
-<h3 id="dx-bike">Bikeshare：一天中哪些時段租借較多？</h3>
-<p>bikers是每小時的租借量，可以作為迴歸目標。講義先展示線性模型的月份與小時係數，後續在分類章的廣義線性模型段落比較線性與Poisson迴歸。</p>
+<h3 id="dx-bike">Bikeshare：哪些月份、時段租借較多？</h3>
+<p>bikers記錄每小時的租借量。先看下面兩張圖，找出一年中、一天中租借量較高的時候。這一章先練習讀圖，模型的詳細說明放在<a href="classification.html#poisson">第四章的Bikeshare例子</a>。</p>
 <div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
 <div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivBikeMonth" height="300"></svg></div><div class="w01-figure-scroll">      <svg class="viz-svg" id="w01ivBike" height="320"></svg></div>
-      <div class="status-banner" id="w01ivBikeStatus"><span class="status-icon">›</span><span class="status-text">縱軸是線性模型係數；月份與小時各自採總和為零的編碼。</span></div>
+      <div class="status-banner" id="w01ivBikeStatus"><span class="status-icon">›</span><span class="status-text">先比較曲線的高低，觀察哪些月份、時段的租借量較多。模型如何計算，第四章再介紹。</span></div>
       <div class="controls-bar"></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Bikeshare；依導論講義與分類lab的線性迴歸重建，使用全部8645筆與sum contrasts。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>Bikeshare，全部8645筆資料；依第四章lab的線性迴歸結果繪製。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">月份與小時的模型係數</div>
-      講義的兩條線來自同一個線性迴歸：以月份、小時、工作日、溫度與天氣預測每小時租借量。月份與小時採總和為零的編碼，各自的係數加總為0。
+      <div class="ic-title">先看哪些月份、時段較高</div>
+      這兩張圖來自第四章的自行車租借例子。模型同時考慮月份、時段、是否為工作日、溫度與天氣。比較曲線高低時，假設其他條件相同；曲線越高，模型估計的租借量就越多。
     </div>
     <div class="info-card">
-      <div class="ic-title">讀取調整後的差異</div>
-      固定模型中的其他變數後，比較兩個月份或小時的係數差，就是模型預測的租借量差。負係數表示低於該因子的平均水準，並不表示租借量為負。這些是觀察資料的條件關係，因果效果仍需其他證據。
+      <div class="ic-title">縱軸的0是比較基準</div>
+      月份圖以模型中各月份的平均水準為基準，時段圖則以各時段的平均水準為基準。正值表示高於基準，負值表示低於基準。負值不代表租借量是負數。這裡畫的是模型估計的差異，不能直接當成各月、各時段的實際平均租借量。
     </div>
   </div>
 </div>
 <div class="quiz-box">
   <div class="quiz-label">讀圖自測 · Bikeshare</div>
-  <p>某小時的模型係數較高，應如何解讀？</p>
-  <div class="quiz-options" id="qIntroBikeshareOptions"><div class="quiz-opt" data-correct="false" data-fb="原始平均未調整月份、工作日、溫度與天氣，與這張係數圖不同。" onclick="quizCheck('qIntroBikeshare', this)"><span class="opt-letter">(A)</span> 這是跨不同日期、同一小時的原始平均租借量</div><div class="quiz-opt" data-correct="false" data-fb="預測還要加上截距及其他變數的貢獻；單一負係數並非負的租借量。" onclick="quizCheck('qIntroBikeshare', this)"><span class="opt-letter">(B)</span> 負係數代表那個小時的租借量是負數</div><div class="quiz-opt" data-correct="true" data-fb="對。兩個小時的係數差是固定其餘模型輸入時的預測差，仍不代表因果效果。" onclick="quizCheck('qIntroBikeshare', this)"><span class="opt-letter">(C)</span> 其他模型變數固定時，該小時的預測租借量較高</div></div>
+  <p>時段圖中，某時段的位置較高，表示什麼？</p>
+  <div class="quiz-options" id="qIntroBikeshareOptions"><div class="quiz-opt" data-correct="false" data-fb="圖上畫的是模型估計的相對差異，已考慮月份、工作日、溫度與天氣。" onclick="quizCheck('qIntroBikeshare', this)"><span class="opt-letter">(A)</span> 圖上的數字就是該時段實際平均租借了幾輛車</div><div class="quiz-opt" data-correct="false" data-fb="0是比較基準；負值表示低於基準，不是租借量為負數。" onclick="quizCheck('qIntroBikeshare', this)"><span class="opt-letter">(B)</span> 曲線低於0，表示該時段的租借量是負數</div><div class="quiz-opt" data-correct="true" data-fb="對。這張圖讓我們在其他條件相同時比較不同時段；它沒有證明時間本身造成租借量改變。" onclick="quizCheck('qIntroBikeshare', this)"><span class="opt-letter">(C)</span> 其他條件相同時，模型估計該時段的租借量較多</div></div>
   <div class="quiz-feedback" id="qIntroBikeshareFeedback"></div>
 </div>
 </section>
@@ -1277,7 +1277,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
-  <p>詞彙卡取自本章講義與 ISLP 第 1 章，正面是中文術語（附英文原名）。
+  <p>詞彙卡整理本章講義與 ISLP 第 1 章中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
@@ -2003,12 +2003,13 @@ function w01ivAutoDraw() {
 }
 function w01ivBikeDraw() {
   const f=FRAMES_w01bike;
-  [['w01ivBikeMonth',f.monthCoefs,'月份','月份係數',300],['w01ivBike',f.hourCoefs,'小時（0–23時）','小時係數',320]].forEach(([id,values,label,title,height])=>{
+  [['w01ivBikeMonth',f.monthCoefs,'月份','月份',300],['w01ivBike',f.hourCoefs,'小時（0–23時）','時段',320]].forEach(([id,values,label,title,height])=>{
     const isMonth=id==='w01ivBikeMonth';
-    const s=w01ivAxes(id,[0,values.length-1],[Math.floor(Math.min(...values)/20)*20,Math.ceil(Math.max(...values)/20)*20],title+'：總和為零的編碼',label,'係數（租借量）',height,6);
+    const s=w01ivAxes(id,[0,values.length-1],[Math.floor(Math.min(...values)/20)*20,Math.ceil(Math.max(...values)/20)*20],title+'：租借量的相對差異',label,'租借量差異',height,6);
     w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');
+    if(isMonth){s.clear();s.grid(6,4,{xtitle:'月份',ytitle:'租借量差異',xfmt:()=>'',ydec:0});w01ivText(s,68,22,title+'：租借量的相對差異',{'font-size':15});w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');values.forEach((_,i)=>w01ivText(s,s.X(i),s.H-s.pad.b+18,String(i+1),{'text-anchor':'middle','font-size':12}));}
     s.seg(0,0,values.length-1,0,{stroke:HC.tok.muted,sw:1,cls:'w01iv-zero'});
-    if(isMonth){s.clear();s.grid(6,4,{xtitle:'月份',ytitle:'係數（租借量）',xfmt:()=>'',ydec:0});w01ivText(s,68,22,title+'：總和為零的編碼',{'font-size':15});w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');values.forEach((_,i)=>w01ivText(s,s.X(i),s.H-s.pad.b+18,String(i+1),{'text-anchor':'middle','font-size':12}));}
+    w01ivText(s,s.pad.l-8,s.Y(0)+4,'0',{'text-anchor':'end','font-size':12,fill:HC.tok.muted});
   });
 }
 w01ivWageDraw();
@@ -2020,7 +2021,7 @@ w01ivBikeDraw();
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"領域重疊（Overlapping Fields）","back":"統計學習、機器學習、資料科學與人工智慧有大量重疊。可依研究目的與工作範圍理解它們，同一個方法也能用於不同領域。"},{"front":"輸入與目標（X and Y）","back":"X 是分析時使用的輸入資料，Y 是問題指定的目標。例如用年齡與教育程度預測薪資，前兩者是 X，薪資是 Y；同一份表換一個問題，角色也可能改變。"},{"front":"監督式學習（Supervised Learning）","back":"用訓練資料中已有的目標值學習輸入與目標的關係，再對新個案預測。未來的答案尚未知，不會讓這個任務變成非監督式。"},{"front":"非監督式學習（Unsupervised Learning）","back":"不以指定目標標籤訓練，主要探索資料的分組或低維結構。即使另有標籤，也可以先不使用，之後再作外部對照；仍可檢查結果是否穩定、有用。"},{"front":"迴歸問題（Regression）","back":"目標是數值，例如薪資、油耗或租借數量。先弄清楚單位與觀測對象，再考慮模型；用數字編碼的類別不會因此自動成為迴歸目標。"},{"front":"分類也能輸出機率（Classification Probabilities）","back":"分類的目標是類別，例如漲跌或違約與否。模型可以先輸出某一類的機率，再依需要轉成標籤；輸出機率不會改變原本的分類任務。"},{"front":"推薦系統（Recommender System）","back":"推薦是應用問題，可以結合監督式、非監督式等不同學習方法。要先問推薦給誰、推薦什麼、手上有哪些互動資料，以及怎樣算推薦得好。"},{"front":"評分與互動紀錄（Ratings and Interactions）","back":"評分直接表達使用者回饋；點擊、觀看或購買紀錄則需要依情境解讀。沒有互動不一定表示不喜歡，也可能只是沒有看過這項內容。"},{"front":"探索式資料分析（EDA）","back":"在急著建模前，用摘要與圖形了解資料的分布、變數關係和可能問題。它會讓你重新提問、查資料定義，並修正原先的想法。"},{"front":"摘要統計（Summary Statistics）","back":"筆數、平均、中位數、標準差與分位數回答不同問題。平均不能單獨描述分布；看 count 時也要記得確認是否排除了遺漏值。"},{"front":"讀圖的起點（Reading a Plot）","back":"先看每個點或長條代表什麼，再看軸、單位、分組方式與範圍。圖形看起來不同，可能來自資料，也可能來自尺度或畫法。"},{"front":"單變數與變數關係（Distributions and Relationships）","back":"直方圖幫助看一個數值變數的分布；散佈圖看兩個數值變數的關係；分組盒鬚圖比較不同類別的數值分布。選圖取決於你想問的問題。"},{"front":"資料規模 N 與 P（Dataset Size）","back":"本章總覽的 N、P 沿用講義所採資料的列數與欄數計算方式。P 不必等於模型的預測變數個數；目標、識別欄與移作索引的欄位都要另外確認。"},{"front":"真實與合成資料（Observed and Simulated Data）","back":"真實資料來自觀測、調查、交易或研究紀錄；合成資料依設定的規則產生。合成資料適合展示方法；要提出真實世界的實證結論，仍須使用相應的觀測證據。"},{"front":"資料代表誰（Data Context）","back":"欄名與筆數之外，還要知道資料從哪裡來、何時收集、一列代表誰，以及哪些個案沒有被收進來。能套用的結論範圍取決於這些條件。"},{"front":"關聯與因果（Association and Causation）","back":"圖中兩個變數一起變動，還不足以說其中一個造成另一個。其他因素、樣本選擇與收集方式都可能影響關係，因果結論需要研究設計與額外假設。"},{"front":"Akaike：模型比較（Information Criteria）","back":"擬合資料更好，不一定代表對新資料更好。資訊準則把擬合與模型複雜度一起考慮，提醒我們不能只挑最會貼住目前資料的模型。"},{"front":"Tukey：先探索資料（Exploratory Data Analysis）","back":"用圖與摘要探索資料的結構、異常與關係，再依觀察調整原有問題或提出新的問題。"},{"front":"Wahba：平滑與模型誤差（Spline Smoothing）","back":"樣條平滑用可彎曲的函數描述關係，同時控制曲線的粗糙程度，讓趨勢估計較少受觀測雜訊影響。"},{"front":"Efron：自助法（Bootstrap）","back":"從已有樣本反覆重抽，觀察估計結果如何變動，藉此近似不確定性。它仍依賴資料與抽樣方式，不能自動補救不具代表性的樣本。"},{"front":"Gelfand 與 Smith：以抽樣協助計算（Sampling-based Computation）","back":"有些機率分布很難直接計算，可以用合適的抽樣方法近似所需的量。這讓較複雜的貝氏模型更容易實際分析。"},{"front":"Imbens 與 Angrist：辨識因果效果（Causal Identification）","back":"觀察到差異之前，要先問研究設計能識別什麼因果效果，以及需要哪些假設。可識別的效果也可能只適用於特定族群。"},{"front":"Tibshirani：Lasso 收縮與選擇（Lasso）","back":"對係數加入限制，讓某些估計縮小，部分可縮到零。這把控制模型複雜度與選擇變數連在一起，同時考慮訓練擬合與模型限制。"},{"front":"Wilkinson：圖形語法（Grammar of Graphics）","back":"把圖拆成資料、視覺對應與幾何圖形等部分。用一致的組合方式思考圖表，有助於說清楚每個顏色、位置與形狀在表達什麼。"},{"front":"Goodfellow 等人：生成對抗網路（GAN）","back":"生成器嘗試產生像資料的樣本，判別器嘗試分辨來源，兩者在訓練中互相提供訊號。生成結果的真實性仍需另外核對。"},{"front":"Bengio、LeCun 與 Hinton：深度學習（Deep Learning）","back":"用多層轉換從資料學習表示，再用於辨識或預測等任務。使用學得的表示時，仍須確認資料品質與評估結果。"}];
+const FLASHCARDS = [{"front":"監督式學習（Supervised Learning）","back":"用訓練資料中已有的目標值學習輸入與目標的關係，再對新個案預測。未來的答案尚未知，不會讓這個任務變成非監督式。"},{"front":"非監督式學習（Unsupervised Learning）","back":"不以指定目標標籤訓練，主要探索資料的分組或低維結構。即使另有標籤，也可以先不使用，之後再作外部對照；仍可檢查結果是否穩定、有用。"},{"front":"迴歸問題（Regression）","back":"目標是數值，例如薪資、油耗或租借數量。先弄清楚單位與觀測對象，再考慮模型；用數字編碼的類別不會因此自動成為迴歸目標。"},{"front":"推薦系統（Recommender System）","back":"推薦是應用問題，可以結合監督式、非監督式等不同學習方法。要先問推薦給誰、推薦什麼、手上有哪些互動資料，以及怎樣算推薦得好。"},{"front":"探索式資料分析（EDA）","back":"在急著建模前，用摘要與圖形了解資料的分布、變數關係和可能問題。它會讓你重新提問、查資料定義，並修正原先的想法。"},{"front":"摘要統計（Summary Statistics）","back":"筆數、平均、中位數、標準差與分位數回答不同問題。平均不能單獨描述分布；看 count 時也要記得確認是否排除了遺漏值。"},{"front":"關聯與因果（Association and Causation）","back":"圖中兩個變數一起變動，還不足以說其中一個造成另一個。其他因素、樣本選擇與收集方式都可能影響關係，因果結論需要研究設計與額外假設。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

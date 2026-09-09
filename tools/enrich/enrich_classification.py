@@ -104,7 +104,7 @@ BODIES["prologue"] = f"""
         ["編碼 C", "2", "1", "3", "又是另一個模型。哪一個才對？<strong>都不對。</strong>"]])}
 
   <p>這些<strong>類別沒有順序也沒有距離</strong>，數字編碼卻加入了順序與等距的假設。
-  正解是邏輯斯迴歸（兩類）與多元邏輯斯迴歸（多類），或者本章後半的生成式模型。</p>
+  正解是邏輯斯迴歸（兩類）與多類別邏輯斯迴歸（多類），或者本章後半的生成式模型。</p>
 
 {quiz("qWhy", "QUIZ · 為什麼不用迴歸",
       "把二元反應編成 0／1 之後擬合線性迴歸，跟邏輯斯迴歸比，最根本的問題是什麼？",
@@ -240,7 +240,7 @@ BODIES["multinomial"] = f"""
   <strong>學生</strong>違約機率是 0.058，同樣條件的<strong>非學生</strong>是 0.105——
   差了將近一倍，而且方向跟「學生風險高」的直覺相反。</p>
 
-  <h3>多於兩類：多元邏輯斯迴歸</h3>
+  <h3>多於兩類：多類別邏輯斯迴歸</h3>
 
   <p>兩類的邏輯斯迴歸沒辦法直接處理 K &gt; 2。做法是<strong>挑一類當基準</strong>（baseline，
   習慣挑第 K 類），然後對其餘每一類寫一條 log-odds：</p>
@@ -745,7 +745,7 @@ BODIES["compare"] = f"""
   <strong>4. QDA 與 Naive Bayes 誰都不是誰的特例。</strong>Naive Bayes 的 g<sub>kj</sub> 可以是任意函數（更彈性），
   但它是純加性的、<strong>永遠沒有 x<sub>j</sub>x<sub>l</sub> 交互項</strong>；QDA 有交互項但被鎖在二次式裡。''')}
 
-  <p>邏輯斯迴歸呢？多元邏輯斯迴歸的形式跟 LDA 的第一行<strong>字面上完全一樣</strong>。
+  <p>邏輯斯迴歸呢？多類別邏輯斯迴歸的形式跟 LDA 的第一行<strong>字面上完全一樣</strong>。
   差別只在係數怎麼來：LDA 從常態假設推出來，邏輯斯迴歸直接最大化條件概似。
   所以「X 近似常態 → LDA 較好，否則 → 邏輯斯較好」。</p>
 
@@ -863,8 +863,10 @@ BODIES["poisson"] = f"""
            "<code>family=sm.families.Binomial()</code> 換成 "
            "<code>family=sm.families.Poisson()</code>，其他一個字都沒改。"
            "係數的補齊步驟（<code>mnth[Dec]</code> 取其餘月份的負和）是因為用了 "
-           "<code>contrast('mnth', 'sum')</code> 這種和為零的編碼，"
-           "係數要讀成「相對於年平均」。對照 ISLP 表 4.11 與圖 4.15。"
+           "<code>contrast('mnth', 'sum')</code>。這個設定讓月份係數加總為0，"
+           "因此係數呈現相對於各月份平均水準的差異。Poisson模型使用對數連結，"
+           "這裡的係數是在對數尺度上比較；固定其他變數後，兩月份的係數差取指數，"
+           "才是預測平均租借量的比值。對照 ISLP 表 4.11 與圖 4.15。"
            "這一格 lab 沒有存下輸出，數字請看課本表 4.11：intercept 4.12、temp 0.79、"
            "weathersit[light rain/snow] −0.58。")}
 
@@ -1000,7 +1002,7 @@ BODIES["reference"] = f"""
 {table(["名稱", "式子", "備註"],
        [["邏輯斯函數", "$p(X) = \\dfrac{e^{\\beta_0+\\beta_1X}}{1+e^{\\beta_0+\\beta_1X}}$", "式 4.2"],
         ["logit / log-odds", "$\\log\\dfrac{p(X)}{1-p(X)} = \\beta_0+\\beta_1X$", "式 4.4，線性的是這個"],
-        ["多元邏輯斯", "$\\log\\dfrac{\\Pr(Y=k|x)}{\\Pr(Y=K|x)} = \\beta_{k0}+\\sum_j\\beta_{kj}x_j$",
+        ["多類別邏輯斯", "$\\log\\dfrac{\\Pr(Y=k|x)}{\\Pr(Y=K|x)} = \\beta_{k0}+\\sum_j\\beta_{kj}x_j$",
          "式 4.12"],
         ["softmax", "$\\Pr(Y=k|x) = \\dfrac{e^{\\beta_{k0}+\\sum_j\\beta_{kj}x_j}}{\\sum_l e^{\\beta_{l0}+\\sum_j\\beta_{lj}x_j}}$",
          "式 4.13，等價寫法"],

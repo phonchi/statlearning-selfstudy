@@ -35,14 +35,14 @@ def _quiz(name, question, correct, feedback, wrong1, fb1, wrong2, fb2):
 def dataset_examples():
     wage = viz(svg('w01ivWageAge', 300) + svg('w01ivWageYear', 270) + svg('w01ivWageEdu', 320),
         [info_card('先看座標，再看分布',
-         '三張圖的薪資單位都是<strong>千美元</strong>。年齡與年份圖都畫全部3000人的觀測值。年齡曲線是四次多項式擬合，年份直線是一次線性擬合；淡色區域是平均反應的95% bootstrap信賴帶，不是個別薪資的預測區間。'),
+         '三張圖的薪資單位都是<strong>千美元</strong>。年齡與年份圖都畫全部3000人的觀測值，線條呈現薪資的整體趨勢。淡色區域是平均薪資的95%信賴區間：區域越寬，表示平均薪資的估計越不確定。它不表示個人薪資會落在哪裡，區間的詳細意義會在後續章節介紹。'),
          info_card('第一次讀箱形圖',
          '箱子下緣是第1四分位數（Q1），上緣是第3四分位數（Q3），中線是中位數。'
          '鬚延伸到Q1−1.5×IQR與Q3+1.5×IQR內最遠的觀測值（IQR＝Q3−Q1）；外面的點另外畫出，不代表輸入錯誤。'),
          info_card('不同人之間的比較',
          '各年齡、年份與教育組都是不同人的資料。看到薪資分布不同，還不能說是年齡或教育造成的。')],
         'w01ivWageStatus', '曲線描述平均薪資與輸入的關係；散點呈現同一年齡或年份中個人的差異。', '',
-        provenance=('course-data', 'Wage，對照講義p31與Ch01 lab儲存格145–155；與lab相同的四次／一次擬合、95% bootstrap信賴帶與Tukey箱形圖；bootstrap固定seed=0便於重現。'))
+        provenance=('course-data', 'Wage，全部3000筆資料；依第一章lab的圖形繪製。'))
     smarket = viz(svg('w01ivSmarketBox', 320) + svg('w01ivSmarketCorr', 470),
         [info_card('箱子依當天的漲跌分組',
          'Lag1、Lag2、Lag3分別是前1、2、3個交易日的報酬（%）。每一組比較<strong>當天跌（紅）／當天漲（綠）</strong>；箱子與鬚沿用上面的定義。'),
@@ -53,7 +53,7 @@ def dataset_examples():
          '箱子大量重疊，只表示這些單一變數沒有明顯分開兩組；不能證明完全無法預測。'
          'Today是當天報酬，與Direction同時才知道，不能拿它預測當天漲跌。')],
         'w01ivSmarketStatus', '先讀分布，再讀線性相關；預測能力還要用未見資料檢查。', '',
-        provenance=('course-data', 'Smarket，對照講義p32與Ch01 lab儲存格157–162；箱形圖使用1.5IQR鬚，熱圖使用numeric_only的Pearson相關。'))
+        provenance=('course-data', 'Smarket，全部1250筆資料；依第一章lab的箱形圖與相關係數圖繪製。'))
     nci = viz(svg('w01ivNci', 470) + svg('w01ivNci3', 340),
         [info_card('一點代表一個細胞株',
          '每筆原本有6830個基因表現值，兩張圖分別看第一、第二主成分與第一、第三主成分。現在只要懂「把高維資料畫在平面上」，PCA的推導留到非監督式學習章。'),
@@ -61,7 +61,7 @@ def dataset_examples():
          '投影只用基因表現量，沒有使用癌症型別。顏色保留全部14種原始型別，供事後對照。第一張圖依lab將第二主成分乘上−1；主成分符號可反轉，不改變距離或解釋變異。'
          '部分同色點靠近，部分仍混在一起；平面也會遺失資訊。')],
         'w01ivNciStatus', '64個細胞株、6830個基因；型別未參與投影計算。', '',
-        provenance=('course-data', 'NCI60，對照講義p33與Ch01 lab儲存格164–170；每個基因標準化後進行PCA，畫PC1對−PC2及PC1對PC3，再按原始型別上色。'))
+        provenance=('course-data', 'NCI60，64個細胞株的基因資料；依第一章lab的投影圖繪製。'))
     auto = viz(svg('w01ivAutoHist', 290) + svg('w01ivAutoJoint', 380) + svg('w01ivAutoPairs', 650),
         [info_card('單一變數與兩個變數',
          '直方圖回答「mpg通常落在哪裡」：縱軸是密度，各柱面積加總為1，橘線是核密度估計（KDE）。分箱與平滑設定沿用lab的seaborn預設值。聯合圖也畫出汽缸數與mpg各自的邊際直方圖。成對散佈圖回答「馬力與mpg如何一起變動」：一點是一輛車。'
@@ -70,15 +70,15 @@ def dataset_examples():
          '成對圖比較mpg、排氣量、馬力與車重，以汽缸數上色。對角線是各汽缸組的KDE，其他格是一對變數的散佈圖；'
          '完整成對圖可幫助找出候選關係；因果判斷還需要研究設計與其他證據。')],
         'w01ivAutoStatus', '392筆車輛、8個資料欄；name是列索引。直方圖與散佈圖回答不同問題。', '',
-        provenance=('course-data', 'Auto，對照講義p34與Ch01 lab儲存格172–176；全部392筆，seaborn密度直方圖與KDE、汽缸數聯合圖，以及以汽缸數上色的完整pairplot。'))
+        provenance=('course-data', 'Auto，全部392筆資料；依第一章lab的分布圖與散佈圖繪製。'))
     bike = viz(svg('w01ivBikeMonth', 300) + svg('w01ivBike', 320),
-        [info_card('月份與小時的模型係數',
-         '講義的兩條線來自同一個線性迴歸：以月份、小時、工作日、溫度與天氣預測每小時租借量。月份與小時採總和為零的編碼，各自的係數加總為0。'),
-         info_card('讀取調整後的差異',
-         '固定模型中的其他變數後，比較兩個月份或小時的係數差，就是模型預測的租借量差。負係數表示低於該因子的平均水準，並不表示租借量為負。'
-         '這些是觀察資料的條件關係，因果效果仍需其他證據。')],
-        'w01ivBikeStatus', '縱軸是線性模型係數；月份與小時各自採總和為零的編碼。', '',
-        provenance=('course-data', 'Bikeshare；依導論講義與分類lab的線性迴歸重建，使用全部8645筆與sum contrasts。'))
+        [info_card('先看哪些月份、時段較高',
+         '這兩張圖來自第四章的自行車租借例子。模型同時考慮月份、時段、是否為工作日、溫度與天氣。比較曲線高低時，假設其他條件相同；曲線越高，模型估計的租借量就越多。'),
+         info_card('縱軸的0是比較基準',
+         '月份圖以模型中各月份的平均水準為基準，時段圖則以各時段的平均水準為基準。正值表示高於基準，負值表示低於基準。負值不代表租借量是負數。'
+         '這裡畫的是模型估計的差異，不能直接當成各月、各時段的實際平均租借量。')],
+        'w01ivBikeStatus', '先比較曲線的高低，觀察哪些月份、時段的租借量較多。模型如何計算，第四章再介紹。', '',
+        provenance=('course-data', 'Bikeshare，全部8645筆資料；依第四章lab的線性迴歸結果繪製。'))
     auto_code = lab_code(1, 175) + '\n\n' + lab_code(1, 176)
     return f'''
 <p>先用五份真實資料練習讀圖：看清一點、一個箱子或一條線代表什麼，再判斷圖能回答哪個問題。</p>
@@ -102,10 +102,10 @@ def dataset_examples():
 {auto}
 {card('課程lab · 從直方圖到完整pairplot', auto_code, None, src=_src(175, 176), note=f'上方重建相同的密度圖與成對圖；可在<a href="{LAB_URL}" target="_blank" rel="noopener">課程lab</a>操作原始程式。')}
 {_quiz('Auto', '散佈圖中，馬力較大的車通常落在較低mpg的位置。哪個解讀合理？', '樣本中馬力與mpg呈負向關係，其他車輛特徵仍可能影響這個關係', '對。散佈圖描述觀察到的關係，不直接證明因果。', 'mpg愈低代表車愈省油', '不對。mpg是每加侖行駛英里數，愈高才表示較省油。', '直方圖的柱高就是每輛車的馬力', '不對。這張直方圖的柱高是密度；柱高乘上箱寬才是該區間的樣本比例。')}
-<h3 id="dx-bike">Bikeshare：一天中哪些時段租借較多？</h3>
-<p>bikers是每小時的租借量，可以作為迴歸目標。講義先展示線性模型的月份與小時係數，後續在分類章的廣義線性模型段落比較線性與Poisson迴歸。</p>
+<h3 id="dx-bike">Bikeshare：哪些月份、時段租借較多？</h3>
+<p>bikers記錄每小時的租借量。先看下面兩張圖，找出一年中、一天中租借量較高的時候。這一章先練習讀圖，模型的詳細說明放在<a href="classification.html#poisson">第四章的Bikeshare例子</a>。</p>
 {bike}
-{_quiz('Bikeshare', '某小時的模型係數較高，應如何解讀？', '其他模型變數固定時，該小時的預測租借量較高', '對。兩個小時的係數差是固定其餘模型輸入時的預測差，仍不代表因果效果。', '這是跨不同日期、同一小時的原始平均租借量', '原始平均未調整月份、工作日、溫度與天氣，與這張係數圖不同。', '負係數代表那個小時的租借量是負數', '預測還要加上截距及其他變數的貢獻；單一負係數並非負的租借量。')}
+{_quiz('Bikeshare', '時段圖中，某時段的位置較高，表示什麼？', '其他條件相同時，模型估計該時段的租借量較多', '對。這張圖讓我們在其他條件相同時比較不同時段；它沒有證明時間本身造成租借量改變。', '圖上的數字就是該時段實際平均租借了幾輛車', '圖上畫的是模型估計的相對差異，已考慮月份、工作日、溫度與天氣。', '曲線低於0，表示該時段的租借量是負數', '0是比較基準；負值表示低於基準，不是租借量為負數。')}
 '''
 
 
@@ -229,12 +229,13 @@ function w01ivAutoDraw() {
 }
 function w01ivBikeDraw() {
   const f=FRAMES_w01bike;
-  [['w01ivBikeMonth',f.monthCoefs,'月份','月份係數',300],['w01ivBike',f.hourCoefs,'小時（0–23時）','小時係數',320]].forEach(([id,values,label,title,height])=>{
+  [['w01ivBikeMonth',f.monthCoefs,'月份','月份',300],['w01ivBike',f.hourCoefs,'小時（0–23時）','時段',320]].forEach(([id,values,label,title,height])=>{
     const isMonth=id==='w01ivBikeMonth';
-    const s=w01ivAxes(id,[0,values.length-1],[Math.floor(Math.min(...values)/20)*20,Math.ceil(Math.max(...values)/20)*20],title+'：總和為零的編碼',label,'係數（租借量）',height,6);
+    const s=w01ivAxes(id,[0,values.length-1],[Math.floor(Math.min(...values)/20)*20,Math.ceil(Math.max(...values)/20)*20],title+'：租借量的相對差異',label,'租借量差異',height,6);
     w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');
+    if(isMonth){s.clear();s.grid(6,4,{xtitle:'月份',ytitle:'租借量差異',xfmt:()=>'',ydec:0});w01ivText(s,68,22,title+'：租借量的相對差異',{'font-size':15});w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');values.forEach((_,i)=>w01ivText(s,s.X(i),s.H-s.pad.b+18,String(i+1),{'text-anchor':'middle','font-size':12}));}
     s.seg(0,0,values.length-1,0,{stroke:HC.tok.muted,sw:1,cls:'w01iv-zero'});
-    if(isMonth){s.clear();s.grid(6,4,{xtitle:'月份',ytitle:'係數（租借量）',xfmt:()=>'',ydec:0});w01ivText(s,68,22,title+'：總和為零的編碼',{'font-size':15});w01ivLine(s,values.map((v,i)=>[i,v]),'#2c3e7a');values.forEach((_,i)=>w01ivText(s,s.X(i),s.H-s.pad.b+18,String(i+1),{'text-anchor':'middle','font-size':12}));}
+    w01ivText(s,s.pad.l-8,s.Y(0)+4,'0',{'text-anchor':'end','font-size':12,fill:HC.tok.muted});
   });
 }
 w01ivWageDraw();

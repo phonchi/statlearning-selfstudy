@@ -1022,6 +1022,17 @@ BY_STEM = {p.stem: p for p in PAGES}
 BY_N = {p.n: p for p in PAGES}
 
 
+def flashcard_count(page: Page):
+    """Cards are optional: only established statistics/ML terms qualify."""
+    import json
+    from paths import FLASHCARDS
+    file = FLASHCARDS / f"{page.dkey}.json"
+    if not file.exists():
+        return 0
+    cards = json.loads(file.read_text(encoding="utf-8"))
+    return len(cards) if isinstance(cards, list) else 0
+
+
 def tokens(page: Page):
     """回傳 [(section, token, section_number_text), ...]，含 EX / REF / QUIZ / CARD。"""
     out, part = [], 0
@@ -1035,7 +1046,8 @@ def tokens(page: Page):
     out.append((Sec("reference", "重點速查與來源", "", ""), "速查", "重點速查與來源"))
     if page.bankquiz:
         out.append((Sec("bankquiz", "自我檢測", "", ""), "QUIZ", "QUIZ · 自我檢測"))
-    out.append((Sec("cards", "關鍵詞彙卡", "", ""), "CARD", "CARDS · 關鍵詞彙卡"))
+    if flashcard_count(page):
+        out.append((Sec("cards", "關鍵詞彙卡", "", ""), "CARD", "CARDS · 關鍵詞彙卡"))
     return out
 
 

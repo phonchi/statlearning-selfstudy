@@ -335,9 +335,9 @@ BODIES["rel"] = f"""
       note="<code>sizes=(15, 200)</code> 明確指定最小與最大的點徑。"
            "不指定的話預設範圍很窄，看不出差別。" + FIG_NOTE)}
 
-{card("折線圖與信賴帶", C(1, 102), src=S(1, 102),
+{card("折線圖與信賴區間", C(1, 102), src=S(1, 102),
       note="<code>lineplot</code> 對同一個 x 有多筆資料時，"
-           "會自動畫平均與 95% 信賴帶。那條帶子是 bootstrap 算出來的，"
+           "會自動畫平均與 95% 信賴區間。這個區間是 bootstrap 算出來的，"
            "第 5 章會講它怎麼來的。" + FIG_NOTE)}
 
 {card("joint 與 pair", C(1, 114, 117), src=S(1, 114, 117),
@@ -448,8 +448,8 @@ BODIES["model"] = f"""
      provenance=("course-data", "依 Ch01 lab 的 tips.corr(numeric_only=True) 相關矩陣重繪。"))}
 
 {card("散佈圖加迴歸線", C(1, 133), src=S(1, 133),
-      note="<code>regplot</code> 直接擬合一條最小平方直線並畫出 95% 信賴帶。"
-           "那條帶子是<strong>對迴歸線的不確定性</strong>，不是預測區間——"
+      note="<code>regplot</code> 直接擬合一條最小平方直線並畫出 95% 信賴區間。"
+           "這個區間是<strong>對迴歸線的不確定性</strong>，不是預測區間——"
            "第 3 章會分清楚這兩者。" + FIG_NOTE)}
 
 {card("依類別分別擬合", C(1, 135, 136), src=S(1, 135, 136),
@@ -538,7 +538,7 @@ BODIES["reference"] = f"""
 
 {table(["x 的型別", "y 的型別", "圖", "seaborn"],
        [["數值", "數值", "散佈圖", "<code>scatterplot</code> / <code>relplot</code>"],
-        ["數值", "數值（有序、每個 x 多筆）", "折線圖＋信賴帶", "<code>lineplot</code>"],
+        ["數值", "數值（有序、每個 x 多筆）", "折線圖＋信賴區間", "<code>lineplot</code>"],
         ["數值", "數值（要看模型）", "散佈圖＋迴歸線", "<code>regplot</code> / <code>lmplot</code>"],
         ["數值", "—", "直方圖／密度圖", "<code>histplot</code> / <code>kdeplot</code>"],
         ["類別", "數值", "盒鬚圖／長條圖／點估計圖", "<code>catplot(kind=…)</code>"],
@@ -719,7 +719,7 @@ const w18pkCases = [
   {k: '計數的交叉表＋熱圖', f: 'heatmap(pd.crosstab(...))',
    q: '兩個類別變數的組合各有幾筆', draw: 'heat'},
   {k: '直方圖／密度圖', f: 'histplot / kdeplot', q: '這個變數的分布長什麼樣', draw: 'hist'},
-  {k: '折線圖＋信賴帶', f: 'lineplot', q: '隨時間怎麼變、變化有多確定', draw: 'line'}
+  {k: '折線圖＋信賴區間', f: 'lineplot', q: '隨時間怎麼變、變化有多確定', draw: 'line'}
 ];
 let w18pkI = 0;
 function w18pkDraw() {

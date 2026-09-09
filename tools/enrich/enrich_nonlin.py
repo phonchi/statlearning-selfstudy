@@ -71,7 +71,7 @@ BODIES["prologue"] = f"""
 {table(["方法", "彈性怎麼來的", "由什麼控制", "邊界行為", "一句話"],
        [["多項式", "拉高次數 d", "d（整數）", "<span class='worst'>很糟</span>，可能大幅振盪", "最省事，但 d &gt; 4 就別碰"],
         ["階梯函數", "多切幾段", "切點數 K", "還可以（常數）", "沒有自然切點就會漏掉趨勢"],
-        ["立方樣條", "多加節點", "內部節點數 K（df = K+4）", "偏糟，信賴帶可能很寬", "次數固定 3，靠節點取得彈性"],
+        ["立方樣條", "多加節點", "內部節點數 K（df = K+4）", "偏糟，信賴區間可能很寬", "次數固定 3，靠節點取得彈性"],
         ["自然樣條", "多加節點", "內部節點數 K（df = K+2）", "<span class='best'>好</span>，兩端是直線", "同樣的彈性、更穩的兩端"],
         ["平滑樣條", "調 λ", "有效自由度 df<sub>λ</sub>（連續）", "好（兩端線性）", "不必選節點，只要選 λ"],
         ["局部迴歸", "調鄰域大小", "跨距 s", "偏糟（單邊資料）", "每次預測都要用到全部資料"]])}
@@ -101,9 +101,9 @@ BODIES["poly"] = f"""
   lab 儲存格 14 擬合出來的 <code>447.07, −478.32, 125.52, −77.91</code>，
   你沒辦法說「age 的二次項效果是 125.52」。這些數字還取決於用哪一組基底
   （正交多項式 vs 原始冪次，係數完全不同，擬合出來的曲線一模一樣）。
-  要看的是<strong>整條擬合曲線</strong>，以及它的信賴帶。</p>
+  要看的是<strong>整條擬合曲線</strong>，以及它的信賴區間。</p>
 
-  <p>信賴帶怎麼來的？在某個 $x_0$ 上，擬合值是
+  <p>信賴區間怎麼來的？在某個 $x_0$ 上，擬合值是
   $\\hat f(x_0) = \\hat\\beta_0 + \\hat\\beta_1 x_0 + \\cdots + \\hat\\beta_d x_0^d$。
   令 $\\ell_0 = (1, x_0, x_0^2, \\ldots, x_0^d)^{{\\mathsf T}}$、$\\hat C$ 是 $\\hat\\beta$ 的
   共變異數矩陣，那麼</p>
@@ -118,7 +118,7 @@ BODIES["poly"] = f"""
 {viz(svg("w08polySvg", 300) + "\n" + svg("w08polyMse", 170),
      [info_card("怎麼看這張圖",
                 '上圖：灰點是 <code>Wage</code> 的全部 3000 筆觀察，'
-                '紅線與淡藍帶是用<strong>全部 3000 筆</strong>擬合出來的 d 次多項式與 95% 信賴帶。'
+                '紅線與淡藍帶是用<strong>全部 3000 筆</strong>擬合出來的 d 次多項式與 95% 信賴區間。'
                 '下圖：訓練 MSE（藍）一路往下，10-fold CV MSE（紅）在 d = 4 觸底之後回頭往上。',
                 "圖 7.1"),
       rows_card("這個次數的成績",
@@ -133,11 +133,11 @@ BODIES["poly"] = f"""
                 '但 80 歲那端從 10.0 長到 <strong>78.3</strong>——'
                 '<strong>高次多項式在邊界的估計較不穩定</strong>。ISLP 圖 7.7 用 degree 15 '
                 '對照 15 個自由度的自然樣條，講的就是這件事。')],
-     "w08polyStatus", "把滑桿從 1 推到 15，比較兩端與中央的信賴帶寬度（淡藍）。",
+     "w08polyStatus", "把滑桿從 1 推到 15，比較兩端與中央的信賴區間寬度（淡藍）。",
      slider("w08polySl", "次數 d", 1, 15, 1, 4, "4", "w08polySetDeg()")
-     + '<button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴帶：開</button>'
+     + '<button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴區間：開</button>'
      + '<button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button>',
-     provenance=("course-data", "Wage 全體資料擬合與完整 3000 筆背景散點；曲線、CV MSE 與信賴帶由 generator 計算。"))}
+     provenance=("course-data", "Wage 全體資料擬合與完整 3000 筆背景散點；曲線、CV MSE 與信賴區間由 generator 計算。"))}
 
   <h3 id="dx-poly">講義完整實作：四次多項式與它的 t 檢定</h3>
 {card("lab 07 · degree 4 多項式（Wage：age → wage）",
@@ -157,7 +157,7 @@ BODIES["poly"] = f"""
 {card("lab 07 · 多項式邏輯斯迴歸：Pr(wage &gt; 250)", lab_code(CH, 33), lab_output(CH, 33),
       src=src(33),
       note="同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，"
-           "所以係數的標準誤很大、信賴帶很寬，尤其在 age 大的那一端。"
+           "所以係數的標準誤很大、信賴區間很寬，尤其在 age 大的那一端。"
            "<strong>評估樣本數時，也要檢查關鍵事件有多少筆。</strong>")}
 
 {quiz("qDeg", "QUIZ · 多項式的次數",
@@ -435,7 +435,7 @@ BODIES["splines"] = f"""
 BODIES["natural"] = f"""
   <p>立方樣條在資料兩端仍有一個問題：<strong>兩端的變異很大</strong>。
   在最小節點以左、最大節點以右，資料只從單邊來，三次多項式卻還有完整的四個自由度可以亂扭。
-  ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴帶「appear fairly wild」。</p>
+  ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴區間「appear fairly wild」。</p>
 
   <p><strong>自然樣條</strong>（natural spline）在立方樣條上加入兩個自然邊界條件：
   左、右端點的二階導數各等於 0，並以端點的值與斜率向邊界外作線性延伸。
@@ -443,10 +443,10 @@ BODIES["natural"] = f"""
   立方樣條的 K + 4 個參數因此減為自然立方樣條的 <strong>K + 2</strong> 個。</p>
 
 {viz(chart("w08natChart", "tall",
-           "。此圖的重點：同樣三個節點（25／40／60），立方樣條在 80 歲那端的 95% 信賴帶寬 65.8，"
+           "。此圖的重點：同樣三個節點（25／40／60），立方樣條在 80 歲那端的 95% 信賴區間寬 65.8，"
            "自然樣條只有 37.1——線性約束把邊界的變異砍掉一半。"),
      [info_card("怎麼看這張圖",
-                '兩條實線是擬合曲線，兩片淡色帶是各自的 95% 信賴帶。'
+                '兩條實線是擬合曲線，兩片淡色帶是各自的 95% 信賴區間。'
                 '兩者<strong>用完全相同的三個內部節點</strong>（25、40、60），'
                 '差別只在自然樣條多了兩端的線性約束。'
                 '中間幾乎重疊，<strong>兩端差很多</strong>。', "圖 7.4"),
@@ -461,10 +461,10 @@ BODIES["natural"] = f"""
                 '自然樣條會擬合不出來（有偏差）。但邊界的資料本來就少，'
                 '<strong>那裡的彎曲通常反映了雜訊</strong>，'
                 '所以這個交換在實務上幾乎總是划算的。')],
-     "w08natStatus", "兩條曲線用同樣的三個節點。比較的是兩端信賴帶的寬度。",
-     '<button class="btn btn-toggle" id="w08natBandBtn" onclick="w08natToggleBands()">信賴帶：開</button>'
+     "w08natStatus", "兩條曲線用同樣的三個節點。比較的是兩端信賴區間的寬度。",
+     '<button class="btn btn-toggle" id="w08natBandBtn" onclick="w08natToggleBands()">信賴區間：開</button>'
      '<button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button>',
-     provenance=("course-data", "Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴帶。"))}
+     provenance=("course-data", "Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴區間。"))}
 
   <p>ISLP 圖 7.7 把這件事推到極端：<strong>15 個自由度的自然樣條 vs 15 次多項式</strong>。
   兩者複雜度相同，但多項式在尾端大幅振盪，自然樣條則較穩定。
@@ -497,7 +497,7 @@ BODIES["natural"] = f"""
 
 {quiz("qNat", "QUIZ · 自然樣條",
       "自然樣條相對於立方樣條，多了什麼約束、換到了什麼？",
-      [(True, "多了「兩端區域必須是線性」的約束，換到邊界處明顯較窄的信賴帶",
+      [(True, "多了「兩端區域必須是線性」的約束，換到邊界處明顯較窄的信賴區間",
         "對。等價地說，左、右端點的二階導數各設為 0，共兩個獨立約束；固定相同 K 個內部節點時，參數數由 K + 4 降為 K + 2。實測：80 歲那端的帶寬從 65.8 降到 37.1。"),
        (False, "多了「節點必須放在分位數上」的約束，換到不必自己選節點位置",
         "不對，這兩件事無關。<code>bs()</code> 與 <code>ns()</code> 都可以用 <code>df</code> 讓軟體自動放分位數節點，也都可以手動指定 <code>internal_knots</code>。自然樣條的約束是關於<strong>邊界的形狀</strong>。"),
@@ -739,7 +739,7 @@ BODIES["gam"] = f"""
      [info_card("怎麼看這三張圖",
                 '每一張都是一個 $\\hat f_k$ 的<strong>偏依賴圖</strong>：'
                 '曲線呈現中心化後的單一加法成分；其餘項的貢獻由截距與其他面板表示。'
-                '虛線是逐點 95% 信賴帶。<strong>三張圖的縱軸都是「對 wage 的效果」</strong>，'
+                '虛線是逐點 95% 信賴區間。<strong>三張圖的縱軸都是「對 wage 的效果」</strong>，'
                 '所以可以直接比高低——age 與 education 的擺幅遠大於 year。', "圖 7.11–7.12"),
       rows_card("這一組 df 的成績",
                 [("age 的 df", "5.0", "w08gamAgeDf"), ("year 的 df", "5.0", "w08gamYearDf"),
@@ -761,7 +761,7 @@ BODIES["gam"] = f"""
      slider("w08gamAgeSl", "age df", 0, 5, 1, 3, "5.0", "w08gamSet()", "200px")
      + slider("w08gamYearSl", "year df", 0, 4, 1, 3, "5.0", "w08gamSet()", "200px")
      + '<button class="btn btn-reset" onclick="w08gamReset()">回到 lab 的設定</button>',
-     provenance=("course-data", "Wage 的 year／age／education GAM；曲線、信賴帶與整體指標由 generator 計算。"))}
+     provenance=("course-data", "Wage 的 year／age／education GAM；曲線、信賴區間與整體指標由 generator 計算。"))}
 
 {table(["GAM 的優點 ✔", "GAM 的限制 ✘"],
        [["每個 $X_j$ 各擬合一個非線性 $f_j$，不必手動試變換", "<strong>模型被限制成加法的</strong>，變數多的時候會漏掉重要的交互作用"],
@@ -775,7 +775,7 @@ BODIES["gam"] = f"""
     + \\cdots + f_p(X_p) \\tag{{7.18}}$$
 
   <p>ISLP 圖 7.13 對 <code>Wage</code> 擬合 $I(\\text{{wage}} > 250)$，
-  結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴帶大到看不出東西，
+  結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴區間大到看不出東西，
   因為<strong>那個層級裡一個高收入者都沒有</strong>（lab 儲存格 105 的交叉表：268 個人、0 個高收入者）。
   拿掉那群人重新擬合就正常了（圖 7.14）。<strong>這個例子提醒我們：
   模型擬合異常時，先檢查列聯表中的類別計數。</strong></p>
@@ -888,7 +888,7 @@ BODIES["reference"] = f"""
        [["多項式", "$x, x^2, \\ldots, x^d$", "次數 d", "d + 1", "<span class='worst'>差</span>", "ANOVA 或 CV"],
         ["階梯函數", "$I(c_k \\le x < c_{k+1})$", "切點數 K", "K + 1", "尚可", "CV"],
         ["線性樣條", "$x, (x-\\xi_k)_+$", "內部節點數 K", "K + 2", "尚可", "CV"],
-        ["立方樣條", "$x, x^2, x^3, (x-\\xi_k)^3_+$", "內部節點數 K", "K + 4", "差（信賴帶可能很寬）", "CV（圖 7.6 右）"],
+        ["立方樣條", "$x, x^2, x^3, (x-\\xi_k)^3_+$", "內部節點數 K", "K + 4", "差（信賴區間可能很寬）", "CV（圖 7.6 右）"],
         ["自然樣條", "立方樣條 + 兩個自然邊界條件", "內部節點數 K", "K + 2", "<span class='best'>好</span>", "CV（圖 7.6 左）"],
         ["平滑樣條", "全部 x 當節點 + 二階導數懲罰", "λ", "df$_\\lambda$（連續，2 到 n）", "好", "LOOCV 捷徑 / GCV"],
         ["局部迴歸", "鄰域內加權最小平方", "跨距 s", "以等效 df 表示", "差（單邊資料）", "CV"]])}
@@ -913,7 +913,7 @@ BODIES["reference"] = f"""
 {table(["名稱", "式子", "備註"],
        [["多項式迴歸", "$y = \\beta_0 + \\beta_1 x + \\cdots + \\beta_d x^d + \\varepsilon$", "式 7.1"],
         ["擬合值的變異", "$\\widehat{\\operatorname{Var}}[\\hat f(x_0)] = \\ell_0^{\\mathsf T} \\hat C \\ell_0$",
-         "式 7.2 腳註；信賴帶的來源"],
+         "式 7.2 腳註；信賴區間的來源"],
         ["階梯函數", "$y = \\beta_0 + \\beta_1 C_1(x) + \\cdots + \\beta_K C_K(x) + \\varepsilon$", "式 7.5；丟掉 $C_0$"],
         ["基底函數框架", "$y = \\beta_0 + \\sum_{k=1}^{K} \\beta_k b_k(x) + \\varepsilon$", "式 7.7；基底函數表示"],
         ["截斷冪基底", "$h(x, \\xi) = (x-\\xi)^3_+$", "式 7.10；每個節點加一個"],
@@ -933,7 +933,7 @@ BODIES["reference"] = f"""
   換掉 $b_k(\\cdot)$ 就換掉方法，擬合方法（最小平方）從頭到尾沒變，
   第 3 章的推論工具全部照用。<br>
   <strong>2. 樣條把次數鎖在 3、靠加節點取得彈性；多項式只能拉高次數，代價全落在邊界。</strong>
-  自然樣條再加兩個自然邊界條件，實測把 80 歲那端的信賴帶從 65.8 砍到 37.1。<br>
+  自然樣條再加兩個自然邊界條件，實測把 80 歲那端的信賴區間從 65.8 砍到 37.1。<br>
   <strong>3. 「自由度」在這一章有兩種身分。</strong>
   多項式的 d 與 K 個內部節點之立方樣條的 K + 4 是參數個數；平滑樣條的 df$_\\lambda$ 是平滑矩陣的跡，
   是連續值。它們都能描述彈性，使用時仍要區分各自的定義。''')}
@@ -1090,15 +1090,15 @@ function w08polyDraw() {
   $('w08polyWm').textContent = HC.fmt(wm, 1);
   setStatus('w08polyStatus', 'degree ' + d + '：訓練 MSE ' + HC.fmt(F.trainMSE[d - 1], 1)
     + '，10-fold CV MSE ' + HC.fmt(F.cvMSE[d - 1], 1)
-    + '。80 歲那端的 95% 信賴帶寬 ' + HC.fmt(wr, 1)
+    + '。80 歲那端的 95% 信賴區間寬 ' + HC.fmt(wr, 1)
     + '，中央只有 ' + HC.fmt(wm, 1) + '——'
-    + (d >= 8 ? '兩端的信賴帶明顯變寬。' : d >= 5 ? '邊界的不確定性開始增加。' : '兩端的信賴帶相對較窄。'));
+    + (d >= 8 ? '兩端的信賴區間明顯變寬。' : d >= 5 ? '邊界的不確定性開始增加。' : '兩端的信賴區間相對較窄。'));
 }
 function w08polySetDeg() { w08polyDraw(); }
 function w08polyToggleBand() {
   w08polyBand = !w08polyBand;
   const b = $('w08polyBandBtn');
-  b.textContent = '信賴帶：' + (w08polyBand ? '開' : '關');
+  b.textContent = '信賴區間：' + (w08polyBand ? '開' : '關');
   b.classList.toggle('off', !w08polyBand);
   w08polyDraw();
 }
@@ -1391,14 +1391,14 @@ function w08natDraw() {
   $('w08natWl').textContent = HC.fmt(F.widthCubic[0], 1) + ' / ' + HC.fmt(F.widthNatural[0], 1);
   $('w08natWr').textContent = HC.fmt(F.widthCubic[1], 1) + ' / ' + HC.fmt(F.widthNatural[1], 1);
   $('w08natKnots').textContent = F.knots.join(' · ');
-  setStatus('w08natStatus', '兩者都用內部節點 25／40／60。80 歲那端的 95% 信賴帶寬：立方樣條 '
+  setStatus('w08natStatus', '兩者都用內部節點 25／40／60。80 歲那端的 95% 信賴區間寬：立方樣條 '
     + HC.fmt(F.widthCubic[1], 1) + '、自然樣條 ' + HC.fmt(F.widthNatural[1], 1)
     + '——線性約束把邊界的變異砍掉了一半。中段兩條幾乎重疊。');
 }
 function w08natToggleBands() {
   w08natBands = !w08natBands;
   const b = $('w08natBandBtn');
-  b.textContent = '信賴帶：' + (w08natBands ? '開' : '關');
+  b.textContent = '信賴區間：' + (w08natBands ? '開' : '關');
   b.classList.toggle('off', !w08natBands);
   w08natDraw();
 }

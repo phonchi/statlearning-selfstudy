@@ -157,7 +157,7 @@ def check_page(p: P.Page):
             fail("NAV-SYNC", w, f"#{s.id} 的 .section-number 不是「{number}」")
 
     # ORDER：cards 一定最後
-    if ids.sections and ids.sections[-1] != "cards":
+    if P.flashcard_count(p) and ids.sections and ids.sections[-1] != "cards":
         fail("ORDER", w, f"最後一節是 {ids.sections[-1]}，應為 cards")
 
     # ANCHOR：id 唯一、錨點可解析
@@ -522,6 +522,7 @@ def check_prep_grounding(p, w, src, labtext):
 
 # ── 全站檢查 ────────────────────────────────────────────────────────────
 def check_flashcards():
+    exclusions = json.loads((ROOT / "data" / "flashcard_exclusions.json").read_text(encoding="utf-8"))
     for p in P.PAGES:
         f = FLASHCARDS / f"{p.dkey}.json"
         if not f.exists():
@@ -532,9 +533,21 @@ def check_flashcards():
         except json.JSONDecodeError as e:
             fail("FLASHCARD", f.name, f"JSON 解析失敗：{e}")
             continue
-        if not isinstance(cards, list) or not cards:
-            fail("FLASHCARD", f.name, "必須是非空的 list")
+        if not isinstance(cards, list):
+            fail("FLASHCARD", f.name, "必須是 list；沒有合適術語時可為空")
             continue
+        # Generated card payloads must match the reviewed source, including [].
+        from inject_data import reader_data
+        page_file = ROOT / p.file
+        if page_file.exists():
+            content = page_file.read_text(encoding="utf-8")
+            marker = re.search(r"const FLASHCARDS = ", content)
+            try:
+                rendered, _ = json.JSONDecoder().raw_decode(content[marker.end():]) if marker else (None, 0)
+            except json.JSONDecodeError:
+                rendered = None
+            if rendered != reader_data(cards):
+                fail("FLASHCARD-SYNC", p.file, "詞彙卡產物與已審核的 JSON 不符，請重新 inject_data")
         fronts = []
         for i, c in enumerate(cards):
             if not isinstance(c, dict) or "front" not in c or "back" not in c:
@@ -551,6 +564,8 @@ def check_flashcards():
                     fail("FLASHCARD-TEXT", f.name,
                          f"第 {i + 1} 張 {side} 必須是純文字，不能含 HTML 標籤或 entity")
             fronts.append(str(c["front"]))
+            if c["front"] in exclusions:
+                fail("FLASHCARD-TERM", f.name, f"不屬於本網站詞彙卡範圍：{c['front']}；{exclusions[c['front']]}")
         dup = [k for k, v in Counter(fronts).items() if v > 1]
         if dup:
             fail("FLASHCARD", f.name, f"重複的正面：{dup}")
@@ -558,8 +573,7 @@ def check_flashcards():
         if fronts and withen / len(fronts) < 0.8:
             warn("FLASHCARD", f.name,
                  f"只有 {withen}/{len(fronts)} 張正面是「中文（English）」格式")
-        if not (18 <= len(cards) <= 34):
-            warn("FLASHCARD", f.name, f"{len(cards)} 張，建議 20–28 張")
+        # Do not impose a quota: each card must be an established term.
 
 
 def check_questions():

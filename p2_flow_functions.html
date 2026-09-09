@@ -677,7 +677,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <a href="#err" data-target="err"><span class="fn-num">P05</span><span class="fn-name">讀懂錯誤訊息</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
   <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
-  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
 <!-- GEN:END floatnav -->
@@ -702,7 +701,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
-  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
+  ④ 最後用<a href="#reference">重點速查與來源</a>複習。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）。章節旁的來源標記可點到本頁書目。</p>
   <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
@@ -719,7 +718,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <a href="#err"><span class="toc-num">P05</span>讀懂錯誤訊息</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
     <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
-    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
 <!-- GEN:END toc -->
@@ -1435,20 +1433,6 @@ ford ranger            2625.0       1</pre></div>
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch05）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
-</section>
-<section id="cards">
-<!-- GEN:BEGIN sec:cards -->
-  <div class="section-number">CARDS · 關鍵詞彙卡</div>
-  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
-  <p>詞彙卡取自本頁引用的課程 lab，正面是中文術語（附英文原名）。
-  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
-    <button id="fcShuffle">🔀 洗牌</button>
-    <button id="fcFlipAll">全部翻面</button>
-    <button id="fcUnflip">全部翻回</button>
-  </div>
-  <div class="fc-grid" id="fcGrid"></div>
-<!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
 <div class="chapter-nav"><a class="prev" href="p1_python_basics.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">Python 基礎</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="p3_numpy.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">NumPy 陣列</div></a></div>
@@ -2391,7 +2375,7 @@ if (w15erS) w15erDraw();
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"條件判斷（if）","back":"成立就做這個、否則做那個。Python 用縮排決定哪些行屬於裡面，不用大括號。"},{"front":"邏輯運算子（and／or／not）","back":"純 Python 的邏輯運算，一次只能判斷一個真假值。拿去選 DataFrame 的列會拋「truth value is ambiguous」。"},{"front":"逐元素邏輯（&／|／~）","back":"對一整排真假值逐元素做且／或／非。選資料一律用它，而且每個條件都要加上括號——它的優先順序比 > 高。"},{"front":"運算子優先順序（Precedence）","back":"& 比 > 先算，所以 df['a'] > 1 & df['b'] > 2 會被讀成 df['a'] > (1 & df['b']) > 2，然後報一個看不懂的錯。"},{"front":"縮排（Indentation）","back":"Python 用它代替大括號來劃分程式區塊。同一層要對齊，混用空白與 tab 會出事。"},{"front":"迴圈（for）","back":"把同一件事對每一個東西各做一次。統計程式裡它出現在三個地方：試參數、重抽樣、逐欄處理。"},{"front":"整數序列（range）","back":"產生一串整數。range(1, 4) 是 1、2、3（不含 4，跟切片同一套規則）。只是要跑 B 次就寫 for _ in range(B)。"},{"front":"帶位置走訪（enumerate）","back":"走過串列時同時拿到位置與值：for i, x in enumerate(a)。要把結果填進一個陣列時很常用。"},{"front":"配對走訪（zip）","back":"把兩排東西逐位配對並排走。長度不一樣時，短的結束就停。算加權平均就是它的典型用法。"},{"front":"累加指派（+=）","back":"total += value 是 total = total + value 的簡寫。自助法累積結果時到處都是。"},{"front":"巢狀迴圈（Nested Loop）","back":"迴圈裡面還有迴圈，總次數是相乘。兩層以上通常代表該換個寫法了。"},{"front":"串列生成式（List Comprehension）","back":"[f(x) for x in a]：走一遍並把結果收成一個串列。比先開空串列再 append 好讀。"},{"front":"向量化與迴圈（Vectorization vs Loop）","back":"對整排數字做同一件事就用 NumPy／pandas 的向量化寫法。迴圈留給「每一圈內容真的不一樣」的情況——試不同參數、抽不同樣本。"},{"front":"函式（Function）","back":"把一段流程封起來，取個名字。三個部分：名字、參數、回傳值。用的人只要知道這三件事。"},{"front":"參數與引數（Parameter／Argument）","back":"定義時寫的名字叫參數，呼叫時傳進去的值叫引數。日常對話常混用。"},{"front":"回傳值（return）","back":"碰到 return 時，函式立刻結束並交出值，後面的行不會執行。沒寫 return 的函式回傳 None；呼叫端要確認這符合預期。"},{"front":"預設引數（Default Argument）","back":"def f(a, B=1000)：呼叫時不給就用預設值。有預設值的參數一定要放在沒有預設值的後面。"},{"front":"關鍵字引數（Keyword Argument）","back":"f(x, B=2000)：依參數名稱給值。參數多時，這種寫法方便辨認每個值的用途，也較容易核對順序。"},{"front":"可變預設值的陷阱（Mutable Default）","back":"def f(acc=[]) 的那個空串列只建立一次，所有呼叫共用，會越積越多。要用就寫 acc=None 再在函式裡建立。"},{"front":"作用域（Scope）","back":"一個名字在哪裡看得到。函式裡看得到外面，外面看不到裡面；一旦在函式裡指派同名變數，那就是新的區域變數。"},{"front":"副作用（Side Effect）","back":"函式除了回傳值之外，還改動外部可觀察的狀態，例如修改傳入的串列、全域資料或檔案。判斷是否有副作用，要檢查函式對這些狀態的操作；資料由參數傳入時也要檢查。"},{"front":"追溯訊息（Traceback）","back":"報錯時印出的那一長串。從最後一行開始讀：最後一行是錯誤種類與說明，往上是它發生在哪一行。"},{"front":"常見的四種錯誤（Common Exceptions）","back":"NameError 名字沒定義（多半是儲存格沒跑）、KeyError 欄名不存在、IndexError 索引超出範圍、ValueError 型別對但值不合理（形狀對不上）。"},{"front":"例外處理（try／except）","back":"使用前先確認預期的錯誤與處理方式。except: pass 會略過錯誤訊息，後續結果仍可能出錯。"},{"front":"未顯示訊息的錯誤（Silent Error）","back":"程式完成執行並產生數字，結果卻有錯。多份程式修改不一致或例外被忽略，都可能造成這種情況；因此仍要核對輸出。"}];
+const FLASHCARDS = [];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

@@ -8,7 +8,7 @@ from validate import js_strings, pagejs
 ROOT=Path(__file__).resolve().parent.parent
 # Explicit house terminology and clearly inappropriate UI words, not a blanket
 # ban on valid technical terms (e.g. 機率質量, 水平線, 正則化).
-UNWANTED=re.compile(r'配適|擬和|拟合|閾值|似然|靈敏度|視頻|信息|軟件|硬件|內存|屏幕|鼠標|打印|默認|網絡|反饋|置信區間|貝葉斯|概率|工作流|烘焙資料|嵌套')
+UNWANTED=re.compile(r'信賴帶|總和為零的編碼|和為零的編碼|配適|擬和|拟合|閾值|似然|靈敏度|視頻|信息|軟件|硬件|內存|屏幕|鼠標|打印|默認|網絡|反饋|置信區間|貝葉斯|概率|工作流|烘焙資料|嵌套')
 
 def check_words(source):
     visible=Visible();visible.feed(source)

@@ -760,7 +760,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>方法</th><th>彈性怎麼來的</th><th>由什麼控制</th><th>邊界行為</th><th>一句話</th></tr></thead>
-  <tbody><tr><td>多項式</td><td>拉高次數 d</td><td>d（整數）</td><td><span class='worst'>很糟</span>，可能大幅振盪</td><td>最省事，但 d &gt; 4 就別碰</td></tr><tr><td>階梯函數</td><td>多切幾段</td><td>切點數 K</td><td>還可以（常數）</td><td>沒有自然切點就會漏掉趨勢</td></tr><tr><td>立方樣條</td><td>多加節點</td><td>內部節點數 K（df = K+4）</td><td>偏糟，信賴帶可能很寬</td><td>次數固定 3，靠節點取得彈性</td></tr><tr><td>自然樣條</td><td>多加節點</td><td>內部節點數 K（df = K+2）</td><td><span class='best'>好</span>，兩端是直線</td><td>同樣的彈性、更穩的兩端</td></tr><tr><td>平滑樣條</td><td>調 λ</td><td>有效自由度 df<sub>λ</sub>（連續）</td><td>好（兩端線性）</td><td>不必選節點，只要選 λ</td></tr><tr><td>局部迴歸</td><td>調鄰域大小</td><td>跨距 s</td><td>偏糟（單邊資料）</td><td>每次預測都要用到全部資料</td></tr></tbody>
+  <tbody><tr><td>多項式</td><td>拉高次數 d</td><td>d（整數）</td><td><span class='worst'>很糟</span>，可能大幅振盪</td><td>最省事，但 d &gt; 4 就別碰</td></tr><tr><td>階梯函數</td><td>多切幾段</td><td>切點數 K</td><td>還可以（常數）</td><td>沒有自然切點就會漏掉趨勢</td></tr><tr><td>立方樣條</td><td>多加節點</td><td>內部節點數 K（df = K+4）</td><td>偏糟，信賴區間可能很寬</td><td>次數固定 3，靠節點取得彈性</td></tr><tr><td>自然樣條</td><td>多加節點</td><td>內部節點數 K（df = K+2）</td><td><span class='best'>好</span>，兩端是直線</td><td>同樣的彈性、更穩的兩端</td></tr><tr><td>平滑樣條</td><td>調 λ</td><td>有效自由度 df<sub>λ</sub>（連續）</td><td>好（兩端線性）</td><td>不必選節點，只要選 λ</td></tr><tr><td>局部迴歸</td><td>調鄰域大小</td><td>跨距 s</td><td>偏糟（單邊資料）</td><td>每次預測都要用到全部資料</td></tr></tbody>
 </table></div>
 
   <p>本章依照上表介紹各種方法，搭配例子與互動觀察擬合結果。
@@ -788,9 +788,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   lab 範例 擬合出來的 <code>447.07, −478.32, 125.52, −77.91</code>，
   你沒辦法說「age 的二次項效果是 125.52」。這些數字還取決於用哪一組基底
   （正交多項式 vs 原始冪次，係數完全不同，擬合出來的曲線一模一樣）。
-  要看的是<strong>整條擬合曲線</strong>，以及它的信賴帶。</p>
+  要看的是<strong>整條擬合曲線</strong>，以及它的信賴區間。</p>
 
-  <p>信賴帶怎麼來的？在某個 $x_0$ 上，擬合值是
+  <p>信賴區間怎麼來的？在某個 $x_0$ 上，擬合值是
   $\hat f(x_0) = \hat\beta_0 + \hat\beta_1 x_0 + \cdots + \hat\beta_d x_0^d$。
   令 $\ell_0 = (1, x_0, x_0^2, \ldots, x_0^d)^{\mathsf T}$、$\hat C$ 是 $\hat\beta$ 的
   共變異數矩陣，那麼</p>
@@ -807,15 +807,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <div class="viz-panel">
       <svg class="viz-svg" id="w08polySvg" height="300"></svg>
       <svg class="viz-svg" id="w08polyMse" height="170"></svg>
-      <div class="status-banner" id="w08polyStatus"><span class="status-icon">›</span><span class="status-text">把滑桿從 1 推到 15，比較兩端與中央的信賴帶寬度（淡藍）。</span></div>
-      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 240px;min-width:0;"><span class="slider-label">次數 d</span><input type="range" id="w08polySl" min="1" max="15" step="1" value="4" oninput="w08polySetDeg()" aria-label="次數 d"><span class="slider-val" id="w08polySlVal">4</span></span><button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴帶：開</button><button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Wage 全體資料擬合與完整 3000 筆背景散點；曲線、CV MSE 與信賴帶由 generator 計算。</div>
+      <div class="status-banner" id="w08polyStatus"><span class="status-icon">›</span><span class="status-text">把滑桿從 1 推到 15，比較兩端與中央的信賴區間寬度（淡藍）。</span></div>
+      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 240px;min-width:0;"><span class="slider-label">次數 d</span><input type="range" id="w08polySl" min="1" max="15" step="1" value="4" oninput="w08polySetDeg()" aria-label="次數 d"><span class="slider-val" id="w08polySlVal">4</span></span><button class="btn btn-toggle" id="w08polyBandBtn" onclick="w08polyToggleBand()">信賴區間：開</button><button class="btn btn-reset" onclick="w08polyReset()">回到 d = 4</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 全體資料擬合與完整 3000 筆背景散點；曲線、CV MSE 與信賴區間由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 7.1</span></div>
-      上圖：灰點是 <code>Wage</code> 的全部 3000 筆觀察，紅線與淡藍帶是用<strong>全部 3000 筆</strong>擬合出來的 d 次多項式與 95% 信賴帶。下圖：訓練 MSE（藍）一路往下，10-fold CV MSE（紅）在 d = 4 觸底之後回頭往上。
+      上圖：灰點是 <code>Wage</code> 的全部 3000 筆觀察，紅線與淡藍帶是用<strong>全部 3000 筆</strong>擬合出來的 d 次多項式與 95% 信賴區間。下圖：訓練 MSE（藍）一路往下，10-fold CV MSE（紅）在 d = 4 觸底之後回頭往上。
     </div>
     <div class="info-card">
       <div class="ic-title">這個次數的成績</div>
@@ -879,7 +879,7 @@ poly(age, degree=4)[0]  71.9642   26.133   2.754  0.006
 poly(age, degree=4)[1] -85.7729   35.929  -2.387  0.017
 poly(age, degree=4)[2]  34.1626   19.697   1.734  0.083
 poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
-  <p class="dx-note">同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，所以係數的標準誤很大、信賴帶很寬，尤其在 age 大的那一端。<strong>評估樣本數時，也要檢查關鍵事件有多少筆。</strong></p>
+  <p class="dx-note">同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，所以係數的標準誤很大、信賴區間很寬，尤其在 age 大的那一端。<strong>評估樣本數時，也要檢查關鍵事件有多少筆。</strong></p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="33">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -1183,7 +1183,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
 
   <p>立方樣條在資料兩端仍有一個問題：<strong>兩端的變異很大</strong>。
   在最小節點以左、最大節點以右，資料只從單邊來，三次多項式卻還有完整的四個自由度可以亂扭。
-  ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴帶「appear fairly wild」。</p>
+  ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴區間「appear fairly wild」。</p>
 
   <p><strong>自然樣條</strong>（natural spline）在立方樣條上加入兩個自然邊界條件：
   左、右端點的二階導數各等於 0，並以端點的值與斜率向邊界外作線性延伸。
@@ -1194,17 +1194,17 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w08natChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：同樣三個節點（25／40／60），立方樣條在 80 歲那端的 95% 信賴帶寬 65.8，自然樣條只有 37.1——線性約束把邊界的變異砍掉一半。</div></div>
+        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：同樣三個節點（25／40／60），立方樣條在 80 歲那端的 95% 信賴區間寬 65.8，自然樣條只有 37.1——線性約束把邊界的變異砍掉一半。</div></div>
       </div>
-      <div class="status-banner" id="w08natStatus"><span class="status-icon">›</span><span class="status-text">兩條曲線用同樣的三個節點。比較的是兩端信賴帶的寬度。</span></div>
-      <div class="controls-bar"><button class="btn btn-toggle" id="w08natBandBtn" onclick="w08natToggleBands()">信賴帶：開</button><button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴帶。</div>
+      <div class="status-banner" id="w08natStatus"><span class="status-icon">›</span><span class="status-text">兩條曲線用同樣的三個節點。比較的是兩端信賴區間的寬度。</span></div>
+      <div class="controls-bar"><button class="btn btn-toggle" id="w08natBandBtn" onclick="w08natToggleBands()">信賴區間：開</button><button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button></div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴區間。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 7.4</span></div>
-      兩條實線是擬合曲線，兩片淡色帶是各自的 95% 信賴帶。兩者<strong>用完全相同的三個內部節點</strong>（25、40、60），差別只在自然樣條多了兩端的線性約束。中間幾乎重疊，<strong>兩端差很多</strong>。
+      兩條實線是擬合曲線，兩片淡色帶是各自的 95% 信賴區間。兩者<strong>用完全相同的三個內部節點</strong>（25、40、60），差別只在自然樣條多了兩端的線性約束。中間幾乎重疊，<strong>兩端差很多</strong>。
     </div>
     <div class="info-card">
       <div class="ic-title">實測（Wage 全體 n = 3000）</div>
@@ -1250,7 +1250,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 自然樣條</div>
   <p>自然樣條相對於立方樣條，多了什麼約束、換到了什麼？</p>
-  <div class="quiz-options" id="qNatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。等價地說，左、右端點的二階導數各設為 0，共兩個獨立約束；固定相同 K 個內部節點時，參數數由 K + 4 降為 K + 2。實測：80 歲那端的帶寬從 65.8 降到 37.1。" onclick="quizCheck('qNat', this)"><span class="opt-letter">(A)</span> 多了「兩端區域必須是線性」的約束，換到邊界處明顯較窄的信賴帶</div><div class="quiz-opt" data-correct="false" data-fb="不對，這兩件事無關。&lt;code&gt;bs()&lt;/code&gt; 與 &lt;code&gt;ns()&lt;/code&gt; 都可以用 &lt;code&gt;df&lt;/code&gt; 讓軟體自動放分位數節點，也都可以手動指定 &lt;code&gt;internal_knots&lt;/code&gt;。自然樣條的約束是關於&lt;strong&gt;邊界的形狀&lt;/strong&gt;。" onclick="quizCheck('qNat', this)"><span class="opt-letter">(B)</span> 多了「節點必須放在分位數上」的約束，換到不必自己選節點位置</div><div class="quiz-opt" data-correct="false" data-fb="不對。二階導數連續是&lt;strong&gt;立方樣條本來就有的&lt;/strong&gt;（那正是它之所以叫立方樣條的原因）。自然樣條額外要求的是兩端線性，也就是二階導數在邊界區域&lt;em&gt;等於零&lt;/em&gt;。" onclick="quizCheck('qNat', this)"><span class="opt-letter">(C)</span> 多了「二階導數在節點連續」的約束，換到更平滑的曲線</div></div>
+  <div class="quiz-options" id="qNatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。等價地說，左、右端點的二階導數各設為 0，共兩個獨立約束；固定相同 K 個內部節點時，參數數由 K + 4 降為 K + 2。實測：80 歲那端的帶寬從 65.8 降到 37.1。" onclick="quizCheck('qNat', this)"><span class="opt-letter">(A)</span> 多了「兩端區域必須是線性」的約束，換到邊界處明顯較窄的信賴區間</div><div class="quiz-opt" data-correct="false" data-fb="不對，這兩件事無關。&lt;code&gt;bs()&lt;/code&gt; 與 &lt;code&gt;ns()&lt;/code&gt; 都可以用 &lt;code&gt;df&lt;/code&gt; 讓軟體自動放分位數節點，也都可以手動指定 &lt;code&gt;internal_knots&lt;/code&gt;。自然樣條的約束是關於&lt;strong&gt;邊界的形狀&lt;/strong&gt;。" onclick="quizCheck('qNat', this)"><span class="opt-letter">(B)</span> 多了「節點必須放在分位數上」的約束，換到不必自己選節點位置</div><div class="quiz-opt" data-correct="false" data-fb="不對。二階導數連續是&lt;strong&gt;立方樣條本來就有的&lt;/strong&gt;（那正是它之所以叫立方樣條的原因）。自然樣條額外要求的是兩端線性，也就是二階導數在邊界區域&lt;em&gt;等於零&lt;/em&gt;。" onclick="quizCheck('qNat', this)"><span class="opt-letter">(C)</span> 多了「二階導數在節點連續」的約束，換到更平滑的曲線</div></div>
   <div class="quiz-feedback" id="qNatFeedback"></div>
 </div>
 
@@ -1536,13 +1536,13 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
       </div>
       <div class="status-banner" id="w08gamStatus"><span class="status-icon">›</span><span class="status-text">推兩個滑桿改 age 與 year 的自由度，右邊看模型整體的成績怎麼變。</span></div>
       <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">age df</span><input type="range" id="w08gamAgeSl" min="0" max="5" step="1" value="3" oninput="w08gamSet()" aria-label="age df"><span class="slider-val" id="w08gamAgeSlVal">5.0</span></span><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">year df</span><input type="range" id="w08gamYearSl" min="0" max="4" step="1" value="3" oninput="w08gamSet()" aria-label="year df"><span class="slider-val" id="w08gamYearSlVal">5.0</span></span><button class="btn btn-reset" onclick="w08gamReset()">回到 lab 的設定</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Wage 的 year／age／education GAM；曲線、信賴帶與整體指標由 generator 計算。</div>
+      <div class="viz-source"><span>課程／lab 資料</span>Wage 的 year／age／education GAM；曲線、信賴區間與整體指標由 generator 計算。</div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看這三張圖 <span class="ic-badge">圖 7.11–7.12</span></div>
-      每一張都是一個 $\hat f_k$ 的<strong>偏依賴圖</strong>：曲線呈現中心化後的單一加法成分；其餘項的貢獻由截距與其他面板表示。虛線是逐點 95% 信賴帶。<strong>三張圖的縱軸都是「對 wage 的效果」</strong>，所以可以直接比高低——age 與 education 的擺幅遠大於 year。
+      每一張都是一個 $\hat f_k$ 的<strong>偏依賴圖</strong>：曲線呈現中心化後的單一加法成分；其餘項的貢獻由截距與其他面板表示。虛線是逐點 95% 信賴區間。<strong>三張圖的縱軸都是「對 wage 的效果」</strong>，所以可以直接比高低——age 與 education 的擺幅遠大於 year。
     </div>
     <div class="info-card">
       <div class="ic-title">這一組 df 的成績</div>
@@ -1570,7 +1570,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
     + \cdots + f_p(X_p) \tag{7.18}$$
 
   <p>ISLP 圖 7.13 對 <code>Wage</code> 擬合 $I(\text{wage} > 250)$，
-  結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴帶大到看不出東西，
+  結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴區間大到看不出東西，
   因為<strong>那個層級裡一個高收入者都沒有</strong>（lab 範例 的交叉表：268 個人、0 個高收入者）。
   拿掉那群人重新擬合就正常了（圖 7.14）。<strong>這個例子提醒我們：
   模型擬合異常時，先檢查列聯表中的類別計數。</strong></p>
@@ -1704,7 +1704,7 @@ github.com/dswah/pyGAM/issues/163
   <h3>七種方法對照</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>方法</th><th>基底／機制</th><th>彈性由什麼控制</th><th>自由度</th><th>邊界</th><th>選參數的辦法</th></tr></thead>
-  <tbody><tr><td>多項式</td><td>$x, x^2, \ldots, x^d$</td><td>次數 d</td><td>d + 1</td><td><span class='worst'>差</span></td><td>ANOVA 或 CV</td></tr><tr><td>階梯函數</td><td>$I(c_k \le x < c_{k+1})$</td><td>切點數 K</td><td>K + 1</td><td>尚可</td><td>CV</td></tr><tr><td>線性樣條</td><td>$x, (x-\xi_k)_+$</td><td>內部節點數 K</td><td>K + 2</td><td>尚可</td><td>CV</td></tr><tr><td>立方樣條</td><td>$x, x^2, x^3, (x-\xi_k)^3_+$</td><td>內部節點數 K</td><td>K + 4</td><td>差（信賴帶可能很寬）</td><td>CV（圖 7.6 右）</td></tr><tr><td>自然樣條</td><td>立方樣條 + 兩個自然邊界條件</td><td>內部節點數 K</td><td>K + 2</td><td><span class='best'>好</span></td><td>CV（圖 7.6 左）</td></tr><tr><td>平滑樣條</td><td>全部 x 當節點 + 二階導數懲罰</td><td>λ</td><td>df$_\lambda$（連續，2 到 n）</td><td>好</td><td>LOOCV 捷徑 / GCV</td></tr><tr><td>局部迴歸</td><td>鄰域內加權最小平方</td><td>跨距 s</td><td>以等效 df 表示</td><td>差（單邊資料）</td><td>CV</td></tr></tbody>
+  <tbody><tr><td>多項式</td><td>$x, x^2, \ldots, x^d$</td><td>次數 d</td><td>d + 1</td><td><span class='worst'>差</span></td><td>ANOVA 或 CV</td></tr><tr><td>階梯函數</td><td>$I(c_k \le x < c_{k+1})$</td><td>切點數 K</td><td>K + 1</td><td>尚可</td><td>CV</td></tr><tr><td>線性樣條</td><td>$x, (x-\xi_k)_+$</td><td>內部節點數 K</td><td>K + 2</td><td>尚可</td><td>CV</td></tr><tr><td>立方樣條</td><td>$x, x^2, x^3, (x-\xi_k)^3_+$</td><td>內部節點數 K</td><td>K + 4</td><td>差（信賴區間可能很寬）</td><td>CV（圖 7.6 右）</td></tr><tr><td>自然樣條</td><td>立方樣條 + 兩個自然邊界條件</td><td>內部節點數 K</td><td>K + 2</td><td><span class='best'>好</span></td><td>CV（圖 7.6 左）</td></tr><tr><td>平滑樣條</td><td>全部 x 當節點 + 二階導數懲罰</td><td>λ</td><td>df$_\lambda$（連續，2 到 n）</td><td>好</td><td>LOOCV 捷徑 / GCV</td></tr><tr><td>局部迴歸</td><td>鄰域內加權最小平方</td><td>跨距 s</td><td>以等效 df 表示</td><td>差（單邊資料）</td><td>CV</td></tr></tbody>
 </table></div>
 
   <h3>Wage 上的實測數字（本頁元件用的就是這些）</h3>
@@ -1726,7 +1726,7 @@ github.com/dswah/pyGAM/issues/163
   <h3>公式速查</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>名稱</th><th>式子</th><th>備註</th></tr></thead>
-  <tbody><tr><td>多項式迴歸</td><td>$y = \beta_0 + \beta_1 x + \cdots + \beta_d x^d + \varepsilon$</td><td>式 7.1</td></tr><tr><td>擬合值的變異</td><td>$\widehat{\operatorname{Var}}[\hat f(x_0)] = \ell_0^{\mathsf T} \hat C \ell_0$</td><td>式 7.2 腳註；信賴帶的來源</td></tr><tr><td>階梯函數</td><td>$y = \beta_0 + \beta_1 C_1(x) + \cdots + \beta_K C_K(x) + \varepsilon$</td><td>式 7.5；丟掉 $C_0$</td></tr><tr><td>基底函數框架</td><td>$y = \beta_0 + \sum_{k=1}^{K} \beta_k b_k(x) + \varepsilon$</td><td>式 7.7；基底函數表示</td></tr><tr><td>截斷冪基底</td><td>$h(x, \xi) = (x-\xi)^3_+$</td><td>式 7.10；每個節點加一個</td></tr><tr><td>立方樣條的自由度</td><td>K + 4</td><td>K 個內部節點，含截距</td></tr><tr><td>自然樣條的自由度</td><td>K + 2</td><td>K 個內部節點；兩端點各 1 個二階導數為 0 的條件；含截距</td></tr><tr><td>平滑樣條</td><td>$\min_g \sum_i (y_i - g(x_i))^2 + \lambda \int g''(t)^2 dt$</td><td>式 7.11；損失＋懲罰</td></tr><tr><td>有效自由度</td><td>$\mathrm{df}_\lambda = \sum_i \{S_\lambda\}_{ii}$，$\hat g_\lambda = S_\lambda y$</td><td>式 7.12–7.13；λ: 0→∞ 時 df: n→2</td></tr><tr><td>平滑樣條的 LOOCV</td><td>$\sum_i \left[\dfrac{y_i - \hat g_\lambda(x_i)}{1 - \{S_\lambda\}_{ii}}\right]^2$</td><td>擬合一次就算完，對照式 5.2</td></tr><tr><td>局部迴歸</td><td>$\min_{\beta_0,\beta_1} \sum_i K_{i0}(y_i - \beta_0 - \beta_1 x_i)^2$</td><td>式 7.14；演算法 7.1</td></tr><tr><td>GAM（迴歸）</td><td>$y = \beta_0 + \sum_j f_j(x_j) + \varepsilon$</td><td>式 7.15–7.16</td></tr><tr><td>GAM（分類）</td><td>$\log\dfrac{p(X)}{1-p(X)} = \beta_0 + \sum_j f_j(X_j)$</td><td>式 7.18</td></tr></tbody>
+  <tbody><tr><td>多項式迴歸</td><td>$y = \beta_0 + \beta_1 x + \cdots + \beta_d x^d + \varepsilon$</td><td>式 7.1</td></tr><tr><td>擬合值的變異</td><td>$\widehat{\operatorname{Var}}[\hat f(x_0)] = \ell_0^{\mathsf T} \hat C \ell_0$</td><td>式 7.2 腳註；信賴區間的來源</td></tr><tr><td>階梯函數</td><td>$y = \beta_0 + \beta_1 C_1(x) + \cdots + \beta_K C_K(x) + \varepsilon$</td><td>式 7.5；丟掉 $C_0$</td></tr><tr><td>基底函數框架</td><td>$y = \beta_0 + \sum_{k=1}^{K} \beta_k b_k(x) + \varepsilon$</td><td>式 7.7；基底函數表示</td></tr><tr><td>截斷冪基底</td><td>$h(x, \xi) = (x-\xi)^3_+$</td><td>式 7.10；每個節點加一個</td></tr><tr><td>立方樣條的自由度</td><td>K + 4</td><td>K 個內部節點，含截距</td></tr><tr><td>自然樣條的自由度</td><td>K + 2</td><td>K 個內部節點；兩端點各 1 個二階導數為 0 的條件；含截距</td></tr><tr><td>平滑樣條</td><td>$\min_g \sum_i (y_i - g(x_i))^2 + \lambda \int g''(t)^2 dt$</td><td>式 7.11；損失＋懲罰</td></tr><tr><td>有效自由度</td><td>$\mathrm{df}_\lambda = \sum_i \{S_\lambda\}_{ii}$，$\hat g_\lambda = S_\lambda y$</td><td>式 7.12–7.13；λ: 0→∞ 時 df: n→2</td></tr><tr><td>平滑樣條的 LOOCV</td><td>$\sum_i \left[\dfrac{y_i - \hat g_\lambda(x_i)}{1 - \{S_\lambda\}_{ii}}\right]^2$</td><td>擬合一次就算完，對照式 5.2</td></tr><tr><td>局部迴歸</td><td>$\min_{\beta_0,\beta_1} \sum_i K_{i0}(y_i - \beta_0 - \beta_1 x_i)^2$</td><td>式 7.14；演算法 7.1</td></tr><tr><td>GAM（迴歸）</td><td>$y = \beta_0 + \sum_j f_j(x_j) + \varepsilon$</td><td>式 7.15–7.16</td></tr><tr><td>GAM（分類）</td><td>$\log\dfrac{p(X)}{1-p(X)} = \beta_0 + \sum_j f_j(X_j)$</td><td>式 7.18</td></tr></tbody>
 </table></div>
 
 <div class="info-box">
@@ -1735,7 +1735,7 @@ github.com/dswah/pyGAM/issues/163
   換掉 $b_k(\cdot)$ 就換掉方法，擬合方法（最小平方）從頭到尾沒變，
   第 3 章的推論工具全部照用。<br>
   <strong>2. 樣條把次數鎖在 3、靠加節點取得彈性；多項式只能拉高次數，代價全落在邊界。</strong>
-  自然樣條再加兩個自然邊界條件，實測把 80 歲那端的信賴帶從 65.8 砍到 37.1。<br>
+  自然樣條再加兩個自然邊界條件，實測把 80 歲那端的信賴區間從 65.8 砍到 37.1。<br>
   <strong>3. 「自由度」在這一章有兩種身分。</strong>
   多項式的 d 與 K 個內部節點之立方樣條的 K + 4 是參數個數；平滑樣條的 df$_\lambda$ 是平滑矩陣的跡，
   是連續值。它們都能描述彈性，使用時仍要區分各自的定義。
@@ -1747,7 +1747,7 @@ github.com/dswah/pyGAM/issues/163
 <!-- GEN:BEGIN sec:cards -->
   <div class="section-number">CARDS · 關鍵詞彙卡</div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
-  <p>詞彙卡取自本章講義與 ISLP 第 7 章，正面是中文術語（附英文原名）。
+  <p>詞彙卡整理本章講義與 ISLP 第 7 章中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
   <div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
@@ -2489,15 +2489,15 @@ function w08polyDraw() {
   $('w08polyWm').textContent = HC.fmt(wm, 1);
   setStatus('w08polyStatus', 'degree ' + d + '：訓練 MSE ' + HC.fmt(F.trainMSE[d - 1], 1)
     + '，10-fold CV MSE ' + HC.fmt(F.cvMSE[d - 1], 1)
-    + '。80 歲那端的 95% 信賴帶寬 ' + HC.fmt(wr, 1)
+    + '。80 歲那端的 95% 信賴區間寬 ' + HC.fmt(wr, 1)
     + '，中央只有 ' + HC.fmt(wm, 1) + '——'
-    + (d >= 8 ? '兩端的信賴帶明顯變寬。' : d >= 5 ? '邊界的不確定性開始增加。' : '兩端的信賴帶相對較窄。'));
+    + (d >= 8 ? '兩端的信賴區間明顯變寬。' : d >= 5 ? '邊界的不確定性開始增加。' : '兩端的信賴區間相對較窄。'));
 }
 function w08polySetDeg() { w08polyDraw(); }
 function w08polyToggleBand() {
   w08polyBand = !w08polyBand;
   const b = $('w08polyBandBtn');
-  b.textContent = '信賴帶：' + (w08polyBand ? '開' : '關');
+  b.textContent = '信賴區間：' + (w08polyBand ? '開' : '關');
   b.classList.toggle('off', !w08polyBand);
   w08polyDraw();
 }
@@ -2790,14 +2790,14 @@ function w08natDraw() {
   $('w08natWl').textContent = HC.fmt(F.widthCubic[0], 1) + ' / ' + HC.fmt(F.widthNatural[0], 1);
   $('w08natWr').textContent = HC.fmt(F.widthCubic[1], 1) + ' / ' + HC.fmt(F.widthNatural[1], 1);
   $('w08natKnots').textContent = F.knots.join(' · ');
-  setStatus('w08natStatus', '兩者都用內部節點 25／40／60。80 歲那端的 95% 信賴帶寬：立方樣條 '
+  setStatus('w08natStatus', '兩者都用內部節點 25／40／60。80 歲那端的 95% 信賴區間寬：立方樣條 '
     + HC.fmt(F.widthCubic[1], 1) + '、自然樣條 ' + HC.fmt(F.widthNatural[1], 1)
     + '——線性約束把邊界的變異砍掉了一半。中段兩條幾乎重疊。');
 }
 function w08natToggleBands() {
   w08natBands = !w08natBands;
   const b = $('w08natBandBtn');
-  b.textContent = '信賴帶：' + (w08natBands ? '開' : '關');
+  b.textContent = '信賴區間：' + (w08natBands ? '開' : '關');
   b.classList.toggle('off', !w08natBands);
   w08natDraw();
 }
@@ -3079,7 +3079,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"多項式迴歸（Polynomial Regression）","back":"把 x, x², …, x^d 當成新的預測變數丟進線性模型。係數照樣用最小平方估；解讀時看整條擬合曲線，因為個別係數受到基底選擇影響。d 通常不超過 3 或 4，太高次在資料邊界會出現很怪的形狀。"},{"front":"階梯函數（Step Function）","back":"把 x 的範圍切成幾個區間，每個區間擬合一個常數。等於把連續變數轉成有序類別變數，再用虛擬變數做迴歸。好處是完全不假設全域形狀，壞處是沒有自然切點時會漏掉趨勢。"},{"front":"切點（Cutpoint）","back":"階梯函數把 x 切段的位置 c₁, …, c_K，切出 K+1 個區間。每一段的擬合值就是該段樣本的平均值（模型只有 x 一個變數時）。"},{"front":"指示函數（Indicator Function）","back":"I(條件)，條件成立回傳 1、否則回傳 0。階梯函數的基底就是 I(c_j ≤ x < c_{j+1})；截斷冪基底也用它把 x 超過節點以後的部分挑出來。"},{"front":"基底函數（Basis Function）","back":"事先選定、固定且已知的一組轉換 b₁(x), …, b_K(x)，然後擬合 y = β₀ + Σ βₖ bₖ(x) + ε。多項式、階梯函數、樣條全都是這個框架的特例，所以第 3 章的標準誤與 F 檢定全部照用。"},{"front":"分段多項式（Piecewise Polynomial）","back":"在 x 的不同區段各擬合一個低次多項式，不同區段的係數可以不同。K 個內部節點會切出 K+1 段。完全不加約束的話函數會在節點斷開，不連續。"},{"front":"節點（Knot）","back":"分段多項式換係數的位置。節點愈多、曲線愈有彈性。實務上常放在資料的均勻分位數處，節點數（或等價的自由度）用交叉驗證選。"},{"front":"立方樣條（Cubic Spline）","back":"分段三次多項式，且在每個節點上函數值、一階導數、二階導數都連續。K 表示內部節點數並把截距算入時，共用 K+4 個自由度。三階導數才允許跳，而人眼幾乎看不出三階導數的不連續，所以看起來很平滑。"},{"front":"線性樣條（Linear Spline）","back":"分段一次多項式，只要求在節點上連續。K 表示內部節點數並把截距算入時，共用 K+2 個自由度。一般而言 d 次樣條就是分段 d 次多項式加上「導數連續到 d−1 階」。"},{"front":"截斷冪基底（Truncated Power Basis）","back":"h(x, ξ) = (x−ξ)³₊，也就是 x > ξ 時等於 (x−ξ)³、否則等於 0。每個節點加一個這種項，就能讓函數在該節點只有三階導數跳、值與一二階導數都保持連續。"},{"front":"迴歸樣條（Regression Spline）","back":"先指定節點、產生對應的基底矩陣，再用最小平方估係數。保持較低次數並增加節點，就能提高彈性，所以比高次多項式穩定得多。"},{"front":"自然樣條（Natural Spline）","back":"立方樣條再加兩個自然邊界條件：左、右端點的二階導數各等於 0，因此在邊界外線性延伸。固定 K 為內部節點數並含截距時，自由度由 K+4 減 2，得到 K+2。"},{"front":"邊界節點（Boundary Knot）","back":"資料範圍兩端的節點，與內部節點分開。在本站的計數慣例中，K 只算內部節點；自然樣條在兩個邊界點各加入一個二階導數為 0 的條件，總共減少 2 個自由度。"},{"front":"B-樣條（B-spline）","back":"樣條空間的另一組基底，每一列只有 degree+1 個非零元素。條件數低、數值穩定，跟多項式的 Vandermonde 矩陣完全相反。與截斷冪基底張出同一個函數空間，擬合出來的曲線一樣。"},{"front":"Runge 現象（Runge Phenomenon）","back":"用高次多項式擬合時，曲線在資料邊界劇烈振盪的現象。次數愈高愈嚴重。樣條把次數固定在 3、改用增加節點取得彈性，就避開了這個問題。"},{"front":"自由度（Degrees of Freedom）","back":"模型裡自由參數的個數。這一章有三個地方用到它：多項式的次數 d、迴歸樣條的參數數，以及平滑樣條的有效自由度。K 表示內部節點數並含截距時，立方樣條是 K+4、自然樣條是 K+2；平滑樣條的有效自由度則由平滑矩陣的跡定義。"},{"front":"平滑樣條（Smoothing Spline）","back":"最小化「RSS + λ∫g″(t)²dt」的函數 g。它的解是在每一個相異 xᵢ 上都有節點的自然立方樣條，但係數被 λ 收縮過。不必選節點位置，只要選 λ。"},{"front":"損失＋懲罰（Loss + Penalty）","back":"平滑樣條的目標函數形式：前項要求擬合得好，後項 λ∫g″(t)²dt 懲罰彎曲程度。跟第 6 章的脊迴歸與 lasso 相同的做法，λ 控制偏差與變異的取捨。"},{"front":"有效自由度（Effective Degrees of Freedom, df_λ）","back":"平滑矩陣 S_λ 的對角線元素之和。λ 從 0 增到無限大時，df_λ 從 n 降到 2。它可以取連續值，用來描述平滑樣條的彈性。"},{"front":"平滑矩陣（Smoother Matrix）","back":"把擬合值寫成 ĝ_λ = S_λ y 的那個 n×n 矩陣。它的跡（對角線之和）就是有效自由度，對角元素 {S_λ}ᵢᵢ 也讓 LOOCV 有一次擬合就算完的捷徑公式。"},{"front":"廣義交叉驗證（Generalized Cross-Validation, GCV）","back":"用平滑矩陣的跡近似留一交叉驗證誤差的準則，只擬合一次模型就算得出來。pygam 的 gridsearch 就是照 GCV 挑 λ，跟課本圖 7.8 用 LOOCV 挑出來的答案通常接近，仍可能因準則不同而有差異。"},{"front":"局部迴歸（Local Regression）","back":"在每個目標點 x₀ 只用附近的樣本，以距離遞減的權重新擬合一條加權最小平方直線，取它在 x₀ 的值當 f̂(x₀)。每換一個 x₀ 就要重新擬合一次，所以需要一直留著全部訓練資料。"},{"front":"跨距（Span, s）","back":"局部迴歸在每個目標點用掉的樣本比例 s = k/n。s 小則局部、曲線抖；s 大通常更平滑，可用交叉驗證選。即使 s = 1 使用全部資料，距離權重仍隨目標點改變，不一定成為全域 OLS 直線。"},{"front":"記憶式方法（Memory-based Procedure）","back":"像最近鄰法與局部迴歸這種「每次預測都要重新用到全部訓練資料」的做法。沒有一組固定的係數可以存下來，所以模型體積等於資料體積。"},{"front":"廣義加法模型（Generalized Additive Model, GAM）","back":"把多元線性迴歸的每個 βⱼxⱼ 換成各自的非線性函數 fⱼ(xⱼ) 再加起來：y = β₀ + Σ fⱼ(xⱼ) + ε。每個 fⱼ 可以用樣條、平滑樣條或局部迴歸來擬合，也可以推廣到分類（logit 是加法的）。"},{"front":"加法性（Additivity）","back":"GAM 保住的性質：各變數的貢獻是相加的，所以可以固定其他變數、單獨看某一個變數的效果。代價是預設沒有交互作用，要的話得手動加 xⱼ×xₖ 或二維的 fⱼₖ 項。"},{"front":"逆向擬合（Backfitting）","back":"擬合 GAM 的標準演算法：輪流更新每一個 fⱼ，更新時把其他項固定，對偏殘差 rᵢ = yᵢ − Σ_{k≠j} f̂ₖ(xᵢₖ) 做一次單變數平滑。這樣只要有單變數的擬合工具就能擬合多變數加法模型。"},{"front":"偏依賴圖（Partial Dependence Plot）","back":"把其他變數固定在平均值、只讓一個變數在格點上變動，畫出它對反應的邊際效果與逐點標準誤。GAM 的每個 f̂ⱼ 就是這樣呈現的，也是解讀 GAM 的主要工具。"}];
+const FLASHCARDS = [{"front":"多項式迴歸（Polynomial Regression）","back":"把 x, x², …, x^d 當成新的預測變數丟進線性模型。係數照樣用最小平方估；解讀時看整條擬合曲線，因為個別係數受到基底選擇影響。d 通常不超過 3 或 4，太高次在資料邊界會出現很怪的形狀。"},{"front":"階梯函數（Step Function）","back":"把 x 的範圍切成幾個區間，每個區間擬合一個常數。等於把連續變數轉成有序類別變數，再用虛擬變數做迴歸。好處是完全不假設全域形狀，壞處是沒有自然切點時會漏掉趨勢。"},{"front":"切點（Cutpoint）","back":"階梯函數把 x 切段的位置 c₁, …, c_K，切出 K+1 個區間。每一段的擬合值就是該段樣本的平均值（模型只有 x 一個變數時）。"},{"front":"指示函數（Indicator Function）","back":"I(條件)，條件成立回傳 1、否則回傳 0。階梯函數的基底就是 I(c_j ≤ x < c_{j+1})；截斷冪基底也用它把 x 超過節點以後的部分挑出來。"},{"front":"基底函數（Basis Function）","back":"事先選定、固定且已知的一組轉換 b₁(x), …, b_K(x)，然後擬合 y = β₀ + Σ βₖ bₖ(x) + ε。多項式、階梯函數、樣條全都是這個框架的特例，所以第 3 章的標準誤與 F 檢定全部照用。"},{"front":"分段多項式（Piecewise Polynomial）","back":"在 x 的不同區段各擬合一個低次多項式，不同區段的係數可以不同。K 個內部節點會切出 K+1 段。完全不加約束的話函數會在節點斷開，不連續。"},{"front":"節點（Knot）","back":"分段多項式換係數的位置。節點愈多、曲線愈有彈性。實務上常放在資料的均勻分位數處，節點數（或等價的自由度）用交叉驗證選。"},{"front":"立方樣條（Cubic Spline）","back":"分段三次多項式，且在每個節點上函數值、一階導數、二階導數都連續。K 表示內部節點數並把截距算入時，共用 K+4 個自由度。三階導數才允許跳，而人眼幾乎看不出三階導數的不連續，所以看起來很平滑。"},{"front":"線性樣條（Linear Spline）","back":"分段一次多項式，只要求在節點上連續。K 表示內部節點數並把截距算入時，共用 K+2 個自由度。一般而言 d 次樣條就是分段 d 次多項式加上「導數連續到 d−1 階」。"},{"front":"截斷冪基底（Truncated Power Basis）","back":"h(x, ξ) = (x−ξ)³₊，也就是 x > ξ 時等於 (x−ξ)³、否則等於 0。每個節點加一個這種項，就能讓函數在該節點只有三階導數跳、值與一二階導數都保持連續。"},{"front":"迴歸樣條（Regression Spline）","back":"先指定節點、產生對應的基底矩陣，再用最小平方估係數。保持較低次數並增加節點，就能提高彈性，所以比高次多項式穩定得多。"},{"front":"自然樣條（Natural Spline）","back":"立方樣條再加兩個自然邊界條件：左、右端點的二階導數各等於 0，因此在邊界外線性延伸。固定 K 為內部節點數並含截距時，自由度由 K+4 減 2，得到 K+2。"},{"front":"邊界節點（Boundary Knot）","back":"資料範圍兩端的節點，與內部節點分開。在本站的計數慣例中，K 只算內部節點；自然樣條在兩個邊界點各加入一個二階導數為 0 的條件，總共減少 2 個自由度。"},{"front":"B-樣條（B-spline）","back":"樣條空間的另一組基底，每一列只有 degree+1 個非零元素。條件數低、數值穩定，跟多項式的 Vandermonde 矩陣完全相反。與截斷冪基底張出同一個函數空間，擬合出來的曲線一樣。"},{"front":"Runge 現象（Runge Phenomenon）","back":"用高次多項式擬合時，曲線在資料邊界劇烈振盪的現象。次數愈高愈嚴重。樣條把次數固定在 3、改用增加節點取得彈性，就避開了這個問題。"},{"front":"自由度（Degrees of Freedom）","back":"模型裡自由參數的個數。這一章有三個地方用到它：多項式的次數 d、迴歸樣條的參數數，以及平滑樣條的有效自由度。K 表示內部節點數並含截距時，立方樣條是 K+4、自然樣條是 K+2；平滑樣條的有效自由度則由平滑矩陣的跡定義。"},{"front":"平滑樣條（Smoothing Spline）","back":"最小化「RSS + λ∫g″(t)²dt」的函數 g。它的解是在每一個相異 xᵢ 上都有節點的自然立方樣條，但係數被 λ 收縮過。不必選節點位置，只要選 λ。"},{"front":"有效自由度（Effective Degrees of Freedom, df_λ）","back":"平滑矩陣 S_λ 的對角線元素之和。λ 從 0 增到無限大時，df_λ 從 n 降到 2。它可以取連續值，用來描述平滑樣條的彈性。"},{"front":"平滑矩陣（Smoother Matrix）","back":"把擬合值寫成 ĝ_λ = S_λ y 的那個 n×n 矩陣。它的跡（對角線之和）就是有效自由度，對角元素 {S_λ}ᵢᵢ 也讓 LOOCV 有一次擬合就算完的捷徑公式。"},{"front":"廣義交叉驗證（Generalized Cross-Validation, GCV）","back":"用平滑矩陣的跡近似留一交叉驗證誤差的準則，只擬合一次模型就算得出來。pygam 的 gridsearch 就是照 GCV 挑 λ，跟課本圖 7.8 用 LOOCV 挑出來的答案通常接近，仍可能因準則不同而有差異。"},{"front":"局部迴歸（Local Regression）","back":"在每個目標點 x₀ 只用附近的樣本，以距離遞減的權重新擬合一條加權最小平方直線，取它在 x₀ 的值當 f̂(x₀)。每換一個 x₀ 就要重新擬合一次，所以需要一直留著全部訓練資料。"},{"front":"跨距（Span, s）","back":"局部迴歸在每個目標點用掉的樣本比例 s = k/n。s 小則局部、曲線抖；s 大通常更平滑，可用交叉驗證選。即使 s = 1 使用全部資料，距離權重仍隨目標點改變，不一定成為全域 OLS 直線。"},{"front":"記憶式方法（Memory-based Procedure）","back":"像最近鄰法與局部迴歸這種「每次預測都要重新用到全部訓練資料」的做法。沒有一組固定的係數可以存下來，所以模型體積等於資料體積。"},{"front":"廣義加法模型（Generalized Additive Model, GAM）","back":"把多元線性迴歸的每個 βⱼxⱼ 換成各自的非線性函數 fⱼ(xⱼ) 再加起來：y = β₀ + Σ fⱼ(xⱼ) + ε。每個 fⱼ 可以用樣條、平滑樣條或局部迴歸來擬合，也可以推廣到分類（logit 是加法的）。"},{"front":"加法性（Additivity）","back":"GAM 保住的性質：各變數的貢獻是相加的，所以可以固定其他變數、單獨看某一個變數的效果。代價是預設沒有交互作用，要的話得手動加 xⱼ×xₖ 或二維的 fⱼₖ 項。"},{"front":"逆向擬合（Backfitting）","back":"擬合 GAM 的標準演算法：輪流更新每一個 fⱼ，更新時把其他項固定，對偏殘差 rᵢ = yᵢ − Σ_{k≠j} f̂ₖ(xᵢₖ) 做一次單變數平滑。這樣只要有單變數的擬合工具就能擬合多變數加法模型。"},{"front":"偏依賴圖（Partial Dependence Plot）","back":"用來呈現模型預測如何隨某個變數改變。計算時，把每筆資料中這個變數都設成同一個指定值，其他變數保留各筆資料原有的值，再把模型預測取平均。對不同的指定值重複計算，就得到曲線。這是對其他變數在資料中的分布取平均，不是把其他變數固定在平均值。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->
