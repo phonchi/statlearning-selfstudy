@@ -269,7 +269,7 @@ REG_PROOF = qa("完整證明", [(
     $X = x$ 固定之後，$f(X)$ 就只是一個數字 $f(x)$，不再是函數。
     所以「在所有函數裡找最好的」可以拆成「在每一點各自找最好的常數 $c = f(x)$」。
     只要每一點的最佳常數都是 $\mu(x)$，把這些點串起來的那個函數就是最佳函數。
-    這正是講義那句 <em>over all functions $f$ at all points $X = x$</em> 的意思。</p>
+    這正是講義那句<strong>「在所有函數上、在每一個 $X = x$ 點上」</strong>的意思。</p>
 
     <p><strong>第 1 步：加一項、減一項。</strong>硬把 $\mu(x)$ 塞進去：</p>
     $$Y - c = \underbrace{\left(Y - \mu(x)\right)}_{\text{隨機，條件期望 } 0}
@@ -326,11 +326,11 @@ BODIES["regfunc"] = "".join([
   行不行取決於你用什麼量尺算帳，而這門課的回歸量尺是平方誤差。
   講義第 11 頁那一行講的就是這件事：</p>
 """,
-    info("講義第 11 頁的原句",
-         """The ideal or optimal predictor of Y with regard to mean-squared prediction error:
-  <strong>f(x) = E(Y | X = x)</strong> is the function that minimizes E[(Y − f(X))² | X = x]
-  over all functions f at all points X = x.<br>
-  翻成白話：在平方誤差之下，條件期望值不是「一個還不錯的選擇」，
+    info("講義第 11 頁怎麼說",
+         """就<strong>均方預測誤差</strong>而言，理想的（也就是最佳的）$Y$ 的預測函數是
+  <strong>f(x) = E(Y | X = x)</strong>：在所有函數之中、在每一個 X = x 點上，
+  它讓 E[(Y − f(X))² | X = x] 最小。<br>
+  也就是說：在平方誤差之下，條件期望值不是「一個還不錯的選擇」，
   而是<strong>所有函數裡最好的那一個</strong>——沒有任何函數能贏過它。下面把它證出來。"""),
     REG_PROOF,
     r"""
@@ -353,7 +353,7 @@ BODIES["regfunc"] = "".join([
 
   <p>麻煩在於「夠多」幾乎不會發生。講義第 12 頁下一頁就潑冷水：</p>
 """,
-    info("講義第 12 頁：Typically, we have few if any data points with X = 4 exactly!",
+    info("講義第 12 頁：恰好落在 X = 4 的資料通常寥寥無幾，甚至一筆都沒有！",
          """X 是連續變數時，恰好落在 4 的機率是 0；就算 X 是離散的，
   只要多掛幾個維度，每一格的資料筆數也會很快掉到 1 筆或 0 筆。
   <strong>所以 E(Y | X = x) 這個定義沒辦法照字面計算。</strong>
@@ -453,8 +453,8 @@ BODIES["curse"] = "".join([
   <p>$p = 10$ 的時候，這個所謂的「鄰域」在<strong>每一個</strong>座標軸上都得覆蓋 79% 的範圍。
   它已經不是鄰域，是整個空間的縮小版。
   <strong>「局部」這兩個字消失了</strong>——而局部正是我們用它來近似 $E[Y \mid X = x]$ 的唯一理由。
-  講義第 13 頁最後一行寫得很直接：a 10% neighborhood in high dimensions need no longer be local,
-  so we lose the spirit of estimating $E(Y \mid X = x)$ by local averaging。</p>
+  講義第 13 頁最後一行寫得很直接：<strong>在高維空間裡，一個 10% 的鄰域已經不再算是局部的，
+  於是我們就失去了「用局部平均去估 $E(Y \mid X = x)$」的本意。</strong></p>
 
   <p>講義第 14–15 頁換一個角度說同一件事，而且更震撼：
   <strong>高維空間的體積幾乎全部躲在角落。</strong>
@@ -764,9 +764,9 @@ BODIES["mse"] = f"""
 
   <p>講義第 27 頁最後一行把這件事寫成一句斷言，值得把它證出來：</p>
 
-{info("講義第 27 頁的原句", '''A model's test error is <strong>typically higher</strong> than its
-  training error, assuming both datasets are drawn from the same underlying distribution.<br>
-  兩批資料<strong>同分布</strong>是前提；「typically」不是模糊其辭，
+{info("講義第 27 頁怎麼說", '''假設兩批資料都抽自同一個母體分布，
+  一個模型的測試誤差<strong>通常會高於</strong>它的訓練誤差。<br>
+  兩批資料<strong>同分布</strong>是前提；而「通常」不是模糊其辭，
   它精確地說明這是一個<strong>期望值</strong>的不等式。''')}
 
 {MSE_PROOF}
@@ -865,8 +865,8 @@ BV_PROOF = qa("完整證明", [(
     <strong>1.</strong> 訓練集 $Tr$——每換一份訓練資料，$\hat\mu$ 就是另一個數字。<br>
     <strong>2.</strong> 測試點的雜訊 $\varepsilon_0$——它是<strong>新抽的</strong>，沒有參與訓練。<br>
     所以 $\varepsilon_0$ 與 $Tr$ 獨立，因而與 $\hat\mu$ 獨立。外面那個 $E$ 是對這兩層一起取的，
-    這正是講義那句 the expectation averages over the variability of $y_0$ as well as
-    the variability in $Tr$ 的意思。<strong>本頁 P01 那條推導是把 $\hat f$ 固定住的版本，
+    這正是講義那句<strong>「這個期望值同時把 $y_0$ 的變動與 $Tr$ 的變動都平均掉」</strong>的意思。
+    <strong>本頁 P01 那條推導是把 $\hat f$ 固定住的版本，
     這裡把 $\hat f$ 的隨機性也放進來，所以可縮減的那一塊會再裂成兩塊。</strong></p>
 
     <p><strong>第 1 步：把 $y_0$ 換掉、湊出 $\varepsilon_0$。</strong></p>
@@ -947,7 +947,7 @@ BODIES["biasvar"] = f"""
     <li><strong>$\\mathrm{{Var}}(\\varepsilon)$</strong>：跟方法無關的常數。</li>
   </ul>
 
-  <p>講義第 28 頁只寫了一行 <em>Proof of the decomposition</em> 就跳過去了，這裡補完：</p>
+  <p>講義第 28 頁只寫了一行「這個拆解的證明」就跳過去了，這裡補完：</p>
 
 {BV_PROOF}
 
@@ -1138,7 +1138,7 @@ BAYES_PROOF = qa("完整證明", [(
 
 # 講義 02 · p.33：最近鄰在分類上一樣會壞掉，但對 Ĉ(x) 的衝擊小於對 p̂_k(x)。
 CLS_ROBUST = qa("為什麼分類比較耐得住維度", [(
-    r"講義第 33 頁：the impact on $\hat C(x)$ is less than on $\hat p_k(x)$——這句話怎麼算出來",
+    r"講義第 33 頁：對 $\hat C(x)$ 的衝擊小於對 $\hat p_k(x)$——這句話怎麼算出來",
     r"""<p><strong>直覺先講。</strong>分類最後只用到<strong>誰最大</strong>，
     不是<strong>大多少</strong>。$\arg\max$ 把一整組機率壓成一個標籤，
     是比機率本身<strong>粗糙得多</strong>的資訊。
@@ -1166,9 +1166,9 @@ CLS_ROBUST = qa("為什麼分類比較耐得住維度", [(
     <p><strong>這條界是單向的，而單向正是重點。</strong>
     機率估得準 $\Rightarrow$ 分類一定準；
     但<strong>反過來完全不成立</strong>——機率可以估得一塌糊塗，分類卻幾乎沒有損失。
-    這就是講義那句 the impact on $\hat C(x)$ is less than on $\hat p_k(x)$ 的數學內容。</p>
+    這就是講義那句<strong>「對 $\hat C(x)$ 的衝擊小於對 $\hat p_k(x)$」</strong>的數學內容。</p>
 
-    <p><strong>但不要過度樂觀。</strong>講義的原句是 <em>also breaks down as the dimension grows</em>——
+    <p><strong>但不要過度樂觀。</strong>講義用的字是<strong>「一樣會隨著維度增加而失效」</strong>——
     分類<strong>還是會</strong>壞掉，只是慢一點：<br>
     <strong>·</strong> 「排名弄反」的那一層薄殼繞在決策邊界附近。維度一高、鄰域不再局部，
     $\hat\eta$ 的誤差變大，這層殼就跟著變厚。<br>
@@ -1215,7 +1215,7 @@ BODIES["bayes"] = f"""
 
 {BAYES_FRAME}
 
-  <p>講義第 34 頁只寫了一句 the Bayes classifier has the smallest error (in the population)，
+  <p>講義第 34 頁只寫了一句「Bayes 分類器的（母體）錯誤率最小」，
   這裡把它證出來，順便看它跟迴歸那條有多像：</p>
 
 {BAYES_PROOF}
@@ -1272,9 +1272,9 @@ BODIES["bayes"] = f"""
   <p>看到這裡應該會有一個疑問：<strong>PART 03 不是說最近鄰在高維會壞掉嗎？</strong>
   講義第 33 頁把話補完了——會壞，但分類壞得比較慢：</p>
 
-{info("講義第 33 頁的原句", '''Nearest-neighbor averaging can be used as before.
-  It <strong>also breaks down</strong> as the dimension grows.
-  However, <strong>the impact on Ĉ(x) is less than on p̂<sub>k</sub>(x)</strong>.<br>
+{info("講義第 33 頁怎麼說", '''最近鄰平均在分類上一樣可以照用。
+  它<strong>同樣會隨著維度增加而失效</strong>。
+  不過，<strong>它對 Ĉ(x) 的衝擊小於對 p̂<sub>k</sub>(x) 的衝擊</strong>。<br>
   也就是說：<strong>估「機率」會被維度詛咒打得很慘，估「哪一類」則相對耐打。</strong>
   這不是安慰的話，可以寫成不等式。''')}
 
@@ -1396,7 +1396,7 @@ BODIES["exercises"] = f"""
         "兩處都錯。反應變數是薪水（連續數值），不是類別，所以是迴歸；"
         "而 p 要<strong>扣掉反應變數本身</strong>，四個欄位裡有一個是 Y，所以 p = 3。"),
        (False, "迴歸問題、目的是預測，n = 500、p = 3",
-        "n 與 p 對了，但目的判斷錯。題目說的是「understanding which factors affect」——"
+        "n 與 p 對了，但目的判斷錯。題目說的是「理解哪些因素會影響」——"
         "目的是理解因素與薪水的關係，屬於推論。"
         "如果題目改成「猜這位新任 CEO 會拿多少」，那才是預測。")])}
 

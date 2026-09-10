@@ -349,7 +349,7 @@ BODIES["cvwrong"] = f"""
                 '<em>剛好</em>跟這 50 筆 y 對得上的。那個「剛好」也包含了驗證折的 y——'
                 '驗證資料的標籤便提前影響了模型。')],
      "w05misStatus", "100 份獨立純雜訊資料上的兩種 CV 流程。", "",
-     provenance=("simulation", "固定種子 100 次獨立模擬；對照講義 Cross-validation: right and wrong"))}
+     provenance=("simulation", "固定種子 100 次獨立模擬；對照講義「交叉驗證的正確與錯誤做法」"))}
 
 {info("一句話原則", '''凡是<strong>會從資料估計任何參數的步驟</strong>——特徵篩選、標準化的平均與標準差、
   遺漏值填補、過抽樣、目標編碼、PCA 降維——都應<strong>只用每一折的訓練部分估計</strong>。

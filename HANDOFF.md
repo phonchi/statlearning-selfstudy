@@ -566,3 +566,37 @@ Codex 建議把類別數改記成 `C`，但那會跟講義與 ISLP 的符號不�
 `bayes` 節截圖逐條看過。Codex 的完整回覆存於
 `~/.local/share/claude-codex-collab/runs/0aa550f0-9edf-48dd-b568-e9d39d6a0a91`。
 
+---
+
+## 19. 全站英文原句改寫成中文（2026-09-10）
+
+使用者要求「這類的文字請全面掃過都翻成中文，不要留英文」，指的是像
+`the Bayes classifier has the smallest error (in the population)` 這種從講義或課本
+抄下來的**整句英文**。範圍是全站加 `data/`。
+
+實際掃出來 **25 處，集中在 5 支 enrich**：`enrich_statlearn.py` 13、`enrich_trees.py` 6、
+`enrich_nonlin.py` 3、`enrich_svm.py` 2、`enrich_resampling.py` 1。
+其餘 21 支 enrich、`tools/*.py` 與**全部 `data/**.json` 都沒有整句英文**——
+詞彙卡裡的英文都是術語欄（`Curse of Dimensionality` 這種），依約定保留。
+
+- 翻譯時保住原句的限定詞：`typically`→「通常」、`can be`→「可以照用」、
+  `need no longer be local`→「不再算是局部的」。上一輪才依 Codex 複查把絕對化用語收緊過，
+  翻譯不能把它們翻回絕對句。
+- 引言框標題一併改掉：`info("講義第 27 頁的原句", …)` → `info("講義第 27 頁怎麼說", …)`，
+  句子已經是中文了，再叫「原句」會誤導。
+- **重生用 `tools/rebuild_content.py`，不是各章的 `enrich_*.py`**。它從 enrich 來源重生
+  正文與頁面 JS，但逐字保留既有的 baked `FRAMES`——純文字改動就該走這條，
+  既不必為 12 支產生器重跑 conda `m524`，也保證圖表數字一個都不會動。
+  驗收時 `git diff -- '*.html' | grep -c '^[+-]const FRAMES_'` 必須是 **0**。
+
+新增 `tools/check_english_prose.py`（**只報告、不 raise、沒併進 `validate.py`**）：
+沿用 `check_reader_contract.Visible`（它已跳過 `<script>`／`<style>`／`<pre>`／`<code>`）、
+`validate.js_strings` 與 `check_taiwan_wording` 取詞彙卡的作法，掃出讀者可見文字裡
+**連續 5 個以上的英文單字**。兩個設計重點：括號內的英文一律當術語對照跳過
+（`（regression function）` 這種），allowlist 直接讀 `sources.BOOKS` 與 `pages.title_en`，
+不手抄會過期的副本。
+
+驗收：改版前的 `statistical_learning.html` 用這支腳本抓到 **13 處**，改版後全站 **0 處**；
+`validate.py --net` 0 失敗、`check_taiwan_wording.py` PASS、
+`browser_check.js` 對五頁 0 問題。契約條文見 `tools/STYLE_CONTRACT.md` §6「英文的去留」。
+

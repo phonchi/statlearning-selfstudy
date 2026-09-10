@@ -457,7 +457,7 @@ BODIES["hinge"] = f"""
 
 {info("λ 與 C 的對應關係", '''式 9.25 的 λ 大 → β 被壓得小 → margin 寬 → 容忍更多違反，
   所以 <strong>λ 大對應 ISLP 的預算 C 大</strong>（也就是 sklearn 的 C 小）。
-  ISLP 原文：「a small value of λ in (9.25) amounts to a small value of C in (9.15)」。<br>
+  ISLP 說的是：「式 9.25 裡的 λ 小，對應到式 9.15 裡的 C 小」。<br>
   注意腳註裡的一句話：在這個 hinge + 懲罰的寫法下，<strong>margin 固定對應到數值 1</strong>，
   而 margin 的實際寬度由 √Σβⱼ² 決定。所以「調 λ」跟「調 margin 寬度」是同一件事。''')}
 
@@ -888,8 +888,8 @@ BODIES["vslogit"] = f"""
 {quiz("qVs", "QUIZ · SVM vs 邏輯斯迴歸",
       "一份資料的兩個類別重疊得相當厲害，而且你需要輸出每一筆的違約機率。該選哪個？",
       [(True, "邏輯斯迴歸（加 ridge 懲罰）：重疊時兩者表現相近，而機率輸出是它天生就有的",
-        "對，兩個條件都指向邏輯斯迴歸。ISLP：「in more overlapping regimes, "
-        "logistic regression is often preferred」，而 SVM 本來就不提供機率估計"
+        "對，兩個條件都指向邏輯斯迴歸。ISLP 說：「在類別重疊得比較厲害的情況下，"
+        "通常偏好邏輯斯迴歸」，而 SVM 本來就不提供機率估計"
         "（講義第 4 頁把這列為 SVM 的缺點）。"),
        (False, "SVM 使用 RBF 核：它比較有彈性，機率可以用 SVC(probability=True) 拿到",
         "此處採用邏輯斯迴歸較直接。<code>probability=True</code> 是事後用 Platt scaling "

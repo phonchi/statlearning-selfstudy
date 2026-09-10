@@ -1183,7 +1183,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
 
   <p>立方樣條在資料兩端仍有一個問題：<strong>兩端的變異很大</strong>。
   在最小節點以左、最大節點以右，資料只從單邊來，三次多項式卻還有完整的四個自由度可以亂扭。
-  ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴區間「appear fairly wild」。</p>
+  ISLP 圖 7.4 就在示範這件事。三個節點的立方樣條，兩端的信賴區間用書上的話說是「相當狂野」。</p>
 
   <p><strong>自然樣條</strong>（natural spline）在立方樣條上加入兩個自然邊界條件：
   左、右端點的二階導數各等於 0，並以端點的值與斜率向邊界外作線性延伸。
@@ -1225,7 +1225,7 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：節點該放幾個？放哪裡？</summary>
-    <div class="qa-a"><p><strong>放哪裡：</strong>理論上該把節點放在「函數變化快」的地方，變化慢的地方少放。實務上幾乎沒人這樣做，因為你事先不知道哪裡變化快。標準做法是<strong>指定自由度，讓軟體把對應數量的節點放在資料的均勻分位數上</strong>。lab 範例 的 <code>BSpline(df=6)</code> 就自動選了 33.75、42.0、51.0，正好是 25%／50%／75% 分位數。用分位數放節點的好處是每一段的樣本數差不多，不會出現「某一段只有 3 個點」的情況。</p><p><strong>放幾個：</strong>用交叉驗證。ISLP 圖 7.6 對 <code>Wage</code> 掃了 df = 1 到 10 的10-fold CV MSE：自然樣條在 df = 3、立方樣條在 df = 4 就已經足夠，曲線之後就拉平了。做法跟第 5 章完全一樣——留一部分資料、擬合一個指定節點數的樣條、在留出的部分算誤差，換不同的 K 重複，選 CV 誤差最小的。</p><p>還有一個很務實的答案：§7.7 擬合多變數 GAM 時，每個變數都要選 df 就太麻煩了，所以<strong>實務上常常直接把所有項的 df 都定成 4</strong>，先跑起來再說。書上原話是「we typically adopt a more pragmatic approach」。</p></div>
+    <div class="qa-a"><p><strong>放哪裡：</strong>理論上該把節點放在「函數變化快」的地方，變化慢的地方少放。實務上幾乎沒人這樣做，因為你事先不知道哪裡變化快。標準做法是<strong>指定自由度，讓軟體把對應數量的節點放在資料的均勻分位數上</strong>。lab 範例 的 <code>BSpline(df=6)</code> 就自動選了 33.75、42.0、51.0，正好是 25%／50%／75% 分位數。用分位數放節點的好處是每一段的樣本數差不多，不會出現「某一段只有 3 個點」的情況。</p><p><strong>放幾個：</strong>用交叉驗證。ISLP 圖 7.6 對 <code>Wage</code> 掃了 df = 1 到 10 的10-fold CV MSE：自然樣條在 df = 3、立方樣條在 df = 4 就已經足夠，曲線之後就拉平了。做法跟第 5 章完全一樣——留一部分資料、擬合一個指定節點數的樣條、在留出的部分算誤差，換不同的 K 重複，選 CV 誤差最小的。</p><p>還有一個很務實的答案：§7.7 擬合多變數 GAM 時，每個變數都要選 df 就太麻煩了，所以<strong>實務上常常直接把所有項的 df 都定成 4</strong>，先跑起來再說。書上說的是「我們通常採取比較務實的做法」。</p></div>
   </details>
 </div>
 
@@ -1666,7 +1666,7 @@ github.com/dswah/pyGAM/issues/163
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 7.9 第 1 題（c）（d）（e）</div>
   <p>第 1 題要你證明 $f(x) = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \beta_4 (x-\xi)^3_+$ 真的是立方樣條。為什麼加上 $\beta_4 (x-\xi)^3_+$ 這一項不會破壞 ξ 上的連續性與一、二階導數連續？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。$(x-\xi)^3$、$3(x-\xi)^2$、$6(x-\xi)$ 在 $x=\xi$ 全是 0，所以左右兩段的 f、f′、f″ 在 ξ 上一致；第三階導數從 $6\beta_3$ 跳到 $6(\beta_3+\beta_4)$。這正是截斷冪基底被設計成三次的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 因為 $(x-\xi)^3$ 本身與它的一階、二階導數在 $x = \xi$ 都等於 0，只有三階導數會跳</div><div class="quiz-opt" data-correct="false" data-fb="不對。這一題要的是&lt;strong&gt;對任何&lt;/strong&gt; $\beta_0, \ldots, \beta_4$ 都成立的恆等式（題幹寫了 regardless of the values）；它要求精確相等。$\beta_4$ 再大也不會破壞連續性。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 因為 $\beta_4$ 通常估出來很小，所以造成的跳躍可以忽略</div><div class="quiz-opt" data-correct="false" data-fb="混淆了。$(x-\xi)^3_+$ 確實可以寫成 $(x-\xi)^3 I(x&gt;\xi)$，但單獨的 $I(x&gt;\xi)$ 會讓函數&lt;strong&gt;跳&lt;/strong&gt;（本頁 P04 那個元件的「不連續」層級就是把它加進來）。連續性來自 $(x-\xi)^3$ 這個因子在 ξ 歸零，使整個截斷項連續。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 因為指示函數 $I(x > \xi)$ 在 ξ 上有定義，所以函數在該點連續</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。$(x-\xi)^3$、$3(x-\xi)^2$、$6(x-\xi)$ 在 $x=\xi$ 全是 0，所以左右兩段的 f、f′、f″ 在 ξ 上一致；第三階導數從 $6\beta_3$ 跳到 $6(\beta_3+\beta_4)$。這正是截斷冪基底被設計成三次的理由。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 因為 $(x-\xi)^3$ 本身與它的一階、二階導數在 $x = \xi$ 都等於 0，只有三階導數會跳</div><div class="quiz-opt" data-correct="false" data-fb="不對。這一題要的是&lt;strong&gt;對任何&lt;/strong&gt; $\beta_0, \ldots, \beta_4$ 都成立的恆等式（題幹寫了「不論這些值是多少」）；它要求精確相等。$\beta_4$ 再大也不會破壞連續性。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 因為 $\beta_4$ 通常估出來很小，所以造成的跳躍可以忽略</div><div class="quiz-opt" data-correct="false" data-fb="混淆了。$(x-\xi)^3_+$ 確實可以寫成 $(x-\xi)^3 I(x&gt;\xi)$，但單獨的 $I(x&gt;\xi)$ 會讓函數&lt;strong&gt;跳&lt;/strong&gt;（本頁 P04 那個元件的「不連續」層級就是把它加進來）。連續性來自 $(x-\xi)^3$ 這個因子在 ξ 歸零，使整個截斷項連續。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 因為指示函數 $I(x > \xi)$ 在 ξ 上有定義，所以函數在該點連續</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 

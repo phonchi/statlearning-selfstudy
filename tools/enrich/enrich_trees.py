@@ -275,7 +275,7 @@ BODIES["prune"] = f"""
 {quiz("qPrune", "QUIZ · 剪枝",
       "為什麼不直接「RSS 下降量小於門檻就停止分裂」，而要先長大再剪？",
       [(True, "因為那樣太短視：一刀本身沒什麼用，但它之後可能接著一刀非常有用",
-        "對。ISLP §8.1.1 用的字是 <em>too short-sighted</em>。先長大再剪，等於讓演算法「看過後面」再決定要不要留這一刀。"),
+        "對。ISLP §8.1.1 用的字是<strong>「太短視」</strong>。先長大再剪，等於讓演算法「看過後面」再決定要不要留這一刀。"),
        (False, "因為 RSS 下降量無法計算，只有剪枝時才算得出來",
         "不對，RSS 下降量在每一步都算得出來（上一節的元件就在顯示它）。若只以這個下降量決定停止，可能錯過後續有用的分裂。"),
        (False, "因為門檻法會讓樹變得太大，剪枝法才會讓樹變小",
@@ -606,7 +606,7 @@ BODIES["bagging"] = f"""
 {quiz("qBag", "QUIZ · Bagging 與 OOB",
       "做 bagging 時，每一棵樹該長多深？",
       [(True, "長到很深、不剪枝——刻意讓每棵樹低偏差高變異，再靠平均壓變異",
-        "對。ISLP §8.2.1 的原話是 <em>These trees are grown deep, and are not pruned</em>。平均能降低變異，但無法消除偏差，因此要先讓單棵樹的偏差較低。"),
+        "對。ISLP §8.2.1 說的是<strong>「這些樹長得很深，而且不剪枝」</strong>。平均能降低變異，但無法消除偏差，因此要先讓單棵樹的偏差較低。"),
        (False, "用交叉驗證幫每一棵樹各自挑最佳的 ccp_alpha，才不會過度擬合",
         "這會花費 B 次 CV 的運算成本，得到偏差較大的樹；平均之後，偏差仍然較大。單棵樹獨立預測時，剪枝用來控制變異；bagging 則靠多棵樹平均控制變異。"),
        (False, "全部剪成單一分裂的 stump，這樣集成才穩定",
@@ -686,7 +686,7 @@ BODIES["rf"] = f"""
 {quiz("qRf", "QUIZ · Random Forest",
       "Random forest 每次分裂只從 m 個隨機挑出的變數裡選。這個 m 是怎麼抽的？",
       [(True, "每一次分裂都重新隨機抽 m 個變數，因此同一棵樹的各次分裂可使用不同變數",
-        "對。ISLP 的原話是 <em>A fresh sample of m predictors is taken at each split</em>。如果整棵樹共用一組變數，那叫 random subspace（隨機子空間）法，多樣性來源不同、效果也不同。"),
+        "對。ISLP 說的是<strong>「每一次分裂都重新抽一組 m 個預測變數」</strong>。如果整棵樹共用一組變數，那叫 random subspace（隨機子空間）法，多樣性來源不同、效果也不同。"),
        (False, "每棵樹開始前抽一次 m 個變數，整棵樹都只用這 m 個",
         "這是 <strong>random subspace</strong>／隨機子空間法，講義第 34 頁提過（跟 bagging 合用時叫 random patches）。它跟 random forest 是不同的東西——RF 的重抽發生在<strong>每一刀</strong>。"),
        (False, "抽出重要度最高的 m 個變數，這樣樹才不會浪費分裂",
@@ -877,7 +877,7 @@ BODIES["modern"] = f"""
   $|T|$ 是葉子數、$w_m$ 是葉子的輸出值。<strong>$\\gamma$ 就是「多開一個葉子要付的錢」</strong>——
   形式上跟本頁 PART 03 的成本複雜度剪枝一模一樣，只是這次直接寫進目標函數，
   分裂增益算出來小於 $\\gamma$ 就不切。這也是為什麼 XGBoost 常被稱為
-  「a regularized version of gradient boosting」。''')}
+  「加了正則化的梯度提升」。''')}
 
   <p>該調哪些超參數？講義第 60–61 頁把三個套件的參數名對照起來，
   分成「求快」「求準」「防過度擬合」三組：</p>
@@ -936,7 +936,7 @@ BODIES["modern"] = f"""
 {quiz("qModern", "QUIZ · XGBoost 與後繼者",
       "XGBoost 相對於課本演算法 8.2 的梯度提升，最主要的<strong>統計</strong>差別是什麼？（不算工程加速）",
       [(True, "目標函數裡多了對樹本身的正則化項（葉子數 γ|T| 與葉值的 L2 罰項）",
-        "對。所以 XGBoost 常被說成 <em>a regularized version of gradient boosting</em>。它另外還用了二階（牛頓法式）近似，比單純用一階梯度更精準。"),
+        "對。所以 XGBoost 常被說成<strong>「加了正則化的梯度提升」</strong>。它另外還用了二階（牛頓法式）近似，比單純用一階梯度更精準。"),
        (False, "它改用 bootstrap 抽樣，所以每棵樹只看部分資料",
         "把 boosting 跟 bagging 搞混了。<code>subsample &lt; 1</code> 確實可以隨機抽列（那叫 stochastic gradient boosting），這是可選的抽樣設定，與有放回的 bootstrap 不同；本題比較的是目標函數。"),
        (False, "它把序列改成並行，B 棵樹可以同時長",
@@ -1105,7 +1105,7 @@ BODIES["exercises"] = f"""
       [(True, "每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低",
         "對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度擬合</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\\sqrt{p}$ 只是預設值。"),
        (False, "曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B",
-        "那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 的原話是 <em>random forests will not overfit if we increase B</em>。"),
+        "那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 說的是<strong>「把 B 加大並不會讓隨機森林過度擬合」</strong>。"),
        (False, "m 愈小曲線一定愈低，因為去相關永遠讓變異更小",
         "限制 m 可增加多樣性，也可能讓樹錯過重要變數，造成整體誤差上升；Boston 就呈現這種結果。樹的預測能力須連同偏差與變異一起看。")])}
 """
