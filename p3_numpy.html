@@ -752,13 +752,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   串列的 <code>+</code> 是串接，陣列的 <code>+</code> 是逐元素相加。NumPy 讓這類整排數值運算更容易表達。
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的 list 與 ndarray 加法結果重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16listArrSvg" height="300"></svg>
       <div class="status-banner" id="w16laStatus"><span class="status-icon">›</span><span class="status-text">按「切換」看同一組數字在兩種容器裡的行為。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w16laTog()">切換：串列 ⇄ 陣列</button><button class="btn btn-reset" onclick="w16laReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 list 與 ndarray 加法結果重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -809,13 +809,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <div class="qa-a">兩件事。一是<strong>記憶體連續</strong>：整塊同型別的數字排在一起，CPU 一次抓一批；串列存的是一堆指標，每個元素都要再跳一次。二是<strong>迴圈在 C 裡面跑</strong>：<code>x**2</code> 不會回到 Python 逐個平方。</div>
   </details>
 </div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 00 · 自我檢測</div>
-  <p><code>a = [1, 2]</code>、<code>b = [3, 4]</code>，那麼 <code>a + b</code> 是什麼？</p>
-  <div class="quiz-options" id="qArrOptions"><div class="quiz-opt" data-correct="false" data-fb="你想的是逐元素相加，那是&lt;strong&gt;陣列&lt;/strong&gt;的行為。串列的 &lt;code&gt;+&lt;/code&gt; 是串接，不會去對齊位置。" onclick="quizCheck('qArr', this)"><span class="opt-letter">(A)</span> <code>[4, 6]</code></div><div class="quiz-opt" data-correct="true" data-fb="對。串列的 &lt;code&gt;+&lt;/code&gt; 把兩個串列接起來，長度是 2+2=4。要逐元素相加得先 &lt;code&gt;np.array(a) + np.array(b)&lt;/code&gt;。" onclick="quizCheck('qArr', this)"><span class="opt-letter">(B)</span> <code>[1, 2, 3, 4]</code></div><div class="quiz-opt" data-correct="false" data-fb="串列相加會直接串接內容，不檢查長度，&lt;code&gt;[1,2] + [3]&lt;/code&gt; 也會乖乖給你 &lt;code&gt;[1, 2, 3]&lt;/code&gt;。" onclick="quizCheck('qArr', this)"><span class="opt-letter">(C)</span> 會報錯，長度一樣才能相加</div></div>
-  <div class="quiz-feedback" id="qArrFeedback"></div>
-</div>
 </section>
 <section id="create">
 <!-- GEN:BEGIN sec:create -->
@@ -850,7 +843,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>2
 dtype(&#x27;int64&#x27;)
 (2, 2)</pre></div>
-  <p class="dx-note">lab 裡這三格是分開跑的，這裡併成一張卡方便對照；輸出仍逐字取自各自的儲存格。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="38,40,48">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
@@ -895,13 +887,13 @@ array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</pre></div>
   六個數字排成一排，或排成兩列三欄，底下是同一塊。一般情況則是能共用就回傳檢視，否則可能複製。若沒注意這個差別，
   之後修改一個變數時，可能漏看另一個變數也受到影響。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的 reshape/view 範例重繪；六個數值共享同一資料順序。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16reshapeSvg" height="320"></svg>
       <div class="status-banner" id="w16rsStatus"><span class="status-icon">›</span><span class="status-text">選一個形狀，看六個數字怎麼被重新分行。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16rsSet(1,6)">(6,)</button><button class="btn btn-toggle" onclick="w16rsSet(2,3)">(2, 3)</button><button class="btn btn-toggle" onclick="w16rsSet(3,2)">(3, 2)</button><button class="btn btn-toggle" onclick="w16rsSet(6,1)">(6, 1)</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 reshape/view 範例重繪；六個數值共享同一資料順序。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1003,13 +995,13 @@ x after we modify top left element of x_reshape:
   <em>「糟糕——發生了什麼？」</em>，因為 <code>A[[1,3],[0,2]]</code> 拿到的
   <strong>不是</strong> 第 1、3 列與第 0、2 欄交叉的那個 2×2 子矩陣。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的 4×4 陣列、花式索引與 np.ix_ 結果重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16idxSvg" height="340"></svg>
       <div class="status-banner" id="w16idxStatus"><span class="status-icon">›</span><span class="status-text">先自己猜哪幾格會亮，再按按鈕。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16idxSet(0)">A</button><button class="btn btn-toggle" onclick="w16idxSet(1)">A[[1,3]]</button><button class="btn btn-toggle" onclick="w16idxSet(2)">A[:,[0,2]]</button><button class="btn btn-toggle" onclick="w16idxSet(3)">A[[1,3],[0,2]]</button><button class="btn btn-toggle" onclick="w16idxSet(4)">np.ix_([1,3],[0,2])</button><button class="btn btn-toggle" onclick="w16idxSet(5)">A[1:4:2,0:3:2]</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 4×4 陣列、花式索引與 np.ix_ 結果重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1122,13 +1114,13 @@ array([[ 4,  6,  7],
   <code>A[np.array([0,1,0,1])]</code> 是<strong>整數</strong>索引，意思是「第 0、1、0、1 列」，會拿到四列而且有重複；<code>A[np.array([False,True,False,True])]</code> 才是布林索引，拿到兩列。長得很像，結果差很多。
 </div>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="自訂八個數值，用來呈現 Ch02 lab 所用的逐列布林遮罩規則。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16maskSvg" height="320"></svg>
       <div class="status-banner" id="w16maskStatus"><span class="status-icon">›</span><span class="status-text">拖動門檻線，看遮罩怎麼變。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w16maskStep(-2)">門檻 −2</button><button class="btn btn-step" onclick="w16maskStep(2)">門檻 +2</button><button class="btn btn-reset" onclick="w16maskReset()">重置</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>自訂八個數值，用來呈現 Ch02 lab 所用的逐列布林遮罩規則。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1224,13 +1216,13 @@ array([[ 4,  5,  6,  7],
   ① <strong>右對齊</strong>兩個 shape；② 缺的維度<strong>補 1</strong>；③ 長度是 1 的維度<strong>拉伸</strong>到對方的長度。任何一維兩邊既不相等、也沒有一邊是 1，就報錯。
 </div>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="自訂 shape 範例，依 NumPy 廣播規則計算相容性。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16bcastSvg" height="340"></svg>
       <div class="status-banner" id="w16bcStatus"><span class="status-icon">›</span><span class="status-text">選一組 shape，再按單步。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16bcCase(0)">(10,3) 與 (3,)</button><button class="btn btn-toggle" onclick="w16bcCase(1)">(10,3) 與 (10,1)</button><button class="btn btn-toggle" onclick="w16bcCase(2)">(10,3) 與 (10,)　✗</button><button class="btn btn-step" onclick="w16bcStep()">→ 單步</button><button class="btn btn-reset" onclick="w16bcReset()">重置</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>自訂 shape 範例，依 NumPy 廣播規則計算相容性。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1270,13 +1262,6 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
   <span class="info-label">減欄平均要小心方向</span>
   <code>X - X.mean(0)</code> 對，因為 <code>(3,)</code> 會對到欄。但 <code>X - X.mean(1)</code> 會報錯——<code>(10,)</code> 右對齊之後跑去對欄了。要減列平均得寫 <code>X - X.mean(1, keepdims=True)</code>，或 <code>X - X.mean(1)[:, None]</code>。
 </div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 05 · 自我檢測</div>
-  <p><code>X.shape</code> 是 <code>(100, 5)</code>。下列哪一個會報錯？</p>
-  <div class="quiz-options" id="qBcastOptions"><div class="quiz-opt" data-correct="false" data-fb="這個沒問題。&lt;code&gt;X.mean(0)&lt;/code&gt; 是 &lt;code&gt;(5,)&lt;/code&gt;，右對齊補成 &lt;code&gt;(1,5)&lt;/code&gt;，第一維拉伸成 100。這就是標準化的寫法。" onclick="quizCheck('qBcast', this)"><span class="opt-letter">(A)</span> <code>X - X.mean(0)</code></div><div class="quiz-opt" data-correct="true" data-fb="對，這個會報錯。&lt;code&gt;X.mean(1)&lt;/code&gt; 是 &lt;code&gt;(100,)&lt;/code&gt;，右對齊之後變成 &lt;code&gt;(1,100)&lt;/code&gt;，跟 5 對不上。要減列平均得加 &lt;code&gt;keepdims=True&lt;/code&gt;。" onclick="quizCheck('qBcast', this)"><span class="opt-letter">(B)</span> <code>X - X.mean(1)</code></div><div class="quiz-opt" data-correct="false" data-fb="這個沒問題。不給 axis 就是把整塊 500 個數字平均成一個純量，純量對任何形狀都能廣播。" onclick="quizCheck('qBcast', this)"><span class="opt-letter">(C)</span> <code>X - X.mean()</code></div></div>
-  <div class="quiz-feedback" id="qBcastFeedback"></div>
-</div>
 </section>
 <section id="agg">
 <!-- GEN:BEGIN sec:agg -->
@@ -1288,13 +1273,13 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
   <strong>axis 指的是「被摺掉」的那一維</strong>。
   <code>X.mean(0)</code> 摺掉第 0 維（列），剩下每一欄一個平均。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的 (10,3) 陣列與 axis 平均範例重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w16axisSvg" height="320"></svg>
       <div class="status-banner" id="w16axStatus"><span class="status-icon">›</span><span class="status-text">先猜結果的 shape，再按按鈕。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w16axSet(0)">axis=0（往下摺）</button><button class="btn btn-toggle" onclick="w16axSet(1)">axis=1（往右摺）</button><button class="btn btn-toggle" onclick="w16axSet(2)">不給 axis（全摺）</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 (10,3) 陣列與 axis 平均範例重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1343,18 +1328,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
   <span class="line">X = rng.standard_normal((<span class="num">10</span>, <span class="num">3</span>))</span>
   <span class="line">X</span>
   <span class="line">X.mean(axis=<span class="num">0</span>)</span></div>
-  <details class="qa-item reading-detail" id="w16detail-agg-out-1"><summary>查看完整 Lab 輸出</summary>
-<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[ 0.22578661, -0.35263079, -0.28128742],
-       [-0.66804635, -1.05515055, -0.39080098],
-       [ 0.48194539, -0.23855361,  0.9577587 ],
-       [-0.19980213,  0.02425957,  1.54582085],
-       [ 0.54510552, -0.50522874, -0.18283897],
-       [ 0.54052513,  1.93508803, -0.26962033],
-       [-0.24355868,  1.0023136 , -0.88645994],
-       [-0.29172023,  0.88253897,  0.58035002],
-       [ 0.0915167 ,  0.67010435, -2.82816231],
-       [ 1.02130682, -0.95964476, -1.66861984]])
-array([ 0.15030588,  0.14030961, -0.34238602])</pre></div></div></details>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
   <p class="dx-note">X 是 (10, 3)，摺掉列之後剩三個數字，每一欄一個平均。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="89,91">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
@@ -1396,7 +1370,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div></div></details>
   <code>np.random.normal(...)</code> 用的是全域狀態，誰在哪裡呼叫都會動到它。新版建議自己開一個產生器：<code>rng = np.random.default_rng(1303)</code>，之後都用 <code>rng.</code> 開頭。
 </div>
 
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="simulation" data-source-note="瀏覽器端常態抽樣；固定種子模式可重現，統計量由當次樣本即時計算。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w16randChart"></canvas>
@@ -1404,7 +1378,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div></div></details>
       </div>
       <div class="status-banner" id="w16rdStatus"><span class="status-icon">›</span><span class="status-text">先固定種子按兩次重抽，再取消固定按兩次。</span></div>
       <div class="controls-bar"><button class="btn btn-play" onclick="w16rdDraw()">▶ 重抽一次</button><button class="btn btn-toggle" id="w16rdSeedBtn" onclick="w16rdSeedTog()">固定種子：開</button><button class="btn btn-step" onclick="w16rdSize()">切換 n：50 ⇄ 500</button><button class="btn btn-reset" onclick="w16rdReset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>瀏覽器端常態抽樣；固定種子模式可重現，統計量由當次樣本即時計算。</div>
+      <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1457,21 +1431,12 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div></div></details>
   <p class="dx-note">對角線一定是 1，非對角線是兩個變數的相關係數。第 3 章看共線性時會一直用到這個矩陣。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="78">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div></div></details>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 07 · 自我檢測</div>
-  <p>你在報告裡寫「自助法 1000 次估出的標準誤是 0.24」，但助教跑出 0.26。最可能的原因是？</p>
-  <div class="quiz-options" id="qSeedOptions"><div class="quiz-opt" data-correct="false" data-fb="先核對資料與重現性設定，確認兩次使用的樣本和種子，再檢查演算法實作。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(A)</span> 自助法本身有 bug</div><div class="quiz-opt" data-correct="true" data-fb="對。自助法的估計本身就有隨機性，B=1000 的蒙地卡羅誤差足以造成這種差距。寫 &lt;code&gt;rng = np.random.default_rng(0)&lt;/code&gt; 並在報告裡註明種子，別人才重現得出來。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(B)</span> 沒有固定種子，兩次抽到的重抽樣本不同</div><div class="quiz-opt" data-correct="false" data-fb="樣本數影響的是估計的精確度，不是「同一份資料跑兩次結果不同」。這裡的差異來自重抽的隨機性，不是資料量。" onclick="quizCheck('qSeed', this)"><span class="opt-letter">(C)</span> 樣本數不夠大</div></div>
-  <div class="quiz-feedback" id="qSeedFeedback"></div>
-</div>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
-  程式碼範例，觀察結果。</p>
+  <p>回顧本頁觀念與原 Lab 的程式，確認各個操作的意義與使用條件。</p>
   <div class="sol-links"><a href="https://numpy.org/doc/stable/user/absolute_beginners.html" target="_blank" rel="noopener">🔗 NumPy 官方教學</a><a href="https://numpy.org/doc/stable/user/basics.broadcasting.html" target="_blank" rel="noopener">🔗 NumPy 廣播規則</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch02 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1489,12 +1454,6 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div></div></details>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 3 · 廣播</div>
-  <p><code>a.shape</code> 是 <code>(3, 1)</code>、<code>b.shape</code> 是 <code>(1, 4)</code>，<code>(a + b).shape</code> 是什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="廣播不要求形狀相同，只要求每一維&lt;strong&gt;要嘛相等、要嘛有一邊是 1&lt;/strong&gt;。這裡兩維都有一邊是 1。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 會報錯，形狀完全不同</div><div class="quiz-opt" data-correct="true" data-fb="對。第一維是 3 與 1 → 拉伸成 3；第二維是 1 與 4 → 拉伸成 4。這種「列向量加欄向量得到矩陣」的寫法在算距離矩陣時很常用。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> <code>(3, 4)</code></div><div class="quiz-opt" data-correct="false" data-fb="廣播的結果是&lt;strong&gt;兩邊各維取較大者&lt;/strong&gt;，不會停在其中一個的形狀。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> <code>(3, 1)</code></div></div>
-  <div class="quiz-feedback" id="qEx3Feedback"></div>
-</div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 檢視與複本</div>
@@ -1533,7 +1492,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div></div></details>
   <strong>1. shape 是 (列, 欄)，列在前。</strong>看不懂錯誤訊息就先印 shape。<br><strong>2. 基本切片給的是檢視；reshape 可行時共用資料，否則複製。花式索引與布林索引給的是複本。</strong>不確定就 <code>.copy()</code>。<br><strong>3. axis 指的是被摺掉的那一維。</strong>axis=0 往下摺得到欄的統計量，axis=1 往右摺得到列的統計量。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+
 </div></details>
 </section>
 <section id="cards">

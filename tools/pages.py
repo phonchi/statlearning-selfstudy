@@ -81,6 +81,7 @@ class Page:
     hero_svg: str              # hero 裝飾 SVG 的內容
     secs: list = field(default_factory=list)
     bankquiz: bool = False
+    show_exercises: bool = True  # 只有保留題目或原教材練習時才顯示
     # study-guide 上額外的連結 pill，[(標籤, 網址), ...]。補充章用它掛官方 lab；
     # 既有章留空，studyguide() 的輸出 byte 不變。
     extra_pills: list = field(default_factory=list)
@@ -1023,6 +1024,11 @@ from statistics_pages import make_pages as _statistics_pages
 _appendix_start = next(i for i, p in enumerate(PAGES) if p.grp == "appendix")
 PAGES[_appendix_start:_appendix_start] = _statistics_pages(Page, Sec)
 
+# No replacement exercises are invented when unsupported numeric questions are removed.
+for _page in PAGES:
+    if _page.stem == "s6_regression":
+        _page.show_exercises = False
+
 BY_STEM = {p.stem: p for p in PAGES}
 BY_N = {p.n: p for p in PAGES}
 
@@ -1047,7 +1053,8 @@ def tokens(page: Page):
         else:
             part += 1
             out.append((s, f"P{part:02d}", f"PART {part:02d} · {s.short}"))
-    out.append((Sec("exercises", "練習題", "", ""), "EX", "EXERCISES · 練習"))
+    if page.show_exercises:
+        out.append((Sec("exercises", "練習題", "", ""), "EX", "EXERCISES · 練習"))
     out.append((Sec("reference", "重點速查與來源", "", ""), "速查", "重點速查與來源"))
     if page.bankquiz:
         out.append((Sec("bankquiz", "自我檢測", "", ""), "QUIZ", "QUIZ · 自我檢測"))

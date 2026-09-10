@@ -750,7 +750,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>先畫圖，再算數字。</strong>圖告訴你「這份資料長什麼樣」，數字告訴你「有多強」——順序反過來很容易被騙。
 </div>
 
-<div class="viz-layout" data-provenance="book-redraw">
+<div class="viz-layout" data-provenance="book-redraw" data-source-note="Anscombe (1973) 四重奏原始數據；摘要由圖中同一批點即時計算。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w18sameChart"></canvas>
@@ -758,7 +758,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       </div>
       <div class="status-banner" id="w18smStatus"><span class="status-icon">›</span><span class="status-text">四組資料，摘要統計幾乎相同。先看數字，再按按鈕看形狀。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w18smSet(0)">I</button><button class="btn btn-toggle" onclick="w18smSet(1)">II</button><button class="btn btn-toggle" onclick="w18smSet(2)">III</button><button class="btn btn-toggle" onclick="w18smSet(3)">IV</button></div>
-      <div class="viz-source"><span>講義／課本重繪</span>Anscombe (1973) 四重奏原始數據；摘要由圖中同一批點即時計算。</div>
+      <div class="viz-source"><span>講義／課本重繪</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -813,19 +813,19 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="section-number">PART 01 · 圖形層級與 Seaborn 分類</div>
   <h2>Figure、Axes 與 Seaborn 的圖形分類 <span class="sec-badge">講義 01</span><span class="sec-badge">課程 Lab Ch2 · lab 範例</span><span class="sec-badge">seaborn 文件 · 圖形分類</span></h2>
 <!-- GEN:END sec:anat -->
-<p>想把多張圖放進同一張 Figure，使用接受 <code>ax=</code> 的函式，例如 <code>histplot</code>、<code>boxplot</code>。<code>relplot</code>、<code>displot</code>、<code>catplot</code> 則管理自己的 Figure。存目前這張圖可用 <code>fig.savefig("figure.png")</code>。</p>
+
   <p>使用 matplotlib 時，先分清設定屬於哪一層：
   <strong>Figure 是整張畫布</strong>（大小、存檔、標題），
   <strong>Axes 是裡面的一個座標系</strong>（畫點、設軸範圍、加圖例）。
   一張 Figure 可以有很多個 Axes。</p>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="依 matplotlib 的 Figure／Axes／Axis／Artist 物件層級製作概念示意。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18anatSvg" height="320"></svg>
       <div class="status-banner" id="w18anStatus"><span class="status-icon">›</span><span class="status-text">先分清楚哪一層是哪一層，之後查文件會快很多。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w18anSet(0)">Figure</button><button class="btn btn-toggle" onclick="w18anSet(1)">Axes</button><button class="btn btn-toggle" onclick="w18anSet(2)">Axis（軸）</button><button class="btn btn-toggle" onclick="w18anSet(3)">Artist（點、線、字）</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>依 matplotlib 的 Figure／Axes／Axis／Artist 物件層級製作概念示意。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -864,13 +864,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="dx-src" data-lab-ch="2" data-lab-cells="105">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的 2×3 subplots 與 axes 索引範例重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18gridSvg" height="300"></svg>
       <div class="status-banner" id="w18gdStatus"><span class="status-icon">›</span><span class="status-text">點任一格，看它的索引。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w18gdNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18gdReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 2×3 subplots 與 axes 索引範例重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1034,13 +1034,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>調參數之前先想好你要回答什麼問題。</strong>想看「有沒有兩群」就把 bins 調細一點；想看「大致集中在哪」就調粗一點。也要比較其他設定下的結果，確認看到的形狀是否穩定。
 </div>
 
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="simulation" data-source-note="固定種子 20260828 的雙峰常態混合模擬；120 筆資料由頁面即時計算。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18binsSvg" height="340"></svg>
       <div class="status-banner" id="w18bnStatus"><span class="status-icon">›</span><span class="status-text">先猜這份資料有幾個峰，再把 bins 從 4 拉到 40。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w18bnStep(-4)">參數 −</button><button class="btn btn-step" onclick="w18bnStep(4)">參數 +</button><button class="btn btn-toggle" onclick="w18bnMode()">切換：直方圖 ⇄ 密度圖</button><button class="btn btn-reset" onclick="w18bnReset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>固定種子 20260828 的雙峰常態混合模擬；120 筆資料由頁面即時計算。</div>
+      <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1108,13 +1108,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>用顏色、大小、分面在同一張圖中呈現第三、第四個變數</strong>——
   <code>hue</code>、<code>size</code>、<code>col</code> 這三個參數值得記起來。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch01 lab 實際使用的 seaborn 圖型與變數型別整理。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18pickSvg" height="340"></svg>
       <div class="status-banner" id="w18pkStatus"><span class="status-icon">›</span><span class="status-text">選 x 與 y 的型別。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w18pkSet(0)">數值 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(1)">類別 × 數值</button><button class="btn btn-toggle" onclick="w18pkSet(2)">類別 × 類別</button><button class="btn btn-toggle" onclick="w18pkSet(3)">單一數值</button><button class="btn btn-toggle" onclick="w18pkSet(4)">時間 × 數值</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 實際使用的 seaborn 圖型與變數型別整理。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1193,13 +1193,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>countplot 講「有幾筆」、barplot 講「平均是多少」、boxplot 講「分布長怎樣」</strong>。
   選圖前先確認你要比較筆數、平均還是分布。</p>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="A、B 兩組固定示意資料；平均、盒鬚摘要與視覺倍率皆由同一批觀測即時計算。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18misSvg" height="340"></svg>
       <div class="status-banner" id="w18msStatus"><span class="status-icon">›</span><span class="status-text">先看左邊，再按「截斷 y 軸」。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w18msSet(0)">y 軸從 0 開始</button><button class="btn btn-toggle" onclick="w18msSet(1)">截斷 y 軸</button><button class="btn btn-toggle" onclick="w18msSet(2)">改用盒鬚圖</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>A、B 兩組固定示意資料；平均、盒鬚摘要與視覺倍率皆由同一批觀測即時計算。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1289,13 +1289,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>最後一種圖：<strong>把擬合好的模型畫在資料上面</strong>。
   把模型與觀測放在一起，可以檢查模型如何描述資料，以及哪些地方有差距。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch01 lab 的 tips.corr(numeric_only=True) 相關矩陣重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w18corrSvg" height="340"></svg>
       <div class="status-banner" id="w18crStatus"><span class="status-icon">›</span><span class="status-text">點格子看那一對變數的相關係數。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w18crNext()">→ 下一格</button><button class="btn btn-reset" onclick="w18crReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的 tips.corr(numeric_only=True) 相關矩陣重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1398,9 +1398,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
-  程式碼範例，觀察結果。</p>
+  <p>回顧本頁觀念與原 Lab 的程式，確認各個操作的意義與使用條件。</p>
   <div class="sol-links"><a href="https://seaborn.pydata.org/tutorial.html" target="_blank" rel="noopener">🔗 seaborn 教學</a><a href="https://matplotlib.org/stable/users/explain/quick_start.html" target="_blank" rel="noopener">🔗 Matplotlib 快速入門</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1462,7 +1460,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>1. 先畫圖再算數字。</strong>摘要統計會漏掉形狀，相關係數一樣的兩份資料可以長得完全不同。<br><strong>2. bins 與頻寬會影響圖形呈現的細緻程度。</strong>調參數之前先想好要回答什麼問題。<br><strong>3. countplot 講筆數、barplot 講平均、boxplot 講分布。</strong>三種長條講三件事，不要混用。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+
 </div></details>
 </section>
 <section id="cards">

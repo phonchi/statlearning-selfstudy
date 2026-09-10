@@ -156,11 +156,6 @@ BODIES["sampling"] = f"""
 {hook("後續用途", "<a href='linear_regression.html#inference'>線性迴歸的係數推論</a>要理解估計量在重複抽樣下如何變動；"
       "<a href='resampling_methods.html#bootstrap'>Bootstrap</a>則用重抽樣近似難以直接推導的抽樣分佈。")}
 
-{quiz("qSampling", "PART 04 · 自我檢測", "母體標準差為 12。獨立抽樣 $n=36$ 時，樣本平均的標準差是多少？", [
-    (False, "$12/36=1/3$", "標準差按 1/√n 縮小；按 1/n 縮小的是變異數。"),
-    (True, "$12/\\sqrt{{36}}=2$", "對。樣本平均的標準差，也就是標準誤，為 σ/√n。"),
-    (False, "$12\\sqrt{{36}}=72$", "平均多個獨立觀測會更集中，標準差不會放大。"),
-])}
 {source("Central Limit Theorem 前的抽樣準備", 38)}
 """
 
@@ -204,27 +199,12 @@ BODIES["clt"] = f"""
 """
 
 BODIES["exercises"] = f"""
-{quiz("qEx1", "EXERCISE 1 · 原創", "擲一顆公平骰子，令 $X=1$ 表示點數大於 4，否則 $X=0$。$X$ 的分佈為何？", [
-    (True, "$\\mathrm{{Bernoulli}}(1/3)$", "對。成功結果是 5、6，共占六個等可能結果中的兩個。"),
-    (False, "$\\mathrm{{Binomial}}(6,1/3)$", "只擲一次，所以是一次 Bernoulli；n=6 不是骰子的面數。"),
-    (False, "$U(1,6)$", "X 只取 0 或 1；均勻分佈 U(1,6) 是連續模型。"),
-])}
-{quiz("qEx2", "EXERCISE 2 · 原創", "若 $X\\sim U(0,8)$，$P(2\\le X\\le5)$ 為何？", [
-    (False, "$2/8$", "區間 [2,5] 的長度是 3，不是左端點 2。"),
-    (True, "$3/8$", "對。均勻分佈的機率等於子區間長度 3 除以總長度 8。"),
-    (False, "$5/8$", "5 是右端點，不是區間長度；要用 5−2。"),
-])}
-{quiz("qEx3", "EXERCISE 3 · 原創", "某母體平均為 50、標準差為 18。獨立抽樣 81 筆時，樣本平均的平均與標準差為何？", [
-    (False, "平均 50、標準差 18", "樣本平均保留母體平均，但標準差會縮小。"),
-    (True, "平均 50、標準差 2", "對。E(平均)=50，SD(平均)=18/√81=2。"),
-    (False, "平均 50/81、標準差 18/81", "取平均不會把期望值除以 n；標準差則除以 √n。"),
-])}
 {quiz("qEx4", "EXERCISE 4 · 原創", "增加樣本數後，某次樣本平均反而離母體平均更遠。這與大數法則矛盾嗎？", [
     (False, "矛盾，因為誤差必須每一步都下降", "大數法則沒有單調保證；單次路徑可以暫時走遠。"),
     (True, "不矛盾；定理描述長期機率行為，不保證逐步單調", "對。樣本數增加會讓大幅偏離愈來愈不可能，但某一步仍可反向波動。"),
     (False, "不矛盾，因為樣本平均永遠不會收斂", "在條件成立時樣本平均會收斂；錯的是把收斂誤讀成每一步都更近。"),
 ])}
-  <p class="source-note"><strong>題目來源：</strong>四題均為本站原創，觀念範圍對照
+  <p class="source-note"><strong>題目來源：</strong>觀念範圍對照
   <a href="{ST3}">Seeing Theory 第 3 章</a>與<a href="{STPDF}#page=31">PDF pp.31–40</a>。</p>
 """
 
@@ -239,7 +219,7 @@ BODIES["reference"] = f"""
 ])}
   <p><a href="{ST3}">Seeing Theory · Probability Distributions</a>提供隨機變數、離散／連續分佈與 CLT 的原始互動章節；
   <a href="{STPDF}#page=31">Seeing Theory PDF pp.31–40</a>提供定義、分佈族與定理脈絡。</p>
-  <p class="ver-note">本頁例題、測驗與互動圖均為本站原創；CLT 圖使用固定種子 20260923，每次最多模擬 1,600 個觀測。本頁不引用課程 lab，也不使用預先產生的圖表；重置會完整回到預設分佈、參數與種子狀態。</p>
+  
 """
 
 
@@ -498,14 +478,11 @@ $$E[X]=\sum_i p=np,\qquad \operatorname{Var}(X)=\sum_i p(1-p)=np(1-p).$$
 參數 λ 是該範圍的期望計數；模型同時限制平均與變異數相等：</p>
 $$P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!},\quad k=0,1,\ldots,\quad\lambda&gt;0;
 \qquad E[X]=\operatorname{Var}(X)=\lambda.$$
-<p>λ=2 時，零次的機率為 $e^{-2}\approx0.1353$，恰好一次為 $2e^{-2}\approx0.2707$。
-<a href="classification.html#poisson">分類章的 Poisson 迴歸</a>讓這個條件平均隨解釋變數改變。
-若資料有明顯過度離散，單純 Poisson 的變異數假設就需要再檢查。</p>
+
 <p><strong>指數分布（Exponential）</strong>描述非負連續等待時間，以 λ 表示率參數：</p>
 $$f(t)=\lambda e^{-\lambda t}\ (t\ge0),\qquad
 P(T&gt;t)=e^{-\lambda t},\qquad E[T]=\frac1\lambda,\quad\operatorname{Var}(T)=\frac1{\lambda^2}.$$
-<p>例如每分鐘率 λ=2 的模型，平均等待時間為 0.5 分鐘，等待超過一分鐘的機率為 $e^{-2}$。
-在同質 Poisson 過程中，長度 t 的計數平均是 λt，而相鄰事件等待時間是此指數分布；任意計數資料不一定符合這種過程。</p>
+
 """ + proof('w23proof-exponential','指數分布的面積與等待機率',r"""
 $$\int_0^\infty\lambda e^{-\lambda u}\,du=1,\qquad
 P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$

@@ -44,7 +44,10 @@ def apply(stem: str, bodies: dict, pagejs: str, frames: str = ""):
     dest = ROOT / f"{stem}.html"
     src = dest.read_text(encoding="utf-8")
     before = src
+    from pages import BY_STEM
     for sid, body in bodies.items():
+        if sid == "exercises" and not BY_STEM[stem].show_exercises:
+            continue
         src = splice_section(src, sid, fragment(body))
     pagejs = prose(pagejs)
     src = splice_pagejs(src, (frames + "\n\n" + pagejs) if frames else pagejs)
@@ -135,8 +138,8 @@ def table(headers, rows, cls="cmp-table", fontsize=".85rem"):
 PROVENANCE_LABELS = {
     "course-data": "課程／lab 資料",
     "book-redraw": "講義／課本重繪",
-    "simulation": "固定種子模擬",
-    "illustrative": "自訂概念示意",
+    "simulation": "模擬示意",
+    "illustrative": "概念示意",
 }
 
 
@@ -150,8 +153,9 @@ def viz(stage, side_cards, status_id, status_text, controls, provenance):
     if kind not in PROVENANCE_LABELS:
         raise ValueError(f"未知的視覺 provenance：{kind}")
     attr = f' data-provenance="{kind}"'
-    source = (f'\n      <div class="viz-source"><span>{PROVENANCE_LABELS[kind]}</span>'
-              f'{detail}</div>')
+    from html import escape
+    attr += f' data-source-note="{escape(detail, quote=True)}"'
+    source = f'\n      <div class="viz-source"><span>{PROVENANCE_LABELS[kind]}</span></div>'
     return f"""<div class="viz-layout"{attr}>
   <div>
     <div class="viz-panel">
@@ -167,6 +171,8 @@ def viz(stage, side_cards, status_id, status_text, controls, provenance):
 
 
 def info_card(title, body, badge=""):
+    if badge.strip().upper() in {"LIVE", "BAKED", "LIVE + BAKED", "BAKED + LIVE", "CODE", "DATA", "LAB", "SIMULATION", "REPLAY"}:
+        badge = ""
     b = f' <span class="ic-badge">{badge}</span>' if badge else ""
     return (f'    <div class="info-card">\n      <div class="ic-title">{title}{b}</div>\n'
             f'      {body}\n    </div>')
@@ -191,21 +197,8 @@ def svg(sid, height=340):
 
 
 def ver_note(labs=(), include_frames=True):
-    """REF 區的環境版本註記。
-
-    labs 給先備頁用：一頁會引用多份 lab，把它們列出來。不給就是舊行為。
-    include_frames=False 給沒有烘焙圖表的概念頁，避免註記宣稱頁面使用了 frames。
-    兩個參數都保留預設值，既有正課頁的輸出逐字不變。
-    """
-    import pages as P
-    src = ("課程 lab notebook" if not labs else
-           "課程 lab notebook（" + "、".join(f"Ch{c:02d}" for c in labs) + "）")
-    frames = (f'圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，'
-              f'環境為 {P.ENV_NOTE}。') if include_frames else (
-                  f'考前的 Python 與套件版本請依<a href="{P.CLASSROOM_PACKAGES}">電腦教室版本清單</a>核對。')
-    return (f'<p class="ver-note">本頁「預期輸出」逐字取自{src}（老師在課程環境實跑）；'
-            f'{frames}'
-            f'每張程式碼卡下方可開啟對應的 lab 筆記本。</p>')
+    """Compatibility entrypoint: production/version reports are not lesson content."""
+    return ""
 
 
 def hook(title, body):

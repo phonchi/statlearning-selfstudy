@@ -764,12 +764,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </details>
 </div>
 
-<div class="quiz-box">
-  <div class="quiz-label">PART 01 · 自我檢測</div>
-  <p>擲一顆公平六面骰，$A$ 為偶數、$B$ 為至少 4。$P(A\cup B)$ 是多少？</p>
-  <div class="quiz-options" id="qEventOptions"><div class="quiz-opt" data-correct="false" data-fb="把 $P(A)$ 與 $P(B)$ 直接相加，會把交集 4、6 各算兩次。" onclick="quizCheck('qEvent', this)"><span class="opt-letter">(A)</span> $1$</div><div class="quiz-opt" data-correct="true" data-fb="對。聯集是 {2,4,5,6}，共 4 個等可能結果，所以機率是 4/6。" onclick="quizCheck('qEvent', this)"><span class="opt-letter">(B)</span> $2/3$</div><div class="quiz-opt" data-correct="false" data-fb="這是交集 {4,6} 的機率，不是聯集。" onclick="quizCheck('qEvent', this)"><span class="opt-letter">(C)</span> $1/3$</div></div>
-  <div class="quiz-feedback" id="qEventFeedback"></div>
-</div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Set Theory</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="19">PDF p.19</a>。本頁文字、例題與圖均重新製作。</p>
 
 <details class="qa-item reading-detail" id="w22detail-set-laws"><summary>延伸：分配律、De Morgan 與條件取反</summary>
@@ -802,13 +796,13 @@ $$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
   看到直線右邊的事件，就先把它圈成新的全部。$P(A\mid B)$ 的分母是 $B$；$P(B\mid A)$ 的分母是 $A$。兩者通常不相等。
 </div>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="本站自訂 2×2 人數表；所有比例由輸入值即時計算。">
   <div>
     <div class="viz-panel">
       <svg role="img" aria-label="事件 A 與 B 的可編輯二乘二人數表" class="viz-svg" id="w22condSvg" height="330"></svg>
       <div class="status-banner" id="w22condStatus"><span class="status-icon">›</span><span class="status-text">目前共有 18 人篩檢陽性，其中 8 人真的有疾病。</span></div>
       <div class="controls-bar"><label>A 且 B <input id="w22n11" type="number" min="0" max="999" value="8" aria-label="事件 A 與 B 同時發生的人數" oninput="w22condDraw()"></label><label>A 且非 B <input id="w22n10" type="number" min="0" max="999" value="2" aria-label="事件 A 發生且 B 未發生的人數" oninput="w22condDraw()"></label><label>非 A 且 B <input id="w22n01" type="number" min="0" max="999" value="10" aria-label="事件 A 未發生且 B 發生的人數" oninput="w22condDraw()"></label><label>皆否 <input id="w22n00" type="number" min="0" max="999" value="80" aria-label="事件 A 與 B 都未發生的人數" oninput="w22condDraw()"></label><button class="btn btn-reset" onclick="w22condReset()">重置</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>本站自訂 2×2 人數表；所有比例由輸入值即時計算。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -834,12 +828,6 @@ $$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
   </details>
 </div>
 
-<div class="quiz-box">
-  <div class="quiz-label">PART 02 · 自我檢測</div>
-  <p>某班 30 人中有 12 人修微積分，其中 9 人也修程式設計。已知一位同學修微積分，他也修程式設計的機率是多少？</p>
-  <div class="quiz-options" id="qCondOptions"><div class="quiz-opt" data-correct="true" data-fb="對。條件是修微積分，所以分母只剩這 12 人，其中 9 人也修程式設計。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(A)</span> $9/12=0.75$</div><div class="quiz-opt" data-correct="false" data-fb="這用的是全班 30 人當分母，算到的是兩科都修的聯合比例。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(B)</span> $9/30=0.30$</div><div class="quiz-opt" data-correct="false" data-fb="這是修微積分的邊際機率，沒有利用「其中 9 人也修程式設計」。" onclick="quizCheck('qCond', this)"><span class="opt-letter">(C)</span> $12/30=0.40$</div></div>
-  <div class="quiz-feedback" id="qCondFeedback"></div>
-</div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Conditional Probability</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="27">PDF p.27</a>。本頁文字、例題與圖均重新製作。</p>
 </section>
 <section id="independence">
@@ -887,24 +875,14 @@ $$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
   <p>若 $A$ 與 $A^c$ 分割所有人，分母可用全機率公式展開：</p>
   $$P(B)=P(B\mid A)P(A)+P(B\mid A^c)P(A^c).$$
 
-  <details class="qa-item reading-detail" id="w22detail-bayes-example"><summary>算一次：陽性結果與基準率</summary>
-<div class="detail-body"><p><strong>數值例。</strong>某疾病盛行率為 1%，檢測對病人的陽性率為 90%，
-  對健康者的偽陽性率為 5%。在 10,000 人中，預期有 100 位病人，其中 90 位陽性；
-  9,900 位健康者中約 495 位也陽性。因此：</p>
-  $$P(\text{疾病}\mid +)=\frac{90}{90+495}\approx0.154.$$
-  <p>陽性結果確實提高了罹病機率，從 1% 變成約 15.4%；但高敏感度本身無法保證陽性後機率很高。
-  這就是基準率（base rate）不可省略的原因。</p>
+  
+  
+  
 
-<div class="quiz-box">
-  <div class="quiz-label">PART 04 · 自我檢測</div>
-  <p>沿用上例，一個人驗出陽性後，最接近的罹病機率是哪一個？</p>
-  <div class="quiz-options" id="qBayesOptions"><div class="quiz-opt" data-correct="false" data-fb="90% 是 P(陽性｜疾病)，條件方向與題目要的 P(疾病｜陽性) 相反。" onclick="quizCheck('qBayes', this)"><span class="opt-letter">(A)</span> 90%</div><div class="quiz-opt" data-correct="true" data-fb="對。陽性者預期共有 90+495=585 人，其中 90 人有病，90/585 約為 15.4%。" onclick="quizCheck('qBayes', this)"><span class="opt-letter">(B)</span> 15%</div><div class="quiz-opt" data-correct="false" data-fb="1% 是檢測前的基準率；陽性結果會更新這個機率。" onclick="quizCheck('qBayes', this)"><span class="opt-letter">(C)</span> 1%</div></div>
-  <div class="quiz-feedback" id="qBayesFeedback"></div>
-</div></div></details><div class="info-box purple">
+<div class="info-box purple">
   <span class="info-label">🔗 後續用途</span>
   <a href='classification.html#lda'>分類第 LDA 節</a>會用 Bayes 定理把類別條件密度轉成後驗類別機率；<a href='statistical_learning.html#bayes'>統計學習的 Bayes 分類器</a>則選後驗機率最大的類別。
 </div>
-
 
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Bayes Rule</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="28">PDF p.28</a>。本頁文字、例題與圖均重新製作。</p>
 <details class="qa-item proof" id="w22proof-bayes"><summary>證明：從條件機率得到 Bayes 公式</summary>
@@ -930,58 +908,27 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
     \binom{n}{r}=\frac{n!}{r!(n-r)!}.$$
 
   <p>符號 $n!$ 讀作 n 的階乘，表示從 n 乘到 1，例如 $4!=4\times3\times2\times1=24$；約定 $0!=1$。這裡 n 與 r 為整數，且 $0\le r\le n$，每個物件最多選一次。</p>
-  <p><strong>數值例。</strong>五位同學選班長與副班長，職位不同，所以有
-  $P_{5,2}=5\times4=20$ 種；若只選兩位代表而不分職位，則每一對的先後被重算兩次，
-  共有 $\binom{5}{2}=10$ 組。</p>
+  
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>問題</th><th>順序重要嗎</th><th>計算</th><th>結果</th></tr></thead>
-  <tbody><tr><td>5 人選班長、副班長</td><td>重要</td><td>$5\times4$</td><td>20</td></tr><tr><td>5 人選 2 位代表</td><td>不重要</td><td>$5\times4/2!$</td><td>10</td></tr><tr><td>擲 3 次硬幣恰有 2 次正面</td><td>正面在哪兩次很重要</td><td>$\binom{{3}}{{2}}(1/2)^3$</td><td>$3/8$</td></tr></tbody>
-</table></div>
 
-<div class="quiz-box">
-  <div class="quiz-label">PART 05 · 自我檢測</div>
-  <p>10 本不同的書選 3 本帶走，不考慮排列順序，應用哪一個數量？</p>
-  <div class="quiz-options" id="qCountOptions"><div class="quiz-opt" data-correct="false" data-fb="這允許同一本書被重複選，而且把三次選取視為有順序，不符合題意。" onclick="quizCheck('qCount', this)"><span class="opt-letter">(A)</span> $10^3$</div><div class="quiz-opt" data-correct="false" data-fb="這算排列，把相同三本書的 3! 種先後都分開計算。" onclick="quizCheck('qCount', this)"><span class="opt-letter">(B)</span> $10\times9\times8$</div><div class="quiz-opt" data-correct="true" data-fb="對。物件不同、不重複，且只在乎選到哪三本，所以用組合。" onclick="quizCheck('qCount', this)"><span class="opt-letter">(C)</span> $\binom{{10}}{{3}}=120$</div></div>
-  <div class="quiz-feedback" id="qCountFeedback"></div>
-</div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Counting</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="23">PDF p.23</a>。本頁文字、例題與圖均重新製作。</p>
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 4 · 計數延伸〔選讀〕</div>
-  <p>八位跑者選出金、銀、銅牌，假設不並列，共有幾種名次結果？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="獎牌有順序，同三人交換金銀銅會是不同結果。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> $\binom{{8}}{{3}}=56$</div><div class="quiz-opt" data-correct="true" data-fb="對。依序選金、銀、銅，每次少一人。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> $8\times7\times6=336$</div><div class="quiz-opt" data-correct="false" data-fb="這允許同一人同時拿多面獎牌，不符合不重複。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> $8^3=512$</div></div>
-  <div class="quiz-feedback" id="qEx4Feedback"></div>
-</div></div></details>
+</div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>用算例檢查理解 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>以下是依本頁觀念自訂的練習。先寫下判斷與理由，再點選答案；每個選項都有解說。
-  回到互動調整條件，確認你的解釋是否仍然成立。</p>
+  <h2>複習本頁概念 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>回顧本頁概念與原教材，檢查自己能否說明公式、圖形與成立條件。</p>
   <div class="sol-links"><a href="https://seeing-theory.brown.edu/compound-probability/index.html" target="_blank" rel="noopener">🔗 本章原站延伸</a></div>
 <!-- GEN:END sec:exercises -->
 
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 1 · 原創</div>
-  <p>袋中有 3 顆紅球、2 顆藍球，不放回抽兩顆。第二顆是紅球，且已知第一顆是藍球，其機率為何？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="條件發生後袋中只剩 4 顆球，分母要更新。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> $3/5$</div><div class="quiz-opt" data-correct="true" data-fb="對。第一顆藍球已移除，剩 3 紅、1 藍。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> $3/4$</div><div class="quiz-opt" data-correct="false" data-fb="剩下的藍球只有 1 顆；題目問的是紅球。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> $2/4$</div></div>
-  <div class="quiz-feedback" id="qEx1Feedback"></div>
-</div>
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 2 · 原創</div>
-  <p>若 $P(A)=0.4$、$P(B)=0.5$ 且兩事件獨立，$P(A\cup B)$ 為何？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。交集為 0.4×0.5=0.2，所以聯集為 0.4+0.5−0.2=0.7。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> $0.7$</div><div class="quiz-opt" data-correct="false" data-fb="直接相加沒有扣掉交集，會把同時發生算兩次。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> $0.9$</div><div class="quiz-opt" data-correct="false" data-fb="0.2 是獨立時的交集機率，不是聯集。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> $0.2$</div></div>
-  <div class="quiz-feedback" id="qEx2Feedback"></div>
-</div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 原創</div>
   <p>某警報在火災時有 98% 會響，無火災時有 2% 會誤響。要算警報響後有火災的機率，還缺哪項？</p>
   <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="音量不在目前的機率模型裡，無法補出 Bayes 公式的先驗。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 警報音量</div><div class="quiz-opt" data-correct="true" data-fb="對。還需要 P(火災)，才能加權真陽性與偽陽性。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 火災的基準率</div><div class="quiz-opt" data-correct="false" data-fb="兩個條件機率不能直接相加；它們還要分別乘上火災與無火災的機率。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 把 98% 和 2% 相加</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
-
-  <p class="source-note"><strong>題目來源：</strong>四題均為本站原創，觀念範圍對照
+  <p class="source-note"><strong>題目來源：</strong>觀念範圍對照
   <a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章</a>與<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="19">PDF pp.19–30</a>。</p>
 </section>
 <section id="reference">
@@ -998,7 +945,7 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
 </table></div>
   <p><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory · Compound Probability</a>提供集合、計數與條件機率的原始互動章節；
   <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="19">Seeing Theory PDF pp.19–30</a>提供公式推導與完整例題脈絡。</p>
-  <p class="ver-note">本頁例題、測驗與互動圖均為本站原創；即時計算不使用外部資料。本頁不引用課程 lab，也不使用預先產生的圖表；互動重置會完整回到預設人數。</p>
+  
 </div></details>
 </section>
 <section id="cards">
@@ -1022,7 +969,7 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
 </div>
 <!-- GEN:BEGIN footer -->
 <footer>
-  互動式條件機率與獨立教學 · 參考 Seeing Theory 網站與講義，以原創算例與互動說明<br>
+  互動式條件機率與獨立教學 · 依 Seeing Theory 網站與講義說明統計概念<br>
   <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive statistics self-study</span>
 </footer>
 <!-- GEN:END footer -->

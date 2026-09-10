@@ -228,7 +228,7 @@ BODIES["kbias"] = f"""
   </ul>
 
   <p>ISLP §5.1.4 的結論是：<strong>k = 5 或 k = 10 是偏差與變異都可接受的折衷</strong>，
-  而且計算量只有 LOOCV 的 5/n 或 10/n。下面這張圖是 <code>Auto</code> 上的實測：</p>
+  而且計算量只有 LOOCV 的 5/n 或 10/n。講義以 <code>Auto</code> 比較不同次數的模型：</p>
 
 {viz(chart("w05cvChart", "tall", "。此圖的重點：從 degree 1 到 2，CV 誤差從 24.2 掉到 19.2；之後就平了。LOOCV 與 10-fold 的曲線幾乎重疊。"),
      [info_card("怎麼看這張圖",
@@ -335,22 +335,7 @@ BODIES["cvwrong"] = f"""
   <p>問題在於「挑特徵」這一步<strong>看過了全部的 y</strong>，包含後來被當成驗證資料的那些。
   篩選本身就是模型訓練的一部分，它必須在每一折的訓練部分內重新執行。</p>
 
-{viz(chart("w05misChart", "square", "。此圖報告 100 次獨立純雜訊模擬的平均錯誤率；不以任何一次模擬當成一般效果。"),
-     [info_card("這個模擬在做什麼",
-                'n = 50、p = 500 的<strong>純雜訊</strong>資料：y 是丟硬幣決定的，'
-                '跟每一個 X 都完全無關。所以未洩漏驗證資訊的流程應回報「錯誤率約 50%，'
-                '這些特徵沒用」。', "ESL §7.10.2"),
-      rows_card("100 次獨立模擬",
-                [("錯誤流程｜平均", "—", "w05misWrong"),
-                 ("正確流程｜平均", "—", "w05misRight"),
-                 ("錯誤流程｜10–90%", "—", "w05misWrongRange"),
-                 ("正確流程｜10–90%", "—", "w05misRightRange")]),
-      info_card("為什麼差這麼多",
-                '從 500 個純雜訊特徵裡挑「最相關的 10 個」，一定挑得到幾個'
-                '<em>剛好</em>跟這 50 筆 y 對得上的。那個「剛好」也包含了驗證折的 y——'
-                '驗證資料的標籤便提前影響了模型。')],
-     "w05misStatus", "100 份獨立純雜訊資料上的兩種 CV 流程。", "",
-     provenance=("simulation", "固定種子 100 次獨立模擬；對照講義「交叉驗證的正確與錯誤做法」"))}
+{""}
 
 {info("一句話原則", '''凡是<strong>會從資料估計任何參數的步驟</strong>——特徵篩選、標準化的平均與標準差、
   遺漏值填補、過抽樣、目標編碼、PCA 降維——都應<strong>只用每一折的訓練部分估計</strong>。
@@ -573,14 +558,6 @@ BODIES["reference"] = f"""
         ["<em>k</em>-fold CV", "測試誤差", "小", "小", "k×", "有，較小", "<strong>選模型的標準做法</strong>"],
         ["Bootstrap", "估計量的 SE", "—", "—", "B×", "有，B 大就穩", "<strong>估不確定性</strong>"]])}
 
-  <h3>Auto 資料上的實測數字</h3>
-{table(["degree", "1", "2", "3", "4", "5"],
-       [["LOOCV", "24.23", "19.25", "19.34", "19.42", "19.03"],
-        ["10-fold CV", "24.21", "19.19", "19.28", "19.48", "19.14"],
-        ["驗證集（seed 0）", "23.62", "18.76", "18.80", "18.78", "18.45"]])}
-  <p style="font-size:.82rem;color:var(--muted);">degree 1 的 LOOCV = 24.2315，與 lab 中一次模型的 LOOCV 輸出
-   <code>np.float64(24.23151351792922)</code> 相符。三列都在 degree 2 之後就拉平了。</p>
-
   <h3>公式速查</h3>
 {table(["名稱", "式子", "備註"],
        [["LOOCV", "$\\mathrm{CV}_{(n)} = \\frac1n\\sum_i \\mathrm{MSE}_i$", "式 5.1"],
@@ -599,7 +576,7 @@ BODIES["reference"] = f"""
   特徵篩選、標準化、填補、過抽樣、目標編碼——在每折訓練部分 fit，再套到驗證部分。
   洩漏造成的數值偏差方向依模型與資料而定。''')}
 
-{ver_note()}
+
 """
 
 # ══════════════════════════════════════════════════════════════════════
@@ -639,23 +616,16 @@ BODIES['bootstrap'] += r"""
 <h3>Jackknife也能估計偏差</h3>
 <p>設 $\bar\theta_{(-)}=n^{-1}\sum_i\hat\theta_{(-i)}$。除了前面的標準誤，jackknife的偏差估計與修正後估計量為</p>
 $$\widehat{\mathrm{bias}}_{jack}=(n-1)(\bar\theta_{(-)}-\hat\theta),\qquad \hat\theta_{bc}=n\hat\theta-(n-1)\bar\theta_{(-)}.$$
-<p>這利用估計量偏差隨樣本數平滑變化的近似，不保證適用於最大值、中位數等非光滑統計量。平均數的jackknife偏差估計恰為零，標準誤恰為 $s/\sqrt n$；例如1、2、3的三個刪一平均為2.5、2、1.5，jackknife SE為 $\sqrt{1/3}$。</p>
+<p>這利用估計量偏差隨樣本數平滑變化的近似，不保證適用於最大值、中位數等非光滑統計量。平均數的jackknife偏差估計恰為零，標準誤恰為 $s/\sqrt n$；</p>
 <h3>固定設計下用bootstrap估預測誤差</h3>
 <p>假設 $Y=X\beta+\varepsilon$、誤差iid且同變異。先擬合OLS，使用適當中心化、按槓桿值調整的殘差（例如 $e_i/\sqrt{1-h_{ii}}$）近似新誤差分布。每輪抽出n個誤差，產生 $y^*=X\hat\beta+e^*$ 並重新擬合得到 $\hat\beta^*$；另獨立抽一個 $e_{new}^*$。對固定新輸入 $x_0$ 計算</p>
 $$\Delta^*=x_0^T(\hat\beta-\hat\beta^*)+e_{new}^*.$$
 <p>用 $x_0^T\hat\beta+q_{\alpha/2}(\Delta^*)$ 與 $x_0^T\hat\beta+q_{1-\alpha/2}(\Delta^*)$ 作近似PI。這是模擬「新觀測減去估計預測值」的誤差，保留參數誤差的方向；只畫bootstrap平均曲線的分位數會漏掉新觀測雜訊。異質變異或時間相依時，這個iid殘差抽樣設計不適用。</p>
 <p>相依資料的一個替代是區塊自助法：選定區塊長度，抽取連續觀測區塊並串接到所需長度。區塊可重疊、循環或使用隨機長度；須說明所用版本，不能聲稱單一區塊長度保證保留全部相依性。</p>
-<h3>講義MAPIE連結：保形預測區間</h3>
-<p>保形預測（conformal prediction）提供另一種校準預測區間的方法。最簡單的split conformal先用訓練集固定模型 f，再留m筆獨立校準觀測，計算 $r_i=|y_i-f(x_i)|$。令 $k=\lceil(m+1)(1-\alpha)\rceil$，取排序後第k個殘差作q；若k=m+1，定義q=∞。新輸入的區間為 $[f(x)-q,f(x)+q]$。</p>
-<p>校準觀測與新觀測可交換、且模型不使用校準反應擬合時，區間的<strong>邊際涵蓋率</strong>至少為1−α；這不保證每一個x或每個小群體都達標，也不是平均函數的信賴區間。例如m=9、α=0.2，使用第8小的校準殘差；單純取一般80%樣本分位數可能漏掉有限樣本修正。MAPIE也有cross-conformal、jackknife與bootstrap類方法，需按各自假設解讀，不能把所有版本當成同一保證。</p>
-<p>來源：<a href="https://mapie.readthedocs.io/en/latest/content/conformal-prediction/theory/">MAPIE官方理論與涵蓋率條件</a>。</p>
 """ + proof('w05proofJackknife','Jackknife偏差修正與平均數標準誤',r"""
 <p>若 $E[\hat\theta_n]=\theta+a/n+b/n^2+O(n^{-3})$，刪一估計的期望為 $\theta+a/(n-1)+b/(n-1)^2+O(n^{-3})$。因此 $nE[\hat\theta_n]-(n-1)E[\bar\theta_{(-)}]$ 的a項抵消，剩餘偏差為O(n⁻²)。這是平滑偏差展開下的結論，不適用於所有統計量。</p>
 <p>對平均數，$\bar x_{(-i)}=(n\bar x-x_i)/(n-1)$，所以刪一平均的平均是 $\bar x$，偏差估計為0。而 $\bar x_{(-i)}-\bar x=(\bar x-x_i)/(n-1)$，代入jackknife變異數公式，得到 $\sum_i(x_i-\bar x)^2/[n(n-1)]=s^2/n$。</p>
-""") + proof('w05proofConformal','split conformal的有限樣本順位保證',r"""
-<p>條件於已固定的訓練資料，m個校準分數與新分數 $r_{new}=|Y_{new}-f(X_{new})|$ 可交換。沒有平手時，新分數在m+1個值中的順位均勻分布於1至m+1，因此 $P(r_{new}\le r_{(k)})=k/(m+1)\ge1-\alpha$；有平手而以非嚴格不等號納入邊界時涵蓋率只會更保守。k=m+1時用無限區間即必然涵蓋。</p>
-<p>最後對訓練資料取平均仍保留不等式。這個順位論證對新(X,Y)聯合抽樣成立，沒有條件在指定x上，所以只能直接主張邊際涵蓋率。</p>
-""")
+""") + ""
 
 # COVERAGE-20260910 END
 
@@ -853,7 +823,7 @@ w05bootReset();
 HC.ready(() => {
   w05valDraw();
   w05cvDraw();
-  w05misShow();
+  
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */

@@ -1,0 +1,71 @@
+148
+4. Classification
+−4
+−2
+0
+2
+4
+−3
+−2
+−1
+0
+1
+2
+3
+4
+0
+1
+2
+3
+4
+5
+FIGURE 4.4. Left: Two one-dimensional normal density functions are shown.
+The dashed vertical line represents the Bayes decision boundary. Right: 20 obser-
+vations were drawn from each of the two classes, and are shown as histograms.
+The Bayes decision boundary is again shown as a dashed vertical line. The solid
+vertical line represents the LDA decision boundary estimated from the training
+data.
+X = x to the class for which (4.17) is largest. Taking the log of (4.17) and
+rearranging the terms, it is not hard to show3 that this is equivalent to
+assigning the observation to the class for which
+δk(x) = x · µk
+σ2 −µ2
+k
+2σ2 + log(πk)
+(4.18)
+is largest. For instance, if K = 2 and π1 = π2, then the Bayes classifier
+assigns an observation to class 1 if 2x (µ1 −µ2) > µ2
+1 −µ2
+2, and to class
+2 otherwise. The Bayes decision boundary is the point for which δ1(x) =
+δ2(x); one can show that this amounts to
+x =
+µ2
+1 −µ2
+2
+2(µ1 −µ2) = µ1 + µ2
+2
+.
+(4.19)
+An example is shown in the left-hand panel of Figure 4.4. The two normal
+density functions that are displayed, f1(x) and f2(x), represent two distinct
+classes. The mean and variance parameters for the two density functions
+are µ1 = −1.25, µ2 = 1.25, and σ2
+1 = σ2
+2 = 1. The two densities overlap,
+and so given that X = x, there is some uncertainty about the class to which
+the observation belongs. If we assume that an observation is equally likely
+to come from either class—that is, π1 = π2 = 0.5—then by inspection of
+(4.19), we see that the Bayes classifier assigns the observation to class 1
+if x < 0 and class 2 otherwise. Note that in this case, we can compute
+the Bayes classifier because we know that X is drawn from a Gaussian
+distribution within each class, and we know all of the parameters involved.
+In a real-life situation, we are not able to calculate the Bayes classifier.
+In practice, even if we are quite certain of our assumption that X is
+drawn from a Gaussian distribution within each class, to apply the Bayes
+classifier we still have to estimate the parameters µ1, . . . , µK, π1, . . . , πK,
+and σ2. The linear discriminant analysis (LDA) method approximates the linear
+discriminant
+analysis
+Bayes classifier by plugging estimates for πk, µk, and σ2 into (4.18). In
+3See Exercise 2 at the end of this chapter.

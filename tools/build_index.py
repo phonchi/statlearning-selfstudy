@@ -137,7 +137,7 @@ def build_html():
       <div class="lb-title">📌 建議的學習方式</div>
       <p>本站以 <cite>An Introduction to Statistical Learning with Applications in Python</cite>（簡稱 ISLP）
       與課程講義為主教材。<strong>先用例子理解問題，再動手驗證直覺。</strong>
-      章節旁的中文來源標記列出課本章節與講義主題，並可連到同頁完整書目；程式碼與「預期輸出」都逐字取自課程 lab 的實跑結果。<br>
+      章節旁的中文來源標記列出課本章節與講義主題，並可連到同頁完整書目；需要程式操作時，可開啟對應的原課程 Lab。<br>
       深度學習對應 ISLP 第 10 章，列為課外補充，程式與輸出引用課本官方的英文 lab。<br>
       <strong>不知道從哪開始？</strong>先看<a href="#pre">課前準備</a>（不需要程式基礎）；
       正課需要補基礎時，可查<a href="#statistics">統計附錄</a>或<a href="#appendix">Python 附錄</a>。
@@ -175,7 +175,7 @@ def build_html():
       投影片與 notebook，是本站內容的完整版來源。<br>
       <a href="https://phonchi.github.io/nsysu-math524/" target="_blank" rel="noopener">現行課程網站</a></div>
       <div class="res-card"><b>📖 統計入門 Seeing Theory</b>機率與統計的視覺入門。
-      本站統計先備頁提供原創中文解說與核心互動。<br>
+      統計先備頁依原教材說明概念，並提供必要的互動圖解。<br>
       <a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原站互動</a> ·
       <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" target="_blank" rel="noopener">PDF 講義</a></div>
       <div class="res-card"><b>🔗 習題解答</b>課本課後習題的參考解答，EX 區每章都有連結。<br>
@@ -219,8 +219,7 @@ def build_readme():
 NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分成四區：
 
 1. **課前準備**——AI 時代的資料分析學習迴圈、環境安裝、AI 輔助統計分析。不需要程式基礎。
-2. **正課**——每一節都有可核對的例子或自測，必要處保留互動，並配上 quiz、觀念釐清 Q&A、
-   關鍵詞彙卡與重點速查表。
+2. **正課**——依講義說明概念、公式與方法，保留必要的原教材範例、互動圖解與練習。
 3. **附錄：統計先備知識**——參考 Seeing Theory，正課需要時查閱。
 4. **附錄：Python 先備知識**——正課會用到的語法與套件，查閱用。
 
@@ -256,7 +255,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 參考 [Seeing Theory 網站](https://seeing-theory.brown.edu/)與 [PDF 講義](https://seeing-theory.brown.edu/doc/seeing-theory.pdf)。
 與 Python 附錄一樣，正課需要時再查閱，不必先讀完。不需要 Python 或微積分基礎。
-每節有原創算例、自測與來源定位，本站核心互動可獨立使用，原站提供延伸實驗。
+各節依原教材解說，保留必要公式、互動與來源連結。
 
 | # | 頁面 | 對應 |
 |---|------|------|
@@ -276,19 +275,11 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 ## 內容出處
 
-統計先備頁以 Seeing Theory 網站與 2018 年講義草稿為參考，公式與算例獨立核對。
-網站與 PDF 的內容定位分開標示；自訂資料、模擬與詞彙解說由本站編寫，不宣稱取自課程 lab。
+正課以現行課程講義與必要的原 Lab 為依據；統計附錄依 Seeing Theory 網站與講義，
+Python 附錄使用原課程 Lab 的必要程式。各頁保留教材來源連結。
 
-
-每頁的中文來源標記提供課本章節與講義主題，並可跳至同頁完整書目。`.deck-extra` 卡片裡的程式碼與「預期輸出」
-**逐字取自課程 lab notebook**（老師在課程環境實跑的結果），卡片下方可開啟原始筆記本；精確引用位置保存在內部來源資料中。
-圖表使用的預先計算資料由 `tools/frames/` 在固定種子下產生，環境為 {P.ENV_NOTE}。
-每個正文視覺另標示它屬於課程資料、講義／課本重繪、固定種子模擬或自訂概念示意；
-自訂值不得解讀成課本或實證結果。
-
-第 11 頁「深度學習」是**補充章**——本課沒有教 ISLP 第 10 章，所以沒有講義也沒有中文 lab。
-那一章的程式碼與輸出改為逐字取自[課本官方的英文 lab](https://github.com/intro-stat-learning/ISLP_labs)
-（BSD 2-Clause，釘 commit `6bf6160`），「逐字引用、絕不重跑」的紀律不變。
+「深度學習」是補充章，以 ISLP 第 10 章及[官方 Lab](https://github.com/intro-stat-learning/ISLP_labs)
+（BSD 2-Clause 授權）為指定來源，維持補充教材定位。圖解標示課程資料或概念示意；內部來源與驗證紀錄供維護時查閱。
 
 ## 技術
 

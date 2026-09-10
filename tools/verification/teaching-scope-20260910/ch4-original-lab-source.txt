@@ -1,0 +1,909 @@
+CELL 0
+# 第 4 章
+
+CELL 1
+<table align="left">
+  <td>
+    <a href="https://colab.research.google.com/github/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch04-classification-lab-zh.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+  </td>
+  <td>
+    <a target="_blank" href="https://kaggle.com/kernels/welcome?src=https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch04-classification-lab-zh.ipynb"><img src="https://kaggle.com/static/images/open-in-kaggle.svg" /></a>
+  </td>
+</table>
+
+
+CELL 2
+%load_ext cudf.pandas
+%load_ext cuml.accel
+
+CELL 3
+%pip install ISLP
+
+CELL 4
+# 本 Notebook 使用的匯入（imports）
+import numpy as np  # 數值運算與陣列處理
+import pandas as pd  # 資料表格與資料處理
+from matplotlib.pyplot import subplots  # 建立子圖與繪圖版面
+import matplotlib.pyplot as plt  # 繪圖指令與樣式
+import seaborn as sns  # 統計視覺化
+import statsmodels.api as sm  # 統計模型與推論
+from ISLP import load_data, confusion_table  # ISLP：資料載入與混淆表
+from ISLP.models import (ModelSpec as MS, contrast, summarize)  # 模型公式與對比
+from sklearn.linear_model import LogisticRegression  # 邏輯斯回歸分類器
+from sklearn.discriminant_analysis import (  # 判別分析
+    LinearDiscriminantAnalysis as LDA,
+    QuadraticDiscriminantAnalysis as QDA
+)
+from sklearn.model_selection import train_test_split  # 訓練/測試資料切分
+from sklearn.naive_bayes import GaussianNB  # 高斯樸素貝葉斯
+from sklearn.neighbors import KNeighborsClassifier  # KNN 分類器
+from sklearn.preprocessing import StandardScaler  # 特徵標準化
+from sklearn.metrics import (  # 評估指標與混淆矩陣
+    accuracy_score, confusion_matrix, ConfusionMatrixDisplay, classification_report,
+    roc_curve, auc, RocCurveDisplay
+)
+
+CELL 5
+# 實驗：Logistic Regression、LDA、QDA 與 KNN
+
+CELL 6
+## 股票市場資料
+
+CELL 7
+在這個實驗中，我們將檢視 [`Smarket`](https://islp.readthedocs.io/en/latest/datasets/Smarket.html) 資料集，這是 ISLP 套件庫的一部分。這個資料集包含 S&P 500 股價指數在 1,250 天期間（從 2001 年初到 2005 年底）的百分比報酬率。對於每個日期，我們記錄了前五個交易日的百分比報酬率 `Lag1` 到 `Lag5`。我們也記錄了 `Volume`（前一日的成交股數，以十億為單位）、`Today`（該日的百分比報酬率）以及 `Direction`（該日市場是上漲 `Up` 還是下跌 `Down`）。
+
+我們從頂層開始匯入函式庫；這些都是在之前實驗中已見過的匯入項目。
+
+CELL 8
+我們必須重新啟動執行環境才能使用新安裝的版本！
+
+CELL 9
+%matplotlib inline
+sns.set_context("notebook", font_scale=1.5, rc={"lines.linewidth": 2.5})
+
+CELL 10
+現在我們準備載入 `Smarket` 資料。
+
+CELL 11
+Smarket = load_data('Smarket')
+Smarket
+
+CELL 12
+這給出了截斷的資料表。
+我們可以看看變數名稱是什麼。
+
+CELL 13
+Smarket.columns
+
+CELL 14
+Smarket.describe(include='all')
+
+CELL 15
+Smarket.info(memory_usage='deep')
+
+CELL 16
+sns.pairplot(data=Smarket, hue='Direction', diag_kind='hist');
+
+CELL 17
+我們使用資料表的 `corr()` 方法來計算相關矩陣，這會產生一個包含所有變數之間成對相關性的矩陣。
+
+透過指示 `pandas` 只使用數值變數，`corr()` 方法不會報告 `Direction` 變數的相關性，因為它是分類變數。
+
+CELL 18
+corr = Smarket.corr(numeric_only=True)
+corr
+
+CELL 19
+# the best way to visualize corerelations matrices is heatmap
+plt.figure(figsize = (8,8))
+sns.heatmap(corr);
+
+CELL 20
+如預期的，落後報酬變數與今日報酬之間的相關性接近零。唯一顯著的相關性是 `Year` 和 `Volume` 之間。透過繪製資料我們可以看到 `Volume` 隨時間增加。換句話說，從 2001 年到 2005 年，每日平均交易股數增加了。
+
+CELL 21
+print(corr.iloc[:,-2:])
+
+CELL 22
+Smarket.plot(y='Volume');
+
+CELL 23
+## Logistic Regression（邏輯迴歸）
+
+CELL 24
+接下來我們將擬合一個 logistic regression 模型來使用 `Lag1` 到 `Lag5` 以及 `Volume` 來預測 `Direction`。`sm.GLM()` 函數擬合*廣義線性模型*，這是一類包含邏輯迴歸的模型。或者，`sm.Logit()` 函數直接擬合 logistic regression 模型。`sm.GLM()` 的語法與 `sm.OLS()` 類似，除了我們必須傳入參數 `family=sm.families.Binomial()` 來告訴 `statsmodels` 執行邏輯迴歸而非其他類型的廣義線性模型。
+
+CELL 25
+allvars = Smarket.columns.drop(['Today', 'Direction', 'Year'])
+design = MS(allvars)
+X = design.fit_transform(Smarket)
+y = Smarket.Direction == 'Up'
+glm = sm.GLM(y, X, family=sm.families.Binomial())
+results = glm.fit()
+summarize(results)
+
+CELL 26
+這裡最小的 *p* 值與 `Lag1` 相關。這個預測變數的負係數表示，如果市場昨日有正報酬，那麼今日上漲的可能性較低。然而，在 0.15 的值下，*p* 值仍然相對較大，因此沒有明確證據顯示 `Lag1` 和 `Direction` 之間存在真實的關聯性。
+
+我們使用 `results` 的 `params` 屬性來存取這個擬合模型的係數。參見 [https://www.statsmodels.org/dev/generated/statsmodels.genmod.generalized_linear_model.GLMResults.html](https://www.statsmodels.org/dev/generated/statsmodels.genmod.generalized_linear_model.GLMResults.html)。
+
+CELL 27
+results.params
+
+CELL 28
+同樣地，我們可以使用 `pvalues` 屬性來存取係數的 *p* 值。
+
+CELL 29
+results.pvalues
+
+CELL 30
+可以使用 `results` 的 `predict()` 方法來預測給定預測變數值時市場上漲的機率。這個方法在機率尺度上回傳預測結果。如果沒有資料集提供給 `predict()` 函數，那麼機率會針對用來擬合邏輯迴歸模型的訓練資料計算。如同線性迴歸，如果需要的話可以傳入一個選擇性的 `exog` 參數與設計矩陣一致。這裡我們只印出前十個機率。
+
+CELL 31
+probs = results.predict()
+probs[:10]
+
+CELL 32
+為了對特定日期的市場是上漲還是下跌做出預測，我們必須將這些預測機率轉換成分類標籤 `Up` 或 `Down`。以下兩個指令根據預測的市場上漲機率是否大於或小於 0.5 來建立分類預測向量。
+
+CELL 33
+labels = np.array(['Down']*1250)
+labels[probs>0.5] = "Up"
+
+CELL 34
+來自 ISLP 套件的 `confusion_table()` 函數彙總這些預測，顯示有多少觀測值被正確或錯誤分類。我們的函數改編自 `scikit-learn.metrics` 模組中的類似函數，會轉置結果矩陣並包含列和欄標籤。
+**`confusion_table()` 函數第一個參數是預測標籤，第二個參數是真實標籤。**
+
+CELL 35
+confusion_table(labels, Smarket.Direction)
+
+CELL 36
+或者我們可以直接使用 `scikit-learn` 提供的版本，**慣例是使用轉置版本（第一個參數是真實標籤，第二個參數是預測標籤）**：
+
+CELL 37
+cm = confusion_matrix(Smarket.Direction, labels) # True, predicted
+cm
+
+CELL 38
+ConfusionMatrixDisplay(cm, display_labels=[0,1]).plot();
+
+CELL 39
+print(classification_report(Smarket.Direction, labels, digits=3))
+
+CELL 40
+混淆矩陣（confusion matrix）的對角線元素表示正確預測，而非對角線元素表示錯誤預測。因此我們的模型正確預測了 507 天的市場上漲和 145 天的市場下跌，總共 507 + 145 = 652 次正確預測。`np.mean()` 函數可以用來計算預測正確的天數比例。在這個案例中，邏輯迴歸正確預測市場走勢的時間為 52.2%。
+
+CELL 41
+(507+145)/1250, np.mean(labels == Smarket.Direction)
+
+CELL 42
+乍看之下，邏輯迴歸模型似乎只比隨機猜測好一點點。然而，這個結果是誤導的，因為我們在同一組 1,250 個觀測值上訓練和測試模型。換句話說，$100-52.2=47.8%$ 是*訓練*錯誤率。如我們之前所見，訓練錯誤率往往過度樂觀——它傾向於低估測試錯誤率。為了更好地評估邏輯迴歸模型在這個設定下的準確率，我們可以使用部分資料擬合模型，然後檢視它對*保留資料*的預測表現如何。這將產生更實際的錯誤率，在實務上我們感興趣的是模型在未來市場走勢未知的日子裡的表現，而不是在用來擬合模型的資料上的表現。
+
+為了實施這個策略，我們首先建立一個對應 2001 年到 2004 年觀測值的布林向量。然後我們使用這個向量建立來自 2005 年觀測值的保留資料集。
+
+CELL 43
+train = (Smarket.Year < 2005)
+Smarket_train = Smarket.loc[train]
+Smarket_test = Smarket.loc[~train]
+Smarket_test.shape
+
+CELL 44
+物件 `train` 是一個包含 1,250 個元素的向量，對應我們資料集中的觀測值。對應 2005 年前發生的觀測值的向量元素被設定為 `True`，而對應 2005 年觀測值的則設定為 `False`。因此 `train` 是一個*布林*陣列，因為它的元素是 `True` 和 `False`。布林陣列可以用來使用 `loc` 方法取得資料表的列或欄子集。例如，指令 `Smarket.loc[train]` 會挑選出股市資料集的子矩陣，只對應 2005 年前的日期，因為這些是 `train` 元素為 `True` 的情況。`~` 符號可以用來否定布林向量的所有元素。也就是說，`~train` 是一個類似 `train` 的向量，除了在 `train` 中為 `True` 的元素在 `~train` 中會被交換為 `False`，反之亦然。因此，`Smarket.loc[~train]` 會產生資料表的子集列，只包含 `train` 為 `False` 的股市資料觀測值。上面的輸出顯示有 252 個這樣的觀測值。
+
+現在我們只使用對應 2005 年前日期的觀測值子集來擬合邏輯迴歸模型。然後我們獲得測試集中每個日子（即 2005 年的日子）股市上漲的預測機率。
+
+CELL 45
+X_train, X_test = X.loc[train], X.loc[~train]
+y_train, y_test = y.loc[train], y.loc[~train]
+glm_train = sm.GLM(y_train,
+                   X_train,
+                   family=sm.families.Binomial())
+results = glm_train.fit()
+probs = results.predict(exog=X_test)
+
+CELL 46
+注意我們在兩個完全分離的資料集上訓練和測試我們的模型：訓練只使用 2005 年前的日期，測試只使用 2005 年的日期。
+
+最後，我們比較 2005 年的預測與該時間段的實際市場走勢。我們將首先儲存測試和訓練標籤（回想 `y_test` 是二元的）。
+
+CELL 47
+D = Smarket.Direction
+L_train, L_test = D.loc[train], D.loc[~train]
+
+CELL 48
+現在我們將擬合機率以 50% 為閾值來形成我們的預測標籤。
+
+CELL 49
+labels = np.array(['Down']*252)
+labels[probs>0.5] = 'Up'
+confusion_table(labels, L_test)
+
+CELL 50
+測試準確率大約是 48%，而錯誤率大約是 52%
+
+CELL 51
+np.mean(labels == L_test), np.mean(labels != L_test)
+
+CELL 52
+`!=` 符號表示*不等於*，所以最後一個指令計算測試集錯誤率。結果相當令人失望：測試錯誤率是 52%，比隨機猜測還差！當然這個結果並不那麼令人意外，因為一般來說不會預期能夠使用前幾天的報酬來預測未來的市場表現。（畢竟，如果可能做到這一點，這本書的作者們會忙著投資，而不會來寫統計教科書。）
+
+我們回想邏輯迴歸模型與所有預測變數相關的 *p* 值都很不理想，而最小的 *p* 值（雖然不是很小）對應到 `Lag1`。或許透過移除那些在預測 `Direction` 上似乎沒有幫助的變數，我們可以獲得更有效的模型。畢竟，使用與反應變數沒有關係的預測變數往往會導致測試錯誤率惡化（因為這樣的預測變數會造成變異數增加而沒有對應的偏誤減少），因此移除這樣的預測變數可能會帶來改善。下面我們僅使用 `Lag1` 和 `Lag2` 重新擬合邏輯迴歸，這兩個變數在原始邏輯迴歸模型中似乎具有最高的預測力。
+
+CELL 53
+model = MS(['Lag1', 'Lag2']).fit(Smarket)
+X = model.transform(Smarket)
+X_train, X_test = X.loc[train], X.loc[~train]
+glm_train = sm.GLM(y_train,
+                   X_train,
+                   family=sm.families.Binomial())
+results = glm_train.fit()
+probs = results.predict(exog=X_test)
+labels = np.array(['Down']*252)
+labels[probs>0.5] = 'Up'
+confusion_table(labels, L_test)
+
+CELL 54
+讓我們評估整體準確率以及邏輯迴歸預測上漲日子的準確率。
+
+CELL 55
+(35+106)/252, 106/(106+76)
+
+CELL 56
+我們可以在 scikit-learn 模組中找到許多有用的評估指標 [https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics](https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics)。
+
+CELL 57
+conf_mat = confusion_matrix(L_test, labels) # True, predicted
+print(conf_mat)
+
+CELL 58
+TP = conf_mat[1,1]
+TN = conf_mat[0,0]
+FP = conf_mat[0,1]
+FN = conf_mat[1,0]
+
+# print("Accuracy: ", conf_mat.diagonal().sum()/conf_mat.sum() )
+print("Accuracy: ", (TP+TN) / (TP+TN+FP+FN) )
+print("Sensitivity: ",  TP / (FN + TP) )
+print("Precision: ",  TP / (FP + TP) )
+print("False Positive Rate: ",  FP / (FP + TN) )
+
+CELL 59
+fpr, tpr, thresholds = roc_curve(L_test, probs, pos_label='Up')
+roc_auc = auc(fpr, tpr)
+RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc, estimator_name='example estimator').plot();
+
+CELL 60
+現在結果看起來好一點：56% 的每日走勢被正確預測。值得注意的是，在這種情況下，預測市場每天都會上漲這種簡單得多的策略也會有 56% 的正確率！因此，就整體錯誤率而言，邏輯迴歸方法並不比直覺方法好。然而，混淆矩陣顯示在邏輯迴歸預測市場上漲的日子裡，它有 58% 的準確率。這暗示了一個可能的交易策略：在模型預測市場上漲時買進，在預測下跌時避免交易。當然，需要更仔細地調查這個小改善是真實的還是僅因隨機機會。
+
+假設我們想要預測與 `Lag1` 和 `Lag2` 特定值相關的報酬。特別是，我們想要預測當 `Lag1` 和 `Lag2` 分別等於 $1.2$ 和 $1.1$ 的日子，以及它們分別等於 $1.5$ 和 $-0.8$ 的日子的 `Direction`。我們使用 `predict()` 函數來做到這一點。
+
+CELL 61
+newdata = pd.DataFrame({'Lag1':[1.2, 1.5],
+                        'Lag2':[1.1, -0.8]});
+newX = model.transform(newdata)
+results.predict(newX)
+
+CELL 62
+## Linear Discriminant Analysis（線性判別分析）
+
+CELL 63
+我們開始對 `Smarket` 資料執行 LDA，使用 `LinearDiscriminantAnalysis()` 函數，我們將其縮寫為 `LDA()`。我們只使用 2005 年前的觀測值來擬合模型。
+
+CELL 64
+lda = LDA(store_covariance=True)
+
+CELL 65
+由於 `LDA` 估計器自動添加截距，我們應該移除 `X_train` 和 `X_test` 中對應截距的欄。我們也可以直接使用標籤而非布林向量 `y_train`。
+
+CELL 66
+X_train, X_test = [M.drop(columns=['intercept'])
+                   for M in [X_train, X_test]]
+lda.fit(X_train, L_train)
+
+CELL 67
+這裡我們使用了在第 3.6.4 節中介紹的串列生成式。看我們上面的第一行，我們看到右邊是一個長度為二的串列。這是因為程式碼 `for M in [X_train, X_test]` 對長度為二的串列進行迭代。雖然這裡我們對串列進行迴圈，但串列生成式方法在對任何可迭代物件進行迴圈時都有效。然後我們將 `drop()` 方法應用於迭代中的每個元素，將結果收集在串列中。左邊告訴 Python 解壓這個長度為二的串列，將其元素指派給變數 `X_train` 和 `X_test`。當然，這會覆蓋 `X_train` 和 `X_test` 的先前值。
+
+擬合模型後，我們可以用 `means_` 屬性提取兩個類別中的平均值。這些是每個預測變數在每個類別中的平均值，被 LDA 用作 $\mu_k$ 的估計值。這些結果表明，在市場上漲的日子裡，前 2 天的報酬傾向為負，而在市場下跌的日子裡，前幾天的報酬傾向為正。
+
+CELL 68
+lda.means_
+
+CELL 69
+估計的先驗機率儲存在 `priors_` 屬性中。套件 `scikit-learn` 通常使用尾隨的 `_` 來表示使用 `fit()` 方法時估計的量。我們可以透過查看 `classes_` 屬性來確定哪個條目對應哪個標籤。
+
+CELL 70
+lda.classes_
+
+CELL 71
+LDA 輸出顯示 $\hat\pi_{Down}=0.492$ 和 $\hat\pi_{Up}=0.508$。
+
+CELL 72
+lda.priors_
+
+CELL 73
+線性判別向量可以在 `scalings_` 屬性中找到：
+
+CELL 74
+lda.scalings_
+
+CELL 75
+# for plotting lda
+ld_sc = X_train.iloc[:, 0] * lda.scalings_[0] + X_train.iloc[:, 1] * lda.scalings_[1]
+
+ld = pd.DataFrame({'groups': y_train, 'ld': ld_sc})
+
+g = sns.FacetGrid(ld, col='groups')
+g.map(plt.hist, 'ld')
+ax1, ax2 = g.axes[0]
+ax1.set_xlabel("Down")
+ax2.set_xlabel("Up");
+
+CELL 76
+這些值提供 `Lag1` 和 `Lag2` 的線性組合，用於形成 LDA 決策規則。換句話說，這些是 (4.24) 中 $X=x$ 元素的乘數。如果 $-0.64\times `Lag1` - 0.51 \times `Lag2`$ 很大，那麼 LDA 分類器將預測市場上漲，如果它很小，那麼 LDA 分類器將預測市場下跌。
+
+CELL 77
+lda_pred = lda.predict(X_test)
+
+CELL 78
+如我們在分類方法比較（第 4.5 節）中觀察到的，LDA 和邏輯迴歸預測幾乎相同。
+
+CELL 79
+confusion_table(lda_pred, L_test)
+
+CELL 80
+我們也可以估計訓練集中每個點屬於每個類別的機率。對後驗機率屬於類別一應用 50% 閾值允許我們重現包含在 `lda_pred` 中的預測。
+
+CELL 81
+lda_prob = lda.predict_proba(X_test)
+np.all(
+       np.where(lda_prob[:,1] >= 0.5, 'Up','Down') == lda_pred
+       )
+
+CELL 82
+上面我們使用了 `np.where()` 函式，該函式建立一個陣列，對於 `lda_prob` 第二欄（估計的 `'Up'` 後驗機率）大於 0.5 的索引，其值為 `'Up'`。對於超過兩個類別的問題，標籤會被選為後驗機率最高的類別：
+
+CELL 83
+np.all(
+       [lda.classes_[i] for i in np.argmax(lda_prob, 1)] == lda_pred
+       )
+
+CELL 84
+如果我們想使用 50% 以外的後驗機率閾值來進行預測，我們可以輕易做到。例如，假設我們希望只有在非常確定市場確實會在當天下跌時才預測市場下跌——也就是說，如果後驗機率至少為 90%。檢查 `classes_` 屬性後，我們知道 `lda_prob` 的第一欄對應標籤 `Down`，因此我們使用欄索引 0 而不是像上面那樣使用 1。
+
+CELL 85
+np.sum(lda_prob[:,0] > 0.9)
+
+CELL 86
+2005 年沒有任何一天滿足該閾值！實際上，2005 年全年的最大下跌後驗機率是 52.02%。
+
+上述的 LDA 分類器是來自 `scikit-learn` 函式庫的第一個分類器。我們將使用該函式庫中的其他幾個物件。這些物件遵循共同的結構，簡化了諸如交叉驗證等任務，我們將在第 5 章中看到。具體而言，這些方法首先建立通用分類器而不參照任何資料。然後使用 `fit()` 方法將這個分類器擬合資料，並且總是使用 `predict()` 方法產生預測。這種首先實例化分類器、然後擬合它、接著產生預測的模式是 `scikit-learn` 的明確設計選擇。這種一致性使得能夠乾淨地複製分類器，讓它可以擬合不同的資料；例如，交叉驗證中產生的不同訓練集。這種標準模式也允許形成可預測的工作流程。
+
+CELL 87
+## Quadratic Discriminant Analysis（二次判別分析）
+
+CELL 88
+我們將現在對 `Smarket` 資料擬合 QDA 模型。QDA 是透過 `scikit-learn` 套件中的 `QuadraticDiscriminantAnalysis()` 實作的，我們將其縮寫為 `QDA()`。語法與 `LDA()` 非常類似。
+
+CELL 89
+qda = QDA(store_covariance=True)
+qda.fit(X_train, L_train)
+
+CELL 90
+`QDA()` 函數將再次計算 `means_` 和 `priors_`。
+
+CELL 91
+qda.means_, qda.priors_
+
+CELL 92
+`QDA()` 分類器會為每個類別估計一個共變數矩陣。這是第一個類別的估計共變數矩陣：
+
+CELL 93
+qda.covariance_[0]
+
+CELL 94
+輸出包含分組平均值。但它不包含線性判別式的係數，因為 QDA 分類器涉及預測變數的二次而非線性函式。`predict()` 函式的運作方式與 LDA 完全相同。
+
+CELL 95
+qda_pred = qda.predict(X_test)
+confusion_table(qda_pred, L_test)
+
+CELL 96
+有趣的是，QDA 預測的準確率接近 60%，儘管 2005 年的資料並未用於擬合模型。
+
+CELL 97
+np.mean(qda_pred == L_test)
+
+CELL 98
+print('Accuracy using QDA is ',accuracy_score(L_test, qda_pred))
+
+CELL 99
+對於股市資料來說，這個準確率水準相當令人印象深刻，因為股市資料以難以準確建模而聞名。這表明 QDA 假設的二次形式可能比 LDA 和邏輯迴歸假設的線性形式更準確地捕捉到真實關係。然而，我們建議在將這種方法持續擊敗市場之前，先在較大的測試集上評估此方法的表現！
+
+CELL 100
+## Naive Bayes
+
+
+CELL 101
+接下來我們對 `Smarket` 資料擬合 naive Bayes 模型。語法與 `LDA()` 和 `QDA()` 類似。預設情況下，naive Bayes 分類器的 `GaussianNB()` 實作使用高斯分布來建模每個定量特徵。然而，核密度方法也可以用來估計分布。
+
+CELL 102
+NB = GaussianNB()
+NB.fit(X_train, L_train)
+
+CELL 103
+類別儲存為 `classes_`。
+
+CELL 104
+NB.classes_
+
+CELL 105
+類別先驗機率儲存在 `class_prior_` 屬性中。
+
+CELL 106
+NB.class_prior_
+
+CELL 107
+特徵的參數可以在 `theta_` 和 `var_` 屬性中找到。列數等於類別數，而欄數等於特徵數。我們看到下面 `Down` 類別中特徵 `Lag1` 的平均值是 0.043。
+
+CELL 108
+NB.theta_
+
+CELL 109
+其變異數是 1.503。
+
+CELL 110
+NB.var_
+
+CELL 111
+我們如何知道這些屬性的名稱？我們使用 `NB?`（或 `?NB`）。
+
+我們可以輕易驗證平均值計算：
+
+CELL 112
+X_train[L_train == 'Down'].mean()
+
+CELL 113
+變異數也類似：
+
+CELL 114
+X_train[L_train == 'Down'].var(ddof=0)
+
+CELL 115
+由於 `NB()` 是 `scikit-learn` 函式庫中的分類器，進行預測使用與上述 `LDA()` 和 `QDA()` 相同的語法。
+
+CELL 116
+nb_labels = NB.predict(X_test)
+confusion_table(nb_labels, L_test)
+
+CELL 117
+print('Accuracy using gnb is ',accuracy_score(L_test,nb_labels))
+
+CELL 118
+Naive Bayes 在這些資料上表現良好，準確預測超過 59% 的時間。這比 QDA 稍微差一點，但比 LDA 好得多。
+
+如同 `LDA`，`predict_proba()` 方法估計每個觀測值屬於特定類別的機率。
+
+CELL 119
+NB.predict_proba(X_test)[:5]
+
+CELL 120
+## K-Nearest Neighbors（K-最近鄰居）
+
+CELL 121
+我們將現在使用 `KNeighborsClassifier()` 函數執行 KNN。這個函數的運作方式與我們迄今遇到的其他模型擬合函數類似。
+
+如同 LDA 和 QDA，我們使用 `fit` 方法擬合分類器。使用由 `fit()` 回傳的物件的 `predict` 方法形成新的預測。
+
+CELL 122
+knn1 = KNeighborsClassifier(n_neighbors=1)
+X_train, X_test = [np.asarray(X) for X in [X_train, X_test]]
+knn1.fit(X_train, L_train)
+knn1_pred = knn1.predict(X_test)
+confusion_table(knn1_pred, L_test)
+
+CELL 123
+使用 $K=1$ 的結果不是很好，因為只有 $50\%$ 的觀測值被正確預測。當然，這可能是 $K=1$ 導致對資料過度靈活的擬合。
+
+CELL 124
+(83+43)/252, np.mean(knn1_pred == L_test)
+
+CELL 125
+print(classification_report(L_test, knn1_pred, digits=3))
+
+CELL 126
+我們在下面使用 $K=3$ 重複分析。
+
+CELL 127
+knn3 = KNeighborsClassifier(n_neighbors=3)
+knn3_pred = knn3.fit(X_train, L_train).predict(X_test)
+np.mean(knn3_pred == L_test)
+
+CELL 128
+print(classification_report(L_test, knn3_pred, digits=3))
+
+CELL 129
+結果有輕微改善。但進一步增加 *K* 並沒有進一步改善。看起來對於這些資料和這個訓練/測試分割，QDA 在我們迄今檢驗的方法中給出最好的結果。
+
+CELL 130
+KNN 在 `Smarket` 資料上表現不佳，但它經常提供令人印象深刻的結果。作為一個例子，我們將 KNN 方法應用於 [`Caravan`](https://islp.readthedocs.io/en/latest/datasets/Caravan.html) 資料集，這是 ISLP 函式庫的一部分。這個資料集包含 85 個預測變數，測量 5,822 個個體的人口統計特徵。反應變數是 `Purchase`，它指示給定個體是否購買大篷車保險。在這個資料集中，只有 6% 的人購買了大篷車保險。
+
+CELL 131
+Caravan = load_data('Caravan')
+Purchase = Caravan.Purchase
+Purchase.value_counts()
+
+CELL 132
+`value_counts()` 方法接受一個 `pd.Series` 或 `pd.DataFrame`，並回傳一個 `pd.Series`，包含每個唯一元素的對應計數。在這個情況下，`Purchase` 只有 `Yes` 和 `No` 值，該方法回傳每個值有多少個。
+
+CELL 133
+348 / 5822
+
+CELL 134
+我們的特徵將包括除了 `Purchase` 以外的所有欄位。
+
+CELL 135
+feature_df = Caravan.drop(columns=['Purchase'])
+
+CELL 136
+因為 KNN 分類器透過識別與測試觀測值最近的觀測值來預測類別，變數的尺度很重要。任何處於大尺度的變數對觀測值之間的*距離*會有更大的影響，因此對 KNN 分類器的影響也比處於小尺度的變數更大。例如，想像一個包含兩個變數的資料集，`salary` 和 `age`（分別以美元和年為單位測量）。就 KNN 而言，薪資相差 1,000 美元與年齡相差 50 歲相比是巨大的。因此，`salary` 將主導 KNN 分類結果，而 `age` 幾乎沒有影響。這與我們的直覺相反，我們直覺上認為薪資相差 1,000 美元與年齡相差 50 歲相比是相當小的。此外，KNN 分類器中尺度的重要性導致另一個問題：如果我們用日圓測量 `salary`，或者用分鐘測量 `age`，那麼我們會得到與用美元和年測量這兩個變數時截然不同的分類結果。
+
+處理這個問題的好方法是*標準化*資料，使所有變數都具有平均值為零、標準差為一。那麼所有變數將處於可比較的尺度上。這可以使用 `StandardScaler()` 轉換來達成。
+
+CELL 137
+scaler = StandardScaler(with_mean=True,
+                        with_std=True,
+                        copy=True)
+
+CELL 138
+參數 `with_mean` 指示是否應該減去平均值，而 `with_std` 指示是否應該縮放欄位使其標準差為 1。最後，參數 `copy=True` 指示我們將總是複製資料，而不是盡可能在原地進行計算。
+
+這個轉換可以擬合，然後應用於任意資料。在下面的第一行中，縮放的參數被計算並儲存在 `scaler` 中，而第二行實際上構建標準化的特徵集合。
+
+CELL 139
+scaler.fit(feature_df)
+X_std = scaler.transform(feature_df)
+
+CELL 140
+現在下面 `feature_std` 的每一欄都有標準差為一和平均值為零。
+
+CELL 141
+feature_std = pd.DataFrame(
+                 X_std,
+                 columns=feature_df.columns);
+feature_std.std()
+
+CELL 142
+注意這裡的標準差不完全是 $1$；這同樣是由於某些程序使用 $1/n$ 慣例來計算變異數（在這種情況下是 `scaler()`），而其他程序使用 $1/(n-1)$（`std()` 方法）。請參見第 200 頁的註腳。在這種情況下這並不重要，只要變數都在相同的尺度上。
+
+使用 `train_test_split()` 函式，我們現在將觀測值分割為包含 1000 個觀測值的測試集和包含其餘觀測值的訓練集。參數 `random_state=0` 確保我們每次重新執行程式碼時得到相同的分割。
+
+CELL 143
+(X_train,
+ X_test,
+ y_train,
+ y_test) = train_test_split(np.asarray(feature_std),
+                            Purchase,
+                            test_size=1000,
+                            random_state=0)
+
+CELL 144
+`?train_test_split` 顯示非關鍵字參數可以是 `lists`、`arrays`、`pandas dataframes` 等，它們都具有相同的長度（`shape[0]`），因此是*可索引的*。在這種情況下，它們是資料表 `feature_std` 和反應變數 `Purchase`。
+{注意：我們已將 `feature_std` 轉換為 `ndarray` 以解決 `scikit-learn` 中的錯誤。}
+
+我們在訓練資料上使用 $K=1$ 擬合 KNN 模型，並評估其在測試資料上的效能。
+
+CELL 145
+knn1 = KNeighborsClassifier(n_neighbors=1)
+knn1_pred = knn1.fit(X_train, y_train).predict(X_test)
+np.mean(y_test != knn1_pred), np.mean(y_test != "No")
+
+CELL 146
+KNN 在 1,000 個測試觀測值上的錯誤率約為 $11%$。乍看之下，這似乎相當不錯。然而，由於只有剛好超過 6% 的客戶購買了保險，我們可以藉由總是預測 `No`（無論預測變數的值如何）將錯誤率降低到幾乎 6%！這被稱為*虛無率*。
+
+假設嘗試向給定個人銷售保險存在某些不小的成本。例如，或許銷售員必須拜訪每位潛在客戶。如果公司嘗試向隨機選擇的客戶銷售保險，那麼成功率將只有 6%，考慮到涉及的成本，這可能太低了。相反，公司希望只嘗試向可能購買保險的客戶銷售保險。所以整體錯誤率不是重點。相反，被正確預測會購買保險的個人比例才是重點。
+
+CELL 147
+confusion_table(knn1_pred, y_test)
+
+CELL 148
+結果發現，在被預測會購買保險的客戶中，KNN $K=1$ 的表現遠比隨機猜測要好。在 62 個這樣的客戶中，有 9 個（即 14.5%）實際購買了保險。這是隨機猜測所能獲得的兩倍率。
+
+CELL 149
+9/(53+9)
+
+CELL 150
+### 調整參數
+
+CELL 151
+KNN 中的鄰居數被稱為*調整參數*，也被稱為*超參數*。我們不知道先驗地應該使用什麼值。因此，看看分類器在測試資料上的表現如何隨著這些參數的變化而變化是有趣的。這可以透過第 2.3.8 節中描述的 `for` 迴圈來達成。這裡我們使用 for 迴圈來查看我們的分類器在被預測購買保險的群組中的準確率，當我們將鄰居數從 1 變化到 5 時：
+
+CELL 152
+for K in range(1,6):
+    knn = KNeighborsClassifier(n_neighbors=K)
+    knn_pred = knn.fit(X_train, y_train).predict(X_test)
+    C = confusion_table(knn_pred, y_test)
+    templ = ('K={0:d}: # predicted to rent: {1:>2},' +
+            '  # who did rent {2:d}, accuracy {3:.1%}')
+    pred = C.loc['Yes'].sum()
+    did_rent = C.loc['Yes','Yes']
+    print(templ.format(
+          K,
+          pred,
+          did_rent,
+          did_rent / pred))
+
+CELL 153
+我們看到一些變化性——`K=4` 的數字與其餘的非常不同。
+
+CELL 154
+### 與邏輯迴歸的比較
+
+CELL 155
+作為比較，我們也可以對資料擬合邏輯迴歸模型。這也可以使用 `scikit-learn` 來完成，不過預設情況下它擬合的是類似*嶺迴歸*版本的邏輯迴歸，我們在第 6 章中介紹。這可以透過適當設定下面的參數 `C` 來修改。其預設值是 1，但透過將其設定為非常大的數字，演算法會收斂到與上面討論的常見（未正則化）邏輯迴歸估計器相同的解。
+
+與 `statsmodels` 套件不同，`scikit-learn` 較少專注於推論而更多專注於分類。因此，在 `statsmodels` 中看到的 `summary` 方法以及我們使用 `summarize` 看到的簡化版本通常不適用於 `scikit-learn` 中的分類器。
+
+CELL 156
+logit = LogisticRegression(C=1e10, solver='liblinear')
+logit.fit(X_train, y_train)
+logit_pred = logit.predict_proba(X_test)
+logit_labels = np.where(logit_pred[:,1] > .5, 'Yes', 'No')
+confusion_table(logit_labels, y_test)
+
+CELL 157
+我們在上面使用了參數 `solver='liblinear'` 來避免預設求解器的警告，該警告會指示演算法不收斂。
+
+如果我們使用 $0.5$ 作為分類器的預測機率截止值，那麼我們就有問題：只有兩個測試觀測值被預測會購買保險。然而，我們不需要使用截止值 $0.5$。如果我們改為在預測購買機率超過 $0.25$ 時就預測會購買，我們會得到更好的結果：我們預測 29 個人會購買保險，而我們對其中約 31% 的人是正確的。這比隨機猜測好了將近五倍！
+
+CELL 158
+logit_labels = np.where(logit_pred[:,1]>0.25, 'Yes', 'No')
+confusion_table(logit_labels, y_test)
+
+CELL 159
+9/(20+9)
+
+CELL 160
+## 在 Bikeshare 資料上的 Linear 和 Poisson Regression
+
+CELL 161
+這裡我們對 [`Bikeshare`](https://islp.readthedocs.io/en/latest/datasets/Bikeshare.html) 資料擬合線性和泊松迴歸模型，如第 4.6 節所述。反應變數 `bikers` 測量 2010-2012 年期間華盛頓特區每小時的自行車租賃數量。
+
+CELL 162
+Bike = load_data('Bikeshare')
+
+CELL 163
+讓我們看看這個資料表的維度和變數名稱。
+
+CELL 164
+Bike.shape, Bike.columns
+
+CELL 165
+### Linear Regression
+
+CELL 166
+我們開始對資料擬合線性迴歸模型。
+
+CELL 167
+X = MS(['mnth',
+        'hr',
+        'workingday',
+        'temp',
+        'weathersit']).fit_transform(Bike)
+Y = Bike['bikers']
+M_lm = sm.OLS(Y, X).fit()
+summarize(M_lm)
+
+CELL 168
+`hr` 中有 24 個水準，總共有 40 行。
+在 `M_lm` 中，第一個水準 `hr[0]` 和 `mnth[Jan]` 被視為基準值，因此沒有為它們提供係數估計：隱含地，它們的係數估計為零，而所有其他水準都是相對於這些基準來衡量的。例如，Feb 的係數 $6.845$ 表示在其他變數不變的情況下，2月平均比1月多約7個騎乘者。同樣地，3月平均比1月多約16.5個騎乘者。
+
+第4.6.1節中看到的結果使用了變數 `hr` 和 `mnth` 的略有不同編碼，如下所示：
+
+CELL 169
+hr_encode = contrast('hr', 'sum')
+mnth_encode = contrast('mnth', 'sum')
+
+CELL 170
+重新擬合：
+
+CELL 171
+X2 = MS([mnth_encode,
+         hr_encode,
+        'workingday',
+        'temp',
+        'weathersit']).fit_transform(Bike)
+M2_lm = sm.OLS(Y, X2).fit()
+S2 = summarize(M2_lm)
+S2
+
+CELL 172
+兩種編碼之間有什麼差異？在 `M2_lm` 中，除了 `hr` 的水準 `23` 和 `mnth` 的水準 `Dec` 之外，所有係數估計都會被報告。重要的是，在 `M2_lm` 中，`mnth` 最後水準的（未報告的）係數估計不是零：相反，它等於所有其他水準係數估計的負和。同樣地，在 `M2_lm` 中，`hr` 最後水準的係數估計是所有其他水準係數估計總和的負值。這意味著 `M2_lm` 中 `hr` 和 `mnth` 的係數總是會加總為零，並且可以解釋為與平均水準的差異。例如，January 的係數 $-46.087$ 表示在其他變數不變的情況下，相對於年平均值，1月通常少46個騎乘者。
+
+重要的是要認識到編碼的選擇實際上並不重要，只要我們根據所使用的編碼正確解釋模型輸出。例如，我們看到無論編碼如何，線性模型的預測都是相同的：
+
+CELL 173
+np.sum((M_lm.fittedvalues - M2_lm.fittedvalues)**2)
+
+CELL 174
+平方差的總和為零。我們也可以使用 `np.allclose()` 函數來看到這一點：
+
+CELL 175
+np.allclose(M_lm.fittedvalues, M2_lm.fittedvalues)
+
+CELL 176
+為了重現圖4.13的左側，我們必須首先獲得與 `mnth` 相關聯的係數估計。January到November的係數可以直接從 `M2_lm` 物件獲得。December的係數必須明確計算為所有其他月份的負和。我們首先從 `M2_lm` 的係數中提取所有月份的係數。
+
+CELL 177
+coef_month = S2[S2.index.str.contains('mnth')]['coef']
+coef_month
+
+CELL 178
+接著我們將 `Dec` 附加為所有其他月份總和的負值。
+
+CELL 179
+months = Bike['mnth'].dtype.categories
+coef_month = pd.concat([
+                       coef_month,
+                       pd.Series([-coef_month.sum()],
+                                  index=['mnth[Dec]'
+                                 ])
+                       ])
+coef_month
+
+CELL 180
+最後，為了讓圖表更整潔，我們只使用每個月的第一個字母，這是索引中每個標籤的第6個條目。
+
+CELL 181
+fig_month, ax_month = subplots(figsize=(8,8))
+x_month = np.arange(coef_month.shape[0])
+ax_month.plot(x_month, coef_month, marker='o', ms=10)
+ax_month.set_xticks(x_month)
+ax_month.set_xticklabels([l[5] for l in coef_month.index], fontsize=20)
+ax_month.set_xlabel('Month', fontsize=20)
+ax_month.set_ylabel('Coefficient', fontsize=20);
+
+CELL 182
+重現圖4.13右側的繪圖遵循類似的過程。
+
+CELL 183
+coef_hr = S2[S2.index.str.contains('hr')]['coef']
+coef_hr = coef_hr.reindex(['hr[{0}]'.format(h) for h in range(23)])
+coef_hr = pd.concat([coef_hr,
+                     pd.Series([-coef_hr.sum()], index=['hr[23]'])
+                    ])
+
+CELL 184
+現在我們製作小時圖表。
+
+CELL 185
+fig_hr, ax_hr = subplots(figsize=(8,8))
+x_hr = np.arange(coef_hr.shape[0])
+ax_hr.plot(x_hr, coef_hr, marker='o', ms=10)
+ax_hr.set_xticks(x_hr[::2])
+ax_hr.set_xticklabels(range(24)[::2], fontsize=20)
+ax_hr.set_xlabel('Hour', fontsize=20)
+ax_hr.set_ylabel('Coefficient', fontsize=20);
+
+CELL 186
+### Poisson Regression
+
+CELL 187
+現在我們改為對 `Bikeshare` 資料擬合泊松迴歸模型。幾乎沒有什麼變化，除了我們現在使用 `sm.GLM()` 函數並指定泊松分布族：
+
+CELL 188
+M_pois = sm.GLM(Y, X2, family=sm.families.Poisson()).fit()
+
+CELL 189
+我們可以繪製與 `mnth` 和 `hr` 相關聯的係數，以重現圖4.15。我們首先如前面一樣完成這些係數。
+
+CELL 190
+S_pois = summarize(M_pois)
+coef_month = S_pois[S_pois.index.str.contains('mnth')]['coef']
+coef_month = pd.concat([coef_month,
+                        pd.Series([-coef_month.sum()],
+                                   index=['mnth[Dec]'])])
+coef_hr = S_pois[S_pois.index.str.contains('hr')]['coef']
+coef_hr = pd.concat([coef_hr,
+                     pd.Series([-coef_hr.sum()],
+                     index=['hr[23]'])])
+
+CELL 191
+繪圖和之前一樣。
+
+CELL 192
+fig_pois, (ax_month, ax_hr) = subplots(1, 2, figsize=(16,8))
+ax_month.plot(x_month, coef_month, marker='o', ms=10)
+ax_month.set_xticks(x_month)
+ax_month.set_xticklabels([l[5] for l in coef_month.index], fontsize=20)
+ax_month.set_xlabel('Month', fontsize=20)
+ax_month.set_ylabel('Coefficient', fontsize=20)
+ax_hr.plot(x_hr, coef_hr, marker='o', ms=10)
+ax_hr.set_xticklabels(range(24)[::2], fontsize=20)
+ax_hr.set_xlabel('Hour', fontsize=20)
+ax_hr.set_ylabel('Coefficient', fontsize=20);
+
+CELL 193
+我們比較兩個模型的擬合值。
+擬合值儲存在線性迴歸和泊松擬合的 `fit()` 方法回傳的 `fittedvalues` 屬性中。線性預測值儲存為 `lin_pred` 屬性。
+
+CELL 194
+fig, ax = subplots(figsize=(8, 8))
+ax.scatter(M2_lm.fittedvalues,
+           M_pois.fittedvalues,
+           s=20)
+ax.set_xlabel('Linear Regression Fit', fontsize=20)
+ax.set_ylabel('Poisson Regression Fit', fontsize=20)
+ax.axline([0,0], c='black', linewidth=3,
+          linestyle='--', slope=1);
+
+CELL 195
+泊松迴歸的預測與線性模型的預測相關；然而，前者是非負的。因此，對於非常低或非常高的騎乘水準，泊松迴歸預測往往比線性模型的預測更大。
+
+在本節中，我們使用 `sm.GLM()` 函數擬合泊松迴歸模型，參數為 `family=sm.families.Poisson()`。本實驗的早期我們使用 `sm.GLM()` 函數擬合邏輯迴歸，參數為 `family=sm.families.Binomial()`。`family` 參數的其他選擇可以用來擬合其他類型的 GLM。例如，`family=sm.families.Gamma()` 擬合伽瑪迴歸模型。
+
+CELL 196
+## `Sklearn` 中邏輯迴歸的更多資訊
+
+CELL 197
+Smarket['Direction2'] = pd.get_dummies(Smarket.Direction, drop_first=True)
+Smarket.head()
+
+CELL 198
+C 是正則化項，其中較高的 C 表示對係數幅度的懲罰較少。我們將 C 設定為任意高的值，使得實際上沒有正則化。
+
+CELL 199
+X = Smarket.loc[:, 'Lag1':'Volume']
+y = Smarket.Direction2
+logreg = LogisticRegression(solver='newton-cg', C=1e42)  #large C for no regularization
+logreg.fit(X, y)
+
+CELL 200
+print("Intercept:", logreg.intercept_)
+list(zip(X.columns, logreg.coef_[0]) )         # coefficients
+
+CELL 201
+list( zip(X.index, logreg.predict_proba(X=X)[:10, 1]) )
+
+CELL 202
+y_pred_class = logreg.predict(X=X)
+y_pred_class_prob = logreg.predict_proba(X=X)
+y_pred_class.sum()
+
+CELL 203
+print("Accuracy: ", accuracy_score(y, y_pred_class))   # Accuracy
+print("Accuracy (manual calculation): %0.7f " % (y == y_pred_class).mean() )
+
+CELL 204
+logreg.predict([[1.2,1.1,1,1,1,1],
+                 [1.5,-0.8,1,1,1,1]])
+
+CELL 205
+y
+
+CELL 206
+fpr, tpr, thresholds = roc_curve(y, y_pred_class_prob[:,1]) # probability estimates of the positive class, confidence values, or non-thresholded measure of decisions
+roc_auc = auc(fpr, tpr)
+RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc, estimator_name='example estimator').plot();
+
+CELL 207
+## 補充內容
+
+CELL 208
+### `scikit-learn` 中的 GLM
+
+CELL 209
+[https://github.com/scikit-learn-contrib/skglm](https://github.com/scikit-learn-contrib/skglm).
+
+
+CELL 210
+### 使用 scikit-learn 和欄位轉換進行 Poisson 迴歸
+
+CELL 211
+[https://scikit-learn.org/stable/auto_examples/linear_model/plot_poisson_regression_non_normal_loss.html](https://scikit-learn.org/stable/auto_examples/linear_model/plot_poisson_regression_non_normal_loss.html).
+
+
+CELL 212
+### Yellowbrick 的繪圖
+
+CELL 213
+[https://www.scikit-yb.org/en/latest/api/classifier/index.html#](https://www.scikit-yb.org/en/latest/api/classifier/index.html#).

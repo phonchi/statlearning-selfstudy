@@ -1,0 +1,122 @@
+4.6 Generalized Linear Models
+171
+Coefficient Std. error z-statistic p-value
+Intercept
+4.12
+0.01
+683.96
+0.00
+workingday
+0.01
+0.00
+7.5
+0.00
+temp
+0.79
+0.01
+68.43
+0.00
+weathersit[cloudy/misty]
+-0.08
+0.00
+-34.53
+0.00
+weathersit[light rain/snow]
+-0.58
+0.00
+-141.91
+0.00
+weathersit[heavy rain/snow]
+-0.93
+0.17
+-5.55
+0.00
+TABLE 4.11. Results for a Poisson regression model fit to predict bikers in
+the Bikeshare data. The predictors mnth and hr are omitted from this table due
+to space constraints, and can be seen in Figure 4.15. For the qualitative variable
+weathersit, the baseline corresponds to clear skies.
+FIGURE 4.15.
+A Poisson regression model was fit to predict bikers in the
+Bikeshare data set. Left: The coefficients associated with the month of the year.
+Bike usage is highest in the spring and fall, and lowest in the winter. Right: The
+coefficients associated with the hour of the day. Bike usage is highest during peak
+commute times, and lowest overnight.
+and lowest during the winter and in the early morning hours. Moreover,
+bike usage increases as the temperature increases, and decreases as the
+weather worsens. Interestingly, the coefficient associated with workingday
+is statistically significant under the Poisson regression model, but not under
+the linear regression model.
+Some important distinctions between the Poisson regression model and
+the linear regression model are as follows:
+• Interpretation: To interpret the coefficients in the Poisson regression
+model, we must pay close attention to (4.37), which states that an
+increase in Xj by one unit is associated with a change in E(Y ) = λ
+by a factor of exp(βj). For example, a change in weather from clear
+to cloudy skies is associated with a change in mean bike usage by a
+factor of exp(−0.08) = 0.923, i.e. on average, only 92.3% as many
+people will use bikes when it is cloudy relative to when it is clear.
+If the weather worsens further and it begins to rain, then the mean
+bike usage will further change by a factor of exp(−0.5) = 0.607, i.e.
+on average only 60.7% as many people will use bikes when it is rainy
+relative to when it is cloudy.
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+−0.6
+−0.4
+−0.2
+0.0
+0.2
+Month
+Coefficient
+J
+F
+M
+A
+M
+J
+J
+A
+S
+O
+N
+D
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●
+●●●●
+●
+●●
+●
+●
+●
+●
+●
+5
+10
+15
+20
+−2
+−1
+0
+1
+Hour
+Coefficient

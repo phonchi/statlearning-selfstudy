@@ -2068,6 +2068,8 @@ HC.ready(() => {
 # 核心閱讀保留；詳細計算、進階方法與 Lab 以主題收合。
 from reading_flow_ch7_8_9_12 import apply_reading_flow
 PAGEJS += apply_reading_flow('unsupervised_learning', BODIES)
+from teaching_scope_ch7_8_9_12 import clean_pagejs
+PAGEJS = clean_pagejs('unsupervised_learning', PAGEJS)
 
 if __name__ == "__main__":
     apply("unsupervised_learning", BODIES, PAGEJS, frames())

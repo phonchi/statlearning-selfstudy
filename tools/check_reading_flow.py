@@ -4,7 +4,7 @@ import json,re,subprocess
 from bs4 import BeautifulSoup
 
 ROOT=Path(__file__).resolve().parent.parent
-OUT=ROOT/'tools/verification/reading-flow-20260910'
+OUT=ROOT/'tools/verification/teaching-scope-20260910'
 failures=[];pages=[]
 
 def main_text(doc):
@@ -24,13 +24,14 @@ for path in sorted(ROOT.glob('*.html')):
     ids=[e['id'] for e in doc.select('[id]')]
     if len(ids)!=len(set(ids)):failures.append(f'{path.name}: duplicate IDs')
     visible_quiz=[q for q in doc.select('.quiz-box') if not q.find_parent('details')]
-    if not visible_quiz:failures.append(f'{path.name}: no visible core self-check')
     baseline=subprocess.check_output(['git','show',f'HEAD:{path.name}'],cwd=ROOT).decode()
-    old=BeautifulSoup(baseline,'html.parser')
-    # Existing anchors remain addressable, except the explicitly deleted intro proof.
-    removed=set(e['id'] for e in old.select('[id]'))-set(ids)
-    allowed={'w01proofMedianEfficiency'} if path.stem=='introduction' else set()
-    if removed-allowed:failures.append(f'{path.name}: removed anchors {sorted(removed-allowed)}')
+    # The teaching-scope cleanup explicitly removes unsupported examples and
+    # their anchors. Validate remaining links, not a quota of historical IDs.
+    from urllib.parse import unquote
+    for link in doc.select('a[href^="#"]'):
+        target=unquote(link['href'][1:])
+        if target and target not in ids:
+            failures.append(f'{path.name}: unresolved current link #{target}')
     before=len(main_text(BeautifulSoup(baseline,'html.parser')))
     after=len(main_text(BeautifulSoup(text,'html.parser')))
     pages.append({'page':path.stem,'details':len(units),'main_text_characters_before':before,

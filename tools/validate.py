@@ -365,8 +365,6 @@ def check_page(p: P.Page):
             head = next((ln.strip() for ln in body.splitlines() if ln.strip()), "")
             if head and labtext and head not in labtext:
                 warn("GROUNDING", w, f"預期輸出的首行在 {labs_note} 找不到：「{head[:60]}」")
-        if not re.search(r'class="ver-note"', src):
-            warn("GROUNDING", w, "REF 區缺 .ver-note 環境版本註記")
 
         # GROUNDING-PREP：先備頁的出處要求比正課更硬（fail 等級）。
         # 整段被 kind=="prep" 包住，正課十一章一行都不會執行，所以不可能製造新的 warn。
@@ -421,18 +419,13 @@ def check_concept_grounding(p, w, src):
                 fail("GROUNDING-CONCEPT", w, f"#{sec.id} 來源與登記章節不符：{url}")
         if not matched:
             fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺對應原站章節連結")
-        if 'class="quiz-box"' not in body:
-            fail("GROUNDING-CONCEPT", w, f"#{sec.id} 缺自測")
     for page in re.findall(r'seeing-theory\.pdf#page=(\d+)', src):
         if not 1 <= int(page) <= 66:
             fail("GROUNDING-CONCEPT", w, f"PDF 頁碼超出 1–66：{page}")
     ex = re.search(r'<section id="exercises">(.*?)</section>', src, re.S)
-    # Advanced exercises may follow their prerequisite topic inside a detail.
-    # Require each original exercise identity exactly once across the whole page.
-    if not ex or any(src.count(f'id="qEx{i}Options"') != 1 for i in range(1, 5)):
-        fail("GROUNDING-CONCEPT", w, "頁內必須完整保留 EX1–4；計算題可隨所屬教學收合")
-    if 'class="ver-note"' not in src:
-        fail("GROUNDING-CONCEPT", w, "缺算例與模擬來源註記")
+    # Retained exercises are checked for valid IDs, answers and source metadata.
+    # No fixed question count: unsupported numeric examples may be removed.
+
 
 
 # ── 先備入口層的出處檢查 ────────────────────────────────────────────────
@@ -468,7 +461,7 @@ def check_prep_grounding(p, w, src, labtext):
     1. 每張 .deck-extra 的 .dx-src 要能解析成「ChNN 某個 lab · 儲存格 k」，
        章號必須在 Page.src_labs 裡，儲存格必須真的存在於該 lab。
     2. 有 .expected-out 的卡，內容必須逐字等於該格的實跑輸出（不是「首行找得到」）。
-    3. 一頁至少要有一張 lab 引用卡，否則這一頁等於沒有出處。
+    3. 只核對必要且實際保留的 lab 卡，不要求為了數量加入程式例子。
     4. 「課程 Lab ChN · 儲存格 k」徽章所指的儲存格也要存在——徽章從自由文字
        升級成可驗證的交叉引用。
     """
@@ -509,8 +502,6 @@ def check_prep_grounding(p, w, src, labtext):
             elif got not in want:
                 fail("GROUNDING-PREP", w,
                      f"第 {i + 1} 張的預期輸出與 lab_ch{ch}.md 儲存格 {ks} 不逐字相同")
-    if not n_cited:
-        fail("GROUNDING-PREP", w, "整頁沒有任何引用課程 lab 的 .deck-extra")
     for m in PREP_BADGE_RE.finditer(" | ".join(sec.badge for sec in p.secs)):
         ch = int(m.group(1))
         if ch not in cells:

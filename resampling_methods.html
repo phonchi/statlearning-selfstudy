@@ -781,7 +781,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>講義用 <code>Auto</code> 資料（n = 392）示範：把 196 筆拿去訓練、196 筆當驗證集，
   用 <code>horsepower</code> 預測 <code>mpg</code>。看起來很乾淨——問題是<strong>換一個切法，答案就變了</strong>。</p>
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Auto；固定 random_state=0..9，對照圖 5.2">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w05valChart"></canvas>
@@ -789,7 +789,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       </div>
       <div class="status-banner" id="w05valStatus"><span class="status-icon">›</span><span class="status-text">十條淡線是十種固定切分，粗線是平均。</span></div>
       <div class="controls-bar"></div>
-      <div class="viz-source"><span>課程／lab 資料</span>ISLP Auto；固定 random_state=0..9，對照圖 5.2</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -992,8 +992,8 @@ $$A(\hat\beta_{(-i)}-\hat\beta)=-x_i(y_i-x_i^T\hat\beta_{(-i)})=-x_i e_i^{(-i)}.
     折誤差可能更相關，但每折本身的變異也會改變，平均後的總變異不保證增加。</li>
 </ul>
 <p>ISLP §5.1.4 的結論是：<strong>k = 5 或 k = 10 是偏差與變異都可接受的折衷</strong>，
-  而且計算量只有 LOOCV 的 5/n 或 10/n。下面這張圖是 <code>Auto</code> 上的實測：</p>
-<div class="viz-layout" data-provenance="course-data">
+  而且計算量只有 LOOCV 的 5/n 或 10/n。講義以 <code>Auto</code> 比較不同次數的模型：</p>
+<div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Auto；依 Ch05 lab 的 LOOCV／10-fold 設定重算">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w05cvChart"></canvas>
@@ -1001,7 +1001,7 @@ $$A(\hat\beta_{(-i)}-\hat\beta)=-x_i(y_i-x_i^T\hat\beta_{(-i)})=-x_i e_i^{(-i)}.
       </div>
       <div class="status-banner" id="w05cvStatus"><span class="status-icon">›</span><span class="status-text">LOOCV 與 10-fold CV 在同一份 Auto 資料上的比較。</span></div>
       <div class="controls-bar"></div>
-      <div class="viz-source"><span>課程／lab 資料</span>ISLP Auto；依 Ch05 lab 的 LOOCV／10-fold 設定重算</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1098,32 +1098,6 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
   <strong>這個數字受到資料洩漏影響。</strong></p>
 <p>問題在於「挑特徵」這一步<strong>看過了全部的 y</strong>，包含後來被當成驗證資料的那些。
   篩選本身就是模型訓練的一部分，它必須在每一折的訓練部分內重新執行。</p>
-<div class="viz-layout" data-provenance="simulation">
-  <div>
-    <div class="viz-panel">
-      <div class="chart-wrap square"><canvas id="w05misChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖報告 100 次獨立純雜訊模擬的平均錯誤率；不以任何一次模擬當成一般效果。</div></div>
-      </div>
-      <div class="status-banner" id="w05misStatus"><span class="status-icon">›</span><span class="status-text">100 份獨立純雜訊資料上的兩種 CV 流程。</span></div>
-      <div class="controls-bar"></div>
-      <div class="viz-source"><span>固定種子模擬</span>固定種子 100 次獨立模擬；對照講義「交叉驗證的正確與錯誤做法」</div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">這個模擬在做什麼 <span class="ic-badge">ESL §7.10.2</span></div>
-      n = 50、p = 500 的<strong>純雜訊</strong>資料：y 是丟硬幣決定的，跟每一個 X 都完全無關。所以未洩漏驗證資訊的流程應回報「錯誤率約 50%，這些特徵沒用」。
-    </div>
-    <div class="info-card">
-      <div class="ic-title">100 次獨立模擬</div>
-      <div class="ic-row"><span class="ic-label">錯誤流程｜平均</span><span class="ic-value" id="w05misWrong">—</span></div><div class="ic-row"><span class="ic-label">正確流程｜平均</span><span class="ic-value" id="w05misRight">—</span></div><div class="ic-row"><span class="ic-label">錯誤流程｜10–90%</span><span class="ic-value" id="w05misWrongRange">—</span></div><div class="ic-row"><span class="ic-label">正確流程｜10–90%</span><span class="ic-value" id="w05misRightRange">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">為什麼差這麼多</div>
-      從 500 個純雜訊特徵裡挑「最相關的 10 個」，一定挑得到幾個<em>剛好</em>跟這 50 筆 y 對得上的。那個「剛好」也包含了驗證折的 y——驗證資料的標籤便提前影響了模型。
-    </div>
-  </div>
-</div>
 <div class="info-box warm">
   <span class="info-label">一句話原則</span>
   凡是<strong>會從資料估計任何參數的步驟</strong>——特徵篩選、標準化的平均與標準差、
@@ -1179,7 +1153,7 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
 <p><strong>Bootstrap 的做法：把手上這份資料當成母體，從裡面有放回地抽 n 筆</strong>，
   當成一份「新」資料集，重算 $\hat\alpha^*$。重複 B 次，那 B 個 $\hat\alpha^*$ 的標準差
   就是 $\mathrm{SE}(\hat\alpha)$ 的估計。不必指定常態分布，但重抽單位須符合資料的獨立性與研究設計。</p>
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Portfolio；與 Ch05 lab 的 α̂ 統計量一致">
   <div>
     <div class="viz-panel">
       <div class="info-box" id="w05bootSvg" style="font-family:var(--mono);font-size:.78rem;">尚未重抽。按「抽一次」後會顯示 Portfolio 的抽樣索引摘要。</div>
@@ -1188,12 +1162,12 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
       </div>
       <div class="status-banner" id="w05bootStatus"><span class="status-icon">›</span><span class="status-text">從 Portfolio 的 100 對 (X,Y) 有放回抽 100 對，再重算同一個 α̂。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w05bootDrawOne()">→ 抽一次</button><button class="btn btn-play" onclick="w05bootMany()">▶ 連抽 200 次</button><button class="btn btn-reset" onclick="w05bootReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>ISLP Portfolio；與 Ch05 lab 的 α̂ 統計量一致</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">虛擬碼 <span class="ic-badge">CODE</span></div>
+      <div class="ic-title">虛擬碼</div>
       <div class="pseudo-code" id="w05bootCode" style="font-size:.74rem;"><span class="line" data-l="1"><span class="kw">for</span> b <span class="kw">in</span> <span class="kw">range</span>(B):</span>
 <span class="line" data-l="2">    idx = 有放回抽 n 個</span>
 <span class="line" data-l="3">    θ*[b] = f(資料[idx])</span>
@@ -1278,7 +1252,7 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
     <div class="qa-a"><p>幾種常見的限制：</p><ul><li><strong>估計量依賴極值</strong>（最大值、最小值、全距）：bootstrap 樣本的最大值永遠不會超過原始資料的最大值，所以分佈會被截斷。</li><li><strong>資料不獨立</strong>（時間序列、空間資料、群組結構）：直接對單筆有放回重抽會破壞相關結構。要改用 block bootstrap。</li><li><strong>n 很小</strong>：把 10 筆資料當母體，本來就沒什麼可抽的。</li></ul></div>
   </details>
 </div>
-<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法與校準。</p><div class="quiz-box">
+<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法。</p><div class="quiz-box">
   <div class="quiz-label">QUIZ · Bootstrap</div>
   <p>n = 100 時，一筆特定的觀測值<strong>完全沒有</strong>出現在某個 bootstrap 樣本裡的機率約為多少？</p>
   <div class="quiz-options" id="qBootOptions"><div class="quiz-opt" data-correct="true" data-fb="對。$(1-1/100)^{100} \approx 0.366$，很接近極限 $e^{-1} \approx 0.368$。沒被抽到的那些就是 OOB 樣本。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(A)</span> 約 0.366</div><div class="quiz-opt" data-correct="false" data-fb="這是「某一次抽籤剛好抽到它」的機率 1/100，不是「一百次都沒抽到」。要一百次都躲掉，是 $(1-1/100)^{100}$。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(B)</span> 約 0.01</div><div class="quiz-opt" data-correct="false" data-fb="不對。有放回意味著同一筆可以被抽到好幾次，也就意味著&lt;strong&gt;可能有觀測完全沒被抽到&lt;/strong&gt;；n=100 時預期約 36.6%，大樣本極限約 36.8%，並非每次重抽都相同。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(C)</span> 0，因為有放回抽 n 次一定會抽到每一筆</div></div>
@@ -1322,7 +1296,7 @@ $$\hat p=\frac{1+\sum_{b=1}^B I(|T_b|\ge|T_{obs}|)}{B+1}.$$
 <div class="detail-body"><h3>Jackknife也能估計偏差</h3>
 <p>設 $\bar\theta_{(-)}=n^{-1}\sum_i\hat\theta_{(-i)}$。除了前面的標準誤，jackknife的偏差估計與修正後估計量為</p>
 $$\widehat{\mathrm{bias}}_{jack}=(n-1)(\bar\theta_{(-)}-\hat\theta),\qquad \hat\theta_{bc}=n\hat\theta-(n-1)\bar\theta_{(-)}.$$
-<p>這利用估計量偏差隨樣本數平滑變化的近似，不保證適用於最大值、中位數等非光滑統計量。平均數的jackknife偏差估計恰為零，標準誤恰為 $s/\sqrt n$；例如1、2、3的三個刪一平均為2.5、2、1.5，jackknife SE為 $\sqrt{1/3}$。</p>
+<p>這利用估計量偏差隨樣本數平滑變化的近似，不保證適用於最大值、中位數等非光滑統計量。平均數的jackknife偏差估計恰為零，標準誤恰為 $s/\sqrt n$；</p>
 <details class="qa-item proof" id="w05proofJackknife"><summary>證明：Jackknife偏差修正與平均數標準誤</summary>
 <div class="qa-a">
 <p>若 $E[\hat\theta_n]=\theta+a/n+b/n^2+O(n^{-3})$，刪一估計的期望為 $\theta+a/(n-1)+b/(n-1)^2+O(n^{-3})$。因此 $nE[\hat\theta_n]-(n-1)E[\bar\theta_{(-)}]$ 的a項抵消，剩餘偏差為O(n⁻²)。這是平滑偏差展開下的結論，不適用於所有統計量。</p>
@@ -1333,16 +1307,7 @@ $$\widehat{\mathrm{bias}}_{jack}=(n-1)(\bar\theta_{(-)}-\hat\theta),\qquad \hat\
 $$\Delta^*=x_0^T(\hat\beta-\hat\beta^*)+e_{new}^*.$$
 <p>用 $x_0^T\hat\beta+q_{\alpha/2}(\Delta^*)$ 與 $x_0^T\hat\beta+q_{1-\alpha/2}(\Delta^*)$ 作近似PI。這是模擬「新觀測減去估計預測值」的誤差，保留參數誤差的方向；只畫bootstrap平均曲線的分位數會漏掉新觀測雜訊。異質變異或時間相依時，這個iid殘差抽樣設計不適用。</p>
 <p>相依資料的一個替代是區塊自助法：選定區塊長度，抽取連續觀測區塊並串接到所需長度。區塊可重疊、循環或使用隨機長度；須說明所用版本，不能聲稱單一區塊長度保證保留全部相依性。</p>
-</div></details><details class="qa-item reading-detail" id="w05-detail-conformal"><summary>延伸閱讀：保形預測的校準區間</summary>
-<div class="detail-body"><h3>講義MAPIE連結：保形預測區間</h3>
-<p>保形預測（conformal prediction）提供另一種校準預測區間的方法。最簡單的split conformal先用訓練集固定模型 f，再留m筆獨立校準觀測，計算 $r_i=|y_i-f(x_i)|$。令 $k=\lceil(m+1)(1-\alpha)\rceil$，取排序後第k個殘差作q；若k=m+1，定義q=∞。新輸入的區間為 $[f(x)-q,f(x)+q]$。</p>
-<p>校準觀測與新觀測可交換、且模型不使用校準反應擬合時，區間的<strong>邊際涵蓋率</strong>至少為1−α；這不保證每一個x或每個小群體都達標，也不是平均函數的信賴區間。例如m=9、α=0.2，使用第8小的校準殘差；單純取一般80%樣本分位數可能漏掉有限樣本修正。MAPIE也有cross-conformal、jackknife與bootstrap類方法，需按各自假設解讀，不能把所有版本當成同一保證。</p>
-<p>來源：<a href="https://mapie.readthedocs.io/en/latest/content/conformal-prediction/theory/">MAPIE官方理論與涵蓋率條件</a>。</p>
-<details class="qa-item proof" id="w05proofConformal"><summary>證明：split conformal的有限樣本順位保證</summary>
-<div class="qa-a">
-<p>條件於已固定的訓練資料，m個校準分數與新分數 $r_{new}=|Y_{new}-f(X_{new})|$ 可交換。沒有平手時，新分數在m+1個值中的順位均勻分布於1至m+1，因此 $P(r_{new}\le r_{(k)})=k/(m+1)\ge1-\alpha$；有平手而以非嚴格不等號納入邊界時涵蓋率只會更保守。k=m+1時用無限區間即必然涵蓋。</p>
-<p>最後對訓練資料取平均仍保留不等式。這個順位論證對新(X,Y)聯合抽樣成立，沒有條件在指定x上，所以只能直接主張邊際涵蓋率。</p>
-</div></details></div></details>
+</div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -1392,15 +1357,7 @@ $$\Delta^*=x_0^T(\hat\beta-\hat\beta^*)+e_{new}^*.$$
   <thead><tr><th>方法</th><th>在估什麼</th><th>偏差</th><th>變異</th><th>計算成本</th><th>隨機性</th><th>典型用途</th></tr></thead>
   <tbody><tr><td>驗證集法</td><td>測試誤差</td><td>大（高估）</td><td>大</td><td>1×</td><td>有，很大</td><td>快速看一眼</td></tr><tr><td>LOOCV</td><td>測試誤差</td><td>最小</td><td>大</td><td>n×</td><td>無</td><td>小資料、線性有捷徑</td></tr><tr><td><em>k</em>-fold CV</td><td>測試誤差</td><td>小</td><td>小</td><td>k×</td><td>有，較小</td><td><strong>選模型的標準做法</strong></td></tr><tr><td>Bootstrap</td><td>估計量的 SE</td><td>—</td><td>—</td><td>B×</td><td>有，B 大就穩</td><td><strong>估不確定性</strong></td></tr></tbody>
 </table></div>
-<details class="qa-item reading-detail" id="w05-detail-auto-numbers"><summary>計算細節：Auto 各種重抽樣結果</summary>
-<div class="detail-body"><h3>Auto 資料上的實測數字</h3>
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>degree</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
-  <tbody><tr><td>LOOCV</td><td>24.23</td><td>19.25</td><td>19.34</td><td>19.42</td><td>19.03</td></tr><tr><td>10-fold CV</td><td>24.21</td><td>19.19</td><td>19.28</td><td>19.48</td><td>19.14</td></tr><tr><td>驗證集（seed 0）</td><td>23.62</td><td>18.76</td><td>18.80</td><td>18.78</td><td>18.45</td></tr></tbody>
-</table></div>
-<p style="font-size:.82rem;color:var(--muted);">degree 1 的 LOOCV = 24.2315，與 lab 中一次模型的 LOOCV 輸出
-   <code>np.float64(24.23151351792922)</code> 相符。三列都在 degree 2 之後就拉平了。</p>
-</div></details><details class="qa-item reading-detail" id="w05-detail-formula-reference"><summary>計算細節：完整公式速查</summary>
+<details class="qa-item reading-detail" id="w05-detail-formula-reference"><summary>計算細節：完整公式速查</summary>
 <div class="detail-body"><h3>公式速查</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>名稱</th><th>式子</th><th>備註</th></tr></thead>
@@ -1416,8 +1373,6 @@ $$\Delta^*=x_0^T(\hat\beta-\hat\beta^*)+e_{new}^*.$$
   特徵篩選、標準化、填補、過抽樣、目標編碼——在每折訓練部分 fit，再套到驗證部分。
   洩漏造成的數值偏差方向依模型與資料而定。
 </div>
-<details class="qa-item reading-detail" id="w05-detail-reproducibility"><summary>延伸閱讀：重現方式與環境版本</summary>
-<div class="detail-body"><p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p></div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -2269,7 +2224,7 @@ w05bootReset();
 HC.ready(() => {
   w05valDraw();
   w05cvDraw();
-  w05misShow();
+  
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */

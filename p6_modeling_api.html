@@ -749,13 +749,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   同一個模型在兩套 API 底下<strong>係數完全一樣</strong>——課程 lab 裡 statsmodels 給 34.5538 與 −0.9500，sklearn 給 34.5538408793831 與 −0.95004935，對 lstat = 5、10、15 的預測值逐位相同。因此，這裡可以依<strong>需要的輸出</strong>選擇工具。
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch03 lab 的 statsmodels 與 scikit-learn 同一 lstat 模型逐步對照。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19apiSvg" height="340"></svg>
       <div class="status-banner" id="w19apiStatus"><span class="status-icon">›</span><span class="status-text">四個步驟，看兩套 API 各自怎麼寫。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19apiSet(0)">① 準備 X</button><button class="btn btn-toggle" onclick="w19apiSet(1)">② 擬合</button><button class="btn btn-toggle" onclick="w19apiSet(2)">③ 看結果</button><button class="btn btn-toggle" onclick="w19apiSet(3)">④ 預測</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch03 lab 的 statsmodels 與 scikit-learn 同一 lstat 模型逐步對照。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -818,13 +818,13 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   類別變數要先展開成 0／1 的欄，交互作用要先乘起來變成新的一欄。
   <code>MS()</code>（ModelSpec）就是幫你做這件事的。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch03 lab 的 Boston 設計矩陣與 ModelSpec 用法重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19dsgSvg" height="340"></svg>
       <div class="status-banner" id="w19dsStatus"><span class="status-icon">›</span><span class="status-text">先猜加了交互作用之後 X 有幾欄，再按按鈕。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19dsSet(0)">MS([&quot;lstat&quot;])</button><button class="btn btn-toggle" onclick="w19dsSet(1)">加 age</button><button class="btn btn-toggle" onclick="w19dsSet(2)">加交互作用</button><button class="btn btn-toggle" onclick="w19dsSet(3)">類別變數展開</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch03 lab 的 Boston 設計矩陣與 ModelSpec 用法重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -890,13 +890,6 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   <p class="dx-note">lstat = 5、10、15 對應的預測 medv。記住這三個數字，下一節 sklearn 會算出<strong>逐位相同</strong>的結果。</p>
   <span class="dx-src" data-lab-ch="3" data-lab-cells="41">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
 </div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 01 · 自我檢測</div>
-  <p>一個有 4 個類別的變數 <code>region</code> 放進迴歸，X 會多出幾欄？</p>
-  <div class="quiz-options" id="qDesignOptions"><div class="quiz-opt" data-correct="false" data-fb="會多出共線性，四欄加起來永遠等於截距那一欄，矩陣就不滿秩了。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(A)</span> 4 欄，每個類別一欄</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫虛擬變數編碼，被留下來當基準的那一類叫參考組，其他三欄的係數都是「相對於參考組」的差。第 3 章會詳細講。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(B)</span> 3 欄，其中一個類別當基準</div><div class="quiz-opt" data-correct="false" data-fb="這樣等於宣稱類別之間有等距的順序關係——「region 3 比 region 1 多兩單位」是沒有意義的敘述。" onclick="quizCheck('qDesign', this)"><span class="opt-letter">(C)</span> 1 欄，把類別編成 0、1、2、3</div></div>
-  <div class="quiz-feedback" id="qDesignFeedback"></div>
-</div>
 </section>
 <section id="summary">
 <!-- GEN:BEGIN sec:summary -->
@@ -907,13 +900,13 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   <p><code>summarize(results)</code> 給你四個欄位。可以依序閱讀：<strong>係數告訴你效果多大，標準誤告訴你這個估計多穩</strong>，
   p 值只是這兩者的比值換算出來的。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="係數、標準誤、t 與 p 值逐項取自 Ch03 lab 的 OLS summary。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19smSvg" height="320"></svg>
       <div class="status-banner" id="w19smStatus"><span class="status-icon">›</span><span class="status-text">四個欄位，一個一個看。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19smSet(0)">coef</button><button class="btn btn-toggle" onclick="w19smSet(1)">std err</button><button class="btn btn-toggle" onclick="w19smSet(2)">t</button><button class="btn btn-toggle" onclick="w19smSet(3)">P&gt;|t|</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>係數、標準誤、t 與 p 值逐項取自 Ch03 lab 的 OLS summary。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -961,32 +954,25 @@ dtype: float64</pre></div>
     <div class="qa-a">標準差量的是<strong>個別觀測</strong>的分散程度；標準誤量的是<strong>估計量</strong>（例如這個係數）的分散程度。樣本變大時標準差不會變小，標準誤會。第 5 章的自助法就是在估標準誤。</div>
   </details>
 </div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 02 · 自我檢測</div>
-  <p>兩個模型的 lstat 係數都是 −0.95，但 A 的標準誤是 0.04、B 是 0.60。這代表什麼？</p>
-  <div class="quiz-options" id="qSummaryOptions"><div class="quiz-opt" data-correct="true" data-fb="對。同樣的點估計、不同的精確度。B 的 95% 信賴區間大約是 −0.95 ± 1.2，涵蓋了 0，也就是說 B 甚至不能排除「沒有效果」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(A)</span> 兩者估到的效果一樣大，但 B 的估計不確定得多</div><div class="quiz-opt" data-correct="false" data-fb="效果的大小是 &lt;code&gt;coef&lt;/code&gt; 這一欄，兩者都是 −0.95，一樣大。標準誤講的是「這個 −0.95 有多可信」。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(B)</span> B 的效果比較小</div><div class="quiz-opt" data-correct="false" data-fb="擬合好壞要看 R² 或殘差圖。標準誤大通常是樣本少、或這個變數跟其他變數共線。那是另一回事。" onclick="quizCheck('qSummary', this)"><span class="opt-letter">(C)</span> B 的模型擬合得比較差</div></div>
-  <div class="quiz-feedback" id="qSummaryFeedback"></div>
-</div>
 </section>
 <section id="skl">
 <!-- GEN:BEGIN sec:skl -->
   <div class="section-number">PART 03 · scikit-learn 的三個動詞</div>
   <h2>fit、predict、score：每個模型都長一樣 <span class="sec-badge">課程 Lab Ch3 · lab 範例</span></h2>
 <!-- GEN:END sec:skl -->
-<p>最小使用順序是 <code>model.fit(X_train, y_train)</code>、<code>model.predict(X_test)</code>、<code>model.score(X_test, y_test)</code>。回歸器的 score 通常是 R²，分類器通常是準確率，仍要核對該估計器的定義。</p>
+
   <p>scikit-learn 的預測模型使用<strong>一致的介面</strong>。
   線性迴歸、隨機森林、支持向量機，都是
   <code>fit(X, y)</code> 學參數、<code>predict(X)</code> 給預測、<code>score</code> 算分數。
   換模型只要換建構子那一行，後面完全不用改。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch03 lab 的 sklearn LinearRegression fit／predict／score 流程重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19flowSvg" height="340"></svg>
       <div class="status-banner" id="w19flStatus"><span class="status-icon">›</span><span class="status-text">按「單步」走一次 fit → predict → score。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w19flStep()">→ 單步</button><button class="btn btn-play" onclick="w19flPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w19flReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch03 lab 的 sklearn LinearRegression fit／predict／score 流程重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1124,7 +1110,7 @@ The RMSE is: 5.0571</pre></div>
 </div></div></details>
 
 <details class="qa-item reading-detail" id="w19detail-cv-comparison"><summary>跨章例子：三種多項式的驗證誤差</summary>
-<div class="detail-body"><div class="viz-layout" data-provenance="course-data">
+<div class="detail-body"><div class="viz-layout" data-provenance="course-data" data-source-note="MSE 逐項取自 Ch05 lab 儲存格 26 與 34；圖只重畫這些輸出。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w19cvChart"></canvas>
@@ -1132,7 +1118,7 @@ The RMSE is: 5.0571</pre></div>
       </div>
       <div class="status-banner" id="w19cvStatus"><span class="status-icon">›</span><span class="status-text">驗證集 MSE：二次式最低，三次式沒有更好。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19cvSet(0)">驗證集 MSE</button><button class="btn btn-toggle" onclick="w19cvSet(1)">加上 LOOCV</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>MSE 逐項取自 Ch05 lab 範例 與 34；圖只重畫這些輸出。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1150,15 +1136,6 @@ The RMSE is: 5.0571</pre></div>
     </div>
   </div>
 </div></div></details>
-
-
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 04 · 自我檢測</div>
-  <p>訓練集 R² 是 0.95、測試集 R² 是 0.42。最合理的判斷是？</p>
-  <div class="quiz-options" id="qSplitOptions"><div class="quiz-opt" data-correct="true" data-fb="對。它把訓練資料的雜訊也學了進去，換一份資料就失效。第 2 章的偏差—變異取捨、第 6 章的收縮方法都在處理這件事。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(A)</span> 模型過度擬合了訓練資料</div><div class="quiz-opt" data-correct="false" data-fb="換到看得順眼為止就等於把測試集當訓練集用。測試集只能&lt;strong&gt;看一次&lt;/strong&gt;，看多了它就失去意義。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(B)</span> 測試集有問題，應該換一個</div><div class="quiz-opt" data-correct="false" data-fb="方向反了。訓練分數遠高於測試分數是&lt;strong&gt;太複雜&lt;/strong&gt;的徵狀，加變數只會更嚴重。" onclick="quizCheck('qSplit', this)"><span class="opt-letter">(C)</span> 模型還不夠複雜，應該加更多變數</div></div>
-  <div class="quiz-feedback" id="qSplitFeedback"></div>
-</div>
 </section>
 <section id="cv">
 <!-- GEN:BEGIN sec:cv -->
@@ -1170,13 +1147,13 @@ The RMSE is: 5.0571</pre></div>
   交叉驗證把資料輪流當驗證集，每一筆都當過一次，結果穩定得多。
   但用它之前得先弄清楚一件事——<strong>前處理要在切分的哪一邊做</strong>。</p>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="自訂資訊流示意；不附虛構 MSE，只判定評估流程是否洩漏。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w19leakSvg" height="340"></svg>
       <div class="status-banner" id="w19lkStatus"><span class="status-icon">›</span><span class="status-text">先找出哪條路在切分前看過測試集資訊。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w19lkSet(0)">先標準化再切分 ✗</button><button class="btn btn-toggle" onclick="w19lkSet(1)">先切分再標準化 ✓</button><button class="btn btn-step" onclick="w19lkStep()">→ 單步</button><button class="btn btn-reset" onclick="w19lkReset()">重置</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>自訂資訊流示意；不附虛構 MSE，只判定評估流程是否洩漏。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1266,55 +1243,12 @@ The RMSE is: 5.0571</pre></div>
   <span class="info-label">🔗 這在本站哪一章會用到</span>
   第 5 章整章都在講交叉驗證與自助法，第 6 章用交叉驗證挑收縮的強度 λ，第 8 章調樹的深度也是同一套。<a href="resampling_methods.html#kfold">→ 重抽樣方法 · k 折交叉驗證</a>　<a href="resampling_methods.html#cvwrong">→ 同一章的「先用全資料選特徵再 CV」</a>
 </div>
-
-<details class="qa-item reading-detail" id="w19detail-ridge-pipeline"><summary>跨章完整實作：Hitters、Ridge 與 Pipeline</summary>
-<div class="detail-body"><h3 id="dx-pipe">把標準化與模型交給同一條 Pipeline</h3>
-<p>到 Ch06 中文 Lab 的 Ridge 節，先完成 imports、Hitters 清理、X／Y、lambdas 與 n_samples 的建立，再接著閱讀下面兩格。
-這裡沿用該份 notebook 的變數；其資料與本頁 Boston、Auto 範例不同。</p>
-<div class="deck-extra">
-  <div class="dx-label">標準化後接 Ridge</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com">#ridge = skl.ElasticNet(alpha=lambdas[59], l1_ratio=0)</span></span>
-  <span class="line">ridge = skl.Ridge(alpha=lambdas[<span class="num">59</span>]* n_samples)</span>
-  <span class="line">scaler = StandardScaler(with_mean=<span class="num">True</span>,  with_std=<span class="num">True</span>)</span>
-  <span class="line">pipe = Pipeline(steps=[(<span class="str">&#x27;scaler&#x27;</span>, scaler), (<span class="str">&#x27;ridge&#x27;</span>, ridge)])</span>
-  <span class="line">pipe.fit(X, Y)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Pipeline(steps=[(&#x27;scaler&#x27;, StandardScaler()),
-                (&#x27;ridge&#x27;, Ridge(alpha=np.float64(64.1056349310749)))])</pre></div>
-  <span class="dx-src" data-lab-ch="6" data-lab-cells="122">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
-</div>
-<p>每個步驟都有名稱：scaler 與 ridge。訓練時先由 scaler 學平均及標準差，再將轉換結果交給 Ridge。
-預測時沿用同一 scaler 的參數；<code>pipe['ridge'].alpha</code> 可存取模型的懲罰強度。</p>
-<div class="deck-extra">
-  <div class="dx-label">把整條 Pipeline 放進切分評估</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># This is basically the same as train_test_split</span></span>
-  <span class="line">validation = skm.ShuffleSplit(n_splits=<span class="num">1</span>,</span>
-  <span class="line">                              test_size=<span class="num">0.5</span>,</span>
-  <span class="line">                              random_state=<span class="num">0</span>)</span>
-  <span class="line">pipe[<span class="str">&#x27;ridge&#x27;</span>].alpha = <span class="num">0.01</span></span>
-  <span class="line">results = skm.cross_validate(pipe,</span>
-  <span class="line">                             X,</span>
-  <span class="line">                             Y,</span>
-  <span class="line">                             scoring=<span class="str">&#x27;neg_mean_squared_error&#x27;</span>,</span>
-  <span class="line">                             cv=validation)</span>
-  <span class="line">-results[<span class="str">&#x27;test_score&#x27;</span>]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([133821.45286659])</pre></div>
-  <span class="dx-src" data-lab-ch="6" data-lab-cells="128">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
-</div>
-<p>此例用一次 ShuffleSplit 留出一半資料，每次評估會複製並重新擬合整條 Pipeline，包括 scaler。
-<code>neg_mean_squared_error</code> 採「越大越好」的分數方向，最前面的負號將它轉回 MSE。
-這裡 alpha 已固定為 0.01，沒有同時搜尋最佳 alpha；改用其他分割器時仍保持前處理在每次訓練資料內。</p>
-<p class="source-note">延伸：<a href="https://scikit-learn.org/stable/modules/compose.html#pipeline">scikit-learn Pipeline 文件</a>；完整參數選擇見 <a href="model_selection.html#ridge">收縮方法</a>。</p>
-</div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
-  程式碼範例，觀察結果。</p>
+  <p>回顧本頁觀念與原 Lab 的程式，確認各個操作的意義與使用條件。</p>
   <div class="sol-links"><a href="https://www.statsmodels.org/stable/gettingstarted.html" target="_blank" rel="noopener">🔗 statsmodels 快速入門</a><a href="https://scikit-learn.org/stable/developers/develop.html" target="_blank" rel="noopener">🔗 scikit-learn 估計器介面</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch03 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1332,12 +1266,6 @@ The RMSE is: 5.0571</pre></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 3 · 誤差的不確定性</div>
-  <p>相同十次切分中，模型 A 的 MSE 平均是 23.8（標準差 1.4），模型 B 是 23.4（標準差 1.5）。這些摘要能告訴你什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="這些摘要顯示 B 在本次評估的平均較低。差距是否穩定、新資料上是否維持同樣排序，仍需要其他評估證據。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> B 的真實預測表現一定較好</div><div class="quiz-opt" data-correct="true" data-fb="對。兩個模型各自的標準差，不等於模型差異的不確定性。要保留每次切分的配對結果，並考慮切分之間的相依性。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> B 的平均較低；還要查看相同切分下兩模型的配對差異與評估設計</div><div class="quiz-opt" data-correct="false" data-fb="這不是有效的判定門檻。兩個模型可能一起隨切分起伏，但其中一個持續較好；沒有足夠證據也不等於證明相同。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 差距小於各自標準差，所以兩模型已證明一樣好</div></div>
-  <div class="quiz-feedback" id="qEx3Feedback"></div>
-</div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 洩漏</div>
@@ -1376,7 +1304,7 @@ The RMSE is: 5.0571</pre></div>
   <strong>1. 兩套 API 算的是同一件事，差別在輸出。</strong>要係數與 p 值找 statsmodels，要預測與模型比較找 scikit-learn。<br><strong>2. sklearn 的一切都是 fit / predict / score。</strong>換模型只要換建構子那一行；結尾有底線的屬性是擬合之後才存在的。<br><strong>3. 先切分，再轉換。</strong>順序反了，那個分數就不再是乾淨的 out-of-sample 評估；用 Pipeline 固定正確順序。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch03、Ch05）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+
 </div></details>
 </section>
 <section id="cards">

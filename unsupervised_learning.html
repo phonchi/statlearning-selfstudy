@@ -812,7 +812,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   $$Z_1 = \phi_{11} X_1 + \phi_{21} X_2 + \cdots + \phi_{p1} X_p,
     \qquad \text{s.t.} \sum_{j=1}^{p} \phi_{j1}^2 = 1$$
 
-  <p>係數稱為負荷量，合起來描述投影軸；把每筆置中資料投影到這個軸，所得座標稱為得分。限制方向長度為 1，才能公平比較不同方向的變異。</p><details class="qa-item reading-detail" id="w07-detail-pca-advanced"><summary>完整 PCA：限制式、矩陣算例與特徵推導</summary>
+  <p>係數稱為負荷量，合起來描述投影軸；把每筆置中資料投影到這個軸，所得座標稱為得分。限制方向長度為 1，才能公平比較不同方向的變異。</p><details class="qa-item reading-detail" id="w07-detail-pca-advanced"><summary>完整 PCA：限制式與特徵推導</summary>
 <div class="detail-body"><p>那些係數 $\phi_{j1}$ 叫做<strong>負荷量</strong>（loading），合起來是負荷向量 $\phi_1$。
   為什麼要限制平方和等於 1？因為不限制的話，把係數全部乘 100 變異數就變 10000 倍，
   「最大」就沒有意義了。把資料先置中（每欄減掉平均）之後，要解的是</p>
@@ -827,17 +827,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>負荷向量是新座標軸的方向，得分是每筆資料在新座標軸上的位置</strong>。請區分負荷向量與得分。</p>
 
   
-<h3>主成分的完整條件與可重算例子</h3><p>以下 $X\in\mathbb R^{n\times p}$ 的每欄已置中，$n>1$，$S=X^TX/(n-1)$。第 $m$ 個方向需解 $\max_v v^TSv$，限制 $v^Tv=1$ 且與前面方向正交。依特徵值由大到小排列 $Sv_m=\lambda_mv_m$，得分 $z_m=Xv_m$ 的變異是 $\lambda_m$，不同得分不相關。</p><p>有非零變異的主成分數為 $r=\operatorname{rank}(X)\le\min(n-1,p)$。相異特徵值的方向僅差正負號；重複特徵值的特徵空間內，可以旋轉成不同的正交基底。若在第 $M$ 與第 $M+1$ 個特徵值之間有間隔，前 $M$ 維子空間唯一；若截斷點落在重根中，最佳子空間也可能不唯一。</p><p>例：$X=\begin{pmatrix}-1&-1\\0&0\\1&1\end{pmatrix}$，則 $S=\begin{pmatrix}1&1\\1&1\end{pmatrix}$。特徵值為 2、0，第一方向 $(1,1)^T/\sqrt2$，得分 $(-\sqrt2,0,\sqrt2)^T$；其樣本變異為 2。第二方向 $(1,-1)^T/\sqrt2$ 的得分全為 0，資料實際只佔一維。</p><p>來源：<a href="https://rich-d-wilkinson.github.io/MATH3030/4.2-pca-a-formal-description-with-proofs.html" target="_blank" rel="noopener">PCA 的形式化定義與證明</a>。</p>
+<h3>主成分的完整條件</h3><p>以下 $X\in\mathbb R^{n\times p}$ 的每欄已置中，$n>1$，$S=X^TX/(n-1)$。第 $m$ 個方向需解 $\max_v v^TSv$，限制 $v^Tv=1$ 且與前面方向正交。依特徵值由大到小排列 $Sv_m=\lambda_mv_m$，得分 $z_m=Xv_m$ 的變異是 $\lambda_m$，不同得分不相關。</p><p>有非零變異的主成分數為 $r=\operatorname{rank}(X)\le\min(n-1,p)$。相異特徵值的方向僅差正負號；重複特徵值的特徵空間內，可以旋轉成不同的正交基底。若在第 $M$ 與第 $M+1$ 個特徵值之間有間隔，前 $M$ 維子空間唯一；若截斷點落在重根中，最佳子空間也可能不唯一。</p><p>來源：<a href="https://rich-d-wilkinson.github.io/MATH3030/4.2-pca-a-formal-description-with-proofs.html" target="_blank" rel="noopener">PCA 的形式化定義與證明</a>。</p>
 <details class="qa-item proof" id="w07proof-pca"><summary>證明：最大變異、特徵向量、正交與秩上限</summary>
 <div class="qa-a"><p>限制單位長度的 Lagrangian 是 $\mathcal L(v,\lambda)=v^TSv-\lambda(v^Tv-1)$。微分為 $2Sv-2\lambda v=0$，所以駐點滿足特徵方程。駐點不全是最大值；令 $S=V\Lambda V^T$、$v=Va$、$\sum_ja_j^2=1$，則 $v^TSv=\sum_j\lambda_ja_j^2\le\lambda_1$，取第一特徵向量達到上界。限制與前 $m-1$ 個方向正交後，同理得到第 $m$ 個特徵值。</p><p>得分共變異數為 $z_j^Tz_k/(n-1)=v_j^TSv_k=\lambda_kv_j^Tv_k$，在 $j\ne k$ 時為 0。反過來，和正特徵值方向的得分不相關才迫使方向正交；零變異得分不能用相關係數反推方向。置中使 $\mathbf1^TX=0$，所以列空間至多 $n-1$ 維，亦至多 $p$ 維，證得秩上限。</p></div></details></div></details><p>下面這個元件就是把「找最大變異方向」這件事用手轉一遍：拖動角度，看投影後的變異數怎麼變。</p>
 
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="simulation" data-source-note="固定種子 7071 的二維橢圓常態模擬；投影變異由目前角度即時計算。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07spinSvg" height="360"></svg>
       <div class="status-banner" id="w07spinStatus"><span class="status-icon">›</span><span class="status-text">拖動橘色把手轉動投影方向，看投影後的變異數怎麼變。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">角度</label><input type="range" id="w07spinSlider" min="0" max="180" step="1" value="8" oninput="w07spinFromSlider()" style="width:150px;accent-color:var(--accent3);"><span class="mono" id="w07spinSliderVal" style="min-width:44px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);">8°</span><button class="btn btn-play" onclick="w07spinSnap()">▶ 跳到變異最大處</button><button class="btn btn-reset" onclick="w07spinReset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>固定種子 7071 的二維橢圓常態模擬；投影變異由目前角度即時計算。</div>
+      <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -860,10 +860,10 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   在第一主成分變異為正時，「與 $Z_1$ 不相關」等價於「方向 $\phi_2$ 與 $\phi_1$ 垂直」，
   所以有非零變異的主成分方向互相垂直，總共最多有 $\min(n-1,\,p)$ 個。</p>
 
-  <details class="qa-item reading-detail" id="w07-detail-pca-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-pca">講義完整實作：標準化 → <code>PCA()</code> → 取出負荷量</h3>
+  <details class="qa-item reading-detail" id="w07-detail-pca-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">講義 12 · USArrests 的 PCA</div>
+  <div class="dx-label">置中、標準化與 PCA 得分</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">scaler = StandardScaler(with_std=<span class="num">True</span>,</span>
   <span class="line">                        with_mean=<span class="num">True</span>)</span>
@@ -873,15 +873,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <span class="line"> </span>
   <span class="line">pcaUS.fit(USArrests_scaled)</span>
   <span class="line"> </span>
-  <span class="line">scores = pcaUS.transform(USArrests_scaled)</span>
-  <span class="line"> </span>
-  <span class="line">pcaUS.components_</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[ 0.53589947,  0.58318363,  0.27819087,  0.54343209],
-       [-0.41818087, -0.1879856 ,  0.87280619,  0.16731864],
-       [-0.34123273, -0.26814843, -0.37801579,  0.81777791],
-       [-0.6492278 ,  0.74340748, -0.13387773, -0.08902432]])</pre></div>
-  <p class="dx-note"><code>components_</code> 的<strong>每一列</strong>是一個負荷向量。第一列 <code>[0.536, 0.583, 0.278, 0.543]</code> 在 Murder／Assault／Rape 上幾乎一樣重、UrbanPop 明顯較輕，所以 PC1 大致就是「整體暴力犯罪率」。第二列幾乎全押在 UrbanPop（0.873），那是「都市化程度」。注意 <code>PCA()</code> 預設只置中、不縮放，所以先用 <code>StandardScaler</code> 標準化，再擬合 PCA。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="19,21,23,27,29">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+  <span class="line">scores = pcaUS.transform(USArrests_scaled)</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="19,21,23,27">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -917,13 +910,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>下面這個 biplot 用的是課本的資料。切換標準化設定，觀察它的影響：
   <strong>按下「未標準化」，整張圖會變形。</strong></p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="USArrests PCA；負荷量與 Ch12 lab 儲存格 29 對照，對應 ISLP 圖 12.1／12.4。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07biSvg" height="400"></svg>
       <div class="status-banner" id="w07biStatus"><span class="status-icon">›</span><span class="status-text">這是標準化後的 biplot，對應 ISLP 圖 12.1 與圖 12.4 左。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w07biToggle()">切換 標準化 / 未標準化</button><button class="btn btn-reset" onclick="w07biSetScaled(true)">回到標準化</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>USArrests PCA；負荷量與 Ch12 lab 範例 對照，對應 ISLP 圖 12.1／12.4。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -942,26 +935,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
 </div>
 
-  <details class="qa-item reading-detail" id="w07-detail-biplot-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-bi">講義完整實作：手工畫 biplot</h3>
-<div class="deck-extra">
-  <div class="dx-label">講義 12 · biplot（scatter + arrow + text）</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">scale_arrow = s_ = <span class="num">2</span></span>
-  <span class="line">scores[:,<span class="num">1</span>] *= -<span class="num">1</span></span>
-  <span class="line">pcaUS.components_[<span class="num">1</span>] *= -<span class="num">1</span> <span class="com"># flip the y-axis</span></span>
-  <span class="line">fig, ax = plt.subplots(<span class="num">1</span>, <span class="num">1</span>, figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
-  <span class="line">ax.scatter(scores[:,<span class="num">0</span>], scores[:,<span class="num">1</span>])</span>
-  <span class="line">ax.set_xlabel(<span class="str">&#x27;PC%d&#x27;</span> % (i+<span class="num">1</span>))</span>
-  <span class="line">ax.set_ylabel(<span class="str">&#x27;PC%d&#x27;</span> % (j+<span class="num">1</span>))</span>
-  <span class="line"><span class="kw">for</span> k <span class="kw">in</span> range(pcaUS.components_.shape[<span class="num">1</span>]):</span>
-  <span class="line">    ax.arrow(<span class="num">0</span>, <span class="num">0</span>, s_*pcaUS.components_[i,k], s_*pcaUS.components_[j,k])</span>
-  <span class="line">    ax.text(s_*pcaUS.components_[i,k],</span>
-  <span class="line">            s_*pcaUS.components_[j,k],</span>
-  <span class="line">            USArrests.columns[k])</span></div>
-  <p class="dx-note"><code>scikit-learn</code> 沒有內建 biplot，所以 lab 用 <code>ax.scatter</code> 畫得分、<code>ax.arrow</code> 畫負荷量，再用 <code>s_ = 2</code> 把箭頭放長一點（否則負荷量都在 ±1 以內，跟得分的尺度差太多，會擠在原點附近）。<strong>整組箭頭同乘一個正的顯示倍率，方向不變。</strong><br>第 2 行與第 3 行把第二個主成分的得分與負荷量同時乘上 −1。同時翻兩邊，圖只是上下鏡射，任何結論都不變。這正是 P05 要講的符號不唯一。本頁的 biplot 直接用lab 範例 那組負荷量，跟課本表 12.1 的數字逐位相同。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="31,33">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
-</div></div></details>
+  
 
 
 <div class="quiz-box">
@@ -1006,7 +980,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   可以直接讀成「近似的 $R^2$」。</p>
 
 
-<h3>最佳低秩近似的解與不唯一性</h3><p>若 $X=UDV^T$，奇異值 $d_1\ge\cdots\ge d_r>0$，最佳 rank 不超過 $M$ 的近似可取 $X_M=U_MD_MV_M^T=XV_MV_M^T$，平方誤差為 $\sum_{j>M}d_j^2$。這個近似的一種因子表示是得分 $A=U_MD_M$ 與負荷量 $B=V_M$；但任意可逆矩陣 $R$ 給出的 $AR$、$BR^{-T}$ 也有相同乘積，不能說不加限制的因子最佳化只會產生那一組 PCA 因子。</p><p>若奇異值為 $(3,1)$，rank-1 近似的平方誤差為 1，累積 PVE 為 $9/(9+1)=0.9$。若矩陣全為 0，總平方和為 0，PVE 是 $0/0$，不應硬報成 0 或 1。大型資料可用 randomized SVD：取隨機測試矩陣 $\Omega$，對 $X\Omega$ 正交化得 $Q$，再分解較小的 $Q^TX$，最後把左因子乘回 $Q$；這是近似法，需記錄種子、過取樣與誤差。</p>
+<h3>最佳低秩近似的解與不唯一性</h3><p>若 $X=UDV^T$，奇異值 $d_1\ge\cdots\ge d_r>0$，最佳 rank 不超過 $M$ 的近似可取 $X_M=U_MD_MV_M^T=XV_MV_M^T$，平方誤差為 $\sum_{j>M}d_j^2$。這個近似的一種因子表示是得分 $A=U_MD_M$ 與負荷量 $B=V_M$；但任意可逆矩陣 $R$ 給出的 $AR$、$BR^{-T}$ 也有相同乘積，不能說不加限制的因子最佳化只會產生那一組 PCA 因子。</p><p>若矩陣全為 0，總平方和為 0，PVE 是 $0/0$，不應硬報成 0 或 1。大型資料可用 randomized SVD：取隨機測試矩陣 $\Omega$，對 $X\Omega$ 正交化得 $Q$，再分解較小的 $Q^TX$，最後把左因子乘回 $Q$；這是近似法，需記錄種子、過取樣與誤差。</p>
 <details class="qa-item proof" id="w07proof-lowrank"><summary>證明：投影誤差、截斷 SVD 與 PVE</summary>
 <div class="qa-a"><p>對任意正交的 $V_M$，分解 $X=XV_MV_M^T+X(I-V_MV_M^T)$，兩部分 Frobenius 內積為 0。因此 $\|X-XV_MV_M^T\|_F^2=\|X\|_F^2-\|XV_M\|_F^2$；最大化投影變異即最小化重建誤差。任意 rank-$M$ 矩陣 $Y$ 的行空間位於某個至多 $M$ 維空間 $W$，對固定 $W$ 最小誤差的矩陣是 $X$ 到 $W$ 的正交投影。再在所有 $W$ 中最大化保留的平方長度，特徵值排序給出前 $M$ 個右奇異向量，誤差便是其餘奇異值平方和。最後除以 $\|X\|_F^2=\sum_jd_j^2$，得到累積 PVE 與 $1-\operatorname{RSS}_M/\operatorname{TSS}$ 的等價式。</p></div></details></div></details><div class="info-box">
   <span class="info-label">實務上怎麼算：SVD</span>
@@ -1018,22 +992,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   而且下一節的矩陣補全就是靠它一步步逼近的。
 </div>
 
-  <details class="qa-item reading-detail" id="w07-detail-lowrank-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-svd">講義完整實作：SVD 與 <code>components_</code> 的關係</h3>
+  <details class="qa-item reading-detail" id="w07-detail-lowrank-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">講義 12 · np.linalg.svd 取出負荷矩陣</div>
+  <div class="dx-label">以 SVD 計算主成分</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">X = USArrests_scaled</span>
-  <span class="line">U, D, V = np.linalg.svd(X, full_matrices=<span class="num">False</span>)</span>
-  <span class="line">U.shape, D.shape, V.shape</span>
-  <span class="line"> </span>
-  <span class="line">V</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[-0.53589947, -0.58318363, -0.27819087, -0.54343209],
-       [-0.41818087, -0.1879856 ,  0.87280619,  0.16731864],
-       [ 0.34123273,  0.26814843,  0.37801579, -0.81777791],
-       [ 0.6492278 , -0.74340748,  0.13387773,  0.08902432]])</pre></div>
-  <p class="dx-note">lab 的變數 <code>V</code> 儲存的是數學上的 Vᵀ（NumPy 的第三個回傳值），因此它的每一列才是負荷向量，只差符號。跟上一節lab 範例 的 <code>components_</code> 比：第 1、3、4 列整列變號，第 2 列一模一樣。<br>lab 範例 又印了一次 <code>components_</code>，但<strong>前面的 biplot 程式已經把 PC2 翻號了</strong>，所以第 2 列跟lab 範例 不同，差異來自同一個物件已被就地修改。lab 範例 與 54 也是同一件事：<code>U * D</code> 跟 <code>scores</code> 差整組符號。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="48,50,51">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+  <span class="line">U, D, V = np.linalg.svd(X, full_matrices=<span class="num">False</span>)</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="48">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -1072,7 +1038,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>所有 $\min(n-1,p)$ 個 PVE 加起來剛好是 1。累積 PVE 就是「前 M 個主成分留住了幾成」，
   由上一節的式 12.11，它同時也是「用前 M 個主成分近似資料矩陣」的 $R^2$。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="USArrests 標準化 PCA；PVE 與 Ch12 lab 儲存格 39 對照，對應 ISLP 圖 12.3。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w07screeChart"></canvas>
@@ -1080,7 +1046,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
       </div>
       <div class="status-banner" id="w07screeStatus"><span class="status-icon">›</span><span class="status-text">拖滑桿改變 M，看留住多少變異、丟掉多少。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">M =</label><input type="range" id="w07screeSlider" min="1" max="4" step="1" value="2" oninput="w07screeSet()" style="width:130px;accent-color:var(--accent3);"><span id="w07screeVal" style="min-width:22px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;">2</span><button class="btn btn-toggle" onclick="w07screeToggleCum()">切換 只看 PVE / 加上累積</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>USArrests 標準化 PCA；PVE 與 Ch12 lab 範例 對照，對應 ISLP 圖 12.3。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1099,19 +1065,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
 </div>
 
-  <details class="qa-item reading-detail" id="w07-detail-pve-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-pve">講義完整實作：<code>explained_variance_ratio_</code></h3>
+  <details class="qa-item reading-detail" id="w07-detail-pve-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">講義 12 · 得分的標準差、變異數與 PVE</div>
+  <div class="dx-label">解釋變異比例</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">scores.std(<span class="num">0</span>, ddof=<span class="num">1</span>)</span>
-  <span class="line"> </span>
-  <span class="line">pcaUS.explained_variance_</span>
-  <span class="line"> </span>
   <span class="line">pcaUS.explained_variance_ratio_</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([0.62006039, 0.24744129, 0.0891408 , 0.04335752])</pre></div>
-  <p class="dx-note">三格印的是同一件事的三種寫法：<code>scores.std(0, ddof=1)</code> 是得分的標準差、<code>explained_variance_</code> 是它的平方、<code>explained_variance_ratio_</code> 是再除以總和。第一個 <strong>0.62006</strong> 就是課本說的「第一主成分解釋了 62.0% 的變異」。lab 範例 用 <code>cumsum()</code> 畫出累積版，就是課本圖 12.3 右。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="35,37,39">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="39">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -1169,25 +1130,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   兩個都乘 $-1$ 乘積不變，重建出來的資料一模一樣。lab 範例 就是這樣做的
   （<code>scores[:,1] *= -1</code> 與 <code>components_[1] *= -1</code> 成對出現）。</p>
 
-  <details class="qa-item reading-detail" id="w07-detail-scaling-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-var">講義完整實作：先看變異數，再決定要不要標準化</h3>
-<div class="deck-extra">
-  <div class="dx-label">講義 12 · USArrests 的平均與變異數</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">USArrests = get_rdataset(<span class="str">&#x27;USArrests&#x27;</span>).data</span>
-  <span class="line">USArrests</span>
-  <span class="line"> </span>
-  <span class="line">USArrests.mean()</span>
-  <span class="line"> </span>
-  <span class="line">USArrests.var()</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Murder        18.970465
-Assault     6945.165714
-UrbanPop     209.518776
-Rape          87.729159
-dtype: float64</pre></div>
-  <p class="dx-note"><strong>6945 對 18.97，差了 366 倍。</strong>看到這種數字就知道非標準化不行了。<br>注意載入方式是 <code>get_rdataset('USArrests').data</code>（statsmodels 去抓 R 的資料集），<code>load_data()</code> 所用的 <code>ISLP</code> 資料集中沒有 <code>USArrests</code>，因此改由前述來源讀取。資料的索引是州名，所以 <code>mean()</code>／<code>var()</code> 是逐欄算的。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="11,15,17">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
-</div></div></details>
+  
 
 
 <div class="qa-box">
@@ -1212,7 +1155,7 @@ dtype: float64</pre></div>
 <p>本站採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$。主成分方向是 $V$ 的欄，得分為 $XV=UD$；最大化 $v^TSv$ 且限制 $v^Tv=1$，便得到 $Sv=\lambda v$。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
 <p>保留正特徵值方向後，白化得分 $Z=XV\Lambda^{-1/2}$ 的樣本共變異數為單位矩陣。ZCA 白化再乘上 $V^T$ 回到原特徵座標；保留全部正秩方向且滿秩時為 $XV\Lambda^{-1/2}V^T$。白化會把低變異方向放大，因此小特徵值可能放大雜訊；普通 PCR 不需要白化，也不能把白化當成保證改善預測的步驟。</p>
 
-<h3>白化算例與零特徵值</h3><p>只取 $r$ 個正特徵值方向，$Z=XV_r\Lambda_r^{-1/2}$ 滿足 $Z^TZ/(n-1)=I_r$。例如主成分共變異數是 $\operatorname{diag}(4,1)$，將第一得分除以 2、第二不變，就得到單位共變異數。ZCA 乘回 $V_r^T$ 後回到原座標；若 $r&lt;p$，其共變異數是投影矩陣 $V_rV_r^T$，不是 $I_p$。零特徵值不能取倒平方根，小特徵值則可截斷或正則化，並明說這不再是所有方向的精確白化。</p>
+<h3>白化與零特徵值</h3><p>只取 $r$ 個正特徵值方向，$Z=XV_r\Lambda_r^{-1/2}$ 滿足 $Z^TZ/(n-1)=I_r$。ZCA 乘回 $V_r^T$ 後回到原座標；若 $r&lt;p$，其共變異數是投影矩陣 $V_rV_r^T$，不是 $I_p$。零特徵值不能取倒平方根，小特徵值則可截斷或正則化，並明說這不再是所有方向的精確白化。</p>
 <details class="qa-item proof" id="w07proof-whitening"><summary>證明：白化的共變異數</summary>
 <div class="qa-a"><p>$\operatorname{Cov}(Z)=\Lambda_r^{-1/2}V_r^T\{X^TX/(n-1)\}V_r\Lambda_r^{-1/2}=I_r$。ZCA 結果 $ZV_r^T$ 的共變異數為 $V_rI_rV_r^T$；只有完整滿秩且 $V_r$ 為方形正交矩陣時才是 $I_p$。這區分了去相關、等變異與原座標表示。</p></div></details></div></details>
 </section>
@@ -1242,7 +1185,7 @@ dtype: float64</pre></div>
   <p>$\mathcal{O}$ 是觀測到的位置集合。跟 P03 的式子唯一的差別就是求和範圍，
   這個目標需要用迭代求解。</p>
 
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="simulation" data-source-note="USArrests 上的固定種子缺失位置；前端依 ISLP 演算法 12.1 即時計算低秩補值。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07mcSvg" height="190"></svg>
@@ -1251,22 +1194,19 @@ dtype: float64</pre></div>
       </div>
       <div class="status-banner" id="w07mcStatus"><span class="status-icon">›</span><span class="status-text">按「單步」跑演算法 12.1 的一輪：算秩一近似 → 覆蓋缺失格 → 算目標函數。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">缺失格數</label><input type="range" id="w07mcSlider" min="10" max="50" step="10" value="20" oninput="w07mcSetMiss()" style="width:120px;accent-color:var(--accent3);"><span id="w07mcSliderVal" style="min-width:34px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent);font-weight:600;">20</span><button class="btn btn-step" onclick="w07mcStep()">→ 單步</button><button class="btn btn-play" onclick="w07mcRun()">▶ 跑到收斂</button><button class="btn btn-toggle" onclick="w07mcReseed()">🔀 換缺失位置</button><button class="btn btn-reset" onclick="w07mcReset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>USArrests 上的固定種子缺失位置；前端依 ISLP 演算法 12.1 即時計算低秩補值。</div>
+      <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">這一輪</div>
-      <div class="ic-row"><span class="ic-label">缺失格數</span><span class="ic-value" id="w07mcMiss">20 / 200</span></div><div class="ic-row"><span class="ic-label">迭代次數</span><span class="ic-value" id="w07mcIter">0</span></div><div class="ic-row"><span class="ic-label">觀測格上的 MSS</span><span class="ic-value" id="w07mcMss">—</span></div><div class="ic-row"><span class="ic-label">相對改善</span><span class="ic-value" id="w07mcRel">—</span></div><div class="ic-row"><span class="ic-label">補值與真值的相關</span><span class="ic-value" id="w07mcCorr">—</span></div>
+      <div class="ic-row"><span class="ic-label">缺失格數</span><span class="ic-value" id="w07mcMiss">20 / 200</span></div><div class="ic-row"><span class="ic-label">迭代次數</span><span class="ic-value" id="w07mcIter">0</span></div><div class="ic-row"><span class="ic-label">觀測格上的 MSS</span><span class="ic-value" id="w07mcMss">—</span></div><div class="ic-row"><span class="ic-label">相對改善</span><span class="ic-value" id="w07mcRel">—</span></div>
     </div>
     <div class="info-card">
       <div class="ic-title">上面那張圖在看什麼</div>
       每一欄是一個州（依字母序），四列是四個變數。顏色是標準化後的數值（藍 = 低、紅 = 高）。<strong>白色虛線框</strong>是被挖掉的格子；按「單步」之後它們會被填上顏色，外框變成橘色。<strong>橘框裡的顏色跟旁邊的真值像不像，就是這個方法準不準。</strong>
     </div>
-    <div class="info-card">
-      <div class="ic-title">本頁模擬的數值來源 <span class="ic-badge">ISLP §12.3</span></div>
-      缺失位置由前端的固定種子決定，跟 lab 的 <code>np.random.seed(15)</code> 不同，所以相關係數不會剛好是 0.7114。lab 的實際執行結果列在下方程式碼卡。<br>課本另外報告了 100 次重複的平均：相關 <strong>0.63 ± 0.11</strong>；如果作弊用完整資料算，是 0.79 ± 0.08。
-    </div>
+    
   </div>
 </div>
 
@@ -1281,38 +1221,30 @@ dtype: float64</pre></div>
   課本第 11 題就是叫你把缺失比例從 5% 掃到 30%、M 從 1 掃到 8，看誤差怎麼變。
 </div>
 
-  <details class="qa-item reading-detail" id="w07-detail-completion-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-mc">講義完整實作：演算法 12.1 的三十行</h3>
+  <details class="qa-item reading-detail" id="w07-detail-completion-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">講義 12 · 挖掉 20 格，然後用主成分反覆填補</div>
+  <div class="dx-label">以欄平均初始化缺值</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">n_omit = <span class="num">20</span></span>
-  <span class="line">np.random.seed(<span class="num">15</span>)</span>
-  <span class="line">r_idx = np.random.choice(np.arange(X.shape[<span class="num">0</span>]),</span>
-  <span class="line">                         n_omit,</span>
-  <span class="line">                         replace=<span class="num">False</span>)</span>
-  <span class="line">c_idx = np.random.choice(np.arange(X.shape[<span class="num">1</span>]),</span>
-  <span class="line">                         n_omit,</span>
-  <span class="line">                         replace=<span class="num">True</span>)</span>
-  <span class="line">Xna = X.copy()</span>
-  <span class="line">Xna[r_idx, c_idx] = np.nan</span>
-  <span class="line"> </span>
-  <span class="line"><span class="kw">def</span> <span class="fn">low_rank</span>(X, M=<span class="num">1</span>):</span>
-  <span class="line">    U, D, V = np.linalg.svd(X)</span>
-  <span class="line">    L = U[:,:M] * D[<span class="num">None</span>,:M]</span>
-  <span class="line">    <span class="kw">return</span> L.dot(V[:M])</span>
-  <span class="line"> </span>
   <span class="line">Xhat = Xna.copy()</span>
   <span class="line">Xbar = np.nanmean(Xhat, axis=<span class="num">0</span>)</span>
-  <span class="line">Xhat[r_idx, c_idx] = Xbar[c_idx]</span>
-  <span class="line"> </span>
+  <span class="line">Xhat[r_idx, c_idx] = Xbar[c_idx]</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="60">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">設定補值迭代的停止條件</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">thresh = <span class="num">1e-7</span></span>
   <span class="line">rel_err = <span class="num">1</span></span>
   <span class="line">count = <span class="num">0</span></span>
   <span class="line">ismiss = np.isnan(Xna)</span>
   <span class="line">mssold = np.mean(Xhat[~ismiss]**<span class="num">2</span>)</span>
-  <span class="line">mss0 = np.mean(Xna[~ismiss]**<span class="num">2</span>)</span>
-  <span class="line"> </span>
+  <span class="line">mss0 = np.mean(Xna[~ismiss]**<span class="num">2</span>)</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="62">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">依低秩近似更新缺值</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line"><span class="kw">while</span> rel_err &gt; thresh:</span>
   <span class="line">    count += <span class="num">1</span></span>
   <span class="line">    <span class="com"># Step 2(a)</span></span>
@@ -1322,29 +1254,10 @@ dtype: float64</pre></div>
   <span class="line">    <span class="com"># Step 2(c)</span></span>
   <span class="line">    mss = np.mean(((Xna - Xapp)[~ismiss])**<span class="num">2</span>)</span>
   <span class="line">    rel_err = (mssold - mss) / mss0</span>
-  <span class="line">    mssold = mss</span>
-  <span class="line">    print(<span class="str">&quot;Iteration: {0}, MSS:{1:.3f}, Rel.Err {2:.2e}&quot;</span></span>
-  <span class="line">          .format(count, mss, rel_err))</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Iteration: 1, MSS:0.395, Rel.Err 5.99e-01
-Iteration: 2, MSS:0.382, Rel.Err 1.33e-02
-Iteration: 3, MSS:0.381, Rel.Err 1.44e-03
-Iteration: 4, MSS:0.381, Rel.Err 1.79e-04
-Iteration: 5, MSS:0.381, Rel.Err 2.58e-05
-Iteration: 6, MSS:0.381, Rel.Err 4.22e-06
-Iteration: 7, MSS:0.381, Rel.Err 7.65e-07
-Iteration: 8, MSS:0.381, Rel.Err 1.48e-07
-Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
-  <p class="dx-note">讀法：<code>low_rank(Xhat, M=1)</code> 是步驟 2(a)（用 SVD 取秩一近似）、<code>Xhat[ismiss] = Xapp[ismiss]</code> 是 2(b)（<strong>只覆蓋缺失格</strong>）、<code>mss</code> 是 2(c) 的目標函數。<br>MSS 從 0.395 掉到 0.381 就幾乎不動了，第 8 輪相對誤差低於 <code>1e-7</code> 時停止。相對改善的分母使用初始值 <code>mss0</code>；<code>mss</code> 是目前值。這樣收斂輪數就不會因為把整個 X 乘上一個常數而改變。<br>挖法也有講究：先隨機選 20 個州、每州再隨機挑一個變數，所以<strong>每一列至少留三個觀測值</strong>。整列都空的話，什麼方法都補不出來。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="56,58,60,62,64">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+  <span class="line">    mssold = mss</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="64">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div>
-<div class="deck-extra">
-  <div class="dx-label">講義 12 · 補得準不準</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">np.corrcoef(Xapp[ismiss], X[ismiss])[<span class="num">0</span>,<span class="num">1</span>]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.7113567434297361)</pre></div>
-  <p class="dx-note">20 個補值與真值的相關係數 <strong>0.711</strong>。lab 範例 換成 <code>fancyimpute</code> 的 <code>SoftImpute(max_rank=1)</code> 再跑一次，相關係數幾乎一樣——這個簡短迴圈也得到了相近的結果，而真的要上線時直接用套件（它有更好的收斂控制與正則化）就好。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="66,68,69">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
-</div></div></details>
+</div></details>
 
 
 
@@ -1356,8 +1269,8 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <div class="quiz-feedback" id="qMcFeedback"></div>
 </div>
 
-<details class="qa-item reading-detail" id="w07-detail-completion-advanced"><summary>補值驗證、可識別性算例與單調性推導</summary>
-<div class="detail-body"><h3>矩陣補全要驗證什麼</h3><p>把實際觀測集合分成擬合集合與保留格子，僅用擬合格子的資料做中心化、初始化和迭代，以保留格子 MSE 選 rank。若先用全部資料算完整 PCA 再遮值，就已用到要預測的資訊。每列每欄都需要足夠的觀測；整列缺失或觀測圖不連通時，低秩假設本身不足以識別答案。</p><p>rank-1 小例：$X=\begin{pmatrix}1&2\\3&?\end{pmatrix}$，若確定行列乘積模型成立，第二列為第一列的 3 倍，缺值為 6；若只知道對角線 $(1,6)$，則非對角的乘積雖須為 6，個別值仍有無限多解。推薦系統的使用者×物品評分矩陣也採這個思路，但通常還需使用者／物品偏差與正則化，並注意「沒有評分」未必是隨機缺失。</p>
+<details class="qa-item reading-detail" id="w07-detail-completion-advanced"><summary>補值驗證、可識別性與單調性推導</summary>
+<div class="detail-body"><h3>矩陣補全要驗證什麼</h3><p>把實際觀測集合分成擬合集合與保留格子，僅用擬合格子的資料做中心化、初始化和迭代，以保留格子 MSE 選 rank。若先用全部資料算完整 PCA 再遮值，就已用到要預測的資訊。每列每欄都需要足夠的觀測；整列缺失或觀測圖不連通時，低秩假設本身不足以識別答案。</p>
 <details class="qa-item proof" id="w07proof-completion"><summary>證明：固定觀測格的交替補值為何使目標不增</summary>
 <div class="qa-a"><p>令 $L^{(t)}$ 為目前 rank-$M$ 估計，構造 $Y^{(t)}$：觀測格用真值 $X$，缺失格用 $L^{(t)}$。截斷 SVD 給出 $L^{(t+1)}=\arg\min_{\operatorname{rank}(L)\le M}\|Y^{(t)}-L\|_F^2$。舊估計的缺失格損失為 0，因此 $\|Y^{(t)}-L^{(t)}\|_F^2=\sum_{(i,j)\in\mathcal O}(X_{ij}-L^{(t)}_{ij})^2$。新估計的觀測格損失不超過其全矩陣損失，後者又不超過舊估計損失，證得觀測格目標不增。這不保證找出全域解，也不保證缺失格預測正確。</p></div></details></div></details>
 </section>
@@ -1366,7 +1279,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <div class="section-number">PART 07 · K-means</div>
   <h2>指派、更新、再指派：目標函數單調下降 <span class="sec-badge"><a href="#w07-source-islp">教科書 · 第 12.4.1 節</a></span><span class="sec-badge">講義 12</span></h2>
 <!-- GEN:END sec:kmeans -->
-<p>K-means 希望每個群內的點靠近自己的群心，常用的目標是</p>$$\sum_k\sum_{i\in C_k}\|x_i-\mu_k\|^2.$$<p>反覆做兩步：先把點指派給最近群心，再把每群中心更新為平均。不同初始值可能得到不同的最終分群。</p><details class="qa-item reading-detail" id="w07-detail-kmeans-advanced"><summary>完整 K-means：平方和、算例、停止條件與證明</summary>
+<p>K-means 希望每個群內的點靠近自己的群心，常用的目標是</p>$$\sum_k\sum_{i\in C_k}\|x_i-\mu_k\|^2.$$<p>反覆做兩步：先把點指派給最近群心，再把每群中心更新為平均。不同初始值可能得到不同的最終分群。</p><details class="qa-item reading-detail" id="w07-detail-kmeans-advanced"><summary>完整 K-means：平方和、停止條件與證明</summary>
 <div class="detail-body">
   <p>換一種化簡方式：不找低維座標，直接把資料<strong>分成 K 群</strong>。
   好的分群是「群內盡量像」，寫成式子就是把群內變異的總和最小化：</p>
@@ -1385,7 +1298,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   也說明了演算法為何反覆更新群心與各點的分組：</p>
 
 
-<h3>一輪 K-means 與停止條件</h3><p>對一維資料 $(0,1,4,5)$，初始中心為 0 與 4。最近中心指派為 $(0,1)$ 和 $(4,5)$，以舊中心計算的平方和為 2；更新平均為 0.5、4.5 後平方和降成 1，再指派已不改變。這個算例刻意沒有同距點或空群。</p><p>完整演算法須維持每群非空，並固定同距時的處理規則，例如優先保留原指派。空群可重新初始化，這是額外步驟，需重新核對目標。沒有 ties 的非停止步驟嚴格改善目標，而指派組合有限，所以會停止；單純說「目標不增」尚不足以排除等值循環。停止的分割是交替更新的固定點，並非保證全域最小。</p><p>初始化也可用 K-means++：第一中心隨機選，其後依各點到已選中心的最近平方距離成比例抽下一中心，再跑同樣更新。它改善起點選擇，但仍需多次初始化與驗證群數。</p>
+<h3>K-means 的停止條件</h3><p>完整演算法須維持每群非空，並固定同距時的處理規則，例如優先保留原指派。空群可重新初始化，這是額外步驟，需重新核對目標。沒有 ties 的非停止步驟嚴格改善目標，而指派組合有限，所以會停止；單純說「目標不增」尚不足以排除等值循環。停止的分割是交替更新的固定點，並非保證全域最小。</p>
 <details class="qa-item proof" id="w07proof-kmeans"><summary>證明：群內兩兩距離、群心與單調性</summary>
 <div class="qa-a"><p>對非空群 $C$，設 $m=|C|$。展開兩兩平方距離，$\sum_{i,j\in C}\|x_i-x_j\|^2=2m\sum_i\|x_i\|^2-2\|\sum_ix_i\|^2=2m\sum_i\|x_i-\bar x_C\|^2$。除以 $m$ 即得正文恆等式。固定指派時，$\sum_{i\in C}\|x_i-c\|^2=\sum_i\|x_i-\bar x_C\|^2+m\|c-\bar x_C\|^2$，所以取平均最優。固定中心時，把每點指派給最近中心逐項最小化距離；兩步都不增。此結論假設更新中群仍非空，並以一致方式處理同距情況。</p></div></details></div></details><div class="info-box">
   <span class="info-label">演算法 12.2（K-means）</span>
@@ -1397,18 +1310,18 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   (b) 因為換到更近的形心只會讓自己那一項變小。所以目標函數<strong>單調不增</strong>；停止還需一致處理同距點並避免空群。
 </div>
 
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="simulation" data-source-note="依 Ch12 lab 的三群模擬設定與 K-means 目標函數製作；初始值由固定種子控制。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07kmSvg" height="330"></svg>
       <div class="status-banner" id="w07kmStatus"><span class="status-icon">›</span><span class="status-text">選 K 之後按「單步」，交替執行「算群心」與「重新指派」。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">K =</label><select id="w07kmSel" class="mono" onchange="w07kmSetK()"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select><button class="btn btn-step" onclick="w07kmStep()">→ 單步</button><button class="btn btn-play" onclick="w07kmRun()">▶ 跑到收斂</button><button class="btn btn-toggle" onclick="w07kmReseed()">🔀 換初始值</button><button class="btn btn-reset" onclick="w07kmReset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>依 Ch12 lab 的三群模擬設定與 K-means 目標函數製作；初始值由固定種子控制。</div>
+      <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">演算法 12.2 <span class="ic-badge">CODE</span></div>
+      <div class="ic-title">演算法 12.2</div>
       <div class="pseudo-code" id="w07kmCode" style="font-size:.72rem;"><span class="line" data-l="1">隨機指派 1..K 給每一點</span>
 <span class="line" data-l="2"><span class="kw">while</span> 指派還在變：</span>
 <span class="line" data-l="3">    <span class="com"># 2(a)</span> 群心 = 群內平均</span>
@@ -1430,41 +1343,17 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   </div>
 </div>
 
-  <details class="qa-item reading-detail" id="w07-detail-kmeans-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-km">講義完整實作：<code>KMeans()</code></h3>
+  <details class="qa-item reading-detail" id="w07-detail-kmeans-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">講義 12 · K = 2 的模擬資料</div>
+  <div class="dx-label">K-means 分群</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">np.random.seed(<span class="num">0</span>);</span>
-  <span class="line">X = np.random.standard_normal((<span class="num">50</span>,<span class="num">2</span>));</span>
-  <span class="line">X[:<span class="num">25</span>,<span class="num">0</span>] += <span class="num">3</span>;</span>
-  <span class="line">X[:<span class="num">25</span>,<span class="num">1</span>] -= <span class="num">4</span>;</span>
-  <span class="line"> </span>
   <span class="line">kmeans = KMeans(n_clusters=<span class="num">2</span>,</span>
   <span class="line">                random_state=<span class="num">2</span>,</span>
-  <span class="line">                n_init=<span class="num">20</span>).fit(X)</span>
-  <span class="line"> </span>
-  <span class="line">kmeans.labels_</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-       0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-       1, 1, 1, 1, 1, 1], dtype=int32)</pre></div>
-  <p class="dx-note">資料是刻意造的：前 25 筆的平均被平移過，所以真的有兩群。<code>labels_</code> 幾乎完美地把前 25 與後 25 分開，<strong>群的編號是任意的</strong>，0 與 1 交換後仍是相同的分組。這也是為什麼比較兩種分群結果要用 <code>pd.crosstab</code>，不能直接比對標籤。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="103,105,107">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+  <span class="line">                n_init=<span class="num">20</span>).fit(X)</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="105">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div>
-<div class="deck-extra">
-  <div class="dx-label">講義 12 · n_init 為什麼要設大</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">kmeans1 = KMeans(n_clusters=<span class="num">3</span>,</span>
-  <span class="line">                random_state=<span class="num">3</span>,</span>
-  <span class="line">                n_init=<span class="num">1</span>).fit(X)</span>
-  <span class="line">kmeans20 = KMeans(n_clusters=<span class="num">3</span>,</span>
-  <span class="line">                  random_state=<span class="num">3</span>,</span>
-  <span class="line">                  n_init=<span class="num">20</span>).fit(X);</span>
-  <span class="line">kmeans1.inertia_, kmeans20.inertia_</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(76.85131986999251, 75.06261242745386)</pre></div>
-  <p class="dx-note"><code>inertia_</code> 就是群內平方和（式 12.17 要最小化的那個）。<code>n_init=1</code> 得到 <strong>76.85</strong>、<code>n_init=20</code> 得到 <strong>75.06</strong>——同一份資料、同一個 K、同一個 <code>random_state</code>，差別只在試了幾組初始值。<br><strong>76.85 是演算法收斂到的一個局部極小</strong>，程式不會警告你。所以 lab 的建議是：<code>n_init</code> 設 20 或 50，並且一定要設 <code>random_state</code> 讓結果可重現。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="113">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
-</div></div></details>
+</div></details>
 
 
 
@@ -1472,7 +1361,7 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：K-means 為什麼每次跑可能給不同答案？該怎麼辦？</summary>
-    <div class="qa-a"><p>因為演算法 12.2 的第 1 步是<strong>隨機</strong>指派。之後的每一步都只保證目標函數下降，不保證下降到全域最小。它會滑進離初始位置最近的那個「盆地」就停住。把 n 筆資料分成 K 群大約有 $K^n$ 種方式，要真的找到全域最小得全部列舉，這不可能，所以我們接受局部極小。</p><p>ISLP 圖 12.9 把同一份資料跑六次，得到三個不同的局部極小：目標函數 235.8（四次）、320.9、310.9。其中 235.8 明顯把三群分得最開。重點是：<strong>如果你只跑一次，剛好抽到 320.9 那組初值，程式不會告訴你有問題。</strong></p><p>標準做法就是<strong>多重初始化</strong>：跑很多組不同的初值，回報目標函數最小的那一次。<code>scikit-learn</code> 的 <code>n_init</code> 就是這件事（預設 10，lab 建議設 20 或 50）。另外一定要設 <code>random_state</code>——固定種子可讓別人重現這組數字。上面那張元件的「換初始值」按鈕，按幾次就會看到這個現象。</p></div>
+    <div class="qa-a"><p>因為演算法 12.2 的第 1 步是<strong>隨機</strong>指派。之後的每一步都只保證目標函數下降，不保證下降到全域最小。它會滑進離初始位置最近的那個「盆地」就停住。把 n 筆資料分成 K 群大約有 $K^n$ 種方式，要真的找到全域最小得全部列舉，這不可能，所以我們接受局部極小。</p><p>ISLP 圖 12.9 把同一份資料跑六次，得到三個不同的局部極小：目標函數 235.8（四次）、320.9、310.9。其中 235.8 明顯把三群分得最開。重點是：<strong>如果你只跑一次，剛好抽到 320.9 那組初值，程式不會告訴你有問題。</strong></p><p>標準做法就是<strong>多重初始化</strong>：跑很多組不同的初值，回報目標函數最小的那一次。<code>scikit-learn</code> 的 <code>n_init</code> 就是這件事（預設 10，lab 建議設 20 或 50）。另外一定要設 <code>random_state</code>——上面那張元件的「換初始值」按鈕，按幾次就會看到這個現象。</p></div>
   </details>
 </div>
 
@@ -1522,13 +1411,13 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <strong>連結方式</strong>（linkage），完整定義可在本節的查閱表展開。
   換 linkage，樹的形狀會整個變。這是這一節最重要的實驗。</p>
 
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="simulation" data-source-note="固定種子 12 的三群模擬；linkage matrix 由 scipy 計算，形狀比照 ISLP 圖 12.10。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07dendroSvg" height="350"></svg>
       <div class="status-banner" id="w07dendroStatus"><span class="status-icon">›</span><span class="status-text">拖動橘色切線改變群數，用下拉選單比較四種 linkage。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">linkage</label><select id="w07dendroSel" class="mono" onchange="w07dendroSetLk()"><option value="complete" selected>complete</option><option value="average">average</option><option value="single">single</option><option value="centroid">centroid</option></select><label class="slider-label" style="margin:0 .3rem 0 .5rem;">切線高度</label><input type="range" id="w07dendroSlider" min="2" max="98" step="1" value="55" oninput="w07dendroFromSlider()" style="width:120px;accent-color:var(--accent3);"><button class="btn btn-reset" onclick="w07dendroReset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>固定種子 12 的三群模擬；linkage matrix 由 scipy 計算，形狀比照 ISLP 圖 12.10。</div>
+      <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1564,31 +1453,17 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   歐氏距離很大，<strong>相關係數距離</strong>（$1 - r_{ii'}$）很小。
   ISLP 圖 12.15 就是這個對比。哪個對，取決於你的科學問題，沒有預設答案。</p>
 
-  <details class="qa-item reading-detail" id="w07-detail-hclust-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-hc">講義完整實作：<code>AgglomerativeClustering</code> 與 <code>cut_tree</code></h3>
+  <details class="qa-item reading-detail" id="w07-detail-hclust-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">講義 12 · 建樹、畫樹、切樹</div>
+  <div class="dx-label">建立階層式分群</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">HClust = AgglomerativeClustering</span>
   <span class="line">hc_comp = HClust(distance_threshold=<span class="num">0</span>,</span>
   <span class="line">                 n_clusters=<span class="num">None</span>,</span>
   <span class="line">                 linkage=<span class="str">&#x27;complete&#x27;</span>)</span>
-  <span class="line">hc_comp.fit(X)</span>
-  <span class="line"> </span>
-  <span class="line">cargs = {<span class="str">&#x27;color_threshold&#x27;</span>:-np.inf,</span>
-  <span class="line">         <span class="str">&#x27;above_threshold_color&#x27;</span>:<span class="str">&#x27;black&#x27;</span>}</span>
-  <span class="line">linkage_comp = compute_linkage(hc_comp)</span>
-  <span class="line">fig, ax = plt.subplots(<span class="num">1</span>, <span class="num">1</span>, figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
-  <span class="line">dendrogram(linkage_comp,</span>
-  <span class="line">           ax=ax,</span>
-  <span class="line">           **cargs);</span>
-  <span class="line"> </span>
-  <span class="line">cut_tree(linkage_comp, n_clusters=<span class="num">4</span>).T</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 2, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 2,
-        0, 2, 2, 3, 2, 3, 3, 3, 3, 2, 3, 3, 3, 3, 2, 3, 3, 3, 3, 2, 3, 3,
-        3, 3, 3, 3, 3, 3]])</pre></div>
-  <p class="dx-note"><code>distance_threshold=0</code> 加 <code>n_clusters=None</code> 是「把整棵樹算完、先不要切」的寫法。<br><code>scikit-learn</code> 不直接給 <code>scipy</code> 畫圖要的 <strong>linkage matrix</strong>，所以要用 <code>ISLP.cluster.compute_linkage()</code> 轉一次。<code>color_threshold=-np.inf</code> 是關掉 <code>dendrogram()</code> 預設的自動上色（預設會暗示一個切法，容易誤導）。<br><code>cut_tree(..., n_clusters=4)</code> 回傳每一筆資料的群編號。也可以給 <code>height=5</code> 用高度切——本頁那條橘色虛線做的就是這件事。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="117,119,123,127">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+  <span class="line">hc_comp.fit(X)</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="117">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -1599,12 +1474,12 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
   <div class="quiz-feedback" id="qHcFeedback"></div>
 </div>
 
-<details class="qa-item reading-detail" id="w07-detail-hclust-advanced"><summary>深入階層方法：Ward 算例、分裂式與 MST</summary>
+<details class="qa-item reading-detail" id="w07-detail-hclust-advanced"><summary>深入階層方法：Ward 與分裂式</summary>
 <div class="detail-body"><h3>Ward 與階層假設</h3><p>Ward linkage 每次選擇使群內平方和增加最少的合併：$\Delta(A,B)=\frac{|A||B|}{|A|+|B|}\|\bar x_A-\bar x_B\|^2$。它需要適當的歐氏幾何，不能隨意把相關距離代入。樹狀圖隱含巢狀分群：較細的群必須包含於較粗的群；若最佳二群依性別、最佳三群依國籍，兩者未必能由同一棵樹取得。Centroid linkage 可能發生後次合併高度更低的 inversion，這時水平切線的解讀要特別小心。</p>
 
-<h3>合併距離的一次手算</h3><p>一維兩群 $A=(0,2)$、$B=(5,7)$，跨群距離為 $(5,7,3,5)$。Single、complete、average 分別為 3、7、5；centroid 距離也是 $|1-6|=5$，但一般不等於 average。Ward 的平方和增加為 $\Delta=2\cdot2/(2+2)\cdot(1-6)^2=25$。某些套件的 Ward 樹狀圖高度是 $\sqrt{2\Delta}$，所以讀圖前要核對高度定義，不能把 25 與距離 5 當作同一單位。</p><p>凝聚式從單點群開始反覆合併；分裂式（divisive）從全體一群反覆拆分。Feature agglomeration 則把特徵當待分群的對象，再用平均等 pooling 函數合併相似欄位。無論合併觀察或特徵，距離 ties 都可能讓不同合法的樹產生；葉子左右換位只改圖的畫法，改合併對象則會改樹本身。</p>
+<h3>連結方式的比較</h3><p>凝聚式從單點群開始反覆合併；分裂式（divisive）從全體一群反覆拆分。Feature agglomeration 則把特徵當待分群的對象，再用平均等 pooling 函數合併相似欄位。無論合併觀察或特徵，距離 ties 都可能讓不同合法的樹產生；葉子左右換位只改圖的畫法，改合併對象則會改樹本身。</p>
 <details class="qa-item proof" id="w07proof-ward"><summary>證明：Ward 的平方和增加量</summary>
-<div class="qa-a"><p>令 $a=|A|,b=|B|$，合併中心 $\mu=(a\mu_A+b\mu_B)/(a+b)$。對各群使用平方和分解，合併後減去原群內平方和得到 $a\|\mu_A-\mu\|^2+b\|\mu_B-\mu\|^2$。代入 $\mu_A-\mu=b(\mu_A-\mu_B)/(a+b)$ 與 $\mu_B-\mu=-a(\mu_A-\mu_B)/(a+b)$，整理即得 $ab\|\mu_A-\mu_B\|^2/(a+b)$。這使用歐氏平方距離，不能任意把其他 dissimilarity 填入同一推導。</p></div></details><h3>分裂式與最小生成樹的具體步驟</h3><p>一種分裂式方法先選目前直徑最大的群，找出對群內其他點平均相異度最大的點作為新群的種子；再把「到舊群平均距離減去到新群平均距離」最大的正值點移到新群，重複到沒有正值候選。持續拆分直到指定群數或單點群，空集合與 ties 需約定。另一種方法先建立最小生成樹（MST），按邊長由大到小移除邊來形成群；用同一距離與一致 ties 處理時，門檻值下的連通分量對應 single-linkage 的切割。它也會受細長鏈與離群邊影響。</p></div></details>
+<div class="qa-a"><p>令 $a=|A|,b=|B|$，合併中心 $\mu=(a\mu_A+b\mu_B)/(a+b)$。對各群使用平方和分解，合併後減去原群內平方和得到 $a\|\mu_A-\mu\|^2+b\|\mu_B-\mu\|^2$。代入 $\mu_A-\mu=b(\mu_A-\mu_B)/(a+b)$ 與 $\mu_B-\mu=-a(\mu_A-\mu_B)/(a+b)$，整理即得 $ab\|\mu_A-\mu_B\|^2/(a+b)$。這使用歐氏平方距離，不能任意把其他 dissimilarity 填入同一推導。</p></div></details><h3>分裂式階層分群</h3><p>一種分裂式方法先選目前直徑最大的群，找出對群內其他點平均相異度最大的點作為新群的種子；再把「到舊群平均距離減去到新群平均距離」最大的正值點移到新群，重複到沒有正值候選。持續拆分直到指定群數或單點群，空集合與 ties 需約定。</p></div></details>
 </section>
 <section id="practical">
 <!-- GEN:BEGIN sec:practical -->
@@ -1622,41 +1497,21 @@ Iteration: 9, MSS:0.381, Rel.Err 2.95e-08</pre></div>
     <li>資料裡的<strong>離群值</strong>怎麼辦？</li>
   </ul>
 
-  <details class="qa-item reading-detail" id="w07-detail-practical-lab"><summary>實作、圖表資料來源與完整輸出</summary>
+  <details class="qa-item reading-detail" id="w07-detail-practical-lab"><summary>原 Lab</summary>
 <div class="detail-body"><p>下面這個元件沿用課本圖 12.16 的「襪子與電腦」情境；課本提供概念，逐筆數值另作示意設定。
   八位顧客的購買次數、單價與離群值都是本站為呈現尺度效應而設定的示意值。
   <strong>它只用來說明：資料不變而尺度改變時，K = 2 的分群可能跟著改變，
   不能把畫面上的群或 WSS 當成課本實證結果。</strong></p>
-<h3 id="dx-vs">講義完整實作：K-means 與階層式分群給的答案不一樣</h3>
-<div class="deck-extra">
-  <div class="dx-label">講義 12 · NCI60 上兩種分群的交叉表</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">NCI60 = load_data(<span class="str">&#x27;NCI60&#x27;</span>)</span>
-  <span class="line">nci_labs = NCI60[<span class="str">&#x27;labels&#x27;</span>]</span>
-  <span class="line">nci_data = NCI60[<span class="str">&#x27;data&#x27;</span>]</span>
-  <span class="line"> </span>
-  <span class="line">nci_kmeans = KMeans(n_clusters=<span class="num">4</span>,</span>
-  <span class="line">                    random_state=<span class="num">0</span>,</span>
-  <span class="line">                    n_init=<span class="num">20</span>).fit(nci_scaled)</span>
-  <span class="line">pd.crosstab(pd.Series(comp_cut, name=<span class="str">&#x27;HClust&#x27;</span>),</span>
-  <span class="line">            pd.Series(nci_kmeans.labels_, name=<span class="str">&#x27;K-means&#x27;</span>))</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>K-means  0   1   2  3
-HClust               
-0        1  20  10  9
-1        0   7   0  0
-2        8   0   0  0
-3        0   0   9  0</pre></div>
-  <p class="dx-note">同一份 NCI60（64 個細胞株 × 6830 個基因）、同樣切 4 群，兩種方法的結果<strong>略有不同</strong>：K-means 的第 3 群等於階層式的第 2 群，但 K-means 的第 0 群混了階層式第 0 群的一部分加上整個第 1 群。<br>先看群編號是任意的（可用 <code>crosstab</code> 對照群的成員；直接比較編號會受任意命名影響）。lab 範例 另外把階層式的 4 群對上真實癌症類型：所有白血病落在同一群，但乳癌散在三群——<strong>分群抓到了部分結構，仍有癌症類型分散在不同群中。</strong></p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="152,172,176">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
-</div></div></details>
 
-<div class="viz-layout" data-provenance="illustrative">
+</div></details>
+
+<div class="viz-layout" data-provenance="illustrative" data-source-note="概念取自 ISLP 圖 12.16；課本未提供數值，購買次數、單價與離群值皆為本站自訂示意。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w07practSvg" height="340"></svg>
       <div class="status-banner" id="w07practStatus"><span class="status-icon">›</span><span class="status-text">換一種尺度，同樣八位顧客的 K = 2 分群結果就變了。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">尺度</label><select id="w07practSel" class="mono" onchange="w07practSetMode()"><option value="raw" selected>原始次數</option><option value="scaled">標準化</option><option value="dollar">花費金額</option></select><button class="btn btn-toggle" onclick="w07practToggleOut()">加入 / 移除離群值</button><button class="btn btn-reset" onclick="w07practReset()">重置</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>概念取自 ISLP 圖 12.16；課本未提供數值，購買次數、單價與離群值皆為本站自訂示意。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1699,7 +1554,7 @@ HClust
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：分群結果「對不對」要怎麼判斷？沒有 y 的時候有沒有客觀標準？</summary>
-    <div class="qa-a"><p>沒有一個通用數字能直接證明群是真的。沒有已知群標籤時，不能直接算分類錯誤率；但仍可先訂評估目標，再比較幾何結構、穩定性或留出資料上的表現。</p><p>常見的內部指標（silhouette、Calinski–Harabasz、gap statistic）能算，這些指標量的是<strong>幾何上的緊密與分離</strong>；群的實質意義仍需外部證據。一份純雜訊的資料照樣可以有不錯的 silhouette；反過來，兩個真實但形狀狹長交錯的子群，silhouette 會很難看。所以這些指標可以用來在同一個方法內部比較 K，不能用來宣告「分群成功」。</p><p>可以併用三種檢查：<strong>（1）穩定性</strong>——換設定、抽子樣本重跑，看哪些群每次都在；<strong>（2）可解釋性</strong>。每一群能不能用領域語言講成一句話；<strong>（3）外部驗證</strong>——在獨立的新資料上重做一次，或對上事後才知道的標籤。ISLP 將分群結果定位為<strong>形成科學假設的起點</strong>，仍需後續證據檢驗。</p></div>
+    <div class="qa-a"><p>沒有一個通用數字能直接證明群是真的。沒有已知群標籤時，不能直接算分類錯誤率；但仍可先訂評估目標，再比較幾何結構、穩定性或留出資料上的表現。</p><p>可以併用三種檢查：<strong>（1）穩定性</strong>——換設定、抽子樣本重跑，看哪些群每次都在；<strong>（2）可解釋性</strong>。每一群能不能用領域語言講成一句話；<strong>（3）外部驗證</strong>——在獨立的新資料上重做一次，或對上事後才知道的標籤。ISLP 將分群結果定位為<strong>形成科學假設的起點</strong>，仍需後續證據檢驗。</p></div>
   </details>
   <details class="qa-item"><summary>Q：PCA 與分群都在「找結構」，差在哪？</summary>
     <div class="qa-a"><p>差在產出的東西是<strong>連續</strong>還是<strong>離散</strong>。PCA 給每一筆資料一組新的連續座標（得分），資料在低維空間裡還是一片雲；分群給每一筆資料一個離散的群編號，雲被切成幾塊。</p><p>對應的假設也不同。PCA 假設「大部分變異集中在少數幾個方向」，它不假設資料裡有子群。如果真的只有一片橢圓形的雲，PCA 照樣給你很有用的答案。分群則假設「資料由幾個同質的子群組成」，如果實際上是連續漸變的，切出來的界線就是人造的。</p><p>實務上兩者常常串起來用，而且順序有講究：<strong>先 PCA 再分群</strong>是很常見的做法（lab 範例 就對 NCI60 的前五個得分向量做階層式分群），理由是前幾個主成分可以看成資料的低雜訊版本。反過來也有用：分群完之後，用前兩個主成分的散佈圖把群畫出來，因為 p > 2 的時候你沒別的辦法看。</p></div>
@@ -1719,17 +1574,17 @@ HClust
 <h3>混合型資料與分群後的用途</h3><p>名目類別不可任意編號後直接套歐氏距離。可只用連續特徵、對類別做適當編碼並控制權重、使用結合數值距離與類別不一致的成本的 k-prototypes，或先用混合資料因素分析得到連續座標。這些選擇代表不同的「相似」定義，需要連同結果報告。</p><p>分群標籤、到各群中心的距離及特徵聚合都能當作監督式模型的輸入；群標籤本身通常應視為類別。評估時分群也要只在訓練折擬合。少量標記時，可優先標註群中心附近的代表樣本，再在群內傳播標籤；這依賴群大致對應真實類別的假設，群跨越類別時會放大錯誤。</p>
 
 
-<h3>從密度鄰域到 HDBSCAN 的階層</h3><p>DBSCAN 的直接密度可達要求出發點是核心點，且終點在其 $\varepsilon$ 鄰域。密度可達是一條由核心點向外延伸的鏈；邊界點可以在鏈的末端，不能繼續把群向外擴張。例如資料 $(0,0.1,0.2,1)$，$\varepsilon=0.11$、minPts＝3（含自身），只有 0.1 是核心，0 與 0.2 是邊界，1 是雜訊。若邊界點同時鄰近不同群，指派可依遍歷次序改變，不能保證所有標籤都對順序不變。</p><p>HDBSCAN 先計算每點到指定近鄰數的核心距離 $c_k(x)$，再用相互可達距離</p>
+<h3>從密度鄰域到 HDBSCAN 的階層</h3><p>DBSCAN 的直接密度可達要求出發點是核心點，且終點在其 $\varepsilon$ 鄰域。密度可達是一條由核心點向外延伸的鏈；邊界點可以在鏈的末端，不能繼續把群向外擴張。若邊界點同時鄰近不同群，指派可依遍歷次序改變，不能保證所有標籤都對順序不變。</p><p>HDBSCAN 先計算每點到指定近鄰數的核心距離 $c_k(x)$，再用相互可達距離</p>
 $$d_{\rm mr}(x_i,x_j)=\max\{c_k(x_i),c_k(x_j),d(x_i,x_j)\}.$$
-<p>它提高稀疏地區的連結距離，再由最小生成樹建立 single-linkage 階層。以密度尺度 $\lambda=1/d_{\rm mr}$ 觀察群分裂，使用 <code>min_cluster_size</code> 壓縮太小分支，最後依群持續存在的穩定性選擇非重疊群，留下不屬於所選群的雜訊。<code>min_samples</code> 仍影響核心距離。例：兩點距離 0.2，但核心距離分別為 0.1、0.5，則 mutual reachability 為 0.5；低密度端限制了兩者的連結強度。</p><p>OPTICS 保留一個探索次序及各點的 reachability，而非固定單一 $\varepsilon$ 的分割；從可達距離圖的谷地或指定門檻值抽取群。不同套件計算近鄰數是否含自身可能不同，重現時需核對。來源：<a href="https://scikit-learn.org/stable/modules/clustering.html" target="_blank" rel="noopener">scikit-learn 密度分群文件</a>。</p>
+<p>它提高稀疏地區的連結距離，再由最小生成樹建立 single-linkage 階層。以密度尺度 $\lambda=1/d_{\rm mr}$ 觀察群分裂，使用 <code>min_cluster_size</code> 壓縮太小分支，最後依群持續存在的穩定性選擇非重疊群，留下不屬於所選群的雜訊。<code>min_samples</code> 仍影響核心距離。</p><p>OPTICS 保留一個探索次序及各點的 reachability，而非固定單一 $\varepsilon$ 的分割；從可達距離圖的谷地或指定門檻值抽取群。近鄰數是否包含樣本本身，須與方法的定義一致。來源：<a href="https://scikit-learn.org/stable/modules/clustering.html" target="_blank" rel="noopener">scikit-learn 密度分群文件</a>。</p>
 <h3>Mean shift 的更新式</h3><p>使用平滑核密度時，令 $g(u)$ 是核輪廓導數所對應的非負權重，頻寬為 $h>0$。候選中心每輪更新</p>
 $$x^{(t+1)}=\frac{\sum_i g(\|x^{(t)}-x_i\|^2/h^2)x_i}{\sum_i g(\|x^{(t)}-x_i\|^2/h^2)}.$$
-<p>分母需大於 0，空鄰域須停止或重設。對平坦鄰域的示意例，資料 $(0,1,2,8)$、目前中心 1、半徑 2，只納入前三點，下一中心仍是 1；從中心 8 開始則留在另一模態。不同初值收斂到相近模態後合併標籤；頻寬決定模態是否被平滑成同一群。停止看中心位移或密度變化，不是要求每輪鄰域點數必須增加。</p>
+<p>分母需大於 0，空鄰域須停止或重設。不同初值收斂到相近模態後合併標籤；頻寬決定模態是否被平滑成同一群。停止看中心位移或密度變化，不是要求每輪鄰域點數必須增加。</p>
 </div></details><details class="qa-item reading-detail" id="w07-detail-mixtures"><summary>混合模型：EM、責任值與變分貝氏</summary>
 <div class="detail-body"><h3>高斯混合模型與 EM 的完整更新</h3><p>用 $K$ 個成分表示密度 $p(x)=\sum_{k=1}^K\pi_k\mathcal N(x;\mu_k,\Sigma_k)$，其中 $\pi_k\ge0,\sum_k\pi_k=1$、$\Sigma_k$ 正定。E 步算各點的責任值，M 步用它作權重更新：</p>
 $$r_{ik}=\frac{\pi_k\mathcal N(x_i;\mu_k,\Sigma_k)}{\sum_{\ell=1}^K\pi_\ell\mathcal N(x_i;\mu_\ell,\Sigma_\ell)},\quad N_k=\sum_ir_{ik},\quad\pi_k^{\rm new}=N_k/n,$$
 $$\mu_k^{\rm new}=\frac{\sum_ir_{ik}x_i}{N_k},\qquad\Sigma_k^{\rm new}=\frac{\sum_ir_{ik}(x_i-\mu_k^{\rm new})(x_i-\mu_k^{\rm new})^T}{N_k}.$$
-<p>交替計算直到對數概似增量很小，需 $N_k>0$；空成分可重設或移除。無限制 Gaussian mixture 的概似可因成分縮到單點而無上界，實作需正則化共變異數或先驗，並比較不同初值。soft assignment 對每點都給責任值，不會自動把離群點拒絕為雜訊。</p><p>例：一維兩個等權、單位變異的成分中心為 0 與 2。在 $x=0$，第一責任值為 $1/(1+e^{-2})\approx0.8808$；在 $x=2$ 則反過來。只用這兩筆做一次 M 步，兩個新中心約為 0.2384、1.7616。這和 K-means 的硬指派中心 0、2 不同。等權球狀混合在共同變異趨近 0 的極限下，責任值才集中到最近中心。</p><p>來源：<a href="https://cs229.stanford.edu/notes2021fall/cs229-notes7b.pdf" target="_blank" rel="noopener">Stanford CS229：Gaussian mixture 與 EM</a>。</p>
+<p>交替計算直到對數概似增量很小，需 $N_k>0$；空成分可重設或移除。無限制 Gaussian mixture 的概似可因成分縮到單點而無上界，實作需正則化共變異數或先驗，並比較不同初值。soft assignment 對每點都給責任值，不會自動把離群點拒絕為雜訊。</p><p>等權球狀混合在共同變異趨近 0 的極限下，責任值才集中到最近中心。</p><p>來源：<a href="https://cs229.stanford.edu/notes2021fall/cs229-notes7b.pdf" target="_blank" rel="noopener">Stanford CS229：Gaussian mixture 與 EM</a>。</p>
 <details class="qa-item proof" id="w07proof-gmm"><summary>證明：EM 的更新與概似不下降</summary>
 <div class="qa-a"><p>引入隱藏成分標籤 $z_i$。固定目前參數計算 $r_{ik}=P(z_i=k\mid x_i)$ 後，條件期望完整對數概似為 $Q=\sum_{i,k}r_{ik}\{\log\pi_k-\frac12\log|\Sigma_k|-\frac12(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k)\}+C$。用 Lagrange multiplier 處理 $\sum_k\pi_k=1$ 得 $\pi_k=N_k/n$；對 $\mu_k$ 微分得到加權平均，再對精度矩陣微分得到加權共變異數。</p><p>對任何分布 $q(z)$，Jensen 不等式給 $\log p(x\mid\theta)\ge E_q[\log p(x,z\mid\theta)]+H(q)$。E 步令 $q$ 等於目前後驗，使下界與目前概似相接；M 步提高此下界，因此不降低觀測概似。這保證單調性，不能保證全域最優、參數唯一或避免奇異解。若改用正則化或先驗，應追蹤相應目標。</p></div></details>
 <h3>變分貝氏混合</h3><p>給混合權重 Dirichlet 先驗，並對 Gaussian 均值／精度給共軛先驗，再用可分解近似 $q(Z)q(\pi,\mu,\Lambda)$ 逼近後驗。責任值使用 $r_{ik}\propto\exp\{E_q\log\pi_k+E_q\log\mathcal N(x_i;\mu_k,\Lambda_k^{-1})\}$，歸一化後累加有效樣本數與充分統計更新參數分布，循環直到 ELBO 穩定。這裡更新的是分布而非單一參數值。</p><p>小有效樣本數的成分可被先驗收縮，但結果受成分上限與先驗濃度影響，不等於自動發現唯一正確群數。來源：<a href="https://scikit-learn.org/stable/modules/mixture.html#variational-bayesian-gaussian-mixture" target="_blank" rel="noopener">變分 Gaussian mixture 文件</a>。</p>
@@ -1740,8 +1595,8 @@ $$\mu_k^{\rm new}=\frac{\sum_ir_{ik}x_i}{N_k},\qquad\Sigma_k^{\rm new}=\frac{\su
 </div></details><details class="qa-item reading-detail" id="w07-detail-mixed-clustering"><summary>混合資料、其他分群方法與評估指標</summary>
 <div class="detail-body"><h3>混合型資料的距離與可驗證的群</h3><p>k-prototypes 把連續與類別成本相加：</p>
 $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathcal C}I(x_{ij}\ne m_{c_i,j})\right].$$
-<p>固定分群後，連續中心更新為平均，類別中心更新為眾數；固定中心後，每點指派到混合成本最小的群。$\gamma$ 控制類別不一致與數值距離的相對重要性，數值欄先採適當尺度。例：數值差為 2 且一個類別不同，$\gamma=3$ 的成本為 $2^2+3=7$；若把數值單位放大十倍卻不調尺度，結果就會由數值欄主導。</p><p>FAMD 把連續欄標準化、類別欄展開成指示碼並按類別頻率加權，再求共同低維表示；如此避免直接把「紅、藍、綠」編成等距的 0、1、2。群結果須附距離、尺度與參數，並比較重抽樣穩定性。來源：<a href="https://github.com/nicodv/kmodes" target="_blank" rel="noopener">k-modes／k-prototypes 作者實作</a>、<a href="https://maxhalford.github.io/prince/famd/" target="_blank" rel="noopener">Prince FAMD 文件</a>。</p><p>輪廓係數以 $a_i$ 表示本群平均距離、$b_i$ 表示最近其他群的平均距離，$s_i=(b_i-a_i)/\max(a_i,b_i)$。例如 $a_i=1,b_i=3$，$s_i=2/3$。單點群與全零距離需要約定；高分也只表示這種距離下群分得開，不能證明有真實亞型。另一條路是把資料重抽後重做整套前處理與分群，對共同樣本比較 co-assignment；若要群的顯著性，還須指定可反駁的虛無模型，不能把任何分群都當作發現。</p>
-<h3>比較圖中的其他分群方法</h3><p>MiniBatch K-means 每次只讀小批次，依指派更新中心的累計平均；可降低成本，但小批次更新不保證每輪完整資料的目標都下降。BIRCH 以 clustering feature $(N,\sum x_i,\sum\|x_i\|^2)$ 建立可合併的小群摘要，再對摘要進一步分群，適合可壓縮的大型歐氏資料。Affinity propagation 在點間傳遞「適合作代表點」的 responsibility 與 availability，挑 exemplar；preference 改變代表點／群的數目，damping 用來減少震盪。它們在講義比較圖中的表現是特定模擬資料的結果，沒有任何一欄普遍最好。</p><h3>模糊分群與距離學習</h3><p>Fuzzy c-means 以隸屬度 $u_{ik}\ge0,\sum_ku_{ik}=1$ 取代硬標籤，最小化 $\sum_{i,k}u_{ik}^m\|x_i-c_k\|^2$，其中 $m>1$。固定隸屬度時，中心為 $c_k=\sum_i u_{ik}^mx_i/\sum_i u_{ik}^m$；固定中心且距離皆非零時，$u_{ik}=\left[\sum_\ell(\|x_i-c_k\|/\|x_i-c_\ell\|)^{2/(m-1)}\right]^{-1}$。零距離需把隸屬集中到重合中心並約定 ties。它的隸屬度不是由 Gaussian density 算出的後驗責任值。</p><p>若領域提供相似／不相似配對，metric learning 可估計 $d_A(x,y)^2=(x-y)^TA(x-y)$，$A\succeq0$；寫 $A=L^TL$ 就是先做 $Lx$ 轉換再算歐氏距離。若 $A$ 不滿秩，可能把不同點投到同一位置，得到的是偽距離。配對標籤加入了監督資訊，評估時也須限制在訓練折，不能把結果稱為完全未使用標籤。</p><h3>混合資料的其他比較基準</h3><p>Gower 相異度先把各連續欄的差除以該欄範圍，把名目類別差記為 0 或 1，再對可比較欄位取加權平均；零範圍欄、缺值及不對稱二元欄須另定規則。PAM（Partitioning Around Medoids）選實際觀測作代表點，以交換代表點降低到最近代表點的相異度總和，適合已定義相異度矩陣的資料。模型式混合資料分群則可用連續密度與類別機率的混合，例如 $p(x)=\sum_k\pi_k f_k(x_{\mathcal N})\prod_{j\in\mathcal C}P_k(x_j)$，其中條件獨立與密度假設需要檢查。</p><p>Calinski–Harabasz 指標為 $\operatorname{CH}(K)=\{B/(K-1)\}/\{W/(n-K)\}$，其中 $W$ 是群內平方和、$B$ 是各群中心相對整體平均的加權平方和；須 $1&lt;K&lt;n$ 且 $W>0$。例如 $n=10,K=2,B=16,W=8$，CH＝16。較大值表示這種歐氏幾何下群間分離相對群內更強；它不是經過搜尋群數後仍有效的顯著性檢定。</p><p>講義連結的混合資料 benchmark 比較模型式與距離式方法，顯示表現會受連續／類別比例、無關特徵與群數改變。不能把某個模擬中的排序當成普遍排名；選方法仍應以自己的相似性定義與獨立驗證為準。來源：<a href="https://www.nature.com/articles/s41598-021-83340-8" target="_blank" rel="noopener">混合資料分群的模擬比較</a>。</p></div></details>
+<p>固定分群後，連續中心更新為平均，類別中心更新為眾數；固定中心後，每點指派到混合成本最小的群。$\gamma$ 控制類別不一致與數值距離的相對重要性，數值欄先採適當尺度。</p><p>FAMD 把連續欄標準化、類別欄展開成指示碼並按類別頻率加權，再求共同低維表示；如此避免直接把「紅、藍、綠」編成等距的 0、1、2。群結果須附距離、尺度與參數，並比較重抽樣穩定性。來源：<a href="https://github.com/nicodv/kmodes" target="_blank" rel="noopener">k-modes／k-prototypes 作者實作</a>、<a href="https://maxhalford.github.io/prince/famd/" target="_blank" rel="noopener">Prince FAMD 文件</a>。</p>
+<h3>比較圖中的其他分群方法</h3><p>MiniBatch K-means 每次只讀小批次，依指派更新中心的累計平均；可降低成本，但小批次更新不保證每輪完整資料的目標都下降。BIRCH 以 clustering feature $(N,\sum x_i,\sum\|x_i\|^2)$ 建立可合併的小群摘要，再對摘要進一步分群，適合可壓縮的大型歐氏資料。Affinity propagation 在點間傳遞「適合作代表點」的 responsibility 與 availability，挑 exemplar；preference 改變代表點／群的數目，damping 用來減少震盪。它們在講義比較圖中的表現是特定模擬資料的結果，沒有任何一欄普遍最好。</p><h3>模糊分群與距離學習</h3><p>Fuzzy c-means 以隸屬度 $u_{ik}\ge0,\sum_ku_{ik}=1$ 取代硬標籤，最小化 $\sum_{i,k}u_{ik}^m\|x_i-c_k\|^2$，其中 $m>1$。固定隸屬度時，中心為 $c_k=\sum_i u_{ik}^mx_i/\sum_i u_{ik}^m$；固定中心且距離皆非零時，$u_{ik}=\left[\sum_\ell(\|x_i-c_k\|/\|x_i-c_\ell\|)^{2/(m-1)}\right]^{-1}$。零距離需把隸屬集中到重合中心並約定 ties。它的隸屬度不是由 Gaussian density 算出的後驗責任值。</p><p>若領域提供相似／不相似配對，metric learning 可估計 $d_A(x,y)^2=(x-y)^TA(x-y)$，$A\succeq0$；寫 $A=L^TL$ 就是先做 $Lx$ 轉換再算歐氏距離。若 $A$ 不滿秩，可能把不同點投到同一位置，得到的是偽距離。配對標籤加入了監督資訊，評估時也須限制在訓練折，不能把結果稱為完全未使用標籤。</p></div></details>
 </section>
 <section id="manifold">
 <!-- GEN:BEGIN sec:manifold -->
@@ -1760,10 +1615,10 @@ $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathc
   也不像 PCA 有負荷量可以解讀「這個方向由哪些變數組成」。<br>
   要當前處理放進 pipeline，UMAP 比較合適。它有 <code>transform()</code>，
   lab 範例 就示範了「先 UMAP 再分類」，
-  而且 SVC 的正確率從 0.62 拉到 0.98。<strong>但那已經是監督式的評估了</strong>，
+  <strong>但那已經是監督式的評估了</strong>，
   能這樣調就是因為有 y 可以看。
 </div>
-<h3>其他流形方法各自保留什麼</h3><p>Isomap 先建近鄰圖，以最短路估計測地距離，再對距離矩陣做 classical MDS；圖斷裂或跨流形捷徑會改變結果。LLE 先用鄰居重建每個高維點，權重滿足列和 1，再找低維座標最小化 $\sum_i\|z_i-\sum_jw_{ij}z_j\|^2$，並用置中與尺度限制排除全零解。UMAP 先構造局部尺度的模糊鄰接關係，再最佳化低維交叉熵；近鄰數與 <code>min_dist</code> 改變保留結構的尺度。它們都需適當前處理，鄰居圖本身不是現實資料流形存在的證明。</p><p>PHATE 以擴散機率及其轉換建構距離，常用於連續軌跡的探索；其連續形狀仍須以原始特徵或獨立資料檢驗。若把降維放進監督式 pipeline，應在每個訓練折擬合轉換；標籤只用於最後評估或上色時，要與有監督的 UMAP 分清楚。</p>
+<h3>其他流形方法各自保留什麼</h3><p>Isomap 先建近鄰圖，以最短路估計測地距離，再對距離矩陣做 classical MDS；圖斷裂或跨流形捷徑會改變結果。LLE 先用鄰居重建每個高維點，權重滿足列和 1，再找低維座標最小化 $\sum_i\|z_i-\sum_jw_{ij}z_j\|^2$，並用置中與尺度限制排除全零解。UMAP 先構造局部尺度的模糊鄰接關係，再最佳化低維交叉熵；近鄰數與 <code>min_dist</code> 改變保留結構的尺度。它們都需適當前處理，鄰居圖本身不是現實資料流形存在的證明。</p><p>若把降維放進監督式 pipeline，應在每個訓練折擬合轉換；標籤只用於最後評估或上色時，要與有監督的 UMAP 分清楚。</p>
 <h3>張量與自監督延伸的最小數學框架</h3><p>三階張量的 CP 分解寫為 $\mathcal X_{ijk}\approx\sum_{r=1}^Ra_{ir}b_{jr}c_{kr}$；Tucker 分解寫為 $\mathcal X_{ijk}\approx\sum_{a,b,c}\mathcal G_{abc}U_{ia}V_{jb}W_{kc}$。前者把 rank-one 張量相加，後者另外保留核心中的多軸交互作用；尺度／排列等不唯一性仍存在。自監督則把輸入的一部分當作預測目標，例如遮罩文字的 $-\sum_{i\in\mathcal M}\log p(x_i\mid x_{\notin\mathcal M})$。這些是講義列出的後續方向，完整的深度模型訓練另查相應教材，不能由低維圖直接推論表示的品質。</p>
 <h3>能否映射新資料，以及理論保證的範圍</h3><p>Parametric t-SNE 用可訓練函數 $z=f_\theta(x)$ 表示座標，以鄰居機率目標調整 $\theta$；訓練後可直接對新 $x$ 評估。這和把一批座標自由最佳化的標準 t-SNE 是不同模型。固定既有嵌入後插入新點，也是另一種近似做法；不能把某個估計器沒有 <code>transform()</code> 推成所有 t-SNE 方法都不能映射新點。</p><p>講義列出的 t-SNE 理論研究，對資料分離、鄰居機率、初始化或 early exaggeration 使用明確假設，再證明特定群可被分開；它們不是對任意資料的全域距離保真或正確分群保證。實務上應回到高維鄰居、參數擾動和獨立資料檢查結構。來源：<a href="https://lvdmaaten.github.io/publications/papers/AISTATS_2009.pdf" target="_blank" rel="noopener">Parametric t-SNE</a>、<a href="https://proceedings.mlr.press/v75/arora18a/arora18a.pdf" target="_blank" rel="noopener">t-SNE 的理論分析</a>。</p></div></details>
 
@@ -1787,7 +1642,7 @@ $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathc
   硬要用高斯核會讓所有點擠在一起（crowding problem）；
   t 分佈的尾巴重，允許中距離的點被推得比較遠，圖才會散開。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="sklearn digits 全部 1797 筆；perplexity 30 沿用課程 lab 的 TSNE 設定，PCA 與 perplexity 5 用於方法比較。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w07tsneChart"></canvas>
@@ -1795,7 +1650,7 @@ $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathc
       </div>
       <div class="status-banner" id="w07tsneStatus"><span class="status-icon">›</span><span class="status-text">同一批 1797 張手寫數字，換方法看嵌入結果怎麼變。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.3rem;">方法</label><select id="w07tsneSel" class="mono" onchange="w07tsneSet()"><option value="pca" selected>PCA</option><option value="tsne5">t-SNE · perplexity 5</option><option value="tsne30" selected>t-SNE · perplexity 30</option></select></div>
-      <div class="viz-source"><span>課程／lab 資料</span>sklearn digits 全部 1797 筆；perplexity 30 沿用課程 lab 的 TSNE 設定，PCA 與 perplexity 5 用於方法比較。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1816,26 +1671,17 @@ $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathc
 
 
 
-  <details class="qa-item reading-detail" id="w07-detail-manifold-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-tsne">講義完整實作：<code>TSNE</code></h3>
+  <details class="qa-item reading-detail" id="w07-detail-manifold-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">講義 12 · digits 的 t-SNE</div>
+  <div class="dx-label">t-SNE 的設定與嵌入</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">tsne = TSNE(</span>
   <span class="line">    n_components=<span class="num">2</span>, perplexity=<span class="num">30</span>, init=<span class="str">&quot;pca&quot;</span>, learning_rate=<span class="str">&quot;auto&quot;</span>, random_state=<span class="num">0</span>, verbose=<span class="num">True</span></span>
   <span class="line">)</span>
   <span class="line"> </span>
   <span class="line">embedding = tsne.fit_transform(X)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>[t-SNE] Computing 91 nearest neighbors...
-[t-SNE] Indexed 1797 samples in 0.001s...
-[t-SNE] Computed neighbors for 1797 samples in 0.393s...
-[t-SNE] Computed conditional probabilities for sample 1000 / 1797
-[t-SNE] Computed conditional probabilities for sample 1797 / 1797
-[t-SNE] Mean sigma: 11.585657
-[t-SNE] KL divergence after 250 iterations with early exaggeration: 61.325920
-[t-SNE] KL divergence after 1000 iterations: 0.753624</pre></div>
-  <p class="dx-note"><code>init="pca"</code> 是重要的細節：用 PCA 的結果當初始位置，比隨機初始化穩定得多，也讓結果比較可重現（配上 <code>random_state=0</code>）。<br>輸出的兩個 KL 散度值得注意：早期誇張階段（early exaggeration）250 輪之後是 61.3，其後未誇張階段到 1000 輪時報 <strong>0.754</strong>；兩階段目標不同，不能直接用比值量化改善。<strong>KL 比較須固定資料、鄰居機率與目標階段</strong>，這個數值衡量投影目標，不能直接評定群的品質。<br>lab 後面還示範了 <code>openTSNE</code>（更快）、<code>UMAP</code>（有 <code>transform()</code>）與 <code>PHATE</code>（保留軌跡結構）。</p>
-  <span class="dx-src" data-lab-ch="12" data-lab-cells="71,72,74,75">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="74,75">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -1846,7 +1692,7 @@ $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathc
   <div class="quiz-feedback" id="qTsneFeedback"></div>
 </div>
 
-<details class="qa-item reading-detail" id="w07-detail-tsne-algorithm"><summary>完整 t-SNE：鄰居機率、參數、梯度與算例</summary>
+<details class="qa-item reading-detail" id="w07-detail-tsne-algorithm"><summary>完整 t-SNE：鄰居機率、參數與梯度</summary>
 <div class="detail-body"><h3>t-SNE 的目標與調整參數</h3><p>高維條件鄰居機率可寫成 $p_{j\mid i}\propto\exp(-\|x_i-x_j\|^2/(2\sigma_i^2))$，其中排除 $i=j$ 並逐列正規化。以 $\mathrm{Perp}(P_i)=2^{H(P_i)}$、$H(P_i)=-\sum_jp_{j\mid i}\log_2p_{j\mid i}$ 指定有效鄰居數，再搜尋各點的 $\sigma_i$。對稱化 $p_{ij}=(p_{j\mid i}+p_{i\mid j})/(2n)$，低維則用 $q_{ij}\propto(1+\|z_i-z_j\|^2)^{-1}$，最小化 $\sum_{i\ne j}p_{ij}\log(p_{ij}/q_{ij})$。梯度同時含吸引與排斥作用，不能說只懲罰鄰居被拉遠。</p><p>Early exaggeration 在初期增強吸引作用，learning rate 決定更新幅度，迭代次數決定最佳化進度；Barnes–Hut 的 angle 取捨近似精度與速度。Perplexity、初始值及亂數種子改變圖形時，應比較局部鄰居是否穩定，不能挑一張最漂亮的圖作結論。PCA 保留全域線性變異；Isomap 以鄰接圖最短路近似流形距離，LLE 保留局部重建權重，UMAP 以鄰接關係建構嵌入並可轉換新點。</p>
 <h3>講義延伸方向</h3><p>張量分解將樣本、空間、時間等多個軸一起表示，例如 CP 用秩一張量之和，Tucker 用各軸因子與核心張量；相比先攤平成矩陣，可保留軸的結構。自監督學習從資料本身設計預測任務，例如遮住部分輸入再重建，或讓同一資料的經過不同資料擴增的版本接近；訓練目標雖由資料產生，取得的表徵仍須在目標任務驗證。</p>
 
@@ -1857,8 +1703,8 @@ $$p_{j\mid i}=\frac{e^{-\|x_i-x_j\|^2/(2\sigma_i^2)}}{\sum_{k\ne i}e^{-\|x_i-x_k
 $$p_{ij}=\frac{p_{j\mid i}+p_{i\mid j}}{2n},\qquad w_{ij}=(1+\|z_i-z_j\|^2)^{-1},\quad Z=\sum_{k\ne\ell}w_{k\ell},\quad q_{ij}=w_{ij}/Z.$$
 <p>對角線機率定為 0，對所有有序非對角配對加總有 $\sum_{i\ne j}p_{ij}=\sum_{i\ne j}q_{ij}=1$。這裡的 $Z$ 是<strong>全域</strong>正規化，不是每個點各除一個列和。最小化 $C=\sum_{i\ne j}p_{ij}\log(p_{ij}/q_{ij})$，其梯度為</p>
 $$\frac{\partial C}{\partial z_i}=4\sum_{j\ne i}(p_{ij}-q_{ij})\frac{z_i-z_j}{1+\|z_i-z_j\|^2}.$$
-<p>例如三個低維點 $(0,1,3)$，三個無序配對的核值為 $1/2,1/10,1/5$，因此 $Z=2(1/2+1/10+1/5)=1.6$；有序機率 $q_{12}=0.3125,q_{13}=0.0625,q_{23}=0.125$，把反向三項也算入才等於 1。</p>
-<h3>perplexity 與逐輪最佳化</h3><ol><li>選定 perplexity $k$，對每個點以二分搜尋調整 $\sigma_i$，使 $H(P_i)=-\sum_jp_{j\mid i}\log_2p_{j\mid i}\approx\log_2k$。它是有效鄰居數，並非硬性只保留 $k$ 個點。</li><li>建立固定 $P$，以小尺度隨機值或 PCA 初始化 $z$，記錄種子。不同初始化可能進入不同局部解。</li><li>每輪重算 $w,Z,Q$ 與上式梯度，以 $z_i^{(t+1)}=z_i^{(t)}-\eta\nabla_iC$ 更新；常見實作另加 momentum。</li><li>early exaggeration 階段把吸引項的 $p_{ij}$ 乘一個大於 1 的係數，再恢復原本目標。檢查進度、最後梯度和多次結果，不能只挑最分開的一張圖。</li></ol><p>若兩個鄰居各有機率 $1/2$，熵為 1 bit，perplexity 為 2；相同兩個鄰居的機率若為 $(0.9,0.1)$，perplexity 約為 1.384。鄰居距離完全相等時，不是任意 perplexity 都能靠改 $\sigma_i$ 達成。</p><p>精確的全配對計算需要平方級的配對數；Barnes–Hut 用空間樹近似遠處排斥，FIt-SNE 則用插值與 FFT 加速，改的是數值近似而非可任意改寫的目標。<code>angle</code> 控制 Barnes–Hut 的精度／速度取捨。KL 的跨次比較需固定資料、$P$、perplexity 與目標階段；early exaggeration 階段報值不能直接當成同一未誇張 KL 的可比數字。</p><p>來源：<a href="https://opentsne.readthedocs.io/en/latest/tsne_algorithm.html" target="_blank" rel="noopener">openTSNE：t-SNE 如何運作</a>與講義連結的原始演算法文獻。</p>
+
+<h3>perplexity 與逐輪最佳化</h3><ol><li>選定 perplexity $k$，對每個點以二分搜尋調整 $\sigma_i$，使 $H(P_i)=-\sum_jp_{j\mid i}\log_2p_{j\mid i}\approx\log_2k$。它是有效鄰居數，並非硬性只保留 $k$ 個點。</li><li>建立固定 $P$，以小尺度隨機值或 PCA 初始化 $z$，記錄種子。不同初始化可能進入不同局部解。</li><li>每輪重算 $w,Z,Q$ 與上式梯度，以 $z_i^{(t+1)}=z_i^{(t)}-\eta\nabla_iC$ 更新；常見實作另加 momentum。</li><li>early exaggeration 階段把吸引項的 $p_{ij}$ 乘一個大於 1 的係數，再恢復原本目標。檢查進度、最後梯度和多次結果，不能只挑最分開的一張圖。</li></ol><p>鄰居距離完全相等時，不是任意 perplexity 都能靠改 $\sigma_i$ 達成。</p><p>精確的全配對計算需要平方級的配對數；Barnes–Hut 用空間樹近似遠處排斥，FIt-SNE 則用插值與 FFT 加速，改的是數值近似而非可任意改寫的目標。<code>angle</code> 控制 Barnes–Hut 的精度／速度取捨。KL 的跨次比較需固定資料、$P$、perplexity 與目標階段；early exaggeration 階段報值不能直接當成同一未誇張 KL 的可比數字。</p><p>來源：<a href="https://opentsne.readthedocs.io/en/latest/tsne_algorithm.html" target="_blank" rel="noopener">openTSNE：t-SNE 如何運作</a>與講義連結的原始演算法文獻。</p>
 <details class="qa-item proof" id="w07proof-tsne"><summary>證明：t-SNE 梯度與吸引／排斥項</summary>
 <div class="qa-a"><p>固定 $P$，利用 $q_{ij}=w_{ij}/Z$ 與 $\sum_{i\ne j}p_{ij}=1$，目標可寫成 $C=\mathrm{const}-\sum_{i\ne j}p_{ij}\log w_{ij}+\log Z$。因 $\nabla_{z_i}\log w_{ij}=-2w_{ij}(z_i-z_j)$，有序配對的 $(i,j)$ 和 $(j,i)$ 各貢獻一次，第一項導數為 $4\sum_jp_{ij}w_{ij}(z_i-z_j)$。同理 $\nabla_{z_i}Z=-4\sum_jw_{ij}^2(z_i-z_j)$，除以 $Z$ 得 $-4\sum_jq_{ij}w_{ij}(z_i-z_j)$，合併即得正文式子。梯度下降取負號：$p_{ij}>q_{ij}$ 的項拉近點，反之推開。</p><p>原始非對稱 SNE 同時有「$i$ 的鄰居分布」與「別人把 $i$ 當鄰居」兩類項，其梯度為 $2\sum_{j\ne i}(z_i-z_j)\{p_{j\mid i}-q_{j\mid i}+p_{i\mid j}-q_{i\mid j}\}$；不能只留下其中一個方向。</p></div></details>
 </div></details>
@@ -1909,7 +1755,7 @@ $$\frac{\partial C}{\partial z_i}=4\sum_{j\ne i}(p_{ij}-q_{ij})\frac{z_i-z_j}{1+
 <details class="qa-item reading-detail" id="w07-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w07-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 12.1 節；教科書 · 第 12.2.1 節；教科書 · 第 12.2.2 節；教科書 · 第 12.2.3 節；教科書 · 第 12.2.4 節；教科書 · 第 12.3 節；教科書 · 第 12.4.1 節；教科書 · 第 12.4.2 節；教科書 · 第 12.4.3 節。</li>
 <li id="w07-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：進階參考 · 第 14.9 節 · 進階。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-<details class="qa-item reading-detail" id="w07-detail-reference"><summary>完整比較表、公式與實測結果</summary>
+<details class="qa-item reading-detail" id="w07-detail-reference"><summary>方法與公式速查</summary>
 <div class="detail-body">
   <p>考前把這一頁掃過去就好。</p>
 
@@ -1931,30 +1777,7 @@ $$\frac{\partial C}{\partial z_i}=4\sum_{j\ne i}(p_{ij}-q_{ij})\frac{z_i-z_j}{1+
   <tbody><tr><td>第一主成分</td><td>$\max \frac1n\sum_i(\sum_j \phi_{j1}x_{ij})^2$ s.t. $\sum_j\phi_{j1}^2=1$</td><td>式 12.3</td></tr><tr><td>得分</td><td>$z_{im} = \sum_{j=1}^{p} \phi_{jm} x_{ij}$</td><td>式 12.2、12.4</td></tr><tr><td>最佳低維近似</td><td>$\min_{A,B}\sum_{j}\sum_i (x_{ij}-\sum_m a_{im}b_{jm})^2$</td><td>式 12.6，解就是主成分</td></tr><tr><td>第 m 個 PVE</td><td>$\mathrm{PVE}_m=\dfrac{\sum_i z_{im}^2}{\sum_j\sum_i x_{ij}^2}$</td><td>式 12.10；所有主成分加總為 1</td></tr><tr><td>前 M 個的累積 PVE</td><td>$\sum_{m=1}^{M}\mathrm{PVE}_m=1-\dfrac{\mathrm{RSS}_M}{\mathrm{TSS}}$</td><td>式 12.11；M 維近似的 R²</td></tr><tr><td>變異分解</td><td>總變異 = 前 M 個 PC 的變異 + M 維近似的 MSE</td><td>式 12.11</td></tr><tr><td>矩陣補全</td><td>$\min_{A,B}\sum_{(i,j)\in\mathcal O}(x_{ij}-\sum_m a_{im}b_{jm})^2$</td><td>式 12.12，只在觀測格上算</td></tr><tr><td>K-means 目標</td><td>$\min\sum_k \frac{1}{|C_k|}\sum_{i,i'\in C_k}\sum_j (x_{ij}-x_{i'j})^2$</td><td>式 12.17</td></tr><tr><td>關鍵恆等式</td><td>$\frac{1}{|C_k|}\sum_{i,i'\in C_k}\sum_j (x_{ij}-x_{i'j})^2 = 2\sum_{i\in C_k}\sum_j (x_{ij}-\bar x_{kj})^2$</td><td>式 12.18，演算法 12.2 的根據</td></tr></tbody>
 </table></div>
 
-  <h3>USArrests 的實測數字</h3>
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>主成分</th><th>PC1</th><th>PC2</th><th>PC3</th><th>PC4</th></tr></thead>
-  <tbody><tr><td>負荷量 Murder</td><td>0.536</td><td>−0.418</td><td>−0.341</td><td>−0.649</td></tr><tr><td>負荷量 Assault</td><td>0.583</td><td>−0.188</td><td>−0.268</td><td>0.743</td></tr><tr><td>負荷量 UrbanPop</td><td>0.278</td><td>0.873</td><td>−0.378</td><td>−0.134</td></tr><tr><td>負荷量 Rape</td><td>0.543</td><td>0.167</td><td>0.818</td><td>−0.089</td></tr><tr><td>得分的變異數</td><td>2.5309</td><td>1.0100</td><td>0.3638</td><td>0.1770</td></tr><tr><td>PVE</td><td><strong>62.0%</strong></td><td><strong>24.7%</strong></td><td>8.9%</td><td>4.3%</td></tr><tr><td>累積 PVE</td><td>62.0%</td><td><strong>86.8%</strong></td><td>95.7%</td><td>100%</td></tr></tbody>
-</table></div>
-  <p style="font-size:.82rem;color:var(--muted);">負荷量與 lab 範例 的
-  <code>components_</code> 逐位相同、PVE 與lab 範例 的
-  <code>explained_variance_ratio_</code> 相同。四個變數的原始變異數是
-  18.97 / 6945.17 / 209.52 / 87.73，因此本例先標準化，讓各變數以相同尺度參與。</p>
-
-<div class="info-box">
-  <span class="info-label">重點回顧</span>
-  <strong>1. PCA 的兩種解釋是同一件事。</strong>
-  「變異最大的方向」＝「離資料最近的低維平面」，式 12.11 就是它們的橋；
-  前 M 個主成分的累積 PVE 因此也可以讀成 M 維近似的 R²。<br>
-  <strong>2. 尺度會決定答案，符號不會。</strong>不標準化，PC1 就退化成變異數最大的那個變數；
-  符號整組翻掉則什麼結論都不變（前提是得分與負荷量一起翻）。<br>
-  <strong>3. 分群給出的群仍需檢查穩定性與實質意義。</strong>
-  K-means 只保證局部極小（要設 <code>n_init</code>）、樹狀圖只能看高度不能看左右、
-  結果對標準化與 linkage 都很敏感。換設定多跑幾次，看什麼結構每次都出現。
-</div>
-
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
-</div></details>
+  </div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -2952,13 +2775,12 @@ function w07mcRender() {
   $('w07mcMss').textContent = w07mcHist.length ? HC.fmt(w07mcHist[w07mcHist.length - 1], 4) : '—';
   $('w07mcRel').textContent = w07mcIterN ? w07mcRel.toExponential(2) : '—';
   const r = w07mcCorr();
-  $('w07mcCorr').textContent = Number.isNaN(r) ? '—' : HC.fmt(r, 4);
   setStatus('w07mcStatus', w07mcIterN === 0
     ? '起點（步驟 1）：' + w07mcMissN + ' 個格子被挖掉，先用該欄觀測值的平均填進去。'
       + '按「單步」開始迭代。'
     : '第 ' + w07mcIterN + ' 輪：觀測格上的 MSS = '
       + HC.fmt(w07mcHist[w07mcHist.length - 1], 4) + '，相對改善 ' + w07mcRel.toExponential(2)
-      + '。橘框裡是補出來的值，跟真值的相關係數 ' + HC.fmt(r, 3)
+      + '。橘框裡是以低秩近似補出的值。'
       + '（相對改善跌破 1e−7 就算收斂）。');
 }
 function w07mcChart() {
@@ -3466,7 +3288,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"非監督式學習（Unsupervised Learning）","back":"只有特徵 X1…Xp、沒有反應變數 Y 的分析，用來找低維表示或群組。沒有真實群標籤時，不能直接用分類錯誤率判斷分群；若先定義補值誤差等目標，仍可用留出資料評估。"},{"front":"主成分分析（Principal Components Analysis, PCA）","back":"把 p 個相關的變數換成少數幾個不相關的線性組合，每一個都盡量抓住最多變異。用途有三：視覺化、當成迴歸的特徵（主成分迴歸）、以及填補缺失值。"},{"front":"負荷量（Loading）","back":"主成分線性組合裡的係數 φjm。同一個主成分的負荷量平方和被約束為 1，否則把係數放大就能讓變異數任意大。負荷量告訴你這個主成分「由哪些變數組成」。"},{"front":"主成分得分（Score）","back":"第 i 筆資料在某個主成分方向上的投影值 zim = Σj φjm xij。得分是「每一筆資料的新座標」，負荷量是「新座標軸的方向」。"},{"front":"第一主成分（First Principal Component）","back":"所有標準化線性組合中樣本變異數最大的那一個方向。等價說法：它是 p 維空間中離所有資料點平均平方距離最近的那條直線。"},{"front":"雙標圖（Biplot）","back":"同時畫主成分得分（點）與負荷量（箭頭）。本頁箭頭的座標表示各變數在 PC1、PC2 中的係數，點的位置表示觀測值的得分。原始負荷量箭頭的夾角不能直接換成相關係數；不相關也不等於獨立。"},{"front":"解釋變異比例（Proportion of Variance Explained, PVE）","back":"第 m 個主成分的變異數除以資料總變異數。所有 min(n−1, p) 個 PVE 加起來是 1。前 M 個的累積 PVE_M = Σ_{m≤M} PVE_m；這個累積量才等於 M 維近似的 R²，也就是 1 − RSS_M/TSS。"},{"front":"陡坡圖（Scree Plot）","back":"把各主成分的 PVE 依序畫出來的折線圖。搭配累積 PVE 一起看，用來判斷該留幾個主成分。USArrests 的前兩個主成分合起來解釋約 87% 的變異。"},{"front":"肘點（Elbow）","back":"陡坡圖上 PVE 突然由陡變平的轉折點。肘點之後的主成分解釋的變異很少，通常就不看了。這個肘點由目測判斷，用來輔助探索資料。"},{"front":"奇異值分解（Singular Value Decomposition, SVD）","back":"置中後的資料矩陣 X = U D Vᵀ：V 的每一欄是負荷向量，UD 是得分矩陣。NumPy 第三個回傳值是 Vᵀ，lab 把它命名為 V，因此程式裡的 V 各列才是負荷向量。"},{"front":"標準化（Standardization）","back":"把非恆定變數減去平均、除以標準差，使變異數為 1。不同單位的 PCA 常需先縮放；若相同單位下的變異差本身就是要保留的訊號，可以保留原尺度。"},{"front":"符號不唯一（Sign Indeterminacy）","back":"PCA 的負荷量與得分同時反號不改變重建與變異。相異特徵值的方向只差符號；重複特徵值的子空間內還可以旋轉基底。比較多次結果時要分清符號對齊與子空間對齊。"},{"front":"矩陣補全（Matrix Completion）","back":"利用變數之間的相關性、用主成分把缺失格子填回來。演算法 12.1 的做法是：先用欄平均填補，反覆「算前 M 個主成分 → 用低秩近似覆蓋缺失格 → 檢查目標函數」直到收斂。"},{"front":"隨機遺漏（Missing at Random, MAR）","back":"資料是否遺漏可以和已觀測到的變數有關；但在這些已觀測變數給定後，遺漏機率不再依賴未觀測到的值。若遺漏機率與已觀測和未觀測的值都無關，才叫完全隨機遺漏（MCAR）。例如，問卷漏答機率只與已記錄的年齡有關，在固定年齡後與未填的收入無關，就符合 MAR。"},{"front":"推薦系統（Recommender System）","back":"矩陣補全最有名的應用。使用者 × 電影的評分矩陣絕大部分是空的，把它補起來就等於預測「這個人會不會喜歡那部沒看過的片」。Netflix 競賽用的就是這類主成分模型。"},{"front":"分群（Clustering）","back":"把觀測值分成若干子群，讓群內相似、群間相異。與 PCA 的分工：PCA 找的是連續的低維表示，分群給的是離散的群標籤；兩者都在化簡資料，但化簡的方式不同。"},{"front":"K-means 分群（K-Means Clustering）","back":"先指定群數 K，再把 n 筆資料分到 K 個不重疊的群，使群內平方距離總和（式 12.17）最小。實際解法是演算法 12.2：反覆「算群心 → 把每點指派給最近的群心」直到指派不再改變。"},{"front":"群內變異（Within-Cluster Variation）","back":"衡量同一群內部差異的量 W(Ck)。最常用的定義是群內所有兩點平方歐氏距離之和除以群的大小；由式 12.18，它等於 2 倍的「各點到群心的平方距離和」。"},{"front":"形心（Centroid）","back":"一個群裡所有觀測值在每個特徵上的平均，長度為 p 的向量。K-means 的名字就來自這一步：每次迭代都把群心設成群內平均，因為平均是讓平方偏差最小的那個常數。"},{"front":"局部極小（Local Optimum）","back":"演算法收斂到的解只保證每一步都讓目標函數下降，不保證是全域最小。K-means 的結果取決於第 1 步的隨機初始指派，換一組初值可能得到不同的分群（ISLP 圖 12.9 有三個不同的局部極小）。"},{"front":"多重初始化（Multiple Random Starts, n_init）","back":"用多組不同的隨機初值各跑一次 K-means，回報目標函數最小的那一次。scikit-learn 的 n_init 就是這件事，實務上建議設 20 或 50；再配上 random_state 讓結果可重現。"},{"front":"階層式分群（Hierarchical Clustering）","back":"不必先決定 K 的分群法。凝聚式（bottom-up）做法是每筆資料各自成群，反覆合併最相似的兩群，直到全部併成一群，過程畫成樹狀圖。切在不同高度就得到不同的群數。"},{"front":"樹狀圖（Dendrogram）","back":"階層式分群的樹狀表示。兩筆資料的相異程度看它們所在分支「第一次合併的高度」，不能看它們在水平方向上有多近——n 個葉子有 2^(n−1) 種等價的左右排法。"},{"front":"連結方式（Linkage）","back":"把「兩點之間的相異度」推廣成「兩群之間的相異度」的規則。四種常見的是 complete（取最大）、single（取最小）、average（取平均）、centroid（比兩群心的距離）。換 linkage 樹的形狀會整個改變。"},{"front":"單一連結（Single Linkage）","back":"用兩群之間最小的那個距離當群間相異度。容易產生鏈狀（trailing）結果：一個很大的群不斷把單一觀測值一顆一顆黏上去。所以實務上偏好 complete 或 average。"},{"front":"相關係數距離（Correlation-Based Distance）","back":"用兩筆觀測值在 p 個特徵上的相關係數衡量相似度（常取 1 − rij）。它比較輪廓的形狀，容許整體高低不同：兩個購物量差很多但偏好一致的顧客，歐氏距離大、相關係數距離小。"},{"front":"流形學習（Manifold Learning）","back":"假設高維資料其實落在一個低維的彎曲流形上，用非線性方法把它攤平。PCA 只能做線性投影，遇到彎曲結構會失真；t-SNE、UMAP、PHATE 都屬於這一類。"},{"front":"t-SNE（t-Distributed Stochastic Neighbor Embedding）","back":"把高維的鄰近關係轉成機率分佈，再在低維找一組座標讓兩個分佈的 KL 散度最小。低維用重尾的 t 分佈以避免擁擠問題。適合觀察局部群集。解讀應限於鄰近關係；座標軸、群間距離與群的大小都缺乏穩定的實質意義。"},{"front":"困惑度（Perplexity）","back":"t-SNE 最關鍵的參數，可以理解為「每個點考慮幾個鄰居」的平滑版本。太小只看到破碎的小團，太大會把結構抹平。換一個 perplexity 圖可能長得完全不同，所以要多試幾個值再下結論。"}];
+const FLASHCARDS = [{"front":"非監督式學習（Unsupervised Learning）","back":"只有特徵 X1…Xp、沒有反應變數 Y 的分析，用來找低維表示或群組。沒有真實群標籤時，不能直接用分類錯誤率判斷分群；若先定義補值誤差等目標，仍可用留出資料評估。"},{"front":"主成分分析（Principal Components Analysis, PCA）","back":"把 p 個相關的變數換成少數幾個不相關的線性組合，每一個都盡量抓住最多變異。用途有三：視覺化、當成迴歸的特徵（主成分迴歸）、以及填補缺失值。"},{"front":"負荷量（Loading）","back":"主成分線性組合裡的係數 φjm。同一個主成分的負荷量平方和被約束為 1，否則把係數放大就能讓變異數任意大。負荷量告訴你這個主成分「由哪些變數組成」。"},{"front":"主成分得分（Score）","back":"第 i 筆資料在某個主成分方向上的投影值 zim = Σj φjm xij。得分是「每一筆資料的新座標」，負荷量是「新座標軸的方向」。"},{"front":"第一主成分（First Principal Component）","back":"所有標準化線性組合中樣本變異數最大的那一個方向。等價說法：它是 p 維空間中離所有資料點平均平方距離最近的那條直線。"},{"front":"雙標圖（Biplot）","back":"同時畫主成分得分（點）與負荷量（箭頭）。本頁箭頭的座標表示各變數在 PC1、PC2 中的係數，點的位置表示觀測值的得分。原始負荷量箭頭的夾角不能直接換成相關係數；不相關也不等於獨立。"},{"front":"解釋變異比例（Proportion of Variance Explained, PVE）","back":"第 m 個主成分的變異數除以資料總變異數。所有 min(n−1, p) 個 PVE 加起來是 1。前 M 個的累積 PVE_M = Σ_{m≤M} PVE_m；這個累積量才等於 M 維近似的 R²，也就是 1 − RSS_M/TSS。"},{"front":"陡坡圖（Scree Plot）","back":"把各主成分的 PVE 依序畫出來的折線圖。搭配累積 PVE 一起看，用來判斷該留幾個主成分。USArrests 的前兩個主成分合起來解釋約 87% 的變異。"},{"front":"肘點（Elbow）","back":"陡坡圖上 PVE 突然由陡變平的轉折點。肘點之後的主成分解釋的變異很少，通常就不看了。這個肘點由目測判斷，用來輔助探索資料。"},{"front":"奇異值分解（Singular Value Decomposition, SVD）","back":"置中後的資料矩陣 X = U D Vᵀ：V 的每一欄是負荷向量，UD 是得分矩陣。NumPy 第三個回傳值是 Vᵀ，lab 把它命名為 V，因此程式裡的 V 各列才是負荷向量。"},{"front":"標準化（Standardization）","back":"把非恆定變數減去平均、除以標準差，使變異數為 1。不同單位的 PCA 常需先縮放；若相同單位下的變異差本身就是要保留的訊號，可以保留原尺度。"},{"front":"符號不唯一（Sign Indeterminacy）","back":"PCA 的負荷量與得分同時反號不改變重建與變異。相異特徵值的方向只差符號；重複特徵值的子空間內還可以旋轉基底。比較多次結果時要分清符號對齊與子空間對齊。"},{"front":"矩陣補全（Matrix Completion）","back":"利用變數之間的相關性、用主成分把缺失格子填回來。演算法 12.1 的做法是：先用欄平均填補，反覆「算前 M 個主成分 → 用低秩近似覆蓋缺失格 → 檢查目標函數」直到收斂。"},{"front":"隨機遺漏（Missing at Random, MAR）","back":"資料是否遺漏可以和已觀測到的變數有關；但在這些已觀測變數給定後，遺漏機率不再依賴未觀測到的值。若遺漏機率與已觀測和未觀測的值都無關，才叫完全隨機遺漏（MCAR）。例如，問卷漏答機率只與已記錄的年齡有關，在固定年齡後與未填的收入無關，就符合 MAR。"},{"front":"推薦系統（Recommender System）","back":"矩陣補全最有名的應用。使用者 × 電影的評分矩陣絕大部分是空的，把它補起來就等於預測「這個人會不會喜歡那部沒看過的片」。Netflix 競賽用的就是這類主成分模型。"},{"front":"分群（Clustering）","back":"把觀測值分成若干子群，讓群內相似、群間相異。與 PCA 的分工：PCA 找的是連續的低維表示，分群給的是離散的群標籤；兩者都在化簡資料，但化簡的方式不同。"},{"front":"K-means 分群（K-Means Clustering）","back":"先指定群數 K，再把 n 筆資料分到 K 個不重疊的群，使群內平方距離總和（式 12.17）最小。實際解法是演算法 12.2：反覆「算群心 → 把每點指派給最近的群心」直到指派不再改變。"},{"front":"群內變異（Within-Cluster Variation）","back":"衡量同一群內部差異的量 W(Ck)。最常用的定義是群內所有兩點平方歐氏距離之和除以群的大小；由式 12.18，它等於 2 倍的「各點到群心的平方距離和」。"},{"front":"形心（Centroid）","back":"一個群裡所有觀測值在每個特徵上的平均，長度為 p 的向量。K-means 的名字就來自這一步：每次迭代都把群心設成群內平均，因為平均是讓平方偏差最小的那個常數。"},{"front":"局部極小（Local Optimum）","back":"演算法收斂到的解只保證每一步都讓目標函數下降，不保證是全域最小。K-means 的結果取決於第 1 步的隨機初始指派，換一組初值可能得到不同的分群（ISLP 圖 12.9 有三個不同的局部極小）。"},{"front":"多重初始化（Multiple Random Starts, n_init）","back":"以多組初始值執行 K-means，再比較群內平方和。不同初始值可能收斂到不同的局部解。"},{"front":"階層式分群（Hierarchical Clustering）","back":"不必先決定 K 的分群法。凝聚式（bottom-up）做法是每筆資料各自成群，反覆合併最相似的兩群，直到全部併成一群，過程畫成樹狀圖。切在不同高度就得到不同的群數。"},{"front":"樹狀圖（Dendrogram）","back":"階層式分群的樹狀表示。兩筆資料的相異程度看它們所在分支「第一次合併的高度」，不能看它們在水平方向上有多近——n 個葉子有 2^(n−1) 種等價的左右排法。"},{"front":"連結方式（Linkage）","back":"把「兩點之間的相異度」推廣成「兩群之間的相異度」的規則。四種常見的是 complete（取最大）、single（取最小）、average（取平均）、centroid（比兩群心的距離）。換 linkage 樹的形狀會整個改變。"},{"front":"單一連結（Single Linkage）","back":"用兩群之間最小的那個距離當群間相異度。容易產生鏈狀（trailing）結果：一個很大的群不斷把單一觀測值一顆一顆黏上去。所以實務上偏好 complete 或 average。"},{"front":"相關係數距離（Correlation-Based Distance）","back":"用兩筆觀測值在 p 個特徵上的相關係數衡量相似度（常取 1 − rij）。它比較輪廓的形狀，容許整體高低不同：兩個購物量差很多但偏好一致的顧客，歐氏距離大、相關係數距離小。"},{"front":"流形學習（Manifold Learning）","back":"假設高維資料其實落在一個低維的彎曲流形上，用非線性方法把它攤平。PCA 只能做線性投影，遇到彎曲結構會失真；t-SNE、UMAP 都屬於這一類。"},{"front":"t-SNE（t-Distributed Stochastic Neighbor Embedding）","back":"把高維的鄰近關係轉成機率分佈，再在低維找一組座標讓兩個分佈的 KL 散度最小。低維用重尾的 t 分佈以避免擁擠問題。適合觀察局部群集。解讀應限於鄰近關係；座標軸、群間距離與群的大小都缺乏穩定的實質意義。"},{"front":"困惑度（Perplexity）","back":"t-SNE 最關鍵的參數，可以理解為「每個點考慮幾個鄰居」的平滑版本。太小只看到破碎的小團，太大會把結構抹平。換一個 perplexity 圖可能長得完全不同，所以要多試幾個值再下結論。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

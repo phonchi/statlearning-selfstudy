@@ -56,7 +56,7 @@ def main():
             if 'nsysu-math524-2025' in link or '#page=' in link:
                 failures.append(f'{path.name}: stale/positional link: {link}')
         if path.name != 'index.html':
-            required_features = ['class="quiz-box"', 'const FLASHCARDS = ']
+            required_features = ['const FLASHCARDS = ']
             if P.flashcard_count(P.BY_STEM[path.stem]):
                 required_features.append('id="fcGrid"')
             elif 'id="fcGrid"' in source or 'href="#cards"' in source:

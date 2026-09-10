@@ -92,69 +92,53 @@ def fold_labs(soup, prefix, section):
         wrap(soup, nodes, f'{prefix}-detail-lab-{section}-{count}', f'完整實作：{title}')
 
 
-GROUPS = {
-    2: {
-        'bayes': [('KNN 的彈性與有效自由度','knn-df','計算細節：KNN 迴歸的有效自由度')],
-    },
-    3: {
-        'slr': [('解釋變數一定要是隨機變數嗎？','fixed-x','延伸閱讀：固定設計與隨機解釋變數')],
-        'inference': [('用 bootstrap 建立迴歸曲線的信賴區間','bootstrap-ci','延伸閱讀：用 bootstrap 建立曲線區間'),
-                      ('公式的條件與平均反應／新觀測','matrix-intervals','計算細節：係數共變異數與 CI／PI')],
-        'accuracy': [('相關係數平方不能取代任意預測的 R²','r2-counterexample','計算細節：R² 與相關係數的反例')],
-        'mlr': [('逐步選擇：如何形成候選模型？','stepwise','延伸閱讀：逐步選擇候選模型'),
-                ('控制其他變數：CCPR 與部分迴歸圖','partial-plots','延伸閱讀：CCPR、部分迴歸圖與 FWL'),
-                ('一次檢定一組係數：部分 F 檢定','partial-f','計算細節：部分 F 檢定')],
-        'qualitative': [('中心化會改變哪個係數的意義？','centering','計算細節：中心化與交互作用係數')],
-        'problems': [('內部與外部學生化殘差','studentization','計算細節：內部與外部學生化殘差'),
-                     ('殘差為什麼對擬合值畫？','residual-geometry','計算細節：殘差圖與投影幾何')],
-        'reference': [('Advertising 資料上的所有數字（本頁每個元件都能對回這張表）','advertising-numbers','計算細節：Advertising 完整數值對照')],
-    },
-    4: {
-        'logistic': [('從觀測到估計：完整的最大概似問題','logistic-fit','計算細節：概似、Newton／IRLS 與標準誤'),
-                     ('預測機率的區間與模型比較','probability-intervals','延伸閱讀：預測機率的區間與模型比較'),
-                     ('反應誤差、潛在變數與完全分離','latent-logistic','延伸閱讀：反應誤差、潛在變數與分離')],
-        'multinomial': [('多類別模型如何估計？','multinomial-fit','計算細節：多類別概似與識別限制'),
-                        ('二元分類器如何組成多類別分類？','ovr-ovo','延伸閱讀：OVR 與 OVO 的組合規則')],
-        'lda': [('LDA 與 Fisher LDA：分類規則與判別方向','fisher','延伸閱讀：Fisher 判別方向與 Iris 投影'),
-                ('把生成式模型的參數估出來','generative-fit','計算細節：生成式模型的參數與共變異數'),
-                ('為什麼二類的最小平方與 LDA 方向有關？','ols-lda','延伸閱讀：OLS、LDA 與降秩迴歸')],
-        'threshold': [('F1 與隨機分數的 AUC 基準','f1-auc','延伸閱讀：F1 與隨機分數的 AUC 基準')],
-        'compare': [('QDA log-odds 中的係數到底是什麼？','qda-coefficients','計算細節：QDA log-odds 的完整係數')],
-        'poisson': [('Poisson 的估計與 GLM 的變異數','glm-fit','計算細節：Poisson 估計與 GLM 指數族'),
-                    ('Bikeshare：同一特徵，兩種係數量尺','bikeshare-table','計算細節：Bikeshare 兩種模型的係數對照')],
-        'reference': [('Default 資料上的實測數字（可以直接對回課本）','default-numbers','計算細節：Default 完整數值對照'),
-                      ('Smarket 上五個方法的 2005 年正確率（lab 的實跑結果）','smarket-numbers','計算細節：Smarket 各方法結果')],
-    },
-    5: {
-        'loocv': [('LOOCV 捷徑何時可用？','press','計算細節：LOOCV 捷徑與槓桿值')],
-        'cvwrong': [('分折也要反映未來的預測情境','splits','延伸閱讀：群組、時間與重複切分'),
-                    ('調參、外層評估與折外預測','nested-cv','延伸閱讀：巢狀 CV 與折外預測')],
-        'bootstrap': [('從標準誤到信賴區間與預測區間','bootstrap-intervals','延伸閱讀：bootstrap 信賴區間與預測區間'),
-                      ('Jackknife：逐筆刪除，估計量會變多少？','jackknife-se','延伸閱讀：Jackknife 的標準誤'),
-                      ('Permutation test：假如 X 與標籤沒有關聯？','permutation','延伸閱讀：置換檢定與分類器評估'),
-                      ('Jackknife也能估計偏差','jackknife-bias','計算細節：Jackknife 的偏差修正'),
-                      ('固定設計下用bootstrap估預測誤差','bootstrap-prediction','計算細節：重抽預測誤差與區塊自助法'),
-                      ('講義MAPIE連結：保形預測區間','conformal','延伸閱讀：保形預測的校準區間')],
-        'reference': [('Auto 資料上的實測數字','auto-numbers','計算細節：Auto 各種重抽樣結果')],
-    },
-    6: {
-        'criteria': [('分類模型的模型選擇','classification-selection','延伸閱讀：分類模型的選擇'),
-                     ('Cp 的風險目標、常數與選模','cp-risk','計算細節：Cp 的風險目標與常數'),
-                     ('分類離差的數值如何對回軟體？','deviance','完整實作：分類離差與軟體量尺')],
-        'ridge': [('中心化後的 Ridge 解','ridge-solution','計算細節：Ridge 的矩陣解與方向收縮')],
-        'lasso': [('收縮的貝氏解讀與延伸','shrinkage-map','延伸閱讀：收縮的貝氏解讀'),
-                  ('Lasso 的零係數條件與座標更新','lasso-solution','計算細節：Lasso 的零點與座標下降'),
-                  ('最小角度迴歸與 Group Lasso','lar-group','延伸閱讀：LAR 與 Group Lasso'),
-                  ('限制式與懲罰式：如何對應？','penalty-constraint','計算細節：限制式與懲罰式的對應')],
-        'pcr': [('從共變異數到白化','whitening','計算細節：共變異數、SVD 與白化'),
-                ('PCA 的最大變異與最小重建誤差','pca-objectives','計算細節：PCA 變異與重建目標'),
-                ('正交、不相關與獨立是三件事','uncorrelated','延伸閱讀：正交、不相關與獨立')],
-        'pls': [('PLS1：從方向到可用於新資料的預測','pls-algorithm','計算細節：PLS1 的訓練與新資料預測'),
-                ('PLS最大化共變異，並非直接最大化相關','pls-covariance','計算細節：PLS 的共變異目標')],
-        'reference': [('Credit 資料上六個準則選出的模型大小','credit-numbers','計算細節：Credit 各準則結果'),
-                      ('在係數平面比較方法','coefficient-paths','延伸閱讀：在係數平面比較方法')],
-    },
-}
+GROUPS = {2: {'bayes': [('KNN 的彈性與有效自由度', 'knn-df', '計算細節：KNN 迴歸的有效自由度')]},
+ 3: {'slr': [('解釋變數一定要是隨機變數嗎？', 'fixed-x', '延伸閱讀：固定設計與隨機解釋變數')],
+     'inference': [('用 bootstrap 建立迴歸曲線的信賴區間', 'bootstrap-ci', '延伸閱讀：用 bootstrap 建立曲線區間'),
+                   ('公式的條件與平均反應／新觀測', 'matrix-intervals', '計算細節：係數共變異數與 CI／PI')],
+     'accuracy': [('相關係數平方不能取代任意預測的 R²', 'r2-counterexample', '計算細節：R² 與相關係數的反例')],
+     'mlr': [('逐步選擇：如何形成候選模型？', 'stepwise', '延伸閱讀：逐步選擇候選模型'),
+             ('控制其他變數：CCPR 與部分迴歸圖', 'partial-plots', '延伸閱讀：CCPR、部分迴歸圖與 FWL'),
+             ('一次檢定一組係數：部分 F 檢定', 'partial-f', '計算細節：部分 F 檢定')],
+     'qualitative': [('中心化會改變哪個係數的意義？', 'centering', '計算細節：中心化與交互作用係數')],
+     'problems': [('內部與外部學生化殘差', 'studentization', '計算細節：內部與外部學生化殘差'),
+                  ('殘差為什麼對擬合值畫？', 'residual-geometry', '計算細節：殘差圖與投影幾何')],
+     'reference': [('Advertising 的迴歸結果', 'advertising-numbers', '計算細節：Advertising 完整數值對照')]},
+ 4: {'logistic': [('從觀測到估計：完整的最大概似問題', 'logistic-fit', '計算細節：概似、Newton／IRLS 與標準誤'),
+                  ('預測機率的區間與模型比較', 'probability-intervals', '延伸閱讀：預測機率的區間與模型比較'),
+                  ('反應誤差、潛在變數與完全分離', 'latent-logistic', '延伸閱讀：反應誤差、潛在變數與分離')],
+     'multinomial': [('多類別模型如何估計？', 'multinomial-fit', '計算細節：多類別概似與識別限制'),
+                     ('二元分類器如何組成多類別分類？', 'ovr-ovo', '延伸閱讀：OVR 與 OVO 的組合規則')],
+     'lda': [('LDA 與 Fisher LDA：分類規則與判別方向', 'fisher', '延伸閱讀：Fisher 判別方向與 Iris 投影'),
+             ('把生成式模型的參數估出來', 'generative-fit', '計算細節：生成式模型的參數與共變異數'),
+             ('為什麼二類的最小平方與 LDA 方向有關？', 'ols-lda', '延伸閱讀：OLS、LDA 與降秩迴歸')],
+     'threshold': [('F1 與隨機分數的 AUC 基準', 'f1-auc', '延伸閱讀：F1 與隨機分數的 AUC 基準')],
+     'compare': [('QDA log-odds 中的係數到底是什麼？', 'qda-coefficients', '計算細節：QDA log-odds 的完整係數')],
+     'poisson': [('Poisson 的估計與 GLM 的變異數', 'glm-fit', '計算細節：Poisson 估計與 GLM 指數族'),
+                 ('Bikeshare：同一特徵，兩種係數量尺', 'bikeshare-table', '計算細節：Bikeshare 兩種模型的係數對照')],
+     'reference': [('Default 的分類結果', 'default-numbers', '計算細節：Default 完整數值對照')]},
+ 5: {'loocv': [('LOOCV 捷徑何時可用？', 'press', '計算細節：LOOCV 捷徑與槓桿值')],
+     'cvwrong': [('分折也要反映未來的預測情境', 'splits', '延伸閱讀：群組、時間與重複切分'),
+                 ('調參、外層評估與折外預測', 'nested-cv', '延伸閱讀：巢狀 CV 與折外預測')],
+     'bootstrap': [('從標準誤到信賴區間與預測區間', 'bootstrap-intervals', '延伸閱讀：bootstrap 信賴區間與預測區間'),
+                   ('Jackknife：逐筆刪除，估計量會變多少？', 'jackknife-se', '延伸閱讀：Jackknife 的標準誤'),
+                   ('Permutation test：假如 X 與標籤沒有關聯？', 'permutation', '延伸閱讀：置換檢定與分類器評估'),
+                   ('Jackknife也能估計偏差', 'jackknife-bias', '計算細節：Jackknife 的偏差修正'),
+                   ('固定設計下用bootstrap估預測誤差', 'bootstrap-prediction', '計算細節：重抽預測誤差與區塊自助法')]},
+ 6: {'criteria': [('分類模型的模型選擇', 'classification-selection', '延伸閱讀：分類模型的選擇'),
+                  ('Cp 的風險目標、常數與選模', 'cp-risk', '計算細節：Cp 的風險目標與常數'),
+                  ('分類離差的數值如何對回軟體？', 'deviance', '完整實作：分類離差與軟體量尺')],
+     'ridge': [('中心化後的 Ridge 解', 'ridge-solution', '計算細節：Ridge 的矩陣解與方向收縮')],
+     'lasso': [('收縮的貝氏解讀與延伸', 'shrinkage-map', '延伸閱讀：收縮的貝氏解讀'),
+               ('Lasso 的零係數條件與座標更新', 'lasso-solution', '計算細節：Lasso 的零點與座標下降'),
+               ('最小角度迴歸與 Group Lasso', 'lar-group', '延伸閱讀：LAR 與 Group Lasso'),
+               ('限制式與懲罰式：如何對應？', 'penalty-constraint', '計算細節：限制式與懲罰式的對應')],
+     'pcr': [('從共變異數到白化', 'whitening', '計算細節：共變異數、SVD 與白化'),
+             ('PCA 的最大變異與最小重建誤差', 'pca-objectives', '計算細節：PCA 變異與重建目標'),
+             ('正交、不相關與獨立是三件事', 'uncorrelated', '延伸閱讀：正交、不相關與獨立')],
+     'pls': [('PLS1：從方向到可用於新資料的預測', 'pls-algorithm', '計算細節：PLS1 的訓練與新資料預測'),
+             ('PLS最大化共變異，並非直接最大化相關', 'pls-covariance', '計算細節：PLS 的共變異目標')],
+     'reference': [('在係數平面比較方法', 'coefficient-paths', '延伸閱讀：在係數平面比較方法')]}}
 
 BRIDGES = {
     3: {
@@ -170,7 +154,7 @@ BRIDGES = {
     },
     5: {
         'cvwrong': r'<p>分割方式須配合預測情境：同一受試者的資料通常一起分組，時間資料用較早訓練、較晚驗證。調參和最終評估也要分開；內層 CV 選模型，外層 CV 或保留測試集評估整個選模流程。</p>',
-        'bootstrap': r'<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法與校準。</p>',
+        'bootstrap': r'<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法。</p>',
     },
     6: {
         'criteria': r'<p>比较準則前須使用同一候選集合並確認量尺。Cp 的完整風險式要把截距也算入參數個數；各模型共用 σ̂² 時，可以省掉共同常數作排序，但省略後的分數不再是完整風險值。下面 BIC／Cp 的懲罰比較採這個共同變異數的設定；軟體各自估變異數的概似版本須另外對照。</p>',
@@ -185,6 +169,21 @@ def organize(ch, bodies, pagejs):
     """Return chapter content with complete, chapter-specific detail groups."""
     prefix = f'w{ch:02d}'
     soups = {k: fragment(v) for k,v in bodies.items()}
+    if ch == 1:
+        for card in list(soups['datasets'].select('.deck-extra')):
+            label = card.select_one('.dx-label').get_text(' ', strip=True)
+            if label in {'課程lab · 2004年的平均薪資', '課程lab · 投影的輸入'}:
+                card.decompose()
+    # Long outputs were removed at their original card calls. Do not leave
+    # explanations pointing to a table that is no longer embedded.
+    for soup in soups.values():
+        for card in soup.select('.deck-extra'):
+            label = card.select_one('.dx-label').get_text(' ', strip=True)
+            if not card.select_one('.expected-out'):
+                for note in card.select('.dx-note'):
+                    if any(t in note.get_text() for t in ('這段輸出','這一張表','這張表','左上','以下輸出')):
+                        note.clear()
+                        note.append('完整結果可在原課程 Lab 查閱。')
     if ch == 1:
         # These are explicit removals, not candidates for restoration in details.
         visible = ''.join(bodies.values())
@@ -208,7 +207,7 @@ def organize(ch, bodies, pagejs):
         for n in earlier:n.extract()
         for n in old.find_all('div',class_='info-box',recursive=False):n.extract()
         main=r'''<p>維度增加後，資料會更難在每個方向上都靠得很近。為了湊到足夠的鄰居，往往需要擴大鄰域；鄰域太大時，就不能期待裡面的 f 幾乎不變。</p>
-<p>一個短例子：假設資料均勻分布在單位區間或單位正方形。覆蓋 10% 範圍的一維區間只需寬 0.1；覆蓋 10% 面積的正方形，每邊卻約需 0.32。更多維時，相同比例通常需要更寬的範圍。這個例子說明幾何代價，不是 KNN 在某個維度就必定失效的定理。</p>
+
 <p>實際表現還取決於資料量、有效維度、分布及 f 的形狀。更多同類資料可能讓我們用較小比例的鄰域估計；因此要共同選擇鄰居數或寬度，不能只看「樣本數很多」就認為局部估計一定可靠。</p>'''
         main += quiz('qCur','QUIZ · 維度詛咒','資料有許多預測變數。使用 KNN 時，為什麼不能只因為樣本數很多，就直接認定「最近鄰」一定夠局部？',[
             (True,'高維時，湊到足夠鄰居可能需要較寬的範圍；還要評估有效維度、鄰居數與資料分布','對。鄰域內資料多可降低平均的不穩定性，但範圍太寬可能混合不同的反應關係。應用驗證資料選擇鄰居數，而不是用單一維度或樣本數門檻斷言。'),
@@ -218,7 +217,7 @@ def organize(ch, bodies, pagejs):
         pagejs += "\nHC.onDetail('w02-detail-geometry', { open: () => { w02curDraw(); } });\n"
     if ch == 3:
         s=soups['slr'];start=next(n for n in s.find_all('p',recursive=False) if '接著把同一件事換個角度看' in n.get_text())
-        end=heading(s,'講義完整實作：三種寫法擬合同一條線');nodes=[]
+        end=heading(s,'講義完整實作：建立並擬合 OLS 模型');nodes=[]
         for n in [start,*list(start.next_siblings)]:
             if n is end:break
             nodes.append(n)
@@ -248,9 +247,6 @@ def organize(ch, bodies, pagejs):
         if p and target:target.insert_before(p.extract())
         # The safe Pipeline principle stays visible; the actual full code is optional.
         fold_heading(soups['ridge'],'折內標準化的概念寫法','w06-detail-scaling-code','完整實作：折內標準化的 Pipeline',stop_core=True)
-    if ch == 2:
-        fold_heading(soups['biasvar'], '蒙地卡羅的重現性', 'w02-detail-monte-carlo', '計算細節：蒙地卡羅的重現性與模擬流程', stop_core=True)
-        fold_heading(soups['reference'], '本頁模擬跑出來的數字', 'w02-detail-simulation-results', '計算細節：本頁模擬的完整數字')
     for sec, html in BRIDGES.get(ch,{}).items():
         before_quiz(soups[sec],html.replace('比较','比較'))
     # An earlier heading stops at the still-visible next heading; never wrap

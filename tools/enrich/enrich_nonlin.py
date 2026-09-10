@@ -1723,6 +1723,8 @@ HC.ready(() => {
 # 核心閱讀保留；詳細計算、進階方法與 Lab 以主題收合。
 from reading_flow_ch7_8_9_12 import apply_reading_flow
 PAGEJS += apply_reading_flow('beyond_linearity', BODIES)
+from teaching_scope_ch7_8_9_12 import clean_pagejs
+PAGEJS = clean_pagejs('beyond_linearity', PAGEJS)
 
 if __name__ == "__main__":
     apply("beyond_linearity", BODIES, PAGEJS, frames())

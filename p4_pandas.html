@@ -747,13 +747,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>Series ≈ 有索引的一維陣列</strong>，<strong>DataFrame ≈ 共用同一個索引的一疊 Series</strong>。底下算數字的還是 NumPy。
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch01 lab 的 Series 與 DataFrame 建構結果重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17serSvg" height="320"></svg>
       <div class="status-banner" id="w17serStatus"><span class="status-icon">›</span><span class="status-text">從字典開始，看它怎麼變成 Series 再變成 DataFrame。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17serSet(0)">Python 字典</button><button class="btn btn-toggle" onclick="w17serSet(1)">Series</button><button class="btn btn-toggle" onclick="w17serSet(2)">DataFrame</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的 Series 與 DataFrame 建構結果重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -834,13 +834,13 @@ dtype: object</pre></div>
   <code>describe()</code> 看數值範圍合不合理、<code>dtypes</code> 看有沒有欄被讀成字串。
   第四項最常出事，下一節會看到。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch01 lab 的資料檢視指令與輸出重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17peekSvg" height="300"></svg>
       <div class="status-banner" id="w17peekStatus"><span class="status-icon">›</span><span class="status-text">四行指令，按順序看過一遍。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17peekSet(0)">df.shape</button><button class="btn btn-toggle" onclick="w17peekSet(1)">df.head()</button><button class="btn btn-toggle" onclick="w17peekSet(2)">df.dtypes</button><button class="btn btn-toggle" onclick="w17peekSet(3)">df.describe()</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的資料檢視指令與輸出重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -918,12 +918,6 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div></div></details>
   </details>
 </div>
 
-<div class="quiz-box">
-  <div class="quiz-label">PART 01 · 自我檢測</div>
-  <p><code>df.describe()</code> 的輸出裡，某一欄的 <code>count</code> 是 380，但 <code>df.shape</code> 是 <code>(392, 9)</code>。這代表什麼？</p>
-  <div class="quiz-options" id="qViewOptions"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;count&lt;/code&gt; 只算非 NaN 的個數，392 − 380 = 12。也可以用 &lt;code&gt;isna().sum()&lt;/code&gt; 核對各欄的遺漏值數。" onclick="quizCheck('qView', this)"><span class="opt-letter">(A)</span> 那一欄有 12 個遺漏值</div><div class="quiz-opt" data-correct="false" data-fb="不會。&lt;code&gt;shape&lt;/code&gt; 是實際的列數，不受遺漏值影響。兩個數字的差距可以用來檢查遺漏值。" onclick="quizCheck('qView', this)"><span class="opt-letter">(B)</span> 資料只有 380 列，shape 印錯了</div><div class="quiz-opt" data-correct="false" data-fb="重複值不影響 &lt;code&gt;count&lt;/code&gt;。要看重複得用 &lt;code&gt;duplicated()&lt;/code&gt; 或 &lt;code&gt;value_counts()&lt;/code&gt;。" onclick="quizCheck('qView', this)"><span class="opt-letter">(C)</span> 那一欄有 12 個重複值</div></div>
-  <div class="quiz-feedback" id="qViewFeedback"></div>
-</div>
 
 <details class="qa-item reading-detail" id="w17detail-view-2"><summary>延伸：標籤排序與資料值排序</summary>
 <div class="detail-body"><h3 id="dx-sort">依標籤或資料值排序</h3>
@@ -1015,13 +1009,13 @@ dtype: float64
   <code>loc</code> 的切片<strong>包含</strong>結尾，<code>iloc</code> 不包含。<code>df.loc['a':'c']</code> 會拿到 c，<code>df.iloc[0:3]</code> 只拿到 0、1、2。因為名字沒有「下一個」可言，含頭不含尾對它沒有意義。
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch01 lab 的示範 DataFrame 與 loc／iloc 選取結果重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17selSvg" height="340"></svg>
       <div class="status-banner" id="w17selStatus"><span class="status-icon">›</span><span class="status-text">先猜哪幾格會亮，再按。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17selSet(0)">df[&quot;A&quot;]</button><button class="btn btn-toggle" onclick="w17selSet(1)">df[0:3]</button><button class="btn btn-toggle" onclick="w17selSet(2)">df.loc[:, [&quot;A&quot;,&quot;C&quot;]]</button><button class="btn btn-toggle" onclick="w17selSet(3)">df.iloc[3]</button><button class="btn btn-toggle" onclick="w17selSet(4)">df[df[&quot;A&quot;]&gt;0]</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的示範 DataFrame 與 loc／iloc 選取結果重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1117,35 +1111,6 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div></div></details>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">Auto_re = Auto.set_index(<span class="str">&#x27;name&#x27;</span>)</span>
   <span class="line">Auto_re</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                            mpg  cylinders  displacement  horsepower  weight  \
-name                                                                           
-chevrolet chevelle malibu  18.0          8         307.0       130.0  3504.0   
-buick skylark 320          15.0          8         350.0       165.0  3693.0   
-plymouth satellite         18.0          8         318.0       150.0  3436.0   
-amc rebel sst              16.0          8         304.0       150.0  3433.0   
-ford torino                17.0          8         302.0       140.0  3449.0   
-...                         ...        ...           ...         ...     ...   
-ford mustang gl            27.0          4         140.0        86.0  2790.0   
-vw pickup                  44.0          4          97.0        52.0  2130.0   
-dodge rampage              32.0          4         135.0        84.0  2295.0   
-ford ranger                28.0          4         120.0        79.0  2625.0   
-chevy s-10                 31.0          4         119.0        82.0  2720.0   
-
-                           acceleration  year  origin  
-name                                                   
-chevrolet chevelle malibu          12.0    70       1  
-buick skylark 320                  11.5    70       1  
-plymouth satellite                 11.0    70       1  
-amc rebel sst                      12.0    70       1  
-ford torino                        10.5    70       1  
-...                                 ...   ...     ...  
-ford mustang gl                    15.6    82       1  
-vw pickup                          24.6    82       2  
-dodge rampage                      11.6    82       1  
-ford ranger                        18.6    82       1  
-chevy s-10                         19.4    82       1  
-
-[392 rows x 8 columns]</pre></div>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="212">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
@@ -1173,13 +1138,13 @@ ford galaxie 500  14.0       1</pre></div>
   <code>horsepower</code> 那一欄<strong>整欄是字串</strong>，因為原始檔用 <code>?</code>
   代表遺漏，pandas 看到問號就把整欄當成文字。這種錯誤不會報錯，只會讓你後面算出來的東西全錯。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的 Auto.data 讀檔、? 遺漏值與 397→392 列流程重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17naSvg" height="340"></svg>
       <div class="status-banner" id="w17naStatus"><span class="status-icon">›</span><span class="status-text">按「單步」看整件事怎麼發生、怎麼修。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w17naStep()">→ 單步</button><button class="btn btn-reset" onclick="w17naReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 Auto.data 讀檔、? 遺漏值與 397→392 列流程重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1202,21 +1167,6 @@ ford galaxie 500  14.0       1</pre></div>
   <div class="dx-label">找出影響型別的值</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">np.unique(Auto[<span class="str">&#x27;horsepower&#x27;</span>])</span></div>
-  <details class="qa-item reading-detail" id="w17detail-na-out-1"><summary>查看完整 Lab 輸出</summary>
-<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([&#x27;100.0&#x27;, &#x27;102.0&#x27;, &#x27;103.0&#x27;, &#x27;105.0&#x27;, &#x27;107.0&#x27;, &#x27;108.0&#x27;, &#x27;110.0&#x27;,
-       &#x27;112.0&#x27;, &#x27;113.0&#x27;, &#x27;115.0&#x27;, &#x27;116.0&#x27;, &#x27;120.0&#x27;, &#x27;122.0&#x27;, &#x27;125.0&#x27;,
-       &#x27;129.0&#x27;, &#x27;130.0&#x27;, &#x27;132.0&#x27;, &#x27;133.0&#x27;, &#x27;135.0&#x27;, &#x27;137.0&#x27;, &#x27;138.0&#x27;,
-       &#x27;139.0&#x27;, &#x27;140.0&#x27;, &#x27;142.0&#x27;, &#x27;145.0&#x27;, &#x27;148.0&#x27;, &#x27;149.0&#x27;, &#x27;150.0&#x27;,
-       &#x27;152.0&#x27;, &#x27;153.0&#x27;, &#x27;155.0&#x27;, &#x27;158.0&#x27;, &#x27;160.0&#x27;, &#x27;165.0&#x27;, &#x27;167.0&#x27;,
-       &#x27;170.0&#x27;, &#x27;175.0&#x27;, &#x27;180.0&#x27;, &#x27;190.0&#x27;, &#x27;193.0&#x27;, &#x27;198.0&#x27;, &#x27;200.0&#x27;,
-       &#x27;208.0&#x27;, &#x27;210.0&#x27;, &#x27;215.0&#x27;, &#x27;220.0&#x27;, &#x27;225.0&#x27;, &#x27;230.0&#x27;, &#x27;46.00&#x27;,
-       &#x27;48.00&#x27;, &#x27;49.00&#x27;, &#x27;52.00&#x27;, &#x27;53.00&#x27;, &#x27;54.00&#x27;, &#x27;58.00&#x27;, &#x27;60.00&#x27;,
-       &#x27;61.00&#x27;, &#x27;62.00&#x27;, &#x27;63.00&#x27;, &#x27;64.00&#x27;, &#x27;65.00&#x27;, &#x27;66.00&#x27;, &#x27;67.00&#x27;,
-       &#x27;68.00&#x27;, &#x27;69.00&#x27;, &#x27;70.00&#x27;, &#x27;71.00&#x27;, &#x27;72.00&#x27;, &#x27;74.00&#x27;, &#x27;75.00&#x27;,
-       &#x27;76.00&#x27;, &#x27;77.00&#x27;, &#x27;78.00&#x27;, &#x27;79.00&#x27;, &#x27;80.00&#x27;, &#x27;81.00&#x27;, &#x27;82.00&#x27;,
-       &#x27;83.00&#x27;, &#x27;84.00&#x27;, &#x27;85.00&#x27;, &#x27;86.00&#x27;, &#x27;87.00&#x27;, &#x27;88.00&#x27;, &#x27;89.00&#x27;,
-       &#x27;90.00&#x27;, &#x27;91.00&#x27;, &#x27;92.00&#x27;, &#x27;93.00&#x27;, &#x27;94.00&#x27;, &#x27;95.00&#x27;, &#x27;96.00&#x27;,
-       &#x27;97.00&#x27;, &#x27;98.00&#x27;, &#x27;?&#x27;], dtype=object)</pre></div></div></details>
   <p class="dx-note">全部是<strong>帶引號的字串</strong>，輸出末尾就會看到那個 <code>'?'</code>。整欄因此被讀成 object。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="192">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
@@ -1300,13 +1250,13 @@ dtype: float64</pre></div>
   <strong>拆分</strong>（照某一欄的值把列分堆）→ <strong>套用</strong>（每一堆各算一次）→
   <strong>合併</strong>（把結果疊回一張表）。看懂這三步，所有變形都是同一件事。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch01 lab 儲存格 78 的 groupby 拆分、套用、合併流程重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17grpSvg" height="340"></svg>
       <div class="status-banner" id="w17grpStatus"><span class="status-icon">›</span><span class="status-text">按「單步」把 groupby 拆成三個動作看。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w17grpStep()">→ 單步</button><button class="btn btn-play" onclick="w17grpPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w17grpReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 範例 的 groupby 拆分、套用、合併流程重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1351,7 +1301,7 @@ foo -2.740490  0.700964</pre></div>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="78">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="圖中數值逐項取自 Ch01 lab 儲存格 78 的 groupby 輸出。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap"><canvas id="w17grpChart"></canvas>
@@ -1359,7 +1309,7 @@ foo -2.740490  0.700964</pre></div>
       </div>
       <div class="status-banner" id="w17grpStatus2"><span class="status-icon">›</span><span class="status-text">bar 與 foo 兩組在 C 欄的方向相反。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w17grpCol(&quot;C&quot;)">看 C 欄</button><button class="btn btn-toggle" onclick="w17grpCol(&quot;D&quot;)">看 D 欄</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>圖中數值逐項取自 Ch01 lab 範例 的 groupby 輸出。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1439,13 +1389,13 @@ foo -2.740490  0.700964</pre></div>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="195">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch01 lab 的 DataFrame 分塊與 concat 範例重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w17catSvg" height="320"></svg>
       <div class="status-banner" id="w17catStatus"><span class="status-icon">›</span><span class="status-text">按「單步」把三塊接回去。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w17catStep()">→ 單步</button><button class="btn btn-reset" onclick="w17catReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch01 lab 的 DataFrame 分塊與 concat 範例重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1473,30 +1423,15 @@ foo -2.740490  0.700964</pre></div>
     <div class="qa-a">DataFrame 的欄是連續存放的，加一列等於整張表複製一次。一萬列就複製一萬次。正確做法是把每一塊放進 Python 串列，最後 <code>pd.concat(串列)</code> 一次接完。</div>
   </details>
 </div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 05 · 自我檢測</div>
-  <p>你要把 500 個小 DataFrame 合成一張大表。哪一種寫法對？</p>
-  <div class="quiz-options" id="qJoinOptions"><div class="quiz-opt" data-correct="false" data-fb="能跑，但每一輪都複製整張大表，重複 500 次會增加處理時間。可以改成集中後一次串接。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(A)</span> 在 for 迴圈裡 <code>big = pd.concat([big, small])</code></div><div class="quiz-opt" data-correct="true" data-fb="對。只複製一次。lab 範例 示範的就是這個形式：先做出 &lt;code&gt;pieces&lt;/code&gt; 這個串列，再一次 concat。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(B)</span> 全部收進一個串列，最後 <code>pd.concat(串列)</code> 一次接完</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;merge&lt;/code&gt; 用來照鍵配對。這題需要沿列串接，應使用 concat。" onclick="quizCheck('qJoin', this)"><span class="opt-letter">(C)</span> 用 <code>merge</code> 兩兩合併</div></div>
-  <div class="quiz-feedback" id="qJoinFeedback"></div>
-</div>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
-  程式碼範例，觀察結果。</p>
+  <p>回顧本頁觀念與原 Lab 的程式，確認各個操作的意義與使用條件。</p>
   <div class="sol-links"><a href="https://pandas.pydata.org/docs/user_guide/10min.html" target="_blank" rel="noopener">🔗 pandas 十分鐘入門</a><a href="https://pandas.pydata.org/docs/user_guide/indexing.html" target="_blank" rel="noopener">🔗 索引與選取資料</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch01 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 1 · 讀檔</div>
-  <p>某個 CSV 用 <code>NA</code> 與 <code>-999</code> 兩種方式表示遺漏。最好的處理時機是？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。一次講清楚，之後每一次重跑都一致。Auto 的 &lt;code&gt;?&lt;/code&gt; 也是同樣的情況；讀進來之後才處理，很容易漏掉某些欄。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 讀檔時寫 <code>na_values=['NA', -999]</code></div><div class="quiz-opt" data-correct="false" data-fb="能做，但每加一個欄就要記得改一次，而且中間那段時間欄的型別是錯的。別人重跑程式碼時，也可能漏掉這一步。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 讀完之後用 <code>replace</code> 換掉</div><div class="quiz-opt" data-correct="false" data-fb="太晚了。&lt;code&gt;dropna&lt;/code&gt; 只認得 NaN——&lt;code&gt;-999&lt;/code&gt; 在它眼裡是一個正常的數字，會被留下來一路算進模型。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 建模前再用 <code>dropna()</code> 一次處理</div></div>
-  <div class="quiz-feedback" id="qEx1Feedback"></div>
-</div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · loc 與 iloc</div>
@@ -1510,13 +1445,6 @@ foo -2.740490  0.700964</pre></div>
   <p>想得到「每個 <code>origin</code> 的平均 <code>mpg</code>」，而且結果要是一張有 <code>origin</code> 欄的普通表，怎麼寫？</p>
   <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="算出來的數字是對的，但 &lt;code&gt;origin&lt;/code&gt; 變成了索引，不是一般的欄——題目要的是「有 origin 欄的普通表」。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> <code>Auto.groupby('origin')['mpg'].mean()</code></div><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;as_index=False&lt;/code&gt;（或事後 &lt;code&gt;.reset_index()&lt;/code&gt;）會把分組的鍵留成一般的欄。畫圖或再 merge 時都需要這個形式。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> <code>Auto.groupby('origin', as_index=False)['mpg'].mean()</code></div><div class="quiz-opt" data-correct="false" data-fb="這是把兩欄各自平均，完全沒有分組——會得到「origin 的平均值」這種沒有意義的數字。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> <code>Auto[['origin', 'mpg']].mean()</code></div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
-</div>
-
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 4 · 遺漏值的影響</div>
-  <p>一份資料的收入欄有 20% 遺漏，而遺漏的多半是高收入的人。直接 <code>dropna()</code> 會怎樣？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="樣本減少之外，&lt;strong&gt;剩下的樣本也不再代表原本的母體&lt;/strong&gt;。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 沒關係，只是樣本變小</div><div class="quiz-opt" data-correct="true" data-fb="對。這叫非隨機遺漏。&lt;code&gt;dropna&lt;/code&gt; 的前提是「遺漏跟你關心的變數無關」，這裡明顯不成立。遺漏指示的用途是記錄哪些資料遺漏。要處理未觀測高收入造成的偏差，應先查明漏填原因，必要時取得額外資料，並在明說假設後做敏感度分析。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 剩下的樣本會系統性低估收入</div><div class="quiz-opt" data-correct="false" data-fb="不會。&lt;code&gt;dropna&lt;/code&gt; 就只是刪掉，沒有任何統計上的補償。你需要依資料的遺漏原因決定處理方式。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> pandas 會自動加權補償</div></div>
-  <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
 <section id="reference">
@@ -1549,7 +1477,7 @@ foo -2.740490  0.700964</pre></div>
   <strong>1. 拿到資料先看 <code>dtypes</code>。</strong>該是數字的欄變成 object，代表原始檔裡有非數字的東西（例如 Auto 的 <code>?</code>）。<br><strong>2. <code>loc</code> 靠名字、<code>iloc</code> 靠位置；<code>loc</code> 的切片含尾。</strong><br><strong>3. groupby 之後鍵會變成索引。</strong>要它留在欄裡就 <code>as_index=False</code> 或 <code>reset_index()</code>。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+
 </div></details>
 </section>
 <section id="cards">

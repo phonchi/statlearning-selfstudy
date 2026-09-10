@@ -76,25 +76,6 @@ BODIES["prologue"] = f"""
   <p>兩者也可以同時要。房價模型既想知道「靠河的房子貴多少」（推論），
   也想知道「這間房子被高估了嗎」（預測）。只是通常得在中間選一個折衷點。</p>
 
-  <h3 id="dx-load">講義完整實作：把 (X, Y) 讀進 Python</h3>
-  <p>第 2 章的 lab 是 Python 入門，所以下面每一張卡的定位是
-  <strong>「這一節的計算需要哪一個工具」</strong>。先從最基本的開始：把資料讀成一張表，
-  才有 X 和 Y 可以談。</p>
-
-{card("講義 02 · 讀 Auto 並處理遺漏值", lab_code(CH, 195), lab_output(CH, 195),
-      src=src("195"),
-      note="<code>Auto.data</code> 裡的遺漏值是用 <code>?</code> 編碼的，"
-           "不告訴 <code>pd.read_csv()</code> 這件事，整個 <code>horsepower</code> 欄位就會被"
-           "讀成字串（lab 的 Auto 匯入範例示範了這個結果）。"
-           "<code>na_values=['?']</code> 之後才加得起來，總和是 <strong>40952.0</strong>。")}
-
-{card("講義 02 · n 與 p 到底是多少", lab_code(CH, 197) + "\n\n" + lab_code(CH, 199),
-      lab_output(CH, 199), src=src("197、199"),
-      note="原始資料 397 列、9 欄；丟掉含遺漏值的 5 列之後是 <strong>392 × 9</strong>。"
-           "如果要用 <code>mpg</code> 當 Y、其他數值欄當 X，那就是 n = 392、"
-           "p = 7（扣掉 <code>mpg</code> 與文字欄 <code>name</code>）。"
-           "本章的符號約定就是這樣對上真實資料的。")}
-
 {quiz("qEst", "QUIZ · Y = f(X) + ε",
       "下列哪一句話正確描述了式子 <em>Y</em> = <em>f</em>(<em>X</em>) + ε 裡的 <em>f</em>？",
       [(True, "f 是固定但未知的函數，代表 X 對 Y 提供的系統性資訊",
@@ -197,32 +178,11 @@ BODIES["irreducible"] = f"""
      'oninput="w02irrDraw()">'
      '<span class="slider-val" id="w02irrSigVal">1.0</span></div>'
      '<button class="btn btn-toggle" onclick="w02irrToggleLin()">切換線性 f̂</button>',
-     provenance=("simulation", "固定訓練樣本；期望誤差在獨立 x 網格上計算"))}
+     provenance=("illustrative", "固定訓練樣本；期望誤差在獨立 x 網格上計算"))}
 
   <p>到這裡還有一個坑沒有填：我們一直講「真實的 $f$」，可是
   <strong>$f$ 本身到底是什麼？</strong>在 $X = x$ 這一點上，$f(x)$ 要取哪個數字才算最好？
   下一節先把它定義清楚、證明它真的最好，再處理「拿不到它的時候怎麼辦」。</p>
-
-  <h3 id="dx-eps">講義完整實作：親手做出一個 Y = f(X) + ε</h3>
-
-{card("講義 02 · 雜訊讓相關係數到不了 1", lab_code(CH, 76) + "\n" + lab_code(CH, 78),
-      lab_output(CH, 78), src=src("74、76、78"),
-      note="lab 的相關係數範例先產生 50 個標準常態的 <code>x</code>。這裡的 "
-           "<code>y = x + N(50, 1)</code> 意思是<strong>真實的 f(x) = x + 50，一點都沒錯</strong>，"
-           "而 ε 是標準差 1 的常態。既然 f 完全正確，相關係數為什麼不是 1？"
-           "因為 Var(x) = 1、Var(ε) = 1，理論相關是 1/√2 ≈ 0.707，"
-           "實測 <strong>0.787</strong>（50 筆的抽樣波動）。"
-           "<strong>雜訊把相關係數壓在 1 以下；但注意「相關係數離 1 的差距」"
-           "本身不是不可縮減誤差——量綱都不一樣。</strong>這一題裡平方誤差意義下的"
-           "不可縮減部分是 Var(ε) = 1。")}
-
-{card("講義 02 · 用樣本變異數估 Var(ε)", lab_code(CH, 84) + "\n" + lab_code(CH, 85),
-      lab_output(CH, 85), src=src("84、85"),
-      note="下一個變異數範例，把 <code>y</code> 重新設成 10 個標準常態樣本；它不是前一張卡的 x 加雜訊。三個寫法給出同一個數字 <strong>2.7243406406465125</strong>，"
-           "因為它們算的是同一件事：<code>np.mean((y - y.mean())**2)</code>。"
-           "MSE 也是「平方的平均」，同一個動作。"
-           "注意 <code>np.var()</code> 預設除以 n 而不是 n − 1（看 <code>ddof</code> 參數）——"
-           "估 Var(ε) 時這個差別在小樣本上是會被抓出來的。")}
 
 {qa("觀念釐清", [
     ("Q：「不可縮減誤差」到底不可縮減在哪？多蒐集資料有用嗎？多加變數呢？",
@@ -242,19 +202,7 @@ BODIES["irreducible"] = f"""
      "可優先考慮蒐集新變數，再評估是否需要更換模型或調整參數。"),
 ])}
 
-{quiz("qIrr", "QUIZ · 兩種誤差",
-      "你把模型從線性迴歸換成一個非常彈性的方法，母體的期望測試 MSE 從 5.2 降到 2.4。"
-      "已知 Var(ε) = 2.0。下列哪個判斷最合理？",
-      [(True, "可縮減誤差從約 3.2 降到約 0.4，剩下的空間已經很小，可優先考慮蒐集新變數",
-        "對。期望測試 MSE 減掉 Var(ε) 就是可縮減那一塊：5.2 − 2.0 = 3.2 → 2.4 − 2.0 = 0.4。"
-        "已經減少 87.5%，可縮減的空間剩下 0.4，繼續加彈性最多也只能再拿回這麼多。"),
-       (False, "還能再降到 0，因為彈性可以無限提高",
-        "不對。三項拆解裡 Var(ε) = 2.0 是加在最後的常數，"
-        "<strong>母體的期望測試 MSE 不可能低於 2.0</strong>，不管方法多彈性。"
-        "訓練 MSE 才有辦法被壓到接近 0，但那是另一回事。"),
-       (False, "Var(ε) = 2.0 表示資料品質太差，應該重新蒐集同樣的資料",
-        "方向錯了。重新蒐集<strong>同樣的變數</strong>不會改變 Var(ε)，它是母體的性質。"
-        "要壓低它得<strong>多量一些變數</strong>，讓原本歸入 ε 的系統性成分能由模型解釋。")])}
+{""}
 """
 
 # ── P02 regfunc（講義 02 · p.10–12） ──────────────────────────────────
@@ -341,17 +289,6 @@ BODIES["regfunc"] = "".join([
   而它要估的那個東西，照剛才的證明就是平方誤差下最好的預測。
   獨立抽樣、變異數有限時，鄰域內筆數 $m$ 愈多，樣本平均就愈接近母體的條件期望。</p>
 
-  <p>要說清楚的是：<strong>樣本平均本身還不是「最佳」，它只是最佳解的估計。</strong>
-  在 $X = 4$ 這一點上用 $m$ 筆的平均 $\bar y_m$ 去預測一筆新的 $Y$，期望平方誤差是</p>
-
-  $$E\left[(Y_{\text{new}} - \bar y_m)^2 \mid X = 4\right]
-    = \underbrace{\tau^2}_{\text{不可縮減}} + \underbrace{\frac{\tau^2}{m}}_{\text{估計誤差}},
-    \qquad \tau^2 = \mathrm{Var}(Y \mid X = 4)$$
-
-  <p>第二項要到 $m \to \infty$ 才消失。所以正確的說法是：
-  <strong>資料夠多的時候，最佳解可以直接照定義估出來，不需要任何模型假設</strong>——
-  這已經夠強了，強到值得把它當成整章的參照點。</p>
-
   <p>麻煩在於「夠多」幾乎不會發生。講義第 12 頁下一頁就潑冷水：</p>
 """,
     info("講義第 12 頁：恰好落在 X = 4 的資料通常寥寥無幾，甚至一筆都沒有！",
@@ -403,7 +340,7 @@ BODIES["regfunc"] = "".join([
         '<input type="range" id="w02nbrX0" min="1" max="9" step="0.1" value="4" '
         'oninput="w02nbrDraw()">'
         '<span class="slider-val" id="w02nbrX0Val">4.0</span></div>',
-        provenance=("simulation", "固定種子的 200 筆樣本，真實 f 與上一節同一條")),
+        provenance=("illustrative", "固定種子的 200 筆樣本，真實 f 與上一節同一條")),
     r"""
   <p>最近鄰平均能用的前提是「鄰域夠小，小到裡面的 $f$ 幾乎是常數；
   同時鄰域裡又有夠多的點，多到平均值不抖」。一維的時候這兩件事很容易同時成立。
@@ -585,16 +522,6 @@ BODIES["parametric"] = f"""
         ["ISLP 例子", "圖 2.4 的線性平面", "圖 2.5／2.6 的薄板樣條"],
         ["本書章節", "第 3、4、6 章", "第 7（樣條、GAM）、8（樹）、9 章"]])}
 
-  <h3 id="dx-cont">講義完整實作：先把「形狀」畫出來看看</h3>
-
-{card("講義 02 · 用等高線圖看一個指定的 f(x, y)", lab_code(CH, 121), None,
-      src=src("121"),
-      note="這一格自己指定了 <code>f = cos(y) / (1 + x²)</code>，"
-           "然後把它畫成等高線圖。這只是把<strong>指定函數的形狀</strong>畫出來，還沒有用資料估計參數。"
-           "真正的參數式擬合還要指定未知係數，再依資料選出它們；下一章的線性迴歸會完整示範。"
-           "順帶記住 <code>np.multiply.outer</code> 與 <code>ax.contour</code>："
-           "第 4、9 章畫決策邊界會一直用到。")}
-
 {quiz("qPar", "QUIZ · 參數式與非參數式",
       "你有 n = 60 筆資料、p = 12 個預測變數，而且懷疑關係不是線性的。"
       "直接使用一個很有彈性的非參數式方法，主要的風險是什麼？",
@@ -627,21 +554,9 @@ BODIES["tradeoff"] = f"""
   <strong>3. 真實的 f 本來就簡單：</strong>如果 f 真的接近線性，線性迴歸的偏差幾乎是 0，
   彈性方法只會增加估計變異。這是 P05 情境 B 的畫面。''')}
 
-  <h3 id="dx-desc">講義完整實作：決定要多彈性之前，先看資料</h3>
+{""}
 
-{card("講義 02 · 數值摘要", lab_code(CH, 271), lab_output(CH, 271), src=src("271"),
-      note="<code>describe()</code> 一次給你 count／mean／std／五數摘要。"
-           "<code>mpg</code> 的樣本標準差 7.805 可以當成誤差的尺度參考——"
-           "平方起來約 <strong>60.9</strong>（正式比較時要用訓練集的平均值去預測"
-           "同一份測試資料再算 MSE，不是直接拿樣本變異數）。有了尺度感才好判斷："
-           "比不過它，就要重新檢查模型是否適合這份資料。")}
-
-{card("講義 02 · 散佈圖矩陣：一眼看出線性夠不夠", lab_code(CH, 269), None,
-      src=src("267、269"),
-      note="<code>pd.plotting.scatter_matrix()</code> 把所有兩兩關係一次畫出來。"
-           "<code>mpg</code> 對 <code>weight</code> 明顯是彎的。"
-           "這就是「線性假設可能不夠」的第一手證據，也是決定要不要往彈性端走的依據。"
-           "第 3 章會把這個觀察變成正式的殘差診斷。")}
+{""}
 
 {quiz("qFlex", "QUIZ · 彈性與可解釋性",
       "下列哪一組方法在 ISLP 圖 2.7 上「彈性最低、可解釋性最高」？",
@@ -781,14 +696,9 @@ BODIES["mse"] = f"""
      '<button class="btn btn-toggle" onclick="w02flexSet(2)">線性（df 2）</button>'
      '<button class="btn btn-toggle" onclick="w02flexSet(6)">中等彈性（df 6）</button>'
      '<button class="btn btn-toggle" onclick="w02flexSet(25)">過度彈性（df 25）</button>',
-     provenance=("simulation", "固定種子模擬；對照 ISLP 圖 2.9"))}
+     provenance=("illustrative", "固定種子模擬；對照 ISLP 圖 2.9"))}
 
-{info("這張圖的三個一定要看懂的地方", '''<strong>1. 這組巢狀樣條的訓練 MSE 從 3.43 一路掉到 0.48，</strong>
-  單調下降，沒有轉折；模型空間擴大時，訓練目標只會下降或不變。<br>
-  <strong>2. 這次模擬的測試 MSE 呈 U 型：</strong>3.26 → 最低約 1.02（df = 7）→ 回升到 1.50。
-  df = 25 的擬合在訓練資料上是最好的，在新資料上卻比 df = 6 差了快 50%。<br>
-  <strong>3. 那條水平虛線是 Var(ε) = 1.00。</strong>
-  這次有限測試集的 MSE 都在它上方；有限樣本估計值仍會波動，理論下限約束的是期望測試 MSE。''')}
+{""}
 
   <p>這組模型依序擴大且用同一訓練目標擬合，所以訓練 MSE 單調不增；
   測試 MSE 常隨彈性先降後升，但最低點也可能落在端點。
@@ -823,20 +733,7 @@ BODIES["mse"] = f"""
      "包含最左邊。</p>"),
 ])}
 
-{quiz("qMSE", "QUIZ · 訓練與測試 MSE",
-      "手上有兩個模型：A 的訓練 MSE = 0.20、測試 MSE = 1.90；"
-      "B 的訓練 MSE = 0.95、測試 MSE = 1.05。應該選哪一個？為什麼？",
-      [(True, "選 B。我們要的是在新資料上的表現，A 的訓練與測試差距顯示它在擬合雜訊",
-        "對。A 的訓練 MSE 只有 B 的五分之一，但測試 MSE 幾乎是 B 的兩倍。"
-        "這是過度擬合的典型表現。決策一律看測試誤差。"),
-       (False, "選 A。訓練 MSE 小表示它真的學到了資料裡的結構",
-        "不對。訓練 MSE 小只表示它<strong>貼合了這批資料</strong>，"
-        "而其中一部分是隨機的巧合。把彈性拉滿可以讓訓練 MSE 變成 0，"
-        "那並不代表學到了任何東西。"),
-       (False, "資訊不足，還要看兩個模型的訓練 MSE 差距是否顯著",
-        "不對。訓練 MSE 的差距對「該選哪個」這個問題沒有參考價值；"
-        "它甚至<strong>系統性地偏好較彈性的模型</strong>。有測試 MSE 可以看的時候，"
-        "直接看它就好。")])}
+{""}
 """
 
 # ── P05 biasvar ───────────────────────────────────────────────────────
@@ -945,18 +842,8 @@ BODIES["biasvar"] = f"""
 {viz(chart("w02bvChart", "tall",
            "。此圖的重點：偏差² 隨彈性下降、變異隨彈性上升，兩者相加再加上 Var(ε) 得到期望測試 MSE；"
            "最低點的位置隨真實 f 的形狀而變（情境 B 在 df = 2，情境 C 在 df = 18）。"),
-     [info_card("這張圖怎麼算出來的",
-                '固定真實的 f 與 σ = 1，<strong>重抽 M = 300 組訓練集</strong>'
-                '（每組 n = 50，訓練點的 x 固定、只有 ε 重抽），對每個彈性度算出 300 條 f̂，'
-                '再在 201 個測試點上算偏差²與變異並平均。三個情境共用同一組 ε。',
-                "ISLP 圖 2.12"),
-      rows_card("這個情境的最低點",
-                [("情境", "中度非線性", "w02bvScen"),
-                 ("最佳 df", "—", "w02bvBest"),
-                 ("該點的期望測試 MSE", "—", "w02bvTot"),
-                 ("其中偏差²", "—", "w02bvBias"),
-                 ("其中變異", "—", "w02bvVarv"),
-                 ("Var(ε)", "1.00", "w02bvIrr")]),
+     [info_card("比較偏差與變異", "同一種擬合方法用在不同的真實關係上，偏差的變化可能不同。切換圖形，觀察期望誤差的低點如何移動。"),
+      "",
       info_card("為什麼變異曲線相同",
                 '三個情境的<strong>變異曲線完全相同</strong>。'
                 '因為對線性平滑器來說 Var(f̂) 只跟設計矩陣與 σ² 有關，'
@@ -966,16 +853,9 @@ BODIES["biasvar"] = f"""
      '<button class="btn btn-toggle" onclick="w02bvSet(\'A\')">中度非線性</button>'
      '<button class="btn btn-toggle" onclick="w02bvSet(\'B\')">接近線性</button>'
      '<button class="btn btn-toggle" onclick="w02bvSet(\'C\')">高度非線性</button>',
-     provenance=("simulation", "固定種子蒙地卡羅 M=300；對照 ISLP 圖 2.12"))}
+     provenance=("illustrative", "固定種子蒙地卡羅 M=300；對照 ISLP 圖 2.12"))}
 
-{info("三個情境的最佳 df 分別是 2、7、18", '''ISLP 圖 2.12 比較了不同情境：
-  <strong>沒有一個放諸四海皆準的彈性度。</strong><br>
-  <strong>情境 B（接近線性）：</strong>偏差²從一開始就幾乎是 0，增加彈性只會增加估計變異，
-  df = 2 最好。<br>
-  <strong>情境 A（中度非線性）：</strong>偏差²一開始掉得快，總和先降後升，經典的 U。<br>
-  <strong>情境 C（高度非線性）：</strong>df = 2 的偏差²高達 20.06，
-  提高彈性可以大幅降低誤差，要到 df = 18 才觸底。<br>
-  真實的 f 你看不到，所以這個最佳點得靠<strong>第 5 章的交叉驗證</strong>去估。''')}
+{""}
 
   <p>ESL §7.3 也給出一個可直接計算的特例。對 KNN 迴歸，
   <strong>在固定訓練輸入（因而鄰居的位置也固定）、雜訊零均值同變異且彼此獨立</strong>的條件下，
@@ -990,29 +870,6 @@ BODIES["biasvar"] = f"""
   這個差<strong>通常</strong>愈大（但不保證單調——$f$ 是直線而鄰居左右對稱時，
   多收一個對面的鄰居反而可能把偏差抵消掉）。
   一條式子把偏差–變異取捨寫得清清楚楚，也預告了本頁最後一節的 KNN。</p>
-
-  <h3 id="dx-seed">蒙地卡羅的重現性</h3>
-
-  <p>這張圖用固定種子抽取 300 組訓練資料，讓比較可以重現。
-  固定種子不會消除資料本身的不確定性；它只是讓同一個模擬流程重跑時得到相同結果。
-  語法可回看<a href="p3_numpy.html#rand">附錄：NumPy 的隨機抽樣與種子</a>
-  （課程 Lab Ch2 的平均與標準差範例），這裡專注看下面如何跨訓練集算偏差與變異。</p>
-
-  <div class="info-card" style="margin:1.2rem 0;">
-    <div class="ic-title">蒙地卡羅拆解的虛擬碼 <span class="ic-badge">CODE</span></div>
-    <div class="pseudo-code" style="font-size:.74rem;">
-<span class="line"><span class="kw">for</span> d <span class="kw">in</span> 彈性度清單:</span>
-<span class="line">    <span class="kw">for</span> m <span class="kw">in</span> <span class="kw">range</span>(M):            <span class="com"># M = 300 組訓練集</span></span>
-<span class="line">        y = f(x_train) + rng.normal(<span class="num">0</span>, sigma)</span>
-<span class="line">        fhat[m] = 用 d 擬合(x_train, y).predict(x_test)</span>
-<span class="line">    bias2 = mean((fhat.mean(axis=<span class="num">0</span>) - f(x_test))**<span class="num">2</span>)</span>
-<span class="line">    var   = mean(fhat.var(axis=<span class="num">0</span>))</span>
-<span class="line">    total = bias2 + var + sigma**<span class="num">2</span></span>
-    </div>
-    <p style="font-size:.82rem;margin:.6rem 0 0;color:var(--muted);">
-    注意 <code>fhat.mean(axis=0)</code>：平均是<strong>跨 300 組訓練集</strong>取的，
-    不是跨測試點。下面的 Q&amp;A 說明這兩種平均的差別。</p>
-  </div>
 
 {qa("觀念釐清", [
     ("Q：偏差–變異拆解是在對「什麼」取期望值？",
@@ -1292,7 +1149,7 @@ BODIES["bayes"] = f"""
      '<button class="btn btn-toggle" onclick="w02knnSet(1)">K = 1</button>'
      '<button class="btn btn-toggle" onclick="w02knnSet(10)">K = 10</button>'
      '<button class="btn btn-toggle" onclick="w02knnSet(100)">K = 100</button>',
-     provenance=("simulation", "固定種子模擬；對照 ISLP 圖 2.15–2.16"))}
+     provenance=("illustrative", "固定種子模擬；對照 ISLP 圖 2.15–2.16"))}
 
 {info("Bayes 錯誤率算不出來，那講它有什麼用", '''<strong>1. 它給出母體期望錯誤率的理論下限。</strong>
   經重複評估得到的分類風險已逼近估計的 Bayes 錯誤率時，可優先考慮蒐集新變數，
@@ -1306,25 +1163,9 @@ BODIES["bayes"] = f"""
   <p>KNN 元件已經同時列出 K = 1、10、100 的訓練與獨立測試錯誤，足以看見
   「訓練誤差偏好高彈性、測試誤差不一定」的差異。</p>
 
-  <h3 id="dx-bool">講義完整實作：錯誤率其實就是布林陣列取平均</h3>
+{""}
 
-{card("講義 02 · 用布林陣列挑出「屬於這一類」的資料",
-      lab_code(CH, 164) + "\n\n" + lab_code(CH, 171), lab_output(CH, 171),
-      src=src("162、164、171"),
-      note="<code>keep_rows</code> 是一個布林陣列，<code>A[keep_rows]</code> 只留下 "
-           "<code>True</code> 的那幾列。KNN 在數「鄰居裡有幾個屬於類別 j」時做的就是這件事："
-           "先算出一個布林陣列，再數它。"
-           "注意 lab 的整數索引與布林索引對照：<code>np.array([0,1,0,1])</code> 雖然跟 "
-           "<code>keep_rows</code> 用 <code>==</code> 比是相等的，"
-           "但當索引用時 <strong>numpy 會把整數當位置、把布林當遮罩</strong>，結果完全不同。")}
-
-{card("講義 02 · 布林取平均就是比例", lab_code(CH, 244), lab_output(CH, 244),
-      src=src("243、244"),
-      note="<code>np.isnan(D[col]).mean()</code>：對布林陣列取平均，"
-           "<code>True</code> 當 1、<code>False</code> 當 0，"
-           "算出來就是「成立的比例」。錯誤率 (1/n)ΣI(yᵢ ≠ ŷᵢ) 完全是同一個動作，"
-           "程式上寫成 <code>(y != y_hat).mean()</code>。"
-           "指示變數 I(·) 在 Python 裡就是一個布林陣列。")}
+{""}
 
 {qa("觀念釐清", [
     ("Q：本頁 KNN 的 K = 1 為什麼訓練錯誤率是 0，這代表它很好嗎？",
@@ -1351,7 +1192,7 @@ BODIES["bayes"] = f"""
        (False, "K = 1 的訓練錯誤率是 0，所以它一定過度擬合；K 愈大一定愈好",
         "兩個「一定」都不成立。K = 1 的訓練錯誤率即使是 0，也要看到較不彈性模型的測試表現更好，才能判定過度擬合。K 一直加大還會走到另一個極端："
         "本頁的模擬裡 K = 150 的測試錯誤率是 0.2270，比 K = 1 的 0.1964 還糟。"
-        "本頁模擬的測試錯誤率呈 U 型，兩端都不好。"),
+        "選擇 K 時要比較新資料的表現，不能只看訓練錯誤率。"),
        (False, "這表示資料的 Bayes 錯誤率很高，換任何 K 都沒有用",
         "不對。Bayes 錯誤率高會讓<strong>所有</strong> K 的錯誤率一起抬高，"
         "但不同 K 之間的差距反映的是各方法估計條件機率與決策邊界的品質，"
@@ -1442,8 +1283,7 @@ BODIES["reference"] = f"""
         ["最好的預測函數", "迴歸函數 $f(x) = E[Y \\mid X = x]$", "Bayes 分類器（取條件機率最大者）"],
         ["期望風險的理論下限", "$\\mathrm{Var}(\\varepsilon)$（不可縮減誤差）", "Bayes 錯誤率"],
         ["訓練版的問題", "用擬合資料自評會偏樂觀", "用擬合資料自評會偏樂觀（本例 K = 1 時是 0）"],
-        ["彈性度的例子", "樣條自由度 df、多項式次數", "KNN 的 $1/K$"],
-        ["本頁元件", "w02irr／w02flexfit／w02bv", "w02bayeserr／w02knn／w02knnerr"]])}
+        ["彈性度的例子", "樣條自由度 df、多項式次數", "KNN 的 $1/K$"]])}
 
   <h3>參數式與非參數式</h3>
 {table(["", "參數式", "非參數式"],
@@ -1454,33 +1294,6 @@ BODIES["reference"] = f"""
         ["額外要選", "形狀", "平滑程度"],
         ["高維表現", "相對穩健", "容易受維度詛咒影響"],
         ["ISLP 例子", "圖 2.4 線性平面（第 3 章）", "圖 2.5／2.6 薄板樣條（第 7 章）"]])}
-
-  <h3>本頁模擬跑出來的數字</h3>
-{table(["樣條自由度 df", "2（線性）", "4", "6", "7", "12", "18", "25"],
-       [["訓練 MSE（單一資料集）", "3.432", "1.125", "0.961", "0.955", "0.890", "0.787", "0.480"],
-        ["測試 MSE（單一資料集）", "3.260", "1.180", "1.036", "<strong>1.021</strong>",
-         "1.072", "1.170", "1.495"],
-        ["情境 A 期望測試 MSE", "3.373", "1.249", "1.137", "<strong>1.136</strong>",
-         "1.219", "1.332", "1.486"],
-        ["情境 B（接近線性）", "<strong>1.047</strong>", "1.077", "1.116", "1.134",
-         "1.219", "1.332", "1.486"],
-        ["情境 C（高度非線性）", "21.099", "10.146", "4.702", "4.470", "2.432",
-         "<strong>1.336</strong>", "1.486"]])}
-  <p style="font-size:.82rem;color:var(--muted);">σ = 1，所以 Var(ε) = 1.00 是三列期望測試 MSE 的下限；
-  單一有限測試集的 MSE 可能因抽樣波動低於它。
-  情境 A、B、C 的最佳 df 分別是 7、2、18。這就是「沒有一個放諸四海皆準的彈性度」。
-  數字由 <code>tools/frames/gen_statlearn.py</code> 在 <code>default_rng(524)</code>、
-  M = 300 下產生。</p>
-
-{table(["KNN（n = 200 訓練 / 5000 測試）", "K = 1", "K = 10", "K = 50", "K = 100", "K = 150"],
-       [["彈性度 1/K", "1.000", "0.100", "0.020", "0.010", "0.0067"],
-        ["訓練錯誤率", "<strong>0.000</strong>", "0.135", "0.125", "0.165", "0.240"],
-        ["測試錯誤率", "0.1964", "0.1470", "<strong>0.1384</strong>", "0.1758", "0.2270"]])}
-  <p style="font-size:.82rem;color:var(--muted);">Bayes 錯誤率 = 0.1382，是母體期望錯誤率的下限；
-  這列 5000 筆測試資料的錯誤率是有限樣本估計，可能在下限兩側波動。
-  本例 K = 1 的訓練錯誤率為 0，因為 X 不重複且最近的鄰居包含自己。
-  課本圖 2.15–2.17 用的是另一份模擬資料，報告 Bayes 0.1304、K = 10 為 0.1363、
-  K = 1 為 0.1695、K = 100 為 0.1925——數字不同，形狀一致。</p>
 
   <h3>公式速查</h3>
 {table(["名稱", "式子", "備註"],
@@ -1515,7 +1328,7 @@ BODIES["reference"] = f"""
   真實資料上、不知道真實 f 時，通常沒辦法把兩者分開算出來；
   特定模型假設或重抽樣之下可以估其中一部分，而第 5 章的交叉驗證估的是<strong>整體預測風險</strong>。''')}
 
-{ver_note()}
+
 """
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1533,7 +1346,7 @@ for _key, _old, _pid in [('irreducible', IRR_PROOF, 'w02proofIrr'),
 BODIES['bayes'] += r"""
 <h3>KNN 的彈性與有效自由度</h3>
 <p>對固定的訓練輸入，KNN <strong>迴歸</strong>把鄰居的 y 平均，可寫成 $\hat y=Sy$。鄰域只由 X 決定、每點使用 K 個等權鄰居且包含自己時，線性平滑器的有效自由度為 $\operatorname{tr}(S)=n/K$。K 越小，模型保留越多訓練反應的個別變動。這個等式使用線性迴歸平滑器的定義；分類的多數決含非線性門檻，不能直接照搬。</p>
-<p>例如 n=100、K=5 時 df=20；K=1 時 df=100，因為每點直接記住自己的 y。距離同分須固定處理方式；若不含自身，不能再使用上述對角線計算。</p>
+<p>距離同分須固定處理方式；若不含自身，不能再使用上述對角線計算。</p>
 """ + proof('w02proofKnnDf', '固定鄰域 KNN 迴歸的 n/K', r"""
 <p>令 $S_{ij}=I\{j\in N_K(i)\}/K$，便有 $\hat y_i=\sum_jS_{ij}y_j$。自點包含於鄰域使 $S_{ii}=1/K$，故 $\operatorname{tr}(S)=\sum_iS_{ii}=n/K$。</p>
 <p>若給定 X 後 $\operatorname{Cov}(y)=\sigma^2I$，則 $\operatorname{Cov}(\hat y_i,y_i)=\sigma^2S_{ii}$。用 $\sum_i\operatorname{Cov}(\hat y_i,y_i)/\sigma^2$ 定義自由度也得到相同結果。</p>
@@ -1728,19 +1541,8 @@ function w02bvDraw() {
     },
   });
   const c = HC.get('w02bvChart');
-  HC.refs(c, [HC.vline(s.argmin, '最低點 df = ' + F.dfs[s.argmin])]);
-  $('w02bvScen').textContent = s.label;
-  $('w02bvBest').textContent = String(F.dfs[s.argmin]);
-  $('w02bvTot').textContent = HC.fmt(s.total[s.argmin], 3);
-  $('w02bvBias').textContent = HC.fmt(s.bias2[s.argmin], 3);
-  $('w02bvVarv').textContent = HC.fmt(s['var'][s.argmin], 3);
-  $('w02bvIrr').textContent = HC.fmt(F.sigma2, 2);
-  setStatus('w02bvStatus', s.label + '：最佳 df = ' + F.dfs[s.argmin]
-    + '，該點期望測試 MSE = ' + HC.fmt(s.total[s.argmin], 3)
-    + '（偏差² ' + HC.fmt(s.bias2[s.argmin], 3) + ' ＋ 變異 '
-    + HC.fmt(s['var'][s.argmin], 3) + ' ＋ Var(ε) ' + HC.fmt(F.sigma2, 2)
-    + '）。df = 2 時是 ' + HC.fmt(s.total[0], 3) + '，df = 25 時是 '
-    + HC.fmt(s.total[s.total.length - 1], 3) + '。');
+  HC.refs(c, [HC.vline(s.argmin, '期望誤差的低點')]);
+  setStatus('w02bvStatus', s.label + '：比較偏差、變異與期望測試誤差，觀察適合的彈性如何隨真實關係改變。');
 }
 
 /* ---------- P06 KNN 決策邊界 vs K（baked，ISLP 圖 2.15–2.16） ---------- */

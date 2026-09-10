@@ -1,0 +1,41 @@
+{
+  "before_sha256": "5bad540db9fe53f4b3b6042e8a023eb853c5f6359134df9b843ce14cd172857d",
+  "remove_topics": [
+    "邏輯斯迴歸 · 係數",
+    "LDA · 決策邊界",
+    "LDA vs QDA · 偏差與變異",
+    "混淆矩陣 · 不平衡資料",
+    "方法選擇 · 假設"
+  ],
+  "keep": {
+    "topic": "Poisson 迴歸 · GLM",
+    "q": "對計數資料擬合 Poisson 迴歸，某個二元變數的係數是 −0.5。這代表什麼？",
+    "options": [
+      "這個變數從 0 變 1 時，平均計數減少 0.5",
+      "這個變數從 0 變 1 時，平均計數乘上 e<sup>−0.5</sup> ≈ 0.607，也就是只剩約 61%",
+      "這個變數從 0 變 1 時，計數的變異數減少 0.5，但平均不變",
+      "這個變數從 0 變 1 時，計數的勝算乘上 e<sup>−0.5</sup>"
+    ],
+    "answer": 1,
+    "why": [
+      "不對。Poisson 迴歸線性的是 log λ，所以係數對 λ 的作用是乘法不是加法——這跟邏輯斯迴歸「勝算乘上 e^β」是同一個模式。",
+      "正確。log λ 加上 −0.5 等於 λ 乘上 e^(−0.5) = 0.607。ISLP 表 4.11 的 weathersit[cloudy/misty] = −0.08 就是這樣解讀成「陰天只有晴天的 92.3%」。",
+      "不對。Poisson 模型裡 E(Y) = Var(Y) = λ，平均與變異是綁在一起的，不可能只動變異不動平均。",
+      "「勝算」是二元反應才有的概念。Poisson 迴歸的反應是計數，改變的是平均值 λ。"
+    ]
+  },
+  "core_ids_present": [
+    "qWhyOptions",
+    "qLogOptions",
+    "qMulOptions",
+    "qLdaOptions",
+    "qQdaOptions",
+    "qThrOptions",
+    "qCmpOptions",
+    "qPoiOptions",
+    "qEx1Options",
+    "qEx2Options",
+    "qEx3Options",
+    "qEx4Options"
+  ]
+}

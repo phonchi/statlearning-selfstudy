@@ -515,7 +515,7 @@ BODIES["qda"] = f"""
      + slider("w04lda2D", "μ 位移", 0.6, 2.4, 0.1, 1.4, "w04lda2Draw")
      + '<button class="btn btn-toggle" onclick="w04lda2Toggle()">切換 LDA ↔ QDA</button>'
      + '<button class="btn btn-reset" onclick="w04lda2Reset()">重置</button>',
-     provenance=("simulation", "固定種子同一資料；只切換 LDA／QDA 分類規則"))}
+     provenance=("illustrative", "固定種子同一資料；只切換 LDA／QDA 分類規則"))}
 
   <h3>Naive Bayes：不猜分佈的形狀，改猜「互相獨立」</h3>
 
@@ -971,32 +971,14 @@ BODIES["reference"] = f"""
         ["KNN", "什麼都不建模", "任意", "無（無母數）", "存全部資料",
          "邊界極度彎曲且 n ≫ p"]])}
 
-  <h3>Default 資料上的實測數字（可以直接對回課本）</h3>
+  <h3>Default 的分類結果</h3>
 {table(["", "TN", "FP", "FN", "TP", "錯誤率", "敏感度", "出處"],
        [["LDA，門檻值 0.5", "9644", "23", "<strong>252</strong>", "81", "2.75%", "24.3%", "ISLP 表 4.4"],
         ["LDA，門檻值 0.2", "9432", "235", "<strong>138</strong>", "195", "3.73%", "58.6%", "ISLP 表 4.5"],
         ["Naive Bayes，門檻值 0.5", "9621", "46", "244", "89", "2.90%", "26.7%", "ISLP 表 4.8"],
         ["Naive Bayes，門檻值 0.2", "9339", "328", "130", "203", "4.58%", "61.0%", "ISLP 表 4.9"],
         ["一律預測「不違約」", "9667", "0", "333", "0", "3.33%", "0.0%", "基準錯誤率"]])}
-  <p style="font-size:.82rem;color:var(--muted);">本頁 <code>w04thr</code> 元件的 2×2 表在門檻值
-  0.5 與 0.2 會<strong>逐格</strong>重現前兩列（我們用 <code>scikit-learn</code> 的
-  <code>LinearDiscriminantAnalysis</code> 在 <code>balance</code> + <code>student</code> 上重算，
-  數字與課本相同）。ISLP 表 4.8／4.9 的 Naive Bayes 實作與 <code>GaussianNB</code>
-  對 <code>student</code> 的處理略有不同，所以本頁預先計算的 NB 混淆矩陣是 9618／49／238／95。</p>
 
-  <h3>Smarket 上五個方法的 2005 年正確率（lab 的實跑結果）</h3>
-{table(["方法", "2005 年正確率", "混淆矩陣（預測 × 真實）", "lab 儲存格"],
-       [["邏輯斯（6 個變數）", "0.4801", "77／97／34／44", "49、51"],
-        ["邏輯斯（Lag1 + Lag2）", "0.5595", "35／35／76／106", "53、55"],
-        ["LDA（Lag1 + Lag2）", "0.5595", "35／35／76／106", "79"],
-        ["QDA（Lag1 + Lag2）", "<strong>0.5992</strong>", "30／20／81／121", "95、97"],
-        ["Naive Bayes（Lag1 + Lag2）", "0.5952", "29／20／82／121", "116、117"],
-        ["KNN，K = 1", "0.5000", "43／58／68／83", "122、124"],
-        ["KNN，K = 3", "0.5317", "—", "127"],
-        ["一律猜 Up（基準正確率）", "0.5595", "—", "—"]])}
-  <p style="font-size:.82rem;color:var(--muted);">注意最後一列：<strong>「每天都猜漲」就有 55.95%</strong>。
-  邏輯斯與 LDA 剛好打成平手、沒有贏過它；QDA 與 Naive Bayes 在這次教材比較中較高。
-  Lag1／Lag2 是看過含 2005 年的完整資料後才選出，因此這張表不能當成選模後的獨立測試證據。</p>
 
   <h3>公式速查</h3>
 {table(["名稱", "式子", "備註"],
@@ -1031,7 +1013,7 @@ BODIES["reference"] = f"""
   類別不平衡或兩種錯誤成本不同時，先問「哪種錯誤比較貴」，再調門檻值，
   並且把同一量尺的多數類基準與混淆矩陣一起報出來。''')}
 
-{ver_note()}
+
 """
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1045,7 +1027,7 @@ $$\max_\beta L(\beta)=\prod_i p_i^{y_i}(1-p_i)^{1-y_i},\qquad
 <p>最小化 $-\ell$ 也就是最小化二元交叉熵。分數函數（score）與 Hessian 為</p>
 $$U(\beta)=X^T(y-p),\qquad \nabla^2\ell(\beta)=-X^TWX,\qquad W=\operatorname{diag}\{p_i(1-p_i)\}.$$
 <p>一個 Newton 更新為 $\beta^{new}=\beta+(X^TWX)^{-1}X^T(y-p)$；實作用線性方程求解並檢查目標改善，避免直接計算逆矩陣。也可寫成反覆加權最小平方（IRLS）：令工作反應 $z=X\beta+W^{-1}(y-p)$，以 W 加權擬合 z，重算 p、W、z，直到收斂。</p>
-<p>小算例：只有截距、10 筆有 7 個正類，從 β=0 起步有 p=0.5、score=2、資訊量=2.5，第一次更新 β=0.8。繼續更新會趨近 $\log(7/3)\approx0.8473$，對應 p=0.7。完全或準完全分離時，無懲罰的有限 MLE 可能不存在；秩不足時係數也不唯一，不能把數值停止一概當成成功估計。</p>
+<p>完全或準完全分離時，無懲罰的有限 MLE 可能不存在；秩不足時係數也不唯一，不能把數值停止一概當成成功估計。</p>
 <p>正確指定的條件模型、有限內點 MLE 與一般大樣本正則條件下，$\widehat{\operatorname{Cov}}(\hat\beta)=(X^T\hat WX)^{-1}$；係數 SE 是對角線平方根，Wald z 為 $\hat\beta_j/\widehat{SE}_j$，近似 95% CI 為 $\hat\beta_j\pm1.96\widehat{SE}_j$。觀測獨立不等於 p 相同；給定不同 X 時，反應變異數可不同。</p>
 <p>來源：<a href="https://dafriedman97.github.io/mlbook/content/c3/s1/logistic_regression.html#parameter-estimation">講義連結的概似估計教材</a>、<a href="https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf">Stanford 邏輯斯迴歸推論講義</a>。</p>
 """ + proof('w04proofLogistic', '概似、梯度、Hessian 與 IRLS', r"""
@@ -1082,7 +1064,7 @@ BODIES['poisson'] += r"""
 <p>給定 X 後 $Y_i$ 獨立，$\mu_i=\exp(x_i^T\beta)$，Poisson 的對數概似為</p>
 $$\ell(\beta)=\sum_i\{y_ix_i^T\beta-e^{x_i^T\beta}-\log(y_i!)\},\qquad
 U=X^T(y-\mu),\quad I=X^T\operatorname{diag}(\mu_i)X.$$
-<p>可採 Newton／IRLS 求解。只有截距時，樣本平均為 3 就得到 $\hat\beta_0=\log3$，平均預測為 3；全部計數為零時，截距 MLE 趨向負無限大，沒有有限解。比較不同觀測時間的計數可加入已知 offset $\log t_i$：$\log\mu_i=\log t_i+x_i^T\beta$，此時係數解讀為事件率的倍數。</p>
+<p>可採 Newton／IRLS 求解。全部計數為零時，截距 MLE 趨向負無限大，沒有有限解。</p>
 <p>GLM 模型的是 $Y\mid X$。指數分布族寫成 $\exp\{[y\theta-b(\theta)]/a(\phi)+c(y,\phi)\}$，其條件平均為 $b'(\theta)$、變異數為 $a(\phi)b''(\theta)$。Bernoulli 的變異數為 $p(1-p)$，Poisson 為 μ，Gaussian 則是共同 σ²；只有條件獨立不代表同變異數。過度分散時，仍可討論均值模型，但 Poisson 的一般 SE 會失準，要另選變異模型或適當穩健推論。</p>
 """ + proof('w04proofPoisson', 'Poisson score 與指數分布族的平均變異數', r"""
 <p>取各筆 Poisson 質量函數的對數並相加，再以 $\mu_i=e^{x_i^T\beta}$ 代入，就得到正文 ℓ。對 β 微分分別為 $\sum_i x_i(y_i-\mu_i)$ 與 $-\sum_i\mu_ix_ix_i^T$。只有截距時 score 為 $\sum_i y_i-ne^{\beta_0}$，零點給 $e^{\hat\beta_0}=\bar y$（需平均數為正）。</p>
@@ -1101,8 +1083,8 @@ BODIES['poisson'] += r"""
 BODIES['logistic'] += r"""
 <h3>預測機率的區間與模型比較</h3>
 <p>對固定新輸入 $x_0$，令 $\hat\eta=x_0^T\hat\beta$、$s_\eta^2=x_0^T\widehat Vx_0$，其中 $\widehat V$ 是完整係數共變異數矩陣。常用近似 95% 機率信賴區間為 $[\sigma(\hat\eta-1.96s_\eta),\sigma(\hat\eta+1.96s_\eta)]$。不能把每個係數 CI 的下端一起代入、上端一起代入：那會漏掉係數間的共變異數。</p>
-<p>例如 η̂=0、$s_\eta=0.2$，機率估計為 0.5，區間約 [0.403,0.597]。這是對事件機率的估計不確定性，個別新反應仍是 0 或 1；不能照線性迴歸在 logit 的變異數裡隨意加 1 當成預測區間。</p>
-<p>另一種二元模型是 probit：$p(x)=\Phi(x^T\beta)$，以標準常態累積分布取代 logistic。兩者都限制機率落在 [0,1]，但 probit 的 $e^{\beta_j}$ 沒有 logistic 的勝算比解讀。可用相同獨立評估流程比較，不能只比係數絕對值。</p>
+<p>這是對事件機率的估計不確定性，個別新反應仍是 0 或 1；不能照線性迴歸在 logit 的變異數裡隨意加 1 當成預測區間。</p>
+
 <p>對事先指定、正則且巢狀的模型，最大概似比統計量 $D=2(\hat\ell_{full}-\hat\ell_{restricted})$ 在虛無假設下漸近服從自由度等於參數維數差的卡方分布。這是比「係數除以 SE」的 Wald 檢定另一種比較方式；分離、邊界參數或資料選模後，不能直接沿用一般卡方校準。</p>
 """ + proof('w04proofProbabilityCI', '線性預測量到機率的區間', r"""
 <p>MLE 的漸近常態近似給 $x_0^T\hat\beta$ 的變異數 $x_0^TVx_0$。logistic 函數單調遞增，所以把 η 的區間兩端逐一通過 σ，涵蓋事件 $\eta\in[L,U]$ 與 $\sigma(\eta)\in[\sigma(L),\sigma(U)]$ 相同。這保留 η 區間的近似涵蓋率且不越出 (0,1)。</p>
@@ -1115,8 +1097,8 @@ BODIES['logistic'] += r"""
 BODIES['logistic'] += r"""
 <h3>反應誤差、潛在變數與完全分離</h3>
 <p>給定 x，logistic 模型的反應仍是 Bernoulli，不是 logistic 分布。若定義誤差 $e=Y-p(x)$，它以機率 p 取 1−p，以機率 1−p 取 −p，條件平均為零、變異數為 p(1−p)。因此不能再自由估一個與 p 無關的共同誤差變異數，也不能把 logit(p) 當成 logit(Y)。</p>
-<p>另一種等價的生成表示是 $Y=I\{x^T\beta+\epsilon>0\}$，其中 $\epsilon$ 服從標準 logistic 分布。這裡的 ε 是未觀測連續變數上的誤差，和上面的二點誤差 e 不同；probit 則把潛在誤差換成標準常態。取相同 x 並不決定固定的 0 或 1，仍需要依 p 抽樣。</p>
-<p>完全分離可用小例子理解：x=−2,−1,1,2 對應 y=0,0,1,1。截距為零、斜率越大，每筆已觀測結果的機率越接近 1；有限斜率總還能繼續改善概似。資料可能因小樣本偶然分離，不能把它當成母體機率必為 0 或 1。一般可加入正則化或使用針對分離的估計方法；對分離資料反覆做普通 pairs bootstrap 不會自動解決有限 MLE 不存在的問題。</p>
+<p>另一種等價的生成表示是 $Y=I\{x^T\beta+\epsilon>0\}$，其中 $\epsilon$ 服從標準 logistic 分布。這裡的 ε 是未觀測連續變數上的誤差，和上面的二點誤差 e 不同。取相同 x 並不決定固定的 0 或 1，仍需要依 p 抽樣。</p>
+<p>完全分離時，無懲罰的概似可能沒有有限最大點。資料也可能因小樣本偶然分離，不能把它當成母體機率必為 0 或 1。一般可加入正則化或使用針對分離的估計方法；對分離資料反覆做普通 pairs bootstrap 不會自動解決有限 MLE 不存在的問題。</p>
 <p>用固定門檻值 t 分類，logistic 在<strong>所用特徵</strong>上的邊界為 $x^T\beta=\log[t/(1-t)]$；如果特徵包含原始變數的平方或交互作用，邊界在原始輸入空間可呈非線性。</p>
 """ + proof('w04proofLatent', '潛在 logistic 表示與分離時的概似極限',r"""
 <p>標準 logistic 的 CDF 為 $F(u)=1/(1+e^{-u})$。因此 $P(x^T\beta+\epsilon>0\mid x)=1-F(-x^T\beta)=\sigma(x^T\beta)$。另一方面，Bernoulli 反應的 $E[Y-p]=0$，$E[(Y-p)^2]=p(1-p)^2+(1-p)p^2=p(1-p)$。</p>
@@ -1133,17 +1115,16 @@ BODIES['multinomial'] += r"""
 <tr><td>一對其餘（OVR）</td><td>K 個二元模型，各類與其餘全部類別比較</td><td>比較各類分數，選最大者</td></tr>
 <tr><td>一對一（OVO）</td><td>K(K−1)/2 個模型，每次只用兩類資料</td><td>各對投票，依事先規定處理平手</td></tr>
 <tr><td>Multinomial logistic</td><td>共同估計一個 K 類概似</td><td>比較同一 softmax 的 K 個機率</td></tr></tbody></table>
-<p>K=4 時，OVR 訓練4個二元問題，OVO訓練6個。OVR各模型的分數尺度可能不同，其獨立輸出也不會自然加總為1；沒有額外校準時，不能直接把任意decision score稱為後驗機率。方法的類別組合規則與底層二元演算法是兩件事。</p>
+<p>OVR各模型的分數尺度可能不同，其獨立輸出也不會自然加總為1；沒有額外校準時，不能直接把任意decision score稱為後驗機率。方法的類別組合規則與底層二元演算法是兩件事。</p>
 """
 BODIES['lda'] += r"""
 <h3>為什麼二類的最小平方與 LDA 方向有關？</h3>
 <p>用 0／1 表示兩類，對中心化 X 做含截距的 OLS。若類內散布 W 正定、兩類平均不同，OLS 斜率向量與 $W^{-1}(\bar x_1-\bar x_0)$ 平行，也就是 Fisher／LDA 的方向；但機率尺度、截距與先驗決定的切點仍不同，不能直接推論兩者使用 0.5 門檻就必定給相同分類。</p>
-<p>多類別可把標籤轉成 K 個 indicator 欄，按每類樣本數調整尺度後做降秩多反應迴歸，得到相同的判別子空間。把 K 類直接編成單一 1、2、3、… 再做 OLS 則沒有這個性質，因為它任意指定類別距離。</p>
-""" + proof('w04proofOlsLda', '二類 OLS 方向與多類指示矩陣',r"""
+
+""" + proof('w04proofOlsLda', '二類 OLS 與 LDA 的方向',r"""
 <p>設 d 為兩類平均差、$a=n_0n_1/n$。中心化 X 的總散布為 $T=X^TX=W+add^T$，而 $X^Ty=ad$。Sherman–Morrison 等式給</p>
 $$\hat\beta_{OLS}=aT^{-1}d=\frac{a}{1+ad^TW^{-1}d}W^{-1}d.$$
-<p>乘數為正，所以方向平行。多類時令 G 為 n×K 指示矩陣，$N=\operatorname{diag}(n_1,\ldots,n_K)$，則 $B=X^TGN^{-1}G^TX$。把目標矩陣設成 $\widetilde G=GN^{-1/2}$ 並中心化，取 rank L 係數模型 $\widetilde G\approx XAC^T$。固定 A 後，最小平方給 $C^T=(A^TTA)^{-1}A^TX^T\widetilde G$。代回目標並使用投影正交性，平方範數等於 $\|\widetilde G\|_F^2-\operatorname{tr}\{(A^TTA)^{-1}A^TX^T\widetilde G\widetilde G^TXA\}$。由 $X^T\widetilde G\widetilde G^TX=B$，最小化等價於最大化 $\operatorname{tr}\{(A^TTA)^{-1}A^TBA\}$。</p>
-<p>其方向解 $Bv=\lambda Tv$。由 T=W+B，等價於 $Bv=[\lambda/(1-\lambda)]Wv$，與 Fisher 問題相同；W正定時非零方向有 0&lt;λ&lt;1。這比較的是判別子空間，分類仍須使用相同尺度、中心與先驗。</p>
+<p>乘數為正，所以方向平行；分類仍須使用相同尺度、中心與先驗。</p>
 """)
 BODIES['compare'] += r"""
 <h3>QDA log-odds 中的係數到底是什麼？</h3>

@@ -738,13 +738,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:prologue -->
 
   <p>先用三個小動作認識流程：依條件選一條路、對每個數字重做一次、把步驟包成可重用的函式。這一頁先練 Python，再連回課程的模型程式。把重複步驟寫成一個函式，修改時較不容易漏改其中一份。</p>
-<div class="pseudo-code">
-<span class="line">mpg = <span class="num">30</span></span>
-<span class="line"><span class="kw">if</span> mpg &gt;= <span class="num">25</span>:</span>
-<span class="line">    print(<span class="str">&#x27;達到門檻&#x27;</span>)</span>
-<span class="line"><span class="kw">else</span>:</span>
-<span class="line">    print(<span class="str">&#x27;未達門檻&#x27;</span>)</span></div>
-  <p>這是自訂語法練習，不是 lab 的實跑輸出。先猜會執行哪一個 print，再把 mpg 改成 20 重跑。冒號開始區塊；同一區塊的縮排必須一致。</p>
+  
 <div class="quiz-box">
   <div class="quiz-label">PART 00 · 自我檢測</div>
   <p>同一段分析程式碼在 notebook 裡複製了三次。最大的風險是什麼？</p>
@@ -758,25 +752,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2><code>&amp;</code> 與 <code>and</code> 的運算對象 <span class="sec-badge">課程 Lab Ch2 · lab 範例</span></h2>
 <!-- GEN:END sec:cond -->
 
-  <p>上面的 <code>if</code> 只要一個真假值。可以用 <code>and</code>／<code>or</code> 合併純量條件，例如 <code>mpg &gt; 25 and year &gt; 80</code>。先熟悉這一種，再看下面一整欄同時判斷的寫法。</p>
-<div class="pseudo-code">
-<span class="line">values = [<span class="num">18</span>, <span class="num">30</span>, <span class="num">24</span>]</span>
-<span class="line"><span class="kw">for</span> mpg <span class="kw">in</span> values:</span>
-<span class="line">    <span class="kw">if</span> mpg &gt;= <span class="num">25</span>:</span>
-<span class="line">        print(mpg)</span></div>
-  <p>這個自訂例子依序取出三個數字，每次都做相同判斷。下面的 NumPy／pandas 遮罩把整欄一起判斷；若尚不熟資料表，可以先讀下一節的基本迴圈，學完 P3、P4 再回來對照。</p>
+  <p><code>if</code> 需要一個真假值；<code>and</code>／<code>or</code> 可以合併純量條件。下面則是一整欄同時判斷的寫法。</p>
+  
 <div class="info-box warm">
   <span class="info-label">一句話講完差別</span>
   <code>and</code> 一次只能判斷<strong>一個</strong>真假值；<code>&amp;</code> 是<strong>逐元素</strong>做「且」，一整排一起算。選資料的時候永遠是後者，而且<strong>每個條件都要用括號包起來</strong>，因為 <code>&amp;</code> 的優先順序比 <code>&gt;</code> 高。
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的 Auto 條件篩選語法重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w15boolSvg" height="320"></svg>
       <div class="status-banner" id="w15blStatus"><span class="status-icon">›</span><span class="status-text">兩個條件，逐列做「且」。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w15blSet(0)">year &gt; 80</button><button class="btn btn-toggle" onclick="w15blSet(1)">mpg &gt; 30</button><button class="btn btn-toggle" onclick="w15blSet(2)">兩者皆是（&amp;）</button><button class="btn btn-toggle" onclick="w15blSet(3)">任一成立（|）</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的 Auto 條件篩選語法重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1000,13 +989,13 @@ ford ranger            2625.0       1</pre></div>
   <strong>試不同的參數</strong>（多項式次數、λ）、<strong>重抽樣</strong>（自助法的 B 次）、
   <strong>逐欄處理</strong>（每一欄算遺漏比例）。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch02 lab 的累加迴圈逐步呈現。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w15loopSvg" height="320"></svg>
       <div class="status-banner" id="w15lpStatus"><span class="status-icon">›</span><span class="status-text">按「單步」跟著跑一次。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w15lpStep()">→ 單步</button><button class="btn btn-play" onclick="w15lpPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w15lpReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch02 lab 的累加迴圈逐步呈現。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1091,13 +1080,7 @@ ford ranger            2625.0       1</pre></div>
   <strong>回傳值</strong>（它給你什麼）。寫得好的函式就像一個黑盒子——
   用的人只要知道這三件事，不必知道裡面怎麼做。</p>
 
-<div class="pseudo-code">
-<span class="line"><span class="kw">def</span> <span class="fn">above_threshold</span>(value, threshold=<span class="num">25</span>):</span>
-<span class="line">    <span class="kw">return</span> value &gt;= threshold</span>
-<span class="line"> </span>
-<span class="line"><span class="kw">for</span> value <span class="kw">in</span> [<span class="num">18</span>, <span class="num">30</span>, <span class="num">24</span>]:</span>
-<span class="line">    print(above_threshold(value))</span></div>
-  <p>這是自訂函式練習。<code>def</code> 定義名字和參數；<code>return</code> 交回真假值，外面的 print 才負責顯示。先改門檻，確認每次呼叫如何使用引數。以下是學完基本語法後的課程應用；OLS、設計矩陣與 MSE 可在 <a href="p6_modeling_api.html">P6</a> 詳讀。</p>
+  
   <details class="qa-item reading-detail" id="w15detail-function-lab"><summary>完整應用：模型評估函式、資料流與重用</summary>
 <div class="detail-body"><p>假設你要比較三種多項式次數的驗證誤差。不寫函式的話，你會把同一段
   「切分 → 擬合 → 預測 → 算 MSE」複製三次，只改中間一個數字。
@@ -1150,13 +1133,13 @@ ford ranger            2625.0       1</pre></div>
   <span class="dx-src" data-lab-ch="5" data-lab-cells="26">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="比較 Ch05 lab 的 evalMSE 函式與逐次複製同一分析的維護差異；不以假想行數計量。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w15whySvg" height="320"></svg>
       <div class="status-banner" id="w15whyStatus"><span class="status-icon">›</span><span class="status-text">先看兩邊的長度，再按「改需求」。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w15whySet(0)">複製貼上</button><button class="btn btn-toggle" onclick="w15whySet(1)">函式 ＋ 迴圈</button><button class="btn btn-step" onclick="w15whyEdit()">改需求：多試一個次數</button><button class="btn btn-reset" onclick="w15whyReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>比較 Ch05 lab 的 evalMSE 函式與逐次複製同一分析的維護差異；不以假想行數計量。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1175,13 +1158,13 @@ ford ranger            2625.0       1</pre></div>
   </div>
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="依 Ch05 lab 的 evalMSE 函式資料流重繪。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w15fnSvg" height="340"></svg>
       <div class="status-banner" id="w15fnStatus"><span class="status-icon">›</span><span class="status-text">按「單步」走一次課程 lab 的 evalMSE。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w15fnStep()">→ 單步</button><button class="btn btn-play" onclick="w15fnPlay()">▶ 連續播</button><button class="btn btn-reset" onclick="w15fnReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>依 Ch05 lab 的 evalMSE 函式資料流重繪。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1303,7 +1286,7 @@ chevy s-10                         2720.0       1</pre></div>
   <div class="section-number">PART 04 · 預設引數與作用域</div>
   <h2>函式裡看得到外面，外面看不到裡面 <span class="sec-badge">課程 Lab Ch5 · lab 範例</span></h2>
 <!-- GEN:END sec:scope -->
-<p>例如 <code>def above(x, threshold=25): return x &gt; threshold</code>；<code>above(30)</code> 使用預設門檻，<code>above(30, threshold=35)</code> 則覆寫它。以下互動再看函式內外的名字如何分開。</p>
+
   <p>兩件事：<strong>預設引數</strong>讓常用的設定不必每次都寫，
   <strong>作用域</strong>決定一個名字在哪裡看得到。
   課程 lab 的 <code>boot_SE</code> 兩者都用上了。</p>
@@ -1348,13 +1331,13 @@ chevy s-10                         2720.0       1</pre></div>
   <span class="dx-src" data-lab-ch="5" data-lab-cells="61">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
-</div></details><div class="viz-layout" data-provenance="illustrative">
+</div></details><div class="viz-layout" data-provenance="illustrative" data-source-note="自訂小例子，用來比較 Python 名稱作用域與可變預設值。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w15scSvg" height="320"></svg>
       <div class="status-banner" id="w15scStatus"><span class="status-icon">›</span><span class="status-text">三個情境，看名字的可見範圍。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w15scSet(0)">函式讀外面的變數</button><button class="btn btn-toggle" onclick="w15scSet(1)">函式裡指派同名變數</button><button class="btn btn-toggle" onclick="w15scSet(2)">可變預設值的陷阱</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>自訂小例子，用來比較 Python 名稱作用域與可變預設值。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1377,13 +1360,6 @@ chevy s-10                         2720.0       1</pre></div>
   <span class="info-label">為什麼 seed 要當參數</span>
   <code>boot_SE(..., seed=0)</code> 把種子做成可設定的參數，這樣你既能重現結果（給同一個 seed），也能檢查結果穩不穩定（換幾個 seed 跑跑看）。把這項設定留在呼叫處，之後較容易重現與比較結果。
 </div>
-
-<div class="quiz-box">
-  <div class="quiz-label">PART 04 · 自我檢測</div>
-  <p><code>def add(x, acc=[]):</code> 這樣寫有什麼問題？</p>
-  <div class="quiz-options" id="qScopeOptions"><div class="quiz-opt" data-correct="false" data-fb="看起來像，但那個空串列&lt;strong&gt;只在定義函式時建立一次&lt;/strong&gt;。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(A)</span> 沒問題，這樣預設就是空串列</div><div class="quiz-opt" data-correct="true" data-fb="對。第一次呼叫加了一個元素，第二次呼叫看到的預設值就不是空的了。正確寫法是 &lt;code&gt;acc=None&lt;/code&gt;，再在函式裡建立新的。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(B)</span> 那個串列所有呼叫共用，會越積越多</div><div class="quiz-opt" data-correct="false" data-fb="語法上完全合法，不會報錯。這正是它危險的地方。" onclick="quizCheck('qScope', this)"><span class="opt-letter">(C)</span> 串列不能當預設值，會報錯</div></div>
-  <div class="quiz-feedback" id="qScopeFeedback"></div>
-</div>
 </section>
 <section id="err">
 <!-- GEN:BEGIN sec:err -->
@@ -1405,13 +1381,13 @@ chevy s-10                         2720.0       1</pre></div>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="152">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="自訂 traceback，用來練習由錯誤末行往上定位。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w15errSvg" height="320"></svg>
       <div class="status-banner" id="w15erStatus"><span class="status-icon">›</span><span class="status-text">按「單步」從最後一行往上讀。</span></div>
       <div class="controls-bar"><button class="btn btn-step" onclick="w15erStep()">→ 單步</button><button class="btn btn-reset" onclick="w15erReset()">重置</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>自訂 traceback，用來練習由錯誤末行往上定位。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1463,9 +1439,7 @@ chevy s-10                         2720.0       1</pre></div>
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
-  程式碼範例，觀察結果。</p>
+  <p>回顧本頁觀念與原 Lab 的程式，確認各個操作的意義與使用條件。</p>
   <div class="sol-links"><a href="https://docs.python.org/zh-tw/3/tutorial/controlflow.html" target="_blank" rel="noopener">🔗 Python 控制流程</a><a href="https://docs.python.org/zh-tw/3/tutorial/errors.html" target="_blank" rel="noopener">🔗 例外處理</a><a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener">📓 Ch05 中文 Lab</a></div>
 <!-- GEN:END sec:exercises -->
 
@@ -1527,7 +1501,7 @@ chevy s-10                         2720.0       1</pre></div>
   <strong>1. 選資料用 <code>&amp;</code>／<code>|</code>，而且每個條件都加上括號。</strong><code>and</code> 一次只判斷一個真假值。<br><strong>2. 同一段程式碼要寫第三次，就該包成函式。</strong>共用一份邏輯，修改時較容易保持一致。<br><strong>3. traceback 從最後一行讀起。</strong>最後一行說錯在哪，往上找是誰呼叫的。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch05）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+
 </div></details>
 </section>
 <!-- GEN:BEGIN chapternav -->

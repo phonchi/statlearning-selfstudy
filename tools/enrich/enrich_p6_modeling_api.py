@@ -129,16 +129,6 @@ BODIES["design"] = f"""
       note="lstat = 5、10、15 對應的預測 medv。記住這三個數字，"
            "下一節 sklearn 會算出<strong>逐位相同</strong>的結果。")}
 
-{quiz("qDesign", "PART 01 · 自我檢測",
-      "一個有 4 個類別的變數 <code>region</code> 放進迴歸，X 會多出幾欄？",
-      [(False, "4 欄，每個類別一欄",
-        "會多出共線性，四欄加起來永遠等於截距那一欄，矩陣就不滿秩了。"),
-       (True, "3 欄，其中一個類別當基準",
-        "對。這叫虛擬變數編碼，被留下來當基準的那一類叫參考組，"
-        "其他三欄的係數都是「相對於參考組」的差。第 3 章會詳細講。"),
-       (False, "1 欄，把類別編成 0、1、2、3",
-        "這樣等於宣稱類別之間有等距的順序關係——"
-        "「region 3 比 region 1 多兩單位」是沒有意義的敘述。")])}
 """
 
 # ── P02 讀 summary 表 ──────────────────────────────────────────────────
@@ -184,17 +174,6 @@ BODIES["summary"] = f"""
      "樣本變大時標準差不會變小，標準誤會。第 5 章的自助法就是在估標準誤。"),
 ])}
 
-{quiz("qSummary", "PART 02 · 自我檢測",
-      "兩個模型的 lstat 係數都是 −0.95，但 A 的標準誤是 0.04、B 是 0.60。這代表什麼？",
-      [(True, "兩者估到的效果一樣大，但 B 的估計不確定得多",
-        "對。同樣的點估計、不同的精確度。B 的 95% 信賴區間大約是 "
-        "−0.95 ± 1.2，涵蓋了 0，也就是說 B 甚至不能排除「沒有效果」。"),
-       (False, "B 的效果比較小",
-        "效果的大小是 <code>coef</code> 這一欄，兩者都是 −0.95，一樣大。"
-        "標準誤講的是「這個 −0.95 有多可信」。"),
-       (False, "B 的模型擬合得比較差",
-        "擬合好壞要看 R² 或殘差圖。標準誤大通常是樣本少、"
-        "或這個變數跟其他變數共線。那是另一回事。")])}
 """
 
 # ── P03 scikit-learn 的三個動詞 ────────────────────────────────────────
@@ -292,17 +271,6 @@ BODIES["split"] = f"""
 {card("三個次數的驗證誤差", C(5, 26), O(5, 26), src=S(5, 26),
       note="上面那張圖的三個數字就是這一格的輸出，逐字取用。")}
 
-{quiz("qSplit", "PART 04 · 自我檢測",
-      "訓練集 R² 是 0.95、測試集 R² 是 0.42。最合理的判斷是？",
-      [(True, "模型過度擬合了訓練資料",
-        "對。它把訓練資料的雜訊也學了進去，換一份資料就失效。"
-        "第 2 章的偏差—變異取捨、第 6 章的收縮方法都在處理這件事。"),
-       (False, "測試集有問題，應該換一個",
-        "換到看得順眼為止就等於把測試集當訓練集用。"
-        "測試集只能<strong>看一次</strong>，看多了它就失去意義。"),
-       (False, "模型還不夠複雜，應該加更多變數",
-        "方向反了。訓練分數遠高於測試分數是<strong>太複雜</strong>的徵狀，"
-        "加變數只會更嚴重。")])}
 """
 
 # ── P05 交叉驗證與資料洩漏 ─────────────────────────────────────────────
@@ -416,14 +384,6 @@ BODIES["exercises"] = f"""
         "<code>sm.OLS</code> 的引數順序就是 <code>(y, X)</code>，順序是對的。"
         "倒是 sklearn 的 <code>fit(X, y)</code> 反過來，兩套要記清楚。")])}
 
-{quiz("qEx3", "EXERCISE 3 · 誤差的不確定性",
-      "相同十次切分中，模型 A 的 MSE 平均是 23.8（標準差 1.4），模型 B 是 23.4（標準差 1.5）。這些摘要能告訴你什麼？",
-      [(False, "B 的真實預測表現一定較好",
-        "這些摘要顯示 B 在本次評估的平均較低。差距是否穩定、新資料上是否維持同樣排序，仍需要其他評估證據。"),
-       (True, "B 的平均較低；還要查看相同切分下兩模型的配對差異與評估設計",
-        "對。兩個模型各自的標準差，不等於模型差異的不確定性。要保留每次切分的配對結果，並考慮切分之間的相依性。"),
-       (False, "差距小於各自標準差，所以兩模型已證明一樣好",
-        "這不是有效的判定門檻。兩個模型可能一起隨切分起伏，但其中一個持續較好；沒有足夠證據也不等於證明相同。")])}
 
 {quiz("qEx4", "EXERCISE 4 · 洩漏",
       "下列哪一個做法<strong>不會</strong>造成資料洩漏？",
@@ -821,19 +781,7 @@ HC.ready(() => { w19cvDraw(); });
 
 # Coverage completion 2026-09-10
 
-BODIES['cv'] += f"""
-<h3 id="dx-pipe">把標準化與模型交給同一條 Pipeline</h3>
-<p>到 Ch06 中文 Lab 的 Ridge 節，先完成 imports、Hitters 清理、X／Y、lambdas 與 n_samples 的建立，再接著閱讀下面兩格。
-這裡沿用該份 notebook 的變數；其資料與本頁 Boston、Auto 範例不同。</p>
-{card('標準化後接 Ridge', lab_code(6,122), lab_output(6,122), src='<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 122')}
-<p>每個步驟都有名稱：scaler 與 ridge。訓練時先由 scaler 學平均及標準差，再將轉換結果交給 Ridge。
-預測時沿用同一 scaler 的參數；<code>pipe['ridge'].alpha</code> 可存取模型的懲罰強度。</p>
-{card('把整條 Pipeline 放進切分評估', lab_code(6,128), lab_output(6,128), src='<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 128')}
-<p>此例用一次 ShuffleSplit 留出一半資料，每次評估會複製並重新擬合整條 Pipeline，包括 scaler。
-<code>neg_mean_squared_error</code> 採「越大越好」的分數方向，最前面的負號將它轉回 MSE。
-這裡 alpha 已固定為 0.01，沒有同時搜尋最佳 alpha；改用其他分割器時仍保持前處理在每次訓練資料內。</p>
-<p class="source-note">延伸：<a href="https://scikit-learn.org/stable/modules/compose.html#pipeline">scikit-learn Pipeline 文件</a>；完整參數選擇見 <a href="model_selection.html#ridge">收縮方法</a>。</p>
-"""
+''
 
 
 # Reading flow: short main text with complete optional details.

@@ -1,0 +1,79 @@
+166
+4. Classification
+KNN−1
+KNN−CV
+LDA
+Logistic
+NBayes
+QDA
+SCENARIO 4
+0.30
+0.35
+0.40
+KNN−1
+KNN−CV
+LDA
+Logistic
+NBayes
+QDA
+SCENARIO 5
+0.18
+0.20
+0.22
+0.24
+0.26
+0.28
+0.30
+0.32
+KNN−1
+KNN−CV
+LDA
+Logistic
+NBayes
+QDA
+SCENARIO 6
+0.15
+0.20
+0.25
+0.30
+0.35
+0.40
+0.45
+FIGURE 4.12.
+Boxplots of the test error rates for each of the non-linear
+scenarios described in the main text.
+other approaches. The naive Bayes assumption of independent predictors
+is violated, so naive Bayes performs poorly.
+Scenario 5: The data were generated from a normal distribution with un-
+correlated predictors. Then the responses were sampled from the logistic
+function applied to a complicated non-linear function of the predictors. The
+center panel of Figure 4.12 shows that both QDA and naive Bayes gave
+slightly better results than the linear methods, while the much more flexi-
+ble KNN-CV method gave the best results. But KNN with K = 1 gave the
+worst results out of all methods. This highlights the fact that even when the
+data exhibits a complex non-linear relationship, a non-parametric method
+such as KNN can still give poor results if the level of smoothness is not
+chosen correctly.
+Scenario 6: The observations were generated from a normal distribution
+with a different diagonal covariance matrix for each class. However, the
+sample size was very small: just n = 6 in each class. Naive Bayes performed
+very well, because its assumptions are met. LDA and logistic regression
+performed poorly because the true decision boundary is non-linear, due to
+the unequal covariance matrices. QDA performed a bit worse than naive
+Bayes, because given the very small sample size, the former incurred too
+much variance in estimating the correlation between the predictors within
+each class. KNN’s performance also suffered due to the very small sample
+size.
+These six examples illustrate that no one method will dominate the oth-
+ers in every situation. When the true decision boundaries are linear, then
+the LDA and logistic regression approaches will tend to perform well. When
+the boundaries are moderately non-linear, QDA or naive Bayes may give
+better results. Finally, for much more complicated decision boundaries, a
+non-parametric approach such as KNN can be superior. But the level of
+smoothness for a non-parametric approach must be chosen carefully. In the
+next chapter we examine a number of approaches for choosing the correct
+level of smoothness and, in general, for selecting the best overall method.
+Finally, recall from Chapter 3 that in the regression setting we can accom-
+modate a non-linear relationship between the predictors and the response
+by performing regression using transformations of the predictors. A similar
+approach could be taken in the classification setting. For instance, we could

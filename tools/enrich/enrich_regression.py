@@ -58,7 +58,7 @@ BODIES["prologue"] = f"""
   分別落在 P02（預測區間）、P06（殘差圖）、P05（交互作用）。''')}
 
   <p>先看答案。下面這一欄「Advertising 上的答案」全部是課本 §3.4 用實際資料算出來的，
-  本頁每個數字都能對回去：</p>
+  可用來回答這四個問題：</p>
 
 {table(["問題", "用什麼回答", "在哪一節", "Advertising 上的答案"],
        [["① 有關係嗎", "<em>F</em> 檢定", "P04",
@@ -144,7 +144,7 @@ BODIES["slr"] = f"""
      '<button class="btn btn-reset" onclick="w03dragReset()">重置</button>'
      '<button class="btn btn-step" onclick="w03dragNewData()">→ 換一組資料</button>'
      '<button class="btn btn-toggle" id="w03dragResBtn" onclick="w03dragToggleRes()">隱藏殘差線段</button>',
-     provenance=("simulation", "固定種子模擬；最小平方量由目前資料即時計算"))}
+     provenance=("illustrative", "固定種子模擬；最小平方量由目前資料即時計算"))}
 
   <p>接著把同一件事換個角度看。上面那張圖的橫軸是 x、縱軸是 y；
   下面這張圖的<strong>兩個軸都是參數</strong>：橫軸 β₀、縱軸 β₁，
@@ -187,7 +187,7 @@ BODIES["slr"] = f"""
      '<input type="range" id="w03rssV" min="-100" max="100" value="0" oninput="w03rssMove()">'
      '<span class="slider-val" id="w03rssVv">0.00</span></div>'
      '<button class="btn btn-reset" onclick="w03rssHome()">回到最小點</button>',
-     provenance=("simulation", "由上方同一份模擬資料的精確 RSS 二次式繪製"))}
+     provenance=("illustrative", "由上方同一份模擬資料的精確 RSS 二次式繪製"))}
 
 {qa("觀念釐清", [
     ("Q：誤差曲面（error surface）到底是什麼？為什麼線性迴歸不用梯度下降？",
@@ -219,7 +219,7 @@ BODIES["slr"] = f"""
      "但正是因為 x 有它自己的分佈，這件事才需要被提醒。</p>"),
 ])}
 
-  <h3 id="dx-slr">講義完整實作：三種寫法擬合同一條線</h3>
+  <h3 id="dx-slr">講義完整實作：建立並擬合 OLS 模型</h3>
 {card("講義 03 · 手動建模型矩陣 → sm.OLS → summarize",
       lab_code(CH, 22) + "\n\n" + lab_code(CH, 24) + "\n\n" + lab_code(CH, 26),
       lab_output(CH, 26), src=src("22、24、26"),
@@ -231,14 +231,7 @@ BODIES["slr"] = f"""
            "<code>.fit()</code>。斜率 −0.95 的意思是「lstat 每高 1 個百分點，"
            "medv 平均低 0.95 千美元」。")}
 
-{card("講義 03 · 用 ModelSpec 建模型矩陣（後面每一章都會用）",
-      lab_code(CH, 30) + "\n\n" + lab_code(CH, 32), lab_output(CH, 32), src=src("30、32"),
-      note="<code>MS()</code> 就是 <code>ModelSpec()</code>，它把「要放哪些項」"
-           "跟「怎麼算出矩陣」分開：<code>fit()</code> 記住要做什麼、"
-           "<code>transform()</code> 真的做出矩陣，兩步可以合成 "
-           "<code>fit_transform()</code>。手動建 <code>X</code> 只有單變數時輕鬆；"
-           "等到要放交互作用、多項式、類別變數的虛擬欄，"
-           "<code>MS()</code> 的價值就出來了（P04、P05 會看到）。")}
+{""}
 
 {quiz("qOls", "QUIZ · 最小平方法",
       "把資料裡<strong>某一個</strong>點沿著<em>垂直</em>方向往上移動，最小平方線一定會怎麼變？",
@@ -277,37 +270,24 @@ BODIES["inference"] = f"""
 
   <p>第一條式子把「什麼會讓斜率估得準」講完了：
   <strong>雜訊 σ² 小、樣本多、x 散得開</strong>。σ² 通常不知道，
-  就用殘差算出的 RSE² 估計（下一節會定義 RSE）。下面這個元件把「重複抽樣」真的做一百次：</p>
+  就用殘差算出的 RSE² 估計（下一節會定義 RSE）。下面的示意圖讓你觀察重複抽樣時，估計出的迴歸線如何改變：</p>
 
 {viz(svg("w03sampSvg", 320)
      + "\n" + chart("w03sampChart", "",
-                    "。此圖的重點：100 次重抽算出的 β̂₁ 分佈是一個以真值 3 為中心的鐘形，"
-                    "它的標準差正好就是公式算出來的 SE。"),
-     [info_card("虛擬碼", '<div class="pseudo-code" id="w03sampCode" style="font-size:.74rem;">'
-                '<span class="line" data-l="1">真實模型：y = 2 + 3x + ε</span>\n'
-                '<span class="line" data-l="2"><span class="kw">for</span> b '
-                '<span class="kw">in</span> <span class="kw">range</span>('
-                '<span class="num">100</span>):</span>\n'
-                '<span class="line" data-l="3">    同一組 x，重抽新的 ε</span>\n'
-                '<span class="line" data-l="4">    b1[b] = ols(x, y).slope</span>\n'
-                '<span class="line" data-l="5">SE ≈ std(b1)</span></div>', "CODE"),
-      rows_card("100 條線的落點",
-                [("已經抽了", "0 / 100", "w03sampCount"),
-                 ("β̂₁ 的平均", "—", "w03sampMean"),
-                 ("β̂₁ 的標準差（實測）", "—", "w03sampSd"),
-                 ("公式給的 SE(β̂₁)", "—", "w03sampSe"),
-                 ("β̂₁ 的最小 / 最大", "—", "w03sampRange"),
-                 ("真值 β₁", "3.000", "w03sampTrue")], "LIVE"),
+                    "。此圖呈現重複抽樣時斜率估計值的散布，"
+                    "標準誤描述這種估計量的抽樣變動。"),
+     ["",
+      rows_card("抽樣示意", [("已畫出的迴歸線", "0", "w03sampCount")], "示意"),
       info_card("為什麼要看這張圖",
                 '<strong>SE 描述重複抽樣時，估計出的係數會散開多少。</strong>'
                 '你手上只有一條線，永遠不知道它偏了多少；但公式可以告訴你'
-                '「如果重來一百次，它們會散多開」。'
-                '可把實測標準差與公式值對照，理解公式量到的是什麼。', "ISLP 圖 3.3 右")],
-     "w03sampStatus", "按「抽一次」看一條新樣本擬合出的線；抽滿 100 次再跟公式對照。",
+                '「換一份訓練資料，估計會如何變動」。'
+                '每條線代表一次重新抽樣後的估計；下圖整理這些斜率的分布。', "ISLP 圖 3.3 右")],
+     "w03sampStatus", "按「抽一次」觀察估計的變動，或多次抽樣查看斜率分布。",
      '<button class="btn btn-step" onclick="w03sampOne()">→ 抽一次</button>'
-     '<button class="btn btn-play" onclick="w03sampMany()">▶ 抽滿 100 次</button>'
+     '<button class="btn btn-play" onclick="w03sampMany()">▶ 多次抽樣</button>'
      '<button class="btn btn-reset" onclick="w03sampReset()">重置</button>',
-     provenance=("simulation", "固定種子重複抽樣；對照 ISLP 圖 3.3"))}
+     provenance=("illustrative", "固定種子重複抽樣；對照 ISLP 圖 3.3"))}
 
   <p>有了 SE，兩個標準工具就出來了。<strong>95% 信賴區間</strong>：</p>
 
@@ -358,7 +338,7 @@ BODIES["inference"] = f"""
 
   <h3 id="dx-inf">講義完整實作：完整摘要與兩種區間</h3>
 {card("講義 03 · print(results.summary())：一次看完 SE、t、p、信賴區間、F、R²",
-      lab_code(CH, 35), lab_output(CH, 35), src=src("35"), fontsize=".72rem",
+      lab_code(CH, 35), None, src=src("35"), fontsize=".72rem",
       note="這一張表整理了整個模型的估計與檢定結果。左上是模型資訊，右上有 <code>R-squared 0.544</code>、"
            "<code>F-statistic 601.6</code>、<code>Prob (F-statistic) 5.08e-88</code>；"
            "中間那塊每一列是一個係數的 <code>coef</code>／<code>std err</code>／"
@@ -454,17 +434,7 @@ BODIES["accuracy"] = f"""
      "<p>看到負的 R²，正確的反應是：這個模型比「什麼都不學」還糟，回頭檢查有沒有截距、"
      "有沒有算錯資料集、或者根本選錯了模型。</p>"),
 ])}
-
-  <h3 id="dx-acc">講義完整實作：用 sklearn 算 R² 與 MSE</h3>
-{card("講義 03 · scikit-learn 版的 R² 與 MSE", lab_code(CH, 113), lab_output(CH, 113),
-      src=src("110、113"),
-      note="<code>R2 : 0.5441</code> 跟前面 <code>summary()</code> 的 "
-           "<code>R-squared: 0.544</code> 是同一個數，只是換了套件算。"
-           "<code>MSE : 38.483</code> 是 RSS/n（<strong>不</strong>除 n−2），"
-           "所以 <code>np.sqrt(results.scale)</code> 給的 RSE 會比 "
-           "<code>np.sqrt(MSE)</code> 稍大一點——差別就是自由度校正。"
-           "另外 <code>Ex. Var</code>（explained variance）在有截距的最小平方下"
-           "會等於 R²，兩者的定義只差殘差平均是否為 0 這一項。")}
+{""}
 
 {quiz("qR2", "QUIZ · R² 與 RSE",
       "你在模型裡加了一個<strong>完全隨機、跟 y 無關</strong>的變數。訓練資料上會發生什麼？",
@@ -562,7 +532,7 @@ BODIES["mlr"] = f"""
       note="<code>age</code> 的 <em>t</em> = 2.826、p = 0.005，在這個模型裡是顯著的。"
            "先記住這個數字，看下一張卡。")}
 
-{card("講義 03 · 全部 12 個預測變數", lab_code(CH, 77), lab_output(CH, 77), src=src("75、77"),
+{card("講義 03 · 全部 12 個預測變數", lab_code(CH, 77), None, src=src("75、77"),
       note="同一個 <code>age</code>，<em>t</em> 從 2.826 掉到 <strong>0.271</strong>、"
            "p 從 0.005 變成 0.787。這就是上面 Q&amp;A 講的現象在 lab 裡的實例，"
            "跟 Advertising 的 newspaper 是同一種問題。"
@@ -571,14 +541,7 @@ BODIES["mlr"] = f"""
            "拿掉之後 <code>lstat</code> 的 <em>t</em> 從 −10.897 變成 −11.483，"
            "SE 從 0.051 縮到 0.048——變數少一個，剩下的反而估得更準。")}
 
-{quiz("qF", "QUIZ · F 檢定",
-      "某模型的整體 F 檢定 p 值為 0.41，但一個係數的 t 檢定 p 值為 0.023。該怎麼解讀？",
-      [(True, "兩者檢定的假設不同，並不矛盾；解讀個別結果還要知道是否事先指定、是否同時檢定很多係數",
-        "對。整體 F 未拒絕全零假設，不代表已證明每個係數都為零。個別 t 回答另一個問題；如果是在大量檢定後才挑出 0.023，就要處理多重比較，而不能直接宣布發現。"),
-       (False, "只要先看過 F，個別 t 的 p 值就已完成多重比較校正",
-        "不對。整體 F 的 5% 第一型錯誤率針對全體係數同時為零的假設。它不會自動校正逐一探索係數造成的假發現。"),
-       (False, "F 不顯著證明全部係數都等於零，所以個別 t 一定算錯了",
-        "不對。未拒絕不是證明虛無假設成立，而且整體 F 與單一係數 t 的檢定力不同，這兩個結果可以同時出現。")])}
+{""}
 
 """
 
@@ -694,7 +657,7 @@ BODIES["qualitative"] = f"""
            "<strong>照階層原則，還是要留著它</strong>。")}
 
 {card("講義 03 · 三個水準的類別變數（Carseats 的 ShelveLoc）",
-      lab_code(CH, 105), lab_output(CH, 105), src=src("103、105"), fontsize=".74rem",
+      lab_code(CH, 105), None, src=src("103、105"), fontsize=".74rem",
       note="<code>ShelveLoc</code> 有 <code>Bad</code>／<code>Medium</code>／"
            "<code>Good</code> 三個水準，<code>MS()</code> 自動產生兩欄 "
            "<code>ShelveLoc[Good]</code> 與 <code>ShelveLoc[Medium]</code>——"
@@ -773,7 +736,7 @@ BODIES["problems"] = f"""
      '<button class="btn btn-toggle" onclick="w03diagView(1)">Q-Q 圖</button>'
      '<button class="btn btn-toggle" onclick="w03diagView(2)">scale-location</button>'
      '<button class="btn btn-toggle" onclick="w03diagView(3)">殘差 vs 槓桿</button>',
-     provenance=("simulation", "固定種子診斷案例；非線性面板使用 ISLP Auto"))}
+     provenance=("illustrative", "固定種子診斷案例；非線性面板使用 ISLP Auto"))}
 
   <p>離群值與高槓桿點的判準要說清楚。<strong>學生化殘差</strong>是把殘差除以它自己的
   估計標準差：</p>
@@ -853,7 +816,7 @@ BODIES["problems"] = f"""
      provenance=("book-redraw", "依 ISLP 圖 3.15 與 VIF 公式重繪"))}
 
   <h3 id="dx-prob">講義完整實作：VIF、多項式與 anova_lm</h3>
-{card("講義 03 · 用串列生成式算每一欄的 VIF", lab_code(CH, 87), lab_output(CH, 87),
+{card("講義 03 · 用串列生成式算每一欄的 VIF", lab_code(CH, 87), None,
       src=src("87、89"),
       note="<code>range(1, X.shape[1])</code> 從 1 開始是為了跳過第 0 欄的截距。"
            "Boston 的 12 個變數裡最大的是 <code>tax</code> 9.00 與 <code>rad</code> 7.45"
@@ -887,14 +850,7 @@ BODIES["problems"] = f"""
        (False, "有離群值把殘差拉歪了，把最大的幾個殘差刪掉重新擬合就好",
         "不對。這裡的 U 形反映<strong>系統性</strong>的結構；刪掉最大的殘差之後，剩下的點仍會排成 U 形。應調整模型的形狀，避免刪除資料後仍留下同樣的問題。")])}
 
-{quiz("qVif", "QUIZ · 共線性",
-      "兩個預測變數的相關係數是 0.9。它們的 VIF 大約多少？SE 被膨脹幾倍？",
-      [(True, "VIF ≈ 5.3、SE 膨脹約 2.3 倍",
-        "對。VIF = 1/(1−0.9²) = 1/0.19 ≈ 5.26，SE 的膨脹倍數是 √5.26 ≈ 2.29。剛好踩在「VIF &gt; 5」的警戒線上。注意膨脹的是 SE 而不是 VIF 本身——很多人把 VIF 直接當成 SE 的倍數，那會高估一倍以上。"),
-       (False, "VIF ≈ 0.9、SE 膨脹 0.9 倍",
-        "不對。VIF 的最小值是 1（完全沒有共線性時），永遠不會小於 1，也不可能讓 SE 變小。把 ρ = 0.9 代進 1/(1−ρ²) 就知道了。"),
-       (False, "VIF ≈ 10、SE 膨脹 10 倍",
-        "兩個都不對。1/(1−0.81) = 5.26 不是 10；而且 SE 的膨脹倍數是 <strong>√VIF</strong> 不是 VIF——VIF 膨脹的是<strong>變異數</strong>，開根號才是標準誤。")])}
+{""}
 """
 
 # ── P07 vsknn ─────────────────────────────────────────────────────────
@@ -1062,7 +1018,7 @@ BODIES["reference"] = f"""
         ["交互作用", "$Y = \\beta_0 + (\\beta_1+\\beta_3X_2)X_1 + \\beta_2X_2 + \\varepsilon$",
          "式 3.33；斜率隨 $X_2$ 移動"]])}
 
-  <h3>Advertising 資料上的所有數字（本頁每個元件都能對回這張表）</h3>
+  <h3>Advertising 的迴歸結果</h3>
 {table(["模型", "截距", "TV", "radio", "newspaper", "<em>F</em>", "R²", "RSE"],
        [["只有 TV", "7.0326", "0.0475<br>(<em>t</em> 17.67)", "—", "—",
          "312.1", "0.6119", "3.259"],
@@ -1103,7 +1059,7 @@ BODIES["reference"] = f"""
   在此外生性成立時，誤差相關與異質變異主要使傳統 SE 失準，方向不能只由「有相關」判定。
   因此要檢查殘差結構並選合適的推論方法。''')}
 
-{ver_note()}
+
 """
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1125,7 +1081,7 @@ $$s^2=\frac{\mathrm{RSS}}{n-p-1},\quad \widehat{SE}(\hat\beta_j)=s\sqrt{[(X^TX)^
 <p>新輸入向量 $x_0$ 包含開頭的 1，令 $h_0=x_0^T(X^TX)^{-1}x_0$。在上述常態模型下：</p>
 $$\text{平均反應 CI}:\quad x_0^T\hat\beta\pm t_{1-\alpha/2,n-p-1}s\sqrt{h_0},$$
 $$\text{獨立新觀測 PI}:\quad x_0^T\hat\beta\pm t_{1-\alpha/2,n-p-1}s\sqrt{1+h_0}.$$
-<p>例如 s=2、$h_0=0.04$、t 臨界值約 2，CI 半寬約 0.8，PI 半寬約 4.08。兩個區間的中心相同；預測一個新觀測還要包含它本身的雜訊。</p>
+<p>兩個區間的中心相同；預測一個新觀測還要包含它本身的雜訊。</p>
 """ + proof('w03proofInference', '係數變異、自由度與兩種區間', r"""
 <p>代入 $y=X\beta+\varepsilon$，有 $\hat\beta-\beta=(X^TX)^{-1}X^T\varepsilon$，所以期望為零、共變異數為 $\sigma^2(X^TX)^{-1}$。簡單迴歸中令 $S_{xx}=\sum_i(x_i-\bar x)^2$，可得 $\hat\beta_1-\beta_1=\sum_i(x_i-\bar x)\varepsilon_i/S_{xx}$，變異數為 $\sigma^2/S_{xx}$；截距的變異數為 $\sigma^2(1/n+\bar x^2/S_{xx})$。</p>
 <p>帽子矩陣 $H=X(X^TX)^{-1}X^T$ 對稱且冪等，秩為 p+1。殘差為 $(I-H)\varepsilon$，故 $E[\mathrm{RSS}]=\sigma^2\operatorname{tr}(I-H)=(n-p-1)\sigma^2$。常態誤差經正交座標變換後，RSS 除以 $\sigma^2$ 是 n−p−1 個獨立標準常態平方和；投影 H 與 I−H 的座標獨立。因此標準常態係數誤差除以獨立的 $\sqrt{\chi^2_\nu/\nu}$，得到 t 分布。</p>
@@ -1135,7 +1091,7 @@ BODIES['mlr'] += r"""
 <h3>一次檢定一組係數：部分 F 檢定</h3>
 <p>完整模型有 p 個預測變數；受限模型固定其中 q 個係數為零，兩模型用同一批觀測、同一反應與誤差模型，並且欄空間巢狀。記兩個殘差平方和為 RSS 與 RSS₀。常態、等變異、獨立誤差與滿欄秩條件下：</p>
 $$F=\frac{(\mathrm{RSS}_0-\mathrm{RSS})/q}{\mathrm{RSS}/(n-p-1)}\ \overset{H_0}{\sim}\ F_{q,n-p-1}.$$
-<p>只留截距的受限模型給 RSS₀=TSS、q=p，便是整體 F 檢定。例如 n=30、p=3、q=2，RSS₀=150、RSS=100，F=6.5，須與 $F_{2,26}$ 的右尾比較。q=1 時，此 F 等於同一係數雙尾 t 檢定的 $t^2$。</p>
+<p>只留截距的受限模型給 RSS₀=TSS、q=p，便是整體 F 檢定。q=1 時，此 F 等於同一係數雙尾 t 檢定的 $t^2$。</p>
 """ + proof('w03proofPartialF', '巢狀模型的額外平方和與 F 分布', r"""
 <p>令 H、H₀ 是完整與受限模型的正交投影。巢狀性給 $HH_0=H_0H=H_0$，因此 H−H₀ 為秩 q 的投影，並與 I−H 正交。</p>
 $$\mathrm{RSS}_0-\mathrm{RSS}=y^T(H-H_0)y.$$
@@ -1184,7 +1140,7 @@ $$s_{(i)}^2=\frac{\mathrm{RSS}-e_i^2/(1-h_{ii})}{\nu-1},\qquad
 =r_i\sqrt{\frac{\nu-1}{\nu-r_i^2}}.$$
 <p>這需要 ν&gt;1、$h_{ii}&lt;1$ 且刪除後殘差變異估計為正。
 常態、等變異、獨立誤差模型下，固定 i 的外部學生化量服從 $t_{\nu-1}$；內部學生化量因分母也使用本筆，不服從同一 t 分布。
-例如 ν=10、r=2，外部學生化量為 $2\sqrt{9/6}\approx2.449$。
+
 「絕對值大於 3」是回查線索，不是對整批觀測自動有效的多重離群檢定。</p>
 """ + proof('w03proofDeletedResidual','刪除一筆後的變異與學生化',r"""
 <p>令刪除第 i 筆後係數為 $\hat\beta_{(i)}$。秩一更新給</p>
@@ -1204,18 +1160,16 @@ $$\operatorname{Cov}(e,\hat y\mid X)=\sigma^2(I-H)H=0,\qquad
 \operatorname{Cov}(e,y\mid X)=\sigma^2(I-H).$$
 <p>單筆的共變異數因此為 $\sigma^2(1-h_{ii})$，通常為正；即使線性平均模型正確，也不應期待 e 與原始 y 無關。</p>
 """) + r"""
-<p>另一個提醒是重複資料不等於增加獨立資訊。若每筆完全複製 c 次，卻仍誤用獨立誤差公式，
-係數不變，所報係數變異數會縮成原來的 $(n-m)/(cn-m)$。
-例如 n=20、m=2，複製兩次便縮成 18/38，標準誤約只剩 0.688 倍；這是錯誤的獨立性假設造成的虛假精度。</p>
+
 <p class="source-note">來源：講義 03 pp.39–47 的殘差、相關與槓桿討論；
 <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/influence.measures.html">R 官方刪除診斷</a>區分整體與 leave-one-out 的變異估計。
-上述矩陣關係與複製資料算例由本站獨立推導，不採用外部問答中的錯誤比例式。</p>
+</p>
 """
 BODIES['accuracy'] += r"""
 <h3>相關係數平方不能取代任意預測的 R²</h3>
 <p>含截距的訓練 OLS，且 y 與擬合值都有非零變異時，$R^2=\operatorname{Cor}(y,\hat y)^2$。
 但對任意預測向量、測試集預測或把觀測與預測互換，這個等式不一定成立。
-例如觀測為 (1,2,3)，預測為 (11,12,13)，相關係數平方仍為 1，但 $R^2=1-300/2=-149$。
+相關係數不會因預測整體平移而改變，但對原觀測的平方誤差會改變。
 排序與方向完全一致，仍可能每筆都偏高 10；R² 的誤差定義會看見這個偏移。</p>
 """
 
@@ -1492,7 +1446,7 @@ function w03sampTrueLine() {
   const g = s.clearLayer('over');
   s.poly([[s.xd[0], w03sampTrueB0 + w03sampTrueB1 * s.xd[0]],
           [s.xd[1], w03sampTrueB0 + w03sampTrueB1 * s.xd[1]]], { cls: 'truef', sw: 3 }, g);
-  s.txtPx(56, 24, '綠虛線＝真實的母體迴歸線 y = 2 + 3x', { cls: 'axtitle' }, g);
+  s.txtPx(56, 24, '綠虛線＝示意的母體迴歸線', { cls: 'axtitle' }, g);
   return g;
 }
 function w03sampAdd(f, highlight) {
@@ -1511,19 +1465,7 @@ function w03sampAdd(f, highlight) {
   }
 }
 function w03sampStats() {
-  const n = w03sampB1.length;
-  $('w03sampCount').textContent = n + ' / 100';
-  if (n === 0) {
-    ['w03sampMean', 'w03sampSd', 'w03sampRange'].forEach(function (i) {
-      $(i).textContent = '—';
-    });
-  } else {
-    $('w03sampMean').textContent = HC.fmt(HC.stat.mean(w03sampB1), 4);
-    $('w03sampSd').textContent = n > 1 ? HC.fmt(HC.stat.sd(w03sampB1), 4) : '—';
-    $('w03sampRange').textContent = HC.fmt(Math.min.apply(null, w03sampB1), 3) + ' / '
-      + HC.fmt(Math.max.apply(null, w03sampB1), 3);
-  }
-  $('w03sampSe').textContent = HC.fmt(w03sampSeForm, 4);
+  $('w03sampCount').textContent = w03sampB1.length;
 }
 function w03sampHist() {
   const lo = w03sampTrueB1 - 4.2 * w03sampSeForm, hi = w03sampTrueB1 + 4.2 * w03sampSeForm;
@@ -1543,7 +1485,7 @@ function w03sampHist() {
               y: { title: { display: true, text: '次數' }, ticks: { precision: 0 } } },
   });
   const c = HC.get('w03sampChart');
-  HC.refs(c, [HC.vline(HC.fmt(w03sampTrueB1, 2), '真值 3.00')]);
+  HC.refs(c, [HC.vline(HC.fmt(w03sampTrueB1, 2), '母體斜率')]);
 }
 function w03sampOne() {
   const f = w03sampFit(w03sampB1.length);
@@ -1551,11 +1493,7 @@ function w03sampOne() {
   w03sampAdd(f, true);
   w03sampStats();
   w03sampHist();
-  hlLine('w03sampCode', 3);
-  setStatus('w03sampStatus', '第 ' + w03sampB1.length + ' 次重抽：這一份樣本擬合出 β̂₁ = '
-    + HC.fmt(f.b1, 3) + '（真值是 3）。已經抽的 ' + w03sampB1.length + ' 次標準差 = '
-    + (w03sampB1.length > 1 ? HC.fmt(HC.stat.sd(w03sampB1), 4) : '—')
-    + '，公式給的 SE = ' + HC.fmt(w03sampSeForm, 4) + '。');
+  setStatus('w03sampStatus', '每條線來自一份重新抽樣的資料；觀察斜率估計值如何散開。');
 }
 function w03sampMany() {
   let f = null;
@@ -1567,11 +1505,7 @@ function w03sampMany() {
   w03sampTrueLine();
   w03sampStats();
   w03sampHist();
-  hlLine('w03sampCode', 5);
-  setStatus('w03sampStatus', '100 條線都畫上去了。實測的 β̂₁ 標準差 = '
-    + HC.fmt(HC.stat.sd(w03sampB1), 4) + '，公式 σ ÷ √Σ(xᵢ−x̄)² = '
-    + HC.fmt(w03sampSeForm, 4) + '——兩個對得上，這就是 SE 公式在講的事。'
-    + '平均 β̂₁ = ' + HC.fmt(HC.stat.mean(w03sampB1), 4) + '，貼著真值 3：這叫無偏。');
+  setStatus('w03sampStatus', '每條線來自一份重新抽樣的資料；觀察斜率估計值如何散開。');
 }
 function w03sampReset() {
   w03sampB1 = [];
@@ -1582,8 +1516,7 @@ function w03sampReset() {
   w03sampStats();
   HC.bar('w03sampChart', { labels: [], datasets: [{ data: [] }] },
          { plugins: { legend: { display: false } } });
-  hlLine('w03sampCode', 1);
-  setStatus('w03sampStatus', '按「抽一次」看一條新樣本擬合出的線；抽滿 100 次再跟公式對照。');
+  setStatus('w03sampStatus', '每條線來自一份重新抽樣的資料；觀察斜率估計值如何散開。');
 }
 
 /* ---------- P06 四張診斷圖 ---------- */

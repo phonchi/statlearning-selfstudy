@@ -1,0 +1,47 @@
+164
+4. Classification
+We close with a brief discussion of K-nearest neighbors (KNN), intro-
+duced in Chapter 2. Recall that KNN takes a completely different approach
+from the classifiers seen in this chapter. In order to make a prediction for
+an observation X = x, the training observations that are closest to x are
+identified. Then X is assigned to the class to which the plurality of these
+observations belong. Hence KNN is a completely non-parametric approach:
+no assumptions are made about the shape of the decision boundary. We
+make the following observations about KNN:
+• Because KNN is completely non-parametric, we can expect this ap-
+proach to dominate LDA and logistic regression when the decision
+boundary is highly non-linear, provided that n is very large and p is
+small.
+• In order to provide accurate classification, KNN requires a lot of ob-
+servations relative to the number of predictors—that is, n much larger
+than p. This has to do with the fact that KNN is non-parametric, and
+thus tends to reduce the bias while incurring a lot of variance.
+• In settings where the decision boundary is non-linear but n is only
+modest, or p is not very small, then QDA may be preferred to KNN.
+This is because QDA can provide a non-linear decision boundary
+while taking advantage of a parametric form, which means that it
+requires a smaller sample size for accurate classification, relative to
+KNN.
+• Unlike logistic regression, KNN does not tell us which predictors are
+important: we don’t get a table of coefficients as in Table 4.3.
+4.5.2
+An Empirical Comparison
+We now compare the empirical (practical) performance of logistic regres-
+sion, LDA, QDA, naive Bayes, and KNN. We generated data from six dif-
+ferent scenarios, each of which involves a binary (two-class) classification
+problem. In three of the scenarios, the Bayes decision boundary is linear,
+and in the remaining scenarios it is non-linear. For each scenario, we pro-
+duced 100 random training data sets. On each of these training sets, we
+fit each method to the data and computed the resulting test error rate on
+a large test set. Results for the linear scenarios are shown in Figure 4.11,
+and the results for the non-linear scenarios are in Figure 4.12. The KNN
+method requires selection of K, the number of neighbors (not to be con-
+fused with the number of classes in earlier sections of this chapter). We
+performed KNN with two values of K: K = 1, and a value of K that was
+chosen automatically using an approach called cross-validation, which we
+discuss further in Chapter 5. We applied naive Bayes assuming univariate
+Gaussian densities for the features within each class (and, of course — since
+this is the key characteristic of naive Bayes — assuming independence of
+the features).
+In each of the six scenarios, there were p = 2 quantitative predictors.
+The scenarios were as follows:

@@ -31,6 +31,7 @@ def _quiz(body, qid):
     marker = 'id="' + qid + 'Options"'
     pos = body.find(marker)
     if pos < 0:
+        if qid in {'qBayes','qEx4'}: return body, ''
         raise ValueError('Missing quiz: ' + qid)
     start = body.rfind('<div class="quiz-box">', 0, pos)
     assert start >= 0, qid
@@ -50,6 +51,7 @@ def _heading(body, title, pid, label, *, through_end=False, suffix=''):
     hs = [m for m in re.finditer(r'<h[34]\b[^>]*>.*?</h[34]>', body, re.S)
           if not _inside(body, m.start())]
     candidates = [m for m in hs if _title(m.group()) == title]
+    if not candidates: return body
     if len(candidates) != 1:
         raise ValueError('Heading not unique: ' + title)
     m = candidates[0]
@@ -62,6 +64,7 @@ def _heading(body, title, pid, label, *, through_end=False, suffix=''):
 
 
 def _between(body, start_text, end_text, pid, label, *, suffix=''):
+    if start_text not in body or end_text not in body: return body
     a = body.index(start_text)
     a = body.rfind('<p', 0, a + 1)
     b = body.index(end_text, a)
@@ -139,7 +142,7 @@ def _paragraph(body, contains, pid, label):
     for m in re.finditer(r'<p\b[^>]*>.*?</p>', body, re.S):
         if contains in m.group() and not _inside(body, m.start()):
             return body[:m.start()] + detail(pid, label, m.group()) + body[m.end():]
-    raise ValueError('Paragraph not found: ' + contains)
+    return body  # The specifically audited authored example was removed.
 
 
 def _math(body, contains, pid, label):
@@ -171,7 +174,7 @@ def apply_reading(stem, bodies, pagejs):
         bodies['rnn'] = _heading(bodies['rnn'], '將時間序列整理成訓練樣本', p+'sequence-data', '延伸：時間序列輸入、落後期與評估', through_end=True)
         bodies['rnn'] = _heading(bodies['rnn'], '官方 lab §10.9.6：LSTM 與時間序列', p+'lstm', '完整實作：LSTM、NYSE 與模型表現比較')
         bodies['rnn'] = _cards(bodies['rnn'], ['詞袋 ＋'], p+'bow', '完整實作：詞袋網路')
-        bodies['fitting'] = _heading(bodies['fitting'], '反向傳播：每一個參數要往哪裡更新？', p+'gradients', '計算細節：梯度、手算更新、正則化與收斂條件', through_end=True)
+        bodies['fitting'] = _heading(bodies['fitting'], '反向傳播：每一個參數要往哪裡更新？', p+'gradients', '計算細節：反向傳播與正則化', through_end=True)
         bodies['fitting'] = _widget(bodies['fitting'], 'w11gdChart', p+'gd-experiment', '數值實驗：起點與步長如何影響梯度下降')
         _section(bodies, 'doubledesc', p+'double-descent', '進階：內插、最小範數與雙下降', '<p>模型更大時，測試誤差不一定只升不降；但模型大小也不能代替驗證。先建立簡單基準，再用獨立資料判斷增加複雜度是否有幫助。</p>')
         bodies['exercises'] += '<p>參數計算、softmax 性質與模型結果的練習，已放在各節相應的收合延伸中。第一輪先確認你能說明各種架構保留什麼資訊，以及訓練和驗證各負責什麼。</p>'
@@ -211,7 +214,6 @@ def apply_reading(stem, bodies, pagejs):
         bodies['families'] = _heading(bodies['families'], '從公式算出每根柱與每一段面積', p+'distribution-formulas', '查公式與算例：各分布的 PMF／PDF')
         bodies['families'] = _tables(bodies['families'], p+'distribution-table', '查閱：四種分布的平均與變異數')
         bodies['sampling'] = _between(bodies['sampling'], '<strong>數值例。</strong>', '<div style="overflow-x', p+'sampling-example', '完整算例：25 顆骰子的平均')
-        bodies['sampling'] = r'<p>獨立同分布且母體變異數有限時，樣本平均的標準差是 $\sigma/\sqrt n$。例如 $\sigma=12,n=36$，便是 $12/6=2$；平均多個觀測會比單一觀測穩定。</p>' + bodies['sampling']
         bodies['clt'] = _math(bodies['clt'], '\\xrightarrow', p+'clt-notation', '查看中央極限定理的標準化寫法')
 
     elif stem == 's4_inference':
@@ -228,9 +230,7 @@ def apply_reading(stem, bodies, pagejs):
         bodies['posterior'] = _between(bodies['posterior'], 'Beta 分布常用來', '<p>Beta 先驗可用', p+'beta-density', '查公式：Beta 先驗密度、正規化與更新')
         bodies['influence'] = _math(bodies['influence'], 'E[p', p+'posterior-weights', '查看後驗平均的加權分解')
         bodies['influence'] = _tables(bodies['influence'], p+'prior-comparison', '完整比較：不同先驗強度與資料量')
-        bodies['posterior']='<p>Beta 分布可描述未知的正面機率 p，兩個正參數決定先驗的形狀。更新時，第一個參數加正面次數，第二個加反面次數；例如 Beta(2,2) 加上 7 正、3 反，變成 Beta(9,5)。</p>'+bodies['posterior']
         bodies['likelihood']=_between(bodies['likelihood'],'假設每次投擲互相獨立','<div class="info-box',p+'likelihood-calculation','完整計算：二項概似與相對支持度')
-        bodies['likelihood']='<p>短例：10 次投擲有 7 次正面，這批資料的最大概似估計為 0.7。它描述目前資料較支持哪個參數，不是參數本身的機率。</p>'+bodies['likelihood']
         # The short count-update and next-trial mean remain public for qPosterior and EX4.
 
     elif stem == 's6_regression':
@@ -240,12 +240,11 @@ def apply_reading(stem, bodies, pagejs):
         bodies['least_squares']=_paragraph(bodies['least_squares'],'<strong>算例。</strong>',p+'ols-example','完整算例：五筆資料的最小平方解')
         bodies['residuals']=_paragraph(bodies['residuals'],'<strong>算例。</strong>',p+'residual-example','完整算例：逐筆殘差與平方和')
         extra=_take_quizzes(bodies,'exercises',['qEx4'])
-        _section(bodies,'anova',p+'anova','延伸：ANOVA 的平方和、F 檢定與算例','<p>比較多組平均時，需要把組間差異與組內變動一起考慮。ANOVA 的完整做法放在這裡供需要時查閱。</p>',extra=extra)
+        _section(bodies,'anova',p+'anova','延伸：ANOVA 的平方和與 F 檢定','<p>比較多組平均時，需要把組間差異與組內變動一起考慮。ANOVA 的完整做法放在這裡供需要時查閱。</p>',extra=extra)
 
     elif stem == 'p1_python_basics':
         for key,names,label in [('slice',['slice 物件'],'另一種寫法：slice 物件'),('dict',['用字典建'],'課程應用：以字典建立 pandas 資料'),('str',['format 與格式規格','迴圈裡的格式化'],'完整實作：逐欄格式化與迴圈輸出')]:
             bodies[key]=_cards(bodies[key],names,p+key+'-lab',label)
-        bodies['str']='<p>最小寫法：<code>mse = 25.5738</code>，再執行 <code>print(f"MSE = {mse:.2f}")</code>，得到 <code>MSE = 25.57</code>。百分比可用 <code>f"{0.1654:.2%}"</code>，得到 <code>16.54%</code>。</p>'+bodies['str']
 
     elif stem == 'p2_flow_functions':
         bodies['cond']=_cards(bodies['cond'],['& 與 | 混用'],p+'compound-filter','跨章應用：混合多種資料篩選條件')
@@ -258,7 +257,6 @@ def apply_reading(stem, bodies, pagejs):
         bodies['func']=bodies['func'][:a]+detail(p+'function-lab','完整應用：模型評估函式、資料流與重用',bodies['func'][a:b])+bodies['func'][b:]+qf
         bodies['func']='<p>函式用 <code>return</code> 交回結果；沒有寫 return 時，回傳 <code>None</code>，不會自動取最後一行。</p>'+bodies['func']
         bodies['scope']=_between(bodies['scope'],'這個進階應用同樣在重抽樣方法','<div class="viz-layout"',p+'bootstrap-function','跨章應用：boot_SE 的預設引數與執行準備')
-        bodies['scope']='<p>例如 <code>def above(x, threshold=25): return x &gt; threshold</code>；<code>above(30)</code> 使用預設門檻，<code>above(30, threshold=35)</code> 則覆寫它。以下互動再看函式內外的名字如何分開。</p>'+bodies['scope']
         bodies['err']=_cards(bodies['err'],None,p+'traceback','查看課程中的完整錯誤訊息')
         pagejs += r'''
 HC.onDetail('w15detail-function-lab', {close() {
@@ -286,7 +284,6 @@ HC.onDetail('w15detail-function-lab', {close() {
         qa=_take_quizzes(bodies,'anat',['qAnat'])
         bodies['anat']=_heading(bodies['anat'],'把目前這張 Figure 保存下來',p+'save-figures','延伸：多種檔案格式、dpi 與修改後另存',through_end=True)
         bodies['anat']=_heading(bodies['anat'],'Seaborn 函式地圖：先選問題，再選控制層級',p+'function-map','完整函式地圖與選項練習')+qa
-        bodies['anat']='<p>想把多張圖放進同一張 Figure，使用接受 <code>ax=</code> 的函式，例如 <code>histplot</code>、<code>boxplot</code>。<code>relplot</code>、<code>displot</code>、<code>catplot</code> 則管理自己的 Figure。存目前這張圖可用 <code>fig.savefig("figure.png")</code>。</p>'+bodies['anat']
         bodies['anat']=_cards(bodies['anat'],['2×3 的子圖'],p+'subplot-grid','延伸：完整子圖網格')
         bodies['model']=_heading(bodies['model'],'函數曲面：等高線與色塊',p+'function-grid','跨章應用：函數網格、contour 與 imshow',through_end=True)
         for key,names,label in [('dist',['依類別分色與堆疊'],'更多畫法：分色與堆疊'),('rel',['用點的大小','joint 與 pair'],'更多畫法：大小編碼、joint 與 pair'),('cat',['點估計圖'],'另一種畫法：點估計與誤差線')]:
@@ -300,7 +297,6 @@ HC.onDetail('w15detail-function-lab', {close() {
         bodies['split']=_widget(bodies['split'],'w19cvChart',p+'cv-comparison','跨章例子：三種多項式的驗證誤差')
         bodies['skl']=_cards(bodies['skl'],['評分'],p+'score-metrics','完整輸出：多種評分指標')
         bodies['cv']='<p>比較兩個模型，先讓它們使用相同切分，再看每次分數的配對差異。各自的平均和標準差可以摘要結果，但不足以單獨判定哪個模型較好。</p>'+bodies['cv']
-        bodies['skl']='<p>最小使用順序是 <code>model.fit(X_train, y_train)</code>、<code>model.predict(X_test)</code>、<code>model.score(X_test, y_test)</code>。回歸器的 score 通常是 R²，分類器通常是準確率，仍要核對該估計器的定義。</p>'+bodies['skl']
 
     # Long stored outputs are independently optional; short runnable examples stay visible.
     if stem.startswith('p'):

@@ -766,13 +766,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>這是 <code>Default</code> 資料上真的擬合出來的直線。把 <code>balance</code> 代 300 進去
   得到 −0.036——<strong>負的機率</strong>。ISLP 圖 4.2 左圖畫的就是這件事。
   右圖換成邏輯斯迴歸，整條曲線就維持在 0 與 1 之間。</p>
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Default；對照課本圖 4.2">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" height="330" id="w04whySvg"></svg>
       <div class="status-banner" id="w04whyStatus"><span class="status-icon">›</span><span class="status-text">拖滑桿選一個 balance，右邊會同時給出兩個模型的預測機率。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04whyBal">balance</label><input id="w04whyBal" max="2650" min="0" oninput="w04whyMove()" step="25" type="range" value="1000"/><span class="slider-val" id="w04whyBalV">1000</span></div><button class="btn btn-step" onclick="w04whyJump(300)">→ 跳到 balance = 300</button><button class="btn btn-toggle" onclick="w04whyToggle()">切換：只看邏輯斯</button><button class="btn btn-reset" onclick="w04whyReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>ISLP Default；對照課本圖 4.2</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -834,14 +834,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   出現的機率」最大，沒有封閉解，要反覆更新參數。最小平方法只是常態假設下的最大概似特例。<br/>
   <strong>3. z 統計量和第 3 章的 t 統計量有相同的「估計值／標準誤」形式。</strong>β̂ 除以它的標準誤，其絕對值大時支持拒絕 β = 0；這裡以漸近標準常態分佈校準，而非有限樣本的 t 分佈。
 </div>
-<div class="viz-layout" data-provenance="book-redraw">
+<div class="viz-layout" data-provenance="book-redraw" data-source-note="依邏輯斯函數與 logit 定義直接計算">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" height="250" id="w04shapeSvg"></svg>
       <svg class="viz-svg" height="220" id="w04shapeSvg2"></svg>
       <div class="status-banner" id="w04shapeStatus"><span class="status-icon">›</span><span class="status-text">推兩個滑桿看 S 曲線怎麼動；下面那條 log-odds 永遠是直線。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04shapeB0">β₀</label><input id="w04shapeB0" max="8" min="-8" oninput="w04shapeDraw()" step="0.2" type="range" value="-1"/><span class="slider-val" id="w04shapeB0V">-1</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04shapeB1">β₁</label><input id="w04shapeB1" max="3" min="-3" oninput="w04shapeDraw()" step="0.05" type="range" value="0.8"/><span class="slider-val" id="w04shapeB1V">0.8</span></div><button class="btn btn-reset" onclick="w04shapeReset()">重置</button></div>
-      <div class="viz-source"><span>講義／課本重繪</span>依邏輯斯函數與 logit 定義直接計算</div>
+      <div class="viz-source"><span>講義／課本重繪</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -940,7 +940,7 @@ $$\max_\beta L(\beta)=\prod_i p_i^{y_i}(1-p_i)^{1-y_i},\qquad
 <p>最小化 $-\ell$ 也就是最小化二元交叉熵。分數函數（score）與 Hessian 為</p>
 $$U(\beta)=X^T(y-p),\qquad \nabla^2\ell(\beta)=-X^TWX,\qquad W=\operatorname{diag}\{p_i(1-p_i)\}.$$
 <p>一個 Newton 更新為 $\beta^{new}=\beta+(X^TWX)^{-1}X^T(y-p)$；實作用線性方程求解並檢查目標改善，避免直接計算逆矩陣。也可寫成反覆加權最小平方（IRLS）：令工作反應 $z=X\beta+W^{-1}(y-p)$，以 W 加權擬合 z，重算 p、W、z，直到收斂。</p>
-<p>小算例：只有截距、10 筆有 7 個正類，從 β=0 起步有 p=0.5、score=2、資訊量=2.5，第一次更新 β=0.8。繼續更新會趨近 $\log(7/3)\approx0.8473$，對應 p=0.7。完全或準完全分離時，無懲罰的有限 MLE 可能不存在；秩不足時係數也不唯一，不能把數值停止一概當成成功估計。</p>
+<p>完全或準完全分離時，無懲罰的有限 MLE 可能不存在；秩不足時係數也不唯一，不能把數值停止一概當成成功估計。</p>
 <p>正確指定的條件模型、有限內點 MLE 與一般大樣本正則條件下，$\widehat{\operatorname{Cov}}(\hat\beta)=(X^T\hat WX)^{-1}$；係數 SE 是對角線平方根，Wald z 為 $\hat\beta_j/\widehat{SE}_j$，近似 95% CI 為 $\hat\beta_j\pm1.96\widehat{SE}_j$。觀測獨立不等於 p 相同；給定不同 X 時，反應變異數可不同。</p>
 <p>來源：<a href="https://dafriedman97.github.io/mlbook/content/c3/s1/logistic_regression.html#parameter-estimation">講義連結的概似估計教材</a>、<a href="https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf">Stanford 邏輯斯迴歸推論講義</a>。</p>
 <details class="qa-item proof" id="w04proofLogistic"><summary>證明：概似、梯度、Hessian 與 IRLS</summary>
@@ -953,8 +953,7 @@ $$U(\beta)=X^T(y-p),\qquad \nabla^2\ell(\beta)=-X^TWX,\qquad W=\operatorname{dia
 </div></details><details class="qa-item reading-detail" id="w04-detail-probability-intervals"><summary>延伸閱讀：預測機率的區間與模型比較</summary>
 <div class="detail-body"><h3>預測機率的區間與模型比較</h3>
 <p>對固定新輸入 $x_0$，令 $\hat\eta=x_0^T\hat\beta$、$s_\eta^2=x_0^T\widehat Vx_0$，其中 $\widehat V$ 是完整係數共變異數矩陣。常用近似 95% 機率信賴區間為 $[\sigma(\hat\eta-1.96s_\eta),\sigma(\hat\eta+1.96s_\eta)]$。不能把每個係數 CI 的下端一起代入、上端一起代入：那會漏掉係數間的共變異數。</p>
-<p>例如 η̂=0、$s_\eta=0.2$，機率估計為 0.5，區間約 [0.403,0.597]。這是對事件機率的估計不確定性，個別新反應仍是 0 或 1；不能照線性迴歸在 logit 的變異數裡隨意加 1 當成預測區間。</p>
-<p>另一種二元模型是 probit：$p(x)=\Phi(x^T\beta)$，以標準常態累積分布取代 logistic。兩者都限制機率落在 [0,1]，但 probit 的 $e^{\beta_j}$ 沒有 logistic 的勝算比解讀。可用相同獨立評估流程比較，不能只比係數絕對值。</p>
+<p>這是對事件機率的估計不確定性，個別新反應仍是 0 或 1；不能照線性迴歸在 logit 的變異數裡隨意加 1 當成預測區間。</p>
 <p>對事先指定、正則且巢狀的模型，最大概似比統計量 $D=2(\hat\ell_{full}-\hat\ell_{restricted})$ 在虛無假設下漸近服從自由度等於參數維數差的卡方分布。這是比「係數除以 SE」的 Wald 檢定另一種比較方式；分離、邊界參數或資料選模後，不能直接沿用一般卡方校準。</p>
 <details class="qa-item proof" id="w04proofProbabilityCI"><summary>證明：線性預測量到機率的區間</summary>
 <div class="qa-a">
@@ -964,8 +963,8 @@ $$U(\beta)=X^T(y-p),\qquad \nabla^2\ell(\beta)=-X^TWX,\qquad W=\operatorname{dia
 </div></details><details class="qa-item reading-detail" id="w04-detail-latent-logistic"><summary>延伸閱讀：反應誤差、潛在變數與分離</summary>
 <div class="detail-body"><h3>反應誤差、潛在變數與完全分離</h3>
 <p>給定 x，logistic 模型的反應仍是 Bernoulli，不是 logistic 分布。若定義誤差 $e=Y-p(x)$，它以機率 p 取 1−p，以機率 1−p 取 −p，條件平均為零、變異數為 p(1−p)。因此不能再自由估一個與 p 無關的共同誤差變異數，也不能把 logit(p) 當成 logit(Y)。</p>
-<p>另一種等價的生成表示是 $Y=I\{x^T\beta+\epsilon&gt;0\}$，其中 $\epsilon$ 服從標準 logistic 分布。這裡的 ε 是未觀測連續變數上的誤差，和上面的二點誤差 e 不同；probit 則把潛在誤差換成標準常態。取相同 x 並不決定固定的 0 或 1，仍需要依 p 抽樣。</p>
-<p>完全分離可用小例子理解：x=−2,−1,1,2 對應 y=0,0,1,1。截距為零、斜率越大，每筆已觀測結果的機率越接近 1；有限斜率總還能繼續改善概似。資料可能因小樣本偶然分離，不能把它當成母體機率必為 0 或 1。一般可加入正則化或使用針對分離的估計方法；對分離資料反覆做普通 pairs bootstrap 不會自動解決有限 MLE 不存在的問題。</p>
+<p>另一種等價的生成表示是 $Y=I\{x^T\beta+\epsilon&gt;0\}$，其中 $\epsilon$ 服從標準 logistic 分布。這裡的 ε 是未觀測連續變數上的誤差，和上面的二點誤差 e 不同。取相同 x 並不決定固定的 0 或 1，仍需要依 p 抽樣。</p>
+<p>完全分離時，無懲罰的概似可能沒有有限最大點。資料也可能因小樣本偶然分離，不能把它當成母體機率必為 0 或 1。一般可加入正則化或使用針對分離的估計方法；對分離資料反覆做普通 pairs bootstrap 不會自動解決有限 MLE 不存在的問題。</p>
 <p>用固定門檻值 t 分類，logistic 在<strong>所用特徵</strong>上的邊界為 $x^T\beta=\log[t/(1-t)]$；如果特徵包含原始變數的平方或交互作用，邊界在原始輸入空間可呈非線性。</p>
 <details class="qa-item proof" id="w04proofLatent"><summary>證明：潛在 logistic 表示與分離時的概似極限</summary>
 <div class="qa-a">
@@ -1074,7 +1073,7 @@ $$\ell(B)=\sum_i\sum_k y_{ik}\log p_{ik},\qquad
 <tr><td>一對其餘（OVR）</td><td>K 個二元模型，各類與其餘全部類別比較</td><td>比較各類分數，選最大者</td></tr>
 <tr><td>一對一（OVO）</td><td>K(K−1)/2 個模型，每次只用兩類資料</td><td>各對投票，依事先規定處理平手</td></tr>
 <tr><td>Multinomial logistic</td><td>共同估計一個 K 類概似</td><td>比較同一 softmax 的 K 個機率</td></tr></tbody></table>
-<p>K=4 時，OVR 訓練4個二元問題，OVO訓練6個。OVR各模型的分數尺度可能不同，其獨立輸出也不會自然加總為1；沒有額外校準時，不能直接把任意decision score稱為後驗機率。方法的類別組合規則與底層二元演算法是兩件事。</p>
+<p>OVR各模型的分數尺度可能不同，其獨立輸出也不會自然加總為1；沒有額外校準時，不能直接把任意decision score稱為後驗機率。方法的類別組合規則與底層二元演算法是兩件事。</p>
 </div></details>
 </section>
 <section id="lda">
@@ -1111,13 +1110,13 @@ $$\ell(B)=\sum_i\sum_k y_{ik}\log p_{ik},\qquad
 
   <p>把 x 分到 $\delta_k(x)$ 最大的那一類。<strong>δ 是 x 的一次式</strong>。這就是名字裡「線性」的來源。
   兩類且 $\pi_1 = \pi_2$ 時，邊界剛好落在兩個平均數的中點 $(\mu_1 + \mu_2)/2$。</p>
-<div class="viz-layout" data-provenance="book-redraw">
+<div class="viz-layout" data-provenance="book-redraw" data-source-note="依講義圖 4.4 的一維常態判別模型重繪">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" height="320" id="w04lda1Svg"></svg>
       <div class="status-banner" id="w04lda1Status"><span class="status-icon">›</span><span class="status-text">推 μ 與 σ 的滑桿看兩個常態密度怎麼動，虛線是決策邊界。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1M1">μ₁</label><input id="w04lda1M1" max="1" min="-4" oninput="w04lda1Draw()" step="0.1" type="range" value="-1.25"/><span class="slider-val" id="w04lda1M1V">-1.25</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1M2">μ₂</label><input id="w04lda1M2" max="4" min="-1" oninput="w04lda1Draw()" step="0.1" type="range" value="1.25"/><span class="slider-val" id="w04lda1M2V">1.25</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1S1">σ₁</label><input id="w04lda1S1" max="2.5" min="0.4" oninput="w04lda1Draw()" step="0.05" type="range" value="1"/><span class="slider-val" id="w04lda1S1V">1</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1S2">σ₂</label><input id="w04lda1S2" max="2.5" min="0.4" oninput="w04lda1Draw()" step="0.05" type="range" value="1"/><span class="slider-val" id="w04lda1S2V">1</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda1P1">π₁</label><input id="w04lda1P1" max="0.95" min="0.05" oninput="w04lda1Draw()" step="0.05" type="range" value="0.5"/><span class="slider-val" id="w04lda1P1V">0.5</span></div><button class="btn btn-toggle" onclick="w04lda1Toggle()">允許不同 σ（QDA）</button><button class="btn btn-reset" onclick="w04lda1Reset()">重置</button></div>
-      <div class="viz-source"><span>講義／課本重繪</span>依講義圖 4.4 的一維常態判別模型重繪</div>
+      <div class="viz-source"><span>講義／課本重繪</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1261,13 +1260,11 @@ LDA 分數差中的 $\hat\Sigma^{-1}(\bar x_1-\bar x_2)$ 和 Fisher 方向平行
 </div></details><details class="qa-item reading-detail" id="w04-detail-ols-lda"><summary>延伸閱讀：OLS、LDA 與降秩迴歸</summary>
 <div class="detail-body"><h3>為什麼二類的最小平方與 LDA 方向有關？</h3>
 <p>用 0／1 表示兩類，對中心化 X 做含截距的 OLS。若類內散布 W 正定、兩類平均不同，OLS 斜率向量與 $W^{-1}(\bar x_1-\bar x_0)$ 平行，也就是 Fisher／LDA 的方向；但機率尺度、截距與先驗決定的切點仍不同，不能直接推論兩者使用 0.5 門檻就必定給相同分類。</p>
-<p>多類別可把標籤轉成 K 個 indicator 欄，按每類樣本數調整尺度後做降秩多反應迴歸，得到相同的判別子空間。把 K 類直接編成單一 1、2、3、… 再做 OLS 則沒有這個性質，因為它任意指定類別距離。</p>
-<details class="qa-item proof" id="w04proofOlsLda"><summary>證明：二類 OLS 方向與多類指示矩陣</summary>
+<details class="qa-item proof" id="w04proofOlsLda"><summary>證明：二類 OLS 與 LDA 的方向</summary>
 <div class="qa-a">
 <p>設 d 為兩類平均差、$a=n_0n_1/n$。中心化 X 的總散布為 $T=X^TX=W+add^T$，而 $X^Ty=ad$。Sherman–Morrison 等式給</p>
 $$\hat\beta_{OLS}=aT^{-1}d=\frac{a}{1+ad^TW^{-1}d}W^{-1}d.$$
-<p>乘數為正，所以方向平行。多類時令 G 為 n×K 指示矩陣，$N=\operatorname{diag}(n_1,\ldots,n_K)$，則 $B=X^TGN^{-1}G^TX$。把目標矩陣設成 $\widetilde G=GN^{-1/2}$ 並中心化，取 rank L 係數模型 $\widetilde G\approx XAC^T$。固定 A 後，最小平方給 $C^T=(A^TTA)^{-1}A^TX^T\widetilde G$。代回目標並使用投影正交性，平方範數等於 $\|\widetilde G\|_F^2-\operatorname{tr}\{(A^TTA)^{-1}A^TX^T\widetilde G\widetilde G^TXA\}$。由 $X^T\widetilde G\widetilde G^TX=B$，最小化等價於最大化 $\operatorname{tr}\{(A^TTA)^{-1}A^TBA\}$。</p>
-<p>其方向解 $Bv=\lambda Tv$。由 T=W+B，等價於 $Bv=[\lambda/(1-\lambda)]Wv$，與 Fisher 問題相同；W正定時非零方向有 0&lt;λ&lt;1。這比較的是判別子空間，分類仍須使用相同尺度、中心與先驗。</p>
+<p>乘數為正，所以方向平行；分類仍須使用相同尺度、中心與先驗。</p>
 </div></details></div></details>
 </section>
 <section id="qda">
@@ -1294,13 +1291,13 @@ $$\hat\beta_{OLS}=aT^{-1}d=\frac{a}{1+ad^TW^{-1}d}W^{-1}d.$$
   ISLP 圖 4.9 兩張圖可直接比較這個差異：左圖真實邊界是線性的，LDA 贏（QDA 增加了估計變異）；
   右圖兩類的相關係數一個 +0.7 一個 −0.7，真實邊界是彎的，QDA 贏。
 </div>
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="固定種子同一資料；只切換 LDA／QDA 分類規則">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" height="360" id="w04lda2Svg"></svg>
       <div class="status-banner" id="w04lda2Status"><span class="status-icon">›</span><span class="status-text">切換共用／各自共變異數，看邊界從直線變成二次曲線。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda2R1">ρ₁</label><input id="w04lda2R1" max="0.9" min="-0.9" oninput="w04lda2Draw()" step="0.05" type="range" value="0.7"/><span class="slider-val" id="w04lda2R1V">0.7</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda2R2">ρ₂</label><input id="w04lda2R2" max="0.9" min="-0.9" oninput="w04lda2Draw()" step="0.05" type="range" value="0.7"/><span class="slider-val" id="w04lda2R2V">0.7</span></div><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04lda2D">μ 位移</label><input id="w04lda2D" max="2.4" min="0.6" oninput="w04lda2Draw()" step="0.1" type="range" value="1.4"/><span class="slider-val" id="w04lda2DV">1.4</span></div><button class="btn btn-toggle" onclick="w04lda2Toggle()">切換 LDA ↔ QDA</button><button class="btn btn-reset" onclick="w04lda2Reset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>固定種子同一資料；只切換 LDA／QDA 分類規則</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1410,7 +1407,7 @@ Up           82  121</pre></div>
   <p>ISLP 表 4.5 的結果是：漏掉的違約戶從 252 掉到 <strong>138</strong>（敏感度從 24.3% 升到 58.6%），
   代價是誤報從 23 升到 <strong>235</strong>，總錯誤率從 2.75% 微升到 3.73%。
   <strong>對信用卡公司，這是划算的交易。</strong>自己動一下滑桿看看：</p>
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Default；對照表 4.4–4.5 與圖 4.8">
   <div>
     <div class="viz-panel">
 <div style="overflow-x:auto;">
@@ -1429,7 +1426,7 @@ Up           82  121</pre></div>
       </div>
       <div class="status-banner" id="w04thrStatus"><span class="status-icon">›</span><span class="status-text">拖動門檻值：混淆矩陣、四個指標與 ROC 上的紅點會同步重算。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 100%;"><label class="slider-label" for="w04thrSlider">門檻值</label><input id="w04thrSlider" max="1" min="0" oninput="w04thrMove()" step="0.005" type="range" value="0.5"/><span class="slider-val" id="w04thrSliderV">0.5</span></div><button class="btn btn-step" onclick="w04thrSet(0.5)">→ 回到 0.5</button><button class="btn btn-step" onclick="w04thrSet(0.2)">→ 調到 0.2</button><button class="btn btn-reset" onclick="w04thrReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>ISLP Default；對照表 4.4–4.5 與圖 4.8</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1696,7 +1693,7 @@ $$b_k=A_k\mu_k-A_K\mu_K,\qquad C_k=\frac12(A_K-A_k).$$
 <p>給定 X 後 $Y_i$ 獨立，$\mu_i=\exp(x_i^T\beta)$，Poisson 的對數概似為</p>
 $$\ell(\beta)=\sum_i\{y_ix_i^T\beta-e^{x_i^T\beta}-\log(y_i!)\},\qquad
 U=X^T(y-\mu),\quad I=X^T\operatorname{diag}(\mu_i)X.$$
-<p>可採 Newton／IRLS 求解。只有截距時，樣本平均為 3 就得到 $\hat\beta_0=\log3$，平均預測為 3；全部計數為零時，截距 MLE 趨向負無限大，沒有有限解。比較不同觀測時間的計數可加入已知 offset $\log t_i$：$\log\mu_i=\log t_i+x_i^T\beta$，此時係數解讀為事件率的倍數。</p>
+<p>可採 Newton／IRLS 求解。全部計數為零時，截距 MLE 趨向負無限大，沒有有限解。</p>
 <p>GLM 模型的是 $Y\mid X$。指數分布族寫成 $\exp\{[y\theta-b(\theta)]/a(\phi)+c(y,\phi)\}$，其條件平均為 $b'(\theta)$、變異數為 $a(\phi)b''(\theta)$。Bernoulli 的變異數為 $p(1-p)$，Poisson 為 μ，Gaussian 則是共同 σ²；只有條件獨立不代表同變異數。過度分散時，仍可討論均值模型，但 Poisson 的一般 SE 會失準，要另選變異模型或適當穩健推論。</p>
 <details class="qa-item proof" id="w04proofPoisson"><summary>證明：Poisson score 與指數分布族的平均變異數</summary>
 <div class="qa-a">
@@ -1761,25 +1758,11 @@ U=X^T(y-\mu),\quad I=X^T\operatorname{diag}(\mu_i)X.$$
   <tbody><tr><td>邏輯斯迴歸</td><td>後驗 Pr(Y|X)（判別式）</td><td>線性</td><td>log-odds 對 x 線性</td><td>(K−1)(p+1)</td><td><strong>兩類的預設選擇</strong>、要推論、X 不常態</td></tr><tr><td>LDA</td><td>類條件 f<sub>k</sub>(x)（生成式）</td><td>線性</td><td>常態 + Σ 共用</td><td>Kp + p(p+1)/2</td><td>各類近常態、n 小、兩類分得很開</td></tr><tr><td>QDA</td><td>類條件 f<sub>k</sub>(x)</td><td>二次</td><td>常態 + Σ<sub>k</sub> 各自</td><td>Kp + K·p(p+1)/2</td><td>邊界明顯彎曲、n 大</td></tr><tr><td>Naive Bayes</td><td>類條件 f<sub>k</sub>(x)</td><td>加性（無交互項）</td><td>類內各變數獨立</td><td>約 2Kp</td><td><strong>p 大 n 小</strong>、變數近似獨立</td></tr><tr><td>KNN</td><td>什麼都不建模</td><td>任意</td><td>無（無母數）</td><td>存全部資料</td><td>邊界極度彎曲且 n ≫ p</td></tr></tbody>
 </table></div>
 <details class="qa-item reading-detail" id="w04-detail-default-numbers"><summary>計算細節：Default 完整數值對照</summary>
-<div class="detail-body"><h3>Default 資料上的實測數字（可以直接對回課本）</h3>
+<div class="detail-body"><h3>Default 的分類結果</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th></th><th>TN</th><th>FP</th><th>FN</th><th>TP</th><th>錯誤率</th><th>敏感度</th><th>出處</th></tr></thead>
   <tbody><tr><td>LDA，門檻值 0.5</td><td>9644</td><td>23</td><td><strong>252</strong></td><td>81</td><td>2.75%</td><td>24.3%</td><td>ISLP 表 4.4</td></tr><tr><td>LDA，門檻值 0.2</td><td>9432</td><td>235</td><td><strong>138</strong></td><td>195</td><td>3.73%</td><td>58.6%</td><td>ISLP 表 4.5</td></tr><tr><td>Naive Bayes，門檻值 0.5</td><td>9621</td><td>46</td><td>244</td><td>89</td><td>2.90%</td><td>26.7%</td><td>ISLP 表 4.8</td></tr><tr><td>Naive Bayes，門檻值 0.2</td><td>9339</td><td>328</td><td>130</td><td>203</td><td>4.58%</td><td>61.0%</td><td>ISLP 表 4.9</td></tr><tr><td>一律預測「不違約」</td><td>9667</td><td>0</td><td>333</td><td>0</td><td>3.33%</td><td>0.0%</td><td>基準錯誤率</td></tr></tbody>
 </table></div>
-<p style="font-size:.82rem;color:var(--muted);">本頁 <code>w04thr</code> 元件的 2×2 表在門檻值
-  0.5 與 0.2 會<strong>逐格</strong>重現前兩列（我們用 <code>scikit-learn</code> 的
-  <code>LinearDiscriminantAnalysis</code> 在 <code>balance</code> + <code>student</code> 上重算，
-  數字與課本相同）。ISLP 表 4.8／4.9 的 Naive Bayes 實作與 <code>GaussianNB</code>
-  對 <code>student</code> 的處理略有不同，所以本頁預先計算的 NB 混淆矩陣是 9618／49／238／95。</p>
-</div></details><details class="qa-item reading-detail" id="w04-detail-smarket-numbers"><summary>計算細節：Smarket 各方法結果</summary>
-<div class="detail-body"><h3>Smarket 上五個方法的 2005 年正確率（lab 的實跑結果）</h3>
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>方法</th><th>2005 年正確率</th><th>混淆矩陣（預測 × 真實）</th></tr></thead>
-  <tbody><tr><td>邏輯斯（6 個變數）</td><td>0.4801</td><td>77／97／34／44</td></tr><tr><td>邏輯斯（Lag1 + Lag2）</td><td>0.5595</td><td>35／35／76／106</td></tr><tr><td>LDA（Lag1 + Lag2）</td><td>0.5595</td><td>35／35／76／106</td></tr><tr><td>QDA（Lag1 + Lag2）</td><td><strong>0.5992</strong></td><td>30／20／81／121</td></tr><tr><td>Naive Bayes（Lag1 + Lag2）</td><td>0.5952</td><td>29／20／82／121</td></tr><tr><td>KNN，K = 1</td><td>0.5000</td><td>43／58／68／83</td></tr><tr><td>KNN，K = 3</td><td>0.5317</td><td>—</td></tr><tr><td>一律猜 Up（基準正確率）</td><td>0.5595</td><td>—</td></tr></tbody>
-</table></div>
-<p style="font-size:.82rem;color:var(--muted);">注意最後一列：<strong>「每天都猜漲」就有 55.95%</strong>。
-  邏輯斯與 LDA 剛好打成平手、沒有贏過它；QDA 與 Naive Bayes 在這次教材比較中較高。
-  Lag1／Lag2 是看過含 2005 年的完整資料後才選出，因此這張表不能當成選模後的獨立測試證據。</p>
 </div></details><details class="qa-item reading-detail" id="w04-detail-formula-reference"><summary>計算細節：完整公式速查</summary>
 <div class="detail-body"><h3>公式速查</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1798,8 +1781,6 @@ U=X^T(y-\mu),\quad I=X^T\operatorname{diag}(\mu_i)X.$$
   類別不平衡或兩種錯誤成本不同時，先問「哪種錯誤比較貴」，再調門檻值，
   並且把同一量尺的多數類基準與混淆矩陣一起報出來。
 </div>
-<details class="qa-item reading-detail" id="w04-detail-reproducibility"><summary>延伸閱讀：重現方式與環境版本</summary>
-<div class="detail-body"><p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p></div></details>
 </section>
 <section id="bankquiz">
 <!-- GEN:BEGIN sec:bankquiz -->
@@ -2899,7 +2880,7 @@ const FLASHCARDS = [{"front":"分類（Classification）","back":"反應變數�
 HC.initFlashcards();
 </script>
 <script>
-const BANKQUIZ = [{"topic":"邏輯斯迴歸 · 係數","q":"某邏輯斯迴歸模型中 <code>hours</code> 的估計係數是 −0.35（p 值 0.002）。下面哪個敘述完全正確？","options":["<code>hours</code> 每增加一單位，事件發生的機率減少 0.35","<code>hours</code> 每增加一單位，事件發生的勝算乘上 e<sup>−0.35</sup> ≈ 0.705","<code>hours</code> 每增加一單位，事件發生的機率乘上 0.705","<code>hours</code> 每增加一單位，log-odds 乘上 −0.35"],"answer":1,"why":["不對。係數是 log-odds 的變化量，不是機率的變化量。機率的變化隨目前的 x 值而變，講不出一個固定數字。","正確。線性的是 log-odds，所以 log-odds「加上 −0.35」等於勝算「乘上 e^(−0.35) = 0.705」，也就是勝算掉了約 29.5%。","不對，乘上 e^β 的是勝算 p/(1−p) 而不是機率 p。只有在 p 很小的時候兩者才近似相等。","不對，是「加上」−0.35，不是「乘上」。log-odds = β₀ + β₁x 是一次式，x 增加一單位讓它加 β₁。"]},{"topic":"LDA · 決策邊界","q":"p = 1、K = 2 的 LDA，兩類平均 μ̂₁ = 2、μ̂₂ = 6，共用標準差 σ̂ = 2，先驗 π̂₁ = π̂₂ = 0.5。決策邊界在哪裡？","options":["x = 4","x = 2","x = 8","沒有足夠資訊，還需要知道每一類的樣本數"],"answer":0,"why":["正確。等先驗時 LDA 的邊界就是兩個平均的中點 (μ̂₁ + μ̂₂)/2 = (2 + 6)/2 = 4（ISLP 式 4.19），而且跟 σ̂ 完全無關。","不對，2 是 μ̂₁ 本身。邊界要落在兩個平均之間；如果 π̂₁ 變大，邊界會往「另一類」的方向移動，讓第 1 類得到較大的決策區域。","不對，8 在兩個平均之外。等先驗時邊界一定落在 μ̂₁ 與 μ̂₂ 中間。","資訊已經夠了。樣本數只透過先驗 π̂ₖ = nₖ/n 影響邊界，而題目已經直接給了 π̂₁ = π̂₂ = 0.5。"]},{"topic":"LDA vs QDA · 偏差與變異","q":"p = 10、K = 2，訓練資料只有 60 筆，而且沒有理由懷疑兩類的共變異數矩陣不同。選 LDA 還是 QDA？","options":["QDA，因為它比較有彈性，線性邊界是二次邊界的特例","LDA，因為 QDA 要多估 55 個共變異數參數，小樣本時共用共變異數通常較穩定","都可以，p = 10 時兩者的參數量差別可以忽略","QDA，但要先把資料標準化"],"answer":1,"why":["「特例」只保證偏差不會更差，完全沒有保證變異。ISLP 習題 4.8 第 5 題 (d) 說明了這個差別。","正確。LDA 估一個 Σ 要 p(p+1)/2 = 55 個數，QDA 要兩倍 110 個；n = 60 時多出來的 55 個估計極不穩定，變異可能抵銷偏差降低的好處。","參數量的差別是：55 對 110 個參數，而樣本只有 60 筆——這已經是「參數比資料多」的量級了。","標準化不會改變參數的數量，也不會讓 QDA 在 n = 60 時變穩。判別分析對線性尺度變換基本上不敏感（那是 KNN 才要在意的事）。"]},{"topic":"混淆矩陣 · 不平衡資料","q":"某疾病篩檢工具在 1000 人（其中 20 人真的有病）上的結果：TP = 8、FN = 12、FP = 30、TN = 950。下面哪個判讀最恰當？","options":["準確率 95.8%，表現良好，可以上線","敏感度只有 40%，漏掉六成病人；多數類基準正確率 98% 甚至比準確率還高，應該調低門檻值","精確率 21.1% 太低，應該調高門檻值減少誤報","特異度 96.9% 很高，所以這個工具主要的問題是誤報"],"answer":1,"why":["準確率算得對（(8+950)/1000 = 95.8%），判讀完全錯。一律說「沒病」就有 98% 準確率——這個工具還輸給什麼都不做。","正確。敏感度 = 8/(8+12) = 40%，多數類基準正確率 = 980/1000 = 98%。篩檢最怕漏抓（FN），所以要調低門檻值換敏感度，代價是 FP 上升。","精確率算得對（8/38 = 21.1%），但方向反了。篩檢的目的是不要漏掉病人；調高門檻值會讓敏感度更差。精確率是垃圾信過濾那類問題在意的方向。","特異度算得對；但在這個重視找出病人的篩檢情境，FN = 12（漏掉六成病人）是優先要改善的問題，同時也要衡量 FP = 30 的成本。"]},{"topic":"方法選擇 · 假設","q":"資料有 p = 200 個預測變數、n = 500，而且領域知識告訴你這些變數在各類內大致互相獨立。哪個方法最可能勝出？","options":["QDA，因為它最有彈性","LDA，因為它的參數比 QDA 少","Naive Bayes，因為獨立假設剛好成立，而它要估的參數最少","KNN（K = 1），因為它完全不做分佈假設"],"answer":2,"why":["QDA 要估 2 × 200 × 201/2 = 40200 個共變異數參數，這帶來估計變異負擔，但不能單憑參數個數判定無法擬合；每類樣本數及設計秩才決定共變異數能否取逆。p 大 n 小時，提高彈性會增加估計困難。","方向對（參數比 QDA 少），但 LDA 仍要估 200 × 201/2 = 20100 個共變異數參數，仍須評估估計穩定性；不能只比較參數個數與總樣本數判定能否擬合。","正確。獨立假設成立時 Naive Bayes 的偏差極小，而它只要估約 2Kp = 800 個數。這就是 ISLP 情境 6 與 Caravan 那類資料的情況。","p = 200 時 KNN 容易受維度詛咒影響：高維空間裡「最近的鄰居」其實一點都不近，K = 1 又把變異放到最大。"]},{"topic":"Poisson 迴歸 · GLM","q":"對計數資料擬合 Poisson 迴歸，某個二元變數的係數是 −0.5。這代表什麼？","options":["這個變數從 0 變 1 時，平均計數減少 0.5","這個變數從 0 變 1 時，平均計數乘上 e<sup>−0.5</sup> ≈ 0.607，也就是只剩約 61%","這個變數從 0 變 1 時，計數的變異數減少 0.5，但平均不變","這個變數從 0 變 1 時，計數的勝算乘上 e<sup>−0.5</sup>"],"answer":1,"why":["不對。Poisson 迴歸線性的是 log λ，所以係數對 λ 的作用是乘法不是加法——這跟邏輯斯迴歸「勝算乘上 e^β」是同一個模式。","正確。log λ 加上 −0.5 等於 λ 乘上 e^(−0.5) = 0.607。ISLP 表 4.11 的 weathersit[cloudy/misty] = −0.08 就是這樣解讀成「陰天只有晴天的 92.3%」。","不對。Poisson 模型裡 E(Y) = Var(Y) = λ，平均與變異是綁在一起的，不可能只動變異不動平均。","「勝算」是二元反應才有的概念。Poisson 迴歸的反應是計數，改變的是平均值 λ。"]}];
+const BANKQUIZ = [{"topic":"Poisson 迴歸 · GLM","q":"對計數資料擬合 Poisson 迴歸，某個二元變數的係數是 −0.5。這代表什麼？","options":["這個變數從 0 變 1 時，平均計數減少 0.5","這個變數從 0 變 1 時，平均計數乘上 e<sup>−0.5</sup> ≈ 0.607，也就是只剩約 61%","這個變數從 0 變 1 時，計數的變異數減少 0.5，但平均不變","這個變數從 0 變 1 時，計數的勝算乘上 e<sup>−0.5</sup>"],"answer":1,"why":["不對。Poisson 迴歸線性的是 log λ，所以係數對 λ 的作用是乘法不是加法——這跟邏輯斯迴歸「勝算乘上 e^β」是同一個模式。","正確。log λ 加上 −0.5 等於 λ 乘上 e^(−0.5) = 0.607。ISLP 表 4.11 的 weathersit[cloudy/misty] = −0.08 就是這樣解讀成「陰天只有晴天的 92.3%」。","不對。Poisson 模型裡 E(Y) = Var(Y) = λ，平均與變異是綁在一起的，不可能只動變異不動平均。","「勝算」是二元反應才有的概念。Poisson 迴歸的反應是計數，改變的是平均值 λ。"]}];
 /* ===== 題庫自我檢測引擎（資料在 BANKQUIZ） ===== */
 (() => {
   const box = document.getElementById('bqBox');

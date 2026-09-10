@@ -289,4 +289,7 @@ def apply_reading_flow(stem,bodies):
             if any(a<match.end() and z>match.start() for a,z in protected):return match.group()
             return match.group().replace('<','&lt;')
         bodies[sec]=re.sub(r'\$\$.*?\$\$|\$[^$]*?\$',escape_math,body,flags=re.S)
+    from teaching_scope_ch7_8_9_12 import student_ui, remove_report_remainders
+    student_ui(stem, bodies)
+    remove_report_remainders(stem, bodies)
     return js

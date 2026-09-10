@@ -25,7 +25,7 @@
   },
   {
     "front": "調整參數 α（Tuning Parameter α）",
-    "back": "成本複雜度剪枝裡「多留一個葉子要付的錢」。嚴格的折內演算法會在每折訓練資料上重新長樹並建立剪枝路徑；本站 lab 則先由完整外層訓練資料建立固定 α 候選格點，再讓 GridSearchCV 在各折重新擬合每個固定 α 的樹。"
+    "back": "成本複雜度剪枝中對葉子數的懲罰權重。α 越大，較小的樹越有利；使用交叉驗證選擇其值。"
   },
   {
     "front": "錯誤率（Classification Error Rate）",
@@ -94,10 +94,6 @@
   {
     "front": "變數重要度（Variable Importance）",
     "back": "把每個變數造成的 RSS 下降（迴歸）或 Gini 下降（分類）總量加起來，在 B 棵樹上平均。這能輔助解讀集成模型，但無法據此判定因果或作用方向，而且相關的變數會互相稀釋。"
-  },
-  {
-    "front": "Permutation 重要度（Permutation Importance）",
-    "back": "把某一欄隨機打亂，看測試誤差變差多少。定義在測試資料上，直接對應「這個變數對預測的貢獻」；相較於不純度下降，它需更多計算，並可避開偏袒高取值數變數的問題。"
   },
   {
     "front": "XGBoost（Extreme Gradient Boosting）",

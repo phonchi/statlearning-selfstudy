@@ -44,22 +44,12 @@ BODIES["likelihood"] = r"""
   忽略與 $p$ 無關的二項係數後，</p>
   $$L(p\mid s,f)\propto p^s(1-p)^f,\qquad
     \hat p_{\mathrm{MLE}}=\frac{s}{s+f}\quad(s+f&gt;0).$$
-  <p><strong>算例。</strong>7 次正面、3 次反面時，最大概似估計是 $0.7$。
-  $p=0.7$ 相對於 $p=0.5$ 的概似比為
-  $0.7^7 0.3^3/(0.5^{10})\approx2.28$。這表示目前資料在前一參數下約有 2.28 倍支持度；
-  它不表示「$p=0.7$ 的機率是 2.28 倍」。若完全沒有資料，所有 $p$ 都使概似達到同一最大值，
-  因此 MLE 不唯一，資料無法選出單一估計。</p>
+  
 """ + info(
     "機率與概似的方向",
     "機率固定參數、比較可能資料；概似固定已看到的資料、比較可能參數。公式相同，問題方向不同。",
     "warm",
-) + quiz(
-    "qLikelihood", "PART 02 · 自我檢測",
-    "硬幣 10 次得到 7 次正面。$L(0.7)$ 比 $L(0.5)$ 大，能得出哪個結論？",
-    [(False, "$P(p=0.7)=L(0.7)$", "概似不是參數的機率分布；要談參數機率，還需要先驗並做正規化。"),
-     (True, "這批資料在 $p=0.7$ 下比在 $p=0.5$ 下更有支持度", "對。概似比較的是固定資料在不同參數值下的相對支持度。"),
-     (False, "下一次一定是正面", "估計 $p=0.7$ 仍代表下一次有隨機性，不能推出確定結果。")],
-) + f'<p><a href="{WEB}#section2">來源：Seeing Theory Ch.5 · Likelihood Function</a>；<a href="{PDF}#page=51">講義 p.51–52</a>。</p>'
+) + '' + f'<p><a href="{WEB}#section2">來源：Seeing Theory Ch.5 · Likelihood Function</a>；<a href="{PDF}#page=51">講義 p.51–52</a>。</p>'
 
 BODIES["posterior"] = r"""
   <p>Beta 分布常用來描述硬幣正面機率 $p$ 的先驗，其中 $0\le p\le1$、$\alpha&gt;0$、$\beta&gt;0$。
@@ -70,9 +60,7 @@ BODIES["posterior"] = r"""
   <p>Beta 先驗可用兩個較清楚的量來讀：先驗平均是
   $\alpha/(\alpha+\beta)$，先驗總量是 $\alpha+\beta$。前者決定中心，後者描述分布集中程度。
   更新後的平均為 $(\alpha+s)/(\alpha+\beta+s+f)$。</p>
-  <p><strong>算例。</strong>$\operatorname{Beta}(2,2)$ 先驗加上 7 次正面、3 次反面，得到
-  $\operatorname{Beta}(9,5)$ 後驗；平均由 $1/2$ 移到 $9/14\approx0.643$。
-  下圖可以重做這筆計算，也能檢查均勻先驗與零筆資料等端點。</p>
+  
 """ + viz(
     svg("w25bayesSvg", 470),
     [info_card(
@@ -103,13 +91,7 @@ BODIES["posterior"] = r"""
     '<output id="w25failureOut">0</output>'
     '<button class="btn btn-reset" onclick="w25bayesReset()">重置</button>',
     provenance=("illustrative", "硬幣資料為自訂概念示意；所有曲線由目前控制值即時計算。"),
-) + quiz(
-    "qPosterior", "PART 03 · 自我檢測",
-    r"先驗為 $\operatorname{Beta}(3,4)$，看到 5 次正面與 2 次反面後，後驗是哪一個？",
-    [(True, r"$\operatorname{Beta}(8,6)$", "對。正面次數加到第一個參數，反面次數加到第二個參數。"),
-     (False, r"$\operatorname{Beta}(5,2)$", "這只留下資料計數，漏掉了先驗中的參數。"),
-     (False, r"$\operatorname{Beta}(6,9)$", "正、反面計數加反了；第一個參數對應正面。")],
-) + f'<p><a href="{WEB}#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="{PDF}#page=52">講義 p.52–54</a>。</p>'
+) + '' + f'<p><a href="{WEB}#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="{PDF}#page=52">講義 p.52–54</a>。</p>'
 
 BODIES["influence"] = r"""
   <p>後驗是先驗資訊與目前資料的折衷。對 Beta–Binomial 模型，後驗平均可直接拆成兩個平均的加權：</p>
@@ -122,44 +104,18 @@ BODIES["influence"] = r"""
   $(\alpha+s)/(\alpha+\beta+s+f)$。</p>
   <p>先驗總量 $\alpha+\beta$ 越大，需要越多資料，才會讓後驗明顯改變。資料量增加時，資料比例的權重增加；
   這不保證先驗永遠變得無關，還要確認模型與資料收集方式合理。</p>
-  <p><strong>算例。</strong>同樣觀察 3 次正面、1 次反面。均勻先驗
-  $\operatorname{Beta}(1,1)$ 產生 $\operatorname{Beta}(4,2)$，後驗平均為 $2/3$；
-  集中在 0.5 的 $\operatorname{Beta}(20,20)$ 產生 $\operatorname{Beta}(23,21)$，後驗平均約 0.523。
-  四筆資料對較集中的先驗影響較小。</p>
-""" + table(
-    ["情況", "後驗參數", "後驗平均", "閱讀重點"],
-    [["Beta(1,1)＋3 正 1 反", "Beta(4,2)", "0.667", "資料比例影響明顯"],
-     ["Beta(20,20)＋3 正 1 反", "Beta(23,21)", "0.523", "先驗總量較大"],
-     ["Beta(20,20)＋300 正 100 反", "Beta(320,120)", "0.727", "大量資料取得較大權重"]],
-) + quiz(
-    "qInfluence", "PART 04 · 自我檢測",
-    "兩位分析者使用平均都為 0.5 的 Beta(2,2) 與 Beta(40,40) 先驗。看到相同少量資料後，何者後驗移動較少？",
-    [(False, "Beta(2,2)，因為參數比較小", "較小的參數總量代表先驗較分散，少量資料就能占較大權重。"),
-     (True, "Beta(40,40)，因為先驗總量較大", "對。兩者中心相同，但 Beta(40,40) 更集中，相當於較多的先前資訊。"),
-     (False, "兩者完全相同，因為先驗平均相同", "先驗平均只描述中心；集中程度也會影響更新幅度。")],
-) + f'<p><a href="{WEB}#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="{PDF}#page=52">講義 p.52–54</a>。</p>'
+  
+""" + '' + '' + f'<p><a href="{WEB}#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="{PDF}#page=52">講義 p.52–54</a>。</p>'
 
 BODIES["exercises"] = (
-    quiz("qEx1", "EXERCISE 1 · Bayes 公式",
-         r"某事件先驗機率 20%，觀察 E 的條件機率在事件成立時為 0.8、不成立時為 0.2。$P(A\mid E)$ 是多少？",
-         [(False, "0.20", "這是更新前的先驗，尚未使用 E 的資訊。"),
-          (True, "0.50", "對。分子 0.8×0.2=0.16，分母再加 0.2×0.8=0.16，所以是 0.5。"),
-          (False, "0.80", "0.8 是 P(E｜A)，條件機率的方向與題目不同。")])
-    + quiz("qEx2", "EXERCISE 2 · 概似",
-           "只有 4 次正面、0 次反面時，二項概似在哪裡達最大？",
-           [(False, "$p=0$", "此時 $p^4=0$，無法產生四次正面。"),
-            (False, "$p=0.5$", "公平硬幣可以產生資料，但支持度不是最大。"),
-            (True, "$p=1$", "對。$p^4$ 隨 p 增加，端點 1 達最大。")])
+    ''
+    + ''
     + quiz("qEx3", "EXERCISE 3 · 共軛更新",
            "Beta(1,1) 先驗配上 0 次正面、0 次反面，後驗為何？",
            [(True, "仍是 Beta(1,1)", "對。沒有資料時，概似對所有 p 相同，後驗等於先驗。"),
             (False, "Beta(0,0)", "更新是把計數加到先驗參數；零筆資料不會把參數清零。"),
             (False, "MLE 為 0.5，所以後驗集中在 0.5", "沒有資料時每個 p 都同樣使概似最大，MLE 不唯一，也沒有理由把分布壓在 0.5。")])
-    + quiz("qEx4", "EXERCISE 4 · 後驗預測",
-           "後驗是 Beta(9,5)。下一次投擲出現正面的後驗預測機率是多少？",
-           [(False, "$9/(9+5+1)$", "不需要再加一筆尚未觀察的資料。"),
-            (True, "$9/(9+5)$", "對。Bernoulli 下一次成功的後驗預測機率等於 p 的後驗平均。"),
-            (False, "$9/5$", "這是兩個參數的比值，且超過 1，不能是機率。")])
+    + ''
     + f'<p><a href="{WEB}#section1">題目依 Seeing Theory Ch.5 的 Bayes、Likelihood 與 Prior to Posterior 定義重新編寫</a>；'
       f'<a href="{PDF}#page=49">講義 p.49–54</a>。</p>'
 )
@@ -172,9 +128,7 @@ BODIES["reference"] = r"""
      ["概似", "固定資料，比較參數", f'<a href="{WEB}#section2">Likelihood Function</a>', f'<a href="{PDF}#page=51">p.51–52</a>'],
      ["先驗到後驗", "結合先驗與資料", f'<a href="{WEB}#section3">Prior to Posterior</a>', f'<a href="{PDF}#page=52">p.52–54</a>']],
 ) + r"""
-  <p class="ver-note">本頁為不需要 Python 的概念先備頁。原始參數與公式依 Seeing Theory Chapter 5：
-  網頁定義「L(θ | x) = P(x | θ)」，並以 Beta(α, β) 先驗更新硬幣正面機率；PDF 印刷頁 49–54。
-  本頁算例、正規化密度、相對概似與端點處理均重新計算，未複製原站文字、程式碼或圖片。</p>
+  
 """
 
 

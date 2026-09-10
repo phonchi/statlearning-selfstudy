@@ -171,15 +171,12 @@ def prep_ex_head(p: P.Page) -> str:
     lbl = "課前" if p.grp == "pre" else "先備"
     if p.grounding_mode == "concept":
         return f'''  <div class="section-number">EXERCISES · 練習</div>
-  <h2>用算例檢查理解 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>以下是依本頁觀念自訂的練習。先寫下判斷與理由，再點選答案；每個選項都有解說。
-  回到互動調整條件，確認你的解釋是否仍然成立。</p>
+  <h2>複習本頁概念 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>回顧本頁概念與原教材，檢查自己能否說明公式、圖形與成立條件。</p>
   <div class="sol-links">{pills}</div>'''
     return f"""  <div class="section-number">EXERCISES · 練習</div>
   <h2>動手驗證：概念自測 <span class="sec-badge">{lbl} · 自我檢測</span></h2>
-  <p>這一頁沒有課本習題，這幾題是照本頁觀念設計的。先自己想過再點選項；
-  每個選項都有解說，答完後可以核對自己的理由。接著在自己的環境執行上面的
-  程式碼範例，觀察結果。</p>
+  <p>回顧本頁觀念與原 Lab 的程式，確認各個操作的意義與使用條件。</p>
   <div class="sol-links">{pills}</div>"""
 
 
@@ -262,7 +259,7 @@ def chapternav(p: P.Page) -> str:
 def footer(p: P.Page) -> str:
     book = "An Introduction to Statistical Learning with Applications in Python (ISLP)"
     if p.grounding_mode == "concept":
-        base = "參考 Seeing Theory 網站與講義，以原創算例與互動說明"
+        base = "依 Seeing Theory 網站與講義說明統計概念"
     elif p.kind == "prep":
         base = "基於 NSYSU MATH524 課程 lab notebook 與各套件官方文件"
     else:
@@ -316,6 +313,8 @@ def render_new(p: P.Page) -> str:
 def refresh(p: P.Page, src: str):
     """只重繪 GEN 區段；回報哪些區段變了、哪些 section 還沒有。"""
     changed, missing = [], []
+    if not p.show_exercises:
+        src = re.sub(r'\n?<section id="exercises">.*?</section>\n?', '\n', src, flags=re.S)
     has_cards = bool(P.flashcard_count(p))
     cards_pattern = r'\n?<section id="cards">.*?</section>\n?'
     if not has_cards and re.search(cards_pattern, src, re.S):

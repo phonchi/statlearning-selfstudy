@@ -117,17 +117,6 @@ BODIES["var"] = f"""
       "<code>7 // 2</code> 給 <code>3</code>（整數，直接砍掉小數）。"
       "算折數或索引時用得到後者，算統計量千萬不要用錯。", "warm")}
 
-{quiz("qVar", "PART 01 · 自我檢測",
-      "<code>a = [1, 2]</code>、<code>b = a</code>、<code>b.append(3)</code>。"
-      "現在 <code>a</code> 是什麼？",
-      [(False, "<code>[1, 2]</code>，因為 b 是複製的",
-        "<code>b = a</code> 沒有複製任何東西，它只是<strong>多貼一張名牌</strong>。"
-        "要複製得寫 <code>b = a.copy()</code>。"),
-       (True, "<code>[1, 2, 3]</code>，因為兩個名字指的是同一個串列",
-        "對。資料前處理時要留意這種共用關係："
-        "修改共用物件時，原本的名字也會看到修改後的資料。"),
-       (False, "會報錯，a 已經被 b 取代了",
-        "不會。一個東西可以有很多個名字，它們平起平坐，沒有誰取代誰。")])}
 """
 
 # ── P02 串列 ────────────────────────────────────────────────────────────
@@ -167,16 +156,6 @@ BODIES["list"] = f"""
         ["在不在裡面", "<code>'mpg' in cols</code>"],
         ["複製一份", "<code>cols.copy()</code>"]])}
 
-{quiz("qList", "PART 02 · 自我檢測",
-      "<code>cols = ['mpg', 'weight', 'year']</code>，<code>cols[-1]</code> 是什麼？",
-      [(True, "<code>'year'</code>",
-        "對。負的索引從後面數，<code>-1</code> 就是最後一個。"
-        "這比 <code>cols[len(cols)-1]</code> 好讀多了。"),
-       (False, "會報錯，索引不能是負的",
-        "Python 的負索引是合法的，而且很常用。"
-        "（NumPy 陣列與 pandas 的 <code>iloc</code> 也支援。）"),
-       (False, "<code>'mpg'</code>",
-        "那是 <code>cols[0]</code>。負索引是從<strong>右邊</strong>數起。")])}
 """
 
 # ── P03 切片 ────────────────────────────────────────────────────────────
@@ -213,15 +192,6 @@ BODIES["slice"] = f"""
       note="<code>[3:6]</code> 只是 <code>[slice(3,6)]</code> 的語法糖。"
            "知道這件事之後，「為什麼可以把切片存成變數」就不奇怪了。")}
 
-{quiz("qSlice", "PART 03 · 自我檢測",
-      "<code>a = [0,1,2,3,4,5]</code>，<code>a[1:4]</code> 有幾個元素？",
-      [(True, "3 個：1、2、3",
-        "對。長度是 <code>迄 − 起</code> = 4 − 1 = 3。"
-        "「迄不包含」讓算長度變得很簡單，這是它的好處。"),
-       (False, "4 個：1、2、3、4",
-        "把終點也算進去了。<code>a[1:4]</code> 取到索引 3 為止，不含 4。"),
-       (False, "2 個：1、2",
-        "少算了一個。起點<strong>是</strong>包含的，只有終點不包含。")])}
 """
 
 # ── P04 字典 ────────────────────────────────────────────────────────────
@@ -231,9 +201,6 @@ BODIES["dict"] = f"""
 {card("用字典建一個 Series", C(1, 19), O(1, 19), src=S(1, 19),
       note="鍵變成索引、值變成資料。pandas 可以用字典中的鍵和值建立 Series。")}
 
-{card("用字典建一整張表", C(1, 26), O(1, 26), src=S(1, 26),
-      note="這次每一個值是一個<strong>串列</strong>，於是每一個鍵變成一欄。"
-           "課程 lab 建示範資料幾乎都用這個寫法。")}
 
 {viz(svg("w14dcSvg", 300),
      [info_card("兩種取值方式",
@@ -333,28 +300,7 @@ BODIES["str"] = f"""
 
 # ── EX 練習 ─────────────────────────────────────────────────────────────
 BODIES["exercises"] = f"""
-{quiz("qEx1", "EXERCISE 1 · 名牌與盒子",
-      "<code>a = [1,2,3]</code>、<code>b = a[:]</code>、<code>b[0] = 99</code>。<code>a[0]</code> 是？",
-      [(True, "<code>1</code>，因為 <code>a[:]</code> 是一份新的複本",
-        "對。整段切片 <code>[:]</code> 會產生新的串列，"
-        "跟 <code>b = a</code> 完全不同。這是最短的複製寫法。"),
-       (False, "<code>99</code>，b 只是 a 的另一個名字",
-        "那是 <code>b = a</code> 的情況。加了 <code>[:]</code> 就是切片，"
-        "切片會產生新的串列。"),
-       (False, "會報錯",
-        "<code>a[:]</code> 是完全合法的寫法，取的是「從頭到尾」。")])}
 
-{quiz("qEx2", "EXERCISE 2 · 索引",
-      "<code>cols = ['mpg','cyl','hp','wt','year']</code>。"
-      "想拿中間三個（cyl、hp、wt），怎麼寫？",
-      [(False, "<code>cols[1:4:1]</code> 之外還要加 <code>cols[4]</code>",
-        "不用。<code>cols[1:4]</code> 已經是 cyl、hp、wt 三個了，"
-        "多加 <code>cols[4]</code> 會把 year 也拿進來。"),
-       (True, "<code>cols[1:4]</code>",
-        "對。起點 1（cyl）、終點 4 不包含（所以停在 wt）。"
-        "「迄不包含」讓長度剛好是 4−1=3。"),
-       (False, "<code>cols[1:3]</code>",
-        "只拿到兩個（cyl、hp）。終點要寫 4 才會包含索引 3 的 wt。")])}
 
 {quiz("qEx3", "EXERCISE 3 · 字典",
       "你想記錄三個模型的 MSE，之後要能用模型名字查。該用什麼？",

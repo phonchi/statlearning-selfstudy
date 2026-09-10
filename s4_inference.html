@@ -831,23 +831,22 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   $$\bar X\pm z_{1-\alpha/2}\frac{\sigma}{\sqrt n}$$
 
-  <h3>算一次：95% 信賴區間</h3>
-  <p>已知 $\sigma=10$，抽 $n=25$ 人得到 $\bar x=52$。95% 的臨界值為 1.96，誤差範圍是
-  $1.96\times10/\sqrt{25}=3.92$，因此區間為</p>
-  $$[52-3.92,\ 52+3.92]=[48.08,\ 55.92]。$$
+  
+  
+  
 
 <div class="info-box warm">
   <span class="info-label">95% 說的是長期涵蓋率</span>
-  若一再用同一套抽樣與建立區間的程序，長期約 95% 的區間會涵蓋固定的真實平均數。算出 [48.08, 55.92] 後，端點與母體參數都已固定；不能再說這一條區間有 95% 機率包含它。
+  若一再用同一套抽樣與建立區間的程序，長期約 95% 的區間會涵蓋固定的真實平均數。區間算出後，端點與母體參數都已固定；不能再說這一條區間有 95% 機率包含它。
 </div>
 
-<div class="viz-layout" data-provenance="simulation">
+<div class="viz-layout" data-provenance="simulation" data-source-note="常態模型 μ=50、σ=10；固定種子 240906；每批 20 組，累計最多 400 組">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w24ciSvg" height="400"></svg>
       <div class="status-banner" id="w24ciStatus"><span class="status-icon">›</span><span class="status-text">尚未抽樣；真實平均固定為 50。</span></div>
       <div class="controls-bar"><label>樣本數 <select id="w24ciN" onchange="w24ciClear()"><option value="10">10</option><option value="30" selected>30</option><option value="100">100</option></select></label><label>信心水準 <select id="w24ciLevel" onchange="w24ciClear()"><option value="0.90">90%</option><option value="0.95" selected>95%</option><option value="0.99">99%</option></select></label><button class="btn btn-step" onclick="w24ciAdd()">→ 新增 20 組</button><button class="btn btn-reset" onclick="w24ciReset()">重置</button></div>
-      <div class="viz-source"><span>固定種子模擬</span>常態模型 μ=50、σ=10；固定種子 240906；每批 20 組，累計最多 400 組</div>
+      <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -921,13 +920,13 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   $z=(54.4-50)/(10/5)=2.20$。若 $H_A:\mu&gt;50$，右尾 p 值約為 0.0139；
   若 $H_A:\mu\ne50$，雙尾 p 值約為 0.0278。</p></div></details>
 
-<div class="viz-layout" data-provenance="illustrative">
+<div class="viz-layout" data-provenance="illustrative" data-source-note="本站重新繪製的已知 σ 常態 z 檢定；固定 μ₀=50、σ=10">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w24testSvg" height="350"></svg>
       <div class="status-banner" id="w24testStatus"><span class="status-icon">›</span><span class="status-text">拖動樣本平均，觀察 z 與尾端面積如何一起改變。</span></div>
       <div class="controls-bar"><label>樣本數 <select id="w24testN" onchange="w24testDraw()"><option value="10">10</option><option value="25" selected>25</option><option value="100">100</option></select></label><label>方向 <select id="w24testSide" onchange="w24testDraw()"><option value="right">右尾：μ &gt; 50</option><option value="two">雙尾：μ ≠ 50</option></select></label><label>樣本平均 <input id="w24testMean" type="range" min="45" max="58" value="54.4" step="0.2" oninput="w24testDraw()"><span id="w24testMeanOut">54.4</span></label><button class="btn btn-reset" onclick="w24testReset()">重置</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>本站重新繪製的已知 σ 常態 z 檢定；固定 μ₀=50、σ=10</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1021,20 +1020,11 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
     =\sqrt{\frac{1}{B-1}\sum_{b=1}^B
     \left(\hat\theta^{*(b)}-\bar{\hat\theta}^*\right)^2}。$$</div></details>
 
-  <h3>小例子：看清楚「有放回」</h3>
-  <p>原始樣本是 $[2,4,4,8]$，平均為 4.5。五次示意重抽可得到
-  $[2,2,4,8]$、$[4,4,4,8]$、$[8,4,2,8]$、$[2,4,2,4]$、$[8,8,4,4]$；
-  對應平均為 4、5、5.5、3、6，樣本標準差約 1.204。</p>
+  
+  
 
-<div class="info-box warm">
-  <span class="info-label">五次只用來看機制</span>
-  每次重抽都是四筆，同一個原始觀測可以重複，也可能完全沒出現。實務上 B 應遠大於 5；重抽次數增加會降低模擬誤差，但不能補救不具代表性、相依性未處理或樣本太小等資料問題。
-</div>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>重抽樣本</th><th>bootstrap 平均</th></tr></thead>
-  <tbody><tr><td>[2, 2, 4, 8]</td><td>4.0</td></tr><tr><td>[4, 4, 4, 8]</td><td>5.0</td></tr><tr><td>[8, 4, 2, 8]</td><td>5.5</td></tr><tr><td>[2, 4, 2, 4]</td><td>3.0</td></tr><tr><td>[8, 8, 4, 4]</td><td>6.0</td></tr></tbody>
-</table></div>
+
 
 <div class="info-box purple">
   <span class="info-label">🔗 接到正課的重抽樣核心</span>
@@ -1048,23 +1038,16 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   <div class="quiz-feedback" id="qBootstrapFeedback"></div>
 </div>
 
-<p class="source-note"><strong>Seeing Theory 網頁 · The Bootstrap：</strong>現行網頁的 The Bootstrap 示範從經驗分佈有放回重抽並估樣本平均的標準誤；本節換成四筆小資料逐筆列出。 <a href="https://seeing-theory.brown.edu/frequentist-inference/index.html" target="_blank" rel="noopener">開啟原始來源</a></p>
+<p class="source-note"><strong>Seeing Theory 網頁 · The Bootstrap：</strong>現行網頁的 The Bootstrap 示範從經驗分佈有放回重抽並估樣本平均的標準誤。 <a href="https://seeing-theory.brown.edu/frequentist-inference/index.html" target="_blank" rel="noopener">開啟原始來源</a></p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
   <div class="section-number">EXERCISES · 練習</div>
-  <h2>用算例檢查理解 <span class="sec-badge">先備 · 自我檢測</span></h2>
-  <p>以下是依本頁觀念自訂的練習。先寫下判斷與理由，再點選答案；每個選項都有解說。
-  回到互動調整條件，確認你的解釋是否仍然成立。</p>
+  <h2>複習本頁概念 <span class="sec-badge">先備 · 自我檢測</span></h2>
+  <p>回顧本頁概念與原教材，檢查自己能否說明公式、圖形與成立條件。</p>
   <div class="sol-links"><a href="https://seeing-theory.brown.edu/frequentist-inference/index.html" target="_blank" rel="noopener">🔗 本章原站延伸</a></div>
 <!-- GEN:END sec:exercises -->
 
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 1 · 原創整合題</div>
-  <p>已知母體標準差 12。要把樣本平均的標準誤從 3 降到 1.5，樣本數應如何改變？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="SE 與 1/√n 成正比。減半需要讓 √n 加倍。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 變成兩倍</div><div class="quiz-opt" data-correct="true" data-fb="對。原本 n=(12/3)²=16，後來 n=(12/1.5)²=64，是四倍。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 變成四倍</div><div class="quiz-opt" data-correct="false" data-fb="八倍會使 SE 乘上 1/√8，降得比一半更多；題目只要求減半。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 變成八倍</div></div>
-  <div class="quiz-feedback" id="qEx1Feedback"></div>
-</div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · 原創整合題</div>
@@ -1105,10 +1088,7 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   看到推論結果時，依序問：母體與參數是什麼？樣本怎麼來？觀測是否可視為獨立？標準差是已知還是估計？檢定方向是否事先決定？結論有沒有把 p 值誤寫成假設為真的機率？
 </div>
 
-  <p class="ver-note">本頁沒有引用課程 lab 程式碼或「預期輸出」。公式依 Seeing Theory 原始來源與常態模型封閉解獨立核對；算例、表格文字與兩個 SVG 互動均為本站自製。
-  信賴區間元件使用常態母體 μ=50、已知 σ=10、固定種子 240906，每批 20 組且累計上限 400 組；
-  z 檢定元件使用同一已知 σ 模型，p 值由共用 <code>HC.stat.pnorm</code> 的 Abramowitz–Stegun 近似計算。
-  文中數值另以常態 CDF 與封閉公式核算；有限次模擬的涵蓋率會在設定值附近波動。</p>
+  
 </div></details>
 </section>
 <section id="cards">
@@ -1132,7 +1112,7 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
 </div>
 <!-- GEN:BEGIN footer -->
 <footer>
-  互動式從樣本推論母體教學 · 參考 Seeing Theory 網站與講義，以原創算例與互動說明<br>
+  互動式從樣本推論母體教學 · 依 Seeing Theory 網站與講義說明統計概念<br>
   <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);">Designed for NSYSU · Interactive statistics self-study</span>
 </footer>
 <!-- GEN:END footer -->

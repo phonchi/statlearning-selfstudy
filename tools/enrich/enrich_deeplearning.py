@@ -790,13 +790,7 @@ BODIES["reference"] = f"""
   預測會帶隨機性。<strong>固定隨機種子</strong>：非凸最佳化換個種子就換個答案，
   官方 lab 用 <code>seed_everything</code> 加 <code>deterministic=True</code>。''', "warm")}
 
-  <p class="ver-note">本頁的「預期輸出」逐字取自
-  <a href="{LAB_URL}" target="_blank" rel="noopener">課本官方的英文 lab</a>
-  （<code>{LAB}</code>，intro-stat-learning/ISLP_labs，BSD 2-Clause，
-  釘 commit <code>6bf6160</code>）的實跑結果——<strong>本課沒有教第 10 章，
-  所以這一章沒有中文 lab</strong>，其餘各章用的都是課程 lab。每張卡下方的「來源」
-  可由程式片段與 notebook 名稱對照原始實作。雙下降的圖表資料由
-  <code>tools/frames/gen_deeplearning.py</code> 在固定種子下產生。</p>
+  
 """
 
 PAGEJS = r"""
@@ -1420,14 +1414,6 @@ $$\frac{\partial R_i}{\partial w_{kj}}
 <p>截距的最後一個導數為 1，因此移除相應輸入因子便得到截距梯度。
 計算時重用前向傳播儲存的 z、a 與輸出，不必對每個參數重新走完整個網路。</p>
 """) + r"""
-<h3>手算一次更新</h3>
-<p>本站自訂算例：只有一個輸入與一個 ReLU 單元，$x=2,y=1$，
-$w=0.5,w_0=0,\beta=0.4,\beta_0=0.1$。
-前向傳播得 $z=1,a=1,f=0.5,e=-0.5$，損失為 0.125。
-依照 $(\beta_0,\beta,w_0,w)$ 的順序，梯度是 $(-0.5,-0.5,-0.2,-0.4)$。</p>
-<p>學習率 0.1 時，新參數為 $(0.15,0.45,0.02,0.54)$。
-重新前向傳播得 $z=1.10,f=0.645$，新損失為 $\tfrac12(0.645-1)^2=0.0630125$。
-這次確實下降；任意資料與任意學習率並無同樣保證。</p>
 <h3>多層網路沿同一規則往回算</h3>
 <p>令 $z^{(\ell)}=W^{(\ell)}a^{(\ell-1)}+b^{(\ell)}$、$a^{(\ell)}=g_\ell(z^{(\ell)})$，
 並定義 $\delta^{(\ell)}=\partial L/\partial z^{(\ell)}$。逐元素相乘記作 $\odot$，則：</p>
@@ -1453,19 +1439,10 @@ $$R(\theta;\lambda)=-\sum_i\sum_my_{im}\log p_m(x_i)+\lambda\sum_{j\in J}\theta_
 層數、層寬、學習率、批次大小、λ、dropout 比率與 epoch 數，都應用訓練／驗證資料決定，測試集留作最後評估。</p>
 <p class="source-note">來源：ISLP §10.7.1–10.7.4，印刷 pp.428–431，式 10.26–10.31；多層 δ 與 softmax 微分是依同一連鎖律展開的本站補充。
 <a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html">PyTorch CrossEntropyLoss 輸入規格</a>。</p>
-<h3>梯度下降的條件與圖中函數的限制</h3>
-<p>若可微目標的梯度為 L-Lipschitz，取 $0&lt;\rho&lt;2/L$ 可保證單步下降；
-若目標另有下界，能進一步推得梯度範數趨近 0。這仍不等於全域最佳，也不自動保證參數序列收斂。
-ReLU 在折點不可微，不能直接把這個光滑函數論證當作所有網路的保證。</p>
 <p>圖中的 $R(\beta)=\sin\beta+\beta/10$ 滿足 $|R''(\beta)|\le1$，滑桿 0.02–1.6 在下降步長範圍內。
 但它在整條實數線上沒有下界；β 趨向負無限時 R 也趨向負無限。
 圖中兩個谷底的比較只限顯示區間，不能稱為整條實數線上的全域最小值。</p>
-""" + proof('w11proof-descent','光滑函數的下降界限',r"""
-<p>L-Lipschitz 梯度給出 $R(\theta+d)\le R(\theta)+\nabla R(\theta)^\top d+\tfrac L2\|d\|^2$。
-代入 $d=-\rho\nabla R(\theta)$：</p>
-$$R(\theta-\rho\nabla R(\theta))\le R(\theta)-\rho(1-L\rho/2)\|\nabla R(\theta)\|^2.$$
-<p>若 $0&lt;\rho&lt;2/L$，非零梯度給出下降。固定步長、目標有下界時，逐次加總可得梯度平方和有限，故梯度範數趨近 0。</p>
-""")
+""" + ''
 BODIES['cnn'] += r"""
 <h3>資料增強與移轉學習</h3>
 <p><strong>資料增強（data augmentation）</strong>在訓練時對影像隨機平移、縮放、小角度旋轉或適當翻轉，

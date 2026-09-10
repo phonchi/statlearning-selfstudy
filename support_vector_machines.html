@@ -781,13 +781,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>所以 $|f(x)|$ 大就是離邊界遠、這個判斷有把握；$|f(x)|$ 接近 0 就是貼在邊界上、
   隨時可能翻盤。這個「離邊界多遠 ＝ 多有把握」的直覺，是整章的地基。</p>
 
-<div class="viz-layout" data-provenance="book-redraw">
+<div class="viz-layout" data-provenance="book-redraw" data-source-note="依 ISLP 圖 9.1 的 1+2X₁+3X₂=0 幾何關係即時計算。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10hyperSvg" height="330"></svg>
       <div class="status-banner" id="w10hyperStatus"><span class="status-icon">›</span><span class="status-text">拖三個滑桿看超平面怎麼動，以及三個測試點的 f(x) 怎麼變。</span></div>
       <div class="controls-bar"><div class="slider-row" style="flex:1 1 170px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:26px;">β₀</span><input type="range" id="w10hyperB0" min="-3" max="3" step="0.1" value="1" oninput="w10hyperDraw()" onchange="w10hyperDraw()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w10hyperB0V" style="min-width:40px;">1.0</span></div><div class="slider-row" style="flex:1 1 170px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:26px;">β₁</span><input type="range" id="w10hyperB1" min="-3" max="3" step="0.1" value="2" oninput="w10hyperDraw()" onchange="w10hyperDraw()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w10hyperB1V" style="min-width:40px;">2.0</span></div><div class="slider-row" style="flex:1 1 170px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:26px;">β₂</span><input type="range" id="w10hyperB2" min="-3" max="3" step="0.1" value="3" oninput="w10hyperDraw()" onchange="w10hyperDraw()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w10hyperB2V" style="min-width:40px;">3.0</span></div><button class="btn btn-reset" onclick="w10hyperReset()">重置</button></div>
-      <div class="viz-source"><span>講義／課本重繪</span>依 ISLP 圖 9.1 的 1+2X₁+3X₂=0 幾何關係即時計算。</div>
+      <div class="viz-source"><span>講義／課本重繪</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -816,28 +816,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   兩條規則合成一條，因為 $y_i$ 自己會把符號翻過來。這個 $y_i f(x_i)$ 之後會一直出現，
   它就是<strong>「這一筆分對了嗎、有多篤定」</strong>的度量。</p>
 
-  <details class="qa-item reading-detail" id="w10-detail-prologue-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-fit">講義完整實作：造資料、擬合一個線性 SVC、取出係數</h3>
+  <details class="qa-item reading-detail" id="w10-detail-prologue-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · SVC(kernel='linear') 的第一次擬合</div>
+  <div class="dx-label">線性支持向量分類器</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">rng = np.random.default_rng(<span class="num">1</span>)</span>
-  <span class="line">X = rng.standard_normal((<span class="num">50</span>, <span class="num">2</span>))</span>
-  <span class="line">y = np.array([-<span class="num">1</span>]*<span class="num">25</span>+[<span class="num">1</span>]*<span class="num">25</span>)</span>
-  <span class="line">X[y==<span class="num">1</span>] += <span class="num">1</span></span>
-  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>,<span class="num">8</span>))</span>
-  <span class="line">ax.scatter(X[:,<span class="num">0</span>],</span>
-  <span class="line">           X[:,<span class="num">1</span>],</span>
-  <span class="line">           c=y,</span>
-  <span class="line">           cmap=cm.coolwarm);</span>
-  <span class="line"> </span>
   <span class="line">svm_linear = SVC(C=<span class="num">10</span>, kernel=<span class="str">&#x27;linear&#x27;</span>)</span>
-  <span class="line">svm_linear.fit(X, y)</span>
-  <span class="line"> </span>
-  <span class="line">svm_linear.coef_</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[1.17303943, 0.77348227]])</pre></div>
-  <p class="dx-note">這 50 筆資料是本章前半的主角，本頁所有烘焙圖都是<strong>重播同一組<code>default_rng(1)</code> 抽樣</strong>算出來的。<code>coef_</code> 就是 (β₁, β₂) = (1.173, 0.773)，<code>intercept_</code> 是 β₀。擬合那一格的輸出只是 <code>SVC(C=10, kernel='linear')</code>——sklearn 在這裡顯示估計器的設定。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="14,16,29">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="line">svm_linear.fit(X, y)</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="16">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -845,7 +831,6 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <details class="qa-item reading-detail" id="w10-detail-distance"><summary>計算：點到超平面的距離</summary>
 <div class="detail-body"><h3 id="w10-distance-normal">點到超平面的距離</h3>
 <p>對 $w\ne0$，點 $x$ 到 $w^Tz+b=0$ 的距離為 $|w^Tx+b|/\|w\|$。
-例如直線 $3z_1+4z_2-5=0$ 到原點的距離是 $5/5=1$。
 若 $w=0$，就不是這裡所說的超平面，不能除以 $\|w\|$。</p>
 <details class="qa-item proof" id="w10-proof-distance"><summary>證明：垂直投影得到距離公式</summary>
 <div class="qa-a">
@@ -884,7 +869,7 @@ $\|x-z\|=|t|\|w\|=|w^Tx+b|/\|w\|$。
   後續會用到的性質。
 </div>
 
-  <details class="qa-item reading-detail" id="w10-detail-hard-dual"><summary>完整硬邊界問題：primal、dual、KKT 與算例</summary>
+  <details class="qa-item reading-detail" id="w10-detail-hard-dual"><summary>完整硬邊界問題：primal、dual 與 KKT</summary>
 <div class="detail-body"><p>寫成最佳化問題（ISLP 式 9.9–9.11）：</p>
 
   $$\begin{aligned}
@@ -949,18 +934,15 @@ w=\sum_i\alpha_i y_ix_i,\quad\sum_i\alpha_i y_i&=0 &&\text{stationarity},\\
 <p>來源：講義 09；
 <a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/202_handout.pdf" data-source-page="6">林軒田：Dual SVM，PDF 第 6–21 頁</a>。</p>
 </div></details>
-<p><strong>可自行算完的例子。</strong>只有兩點 $(x_1,y_1)=(-1,-1)$、$(x_2,y_2)=(1,1)$。
-等式限制給 $\alpha_1=\alpha_2=a$，對偶化成 $\max_{a\ge0}(2a-2a^2)$。
-最大值在 $a=1/2$，得到 $w=1,b=0$。原始值 $w^2/2=1/2$ 與對偶值相等，
-兩點的函數間隔都為 1，幾何半寬也為 1。</p>
 
-</div></details><div class="viz-layout" data-provenance="illustrative">
+
+</div></details><div class="viz-layout" data-provenance="illustrative" data-source-note="自訂可拖曳二維點；最大邊界由兩類凸包最近點即時計算。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10marginSvg" height="430"></svg>
       <div class="status-banner" id="w10marginStatus"><span class="status-icon">›</span><span class="status-text">拖動任何一個點。粗框標示接觸間隔的點；對偶乘子是否為正還需由最佳化判斷。</span></div>
       <div class="controls-bar"><button class="btn btn-reset" onclick="w10marginReset()">重置點的位置</button><button class="btn btn-toggle" onclick="w10marginToggleHull()">切換凸包顯示</button></div>
-      <div class="viz-source"><span>自訂概念示意</span>自訂可拖曳二維點；最大邊界由兩類凸包最近點即時計算。</div>
+      <div class="viz-source"><span>概念示意</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -973,7 +955,7 @@ w=\sum_i\alpha_i y_ix_i,\quad\sum_i\alpha_i y_i&=0 &&\text{stationarity},\\
       <div class="ic-row"><span class="ic-label">margin 半寬 M</span><span class="ic-value" id="w10marginM">—</span></div><div class="ic-row"><span class="ic-label">板子總寬 2M</span><span class="ic-value" id="w10marginW">—</span></div><div class="ic-row"><span class="ic-label">間隔接觸點個數</span><span class="ic-value" id="w10marginNsv">—</span></div><div class="ic-row"><span class="ic-label">邊界（f = 0）</span><span class="ic-value" id="w10marginEq">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">解是怎麼算出來的 <span class="ic-badge">LIVE</span></div>
+      <div class="ic-title">解是怎麼算出來的</div>
       這個元件使用等價的幾何性質：<strong>最大邊界超平面就是兩類凸包最近點對連線的垂直平分線</strong>，M 是那段距離的一半（紫色線段）。點很少，把所有候選組合都算一遍就好，每次拖曳都重算。<br>凸包一旦重疊就不存在分離超平面。把兩堆點拖到交錯，元件會直接說解不出來。
     </div>
   </div>
@@ -995,25 +977,7 @@ w=\sum_i\alpha_i y_ix_i,\quad\sum_i\alpha_i y_i&=0 &&\text{stationarity},\\
   下一節會用軟邊界改善這種敏感性。
 </div>
 
-  <details class="qa-item reading-detail" id="w10-detail-maxmargin-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-sep">講義完整實作：把兩類推開到剛好可分開，再用超大的 C 擬合</h3>
-<div class="deck-extra">
-  <div class="dx-label">lab 09 · 剛好線性可分開的情況（C = 10⁵）</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">X[y==<span class="num">1</span>] += <span class="num">1.9</span>;</span>
-  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>,<span class="num">8</span>))</span>
-  <span class="line">ax.scatter(X[:,<span class="num">0</span>], X[:,<span class="num">1</span>], c=y, cmap=cm.coolwarm);</span>
-  <span class="line"> </span>
-  <span class="line">svm_ = SVC(C=<span class="num">1e5</span>, kernel=<span class="str">&#x27;linear&#x27;</span>).fit(X, y)</span>
-  <span class="line">y_hat = svm_.predict(X)</span>
-  <span class="line">confusion_table(y_hat, y)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Truth      -1   1
-Predicted        
--1         25   0
- 1          0  25</pre></div>
-  <p class="dx-note"><code>X[y==1] += 1.9</code> 把兩類再推開一點，剛好變成線性可分開。用 <code>C=1e5</code>（sklearn 的 C，見下一節）擬合出來的分類器沒有任何訓練誤差，而且<strong>只用了 3 個支持向量</strong>。這就是最大邊界超平面。lab 範例 換成 <code>C=0.1</code>，訓練誤差同樣是 0，但支持向量變成 <strong>12 個</strong>、margin 寬得多。ISLP §9.6.1 的評語是：後者「因為點更多所以更穩定」，在測試資料上可能更好。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="41,43">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
-</div></div></details>
+  
 
 
 <div class="qa-box">
@@ -1121,11 +1085,7 @@ $y_if(x_i)=1-\xi_i\le1$。這導出正文三類，而不是「支持向量都剛
 也不能任取一個 $\alpha_s=C$ 的點套用等式。令 $g_i=\sum_j\alpha_jy_jK(x_j,x_i)$，
 從零乘子的 $y_i(g_i+b)\ge1$ 及上界乘子的 $y_i(g_i+b)\le1$，
 分別得到 $b$ 的上下界，選其可行區間內的值。</p>
-<p><strong>接續兩點例子。</strong>設 $C=1/4$，則 $0\le a\le1/4$，最佳 $a=1/4$，
-$w=1/2$。取 $b=0$，兩筆 $\xi_i=1/2$，原始值是
-$1/8+(1/4)(1/2+1/2)=3/8$，對偶值亦為 $2(1/4)-2(1/4)^2=3/8$。
-這裡兩點都達乘子上界，沒有自由支持向量；$b\in[-1/2,1/2]$ 都可行且最佳。
-所以凸性不代表每個截距與每個對偶乘子都唯一。</p>
+
 <div class="quiz-box">
   <div class="quiz-label">自我檢測 · 對偶與支持向量</div>
   <p>在軟邊界最佳解中，$\alpha_i=C$ 能推出哪件事？</p>
@@ -1141,7 +1101,7 @@ $1/8+(1/4)(1/2+1/2)=3/8$，對偶值亦為 $2(1/4)-2(1/4)^2=3/8$。
   下面元件與 Lab 使用 scikit-learn 的 C。
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="Ch09 lab 儲存格 14／22／23／27／41 的線性 SVC 擬合。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10softSvg" height="360"></svg>
@@ -1150,7 +1110,7 @@ $1/8+(1/4)(1/2+1/2)=3/8$，對偶值亦為 $2(1/4)-2(1/4)^2=3/8$。
       </div>
       <div class="status-banner" id="w10softStatus"><span class="status-icon">›</span><span class="status-text">選資料集、推 C 的滑桿，看邊界、margin 帶與支持向量怎麼變。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">資料</label><select id="w10softSel" class="mono" onchange="w10softSetData()"><option value="nonsep" selected>不可分開</option><option value="sep">剛好可分開</option></select><div class="slider-row" style="flex:1 1 240px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:86px;">sklearn 的 C</span><input type="range" id="w10softSl" min="0" max="5" step="1" value="3" oninput="w10softDraw()" onchange="w10softDraw()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w10softSlV" style="min-width:54px;">1</span></div></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Ch09 lab 範例 的線性 SVC 擬合。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1163,7 +1123,7 @@ $1/8+(1/4)(1/2+1/2)=3/8$，對偶值亦為 $2(1/4)-2(1/4)^2=3/8$。
       <div class="ic-row"><span class="ic-label">sklearn 的 C</span><span class="ic-value" id="w10softC">—</span></div><div class="ic-row"><span class="ic-label">ISLP 的預算 C 相當於</span><span class="ic-value" id="w10softBudget">—</span></div><div class="ic-row"><span class="ic-label">margin 半寬 1/‖β‖</span><span class="ic-value" id="w10softM">—</span></div><div class="ic-row"><span class="ic-label">支持向量個數</span><span class="ic-value" id="w10softNsv">—</span></div><div class="ic-row"><span class="ic-label">違反 margin 的點</span><span class="ic-value" id="w10softViol">—</span></div><div class="ic-row"><span class="ic-label">被錯誤分類的點</span><span class="ic-value" id="w10softWrong">—</span></div>
     </div>
     <div class="info-card">
-      <div class="ic-title">兩組資料在對什麼 <span class="ic-badge">BAKED</span></div>
+      <div class="ic-title">兩組資料在對什麼</div>
       <strong>「不可分開」</strong>就是 lab 範例 那 50 筆。C = 10 時支持向量 29 個，C = 0.1 時 36 個（lab 範例 的 <code>[18 18]</code>）——元件上的數字就是那些數字。<br><strong>「剛好可分開」</strong>是lab 範例 把兩類推開 1.9 之後的版本。C = 10⁵ 只用 3 個支持向量、C = 0.1 用 12 個，正是 ISLP §9.6.1 講的 three 與 twelve。
     </div>
   </div>
@@ -1176,40 +1136,22 @@ $1/8+(1/4)(1/2+1/2)=3/8$，對偶值亦為 $2(1/4)-2(1/4)^2=3/8$。
   <p>軟邊界仍保留支持向量的性質：<strong>非零對偶乘子的點才直接出現在解的表示中</strong>。嚴格待在正確一側的點，
   你把它拖到再遠的地方，分類器完全不變。移動一個支持向量也不保證解一定改變，仍需看其餘限制與是否退化。</p>
 
-  <details class="qa-item reading-detail" id="w10-detail-soft-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-sv">講義完整實作：支持向量是哪幾筆</h3>
+  <details class="qa-item reading-detail" id="w10-detail-soft-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · 取出支持向量（C = 10）</div>
+  <div class="dx-label">辨認支持向量</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line"><span class="com"># get indices of support vectors</span></span>
   <span class="line">svm_linear.support_</span>
   <span class="line"> </span>
   <span class="line"><span class="com"># get number of support vectors for each class</span></span>
   <span class="line">svm_linear.n_support_</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([15, 14], dtype=int32)</pre></div>
-  <p class="dx-note"><code>support_</code> 是支持向量在原始資料裡的<strong>索引</strong>（lab 範例 印出 29 個），<code>n_support_</code> 是每一類各幾個：<code>[15, 14]</code>，合起來 29。lab 範例 用 <code>support_vectors_</code> 把座標印成表格。50 筆資料裡有 29 筆是支持向量。這份資料重疊得很厲害。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="21,22,23">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="22,23">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
+
+
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · 換成小的 C：支持向量變多</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">svm_linear_small = SVC(C=<span class="num">0.1</span>, kernel=<span class="str">&#x27;linear&#x27;</span>)</span>
-  <span class="line">svm_linear_small.fit(X, y)</span>
-  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>,<span class="num">8</span>))</span>
-  <span class="line">plot_svm(X,</span>
-  <span class="line">         y,</span>
-  <span class="line">         svm_linear_small,</span>
-  <span class="line">         ax=ax)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com"># get number of support vectors for each class</span></span>
-  <span class="line">svm_linear_small.n_support_</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([18, 18], dtype=int32)</pre></div>
-  <p class="dx-note"><code>C=0.1</code> 的支持向量變成 <code>[18, 18]</code> = 36 個。lab 的說法是「使用較小的成本參數值，我們獲得更多的支援向量，因為邊界現在更寬」——<strong>sklearn 的 C 小 ＝ 罰得輕 ＝ margin 寬</strong>，跟 ISLP 的預算 C 剛好相反。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="25,27">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
-</div>
-<h3 id="dx-cv">講義完整實作：用交叉驗證選 C</h3>
-<div class="deck-extra">
-  <div class="dx-label">lab 09 · GridSearchCV 掃七個 C</div>
+  <div class="dx-label">交叉驗證選 C</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">kfold = skm.KFold(<span class="num">5</span>,</span>
   <span class="line">                  random_state=<span class="num">0</span>,</span>
@@ -1219,27 +1161,10 @@ $1/8+(1/4)(1/2+1/2)=3/8$，對偶值亦為 $2(1/4)-2(1/4)^2=3/8$。
   <span class="line">                        refit=<span class="num">True</span>,</span>
   <span class="line">                        cv=kfold,</span>
   <span class="line">                        scoring=<span class="str">&#x27;accuracy&#x27;</span>)</span>
-  <span class="line">grid.fit(X, y)</span>
-  <span class="line">grid.best_params_</span>
-  <span class="line"> </span>
-  <span class="line">grid.cv_results_[(<span class="str">&#x27;mean_test_score&#x27;</span>)]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([0.46, 0.46, 0.72, 0.74, 0.74, 0.74, 0.74])</pre></div>
-  <p class="dx-note">七個 C 的 5 折交叉驗證準確率是 <code>[0.46, 0.46, 0.72, 0.74, 0.74, 0.74, 0.74]</code>。最佳是 C = 1（lab 範例 的輸出），但後面四個 C 的準確率完全一樣。<strong>這種誤差曲線平坦的情況很常見，就挑最簡單（最正則化）的那個</strong>，兩者分別是 0.74 與 0.74，這次結果相同。注意 C = 0.001 與 0.01 的準確率只有 0.46，比亂猜還差：罰得太輕，β 被壓到幾乎是 0，分類器的預測表現變差。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="31,33">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="line">grid.fit(X, y)</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="31">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
-<div class="deck-extra">
-  <div class="dx-label">lab 09 · 用選出來的 C 預測測試資料</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">best_ = grid.best_estimator_</span>
-  <span class="line">y_test_hat = best_.predict(X_test)</span>
-  <span class="line">confusion_table(y_test_hat, y_test)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Truth      -1   1
-Predicted        
--1          8   4
- 1          2   6</pre></div>
-  <p class="dx-note">混淆矩陣的對角線是 8 + 6 = 14，20 筆裡對了 14 筆 → <strong>70%</strong>。lab 範例 換成 <code>C=0.001</code>，正確率掉到 60%（幾乎把所有點都判成 +1）。這一頁的每一個混淆矩陣都是 <code>confusion_table(預測, 真實)</code>：<strong>列是預測、欄是真實</strong>，順序跟 sklearn 的 <code>confusion_matrix</code> 相反，看的時候要注意。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="35,37">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
-</div></div></details>
+</div></details>
 
 
 
@@ -1277,7 +1202,7 @@ Predicted
   是 ISLP §9.5 與 ESL §12.3.2 的內容。第一輪讀可以先跳過，直接去 PART 04 的核技巧；
   這一節也提供比較 SVM 與邏輯斯迴歸所需的損失函數觀點。</p>
 
-  <p>Hinge loss 以帶標籤分數 $y f(x)$ 衡量違反間隔的程度：</p>$$\ell(y,f(x))=\max(0,1-yf(x)).$$<p>例如分數為 0.5 時損失為 0.5，分數超過 1 後損失為 0；間隔上的折角仍可能對解有影響。擬合時把這個損失與係數的平方懲罰相加。</p><details class="qa-item reading-detail" id="w10-detail-loss-normalization"><summary>完整目標與尺度：hinge、slack、預算及標籤</summary>
+  <p>Hinge loss 以帶標籤分數 $y f(x)$ 衡量違反間隔的程度：</p>$$\ell(y,f(x))=\max(0,1-yf(x)).$$<p>間隔上的折角仍可能對解有影響。擬合時把這個損失與係數的平方懲罰相加。</p><details class="qa-item reading-detail" id="w10-detail-loss-normalization"><summary>完整目標與尺度：hinge、slack、預算及標籤</summary>
 <div class="detail-body"><p>前面把支持向量分類器寫成一個帶限制式的最佳化問題。ISLP §9.5 給了一個
   <strong>完全等價、但看起來完全不同</strong>的寫法（式 9.25）：</p>
 
@@ -1343,7 +1268,7 @@ $z=0$ 時 $y=-1$，$-\log[1-\sigma(f)]=\log(1+e^f)$。
 </div></details>
 </div></details><p>現在看那條曲線。橫軸是 $y_i f(x_i)$——分對了是正的，愈大愈篤定；分錯了是負的。</p>
 
-<div class="viz-layout" data-provenance="book-redraw">
+<div class="viz-layout" data-provenance="book-redraw" data-source-note="依 ISLP 圖 9.12 的 hinge、logistic 與 0–1 loss 公式即時計算。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w10lossChart"></canvas>
@@ -1351,7 +1276,7 @@ $z=0$ 時 $y=-1$，$-\log[1-\sigma(f)]=\log(1+e^f)$。
       </div>
       <div class="status-banner" id="w10lossStatus"><span class="status-icon">›</span><span class="status-text">綠線是 hinge、紅線是邏輯斯。注意綠線在右邊完全貼著 0。</span></div>
       <div class="controls-bar"><button class="btn btn-toggle" onclick="w10lossToggle01()">顯示 0–1 損失</button><button class="btn btn-toggle" onclick="w10lossToggleZoom()">切換 y 軸範圍</button></div>
-      <div class="viz-source"><span>講義／課本重繪</span>依 ISLP 圖 9.12 的 hinge、logistic 與 0–1 loss 公式即時計算。</div>
+      <div class="viz-source"><span>講義／課本重繪</span></div>
     </div>
   </div>
   <div class="side-panel">
@@ -1385,39 +1310,14 @@ $z=0$ 時 $y=-1$，$-\log[1-\sigma(f)]=\log(1+e^f)$。
   <strong>凸代理損失</strong>（convex surrogate loss）。hinge 與邏輯斯損失都是代理；
   其中 hinge 是 0–1 損失的逐點上界，本圖未縮放的邏輯斯損失則不一定在階梯之上。</p>
 
-  <details class="qa-item reading-detail" id="w10-detail-hinge-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-sgd">講義完整實作：直接對 hinge loss 做隨機梯度下降</h3>
+  <details class="qa-item reading-detail" id="w10-detail-hinge-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · SGDClassifier(loss="hinge")</div>
+  <div class="dx-label">以 hinge loss 擬合線性分類器</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com"># we create 50 separable points</span></span>
-  <span class="line">X, Y = make_blobs(n_samples=<span class="num">50</span>, centers=<span class="num">2</span>, random_state=<span class="num">0</span>, cluster_std=<span class="num">0.60</span>)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com"># fit the model</span></span>
   <span class="line">clf = SGDClassifier(loss=<span class="str">&quot;hinge&quot;</span>, alpha=<span class="num">0.01</span>, max_iter=<span class="num">200</span>)</span>
   <span class="line"> </span>
-  <span class="line">clf.fit(X, Y)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com"># plot the line, the points, and the nearest vectors to the plane</span></span>
-  <span class="line">xx = np.linspace(-<span class="num">1</span>, <span class="num">5</span>, <span class="num">10</span>)</span>
-  <span class="line">yy = np.linspace(-<span class="num">1</span>, <span class="num">5</span>, <span class="num">10</span>)</span>
-  <span class="line"> </span>
-  <span class="line">X1, X2 = np.meshgrid(xx, yy)</span>
-  <span class="line">Z = np.empty(X1.shape)</span>
-  <span class="line"><span class="kw">for</span> (i, j), val <span class="kw">in</span> np.ndenumerate(X1):</span>
-  <span class="line">    x1 = val</span>
-  <span class="line">    x2 = X2[i, j]</span>
-  <span class="line">    p = clf.decision_function([[x1, x2]])</span>
-  <span class="line">    Z[i, j] = p[<span class="num">0</span>]</span>
-  <span class="line">levels = [-<span class="num">1.0</span>, <span class="num">0.0</span>, <span class="num">1.0</span>]</span>
-  <span class="line">linestyles = [<span class="str">&quot;dashed&quot;</span>, <span class="str">&quot;solid&quot;</span>, <span class="str">&quot;dashed&quot;</span>]</span>
-  <span class="line">colors = <span class="str">&quot;k&quot;</span></span>
-  <span class="line">plt.contour(X1, X2, Z, levels, colors=colors, linestyles=linestyles)</span>
-  <span class="line">plt.scatter(X[:, <span class="num">0</span>], X[:, <span class="num">1</span>], c=Y, cmap=plt.cm.Paired, edgecolor=<span class="str">&quot;black&quot;</span>, s=<span class="num">20</span>)</span>
-  <span class="line"> </span>
-  <span class="line">plt.axis(<span class="str">&quot;tight&quot;</span>)</span>
-  <span class="line">plt.show()</span></div>
-  <p class="dx-note">講義的重點：<code>SGDClassifier(loss="hinge")</code> 就是<strong>用隨機梯度下降去最小化式 9.25</strong>，<code>alpha</code> 是正則化權重；SGD 使用平均損失與半個平方範數，須按正規化換算，不能直接當作本頁的 λ。它不解 QP，所以資料量很大時比 <code>SVC</code> 快得多，代價是解得比較粗。這一格畫的三條等高線 <code>[-1, 0, 1]</code> 就是 margin 的兩側與邊界本身——跟 <code>plot_svm()</code> 畫的是同一件事。順帶一提，講義也提醒 <strong>SGD 對特徵尺度很敏感</strong>，用它之前更要標準化。</p>
+  <span class="line">clf.fit(X, Y)</span></div>
   <span class="dx-src" data-lab-ch="9" data-lab-cells="95">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
@@ -1511,28 +1411,25 @@ $$e^{-\gamma(x-z)^2}=e^{-\gamma x^2}e^{-\gamma z^2}e^{2\gamma xz}
 <p>來源：講義 09；
 <a href="https://cs229.stanford.edu/notes2021fall/cs229-notes3.pdf">Stanford CS229：Kernels and SVM</a>。</p>
 </div></details>
-<p><strong>半正定檢查例。</strong>對 $x=-1,1$ 的線性核，
-$K=\begin{pmatrix}1&-1\\-1&1\end{pmatrix}$，其特徵值為 0、2。
-零特徵值是允許的：合法核只需半正定，不必嚴格正定。
-完整 Gram 矩陣通常需 $O(n^2)$ 儲存；大資料可考慮線性求解器或核近似。</p>
 
 
-</div></details><div class="viz-layout" data-provenance="course-data">
+
+</div></details><div class="viz-layout" data-provenance="course-data" data-source-note="同心圓取自 Ch09 lab 儲存格 51–54；一維 lift 為公式機制示意。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10kernSvg" height="430"></svg>
       <div class="status-banner" id="w10kernSvgStatus"><span class="status-icon">›</span><span class="status-text">選模式後按「開始」。一維的點會被抬到二維，然後一條直線就分開了。</span></div>
       <div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">模式</label><select id="w10kernSel" class="mono" onchange="w10kernSetMode()"><option value="lift" selected>一維 → 二維（x → x²）</option><option value="circle">同心圓 → 二次核</option></select><button class="btn btn-play" onclick="w10kernStart()">▶ 開始</button><button class="btn btn-step" onclick="w10kernStep()">→ 單步</button><button class="btn btn-reset" onclick="w10kernReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span>同心圓取自 Ch09 lab 範例；一維 lift 為公式機制示意。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
-      <div class="ic-title">怎麼玩 <span class="ic-badge">LIVE + BAKED</span></div>
+      <div class="ic-title">怎麼玩</div>
       <strong>「一維 → 二維」</strong>：按 ▶ 看點被抬到 (x, x²)。一維上紅色被藍色夾住、一個門檻切不開；抬到二維後<strong>一條水平線就分開了</strong>；映射回一維就變成兩個門檻。<br><strong>「同心圓 → 二次核」</strong>：lab 範例 的真實資料，填色是二次核 SVM 的決策區域。
     </div>
     <div class="info-card">
-      <div class="ic-title">核技巧的三步 <span class="ic-badge">CODE</span></div>
+      <div class="ic-title">核技巧的三步</div>
       <div class="pseudo-code" id="w10kernCode" style="font-size:.74rem;"><span class="line" data-l="1">原空間分不開</span>
 <span class="line" data-l="2">映射 φ：x → (x, x²)</span>
 <span class="line" data-l="3">在新空間擬合線性超平面</span>
@@ -1547,107 +1444,35 @@ $K=\begin{pmatrix}1&-1\\-1&1\end{pmatrix}$，其特徵值為 0、2。
   </div>
 </div>
 
-  <details class="qa-item reading-detail" id="w10-detail-kernel-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-map">講義完整實作：手寫一個二次核，跟「先映射再擬合線性」比對</h3>
+  <details class="qa-item reading-detail" id="w10-detail-kernel-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · 特徵映射 vs 自訂核（同心圓資料）</div>
+  <div class="dx-label">特徵映射與自訂核</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line"><span class="kw">def</span> <span class="fn">feature_map_1</span>(X):</span>
   <span class="line">    <span class="kw">return</span> np.asarray((np.sqrt(<span class="num">2</span>)*X[:,<span class="num">0</span>]*X[:,<span class="num">1</span>], X[:,<span class="num">0</span>]**<span class="num">2</span>, X[:,<span class="num">1</span>]**<span class="num">2</span>)).T</span>
   <span class="line"> </span>
   <span class="line"><span class="kw">def</span> <span class="fn">my_kernel_1</span>(X,Y):</span>
-  <span class="line">    <span class="kw">return</span> np.dot(feature_map_1(X),feature_map_1(Y).T )</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com">## Reference https://xavierbourretsicotte.github.io/Kernel_特徵_map.html</span></span>
-  <span class="line"> </span>
-  <span class="line">X, y = make_circles(<span class="num">100</span>, factor=<span class="num">.1</span>, noise=<span class="num">.1</span>, random_state = <span class="num">0</span>)</span>
-  <span class="line">Z = feature_map_1(X)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com">#2D scatter plot</span></span>
-  <span class="line">fig = plt.figure(figsize = (<span class="num">16</span>,<span class="num">8</span>))</span>
-  <span class="line">ax = fig.add_subplot(<span class="num">1</span>, <span class="num">2</span>, <span class="num">1</span>)</span>
-  <span class="line">ax.scatter(X[:,<span class="num">0</span>], X[:,<span class="num">1</span>], c = y, cmap = <span class="str">&#x27;viridis&#x27;</span>)</span>
-  <span class="line">ax.set_xlabel(<span class="str">&#x27;$x_1$&#x27;</span>)</span>
-  <span class="line">ax.set_ylabel(<span class="str">&#x27;$x_2$&#x27;</span>)</span>
-  <span class="line">ax.set_title(<span class="str">&#x27;Original data&#x27;</span>)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com">#3D scatter plot</span></span>
-  <span class="line">ax = fig.add_subplot(<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, projection=<span class="str">&#x27;3d&#x27;</span>)</span>
-  <span class="line">ax.scatter3D(Z[:,<span class="num">0</span>],Z[:,<span class="num">1</span>], Z[:,<span class="num">2</span>],c = y, cmap = <span class="str">&#x27;viridis&#x27;</span> ) <span class="com">#,rstride = 5, cstride = 5, cmap = &#x27;jet&#x27;, alpha = .4, edgecolor = &#x27;none&#x27; )</span></span>
-  <span class="line">ax.set_xlabel(<span class="str">&#x27;$z_1$&#x27;</span>)</span>
-  <span class="line">ax.set_ylabel(<span class="str">&#x27;$z_2$&#x27;</span>)</span>
-  <span class="line">ax.set_zlabel(<span class="str">&#x27;$z_3$&#x27;</span>)</span>
-  <span class="line">ax.set_title(<span class="str">&#x27;Transformed data: &#x27;</span>)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com">#SVM using linear kernel with 特徵 map 1</span></span>
-  <span class="line">clf = SVC(C = <span class="num">1</span>, kernel = <span class="str">&#x27;linear&#x27;</span>)</span>
-  <span class="line">clf.fit(Z, y)</span>
-  <span class="line"> </span>
-  <span class="line">w = clf.coef_.flatten()</span>
-  <span class="line">b = clf.intercept_.flatten()</span>
-  <span class="line">print(<span class="str">&#x27;w=&#x27;</span>,w,<span class="str">&#x27;b=&#x27;</span>,b)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com"># create x,y</span></span>
-  <span class="line">xx, yy = np.meshgrid(np.linspace(-<span class="num">1</span>,<span class="num">1</span>), np.linspace(<span class="num">0</span>,<span class="num">1</span>))</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com"># calculate corresponding z</span></span>
-  <span class="line"><span class="com"># The equation of the separating plane is given by all x in R^3 such that:</span></span>
-  <span class="line"><span class="com"># np.dot(w, x) + b = 0. We should solve for the last coordinate</span></span>
-  <span class="line">boundary = (-w[<span class="num">0</span>] * xx - w[<span class="num">1</span>] * yy - b) * <span class="num">1.</span> /w[<span class="num">2</span>]</span>
-  <span class="line"> </span>
-  <span class="line"> </span>
-  <span class="line"><span class="com"># plot the surface</span></span>
-  <span class="line"> </span>
-  <span class="line">ax.plot_surface(xx, yy, boundary, alpha = <span class="num">.3</span>)</span>
-  <span class="line">ax.set_ylim(<span class="num">.2</span>,<span class="num">1.2</span>)</span>
-  <span class="line">ax.set_zlim(-<span class="num">.9</span>,<span class="num">1.1</span>)</span>
-  <span class="line"><span class="com">#ax.view_init(0, 260)</span></span>
-  <span class="line"> </span>
-  <span class="line">plt.show()</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>w= [-0.05481854 -2.53191791 -2.52028513] b= [1.14976292]
-&lt;Figure size 1600x800 with 2 Axes&gt;&lt;figure omitted&gt;</pre></div>
-  <p class="dx-note"><code>feature_map_1</code> 把二維點送到三維 (√2·x₁x₂, x₁², x₂²)，<code>my_kernel_1</code> 則是那個映射的內積，也就是它的核。在三維空間擬合出來的線性超平面是 <code>w = [-0.0548, -2.5319, -2.5203]</code>、<code>b = 1.1498</code>：第一個係數幾乎是 0（交互項沒用），後兩個幾乎相等且為負。<strong>它學到的其實就是「x₁² + x₂² 小的是內圈」</strong>。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="51,52">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="line">    <span class="kw">return</span> np.dot(feature_map_1(X),feature_map_1(Y).T )</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="51">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · 兩條路的答案一模一樣</div>
+  <div class="dx-label">用自訂核擬合</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="com">#SVM using kernel 1 - 特徵 map 1</span></span>
   <span class="line">clf2 = SVC(kernel=my_kernel_1)</span>
-  <span class="line">clf2.fit(X, y)</span>
-  <span class="line"> </span>
-  <span class="line"><span class="com"># predict on training examples - print accuracy score</span></span>
-  <span class="line">print(<span class="str">&#x27;Accuracy score using feature map &#x27;</span>,accuracy_score(y, clf2.predict(X)))</span>
-  <span class="line">print(<span class="str">&#x27;Accuracy score using feature map &#x27;</span>,accuracy_score(y, clf.predict(Z)))</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Accuracy score using feature map  1.0
-Accuracy score using feature map  1.0</pre></div>
-  <p class="dx-note"><code>SVC(kernel=my_kernel_1)</code>（只用核、留在二維）與 <code>SVC(kernel='linear').fit(Z, y)</code>（真的升到三維）訓練準確率都是 <strong>1.0</strong>。<strong>這個比較呈現了核技巧的等價性</strong>：兩條路數學上等價，但右邊那條不需要把 Φ(x) 算出來。lab 範例 把決策區域畫出來，在原空間看是一個圓。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="53,54">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="line">clf2.fit(X, y)</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="53">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
-<h3 id="dx-rbf">講義完整實作：RBF 核 SVM</h3>
+
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · 非線性邊界的資料 + RBF 核</div>
+  <div class="dx-label">RBF 核分類器</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">X = rng.standard_normal((<span class="num">200</span>, <span class="num">2</span>))</span>
-  <span class="line">X[:<span class="num">100</span>] += <span class="num">2</span></span>
-  <span class="line">X[<span class="num">100</span>:<span class="num">150</span>] -= <span class="num">2</span></span>
-  <span class="line">y = np.array([<span class="num">1</span>]*<span class="num">150</span>+[<span class="num">2</span>]*<span class="num">50</span>)</span>
-  <span class="line"> </span>
-  <span class="line">(X_train,</span>
-  <span class="line"> X_test,</span>
-  <span class="line"> y_train,</span>
-  <span class="line"> y_test) = skm.train_test_split(X,</span>
-  <span class="line">                                y,</span>
-  <span class="line">                                test_size=<span class="num">0.5</span>,</span>
-  <span class="line">                                random_state=<span class="num">0</span>)</span>
   <span class="line">svm_rbf = SVC(kernel=<span class="str">&quot;rbf&quot;</span>, gamma=<span class="num">1</span>, C=<span class="num">1</span>)</span>
   <span class="line">svm_rbf.fit(X_train, y_train)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>SVC(C=1, gamma=1)</pre></div>
-  <p class="dx-note">200 筆資料分成三塊：前 100 筆整體 +2、第 101–150 筆整體 −2、剩下 50 筆留在原地，標籤是 <code>[1]*150 + [2]*50</code>，所以第 2 類被第 1 類從兩邊夾住，邊界必然是非線性的。上面那張圖用的就是這 100 筆訓練資料（<code>test_size=0.5</code>）。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="57,61">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="61">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · 同時調 C 與 γ</div>
+  <div class="dx-label">同時選 C 與核參數</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">kfold = skm.KFold(<span class="num">5</span>,</span>
   <span class="line">                  random_state=<span class="num">0</span>,</span>
@@ -1658,11 +1483,8 @@ Accuracy score using feature map  1.0</pre></div>
   <span class="line">                        refit=<span class="num">True</span>,</span>
   <span class="line">                        cv=kfold,</span>
   <span class="line">                        scoring=<span class="str">&#x27;accuracy&#x27;</span>);</span>
-  <span class="line">grid.fit(X_train, y_train)</span>
-  <span class="line">grid.best_params_</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>{&#x27;C&#x27;: 1, &#x27;gamma&#x27;: 0.5}</pre></div>
-  <p class="dx-note">25 組組合裡最好的是 <strong>C = 1、γ = 0.5</strong>。lab 的補充很重要：<strong>「儘管其他幾個值也達到相同的值」</strong>——網格搜尋常常有一片平原，別把 <code>best_params_</code> 當成唯一正確答案。接著lab 範例 用它預測測試集，混淆矩陣是 69／6／6／19，錯誤率 12%。順帶一提，ISLP 書上印的 <code>Out[24]</code> 是 <code>{'C': 100, 'gamma': 1}</code>，跟 lab 實跑不同。這說明附近幾組參數的表現相近。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="67,69">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="line">grid.fit(X_train, y_train)</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="67">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -1687,31 +1509,26 @@ Accuracy score using feature map  1.0</pre></div>
   $f(x^*) = \beta_0 + \sum_{i \in S} \alpha_i y_i K(x^*, x_i)$ 裡幾乎沒有發言權。
   <strong>只有附近的訓練點會影響一個測試點的預測。</strong>γ 就是「附近」有多近。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+<div class="viz-layout" data-provenance="course-data" data-source-note="Ch09 lab 儲存格 57／61／65／67／75；同一 train/test split 的 SVC 擬合。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10rbfSvg" height="420"></svg>
-      <div class="chart-wrap"><canvas id="w10rbfChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：γ 從 0.25 加到 50，訓練錯誤率一路掉到 0，但測試錯誤率先降後升——γ = 50 時訓練幾乎完美而測試最差，這就是過度擬合。</div></div>
-      </div>
+      
       <div class="status-banner" id="w10rbfStatus"><span class="status-icon">›</span><span class="status-text">一次只改一個參數，分清 γ 的局部性與 C 的違規懲罰。</span></div>
       <div class="controls-bar"><label class="slider-label">這次要改</label><select id="w10rbfMode" class="mono" onchange="w10rbfModeChange()"><option value="gamma" selected>γ（C 固定為 1）</option><option value="C">C（γ 固定為 1）</option></select><div class="slider-row" style="flex:1 1 260px;margin-bottom:0;min-width:0;"><span class="slider-label" style="min-width:30px;">設定</span><input type="range" id="w10rbfSl" min="0" max="2" step="1" value="0" oninput="w10rbfDraw()" onchange="w10rbfDraw()" style="min-width:0;flex:1 1 0;"><span class="slider-val" id="w10rbfSlV" style="min-width:112px;">γ = 0.5</span></div></div>
-      <div class="viz-source"><span>課程／lab 資料</span>Ch09 lab 範例；同一 train/test split 的 SVC 擬合。</div>
+      <div class="viz-source"><span>課程／lab 資料</span></div>
     </div>
   </div>
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看 <span class="ic-badge">圖 9.9</span></div>
-      上圖：填色是 RBF 核 SVM 的決策區域（<strong>預先計算的 40×40 格點</strong>），點是訓練資料。先選只改 γ 或只改 C，再推滑桿；另一個參數全程固定。<strong>在 C=1 下看 γ = 50</strong>：邊界縮成一個個包住單點的小島，訓練錯誤率是 0。此時模型把每個點各自圈起來，訓練滿分仍不足以說明泛化能力。<br>下圖：C = 1 固定，γ 從 0.25 掃到 50 的訓練與測試錯誤率。
+      填色是 RBF 核 SVM 的決策區域，點是訓練資料。先選只改 γ 或只改 C，再推滑桿；另一個參數全程固定。
     </div>
     <div class="info-card">
       <div class="ic-title">這一格的擬合</div>
-      <div class="ic-row"><span class="ic-label">γ</span><span class="ic-value" id="w10rbfG">—</span></div><div class="ic-row"><span class="ic-label">sklearn 的 C</span><span class="ic-value" id="w10rbfC">—</span></div><div class="ic-row"><span class="ic-label">支持向量個數</span><span class="ic-value" id="w10rbfNsv">—</span></div><div class="ic-row"><span class="ic-label">訓練錯誤率</span><span class="ic-value" id="w10rbfTr">—</span></div><div class="ic-row"><span class="ic-label">測試錯誤率</span><span class="ic-value" id="w10rbfTe">—</span></div><div class="ic-row"><span class="ic-label">這一組的出處</span><span class="ic-value" id="w10rbfWhy">—</span></div>
+      <div class="ic-row"><span class="ic-label">γ</span><span class="ic-value" id="w10rbfG">—</span></div><div class="ic-row"><span class="ic-label">sklearn 的 C</span><span class="ic-value" id="w10rbfC">—</span></div><div class="ic-row"><span class="ic-label">支持向量個數</span><span class="ic-value" id="w10rbfNsv">—</span></div><div class="ic-row"><span class="ic-label">參數的意義</span><span class="ic-value" id="w10rbfWhy">—</span></div>
     </div>
-    <div class="info-card">
-      <div class="ic-title">交叉驗證選出來的是哪一組 <span class="ic-badge">BAKED</span></div>
-      lab 範例 用 5 折交叉驗證掃 C ∈ {0.1, 1, 10, 100, 1000} × γ ∈ {0.5, 1, 2, 3, 4}，選出 <strong>C = 1、γ = 0.5</strong>，測試錯誤率 <strong>12%</strong>（lab 範例 的混淆矩陣 69／6／6／19）。滑桿最左邊那一格就是它。
-    </div>
+    
     <div class="info-card">
       <div class="ic-title">γ 也是一個正則化參數</div>
       講義：<strong>「γ 也是一個正則化參數，過度擬合時應該把它調小」</strong>。γ 小 → 每個支持向量的影響範圍大 → 邊界平滑 → 偏差大變異小；γ 大 → 影響範圍小 → 邊界破碎 → 偏差小變異大。它跟 C 要<strong>一起</strong>用網格搜尋調，因為兩者都在控制彈性。
@@ -1727,34 +1544,23 @@ Accuracy score using feature map  1.0</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：核技巧「不用真的升維」到底是什麼意思？它省掉了什麼？</summary>
-    <div class="qa-a"><p>省掉的是<strong>把 Φ(x) 算出來、存起來、在高維空間裡做運算</strong>這三件事。</p><p>具體看講義那個例子。要做二次擴張，直接的做法是：對每一筆資料算出三維向量 $\Phi(x) = (\sqrt2 x_1x_2, x_1^2, x_2^2)$，存成一個 n × 3 的矩陣，再在三維空間裡擬合 SVC。核方法是：完全不動原始的 n × 2 資料，需要內積的時候就算 $(x_i^\top x_{i'})^2$。兩者的答案<strong>數學上完全相同</strong>（lab 範例 實測都是 1.0），但後者永遠留在二維。</p><p>二維變三維省不了多少。但 p = 100 做到 d = 3 是 17 萬多維，而 RBF 核對應的特徵空間是<strong>無限維</strong>的，可寫成無限級數，但不必逐座標計算。ISLP 指出：那個空間大到「我們本來也不可能在那裡做計算」。核方法讓你使用那個空間，卻永遠不必進去。</p><p>要付的代價是：你沒有原輸入空間中的有限維線性係數 β。線性核可以印 <code>coef_</code> 看哪個變數重要，RBF 核只有 $\alpha_i$ 與支持向量。講義把這列成高斯核的缺點：<strong>「神祕（沒有 w）」</strong>。可解讀性換來了彈性。</p></div>
+    <div class="qa-a"><p>省掉的是<strong>把 Φ(x) 算出來、存起來、在高維空間裡做運算</strong>這三件事。</p><p>具體看講義那個例子。要做二次擴張，直接的做法是：對每一筆資料算出三維向量 $\Phi(x) = (\sqrt2 x_1x_2, x_1^2, x_2^2)$，存成一個 n × 3 的矩陣，再在三維空間裡擬合 SVC。核方法是：完全不動原始的 n × 2 資料，需要內積的時候就算 $(x_i^\top x_{i'})^2$。兩者的答案<strong>數學上完全相同</strong>，但後者永遠留在二維。</p><p>二維變三維省不了多少。但 p = 100 做到 d = 3 是 17 萬多維，而 RBF 核對應的特徵空間是<strong>無限維</strong>的，可寫成無限級數，但不必逐座標計算。ISLP 指出：那個空間大到「我們本來也不可能在那裡做計算」。核方法讓你使用那個空間，卻永遠不必進去。</p><p>要付的代價是：你沒有原輸入空間中的有限維線性係數 β。線性核可以印 <code>coef_</code> 看哪個變數重要，RBF 核只有 $\alpha_i$ 與支持向量。講義把這列成高斯核的缺點：<strong>「神祕（沒有 w）」</strong>。可解讀性換來了彈性。</p></div>
   </details>
 </div>
 
 
-<details class="qa-item reading-detail" id="w10-detail-score-roc"><summary>算例：用 SVM 決策分數畫 ROC</summary>
+<details class="qa-item reading-detail" id="w10-detail-score-roc"><summary>用 SVM 決策分數畫 ROC</summary>
 <div class="detail-body"><h3 id="w10-svm-roc">用決策分數畫 ROC</h3>
 <p>講義分別用 Heart 訓練集與測試集比較 ROC。
 對每個門檻 $t$，以 $f(x)\ge t$ 判為正類，計算
 $\mathrm{TPR}=\mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$ 與
 $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$。
 畫 ROC 只需要排序分數，不需要先把分數變成機率；若某個評估集只有單一類別，其中一個分母為零，ROC 不適用。</p>
-<p><strong>本站算例。</strong>四筆標籤是 $+1,-1,+1,-1$，對應分數 $0.8,0.5,0.2,-0.4$。</p>
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>門檻 t</th><th>FPR</th><th>TPR</th></tr></thead>
-  <tbody><tr><td>大於 0.8</td><td>0</td><td>0</td></tr><tr><td>0.8</td><td>0</td><td>1/2</td></tr><tr><td>0.5</td><td>1/2</td><td>1/2</td></tr><tr><td>0.2</td><td>1/2</td><td>1</td></tr><tr><td>−0.4</td><td>1</td><td>1</td></tr></tbody>
-</table></div>
-<p>按表中次序連線的梯形面積是 $\mathrm{AUC}=3/4$，也等於正負樣本四種配對中，
-正類分數較大的三對所占比例。重複分數應一起跨過門檻。
-模型及 C、核參數先在訓練／驗證資料決定，最後才用保留測試集評估；
-不能因為測試 ROC 看起來較好就反覆選模型。此小例是自訂分數，不是 Heart 的實測數字。</p>
 
-</div></details><div class="quiz-box">
-  <div class="quiz-label">QUIZ · 核技巧</div>
-  <p>用 RBF 核的 SVM 時，把 γ 從 0.5 調到 50，決策邊界會怎麼變？</p>
-  <div class="quiz-options" id="qKernOptions"><div class="quiz-opt" data-correct="true" data-fb="對。γ 大 → 每個支持向量的影響半徑小 → 只有貼著它的地方會被判成它的類別。上面元件的第四格（γ = 50）就是這個樣子，而下面的曲線顯示測試錯誤率在 γ 很大時反而上升。ISLP 圖 9.10／9.11 講的是同一件事。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(A)</span> 邊界從平滑的曲線變成一個個包住訓練點的小島，訓練誤差趨近 0 但測試誤差變差</div><div class="quiz-opt" data-correct="false" data-fb="方向反了。γ 出現在 exp(−γ·距離²) 的指數上，&lt;strong&gt;γ 愈大衰減愈快&lt;/strong&gt;、影響範圍愈小、邊界愈破碎。要平滑就把 γ 調小。講義：「過度擬合時應該把它調小」。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(B)</span> 邊界會變得更平滑，因為 γ 是核的平滑參數</div><div class="quiz-opt" data-correct="false" data-fb="不對。決策函數是 f(x) = β₀ + Σ αᵢ K(x, xᵢ)，K 的形狀變了 f 就變了，邊界 f(x) = 0 當然跟著變。γ 控制相似度隨距離衰減的速度，因此會改變核函數的形狀。" onclick="quizCheck('qKern', this)"><span class="opt-letter">(C)</span> 邊界不變，只有支持向量的個數會變，因為 γ 只影響核值的大小</div></div>
-  <div class="quiz-feedback" id="qKernFeedback"></div>
-</div>
+
+
+
+</div></details>
 </section>
 <section id="multiclass">
 <!-- GEN:BEGIN sec:multiclass -->
@@ -1819,30 +1625,7 @@ $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$。
 
 
 
-  <details class="qa-item reading-detail" id="w10-detail-multiclass-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-khan">講義完整實作：四類的基因表現資料</h3>
-<div class="deck-extra">
-  <div class="dx-label">lab 09 · Khan 資料（4 類、p = 2308、n = 63）</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">Khan = load_data(<span class="str">&#x27;Khan&#x27;</span>)</span>
-  <span class="line">Khan[<span class="str">&#x27;xtrain&#x27;</span>].shape, Khan[<span class="str">&#x27;xtest&#x27;</span>].shape</span>
-  <span class="line"> </span>
-  <span class="line">khan_linear = SVC(kernel=<span class="str">&#x27;linear&#x27;</span>, C=<span class="num">10</span>)</span>
-  <span class="line">khan_linear.fit(Khan[<span class="str">&#x27;xtrain&#x27;</span>], Khan[<span class="str">&#x27;ytrain&#x27;</span>])</span>
-  <span class="line">confusion_table(khan_linear.predict(Khan[<span class="str">&#x27;xtrain&#x27;</span>]),</span>
-  <span class="line">                Khan[<span class="str">&#x27;ytrain&#x27;</span>])</span>
-  <span class="line"> </span>
-  <span class="line">confusion_table(khan_linear.predict(Khan[<span class="str">&#x27;xtest&#x27;</span>]),</span>
-  <span class="line">                Khan[<span class="str">&#x27;ytest&#x27;</span>])</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Truth      1  2  3  4
-Predicted            
-1          3  0  0  0
-2          0  6  2  0
-3          0  0  4  0
-4          0  0  0  5</pre></div>
-  <p class="dx-note">p = 2308 遠大於 n = 63，所以 lab 直接說<strong>「這表示我們應該使用線性核，因為多項式或徑向基核產生的額外靈活性是不必要的」</strong>——維度已經夠高了，隨便都找得到分得開的超平面。訓練混淆矩陣完全對角、零訓練誤差，「這並不令人驚訝」；測試集 20 筆只錯 2 筆。這一格用的是 <code>SVC</code> 的預設多類別機制，也就是 OVO。lab 範例 則用 <code>decision_function_shape='ovo'</code> 明確指定，在三類的二維資料上把決策區域畫出來。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="88,90,92">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
-</div></div></details>
+  
 
 
 <div class="quiz-box">
@@ -1904,33 +1687,16 @@ Predicted
   等於把 margin 的概念搬到迴歸，落在「管子」裡的點對解沒有貢獻，
   稀疏性因此保留下來。<code>sklearn.svm.SVR</code> 就是它。</p>
 
-  <details class="qa-item reading-detail" id="w10-detail-vslogit-lab"><summary>Python 實作與完整輸出</summary>
-<div class="detail-body"><h3 id="dx-rbfs">講義完整實作：用核近似 + SGD 逼近核 SVM</h3>
+  <details class="qa-item reading-detail" id="w10-detail-vslogit-lab"><summary>方法示範與原 Lab</summary>
+<div class="detail-body">
 <div class="deck-extra">
-  <div class="dx-label">lab 09 · RBFSampler + SGDClassifier</div>
+  <div class="dx-label">用隨機 Fourier 特徵近似 RBF</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">np.random.seed(<span class="num">1</span>)</span>
-  <span class="line"> </span>
-  <span class="line">X = np.random.normal(size=<span class="num">400</span>).reshape(<span class="num">200</span>, <span class="num">2</span>)</span>
-  <span class="line">X[<span class="num">0</span>:<span class="num">100</span>, :] += <span class="num">2</span></span>
-  <span class="line">X[<span class="num">100</span>:<span class="num">150</span>, :] -= <span class="num">2</span></span>
-  <span class="line">y = np.concatenate((np.full(<span class="num">150</span>, <span class="num">1</span>, dtype=np.int64), np.full(<span class="num">50</span>, <span class="num">2</span>, dtype=np.int64)))</span>
-  <span class="line"> </span>
-  <span class="line">X = np.concatenate((X, np.random.normal(size=<span class="num">100</span>).reshape(<span class="num">50</span>, <span class="num">2</span>)))</span>
-  <span class="line">y = np.concatenate((y, np.full(<span class="num">50</span>, <span class="num">0</span>, dtype=np.int64)))</span>
-  <span class="line"> </span>
-  <span class="line">X[y == <span class="num">0</span>, <span class="num">1</span>] += <span class="num">2</span></span>
-  <span class="line"> </span>
-  <span class="line">plt.scatter(X[:, <span class="num">0</span>], X[:, <span class="num">1</span>], c=y+<span class="num">1</span>, cmap=<span class="str">&#x27;Spectral&#x27;</span>);</span>
-  <span class="line"> </span>
   <span class="line">rbf_feature = RBFSampler(gamma=<span class="num">1</span>, random_state=<span class="num">1</span>)</span>
   <span class="line">X_features = rbf_feature.fit_transform(X)</span>
   <span class="line">clf = SGDClassifier(loss=<span class="str">&quot;hinge&quot;</span>, alpha=<span class="num">0.01</span>, max_iter=<span class="num">200</span>)</span>
-  <span class="line">clf.fit(X_features, y)</span>
-  <span class="line">clf.score(X_features, y)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>0.84</pre></div>
-  <p class="dx-note"><code>RBFSampler</code> 用隨機傅立葉特徵<strong>近似</strong> RBF 核：它真的把資料映射到一個有限維的空間，讓內積近似 K(x, x′)，然後就可以用便宜的線性方法（這裡是 hinge loss 的 SGD）。訓練準確率 <strong>0.84</strong> 低於 <code>SVC(kernel='rbf')</code>，但它是 O(n) 的，資料上百萬筆時 <code>SVC</code> 計算成本可能過高。講義：<strong>「大規模問題就用 SGDClassifier 配 hinge loss」</strong>。</p>
-  <span class="dx-src" data-lab-ch="9" data-lab-cells="96,97">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+  <span class="line">clf.fit(X_features, y)</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="97">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
 </div></div></details>
 
 
@@ -1948,8 +1714,7 @@ Predicted
 <details class="qa-item reading-detail" id="w10-detail-svr"><summary>延伸：SVR 的管狀損失與完整對偶</summary>
 <div class="detail-body"><h3 id="w10-svr-complete">延伸：支持向量迴歸的管狀損失</h3>
 <p>迴歸的 $y_i$ 是實數，$\varepsilon\ge0$ 是可接受的絕對誤差。
-損失為 $[|y_i-f(x_i)|-\varepsilon]_+$。例如 $\varepsilon=0.2$，
-殘差 0.1、0.5 的損失分別為 0、0.3；$\varepsilon$ 控制管寬，$C$ 控制超出管子的懲罰。</p>
+損失為 $[|y_i-f(x_i)|-\varepsilon]_+$。$\varepsilon$ 控制管寬，$C$ 控制超出管子的懲罰。</p>
 $$\begin{aligned}
 \min_{w,b,\xi,\xi^*}\quad&\frac12\|w\|^2+C\sum_i(\xi_i+\xi_i^*)\\
 \text{使得}\quad&y;_i-w^T\phi(x_i)-b\le\varepsilon+\xi_i,\\
@@ -1988,8 +1753,8 @@ $-\|w\|^2/2$，常數項為 $\sum_i y_i(\alpha_i-\alpha_i^*)-
 <code>OneClassSVM</code> 則主要用一類正常資料學習邊界，預測新點是否在正常區域；
 訓練資料受污染及特徵尺度都會改變結果，不能把它直接當成有標籤二元 SVC。</p>
 <p>核近似把輸入變成有限特徵，再交給線性模型。<code>RBFSampler</code> 用隨機 Fourier 特徵
-近似 RBF 內積；<code>Nystroem</code> 選訓練資料中的代表點近似 Gram 矩陣。
-代表點選取、標準化與後續模型都放在訓練折內；近似維度越大通常成本越高，精度需由驗證資料評估。</p>
+近似 RBF 內積。
+特徵近似、標準化與後續模型都放在訓練折內；近似維度越大通常成本越高，精度需由驗證資料評估。</p>
 <p>需要機率時，Platt scaling 擬合 $P(Y=1\mid f)=1/[1+\exp(Af+B)]$，
 使用訓練資料的交叉驗證分數校準；測試標籤不能參與。
 因此 <code>predict</code> 與 <code>predict_proba</code> 的最大機率類別可能不一致，
@@ -2003,11 +1768,8 @@ $-\|w\|^2/2$，常數項為 $\sum_i y_i(\alpha_i-\alpha_i^*)-
 <p>RBF 隨機 Fourier 特徵抽取 $\omega_j\sim N(0,2\gamma I)$、
 $b_j\sim U(0,2\pi)$，令 $z_j(x)=\sqrt{2/m}\cos(\omega_j^Tx+b_j)$。
 於是用長度 $m$ 的 $z(x)$ 擬合線性模型，$z(x)^Tz(x')$ 近似 RBF 核。
-固定亂數種子才能重現同一組近似。</p>
-<p>Nyström 則選 $m$ 個代表點 $\tilde x_j$，令
-$A_{ij}=K(x_i,\tilde x_j)$、$W_{jk}=K(\tilde x_j,\tilde x_k)$，
-使用 $Z=AW^{\dagger/2}$ 得 $ZZ^T=AW^\dagger A^T\approx K$。
-上標 $\dagger$ 表示廣義逆，只在保留的正特徵值方向取逆平方根；這也說明為何退化代表點要做數值截斷。</p>
+</p>
+
 <details class="qa-item proof" id="w10-proof-rff"><summary>證明：隨機 Fourier 特徵的期望等於 RBF</summary>
 <div class="qa-a">
 <p>對均勻隨機相位，$E_b[2\cos(u+b)\cos(v+b)]=\cos(u-v)$。
@@ -2017,12 +1779,9 @@ $E_\omega\cos(\omega^T(x-x'))=\exp[-\gamma\|x-x'\|^2]$。
 來源：講義 09連結的 scikit-learn Kernel Approximation。</p>
 </div></details>
 
-</div></details><details class="qa-item reading-detail" id="w10-detail-kernel-extensions"><summary>延伸：核 Ridge 與單類別 SVM</summary>
-<div class="detail-body"><h4>核 Ridge 與單類別邊界</h4>
-<p>核 Ridge 使用平方損失，與 SVR 的管狀損失不同。對已中心化、此處不另設截距的模型，
-最小化 $\sum_i[y_i-w^T\phi(x_i)]^2+\lambda\|w\|^2$（$\lambda&gt;0$）可取
-$c=(K+\lambda I)^{-1}y$，預測 $f(x)=\sum_i c_iK(x_i,x)$。
-係數通常不稀疏；要加截距時需一致地中心化訓練核及新點的核，或聯合估計截距。</p>
+</div></details><details class="qa-item reading-detail" id="w10-detail-kernel-extensions"><summary>延伸：單類別 SVM</summary>
+<div class="detail-body"><h4>單類別邊界</h4>
+
 <p>單類別 SVM 使用未標記的正常訓練樣本，$0&lt;\nu\le1$。其問題為</p>
 $$\min_{w,\rho,\xi}\frac12\|w\|^2+\frac1{\nu n}\sum_i\xi_i-\rho,
 \quad w^T\phi(x_i)\ge\rho-\xi_i,\quad\xi_i\ge0.$$
@@ -2032,18 +1791,14 @@ $0\le\alpha_i\le1/(\nu n)$、$\sum_i\alpha_i=1$。
 它給的是邊界分數，並不是積分為 1 的機率密度。
 有自由乘子時，以 $\rho=\sum_j\alpha_jK(x_j,x_i)$ 回復門檻。
 在常用的非退化解讀下，ν控制訓練異常比例的上界及支持向量比例的下界；尺度與污染程度仍須驗證。</p>
-<details class="qa-item proof" id="w10-proof-kernel-ridge-oneclass"><summary>證明：核 Ridge 的解與單類別對偶</summary>
+<details class="qa-item proof" id="w10-proof-kernel-ridge-oneclass"><summary>證明：單類別 SVM 的對偶</summary>
 <div class="qa-a">
-<p>把 $w$ 分成訓練特徵張成空間內的部分與正交部分。正交部分不改變訓練預測，
-卻增加正則項，所以可以取 $w=\sum_i c_i\phi(x_i)$。
-目標變成 $\|y-Kc\|^2+\lambda c^TKc$，其導數為
-$2K[(K+\lambda I)c-y]$。正文的 c 使導數為零，凸性保證是最小解。
-即使 K 奇異，$K+\lambda I$ 仍正定；不同係數表示可能對應相同的 w。</p>
+
 <p>單類別問題的 Lagrangian 對 $w,\rho,\xi_i$ 求 stationarity 分別得到
 $w=\sum_i\alpha_i\phi(x_i)$、$\sum_i\alpha_i=1$、
 $\alpha_i+\mu_i=1/(\nu n)$。代入留下最大化 $-\alpha^TK\alpha/2$，
 等價於正文的最小化形式。自由乘子的 slack 為零，互補鬆弛給出門檻回復式。</p>
-<p>來源：林軒田 Support Vector Regression 中的 Kernel Ridge Regression；
+<p>來源：
 <a href="https://scikit-learn.org/1.6/modules/svm.html#density-estimation-novelty-detection">scikit-learn 單類別 SVM</a>。</p>
 </div></details>
 </div></details><div class="quiz-box">
@@ -2087,7 +1842,7 @@ $\alpha_i+\mu_i=1/(\nu n)$。代入留下最大化 $-\alpha^TK\alpha/2$，
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 9.7 第 6 題</div>
   <p>課本第 6 題要你造一組「剛好可以線性分開」的資料，然後比較大 C 與小 C。課本的主張是什麼，理由是什麼？（這裡的 C 是 <code>sklearn</code> 的 C）</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，這正是 lab 範例 演示的事：C = 10⁵ 訓練誤差 0 但只有 3 個支持向量；C = 0.1 訓練誤差同樣 0，卻用了 12 個支持向量、margin 寬得多。ISLP §9.6.1 的評語是後者「因為數量更多，因此更穩定」，並說「使用大型測試集的簡單實驗會證實這一點」。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 小 C（會錯分幾筆訓練資料）在測試資料上可能贏過大 C，因為大 C 的邊界只由極少數點決定、變異大</div><div class="quiz-opt" data-correct="false" data-fb="訓練誤差 0 仍需配合泛化評估解讀。第 2 章與第 5 章反覆講過這件事。而且在這一題裡&lt;strong&gt;兩個 C 的訓練誤差都是 0&lt;/strong&gt;（lab 範例 與 47 的混淆矩陣一樣），所以訓練誤差無法區分它們的泛化能力。這正是要看交叉驗證與測試誤差的理由。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 大 C 一定更好，因為它的訓練誤差是 0，而訓練誤差 0 表示模型完全學會了資料</div><div class="quiz-opt" data-correct="false" data-fb="「最大邊界超平面唯一」是對的，小 C 則允許違反 margin，擬合出軟邊界分類器。它願意犧牲那幾個貼著邊界的點去換更寬的 margin，方向會不一樣。兩個不同的超平面，測試誤差沒有理由相同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩者測試誤差會一樣，因為資料可以線性分開，最佳超平面唯一</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="ISLP §9.6.1 的評語是後者「因為數量更多，因此更穩定」，並說「使用大型測試集的簡單實驗會證實這一點」。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 小 C（會錯分幾筆訓練資料）在測試資料上可能贏過大 C，因為大 C 的邊界只由極少數點決定、變異大</div><div class="quiz-opt" data-correct="false" data-fb="訓練誤差 0 仍需配合泛化評估解讀。第 2 章與第 5 章反覆講過這件事。而且在這一題裡&lt;strong&gt;兩個 C 的訓練誤差都是 0&lt;/strong&gt;（lab 範例 與 47 的混淆矩陣一樣），所以訓練誤差無法區分它們的泛化能力。這正是要看交叉驗證與測試誤差的理由。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 大 C 一定更好，因為它的訓練誤差是 0，而訓練誤差 0 表示模型完全學會了資料</div><div class="quiz-opt" data-correct="false" data-fb="「最大邊界超平面唯一」是對的，小 C 則允許違反 margin，擬合出軟邊界分類器。它願意犧牲那幾個貼著邊界的點去換更寬的 margin，方向會不一樣。兩個不同的超平面，測試誤差沒有理由相同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩者測試誤差會一樣，因為資料可以線性分開，最佳超平面唯一</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </div></details>
@@ -2099,7 +1854,7 @@ $\alpha_i+\mu_i=1/(\nu n)$。代入留下最大化 $-\alpha^TK\alpha/2$，
 <details class="qa-item reading-detail" id="w10-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w10-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 9.1 節；教科書 · 第 9.1.3–9.1.4 節；教科書 · 第 9.2 節；教科書 · 第 9.5 節；教科書 · 第 9.3 節；教科書 · 第 9.4 節。</li>
 <li id="w10-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：進階參考 · 第 12.3.2 節 · 進階。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-<details class="qa-item reading-detail" id="w10-detail-reference"><summary>完整比較表、公式與實測結果</summary>
+<details class="qa-item reading-detail" id="w10-detail-reference"><summary>方法與公式速查</summary>
 <div class="detail-body">
   <p>考前把這一頁掃過去就好。</p>
 
@@ -2113,12 +1868,6 @@ $\alpha_i+\mu_i=1/(\nu n)$。代入留下最大化 $-\alpha^TK\alpha/2$，
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>核</th><th>式子</th><th>調的參數</th><th>優點</th><th>缺點</th></tr></thead>
   <tbody><tr><td>線性</td><td>Σⱼ xᵢⱼxᵢ′ⱼ</td><td>只有 C</td><td>快、可以看 coef_、不易過度擬合；p ≫ n 的首選</td><td>邊界只能是直的</td></tr><tr><td>d 次多項式</td><td>(1 + Σⱼ xᵢⱼxᵢ′ⱼ)^d</td><td>C、d</td><td>比線性有彈性，d 的意義很具體</td><td>d 大時數值不穩；實務只用小 d</td></tr><tr><td>徑向基（RBF）</td><td>exp(−γ Σⱼ (xᵢⱼ−xᵢ′ⱼ)²)</td><td>C、γ</td><td>最有彈性、有界（數值穩）、只有一個核參數</td><td>沒有 β 可解讀、比線性慢、容易過度擬合</td></tr></tbody>
-</table></div>
-
-  <h3>lab 上的實測數字（全部逐字取自 <code>Ch09-svm-lab-zh.ipynb</code>）</h3>
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>情境</th><th>設定</th><th>支持向量</th><th>結果</th><th>出處</th></tr></thead>
-  <tbody><tr><td>50 筆·不可分開</td><td>C = 10</td><td>29（15 + 14）</td><td>coef_ = [1.173, 0.773]</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 0.1</td><td>36（18 + 18）</td><td>margin 更寬</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>CV 選 C</td><td>—</td><td>best C = 1，準確率 0.74</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 1（測試）</td><td>—</td><td>70% 正確（8 + 6 / 20）</td><td>lab 範例</td></tr><tr><td>50 筆·不可分開</td><td>C = 0.001（測試）</td><td>—</td><td>60% 正確</td><td>lab 範例</td></tr><tr><td>50 筆·可分開</td><td>C = 10⁵</td><td><strong>3</strong></td><td>訓練誤差 0，margin 極窄</td><td>lab 範例</td></tr><tr><td>50 筆·可分開</td><td>C = 0.1</td><td><strong>12</strong></td><td>訓練誤差 0，margin 寬得多</td><td>lab 範例</td></tr><tr><td>同心圓 100 筆</td><td>二次核</td><td>—</td><td>訓練準確率 1.0</td><td>lab 範例</td></tr><tr><td>200 筆·非線性</td><td>RBF, CV 選 C 與 γ</td><td>—</td><td>best C = 1、γ = 0.5，測試錯誤 12%</td><td>lab 範例</td></tr><tr><td>Khan（4 類）</td><td>線性核，C = 10</td><td>—</td><td>訓練誤差 0；測試 20 筆錯 2 筆</td><td>lab 範例</td></tr><tr><td>200 筆·核近似</td><td>RBFSampler + SGD</td><td>—</td><td>訓練準確率 0.84</td><td>lab 範例</td></tr></tbody>
 </table></div>
 
   <h3>公式速查</h3>
@@ -2149,7 +1898,7 @@ $\alpha_i+\mu_i=1/(\nu n)$。代入留下最大化 $-\alpha^TK\alpha/2$，
   或接受 <code>probability=True</code> 的額外成本。
 </div>
 
-<p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+
 
 <h3>對偶限制與記號速查</h3>
 <p>硬邊界：$\alpha_i\ge0,\ \sum_i\alpha_i y_i=0$。
@@ -3413,44 +3162,14 @@ function w10rbfDraw() {
   $('w10rbfG').textContent = String(fr.gamma);
   $('w10rbfC').textContent = fr.C >= 1000 ? '100000（幾乎硬邊界）' : String(fr.C);
   $('w10rbfNsv').textContent = fr.nsv + ' / ' + F.trainPts.length;
-  $('w10rbfTr').textContent = HC.pct(fr.trainErr, 1);
-  $('w10rbfTe').textContent = HC.pct(fr.testErr, 1);
-  $('w10rbfWhy').textContent = fr.why;
-  setStatus('w10rbfStatus', (mode === 'gamma' ? '只改 γ；C 固定為 1。' : '只改 C；γ 固定為 1。')
-    + '目前 γ = ' + fr.gamma + '、C = ' + (fr.C >= 1000 ? '10⁵' : fr.C)
-    + '：訓練錯誤率 <b>' + HC.pct(fr.trainErr, 1) + '</b>、測試錯誤率 <b>'
-    + HC.pct(fr.testErr, 1) + '</b>、支持向量 ' + fr.nsv + ' 個。'
-    + (fr.gamma >= 50
-      ? ' 邊界已經縮成一個個包住單點的小島——訓練幾乎全對，測試最差，這就是過度擬合。'
-      : (fr.C >= 1000
-        ? ' C 拉到極大：邊界變得很不規則，因為它不肯放過任何一個訓練點。'
-        : ' 邊界較平滑，接下來可檢查未見資料上的表現。')));
+  $('w10rbfWhy').textContent = 'γ 控制核的局部程度；C 控制違反間隔的懲罰。';
+  setStatus('w10rbfStatus', 'γ = ' + fr.gamma + '、C = ' + fr.C + '：觀察核的局部程度與邊界形狀。');
 }
 function w10rbfModeChange() {
   $('w10rbfSl').value = 0;
   w10rbfDraw();
 }
-function w10rbfChart() {
-  const F = FRAMES_w10rbf.curve;
-  HC.line('w10rbfChart', {
-    datasets: [
-      { label: '訓練錯誤率', data: F.gammas.map((g, i) => ({ x: g, y: F.trainErr[i] })),
-        borderColor: HC.tok.accent2, backgroundColor: HC.tok.accent2,
-        borderWidth: 2.6, pointRadius: 4, fill: false },
-      { label: '測試錯誤率', data: F.gammas.map((g, i) => ({ x: g, y: F.testErr[i] })),
-        borderColor: HC.tok.accent, backgroundColor: HC.tok.accent,
-        borderWidth: 2.6, pointRadius: 4, borderDash: [6, 4], fill: false },
-    ],
-  }, {
-    interaction: { mode: 'nearest', intersect: false },
-    scales: {
-      x: { type: 'logarithmic', title: { display: true, text: 'γ（對數刻度）· C = 1 固定' } },
-      y: { min: 0, title: { display: true, text: '錯誤率' } },
-    },
-  });
-  const c = HC.get('w10rbfChart');
-  HC.refs(c, [HC.hline(Math.min.apply(null, F.testErr), '測試錯誤率的最低點')]);
-}
+function w10rbfChart() {}
 
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。

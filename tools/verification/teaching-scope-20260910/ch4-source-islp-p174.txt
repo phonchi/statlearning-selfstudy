@@ -1,0 +1,77 @@
+4.5 A Comparison of Classification Methods
+165
+KNN−1
+KNN−CV
+LDA
+Logistic
+NBayes
+QDA
+SCENARIO 1
+0.25
+0.30
+0.35
+0.40
+0.45
+KNN−1
+KNN−CV
+LDA
+Logistic
+NBayes
+QDA
+SCENARIO 2
+0.15
+0.20
+0.25
+0.30
+KNN−1
+KNN−CV
+LDA
+Logistic
+NBayes
+QDA
+SCENARIO 3
+0.20
+0.25
+0.30
+0.35
+0.40
+0.45
+0.50
+FIGURE 4.11. Boxplots of the test error rates for each of the linear scenarios
+described in the main text.
+Scenario 1: There were 20 training observations in each of two classes. The
+observations within each class were uncorrelated random normal variables
+with a different mean in each class. The left-hand panel of Figure 4.11 shows
+that LDA performed well in this setting, as one would expect since this is
+the model assumed by LDA. Logistic regression also performed quite well,
+since it assumes a linear decision boundary. KNN performed poorly because
+it paid a price in terms of variance that was not offset by a reduction in bias.
+QDA also performed worse than LDA, since it fit a more flexible classifier
+than necessary. The performance of naive Bayes was slightly better than
+QDA, because the naive Bayes assumption of independent predictors is
+correct.
+Scenario 2: Details are as in Scenario 1, except that within each class, the
+two predictors had a correlation of −0.5. The center panel of Figure 4.11
+indicates that the performance of most methods is similar to the previ-
+ous scenario. The notable exception is naive Bayes, which performs very
+poorly here, since the naive Bayes assumption of independent predictors is
+violated.
+Scenario 3: As in the previous scenario, there is substantial negative cor-
+relation between the predictors within each class. However, this time we
+generated X1 and X2 from the t-distribution, with 50 observations per class. t-
+distribution
+The t-distribution has a similar shape to the normal distribution, but it
+has a tendency to yield more extreme points—that is, more points that are
+far from the mean. In this setting, the decision boundary was still linear,
+and so fit into the logistic regression framework. The set-up violated the
+assumptions of LDA, since the observations were not drawn from a normal
+distribution. The right-hand panel of Figure 4.11 shows that logistic regres-
+sion outperformed LDA, though both methods were superior to the other
+approaches. In particular, the QDA results deteriorated considerably as a
+consequence of non-normality. Naive Bayes performed very poorly because
+the independence assumption is violated.
+Scenario 4: The data were generated from a normal distribution, with a
+correlation of 0.5 between the predictors in the first class, and correlation of
+−0.5 between the predictors in the second class. This setup corresponded to
+the QDA assumption, and resulted in quadratic decision boundaries. The
+left-hand panel of Figure 4.12 shows that QDA outperformed all of the
