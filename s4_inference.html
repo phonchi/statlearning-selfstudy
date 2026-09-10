@@ -700,7 +700,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S4 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -871,6 +871,24 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </div>
 
 <p class="source-note"><strong>Seeing Theory 網頁 · Confidence Interval：</strong>現行網頁有反覆產生信賴區間的視覺；本頁改成已知 σ 的常態模型，並明示有限次涵蓋計數。 <a href="https://seeing-theory.brown.edu/frequentist-inference/index.html" target="_blank" rel="noopener">開啟原始來源</a></p>
+
+<h3>母體標準差未知：t 區間</h3>
+<p>若 $X_1,\ldots,X_n$ 獨立來自常態母體，而 σ 未知，改以樣本標準差 s 估計。
+當 $n\ge2$、$s&gt;0$，使用 $n-1$ 個自由度的 t 臨界值：</p>
+$$T=\frac{\bar X-\mu}{S/\sqrt n}\sim t_{n-1},\qquad
+\bar x\pm t_{n-1,1-\alpha/2}\frac{s}{\sqrt n}.$$
+<p>這裡 $t_{\nu,q}$ 是自由度 ν 的 t 分布之 q 分位數。t 分布比標準常態有較厚的尾部，反映估計 σ 的額外不確定性。
+例如 $n=10,\bar x=20,s=3$，95% 區間以 $t_{9,0.975}\approx2.262$ 計算，為 $20\pm2.146$，即約 [17.854,22.146]。</p>
+<p>常態抽樣給出精確的 t 分布。母體非常態時，大樣本下可能適用近似，但小樣本、重尾或相依資料不能只靠換成 t 臨界值解決。
+迴歸係數的 t 區間使用同樣的「估計值 ± 臨界值 × 標準誤」，自由度由模型剩餘自由度決定。</p>
+<p class="source-note">延伸銜接：ISLP §3.1.2 的 t 統計量與迴歸區間；此處的一樣本 t 區間是本站先備補充，並非 Seeing Theory PDF 的新增原文。</p>
+<details class="qa-item proof" id="w24proof-tinterval"><summary>證明：t 區間的涵蓋機率</summary>
+<div class="qa-a">
+<p>常態樣本下，$Z=(\bar X-\mu)/(\sigma/\sqrt n)\sim N(0,1)$，
+$U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
+因此 $Z/\sqrt{U/(n-1)}=(\bar X-\mu)/(S/\sqrt n)$ 服從 t 分布。
+從 $P(-t_{n-1,1-\alpha/2}\le T\le t_{n-1,1-\alpha/2})=1-\alpha$ 解出 μ 的範圍，即得上式。</p>
+</div></details>
 </section>
 <section id="testing">
 <!-- GEN:BEGIN sec:testing -->

@@ -261,5 +261,33 @@ if (w26olsS) w26olsDraw();
 """
 
 
+# Coverage completion 2026-09-10
+from lib import proof
+
+BODIES['least_squares'] += proof('w26proof-ols','OLS 正規方程與唯一最小值',r"""
+<p>對 RSS 分別微分並設為 0：</p>
+$$\sum_i(y_i-b_0-b_1x_i)=0,\qquad \sum_ix_i(y_i-b_0-b_1x_i)=0.$$
+<p>第一式給出 $b_0=\bar y-b_1\bar x$；代回第二式，得 $b_1S_{xx}=S_{xy}$。
+若 $S_{xx}&gt;0$，這就是正文的唯一解。對任意截距與斜率，還有</p>
+$$\operatorname{RSS}(b_0,b_1)=\operatorname{RSS}(\hat b_0,\hat b_1)
++n[(b_0-\hat b_0)+(b_1-\hat b_1)\bar x]^2+(b_1-\hat b_1)^2S_{xx}.$$
+<p>後兩項非負，且只有兩係數都等於 OLS 解時同為 0，所以駐點確實是唯一全域最小值。</p>
+""")
+BODIES['residuals'] += proof('w26proof-residual','殘差和為零與迴歸平方和分解',r"""
+<p>含截距 OLS 的第一條正規方程直接給出 $\sum_ie_i=0$；第二條給出 $\sum_ix_ie_i=0$。
+因此 $\sum_i(\hat y_i-\bar y)e_i=0$。將 $y_i-\bar y=(\hat y_i-\bar y)+e_i$ 平方後加總：</p>
+$$\sum_i(y_i-\bar y)^2=\sum_i(\hat y_i-\bar y)^2+\sum_ie_i^2.$$
+<p>這是含截距、以相同訓練資料計算之 OLS 的分解；對測試資料或任意預測模型，不保證交叉項為 0，也不保證 R² 非負。</p>
+""")
+BODIES['anova'] += proof('w26proof-anova','組間與組內平方和為什麼相加',r"""
+<p>每組內把偏差寫成 $y_{ij}-\bar y=(y_{ij}-\bar y_j)+(\bar y_j-\bar y)$。
+平方後的交叉項在第 j 組加總為</p>
+$$2(\bar y_j-\bar y)\sum_i(y_{ij}-\bar y_j)=0.$$
+<p>所以總平方和恰等於組內與組間平方和；這是代數恆等式，不需要常態假設。
+在獨立、同變異數、常態誤差及 $H_0$ 下，兩個平方和除以 σ² 分別是自由度 k−1 與 n−k 的獨立卡方量，
+因此兩個均方比服從 $F_{k-1,n-k}$。代數分解與 F 檢定的分布條件要分開看。</p>
+""")
+
+
 if __name__ == "__main__":
     apply("s6_regression", BODIES, PAGEJS)

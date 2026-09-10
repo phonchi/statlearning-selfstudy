@@ -698,7 +698,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S1 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -829,6 +829,17 @@ $$E[X]=1\cdot\frac16+2\cdot\frac16+\cdots+6\cdot\frac16=\frac{21}{6}=3.5.$$
   <div class="quiz-options" id="qExpectationOptions"><div class="quiz-opt" data-correct="false" data-fb="骰子只有 1 到 6 點，單次不可能得到 3.5。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(A)</span> 下一次最可能擲出 3.5。</div><div class="quiz-opt" data-correct="false" data-fb="六次仍有隨機波動，不保證六種點數各一次。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(B)</span> 任意六次投擲的平均必須是 3.5。</div><div class="quiz-opt" data-correct="true" data-fb="在同一公平模型下，期望值是長期平均的目標；單次或有限次結果可以不同。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(C)</span> 許多次獨立投擲的平均會趨近 3.5。</div></div>
   <div class="quiz-feedback" id="qExpectationFeedback"></div>
 </div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="10" target="_blank" rel="noopener">Seeing Theory 講義 · Expectation</a>。</p>
+<h3>加總與加權平均</h3>
+<p>只要相關期望值存在，期望值具有線性性，<strong>不需要獨立</strong>：</p>
+$$E[aX+bY+c]=aE[X]+bE[Y]+c.$$
+<p>例如兩天各有期望通勤時間 20 分鐘，總時間的期望是 40 分鐘；即使兩天都受同一交通狀況影響，這個加法仍成立。</p>
+<details class="qa-item proof" id="w21proof-linearity"><summary>證明：期望值的線性性</summary>
+<div class="qa-a">
+<p>以有限離散分布為例，對所有可能的配對加總：</p>
+$$E[aX+bY+c]=\sum_{x,y}(ax+by+c)P(X=x,Y=y)
+=a\sum_x xP(X=x)+b\sum_y yP(Y=y)+c.$$
+<p>這裡只用了邊際機率等於聯合機率的加總，沒有將聯合機率拆成乘積。</p>
+</div></details>
 </section>
 <section id="variation">
 <!-- GEN:BEGIN sec:variation -->
@@ -863,6 +874,38 @@ $$s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2.$$
   <div class="quiz-options" id="qVarianceOptions"><div class="quiz-opt" data-correct="false" data-fb="兩者平均都是 3，但偏離平均的距離分別是 1 與 3。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(A)</span> 平均相同，所以變異數相同。</div><div class="quiz-opt" data-correct="true" data-fb="X 的變異數為 1，Y 為 9，平方使三倍的偏離對應九倍變異數。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(B)</span> Y 的變異數是 X 的 9 倍。</div><div class="quiz-opt" data-correct="false" data-fb="標準差取平方根，因此 Y 的標準差是 X 的 3 倍。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(C)</span> Y 的標準差是 X 的 9 倍。</div></div>
   <div class="quiz-feedback" id="qVarianceFeedback"></div>
 </div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="12" target="_blank" rel="noopener">Seeing Theory 講義 · Variance</a>。</p><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="17" target="_blank" rel="noopener">Seeing Theory 講義 · Consistency of Estimators：長期穩定的例子</a>。</p>
+<h3>加總後的變異數，以及平均為什麼較穩定</h3>
+<p>期望值可以直接相加，變異數則要考慮變數是否一起波動。定義
+$\operatorname{Cov}(X,Y)=E[(X-E[X])(Y-E[Y])]$，有限二階動差下有：</p>
+$$\operatorname{Var}(aX+bY)=a^2\operatorname{Var}(X)+b^2\operatorname{Var}(Y)+2ab\operatorname{Cov}(X,Y).$$
+<p>獨立會使共變異數為 0。因此，若 $X_1,\ldots,X_n$ 獨立同分布，平均為 μ、有限變異數為 σ²，</p>
+$$E[\bar X]=\mu,\qquad \operatorname{Var}(\bar X)=\frac{\sigma^2}{n}.$$
+<p>例如單次測量標準差是 6，取 9 次獨立測量的平均，其標準差是 $6/\sqrt9=2$。
+若測量彼此相關，就不能直接套用這個除以 n 的變異數公式。</p>
+<details class="qa-item proof" id="w21proof-varsum"><summary>證明：變異數加法與樣本平均的變異數</summary>
+<div class="qa-a">
+<p>把 $a(X-E[X])+b(Y-E[Y])$ 平方後取期望，平方項給出兩個變異數，交叉項給出 $2ab\operatorname{Cov}(X,Y)$。
+獨立時 $E[XY]=E[X]E[Y]$，所以交叉項為 0。於是</p>
+$$\operatorname{Var}\!\left(\frac1n\sum_iX_i\right)=\frac1{n^2}\sum_i\sigma^2=\frac{\sigma^2}{n}.$$
+</div></details><details class="qa-item proof" id="w21proof-unbiased"><summary>證明：樣本變異數為什麼除以 n−1</summary>
+<div class="qa-a">
+<p>在上述獨立同分布、有限變異數的條件下，</p>
+$$\sum_i(X_i-\bar X)^2=\sum_i(X_i-\mu)^2-n(\bar X-\mu)^2.$$
+<p>兩邊取期望，右邊是 $n\sigma^2-n\operatorname{Var}(\bar X)=(n-1)\sigma^2$。
+因此 $n\ge2$ 時，$E[s^2]=\sigma^2$。</p>
+</div></details>
+<h3>延伸：把「越來越穩定」寫成機率界限</h3>
+<p>Markov 不等式適用於非負 X 與 $a&gt;0$；Chebyshev 不等式適用於有限變異數的 X 與 $\varepsilon&gt;0$：</p>
+$$P(X\ge a)\le\frac{E[X]}a,\qquad
+P(|X-\mu|\ge\varepsilon)\le\frac{\sigma^2}{\varepsilon^2}.$$
+<p>套在樣本平均，可得 $P(|\bar X-\mu|\ge\varepsilon)\le\sigma^2/(n\varepsilon^2)$。
+這個界限隨 n 趨近 0，說明有限變異數、獨立同分布情況下的弱大數法則；它不要求每一次新抽樣都比前一次接近 μ。</p>
+<details class="qa-item proof" id="w21proof-lln"><summary>證明：Markov、Chebyshev 與弱大數法則</summary>
+<div class="qa-a">
+<p>因為 $X\ge a\mathbf1_{\{X\ge a\}}$，取期望得 $E[X]\ge aP(X\ge a)$，這就是 Markov 不等式。
+再把非負變數 $(X-\mu)^2$ 與門檻 $\varepsilon^2$ 代入，得到 Chebyshev 不等式。
+最後代入 $\operatorname{Var}(\bar X)=\sigma^2/n$；固定 $\varepsilon&gt;0$ 時右邊隨 n 增大而趨近 0。</p>
+</div></details><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="10" target="_blank" rel="noopener">Seeing Theory 講義 · 期望值與變異數性質</a>。</p><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="14" target="_blank" rel="noopener">Seeing Theory 講義 · Markov 與 Chebyshev 不等式；一致性見 pp.17–18</a>。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->

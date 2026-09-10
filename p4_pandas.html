@@ -1089,6 +1089,59 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
   <span class="info-label">🔗 這在本站哪一章會用到</span>
   第 3 章把類別變數放進迴歸、第 4 章切出訓練與測試集，用的都是這一節的選取語法。<a href="linear_regression.html#qualitative">→ 線性迴歸 · 類別型預測變數</a>
 </div>
+
+<h3 id="dx-idx">把車名設成索引，以及重複標籤</h3>
+<p><code>set_index('name')</code> 將 name 欄用作列標籤，預設從一般資料欄移除它。
+這只改變如何查找列，不會把車名變成唯一識別碼：同一名稱仍可能出現多次。</p>
+<div class="deck-extra">
+  <div class="dx-label">使用車名作為列標籤</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto_re = Auto.set_index(<span class="str">&#x27;name&#x27;</span>)</span>
+  <span class="line">Auto_re</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                            mpg  cylinders  displacement  horsepower  weight  \
+name                                                                           
+chevrolet chevelle malibu  18.0          8         307.0       130.0  3504.0   
+buick skylark 320          15.0          8         350.0       165.0  3693.0   
+plymouth satellite         18.0          8         318.0       150.0  3436.0   
+amc rebel sst              16.0          8         304.0       150.0  3433.0   
+ford torino                17.0          8         302.0       140.0  3449.0   
+...                         ...        ...           ...         ...     ...   
+ford mustang gl            27.0          4         140.0        86.0  2790.0   
+vw pickup                  44.0          4          97.0        52.0  2130.0   
+dodge rampage              32.0          4         135.0        84.0  2295.0   
+ford ranger                28.0          4         120.0        79.0  2625.0   
+chevy s-10                 31.0          4         119.0        82.0  2720.0   
+
+                           acceleration  year  origin  
+name                                                   
+chevrolet chevelle malibu          12.0    70       1  
+buick skylark 320                  11.5    70       1  
+plymouth satellite                 11.0    70       1  
+amc rebel sst                      12.0    70       1  
+ford torino                        10.5    70       1  
+...                                 ...   ...     ...  
+ford mustang gl                    15.6    82       1  
+vw pickup                          24.6    82       2  
+dodge rampage                      11.6    82       1  
+ford ranger                        18.6    82       1  
+chevy s-10                         19.4    82       1  
+
+[392 rows x 8 columns]</pre></div>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="212">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">同一標籤可選到多列</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto_re.loc[<span class="str">&#x27;ford galaxie 500&#x27;</span>, [<span class="str">&#x27;mpg&#x27;</span>, <span class="str">&#x27;origin&#x27;</span>]]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   mpg  origin
+name                          
+ford galaxie 500  15.0       1
+ford galaxie 500  14.0       1
+ford galaxie 500  14.0       1</pre></div>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="223">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<p><code>loc</code> 使用標籤，回傳一列或多列取決於標籤是否重複與索引寫法。
+<code>iloc</code> 仍依位置取資料。需要回到一般欄位時使用 <code>reset_index()</code>。</p>
 </section>
 <section id="na">
 <!-- GEN:BEGIN sec:na -->
@@ -1198,6 +1251,20 @@ dtype: float64</pre></div>
   <div class="quiz-options" id="qNaOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不知道 &lt;code&gt;?&lt;/code&gt; 是遺漏，它只看到一欄字串。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(A)</span> 自動忽略問號，算出正確的平均</div><div class="quiz-opt" data-correct="true" data-fb="對。計算平均前，要先確認&lt;strong&gt;欄位讀成了數字&lt;/strong&gt;。所以拿到資料先看 &lt;code&gt;dtypes&lt;/code&gt;。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(B)</span> 報錯或算出無意義的結果，因為整欄是字串</div><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不會擅自把字串轉成數字，它的選擇是把整欄保持成 object。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(C)</span> 把問號當成 0 來算</div></div>
   <div class="quiz-feedback" id="qNaFeedback"></div>
 </div>
+
+<h3 id="dx-cat">數字儲存，不代表一定當連續量分析</h3>
+<p>cylinders 是汽缸數。它以整數儲存，但在比較不同汽缸數的車時，也可以視為類別。
+轉為 <code>category</code> 後，各個值成為群組水準，適合畫各組分布或建立類別編碼。</p>
+<div class="deck-extra">
+  <div class="dx-label">把汽缸數標成類別</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto.cylinders = pd.Series(Auto.cylinders, dtype=<span class="str">&#x27;category&#x27;</span>)</span>
+  <span class="line">Auto.cylinders.dtype</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>CategoricalDtype(categories=[3, 4, 5, 6, 8], ordered=None, categories_dtype=int64)</pre></div>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="259">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<p>型態轉換不會決定研究問題；是否把汽缸數當連續效應、順序效果或類別效果，仍須依模型與問題選擇。
+不要因為類別代碼是 0、1、2，就自動把代碼間距當成測量距離。</p>
 </section>
 <section id="group">
 <!-- GEN:BEGIN sec:group -->

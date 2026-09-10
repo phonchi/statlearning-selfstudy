@@ -698,7 +698,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S5 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -771,7 +771,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>硬幣 10 次得到 7 次正面。$L(0.7)$ 比 $L(0.5)$ 大，能得出哪個結論？</p>
   <div class="quiz-options" id="qLikelihoodOptions"><div class="quiz-opt" data-correct="false" data-fb="概似不是參數的機率分布；要談參數機率，還需要先驗並做正規化。" onclick="quizCheck('qLikelihood', this)"><span class="opt-letter">(A)</span> $P(p=0.7)=L(0.7)$</div><div class="quiz-opt" data-correct="true" data-fb="對。概似比較的是固定資料在不同參數值下的相對支持度。" onclick="quizCheck('qLikelihood', this)"><span class="opt-letter">(B)</span> 這批資料在 $p=0.7$ 下比在 $p=0.5$ 下更有支持度</div><div class="quiz-opt" data-correct="false" data-fb="估計 $p=0.7$ 仍代表下一次有隨機性，不能推出確定結果。" onclick="quizCheck('qLikelihood', this)"><span class="opt-letter">(C)</span> 下一次一定是正面</div></div>
   <div class="quiz-feedback" id="qLikelihoodFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section2">來源：Seeing Theory Ch.5 · Likelihood Function</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="51">講義</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section2">來源：Seeing Theory Ch.5 · Likelihood Function</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="51">講義</a>。</p><details class="qa-item proof" id="w25proof-mle"><summary>證明：Bernoulli 最大概似估計，包括端點</summary>
+<div class="qa-a">
+<p>若 s、f 都為正，對數概似為 $\ell(p)=s\log p+f\log(1-p)$，</p>
+$$\ell'(p)=\frac{s}{p}-\frac{f}{1-p}=0\ \Longrightarrow\ \hat p=\frac{s}{s+f},\qquad
+\ell''(p)=-\frac{s}{p^2}-\frac{f}{(1-p)^2}&lt;0.$$
+<p>所以內部駐點是唯一最大值。若 s=0、f&gt;0，概似在 p=0 最大；若 f=0、s&gt;0，則在 p=1 最大。
+若兩者都是 0，概似恆定，沒有唯一 MLE。</p>
+</div></details>
 </section>
 <section id="posterior">
 <!-- GEN:BEGIN sec:posterior -->
@@ -819,6 +826,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-options" id="qPosteriorOptions"><div class="quiz-opt" data-correct="true" data-fb="對。正面次數加到第一個參數，反面次數加到第二個參數。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(A)</span> $\operatorname{Beta}(8,6)$</div><div class="quiz-opt" data-correct="false" data-fb="這只留下資料計數，漏掉了先驗中的參數。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(B)</span> $\operatorname{Beta}(5,2)$</div><div class="quiz-opt" data-correct="false" data-fb="正、反面計數加反了；第一個參數對應正面。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(C)</span> $\operatorname{Beta}(6,9)$</div></div>
   <div class="quiz-feedback" id="qPosteriorFeedback"></div>
 </div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="52">講義</a>。</p>
+<h3>一般的更新公式與正規化</h3>
+<p>參數 θ 為連續量時，先驗與後驗都是密度。固定資料 x，以概似乘上先驗，再除以整個參數範圍上的積分：</p>
+$$\pi(\theta\mid x)=\frac{L(\theta;x)\pi(\theta)}{\int L(u;x)\pi(u)\,du}.$$
+<p>分母必須有限且大於 0；它讓後驗密度積分為 1。離散參數則把積分換成加總。
+所謂<strong>共軛先驗（conjugate prior）</strong>，指更新後仍落在同一分布族；Beta 對 Bernoulli／二項概似就是一例。</p>
+<details class="qa-item proof" id="w25proof-conjugacy"><summary>證明：Beta 與二項概似的共軛更新</summary>
+<div class="qa-a">
+<p>把先驗和概似相乘：</p>
+$$\pi(p\mid s,f)\propto p^s(1-p)^f p^{\alpha-1}(1-p)^{\beta-1}
+=p^{\alpha+s-1}(1-p)^{\beta+f-1}.$$
+<p>這正是 Beta 密度的形狀。由 $B(a,b)=\int_0^1u^{a-1}(1-u)^{b-1}\,du$，其正規化後為</p>
+$$\pi(p\mid s,f)=\frac{p^{\alpha+s-1}(1-p)^{\beta+f-1}}{B(\alpha+s,\beta+f)}.$$
+<p>α、β 均大於 0 時，零筆資料也有合法後驗，且後驗等於先驗。</p>
+</div></details>
 </section>
 <section id="influence">
 <!-- GEN:BEGIN sec:influence -->
@@ -848,7 +869,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>兩位分析者使用平均都為 0.5 的 Beta(2,2) 與 Beta(40,40) 先驗。看到相同少量資料後，何者後驗移動較少？</p>
   <div class="quiz-options" id="qInfluenceOptions"><div class="quiz-opt" data-correct="false" data-fb="較小的參數總量代表先驗較分散，少量資料就能占較大權重。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(A)</span> Beta(2,2)，因為參數比較小</div><div class="quiz-opt" data-correct="true" data-fb="對。兩者中心相同，但 Beta(40,40) 更集中，相當於較多的先前資訊。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(B)</span> Beta(40,40)，因為先驗總量較大</div><div class="quiz-opt" data-correct="false" data-fb="先驗平均只描述中心；集中程度也會影響更新幅度。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(C)</span> 兩者完全相同，因為先驗平均相同</div></div>
   <div class="quiz-feedback" id="qInfluenceFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="52">講義</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="52">講義</a>。</p><details class="qa-item proof" id="w25proof-predictive"><summary>證明：下一次正面的後驗預測機率</summary>
+<div class="qa-a">
+<p>對未知 p 的後驗密度加權：</p>
+$$P(X_{\rm new}=1\mid s,f)=\int_0^1P(X_{\rm new}=1\mid p)\pi(p\mid s,f)\,dp
+=E[p\mid s,f]=\frac{\alpha+s}{\alpha+\beta+s+f}.$$
+<p>這裡假設新投擲與既有資料在給定同一 p 後條件獨立。</p>
+</div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->

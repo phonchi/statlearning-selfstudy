@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib import proof
 from lib import (apply, card, chart, hl, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -233,14 +234,14 @@ BODIES["criteria"] = f"""
      "$\\log n > 2$ 對任何 $n > 7$ 都成立（$e^2 \\approx 7.39$），所以 BIC 一律罰得比較重，"
      "選出來的模型一律比較小或一樣大。n = 400 時 $\\log n \\approx 5.99$，懲罰差三倍。</p>"
      "<p>背後的動機不同。Cp 是<strong>估測試 MSE</strong>："
-     "可以證明只要 $\\hat\\sigma^2$ 是 $\\sigma^2$ 的無偏估計，Cp 就是測試 MSE 的無偏估計。"
+     "對固定設計、預先指定的線性模型，計入全部投影維度的 Cp 可估計同一 X 上的新反應風險；完整條件與省略常數的差別見本節推導。"
      "BIC 是從<strong>貝氏</strong>觀點來的，它在近似「這個模型是真模型的後驗機率」。"
      "所以兩者的目標本來就不一樣：Cp／AIC 想預測得準，BIC 想找出<em>正確的</em>模型。"
      "如果真模型確實在候選清單裡，n 夠大時 BIC 會挑中它（一致性）；AIC 不保證，它會傾向多留幾個變數。</p>"
      "<p>實務上的建議：<strong>目的是預測就用 CV（或 AIC／Cp），目的是「哪些變數真的有關」就參考 BIC</strong>。"
      "而且兩者都要求你估得出 $\\hat\\sigma^2$——這在 p &gt; n 的時候無法按全模型的常規公式計算（最後一節會講）。</p>"),
     ("Q：調整後 R² 為什麼「理論基礎比較弱」？",
-     "<p>Cp、AIC、BIC 都有明確的推導：Cp 是測試 MSE 的無偏估計，AIC 來自 Kullback–Leibler 距離的漸近論證，"
+     "<p>Cp、AIC、BIC 都有明確的推導：Cp 在固定模型與固定設計條件下修正樂觀偏差，AIC 來自 Kullback–Leibler 距離的漸近論證，"
      "BIC 來自後驗機率的 Laplace 近似。調整後 R² 沒有這種東西。它就是「把 RSS 除以 $n-d-1$ 而不是 n」"
      "這個直覺上合理的修正。</p>"
      "<p>它的直覺是對的：真正有用的變數都進來以後，再加雜訊變數只會讓 RSS 降一點點，"
@@ -421,7 +422,7 @@ BODIES["lasso"] = f"""
   於是它同時做了收縮與變數選擇。這種解叫做<strong>稀疏</strong>（sparse）。</p>
 
   <h3 id="dx-geom">為什麼 L1 會歸零、L2 不會</h3>
-  <p>把兩者寫成等價的約束型式（$s$ 是預算，跟 $\\lambda$ 一對一對應）：</p>
+  <p>把兩者寫成等價的約束型式（$s$ 是預算，可與適當的 $\\lambda$ 對應，但一般不是一對一）：</p>
 
   $$\\min_{{\\beta}} \\mathrm{{RSS}} \\quad \\text{{s.t.}} \\quad
     \\|\\beta\\|_1 \\le s \\;\\;(\\text{{Lasso，菱形}})
@@ -557,7 +558,7 @@ BODIES["pcr"] = f"""
   $$Z_m = \\sum_{{j=1}}^{{p}} \\phi_{{jm}} X_j, \\qquad
     y_i = \\theta_0 + \\sum_{{m=1}}^{{M}} \\theta_m z_{{im}} + \\varepsilon_i$$
 
-  <p>M 是調整參數，同樣用 CV 選。M = p 時 PCR 就退回最小平方（只是換了個座標）；
+  <p>M 是調整參數，同樣用 CV 選。X 滿欄秩且 M = p 時 PCR 就退回最小平方（只是換了個座標）；
   M 小的時候，被丟掉的那些低變異方向就是被收縮掉的部分。</p>
 
 {viz(svg("w06dirSvg", 340),
@@ -572,9 +573,9 @@ BODIES["pcr"] = f"""
                  ("PLS1 方向", "—", "w06dirPls"),
                  ("PC1 與真實方向的夾角", "—", "w06dirAng")]),
       info_card("這說明了什麼",
-                'PCR 的方向<strong>完全是非監督式的</strong>。它假設「X 變異大的方向也是跟 y 有關的方向」。'
+                'PCR 的方向<strong>完全是非監督式的</strong>。當「X 變異大的方向也是跟 y 有關的方向」時，截取主成分較可能保留預測訊號。'
                 '這個假設常常成立，但沒有保證。PLS 讓 y 參與挑方向，'
-                '所以在這個假設不成立時表現較好。')],
+                '因此可能保留 PCR 忽略的訊號，但測試表現仍須驗證。')],
      "w06dirStatus", "灰點是資料，兩條線分別是 PC1 與 PLS1 的方向。",
      '<label class="slider-label" style="margin-right:.4rem;">y 的方向</label>'
      '<input type="range" id="w06dirSl" min="0" max="180" step="3" value="20" '
@@ -595,7 +596,7 @@ BODIES["pcr"] = f"""
 {qa("觀念釐清", [
     ("Q：PCR 算不算變數選擇？",
      "<p>不算。每一個主成分都是<strong>全部 p 個原始變數的線性組合</strong>，"
-     "所以就算你只留 M = 2 個主成分，最終模型仍然用到了每一個原始變數。</p>"
+     "所以就算只留 M = 2，最終模型仍可能需要全部原始欄位；個別 loading 可為零。</p>"
      "<p>這是 PCR 跟 Lasso 最重要的差別：Lasso 給你「這 5 個變數有用、其餘丟掉」；"
      "PCR 給你「這 2 個方向有用」，而每個方向都攪拌了所有變數。"
      "後者在解釋上通常更難。你得去看 loadings 才知道那個方向大致代表什麼。</p>"),
@@ -608,12 +609,12 @@ BODIES["pcr"] = f"""
 
 {quiz("qPcr", "QUIZ · PCR",
       "PCR 用 M = 2 個主成分。最終模型用到了幾個原始預測變數？",
-      [(True, "全部 p 個，因為每個主成分都是所有原始變數的線性組合",
-        "對。PCR 不做變數選擇。這是它跟 Lasso 最重要的差別。它只是把 p 維壓進 M 維，沒有丟掉任何變數。"),
+      [(True, "可能仍用到全部 p 個；M 指成分數，並非原始變數數量",
+        "對。PCR 不做變數選擇。這是它跟 Lasso 最重要的差別。它把 p 維壓進 M 維；一般仍可能需要全部原始欄位，個別 loading 則可以為零。"),
        (False, "2 個，就是 loadings 最大的那兩個",
         "M = 2 指的是<strong>主成分</strong>的個數，不是原始變數的個數。每個主成分的 loading 向量長度都是 p，而且通常每一項都不為零。"),
        (False, "不確定，要看 CV 選出多少",
-        "CV 選的是 M（主成分個數）。不管 M 是多少，只要 M ≥ 1，用到的原始變數就是全部 p 個。")])}
+        "CV 選的是 M（主成分個數）。保留的 loading 決定哪些原始變數有貢獻；M 不是所用原始變數的個數。")])}
 """
 
 # ── P08 PLS ───────────────────────────────────────────────────────────
@@ -808,18 +809,125 @@ BODIES["reference"] = f"""
 # 最新講義主題補全；維持既有 section 與導覽。
 BODIES['lasso'] += r"""
 <h3>收縮的貝氏解讀與延伸</h3>
-<p>假設誤差為獨立常態、變異數為 $\sigma^2$，且截距不受懲罰。最大後驗估計（MAP）最小化負對數概似與負對數先驗的和。各係數採獨立 $N(0,\tau^2)$ 先驗時，乘上 $2\sigma^2$ 後得到 $\mathrm{RSS}+(\sigma^2/\tau^2)\sum_j\beta_j^2$，因此 Ridge 的 $\lambda=\sigma^2/\tau^2$。改採尺度 $b$ 的 Laplace 先驗，得到 $\mathrm{RSS}+(2\sigma^2/b)\sum_j|\beta_j|$，即 Lasso。這是後驗眾數的關係；Lasso 的後驗平均通常不會精確等於零。</p>
+<p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 λ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明；後驗眾數與後驗平均不同，Lasso 的後驗平均通常不會精確等於零。</p>
 <p>當中心化設計矩陣滿足 $X^TX=I$，令 $z=X^Ty$，Ridge 解為 $z_j/(1+\lambda)$，Lasso 解為 $\operatorname{sign}(z_j)(|z_j|-\lambda/2)_+$。Ridge 比例收縮、Lasso 軟門檻的差異可直接從這兩式看見；若目標使用 $\mathrm{RSS}/2$，Lasso 的門檻值相應改為 $\lambda$。</p>
 <p>最小角度迴歸（least angle regression, LAR）從與殘差相關最大的特徵開始，沿活躍特徵的等角方向前進；其他特徵達到相同相關程度時加入。加上係數過零時退出的規則可追蹤 Lasso 路徑。Group Lasso 則以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰各組係數，讓同一類別變數的一組虛擬變數或同一組基底一起進出；選入的組內係數不必稀疏。</p>
 """
 BODIES['pcr'] += r"""
 <h3>從共變異數到白化</h3>
-<p>本站採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$。主成分方向是 $V$ 的欄，得分為 $XV=UD$；最大化 $v^TSv$ 且限制 $v^Tv=1$，便得到 $Sv=\lambda v$。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
+<p>本站採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$。主成分方向是 $V$ 的欄，得分為 $XV=UD$；主成分方向滿足 $Sv=\lambda v$；最大變異與重建誤差的關係見下方證明。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
 <p>保留正特徵值方向後，白化得分 $Z=XV\Lambda^{-1/2}$ 的樣本共變異數為單位矩陣。ZCA 白化再乘上 $V^T$ 回到原特徵座標；保留全部正秩方向且滿秩時為 $XV\Lambda^{-1/2}V^T$。白化會把低變異方向放大，因此小特徵值可能放大雜訊；普通 PCR 不需要白化，也不能把白化當成保證改善預測的步驟。</p>
 """
 BODIES['criteria'] += r"""
 <h3>分類模型的模型選擇</h3><p>子集搜尋也能套用邏輯斯迴歸等模型，但比較的擬合量要改為相應的概似。離差（deviance）定義為 $D=2(\ell_{\mathrm{sat}}-\ell_{\mathrm{fit}})$；它比較擬合模型與飽和模型，不能直接把分類誤差率代入 RSS 公式。AIC 為 $-2\ell_{\mathrm{fit}}+2k$，BIC 為 $-2\ell_{\mathrm{fit}}+k\log n$，$k$ 計入實際估計的參數。選定模型後的係數不確定性還受搜尋影響，不能忽略選模就直接沿用事先固定模型的推論。</p>
 """
+
+# COVERAGE-20260910 BEGIN
+
+BODIES['criteria'] += r"""
+<h3>Cp 的風險目標、常數與選模</h3>
+<p>先固定 X 及候選線性模型，不用 y 搜尋欄位。令 H 為其投影矩陣，$r=\operatorname{rank}(H)$ 計入截距，並假設 $y=\mu+\varepsilon$、$\operatorname{Cov}(\varepsilon)=\sigma^2I$。以相同 X 上一組獨立新反應 $y^{new}$ 定義固定設計預測風險，完整的 Cp 型估計為</p>
+$$\widehat R=\frac{\mathrm{RSS}+2r\hat\sigma^2}{n}.$$
+<p>σ̂² 無偏時，這估計量對訓練反應重抽的期望等於上述風險；並非某次實現的測試 MSE，也不是任意新 X 的風險。若所有模型都含截距、d 只數斜率，r=d+1；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
+<p>例如 n=100、d=3、RSS=90、σ̂²=1，完整估計為 0.98；省去截距共同項的比較分數為 0.96，兩者對同一候選集合排序相同。若每個大小的最佳模型也是用同一份 y 搜尋出來的，H 已依賴 y，單純代入 r 不會自動修正搜尋的樂觀偏差。</p>
+<p>AIC 的 $-2\hat\ell+2k$ 計入實際估計的參數；高斯模型共同固定 σ² 時，可化成 RSS/σ² 加參數懲罰。各模型各自估 σ² 時，則出現 $n\log(\mathrm{RSS}/n)$，不能混用。BIC 以 $k\log n$ 懲罰，源於固定維度、正則模型的邊際概似近似；有限樣本、錯置或候選清單沒有真模型時，不保證找出真相。</p>
+""" + proof('w06proofCp', '固定設計預測風險的樂觀偏差', r"""
+<p>H 對稱冪等，$\operatorname{tr}(H)=r$。訓練 RSS 的期望為</p>
+$$E\|(I-H)y\|^2=\|(I-H)\mu\|^2+\sigma^2(n-r).$$
+<p>新反應與訓練反應獨立，$y^{new}-Hy=(I-H)\mu+\varepsilon^{new}-H\varepsilon$，故</p>
+$$E\|y^{new}-Hy\|^2=\|(I-H)\mu\|^2+n\sigma^2+r\sigma^2.$$
+<p>相減得 2rσ²，再除以 n。σ̂² 無偏即可在期望中取代 σ²；不要求 σ̂² 與 RSS 獨立。若 H 隨 y 的搜尋結果改變，上述固定矩陣期望運算不再適用。</p>
+""")
+BODIES['ridge'] += r"""
+<h3>中心化後的 Ridge 解</h3>
+<p>先用訓練資料中心化 X 與 y，斜率的目標為 $\|y-X\beta\|^2+\lambda\|\beta\|^2$。λ&gt;0 時，無論 X 是否滿欄秩都有唯一斜率解 $(X^TX+\lambda I)^{-1}X^Ty$。還原截距用 $\bar y-\bar x^T\hat\beta$；不能把原始 X 的截距欄也按相同 λ 懲罰。</p>
+""" + proof('w06proofRidge', 'Ridge 閉式解與方向收縮', r"""
+<p>目標的梯度是 $-2X^T(y-X\beta)+2\lambda\beta$。設為零得 $(X^TX+\lambda I)\beta=X^Ty$。對任意非零 v，$v^T(X^TX+\lambda I)v=\|Xv\|^2+\lambda\|v\|^2>0$，所以解唯一。</p>
+<p>若 $X=UDV^T$ 為精簡 SVD，則 $\hat\beta=V\operatorname{diag}\{d_j/(d_j^2+\lambda)\}U^Ty$，擬合值為 $U\operatorname{diag}\{d_j^2/(d_j^2+\lambda)\}U^Ty$。相對 OLS，各方向乘上 $d_j^2/(d_j^2+\lambda)$，小奇異值方向收縮較強。這也說明 Ridge 不等於挑掉一些原始變數。</p>
+""")
+BODIES['lasso'] += r"""
+<h3>Lasso 的零係數條件與座標更新</h3>
+<p>固定目標 $\|y-X\beta\|^2+\lambda\sum_j|\beta_j|$，令殘差 $r=y-X\hat\beta$。凸問題的最優條件是</p>
+$$2x_j^Tr=\lambda\operatorname{sign}(\hat\beta_j)\quad(\hat\beta_j\ne0),\qquad
+|2x_j^Tr|\le\lambda\quad(\hat\beta_j=0).$$
+<p>在零點要使用次梯度區間 [-1,1]，不能把絕對值當作處處可微。一般 X 可採座標下降：固定其他係數，令 $r_{-j}=y-X_{-j}\beta_{-j}$，更新</p>
+$$\beta_j\leftarrow\frac{\operatorname{sign}(x_j^Tr_{-j})(|x_j^Tr_{-j}|-\lambda/2)_+}{x_j^Tx_j}.$$
+<p>常數欄須先處理；反覆更新直到目標或最優條件達到指定精度。正交、單位長度設計下，$z=(3,-0.4,0)$、λ=2，Ridge 為 $(1,-0.1333,0)$，Lasso 為 $(2,0,0)$。不同套件若用 RSS/(2n)，相同 λ 的數字不能直接比較。</p>
+""" + proof('w06proofLasso', '軟門檻與零點的次梯度', r"""
+<p>正交設計 $X^TX=I$ 下，目標除去常數後是 $\sum_j[(\beta_j-z_j)^2+\lambda|\beta_j|]$，$z=X^Ty$，因此逐座標最小化。β&gt;0 時微分給 β=z−λ/2，此分支要求 z&gt;λ/2；β&lt;0 時 β=z+λ/2，要求 z&lt;−λ/2。</p>
+<p>β=0 處，最優條件為 $0\in-2z+\lambda[-1,1]$，等價於 |z|≤λ/2。三種情況合併得到 soft threshold。一般座標更新把平方項換成 $(x_j^Tx_j)\beta_j^2-2(x_j^Tr_{-j})\beta_j$，同一推理給正文更新式。對整體目標做次梯度條件便得到零與非零係數的 KKT 條件。</p>
+""") + proof('w06proofMAP', '高斯／Laplace 先驗如何變成 Ridge／Lasso', r"""
+<p>獨立 $N(x_i^T\beta,\sigma^2)$ 反應的負對數概似，除去與 β 無關的常數後為 RSS/(2σ²)。各斜率獨立 $N(0,\tau^2)$ 的負對數先驗為 $\sum_j\beta_j^2/(2\tau^2)$；負對數後驗相加後乘以 2σ²，成為 RSS＋$(\sigma^2/\tau^2)\sum_j\beta_j^2$。</p>
+<p>Laplace 密度為 $e^{-|\beta_j|/b}/(2b)$，負對數先驗為 $\sum_j|\beta_j|/b$ 加常數，因此乘以 2σ² 後 λ=2σ²/b。截距使用不懲罰的設定；σ、τ、b 在此視為固定。這是後驗眾數，後驗平均須積分計算，一般不會因 Laplace 先驗精確歸零。</p>
+""")
+BODIES['lasso'] += r"""
+<h3>最小角度迴歸與 Group Lasso</h3>
+<p>LAR 先中心化 y，將特徵中心化並調成相同長度；從全零係數開始，找到與殘差絕對相關最大的特徵。沿其方向前進，直到另一個特徵達到相同絕對相關，再讓兩個特徵一起沿等角方向前進；重複加入活躍特徵，得到分段線性係數路徑。Lasso 路徑版本還要在活躍係數走到零時把它移除；所以 LAR 與 Lasso 不能當同一演算法。可用 <code>Lars</code>／<code>lars_path</code> 看 LAR 路徑，用 <code>LassoLars</code> 看對應 Lasso 版本。</p>
+<p>Group Lasso 在事先指定、不重疊的特徵組上解</p>
+$$\min_{\beta_0,\beta}\frac1{2n}\|y-\beta_0\mathbf1-X\beta\|^2+\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2.$$
+<p>$p_g$ 是組內欄數；截距不懲罰，組別與縮放應在擬合前交代。例如「季節」的三個虛擬欄可作一組，「溫度」為另一組。λ 增大可把整組季節係數設成零；保留季節時，組內每個係數並不保證非零。再加逐係數 L1 懲罰就是 sparse-group Lasso，會同時做組間與組內選擇。應以同樣組別與前處理在訓練折內選 λ。</p>
+<p>來源：<a href="https://scikit-learn.org/stable/modules/linear_model.html#least-angle-regression">LAR／Lasso 路徑官方說明</a>、<a href="https://group-lasso.readthedocs.io/en/latest/">Group Lasso 文件</a>。</p>
+"""
+BODIES['pcr'] += r"""
+<h3>PCA 的最大變異與最小重建誤差</h3>
+<p>令 X 是中心化、每列一筆觀察的矩陣，$S=X^TX/(n-1)$。第一方向解 $\max_{\|v\|=1}v^TSv$，前 M 個方向組成 $V_M$，得分 $Z=XV_M$、重建 $\hat X=XV_MV_M^T$。同一組方向也最小化 $\|X-XVV^T\|_F^2$，其中 $V^TV=I_M$。這個目標只看 X，並沒有保證保留下來的方向最能預測 y。</p>
+<p>例如 S 的特徵值為 9、1，只留第一方向可保留 90% X 變異；如果 y 只依賴第二方向，這個 90% 仍不保證預測好。PCR 在得分上擬合 y，再把係數轉回 $\hat\beta=V_M\hat\theta$。保留所有正秩方向時，訓練擬合值與 OLS 相同；原始係數唯一性另需滿欄秩。主成分通常混合許多原始變數，但個別 loading 可為零，不能說每一欄必定有非零貢獻。</p>
+""" + proof('w06proofPCA', '特徵方向、重建誤差與白化', r"""
+<p>對 $v^TSv-\lambda(v^Tv-1)$ 微分給 $Sv=\lambda v$。把單位 v 寫在 S 的正交特徵基底上，$v=\sum_jc_jv_j$、$\sum_jc_j^2=1$，則 $v^TSv=\sum_j\lambda_jc_j^2\le\lambda_1$，所以最大特徵值方向達到全域最大。</p>
+<p>對正交 V，投影與殘差正交，故 $\|X-XVV^T\|_F^2=\|X\|_F^2-\|XV\|_F^2=\|X\|_F^2-(n-1)\operatorname{tr}(V^TSV)$。取前 M 個特徵方向最大化最後的 trace，所以同時最小化重建誤差。</p>
+<p>若 $X=UDV^T$，則 $S=VD^2V^T/(n-1)$，特徵值為 $d_j^2/(n-1)$，得分為 UD。只保留正特徵值，令 $Z=XV_r\Lambda_r^{-1/2}$，其樣本共變異數為 $\Lambda_r^{-1/2}V_r^TSV_r\Lambda_r^{-1/2}=I_r$。ZCA 的回投影 $ZV_r^T$ 在 p 維中的共變異數為 $V_rV_r^T$，只有 r=p 時才是 $I_p$。</p>
+""")
+BODIES['pls'] += r"""
+<h3>PLS1：從方向到可用於新資料的預測</h3>
+<p>以下固定單一反應的 PLS1 版本。先用訓練資料中心化 y，並按選定方式中心化及縮放 X；記 $X_0=X,y_0=y$。第 m 步依序計算：</p>
+$$w_m=\frac{X_{m-1}^Ty_{m-1}}{\|X_{m-1}^Ty_{m-1}\|},\quad t_m=X_{m-1}w_m,$$
+$$p_m=\frac{X_{m-1}^Tt_m}{t_m^Tt_m},\quad q_m=\frac{y_{m-1}^Tt_m}{t_m^Tt_m},\quad
+X_m=X_{m-1}-t_mp_m^T,\quad y_m=y_{m-1}-t_mq_m.$$
+<p>若方向分子或 $t_m^Tt_m$ 為零，已沒有可用的新成分，停止。第一方向會看 X 與 y 的共變動；後續方向用扣掉既有得分成分後的殘差。成分數 M 在訓練折內選，縮放與方向都須重新估計。</p>
+<p>預測新的一列時，先用訓練平均與尺度轉換為 $x_0^*$。依序計算 $t_m^*=x_{m-1}^{*T}w_m$，更新 $x_m^*=x_{m-1}^*-t_m^*p_m$；預測為 $\bar y+\sum_mq_mt_m^*$，若 y 也有縮放須再乘回其尺度。這個遞迴明確規定了如何把訓練好的 PLS 用於新資料，不能每次用新資料重算方向。</p>
+<p>小例子：若目前兩個特徵與 y 的內積為 3、4，第一權重為 (0.6,0.8)，每筆得分為 0.6X₁+0.8X₂。接著需用上述 p、q 做 deflation，不能直接把同一權重套第二次當第二成分。</p>
+"""
+
+
+BODIES['reference'] += r"""
+<h3>在係數平面比較方法</h3>
+<p>講義把兩個係數放在同一平面，以完整最小平方的 (4,2) 作共同終點，讓不同複雜度的解形成路徑。最佳子集只能在坐標軸上的受限模型或完整模型之間選擇；Ridge 平滑地收縮，Lasso 可以沿軸停留到某係數進入；PCR 由保留幾個主成分決定可達子空間，PLS 的方向也使用 y。這張圖比較解的幾何，沒有表示所有方法都沿同一條直線縮回原點，也沒有提供測試風險的排名。</p>
+"""
+
+
+# DIRECT-LINKS-20260910
+
+BODIES['lasso'] += r"""
+<h3>限制式與懲罰式：如何對應？</h3>
+<p>令 $P(\beta)=\|\beta\|_1$（Lasso）或 $\|\beta\|_2^2$（Ridge）。兩種問題分別為 $\min\{\mathrm{RSS}+\lambda P(\beta)\}$ 與 $\min\mathrm{RSS}$ subject to $P(\beta)\le s$。它們可用適當參數得到同一個解，但<strong>λ與s一般不是一對一</strong>，對應也依資料而變。</p>
+<p>例如正交Lasso的z=(3,1)，只要λ≥6，解一直是(0,0)，都對應s=0。Ridge的s=0強制斜率全零，但一般非零訊號須讓λ趨近∞才達到，未必存在有限λ。Lasso也不保證任何正λ就產生零係數；z=(3,2)、λ=1時解為(2.5,1.5)，兩者都非零。</p>
+""" + proof('w06proofConstraint','凸限制問題與懲罰問題的解',r"""
+<p>若 $\hat\beta_\lambda$ 最小化 $L+\lambda P$，取 $s=P(\hat\beta_\lambda)$。假如有可行β使L更小，則P(β)≤s，故 $L(\beta)+\lambda P(\beta)&lt;L(\hat\beta_\lambda)+\lambda P(\hat\beta_\lambda)$，與最優性矛盾，因此同時解限制式。</p>
+<p>反向在凸L、凸P及嚴格可行性成立時（本例s&gt;0即可用β=0），KKT給某個λ≥0，使 $0\in\nabla L(\hat\beta)+\lambda\partial P(\hat\beta)$ 與 $\lambda(P(\hat\beta)-s)=0$。前式就是懲罰問題的充分最優條件。限制不活躍可取λ=0；s=0等邊界需另查，不能用此論證強行宣稱有限λ存在。</p>
+""")
+BODIES['pcr'] += r"""
+<h3>正交、不相關與獨立是三件事</h3>
+<p>向量正交表示內積為零；資料欄位的樣本不相關表示<strong>中心化之後</strong>的內積為零。PCA先中心化，得分共變異數是對角矩陣，所以不同得分欄位樣本不相關。這不等於它們統計獨立；獨立要求整個聯合分布可分解。</p>
+<p>例如X在−1至1均勻分布、Y=X²，由對稱性Cov(X,Y)=0，但知道X就完全知道Y，兩者不獨立。只有在聯合常態等額外條件下，不相關才足以推出獨立。對未中心化的原始X做SVD，主方向最大化的是相對原點的平方量，不必是相對平均的變異數。</p>
+""" + proof('w06proofUncorrelated','PCA得分不相關與反例',r"""
+<p>中心化X滿足 $\mathbf1^TX=0$，故Z=XV也中心化。由 $S=V\Lambda V^T$，$Z^TZ/(n-1)=V^TSV=\Lambda$，所有非對角元素為零。對反例，$E[X]=E[X^3]=0$，所以Cov(X,X²)=0；但是事件 $|X|\le1/2$ 與 $Y\le1/4$ 完全相同，機率各為1/2，其交集也是1/2而非1/4，因此不獨立。</p>
+""")
+BODIES['pls'] += r"""
+<h3>PLS最大化共變異，並非直接最大化相關</h3>
+<p>中心化後，第一PLS方向在單位長度w下最大化 $\operatorname{Cov}(Xw,y)$。由 $\operatorname{Cov}(Xw,y)=\operatorname{Corr}(Xw,y)\operatorname{SD}(Xw)\operatorname{SD}(y)$，PLS同時考慮與y的關係及得分的變動量。OLS則最小化殘差平方和，兩個目標不能混寫。</p>
+<p>單變數OLS斜率為 $\operatorname{Corr}(X_j,y)s_y/s_{X_j}$。只有先把每個Xj調成相同標準差，這些斜率才與相關係數使用共同倍數。因此講義PLS的「權重與相關成比例」須連同標準化條件閱讀。</p>
+""" + proof('w06proofPLSCov','第一PLS方向與相關係數量尺',r"""
+<p>令c=Xᵀy，中心化後的共變異為 $w^Tc/(n-1)$。Cauchy–Schwarz給 $w^Tc\le\|w\|\|c\|=\|c\|$，c≠0時等號在w=c/‖c‖達到，便是前述第一方向。單變數斜率為 $S_{xy}/S_{xx}$；再以相關係數 $S_{xy}/\sqrt{S_{xx}S_{yy}}$ 代入，即得 r·sy/sx。</p>
+""")
+
+
+BODIES['criteria'] += r"""
+<h3>分類離差的數值如何對回軟體？</h3>
+<p>獨立二元觀測的飽和模型逐筆令 $p_i=y_i$，以 $0\log0=0$ 慣例，其對數概似為0。故Bernoulli離差為 $D=-2\sum_i[y_i\log p_i+(1-y_i)\log(1-p_i)]$。對單筆二元標籤，可用 <code>2 * log_loss(y, predict_proba(X), normalize=False)</code> 計算；輸入必須是機率，不能把log機率再次當機率，也不能漏掉總和與平均的n倍差別。</p>
+<p>例如真實標籤為(1,0)、對正類的機率為(0.8,0.3)，離差為 $-2\log(0.8\times0.7)\approx1.15964$。這是固定模型的擬合量；有懲罰的係數估計不等於無懲罰MLE，不能直接把任意兩個正則化模型的離差差值當成一般卡方概似比檢定。</p>
+"""
+
+# COVERAGE-20260910 END
 
 PAGEJS = r"""
 /* ===== model_selection 本頁元件（id 與全域一律 w06 前綴）===== */

@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib import proof
 from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -535,7 +536,7 @@ BODIES["mlr"] = f"""
      "$X_j$ 真的有用，只是它跟別的變數太像，SE 被膨脹到檢不出來"
      "（P06 的 Credit <code>limit</code>／<code>rating</code>）。"
      "分辨方法：看 VIF。這裡 newspaper 的 VIF 只有 1.145，"
-     "所以是混淆，不是共線性。</p>"),
+     "這裡不能把不顯著主要歸因於高共線性；但低 VIF 也不能證明特定的因果混淆結構。</p>"),
     ("Q：有了 t 檢定，為什麼還要 F 檢定？",
      "<p>因為<strong>多重比較</strong>。單一個 t 檢定在 α = 0.05 下有 5% 的機率誤判；"
      "但如果你有 100 個變數、逐一做 t 檢定，即使它們全部無用，"
@@ -1106,6 +1107,119 @@ BODIES["reference"] = f"""
 """
 
 # ══════════════════════════════════════════════════════════════════════
+# COVERAGE-20260910 BEGIN
+
+# 估計、推論與部分檢定的完整條件和可展開推導。
+BODIES['slr'] += proof('w03proofOls', '最小平方解、殘差正交與 RSS 曲面', r"""
+<p>對 $L=\sum_i(y_i-b_0-b_1x_i)^2$ 微分，得到 $\sum_i(y_i-b_0-b_1x_i)=0$ 與 $\sum_ix_i(y_i-b_0-b_1x_i)=0$。第一式給 $b_0=\bar y-b_1\bar x$；代回第二式並利用中心化和為零：</p>
+$$b_1\sum_i(x_i-\bar x)^2=\sum_i(x_i-\bar x)(y_i-\bar y).$$
+<p>只要 x 不全相同，分母為正，就得到正文斜率與截距。矩陣版令 X 含截距欄，梯度為 $-2X^T(y-Xb)$，所以 $X^TX\hat\beta=X^Ty$。X 滿欄秩時 $X^TX$ 正定，唯一解為 $(X^TX)^{-1}X^Ty$。</p>
+<p>令 $e=y-X\hat\beta$，normal equations 給 $X^Te=0$，故對任意 $d=b-\hat\beta$：</p>
+$$\|y-Xb\|^2=\|e-Xd\|^2=\|e\|^2+d^TX^TXd.$$
+<p>交叉項為零，因此最小值確在 $d=0$；展開二維二次型便是正文 RSS 等高線公式。若 X 不滿秩，擬合值仍是 y 在欄空間的唯一投影，但係數未必唯一，不能直接取逆矩陣。</p>
+""")
+BODIES['inference'] += r"""
+<h3>公式的條件與平均反應／新觀測</h3>
+<p>以下給定滿欄秩 X，包含截距及 p 個預測變數，n&gt;p+1；誤差條件平均為零、共變異數為 $\sigma^2I$。係數共變異數為 $\sigma^2(X^TX)^{-1}$。再加常態誤差，才有有限樣本精確 t 與 F 分布。</p>
+$$s^2=\frac{\mathrm{RSS}}{n-p-1},\quad \widehat{SE}(\hat\beta_j)=s\sqrt{[(X^TX)^{-1}]_{jj}}.$$
+<p>新輸入向量 $x_0$ 包含開頭的 1，令 $h_0=x_0^T(X^TX)^{-1}x_0$。在上述常態模型下：</p>
+$$\text{平均反應 CI}:\quad x_0^T\hat\beta\pm t_{1-\alpha/2,n-p-1}s\sqrt{h_0},$$
+$$\text{獨立新觀測 PI}:\quad x_0^T\hat\beta\pm t_{1-\alpha/2,n-p-1}s\sqrt{1+h_0}.$$
+<p>例如 s=2、$h_0=0.04$、t 臨界值約 2，CI 半寬約 0.8，PI 半寬約 4.08。兩個區間的中心相同；預測一個新觀測還要包含它本身的雜訊。</p>
+""" + proof('w03proofInference', '係數變異、自由度與兩種區間', r"""
+<p>代入 $y=X\beta+\varepsilon$，有 $\hat\beta-\beta=(X^TX)^{-1}X^T\varepsilon$，所以期望為零、共變異數為 $\sigma^2(X^TX)^{-1}$。簡單迴歸中令 $S_{xx}=\sum_i(x_i-\bar x)^2$，可得 $\hat\beta_1-\beta_1=\sum_i(x_i-\bar x)\varepsilon_i/S_{xx}$，變異數為 $\sigma^2/S_{xx}$；截距的變異數為 $\sigma^2(1/n+\bar x^2/S_{xx})$。</p>
+<p>帽子矩陣 $H=X(X^TX)^{-1}X^T$ 對稱且冪等，秩為 p+1。殘差為 $(I-H)\varepsilon$，故 $E[\mathrm{RSS}]=\sigma^2\operatorname{tr}(I-H)=(n-p-1)\sigma^2$。常態誤差經正交座標變換後，RSS 除以 $\sigma^2$ 是 n−p−1 個獨立標準常態平方和；投影 H 與 I−H 的座標獨立。因此標準常態係數誤差除以獨立的 $\sqrt{\chi^2_\nu/\nu}$，得到 t 分布。</p>
+<p>$x_0^T(\hat\beta-\beta)$ 的變異數為 $\sigma^2h_0$。對新觀測 $Y_0=x_0^T\beta+\varepsilon_0$，獨立的 $\varepsilon_0$ 再增加 $\sigma^2$，預測誤差變異成為 $\sigma^2(1+h_0)$。分別用 s 取代 σ 並套 t 分位數，便得到兩種區間。</p>
+""")
+BODIES['mlr'] += r"""
+<h3>一次檢定一組係數：部分 F 檢定</h3>
+<p>完整模型有 p 個預測變數；受限模型固定其中 q 個係數為零，兩模型用同一批觀測、同一反應與誤差模型，並且欄空間巢狀。記兩個殘差平方和為 RSS 與 RSS₀。常態、等變異、獨立誤差與滿欄秩條件下：</p>
+$$F=\frac{(\mathrm{RSS}_0-\mathrm{RSS})/q}{\mathrm{RSS}/(n-p-1)}\ \overset{H_0}{\sim}\ F_{q,n-p-1}.$$
+<p>只留截距的受限模型給 RSS₀=TSS、q=p，便是整體 F 檢定。例如 n=30、p=3、q=2，RSS₀=150、RSS=100，F=6.5，須與 $F_{2,26}$ 的右尾比較。q=1 時，此 F 等於同一係數雙尾 t 檢定的 $t^2$。</p>
+""" + proof('w03proofPartialF', '巢狀模型的額外平方和與 F 分布', r"""
+<p>令 H、H₀ 是完整與受限模型的正交投影。巢狀性給 $HH_0=H_0H=H_0$，因此 H−H₀ 為秩 q 的投影，並與 I−H 正交。</p>
+$$\mathrm{RSS}_0-\mathrm{RSS}=y^T(H-H_0)y.$$
+<p>$H_0$ 成立時，平均向量落在受限欄空間，故上式等於 $\varepsilon^T(H-H_0)\varepsilon$。在常態誤差下，它除以 $\sigma^2$ 服從 $\chi^2_q$；RSS 除以 $\sigma^2$ 服從獨立的 $\chi^2_{n-p-1}$。各除自由度後取比，就是正文 F 分布。q=1 時，額外平方和等於 $\hat\beta_j^2/[(X^TX)^{-1}]_{jj}$，除以 $s^2$ 即為 $t_j^2$。</p>
+""")
+BODIES['mlr'] += proof('w03proofFWL', '部分迴歸圖的斜率等於完整模型係數', r"""
+<p>把 X 分成其他變數 Z（含截距）與目標欄 x，令 $M_Z=I-Z(Z^TZ)^{-1}Z^T$。固定 x 的係數 b 後，對 Z 的最小平方殘差是 $M_Z(y-xb)$。因此只需最小化 $\|M_Zy-M_Zxb\|^2$。</p>
+$$\hat b=\frac{x^TM_Zy}{x^TM_Zx}.$$
+<p>這就是兩組殘差 $M_Zy$ 對 $M_Zx$ 的迴歸斜率。分母須為正，即 x 不在 Z 的欄空間內。CCPR 用原始 x 作橫軸，沒有這個雙重殘差化，因此兩種圖不相同。</p>
+""")
+
+# COVERAGE-20260910 END
+
+# LINK-CLOSURE-CH1-3
+
+BODIES['slr'] += r"""
+<h3>解釋變數一定要是隨機變數嗎？</h3>
+<p>實驗可由研究者固定輸入值，例如指定不同施肥量；觀察資料的輸入則可以是隨機抽到的。
+兩種情況都可分析。對隨機 X，先給定實際觀察到的 X，使用 $E(\varepsilon\mid X)=0$ 及條件共變異數假設推導。
+稱 X 為「independent variable」不代表各個解釋變數互相獨立，也不代表 Y 與 X 獨立。</p>
+<p>常態線性模型的誤差可獨立同分布，但各筆 Y 的平均隨 x 改變，所以 Y 通常不是同分布。
+在固定 σ 的 Gaussian 概似中，最大化係數概似等價於最小化 RSS；若連 σ 也估計，完整對數概似仍須保留 $-n\log\sigma$ 項。</p>
+"""
+BODIES['qualitative'] += r"""
+<h3>中心化會改變哪個係數的意義？</h3>
+<p>只有主效應且含截距的普通最小平方模型，將每欄減去常數可改寫截距而保持所有擬合值。
+把 x 換成 $u=x-a$ 後，截距代表原來 x=a 時的平均反應；若再除以尺度，係數單位跟著改變。
+這種可逆重新參數化不會消除原本精確的線性相依，也不會自動修復混淆。</p>
+<p>有交互作用時，令 $u=x-a,v=z-b$，完整模型改寫為</p>
+$$\beta_0+\beta_1x+\beta_2z+\beta_3xz
+=(\beta_0+a\beta_1+b\beta_2+ab\beta_3)
++(\beta_1+b\beta_3)u+(\beta_2+a\beta_3)v+\beta_3uv.$$
+<p>交互作用係數保留，但主效應係數改成另一個參考點的斜率，檢定「主效應為零」的意義也改了。
+只保留 xz 卻移除 x、z，平移座標後會產生無處容納的主效應項；因此一般遵守階層原則。
+有明確科學理由設定某些主效應為零仍是可能的模型，須說明該限制與選定原點的含義。</p>
+"""
+BODIES['problems'] += r"""
+<h3>內部與外部學生化殘差</h3>
+<p>令 m=p+1 為含截距的參數數，ν=n−m，X 滿欄秩。帽子矩陣 H 給出
+$\operatorname{Var}(e_i\mid X)=\sigma^2(1-h_{ii})$。
+前面的圖使用整份資料的 $s^2=\mathrm{RSS}/\nu$，因此是<strong>內部學生化</strong>：</p>
+$$r_i=\frac{e_i}{s\sqrt{1-h_{ii}}}.$$
+<p>檢查第 i 筆時，也可以刪除此筆再估 σ，得到<strong>外部學生化</strong>：</p>
+$$s_{(i)}^2=\frac{\mathrm{RSS}-e_i^2/(1-h_{ii})}{\nu-1},\qquad
+ t_i=\frac{e_i}{s_{(i)}\sqrt{1-h_{ii}}}
+=r_i\sqrt{\frac{\nu-1}{\nu-r_i^2}}.$$
+<p>這需要 ν&gt;1、$h_{ii}&lt;1$ 且刪除後殘差變異估計為正。
+常態、等變異、獨立誤差模型下，固定 i 的外部學生化量服從 $t_{\nu-1}$；內部學生化量因分母也使用本筆，不服從同一 t 分布。
+例如 ν=10、r=2，外部學生化量為 $2\sqrt{9/6}\approx2.449$。
+「絕對值大於 3」是回查線索，不是對整批觀測自動有效的多重離群檢定。</p>
+""" + proof('w03proofDeletedResidual','刪除一筆後的變異與學生化',r"""
+<p>令刪除第 i 筆後係數為 $\hat\beta_{(i)}$。秩一更新給</p>
+$$\hat\beta_{(i)}=\hat\beta-\frac{(X^TX)^{-1}x_ie_i}{1-h_{ii}},\qquad
+\mathrm{RSS}_{(i)}=\mathrm{RSS}-\frac{e_i^2}{1-h_{ii}}.$$
+<p>刪除一筆使殘差自由度從 ν 變成 ν−1；以此定義 $s_{(i)}$，並用 $r_i^2=e_i^2/[s^2(1-h_{ii})]$ 整理即可得到兩者換算。
+常態模型下，刪除模型對第 i 筆的預測誤差除以其真實標準差為標準常態，且與刪除模型的 RSS 獨立。
+除以獨立的 $\sqrt{\chi^2_{\nu-1}/(\nu-1)}$，便得到外部學生化的 t 分布。</p>
+""") + r"""
+<h3>殘差為什麼對擬合值畫？</h3>
+<p>在相同訓練資料、含截距的 OLS 中，殘差與擬合值正交。
+但觀測值 $y_i=\hat y_i+e_i$ 本身含有殘差，所以把 e 對原始 y 畫，可能僅因兩者共用 e 就出現關聯。
+殘差對擬合值或個別解釋變數的圖較適合檢查平均形狀與散布；非線性或異質變異仍須結合模型與資料判斷。</p>
+""" + proof('w03proofResidualAxes','殘差與觀測值的共用成分',r"""
+<p>在 $\operatorname{Cov}(\varepsilon\mid X)=\sigma^2I$ 下，$e=(I-H)\varepsilon$、$\hat y=X\beta+H\varepsilon$，故</p>
+$$\operatorname{Cov}(e,\hat y\mid X)=\sigma^2(I-H)H=0,\qquad
+\operatorname{Cov}(e,y\mid X)=\sigma^2(I-H).$$
+<p>單筆的共變異數因此為 $\sigma^2(1-h_{ii})$，通常為正；即使線性平均模型正確，也不應期待 e 與原始 y 無關。</p>
+""") + r"""
+<p>另一個提醒是重複資料不等於增加獨立資訊。若每筆完全複製 c 次，卻仍誤用獨立誤差公式，
+係數不變，所報係數變異數會縮成原來的 $(n-m)/(cn-m)$。
+例如 n=20、m=2，複製兩次便縮成 18/38，標準誤約只剩 0.688 倍；這是錯誤的獨立性假設造成的虛假精度。</p>
+<p class="source-note">來源：講義 03 pp.39–47 的殘差、相關與槓桿討論；
+<a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/influence.measures.html">R 官方刪除診斷</a>區分整體與 leave-one-out 的變異估計。
+上述矩陣關係與複製資料算例由本站獨立推導，不採用外部問答中的錯誤比例式。</p>
+"""
+BODIES['accuracy'] += r"""
+<h3>相關係數平方不能取代任意預測的 R²</h3>
+<p>含截距的訓練 OLS，且 y 與擬合值都有非零變異時，$R^2=\operatorname{Cor}(y,\hat y)^2$。
+但對任意預測向量、測試集預測或把觀測與預測互換，這個等式不一定成立。
+例如觀測為 (1,2,3)，預測為 (11,12,13)，相關係數平方仍為 1，但 $R^2=1-300/2=-149$。
+排序與方向完全一致，仍可能每筆都偏高 10；R² 的誤差定義會看見這個偏移。</p>
+"""
+
+
 PAGEJS = r"""
 /* ===== linear_regression 本頁元件（id 與全域一律 w03 前綴）===== */
 

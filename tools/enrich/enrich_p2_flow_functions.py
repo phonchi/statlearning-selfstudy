@@ -827,4 +827,18 @@ function w15erReset() { w15erI = 3; w15erDraw(); }
 if (w15erS) w15erDraw();
 """
 
+# Coverage completion 2026-09-10
+
+BODIES['func'] += f"""
+<h3 id="dx-lamb">lambda 是只有一個運算式的函式</h3>
+<p><code>lambda df: df['year'] &gt; 80</code> 建立一個接受 df 的函式，並把冒號後的運算式結果回傳。
+它相當於定義一個函式，內容只有 <code>return df['year'] &gt; 80</code>。
+<code>loc</code> 接到這個函式時，會把當下的資料框傳給它，再使用回傳的布林條件選列。</p>
+{card('以當下資料框產生選列條件', C(2,228), O(2,228), src=S(2,228), note='沿用 Ch02 已建立的 Auto_re；列條件由 lambda 計算，欄條件仍是欄名串列。')}
+<p>需要多個步驟、註解或重複呼叫時，具名的 <code>def</code> 通常更方便。
+<code>lambda</code> 只容許單一運算式，不用寫 <code>return</code>，也不是提早執行一次的篩選結果。</p>
+<p class="source-note">延伸：<a href="https://docs.python.org/zh-tw/3/tutorial/controlflow.html#lambda-expressions">Python 官方教學：lambda 運算式</a>。</p>
+"""
+
+
 apply("p2_flow_functions", BODIES, PAGEJS)

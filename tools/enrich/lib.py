@@ -94,6 +94,12 @@ def qa(head, items):
     return "\n".join(out)
 
 
+def proof(pid, title, body):
+    """完整證明預設收合；結果與條件由正文先交代。"""
+    return (f'<details class="qa-item proof" id="{pid}"><summary>證明：{title}</summary>\n'
+            f'<div class="qa-a">{body}</div></details>')
+
+
 def quiz(qid, label, question, options):
     """三選一 quiz。options = [(是否正解, 選項 HTML, 為什麼), ...]，錯的也要寫為什麼。"""
     letters = "ABC"

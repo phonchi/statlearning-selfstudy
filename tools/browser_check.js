@@ -71,6 +71,25 @@ async function checkOne(browser, stem) {
   const mathErrors = await page.$$eval('mjx-merror', els => els.map(el => el.textContent));
   mathErrors.forEach(msg => note(stem, '數學排版錯誤：' + msg));
 
+  // Proofs preserve the uninterrupted reading view and native keyboard behavior.
+  const proofState = await page.$$eval('details.proof', ds => ds.map(d => ({
+    id: d.id, open: d.open, summary: d.querySelector('summary')?.textContent.trim()
+  })));
+  proofState.forEach(d => {
+    if (d.open) note(stem, `證明預設展開：${d.id}`);
+    if (!d.id || !d.summary) note(stem, '證明缺少錨點或摘要');
+  });
+  fs.mkdirSync(SHOT_DIR, { recursive: true });
+  await page.screenshot({ path: path.join(SHOT_DIR, stem + '_reading.png'), fullPage: true });
+  const firstProof = await page.$('details.proof > summary');
+  if (firstProof) {
+    await firstProof.focus();
+    await page.keyboard.press('Enter');
+    if (!await firstProof.evaluate(el => el.parentElement.open)) note(stem, 'Enter 無法展開證明');
+    await page.keyboard.press('Space');
+    if (await firstProof.evaluate(el => el.parentElement.open)) note(stem, 'Space 無法收合證明');
+  }
+
   // Card JSON and its reader-visible text must agree (including <, > and &).
   const cardTextProblems = await page.evaluate(() => {
     if (typeof FLASHCARDS === 'undefined') return [];
@@ -176,6 +195,8 @@ async function checkOne(browser, stem) {
       (d.querySelector('summary') || {}).textContent || '(?)');
   });
   qaBad.forEach(q => note(stem, `Q&A 展開後仍看到未排版的 $：${String(q).slice(0, 40)}`));
+  const expandedErrors = await page.$$eval('details mjx-merror', es => es.map(e => e.textContent));
+  expandedErrors.forEach(msg => note(stem, '收合內容展開後公式錯誤：' + msg));
 
   // 全頁截圖
   fs.mkdirSync(SHOT_DIR, { recursive: true });

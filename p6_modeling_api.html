@@ -1249,6 +1249,45 @@ The RMSE is: 5.0571</pre></div>
   <span class="info-label">🔗 這在本站哪一章會用到</span>
   第 5 章整章都在講交叉驗證與自助法，第 6 章用交叉驗證挑收縮的強度 λ，第 8 章調樹的深度也是同一套。<a href="resampling_methods.html#kfold">→ 重抽樣方法 · k 折交叉驗證</a>　<a href="resampling_methods.html#cvwrong">→ 同一章的「先用全資料選特徵再 CV」</a>
 </div>
+
+<h3 id="dx-pipe">把標準化與模型交給同一條 Pipeline</h3>
+<p>到 Ch06 中文 Lab 的 Ridge 節，先完成 imports、Hitters 清理、X／Y、lambdas 與 n_samples 的建立，再接著閱讀下面兩格。
+這裡沿用該份 notebook 的變數；其資料與本頁 Boston、Auto 範例不同。</p>
+<div class="deck-extra">
+  <div class="dx-label">標準化後接 Ridge</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com">#ridge = skl.ElasticNet(alpha=lambdas[59], l1_ratio=0)</span></span>
+  <span class="line">ridge = skl.Ridge(alpha=lambdas[<span class="num">59</span>]* n_samples)</span>
+  <span class="line">scaler = StandardScaler(with_mean=<span class="num">True</span>,  with_std=<span class="num">True</span>)</span>
+  <span class="line">pipe = Pipeline(steps=[(<span class="str">&#x27;scaler&#x27;</span>, scaler), (<span class="str">&#x27;ridge&#x27;</span>, ridge)])</span>
+  <span class="line">pipe.fit(X, Y)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Pipeline(steps=[(&#x27;scaler&#x27;, StandardScaler()),
+                (&#x27;ridge&#x27;, Ridge(alpha=np.float64(64.1056349310749)))])</pre></div>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="122">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
+</div>
+<p>每個步驟都有名稱：scaler 與 ridge。訓練時先由 scaler 學平均及標準差，再將轉換結果交給 Ridge。
+預測時沿用同一 scaler 的參數；<code>pipe['ridge'].alpha</code> 可存取模型的懲罰強度。</p>
+<div class="deck-extra">
+  <div class="dx-label">把整條 Pipeline 放進切分評估</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># This is basically the same as train_test_split</span></span>
+  <span class="line">validation = skm.ShuffleSplit(n_splits=<span class="num">1</span>,</span>
+  <span class="line">                              test_size=<span class="num">0.5</span>,</span>
+  <span class="line">                              random_state=<span class="num">0</span>)</span>
+  <span class="line">pipe[<span class="str">&#x27;ridge&#x27;</span>].alpha = <span class="num">0.01</span></span>
+  <span class="line">results = skm.cross_validate(pipe,</span>
+  <span class="line">                             X,</span>
+  <span class="line">                             Y,</span>
+  <span class="line">                             scoring=<span class="str">&#x27;neg_mean_squared_error&#x27;</span>,</span>
+  <span class="line">                             cv=validation)</span>
+  <span class="line">-results[<span class="str">&#x27;test_score&#x27;</span>]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([133821.45286659])</pre></div>
+  <span class="dx-src" data-lab-ch="6" data-lab-cells="128">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
+</div>
+<p>此例用一次 ShuffleSplit 留出一半資料，每次評估會複製並重新擬合整條 Pipeline，包括 scaler。
+<code>neg_mean_squared_error</code> 採「越大越好」的分數方向，最前面的負號將它轉回 MSE。
+這裡 alpha 已固定為 0.01，沒有同時搜尋最佳 alpha；改用其他分割器時仍保持前處理在每次訓練資料內。</p>
+<p class="source-note">延伸：<a href="https://scikit-learn.org/stable/modules/compose.html#pipeline">scikit-learn Pipeline 文件</a>；完整參數選擇見 <a href="model_selection.html#ridge">收縮方法</a>。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->

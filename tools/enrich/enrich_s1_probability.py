@@ -163,5 +163,51 @@ function w21Reset() { document.getElementById('w21p').value='0.5';w21Change(); }
 w21Render();
 '''
 
+# Coverage completion 2026-09-10
+from lib import proof
+
+BODIES['expectation'] += r"""
+<h3>加總與加權平均</h3>
+<p>只要相關期望值存在，期望值具有線性性，<strong>不需要獨立</strong>：</p>
+$$E[aX+bY+c]=aE[X]+bE[Y]+c.$$
+<p>例如兩天各有期望通勤時間 20 分鐘，總時間的期望是 40 分鐘；即使兩天都受同一交通狀況影響，這個加法仍成立。</p>
+""" + proof('w21proof-linearity', '期望值的線性性', r"""
+<p>以有限離散分布為例，對所有可能的配對加總：</p>
+$$E[aX+bY+c]=\sum_{x,y}(ax+by+c)P(X=x,Y=y)
+=a\sum_x xP(X=x)+b\sum_y yP(Y=y)+c.$$
+<p>這裡只用了邊際機率等於聯合機率的加總，沒有將聯合機率拆成乘積。</p>
+""")
+BODIES['variation'] += r"""
+<h3>加總後的變異數，以及平均為什麼較穩定</h3>
+<p>期望值可以直接相加，變異數則要考慮變數是否一起波動。定義
+$\operatorname{Cov}(X,Y)=E[(X-E[X])(Y-E[Y])]$，有限二階動差下有：</p>
+$$\operatorname{Var}(aX+bY)=a^2\operatorname{Var}(X)+b^2\operatorname{Var}(Y)+2ab\operatorname{Cov}(X,Y).$$
+<p>獨立會使共變異數為 0。因此，若 $X_1,\ldots,X_n$ 獨立同分布，平均為 μ、有限變異數為 σ²，</p>
+$$E[\bar X]=\mu,\qquad \operatorname{Var}(\bar X)=\frac{\sigma^2}{n}.$$
+<p>例如單次測量標準差是 6，取 9 次獨立測量的平均，其標準差是 $6/\sqrt9=2$。
+若測量彼此相關，就不能直接套用這個除以 n 的變異數公式。</p>
+""" + proof('w21proof-varsum', '變異數加法與樣本平均的變異數', r"""
+<p>把 $a(X-E[X])+b(Y-E[Y])$ 平方後取期望，平方項給出兩個變異數，交叉項給出 $2ab\operatorname{Cov}(X,Y)$。
+獨立時 $E[XY]=E[X]E[Y]$，所以交叉項為 0。於是</p>
+$$\operatorname{Var}\!\left(\frac1n\sum_iX_i\right)=\frac1{n^2}\sum_i\sigma^2=\frac{\sigma^2}{n}.$$
+""") + proof('w21proof-unbiased', '樣本變異數為什麼除以 n−1', r"""
+<p>在上述獨立同分布、有限變異數的條件下，</p>
+$$\sum_i(X_i-\bar X)^2=\sum_i(X_i-\mu)^2-n(\bar X-\mu)^2.$$
+<p>兩邊取期望，右邊是 $n\sigma^2-n\operatorname{Var}(\bar X)=(n-1)\sigma^2$。
+因此 $n\ge2$ 時，$E[s^2]=\sigma^2$。</p>
+""") + r"""
+<h3>延伸：把「越來越穩定」寫成機率界限</h3>
+<p>Markov 不等式適用於非負 X 與 $a&gt;0$；Chebyshev 不等式適用於有限變異數的 X 與 $\varepsilon&gt;0$：</p>
+$$P(X\ge a)\le\frac{E[X]}a,\qquad
+P(|X-\mu|\ge\varepsilon)\le\frac{\sigma^2}{\varepsilon^2}.$$
+<p>套在樣本平均，可得 $P(|\bar X-\mu|\ge\varepsilon)\le\sigma^2/(n\varepsilon^2)$。
+這個界限隨 n 趨近 0，說明有限變異數、獨立同分布情況下的弱大數法則；它不要求每一次新抽樣都比前一次接近 μ。</p>
+""" + proof('w21proof-lln', 'Markov、Chebyshev 與弱大數法則', r"""
+<p>因為 $X\ge a\mathbf1_{\{X\ge a\}}$，取期望得 $E[X]\ge aP(X\ge a)$，這就是 Markov 不等式。
+再把非負變數 $(X-\mu)^2$ 與門檻 $\varepsilon^2$ 代入，得到 Chebyshev 不等式。
+最後代入 $\operatorname{Var}(\bar X)=\sigma^2/n$；固定 $\varepsilon&gt;0$ 時右邊隨 n 增大而趨近 0。</p>
+""") + source(10,'期望值與變異數性質') + source(14,'Markov 與 Chebyshev 不等式；一致性見 pp.17–18')
+
+
 if __name__ == '__main__':
     apply('s1_probability', BODIES, PAGEJS)

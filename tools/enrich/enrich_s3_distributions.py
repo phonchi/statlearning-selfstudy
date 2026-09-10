@@ -472,5 +472,47 @@ if (w23cltS) w23cltReset();
 """
 
 
+# Coverage completion 2026-09-10
+from lib import proof
+
+BODIES['families'] += r"""
+<h3>從公式算出每根柱與每一段面積</h3>
+<p>下列 PMF／PDF 連同支撐範圍定義分布；沒有列入的離散值或區間外的密度皆為 0。</p>
+<div class="table-wrap"><table><thead><tr><th>分布</th><th>PMF／PDF</th><th>範圍與參數</th></tr></thead><tbody>
+<tr><td>Bernoulli</td><td>$P(X=1)=p,\ P(X=0)=1-p$</td><td>$0\le p\le1$</td></tr>
+<tr><td>二項</td><td>$P(X=k)=\binom nk p^k(1-p)^{n-k}$</td><td>$k=0,\ldots,n$；$n\ge1$ 整數，$0&lt;p&lt;1$</td></tr>
+<tr><td>均勻</td><td>$f(x)=1/(b-a)$</td><td>$a\le x\le b$；$a&lt;b$</td></tr>
+<tr><td>常態</td><td>$f(x)=\frac1{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/(2\sigma^2)}$</td><td>$x\in\mathbb R$；$\sigma&gt;0$</td></tr>
+</tbody></table></div>
+<p>二項分布的端點 $p=0$ 表示 X 恆等於 0，$p=1$ 表示 X 恆等於 n。
+例如 $X\sim\mathrm{Binomial}(3,0.5)$，恰有兩次成功的機率是 $\binom32(0.5)^3=3/8$。
+均勻 $U(2,6)$ 的密度為 1/4，因此落在 [3,5] 的機率為 $2/4=1/2$。</p>
+""" + proof('w23proof-binomial','二項 PMF、平均與變異數',r"""
+<p>令 $X=\sum_{i=1}^nI_i$，其中 $I_i$ 是獨立、成功率同為 p 的 Bernoulli 變數。
+指定 k 次成功所在位置後，該序列的機率為 $p^k(1-p)^{n-k}$，位置共有 $\binom nk$ 種。
+不同序列互斥，所以加總得到 PMF。由期望值線性性及獨立性，</p>
+$$E[X]=\sum_i p=np,\qquad \operatorname{Var}(X)=\sum_i p(1-p)=np(1-p).$$
+""") + r"""
+<h3>計數與等待：Poisson、Exponential</h3>
+<p><strong>Poisson 分布</strong>描述固定觀察範圍內的非負整數計數，例如一段時間內到站的人數。
+參數 λ 是該範圍的期望計數；模型同時限制平均與變異數相等：</p>
+$$P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!},\quad k=0,1,\ldots,\quad\lambda&gt;0;
+\qquad E[X]=\operatorname{Var}(X)=\lambda.$$
+<p>λ=2 時，零次的機率為 $e^{-2}\approx0.1353$，恰好一次為 $2e^{-2}\approx0.2707$。
+<a href="classification.html#poisson">分類章的 Poisson 迴歸</a>讓這個條件平均隨解釋變數改變。
+若資料有明顯過度離散，單純 Poisson 的變異數假設就需要再檢查。</p>
+<p><strong>指數分布（Exponential）</strong>描述非負連續等待時間，以 λ 表示率參數：</p>
+$$f(t)=\lambda e^{-\lambda t}\ (t\ge0),\qquad
+P(T&gt;t)=e^{-\lambda t},\qquad E[T]=\frac1\lambda,\quad\operatorname{Var}(T)=\frac1{\lambda^2}.$$
+<p>例如每分鐘率 λ=2 的模型，平均等待時間為 0.5 分鐘，等待超過一分鐘的機率為 $e^{-2}$。
+在同質 Poisson 過程中，長度 t 的計數平均是 λt，而相鄰事件等待時間是此指數分布；任意計數資料不一定符合這種過程。</p>
+""" + proof('w23proof-exponential','指數分布的面積與等待機率',r"""
+$$\int_0^\infty\lambda e^{-\lambda u}\,du=1,\qquad
+P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
+<p>以分部積分得 $E[T]=1/\lambda$、$E[T^2]=2/\lambda^2$，相減可得變異數 $1/\lambda^2$。
+此外，$P(T&gt;s+t\mid T&gt;s)=e^{-\lambda(s+t)}/e^{-\lambda s}=e^{-\lambda t}$，這稱為無記憶性。</p>
+""") + source('Poisson、二項、指數與常態',34)
+
+
 if __name__ == "__main__":
     apply("s3_distributions", BODIES, PAGEJS)

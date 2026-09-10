@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
+from lib import (proof, apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
 CH = 8
@@ -773,7 +773,7 @@ BODIES["boosting"] = f"""
   <p>$e_j$ 是第 $j$ 個分類器的<strong>加權</strong>錯誤率，$\\alpha_j$ 同時是它在最終投票裡的份量：
   錯誤率愈低、$\\alpha$ 愈大、票愈重。最終預測是 $\\hat y = \\arg\\max_k \\sum_{{j:\\, h_j(x) = k}} \\alpha_j$。
   下面的元件取 $\\eta = \\tfrac{{1}}{{2}}$，那正是 Freund–Schapire 原版的 AdaBoost；
-  $\\eta = 1$（<code>scikit-learn</code> 的 SAMME）重新加權更兇，在小樣本上容易讓權重
+  $\\eta = 1$ 代入這組對稱更新會加倍經典二元係數，不能直接稱為 SAMME；較大的更新在小樣本上容易讓權重
   幾輪就集中到少數幾點上。</p>
 
 {viz(svg("w09adaSvg", 320),
@@ -847,7 +847,7 @@ BODIES["modern"] = f"""
   <p class="skip-note">這一節是課堂沒細講的延伸（講義 p.52–61）：三個現代 GBDT 套件與該調的超參數。
   第一輪讀可以整節略過，回頭要用套件時再看。</p>
 
-  <p>上一節的梯度提升在概念上已經完整了，剩下的全是<strong>工程</strong>與<strong>正則化</strong>。
+  <p>以下將梯度提升延伸到二階目標、正則化與大資料搜尋。
   三個常用套件提供了不同的加速與正則化做法：</p>
 
 {table(["", "全名／來源", "主要特點", "在 lab 的實測"],
@@ -856,12 +856,12 @@ BODIES["modern"] = f"""
          "用類似<strong>牛頓法</strong>的二階近似，納入梯度與曲率；分位數草圖做近似分裂搜尋、"
          "稀疏感知、快取友善", "24.3 秒（儲存格 114）"],
         ["<strong>LightGBM</strong>", "Microsoft",
-         "<strong>直方圖分箱</strong>（預設 255 箱）把排序的 $O(n \\log n)$ 降成 $O(n)$；"
+         "<strong>直方圖分箱</strong>先線性掃描建箱，再在較少的箱邊界搜尋門檻值；"
          "GOSS 只對小梯度的樣本抽樣；以<strong>leaf-wise</strong> 方式選葉生長，有別於逐層的 level-wise；"
          "互斥特徵綁定（EFB）", "13.1 秒（儲存格 185）"],
         ["<strong>CatBoost</strong>", "Yandex",
          "<strong>對稱樹</strong>（同一層用同一個分裂條件，本身就是正則化，預測極快）；"
-         "<strong>ordered boosting</strong> 用另一份子集算殘差以防過度擬合；"
+         "<strong>ordered boosting</strong> 用排列前綴模型計算本點梯度，以降低預測偏移；"
          "類別變數原生支援", "15.1 秒（儲存格 210）"],
         ["對照組", "<code>sklearn</code> 的 <code>GradientBoostingClassifier</code>",
          "純 Python 迴圈的參考實作", "<strong>624.8 秒</strong>（儲存格 113）"]])}
@@ -1038,7 +1038,7 @@ BODIES["stacking"] = f"""
   </ul>
 
   <p>因為每一輪只是微調，BART <strong>每次只作局部修改</strong>，
-  這本身就是防過度擬合的機制。要選三個數字：樹的棵數 $K$、迭代次數 $B$、
+  模型的正則化還來自偏好小樹與收縮葉值的先驗。要選三個數字：樹的棵數 $K$、迭代次數 $B$、
   丟掉的暖機輪數 $L$。講義的建議是 $K = 200$、$B = 1000$、$L = 100$，
   最終預測是暖機後的平均</p>
 
@@ -1192,6 +1192,47 @@ BODIES["reference"] = f"""
 BODIES['modern'] += r"""
 <h3>類別特徵如何編碼</h3><p>One-hot encoding 用各水準的指示欄表示名目類別；label encoding 將水準編成整數，只有存在自然次序時，數值門檻值的順序才有直接意義。對名目類別任意編號會限制數值樹可做的分割。Target encoding 以各類別的目標平均取代類別，可用 $\tilde\mu_c=(n_c\bar y_c+a\bar y)/(n_c+a)$ 向整體平均收縮，避免稀有類別的估計過度波動。</p><p>訓練資料的 target encoding 必須用折外或有順序的估計，不能讓該筆 $y_i$ 進入自己的編碼；驗證與測試資料只使用訓練部分學到的映射，未見類別使用訓練整體平均。CatBoost 的有序類別統計與 ordered boosting 正是在處理這類目標洩漏及預測偏移，仍須保留外層獨立評估。</p>
 """
+
+# 完整講義覆蓋：結果與算例留在正文，推導預設收合。
+
+BODIES['grow'] += r"""
+<h3>連續切點與類別分割如何搜尋</h3><p>連續變數先排序，只需考慮相鄰<strong>相異</strong>數值之間的分割；相同數值不能分到門檻值兩側。若有 $m$ 個相異值，最多有 $m-1$ 個候選門檻值。名目變數有 $q$ 個水準時，則要選非空子集合 $A$，以 $x_j\in A$ 或 $x_j\notin A$ 分開；不計左右互換，共有 $2^{q-1}-1$ 種。</p><p>平方損失的迴歸樹可先按每個水準的平均反應排序，再比較 $q-1$ 個相鄰切點。例如水準 A、B、C 的觀測分別為 $(0,2)$、$(8,10)$、$(4,6)$，水準平均為 1、9、5，排序為 A、C、B。切 A｜C,B 與 A,C｜B 的 RSS 都為 22，切 C｜A,B 的 RSS 為 70；只搜尋有序切分便找到最佳解。排序使用當前訓練節點的反應，不能先用全資料的目標幫驗證資料編碼。二元分類亦有相應排序捷徑，多類別問題則不可直接把類別編號平均後套用。</p>
+<h3>樹的分裂規則與演算法家族</h3><p>ID3 以資訊增益挑類別特徵並做多叉分裂；C4.5 擴充連續特徵與增益比，並具有剪枝與規則表示；C5.0 是後續系統。CART 做二元分裂，可用平方損失處理回歸，也可用 Gini 等準則處理分類。scikit-learn 的一般決策樹採 CART 家族做法，輸入介面對類別特徵的支援需另查，不能由「理論上的樹能分割類別」推成「任何套件都直接接受字串」。</p><p>來源：<a href="https://scikit-learn.org/stable/modules/tree.html" target="_blank" rel="noopener">scikit-learn 決策樹文件</a>。</p>
+"""+proof('w09proof-leaf','葉平均與類別排序捷徑的理由',r"""<p>固定一個葉子的資料集合 $R$，$\sum_{i\in R}(y_i-c)^2=\sum_{i\in R}(y_i-\bar y_R)^2+|R|(c-\bar y_R)^2$，故最優常數為平均。將每個類別先縮成帶權重的平均後，類別內的 RSS 是不隨分組改變的常數，剩下的是在一維類別平均上選兩個中心的平方損失問題。給定兩個有序中心，每個類別歸到較近中心的分界在兩中心中點，故存在最佳分割是平均排序的一次切分。這個證明使用平方距離與兩組，不能無條件搬到多類別 impurity。</p>""")
+BODIES['prune'] += r"""
+<h3>weakest-link 的臨界值</h3><p>把節點 $t$ 以下的整棵子樹 $T_t$ 收成一片葉，損失由 $R(T_t)$ 變成 $R(t)$，葉子由 $|T_t|$ 片變成一片。兩種成本恰好相等的臨界值是</p>
+$$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
+<p>先在所有內部節點中找最小的非負臨界值，剪掉該弱連結，重新計算剩下的候選值，得到巢狀路徑。相同臨界值的多個分支需一致處理 ties。最後用訓練折中的剪枝路徑與驗證損失挑 $\alpha$。</p><p>例如某三葉子樹的 RSS 為 10，收成一葉後是 18，臨界值是 $(18-10)/(3-1)=4$。當 $\alpha=3$，三葉成本 19 小於一葉成本 21；當 $\alpha=5$，三葉成本 25 大於一葉成本 23。若套件把 $R$ 除以樣本數，$\alpha$ 的數值也會跟著縮放，不能直接拿不同尺度的值相比。</p>
+"""+proof('w09proof-prune','剪枝臨界值',r"""<p>保留子樹與收成一葉的成本差為 $R(T_t)+\alpha|T_t|-\{R(t)+\alpha\}=R(T_t)-R(t)+\alpha(|T_t|-1)$。令差為 0 即得正文的臨界值；大於此值時收成一葉更便宜。weakest-link 演算法逐次選最先達到這個臨界值的分支，無須列舉所有可能子樹。</p>""")
+BODIES['rf'] += r"""
+<h3>Extra-trees、random subspaces 與 random patches</h3><p>Random forest 在每個節點抽候選變數，再搜尋其最佳門檻值；極端隨機樹（Extra-trees）還對候選變數隨機產生門檻值，再從這些候選中選損失最低者。這減少門檻值搜尋，也增加隨機性，偏差與變異的取捨須用驗證比較；它不等於完全隨機選一刀。</p><p>Random subspaces 對每個基礎模型固定抽一組特徵；random patches 同時抽樣本與特徵。它們與 RF 每個節點重新抽特徵的層次不同。例如三個特徵中，每棵樹固定用兩個是 subspace；同一棵樹根節點看前兩個、子節點又換一組才是 RF 的機制。bootstrap 與是否抽特徵是兩個獨立選項，不能由 Extra-trees 名稱推定一定有 OOB。</p><p>來源：<a href="https://scikit-learn.org/stable/modules/ensemble.html#extremely-randomized-trees" target="_blank" rel="noopener">scikit-learn 集成方法文件</a>。</p>
+"""+proof('w09proof-forest-var','平均樹的變異與相關性',r"""<p>固定預測位置 $x$，若各隨機樹預測的變異都是 $\sigma^2$、兩兩相關都是 $\rho$，則 $\operatorname{Var}(B^{-1}\sum_bT_b)=B^{-2}\{B\sigma^2+B(B-1)\rho\sigma^2\}=\rho\sigma^2+(1-\rho)\sigma^2/B$。只有不相關部分隨樹數消失。共同訓練資料會帶來相關性；跨測試點計算的相關係數並不等於這個固定 $x$、對重複訓練取分布的 $\rho$。</p>""")
+BODIES['boosting'] += r"""
+<h3>從擬合殘差到一般負梯度</h3><p>對可微損失 $\ell(y,F)$，先用最佳常數 $F_0=\arg\min_c\sum_i\ell(y_i,c)$。第 $m$ 輪在目前預測上算負梯度，再用小樹擬合它：</p>
+$$r_{im}=-\left.\frac{\partial\ell(y_i,F)}{\partial F}\right|_{F=F_{m-1}(x_i)},\qquad h_m\approx r_m.$$
+<p>可沿樹的方向做線搜尋 $\gamma_m=\arg\min_\gamma\sum_i\ell(y_i,F_{m-1}(x_i)+\gamma h_m(x_i))$，再更新 $F_m=F_{m-1}+\nu\gamma_mh_m$。樹也可在每片葉上分別估計最優增量。$0<\nu\le1$ 是學習率，樹數、葉數與驗證停止輪次共同控制複雜度。</p><p>平方損失取 $\ell=(y-F)^2/2$，負梯度正好是 $y-F$。例如 $y=(0,2,4)$，初始常數為 2，殘差為 $(-2,0,2)$；若樹分出第一點與其餘兩點，葉平均為 −2 與 1，$\nu=0.1$ 更新後預測為 $(1.8,2.1,2.1)$。二元 logistic loss 在 logit 尺度使用 $\ell=\log(1+e^F)-yF$，負梯度為 $y-p$，輸出預測必須再轉成機率。</p>
+<h3>AdaBoost 的權重尺度</h3><p>經典二元 AdaBoost 採 $y_i,h_m(x_i)\in\{-1,1\}$，權重先正規化為總和 1。令 $e_m=\sum_iw_iI(y_i\ne h_m(x_i))$，當 $0<e_m<1/2$ 時取 $a_m=\frac12\log\{(1-e_m)/e_m\}$，更新 $w_i\leftarrow w_i e^{-a_my_ih_m(x_i)}$ 後再次正規化。最終以 $\operatorname{sign}\sum_ma_mh_m(x)$ 分類；$e_m=0$ 可停止，$e_m\ge1/2$ 需拒絕或更換弱分類器。</p><p>例如 $e=1/4$，$a=\frac12\log3$，答錯／答對的相對權重倍率為 $e^{2a}=3$。SAMME 的多類別寫法使用 $A_m=\nu[\log\{(1-e_m)/e_m\}+\log(K-1)]$，只把答錯者乘上 $e^{A_m}$，再正規化。二元且 $\nu=1$ 時與經典更新的相對權重一致，但不能把 $A_m$ 放進對稱的 $e^{\pm A_m}$ 後仍宣稱相同。</p>
+"""+proof('w09proof-adaboost','AdaBoost 的半個對數勝算從哪裡來',r"""<p>固定本輪弱分類器，指數損失按目前權重寫成 $Z(a)=(1-e)e^{-a}+ee^a$。對 $a$ 微分並令其為 0，得到 $ee^a=(1-e)e^{-a}$，因此 $a=\frac12\log((1-e)/e)$。二階導數為正，所以是極小值。逐點權重與 $\exp\{-y_iF_{m-1}(x_i)\}$ 成正比；新增 $ah_m$ 後便多乘 $e^{-ay_ih_m(x_i)}$。正規化只除以共同常數，不改變下一輪加權錯誤率的相對權重。</p>""")+proof('w09proof-gradient','為何擬合負梯度是下降方向',r"""<p>把訓練點上的預測看成向量 $F$。對小步長 $\epsilon$，$L(F+\epsilon h)=L(F)+\epsilon\nabla L(F)^Th+O(\epsilon^2)$。選 $h=-\nabla L(F)$ 時一階變化為 $-\epsilon\|\nabla L(F)\|^2$。樹的函數空間有限，故以最小平方把負梯度投影近似成可用的小樹，再調步長。擬合出的樹若與負梯度方向不一致，不能僅由名稱保證每一步都下降。</p>""")
+BODIES['modern'] += r"""
+<h3>XGBoost：本輪的目標、葉值與分裂增益</h3><p>固定先前所有樹，第 $t$ 輪新增 $f_t(x)=w_{q(x)}$。用目前的原始分數 $F_i$ 計算 $g_i=\partial_F\ell(y_i,F_i)$、$h_i=\partial_F^2\ell(y_i,F_i)$；二階近似的本輪目標為</p>
+$$\widetilde L_t=\sum_i\{g_if_t(x_i)+\tfrac12h_if_t(x_i)^2\}+\gamma T+\tfrac\lambda2\sum_{j=1}^Tw_j^2.$$
+<p>$T$ 是葉數。葉 $j$ 中的集合 $I_j$ 給出 $G_j=\sum_{i\in I_j}g_i$、$H_j=\sum_{i\in I_j}h_i$。當 $H_j+\lambda>0$，最佳葉值與左右分裂的淨收益為</p>
+$$w_j^*=-\frac{G_j}{H_j+\lambda},\qquad\operatorname{Gain}=\frac12\left(\frac{G_L^2}{H_L+\lambda}+\frac{G_R^2}{H_R+\lambda}-\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\right)-\gamma.$$
+<p>逐特徵搜尋候選切點，把 $g,h$ 累加到左右；接受符合葉大小／曲率等限制且淨收益為正的分裂，完成樹後用學習率縮小葉值。這是二階近似的收益，並非一般損失的精確下降量。若另加 L1 懲罰 $\alpha\sum_j|w_j|$，葉值改為 $-\operatorname{sign}(G_j)(|G_j|-\alpha)_+/(H_j+\lambda)$。</p><p>算例：平方損失 $\ell=(y-F)^2/2$、$y=(0,2,4)$、目前 $F=(2,2,2)$，故 $g=(2,0,-2)$、$h=(1,1,1)$。切第一點｜後兩點，取 $\lambda=1,\gamma=0.1$，左葉 $G_L=2,H_L=1$、右葉 $G_R=-2,H_R=2$，葉值為 $-1$ 與 $2/3$，淨收益為 $\frac12(4/2+4/3)-0.1=1.5667$。學習率 0.1 時新預測為 $(1.9,2.0667,2.0667)$。</p><p>二元 logistic 的導數是 $g=p-y$、$h=p(1-p)$。只看殘差 $y-p$ 會漏掉曲率；這也說明 $\texttt{min\_child\_weight}$ 限制的是葉內 Hessian 總和，通常不等於樣本數。來源：<a href="https://xgboost.readthedocs.io/en/latest/tutorials/model.html" target="_blank" rel="noopener">XGBoost 官方樹提升推導</a>。</p>
+"""+proof('w09proof-xgboost','二階展開、最佳葉值與 split gain',r"""<p>逐點 Taylor 展開 $\ell(y_i,F_i+f_i)\approx\ell(y_i,F_i)+g_if_i+h_if_i^2/2$，移除不依賴新樹的常數。依葉集合加總後，目標為 $\sum_j\{G_jw_j+(H_j+\lambda)w_j^2/2\}+\gamma T$。每葉微分給 $G_j+(H_j+\lambda)w_j=0$，代回最小目標得到 $-\frac12\sum_jG_j^2/(H_j+\lambda)+\gamma T$。一葉分兩葉，舊目標減新目標就是正文 Gain；葉數多一個，因此只減一次 $\gamma$。有 L1 時以次梯度條件得到 soft threshold，不能繼續沿用未加 L1 的葉值。</p>""")
+BODIES['modern'] += r"""
+<h3>大型資料如何減少搜尋量</h3><p>XGBoost 的近似分裂用加權分位數草圖壓縮候選門檻值；二階目標中樣本的 Hessian 可作為權重。稀疏感知搜尋只巡訪非缺失項，並比較缺失資料送左或送右的收益，學出每個節點的預設方向；這不代表缺失值就是數字 0。欄式儲存、快取友善的梯度存取及區塊壓縮降低資料搬移成本。這些處理改變搜尋與存取方式，統計目標仍需和採用的 objective 對照。</p><p>LightGBM 先把連續值分箱，在每箱加總梯度與 Hessian，搜尋門檻值只需掃過各箱；子節點直方圖可由父節點減去另一子節點取得。例如四箱梯度和是 $(2,1,-1,-2)$，累計左和為 $(2,3,2)$，直接得到三個候選切分。箱數越少越快，但會合併原本不同的候選門檻值。Leaf-wise 每次選目前收益最大的葉繼續長，仍須用葉數、最小葉資料量與深度限制複雜度。</p><p>互斥特徵綁定（EFB）把很少同時非零的稀疏特徵放到一個帶不同偏移量的箱碼中。例如兩個互斥的 0/1 欄可編成 0、1、2；如果兩欄能同時為 1，就需要保留衝突資訊或容許受控近似，不能直接壓成同一個碼。類別分裂則依節點的梯度／Hessian 統計排序水準，再搜尋子集合，與任意整數編碼不同。</p><p>GOSS 保留絕對梯度最大的 $an$ 筆，再從其餘 $(1-a)n$ 筆均勻抽 $bn$ 筆，故小梯度被抽到的機率是 $b/(1-a)$。抽中的小梯度項須乘 $(1-a)/b$ 才能代表其餘項；若 $a=0.2,b=0.1$，就乘 8。實作在分裂分數所需統計中使用對應補權，不能只丟棄大部分資料而維持原權重。</p><p>來源：<a href="https://lightgbm.readthedocs.io/en/latest/Features.html" target="_blank" rel="noopener">LightGBM 官方機制</a>及其連結的原論文。箱數、類別支援與預設值會隨版本和估計器而不同；255 是常見設定，並非所有模式的不可突破上限。</p>
+<h3>CatBoost 的順序與取樣</h3><p>有序目標統計先產生一個排列 $\pi$。位置 $r$ 的樣本只使用排在它前面、且類別相同的目標：</p>
+$$\operatorname{TS}_{\pi_r}=\frac{\sum_{s<r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a\mu_0}{\sum_{s<r}I(x_{\pi_s}=x_{\pi_r})+a}.$$
+<p>$\mu_0$ 是選定先驗平均。若依序同類的反應為 $(1,0,1)$、$a=1,\mu_0=0.5$，各自編碼為 $0.5,0.75,0.5$；自己的反應未進入自己的編碼。Ordered boosting 另使本點的梯度由只看過排列前綴的模型計算，降低訓練預測與新資料預測的偏移；有序編碼與有序 boosting 是不同步驟，並非單純固定切兩份資料。</p><p>對稱樹在同一深度共用同一個分裂條件；若連續兩層分別判斷 $x_1>0$ 與 $x_2>1$，兩個布林值即可編成四個葉索引。這種受限結構有助快速推論，但仍需驗證複雜度。MVS 則依梯度大小做重要性抽樣：基本形式取 $p_i=\min(1,|g_i|/\mu)$，抽中後用 $1/p_i$ 補權；$\mu$ 控制預期樣本數。實際的 <code>mvs_reg</code> 另平衡梯度和與樣本數估計，不能把 MVS 說成均勻抽樣。</p><p>例如 $g=(1,4)$、$\mu=2$，納入機率為 $(0.5,1)$；第一筆一旦抽中，梯度貢獻為 2，而其期望仍是 1。來源：<a href="https://proceedings.neurips.cc/paper/2018/file/14491b756b3a51daac41c24863285549-Paper.pdf" target="_blank" rel="noopener">CatBoost 原論文</a>、<a href="https://catboost.ai/docs/en/concepts/algorithm-main-stages_bootstrap-options" target="_blank" rel="noopener">官方 MVS 說明</a>。</p>
+<h3>DART：暫時拿掉部分既有樹</h3><p>DART 在本輪先隨機略去部分既有樹，以剩下的集成計算梯度，再擬合一棵新樹；之後把略去的樹放回，並調整新、舊樹的權重，避免模型分數因加回樹而跳升。以 XGBoost 的 <code>normalize_type="tree"</code> 為例，略去 $k$ 棵時，新樹的相對權重為 $1/(k+\eta)$，被略去樹的權重乘 $k/(k+\eta)$；這裡的樹葉值還包含其採用的學習率尺度。若 $k=2,\eta=0.1$，兩個因子約為 0.4762、0.9524。其他正規化模式不同，不能任選一套公式混用。</p><p><code>rate_drop</code> 控制略去比例，<code>skip_drop</code> 可跳過此操作；應以固定驗證集選樹數，預測時依官方版本設定使用完整樹範圍。來源：<a href="https://xgboost.readthedocs.io/en/stable/tutorials/dart.html" target="_blank" rel="noopener">XGBoost DART 文件</a>。</p>
+"""
+BODIES['stacking'] += r"""
+<h3>BART 每一輪究竟更新什麼</h3><p>回歸 BART 的觀測模型為 $y_i=\sum_{j=1}^Kg(x_i;T_j,M_j)+\varepsilon_i$，$\varepsilon_i\sim N(0,\sigma^2)$。$T_j$ 是樹結構，$M_j$ 是葉值。樹深度先驗偏好小樹，葉值先驗把個別樹貢獻縮小，並對 $\sigma^2$ 指定先驗；抑制過度擬合的來源包含這些先驗，並非只因每輪移動小。</p><ol><li>更新第 $j$ 棵樹前，算偏殘差 $r_{ij}=y_i-\sum_{k\ne j}g(x_i;T_k,M_k)$。</li><li>給定偏殘差與目前 $\sigma^2$，提議生長、剪枝或其他結構修改；以後驗比與提議機率比決定接受或拒絕。</li><li>依條件後驗抽取各葉的新值；完成所有樹後更新 $\sigma^2$。</li><li>丟掉暖機輪次，保留後續抽樣。對每個新 $x$ 加總該輪所有樹，再跨輪平均作預測。</li></ol><p>固定葉分配時，若葉值先驗 $\mu\sim N(0,\tau^2)$，該葉的 $m$ 個偏殘差給出條件後驗 $N(v\sum_i r_i/\sigma^2,v)$，其中 $v=(m/\sigma^2+1/\tau^2)^{-1}$。例如 $r=(1,3)$、$\sigma^2=\tau^2=1$，後驗平均是 $4/3$、變異是 $1/3$；不是直接把葉值設為樣本平均 2。</p><p>各輪 $f^{(b)}(x)$ 的分位數描述平均反應的不確定性；若要個別新觀測的預測區間，還須加入該輪的噪聲抽樣。鏈內樣本相關，應檢查軌跡與有效樣本數；短示範的少量 draw 不能直接當作可靠的推論結果。來源：<a href="https://hedibert.org/wp-content/uploads/2018/06/BART.pdf" target="_blank" rel="noopener">BART 教材</a>。</p>
+"""+proof('w09proof-bart-leaf','Gaussian 葉值的條件後驗',r"""<p>固定樹結構與其他樹後，葉內概似乘先驗為 $\exp\{-\sum_i(r_i-\mu)^2/(2\sigma^2)-\mu^2/(2\tau^2)\}$。收集依賴 $\mu$ 的項，平方項係數為 $m/\sigma^2+1/\tau^2$、一次項係數為 $\sum_i r_i/\sigma^2$。完成平方即可辨認常態分布，其變異與平均是正文的 $v$ 與 $v\sum_i r_i/\sigma^2$。</p>""")
+
+
+BODIES['boosting'] += r"""<h3>同一提升流程下的不同損失</h3><p>一般提升法可換損失，但每輪的工作反應和葉增量也要一起換。絕對損失 $|y-F|$ 的負次梯度為 $\operatorname{sign}(y-F)$，零殘差可取 0；初始常數是中位數，葉增量也以相應殘差中位數估計。Huber 損失在 $|r|\le\delta$ 時取 $r^2/2$，否則取 $\delta|r|-\delta^2/2$，負梯度為 $\operatorname{clip}(r,-\delta,\delta)$，因此限制極端殘差的影響。多類別 deviance 的第 $k$ 個分數負梯度為 $I(y_i=k)-p_{ik}$，需以 softmax 連結各類分數並固定可識別表示。</p><p>例如殘差為 $(-4,1,3)$，平方損失的負梯度仍是 $(-4,1,3)$，絕對損失為 $(-1,1,1)$；Huber 取 $\delta=2$ 時為 $(-2,1,2)$。選擇不同損失，表示你對大誤差的代價有不同要求。</p>"""
 
 PAGEJS = r"""
 /* ===== tree_based_methods 本頁元件（id 與全域一律 w09 前綴）===== */

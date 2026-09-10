@@ -467,5 +467,27 @@ w24testReset();
 """
 
 
+# Coverage completion 2026-09-10
+from lib import proof
+
+BODIES['intervals'] += r"""
+<h3>母體標準差未知：t 區間</h3>
+<p>若 $X_1,\ldots,X_n$ 獨立來自常態母體，而 σ 未知，改以樣本標準差 s 估計。
+當 $n\ge2$、$s&gt;0$，使用 $n-1$ 個自由度的 t 臨界值：</p>
+$$T=\frac{\bar X-\mu}{S/\sqrt n}\sim t_{n-1},\qquad
+\bar x\pm t_{n-1,1-\alpha/2}\frac{s}{\sqrt n}.$$
+<p>這裡 $t_{\nu,q}$ 是自由度 ν 的 t 分布之 q 分位數。t 分布比標準常態有較厚的尾部，反映估計 σ 的額外不確定性。
+例如 $n=10,\bar x=20,s=3$，95% 區間以 $t_{9,0.975}\approx2.262$ 計算，為 $20\pm2.146$，即約 [17.854,22.146]。</p>
+<p>常態抽樣給出精確的 t 分布。母體非常態時，大樣本下可能適用近似，但小樣本、重尾或相依資料不能只靠換成 t 臨界值解決。
+迴歸係數的 t 區間使用同樣的「估計值 ± 臨界值 × 標準誤」，自由度由模型剩餘自由度決定。</p>
+<p class="source-note">延伸銜接：ISLP §3.1.2 的 t 統計量與迴歸區間；此處的一樣本 t 區間是本站先備補充，並非 Seeing Theory PDF 的新增原文。</p>
+""" + proof('w24proof-tinterval','t 區間的涵蓋機率',r"""
+<p>常態樣本下，$Z=(\bar X-\mu)/(\sigma/\sqrt n)\sim N(0,1)$，
+$U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
+因此 $Z/\sqrt{U/(n-1)}=(\bar X-\mu)/(S/\sqrt n)$ 服從 t 分布。
+從 $P(-t_{n-1,1-\alpha/2}\le T\le t_{n-1,1-\alpha/2})=1-\alpha$ 解出 μ 的範圍，即得上式。</p>
+""")
+
+
 if __name__ == "__main__":
     apply("s4_inference", BODIES, PAGEJS)

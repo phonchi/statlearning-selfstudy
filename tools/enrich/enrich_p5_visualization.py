@@ -923,4 +923,26 @@ function w18smSet(i) { w18smI = i; w18smDraw(); }
 HC.ready(() => { w18smDraw(); });
 """
 
+# Coverage completion 2026-09-10
+
+BODIES['anat'] += f"""
+<h3 id="dx-save">把目前這張 Figure 保存下來</h3>
+<p>完成軸標籤與版面後，對 Figure 呼叫 <code>savefig</code>。
+副檔名指定 PNG、PDF 或 JPEG；dpi 對點陣圖決定每英吋像素數。PDF 中的向量圖元仍可縮放，dpi 主要影響其中點陣化的內容。</p>
+{card('同一張圖保存兩種格式', C(2,117), None, src=S(2,117), note='沿用前面的 fig。命令將在目前工作目錄寫入檔案；同名檔案會被覆寫。')}
+{card('改軸範圍後再存一份', C(2,119), None, src=S(2,119), note='此格沿用 Ch02 建立的二維 axes 陣列；修改第二張子圖後另存，前一份檔案不會自動更新。')}
+"""
+BODIES['model'] += f"""
+<h3 id="dx-grid">函數曲面：等高線與色塊</h3>
+<p>若每一組 (x,y) 座標都有一個函數值，資料可排成網格。
+<code>contour(x, y, f)</code> 的 f 必須有 len(y) 列、len(x) 欄，每個元素對應一個座標配對。</p>
+{card('建立二維函數網格並畫等高線', C(2,121), None, src=S(2,121), note='np.multiply.outer 對所有 y 與 x 配對計算乘積，因此 f 的列對應 y、欄對應 x。')}
+{card('改等高線層數，與 imshow 比較', C(2,123,125), None, src=S(2,123,125), note='這些儲存格只保存圖形，不另造文字輸出。')}
+<p><code>levels</code> 控制等高線層級的選擇；更多線不會增加原始網格資料。
+<code>imshow(f)</code> 用顏色畫出陣列元素，預設座標是欄／列索引，原點在上方；因此不能直接把其座標當成前面的 x、y。
+若要對上物理座標，須交代 <code>extent</code> 與 <code>origin</code> 的設定。
+<a href="statistical_learning.html#parametric">統計學習章</a>用同一函數說明「指定形狀」與「從資料估計」的差異。</p>
+"""
+
+
 apply("p5_visualization", BODIES, PAGEJS)

@@ -952,4 +952,27 @@ function w16rdDraw() { w16rdRun += 1; w16rdRender(); }
 HC.ready(() => { w16rdRender(); });
 """
 
+# Coverage completion 2026-09-10
+
+BODIES['create'] += f"""
+<h3 id="dx-seq">先決定點數，還是先決定間距？</h3>
+<p><code>np.linspace(start, stop, num)</code> 指定<strong>點數</strong>，預設包含兩端；
+<code>np.arange(start, stop, step)</code> 指定<strong>間距</strong>，採含頭不含尾的範圍。</p>
+{card('兩個序列的右端點不同', C(128,130), O(128)+'\n'+O(130), src=S(128,130))}
+<p>例如前者在 0 到 10 放 11 個點，所以包含 10；後者使用預設間距 1，最後是 9。
+<code>linspace(..., endpoint=False)</code> 可排除右端。
+浮點間距累加會受捨入影響；畫固定數量的網格時，通常直接指定 <code>linspace</code> 的點數較清楚。</p>
+<p class="source-note">延伸：<a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html">NumPy linspace 的端點與點數定義</a>。</p>
+"""
+BODIES['bool'] += f"""
+<h3 id="dx-all">一整排條件，如何變成一個答案？</h3>
+<p>比較陣列會得到一排布林值；<code>np.all</code> 問「是否全部成立」，<code>np.any</code> 問「是否至少一個成立」。
+它們把多個真假值歸約成單一判斷，也能用 <code>axis</code> 分別判斷每列或每欄。</p>
+{card('每個位置都相同嗎？', C(166), O(166), src=S(166))}
+<p>上例的 True 只代表逐元素值相等；整數陣列與布林陣列仍有不同的索引語意。
+對布林值 [True, False]，all 為 False，any 為 True。
+不要直接把含多個元素的陣列放入 <code>if</code>；先說清楚你要「全部」還是「至少一個」。</p>
+"""
+
+
 apply("p3_numpy", BODIES, PAGEJS)

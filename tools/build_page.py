@@ -119,16 +119,16 @@ def studyguide(p: P.Page) -> str:
     deck_note = f'\n  <p class="source-intro">{p.deck_note}</p>' if p.deck_note else ""
     if p.grounding_mode == "concept":
         step2 = ("<strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。"
-                 "各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。")
+                 "證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。")
     elif p.kind == "prep":
         step2 = ("<strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）"
                  "；需要實作時，再打開原始筆記本對照。")
     elif p.deck:
         step2 = ("<strong>對照來源</strong>：章節旁標示課本章節與講義主題，"
-                 "需要完整推導時，點來源標記查書目，再回課本與講義閱讀。")
+                 "正文保留公式、條件與算例；證明預設收合，可按需要展開。來源標記可查原教材。")
     else:
         step2 = ("<strong>對照課本</strong>：章節旁標示課本節號，"
-                 "細節與完整推導請回課本。")
+                 "正文保留公式與算例，證明預設收合；可展開推導，並對照原書。")
     return f"""<div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（{p.islp_label}{deck_bit}）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。

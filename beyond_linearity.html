@@ -703,7 +703,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.7｜講義 07）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，需要完整推導時，點來源標記查書目，再回課本與講義閱讀。
+  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，正文保留公式、條件與算例；證明預設收合，可按需要展開。來源標記可查原教材。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
@@ -889,6 +889,13 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   <div class="quiz-options" id="qDegOptions"><div class="quiz-opt" data-correct="true" data-fb="對。訓練 MSE 必然單調下降（參數只增不減），CV MSE 才是測試誤差的估計。兩條線分岔的地方就是過度擬合開始的地方。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(A)</span> d 超過 4 之後多出來的彈性只是在擬合雜訊，所以測試誤差反而變差</div><div class="quiz-opt" data-correct="false" data-fb="不對，方向剛好反了。訓練 MSE 是&lt;strong&gt;系統性偏低&lt;/strong&gt;的（第 5 章講過）；CV MSE 用來估計測試誤差。而且 1596 → 1603 的上升是單調的，不像雜訊。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(B)</span> CV MSE 的估計本身有偏誤，所以它上升只是雜訊，該相信訓練 MSE</div><div class="quiz-opt" data-correct="false" data-fb="這個推論超出了 CV 的結果。CV 只告訴你「在多項式這個模型族裡，d = 4 附近的複雜度最合適」。真實關係很可能屬於其他函數形式。後面的樣條與平滑樣條會用完全不同的基底擬合出差不多好的結果。" onclick="quizCheck('qDeg', this)"><span class="opt-letter">(C)</span> 說明 <code>Wage</code> 資料裡 age 與 wage 的真實關係是四次多項式</div></div>
   <div class="quiz-feedback" id="qDegFeedback"></div>
 </div>
+
+<h3>從 logit 的信賴區間回到機率</h3>
+<p>二元反應仍使用同一組基底 $b(x)$。令 $\eta(x)=b(x)^T\beta$、$p(x)=\{1+e^{-\eta(x)}\}^{-1}$。在固定的 $x_0$，用係數共變異數估計 $\widehat V$ 計算 $s_\eta=\sqrt{b(x_0)^T\widehat Vb(x_0)}$。近似 95% 區間先在 logit 尺度取 $\hat\eta\pm1.96s_\eta$，再把兩端各代入 logistic 函數：</p>
+$$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta)}}\right].$$
+<p>例如 $\hat\eta=-2$、$s_\eta=0.5$，估計機率為 $0.1192$，區間約為 $[0.0483,0.2650]$，自然落在 0 與 1 之間，而且不以估計值左右對稱。這是固定 $x_0$ 的平均機率區間；小樣本、稀有事件或完全分離時，常態近似可能失準。</p>
+<details class="qa-item proof" id="w08proof-logit"><summary>證明：線性預測量的變異與區間轉換</summary>
+<div class="qa-a"><p>固定基底向量 $b_0$ 時，$\operatorname{Var}(b_0^T\hat\beta)=b_0^T\operatorname{Cov}(\hat\beta)b_0$。大樣本下以標準常態分位數建立 $\eta_0$ 的區間。因為 logistic 函數嚴格遞增，事件 $L\le\eta_0\le U$ 等價於 $\operatorname{logistic}(L)\le p_0\le\operatorname{logistic}(U)$，因此轉換端點保留同一近似涵蓋率。連續反應的常態線性模型則使用殘差自由度的 $t$ 分位數。</p></div></details>
 </section>
 <section id="step">
 <!-- GEN:BEGIN sec:step -->
@@ -972,6 +979,7 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   <div class="quiz-options" id="qStepOptions"><div class="quiz-opt" data-correct="true" data-fb="對。段內的設計矩陣只有一個常數欄，最小平方對常數的解就是平均。所以 lab 範例 的四個係數 94.16／116.66／119.19／116.57 就是四段的平均薪水。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(A)</span> 那一段內所有觀測值的 y 平均</div><div class="quiz-opt" data-correct="false" data-fb="不對。階梯函數段內&lt;strong&gt;沒有斜率&lt;/strong&gt;，各段都取常數；後面介紹的「分段線性」（linear spline）才允許各段有斜率。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(B)</span> 那一段兩個端點上迴歸直線的中點</div><div class="quiz-opt" data-correct="false" data-fb="接近但不對。截距對應&lt;strong&gt;第一段&lt;/strong&gt;的平均；全體平均則納入所有段的資料；各段係數是相對第一段的增量。全體平均只有在各段樣本數相同時才剛好等於各段平均的平均。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(C)</span> 全體樣本平均，加上該段切點對應的偏移量</div></div>
   <div class="quiz-feedback" id="qStepFeedback"></div>
 </div>
+<h3>用切段建立可解讀的交互作用</h3><p>若不同年份的年齡斜率不同，可擬合 $y=\beta_0+\beta_1x+\beta_2I(t\ge2005)+\beta_3xI(t\ge2005)+\varepsilon$。較早年份的截距、斜率是 $(\beta_0,\beta_1)$，較晚年份是 $(\beta_0+\beta_2,\beta_1+\beta_3)$。例如 $(10,2,3,-1)$ 使兩段分別為 $10+2x$ 與 $13+x$。切段可以改變截距，也能讓同一連續變數在不同群中有不同斜率。</p>
 </section>
 <section id="basis">
 <!-- GEN:BEGIN sec:basis -->
@@ -1174,6 +1182,8 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
   <div class="quiz-options" id="qSplOptions"><div class="quiz-opt" data-correct="true" data-fb="對。從 x, x², x³ 的 3 個，加截距 1 個，再加 5 個截斷冪基底項 (x−ξₖ)³₊，總共 9。等價的說法：6 段 × 4 個參數 − 5 個節點 × 3 個約束 = 24 − 15 = 9。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(A)</span> 9 個（K + 4 = 5 + 4）</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;完全不加約束&lt;/strong&gt;的分段三次多項式的自由度。加上「連續 + 一階 + 二階導數連續」共 5 × 3 = 15 個約束後，剩下 9 個。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(B)</span> 24 個（6 段各 4 個參數）</div><div class="quiz-opt" data-correct="false" data-fb="不對。節點數只決定&lt;strong&gt;額外&lt;/strong&gt;的彈性；基礎的三次多項式本身就要 4 個參數（含截距）。計入基礎參數後，df = K + 4；只算 K 會漏掉基礎參數。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(C)</span> 5 個（節點數就是自由度）</div></div>
   <div class="quiz-feedback" id="qSplFeedback"></div>
 </div>
+<h3>一次樣條與一般次數</h3><p>令內部節點為 $\xi_1<\cdots<\xi_K$。連續分段直線可寫成 $f(x)=\beta_0+\beta_1x+\sum_{k=1}^K\theta_k(x-\xi_k)_+$；通過節點 $\xi_k$ 後，斜率增加 $\theta_k$。例如 $f(x)=1+2x-3(x-2)_+$ 在 $x\le2$ 是 $1+2x$，在 $x>2$ 是 $7-x$；兩側在節點都等於 5，斜率由 2 改為 −1。一般 degree-$d$ 樣條要求到 $d-1$ 階導數連續，基底為 $1,x,\ldots,x^d,(x-\xi_1)_+^d,\ldots,(x-\xi_K)_+^d$，空間維度為 $K+d+1$。</p><details class="qa-item proof" id="w08proof-spline-dimension"><summary>證明：樣條的維度與連續性</summary>
+<div class="qa-a"><p>$K+1$ 段各有 $d+1$ 個係數，共 $(K+1)(d+1)$ 個。每個內部節點要求函數值與前 $d-1$ 階導數一致，提供 $d$ 個獨立線性條件，所以剩下 $(K+1)(d+1)-Kd=K+d+1$。截斷冪 $(x-\xi)_+^d$ 在節點兩側到 $d-1$ 階導數都接為 0，而第 $d$ 階可以改變，故滿足這些條件；基底彼此獨立且數量相符，便張成整個空間。</p></div></details>
 </section>
 <section id="natural">
 <!-- GEN:BEGIN sec:natural -->
@@ -1255,6 +1265,12 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 </div>
 
 <h3>自然樣條與 B-spline 基底</h3><p>給定有序節點 $\xi_1<\cdots<\xi_K$，可令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。自然立方樣條的一組基底為 $1,x,d_k(x)-d_{K-1}(x)$（$k=1,\ldots,K-2$）；相減消去邊界外的二次、三次項，使兩端保持線性。這裡的 $\xi_1,\xi_K$ 是邊界節點，計數時不可與只算內部節點的記號混用。</p><p>截斷冪基底方便看連續性，但高次冪容易造成數值問題。B-spline 用只在一段節點範圍非零的局部支撐基底，表示相同的樣條空間，通常更適合計算。更換基底不等於更換模型；需保持次數、節點、邊界條件與截距設定一致。</p>
+
+<h3>實際計算 B-spline 基底</h3><p>取非遞減節點序列 $t_i$，degree 為 $d$。零次基底是區間指示函數，高次基底用下面的 Cox–de Boor 遞迴計算：</p>
+$$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i,d-1}(x)+\frac{t_{i+d+1}-x}{t_{i+d+1}-t_{i+1}}B_{i+1,d-1}(x).$$
+<p>某項分母為 0 時把該整項定為 0。基底只在 $[t_i,t_{i+d+1}]$ 可能非零；端點重複 $d+1$ 次的 clamped 設定須把最右端點另按連續極限納入。相同次數與節點下，B-spline 與截斷冪張成相同空間，實作時仍須另加自然邊界限制才成為自然樣條。</p><p>用節點 $(0,1,2)$，一次基底 $B_{0,1}$ 在 $[0,1)$ 等於 $x$，在 $[1,2)$ 等於 $2-x$，其餘為 0；在 $x=0.5,1,1.5$ 的值分別是 $0.5,1,0.5$。它只影響局部區間，容易看出設計矩陣為何稀疏。</p><p>自然樣條則固定兩個邊界節點，內部 $K$ 個節點給 $K+2$ 維空間。前面的 $d_k-d_{K-1}$ 基底採「連兩端共 $K$ 個節點」記號，因而有 $K$ 個基底。兩套記號不能把同一個 $K$ 直接互換。</p><p>來源：<a href="https://www.hds.utc.fr/~tdenoeux/dokuwiki/_media/en/splines.pdf" target="_blank" rel="noopener">UTC：樣條與加法模型講義</a>、ESL 第 5 章。</p>
+<details class="qa-item proof" id="w08proof-natural"><summary>證明：自然基底為何在邊界外線性</summary>
+<div class="qa-a"><p>令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。在 $x<\xi_1$，所有截斷冪為 0。在 $x>\xi_K$，展開得 $d_k(x)=3x^2-3(\xi_k+\xi_K)x+(\xi_k^2+\xi_k\xi_K+\xi_K^2)$。因此 $d_k-d_{K-1}$ 的二次項抵消，剩下一次函數。各基底原本已在節點具有二階連續性，故線性尾端的二階導數 0 與內部相接，滿足自然邊界條件。</p></div></details>
 </section>
 <section id="smooth">
 <!-- GEN:BEGIN sec:smooth -->
@@ -1286,7 +1302,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 
   <p>這個無限維最佳化問題的解可以明確寫出：使 (7.11) 最小的 g 是
   <strong>在每一個相異的 $x_1, \ldots, x_n$ 上都有節點的自然立方樣條</strong>。
-  但它不等於「拿全部 x 當節點去擬合自然樣條」。那樣一定過度擬合；
+  但它不等於「拿全部 x 當節點去擬合自然樣條」。在相異設計點上不加懲罰會插值，因而容易過度擬合；
   它是那個自然樣條的<strong>收縮版</strong>，收縮的程度由 λ 決定。</p>
 
   <p>既然每個點都是節點，名目上有 n 個參數。所以我們不用「參數個數」描述它的彈性，
@@ -1362,6 +1378,22 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
 </div>
 
 <h3>平滑矩陣與邏輯斯平滑</h3><p>以基底矩陣 $B$ 表示 $f$，令 $\Omega_{jk}=\int b_j''(t)b_k''(t)\,dt$，則 $\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty$，擬合值為 $\hat y=S_\lambda y$，其中 $S_\lambda=B(B^TB+\lambda\Omega)^{-1}B^T$。係數與擬合值維度不同，不能把 $S_\lambda y$ 寫成係數。有效自由度為 $\operatorname{tr}(S_\lambda)$；懲罰矩陣取單位矩陣時與 Ridge 形式相同。</p><p>二元反應可將 $g(x)$ 放入 logit，最大化 $\sum_i\{y_i g(x_i)-\log(1+e^{g(x_i)})\}-\frac\lambda2\int g''(t)^2dt$。此時使用懲罰的 Newton 或迭代加權最小平方更新，預測機率為 $1/(1+e^{-g(x)})$；不能直接以連續薪資的最小平方法取代。</p>
+
+<h3>由曲率懲罰到可計算的線性系統</h3><p>寫 $g(x)=\sum_j\beta_jb_j(x)$、$B_{ij}=b_j(x_i)$、$\Omega_{jk}=\int b_j''b_k''$，最小化 $\|y-B\beta\|^2+\lambda\beta^T\Omega\beta$。當 $B^TB+\lambda\Omega$ 可逆時，係數與擬合值分別是</p>
+$$\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty,\qquad\hat y=B\hat\beta=S_\lambda y.$$
+<p>實務上解線性系統，不必顯式求逆。若 $B$ 是相異設計點上的方形可逆基底矩陣，令 $M=B^{-T}\Omega B^{-1}$，就有 $S_\lambda=(I+\lambda M)^{-1}$。若 $M$ 的特徵值是 $\mu_j\ge0$，則</p>
+$$\operatorname{df}_\lambda=\sum_j\frac1{1+\lambda\mu_j}.$$
+<p>相異 $x_i$ 至少兩個且線性項可識別時，零懲罰空間由常數與一次函數組成；$\lambda\to\infty$ 留下最小平方直線與 2 個有效自由度。若有重複 $x$，應先把同位置觀測合併為有權重的平均，插值不能同時通過相同 $x$ 上不同的 $y$；自由度上界是相異位置數，不能直接寫成樣本數。</p><p>例如在正交座標中 $M=\operatorname{diag}(0,0,2)$，$\lambda=1$ 時收縮因子為 $(1,1,1/3)$，有效自由度為 $7/3$。前兩個線性方向不受罰，彎曲方向縮成三分之一。GCV 則把 LOOCV 的逐點槓桿近似成平均槓桿：</p>
+$$\operatorname{GCV}(\lambda)=\frac{\|y-S_\lambda y\|^2/n}{\{1-\operatorname{tr}(S_\lambda)/n\}^2}.$$
+<p>GCV 和精確 LOOCV 的分母不同，不能把其選出的自由度差異當作程式錯誤；比較時也要固定基底、懲罰和資料。</p>
+<details class="qa-item proof" id="w08proof-smooth"><summary>證明：正常方程、平滑矩陣與自由度</summary>
+<div class="qa-a"><p>對係數微分得 $-2B^T(y-B\beta)+2\lambda\Omega\beta=0$，解出正文的正常方程。令 $u=B\beta$，目標改寫為 $\|y-u\|^2+\lambda u^TMu$，微分得 $(I+\lambda M)u=y$。對稱半正定矩陣 $M=Q\operatorname{diag}(\mu_j)Q^T$，因此 $S_\lambda=Q\operatorname{diag}\{(1+\lambda\mu_j)^{-1}\}Q^T$，取跡即得有效自由度。每個正特徵值方向的因子隨 $\lambda$ 遞減；零特徵值方向保留。</p><p>為何無限維問題可限制在自然樣條？設 $s$ 為通過 $g(x_i)$ 的自然立方插值樣條，令 $h=g-s$，故 $h(x_i)=0$。逐區間分部積分兩次，利用 $s$ 在各區間是三次、$s''$ 連續、邊界 $s''=0$ 以及所有節點的 $h=0$，得到 $\int s''h''=0$。故 $\int(g'')^2=\int(s'')^2+\int(h'')^2\ge\int(s'')^2$，兩者資料損失相同。$\lambda>0$ 時可以選最優解為自然樣條；$\lambda=0$ 時只約束觀測位置，不能聲稱整個函數唯一。</p></div></details><details class="qa-item proof" id="w08proof-loocv"><summary>證明：平滑樣條的留一法捷徑</summary>
+<div class="qa-a"><p>固定基底與同一未按樣本數重新縮放的 $\lambda$，令 $A=B^TB+\lambda\Omega$，$b_i^T$ 是設計矩陣第 $i$ 列，$s_{ii}=b_i^TA^{-1}b_i$。刪除第 $i$ 筆後的方程為 $(A-b_ib_i^T)\hat\beta^{(-i)}=B^Ty-b_iy_i$。由秩一逆矩陣恆等式可得 $\hat\beta^{(-i)}=\hat\beta-A^{-1}b_i(y_i-\hat y_i)/(1-s_{ii})$。左乘 $b_i^T$ 並整理即得 $y_i-\hat y_i^{(-i)}=(y_i-\hat y_i)/(1-s_{ii})$。平方加總得到正文公式；需 $1-s_{ii}\ne0$，插值極限不能直接用 $0/0$ 計算。</p></div></details>
+<h3>二元反應的懲罰 IRLS</h3><p>令 $\eta=B\beta$、$p_i=\operatorname{logistic}(\eta_i)$，最小化負對數概似加 $\lambda\beta^T\Omega\beta/2$。從有限的初值開始，每輪用目前的 $p_i$ 組成 $W=\operatorname{diag}\{p_i(1-p_i)\}$ 與工作反應 $z=\eta+W^{-1}(y-p)$，再解</p>
+$$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
+<p>這就是懲罰的迭代加權最小平方（IRLS）。例如一筆 $y=1$、目前 $\eta=0$，則 $p=1/2$、權重為 $1/4$、工作反應為 2；它推動新的線性預測量上升。若更新使目標變差，可縮短步長；接近 0 或 1 的機率會使 $W$ 很小，須處理分離、可識別性與數值穩定性。</p>
+<details class="qa-item proof" id="w08proof-irls"><summary>證明：懲罰 logistic 的 Newton 更新</summary>
+<div class="qa-a"><p>負對數概似 $\ell(\beta)=\sum_i\{\log(1+e^{b_i^T\beta})-y_ib_i^T\beta\}+\lambda\beta^T\Omega\beta/2$ 的梯度為 $B^T(p-y)+\lambda\Omega\beta$，Hessian 為 $B^TWB+\lambda\Omega$。Newton 步為 $\beta_{\rm new}=\beta-(B^TWB+\lambda\Omega)^{-1}\{B^T(p-y)+\lambda\Omega\beta\}$。兩邊乘上 Hessian，代入 $Wz=WB\beta+y-p$，便得到正文的 IRLS 線性系統。</p></div></details>
 </section>
 <section id="loess">
 <!-- GEN:BEGIN sec:loess -->
@@ -1481,6 +1513,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <div class="quiz-options" id="qLoOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每換一個 x₀，權重 $K_{i0}$ 全部都變，要重新擬合一次加權迴歸。這跟最近鄰法是同一種性質——模型「就是」資料本身。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(A)</span> 因為每算一次預測都要重新用到全部訓練資料，沒有一組固定的係數可以存起來</div><div class="quiz-opt" data-correct="false" data-fb="預先查表無法涵蓋所有新位置。新的 x₀ 可以落在任何地方，都要重新擬合。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(B)</span> 因為它把每個訓練點的預測值先算好存起來，查表時直接取用</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是&lt;strong&gt;迴歸樣條&lt;/strong&gt;的性質（而且樣條擬合完之後只要留 K + 4 個係數就好）。局部迴歸以目標點周圍的資料擬合，沒有固定節點。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(C)</span> 因為它需要記住每個節點的位置與對應的係數</div></div>
   <div class="quiz-feedback" id="qLoFeedback"></div>
 </div>
+<h3>局部加權擬合的一次計算</h3><p>用中心化的局部設計向量 $b_i=(1,x_i-x_0)^T$，令 $W_0=\operatorname{diag}(K_{i0})$。當 $B_0^TW_0B_0$ 可逆，$\hat\beta=(B_0^TW_0B_0)^{-1}B_0^TW_0y$，而 $\hat f(x_0)=\hat\beta_0$。常用 tricube 權重 $K(u)=(1-|u|^3)^3I(|u|<1)$，其中 $u=(x_i-x_0)/h(x_0)$；$h(x_0)$ 可由第 $k$ 近鄰決定。</p><p>例如 $x=(-1,0,1)$、$y=(1,2,4)$、$x_0=0$、示意權重 $(1/2,1,1/2)$，加權設計矩陣的交叉項為 0，得到截距 $2.25$、斜率 $1.5$，故中心的預測為 $2.25$。權重不是觀測誤差精確變異數的倒數，推論不能無條件照搬一般 WLS。</p><p>多變數時可在 $(x_1,x_2)$ 的鄰域擬合局部平面，但維度增加後鄰居會稀疏。變係數模型則讓部分係數隨時間變化，例如 $E(Y\mid x,t)=\beta_0(t)+\beta_1(t)x$；在目標時間附近擬合，對 $x$ 維持線性解讀。</p>
 </section>
 <section id="gam">
 <!-- GEN:BEGIN sec:gam -->
@@ -1507,7 +1540,7 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <p>其中 education 是類別變數，$f_3$ 就是「每個層級一個常數」（虛擬變數）。
   如果 $f_1, f_2$ 用<strong>自然樣條</strong>，整個模型只是一個較大的線性迴歸模型
   （基底矩陣橫向疊起來就好），<code>sm.OLS()</code> 一行擬合完。這是圖 7.11。
-  如果用<strong>平滑樣條</strong>，最小平方就不夠了，要用
+  如果用<strong>平滑樣條</strong>，需要加入曲率懲罰，可以用
   <strong>逆向擬合</strong>（backfitting）。這是圖 7.12。</p>
 
 <div class="info-box">
@@ -1653,6 +1686,17 @@ github.com/dswah/pyGAM/issues/163
 </div>
 
 <h3>二維平滑與效果圖的讀法</h3><p>薄板樣條（thin-plate spline）把一維曲率懲罰推廣到平面，最小化 $\sum_i(y_i-g(x_{i1},x_{i2}))^2+\lambda J(g)$，其中 $J(g)=\iint\{g_{11}^2+2g_{12}^2+g_{22}^2\}\,dx_1dx_2$。解由仿射項與以資料點為中心的徑向基底組成，基底可寫為 $r^2\log r$（$r=0$ 取連續極限 0）；係數另受與仿射項正交的限制。把這類 $g(x_j,x_k)$ 加入 GAM 可表示交互作用，複雜度也必須另外控制。</p><p>偏依賴圖（partial dependence plot, PDP）在模型擬合後計算 $\hat f_S(x_S)=n^{-1}\sum_i\hat f(x_S,x_C^{(i)})$，是平均其他特徵的預測。固定其他特徵於平均值只是切片，對一般非線性模型兩者不同。加法模型的單一成分圖與回應尺度 PDP 可相差一個常數；分類 GAM 的 link 尺度成分也不能直接當成機率差。特徵高度相關時，PDP 可能評估資料未支持的組合，更不能把曲線直接解讀成因果效果。</p><p>偏殘差圖畫 $e_i+\hat f_j(x_{ij})$ 對 $x_{ij}$，可檢查剩餘非線性。部分迴歸圖則先把 $y$ 與指定 $x_j$ 各自對其他線性項迴歸，再畫兩組殘差；其斜率等於原多元線性模型的係數。含截距的 OLS 滿足 $\sum_i e_i=0$ 與 $X^Te=0$，這是樣本內正交性，不能推成誤差與特徵獨立。</p>
+
+<h3>讓加法成分可識別的 backfitting</h3><p>常數可在截距與成分之間任意移動，因此使用 $\sum_i f_j(x_{ij})=0$ 的樣本中心化限制。平方損失下先令 $\hat\beta_0=\bar y$、各成分為 0，再循環更新每一個 $j$：</p><ol><li>算偏殘差 $r_i=y_i-\hat\beta_0-\sum_{k\ne j}\hat f_k(x_{ik})$。</li><li>用指定的一維平滑器擬合 $r$ 對 $x_j$，得到暫時成分 $\tilde f_j$。</li><li>令 $\hat f_j(x)=\tilde f_j(x)-n^{-1}\sum_i\tilde f_j(x_{ij})$，保持成分中心化。</li><li>重複完整輪次，直到目標與擬合值的變化小於事先設定的容許量。</li></ol><p>例如 $y=(2,4,6)$，截距為 4，第一項已擬合為 $(-1,0,1)$，更新第二項的偏殘差便是 $(-1,0,1)$。若平滑器回傳 $(0,1,2)$，先減去平均 1，才能把第二項和截距分清楚。對 Gaussian GAM，固定基底與二次懲罰也可聯合解線性系統；二元 GAM 須在 IRLS 的工作反應與權重下更新，不能直接對 $0/1$ 反應套普通 backfitting。</p>
+<details class="qa-item proof" id="w08proof-backfit"><summary>證明：backfitting 為何是分塊最小化</summary>
+<div class="qa-a"><p>固定其他成分後，總目標中依賴 $f_j$ 的部分恰是 $\sum_i(r_i-f_j(x_{ij}))^2+\lambda_jJ(f_j)$，所以精確的一維更新會使同一目標不增加。對固定基底、凸二次懲罰及可識別的聯合系統，分塊更新可解同一最小化問題；任意套入非線性平滑器時，不可直接承諾這個收斂結果。中心化固定的是參數表示，避免把常數在各成分之間反覆搬動。</p></div></details>
+<h3>薄板樣條的完整表示</h3><p>二維輸入 $x=(x_1,x_2)^T$ 的曲率懲罰為 $J(g)=\iint(g_{11}^2+2g_{12}^2+g_{22}^2)\,dx_1dx_2$。對互異且仿射設計滿秩的資料點，解可表示成</p>
+$$g(x)=\beta_0+\beta_1x_1+\beta_2x_2+\sum_{i=1}^n\alpha_i\eta(\|x-x_i\|),\quad\eta(r)=r^2\log r,\quad\eta(0)=0,$$
+$$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
+<p>徑向基底的整體常數可吸收入 $\lambda$；講義的 $r^2\log r^2$ 與這裡差一個常數 2，使用時要連同懲罰尺度對齊。令 $K_{ij}=\eta(\|x_i-x_j\|)$、$P_i=(1,x_{i1},x_{i2})$，吸收常數後可解區塊系統 $\begin{pmatrix}K+\lambda I&P;\\P^T&0\end{pmatrix}\binom\alpha\beta=\binom y0$。它同時限制徑向部分並保留不受曲率懲罰的平面。</p><p>例如 $g(x)=1+2x_1-x_2$ 的三個二階導數全為 0，因此 $J(g)=0$；$g(x)=x_1x_2$ 的混合導數為 1，在單位方形上的曲率積分為 2。混合項的係數 2 不可漏掉。以上是自訂算例。</p>
+<h3>用一個小例子區分四種效果圖</h3><p>模型 $\hat f(x_1,x_2)=2x_1+x_2^2$，觀測到的 $x_2$ 為 $(-1,1)$。$x_1$ 的 PDP 是 $2x_1+1$；把 $x_2$ 固定於平均 0 的切片則是 $2x_1$。若模型是加法形式，單一成分圖只顯示 $2x_1$，其餘成分的平均可併入常數。偏殘差圖在每個訓練點畫 $e_i+\hat f_1(x_{i1})$；部分迴歸圖則先對其他線性變數消去影響，再畫兩組殘差，橫軸也不同。PDP 遇到相關特徵時會產生罕見甚至不可能的組合，讀的是模型的邊際平均預測，不是因果效果。</p>
+<details class="qa-item proof" id="w08proof-fwl"><summary>證明：部分迴歸斜率與 OLS 殘差正交性</summary>
+<div class="qa-a"><p>把完整線性設計分成 $[Z,x]$，$Z$ 含截距及其他項，令 $M_Z=I-Z(Z^TZ)^{-1}Z^T$。固定 $x$ 的係數 $b$ 時，對 $Z$ 最小化後剩下 $\|M_Z(y-xb)\|^2$，微分得 $\hat b=(x^TM_Zx)^{-1}x^TM_Zy$，正是殘差 $M_Zy$ 對 $M_Zx$ 的斜率；需各分母可逆。完整 OLS 正常方程給 $X^Te=0$；設計含一整欄 1 時亦有 $\sum_i e_i=0$。這是擬合後樣本內的代數限制，並沒有證明誤差與解釋變數獨立。</p></div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -3079,7 +3123,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"多項式迴歸（Polynomial Regression）","back":"把 x, x², …, x^d 當成新的預測變數丟進線性模型。係數照樣用最小平方估；解讀時看整條擬合曲線，因為個別係數受到基底選擇影響。d 通常不超過 3 或 4，太高次在資料邊界會出現很怪的形狀。"},{"front":"階梯函數（Step Function）","back":"把 x 的範圍切成幾個區間，每個區間擬合一個常數。等於把連續變數轉成有序類別變數，再用虛擬變數做迴歸。好處是完全不假設全域形狀，壞處是沒有自然切點時會漏掉趨勢。"},{"front":"切點（Cutpoint）","back":"階梯函數把 x 切段的位置 c₁, …, c_K，切出 K+1 個區間。每一段的擬合值就是該段樣本的平均值（模型只有 x 一個變數時）。"},{"front":"指示函數（Indicator Function）","back":"I(條件)，條件成立回傳 1、否則回傳 0。階梯函數的基底就是 I(c_j ≤ x < c_{j+1})；截斷冪基底也用它把 x 超過節點以後的部分挑出來。"},{"front":"基底函數（Basis Function）","back":"事先選定、固定且已知的一組轉換 b₁(x), …, b_K(x)，然後擬合 y = β₀ + Σ βₖ bₖ(x) + ε。多項式、階梯函數、樣條全都是這個框架的特例，所以第 3 章的標準誤與 F 檢定全部照用。"},{"front":"分段多項式（Piecewise Polynomial）","back":"在 x 的不同區段各擬合一個低次多項式，不同區段的係數可以不同。K 個內部節點會切出 K+1 段。完全不加約束的話函數會在節點斷開，不連續。"},{"front":"節點（Knot）","back":"分段多項式換係數的位置。節點愈多、曲線愈有彈性。實務上常放在資料的均勻分位數處，節點數（或等價的自由度）用交叉驗證選。"},{"front":"立方樣條（Cubic Spline）","back":"分段三次多項式，且在每個節點上函數值、一階導數、二階導數都連續。K 表示內部節點數並把截距算入時，共用 K+4 個自由度。三階導數才允許跳，而人眼幾乎看不出三階導數的不連續，所以看起來很平滑。"},{"front":"線性樣條（Linear Spline）","back":"分段一次多項式，只要求在節點上連續。K 表示內部節點數並把截距算入時，共用 K+2 個自由度。一般而言 d 次樣條就是分段 d 次多項式加上「導數連續到 d−1 階」。"},{"front":"截斷冪基底（Truncated Power Basis）","back":"h(x, ξ) = (x−ξ)³₊，也就是 x > ξ 時等於 (x−ξ)³、否則等於 0。每個節點加一個這種項，就能讓函數在該節點只有三階導數跳、值與一二階導數都保持連續。"},{"front":"迴歸樣條（Regression Spline）","back":"先指定節點、產生對應的基底矩陣，再用最小平方估係數。保持較低次數並增加節點，就能提高彈性，所以比高次多項式穩定得多。"},{"front":"自然樣條（Natural Spline）","back":"立方樣條再加兩個自然邊界條件：左、右端點的二階導數各等於 0，因此在邊界外線性延伸。固定 K 為內部節點數並含截距時，自由度由 K+4 減 2，得到 K+2。"},{"front":"邊界節點（Boundary Knot）","back":"資料範圍兩端的節點，與內部節點分開。在本站的計數慣例中，K 只算內部節點；自然樣條在兩個邊界點各加入一個二階導數為 0 的條件，總共減少 2 個自由度。"},{"front":"B-樣條（B-spline）","back":"樣條空間的另一組基底，每一列只有 degree+1 個非零元素。條件數低、數值穩定，跟多項式的 Vandermonde 矩陣完全相反。與截斷冪基底張出同一個函數空間，擬合出來的曲線一樣。"},{"front":"Runge 現象（Runge Phenomenon）","back":"用高次多項式擬合時，曲線在資料邊界劇烈振盪的現象。次數愈高愈嚴重。樣條把次數固定在 3、改用增加節點取得彈性，就避開了這個問題。"},{"front":"自由度（Degrees of Freedom）","back":"模型裡自由參數的個數。這一章有三個地方用到它：多項式的次數 d、迴歸樣條的參數數，以及平滑樣條的有效自由度。K 表示內部節點數並含截距時，立方樣條是 K+4、自然樣條是 K+2；平滑樣條的有效自由度則由平滑矩陣的跡定義。"},{"front":"平滑樣條（Smoothing Spline）","back":"最小化「RSS + λ∫g″(t)²dt」的函數 g。它的解是在每一個相異 xᵢ 上都有節點的自然立方樣條，但係數被 λ 收縮過。不必選節點位置，只要選 λ。"},{"front":"有效自由度（Effective Degrees of Freedom, df_λ）","back":"平滑矩陣 S_λ 的對角線元素之和。λ 從 0 增到無限大時，df_λ 從 n 降到 2。它可以取連續值，用來描述平滑樣條的彈性。"},{"front":"平滑矩陣（Smoother Matrix）","back":"把擬合值寫成 ĝ_λ = S_λ y 的那個 n×n 矩陣。它的跡（對角線之和）就是有效自由度，對角元素 {S_λ}ᵢᵢ 也讓 LOOCV 有一次擬合就算完的捷徑公式。"},{"front":"廣義交叉驗證（Generalized Cross-Validation, GCV）","back":"用平滑矩陣的跡近似留一交叉驗證誤差的準則，只擬合一次模型就算得出來。pygam 的 gridsearch 就是照 GCV 挑 λ，跟課本圖 7.8 用 LOOCV 挑出來的答案通常接近，仍可能因準則不同而有差異。"},{"front":"局部迴歸（Local Regression）","back":"在每個目標點 x₀ 只用附近的樣本，以距離遞減的權重新擬合一條加權最小平方直線，取它在 x₀ 的值當 f̂(x₀)。每換一個 x₀ 就要重新擬合一次，所以需要一直留著全部訓練資料。"},{"front":"跨距（Span, s）","back":"局部迴歸在每個目標點用掉的樣本比例 s = k/n。s 小則局部、曲線抖；s 大通常更平滑，可用交叉驗證選。即使 s = 1 使用全部資料，距離權重仍隨目標點改變，不一定成為全域 OLS 直線。"},{"front":"記憶式方法（Memory-based Procedure）","back":"像最近鄰法與局部迴歸這種「每次預測都要重新用到全部訓練資料」的做法。沒有一組固定的係數可以存下來，所以模型體積等於資料體積。"},{"front":"廣義加法模型（Generalized Additive Model, GAM）","back":"把多元線性迴歸的每個 βⱼxⱼ 換成各自的非線性函數 fⱼ(xⱼ) 再加起來：y = β₀ + Σ fⱼ(xⱼ) + ε。每個 fⱼ 可以用樣條、平滑樣條或局部迴歸來擬合，也可以推廣到分類（logit 是加法的）。"},{"front":"加法性（Additivity）","back":"GAM 保住的性質：各變數的貢獻是相加的，所以可以固定其他變數、單獨看某一個變數的效果。代價是預設沒有交互作用，要的話得手動加 xⱼ×xₖ 或二維的 fⱼₖ 項。"},{"front":"逆向擬合（Backfitting）","back":"擬合 GAM 的標準演算法：輪流更新每一個 fⱼ，更新時把其他項固定，對偏殘差 rᵢ = yᵢ − Σ_{k≠j} f̂ₖ(xᵢₖ) 做一次單變數平滑。這樣只要有單變數的擬合工具就能擬合多變數加法模型。"},{"front":"偏依賴圖（Partial Dependence Plot）","back":"用來呈現模型預測如何隨某個變數改變。計算時，把每筆資料中這個變數都設成同一個指定值，其他變數保留各筆資料原有的值，再把模型預測取平均。對不同的指定值重複計算，就得到曲線。這是對其他變數在資料中的分布取平均，不是把其他變數固定在平均值。"}];
+const FLASHCARDS = [{"front":"多項式迴歸（Polynomial Regression）","back":"把 x, x², …, x^d 當成新的預測變數丟進線性模型。係數照樣用最小平方估；解讀時看整條擬合曲線，因為個別係數受到基底選擇影響。d 通常不超過 3 或 4，太高次在資料邊界會出現很怪的形狀。"},{"front":"階梯函數（Step Function）","back":"把 x 的範圍切成幾個區間，每個區間擬合一個常數。等於把連續變數轉成有序類別變數，再用虛擬變數做迴歸。好處是完全不假設全域形狀，壞處是沒有自然切點時會漏掉趨勢。"},{"front":"切點（Cutpoint）","back":"階梯函數把 x 切段的位置 c₁, …, c_K，切出 K+1 個區間。每一段的擬合值就是該段樣本的平均值（模型只有 x 一個變數時）。"},{"front":"指示函數（Indicator Function）","back":"I(條件)，條件成立回傳 1、否則回傳 0。階梯函數的基底就是 I(c_j ≤ x < c_{j+1})；截斷冪基底也用它把 x 超過節點以後的部分挑出來。"},{"front":"基底函數（Basis Function）","back":"事先選定、固定且已知的一組轉換 b₁(x), …, b_K(x)，然後擬合 y = β₀ + Σ βₖ bₖ(x) + ε。多項式、階梯函數、樣條全都是這個框架的特例，所以第 3 章的標準誤與 F 檢定全部照用。"},{"front":"分段多項式（Piecewise Polynomial）","back":"在 x 的不同區段各擬合一個低次多項式，不同區段的係數可以不同。K 個內部節點會切出 K+1 段。完全不加約束的話函數會在節點斷開，不連續。"},{"front":"節點（Knot）","back":"分段多項式換係數的位置。節點愈多、曲線愈有彈性。實務上常放在資料的均勻分位數處，節點數（或等價的自由度）用交叉驗證選。"},{"front":"立方樣條（Cubic Spline）","back":"分段三次多項式，且在每個節點上函數值、一階導數、二階導數都連續。K 表示內部節點數並把截距算入時，共用 K+4 個自由度。三階導數才允許跳，而人眼幾乎看不出三階導數的不連續，所以看起來很平滑。"},{"front":"線性樣條（Linear Spline）","back":"分段一次多項式，只要求在節點上連續。K 表示內部節點數並把截距算入時，共用 K+2 個自由度。一般而言 d 次樣條就是分段 d 次多項式加上「導數連續到 d−1 階」。"},{"front":"截斷冪基底（Truncated Power Basis）","back":"h(x, ξ) = (x−ξ)³₊，也就是 x > ξ 時等於 (x−ξ)³、否則等於 0。每個節點加一個這種項，就能讓函數在該節點只有三階導數跳、值與一二階導數都保持連續。"},{"front":"迴歸樣條（Regression Spline）","back":"先指定節點、產生對應的基底矩陣，再用最小平方估係數。保持較低次數並增加節點，就能提高彈性，所以比高次多項式穩定得多。"},{"front":"自然樣條（Natural Spline）","back":"立方樣條再加兩個自然邊界條件：左、右端點的二階導數各等於 0，因此在邊界外線性延伸。固定 K 為內部節點數並含截距時，自由度由 K+4 減 2，得到 K+2。"},{"front":"邊界節點（Boundary Knot）","back":"資料範圍兩端的節點，與內部節點分開。在本站的計數慣例中，K 只算內部節點；自然樣條在兩個邊界點各加入一個二階導數為 0 的條件，總共減少 2 個自由度。"},{"front":"B-樣條（B-spline）","back":"樣條空間的一組局部支撐基底。degree 為 d 時，一個位置通常至多有 d+1 個非零基底值；相同節點、次數與邊界條件下，與截斷冪張成相同空間。局部支撐有助稀疏計算，但不能保證任何節點設定都條件良好。"},{"front":"Runge 現象（Runge Phenomenon）","back":"用高次多項式擬合時，曲線在資料邊界劇烈振盪的現象。次數愈高愈嚴重。樣條把次數固定在 3、改用增加節點取得彈性，就避開了這個問題。"},{"front":"自由度（Degrees of Freedom）","back":"模型裡自由參數的個數。這一章有三個地方用到它：多項式的次數 d、迴歸樣條的參數數，以及平滑樣條的有效自由度。K 表示內部節點數並含截距時，立方樣條是 K+4、自然樣條是 K+2；平滑樣條的有效自由度則由平滑矩陣的跡定義。"},{"front":"平滑樣條（Smoothing Spline）","back":"最小化「RSS + λ∫g″(t)²dt」的函數 g。它的解是在每一個相異 xᵢ 上都有節點的自然立方樣條，但係數被 λ 收縮過。不必選節點位置，只要選 λ。"},{"front":"有效自由度（Effective Degrees of Freedom, df_λ）","back":"線性平滑矩陣 S_λ 的跡。相異設計點且常數與斜率可識別時，平滑樣條的有效自由度隨 λ 由插值極限的 n 降至 2；重複位置需以相異設計點數與權重處理。"},{"front":"平滑矩陣（Smoother Matrix）","back":"把擬合值寫成 ĝ_λ = S_λ y 的那個 n×n 矩陣。它的跡（對角線之和）就是有效自由度，對角元素 {S_λ}ᵢᵢ 也讓 LOOCV 有一次擬合就算完的捷徑公式。"},{"front":"廣義交叉驗證（Generalized Cross-Validation, GCV）","back":"用平滑矩陣的跡近似留一交叉驗證誤差的準則，只擬合一次模型就算得出來。pygam 的 gridsearch 就是照 GCV 挑 λ，跟課本圖 7.8 用 LOOCV 挑出來的答案通常接近，仍可能因準則不同而有差異。"},{"front":"局部迴歸（Local Regression）","back":"在每個目標點 x₀ 只用附近的樣本，以距離遞減的權重新擬合一條加權最小平方直線，取它在 x₀ 的值當 f̂(x₀)。每換一個 x₀ 就要重新擬合一次，所以需要一直留著全部訓練資料。"},{"front":"跨距（Span, s）","back":"局部迴歸在每個目標點用掉的樣本比例 s = k/n。s 小則局部、曲線抖；s 大通常更平滑，可用交叉驗證選。即使 s = 1 使用全部資料，距離權重仍隨目標點改變，不一定成為全域 OLS 直線。"},{"front":"記憶式方法（Memory-based Procedure）","back":"像最近鄰法與局部迴歸這種「每次預測都要重新用到全部訓練資料」的做法。沒有一組固定的係數可以存下來，所以模型體積等於資料體積。"},{"front":"廣義加法模型（Generalized Additive Model, GAM）","back":"把多元線性迴歸的每個 βⱼxⱼ 換成各自的非線性函數 fⱼ(xⱼ) 再加起來：y = β₀ + Σ fⱼ(xⱼ) + ε。每個 fⱼ 可以用樣條、平滑樣條或局部迴歸來擬合，也可以推廣到分類（logit 是加法的）。"},{"front":"加法性（Additivity）","back":"GAM 保住的性質：各變數的貢獻是相加的，所以可以固定其他變數、單獨看某一個變數的效果。代價是預設沒有交互作用，要的話得手動加 xⱼ×xₖ 或二維的 fⱼₖ 項。"},{"front":"逆向擬合（Backfitting）","back":"擬合 GAM 的標準演算法：輪流更新每一個 fⱼ，更新時把其他項固定，對偏殘差 rᵢ = yᵢ − Σ_{k≠j} f̂ₖ(xᵢₖ) 做一次單變數平滑。這樣只要有單變數的擬合工具就能擬合多變數加法模型。"},{"front":"偏依賴圖（Partial Dependence Plot）","back":"用來呈現模型預測如何隨某個變數改變。計算時，把每筆資料中這個變數都設成同一個指定值，其他變數保留各筆資料原有的值，再把模型預測取平均。對不同的指定值重複計算，就得到曲線。這是對其他變數在資料中的分布取平均，不是把其他變數固定在平均值。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

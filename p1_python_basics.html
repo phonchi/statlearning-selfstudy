@@ -793,6 +793,17 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-options" id="qFirstOptions"><div class="quiz-opt" data-correct="true" data-fb="對。逗號分開的東西會被依序印出來，中間自動補一個空白。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(A)</span> <code>MSE = 25.57</code></div><div class="quiz-opt" data-correct="false" data-fb="少了空白。&lt;code&gt;print&lt;/code&gt; 用逗號分隔時預設會插入一個空白。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(B)</span> <code>MSE =25.57</code></div><div class="quiz-opt" data-correct="false" data-fb="那是你把整個括號當成一個東西印出來的樣子。&lt;code&gt;print&lt;/code&gt; 會把括號裡的每一項各自印出，不會印括號本身。" onclick="quizCheck('qFirst', this)"><span class="opt-letter">(C)</span> <code>('MSE =', 25.57)</code></div></div>
   <div class="quiz-feedback" id="qFirstFeedback"></div>
 </div>
+
+<h3 id="dx-help">遇到不熟的函式，先看呼叫方式</h3>
+<p>在 Jupyter／IPython 中，函式名稱後加 <code>?</code> 可查看參數與說明；這是 notebook 的互動語法。
+一般 Python 程式可用 <code>help(print)</code>。先找輸入參數、預設值、回傳值，再看範例，不必一次讀完整份文件。</p>
+<div class="deck-extra">
+  <div class="dx-label">在 notebook 查 print 的說明</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">print?</span></div>
+  <p class="dx-note">這格開啟說明面板；不假設 notebook 保存了文字輸出。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="14">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
 </section>
 <section id="var">
 <!-- GEN:BEGIN sec:var -->
@@ -910,6 +921,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-options" id="qListOptions"><div class="quiz-opt" data-correct="true" data-fb="對。負的索引從後面數，&lt;code&gt;-1&lt;/code&gt; 就是最後一個。這比 &lt;code&gt;cols[len(cols)-1]&lt;/code&gt; 好讀多了。" onclick="quizCheck('qList', this)"><span class="opt-letter">(A)</span> <code>'year'</code></div><div class="quiz-opt" data-correct="false" data-fb="Python 的負索引是合法的，而且很常用。（NumPy 陣列與 pandas 的 &lt;code&gt;iloc&lt;/code&gt; 也支援。）" onclick="quizCheck('qList', this)"><span class="opt-letter">(B)</span> 會報錯，索引不能是負的</div><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;code&gt;cols[0]&lt;/code&gt;。負索引是從&lt;strong&gt;右邊&lt;/strong&gt;數起。" onclick="quizCheck('qList', this)"><span class="opt-letter">(C)</span> <code>'mpg'</code></div></div>
   <div class="quiz-feedback" id="qListFeedback"></div>
 </div>
+
+<h3>tuple 與解包：一組不重新指派位置的值</h3>
+<p><strong>tuple（元組）</strong>也是有順序的序列，例如 <code>(2, 3)</code> 可記錄兩列三欄。
+串列可以用 <code>x[0] = 9</code> 更換某一項；tuple 的位置不能這樣重新指定。
+只有一項時要寫 <code>(2,)</code>，逗號才是關鍵；<code>(2)</code> 只是加括號的數字。</p>
+<p><code>rows, cols = (2, 3)</code> 叫做解包，兩個名稱依序取得 2、3，名稱數量須與項目相符。
+之後 <code>fig, ax = subplots()</code> 也採用同樣的方式接住兩個回傳物件。
+含有串列的 tuple 仍可讓那個內部串列改變；「tuple 不能改位置」不代表裡面每個物件都不可變。</p>
+<p class="source-note">來源：課程 Ch02 中文 Lab 的序列介紹與 reshape 說明（原始lab 範例）；程式碼中的 shape 寫法見 <a href="p3_numpy.html#reshape">NumPy 附錄</a>。</p>
 </section>
 <section id="slice">
 <!-- GEN:BEGIN sec:slice -->
@@ -1046,7 +1066,7 @@ dtype: int64</pre></div>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>字典的鍵可以是什麼？</summary>
-    <div class="qa-a">不可變的東西都可以：字串、數字、tuple。<strong>串列不行</strong>，因為它會變，變了之後就找不回原來的位置。實務上常用字串作為鍵。</div>
+    <div class="qa-a">鍵必須可雜湊（hashable）：字串、數字通常可以；tuple 還需要每個元素都可雜湊。<strong>串列不行</strong>，因為它會變，變了之後就找不回原來的位置。實務上常用字串作為鍵。</div>
   </details>
   <details class="qa-item"><summary>字典有順序嗎？</summary>
     <div class="qa-a">Python 3.7 之後，字典會<strong>記住插入的順序</strong>，所以 <code>for k in d</code> 的順序是可預期的。需要排序時，明確使用 <code>sorted(d)</code>。</div>

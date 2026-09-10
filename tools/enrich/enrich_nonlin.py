@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
+from lib import (proof, apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
 CH = 7
@@ -528,7 +528,7 @@ BODIES["smooth"] = f"""
 
   <p>這個無限維最佳化問題的解可以明確寫出：使 (7.11) 最小的 g 是
   <strong>在每一個相異的 $x_1, \\ldots, x_n$ 上都有節點的自然立方樣條</strong>。
-  但它不等於「拿全部 x 當節點去擬合自然樣條」。那樣一定過度擬合；
+  但它不等於「拿全部 x 當節點去擬合自然樣條」。在相異設計點上不加懲罰會插值，因而容易過度擬合；
   它是那個自然樣條的<strong>收縮版</strong>，收縮的程度由 λ 決定。</p>
 
   <p>既然每個點都是節點，名目上有 n 個參數。所以我們不用「參數個數」描述它的彈性，
@@ -719,7 +719,7 @@ BODIES["gam"] = f"""
   <p>其中 education 是類別變數，$f_3$ 就是「每個層級一個常數」（虛擬變數）。
   如果 $f_1, f_2$ 用<strong>自然樣條</strong>，整個模型只是一個較大的線性迴歸模型
   （基底矩陣橫向疊起來就好），<code>sm.OLS()</code> 一行擬合完。這是圖 7.11。
-  如果用<strong>平滑樣條</strong>，最小平方就不夠了，要用
+  如果用<strong>平滑樣條</strong>，需要加入曲率懲罰，可以用
   <strong>逆向擬合</strong>（backfitting）。這是圖 7.12。</p>
 
 {info("逆向擬合在做什麼", '''輪流更新每一個 $f_j$：更新第 j 個的時候把其他項固定，
@@ -953,6 +953,47 @@ BODIES['smooth'] += r"""
 BODIES['gam'] += r"""
 <h3>二維平滑與效果圖的讀法</h3><p>薄板樣條（thin-plate spline）把一維曲率懲罰推廣到平面，最小化 $\sum_i(y_i-g(x_{i1},x_{i2}))^2+\lambda J(g)$，其中 $J(g)=\iint\{g_{11}^2+2g_{12}^2+g_{22}^2\}\,dx_1dx_2$。解由仿射項與以資料點為中心的徑向基底組成，基底可寫為 $r^2\log r$（$r=0$ 取連續極限 0）；係數另受與仿射項正交的限制。把這類 $g(x_j,x_k)$ 加入 GAM 可表示交互作用，複雜度也必須另外控制。</p><p>偏依賴圖（partial dependence plot, PDP）在模型擬合後計算 $\hat f_S(x_S)=n^{-1}\sum_i\hat f(x_S,x_C^{(i)})$，是平均其他特徵的預測。固定其他特徵於平均值只是切片，對一般非線性模型兩者不同。加法模型的單一成分圖與回應尺度 PDP 可相差一個常數；分類 GAM 的 link 尺度成分也不能直接當成機率差。特徵高度相關時，PDP 可能評估資料未支持的組合，更不能把曲線直接解讀成因果效果。</p><p>偏殘差圖畫 $e_i+\hat f_j(x_{ij})$ 對 $x_{ij}$，可檢查剩餘非線性。部分迴歸圖則先把 $y$ 與指定 $x_j$ 各自對其他線性項迴歸，再畫兩組殘差；其斜率等於原多元線性模型的係數。含截距的 OLS 滿足 $\sum_i e_i=0$ 與 $X^Te=0$，這是樣本內正交性，不能推成誤差與特徵獨立。</p>
 """
+
+# 完整講義覆蓋：結果與算例留在正文，推導預設收合。
+
+BODIES['poly'] += r"""
+<h3>從 logit 的信賴區間回到機率</h3>
+<p>二元反應仍使用同一組基底 $b(x)$。令 $\eta(x)=b(x)^T\beta$、$p(x)=\{1+e^{-\eta(x)}\}^{-1}$。在固定的 $x_0$，用係數共變異數估計 $\widehat V$ 計算 $s_\eta=\sqrt{b(x_0)^T\widehat Vb(x_0)}$。近似 95% 區間先在 logit 尺度取 $\hat\eta\pm1.96s_\eta$，再把兩端各代入 logistic 函數：</p>
+$$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta)}}\right].$$
+<p>例如 $\hat\eta=-2$、$s_\eta=0.5$，估計機率為 $0.1192$，區間約為 $[0.0483,0.2650]$，自然落在 0 與 1 之間，而且不以估計值左右對稱。這是固定 $x_0$ 的平均機率區間；小樣本、稀有事件或完全分離時，常態近似可能失準。</p>
+""" + proof('w08proof-logit','線性預測量的變異與區間轉換',r"""<p>固定基底向量 $b_0$ 時，$\operatorname{Var}(b_0^T\hat\beta)=b_0^T\operatorname{Cov}(\hat\beta)b_0$。大樣本下以標準常態分位數建立 $\eta_0$ 的區間。因為 logistic 函數嚴格遞增，事件 $L\le\eta_0\le U$ 等價於 $\operatorname{logistic}(L)\le p_0\le\operatorname{logistic}(U)$，因此轉換端點保留同一近似涵蓋率。連續反應的常態線性模型則使用殘差自由度的 $t$ 分位數。</p>""")
+BODIES['step'] += r"""<h3>用切段建立可解讀的交互作用</h3><p>若不同年份的年齡斜率不同，可擬合 $y=\beta_0+\beta_1x+\beta_2I(t\ge2005)+\beta_3xI(t\ge2005)+\varepsilon$。較早年份的截距、斜率是 $(\beta_0,\beta_1)$，較晚年份是 $(\beta_0+\beta_2,\beta_1+\beta_3)$。例如 $(10,2,3,-1)$ 使兩段分別為 $10+2x$ 與 $13+x$。切段可以改變截距，也能讓同一連續變數在不同群中有不同斜率。</p>"""
+BODIES['splines'] += r"""<h3>一次樣條與一般次數</h3><p>令內部節點為 $\xi_1<\cdots<\xi_K$。連續分段直線可寫成 $f(x)=\beta_0+\beta_1x+\sum_{k=1}^K\theta_k(x-\xi_k)_+$；通過節點 $\xi_k$ 後，斜率增加 $\theta_k$。例如 $f(x)=1+2x-3(x-2)_+$ 在 $x\le2$ 是 $1+2x$，在 $x>2$ 是 $7-x$；兩側在節點都等於 5，斜率由 2 改為 −1。一般 degree-$d$ 樣條要求到 $d-1$ 階導數連續，基底為 $1,x,\ldots,x^d,(x-\xi_1)_+^d,\ldots,(x-\xi_K)_+^d$，空間維度為 $K+d+1$。</p>"""+proof('w08proof-spline-dimension','樣條的維度與連續性',r"""<p>$K+1$ 段各有 $d+1$ 個係數，共 $(K+1)(d+1)$ 個。每個內部節點要求函數值與前 $d-1$ 階導數一致，提供 $d$ 個獨立線性條件，所以剩下 $(K+1)(d+1)-Kd=K+d+1$。截斷冪 $(x-\xi)_+^d$ 在節點兩側到 $d-1$ 階導數都接為 0，而第 $d$ 階可以改變，故滿足這些條件；基底彼此獨立且數量相符，便張成整個空間。</p>""")
+BODIES['natural'] += r"""
+<h3>實際計算 B-spline 基底</h3><p>取非遞減節點序列 $t_i$，degree 為 $d$。零次基底是區間指示函數，高次基底用下面的 Cox–de Boor 遞迴計算：</p>
+$$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i,d-1}(x)+\frac{t_{i+d+1}-x}{t_{i+d+1}-t_{i+1}}B_{i+1,d-1}(x).$$
+<p>某項分母為 0 時把該整項定為 0。基底只在 $[t_i,t_{i+d+1}]$ 可能非零；端點重複 $d+1$ 次的 clamped 設定須把最右端點另按連續極限納入。相同次數與節點下，B-spline 與截斷冪張成相同空間，實作時仍須另加自然邊界限制才成為自然樣條。</p><p>用節點 $(0,1,2)$，一次基底 $B_{0,1}$ 在 $[0,1)$ 等於 $x$，在 $[1,2)$ 等於 $2-x$，其餘為 0；在 $x=0.5,1,1.5$ 的值分別是 $0.5,1,0.5$。它只影響局部區間，容易看出設計矩陣為何稀疏。</p><p>自然樣條則固定兩個邊界節點，內部 $K$ 個節點給 $K+2$ 維空間。前面的 $d_k-d_{K-1}$ 基底採「連兩端共 $K$ 個節點」記號，因而有 $K$ 個基底。兩套記號不能把同一個 $K$ 直接互換。</p><p>來源：<a href="https://www.hds.utc.fr/~tdenoeux/dokuwiki/_media/en/splines.pdf" target="_blank" rel="noopener">UTC：樣條與加法模型講義</a>、ESL 第 5 章。</p>
+"""+proof('w08proof-natural','自然基底為何在邊界外線性',r"""<p>令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。在 $x<\xi_1$，所有截斷冪為 0。在 $x>\xi_K$，展開得 $d_k(x)=3x^2-3(\xi_k+\xi_K)x+(\xi_k^2+\xi_k\xi_K+\xi_K^2)$。因此 $d_k-d_{K-1}$ 的二次項抵消，剩下一次函數。各基底原本已在節點具有二階連續性，故線性尾端的二階導數 0 與內部相接，滿足自然邊界條件。</p>""")
+BODIES['smooth'] += r"""
+<h3>由曲率懲罰到可計算的線性系統</h3><p>寫 $g(x)=\sum_j\beta_jb_j(x)$、$B_{ij}=b_j(x_i)$、$\Omega_{jk}=\int b_j''b_k''$，最小化 $\|y-B\beta\|^2+\lambda\beta^T\Omega\beta$。當 $B^TB+\lambda\Omega$ 可逆時，係數與擬合值分別是</p>
+$$\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty,\qquad\hat y=B\hat\beta=S_\lambda y.$$
+<p>實務上解線性系統，不必顯式求逆。若 $B$ 是相異設計點上的方形可逆基底矩陣，令 $M=B^{-T}\Omega B^{-1}$，就有 $S_\lambda=(I+\lambda M)^{-1}$。若 $M$ 的特徵值是 $\mu_j\ge0$，則</p>
+$$\operatorname{df}_\lambda=\sum_j\frac1{1+\lambda\mu_j}.$$
+<p>相異 $x_i$ 至少兩個且線性項可識別時，零懲罰空間由常數與一次函數組成；$\lambda\to\infty$ 留下最小平方直線與 2 個有效自由度。若有重複 $x$，應先把同位置觀測合併為有權重的平均，插值不能同時通過相同 $x$ 上不同的 $y$；自由度上界是相異位置數，不能直接寫成樣本數。</p><p>例如在正交座標中 $M=\operatorname{diag}(0,0,2)$，$\lambda=1$ 時收縮因子為 $(1,1,1/3)$，有效自由度為 $7/3$。前兩個線性方向不受罰，彎曲方向縮成三分之一。GCV 則把 LOOCV 的逐點槓桿近似成平均槓桿：</p>
+$$\operatorname{GCV}(\lambda)=\frac{\|y-S_\lambda y\|^2/n}{\{1-\operatorname{tr}(S_\lambda)/n\}^2}.$$
+<p>GCV 和精確 LOOCV 的分母不同，不能把其選出的自由度差異當作程式錯誤；比較時也要固定基底、懲罰和資料。</p>
+"""+proof('w08proof-smooth','正常方程、平滑矩陣與自由度',r"""<p>對係數微分得 $-2B^T(y-B\beta)+2\lambda\Omega\beta=0$，解出正文的正常方程。令 $u=B\beta$，目標改寫為 $\|y-u\|^2+\lambda u^TMu$，微分得 $(I+\lambda M)u=y$。對稱半正定矩陣 $M=Q\operatorname{diag}(\mu_j)Q^T$，因此 $S_\lambda=Q\operatorname{diag}\{(1+\lambda\mu_j)^{-1}\}Q^T$，取跡即得有效自由度。每個正特徵值方向的因子隨 $\lambda$ 遞減；零特徵值方向保留。</p><p>為何無限維問題可限制在自然樣條？設 $s$ 為通過 $g(x_i)$ 的自然立方插值樣條，令 $h=g-s$，故 $h(x_i)=0$。逐區間分部積分兩次，利用 $s$ 在各區間是三次、$s''$ 連續、邊界 $s''=0$ 以及所有節點的 $h=0$，得到 $\int s''h''=0$。故 $\int(g'')^2=\int(s'')^2+\int(h'')^2\ge\int(s'')^2$，兩者資料損失相同。$\lambda>0$ 時可以選最優解為自然樣條；$\lambda=0$ 時只約束觀測位置，不能聲稱整個函數唯一。</p>""")+proof('w08proof-loocv','平滑樣條的留一法捷徑',r"""<p>固定基底與同一未按樣本數重新縮放的 $\lambda$，令 $A=B^TB+\lambda\Omega$，$b_i^T$ 是設計矩陣第 $i$ 列，$s_{ii}=b_i^TA^{-1}b_i$。刪除第 $i$ 筆後的方程為 $(A-b_ib_i^T)\hat\beta^{(-i)}=B^Ty-b_iy_i$。由秩一逆矩陣恆等式可得 $\hat\beta^{(-i)}=\hat\beta-A^{-1}b_i(y_i-\hat y_i)/(1-s_{ii})$。左乘 $b_i^T$ 並整理即得 $y_i-\hat y_i^{(-i)}=(y_i-\hat y_i)/(1-s_{ii})$。平方加總得到正文公式；需 $1-s_{ii}\ne0$，插值極限不能直接用 $0/0$ 計算。</p>""")
+BODIES['smooth'] += r"""
+<h3>二元反應的懲罰 IRLS</h3><p>令 $\eta=B\beta$、$p_i=\operatorname{logistic}(\eta_i)$，最小化負對數概似加 $\lambda\beta^T\Omega\beta/2$。從有限的初值開始，每輪用目前的 $p_i$ 組成 $W=\operatorname{diag}\{p_i(1-p_i)\}$ 與工作反應 $z=\eta+W^{-1}(y-p)$，再解</p>
+$$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
+<p>這就是懲罰的迭代加權最小平方（IRLS）。例如一筆 $y=1$、目前 $\eta=0$，則 $p=1/2$、權重為 $1/4$、工作反應為 2；它推動新的線性預測量上升。若更新使目標變差，可縮短步長；接近 0 或 1 的機率會使 $W$ 很小，須處理分離、可識別性與數值穩定性。</p>
+"""+proof('w08proof-irls','懲罰 logistic 的 Newton 更新',r"""<p>負對數概似 $\ell(\beta)=\sum_i\{\log(1+e^{b_i^T\beta})-y_ib_i^T\beta\}+\lambda\beta^T\Omega\beta/2$ 的梯度為 $B^T(p-y)+\lambda\Omega\beta$，Hessian 為 $B^TWB+\lambda\Omega$。Newton 步為 $\beta_{\rm new}=\beta-(B^TWB+\lambda\Omega)^{-1}\{B^T(p-y)+\lambda\Omega\beta\}$。兩邊乘上 Hessian，代入 $Wz=WB\beta+y-p$，便得到正文的 IRLS 線性系統。</p>""")
+BODIES['loess'] += r"""<h3>局部加權擬合的一次計算</h3><p>用中心化的局部設計向量 $b_i=(1,x_i-x_0)^T$，令 $W_0=\operatorname{diag}(K_{i0})$。當 $B_0^TW_0B_0$ 可逆，$\hat\beta=(B_0^TW_0B_0)^{-1}B_0^TW_0y$，而 $\hat f(x_0)=\hat\beta_0$。常用 tricube 權重 $K(u)=(1-|u|^3)^3I(|u|<1)$，其中 $u=(x_i-x_0)/h(x_0)$；$h(x_0)$ 可由第 $k$ 近鄰決定。</p><p>例如 $x=(-1,0,1)$、$y=(1,2,4)$、$x_0=0$、示意權重 $(1/2,1,1/2)$，加權設計矩陣的交叉項為 0，得到截距 $2.25$、斜率 $1.5$，故中心的預測為 $2.25$。權重不是觀測誤差精確變異數的倒數，推論不能無條件照搬一般 WLS。</p><p>多變數時可在 $(x_1,x_2)$ 的鄰域擬合局部平面，但維度增加後鄰居會稀疏。變係數模型則讓部分係數隨時間變化，例如 $E(Y\mid x,t)=\beta_0(t)+\beta_1(t)x$；在目標時間附近擬合，對 $x$ 維持線性解讀。</p>"""
+BODIES['gam'] += r"""
+<h3>讓加法成分可識別的 backfitting</h3><p>常數可在截距與成分之間任意移動，因此使用 $\sum_i f_j(x_{ij})=0$ 的樣本中心化限制。平方損失下先令 $\hat\beta_0=\bar y$、各成分為 0，再循環更新每一個 $j$：</p><ol><li>算偏殘差 $r_i=y_i-\hat\beta_0-\sum_{k\ne j}\hat f_k(x_{ik})$。</li><li>用指定的一維平滑器擬合 $r$ 對 $x_j$，得到暫時成分 $\tilde f_j$。</li><li>令 $\hat f_j(x)=\tilde f_j(x)-n^{-1}\sum_i\tilde f_j(x_{ij})$，保持成分中心化。</li><li>重複完整輪次，直到目標與擬合值的變化小於事先設定的容許量。</li></ol><p>例如 $y=(2,4,6)$，截距為 4，第一項已擬合為 $(-1,0,1)$，更新第二項的偏殘差便是 $(-1,0,1)$。若平滑器回傳 $(0,1,2)$，先減去平均 1，才能把第二項和截距分清楚。對 Gaussian GAM，固定基底與二次懲罰也可聯合解線性系統；二元 GAM 須在 IRLS 的工作反應與權重下更新，不能直接對 $0/1$ 反應套普通 backfitting。</p>
+"""+proof('w08proof-backfit','backfitting 為何是分塊最小化',r"""<p>固定其他成分後，總目標中依賴 $f_j$ 的部分恰是 $\sum_i(r_i-f_j(x_{ij}))^2+\lambda_jJ(f_j)$，所以精確的一維更新會使同一目標不增加。對固定基底、凸二次懲罰及可識別的聯合系統，分塊更新可解同一最小化問題；任意套入非線性平滑器時，不可直接承諾這個收斂結果。中心化固定的是參數表示，避免把常數在各成分之間反覆搬動。</p>""")
+BODIES['gam'] += r"""
+<h3>薄板樣條的完整表示</h3><p>二維輸入 $x=(x_1,x_2)^T$ 的曲率懲罰為 $J(g)=\iint(g_{11}^2+2g_{12}^2+g_{22}^2)\,dx_1dx_2$。對互異且仿射設計滿秩的資料點，解可表示成</p>
+$$g(x)=\beta_0+\beta_1x_1+\beta_2x_2+\sum_{i=1}^n\alpha_i\eta(\|x-x_i\|),\quad\eta(r)=r^2\log r,\quad\eta(0)=0,$$
+$$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
+<p>徑向基底的整體常數可吸收入 $\lambda$；講義的 $r^2\log r^2$ 與這裡差一個常數 2，使用時要連同懲罰尺度對齊。令 $K_{ij}=\eta(\|x_i-x_j\|)$、$P_i=(1,x_{i1},x_{i2})$，吸收常數後可解區塊系統 $\begin{pmatrix}K+\lambda I&P\\P^T&0\end{pmatrix}\binom\alpha\beta=\binom y0$。它同時限制徑向部分並保留不受曲率懲罰的平面。</p><p>例如 $g(x)=1+2x_1-x_2$ 的三個二階導數全為 0，因此 $J(g)=0$；$g(x)=x_1x_2$ 的混合導數為 1，在單位方形上的曲率積分為 2。混合項的係數 2 不可漏掉。以上是自訂算例。</p>
+<h3>用一個小例子區分四種效果圖</h3><p>模型 $\hat f(x_1,x_2)=2x_1+x_2^2$，觀測到的 $x_2$ 為 $(-1,1)$。$x_1$ 的 PDP 是 $2x_1+1$；把 $x_2$ 固定於平均 0 的切片則是 $2x_1$。若模型是加法形式，單一成分圖只顯示 $2x_1$，其餘成分的平均可併入常數。偏殘差圖在每個訓練點畫 $e_i+\hat f_1(x_{i1})$；部分迴歸圖則先對其他線性變數消去影響，再畫兩組殘差，橫軸也不同。PDP 遇到相關特徵時會產生罕見甚至不可能的組合，讀的是模型的邊際平均預測，不是因果效果。</p>
+"""+proof('w08proof-fwl','部分迴歸斜率與 OLS 殘差正交性',r"""<p>把完整線性設計分成 $[Z,x]$，$Z$ 含截距及其他項，令 $M_Z=I-Z(Z^TZ)^{-1}Z^T$。固定 $x$ 的係數 $b$ 時，對 $Z$ 最小化後剩下 $\|M_Z(y-xb)\|^2$，微分得 $\hat b=(x^TM_Zx)^{-1}x^TM_Zy$，正是殘差 $M_Zy$ 對 $M_Zx$ 的斜率；需各分母可逆。完整 OLS 正常方程給 $X^Te=0$；設計含一整欄 1 時亦有 $\sum_i e_i=0$。這是擬合後樣本內的代數限制，並沒有證明誤差與解釋變數獨立。</p>""")
 
 PAGEJS = r"""
 /* ===== beyond_linearity 本頁元件（站內序號 08 → id 與全域一律 w08 前綴）=====

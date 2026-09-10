@@ -263,7 +263,7 @@ BODIES["dict"] = f"""
 
 {qa("觀念釐清", [
     ("字典的鍵可以是什麼？",
-     "不可變的東西都可以：字串、數字、tuple。"
+     "鍵必須可雜湊（hashable）：字串、數字通常可以；tuple 還需要每個元素都可雜湊。"
      "<strong>串列不行</strong>，因為它會變，變了之後就找不回原來的位置。"
      "實務上常用字串作為鍵。"),
     ("字典有順序嗎？",
@@ -704,5 +704,25 @@ function w14fmDraw() {
 function w14fmSet(i) { w14fmI = i; w14fmDraw(); }
 if (w14fmS) w14fmDraw();
 """
+
+# Coverage completion 2026-09-10
+
+BODIES['prologue'] += f"""
+<h3 id="dx-help">遇到不熟的函式，先看呼叫方式</h3>
+<p>在 Jupyter／IPython 中，函式名稱後加 <code>?</code> 可查看參數與說明；這是 notebook 的互動語法。
+一般 Python 程式可用 <code>help(print)</code>。先找輸入參數、預設值、回傳值，再看範例，不必一次讀完整份文件。</p>
+{card('在 notebook 查 print 的說明', C(2,14), None, src=S(2,14), note='這格開啟說明面板；不假設 notebook 保存了文字輸出。')}
+"""
+BODIES['list'] += """
+<h3>tuple 與解包：一組不重新指派位置的值</h3>
+<p><strong>tuple（元組）</strong>也是有順序的序列，例如 <code>(2, 3)</code> 可記錄兩列三欄。
+串列可以用 <code>x[0] = 9</code> 更換某一項；tuple 的位置不能這樣重新指定。
+只有一項時要寫 <code>(2,)</code>，逗號才是關鍵；<code>(2)</code> 只是加括號的數字。</p>
+<p><code>rows, cols = (2, 3)</code> 叫做解包，兩個名稱依序取得 2、3，名稱數量須與項目相符。
+之後 <code>fig, ax = subplots()</code> 也採用同樣的方式接住兩個回傳物件。
+含有串列的 tuple 仍可讓那個內部串列改變；「tuple 不能改位置」不代表裡面每個物件都不可變。</p>
+<p class="source-note">來源：課程 Ch02 中文 Lab 的序列介紹與 reshape 說明（原始儲存格 19、53）；程式碼中的 shape 寫法見 <a href="p3_numpy.html#reshape">NumPy 附錄</a>。</p>
+"""
+
 
 apply("p1_python_basics", BODIES, PAGEJS)

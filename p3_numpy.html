@@ -855,6 +855,25 @@ dtype(&#x27;int64&#x27;)
   <div class="quiz-options" id="qShapeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。統計資料的慣例就是這樣擺：&lt;strong&gt;列是觀測、欄是變數&lt;/strong&gt;，所以 n=10、p=3。整門課的 X 都是這個形狀。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(A)</span> 10 列 3 欄：10 筆觀測、每筆 3 個變數</div><div class="quiz-opt" data-correct="false" data-fb="順序反了。&lt;code&gt;shape&lt;/code&gt; 的第一個數字是&lt;strong&gt;列&lt;/strong&gt;數。如果真的是 10 個變數 3 筆觀測，shape 會是 &lt;code&gt;(3, 10)&lt;/code&gt;。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(B)</span> 10 個變數、每個變數 3 筆觀測</div><div class="quiz-opt" data-correct="false" data-fb="「幾維」看的是 &lt;code&gt;ndim&lt;/code&gt;，也就是 shape 這個 tuple 的長度。這裡 tuple 只有兩個數字，所以是二維。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(C)</span> 一個 10 維陣列，每一維長度 3</div></div>
   <div class="quiz-feedback" id="qShapeFeedback"></div>
 </div>
+
+<h3 id="dx-seq">先決定點數，還是先決定間距？</h3>
+<p><code>np.linspace(start, stop, num)</code> 指定<strong>點數</strong>，預設包含兩端；
+<code>np.arange(start, stop, step)</code> 指定<strong>間距</strong>，採含頭不含尾的範圍。</p>
+<div class="deck-extra">
+  <div class="dx-label">兩個序列的右端點不同</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">seq1 = np.linspace(<span class="num">0</span>, <span class="num">10</span>, <span class="num">11</span>)</span>
+  <span class="line">seq1</span>
+  <span class="line">seq2 = np.arange(<span class="num">0</span>, <span class="num">10</span>)</span>
+  <span class="line">seq2</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10.])
+array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</pre></div>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="128,130">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<p>例如前者在 0 到 10 放 11 個點，所以包含 10；後者使用預設間距 1，最後是 9。
+<code>linspace(..., endpoint=False)</code> 可排除右端。
+浮點間距累加會受捨入影響；畫固定數量的網格時，通常直接指定 <code>linspace</code> 的點數較清楚。</p>
+<p class="source-note">延伸：<a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html">NumPy linspace 的端點與點數定義</a>。</p>
 </section>
 <section id="reshape">
 <!-- GEN:BEGIN sec:reshape -->
@@ -1160,6 +1179,20 @@ array([[ 4,  5,  6,  7],
   <div class="quiz-options" id="qMaskOptions"><div class="quiz-opt" data-correct="true" data-fb="對。遮罩是&lt;strong&gt;跟被索引那一維一樣長&lt;/strong&gt;的布林陣列，符合條件的筆數則用 &lt;code&gt;mask.sum()&lt;/code&gt; 計算。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(A)</span> 392，每一列一個 True 或 False</div><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;code&gt;mask.sum()&lt;/code&gt; 的結果。遮罩本身必須跟原資料一樣長，否則 NumPy 不知道每個 True 對應哪一列。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(B)</span> 符合條件的筆數，例如 89</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;Auto[&#x27;mpg&#x27;] &amp;gt; 30&lt;/code&gt; 是&lt;strong&gt;向量化&lt;/strong&gt;比較，392 個數字各比一次，得到 392 個布林值。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(C)</span> 1，因為它是一個條件</div></div>
   <div class="quiz-feedback" id="qMaskFeedback"></div>
 </div>
+
+<h3 id="dx-all">一整排條件，如何變成一個答案？</h3>
+<p>比較陣列會得到一排布林值；<code>np.all</code> 問「是否全部成立」，<code>np.any</code> 問「是否至少一個成立」。
+它們把多個真假值歸約成單一判斷，也能用 <code>axis</code> 分別判斷每列或每欄。</p>
+<div class="deck-extra">
+  <div class="dx-label">每個位置都相同嗎？</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">np.all(keep_rows == np.array([<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>]))</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.True_</pre></div>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="166">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<p>上例的 True 只代表逐元素值相等；整數陣列與布林陣列仍有不同的索引語意。
+對布林值 [True, False]，all 為 False，any 為 True。
+不要直接把含多個元素的陣列放入 <code>if</code>；先說清楚你要「全部」還是「至少一個」。</p>
 </section>
 <section id="bcast">
 <!-- GEN:BEGIN sec:bcast -->

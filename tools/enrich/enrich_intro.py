@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib import proof
 from lib import apply, info, qa, quiz, table, ver_note  # noqa: E402
 from intro_catalog import dataset_table  # noqa: E402
 from intro_visuals import PAGEJS, dataset_examples, frames  # noqa: E402
@@ -388,6 +389,51 @@ BODIES["reference"] = f"""
   <strong>讓結論跟著證據：</strong>圖上的關係、預測準確度與因果效果，要分別說明。''')}
 
 {ver_note()}
+"""
+
+
+# COVERAGE-20260910 BEGIN
+
+# 逐項教材補全：摘要必須足以自行計算。
+BODIES['eda'] += r"""
+<h3>同一組資料，親手比較摘要</h3>
+<p>以排序後的 $1,2,3,4,20$ 為例，平均數是 6，中位數是 3。兩端各去掉一筆再平均，得到 20% 截尾平均 $(2+3+4)/3=3$。沒有重複值，因此這組資料沒有唯一眾數。</p>
+$$\bar x=\frac1n\sum_i x_i,\qquad s^2=\frac{\sum_i(x_i-\bar x)^2}{n-1}.$$
+<p>此例平方離差和為 250，樣本變異數為 62.5。下列兩種絕對離差的中心和最後的聚合方式都不同，縮寫 MAD 可能指其中任一種，使用時要寫清楚：</p>
+$$\text{平均絕對離差}=\frac1n\sum_i|x_i-\bar x|=5.6,$$
+$$\text{中位絕對離差}=\operatorname{median}_i|x_i-\operatorname{median}(x)|=1.$$
+<p>採用線性插值的樣本分位數，此例 $Q_1=2,Q_3=4$，所以 IQR 為 2。不同軟體的分位數慣例可能略有差異，報告小樣本四分位數時應註明方式。20 會明顯拉動平均數與變異數，中位數、截尾平均、IQR 則較能保留中間資料的樣貌；仍要搭配完整分布看資料。</p>
+"""
+
+# COVERAGE-20260910 END
+
+# LINK-CLOSURE-CH1-3
+
+BODIES['eda'] += r"""
+<h3>中位數的穩健性與相對效率</h3>
+<p>對稱常態母體的平均與中位數相同，可以比較兩個樣本估計量估計同一中心的精度。
+獨立常態樣本下，平均數的變異數為 $\sigma^2/n$；大樣本中位數的變異數近似為 $\pi\sigma^2/(2n)$。
+以「平均數變異數／中位數變異數」定義相對效率，極限是 $2/\pi\approx0.637$。</p>
+<p>這個數字有<strong>常態與大樣本條件</strong>，不是中位數在任何分布下都比較差。
+重尾、污染或離群值會改變兩者的表現；不對稱分布的平均與中位數還可能是不同的研究目標，不能只比變異數就說誰估得較好。</p>
+""" + proof('w01proofMedianEfficiency','常態下 2／π 的漸近效率',r"""
+<p>設母體中位數為 m，附近有連續且正的密度 f(m)。經驗分布 $F_n(m)$ 是 n 個成功機率 1/2 的指示變數平均，變異數為 $1/(4n)$。
+樣本中位數附近的一階近似給 $\hat m-m\approx-[F_n(m)-1/2]/f(m)$，因此漸近變異數為 $1/[4nf(m)^2]$。
+常態密度在中心為 $1/(\sigma\sqrt{2\pi})$，代入得到 $\pi\sigma^2/(2n)$，再與平均數變異數相比即得 $2/\pi$。
+這使用分位數的大樣本近似，不是有限樣本精確公式。</p>
+""") + r"""
+<h3>資料表的形狀與合併鍵</h3>
+<p><strong>寬表</strong>把不同量測放在不同欄，<strong>長表</strong>以一欄記量測種類、另一欄記數值。
+例如兩人 A、B 各有期中／期末兩次成績，寬表是兩列；轉成長表後是四列「人、考試、成績」。
+<code>melt</code> 把量測欄收成長表；<code>pivot</code> 展回寬表，需要每個人與考試的組合最多一筆。
+有重複組合時，先查原因；<code>pivot_table</code> 會依指定聚合方式合併，可能改變資料意義。</p>
+<p><code>concat</code> 沿列或欄串接；<code>merge</code> 依鍵配對。
+左表鍵是 A、B，右表鍵是 B、C，inner join 只留 B，left join 留 A、B，outer join 留 A、B、C，沒有對應的欄值為遺漏。
+若同一鍵在左表有兩列、右表有三列，多對多合併會產生六列；合併後列數增加不一定是新觀測。
+指定預期的一對一／多對一關係並核對筆數，再做摘要或建模。</p>
+<p class="source-note">來源：講義 01 pp.27–28 的 <a href="https://pandas.pydata.org/docs/getting_started/index.html">pandas 入門</a>與
+<a href="https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf">官方整理資料速查表 pp.1–2</a>。
+中位數效率由講義直接討論引出，以上條件與推導經獨立核對；不採用討論串省略母體分布的概括。</p>
 """
 
 

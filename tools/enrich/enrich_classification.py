@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib import proof
 from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -197,7 +198,7 @@ BODIES["logistic"] = f"""
       note="<code>predict()</code> 回傳的是<strong>機率</strong>，不是標籤；"
            "要自己挑一個門檻值把它切成 <code>Up</code>／<code>Down</code>。"
            "這裡用 0.5，正確率 (507 + 145) / 1250 = 52.2%，但這是<strong>訓練</strong>正確率，"
-           "同一批資料又訓練又測試，一定太樂觀。")}
+           "同一批資料又訓練又評估，不能當作獨立測試；訓練表現通常較樂觀。")}
 
 {card("講義 04 · 用 2001–2004 擬合、在 2005 年比較", _log_code3, lab_output(CH, 49),
       src=src("45、49、51"),
@@ -434,7 +435,7 @@ $$B=\sum_{k=1}^K n_k(\bar x_k-\bar x)(\bar x_k-\bar x)^T.$$
 <p>$W$ 加總同類觀測的散布，$B$ 加總各類中心相對於總中心的散布；它們尚未除以自由度。
 投影成 $a^Tx$ 後，Fisher 比值為</p>
 $$J(a)=\frac{a^TBa}{a^TWa}.$$
-<p>假設 $W$ 正定，固定 $a^TWa=1$ 後最大化分子，拉格朗日條件給出廣義特徵值問題
+<p>假設 $W$ 正定，Fisher 最優方向滿足廣義特徵值問題
 $Ba=\lambda Wa$。取最大特徵值對應的方向，再依特徵值遞減取後續方向。
 不同方向可規範成 $a_i^TWa_j=\delta_{ij}$：這是 <strong>W 內積下的正交</strong>，原始座標中不一定垂直。
 也可以先解對稱矩陣 $W^{-1/2}BW^{-1/2}$，再轉回原始座標。</p>
@@ -445,9 +446,8 @@ $$a\propto W^{-1}(\bar x_1-\bar x_2).$$
 LDA 分數差中的 $\hat\Sigma^{-1}(\bar x_1-\bar x_2)$ 和 Fisher 方向平行。
 <strong>方向相同還不等於分類完全相同</strong>：仍要用平均、尺度與先驗設定切點；任意取投影零點當切點並不正確。</p>
 <h4>多類：為什麼最多只有 K−1 個方向？</h4>
-<p>加權中心差的總和為零，因此 $\operatorname{rank}(B)\le\min(p,K-1)$。
-在白化空間中，各類中心都落在至多 K−1 維的仿射子空間。垂直於這個子空間的距離，
-對每一類都相同，在比較分數時抵消。保留完整的判別子空間，並保留同樣的尺度與先驗，便可重現原 LDA 分類。</p>
+<p>類間散布的秩滿足 $\operatorname{rank}(B)\le\min(p,K-1)$。
+在白化空間中，各類中心都落在至多 K−1 維的仿射子空間。完整的距離分解見下方證明。保留完整的判別子空間，並保留同樣的尺度與先驗，便可重現原 LDA 分類。</p>
 <p>若只保留前 $L&lt;\operatorname{rank}(B)$ 個方向，就得到<strong>降秩 LDA（reduced-rank LDA）</strong>。
 它依 Fisher 準則保留分離最強的方向；在共用常態模型下可連結到類平均的秩受限最大概似估計。
 刪去非零判別方向可能改變分類與後驗機率。K 大於 3 時的二維圖因此通常只是近似視圖。
@@ -708,8 +708,8 @@ BODIES["threshold"] = f"""
         "敏感度確實上升，但<strong>精確率通常會下降</strong>。精確率的分母是「你預測為正的人數」，"
         "門檻值放寬後這個分母漲得比 TP 快。Default 的例子：精確率從 81/104 = 77.9% 掉到 195/430 = 45.3%。"),
        (False, "總錯誤率一定下降，因為模型抓到更多真正的正類",
-        "不對，方向反了。0.5 這個門檻值<strong>就是</strong>讓總錯誤率最小的那個（Bayes 分類器的性質），"
-        "所以離開 0.5 通常會讓總錯誤率變差。我們願意付這個代價，是因為兩種錯誤的成本不一樣。")])}
+        "不對，方向反了。使用真實後驗機率、兩種錯誤等成本時，0.5 是最小化母體期望錯誤的門檻值，"
+        "估計機率與有限測試集則沒有同樣保證；是否改善仍須在獨立資料檢查。我們願意付這個代價，是因為兩種錯誤的成本不一樣。")])}
 
 {table(["名稱", "定義", "別名", "分母是誰"],
        [["假陽率 FPR", "FP / N", "第一型錯誤、1 − 特異度", "真實的負類"],
@@ -923,7 +923,7 @@ BODIES["exercises"] = f"""
         "「不違約」的勝算。題目問的是違約，分子要放 p。")])}
 
 {quiz("qEx3", "EXERCISE 3 · ISLP 4.8 第 8 題",
-      "同一份資料切成一半訓練一半測試。邏輯斯迴歸的訓練錯誤率 20%、測試錯誤率 30%；"
+      "假設沒有同一輸入卻有衝突標籤的重複點，且最近鄰包含自己。資料切成一半訓練一半測試。邏輯斯迴歸的訓練錯誤率 20%、測試錯誤率 30%；"
       "1-NN 的「訓練與測試平均」錯誤率是 18%。該選哪一個？",
       [(True, "邏輯斯迴歸。1-NN 的訓練錯誤率是 0，所以它的測試錯誤率約 36%，比 30% 差",
         "對，這一題的陷阱就在「平均」。K = 1 時每個訓練點的最近鄰居就是它自己，"
@@ -939,18 +939,18 @@ BODIES["exercises"] = f"""
 {quiz("qEx4", "EXERCISE 4 · ISLP 4.8 第 5 題（a）（d）",
       "（a）Bayes 決策邊界是<strong>線性</strong>時，LDA 與 QDA 誰在訓練集上比較好？測試集呢？"
       "（d）「就算邊界是線性的，QDA 彈性夠大也擬合得下，所以測試誤差還是會比較好」——對嗎？",
-      [(True, "訓練集 QDA 通常較好，測試集 LDA 較好；(d) 是錯的",
-        "對。QDA 比較有彈性，所以<strong>訓練</strong>誤差通常較低（甚至一定不會更高）。"
+      [(True, "依本章偏差–變異直覺，常預期 QDA 的訓練誤差較低、LDA 的測試誤差較低；(d) 沒有保證",
+        "對。QDA 比較有彈性，所以<strong>訓練</strong>誤差常預期較低，但沒有逐份資料的保證；高斯最大概似最佳化的是概似，並非直接最小化分類錯誤。"
         "但邊界既然是線性的，多出來的彈性只帶來變異、換不到偏差的減少，"
-        "所以<strong>測試</strong>誤差 LDA 較好。(d) 的錯誤在於把「模型空間包含真解」"
+        "因此常預期<strong>測試</strong>誤差 LDA 較低，仍需獨立評估。(d) 的錯誤在於把「模型空間包含真解」"
         "當成「估得準」。這是偏差–變異取捨的核心誤解。"
         "附帶第 (c) 小題：n 變大時 QDA 相對 LDA 會<strong>改善</strong>，因為變異的代價被 n 稀釋掉了。"),
        (False, "兩個集合都是 LDA 較好，因為真實邊界是線性的",
-        "測試集對，訓練集錯。<strong>訓練誤差幾乎總是站在比較彈性的模型那一邊</strong>。"
+        "兩個集合都保證 LDA 較好說得太強；較有彈性的 QDA 常預期能降低訓練誤差，但不保證測試誤差降低。"
         "這正是訓練誤差不能用來選模型的原因。分辨「訓練」與「測試」是這一題的全部重點。"),
        (False, "兩個集合都是 QDA 較好，因為線性邊界是二次邊界的特例",
         "訓練集對，測試集錯，而且理由正是課本第 (d) 小題要釐清的差別。"
-        "「特例」保證的是<strong>偏差</strong>不會更差，完全沒有保證變異——"
+        "模型類包含關係不保證實際估計量的偏差或變異排序——"
         "而測試誤差 = 偏差² + 變異 + 不可縮減誤差。")])}
 """
 
@@ -1035,6 +1035,136 @@ BODIES["reference"] = f"""
 """
 
 # ══════════════════════════════════════════════════════════════════════
+# COVERAGE-20260910 BEGIN
+
+BODIES['logistic'] += r"""
+<h3>從觀測到估計：完整的最大概似問題</h3>
+<p>給定 X 後，假設各 $Y_i$ 獨立且 $Y_i\sim\operatorname{Bernoulli}(p_i)$，$p_i=\sigma(x_i^T\beta)$，$x_i$ 含截距。用 $\eta_i=x_i^T\beta$ 表示線性預測量，估計問題為</p>
+$$\max_\beta L(\beta)=\prod_i p_i^{y_i}(1-p_i)^{1-y_i},\qquad
+\ell(\beta)=\sum_i\{y_i\eta_i-\log(1+e^{\eta_i})\}.$$
+<p>最小化 $-\ell$ 也就是最小化二元交叉熵。分數函數（score）與 Hessian 為</p>
+$$U(\beta)=X^T(y-p),\qquad \nabla^2\ell(\beta)=-X^TWX,\qquad W=\operatorname{diag}\{p_i(1-p_i)\}.$$
+<p>一個 Newton 更新為 $\beta^{new}=\beta+(X^TWX)^{-1}X^T(y-p)$；實作用線性方程求解並檢查目標改善，避免直接計算逆矩陣。也可寫成反覆加權最小平方（IRLS）：令工作反應 $z=X\beta+W^{-1}(y-p)$，以 W 加權擬合 z，重算 p、W、z，直到收斂。</p>
+<p>小算例：只有截距、10 筆有 7 個正類，從 β=0 起步有 p=0.5、score=2、資訊量=2.5，第一次更新 β=0.8。繼續更新會趨近 $\log(7/3)\approx0.8473$，對應 p=0.7。完全或準完全分離時，無懲罰的有限 MLE 可能不存在；秩不足時係數也不唯一，不能把數值停止一概當成成功估計。</p>
+<p>正確指定的條件模型、有限內點 MLE 與一般大樣本正則條件下，$\widehat{\operatorname{Cov}}(\hat\beta)=(X^T\hat WX)^{-1}$；係數 SE 是對角線平方根，Wald z 為 $\hat\beta_j/\widehat{SE}_j$，近似 95% CI 為 $\hat\beta_j\pm1.96\widehat{SE}_j$。觀測獨立不等於 p 相同；給定不同 X 時，反應變異數可不同。</p>
+<p>來源：<a href="https://dafriedman97.github.io/mlbook/content/c3/s1/logistic_regression.html#parameter-estimation">講義連結的概似估計教材</a>、<a href="https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture26.pdf">Stanford 邏輯斯迴歸推論講義</a>。</p>
+""" + proof('w04proofLogistic', '概似、梯度、Hessian 與 IRLS', r"""
+<p>Bernoulli 機率質量為 $p_i^{y_i}(1-p_i)^{1-y_i}$。獨立性讓聯合概似相乘；取對數後，利用 $\log p_i=\eta_i-\log(1+e^{\eta_i})$ 與 $\log(1-p_i)=-\log(1+e^{\eta_i})$，得到正文的 ℓ。</p>
+<p>$\partial p_i/\partial\eta_i=p_i(1-p_i)$，故 $\partial\ell/\partial\beta=\sum_ix_i(y_i-p_i)$，再微分為 $-\sum_i p_i(1-p_i)x_ix_i^T=-X^TWX$。任意 v 的二次型為 $-\sum_i p_i(1-p_i)(x_i^Tv)^2\le0$，所以 ℓ 凹；在有限 β、X 滿欄秩時嚴格凹，但這不保證最大值在有限處取得。</p>
+<p>對 score 做一次 Taylor 線性化：$0\approx U(\beta)-X^TWX(\beta^{new}-\beta)$。解出正文 Newton 更新，並將右側寫成 $X^TW[X\beta+W^{-1}(y-p)]$，便得到 IRLS 加權 normal equations。</p>
+<p>Hessian 給定 X 後不含 y，故期望負 Hessian 就是 Fisher information $I=X^TWX$。在 MLE 漸近常態條件下，其逆矩陣近似係數共變異數。若條件模型錯置，此簡單逆資訊公式不再可靠；可用 sandwich 共變異數或適當 pairs bootstrap，不能只憑分類正確率驗證推論條件。</p>
+""")
+BODIES['multinomial'] += r"""
+<h3>多類別模型如何估計？</h3>
+<p>令 $y_{ik}=I\{Y_i=k\}$，$p_{ik}=\exp(x_i^T\beta_k)/\sum_l\exp(x_i^T\beta_l)$。最大化</p>
+$$\ell(B)=\sum_i\sum_k y_{ik}\log p_{ik},\qquad
+\frac{\partial\ell}{\partial\beta_k}=\sum_i x_i(y_{ik}-p_{ik}).$$
+<p>所有類別的係數同時加上同一向量不改變機率，所以要選基準類設 $\beta_K=0$ 或加等價識別限制；不能把 K 組完全自由的係數當成可唯一估計。這個 softmax 模型一次估計全部類別，與分別訓練二元模型的 one-versus-rest／one-versus-one 不同。</p>
+""" + proof('w04proofSoftmax', '多類別概似梯度與識別性', r"""
+<p>寫 $\eta_{ik}=x_i^T\beta_k$，則 $\ell=\sum_{i,k}y_{ik}\eta_{ik}-\sum_i\log\sum_l e^{\eta_{il}}$，其中用到 $\sum_ky_{ik}=1$。對 $\beta_k$ 微分，第一項給 $\sum_i y_{ik}x_i$，第二項給 $\sum_i p_{ik}x_i$。若把每個 $\beta_k$ 換成 $\beta_k+c$，分子分母共同乘 $e^{x_i^Tc}$，相除抵消，故須施加識別限制。</p>
+""")
+BODIES['lda'] += r"""
+<h3>把生成式模型的參數估出來</h3>
+<p>第 k 類有 $n_k$ 筆資料。經驗先驗 $\hat\pi_k=n_k/n$，平均向量 $\hat\mu_k=\sum_{i\in C_k}x_i/n_k$。令 W 為前述類內散布矩陣，共用共變異數的高斯最大概似估計為 W/n；課本常用的 pooled 無偏估計為 W/(n−K)，兩者須分清楚。QDA 的類別共變異數 MLE 除以 $n_k$，無偏版本除以 $n_k-1$。</p>
+<p>分類時先選定一致的共變異數估法，再代入分數。LDA 要估的 Σ 正定，QDA 則每一類的 Σk 都須可逆；某類樣本少或欄位共線時，可改用正則化或降低維度。Naive Bayes 只估每類每個特徵的一維條件分布；連續變數可用常態或其他密度模型，類別變數則估機率，零計數時須處理平滑。</p>
+""" + proof('w04proofGenerative', '類別平均、共變異數與判別函數', r"""
+<p>完整資料的對數概似可分成 $\sum_kn_k\log\pi_k$ 與各類高斯項。加上 $\sum_k\pi_k=1$ 的乘數約束，微分得 $n_k/\pi_k=\lambda$，相加給 λ=n，因此 $\hat\pi_k=n_k/n$。對 $\mu_k$ 微分得 $\Sigma^{-1}\sum_{i\in C_k}(x_i-\mu_k)=0$，故為類平均。</p>
+<p>代回平均後，共用共變異數的負對數概似除去常數為 $\frac n2\log|\Sigma|+\frac12\operatorname{tr}(\Sigma^{-1}W)$。對精確度矩陣 $A=\Sigma^{-1}$ 微分給 $-\frac n2 A^{-1}+\frac12W=0$，所以 $\hat\Sigma=W/n$。估了 K 個平均後，W 的期望為 (n−K)Σ，因而無偏版本改除以 n−K。</p>
+<p>分類比較 $\log\pi_k+\log f_k(x)$。展開共用 Σ 的二次型，$-x^T\Sigma^{-1}x/2$ 與 $-\log|\Sigma|/2$ 不依 k 而抵消，留下 $x^T\Sigma^{-1}\mu_k-\mu_k^T\Sigma^{-1}\mu_k/2+\log\pi_k$。QDA 的 Σk 不同，二次項與 log determinant 都不能刪掉。</p>
+""")
+BODIES['lda'] += proof('w04proofFisher', 'Fisher 方向、白化與判別子空間', r"""
+<p>W 正定時，可把分母固定為 $a^TWa=1$。Lagrangian $a^TBa-\lambda(a^TWa-1)$ 的導數為 $2Ba-2\lambda Wa=0$。令 $u=W^{1/2}a$，得到對稱特徵問題 $W^{-1/2}BW^{-1/2}u=\lambda u$。取歐氏正交的 u，轉回後即有 $a_i^TWa_j=\delta_{ij}$。</p>
+<p>二類時 $\bar x=(n_1\bar x_1+n_2\bar x_2)/n$；代入 B 的定義並合併，得 $B=(n_1n_2/n)dd^T$，$d=\bar x_1-\bar x_2$。因此非零廣義特徵方向平行於 $W^{-1}d$，也平行於 LDA 邊界法向量。</p>
+<p>一般 K 類滿足 $\sum_k n_k(\bar x_k-\bar x)=0$，所以 B 的秩至多 K−1。白化後，將 z 分成類中心仿射子空間內的 $z_\parallel$ 與垂直成分 $z_\perp$，有 $\|z-m_k\|^2=\|z_\parallel-m_k\|^2+\|z_\perp\|^2$。最後一項對所有類別相同，比較距離與先驗時抵消；保留完整判別空間即可保留分類，截掉非零方向則未必。</p>
+""")
+BODIES['poisson'] += r"""
+<h3>Poisson 的估計與 GLM 的變異數</h3>
+<p>給定 X 後 $Y_i$ 獨立，$\mu_i=\exp(x_i^T\beta)$，Poisson 的對數概似為</p>
+$$\ell(\beta)=\sum_i\{y_ix_i^T\beta-e^{x_i^T\beta}-\log(y_i!)\},\qquad
+U=X^T(y-\mu),\quad I=X^T\operatorname{diag}(\mu_i)X.$$
+<p>可採 Newton／IRLS 求解。只有截距時，樣本平均為 3 就得到 $\hat\beta_0=\log3$，平均預測為 3；全部計數為零時，截距 MLE 趨向負無限大，沒有有限解。比較不同觀測時間的計數可加入已知 offset $\log t_i$：$\log\mu_i=\log t_i+x_i^T\beta$，此時係數解讀為事件率的倍數。</p>
+<p>GLM 模型的是 $Y\mid X$。指數分布族寫成 $\exp\{[y\theta-b(\theta)]/a(\phi)+c(y,\phi)\}$，其條件平均為 $b'(\theta)$、變異數為 $a(\phi)b''(\theta)$。Bernoulli 的變異數為 $p(1-p)$，Poisson 為 μ，Gaussian 則是共同 σ²；只有條件獨立不代表同變異數。過度分散時，仍可討論均值模型，但 Poisson 的一般 SE 會失準，要另選變異模型或適當穩健推論。</p>
+""" + proof('w04proofPoisson', 'Poisson score 與指數分布族的平均變異數', r"""
+<p>取各筆 Poisson 質量函數的對數並相加，再以 $\mu_i=e^{x_i^T\beta}$ 代入，就得到正文 ℓ。對 β 微分分別為 $\sum_i x_i(y_i-\mu_i)$ 與 $-\sum_i\mu_ix_ix_i^T$。只有截距時 score 為 $\sum_i y_i-ne^{\beta_0}$，零點給 $e^{\hat\beta_0}=\bar y$（需平均數為正）。</p>
+<p>對指數分布族的總機率 1 對 θ 微分，得到 $E[(Y-b'(\theta))/a(\phi)]=0$，所以 $E[Y]=b'(\theta)$。再用 score 的變異等於期望負二階導數，得到 $\operatorname{Var}(Y)/a(\phi)^2=b''(\theta)/a(\phi)$，即正文變異公式；交換微分與積分需一般正則條件。</p>
+""")
+
+
+BODIES['poisson'] += r"""
+<h3>Bikeshare：同一特徵，兩種係數量尺</h3>
+<p>講義比較線性迴歸與 Poisson 迴歸：月份與時段以類別變數納入，工作日、溫度與天氣則說明不同量尺的係數解讀。以下是講義係數的四捨五入值，沒有重新執行 lab：</p>
+<table class="cmp-table"><thead><tr><th>變數</th><th>線性模型</th><th>Poisson 的 log 平均模型</th></tr></thead><tbody>
+<tr><td>工作日</td><td>1.27</td><td>0.01</td></tr><tr><td>溫度</td><td>157.21</td><td>0.79</td></tr>
+<tr><td>陰天／霧</td><td>−12.89</td><td>−0.08</td></tr><tr><td>小雨／雪</td><td>−66.49</td><td>−0.58</td></tr><tr><td>大雨／雪</td><td>−109.75</td><td>−0.93</td></tr></tbody></table>
+<p>例如控制模型內其他欄位後，小雨／雪在線性模型中是平均租借數少約 66.49；Poisson 模型則是平均租借數乘 $e^{-0.58}\approx0.56$。溫度的一單位須依資料原來的編碼解讀，不能直接當攝氏一度。月份／時段圖顯示冬季較低、夏季較高，以及早晚時段的高峰；線性模型的縱軸是平均租借數的加法差，Poisson 圖則是 log 平均的差，兩張圖不能直接比較係數高度。</p>
+"""
+BODIES['logistic'] += r"""
+<h3>預測機率的區間與模型比較</h3>
+<p>對固定新輸入 $x_0$，令 $\hat\eta=x_0^T\hat\beta$、$s_\eta^2=x_0^T\widehat Vx_0$，其中 $\widehat V$ 是完整係數共變異數矩陣。常用近似 95% 機率信賴區間為 $[\sigma(\hat\eta-1.96s_\eta),\sigma(\hat\eta+1.96s_\eta)]$。不能把每個係數 CI 的下端一起代入、上端一起代入：那會漏掉係數間的共變異數。</p>
+<p>例如 η̂=0、$s_\eta=0.2$，機率估計為 0.5，區間約 [0.403,0.597]。這是對事件機率的估計不確定性，個別新反應仍是 0 或 1；不能照線性迴歸在 logit 的變異數裡隨意加 1 當成預測區間。</p>
+<p>另一種二元模型是 probit：$p(x)=\Phi(x^T\beta)$，以標準常態累積分布取代 logistic。兩者都限制機率落在 [0,1]，但 probit 的 $e^{\beta_j}$ 沒有 logistic 的勝算比解讀。可用相同獨立評估流程比較，不能只比係數絕對值。</p>
+<p>對事先指定、正則且巢狀的模型，最大概似比統計量 $D=2(\hat\ell_{full}-\hat\ell_{restricted})$ 在虛無假設下漸近服從自由度等於參數維數差的卡方分布。這是比「係數除以 SE」的 Wald 檢定另一種比較方式；分離、邊界參數或資料選模後，不能直接沿用一般卡方校準。</p>
+""" + proof('w04proofProbabilityCI', '線性預測量到機率的區間', r"""
+<p>MLE 的漸近常態近似給 $x_0^T\hat\beta$ 的變異數 $x_0^TVx_0$。logistic 函數單調遞增，所以把 η 的區間兩端逐一通過 σ，涵蓋事件 $\eta\in[L,U]$ 與 $\sigma(\eta)\in[\sigma(L),\sigma(U)]$ 相同。這保留 η 區間的近似涵蓋率且不越出 (0,1)。</p>
+<p>若用一階 delta method，$\nabla_\beta p=p(1-p)x_0$，因此 $\widehat{SE}(\hat p)=\hat p(1-\hat p)s_\eta$。直接用 $\hat p\pm1.96SE$ 在接近 0 或 1 時可能越界；單純截到 [0,1] 不會自動修正近似涵蓋率。</p>
+""")
+
+
+# DIRECT-LINKS-20260910
+
+BODIES['logistic'] += r"""
+<h3>反應誤差、潛在變數與完全分離</h3>
+<p>給定 x，logistic 模型的反應仍是 Bernoulli，不是 logistic 分布。若定義誤差 $e=Y-p(x)$，它以機率 p 取 1−p，以機率 1−p 取 −p，條件平均為零、變異數為 p(1−p)。因此不能再自由估一個與 p 無關的共同誤差變異數，也不能把 logit(p) 當成 logit(Y)。</p>
+<p>另一種等價的生成表示是 $Y=I\{x^T\beta+\epsilon>0\}$，其中 $\epsilon$ 服從標準 logistic 分布。這裡的 ε 是未觀測連續變數上的誤差，和上面的二點誤差 e 不同；probit 則把潛在誤差換成標準常態。取相同 x 並不決定固定的 0 或 1，仍需要依 p 抽樣。</p>
+<p>完全分離可用小例子理解：x=−2,−1,1,2 對應 y=0,0,1,1。截距為零、斜率越大，每筆已觀測結果的機率越接近 1；有限斜率總還能繼續改善概似。資料可能因小樣本偶然分離，不能把它當成母體機率必為 0 或 1。一般可加入正則化或使用針對分離的估計方法；對分離資料反覆做普通 pairs bootstrap 不會自動解決有限 MLE 不存在的問題。</p>
+<p>用固定門檻值 t 分類，logistic 在<strong>所用特徵</strong>上的邊界為 $x^T\beta=\log[t/(1-t)]$；如果特徵包含原始變數的平方或交互作用，邊界在原始輸入空間可呈非線性。</p>
+""" + proof('w04proofLatent', '潛在 logistic 表示與分離時的概似極限',r"""
+<p>標準 logistic 的 CDF 為 $F(u)=1/(1+e^{-u})$。因此 $P(x^T\beta+\epsilon>0\mid x)=1-F(-x^T\beta)=\sigma(x^T\beta)$。另一方面，Bernoulli 反應的 $E[Y-p]=0$，$E[(Y-p)^2]=p(1-p)^2+(1-p)p^2=p(1-p)$。</p>
+<p>令 $s_i=2y_i-1$。完全分離表示存在 v 使所有 $s_ix_i^Tv>0$。沿 β=cv、c→∞，每項概似為 $\sigma(cs_ix_i^Tv)\to1$，故總對數概似遞增趨近 0。有限 c 時每項仍小於 1，不能取得上確界，所以沒有有限 MLE。</p>
+""") + proof('w04proofMLELimit', 'score 的變異與大樣本係數共變異數',r"""
+<p>在正確指定且可交換微分與積分的模型，對 $\int f_\theta(z)dz=1$ 微分，得到 $E[u_\theta(Z)]=0$。再微分一次，得到 $E[u_\theta u_\theta^T]=-E[\nabla u_\theta]=J$，這是每筆資料的資訊等式。</p>
+<p>假設 MLE 一致、真參數在內點、J 正定且滿足 score 中央極限定理與 Hessian 大數法則，則 $n^{-1/2}U_n(\theta_0)\Rightarrow N(0,J)$，$-n^{-1}\nabla U_n(\tilde\theta)\to J$。對 $U_n(\hat\theta)=0$ 作 Taylor 展開：</p>
+$$\sqrt n(\hat\theta-\theta_0)=\left[-\frac1n\nabla U_n(\tilde\theta)\right]^{-1}\frac{U_n(\theta_0)}{\sqrt n}\Rightarrow N(0,J^{-1}).$$
+<p>總資訊約為 nJ，所以估計共變異數約為總資訊的逆。模型錯置時，score 變異 B 與期望負 Hessian A 不再相同，結果變成 $A^{-1}BA^{-1}/n$。觀測資訊是<strong>負 對數概似的 Hessian</strong>，不是其逆；SE 則是逆資訊矩陣對角元素的平方根，也不是先逐一取對角元素再倒數。</p>
+""")
+BODIES['multinomial'] += r"""
+<h3>二元分類器如何組成多類別分類？</h3>
+<table class="cmp-table"><thead><tr><th>方式</th><th>訓練問題</th><th>預測</th></tr></thead><tbody>
+<tr><td>一對其餘（OVR）</td><td>K 個二元模型，各類與其餘全部類別比較</td><td>比較各類分數，選最大者</td></tr>
+<tr><td>一對一（OVO）</td><td>K(K−1)/2 個模型，每次只用兩類資料</td><td>各對投票，依事先規定處理平手</td></tr>
+<tr><td>Multinomial logistic</td><td>共同估計一個 K 類概似</td><td>比較同一 softmax 的 K 個機率</td></tr></tbody></table>
+<p>K=4 時，OVR 訓練4個二元問題，OVO訓練6個。OVR各模型的分數尺度可能不同，其獨立輸出也不會自然加總為1；沒有額外校準時，不能直接把任意decision score稱為後驗機率。方法的類別組合規則與底層二元演算法是兩件事。</p>
+"""
+BODIES['lda'] += r"""
+<h3>為什麼二類的最小平方與 LDA 方向有關？</h3>
+<p>用 0／1 表示兩類，對中心化 X 做含截距的 OLS。若類內散布 W 正定、兩類平均不同，OLS 斜率向量與 $W^{-1}(\bar x_1-\bar x_0)$ 平行，也就是 Fisher／LDA 的方向；但機率尺度、截距與先驗決定的切點仍不同，不能直接推論兩者使用 0.5 門檻就必定給相同分類。</p>
+<p>多類別可把標籤轉成 K 個 indicator 欄，按每類樣本數調整尺度後做降秩多反應迴歸，得到相同的判別子空間。把 K 類直接編成單一 1、2、3、… 再做 OLS 則沒有這個性質，因為它任意指定類別距離。</p>
+""" + proof('w04proofOlsLda', '二類 OLS 方向與多類指示矩陣',r"""
+<p>設 d 為兩類平均差、$a=n_0n_1/n$。中心化 X 的總散布為 $T=X^TX=W+add^T$，而 $X^Ty=ad$。Sherman–Morrison 等式給</p>
+$$\hat\beta_{OLS}=aT^{-1}d=\frac{a}{1+ad^TW^{-1}d}W^{-1}d.$$
+<p>乘數為正，所以方向平行。多類時令 G 為 n×K 指示矩陣，$N=\operatorname{diag}(n_1,\ldots,n_K)$，則 $B=X^TGN^{-1}G^TX$。把目標矩陣設成 $\widetilde G=GN^{-1/2}$ 並中心化，取 rank L 係數模型 $\widetilde G\approx XAC^T$。固定 A 後，最小平方給 $C^T=(A^TTA)^{-1}A^TX^T\widetilde G$。代回目標並使用投影正交性，平方範數等於 $\|\widetilde G\|_F^2-\operatorname{tr}\{(A^TTA)^{-1}A^TX^T\widetilde G\widetilde G^TXA\}$。由 $X^T\widetilde G\widetilde G^TX=B$，最小化等價於最大化 $\operatorname{tr}\{(A^TTA)^{-1}A^TBA\}$。</p>
+<p>其方向解 $Bv=\lambda Tv$。由 T=W+B，等價於 $Bv=[\lambda/(1-\lambda)]Wv$，與 Fisher 問題相同；W正定時非零方向有 0&lt;λ&lt;1。這比較的是判別子空間，分類仍須使用相同尺度、中心與先驗。</p>
+""")
+BODIES['compare'] += r"""
+<h3>QDA log-odds 中的係數到底是什麼？</h3>
+<p>以第 K 類為基準，令 $A_k=\Sigma_k^{-1}$。完整形式為 $a_k+b_k^Tx+x^TC_kx$，其中</p>
+$$a_k=\log\frac{\pi_k}{\pi_K}-\frac12\log\frac{|\Sigma_k|}{|\Sigma_K|}-\frac12\mu_k^TA_k\mu_k+\frac12\mu_K^TA_K\mu_K,$$
+$$b_k=A_k\mu_k-A_K\mu_K,\qquad C_k=\frac12(A_K-A_k).$$
+<p>注意 Ck 使用「兩個逆矩陣的差」，一般不等於 $(\Sigma_K-\Sigma_k)^{-1}/2$。對稱 Ck 的 $x^TC_kx$ 同時包含各平方項與交互作用；所有共變異數相同時 Ck=0，退回 LDA 的線性 log-odds。</p>
+""" + proof('w04proofQdaCoefficients','從後驗比逐項展開QDA',r"""
+<p>Bayes 分母抵消後，log 後驗比等於 $\log(\pi_k/\pi_K)+\log f_k(x)-\log f_K(x)$。高斯常數中的 $-p\log(2\pi)/2$ 抵消；留下 log determinant 差與兩個二次型。逐一展開 $-(x-\mu_k)^TA_k(x-\mu_k)/2=-x^TA_kx/2+x^TA_k\mu_k-\mu_k^TA_k\mu_k/2$，再減去基準類的對應式，收集常數、一次與二次項，便得到 a、b、C。</p>
+""")
+BODIES['threshold'] += r"""
+<h3>F1 與隨機分數的 AUC 基準</h3>
+$$F_1=\frac{2\,\mathrm{precision}\,\mathrm{recall}}{\mathrm{precision}+\mathrm{recall}}=\frac{2TP}{2TP+FP+FN}.$$
+<p>F1不使用TN，適合某些重視正類的任務，但不能代替錯誤成本分析。分母為零時須事先規定回報方式。門檻值降低保證recall不降，卻不保證precision下降或上升，因為新納入觀測的真實正類比例也會變。</p>
+<p>AUC可解讀為隨機抽一個正類和一個負類時，正類分數較高的機率，加上一半平手機率。若分數與類別獨立且兩類使用同一分數分布，母體AUC為0.5；有限測試集的實現值可高可低。把分數全部取反會把AUC變成1−AUC，但這個操作不能利用測試標籤來挑方向。</p>
+""" + proof('w04proofRandomAuc','獨立隨機分數的AUC為二分之一',r"""
+<p>在虛無情境，正類分數 S+ 與負類分數 S− 為同分布的獨立抽樣，所以交換對稱性給 $P(S_+>S_-)=P(S_->S_+)$。令平手機率為 q，兩個嚴格排序的機率各為 (1−q)/2，因此 AUC=(1−q)/2+q/2=1/2。</p>
+""")
+
+# COVERAGE-20260910 END
+
 PAGEJS = r"""
 /* ===== classification 本頁元件（id 與全域一律 w04 前綴）===== */
 

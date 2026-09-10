@@ -281,5 +281,37 @@ if (w25bayesS) w25bayesDraw();
 """
 
 
+# Coverage completion 2026-09-10
+from lib import proof
+
+BODIES['posterior'] += r"""
+<h3>一般的更新公式與正規化</h3>
+<p>參數 θ 為連續量時，先驗與後驗都是密度。固定資料 x，以概似乘上先驗，再除以整個參數範圍上的積分：</p>
+$$\pi(\theta\mid x)=\frac{L(\theta;x)\pi(\theta)}{\int L(u;x)\pi(u)\,du}.$$
+<p>分母必須有限且大於 0；它讓後驗密度積分為 1。離散參數則把積分換成加總。
+所謂<strong>共軛先驗（conjugate prior）</strong>，指更新後仍落在同一分布族；Beta 對 Bernoulli／二項概似就是一例。</p>
+""" + proof('w25proof-conjugacy','Beta 與二項概似的共軛更新',r"""
+<p>把先驗和概似相乘：</p>
+$$\pi(p\mid s,f)\propto p^s(1-p)^f p^{\alpha-1}(1-p)^{\beta-1}
+=p^{\alpha+s-1}(1-p)^{\beta+f-1}.$$
+<p>這正是 Beta 密度的形狀。由 $B(a,b)=\int_0^1u^{a-1}(1-u)^{b-1}\,du$，其正規化後為</p>
+$$\pi(p\mid s,f)=\frac{p^{\alpha+s-1}(1-p)^{\beta+f-1}}{B(\alpha+s,\beta+f)}.$$
+<p>α、β 均大於 0 時，零筆資料也有合法後驗，且後驗等於先驗。</p>
+""")
+BODIES['likelihood'] += proof('w25proof-mle','Bernoulli 最大概似估計，包括端點',r"""
+<p>若 s、f 都為正，對數概似為 $\ell(p)=s\log p+f\log(1-p)$，</p>
+$$\ell'(p)=\frac{s}{p}-\frac{f}{1-p}=0\ \Longrightarrow\ \hat p=\frac{s}{s+f},\qquad
+\ell''(p)=-\frac{s}{p^2}-\frac{f}{(1-p)^2}&lt;0.$$
+<p>所以內部駐點是唯一最大值。若 s=0、f&gt;0，概似在 p=0 最大；若 f=0、s&gt;0，則在 p=1 最大。
+若兩者都是 0，概似恆定，沒有唯一 MLE。</p>
+""")
+BODIES['influence'] += proof('w25proof-predictive','下一次正面的後驗預測機率',r"""
+<p>對未知 p 的後驗密度加權：</p>
+$$P(X_{\rm new}=1\mid s,f)=\int_0^1P(X_{\rm new}=1\mid p)\pi(p\mid s,f)\,dp
+=E[p\mid s,f]=\frac{\alpha+s}{\alpha+\beta+s+f}.$$
+<p>這裡假設新投擲與既有資料在給定同一 p 後條件獨立。</p>
+""")
+
+
 if __name__ == "__main__":
     apply("s5_bayesian", BODIES, PAGEJS)

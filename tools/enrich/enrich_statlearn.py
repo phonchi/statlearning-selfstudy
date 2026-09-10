@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib import proof
 from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -1528,6 +1529,58 @@ BODIES["reference"] = f"""
 """
 
 # ══════════════════════════════════════════════════════════════════════
+# COVERAGE-20260910 BEGIN
+
+# 原有完整證明保留原文，統一為可驗收的預設收合元件。
+import re as _coverage_re
+for _key, _old, _pid in [('irreducible', IRR_PROOF, 'w02proofIrr'),
+        ('regfunc', REG_PROOF, 'w02proofMean'), ('mse', MSE_PROOF, 'w02proofRisk'),
+        ('biasvar', BV_PROOF, 'w02proofBV'), ('bayes', BAYES_PROOF, 'w02proofBayes'),
+        ('bayes', CLS_ROBUST, 'w02proofRobust')]:
+    _m = _coverage_re.search(r'<summary>(.*?)</summary>\s*<div class="qa-a">(.*)</div>\s*</details>', _old, _coverage_re.S)
+    assert _m, _pid
+    BODIES[_key] = BODIES[_key].replace(_old, proof(_pid, _m[1], _m[2]))
+BODIES['bayes'] += r"""
+<h3>KNN 的彈性與有效自由度</h3>
+<p>對固定的訓練輸入，KNN <strong>迴歸</strong>把鄰居的 y 平均，可寫成 $\hat y=Sy$。鄰域只由 X 決定、每點使用 K 個等權鄰居且包含自己時，線性平滑器的有效自由度為 $\operatorname{tr}(S)=n/K$。K 越小，模型保留越多訓練反應的個別變動。這個等式使用線性迴歸平滑器的定義；分類的多數決含非線性門檻，不能直接照搬。</p>
+<p>例如 n=100、K=5 時 df=20；K=1 時 df=100，因為每點直接記住自己的 y。距離同分須固定處理方式；若不含自身，不能再使用上述對角線計算。</p>
+""" + proof('w02proofKnnDf', '固定鄰域 KNN 迴歸的 n/K', r"""
+<p>令 $S_{ij}=I\{j\in N_K(i)\}/K$，便有 $\hat y_i=\sum_jS_{ij}y_j$。自點包含於鄰域使 $S_{ii}=1/K$，故 $\operatorname{tr}(S)=\sum_iS_{ii}=n/K$。</p>
+<p>若給定 X 後 $\operatorname{Cov}(y)=\sigma^2I$，則 $\operatorname{Cov}(\hat y_i,y_i)=\sigma^2S_{ii}$。用 $\sum_i\operatorname{Cov}(\hat y_i,y_i)/\sigma^2$ 定義自由度也得到相同結果。</p>
+""")
+
+
+BODIES['tradeoff'] += r"""
+<h3>訓練與測試都不理想時，先找哪一種原因？</h3>
+<p>先確認資料、損失定義與程式正確，再比較訓練及獨立驗證表現。訓練誤差也很高，可能是模型類太受限，也可能是最佳化尚未找到這個模型能達到的解。前者可考慮更合適的特徵或更有彈性的模型；後者先檢查最佳化過程，不能只靠加資料。</p>
+<p>訓練誤差低而驗證誤差高，既可能是過度擬合，也可能是資料分布不一致（distribution mismatch）：例如訓練資料來自成人，而預測對象換成兒童。前者可考慮減少彈性、正則化或取得更多同分布訓練資料；後者需要檢查來源、收集與預測情境。只看兩個誤差數字不能辨認原因，須配合資料設計、學習曲線與誤差分析。</p>
+<p>這是講義連結的<a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2021-course-data/overfit-v6.pdf">模型誤差診斷流程</a>的閱讀方式；第二章的偏差–變異公式預設同一資料生成分布，不能自動解釋任意分布轉移。</p>
+"""
+
+# COVERAGE-20260910 END
+
+# LINK-CLOSURE-CH1-3
+
+BODIES['curse'] += r"""
+<h3>高維球的體積集中在哪裡？</h3>
+<p>在 p 維半徑 R 的球中均勻取點，距離中心不超過 $(1-\delta)R$ 的機率為 $(1-\delta)^p$。
+所以外側厚度 $\delta R$ 的球殼占比是</p>
+$$P\{(1-\delta)R&lt;\|X\|\le R\}=1-(1-\delta)^p,\qquad0\le\delta\le1.$$
+<p>例如外側 10% 厚度，在二維占 $1-0.9^2=19\%$，十維占約 65.1%，五十維占約 99.5%。
+這是<strong>均勻球內取樣</strong>的結論；真實資料不一定均勻分布在球內，也不能直接套到任意核距離。
+它補充了「內接球在立方體中占比很小」以外的另一個現象：即使只看球本身，靠近中心的體積比例也很小。</p>
+""" + proof('w02proofBallVolume','球體積公式與球殼占比',r"""
+<p>令 Aₚ 為單位球面面積。高斯積分分別用直角座標與極座標計算：</p>
+$$\pi^{p/2}=\int_{\mathbb R^p}e^{-\|x\|^2}\,dx
+=A_p\int_0^\infty e^{-r^2}r^{p-1}\,dr=\frac{A_p}{2}\Gamma(p/2).$$
+<p>所以半徑 R 球體積為 $A_pR^p/p=\pi^{p/2}R^p/\Gamma(p/2+1)$。
+球體積與半徑的 p 次方成正比，內球除以外球即為 $(1-\delta)^p$；取補集得到球殼比例。</p>
+""") + r"""
+<p class="source-note">來源：講義 02 p.15 指向的 <a href="https://ttic.edu/blum/book.pdf#page=16">Blum、Hopcroft、Kannan，Foundations of Data Science，§2.3–2.4.1，pp.16–19</a>。
+只延伸本節直接相關的高維幾何，不要求讀完整本書。</p>
+"""
+
+
 PAGEJS = r"""
 /* ===== statistical_learning 本頁元件（id 與全域一律 w02 前綴）=====
    SVG 元件的初始化一律放在 HC.ready() 外面：Chart.js 從 CDN 載不到時

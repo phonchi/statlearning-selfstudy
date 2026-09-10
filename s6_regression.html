@@ -698,7 +698,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S6 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -792,7 +792,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>目前某條線的五個殘差是 1、−1、0、2、−2。它的 RSS 是多少？</p>
   <div class="quiz-options" id="qLeastSquaresOptions"><div class="quiz-opt" data-correct="false" data-fb="殘差直接相加會正負抵消；OLS 的目標是平方後再加。" onclick="quizCheck('qLeastSquares', this)"><span class="opt-letter">(A)</span> 0</div><div class="quiz-opt" data-correct="false" data-fb="這是殘差絕對值的總和，不是平方和。" onclick="quizCheck('qLeastSquares', this)"><span class="opt-letter">(B)</span> 6</div><div class="quiz-opt" data-correct="true" data-fb="對。$1^2+(-1)^2+0^2+2^2+(-2)^2=10$。" onclick="quizCheck('qLeastSquares', this)"><span class="opt-letter">(C)</span> 10</div></div>
   <div class="quiz-feedback" id="qLeastSquaresFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · Ordinary Least Squares</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="55">講義</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · Ordinary Least Squares</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="55">講義</a>。</p><details class="qa-item proof" id="w26proof-ols"><summary>證明：OLS 正規方程與唯一最小值</summary>
+<div class="qa-a">
+<p>對 RSS 分別微分並設為 0：</p>
+$$\sum_i(y_i-b_0-b_1x_i)=0,\qquad \sum_ix_i(y_i-b_0-b_1x_i)=0.$$
+<p>第一式給出 $b_0=\bar y-b_1\bar x$；代回第二式，得 $b_1S_{xx}=S_{xy}$。
+若 $S_{xx}&gt;0$，這就是正文的唯一解。對任意截距與斜率，還有</p>
+$$\operatorname{RSS}(b_0,b_1)=\operatorname{RSS}(\hat b_0,\hat b_1)
++n[(b_0-\hat b_0)+(b_1-\hat b_1)\bar x]^2+(b_1-\hat b_1)^2S_{xx}.$$
+<p>後兩項非負，且只有兩係數都等於 OLS 解時同為 0，所以駐點確實是唯一全域最小值。</p>
+</div></details>
 </section>
 <section id="residuals">
 <!-- GEN:BEGIN sec:residuals -->
@@ -823,7 +832,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>含截距的 OLS 訓練殘差加總為 0。這足以證明直線模型正確嗎？</p>
   <div class="quiz-options" id="qResidualsOptions"><div class="quiz-opt" data-correct="false" data-fb="正負殘差會抵消；彎曲或異質變異仍可能同時存在。" onclick="quizCheck('qResiduals', this)"><span class="opt-letter">(A)</span> 足夠，因為平均誤差是 0</div><div class="quiz-opt" data-correct="true" data-fb="對。加總為 0 是 OLS 的代數性質，不能取代診斷。" onclick="quizCheck('qResiduals', this)"><span class="opt-letter">(B)</span> 不足，還要看殘差形狀與模型假設</div><div class="quiz-opt" data-correct="false" data-fb="殘差可正可負；它們在含截距的訓練 OLS 中才會加總為 0。" onclick="quizCheck('qResiduals', this)"><span class="opt-letter">(C)</span> 不足，因為 OLS 殘差永遠都大於 0</div></div>
   <div class="quiz-feedback" id="qResidualsFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · OLS 的誤差平方</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="57">講義</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">來源：Seeing Theory Ch.6 · OLS 的誤差平方</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="57">講義</a>。</p><details class="qa-item proof" id="w26proof-residual"><summary>證明：殘差和為零與迴歸平方和分解</summary>
+<div class="qa-a">
+<p>含截距 OLS 的第一條正規方程直接給出 $\sum_ie_i=0$；第二條給出 $\sum_ix_ie_i=0$。
+因此 $\sum_i(\hat y_i-\bar y)e_i=0$。將 $y_i-\bar y=(\hat y_i-\bar y)+e_i$ 平方後加總：</p>
+$$\sum_i(y_i-\bar y)^2=\sum_i(\hat y_i-\bar y)^2+\sum_ie_i^2.$$
+<p>這是含截距、以相同訓練資料計算之 OLS 的分解；對測試資料或任意預測模型，不保證交叉項為 0，也不保證 R² 非負。</p>
+</div></details>
 </section>
 <section id="anova">
 <!-- GEN:BEGIN sec:anova -->
@@ -853,7 +868,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>若三組的組平均完全相同，但各組內仍有變動，ANOVA 的 F 會是多少？</p>
   <div class="quiz-options" id="qAnovaOptions"><div class="quiz-opt" data-correct="true" data-fb="對。組間平方和為 0，分子均方也是 0；組內均方為正時 F=0。" onclick="quizCheck('qAnova', this)"><span class="opt-letter">(A)</span> 0</div><div class="quiz-opt" data-correct="false" data-fb="F=1 代表組間、組內均方相同；組平均完全相同時組間平方和為 0。" onclick="quizCheck('qAnova', this)"><span class="opt-letter">(B)</span> 1</div><div class="quiz-opt" data-correct="false" data-fb="無限大會出現在組內均方趨近 0、組間差異仍存在的情況。" onclick="quizCheck('qAnova', this)"><span class="opt-letter">(C)</span> 無限大</div></div>
   <div class="quiz-feedback" id="qAnovaFeedback"></div>
-</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section3">來源：Seeing Theory Ch.6 · Analysis of Variance</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="63">講義</a>。</p>
+</div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section3">來源：Seeing Theory Ch.6 · Analysis of Variance</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="63">講義</a>。</p><details class="qa-item proof" id="w26proof-anova"><summary>證明：組間與組內平方和為什麼相加</summary>
+<div class="qa-a">
+<p>每組內把偏差寫成 $y_{ij}-\bar y=(y_{ij}-\bar y_j)+(\bar y_j-\bar y)$。
+平方後的交叉項在第 j 組加總為</p>
+$$2(\bar y_j-\bar y)\sum_i(y_{ij}-\bar y_j)=0.$$
+<p>所以總平方和恰等於組內與組間平方和；這是代數恆等式，不需要常態假設。
+在獨立、同變異數、常態誤差及 $H_0$ 下，兩個平方和除以 σ² 分別是自由度 k−1 與 n−k 的獨立卡方量，
+因此兩個均方比服從 $F_{k-1,n-k}$。代數分解與 F 檢定的分布條件要分開看。</p>
+</div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->

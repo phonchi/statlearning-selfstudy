@@ -819,4 +819,21 @@ function w19cvSet(i) { w19cvMode = i; w19cvDraw(); }
 HC.ready(() => { w19cvDraw(); });
 """
 
+# Coverage completion 2026-09-10
+
+BODIES['cv'] += f"""
+<h3 id="dx-pipe">把標準化與模型交給同一條 Pipeline</h3>
+<p>到 Ch06 中文 Lab 的 Ridge 節，先完成 imports、Hitters 清理、X／Y、lambdas 與 n_samples 的建立，再接著閱讀下面兩格。
+這裡沿用該份 notebook 的變數；其資料與本頁 Boston、Auto 範例不同。</p>
+{card('標準化後接 Ridge', lab_code(6,122), lab_output(6,122), src='<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 122')}
+<p>每個步驟都有名稱：scaler 與 ridge。訓練時先由 scaler 學平均及標準差，再將轉換結果交給 Ridge。
+預測時沿用同一 scaler 的參數；<code>pipe['ridge'].alpha</code> 可存取模型的懲罰強度。</p>
+{card('把整條 Pipeline 放進切分評估', lab_code(6,128), lab_output(6,128), src='<code>Ch06-varselect-lab-zh.ipynb</code> · 儲存格 128')}
+<p>此例用一次 ShuffleSplit 留出一半資料，每次評估會複製並重新擬合整條 Pipeline，包括 scaler。
+<code>neg_mean_squared_error</code> 採「越大越好」的分數方向，最前面的負號將它轉回 MSE。
+這裡 alpha 已固定為 0.01，沒有同時搜尋最佳 alpha；改用其他分割器時仍保持前處理在每次訓練資料內。</p>
+<p class="source-note">延伸：<a href="https://scikit-learn.org/stable/modules/compose.html#pipeline">scikit-learn Pipeline 文件</a>；完整參數選擇見 <a href="model_selection.html#ridge">收縮方法</a>。</p>
+"""
+
+
 apply("p6_modeling_api", BODIES, PAGEJS)

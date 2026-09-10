@@ -292,5 +292,31 @@ if (w22condS) w22condDraw();
 """
 
 
+# Coverage completion 2026-09-10
+from lib import proof
+
+BODIES['events'] += r"""
+<h3>集合條件如何展開與取反</h3>
+<p>在機率題與資料篩選中，分配律和 De Morgan 定律能幫你改寫條件：</p>
+$$A\cap(B\cup C)=(A\cap B)\cup(A\cap C),$$
+$$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
+<p>例如「沒有同時通過兩項檢查」表示「至少一項沒通過」；它與「兩項都沒通過」不同。
+寫 pandas 條件時，每個條件加括號，並以 <code>~</code>、<code>&amp;</code>、<code>|</code> 對應取反、且、或。</p>
+""" + proof('w22proof-sets','分配律與 De Morgan 定律',r"""
+<p>任取一個結果 ω。它屬於 $A\cap(B\cup C)$，恰好表示它在 A 中，而且在 B 或 C 中；
+這等價於它在 $A\cap B$ 或 $A\cap C$ 中，所以兩集合相同。
+同理，ω 不屬於 $A\cup B$，恰好表示它既不在 A 也不在 B；ω 不屬於 $A\cap B$，則表示至少不在其中一個集合。
+逐一改寫便得到兩條 De Morgan 定律。</p>
+""") + source('分配律與 De Morgan 定律',20)
+BODIES['bayes'] += proof('w22proof-bayes','從條件機率得到 Bayes 公式',r"""
+<p>當 $P(A)&gt;0$、$P(B)&gt;0$，由條件機率定義，</p>
+$$P(A\cap B)=P(A\mid B)P(B)=P(B\mid A)P(A).$$
+<p>兩邊除以 $P(B)$ 即得 Bayes 公式。若 $A_1,\ldots,A_K$ 是互斥且涵蓋全部結果的分割，
+所有使用到的條件機率有定義，則 $B$ 被 $B\cap A_k$ 分割，因而</p>
+$$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
+<p>零機率類別的聯合機率為 0，可直接省略，無須定義該類別上的條件機率。</p>
+""")
+
+
 if __name__ == "__main__":
     apply("s2_conditional", BODIES, PAGEJS)

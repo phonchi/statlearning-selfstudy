@@ -699,7 +699,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S2 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。各節附 Seeing Theory 網站與講義連結；需要更多實驗或推導時再開啟。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -761,6 +761,20 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-feedback" id="qEventFeedback"></div>
 </div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Set Theory</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="19">PDF p.19</a>。本頁文字、例題與圖均重新製作。</p>
+
+<h3>集合條件如何展開與取反</h3>
+<p>在機率題與資料篩選中，分配律和 De Morgan 定律能幫你改寫條件：</p>
+$$A\cap(B\cup C)=(A\cap B)\cup(A\cap C),$$
+$$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
+<p>例如「沒有同時通過兩項檢查」表示「至少一項沒通過」；它與「兩項都沒通過」不同。
+寫 pandas 條件時，每個條件加括號，並以 <code>~</code>、<code>&amp;</code>、<code>|</code> 對應取反、且、或。</p>
+<details class="qa-item proof" id="w22proof-sets"><summary>證明：分配律與 De Morgan 定律</summary>
+<div class="qa-a">
+<p>任取一個結果 ω。它屬於 $A\cap(B\cup C)$，恰好表示它在 A 中，而且在 B 或 C 中；
+這等價於它在 $A\cap B$ 或 $A\cap C$ 中，所以兩集合相同。
+同理，ω 不屬於 $A\cup B$，恰好表示它既不在 A 也不在 B；ω 不屬於 $A\cap B$，則表示至少不在其中一個集合。
+逐一改寫便得到兩條 De Morgan 定律。</p>
+</div></details><p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · 分配律與 De Morgan 定律</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="20">PDF p.20</a>。本頁文字、例題與圖均重新製作。</p>
 </section>
 <section id="conditional">
 <!-- GEN:BEGIN sec:conditional -->
@@ -881,6 +895,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-feedback" id="qBayesFeedback"></div>
 </div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Bayes Rule</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="28">PDF p.28</a>。本頁文字、例題與圖均重新製作。</p>
+<details class="qa-item proof" id="w22proof-bayes"><summary>證明：從條件機率得到 Bayes 公式</summary>
+<div class="qa-a">
+<p>當 $P(A)&gt;0$、$P(B)&gt;0$，由條件機率定義，</p>
+$$P(A\cap B)=P(A\mid B)P(B)=P(B\mid A)P(A).$$
+<p>兩邊除以 $P(B)$ 即得 Bayes 公式。若 $A_1,\ldots,A_K$ 是互斥且涵蓋全部結果的分割，
+所有使用到的條件機率有定義，則 $B$ 被 $B\cap A_k$ 分割，因而</p>
+$$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
+<p>零機率類別的聯合機率為 0，可直接省略，無須定義該類別上的條件機率。</p>
+</div></details>
 </section>
 <section id="counting">
 <!-- GEN:BEGIN sec:counting -->

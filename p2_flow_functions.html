@@ -1205,6 +1205,81 @@ ford ranger            2625.0       1</pre></div>
   <div class="quiz-options" id="qFuncOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。Python 允許沒有回傳值的函式（例如只負責畫圖或存檔的那種）。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(A)</span> 會報錯</div><div class="quiz-opt" data-correct="true" data-fb="對，而且這是很難查的 bug——&lt;code&gt;mse = evalMSE(...)&lt;/code&gt; 之後 &lt;code&gt;mse&lt;/code&gt; 是 None，要等到你拿它去算東西才會爆，那時錯誤訊息已經離現場很遠了。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(B)</span> <code>None</code></div><div class="quiz-opt" data-correct="false" data-fb="那是 R 或 Jupyter 儲存格的行為。Python 的函式一定要明寫 &lt;code&gt;return&lt;/code&gt;。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(C)</span> 最後一行的值</div></div>
   <div class="quiz-feedback" id="qFuncFeedback"></div>
 </div>
+
+<h3 id="dx-lamb">lambda 是只有一個運算式的函式</h3>
+<p><code>lambda df: df['year'] &gt; 80</code> 建立一個接受 df 的函式，並把冒號後的運算式結果回傳。
+它相當於定義一個函式，內容只有 <code>return df['year'] &gt; 80</code>。
+<code>loc</code> 接到這個函式時，會把當下的資料框傳給它，再使用回傳的布林條件選列。</p>
+<div class="deck-extra">
+  <div class="dx-label">以當下資料框產生選列條件</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">Auto_re.loc[<span class="kw">lambda</span> df: df[<span class="str">&#x27;year&#x27;</span>] &gt; <span class="num">80</span>, [<span class="str">&#x27;weight&#x27;</span>, <span class="str">&#x27;origin&#x27;</span>]]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                                   weight  origin
+name                                             
+plymouth reliant                   2490.0       1
+buick skylark                      2635.0       1
+dodge aries wagon (sw)             2620.0       1
+chevrolet citation                 2725.0       1
+plymouth reliant                   2385.0       1
+toyota starlet                     1755.0       3
+plymouth champ                     1875.0       1
+honda civic 1300                   1760.0       3
+subaru                             2065.0       3
+datsun 210 mpg                     1975.0       3
+toyota tercel                      2050.0       3
+mazda glc 4                        1985.0       3
+plymouth horizon 4                 2215.0       1
+ford escort 4w                     2045.0       1
+ford escort 2h                     2380.0       1
+volkswagen jetta                   2190.0       2
+honda prelude                      2210.0       3
+toyota corolla                     2350.0       3
+datsun 200sx                       2615.0       3
+mazda 626                          2635.0       3
+peugeot 505s turbo diesel          3230.0       2
+volvo diesel                       3160.0       2
+toyota cressida                    2900.0       3
+datsun 810 maxima                  2930.0       3
+buick century                      3415.0       1
+oldsmobile cutlass ls              3725.0       1
+ford granada gl                    3060.0       1
+chrysler lebaron salon             3465.0       1
+chevrolet cavalier                 2605.0       1
+chevrolet cavalier wagon           2640.0       1
+chevrolet cavalier 2-door          2395.0       1
+pontiac j2000 se hatchback         2575.0       1
+dodge aries se                     2525.0       1
+pontiac phoenix                    2735.0       1
+ford fairmont futura               2865.0       1
+volkswagen rabbit l                1980.0       2
+mazda glc custom l                 2025.0       3
+mazda glc custom                   1970.0       3
+plymouth horizon miser             2125.0       1
+mercury lynx l                     2125.0       1
+nissan stanza xe                   2160.0       3
+honda accord                       2205.0       3
+toyota corolla                     2245.0       3
+honda civic                        1965.0       3
+honda civic (auto)                 1965.0       3
+datsun 310 gx                      1995.0       3
+buick century limited              2945.0       1
+oldsmobile cutlass ciera (diesel)  3015.0       1
+chrysler lebaron medallion         2585.0       1
+ford granada l                     2835.0       1
+toyota celica gt                   2665.0       3
+dodge charger 2.2                  2370.0       1
+chevrolet camaro                   2950.0       1
+ford mustang gl                    2790.0       1
+vw pickup                          2130.0       2
+dodge rampage                      2295.0       1
+ford ranger                        2625.0       1
+chevy s-10                         2720.0       1</pre></div>
+  <p class="dx-note">沿用 Ch02 已建立的 Auto_re；列條件由 lambda 計算，欄條件仍是欄名串列。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="228">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<p>需要多個步驟、註解或重複呼叫時，具名的 <code>def</code> 通常更方便。
+<code>lambda</code> 只容許單一運算式，不用寫 <code>return</code>，也不是提早執行一次的篩選結果。</p>
+<p class="source-note">延伸：<a href="https://docs.python.org/zh-tw/3/tutorial/controlflow.html#lambda-expressions">Python 官方教學：lambda 運算式</a>。</p>
 </section>
 <section id="scope">
 <!-- GEN:BEGIN sec:scope -->

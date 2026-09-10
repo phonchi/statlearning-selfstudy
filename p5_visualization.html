@@ -982,6 +982,27 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-options" id="qAnatOptions"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;relplot&lt;/code&gt;／&lt;code&gt;catplot&lt;/code&gt;／&lt;code&gt;lmplot&lt;/code&gt; 是 figure-level，它不會畫到你手上那個 &lt;code&gt;ax&lt;/code&gt; 上。要放進既有座標系可改用 &lt;code&gt;scatterplot(..., ax=ax)&lt;/code&gt;；保留 relplot 時則透過回傳的 Grid 修改它所管理的軸。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(A)</span> <code>relplot</code> 自己開了一張新的 Figure，你的 <code>ax</code> 指的是別張圖</div><div class="quiz-opt" data-correct="false" data-fb="順序不是問題。matplotlib 的設定隨時可以改，改完重新顯示就會生效。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(B)</span> <code>set_xlim</code> 要寫在畫圖之前</div><div class="quiz-opt" data-correct="false" data-fb="支援。這次設定用到了&lt;strong&gt;另一個 Axes&lt;/strong&gt;，請確認要修改的座標系。" onclick="quizCheck('qAnat', this)"><span class="opt-letter">(C)</span> seaborn 不支援設定軸範圍</div></div>
   <div class="quiz-feedback" id="qAnatFeedback"></div>
 </div>
+
+<h3 id="dx-save">把目前這張 Figure 保存下來</h3>
+<p>完成軸標籤與版面後，對 Figure 呼叫 <code>savefig</code>。
+副檔名指定 PNG、PDF 或 JPEG；dpi 對點陣圖決定每英吋像素數。PDF 中的向量圖元仍可縮放，dpi 主要影響其中點陣化的內容。</p>
+<div class="deck-extra">
+  <div class="dx-label">同一張圖保存兩種格式</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">fig.savefig(<span class="str">&quot;Figure.png&quot;</span>, dpi=<span class="num">400</span>)</span>
+  <span class="line">fig.savefig(<span class="str">&quot;Figure.pdf&quot;</span>, dpi=<span class="num">200</span>);</span></div>
+  <p class="dx-note">沿用前面的 fig。命令將在目前工作目錄寫入檔案；同名檔案會被覆寫。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="117">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">改軸範圍後再存一份</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">axes[<span class="num">0</span>,<span class="num">1</span>].set_xlim([-<span class="num">1</span>,<span class="num">1</span>])</span>
+  <span class="line">fig.savefig(<span class="str">&quot;Figure_updated.jpg&quot;</span>)</span>
+  <span class="line">fig</span></div>
+  <p class="dx-note">此格沿用 Ch02 建立的二維 axes 陣列；修改第二張子圖後另存，前一份檔案不會自動更新。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="119">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
 </section>
 <section id="dist">
 <!-- GEN:BEGIN sec:dist -->
@@ -1322,6 +1343,35 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-options" id="qModelOptions"><div class="quiz-opt" data-correct="false" data-fb="斜率描述「&lt;strong&gt;帳單每增加一元，小費增加多少&lt;/strong&gt;」。兩組斜率不同，表示這個變化量不同；比較哪組較高，還要看截距與整體位置。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(A)</span> 吸菸者的小費比較高</div><div class="quiz-opt" data-correct="true" data-fb="對。斜率隨另一個變數改變，正是交互作用的定義。第 3 章會教怎麼在模型裡寫出來（&lt;code&gt;total_bill * smoker&lt;/code&gt;），並檢定它是不是真的。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(B)</span> 帳單對小費的效果在兩組之間不同，可能有交互作用</div><div class="quiz-opt" data-correct="false" data-fb="離群值會影響斜率。單憑兩組斜率不同，無法確定是否有離群值；可以畫盒鬚圖或殘差圖檢查。" onclick="quizCheck('qModel', this)"><span class="opt-letter">(C)</span> 資料裡有離群值</div></div>
   <div class="quiz-feedback" id="qModelFeedback"></div>
 </div>
+
+<h3 id="dx-grid">函數曲面：等高線與色塊</h3>
+<p>若每一組 (x,y) 座標都有一個函數值，資料可排成網格。
+<code>contour(x, y, f)</code> 的 f 必須有 len(y) 列、len(x) 欄，每個元素對應一個座標配對。</p>
+<div class="deck-extra">
+  <div class="dx-label">建立二維函數網格並畫等高線</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
+  <span class="line">x = np.linspace(-np.pi, np.pi, <span class="num">50</span>)</span>
+  <span class="line">y = x</span>
+  <span class="line">f = np.multiply.outer(np.cos(y), <span class="num">1</span> / (<span class="num">1</span> + x**<span class="num">2</span>))</span>
+  <span class="line">ax.contour(x, y, f);</span></div>
+  <p class="dx-note">np.multiply.outer 對所有 y 與 x 配對計算乘積，因此 f 的列對應 y、欄對應 x。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="121">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">改等高線層數，與 imshow 比較</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
+  <span class="line">ax.contour(x, y, f, levels=<span class="num">45</span>);</span>
+  <span class="line">fig, ax = subplots(figsize=(<span class="num">8</span>, <span class="num">8</span>))</span>
+  <span class="line">ax.imshow(f);</span></div>
+  <p class="dx-note">這些儲存格只保存圖形，不另造文字輸出。</p>
+  <span class="dx-src" data-lab-ch="2" data-lab-cells="123,125">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
+</div>
+<p><code>levels</code> 控制等高線層級的選擇；更多線不會增加原始網格資料。
+<code>imshow(f)</code> 用顏色畫出陣列元素，預設座標是欄／列索引，原點在上方；因此不能直接把其座標當成前面的 x、y。
+若要對上物理座標，須交代 <code>extent</code> 與 <code>origin</code> 的設定。
+<a href="statistical_learning.html#parametric">統計學習章</a>用同一函數說明「指定形狀」與「從資料估計」的差異。</p>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->

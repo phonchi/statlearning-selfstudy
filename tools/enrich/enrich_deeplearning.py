@@ -122,7 +122,7 @@ BODIES["single"] = f"""
 {info("g 的兩個常見選擇", '''<strong>Sigmoid：</strong>g(z) = eᶻ/(1+eᶻ)，把任何實數壓進 (0, 1)。
   就是邏輯斯迴歸那個函數。缺點是 |z| 一大曲線就平掉，導數趨近 0，梯度傳不回去。<br>
   <strong>ReLU：</strong>g(z) = max(0, z)。負的歸零、正的原樣過。導數取 0 或 1，
-  算得快也不會消失，現代網路的預設。''')}
+  正值區的導數為 1，可減少飽和造成的梯度衰減；負值區的導數為 0，仍可能出現不再更新的單元。z=0 處不可微，實作會約定使用一個導數值。''')}
 
 {viz(svg("w11fwdSvg", 400),
      [info_card("怎麼玩",
@@ -160,7 +160,7 @@ BODIES["single"] = f"""
      "<p>實務上也常<strong>先把 K 開大，"
      "再靠正則化（dropout、權重衰減、早停）把彈性收回來</strong>，"
      "這種做法的理由見 §10.8：過度參數化的網路配上"
-     "會找平滑解的 SGD，表現往往比「剛好夠用」的網路更好。</p>"),
+     "適當的訓練與正則化，有時能比參數較少的網路表現更好；SGD 並不普遍保證最平滑或最小範數解。</p>"),
     ("Q：為什麼要標準化輸入？",
      "<p>跟 SVM 與嶺迴歸的理由一樣：所有輸入共用同一個學習率與同一個權重衰減，"
      "尺度差很多時，數值大的那個變數會主宰梯度，小的那個幾乎不動。</p>"
@@ -493,10 +493,10 @@ BODIES["fitting"] = f"""
   <p>前面都在講模型長什麼樣，這一節講怎麼把參數估出來。目標函數以量化反應為例：</p>
 
   $$R(\\theta) = \\frac{{1}}{{2}} \\sum_{{i=1}}^{{n}}
-    \\left(y_i - f_\\theta(x_i)\\right)^2 \\tag{{10.22}}$$
+    \\left(y_i - f_\\theta(x_i)\\right)^2 \\tag{{10.25}}$$
 
   <p>問題在於這個 R(θ) <strong>不是凸函數</strong>。線性迴歸有閉式解、
-  邏輯斯迴歸的對數概似是凹的所以有唯一最大值，神經網路兩個都沒有：
+  邏輯斯迴歸的對數概似是凹的，但唯一有限解還需要可識別性與不存在分離等條件。神經網路通常沒有閉式解或凸性保障：
   它有很多局部極小，而我們只能用梯度下降慢慢滑下去、
   以找到足夠好的解為目標，但無法保證找到全域最佳解。</p>
 
@@ -508,7 +508,7 @@ BODIES["fitting"] = f"""
                 '拖滑桿改起點 β⁰ 與學習率 ρ，看軌跡往哪裡收斂。'
                 '<strong>β⁰ = 2.3 會滑到 β ≈ 4.61，β⁰ = 1.4 卻掉到 β ≈ −1.67</strong>——'
                 '兩個不同的谷底，這正是 6(c) 與 6(d) 要你比較的事。'
-                '學習率拉到 1.2 以上還會看到它開始跳來跳去。',
+                '提高學習率時，軌跡可能在極小點兩側交替靠近；振盪不等於發散。',
                 "習題 6"),
       rows_card("這次的軌跡",
                 [("起點 β⁰", "2.30", "w11gdB0"),
@@ -516,10 +516,10 @@ BODIES["fitting"] = f"""
                  ("走了幾步", "—", "w11gdSteps"),
                  ("收斂到 β ≈", "—", "w11gdEnd"),
                  ("那裡的 R(β)", "—", "w11gdVal"),
-                 ("是全域最小嗎", "—", "w11gdGlobal")]),
+                 ("落在哪個極小點附近", "—", "w11gdGlobal")]),
       info_card("更新規則",
                 '每一步做 β ← β − ρ·R′(β)，其中 R′(β) = cos(β) + 1/10。'
-                '導數為 0 的地方就是駐點，梯度下降只保證滑到<strong>某一個</strong>駐點，'
+                '導數為 0 的地方就是駐點。收斂需要步長與目標函數等條件；即使收斂到駐點，'
                 '不保證是最低的那個。')],
      "w11gdStatus", "拖滑桿改起點與學習率，按「開始」看軌跡。",
      slider("w11gdB0s", "β⁰", -6, 6, 0.1, 2.3, "w11gdSync()", "w11gdB0v", "2.3",
@@ -534,13 +534,13 @@ BODIES["fitting"] = f"""
   重複利用前一層算好的中間量，
   成本跟一次前向傳播同一個量級。<br>
   <strong>隨機梯度下降：</strong>每一步只用一小批（minibatch）樣本估梯度。
-  除了便宜，取樣雜訊本身還有正則化效果，也幫忙跳出不好的局部極小。<br>
+  除了便宜，取樣雜訊會改變最佳化軌跡，有時有助於泛化或離開某些區域，但不保證跳出所有不好的局部極小。<br>
   <strong>Dropout：</strong>訓練時隨機把一部分單元設成 0，剩下的按比例放大。
   每一批看到的都是不同的子網路，沒有單元能依賴特定同伴。
   ISLP 說它的精神接近隨機森林，都靠隨機性打散相關性。''')}
 
   <p>另一個常用的正則化手段是<strong>早停</strong>。
-  訓練誤差會一路降，驗證誤差則通常先降後升；在轉折點停下來，
+  訓練誤差通常隨訓練下降，但 SGD 的單步或單一 epoch 不保證單調；驗證誤差可能先降後升；在轉折點停下來，
   效果跟加懲罰項類似。<code>ErrorTracker</code> 回呼只記錄驗證曲線；官方 Hitters lab
   仍跑滿 <code>max_epochs=50</code>，沒有 <code>EarlyStopping</code> 回呼或依驗證結果選 epoch。</p>
 
@@ -548,7 +548,7 @@ BODIES["fitting"] = f"""
     ("Q：非凸最佳化會受局部極小影響，為什麼仍可用來訓練模型？",
      "<p>局部極小會影響結果，但仍有幾個因素有助於找到可用的解。</p>"
      "<p>第一，實務上在高維空間裡，會嚴重影響結果的局部極小相對較少："
-     "更常見的是鞍點，而 SGD 的雜訊很容易把你推離鞍點。"
+     "也可能遇到鞍點；在適當條件下，隨機擾動有助於離開鞍點附近。"
      "第二，學習的目標是降低<strong>測試</strong>誤差；訓練誤差的全域最小值本身不足以衡量泛化；"
      "訓練誤差的全域最小很可能就是嚴重過度擬合的那個點。</p>"
      "<p>此外，<strong>訓練結果會受隨機性影響。</strong>"
@@ -568,10 +568,10 @@ BODIES["fitting"] = f"""
 
 {quiz("qSgd", "QUIZ · minibatch 的大小",
       "把批次大小從 32 改成整個訓練集（也就是每一步都用全部資料算梯度），會發生什麼？",
-      [(True, "每一步的梯度更準，但一個 epoch 只更新一次參數，而且失去了雜訊帶來的正則化",
+      [(True, "一個 epoch 只更新一次，使用完整資料梯度並移除批次抽樣雜訊",
         "對。梯度更準不等於學得更好：<strong>參數更新的次數大幅減少</strong>，"
-        "同樣的 epoch 數下走的路短很多。而且 SGD 的取樣雜訊是有用的："
-        "它幫忙跳出不好的局部極小，也讓解偏向比較平坦、泛化比較好的區域。"),
+        "相同 epoch 數代表的更新次數不同，不能據此斷定哪一種一定較好。批次抽樣雜訊會改變軌跡："
+        "在某些條件下有助於最佳化或泛化，但不保證全批次的測試表現一定較差。"),
        (False, "完全一樣，因為梯度的期望值不變",
         "期望值確實一樣，但最佳化還受到梯度變動的影響。"
         "<strong>變異數也是演算法行為的一部分</strong>——雜訊改變了它會走到哪裡去。"
@@ -770,9 +770,9 @@ BODIES["reference"] = f"""
         ["Sigmoid", "$g(z) = e^z/(1+e^z)$", "式 10.3，就是邏輯斯函數"],
         ["Softmax", "$f_m(X) = e^{Z_m} / \\sum_\\ell e^{Z_\\ell}$", "式 10.13，加常數不變"],
         ["交叉熵", "$-\\sum_i \\sum_m y_{im} \\log f_m(x_i)$", "式 10.14，M = 2 時退回邏輯斯"],
-        ["平方誤差目標", "$R(\\theta) = \\tfrac12 \\sum_i (y_i - f_\\theta(x_i))^2$", "式 10.22，非凸"],
+        ["平方誤差目標", "$R(\\theta) = \\tfrac12 \\sum_i (y_i - f_\\theta(x_i))^2$", "式 10.25，一般非凸"],
         ["梯度下降更新", "$\\theta \\leftarrow \\theta - \\rho \\nabla R(\\theta)$",
-         "式 10.23，ρ 是學習率"],
+         "式 10.27，ρ 是學習率"],
         ["全連接層參數量", "$(a+1) \\times b$", "a 個輸入接到 b 個輸出，+1 是偏置"],
         ["卷積層參數量", "$(k^2 c_{in} + 1) \\times c_{out}$", "跟影像大小無關"]])}
 
@@ -1271,20 +1271,20 @@ function w11gdRun() {
   $('w11gdSteps').textContent = steps + ' 步';
   $('w11gdEnd').textContent = HC.fmt(b, 3);
   $('w11gdVal').textContent = HC.fmt(w11gdR(b), 3);
-  $('w11gdGlobal').textContent = near === w11gdMIN[0] ? '是（−6…6 之間最低）'
-    : (near === w11gdMIN[1] ? '否，收斂到較高的局部極小' : '還沒收斂');
+  $('w11gdGlobal').textContent = near === w11gdMIN[0] ? '接近 −1.67（圖示區間較低）'
+    : (near === w11gdMIN[1] ? '接近 4.61（圖示區間較高）' : '還沒收斂');
   let msg = '從 β⁰ = ' + HC.fmt(parseFloat($('w11gdB0s').value), 2) + ' 出發、學習率 '
     + HC.fmt(rho, 2) + '，走了 ' + steps + ' 步收在 β ≈ ' + HC.fmt(b, 3) + '。';
   if (near === w11gdMIN[1]) {
-    msg += ' <b>這次收斂到較高的局部極小</b>——左邊 β ≈ −1.67 那個谷底更低'
+    msg += ' <b>這次接近較高的局部極小</b>；左邊 β ≈ −1.67 那個谷底更低'
       + '（R = −1.162 對 −0.534）。把起點改成 1.4 就會掉到那邊去，'
       + '這正是習題 6(c) 與 6(d) 要你比較的事。';
   } else if (near === w11gdMIN[0]) {
     msg += ' 這次掉進了比較低的那個谷底（R = −1.162）。'
       + '把起點改回 2.3 會收到右邊那個比較淺的極小。';
   } else {
-    msg += ' <b>尚未收斂：目前學習率過大，參數持續震盪。</b>'
-      + '把 ρ 調小一點再試一次。';
+    msg += ' <b>這次終點不在兩個標示谷底附近。</b>'
+      + '目前梯度大小為 ' + HC.fmt(Math.abs(w11gdD(b)), 5) + '；有限步數的結果不能單憑位置判定發散。';
   }
   setStatus('w11gdStatus', msg);
 }
@@ -1389,6 +1389,108 @@ HC.ready(() => {
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */
+"""
+
+
+
+# Coverage completion 2026-09-10
+from lib import proof
+BODIES['fitting'] += r"""
+<h3>反向傳播：每一個參數要往哪裡更新？</h3>
+<p>先看一筆輸入 $x_i$、反應 $y_i$ 與一層隱藏層。令
+$z_{ik}=w_{k0}+\sum_jw_{kj}x_{ij}$、$a_{ik}=g(z_{ik})$，
+$f_i=\beta_0+\sum_k\beta_ka_{ik}$，單筆損失 $R_i=\tfrac12(f_i-y_i)^2$。
+以 $e_i=f_i-y_i$ 記錄預測誤差；在 g 可微處，四種梯度是：</p>
+$$\frac{\partial R_i}{\partial\beta_0}=e_i,\qquad
+\frac{\partial R_i}{\partial\beta_k}=e_i a_{ik},$$
+$$\frac{\partial R_i}{\partial w_{k0}}=e_i\beta_k g'(z_{ik}),\qquad
+\frac{\partial R_i}{\partial w_{kj}}=e_i\beta_k g'(z_{ik})x_{ij}.$$
+<p>每個參數收到的梯度，包含輸出誤差、沿途權重、激發函數導數與輸入。
+對完整資料的加總損失，將各筆梯度相加；若目標採平均損失，就再除以 n。
+所有梯度都用同一個更新前的參數版本計算，最後才一起做 $\theta\leftarrow\theta-\rho\nabla R$。</p>
+""" + proof('w11proof-backprop','單隱藏層的連鎖律',r"""
+<p>輸出損失的導數為 $\partial R_i/\partial f_i=f_i-y_i=e_i$。
+沿著 $\beta_k\to f_i\to R_i$ 的路徑：</p>
+$$\frac{\partial R_i}{\partial\beta_k}=\frac{\partial R_i}{\partial f_i}\frac{\partial f_i}{\partial\beta_k}=e_ia_{ik}.$$
+<p>沿著 $w_{kj}\to z_{ik}\to a_{ik}\to f_i\to R_i$：</p>
+$$\frac{\partial R_i}{\partial w_{kj}}
+=\frac{\partial R_i}{\partial f_i}\frac{\partial f_i}{\partial a_{ik}}
+\frac{\partial a_{ik}}{\partial z_{ik}}\frac{\partial z_{ik}}{\partial w_{kj}}
+=e_i\beta_kg'(z_{ik})x_{ij}.$$
+<p>截距的最後一個導數為 1，因此移除相應輸入因子便得到截距梯度。
+計算時重用前向傳播儲存的 z、a 與輸出，不必對每個參數重新走完整個網路。</p>
+""") + r"""
+<h3>手算一次更新</h3>
+<p>本站自訂算例：只有一個輸入與一個 ReLU 單元，$x=2,y=1$，
+$w=0.5,w_0=0,\beta=0.4,\beta_0=0.1$。
+前向傳播得 $z=1,a=1,f=0.5,e=-0.5$，損失為 0.125。
+依照 $(\beta_0,\beta,w_0,w)$ 的順序，梯度是 $(-0.5,-0.5,-0.2,-0.4)$。</p>
+<p>學習率 0.1 時，新參數為 $(0.15,0.45,0.02,0.54)$。
+重新前向傳播得 $z=1.10,f=0.645$，新損失為 $\tfrac12(0.645-1)^2=0.0630125$。
+這次確實下降；任意資料與任意學習率並無同樣保證。</p>
+<h3>多層網路沿同一規則往回算</h3>
+<p>令 $z^{(\ell)}=W^{(\ell)}a^{(\ell-1)}+b^{(\ell)}$、$a^{(\ell)}=g_\ell(z^{(\ell)})$，
+並定義 $\delta^{(\ell)}=\partial L/\partial z^{(\ell)}$。逐元素相乘記作 $\odot$，則：</p>
+$$\delta^{(\ell)}=(W^{(\ell+1)})^\top\delta^{(\ell+1)}\odot g_\ell'(z^{(\ell)}),$$
+$$\frac{\partial L}{\partial W^{(\ell)}}=\delta^{(\ell)}(a^{(\ell-1)})^\top,
+\qquad\frac{\partial L}{\partial b^{(\ell)}}=\delta^{(\ell)}.$$
+<p>以 softmax 機率 p 與 one-hot 類別 y 的交叉熵作輸出損失時，輸出層的 δ 就是 p−y。
+這也是為什麼擬合要保留原始 logits：例如 PyTorch 的 CrossEntropyLoss 已包含 log-softmax，不要先做一次 softmax 再當作 logits 傳入。</p>
+""" + proof('w11proof-softmax-gradient','softmax 交叉熵的輸出梯度',r"""
+<p>$p_m=e^{z_m}/\sum_re^{z_r}$，因此 $\partial p_m/\partial z_k=p_m(\mathbf1_{m=k}-p_k)$。
+對 $L=-\sum_my_m\log p_m$ 微分，並使用 $\sum_my_m=1$：</p>
+$$\frac{\partial L}{\partial z_k}=-\sum_my_m(\mathbf1_{m=k}-p_k)=p_k-y_k.$$
+<p>隱藏層 δ 的公式則把每個後續單元的影響加總，再乘上本層的激發函數導數。</p>
+""") + r"""
+<h3>正則化、minibatch 與停止時機</h3>
+<p>Ridge 懲罰把權重平方和加進目標，例如對多類別分類：</p>
+$$R(\theta;\lambda)=-\sum_i\sum_my_{im}\log p_m(x_i)+\lambda\sum_{j\in J}\theta_j^2,
+\qquad\lambda\ge0.$$
+<p>J 是決定要懲罰的參數集合；不一定包含所有截距或輸出層權重。
+受懲罰參數的梯度多出 $2\lambda\theta_j$。不同軟體的損失採加總或平均、懲罰有無 1/2，會影響 λ 的數值對應。</p>
+<p>若定義 $R=\frac1n\sum_iR_i$，隨機抽取大小 B 的批次，以 $\frac1B\sum_{i\in\mathcal B}\nabla R_i$ 估計梯度。
+一個 epoch 表示大致使用完整訓練集一次；48,000 筆資料、批次 128，約更新 375 次。
+層數、層寬、學習率、批次大小、λ、dropout 比率與 epoch 數，都應用訓練／驗證資料決定，測試集留作最後評估。</p>
+<p class="source-note">來源：ISLP §10.7.1–10.7.4，印刷 pp.428–431，式 10.26–10.31；多層 δ 與 softmax 微分是依同一連鎖律展開的本站補充。
+<a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html">PyTorch CrossEntropyLoss 輸入規格</a>。</p>
+<h3>梯度下降的條件與圖中函數的限制</h3>
+<p>若可微目標的梯度為 L-Lipschitz，取 $0&lt;\rho&lt;2/L$ 可保證單步下降；
+若目標另有下界，能進一步推得梯度範數趨近 0。這仍不等於全域最佳，也不自動保證參數序列收斂。
+ReLU 在折點不可微，不能直接把這個光滑函數論證當作所有網路的保證。</p>
+<p>圖中的 $R(\beta)=\sin\beta+\beta/10$ 滿足 $|R''(\beta)|\le1$，滑桿 0.02–1.6 在下降步長範圍內。
+但它在整條實數線上沒有下界；β 趨向負無限時 R 也趨向負無限。
+圖中兩個谷底的比較只限顯示區間，不能稱為整條實數線上的全域最小值。</p>
+""" + proof('w11proof-descent','光滑函數的下降界限',r"""
+<p>L-Lipschitz 梯度給出 $R(\theta+d)\le R(\theta)+\nabla R(\theta)^\top d+\tfrac L2\|d\|^2$。
+代入 $d=-\rho\nabla R(\theta)$：</p>
+$$R(\theta-\rho\nabla R(\theta))\le R(\theta)-\rho(1-L\rho/2)\|\nabla R(\theta)\|^2.$$
+<p>若 $0&lt;\rho&lt;2/L$，非零梯度給出下降。固定步長、目標有下界時，逐次加總可得梯度平方和有限，故梯度範數趨近 0。</p>
+""")
+BODIES['cnn'] += r"""
+<h3>資料增強與移轉學習</h3>
+<p><strong>資料增強（data augmentation）</strong>在訓練時對影像隨機平移、縮放、小角度旋轉或適當翻轉，
+讓模型對應保留類別意義的變化。它為同一訓練影像建立附近的變體，可視為一種正則化，並未產生新的獨立受試者或獨立場景。</p>
+<p>增強必須維持標籤合理：左右翻轉某些物體照片可行，旋轉數字 6 卻可能改成另一類。
+先切分原始影像，再對訓練部分做隨機增強，避免同一原圖的不同版本分散到訓練與測試集。
+評估使用明確固定的前處理；若用測試時增強，須另外說明合併預測的程序。</p>
+<p>預訓練模型還可作<strong>移轉學習</strong>：保留已學到的卷積特徵，凍結部分權重，只用新資料訓練後幾層。
+這與上面直接使用原本的 ResNet50 分類器不同；新任務需有自己的標籤、輸出層與獨立評估。</p>
+<p class="source-note">來源：ISLP §10.3.4–10.3.5，印刷 pp.411–412；官方 Lab §10.9.4 展示直接使用預訓練分類器，未宣稱執行了本站所述移轉訓練。</p>
+"""
+BODIES['rnn'] += r"""
+<h3>將時間序列整理成訓練樣本</h3>
+<p>NYSE 例子以 $v_t$ 表示當日對數交易量，$r_t$、$z_t$ 為另外兩個歷史量測。
+用前 L 天預測第 t 天，則一筆輸入與目標為：</p>
+$$X_t=\begin{bmatrix}v_{t-L}&amp;r_{t-L}&amp;z_{t-L}\\\vdots&amp;\vdots&amp;\vdots\\
+v_{t-1}&amp;r_{t-1}&amp;z_{t-1}\end{bmatrix},\qquad Y_t=v_t.$$
+<p>X 的形狀是 L×3。T 天資料可建立 T−L 筆樣本；L=5、T=6,051 時為 6,046 筆。
+相鄰樣本會共用部分日期，不能當成互相獨立的抽樣，更不能隨機打亂後宣稱是在預測未來。</p>
+<p>RNN 依時間順序處理五個三維向量；線性自迴歸把同一批歷史量展平成 15 個欄位，連同截距擬合：</p>
+$$\hat v_t=\beta_0+\sum_{\ell=1}^L(\beta_{v\ell}v_{t-\ell}+\beta_{r\ell}r_{t-\ell}+\beta_{z\ell}z_{t-\ell}).$$
+<p>訓練日期早於評估日期，標準化與參數估計只使用訓練部分。
+逐日的一步預測可以使用已經實際觀察到的前一天測試期交易量；若要在同一天一次預測未來很多天，就不能偷用尚未觀察到的數值。
+星期幾可由日曆提前知道，所以與當天未知交易量的可用性不同。</p>
+<p class="source-note">來源：ISLP §10.5.2，印刷 pp.421–424、式 10.20–10.22；官方 Lab 時間序列段使用相同落後期構造。這些是歷史資料的教學示例。</p>
 """
 
 
