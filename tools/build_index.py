@@ -153,7 +153,7 @@ def build_html():
 
 {pre_block}  <section id="core">
     <h2>正課</h2>
-    <p>章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前。
+    <p>章節依課堂進度排列：非監督式學習（講義 12）接在支持向量機（講義 09）之後。
     </p>
     <div class="ch-grid">
 {cards}
@@ -196,11 +196,11 @@ def build_html():
 
 def build_readme():
     rows = []
-    for p in [q for q in P.PAGES if q.kind == "core"]:
+    for seq, p in enumerate([q for q in P.PAGES if q.kind == "core"], 1):
         parts, cards, qs, widgets = counts(p)
         對應 = p.islp_label + (f"／{p.esl_label}" if p.esl_label else "")
         講義 = f"講義 {p.deck_no}" if p.deck else "—"     # 補充章沒有講義
-        rows.append(f"| {p.n:02d} | [{p.plain}]({p.file}) | {對應} | {講義} |")
+        rows.append(f"| {seq:02d} | [{p.plain}]({p.file}) | {對應} | {講義} |")
     table = "\n".join(rows)
 
     def side_table(grp):
@@ -249,7 +249,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 |---|------|------|------|
 {table}
 
-章節依課堂進度排列：非監督式學習（第 12 章）排在超越線性（第 7 章）之前，
+章節依課堂進度排列：非監督式學習（講義 12）接在支持向量機（講義 09）之後，
 集成學習那一週折進「樹狀方法與集成學習」。
 
 ## 附錄：統計先備知識（選讀，不列入評分）

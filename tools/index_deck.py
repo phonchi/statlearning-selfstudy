@@ -22,10 +22,10 @@ DECK_ORDER = [
     "04_Classification.pdf",
     "05_Resampling_Methods.pdf",
     "06_Linear_Model_Selection.pdf",
-    "12_Unsupervised_learning.pdf",
     "07_Moving_Beyond_Linearity.pdf",
     "08_Tree-Based_Methods.pdf",
     "09_Support_Vector_Machines.pdf",
+    "12_Unsupervised_learning.pdf",
     "01-06_Recap.pdf",
 ]
 

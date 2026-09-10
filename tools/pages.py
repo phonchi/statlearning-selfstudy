@@ -6,8 +6,8 @@ build_page.py 由此產生 float-nav、TOC、每節的 .section-number、chapter
 index.html 卡片與 README 章節表——所以三處編號不可能不同步。
 
 兩條命名法（不要動）：
-1. data/*/chN.json 的 N ＝ ISLP 章號，不是站內序號。授課順序與 ISLP 章號不同
-   （站內第 07 頁對應 ISLP 第 12 章），用 ISLP 章號才跟徽章、講義檔名、lab 檔名一致。
+1. data/*/chN.json 的 N ＝ ISLP 章號，不是畫面上的排列序號；與徽章、講義和 lab 對應。
+   正課依講義順序，非監督式學習接在支持向量機之後；深度學習維持補充章。
 2. 頁面檔名是小寫 snake_case 的英文主題字根，不編號。順序只由本表承載。
 """
 from dataclasses import dataclass, field
@@ -63,7 +63,7 @@ class Sec:
 
 @dataclass
 class Page:
-    n: int                     # 站內序號（授課順序）
+    n: int                     # 固定識別碼（wNN）；顯示順序以 PAGES 列表為準
     stem: str                  # 檔名（不含 .html）
     slug: str                  # .ch-num 用的英文大寫短名
     title_en: str
@@ -646,40 +646,6 @@ PAGES = [
         ],
     ),
     Page(
-        n=7, stem="unsupervised_learning", slug="UNSUPERVISED", title_en="Unsupervised Learning",
-        h1='沒有 <span class="orange">y</span> 的時候，還能學到什麼？',
-        plain="非監督式學習",
-        subtitle="ISLP 第 12 章 — 對應講義 12",
-        formula="PCA｜負荷量與得分｜PVE｜Scree plot｜Biplot｜矩陣補全｜K-means｜階層式分群｜Dendrogram",
-        deck="12_Unsupervised_learning.pdf", deck_pages=106, lab="Ch12-unsup-lab-zh.ipynb",
-        islp=12, islp_label="ISLP Ch.12", esl_label="ESL §13.1–13.3、§14.1–14.3、§14.5–14.9",
-        playlist="PLHNZtBNWQ-85BiSie5BdC-ElKcRw37fs1,PLHNZtBNWQ-87wNMJFe_UQj_DzsiHVZWkx",
-        hero_svg=_svg_cluster(),
-        group="core",
-        secs=[
-            Sec("prologue", "沒有標準答案", "沒有現成標籤，該怎麼評估找到的結構？",
-                "ISLP §12.1|講義 12 · p.2–6", kicker="PROLOGUE · 開場"),
-            Sec("pca", "主成分是什麼", "第一主成分：變異最大的那個方向",
-                "ISLP §12.2.1|講義 12 · p.7–12"),
-            Sec("biplot", "Biplot 怎麼讀", "USArrests：一張圖同時放州與變數",
-                "ISLP §12.2.2|講義 12 · p.13–16"),
-            Sec("lowrank", "另一種解釋", "主成分也是「最佳低維近似」", "ISLP §12.2.2|講義 12 · p.17–19"),
-            Sec("pve", "PVE 與 scree plot", "要留幾個主成分？先看解釋了多少變異",
-                "ISLP §12.2.3|講義 12 · p.20–22"),
-            Sec("scaling", "尺度化與符號", "沒標準化就等於在比單位；符號翻掉不影響結論",
-                "ISLP §12.2.4|講義 12 · p.23–28"),
-            Sec("completion", "矩陣補全", "把缺失值當成主成分問題解", "ISLP §12.3|講義 12 · p.30–38"),
-            Sec("kmeans", "K-means", "指派、更新、再指派：目標函數單調下降",
-                "ISLP §12.4.1|講義 12 · p.54–68"),
-            Sec("hclust", "階層式分群", "不用先決定 K：dendrogram 與四種 linkage",
-                "ISLP §12.4.2|講義 12 · p.69–90"),
-            Sec("practical", "分群的實務問題", "要不要標準化、離群值怎麼辦、結果穩不穩",
-                "ISLP §12.4.3|講義 12 · p.88–92"),
-            Sec("manifold", "流形學習與 t-SNE", "非線性降維：t-SNE 的讀圖方式與解讀範圍",
-                "講義 12 · p.39–53|ESL §14.9 · 進階", eslx=True),
-        ],
-    ),
-    Page(
         n=8, stem="beyond_linearity", slug="BEYOND LINEARITY", title_en="Moving Beyond Linearity",
         h1='<span class="purple">彎</span>得剛剛好：從多項式到 GAM',
         plain="超越線性",
@@ -767,6 +733,40 @@ PAGES = [
             Sec("multiclass", "多類別", "OVO 與 OVA：兩類的方法怎麼推廣", "ISLP §9.4|講義 09 · p.29"),
             Sec("vslogit", "與邏輯斯迴歸的關係", "兩個損失函數其實很像，差別在哪",
                 "ISLP §9.5|講義 09 · p.30–34"),
+        ],
+    ),
+    Page(
+        n=7, stem="unsupervised_learning", slug="UNSUPERVISED", title_en="Unsupervised Learning",
+        h1='沒有 <span class="orange">y</span> 的時候，還能學到什麼？',
+        plain="非監督式學習",
+        subtitle="ISLP 第 12 章 — 對應講義 12",
+        formula="PCA｜負荷量與得分｜PVE｜Scree plot｜Biplot｜矩陣補全｜K-means｜階層式分群｜Dendrogram",
+        deck="12_Unsupervised_learning.pdf", deck_pages=106, lab="Ch12-unsup-lab-zh.ipynb",
+        islp=12, islp_label="ISLP Ch.12", esl_label="ESL §13.1–13.3、§14.1–14.3、§14.5–14.9",
+        playlist="PLHNZtBNWQ-85BiSie5BdC-ElKcRw37fs1,PLHNZtBNWQ-87wNMJFe_UQj_DzsiHVZWkx",
+        hero_svg=_svg_cluster(),
+        group="core",
+        secs=[
+            Sec("prologue", "沒有標準答案", "沒有現成標籤，該怎麼評估找到的結構？",
+                "ISLP §12.1|講義 12 · p.2–6", kicker="PROLOGUE · 開場"),
+            Sec("pca", "主成分是什麼", "第一主成分：變異最大的那個方向",
+                "ISLP §12.2.1|講義 12 · p.7–12"),
+            Sec("biplot", "Biplot 怎麼讀", "USArrests：一張圖同時放州與變數",
+                "ISLP §12.2.2|講義 12 · p.13–16"),
+            Sec("lowrank", "另一種解釋", "主成分也是「最佳低維近似」", "ISLP §12.2.2|講義 12 · p.17–19"),
+            Sec("pve", "PVE 與 scree plot", "要留幾個主成分？先看解釋了多少變異",
+                "ISLP §12.2.3|講義 12 · p.20–22"),
+            Sec("scaling", "尺度化與符號", "沒標準化就等於在比單位；符號翻掉不影響結論",
+                "ISLP §12.2.4|講義 12 · p.23–28"),
+            Sec("completion", "矩陣補全", "把缺失值當成主成分問題解", "ISLP §12.3|講義 12 · p.30–38"),
+            Sec("kmeans", "K-means", "指派、更新、再指派：目標函數單調下降",
+                "ISLP §12.4.1|講義 12 · p.54–68"),
+            Sec("hclust", "階層式分群", "不用先決定 K：dendrogram 與四種 linkage",
+                "ISLP §12.4.2|講義 12 · p.69–90"),
+            Sec("practical", "分群的實務問題", "要不要標準化、離群值怎麼辦、結果穩不穩",
+                "ISLP §12.4.3|講義 12 · p.88–92"),
+            Sec("manifold", "流形學習與 t-SNE", "非線性降維：t-SNE 的讀圖方式與解讀範圍",
+                "講義 12 · p.39–53|ESL §14.9 · 進階", eslx=True),
         ],
     ),
     Page(
