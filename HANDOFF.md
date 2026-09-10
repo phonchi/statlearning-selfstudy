@@ -19,7 +19,7 @@
 | 頁面 | ISLP | 大小 | 圖表 | SVG 元件 | 詞彙卡 | 題庫 |
 |---|---|---|---|---|---|---|
 | `introduction` | Ch.1 | 160 KB | 1 | 3 | 23 | — |
-| `statistical_learning` | Ch.2 | 238 KB | 2 | 7 | 26 | — |
+| `statistical_learning` | Ch.2 | 244 KB | 2 | 7 | 26 | — |
 | `linear_regression` | Ch.3 | 261 KB | 4 | 5 | 28 | 6 |
 | `classification` | Ch.4 | 218 KB | 2 | 5 | 28 | 6 |
 | `resampling_methods` | Ch.5 | 162 KB | 5 | 3 | 23 | — |
@@ -522,6 +522,7 @@ S6 頁尾與 P6 相同，不再把正課導論標成「下一章」；正課回�
 |---|---|---|
 | PART 06 `mse` | 講義 p.27 最後一行 | 測試誤差在期望上不低於訓練誤差：以 `R(f*)` 夾在中間的兩條不等式，外加樂觀程度 `ω = (2/n)ΣCov(ŷᵢ, yᵢ) = 2dσ²/n`（第 6 章 Cp／AIC 的來源） |
 | PART 07 `biasvar` | 講義 p.28「Proof of the decomposition」 | 偏差–變異拆解：兩層隨機（`Tr` 與 `ε₀`）分清楚，湊 `ε₀` → 交叉項歸零 → 再對 `m = E[f̂(x₀)]` 加減一次 |
+| PART 08 `bayes` | 講義 p.32、34 | Bayes 分類器在 0–1 損失下最佳：條件風險 `1 − p_c(x)` → 逐點取 argmax → 全期望公式推到全域；附損失／最佳解對照表與「Bayes 決策理論 ≠ 貝氏統計」的說明 |
 
 `biasvar` 那條特別交代它與 PART 01 推導的關係：P01 把 `f̂` 固定，這裡把 `Tr` 的隨機性也放進來，
 所以可縮減那一塊才會再裂成偏差² 與變異。兩條證明的 LaTeX 同樣用 module 層 raw string
