@@ -313,5 +313,9 @@ $$P(X_{\rm new}=1\mid s,f)=\int_0^1P(X_{\rm new}=1\mid p)\pi(p\mid s,f)\,dp
 """)
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('s5_bayesian', BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("s5_bayesian", BODIES, PAGEJS)

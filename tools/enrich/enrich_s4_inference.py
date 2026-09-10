@@ -489,5 +489,9 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
 """)
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('s4_inference', BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("s4_inference", BODIES, PAGEJS)

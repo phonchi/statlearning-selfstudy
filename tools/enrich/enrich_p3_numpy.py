@@ -975,4 +975,8 @@ BODIES['bool'] += f"""
 """
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('p3_numpy', BODIES, PAGEJS)
+
 apply("p3_numpy", BODIES, PAGEJS)

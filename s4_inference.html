@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -700,7 +710,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S4 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。計算細節、完整實作與證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -872,7 +882,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <p class="source-note"><strong>Seeing Theory 網頁 · Confidence Interval：</strong>現行網頁有反覆產生信賴區間的視覺；本頁改成已知 σ 的常態模型，並明示有限次涵蓋計數。 <a href="https://seeing-theory.brown.edu/frequentist-inference/index.html" target="_blank" rel="noopener">開啟原始來源</a></p>
 
-<h3>母體標準差未知：t 區間</h3>
+<details class="qa-item reading-detail" id="w24detail-t-interval"><summary>延伸：未知標準差的 t 區間與推導</summary>
+<div class="detail-body"><h3>母體標準差未知：t 區間</h3>
 <p>若 $X_1,\ldots,X_n$ 獨立來自常態母體，而 σ 未知，改以樣本標準差 s 估計。
 當 $n\ge2$、$s&gt;0$，使用 $n-1$ 個自由度的 t 臨界值：</p>
 $$T=\frac{\bar X-\mu}{S/\sqrt n}\sim t_{n-1},\qquad
@@ -888,7 +899,7 @@ $$T=\frac{\bar X-\mu}{S/\sqrt n}\sim t_{n-1},\qquad
 $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
 因此 $Z/\sqrt{U/(n-1)}=(\bar X-\mu)/(S/\sqrt n)$ 服從 t 分布。
 從 $P(-t_{n-1,1-\alpha/2}\le T\le t_{n-1,1-\alpha/2})=1-\alpha$ 解出 μ 的範圍，即得上式。</p>
-</div></details>
+</div></details></div></details>
 </section>
 <section id="testing">
 <!-- GEN:BEGIN sec:testing -->
@@ -904,10 +915,11 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   <p><strong>p 值</strong>（p-value）是在 $H_0$ 成立的前提下，得到目前這麼極端或更極端結果的機率。
   它不是 $H_0$ 為真的機率，也不是「結果純屬偶然」的機率。</p>
 
-  <h3>算一次：單尾與雙尾問的是不同問題</h3>
-  <p>令 $H_0:\mu=50$，已知 $\sigma=10$，$n=25$，觀察到 $\bar x=54.4$，則
+  <h3>用圖看單尾與雙尾</h3>
+  <details class="qa-item reading-detail" id="w24detail-tails-calculation"><summary>完整算例：單尾與雙尾的 p 值</summary>
+<div class="detail-body"><p>令 $H_0:\mu=50$，已知 $\sigma=10$，$n=25$，觀察到 $\bar x=54.4$，則
   $z=(54.4-50)/(10/5)=2.20$。若 $H_A:\mu&gt;50$，右尾 p 值約為 0.0139；
-  若 $H_A:\mu\ne50$，雙尾 p 值約為 0.0278。</p>
+  若 $H_A:\mu\ne50$，雙尾 p 值約為 0.0278。</p></div></details>
 
 <div class="viz-layout" data-provenance="illustrative">
   <div>
@@ -967,7 +979,8 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   <tbody><tr><td>$H_0$ 為真</td><td>正確決策</td><td>型一錯誤；機率由 $α$ 控制</td></tr><tr><td>$H_0$ 不真</td><td>型二錯誤；機率為 $β$</td><td>正確決策；檢定力 $1-β$</td></tr></tbody>
 </table></div>
 
-  <h3>算一次：同一個 5% 檢定的型二錯誤</h3>
+  <details class="qa-item reading-detail" id="w24detail-power-calculation"><summary>完整計算：型二錯誤與檢定力</summary>
+<div class="detail-body"><h3>算一次：同一個 5% 檢定的型二錯誤</h3>
   <p>右尾檢定 $H_0:\mu=50$ 對 $H_A:\mu&gt;50$，已知 $\sigma=10$、$n=25$，取 $\alpha=0.05$。
   拒絕門檻為 $50+1.645(10/5)=53.290$。若真實平均其實是 54，拒絕的機率約為 0.639，
   這是該對立值下的檢定力；型二錯誤機率約為 $1-0.639=0.361$。</p>
@@ -984,14 +997,15 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   </details>
 </div>
 
-<div class="quiz-box">
+
+
+<p class="source-note"><strong>Seeing Theory PDF · Types of Error：</strong>PDF pp. 44–45 定義型一與型二錯誤。本頁將型二錯誤寫成未拒絕 H₀，並將 α 明確寫成條件機率。 <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="44" target="_blank" rel="noopener">開啟原始來源</a></p>
+</div></details><div class="quiz-box">
   <div class="quiz-label">QUIZ · 兩類錯誤</div>
   <p>藥物其實沒有療效，但研究拒絕了「沒有療效」的虛無假設。這是哪種錯誤？</p>
   <div class="quiz-options" id="qErrorsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。H₀ 真的卻被拒絕，是型一錯誤；α 控制的是這個條件機率。" onclick="quizCheck('qErrors', this)"><span class="opt-letter">(A)</span> 型一錯誤</div><div class="quiz-opt" data-correct="false" data-fb="型二錯誤發生在 H₀ 不真，研究卻未能拒絕 H₀。這題的 H₀ 其實為真。" onclick="quizCheck('qErrors', this)"><span class="opt-letter">(B)</span> 型二錯誤</div><div class="quiz-opt" data-correct="false" data-fb="即使程序達到顯著門檻，仍可能在 H₀ 為真時誤拒；這正是型一錯誤。" onclick="quizCheck('qErrors', this)"><span class="opt-letter">(C)</span> 沒有錯誤，因為 p 值小就表示結論正確</div></div>
   <div class="quiz-feedback" id="qErrorsFeedback"></div>
 </div>
-
-<p class="source-note"><strong>Seeing Theory PDF · Types of Error：</strong>PDF pp. 44–45 定義型一與型二錯誤。本頁將型二錯誤寫成未拒絕 H₀，並將 α 明確寫成條件機率。 <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="44" target="_blank" rel="noopener">開啟原始來源</a></p>
 </section>
 <section id="bootstrap">
 <!-- GEN:BEGIN sec:bootstrap -->
@@ -1002,9 +1016,10 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   <p>有些估計量的標準誤很難推公式。自助法（bootstrap）把手上的樣本當成一個暫時母體，
   每次<strong>有放回</strong>抽取同樣多筆，重算估計量。重複很多次後，這些估計量的標準差可用來估標準誤。</p>
 
-  $$\widehat{\operatorname{SE}}_{\mathrm{boot}}(\hat\theta)
+  <details class="qa-item reading-detail" id="w24detail-bootstrap-se"><summary>查公式：由多份重抽結果計算標準誤</summary>
+<div class="detail-body">$$\widehat{\operatorname{SE}}_{\mathrm{boot}}(\hat\theta)
     =\sqrt{\frac{1}{B-1}\sum_{b=1}^B
-    \left(\hat\theta^{*(b)}-\bar{\hat\theta}^*\right)^2}。$$
+    \left(\hat\theta^{*(b)}-\bar{\hat\theta}^*\right)^2}。$$</div></details>
 
   <h3>小例子：看清楚「有放回」</h3>
   <p>原始樣本是 $[2,4,4,8]$，平均為 4.5。五次示意重抽可得到
@@ -1076,9 +1091,10 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>從樣本推論母體速查表 <span class="sec-badge">先備 · S4 統計</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w24-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 4 章。</li></ul></div>
+<details class="qa-item reading-detail" id="w24-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w24-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 4 章。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w24detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>想回答的問題</th><th>工具</th><th>核心讀法</th><th>本頁條件</th></tr></thead>
   <tbody><tr><td>未知參數大約是多少？</td><td>點估計</td><td>$X̄$ 是會隨抽樣改變的估計量</td><td>隨機且具代表性的樣本</td></tr><tr><td>估計量換樣本會變多少？</td><td>標準誤</td><td>$SE(X̄)=σ/√n$</td><td>獨立同分布、有限變異；σ 未知時以 s/√n 估計</td></tr><tr><td>哪些參數值與資料相容？</td><td>信賴區間</td><td>信心水準描述程序的長期涵蓋率</td><td>本頁互動為常態、已知 σ</td></tr><tr><td>資料對基準假設有多不尋常？</td><td>z 檢定與 p 值</td><td>p 值以 H₀ 成立為條件</td><td>常態、獨立、已知 σ</td></tr><tr><td>公式難推時怎麼估 SE？</td><td>Bootstrap</td><td>有放回抽 n 筆，重算 B 次</td><td>樣本須能代表母體；相依資料需改方法</td></tr></tbody>
@@ -1093,6 +1109,7 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   信賴區間元件使用常態母體 μ=50、已知 σ=10、固定種子 240906，每批 20 組且累計上限 400 組；
   z 檢定元件使用同一已知 σ 模型，p 值由共用 <code>HC.stat.pnorm</code> 的 Abramowitz–Stegun 近似計算。
   文中數值另以常態 CDF 與封閉公式核算；有限次模擬的涵蓋率會在設定值附近波動。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1100,12 +1117,13 @@ $U=(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$，且 Z 與 U 獨立。
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡整理本頁依 Seeing Theory 編寫的概念解說中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w24-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -1131,10 +1149,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -1656,13 +1678,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

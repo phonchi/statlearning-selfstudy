@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -703,7 +713,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（ISLP Ch.7｜講義 07）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，正文保留公式、條件與算例；證明預設收合，可按需要展開。來源標記可查原教材。
+  ② <strong>對照來源</strong>：章節旁標示課本章節與講義主題，正文保留公式、條件與算例；計算細節、完整實作與證明預設收合，可按需要展開。來源標記可查原教材。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>進階參考：<cite>The Elements of Statistical Learning</cite>（ESL）。章節旁的來源標記可點到本頁書目。</p>
@@ -758,12 +768,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   「只看附近」兩種不同的想法。最後 §7.7 的 <strong>GAM</strong> 把它們推廣到多個變數。
 </div>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<details class="qa-item reading-detail" id="w08-detail-method-table"><summary>比較各種方法的彈性、邊界與調整參數</summary>
+<div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>方法</th><th>彈性怎麼來的</th><th>由什麼控制</th><th>邊界行為</th><th>一句話</th></tr></thead>
   <tbody><tr><td>多項式</td><td>拉高次數 d</td><td>d（整數）</td><td><span class='worst'>很糟</span>，可能大幅振盪</td><td>最省事，但 d &gt; 4 就別碰</td></tr><tr><td>階梯函數</td><td>多切幾段</td><td>切點數 K</td><td>還可以（常數）</td><td>沒有自然切點就會漏掉趨勢</td></tr><tr><td>立方樣條</td><td>多加節點</td><td>內部節點數 K（df = K+4）</td><td>偏糟，信賴區間可能很寬</td><td>次數固定 3，靠節點取得彈性</td></tr><tr><td>自然樣條</td><td>多加節點</td><td>內部節點數 K（df = K+2）</td><td><span class='best'>好</span>，兩端是直線</td><td>同樣的彈性、更穩的兩端</td></tr><tr><td>平滑樣條</td><td>調 λ</td><td>有效自由度 df<sub>λ</sub>（連續）</td><td>好（兩端線性）</td><td>不必選節點，只要選 λ</td></tr><tr><td>局部迴歸</td><td>調鄰域大小</td><td>跨距 s</td><td>偏糟（單邊資料）</td><td>每次預測都要用到全部資料</td></tr></tbody>
-</table></div>
+</table></div></div></details>
 
-  <p>本章依照上表介紹各種方法，搭配例子與互動觀察擬合結果。
+  <p>本章依照這些路線介紹各種方法，搭配例子與互動觀察擬合結果。
   <strong>先猜結果再按按鈕</strong>，再對照畫面，檢查自己對參數效果的理解。</p>
 
 <div class="quiz-box">
@@ -784,13 +795,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   $$y_i = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \beta_3 x_i^3 + \cdots
     + \beta_d x_i^d + \varepsilon_i \tag{7.1}$$
 
-  <p>係數照樣用最小平方估。但注意：<strong>個別的 $\hat\beta_j$ 沒有解讀價值</strong>。
+  <p>多項式對係數仍是線性的。解讀時看整條擬合曲線：個別係數會隨基底選擇改變，曲線與預測才是這裡的重點。</p><details class="qa-item reading-detail" id="w08-detail-poly-calculation"><summary>深入計算：係數、基底與信賴區間</summary>
+<div class="detail-body"><p>係數照樣用最小平方估。但注意：<strong>個別的 $\hat\beta_j$ 沒有解讀價值</strong>。
   lab 範例 擬合出來的 <code>447.07, −478.32, 125.52, −77.91</code>，
   你沒辦法說「age 的二次項效果是 125.52」。這些數字還取決於用哪一組基底
   （正交多項式 vs 原始冪次，係數完全不同，擬合出來的曲線一模一樣）。
   要看的是<strong>整條擬合曲線</strong>，以及它的信賴區間。</p>
-
-  <p>信賴區間怎麼來的？在某個 $x_0$ 上，擬合值是
+<p>信賴區間怎麼來的？在某個 $x_0$ 上，擬合值是
   $\hat f(x_0) = \hat\beta_0 + \hat\beta_1 x_0 + \cdots + \hat\beta_d x_0^d$。
   令 $\ell_0 = (1, x_0, x_0^2, \ldots, x_0^d)^{\mathsf T}$、$\hat C$ 是 $\hat\beta$ 的
   共變異數矩陣，那麼</p>
@@ -802,7 +813,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>這個公式是整節的關鍵</strong>：$x_0$ 跑到資料邊界時 $x_0^{15}$ 大得離譜，
   乘上共變異數矩陣以後變異就會大幅增加。下面把滑桿推到 15 就看得到。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+</div></details>
+
+  <div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08polySvg" height="300"></svg>
@@ -828,7 +841,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
 </div>
 
-  <h3 id="dx-poly">講義完整實作：四次多項式與它的 t 檢定</h3>
+  <details class="qa-item reading-detail" id="w08-detail-poly-lab"><summary>Python 實作與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-poly">講義完整實作：四次多項式與它的 t 檢定</h3>
 <div class="deck-extra">
   <div class="dx-label">lab 07 · degree 4 多項式（Wage：age → wage）</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -844,7 +858,6 @@ poly(age, degree=4)[3]  -77.9112   39.915   -1.952  0.051</pre></div>
   <p class="dx-note"><code>poly('age', degree=4)</code> 產生的是<strong>正交</strong>多項式基底，所以四個係數彼此不相關，t 檢定可以一個一個讀。最後一項的 p 值 0.051 剛好在邊界上。這就是「三次或四次都合理」的來源。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="14">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
 </div>
-
 <div class="deck-extra">
   <div class="dx-label">lab 07 · 用 ANOVA 逐步比較 degree 1 到 5</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -862,7 +875,6 @@ poly(age, degree=4)[3]  -77.9112   39.915   -1.952  0.051</pre></div>
   <p class="dx-note">第 1 列（線性 vs 二次）p 值 2.4e−32，第 2 列（二次 vs 三次）0.0017，第 3 列（三次 vs 四次）0.051，第 4 列（四次 vs 五次）0.37。<strong>結論：三次或四次夠了，五次沒有必要。</strong>順帶對一下上面那張卡：$(-11.983)^2 = 143.59$ 正好是這裡的 F 統計量（lab 範例 就在算這個）。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="26">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
 </div>
-
 <div class="deck-extra">
   <div class="dx-label">lab 07 · 多項式邏輯斯迴歸：Pr(wage &gt; 250)</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -881,7 +893,12 @@ poly(age, degree=4)[2]  34.1626   19.697   1.734  0.083
 poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   <p class="dx-note">同一套基底換到 GLM 上就得到 ISLP 圖 7.1 右。注意 n = 3000 但高收入者只有 79 人，所以係數的標準誤很大、信賴區間很寬，尤其在 age 大的那一端。<strong>評估樣本數時，也要檢查關鍵事件有多少筆。</strong></p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="33">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
+
+
+
+
+
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 多項式的次數</div>
@@ -890,12 +907,13 @@ poly(age, degree=4)[3] -47.4008   24.105  -1.966  0.049</pre></div>
   <div class="quiz-feedback" id="qDegFeedback"></div>
 </div>
 
-<h3>從 logit 的信賴區間回到機率</h3>
+<details class="qa-item reading-detail" id="w08-detail-logit-ci"><summary>機率的信賴區間：logit 轉換與算例</summary>
+<div class="detail-body"><h3>從 logit 的信賴區間回到機率</h3>
 <p>二元反應仍使用同一組基底 $b(x)$。令 $\eta(x)=b(x)^T\beta$、$p(x)=\{1+e^{-\eta(x)}\}^{-1}$。在固定的 $x_0$，用係數共變異數估計 $\widehat V$ 計算 $s_\eta=\sqrt{b(x_0)^T\widehat Vb(x_0)}$。近似 95% 區間先在 logit 尺度取 $\hat\eta\pm1.96s_\eta$，再把兩端各代入 logistic 函數：</p>
 $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta)}}\right].$$
 <p>例如 $\hat\eta=-2$、$s_\eta=0.5$，估計機率為 $0.1192$，區間約為 $[0.0483,0.2650]$，自然落在 0 與 1 之間，而且不以估計值左右對稱。這是固定 $x_0$ 的平均機率區間；小樣本、稀有事件或完全分離時，常態近似可能失準。</p>
 <details class="qa-item proof" id="w08proof-logit"><summary>證明：線性預測量的變異與區間轉換</summary>
-<div class="qa-a"><p>固定基底向量 $b_0$ 時，$\operatorname{Var}(b_0^T\hat\beta)=b_0^T\operatorname{Cov}(\hat\beta)b_0$。大樣本下以標準常態分位數建立 $\eta_0$ 的區間。因為 logistic 函數嚴格遞增，事件 $L\le\eta_0\le U$ 等價於 $\operatorname{logistic}(L)\le p_0\le\operatorname{logistic}(U)$，因此轉換端點保留同一近似涵蓋率。連續反應的常態線性模型則使用殘差自由度的 $t$ 分位數。</p></div></details>
+<div class="qa-a"><p>固定基底向量 $b_0$ 時，$\operatorname{Var}(b_0^T\hat\beta)=b_0^T\operatorname{Cov}(\hat\beta)b_0$。大樣本下以標準常態分位數建立 $\eta_0$ 的區間。因為 logistic 函數嚴格遞增，事件 $L\le\eta_0\le U$ 等價於 $\operatorname{logistic}(L)\le p_0\le\operatorname{logistic}(U)$，因此轉換端點保留同一近似涵蓋率。連續反應的常態線性模型則使用殘差自由度的 $t$ 分位數。</p></div></details></div></details>
 </section>
 <section id="step">
 <!-- GEN:BEGIN sec:step -->
@@ -907,9 +925,10 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
   影響 20 歲那一段的曲線形狀。階梯函數（step function）換一個想法：
   把 x 的範圍切成幾段，每段各擬合一個常數，段與段之間互不干涉。</p>
 
-  <p>做法是選切點 $c_1, \ldots, c_K$，造出 K+1 個指示變數：</p>
+  <p>選好切點後，每段各給一個常數；只有這個預測變數、以平方損失擬合時，該常數就是段內反應的平均。例如把年齡分成四段，就得到四個段內平均。</p><details class="qa-item reading-detail" id="w08-detail-step-coding"><summary>階梯函數的完整編碼與係數解讀</summary>
+<div class="detail-body"><p>做法是選切點 $c_1, \ldots, c_K$，造出 K+1 個指示變數：</p>
 
-  $$C_0(X) = I(X < c_1),\quad C_k(X) = I(c_k \le X < c_{k+1}),\quad
+  $$C_0(X) = I(X &lt; c_1),\quad C_k(X) = I(c_k \le X &lt; c_{k+1}),\quad
     C_K(X) = I(c_K \le X) \tag{7.4}$$
 
   <p>然後把 $C_1, \ldots, C_K$ 丟進迴歸（$C_0$ 跟截距重複，要丟掉一個）：</p>
@@ -927,7 +946,7 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
   兩種編碼擬合出來的曲線完全一樣。
 </div>
 
-<div class="viz-layout" data-provenance="course-data">
+</div></details><div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08stepSvg" height="330"></svg>
@@ -956,7 +975,8 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
   </div>
 </div>
 
-  <h3 id="dx-step">講義完整實作：<code>pd.qcut</code> 切四段</h3>
+  <details class="qa-item reading-detail" id="w08-detail-step-lab"><summary>Python 實作與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-step">講義完整實作：<code>pd.qcut</code> 切四段</h3>
 <div class="deck-extra">
   <div class="dx-label">lab 07 · 用分位數切點擬合階梯函數</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -971,7 +991,8 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
 (51.0, 80.0]     116.5717    1.559  74.751    0.0</pre></div>
   <p class="dx-note"><code>pd.qcut(age, 4)</code> 自動用 25%／50%／75% 分位數當切點，切出 <code>(17.999, 33.75]</code>、<code>(33.75, 42.0]</code>、<code>(42.0, 51.0]</code>、<code>(51.0, 80.0]</code> 四段。因為 <code>get_dummies()</code> 保留了全部四欄（沒有丟基準組），<strong>四個係數就直接是四段的平均薪水</strong>：94.16、116.66、119.19、116.57。把它們跟上面元件裡的紅線對一下——同一件事。<br>不用分位數就改 <code>pd.cut()</code>（等寬切），lab 範例 有。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="39">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
+
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 階梯函數</div>
@@ -979,7 +1000,8 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
   <div class="quiz-options" id="qStepOptions"><div class="quiz-opt" data-correct="true" data-fb="對。段內的設計矩陣只有一個常數欄，最小平方對常數的解就是平均。所以 lab 範例 的四個係數 94.16／116.66／119.19／116.57 就是四段的平均薪水。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(A)</span> 那一段內所有觀測值的 y 平均</div><div class="quiz-opt" data-correct="false" data-fb="不對。階梯函數段內&lt;strong&gt;沒有斜率&lt;/strong&gt;，各段都取常數；後面介紹的「分段線性」（linear spline）才允許各段有斜率。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(B)</span> 那一段兩個端點上迴歸直線的中點</div><div class="quiz-opt" data-correct="false" data-fb="接近但不對。截距對應&lt;strong&gt;第一段&lt;/strong&gt;的平均；全體平均則納入所有段的資料；各段係數是相對第一段的增量。全體平均只有在各段樣本數相同時才剛好等於各段平均的平均。" onclick="quizCheck('qStep', this)"><span class="opt-letter">(C)</span> 全體樣本平均，加上該段切點對應的偏移量</div></div>
   <div class="quiz-feedback" id="qStepFeedback"></div>
 </div>
-<h3>用切段建立可解讀的交互作用</h3><p>若不同年份的年齡斜率不同，可擬合 $y=\beta_0+\beta_1x+\beta_2I(t\ge2005)+\beta_3xI(t\ge2005)+\varepsilon$。較早年份的截距、斜率是 $(\beta_0,\beta_1)$，較晚年份是 $(\beta_0+\beta_2,\beta_1+\beta_3)$。例如 $(10,2,3,-1)$ 使兩段分別為 $10+2x$ 與 $13+x$。切段可以改變截距，也能讓同一連續變數在不同群中有不同斜率。</p>
+<details class="qa-item reading-detail" id="w08-detail-step-interaction"><summary>延伸：切段後的交互作用</summary>
+<div class="detail-body"><h3>用切段建立可解讀的交互作用</h3><p>若不同年份的年齡斜率不同，可擬合 $y=\beta_0+\beta_1x+\beta_2I(t\ge2005)+\beta_3xI(t\ge2005)+\varepsilon$。較早年份的截距、斜率是 $(\beta_0,\beta_1)$，較晚年份是 $(\beta_0+\beta_2,\beta_1+\beta_3)$。例如 $(10,2,3,-1)$ 使兩段分別為 $10+2x$ 與 $13+x$。切段可以改變截距，也能讓同一連續變數在不同群中有不同斜率。</p></div></details>
 </section>
 <section id="basis">
 <!-- GEN:BEGIN sec:basis -->
@@ -988,7 +1010,7 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
 <!-- GEN:END sec:basis -->
 
   <p>比較前兩節的方法：多項式迴歸用的預測變數是 $x, x^2, x^3, \ldots$；
-  階梯函數用的是 $I(c_1 \le x < c_2), I(c_2 \le x < c_3), \ldots$。
+  階梯函數用的是 $I(c_1 \le x &lt; c_2), I(c_2 \le x &lt; c_3), \ldots$。
   形式不同，但<strong>結構完全一樣</strong>：都是「先把 x 過一組固定函數，再做線性迴歸」。
   ISLP §7.3 把這個結構抽出來叫做<strong>基底函數</strong>（basis function）：</p>
 
@@ -1002,17 +1024,17 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
 <div class="info-box">
   <span class="info-label">幾種常見的基底函數</span>
   <strong>多項式：</strong>$b_j(x) = x^j$<br>
-  <strong>階梯函數：</strong>$b_j(x) = I(c_j \le x < c_{j+1})$<br>
+  <strong>階梯函數：</strong>$b_j(x) = I(c_j \le x &lt; c_{j+1})$<br>
   <strong>立方樣條：</strong>$x, x^2, x^3$ 再加每個節點一個 $(x - \xi_k)^3_+$<br>
   <strong>自然樣條、B-樣條：</strong>同一個函數空間的另外幾組基底<br>
   換基底就換方法，但擬合方法（最小平方）從頭到尾沒換過。
   小波（wavelet）與傅立葉級數也是合法的選擇，只是這一章不講。
 </div>
 
-  <p>下面的元件讓你組合不同基底。左邊每一個核取方塊都是一個基底函數；
+  <details class="qa-item reading-detail" id="w08-detail-basis-sandbox"><summary>操作比較：勾選基底、組合曲線</summary>
+<div class="detail-body"><p>下面的元件讓你組合不同基底。左邊每一個核取方塊都是一個基底函數；
   你選哪幾個，下面就用<strong>那幾個</strong>去擬合。三個預設按鈕分別把選擇切成
   「三次多項式」、「立方樣條」、「階梯函數」。<strong>你會看到它們只是勾選項不同而已</strong>。</p>
-
 <div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
@@ -1037,9 +1059,12 @@ $$\left[\frac1{1+e^{-(\hat\eta-1.96s_\eta)}},\ \frac1{1+e^{-(\hat\eta+1.96s_\eta
       <strong>三次多項式</strong>＝1, x, x², x³（4 個參數）<br><strong>立方樣條</strong>＝上面再加 (x−33.75)³₊、(x−51)³₊（6 個參數＝K+4）<br><strong>階梯函數</strong>＝1, I(x≥33.75), I(x≥51)（3 段，3 個參數）<br>按下去看曲線怎麼變。三種「不同的方法」在程式裡只差幾個勾。
     </div>
   </div>
-</div>
+</div></div></details>
 
-  <h3 id="dx-bs0">講義完整實作：把樣條的次數調成 0，就是階梯函數</h3>
+
+
+  <details class="qa-item reading-detail" id="w08-detail-basis-lab"><summary>Python 實作與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-bs0">講義完整實作：把樣條的次數調成 0，就是階梯函數</h3>
 <div class="deck-extra">
   <div class="dx-label">lab 07 · degree=0 的 B-樣條 ≡ 分段常數</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1055,7 +1080,8 @@ bs(age, df=3, degree=0)[1]  24.8076    2.044  12.137    0.0
 bs(age, df=3, degree=0)[2]  22.7814    2.087  10.917    0.0</pre></div>
   <p class="dx-note">這張卡是上面那個元件的程式版證據。<code>bs('age', df=3, degree=0)</code> 指定 3 個自由度、次數 0，節點就落在同樣的三個分位數上，擬合出來的是<strong>分段常數</strong>。截距 94.158 跟 <code>qcut</code> 版一模一樣（第一段的平均），而 94.158 + 22.349 = 116.507 ≈ 116.611（第二段的平均）——差一點是因為 <code>qcut()</code> 用 ≤ 判斷區間、<code>bs()</code> 用 &lt;，邊界上那幾筆歸屬不同。<strong>同一個模型，不同編碼。</strong></p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="53">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
+
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 基底函數框架</div>
@@ -1069,14 +1095,15 @@ bs(age, df=3, degree=0)[2]  22.7814    2.087  10.917    0.0</pre></div>
   <div class="section-number">PART 04 · 迴歸樣條</div>
   <h2>分段三次多項式，在節點上接得平滑 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.4.1–7.4.3 節</a></span><span class="sec-badge">講義 07</span></h2>
 <!-- GEN:END sec:splines -->
-
+<p>樣條在不同區段使用低次多項式，再於節點上接合。三次樣條要求函數值、一階與二階導數連續，因此能彎曲而不出現斷裂或折角；K 個內部節點、含截距時共有 K＋4 個自由度。</p><details class="qa-item reading-detail" id="w08-detail-spline-calculation"><summary>完整計算：樣條基底、連續性與自由度</summary>
+<div class="detail-body">
   <p>多項式的毛病是全域、次數一高就在邊界暴衝。階梯函數的毛病是段內沒有斜率。
   把兩個想法縫起來：<strong>分段擬合低次多項式</strong>。節點（knot）就是換係數的地方。
   一個節點在 c 的分段三次多項式長這樣：</p>
 
   $$y_i = \begin{cases}
     \beta_{01} + \beta_{11} x_i + \beta_{21} x_i^2 + \beta_{31} x_i^3 + \varepsilon_i
-      & x_i < c \\
+      & x_i &lt; c \\
     \beta_{02} + \beta_{12} x_i + \beta_{22} x_i^2 + \beta_{32} x_i^3 + \varepsilon_i
       & x_i \ge c
   \end{cases} \tag{7.8}$$
@@ -1094,7 +1121,26 @@ bs(age, df=3, degree=0)[2]  22.7814    2.087  10.917    0.0</pre></div>
   d 次樣條的定義是：分段 d 次多項式，且導數連續到 d − 1 階。
   所以線性樣條只要求函數連續（圖 7.3 右下），而 §7.2 的階梯函數就是 0 次樣條。</p>
 
-<div class="viz-layout" data-provenance="course-data">
+
+<p>那要怎麼真的把約束擬合進去？不必解限制式最小平方——<strong>換基底就好</strong>。
+  從三次多項式的基底 $x, x^2, x^3$ 出發，每個節點加一個<strong>截斷冪基底</strong>
+  （truncated power basis）函數：</p>
+
+  $$h(x, \xi) = (x - \xi)^3_+ = \begin{cases} (x-\xi)^3 & x > \xi \\
+    0 & \text{否則} \end{cases} \tag{7.10}$$
+
+  <p>加上 $\beta_4 h(x, \xi)$ 只會讓<strong>三階</strong>導數在 ξ 跳（跳 $6\beta_4$），
+  函數值、一階、二階導數都保持連續。所以 K 個內部節點的立方樣條就是對
+  $X, X^2, X^3, h(X,\xi_1), \ldots, h(X,\xi_K)$ 做普通的最小平方，
+  K + 4 個係數；這裡 K 一律指內部節點數。這就是 (7.9)。</p>
+
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>約束</th><th>自由度（單節點）</th><th>圖 7.3 的位置</th><th>長相</th></tr></thead>
+  <tbody><tr><td>都不加（分段三次）</td><td>8</td><td>左上</td><td>在節點上不連續</td></tr><tr><td>函數值連續</td><td>7</td><td>右上</td><td>接上了，但是 V 字折角</td></tr><tr><td>＋一階導數連續</td><td>6</td><td>（書上沒單獨畫）</td><td>折角消失</td></tr><tr><td>＋二階導數連續 ＝ <strong>立方樣條</strong></td><td><span class='best'>5 = K+4</span></td><td>左下</td><td>看起來完全平滑</td></tr><tr><td>線性樣條（只要求連續）</td><td>3 = K+2</td><td>右下</td><td>折線</td></tr></tbody>
+</table></div>
+<h3>一次樣條與一般次數</h3><p>令內部節點為 $\xi_1&lt;\cdots&lt;\xi_K$。連續分段直線可寫成 $f(x)=\beta_0+\beta_1x+\sum_{k=1}^K\theta_k(x-\xi_k)_+$；通過節點 $\xi_k$ 後，斜率增加 $\theta_k$。例如 $f(x)=1+2x-3(x-2)_+$ 在 $x\le2$ 是 $1+2x$，在 $x>2$ 是 $7-x$；兩側在節點都等於 5，斜率由 2 改為 −1。一般 degree-$d$ 樣條要求到 $d-1$ 階導數連續，基底為 $1,x,\ldots,x^d,(x-\xi_1)_+^d,\ldots,(x-\xi_K)_+^d$，空間維度為 $K+d+1$。</p><details class="qa-item proof" id="w08proof-spline-dimension"><summary>證明：樣條的維度與連續性</summary>
+<div class="qa-a"><p>$K+1$ 段各有 $d+1$ 個係數，共 $(K+1)(d+1)$ 個。每個內部節點要求函數值與前 $d-1$ 階導數一致，提供 $d$ 個獨立線性條件，所以剩下 $(K+1)(d+1)-Kd=K+d+1$。截斷冪 $(x-\xi)_+^d$ 在節點兩側到 $d-1$ 階導數都接為 0，而第 $d$ 階可以改變，故滿足這些條件；基底彼此獨立且數量相符，便張成整個空間。</p></div></details></div></details><div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w08knotSvg" height="340"></svg>
@@ -1119,26 +1165,15 @@ bs(age, df=3, degree=0)[2]  22.7814    2.087  10.917    0.0</pre></div>
   </div>
 </div>
 
-  <p>那要怎麼真的把約束擬合進去？不必解限制式最小平方——<strong>換基底就好</strong>。
-  從三次多項式的基底 $x, x^2, x^3$ 出發，每個節點加一個<strong>截斷冪基底</strong>
-  （truncated power basis）函數：</p>
-
-  $$h(x, \xi) = (x - \xi)^3_+ = \begin{cases} (x-\xi)^3 & x > \xi \\
-    0 & \text{否則} \end{cases} \tag{7.10}$$
-
-  <p>加上 $\beta_4 h(x, \xi)$ 只會讓<strong>三階</strong>導數在 ξ 跳（跳 $6\beta_4$），
-  函數值、一階、二階導數都保持連續。所以 K 個內部節點的立方樣條就是對
-  $X, X^2, X^3, h(X,\xi_1), \ldots, h(X,\xi_K)$ 做普通的最小平方，
-  K + 4 個係數；這裡 K 一律指內部節點數。這就是 (7.9)。</p>
-
-<div class="qa-box">
+  <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：為什麼三次樣條剛好要求到<strong>二階</strong>導數連續？多一階或少一階會怎樣？</summary>
     <div class="qa-a"><p>先看少一階。只要求函數值與一階導數連續，二階導數可以跳——二階導數是「斜率變化的速度」，也就是曲率。曲率突然改變，人眼看得出來：曲線在節點附近會有一個「彈一下」的感覺。所以只到一階不夠。</p><p>再看多一階。三次多項式的三階導數是常數 $6d$；如果連三階導數也要求連續，那 $d$ 在節點兩側必須相同，二階導數又是 $2c + 6dx$，連續加上 $d$ 相同就迫使 $c$ 也相同…一路推下去，<strong>兩段會退化成同一個三次多項式</strong>——節點等於不存在，整條曲線變回全域三次多項式，彈性全部消失。所以三次的極限就是二階。</p><p>這也是「d 次樣條＝分段 d 次多項式 + 導數連續到 d−1 階」這個定義的來源：d−1 階是<strong>還能留下彈性的最高要求</strong>。書上還補了一句很實用的話：三階導數的不連續人眼幾乎偵測不到，所以立方樣條「看起來」就是平滑的。這就是為什麼實務上 degree 3 幾乎是唯一的選擇，更高次只是多花自由度，看起來沒有更平滑。</p></div>
   </details>
 </div>
 
-  <h3 id="dx-bs">講義完整實作：<code>BSpline</code> 與 <code>bs()</code></h3>
+  <details class="qa-item reading-detail" id="w08-detail-splines-lab"><summary>Python 實作與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-bs">講義完整實作：<code>BSpline</code> 與 <code>bs()</code></h3>
 <div class="deck-extra">
   <div class="dx-label">lab 07 · 三個內部節點的立方樣條</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1161,7 +1196,6 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
   <p class="dx-note"><code>BSpline(internal_knots=[25,40,60], intercept=True)</code> 給出 <strong>7 欄</strong>＝K + 4 = 3 + 4，正好是理論值。<code>bs()</code> 預設 <code>intercept=False</code>，所以會丟掉一個基底函數讓模型自己的截距去頂，摘要裡只剩 6 個 <code>bs(age)[j]</code> 加一個 <code>intercept</code>——加起來還是 7 個參數。<br>這裡使用 <strong>B-樣條</strong>基底；上面介紹的是截斷冪基底。兩者張出<strong>同一個函數空間</strong>，擬合出來的曲線一模一樣，但 B-樣條的設計矩陣是帶狀的（每列只有 degree + 1 個非零元素），條件數低得多。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="44,46">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
 </div>
-
 <div class="deck-extra">
   <div class="dx-label">lab 07 · 用 df 代替節點位置</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1169,12 +1203,12 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([33.75, 42.  , 51.  ])</pre></div>
   <p class="dx-note">要求 6 個自由度（<code>df=6</code>），轉換器就自己把 3 個節點放在 <strong>33.75、42.0、51.0</strong>——正好是 <code>age</code> 的 25%、50%、75% 分位數。6 = K + 3（不含截距）。<strong>實務上就是這樣用的：給 df，讓軟體放節點。</strong>上面那個基底積木元件的兩個節點 33.75 與 51 就是從這裡抄來的。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="51">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>約束</th><th>自由度（單節點）</th><th>圖 7.3 的位置</th><th>長相</th></tr></thead>
-  <tbody><tr><td>都不加（分段三次）</td><td>8</td><td>左上</td><td>在節點上不連續</td></tr><tr><td>函數值連續</td><td>7</td><td>右上</td><td>接上了，但是 V 字折角</td></tr><tr><td>＋一階導數連續</td><td>6</td><td>（書上沒單獨畫）</td><td>折角消失</td></tr><tr><td>＋二階導數連續 ＝ <strong>立方樣條</strong></td><td><span class='best'>5 = K+4</span></td><td>左下</td><td>看起來完全平滑</td></tr><tr><td>線性樣條（只要求連續）</td><td>3 = K+2</td><td>右下</td><td>折線</td></tr></tbody>
-</table></div>
+
+
+
+
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 樣條的自由度</div>
@@ -1182,8 +1216,6 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
   <div class="quiz-options" id="qSplOptions"><div class="quiz-opt" data-correct="true" data-fb="對。從 x, x², x³ 的 3 個，加截距 1 個，再加 5 個截斷冪基底項 (x−ξₖ)³₊，總共 9。等價的說法：6 段 × 4 個參數 − 5 個節點 × 3 個約束 = 24 − 15 = 9。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(A)</span> 9 個（K + 4 = 5 + 4）</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;完全不加約束&lt;/strong&gt;的分段三次多項式的自由度。加上「連續 + 一階 + 二階導數連續」共 5 × 3 = 15 個約束後，剩下 9 個。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(B)</span> 24 個（6 段各 4 個參數）</div><div class="quiz-opt" data-correct="false" data-fb="不對。節點數只決定&lt;strong&gt;額外&lt;/strong&gt;的彈性；基礎的三次多項式本身就要 4 個參數（含截距）。計入基礎參數後，df = K + 4；只算 K 會漏掉基礎參數。" onclick="quizCheck('qSpl', this)"><span class="opt-letter">(C)</span> 5 個（節點數就是自由度）</div></div>
   <div class="quiz-feedback" id="qSplFeedback"></div>
 </div>
-<h3>一次樣條與一般次數</h3><p>令內部節點為 $\xi_1<\cdots<\xi_K$。連續分段直線可寫成 $f(x)=\beta_0+\beta_1x+\sum_{k=1}^K\theta_k(x-\xi_k)_+$；通過節點 $\xi_k$ 後，斜率增加 $\theta_k$。例如 $f(x)=1+2x-3(x-2)_+$ 在 $x\le2$ 是 $1+2x$，在 $x>2$ 是 $7-x$；兩側在節點都等於 5，斜率由 2 改為 −1。一般 degree-$d$ 樣條要求到 $d-1$ 階導數連續，基底為 $1,x,\ldots,x^d,(x-\xi_1)_+^d,\ldots,(x-\xi_K)_+^d$，空間維度為 $K+d+1$。</p><details class="qa-item proof" id="w08proof-spline-dimension"><summary>證明：樣條的維度與連續性</summary>
-<div class="qa-a"><p>$K+1$ 段各有 $d+1$ 個係數，共 $(K+1)(d+1)$ 個。每個內部節點要求函數值與前 $d-1$ 階導數一致，提供 $d$ 個獨立線性條件，所以剩下 $(K+1)(d+1)-Kd=K+d+1$。截斷冪 $(x-\xi)_+^d$ 在節點兩側到 $d-1$ 階導數都接為 0，而第 $d$ 階可以改變，故滿足這些條件；基底彼此獨立且數量相符，便張成整個空間。</p></div></details>
 </section>
 <section id="natural">
 <!-- GEN:BEGIN sec:natural -->
@@ -1239,7 +1271,8 @@ bs(age, internal_knots=[25, 40, 60])[5]  16.6061   19.126  0.868  0.385</pre></d
   </details>
 </div>
 
-  <h3 id="dx-ns">講義完整實作：<code>ns()</code> 擬合自然樣條</h3>
+  <details class="qa-item reading-detail" id="w08-detail-natural-lab"><summary>Python 實作與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-ns">講義完整實作：<code>ns()</code> 擬合自然樣條</h3>
 <div class="deck-extra">
   <div class="dx-label">lab 07 · 五個自由度的自然樣條</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1255,7 +1288,8 @@ ns(age, df=5)[3]  83.2036   11.918   6.982  0.000
 ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <p class="dx-note"><code>ns('age', df=5)</code>：5 個自由度（不含截距），節點由分位數自動決定。跟前一節 <code>bs()</code> 的摘要對比一下——<strong>係數的標準誤明顯小很多</strong>（4.7～11.9 對上 9.6～19.1）。這是加入邊界線性約束後的結果。<br>這裡的 <code>df</code> 是軟體要求的樣條基底欄數；理論計數則固定 K 為內部節點數、含截距，從立方樣條 K + 4 扣掉兩個端點的二階導數條件，得到 K + 2。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="56">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
+
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 自然樣條</div>
@@ -1264,13 +1298,14 @@ ns(age, df=5)[4]   6.8770    9.484   0.725  0.468</pre></div>
   <div class="quiz-feedback" id="qNatFeedback"></div>
 </div>
 
-<h3>自然樣條與 B-spline 基底</h3><p>給定有序節點 $\xi_1<\cdots<\xi_K$，可令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。自然立方樣條的一組基底為 $1,x,d_k(x)-d_{K-1}(x)$（$k=1,\ldots,K-2$）；相減消去邊界外的二次、三次項，使兩端保持線性。這裡的 $\xi_1,\xi_K$ 是邊界節點，計數時不可與只算內部節點的記號混用。</p><p>截斷冪基底方便看連續性，但高次冪容易造成數值問題。B-spline 用只在一段節點範圍非零的局部支撐基底，表示相同的樣條空間，通常更適合計算。更換基底不等於更換模型；需保持次數、節點、邊界條件與截距設定一致。</p>
+<details class="qa-item reading-detail" id="w08-detail-natural-basis"><summary>深入基底：自然樣條與 B-spline 的計算</summary>
+<div class="detail-body"><h3>自然樣條與 B-spline 基底</h3><p>給定有序節點 $\xi_1&lt;\cdots&lt;\xi_K$，可令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。自然立方樣條的一組基底為 $1,x,d_k(x)-d_{K-1}(x)$（$k=1,\ldots,K-2$）；相減消去邊界外的二次、三次項，使兩端保持線性。這裡的 $\xi_1,\xi_K$ 是邊界節點，計數時不可與只算內部節點的記號混用。</p><p>截斷冪基底方便看連續性，但高次冪容易造成數值問題。B-spline 用只在一段節點範圍非零的局部支撐基底，表示相同的樣條空間，通常更適合計算。更換基底不等於更換模型；需保持次數、節點、邊界條件與截距設定一致。</p>
 
 <h3>實際計算 B-spline 基底</h3><p>取非遞減節點序列 $t_i$，degree 為 $d$。零次基底是區間指示函數，高次基底用下面的 Cox–de Boor 遞迴計算：</p>
-$$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i,d-1}(x)+\frac{t_{i+d+1}-x}{t_{i+d+1}-t_{i+1}}B_{i+1,d-1}(x).$$
+$$B_{i,0}(x)=I(t_i\le x&lt;t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i,d-1}(x)+\frac{t_{i+d+1}-x}{t_{i+d+1}-t_{i+1}}B_{i+1,d-1}(x).$$
 <p>某項分母為 0 時把該整項定為 0。基底只在 $[t_i,t_{i+d+1}]$ 可能非零；端點重複 $d+1$ 次的 clamped 設定須把最右端點另按連續極限納入。相同次數與節點下，B-spline 與截斷冪張成相同空間，實作時仍須另加自然邊界限制才成為自然樣條。</p><p>用節點 $(0,1,2)$，一次基底 $B_{0,1}$ 在 $[0,1)$ 等於 $x$，在 $[1,2)$ 等於 $2-x$，其餘為 0；在 $x=0.5,1,1.5$ 的值分別是 $0.5,1,0.5$。它只影響局部區間，容易看出設計矩陣為何稀疏。</p><p>自然樣條則固定兩個邊界節點，內部 $K$ 個節點給 $K+2$ 維空間。前面的 $d_k-d_{K-1}$ 基底採「連兩端共 $K$ 個節點」記號，因而有 $K$ 個基底。兩套記號不能把同一個 $K$ 直接互換。</p><p>來源：<a href="https://www.hds.utc.fr/~tdenoeux/dokuwiki/_media/en/splines.pdf" target="_blank" rel="noopener">UTC：樣條與加法模型講義</a>、ESL 第 5 章。</p>
 <details class="qa-item proof" id="w08proof-natural"><summary>證明：自然基底為何在邊界外線性</summary>
-<div class="qa-a"><p>令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。在 $x<\xi_1$，所有截斷冪為 0。在 $x>\xi_K$，展開得 $d_k(x)=3x^2-3(\xi_k+\xi_K)x+(\xi_k^2+\xi_k\xi_K+\xi_K^2)$。因此 $d_k-d_{K-1}$ 的二次項抵消，剩下一次函數。各基底原本已在節點具有二階連續性，故線性尾端的二階導數 0 與內部相接，滿足自然邊界條件。</p></div></details>
+<div class="qa-a"><p>令 $d_k(x)=\{(x-\xi_k)_+^3-(x-\xi_K)_+^3\}/(\xi_K-\xi_k)$。在 $x&lt;\xi_1$，所有截斷冪為 0。在 $x>\xi_K$，展開得 $d_k(x)=3x^2-3(\xi_k+\xi_K)x+(\xi_k^2+\xi_k\xi_K+\xi_K^2)$。因此 $d_k-d_{K-1}$ 的二次項抵消，剩下一次函數。各基底原本已在節點具有二階連續性，故線性尾端的二階導數 0 與內部相接，滿足自然邊界條件。</p></div></details></div></details>
 </section>
 <section id="smooth">
 <!-- GEN:BEGIN sec:smooth -->
@@ -1305,7 +1340,8 @@ $$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i
   但它不等於「拿全部 x 當節點去擬合自然樣條」。在相異設計點上不加懲罰會插值，因而容易過度擬合；
   它是那個自然樣條的<strong>收縮版</strong>，收縮的程度由 λ 決定。</p>
 
-  <p>既然每個點都是節點，名目上有 n 個參數。所以我們不用「參數個數」描述它的彈性，
+  <details class="qa-item reading-detail" id="w08-detail-smoothing-df"><summary>有效自由度與留一法的完整公式</summary>
+<div class="detail-body"><p>既然每個點都是節點，名目上有 n 個參數。所以我們不用「參數個數」描述它的彈性，
   改用<strong>有效自由度</strong>（effective degrees of freedom）。把擬合值寫成</p>
 
   $$\hat g_\lambda = S_\lambda \, y, \qquad
@@ -1323,7 +1359,7 @@ $$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i
     = \sum_{i=1}^{n} \left[\frac{y_i - \hat g_\lambda(x_i)}
     {1 - \{S_\lambda\}_{ii}}\right]^2$$
 
-<div class="viz-layout" data-provenance="course-data">
+</div></details><div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w08lamChart"></canvas>
@@ -1357,7 +1393,8 @@ $$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i
   </details>
 </div>
 
-  <h3 id="dx-lam">講義完整實作：用 df 反解 λ</h3>
+  <details class="qa-item reading-detail" id="w08-detail-smooth-lab"><summary>Python 實作與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-lam">講義完整實作：用 df 反解 λ</h3>
 <div class="deck-extra">
   <div class="dx-label">lab 07 · approx_lam：指定自由度，反解懲罰參數</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1368,7 +1405,8 @@ $$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(4.000000100000307)</pre></div>
   <p class="dx-note"><code>approx_lam(X_age, age_term, 4)</code> 找出「讓有效自由度等於 4」的那個 λ，回代驗算得到 <code>4.000000100000307</code>。注意 lab 的說明：<strong>這個 df 包含平滑樣條那個沒有被懲罰的截距與線性項，所以下限是 2</strong>。這正好對上課本「λ → ∞ 時 df 降到 2」。所以 lab 範例 畫圖時用 <code>approx_lam(..., df+1)</code>，標籤上的 <code>df=1</code> 其實就是直線擬合。<br>上面元件的滑桿刻度用的是 <code>degrees_of_freedom()</code> 的定義（含截距），所以最左邊標為 2，0 未列入這個範圍。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="71">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
+
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 平滑樣條的懲罰</div>
@@ -1377,7 +1415,8 @@ $$B_{i,0}(x)=I(t_i\le x<t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B_{i
   <div class="quiz-feedback" id="qLamFeedback"></div>
 </div>
 
-<h3>平滑矩陣與邏輯斯平滑</h3><p>以基底矩陣 $B$ 表示 $f$，令 $\Omega_{jk}=\int b_j''(t)b_k''(t)\,dt$，則 $\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty$，擬合值為 $\hat y=S_\lambda y$，其中 $S_\lambda=B(B^TB+\lambda\Omega)^{-1}B^T$。係數與擬合值維度不同，不能把 $S_\lambda y$ 寫成係數。有效自由度為 $\operatorname{tr}(S_\lambda)$；懲罰矩陣取單位矩陣時與 Ridge 形式相同。</p><p>二元反應可將 $g(x)$ 放入 logit，最大化 $\sum_i\{y_i g(x_i)-\log(1+e^{g(x_i)})\}-\frac\lambda2\int g''(t)^2dt$。此時使用懲罰的 Newton 或迭代加權最小平方更新，預測機率為 $1/(1+e^{-g(x)})$；不能直接以連續薪資的最小平方法取代。</p>
+<details class="qa-item reading-detail" id="w08-detail-smoothing-computation"><summary>深入計算：平滑矩陣、交叉驗證與 IRLS</summary>
+<div class="detail-body"><h3>平滑矩陣與邏輯斯平滑</h3><p>以基底矩陣 $B$ 表示 $f$，令 $\Omega_{jk}=\int b_j''(t)b_k''(t)\,dt$，則 $\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty$，擬合值為 $\hat y=S_\lambda y$，其中 $S_\lambda=B(B^TB+\lambda\Omega)^{-1}B^T$。係數與擬合值維度不同，不能把 $S_\lambda y$ 寫成係數。有效自由度為 $\operatorname{tr}(S_\lambda)$；懲罰矩陣取單位矩陣時與 Ridge 形式相同。</p><p>二元反應可將 $g(x)$ 放入 logit，最大化 $\sum_i\{y_i g(x_i)-\log(1+e^{g(x_i)})\}-\frac\lambda2\int g''(t)^2dt$。此時使用懲罰的 Newton 或迭代加權最小平方更新，預測機率為 $1/(1+e^{-g(x)})$；不能直接以連續薪資的最小平方法取代。</p>
 
 <h3>由曲率懲罰到可計算的線性系統</h3><p>寫 $g(x)=\sum_j\beta_jb_j(x)$、$B_{ij}=b_j(x_i)$、$\Omega_{jk}=\int b_j''b_k''$，最小化 $\|y-B\beta\|^2+\lambda\beta^T\Omega\beta$。當 $B^TB+\lambda\Omega$ 可逆時，係數與擬合值分別是</p>
 $$\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty,\qquad\hat y=B\hat\beta=S_\lambda y.$$
@@ -1393,7 +1432,7 @@ $$\operatorname{GCV}(\lambda)=\frac{\|y-S_\lambda y\|^2/n}{\{1-\operatorname{tr}
 $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
 <p>這就是懲罰的迭代加權最小平方（IRLS）。例如一筆 $y=1$、目前 $\eta=0$，則 $p=1/2$、權重為 $1/4$、工作反應為 2；它推動新的線性預測量上升。若更新使目標變差，可縮短步長；接近 0 或 1 的機率會使 $W$ 很小，須處理分離、可識別性與數值穩定性。</p>
 <details class="qa-item proof" id="w08proof-irls"><summary>證明：懲罰 logistic 的 Newton 更新</summary>
-<div class="qa-a"><p>負對數概似 $\ell(\beta)=\sum_i\{\log(1+e^{b_i^T\beta})-y_ib_i^T\beta\}+\lambda\beta^T\Omega\beta/2$ 的梯度為 $B^T(p-y)+\lambda\Omega\beta$，Hessian 為 $B^TWB+\lambda\Omega$。Newton 步為 $\beta_{\rm new}=\beta-(B^TWB+\lambda\Omega)^{-1}\{B^T(p-y)+\lambda\Omega\beta\}$。兩邊乘上 Hessian，代入 $Wz=WB\beta+y-p$，便得到正文的 IRLS 線性系統。</p></div></details>
+<div class="qa-a"><p>負對數概似 $\ell(\beta)=\sum_i\{\log(1+e^{b_i^T\beta})-y_ib_i^T\beta\}+\lambda\beta^T\Omega\beta/2$ 的梯度為 $B^T(p-y)+\lambda\Omega\beta$，Hessian 為 $B^TWB+\lambda\Omega$。Newton 步為 $\beta_{\rm new}=\beta-(B^TWB+\lambda\Omega)^{-1}\{B^T(p-y)+\lambda\Omega\beta\}$。兩邊乘上 Hessian，代入 $Wz=WB\beta+y-p$，便得到正文的 IRLS 線性系統。</p></div></details></div></details>
 </section>
 <section id="loess">
 <!-- GEN:BEGIN sec:loess -->
@@ -1401,7 +1440,8 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   <h2>只看附近的點，加權配一條線 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7.6 節</a></span><span class="sec-badge">講義 07</span></h2>
 <!-- GEN:END sec:loess -->
 
-<div class="viz-layout" data-provenance="course-data">
+<details class="qa-item reading-detail" id="w08-detail-lowess-lab-plot"><summary>課程 LOWESS、跨距與實作差異</summary>
+<div class="detail-body"><div class="viz-layout" data-provenance="course-data">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w08lowessLab"></canvas>
@@ -1419,6 +1459,15 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
     </div>
   </div>
 </div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>span s</th><th>鄰域</th><th>曲線</th><th>ISLP 圖 7.10 標的有效自由度</th></tr></thead>
+  <tbody><tr><td>0.2</td><td>20% 的資料</td><td>抖，跟著局部起伏</td><td>16.4</td></tr><tr><td>0.7</td><td>70% 的資料</td><td>平滑</td><td>5.3</td></tr><tr><td>1.0</td><td>全部資料，仍按距離加權</td><td>通常更平滑，但不一定是直線</td><td>不一定等於 2</td></tr></tbody>
+</table></div>
+<p style="font-size:.82rem;color:var(--muted);">上表的 16.4 與 5.3 取自 ISLP 圖 7.10 的圖例
+  （<code>Wage</code>，局部線性）。lab 範例 畫的是 span 0.2 與 0.5。
+  <strong>注意上面元件是瀏覽器即時算的 tricube 加權最小平方，不含 <code>lowess()</code>
+  的穩健疊代（robustifying iterations），所以數字不會跟 lab 完全對上。
+  可用它觀察局部擬合的機制；套件輸出請對照 lab。</strong></p></div></details>
 
   <p>再換一個想法。前面所有方法都在擬合一個<strong>全域</strong>的函數形式
   （就算是分段的，段的邊界也是事先定死的）。局部迴歸（local regression）說：
@@ -1474,17 +1523,11 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   </div>
 </div>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>span s</th><th>鄰域</th><th>曲線</th><th>ISLP 圖 7.10 標的有效自由度</th></tr></thead>
-  <tbody><tr><td>0.2</td><td>20% 的資料</td><td>抖，跟著局部起伏</td><td>16.4</td></tr><tr><td>0.7</td><td>70% 的資料</td><td>平滑</td><td>5.3</td></tr><tr><td>1.0</td><td>全部資料，仍按距離加權</td><td>通常更平滑，但不一定是直線</td><td>不一定等於 2</td></tr></tbody>
-</table></div>
-  <p style="font-size:.82rem;color:var(--muted);">上表的 16.4 與 5.3 取自 ISLP 圖 7.10 的圖例
-  （<code>Wage</code>，局部線性）。lab 範例 畫的是 span 0.2 與 0.5。
-  <strong>注意上面元件是瀏覽器即時算的 tricube 加權最小平方，不含 <code>lowess()</code>
-  的穩健疊代（robustifying iterations），所以數字不會跟 lab 完全對上。
-  可用它觀察局部擬合的機制；套件輸出請對照 lab。</strong></p>
 
-  <h3 id="dx-low">講義完整實作：<code>statsmodels</code> 的 <code>lowess()</code></h3>
+  
+
+  <details class="qa-item reading-detail" id="w08-detail-loess-lab"><summary>Python 實作與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-low">講義完整實作：<code>statsmodels</code> 的 <code>lowess()</code></h3>
 <div class="deck-extra">
   <div class="dx-label">lab 07 · 兩個 span 的局部線性迴歸</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1505,7 +1548,8 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   <span class="line">ax.legend(title=<span class="str">&#x27;span&#x27;</span>, fontsize=<span class="num">15</span>);</span></div>
   <p class="dx-note"><code>frac=span</code> 就是跨距，<code>xvals=age_grid</code> 指定要在哪些點求擬合值。lab 用 0.2 與 0.5，畫出來 0.5 明顯比 0.2 平滑。<br>這一格保存的是圖，閱讀時可對照上面的曲線與原始 lab。<br>另外注意 lab 的註解：<strong><code>pygam</code> 不支援把局部迴歸當成 GAM 的項</strong>，有些 GAM 實作（例如 R 的 <code>gam</code>）可以。</p>
   <span class="dx-src" data-lab-ch="7" data-lab-cells="124,125">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
+
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · 局部迴歸</div>
@@ -1513,7 +1557,8 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   <div class="quiz-options" id="qLoOptions"><div class="quiz-opt" data-correct="true" data-fb="對。每換一個 x₀，權重 $K_{i0}$ 全部都變，要重新擬合一次加權迴歸。這跟最近鄰法是同一種性質——模型「就是」資料本身。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(A)</span> 因為每算一次預測都要重新用到全部訓練資料，沒有一組固定的係數可以存起來</div><div class="quiz-opt" data-correct="false" data-fb="預先查表無法涵蓋所有新位置。新的 x₀ 可以落在任何地方，都要重新擬合。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(B)</span> 因為它把每個訓練點的預測值先算好存起來，查表時直接取用</div><div class="quiz-opt" data-correct="false" data-fb="不對，那是&lt;strong&gt;迴歸樣條&lt;/strong&gt;的性質（而且樣條擬合完之後只要留 K + 4 個係數就好）。局部迴歸以目標點周圍的資料擬合，沒有固定節點。" onclick="quizCheck('qLo', this)"><span class="opt-letter">(C)</span> 因為它需要記住每個節點的位置與對應的係數</div></div>
   <div class="quiz-feedback" id="qLoFeedback"></div>
 </div>
-<h3>局部加權擬合的一次計算</h3><p>用中心化的局部設計向量 $b_i=(1,x_i-x_0)^T$，令 $W_0=\operatorname{diag}(K_{i0})$。當 $B_0^TW_0B_0$ 可逆，$\hat\beta=(B_0^TW_0B_0)^{-1}B_0^TW_0y$，而 $\hat f(x_0)=\hat\beta_0$。常用 tricube 權重 $K(u)=(1-|u|^3)^3I(|u|<1)$，其中 $u=(x_i-x_0)/h(x_0)$；$h(x_0)$ 可由第 $k$ 近鄰決定。</p><p>例如 $x=(-1,0,1)$、$y=(1,2,4)$、$x_0=0$、示意權重 $(1/2,1,1/2)$，加權設計矩陣的交叉項為 0，得到截距 $2.25$、斜率 $1.5$，故中心的預測為 $2.25$。權重不是觀測誤差精確變異數的倒數，推論不能無條件照搬一般 WLS。</p><p>多變數時可在 $(x_1,x_2)$ 的鄰域擬合局部平面，但維度增加後鄰居會稀疏。變係數模型則讓部分係數隨時間變化，例如 $E(Y\mid x,t)=\beta_0(t)+\beta_1(t)x$；在目標時間附近擬合，對 $x$ 維持線性解讀。</p>
+<details class="qa-item reading-detail" id="w08-detail-local-calculation"><summary>局部加權擬合的算例與多變數延伸</summary>
+<div class="detail-body"><h3>局部加權擬合的一次計算</h3><p>用中心化的局部設計向量 $b_i=(1,x_i-x_0)^T$，令 $W_0=\operatorname{diag}(K_{i0})$。當 $B_0^TW_0B_0$ 可逆，$\hat\beta=(B_0^TW_0B_0)^{-1}B_0^TW_0y$，而 $\hat f(x_0)=\hat\beta_0$。常用 tricube 權重 $K(u)=(1-|u|^3)^3I(|u|&lt;1)$，其中 $u=(x_i-x_0)/h(x_0)$；$h(x_0)$ 可由第 $k$ 近鄰決定。</p><p>例如 $x=(-1,0,1)$、$y=(1,2,4)$、$x_0=0$、示意權重 $(1/2,1,1/2)$，加權設計矩陣的交叉項為 0，得到截距 $2.25$、斜率 $1.5$，故中心的預測為 $2.25$。權重不是觀測誤差精確變異數的倒數，推論不能無條件照搬一般 WLS。</p><p>多變數時可在 $(x_1,x_2)$ 的鄰域擬合局部平面，但維度增加後鄰居會稀疏。變係數模型則讓部分係數隨時間變化，例如 $E(Y\mid x,t)=\beta_0(t)+\beta_1(t)x$；在目標時間附近擬合，對 $x$ 維持線性解讀。</p></div></details>
 </section>
 <section id="gam">
 <!-- GEN:BEGIN sec:gam -->
@@ -1537,13 +1582,76 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   $$\mathrm{wage} = \beta_0 + f_1(\mathrm{year}) + f_2(\mathrm{age})
     + f_3(\mathrm{education}) + \varepsilon \tag{7.16}$$
 
-  <p>其中 education 是類別變數，$f_3$ 就是「每個層級一個常數」（虛擬變數）。
+  <p>例如年齡與年份各用一條平滑曲線，學歷則用每個水準的一個效果；三者的貢獻相加得到薪資預測。</p><details class="qa-item reading-detail" id="w08-detail-gam-lab"><summary>GAM 模型規格、Python 實作與完整輸出</summary>
+<div class="detail-body"><p>其中 education 是類別變數，$f_3$ 就是「每個層級一個常數」（虛擬變數）。
   如果 $f_1, f_2$ 用<strong>自然樣條</strong>，整個模型只是一個較大的線性迴歸模型
   （基底矩陣橫向疊起來就好），<code>sm.OLS()</code> 一行擬合完。這是圖 7.11。
   如果用<strong>平滑樣條</strong>，需要加入曲率懲罰，可以用
   <strong>逆向擬合</strong>（backfitting）。這是圖 7.12。</p>
+<h3 id="dx-gam">講義完整實作：<code>pygam</code> 擬合 GAM</h3>
+<div class="deck-extra">
+  <div class="dx-label">lab 07 · 模型規格與用 df 設定平滑程度</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">gam_full = LinearGAM(s_gam(<span class="num">0</span>) +</span>
+  <span class="line">                     s_gam(<span class="num">1</span>, n_splines=<span class="num">7</span>) +</span>
+  <span class="line">                     f_gam(<span class="num">2</span>, lam=<span class="num">0</span>))</span>
+  <span class="line">Xgam = np.column_stack([age,</span>
+  <span class="line">                        Wage[<span class="str">&#x27;year&#x27;</span>],</span>
+  <span class="line">                        Wage[<span class="str">&#x27;education&#x27;</span>].cat.codes])</span>
+  <span class="line">gam_full = gam_full.fit(Xgam, y)</span>
+  <span class="line"> </span>
+  <span class="line">age_term = gam_full.terms[<span class="num">0</span>]</span>
+  <span class="line">age_term.lam = approx_lam(Xgam, age_term, df=<span class="num">4</span>+<span class="num">1</span>)</span>
+  <span class="line">year_term = gam_full.terms[<span class="num">1</span>]</span>
+  <span class="line">year_term.lam = approx_lam(Xgam, year_term, df=<span class="num">4</span>+<span class="num">1</span>)</span>
+  <span class="line">gam_full = gam_full.fit(Xgam, y)</span></div>
+  <p class="dx-note"><code>s_gam(0)</code> 是 age 的平滑樣條、<code>s_gam(1, n_splines=7)</code> 是 year（year 只有 7 個相異值，所以基底也只給 7 個）、<code>f_gam(2, lam=0)</code> 是 education 的類別項且不收縮。<br>第二段把兩個平滑項的 λ 用 <code>approx_lam(..., df=4+1)</code> 反解成「4 個自由度」（加 1 是因為 df 含截距），再重新擬合一次。<strong>先 fit 再設 lam 再 fit</strong> 的順序是必要的——<code>approx_lam</code> 要用到 fit 時才建好的節點資訊。上面元件的「回到 lab 的設定」就是這一組（age df 5、year df 5）。</p>
+  <span class="dx-src" data-lab-ch="7" data-lab-cells="82,86">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
+</div>
+<h3 id="dx-sum">講義完整實作：GAM 的摘要與套件的 p 值警告</h3>
+<div class="deck-extra">
+  <div class="dx-label">lab 07 · gam_full.summary()</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">gam_full.summary()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>LinearGAM                                                                                                 
+=============================================== ==========================================================
+Distribution:                        NormalDist Effective DoF:                                     12.9927
+Link Function:                     IdentityLink Log Likelihood:                                 -24117.907
+Number of Samples:                         3000 AIC:                                            48263.7995
+                                                AICc:                                             48263.94
+                                                GCV:                                             1246.1129
+                                                Scale:                                           1236.4024
+                                                Pseudo R-Squared:                                   0.2928
+==========================================================================================================
+Feature Function                  Lambda               Rank         EDoF         P &gt; x        Sig. Code   
+================================= ==================== ============ ============ ============ ============
+s(0)                              [465.0491]           20           5.1          1.11e-16     ***         
+s(1)                              [2.1564]             7            4.0          8.10e-03     **          
+f(2)                              [0]                  5            4.0          1.11e-16     ***         
+intercept                                              1            0.0          1.11e-16     ***         
+==========================================================================================================
+Significance codes:  0 &#x27;***&#x27; 0.001 &#x27;**&#x27; 0.01 &#x27;*&#x27; 0.05 &#x27;.&#x27; 0.1 &#x27; &#x27; 1
 
-<div class="info-box">
+WARNING: Fitting splines and a linear function to a feature introduces a model identifiability problem
+         which can cause p-values to appear significant when they are not.
+
+WARNING: p-values calculated in this manner behave correctly for un-penalized models or models with
+         known smoothing parameters, but when smoothing parameters have been estimated, the p-values
+         are typically lower than they should be, meaning that the tests reject the null too readily.
+/tmp/ipython-input-3870570873.py:1: UserWarning: KNOWN BUG: p-values computed in this summary are likely much smaller than they should be. 
+ 
+Please do not make inferences based on these values! 
+
+Collaborate on a solution, and stay up to date at: 
+github.com/dswah/pyGAM/issues/163 
+
+  gam_full.summary()</pre></div>
+  <p class="dx-note">幾個要對的數字：<strong>Effective DoF 12.9927</strong>（age 5.1 + year 4.0 + education 4.0 + 截距）、<strong>GCV 1246.1129</strong>、<strong>Pseudo R² 0.2928</strong>。上面元件的「回到 lab 的設定」右側顯示的就是這三個數字，由 <code>tools/frames/gen_nonlin.py</code> 用同一組設定重算，對到小數第四位。<br>請留意輸出中的警告。<code>pygam</code> 自己說：<strong>「平滑參數是估出來的時候，這裡的 p 值會比該有的小很多，不要拿它做推論」</strong>（<code>pyGAM</code> issue #163）。這個例子說明，引用套件輸出前，要先確認統計量的適用條件。要檢定就用 lab 範例 的 <code>anova_gam()</code> 比巢狀模型。</p>
+  <span class="dx-src" data-lab-ch="7" data-lab-cells="98">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
+</div></div></details>
+
+<details class="qa-item reading-detail" id="w08-detail-gam-backfit"><summary>完整演算法：偏殘差與可識別的 backfitting</summary>
+<div class="detail-body"><div class="info-box">
   <span class="info-label">逆向擬合在做什麼</span>
   輪流更新每一個 $f_j$：更新第 j 個的時候把其他項固定，
   對<strong>偏殘差</strong>（partial residual）做一次單變數平滑。以 p = 3、更新 $f_3$ 為例：<br>
@@ -1552,6 +1660,10 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   換下一個變數，重複，直到不再變動。<strong>好處是你只要有單變數的擬合工具，
   就能擬合任意多變數的加法模型。</strong>ISLP §7.9 第 11、12 題用線性迴歸版本讓你手動跑一遍。
 </div>
+<h3>讓加法成分可識別的 backfitting</h3><p>常數可在截距與成分之間任意移動，因此使用 $\sum_i f_j(x_{ij})=0$ 的樣本中心化限制。平方損失下先令 $\hat\beta_0=\bar y$、各成分為 0，再循環更新每一個 $j$：</p><ol><li>算偏殘差 $r_i=y_i-\hat\beta_0-\sum_{k\ne j}\hat f_k(x_{ik})$。</li><li>用指定的一維平滑器擬合 $r$ 對 $x_j$，得到暫時成分 $\tilde f_j$。</li><li>令 $\hat f_j(x)=\tilde f_j(x)-n^{-1}\sum_i\tilde f_j(x_{ij})$，保持成分中心化。</li><li>重複完整輪次，直到目標與擬合值的變化小於事先設定的容許量。</li></ol><p>例如 $y=(2,4,6)$，截距為 4，第一項已擬合為 $(-1,0,1)$，更新第二項的偏殘差便是 $(-1,0,1)$。若平滑器回傳 $(0,1,2)$，先減去平均 1，才能把第二項和截距分清楚。對 Gaussian GAM，固定基底與二次懲罰也可聯合解線性系統；二元 GAM 須在 IRLS 的工作反應與權重下更新，不能直接對 $0/1$ 反應套普通 backfitting。</p>
+<details class="qa-item proof" id="w08proof-backfit"><summary>證明：backfitting 為何是分塊最小化</summary>
+<div class="qa-a"><p>固定其他成分後，總目標中依賴 $f_j$ 的部分恰是 $\sum_i(r_i-f_j(x_{ij}))^2+\lambda_jJ(f_j)$，所以精確的一維更新會使同一目標不增加。對固定基底、凸二次懲罰及可識別的聯合系統，分塊更新可解同一最小化問題；任意套入非線性平滑器時，不可直接承諾這個收斂結果。中心化固定的是參數表示，避免把常數在各成分之間反覆搬動。</p></div></details>
+</div></details>
 
 <div class="viz-layout" data-provenance="course-data">
   <div>
@@ -1602,11 +1714,12 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   $$\log\left(\frac{p(X)}{1 - p(X)}\right) = \beta_0 + f_1(X_1) + f_2(X_2)
     + \cdots + f_p(X_p) \tag{7.18}$$
 
-  <p>ISLP 圖 7.13 對 <code>Wage</code> 擬合 $I(\text{wage} > 250)$，
+  <details class="qa-item reading-detail" id="w08-detail-gam-classification"><summary>分類 GAM 的稀有事件算例</summary>
+<div class="detail-body"><p>ISLP 圖 7.13 對 <code>Wage</code> 擬合 $I(\text{wage} > 250)$，
   結果最後一張圖的第一個層級 <code>&lt;HS</code> 信賴區間大到看不出東西，
   因為<strong>那個層級裡一個高收入者都沒有</strong>（lab 範例 的交叉表：268 個人、0 個高收入者）。
   拿掉那群人重新擬合就正常了（圖 7.14）。<strong>這個例子提醒我們：
-  模型擬合異常時，先檢查列聯表中的類別計數。</strong></p>
+  模型擬合異常時，先檢查列聯表中的類別計數。</strong></p></div></details>
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
@@ -1615,68 +1728,11 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   </details>
 </div>
 
-  <h3 id="dx-gam">講義完整實作：<code>pygam</code> 擬合 GAM</h3>
-<div class="deck-extra">
-  <div class="dx-label">lab 07 · 模型規格與用 df 設定平滑程度</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">gam_full = LinearGAM(s_gam(<span class="num">0</span>) +</span>
-  <span class="line">                     s_gam(<span class="num">1</span>, n_splines=<span class="num">7</span>) +</span>
-  <span class="line">                     f_gam(<span class="num">2</span>, lam=<span class="num">0</span>))</span>
-  <span class="line">Xgam = np.column_stack([age,</span>
-  <span class="line">                        Wage[<span class="str">&#x27;year&#x27;</span>],</span>
-  <span class="line">                        Wage[<span class="str">&#x27;education&#x27;</span>].cat.codes])</span>
-  <span class="line">gam_full = gam_full.fit(Xgam, y)</span>
-  <span class="line"> </span>
-  <span class="line">age_term = gam_full.terms[<span class="num">0</span>]</span>
-  <span class="line">age_term.lam = approx_lam(Xgam, age_term, df=<span class="num">4</span>+<span class="num">1</span>)</span>
-  <span class="line">year_term = gam_full.terms[<span class="num">1</span>]</span>
-  <span class="line">year_term.lam = approx_lam(Xgam, year_term, df=<span class="num">4</span>+<span class="num">1</span>)</span>
-  <span class="line">gam_full = gam_full.fit(Xgam, y)</span></div>
-  <p class="dx-note"><code>s_gam(0)</code> 是 age 的平滑樣條、<code>s_gam(1, n_splines=7)</code> 是 year（year 只有 7 個相異值，所以基底也只給 7 個）、<code>f_gam(2, lam=0)</code> 是 education 的類別項且不收縮。<br>第二段把兩個平滑項的 λ 用 <code>approx_lam(..., df=4+1)</code> 反解成「4 個自由度」（加 1 是因為 df 含截距），再重新擬合一次。<strong>先 fit 再設 lam 再 fit</strong> 的順序是必要的——<code>approx_lam</code> 要用到 fit 時才建好的節點資訊。上面元件的「回到 lab 的設定」就是這一組（age df 5、year df 5）。</p>
-  <span class="dx-src" data-lab-ch="7" data-lab-cells="82,86">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
+  
 
-  <h3 id="dx-sum">講義完整實作：GAM 的摘要與套件的 p 值警告</h3>
-<div class="deck-extra">
-  <div class="dx-label">lab 07 · gam_full.summary()</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">gam_full.summary()</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>LinearGAM                                                                                                 
-=============================================== ==========================================================
-Distribution:                        NormalDist Effective DoF:                                     12.9927
-Link Function:                     IdentityLink Log Likelihood:                                 -24117.907
-Number of Samples:                         3000 AIC:                                            48263.7995
-                                                AICc:                                             48263.94
-                                                GCV:                                             1246.1129
-                                                Scale:                                           1236.4024
-                                                Pseudo R-Squared:                                   0.2928
-==========================================================================================================
-Feature Function                  Lambda               Rank         EDoF         P &gt; x        Sig. Code   
-================================= ==================== ============ ============ ============ ============
-s(0)                              [465.0491]           20           5.1          1.11e-16     ***         
-s(1)                              [2.1564]             7            4.0          8.10e-03     **          
-f(2)                              [0]                  5            4.0          1.11e-16     ***         
-intercept                                              1            0.0          1.11e-16     ***         
-==========================================================================================================
-Significance codes:  0 &#x27;***&#x27; 0.001 &#x27;**&#x27; 0.01 &#x27;*&#x27; 0.05 &#x27;.&#x27; 0.1 &#x27; &#x27; 1
 
-WARNING: Fitting splines and a linear function to a feature introduces a model identifiability problem
-         which can cause p-values to appear significant when they are not.
+  
 
-WARNING: p-values calculated in this manner behave correctly for un-penalized models or models with
-         known smoothing parameters, but when smoothing parameters have been estimated, the p-values
-         are typically lower than they should be, meaning that the tests reject the null too readily.
-/tmp/ipython-input-3870570873.py:1: UserWarning: KNOWN BUG: p-values computed in this summary are likely much smaller than they should be. 
- 
-Please do not make inferences based on these values! 
-
-Collaborate on a solution, and stay up to date at: 
-github.com/dswah/pyGAM/issues/163 
-
-  gam_full.summary()</pre></div>
-  <p class="dx-note">幾個要對的數字：<strong>Effective DoF 12.9927</strong>（age 5.1 + year 4.0 + education 4.0 + 截距）、<strong>GCV 1246.1129</strong>、<strong>Pseudo R² 0.2928</strong>。上面元件的「回到 lab 的設定」右側顯示的就是這三個數字，由 <code>tools/frames/gen_nonlin.py</code> 用同一組設定重算，對到小數第四位。<br>請留意輸出中的警告。<code>pygam</code> 自己說：<strong>「平滑參數是估出來的時候，這裡的 p 值會比該有的小很多，不要拿它做推論」</strong>（<code>pyGAM</code> issue #163）。這個例子說明，引用套件輸出前，要先確認統計量的適用條件。要檢定就用 lab 範例 的 <code>anova_gam()</code> 比巢狀模型。</p>
-  <span class="dx-src" data-lab-ch="7" data-lab-cells="98">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch07-nonlin-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch07-nonlin-lab-zh.ipynb</code></a></span>
-</div>
 
 <div class="quiz-box">
   <div class="quiz-label">QUIZ · GAM 的加法性</div>
@@ -1685,18 +1741,17 @@ github.com/dswah/pyGAM/issues/163
   <div class="quiz-feedback" id="qGamFeedback"></div>
 </div>
 
-<h3>二維平滑與效果圖的讀法</h3><p>薄板樣條（thin-plate spline）把一維曲率懲罰推廣到平面，最小化 $\sum_i(y_i-g(x_{i1},x_{i2}))^2+\lambda J(g)$，其中 $J(g)=\iint\{g_{11}^2+2g_{12}^2+g_{22}^2\}\,dx_1dx_2$。解由仿射項與以資料點為中心的徑向基底組成，基底可寫為 $r^2\log r$（$r=0$ 取連續極限 0）；係數另受與仿射項正交的限制。把這類 $g(x_j,x_k)$ 加入 GAM 可表示交互作用，複雜度也必須另外控制。</p><p>偏依賴圖（partial dependence plot, PDP）在模型擬合後計算 $\hat f_S(x_S)=n^{-1}\sum_i\hat f(x_S,x_C^{(i)})$，是平均其他特徵的預測。固定其他特徵於平均值只是切片，對一般非線性模型兩者不同。加法模型的單一成分圖與回應尺度 PDP 可相差一個常數；分類 GAM 的 link 尺度成分也不能直接當成機率差。特徵高度相關時，PDP 可能評估資料未支持的組合，更不能把曲線直接解讀成因果效果。</p><p>偏殘差圖畫 $e_i+\hat f_j(x_{ij})$ 對 $x_{ij}$，可檢查剩餘非線性。部分迴歸圖則先把 $y$ 與指定 $x_j$ 各自對其他線性項迴歸，再畫兩組殘差；其斜率等於原多元線性模型的係數。含截距的 OLS 滿足 $\sum_i e_i=0$ 與 $X^Te=0$，這是樣本內正交性，不能推成誤差與特徵獨立。</p>
+<details class="qa-item reading-detail" id="w08-detail-gam-thinplate"><summary>延伸：薄板樣條、效果圖與部分迴歸</summary>
+<div class="detail-body"><h3>二維平滑與效果圖的讀法</h3><p>薄板樣條（thin-plate spline）把一維曲率懲罰推廣到平面，最小化 $\sum_i(y_i-g(x_{i1},x_{i2}))^2+\lambda J(g)$，其中 $J(g)=\iint\{g_{11}^2+2g_{12}^2+g_{22}^2\}\,dx_1dx_2$。解由仿射項與以資料點為中心的徑向基底組成，基底可寫為 $r^2\log r$（$r=0$ 取連續極限 0）；係數另受與仿射項正交的限制。把這類 $g(x_j,x_k)$ 加入 GAM 可表示交互作用，複雜度也必須另外控制。</p><p>偏依賴圖（partial dependence plot, PDP）在模型擬合後計算 $\hat f_S(x_S)=n^{-1}\sum_i\hat f(x_S,x_C^{(i)})$，是平均其他特徵的預測。固定其他特徵於平均值只是切片，對一般非線性模型兩者不同。加法模型的單一成分圖與回應尺度 PDP 可相差一個常數；分類 GAM 的 link 尺度成分也不能直接當成機率差。特徵高度相關時，PDP 可能評估資料未支持的組合，更不能把曲線直接解讀成因果效果。</p><p>偏殘差圖畫 $e_i+\hat f_j(x_{ij})$ 對 $x_{ij}$，可檢查剩餘非線性。部分迴歸圖則先把 $y$ 與指定 $x_j$ 各自對其他線性項迴歸，再畫兩組殘差；其斜率等於原多元線性模型的係數。含截距的 OLS 滿足 $\sum_i e_i=0$ 與 $X^Te=0$，這是樣本內正交性，不能推成誤差與特徵獨立。</p>
 
-<h3>讓加法成分可識別的 backfitting</h3><p>常數可在截距與成分之間任意移動，因此使用 $\sum_i f_j(x_{ij})=0$ 的樣本中心化限制。平方損失下先令 $\hat\beta_0=\bar y$、各成分為 0，再循環更新每一個 $j$：</p><ol><li>算偏殘差 $r_i=y_i-\hat\beta_0-\sum_{k\ne j}\hat f_k(x_{ik})$。</li><li>用指定的一維平滑器擬合 $r$ 對 $x_j$，得到暫時成分 $\tilde f_j$。</li><li>令 $\hat f_j(x)=\tilde f_j(x)-n^{-1}\sum_i\tilde f_j(x_{ij})$，保持成分中心化。</li><li>重複完整輪次，直到目標與擬合值的變化小於事先設定的容許量。</li></ol><p>例如 $y=(2,4,6)$，截距為 4，第一項已擬合為 $(-1,0,1)$，更新第二項的偏殘差便是 $(-1,0,1)$。若平滑器回傳 $(0,1,2)$，先減去平均 1，才能把第二項和截距分清楚。對 Gaussian GAM，固定基底與二次懲罰也可聯合解線性系統；二元 GAM 須在 IRLS 的工作反應與權重下更新，不能直接對 $0/1$ 反應套普通 backfitting。</p>
-<details class="qa-item proof" id="w08proof-backfit"><summary>證明：backfitting 為何是分塊最小化</summary>
-<div class="qa-a"><p>固定其他成分後，總目標中依賴 $f_j$ 的部分恰是 $\sum_i(r_i-f_j(x_{ij}))^2+\lambda_jJ(f_j)$，所以精確的一維更新會使同一目標不增加。對固定基底、凸二次懲罰及可識別的聯合系統，分塊更新可解同一最小化問題；任意套入非線性平滑器時，不可直接承諾這個收斂結果。中心化固定的是參數表示，避免把常數在各成分之間反覆搬動。</p></div></details>
+
 <h3>薄板樣條的完整表示</h3><p>二維輸入 $x=(x_1,x_2)^T$ 的曲率懲罰為 $J(g)=\iint(g_{11}^2+2g_{12}^2+g_{22}^2)\,dx_1dx_2$。對互異且仿射設計滿秩的資料點，解可表示成</p>
 $$g(x)=\beta_0+\beta_1x_1+\beta_2x_2+\sum_{i=1}^n\alpha_i\eta(\|x-x_i\|),\quad\eta(r)=r^2\log r,\quad\eta(0)=0,$$
 $$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
 <p>徑向基底的整體常數可吸收入 $\lambda$；講義的 $r^2\log r^2$ 與這裡差一個常數 2，使用時要連同懲罰尺度對齊。令 $K_{ij}=\eta(\|x_i-x_j\|)$、$P_i=(1,x_{i1},x_{i2})$，吸收常數後可解區塊系統 $\begin{pmatrix}K+\lambda I&P;\\P^T&0\end{pmatrix}\binom\alpha\beta=\binom y0$。它同時限制徑向部分並保留不受曲率懲罰的平面。</p><p>例如 $g(x)=1+2x_1-x_2$ 的三個二階導數全為 0，因此 $J(g)=0$；$g(x)=x_1x_2$ 的混合導數為 1，在單位方形上的曲率積分為 2。混合項的係數 2 不可漏掉。以上是自訂算例。</p>
 <h3>用一個小例子區分四種效果圖</h3><p>模型 $\hat f(x_1,x_2)=2x_1+x_2^2$，觀測到的 $x_2$ 為 $(-1,1)$。$x_1$ 的 PDP 是 $2x_1+1$；把 $x_2$ 固定於平均 0 的切片則是 $2x_1$。若模型是加法形式，單一成分圖只顯示 $2x_1$，其餘成分的平均可併入常數。偏殘差圖在每個訓練點畫 $e_i+\hat f_1(x_{i1})$；部分迴歸圖則先對其他線性變數消去影響，再畫兩組殘差，橫軸也不同。PDP 遇到相關特徵時會產生罕見甚至不可能的組合，讀的是模型的邊際平均預測，不是因果效果。</p>
 <details class="qa-item proof" id="w08proof-fwl"><summary>證明：部分迴歸斜率與 OLS 殘差正交性</summary>
-<div class="qa-a"><p>把完整線性設計分成 $[Z,x]$，$Z$ 含截距及其他項，令 $M_Z=I-Z(Z^TZ)^{-1}Z^T$。固定 $x$ 的係數 $b$ 時，對 $Z$ 最小化後剩下 $\|M_Z(y-xb)\|^2$，微分得 $\hat b=(x^TM_Zx)^{-1}x^TM_Zy$，正是殘差 $M_Zy$ 對 $M_Zx$ 的斜率；需各分母可逆。完整 OLS 正常方程給 $X^Te=0$；設計含一整欄 1 時亦有 $\sum_i e_i=0$。這是擬合後樣本內的代數限制，並沒有證明誤差與解釋變數獨立。</p></div></details>
+<div class="qa-a"><p>把完整線性設計分成 $[Z,x]$，$Z$ 含截距及其他項，令 $M_Z=I-Z(Z^TZ)^{-1}Z^T$。固定 $x$ 的係數 $b$ 時，對 $Z$ 最小化後剩下 $\|M_Z(y-xb)\|^2$，微分得 $\hat b=(x^TM_Zx)^{-1}x^TM_Zy$，正是殘差 $M_Zy$ 對 $M_Zx$ 的斜率；需各分母可逆。完整 OLS 正常方程給 $X^Te=0$；設計含一整欄 1 時亦有 $\sum_i e_i=0$。這是擬合後樣本內的代數限制，並沒有證明誤差與解釋變數獨立。</p></div></details></div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -1706,7 +1761,8 @@ $$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
   每個選項都有解說；需要完整解答時，可查閱下面3個站。</p>
   <div class="sol-links"><a href="https://botlnec.github.io/islp/sols/chapter7/exercise1" target="_blank" rel="noopener">🔗 ISLP 解答（botlnec）</a><a href="https://github.com/Mohamed-Badry/islp-solutions/blob/main/Exercises_ch07.ipynb" target="_blank" rel="noopener">🔗 ISLP 解答（Mohamed-Badry）</a><a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">🔗 ESL 解答（YuhangZhou88）</a></div>
 <!-- GEN:END sec:exercises -->
-
+<details class="qa-item reading-detail" id="w08-detail-exercises"><summary>進一步練習：計算與推理題</summary>
+<div class="detail-body">
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 7.9 第 1 題（c）（d）（e）</div>
   <p>第 1 題要你證明 $f(x) = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \beta_4 (x-\xi)^3_+$ 真的是立方樣條。為什麼加上 $\beta_4 (x-\xi)^3_+$ 這一項不會破壞 ξ 上的連續性與一、二階導數連續？</p>
@@ -1724,7 +1780,7 @@ $$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · ISLP 7.9 第 3 題</div>
   <p>第 3 題給基底 $b_1(X) = X$、$b_2(X) = (X-1)^2 I(X \ge 1)$，擬合出 $\hat\beta_0 = 1, \hat\beta_1 = 1, \hat\beta_2 = -2$，要你畫出 $X \in [-2, 2]$ 的曲線。下面哪個描述是對的？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。$X&lt;1$ 時 $\hat Y = 1 + X$，從 $(-2,-1)$ 到 $(1,2)$。$X \ge 1$ 時 $\hat Y = 1 + X - 2(X-1)^2$；導數 $1 - 4(X-1)$ 在 $X=1$ 等於 1（跟左邊接得上），在 $X=1.25$ 歸零（極大值 2.125），$X=2$ 時 $\hat Y = 1$。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> $X < 1$ 是斜率 1 的直線（在 $X=1$ 到達 2）；$X \ge 1$ 變成開口向下的拋物線，在 $X = 1.25$ 到最高的 2.125，$X = 2$ 掉回 1；整條曲線的值與斜率在 $X=1$ 都連續</div><div class="quiz-opt" data-correct="false" data-fb="漏掉了極大值。$\hat\beta_2 &lt; 0$ 確實讓拋物線開口向下，但頂點不在 $X=1$——導數在 $X=1$ 還是正的（等於 1），要到 $X=1.25$ 才轉負。所以曲線先升到 2.125 再降。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> $X \ge 1$ 時從 2 單調下降到 1，因為 $\hat\beta_2 = -2$ 是負的</div><div class="quiz-opt" data-correct="false" data-fb="不對。$(X-1)^2$ 這個因子在 $X=1$ 等於 0，把跳躍抹平了，而且它的一階導數 $2(X-1)$ 在 $X=1$ 也是 0，所以連斜率都連續。會跳的是像 $I(X \ge 1)$ 這種&lt;em&gt;沒有&lt;/em&gt;乘上歸零因子的項。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 曲線在 $X = 1$ 有一個跳躍，因為指示函數 $I(X \ge 1)$ 在那裡開關</div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。$X&lt;1$ 時 $\hat Y = 1 + X$，從 $(-2,-1)$ 到 $(1,2)$。$X \ge 1$ 時 $\hat Y = 1 + X - 2(X-1)^2$；導數 $1 - 4(X-1)$ 在 $X=1$ 等於 1（跟左邊接得上），在 $X=1.25$ 歸零（極大值 2.125），$X=2$ 時 $\hat Y = 1$。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> $X &lt; 1$ 是斜率 1 的直線（在 $X=1$ 到達 2）；$X \ge 1$ 變成開口向下的拋物線，在 $X = 1.25$ 到最高的 2.125，$X = 2$ 掉回 1；整條曲線的值與斜率在 $X=1$ 都連續</div><div class="quiz-opt" data-correct="false" data-fb="漏掉了極大值。$\hat\beta_2 &lt; 0$ 確實讓拋物線開口向下，但頂點不在 $X=1$——導數在 $X=1$ 還是正的（等於 1），要到 $X=1.25$ 才轉負。所以曲線先升到 2.125 再降。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> $X \ge 1$ 時從 2 單調下降到 1，因為 $\hat\beta_2 = -2$ 是負的</div><div class="quiz-opt" data-correct="false" data-fb="不對。$(X-1)^2$ 這個因子在 $X=1$ 等於 0，把跳躍抹平了，而且它的一階導數 $2(X-1)$ 在 $X=1$ 也是 0，所以連斜率都連續。會跳的是像 $I(X \ge 1)$ 這種&lt;em&gt;沒有&lt;/em&gt;乘上歸零因子的項。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 曲線在 $X = 1$ 有一個跳躍，因為指示函數 $I(X \ge 1)$ 在那裡開關</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 
@@ -1734,21 +1790,23 @@ $$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
   <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對。$\lambda \to \infty$ 讓 $g^{(4)} \equiv 0$（三次多項式）或 $g^{(3)} \equiv 0$（二次多項式）。三次多項式的函數空間包含二次多項式，參數多一個，所以訓練 RSS 一定不會更大。第 (b) 小題的答案是「說不出來」——測試 RSS 取決於真實函數；第 (c) 小題 λ = 0 時若兩者均能內插，訓練 RSS 都為零；未指定內插解的選擇時，測試預測與測試 RSS 不必相同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> $\hat g_2$，因為它被逼成三次多項式，比被逼成二次多項式的 $\hat g_1$ 更有彈性</div><div class="quiz-opt" data-correct="false" data-fb="反了。懲罰&lt;strong&gt;低&lt;/strong&gt;階導數是&lt;strong&gt;更強&lt;/strong&gt;的約束：要求 $g&#x27;&#x27;&#x27;=0$ 只剩二次多項式，要求 $g^{(4)}=0$ 還可以是三次多項式。階數愈高，被允許的函數族愈大。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> $\hat g_1$，因為懲罰的導數階數較低，代表約束較弱</div><div class="quiz-opt" data-correct="false" data-fb="不對。兩個懲罰&lt;em&gt;積分值&lt;/em&gt;都被壓到 0，但被壓成 0 的是&lt;strong&gt;不同的導數&lt;/strong&gt;，留下的函數族不一樣（二次 vs 三次）。同樣的邏輯：m = 0 會把 $\hat g$ 壓成常數 0，與前述函數族仍不同。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 兩者相同，因為 $\lambda \to \infty$ 時兩個懲罰項都趨近於 0，模型退化成同一個</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
+</div></details>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>超越線性速查表 <span class="sec-badge"><a href="#w08-source-islp">教科書 · 第 7 章</a></span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w08-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 7 章開頭；教科書 · 第 7.1 節；教科書 · 第 7.2 節；教科書 · 第 7.3 節；教科書 · 第 7.4.1–7.4.3 節；教科書 · 第 7.4.4–7.4.5 節；教科書 · 第 7.5 節；教科書 · 第 7.6 節；教科書 · 第 7.7 節。</li>
-<li id="w08-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
+<details class="qa-item reading-detail" id="w08-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w08-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：教科書 · 第 7 章開頭；教科書 · 第 7.1 節；教科書 · 第 7.2 節；教科書 · 第 7.3 節；教科書 · 第 7.4.1–7.4.3 節；教科書 · 第 7.4.4–7.4.5 節；教科書 · 第 7.5 節；教科書 · 第 7.6 節；教科書 · 第 7.7 節。</li>
+<li id="w08-source-esl"><strong>進階參考</strong>：<cite>The Elements of Statistical Learning</cite>。Hastie、Tibshirani、Friedman，第二版。<a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<details class="qa-item reading-detail" id="w08-detail-reference"><summary>完整比較表、公式與實測結果</summary>
+<div class="detail-body">
   <p>考前把這一頁掃過去就好。</p>
 
   <h3>七種方法對照</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>方法</th><th>基底／機制</th><th>彈性由什麼控制</th><th>自由度</th><th>邊界</th><th>選參數的辦法</th></tr></thead>
-  <tbody><tr><td>多項式</td><td>$x, x^2, \ldots, x^d$</td><td>次數 d</td><td>d + 1</td><td><span class='worst'>差</span></td><td>ANOVA 或 CV</td></tr><tr><td>階梯函數</td><td>$I(c_k \le x < c_{k+1})$</td><td>切點數 K</td><td>K + 1</td><td>尚可</td><td>CV</td></tr><tr><td>線性樣條</td><td>$x, (x-\xi_k)_+$</td><td>內部節點數 K</td><td>K + 2</td><td>尚可</td><td>CV</td></tr><tr><td>立方樣條</td><td>$x, x^2, x^3, (x-\xi_k)^3_+$</td><td>內部節點數 K</td><td>K + 4</td><td>差（信賴區間可能很寬）</td><td>CV（圖 7.6 右）</td></tr><tr><td>自然樣條</td><td>立方樣條 + 兩個自然邊界條件</td><td>內部節點數 K</td><td>K + 2</td><td><span class='best'>好</span></td><td>CV（圖 7.6 左）</td></tr><tr><td>平滑樣條</td><td>全部 x 當節點 + 二階導數懲罰</td><td>λ</td><td>df$_\lambda$（連續，2 到 n）</td><td>好</td><td>LOOCV 捷徑 / GCV</td></tr><tr><td>局部迴歸</td><td>鄰域內加權最小平方</td><td>跨距 s</td><td>以等效 df 表示</td><td>差（單邊資料）</td><td>CV</td></tr></tbody>
+  <tbody><tr><td>多項式</td><td>$x, x^2, \ldots, x^d$</td><td>次數 d</td><td>d + 1</td><td><span class='worst'>差</span></td><td>ANOVA 或 CV</td></tr><tr><td>階梯函數</td><td>$I(c_k \le x &lt; c_{k+1})$</td><td>切點數 K</td><td>K + 1</td><td>尚可</td><td>CV</td></tr><tr><td>線性樣條</td><td>$x, (x-\xi_k)_+$</td><td>內部節點數 K</td><td>K + 2</td><td>尚可</td><td>CV</td></tr><tr><td>立方樣條</td><td>$x, x^2, x^3, (x-\xi_k)^3_+$</td><td>內部節點數 K</td><td>K + 4</td><td>差（信賴區間可能很寬）</td><td>CV（圖 7.6 右）</td></tr><tr><td>自然樣條</td><td>立方樣條 + 兩個自然邊界條件</td><td>內部節點數 K</td><td>K + 2</td><td><span class='best'>好</span></td><td>CV（圖 7.6 左）</td></tr><tr><td>平滑樣條</td><td>全部 x 當節點 + 二階導數懲罰</td><td>λ</td><td>df$_\lambda$（連續，2 到 n）</td><td>好</td><td>LOOCV 捷徑 / GCV</td></tr><tr><td>局部迴歸</td><td>鄰域內加權最小平方</td><td>跨距 s</td><td>以等效 df 表示</td><td>差（單邊資料）</td><td>CV</td></tr></tbody>
 </table></div>
 
   <h3>Wage 上的實測數字（本頁元件用的就是這些）</h3>
@@ -1786,6 +1844,7 @@ $$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1793,12 +1852,13 @@ $$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡整理本章講義與 ISLP 第 7 章中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w08-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -1824,10 +1884,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -2349,13 +2413,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

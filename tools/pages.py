@@ -788,7 +788,7 @@ PAGES = [
                 "ISLP §10 開頭", kicker="PROLOGUE · 開場"),
             Sec("single", "單層神經網路", "一層隱藏層：非線性怎麼進來的",
                 "ISLP §10.1|ESL §11.3"),
-            Sec("multi", "多層與 MNIST", "疊第二層之後：softmax 與 235,146 個參數",
+            Sec("multi", "多層與 MNIST", "多層網路與分類輸出",
                 "ISLP §10.2|ESL §11.4–11.6"),
             Sec("cnn", "卷積神經網路", "把「哪裡」的資訊丟掉一部分：卷積與池化",
                 "ISLP §10.3"),

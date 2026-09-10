@@ -209,5 +209,9 @@ P(|X-\mu|\ge\varepsilon)\le\frac{\sigma^2}{\varepsilon^2}.$$
 """) + source(10,'期望值與變異數性質') + source(14,'Markov 與 Chebyshev 不等式；一致性見 pp.17–18')
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('s1_probability', BODIES, PAGEJS)
+
 if __name__ == '__main__':
     apply('s1_probability', BODIES, PAGEJS)

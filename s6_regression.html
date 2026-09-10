@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -698,7 +708,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S6 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。計算細節、完整實作與證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -727,13 +737,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>兩個變數一起高於各自平均，或一起低於各自平均時，中心化後的乘積為正；一高一低時為負。
   <strong>樣本共變異數（sample covariance）</strong>把這些乘積取平均，相關係數再除以兩邊的尺度。</p>
-  $$s_{xy}=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y),\qquad
+  <details class="qa-item reading-detail" id="w26detail-correlation-formula"><summary>查公式：共變異數與相關係數</summary>
+<div class="detail-body">$$s_{xy}=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y),\qquad
     r=\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}
-    {\sqrt{\sum_i(x_i-\bar x)^2}\sqrt{\sum_i(y_i-\bar y)^2}}.$$
-  <p><strong>算例。</strong>$x=(1,2,3)$、$y=(2,4,5)$，兩者平均為 2 與 $11/3$。
+    {\sqrt{\sum_i(x_i-\bar x)^2}\sqrt{\sum_i(y_i-\bar y)^2}}.$$</div></details>
+  <details class="qa-item reading-detail" id="w26detail-correlation-example"><summary>完整算例：從中心化乘積算相關係數</summary>
+<div class="detail-body"><p><strong>算例。</strong>$x=(1,2,3)$、$y=(2,4,5)$，兩者平均為 2 與 $11/3$。
   中心化乘積總和為 3，所以 $s_{xy}=3/2=1.5$；平方和為 2 與 $14/3$，
   因而 $r=3/\sqrt{2(14/3)}\approx0.982$。若改成 $x=(2,2,2)$，其平方和為 0，
-  分母也為 0；此時相關係數<strong>未定義</strong>，不能填成 0。</p>
+  分母也為 0；此時相關係數<strong>未定義</strong>，不能填成 0。</p></div></details>
   <p>高相關本身不能證明因果；例如氣溫可同時提高冷飲銷量與用電量，兩者的相關可能來自共同原因。
   相關為 0 也不保證獨立；對稱的 U 形關係可能讓正、負中心化乘積互相抵消。</p>
 <div class="info-box">
@@ -759,11 +771,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   普通最小平方法（ordinary least squares, OLS）選出讓殘差平方和最小的截距與斜率。</p>
   $$e_i=y_i-\hat y_i,\qquad
     \operatorname{RSS}(b_0,b_1)=\sum_{i=1}^n[y_i-(b_0+b_1x_i)]^2,$$
-  $$\hat b_1=\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}{\sum_i(x_i-\bar x)^2},
-    \qquad \hat b_0=\bar y-\hat b_1\bar x,\qquad S_{xx}&gt;0.$$
-  <p><strong>算例。</strong>固定資料 $(0,1),(1,2),(2,2),(3,4),(4,5)$ 的
+  <details class="qa-item reading-detail" id="w26detail-ols-coefficients"><summary>查看最小平方斜率與截距公式</summary>
+<div class="detail-body">$$\hat b_1=\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}{\sum_i(x_i-\bar x)^2},
+    \qquad \hat b_0=\bar y-\hat b_1\bar x,\qquad S_{xx}&gt;0.$$</div></details>
+  <details class="qa-item reading-detail" id="w26detail-ols-example"><summary>完整算例：五筆資料的最小平方解</summary>
+<div class="detail-body"><p><strong>算例。</strong>固定資料 $(0,1),(1,2),(2,2),(3,4),(4,5)$ 的
   $\bar x=2$、$\bar y=2.8$、$S_{xy}=10$、$S_{xx}=10$，所以 OLS 線是
-  $\hat y=0.8+1.0x$，RSS 為 0.8。拖動下面兩個滑桿，再按「顯示 OLS 解」核對。</p>
+  $\hat y=0.8+1.0x$，RSS 為 0.8。拖動下面兩個滑桿，再按「顯示 OLS 解」核對。</p></div></details>
 <div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
@@ -811,10 +825,11 @@ $$\operatorname{RSS}(b_0,b_1)=\operatorname{RSS}(\hat b_0,\hat b_1)
 
   <p>殘差 $e_i=y_i-\hat y_i$ 是觀測值相對於目前模型的剩餘差異。正殘差表示點在預測線上方，
   負殘差表示在下方。含截距的 OLS 會使訓練資料殘差總和為 0，但這只是一階條件，不能證明模型合適。</p>
-  <p><strong>算例。</strong>上一節 OLS 線對五筆資料的預測為
+  <details class="qa-item reading-detail" id="w26detail-residual-example"><summary>完整算例：逐筆殘差與平方和</summary>
+<div class="detail-body"><p><strong>算例。</strong>上一節 OLS 線對五筆資料的預測為
   $(0.8,1.8,2.8,3.8,4.8)$，所以殘差為 $(0.2,0.2,-0.8,0.2,0.2)$。
   它們加總為 0，平方和為 $4(0.2^2)+(-0.8)^2=0.8$。中間那筆貢獻 RSS 的 80%，
-  顯示平方損失會放大較大的殘差。</p>
+  顯示平方損失會放大較大的殘差。</p></div></details>
   $$\sum_i e_i=0\quad\text{（含截距的訓練 OLS）},\qquad
     R^2=1-\frac{\sum_i e_i^2}{\sum_i(y_i-\bar y)^2}.$$
   <p>這個 R² 公式需要 y 有變異，使分母大於 0；若所有 y 相同，這個比值沒有定義。</p>
@@ -845,7 +860,8 @@ $$\sum_i(y_i-\bar y)^2=\sum_i(\hat y_i-\bar y)^2+\sum_ie_i^2.$$
   <div class="section-number">PART 04 · ANOVA 入門〔延伸〕</div>
   <h2>ANOVA 入門〔延伸〕 <span class="sec-badge"><a href="#w26-source-seeing-theory">統計入門參考 · 第 6 章</a></span></h2>
 <!-- GEN:END sec:anova -->
-
+<p>比較多組平均時，需要把組間差異與組內變動一起考慮。ANOVA 的完整做法放在這裡供需要時查閱。</p><details class="qa-item reading-detail" id="w26detail-anova"><summary>延伸：ANOVA 的平方和、F 檢定與算例</summary>
+<div class="detail-body">
   <p>單因子變異數分析（one-way ANOVA）檢定
   $H_0:\mu_1=\mu_2=\cdots=\mu_k$。總平方和可以精確拆成「組間」與「組內」：
   組間衡量各組平均離總平均多遠，組內衡量個體離各自組平均多遠。</p>
@@ -876,7 +892,12 @@ $$2(\bar y_j-\bar y)\sum_i(y_{ij}-\bar y_j)=0.$$
 <p>所以總平方和恰等於組內與組間平方和；這是代數恆等式，不需要常態假設。
 在獨立、同變異數、常態誤差及 $H_0$ 下，兩個平方和除以 σ² 分別是自由度 k−1 與 n−k 的獨立卡方量，
 因此兩個均方比服從 $F_{k-1,n-k}$。代數分解與 F 檢定的分布條件要分開看。</p>
-</div></details>
+</div></details><div class="quiz-box">
+  <div class="quiz-label">EXERCISE 4 · ANOVA</div>
+  <p>四組、總樣本數 20 的單因子 ANOVA，組間與組內自由度分別是多少？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="組間需扣掉一個總平均限制，所以不是 k。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 4 與 16</div><div class="quiz-opt" data-correct="true" data-fb="對。組間 k−1=3，組內 n−k=16。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 3 與 16</div><div class="quiz-opt" data-correct="false" data-fb="19 是總自由度 n−1；組內還要扣掉四個組平均。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 3 與 19</div></div>
+  <div class="quiz-feedback" id="qEx4Feedback"></div>
+</div></div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -901,20 +922,16 @@ $$2(\bar y_j-\bar y)\sum_i(y_{ij}-\bar y_j)=0.$$
   <p>某模型 RSS=20，若只用平均數預測的總平方和 TSS=80，$R^2$ 是多少？</p>
   <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。$1-20/80=0.75$。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 0.75</div><div class="quiz-opt" data-correct="false" data-fb="這是 RSS/TSS，代表尚未由模型解釋的比例。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 0.25</div><div class="quiz-opt" data-correct="false" data-fb="R² 不是 TSS/RSS；依定義應計算 1−RSS/TSS。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 4</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
-</div><div class="quiz-box">
-  <div class="quiz-label">EXERCISE 4 · ANOVA</div>
-  <p>四組、總樣本數 20 的單因子 ANOVA，組間與組內自由度分別是多少？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="組間需扣掉一個總平均限制，所以不是 k。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 4 與 16</div><div class="quiz-opt" data-correct="true" data-fb="對。組間 k−1=3，組內 n−k=16。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 3 與 16</div><div class="quiz-opt" data-correct="false" data-fb="19 是總自由度 n−1；組內還要扣掉四個組平均。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> 3 與 19</div></div>
-  <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div><p><a href="https://seeing-theory.brown.edu/regression-analysis/index.html#section1">題目依 Seeing Theory Ch.6 的 OLS、Correlation 與 ANOVA 定義重新編寫</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="55">講義</a>。</p>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>相關與迴歸〔選讀〕速查表 <span class="sec-badge">先備 · S6 統計</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w26-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 6 章。</li></ul></div>
+<details class="qa-item reading-detail" id="w26-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w26-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 6 章。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w26detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
   <p>同一個平方和在迴歸與 ANOVA 中可能使用不同縮寫。閱讀表格時先看定義與下標，再看名稱。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>量</th><th>公式核心</th><th>用途</th><th>原站</th></tr></thead>
@@ -924,6 +941,7 @@ $$2(\bar y_j-\bar y)\sum_i(y_{ij}-\bar y_j)=0.$$
   網頁列出「b̂1 = Sxy/Sxx」、「SSE = Σ(yi − (b̂0 + b̂1xi))²」、樣本相關係數 r，
   以及「F = [SST/(k−1)]/[SSE/(n−k)]」；PDF 印刷頁 55–66。
   本頁統一改用 RSS、SSBetween、SSWithin 避免同名歧義，所有算例與互動數值均重新計算。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -931,12 +949,13 @@ $$2(\bar y_j-\bar y)\sum_i(y_{ij}-\bar y_j)=0.$$
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡整理本頁依 Seeing Theory 編寫的概念解說中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w26-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -962,10 +981,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -1487,13 +1510,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

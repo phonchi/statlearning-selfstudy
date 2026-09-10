@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -925,7 +935,8 @@ reshaped x:
   <span class="dx-src" data-lab-ch="2" data-lab-cells="54">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w16detail-reshape-lab"><summary>完整實驗：修改共用資料前後的輸出</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">改 reshape 出來的元素，原陣列也會變</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">print(<span class="str">&#x27;x before we modify x_reshape:\n&#x27;</span>, x)</span>
@@ -945,7 +956,7 @@ x after we modify top left element of x_reshape:
  [5 2 3 4 5 6]</pre></div>
   <p class="dx-note">這就是「同一塊記憶體」的證據：改 <code>x_reshape[0, 0]</code>，<code>x</code> 的第一個元素跟著變成 5。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="61">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div class="deck-extra">
   <div class="dx-label">shape、ndim 與轉置</div>
@@ -987,7 +998,7 @@ x after we modify top left element of x_reshape:
   <div class="section-number">PART 03 · 索引、切片與子矩陣</div>
   <h2>用 A[[1,3],[0,2]] 理解成對索引 <span class="sec-badge">課程 Lab Ch2 · lab 範例</span></h2>
 <!-- GEN:END sec:index -->
-
+<p>記憶體也有差別：基本切片可共享原陣列，整數陣列的進階索引會建立複本。對本頁連續儲存的 A，reshape 可以共享資料；需要獨立修改時應明確複製。</p>
   <p>同時指定列與欄時，要看清楚索引如何配對。lab 裡有一格叫
   <em>「糟糕——發生了什麼？」</em>，因為 <code>A[[1,3],[0,2]]</code> 拿到的
   <strong>不是</strong> 第 1、3 列與第 0、2 欄交叉的那個 2×2 子矩陣。</p>
@@ -1053,7 +1064,8 @@ array([[ 0,  2],
   <span class="dx-src" data-lab-ch="2" data-lab-cells="148">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w16detail-index-lab"><summary>延伸：索引錯誤與其他子矩陣寫法</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">長度不一樣就直接報錯</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">A[[<span class="num">1</span>,<span class="num">3</span>],[<span class="num">0</span>,<span class="num">2</span>,<span class="num">3</span>]]</span></div>
@@ -1061,7 +1073,6 @@ array([[ 0,  2],
   <p class="dx-note">錯誤訊息裡的 <code>could not be broadcast together</code> 已經在暗示：花式索引走的是廣播規則，不是交叉。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="152">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
-
 <div class="deck-extra">
   <div class="dx-label">真的要子矩陣：兩種寫法</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1075,7 +1086,6 @@ array([[ 4,  6,  7],
   <p class="dx-note"><code>A[[1,3]][:,[0,2]]</code> 會產生一個中間陣列；<code>np.ix_</code> 可一次指定列與欄的索引。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="154,156">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
-
 <div class="deck-extra">
   <div class="dx-label">等距切片也能取子矩陣</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1084,7 +1094,11 @@ array([[ 4,  6,  7],
        [12, 14]])</pre></div>
   <p class="dx-note">切片是 <code>起:迄:步長</code>，迄不包含。<code>1:4:2</code> 取到第 1、3 列，<code>0:3:2</code> 取到第 0、2 欄。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="158">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
+
+
+
+
 
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
@@ -1161,7 +1175,8 @@ array([[ 4,  5,  6,  7],
   <span class="dx-src" data-lab-ch="2" data-lab-cells="169,171">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w16detail-bool-lab"><summary>延伸：布林遮罩與子矩陣</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">布林也能配 np.ix_ 取子矩陣</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">keep_cols = np.zeros(A.shape[<span class="num">1</span>], bool)</span>
@@ -1171,7 +1186,7 @@ array([[ 4,  5,  6,  7],
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[ 4,  6,  7],
        [12, 14, 15]])</pre></div>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="174">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
@@ -1298,7 +1313,8 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
   </div>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w16detail-agg-lab"><summary>完整實作：變異數的三種等價計算</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">變異數的三種寫法會一致</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">rng = np.random.default_rng(<span class="num">3</span>)</span>
@@ -1311,7 +1327,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
  np.float64(2.7243406406465125))</pre></div>
   <p class="dx-note"><code>np.var</code> 預設除以 n（不是 n−1），所以它跟<code>np.mean((y - y.mean())**2)</code> 完全相同。要不偏估計得寫 <code>np.var(y, ddof=1)</code>。第 2 章會再遇到這件事。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="84,85">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div class="deck-extra">
   <div class="dx-label">標準差就是變異數開根號</div>
@@ -1327,7 +1343,8 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
   <span class="line">X = rng.standard_normal((<span class="num">10</span>, <span class="num">3</span>))</span>
   <span class="line">X</span>
   <span class="line">X.mean(axis=<span class="num">0</span>)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[ 0.22578661, -0.35263079, -0.28128742],
+  <details class="qa-item reading-detail" id="w16detail-agg-out-1"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[ 0.22578661, -0.35263079, -0.28128742],
        [-0.66804635, -1.05515055, -0.39080098],
        [ 0.48194539, -0.23855361,  0.9577587 ],
        [-0.19980213,  0.02425957,  1.54582085],
@@ -1337,7 +1354,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
        [-0.29172023,  0.88253897,  0.58035002],
        [ 0.0915167 ,  0.67010435, -2.82816231],
        [ 1.02130682, -0.95964476, -1.66861984]])
-array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
+array([ 0.15030588,  0.14030961, -0.34238602])</pre></div></div></details>
   <p class="dx-note">X 是 (10, 3)，摺掉列之後剩三個數字，每一欄一個平均。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="89,91">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
@@ -1430,7 +1447,8 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="82">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w16detail-rand-lab"><summary>跨章應用：相關係數矩陣</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">相關係數矩陣</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">np.corrcoef(x, y)</span></div>
@@ -1438,7 +1456,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
        [0.78689588, 1.        ]])</pre></div>
   <p class="dx-note">對角線一定是 1，非對角線是兩個變數的相關係數。第 3 章看共線性時會一直用到這個矩陣。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="78">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 07 · 自我檢測</div>
@@ -1489,9 +1507,10 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>NumPy 陣列速查表 <span class="sec-badge">先備 · NumPy 陣列</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w16-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
+<details class="qa-item reading-detail" id="w16-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w16-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w16detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
   <p>下面三張表整理索引、彙總方向與容易混淆的寫法，後續處理資料時可以回查。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1515,6 +1534,7 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1522,12 +1542,13 @@ array([ 0.15030588,  0.14030961, -0.34238602])</pre></div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡整理本頁引用的課程 lab中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w16-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -1553,10 +1574,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -2078,13 +2103,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

@@ -836,4 +836,8 @@ BODIES['cv'] += f"""
 """
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('p6_modeling_api', BODIES, PAGEJS)
+
 apply("p6_modeling_api", BODIES, PAGEJS)

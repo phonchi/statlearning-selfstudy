@@ -71,20 +71,34 @@ async function checkOne(browser, stem) {
   const mathErrors = await page.$$eval('mjx-merror', els => els.map(el => el.textContent));
   mathErrors.forEach(msg => note(stem, '數學排版錯誤：' + msg));
 
-  // Proofs preserve the uninterrupted reading view and native keyboard behavior.
-  const proofState = await page.$$eval('details.proof', ds => ds.map(d => ({
+  // First validate the uninterrupted default reading view.
+  const disclosureState = await page.$$eval('details.proof, details.reading-detail', ds => ds.map(d => ({
     id: d.id, open: d.open, summary: d.querySelector('summary')?.textContent.trim()
   })));
-  proofState.forEach(d => {
-    if (d.open) note(stem, `證明預設展開：${d.id}`);
-    if (!d.id || !d.summary) note(stem, '證明缺少錨點或摘要');
+  disclosureState.forEach(d => {
+    if (d.open) note(stem, `細節預設展開：${d.id}`);
+    if (!d.id || !d.summary) note(stem, '收合區缺少錨點或摘要');
   });
   fs.mkdirSync(SHOT_DIR, { recursive: true });
   await page.screenshot({ path: path.join(SHOT_DIR, stem + '_reading.png'), fullPage: true });
+  const readingSummary = await page.$('details.reading-detail > summary');
+  if (readingSummary) {
+    await readingSummary.focus(); await page.keyboard.press('Enter');
+    if (!await readingSummary.evaluate(el => el.parentElement.open)) note(stem, 'Enter 無法展開閱讀細節');
+    await page.keyboard.press('Space');
+    if (await readingSummary.evaluate(el => el.parentElement.open)) note(stem, 'Space 無法收合閱讀細節');
+  }
+  // Every hidden teaching unit must be opened before testing its real controls.
+  await page.evaluate(async () => {
+    document.querySelectorAll('details.reading-detail').forEach(d => { d.open = true; });
+    await new Promise(r => setTimeout(r, 200));
+    if (window.MathJax?.startup?.promise) await MathJax.startup.promise;
+    if (typeof HC !== 'undefined') await HC._mathQueue;
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  });
   const firstProof = await page.$('details.proof > summary');
   if (firstProof) {
-    await firstProof.focus();
-    await page.keyboard.press('Enter');
+    await firstProof.focus(); await page.keyboard.press('Enter');
     if (!await firstProof.evaluate(el => el.parentElement.open)) note(stem, 'Enter 無法展開證明');
     await page.keyboard.press('Space');
     if (await firstProof.evaluate(el => el.parentElement.open)) note(stem, 'Space 無法收合證明');
@@ -126,7 +140,9 @@ async function checkOne(browser, stem) {
   // 按下每個控制鈕
   const btns = await page.$$('.controls-bar .btn');
   for (const b of btns) {
-    try { await b.click(); await new Promise(r => setTimeout(r, 260)); } catch (e) { /* 被覆蓋就跳過 */ }
+    if (await b.evaluate(el => el.disabled)) continue;
+    try { await b.click(); await new Promise(r => setTimeout(r, 260)); }
+    catch (e) { note(stem, '控制鈕無法操作：' + await b.evaluate(el => el.textContent.trim())); }
   }
   // select 推到每個選項
   for (const sel of await page.$$('.controls-bar select')) {
@@ -190,7 +206,8 @@ async function checkOne(browser, stem) {
   const qaBad = await page.evaluate(async () => {
     const items = [...document.querySelectorAll('.qa-item')];
     items.forEach(d => { d.open = true; });
-    await new Promise(r => setTimeout(r, 900));
+    await new Promise(r => setTimeout(r, 200));
+    if (typeof HC !== 'undefined') await HC._mathQueue;
     return items.filter(d => /\$[^$]/.test(d.textContent)).map(d =>
       (d.querySelector('summary') || {}).textContent || '(?)');
   });
@@ -223,6 +240,16 @@ async function checkOne(browser, stem) {
   if (overflow) note(stem, `手機版橫向溢出 ${overflow.over}px：${overflow.wide.join(' | ')}`);
   await page.screenshot({ path: path.join(SHOT_DIR, stem + '_mobile.png'), fullPage: true });
 
+  const reflowBad = await page.evaluate(async () => {
+    document.querySelectorAll('details.reading-detail').forEach(d => { d.open = false; });
+    await new Promise(r => setTimeout(r, 120));
+    document.querySelectorAll('details.reading-detail').forEach(d => { d.open = true; });
+    await new Promise(r => setTimeout(r, 250));
+    if (typeof HC !== 'undefined') await HC._mathQueue;
+    return [...document.querySelectorAll('.chart-wrap.ready canvas')].filter(c => c.width < 50 || c.height < 50).map(c => c.id);
+  });
+  reflowBad.forEach(id => note(stem, `重新展開後圖表尺寸異常：${id}`));
+
   // CDN 掛掉時：圖表退回 fallback，SVG 元件仍在
   // 用攔截 cdn.jsdelivr.net 而不是 setOfflineMode——後者仍會從磁碟快取供應 Chart.js，
   // 測不到真正的「CDN 失效」情境。
@@ -235,6 +262,7 @@ async function checkOne(browser, stem) {
   await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => {});
   await new Promise(r => setTimeout(r, 1200));
   const off = await page.evaluate(() => {
+    document.querySelectorAll('details.reading-detail').forEach(d => { d.open = true; });
     const wraps = [...document.querySelectorAll('.chart-wrap')];
     return {
       fallbackVisible: wraps.filter(w => !w.classList.contains('ready')).length,

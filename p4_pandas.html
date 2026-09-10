@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -855,7 +865,8 @@ dtype: object</pre></div>
   <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
   <span class="line">df.head() <span class="com"># Get the first 5 rows of data</span></span>
   <span class="line">df.tail(<span class="num">3</span>) <span class="com"># Get the last 3 rows of data</span></span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
+  <details class="qa-item reading-detail" id="w17detail-view-out-1"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
 2025-09-01 -0.397297 -1.061537  1.455216  0.632237
 2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
 2025-09-03  0.501820 -0.662466  0.146713  0.293567
@@ -864,7 +875,7 @@ dtype: object</pre></div>
                    A         B         C         D
 2025-09-04 -1.060077 -1.010073  0.553983  0.211157
 2025-09-05 -0.109702  0.236859 -0.203407  0.695861
-2025-09-06  0.157943 -0.966041  0.844384  1.641228</pre></div>
+2025-09-06  0.157943 -0.966041  0.844384  1.641228</pre></div></div></details>
   <p class="dx-note"><code>head()</code> 預設五列，<code>tail(3)</code> 給最後三列。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="31,32">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
@@ -874,7 +885,8 @@ dtype: object</pre></div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
   <span class="line">df.describe()</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              A         B         C         D
+  <details class="qa-item reading-detail" id="w17detail-view-out-2"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              A         B         C         D
 count  6.000000  6.000000  6.000000  6.000000
 mean  -0.291225 -0.842656  0.365341  0.328874
 std    0.594509  0.608525  0.743696  1.030710
@@ -882,7 +894,7 @@ min   -1.060077 -1.592677 -0.604842 -1.500806
 25%   -0.729352 -1.048671 -0.115877  0.231760
 50%   -0.253499 -0.988057  0.350348  0.462902
 75%    0.091032 -0.738359  0.771784  0.679955
-max    0.501820  0.236859  1.455216  1.641228</pre></div>
+max    0.501820  0.236859  1.455216  1.641228</pre></div></div></details>
   <p class="dx-note"><code>count</code> 那一列很有用。它<strong>不算遺漏值</strong>，所以某一欄的 count 比別欄少，就代表那欄有 NaN。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="36">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
@@ -913,7 +925,8 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div>
   <div class="quiz-feedback" id="qViewFeedback"></div>
 </div>
 
-<h3 id="dx-sort">依標籤或資料值排序</h3>
+<details class="qa-item reading-detail" id="w17detail-view-2"><summary>延伸：標籤排序與資料值排序</summary>
+<div class="detail-body"><h3 id="dx-sort">依標籤或資料值排序</h3>
 <p><code>sort_index</code> 排列列／欄的標籤；<code>sort_values</code> 按指定欄的數值排列資料列。
 <code>axis=1</code> 指欄方向，<code>ascending=False</code> 指遞減順序。排序後標籤仍跟著原本的資料走。</p>
 <div class="deck-extra">
@@ -939,7 +952,8 @@ max    0.501820  0.236859  1.455216  1.641228</pre></div>
 2025-09-05 -0.109702  0.236859 -0.203407  0.695861</pre></div>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="40,42">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
-<h3 id="dx-calc">摘要、逐元素運算與累積量</h3>
+</div></details><details class="qa-item reading-detail" id="w17detail-view-1"><summary>延伸：對齊、逐元素計算與累積量</summary>
+<div class="detail-body"><h3 id="dx-calc">摘要、逐元素運算與累積量</h3>
 <p><code>mean()</code> 預設沿列計算各欄平均；DataFrame 相加會先對齊列與欄標籤，再逐元素相加。
 <code>apply(np.cumsum)</code> 在這個數值表上逐欄累積加總，因此每一列表示從開頭累積到該列的總量。</p>
 <div class="deck-extra">
@@ -971,7 +985,8 @@ dtype: float64
 2025-09-06 -1.747348 -5.055935  2.192048  1.973244</pre></div>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="64,66,68">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
-<h3 id="dx-save">讀入與輸出資料表</h3>
+</div></details><details class="qa-item reading-detail" id="w17detail-view-0"><summary>延伸：Excel／CSV 輸出與完整參數</summary>
+<div class="detail-body"><h3 id="dx-save">讀入與輸出資料表</h3>
 <p><code>read_csv</code>、<code>read_excel</code> 將檔案讀為資料表；<code>to_csv</code>、<code>to_excel</code>
 將目前的表輸出到檔案。下列兩個命令會在執行目錄建立檔案，檔名已存在時會覆寫；預設也會寫出列索引。
 只想保留資料欄時可指定 <code>index=False</code>。Excel 讀寫另需要相容的引擎，例如 <code>openpyxl</code>。</p>
@@ -983,6 +998,7 @@ dtype: float64
   <p class="dx-note">這兩個命令的結果是檔案；lab未保存文字輸出。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="81,82">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
+</div></details>
 </section>
 <section id="select">
 <!-- GEN:BEGIN sec:select -->
@@ -1029,7 +1045,8 @@ dtype: float64
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">df[<span class="str">&quot;A&quot;</span>]</span>
   <span class="line">df[<span class="num">0</span>:<span class="num">3</span>] <span class="com"># df[&quot;20250901&quot;:&quot;20250903&quot;] also works</span></span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>2025-09-01   -0.397297
+  <details class="qa-item reading-detail" id="w17detail-select-out-1"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>2025-09-01   -0.397297
 2025-09-02   -0.840037
 2025-09-03    0.501820
 2025-09-04   -1.060077
@@ -1039,7 +1056,7 @@ Freq: D, Name: A, dtype: float64
                    A         B         C         D
 2025-09-01 -0.397297 -1.061537  1.455216  0.632237
 2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
-2025-09-03  0.501820 -0.662466  0.146713  0.293567</pre></div>
+2025-09-03  0.501820 -0.662466  0.146713  0.293567</pre></div></div></details>
   <p class="dx-note">注意兩者的差別：<code>df['A']</code> 給 Series，<code>df[0:3]</code> 給 DataFrame。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="45,47">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
@@ -1051,7 +1068,8 @@ Freq: D, Name: A, dtype: float64
   <span class="line">df.loc[:, [<span class="str">&quot;A&quot;</span>, <span class="str">&quot;C&quot;</span>]] <span class="com"># Fancy indexing in the second dimension</span></span>
   <span class="line"><span class="com"># 欄位選取與資料清理/轉換</span></span>
   <span class="line">df.iloc[<span class="num">3</span>]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         C
+  <details class="qa-item reading-detail" id="w17detail-select-out-2"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         C
 2025-09-01 -0.397297  1.455216
 2025-09-02 -0.840037 -0.604842
 2025-09-03  0.501820  0.146713
@@ -1062,7 +1080,7 @@ A   -1.060077
 B   -1.010073
 C    0.553983
 D    0.211157
-Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
+Name: 2025-09-04 00:00:00, dtype: float64</pre></div></div></details>
   <p class="dx-note"><code>df.iloc[3]</code> 拿一整列，回來的是 Series——那一列的欄名變成了它的索引。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="50,53">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
@@ -1090,7 +1108,8 @@ Name: 2025-09-04 00:00:00, dtype: float64</pre></div>
   第 3 章把類別變數放進迴歸、第 4 章切出訓練與測試集，用的都是這一節的選取語法。<a href="linear_regression.html#qualitative">→ 線性迴歸 · 類別型預測變數</a>
 </div>
 
-<h3 id="dx-idx">把車名設成索引，以及重複標籤</h3>
+<details class="qa-item reading-detail" id="w17detail-named-index"><summary>延伸：車名索引、重複標籤與完整輸出</summary>
+<div class="detail-body"><h3 id="dx-idx">把車名設成索引，以及重複標籤</h3>
 <p><code>set_index('name')</code> 將 name 欄用作列標籤，預設從一般資料欄移除它。
 這只改變如何查找列，不會把車名變成唯一識別碼：同一名稱仍可能出現多次。</p>
 <div class="deck-extra">
@@ -1142,6 +1161,7 @@ ford galaxie 500  14.0       1</pre></div>
 </div>
 <p><code>loc</code> 使用標籤，回傳一列或多列取決於標籤是否重複與索引寫法。
 <code>iloc</code> 仍依位置取資料。需要回到一般欄位時使用 <code>reset_index()</code>。</p>
+</div></details>
 </section>
 <section id="na">
 <!-- GEN:BEGIN sec:na -->
@@ -1182,7 +1202,8 @@ ford galaxie 500  14.0       1</pre></div>
   <div class="dx-label">找出影響型別的值</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">np.unique(Auto[<span class="str">&#x27;horsepower&#x27;</span>])</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([&#x27;100.0&#x27;, &#x27;102.0&#x27;, &#x27;103.0&#x27;, &#x27;105.0&#x27;, &#x27;107.0&#x27;, &#x27;108.0&#x27;, &#x27;110.0&#x27;,
+  <details class="qa-item reading-detail" id="w17detail-na-out-1"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([&#x27;100.0&#x27;, &#x27;102.0&#x27;, &#x27;103.0&#x27;, &#x27;105.0&#x27;, &#x27;107.0&#x27;, &#x27;108.0&#x27;, &#x27;110.0&#x27;,
        &#x27;112.0&#x27;, &#x27;113.0&#x27;, &#x27;115.0&#x27;, &#x27;116.0&#x27;, &#x27;120.0&#x27;, &#x27;122.0&#x27;, &#x27;125.0&#x27;,
        &#x27;129.0&#x27;, &#x27;130.0&#x27;, &#x27;132.0&#x27;, &#x27;133.0&#x27;, &#x27;135.0&#x27;, &#x27;137.0&#x27;, &#x27;138.0&#x27;,
        &#x27;139.0&#x27;, &#x27;140.0&#x27;, &#x27;142.0&#x27;, &#x27;145.0&#x27;, &#x27;148.0&#x27;, &#x27;149.0&#x27;, &#x27;150.0&#x27;,
@@ -1195,7 +1216,7 @@ ford galaxie 500  14.0       1</pre></div>
        &#x27;76.00&#x27;, &#x27;77.00&#x27;, &#x27;78.00&#x27;, &#x27;79.00&#x27;, &#x27;80.00&#x27;, &#x27;81.00&#x27;, &#x27;82.00&#x27;,
        &#x27;83.00&#x27;, &#x27;84.00&#x27;, &#x27;85.00&#x27;, &#x27;86.00&#x27;, &#x27;87.00&#x27;, &#x27;88.00&#x27;, &#x27;89.00&#x27;,
        &#x27;90.00&#x27;, &#x27;91.00&#x27;, &#x27;92.00&#x27;, &#x27;93.00&#x27;, &#x27;94.00&#x27;, &#x27;95.00&#x27;, &#x27;96.00&#x27;,
-       &#x27;97.00&#x27;, &#x27;98.00&#x27;, &#x27;?&#x27;], dtype=object)</pre></div>
+       &#x27;97.00&#x27;, &#x27;98.00&#x27;, &#x27;?&#x27;], dtype=object)</pre></div></div></details>
   <p class="dx-note">全部是<strong>帶引號的字串</strong>，輸出末尾就會看到那個 <code>'?'</code>。整欄因此被讀成 object。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="192">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
@@ -1224,7 +1245,8 @@ ford galaxie 500  14.0       1</pre></div>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="197,199">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w17detail-reindex-missing"><summary>延伸：重新索引產生的缺值</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">reindex 也會生出 NaN</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line"><span class="com"># 欄位選取與資料清理/轉換；排序/重建索引</span></span>
@@ -1238,7 +1260,7 @@ e    NaN
 dtype: float64</pre></div>
   <p class="dx-note">索引裡多了一個 <code>e</code>，原本沒有這一筆，pandas 就填 NaN。遺漏值不是只有讀檔會產生。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="61">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>做法</th><th>什麼時候用</th><th>風險</th></tr></thead>
@@ -1252,7 +1274,8 @@ dtype: float64</pre></div>
   <div class="quiz-feedback" id="qNaFeedback"></div>
 </div>
 
-<h3 id="dx-cat">數字儲存，不代表一定當連續量分析</h3>
+<details class="qa-item reading-detail" id="w17detail-categorical"><summary>跨章應用：category 與模型中的類別效果</summary>
+<div class="detail-body"><h3 id="dx-cat">數字儲存，不代表一定當連續量分析</h3>
 <p>cylinders 是汽缸數。它以整數儲存，但在比較不同汽缸數的車時，也可以視為類別。
 轉為 <code>category</code> 後，各個值成為群組水準，適合畫各組分布或建立類別編碼。</p>
 <div class="deck-extra">
@@ -1265,6 +1288,7 @@ dtype: float64</pre></div>
 </div>
 <p>型態轉換不會決定研究問題；是否把汽缸數當連續效應、順序效果或類別效果，仍須依模型與問題選擇。
 不要因為類別代碼是 0、1、2，就自動把代碼間距當成測量距離。</p>
+</div></details>
 </section>
 <section id="group">
 <!-- GEN:BEGIN sec:group -->
@@ -1366,7 +1390,8 @@ foo -2.740490  0.700964</pre></div>
   <p>這節整理串接與讀檔的用法。上一節的 <code>?</code> 影響欄位型別，提醒我們
   <strong>讀檔時先確認分隔符與遺漏值設定</strong>。</p>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w17detail-concat-pieces"><summary>查看完整分塊與中間輸出</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">切成三塊再接回去</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">pieces = [df[:<span class="num">2</span>], df[<span class="num">2</span>:<span class="num">4</span>], df[<span class="num">4</span>:]]</span>
@@ -1383,20 +1408,21 @@ foo -2.740490  0.700964</pre></div>
  pandas.core.frame.DataFrame)</pre></div>
   <p class="dx-note">切片給的是三個 DataFrame，裝在一個串列裡。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="71">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div class="deck-extra">
   <div class="dx-label">concat 沿著列接起來</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line"><span class="com"># 資料表合併/串接</span></span>
   <span class="line">pd.concat(pieces) <span class="com"># Adding a column to a DataFrame is relatively fast. However, adding a row requires a copy, and may be expensive.</span></span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
+  <details class="qa-item reading-detail" id="w17detail-join-out-1"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                   A         B         C         D
 2025-09-01 -0.397297 -1.061537  1.455216  0.632237
 2025-09-02 -0.840037 -1.592677 -0.604842 -1.500806
 2025-09-03  0.501820 -0.662466  0.146713  0.293567
 2025-09-04 -1.060077 -1.010073  0.553983  0.211157
 2025-09-05 -0.109702  0.236859 -0.203407  0.695861
-2025-09-06  0.157943 -0.966041  0.844384  1.641228</pre></div>
+2025-09-06  0.157943 -0.966041  0.844384  1.641228</pre></div></div></details>
   <p class="dx-note">接回去之後跟原本一模一樣。注意註解裡那句話：<strong>加一欄很快，加一列要複製整張表</strong>——所以不要在迴圈裡一列一列 append。</p>
   <span class="dx-src" data-lab-ch="1" data-lab-cells="72">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
@@ -1497,9 +1523,10 @@ foo -2.740490  0.700964</pre></div>
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>pandas 資料框速查表 <span class="sec-badge">先備 · pandas 資料框</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w17-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
+<details class="qa-item reading-detail" id="w17-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w17-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w17detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
   <p>三張速查表整理選取語法、資料檢查與分組彙總。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1523,6 +1550,7 @@ foo -2.740490  0.700964</pre></div>
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch02）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1530,12 +1558,13 @@ foo -2.740490  0.700964</pre></div>
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
   <p>詞彙卡整理本頁引用的課程 lab中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w17-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -1561,10 +1590,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -2086,13 +2119,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

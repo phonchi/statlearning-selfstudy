@@ -869,4 +869,8 @@ BODIES['na'] += f"""
 """
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('p4_pandas', BODIES, PAGEJS)
+
 apply("p4_pandas", BODIES, PAGEJS)

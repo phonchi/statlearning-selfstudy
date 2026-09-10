@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -790,7 +800,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">idx_80 = Auto_re[<span class="str">&#x27;year&#x27;</span>] &gt; <span class="num">80</span></span>
   <span class="line">Auto_re.loc[idx_80, [<span class="str">&#x27;weight&#x27;</span>, <span class="str">&#x27;origin&#x27;</span>]]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                                   weight  origin
+  <details class="qa-item reading-detail" id="w15detail-cond-out-1"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                                   weight  origin
 name                                             
 plymouth reliant                   2490.0       1
 buick skylark                      2635.0       1
@@ -849,7 +860,7 @@ ford mustang gl                    2790.0       1
 vw pickup                          2130.0       2
 dodge rampage                      2295.0       1
 ford ranger                        2625.0       1
-chevy s-10                         2720.0       1</pre></div>
+chevy s-10                         2720.0       1</pre></div></div></details>
   <p class="dx-note">先算出一整排 True／False，再拿它去 <code>loc</code> 選列。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="226">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
@@ -860,7 +871,8 @@ chevy s-10                         2720.0       1</pre></div>
   <span class="line">Auto_re.loc[<span class="kw">lambda</span> df: (df[<span class="str">&#x27;year&#x27;</span>] &gt; <span class="num">80</span>) &amp; (df[<span class="str">&#x27;mpg&#x27;</span>] &gt; <span class="num">30</span>),</span>
   <span class="line">            [<span class="str">&#x27;weight&#x27;</span>, <span class="str">&#x27;origin&#x27;</span>]</span>
   <span class="line">           ]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                                   weight  origin
+  <details class="qa-item reading-detail" id="w15detail-cond-out-2"><summary>查看完整 Lab 輸出</summary>
+<div class="detail-body"><div class="expected-out"><span class="eo-tag">預期輸出</span><pre>                                   weight  origin
 name                                             
 toyota starlet                     1755.0       3
 plymouth champ                     1875.0       1
@@ -895,12 +907,13 @@ toyota celica gt                   2665.0       3
 dodge charger 2.2                  2370.0       1
 vw pickup                          2130.0       2
 dodge rampage                      2295.0       1
-chevy s-10                         2720.0       1</pre></div>
+chevy s-10                         2720.0       1</pre></div></div></details>
   <p class="dx-note">注意<strong>兩個條件各自都有括號</strong>。另外這裡用了 <code>lambda df:</code>。它讓你在鏈式操作中間也能引用「當下這張表」。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="230">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w15detail-compound-filter"><summary>跨章應用：混合多種資料篩選條件</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">& 與 | 混用</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">Auto_re.loc[<span class="kw">lambda</span> df: (df[<span class="str">&#x27;displacement&#x27;</span>] &lt; <span class="num">300</span>)</span>
@@ -963,7 +976,7 @@ ford mustang gl        2790.0       1
 ford ranger            2625.0       1</pre></div>
   <p class="dx-note">排氣量小於 300，<strong>而且</strong>（是 ford <strong>或</strong> datsun）。括號決定了誰先算，跟數學一樣。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="232">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>情境</th><th>用什麼</th><th>為什麼</th></tr></thead>
@@ -1024,7 +1037,8 @@ ford ranger            2625.0       1</pre></div>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="236">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w15detail-nested-loop"><summary>延伸：巢狀迴圈的加總</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">巢狀迴圈</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">total = <span class="num">0</span></span>
@@ -1035,7 +1049,7 @@ ford ranger            2625.0       1</pre></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Total is: 144</pre></div>
   <p class="dx-note">裡面那圈跑完，外面才前進一格，所以總共跑 3×3 = 9 次。巢狀兩層以上通常代表該換個寫法了。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="238">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div class="deck-extra">
   <div class="dx-label">zip：兩排東西配對走</div>
@@ -1072,7 +1086,7 @@ ford ranger            2625.0       1</pre></div>
   <div class="section-number">PART 03 · 函式</div>
   <h2>def、參數、return：把一段流程封起來 <span class="sec-badge">課程 Lab Ch5 · lab 範例</span></h2>
 <!-- GEN:END sec:func -->
-
+<p>函式用 <code>return</code> 交回結果；沒有寫 return 時，回傳 <code>None</code>，不會自動取最後一行。</p>
   <p>函式有三個部分：<strong>名字</strong>、<strong>參數</strong>（要給它什麼）、
   <strong>回傳值</strong>（它給你什麼）。寫得好的函式就像一個黑盒子——
   用的人只要知道這三件事，不必知道裡面怎麼做。</p>
@@ -1084,7 +1098,8 @@ ford ranger            2625.0       1</pre></div>
 <span class="line"><span class="kw">for</span> value <span class="kw">in</span> [<span class="num">18</span>, <span class="num">30</span>, <span class="num">24</span>]:</span>
 <span class="line">    print(above_threshold(value))</span></div>
   <p>這是自訂函式練習。<code>def</code> 定義名字和參數；<code>return</code> 交回真假值，外面的 print 才負責顯示。先改門檻，確認每次呼叫如何使用引數。以下是學完基本語法後的課程應用；OLS、設計矩陣與 MSE 可在 <a href="p6_modeling_api.html">P6</a> 詳讀。</p>
-  <p>假設你要比較三種多項式次數的驗證誤差。不寫函式的話，你會把同一段
+  <details class="qa-item reading-detail" id="w15detail-function-lab"><summary>完整應用：模型評估函式、資料流與重用</summary>
+<div class="detail-body"><p>假設你要比較三種多項式次數的驗證誤差。不寫函式的話，你會把同一段
   「切分 → 擬合 → 預測 → 算 MSE」複製三次，只改中間一個數字。
   三份幾乎一樣的程式碼，就是<strong>三個各自會出錯、而且改了一份忘了改另外兩份</strong>的地方。</p>
 
@@ -1199,14 +1214,10 @@ ford ranger            2625.0       1</pre></div>
   </details>
 </div>
 
-<div class="quiz-box">
-  <div class="quiz-label">PART 03 · 自我檢測</div>
-  <p>一個函式忘了寫 <code>return</code>，呼叫它會拿到什麼？</p>
-  <div class="quiz-options" id="qFuncOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。Python 允許沒有回傳值的函式（例如只負責畫圖或存檔的那種）。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(A)</span> 會報錯</div><div class="quiz-opt" data-correct="true" data-fb="對，而且這是很難查的 bug——&lt;code&gt;mse = evalMSE(...)&lt;/code&gt; 之後 &lt;code&gt;mse&lt;/code&gt; 是 None，要等到你拿它去算東西才會爆，那時錯誤訊息已經離現場很遠了。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(B)</span> <code>None</code></div><div class="quiz-opt" data-correct="false" data-fb="那是 R 或 Jupyter 儲存格的行為。Python 的函式一定要明寫 &lt;code&gt;return&lt;/code&gt;。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(C)</span> 最後一行的值</div></div>
-  <div class="quiz-feedback" id="qFuncFeedback"></div>
-</div>
 
-<h3 id="dx-lamb">lambda 是只有一個運算式的函式</h3>
+
+</div></details><details class="qa-item reading-detail" id="w15detail-lambda"><summary>跨套件應用：lambda 與資料篩選</summary>
+<div class="detail-body"><h3 id="dx-lamb">lambda 是只有一個運算式的函式</h3>
 <p><code>lambda df: df['year'] &gt; 80</code> 建立一個接受 df 的函式，並把冒號後的運算式結果回傳。
 它相當於定義一個函式，內容只有 <code>return df['year'] &gt; 80</code>。
 <code>loc</code> 接到這個函式時，會把當下的資料框傳給它，再使用回傳的布林條件選列。</p>
@@ -1280,18 +1291,25 @@ chevy s-10                         2720.0       1</pre></div>
 <p>需要多個步驟、註解或重複呼叫時，具名的 <code>def</code> 通常更方便。
 <code>lambda</code> 只容許單一運算式，不用寫 <code>return</code>，也不是提早執行一次的篩選結果。</p>
 <p class="source-note">延伸：<a href="https://docs.python.org/zh-tw/3/tutorial/controlflow.html#lambda-expressions">Python 官方教學：lambda 運算式</a>。</p>
+</div></details><div class="quiz-box">
+  <div class="quiz-label">PART 03 · 自我檢測</div>
+  <p>一個函式忘了寫 <code>return</code>，呼叫它會拿到什麼？</p>
+  <div class="quiz-options" id="qFuncOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。Python 允許沒有回傳值的函式（例如只負責畫圖或存檔的那種）。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(A)</span> 會報錯</div><div class="quiz-opt" data-correct="true" data-fb="對，而且這是很難查的 bug——&lt;code&gt;mse = evalMSE(...)&lt;/code&gt; 之後 &lt;code&gt;mse&lt;/code&gt; 是 None，要等到你拿它去算東西才會爆，那時錯誤訊息已經離現場很遠了。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(B)</span> <code>None</code></div><div class="quiz-opt" data-correct="false" data-fb="那是 R 或 Jupyter 儲存格的行為。Python 的函式一定要明寫 &lt;code&gt;return&lt;/code&gt;。" onclick="quizCheck('qFunc', this)"><span class="opt-letter">(C)</span> 最後一行的值</div></div>
+  <div class="quiz-feedback" id="qFuncFeedback"></div>
+</div>
 </section>
 <section id="scope">
 <!-- GEN:BEGIN sec:scope -->
   <div class="section-number">PART 04 · 預設引數與作用域</div>
   <h2>函式裡看得到外面，外面看不到裡面 <span class="sec-badge">課程 Lab Ch5 · lab 範例</span></h2>
 <!-- GEN:END sec:scope -->
-
+<p>例如 <code>def above(x, threshold=25): return x &gt; threshold</code>；<code>above(30)</code> 使用預設門檻，<code>above(30, threshold=35)</code> 則覆寫它。以下互動再看函式內外的名字如何分開。</p>
   <p>兩件事：<strong>預設引數</strong>讓常用的設定不必每次都寫，
   <strong>作用域</strong>決定一個名字在哪裡看得到。
   課程 lab 的 <code>boot_SE</code> 兩者都用上了。</p>
 
-  <p>這個進階應用同樣在重抽樣方法的課程筆記本中執行：先跑lab 範例 的安裝與匯入，
+  <details class="qa-item reading-detail" id="w15detail-bootstrap-function"><summary>跨章應用：boot_SE 的預設引數與執行準備</summary>
+<div class="detail-body"><p>這個進階應用同樣在重抽樣方法的課程筆記本中執行：先跑lab 範例 的安裝與匯入，
   再跑lab 範例 建立 <code>Portfolio</code> 與 <code>alpha_func</code>，最後跑下面的lab 範例。
   第一輪先看引數如何傳入即可，bootstrap 的用途留待正課。</p>
 
@@ -1330,7 +1348,7 @@ chevy s-10                         2720.0       1</pre></div>
   <span class="dx-src" data-lab-ch="5" data-lab-cells="61">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 
-<div class="viz-layout" data-provenance="illustrative">
+</div></details><div class="viz-layout" data-provenance="illustrative">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w15scSvg" height="320"></svg>
@@ -1377,14 +1395,15 @@ chevy s-10                         2720.0       1</pre></div>
   Python 的錯誤訊息（traceback）要<strong>從最後一行開始讀</strong>：
   最後一行是錯誤的種類與說明，往上是它發生在哪一行。</p>
 
-<div class="deck-extra">
+<details class="qa-item reading-detail" id="w15detail-traceback"><summary>查看課程中的完整錯誤訊息</summary>
+<div class="detail-body"><div class="deck-extra">
   <div class="dx-label">一個真的錯誤訊息</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">A[[<span class="num">1</span>,<span class="num">3</span>],[<span class="num">0</span>,<span class="num">2</span>,<span class="num">3</span>]]</span></div>
   <div class="expected-out"><span class="eo-tag">錯誤訊息</span><pre>IndexError: shape mismatch: indexing arrays could not be broadcast together with shapes (2,) (3,)</pre></div>
   <p class="dx-note">最後一行說得很清楚：<code>shape mismatch</code>，兩個索引陣列的形狀 (2,) 與 (3,) 沒辦法一起廣播。看到 shape 就知道要去印 shape。這是 P3 的第一課。</p>
   <span class="dx-src" data-lab-ch="2" data-lab-cells="152">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch02-statlearn-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch02-statlearn-lab-zh.ipynb</code></a></span>
-</div>
+</div></div></details>
 
 <div class="viz-layout" data-provenance="illustrative">
   <div>
@@ -1482,9 +1501,10 @@ chevy s-10                         2720.0       1</pre></div>
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>流程與函式速查表 <span class="sec-badge">先備 · 流程與函式</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w15-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div>
+<details class="qa-item reading-detail" id="w15-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w15-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w15detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
   <p>三張速查表。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -1508,6 +1528,7 @@ chevy s-10                         2720.0       1</pre></div>
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch02、Ch05）（老師在課程環境實跑）；圖表使用的預先計算資料由 <code>tools/frames/</code> 在固定種子下產生，環境為 numpy 1.24.4 · pandas 2.3.2 · scikit-learn 1.6.1 · scipy 1.13.1 · statsmodels 0.14.2 · ISLP 0.4.0 · pygam 0.10.1。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+</div></details>
 </section>
 <!-- GEN:BEGIN chapternav -->
 <div class="chapter-nav"><a class="prev" href="p1_python_basics.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">Python 基礎</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="p3_numpy.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">NumPy 陣列</div></a></div>
@@ -1532,10 +1553,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -2057,13 +2082,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {
@@ -2446,6 +2514,12 @@ function w15erDraw() {
 function w15erStep() { w15erI = w15erI > 0 ? w15erI - 1 : 3; w15erDraw(); }
 function w15erReset() { w15erI = 3; w15erDraw(); }
 if (w15erS) w15erDraw();
+
+HC.onDetail('w15detail-function-lab', {close() {
+  if (w15fnTimer) { clearTimeout(w15fnTimer); w15fnTimer = null; }
+  document.querySelectorAll('#w15detail-function-lab button[onclick="w15fnPlay()"]')
+    .forEach(button => { button.textContent = '▶ 重新播放'; button.setAttribute('aria-pressed', 'false'); });
+}});
 </script>
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->

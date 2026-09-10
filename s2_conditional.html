@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -699,7 +709,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S2 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。計算細節、完整實作與證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -762,7 +772,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Set Theory</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="19">PDF p.19</a>。本頁文字、例題與圖均重新製作。</p>
 
-<h3>集合條件如何展開與取反</h3>
+<details class="qa-item reading-detail" id="w22detail-set-laws"><summary>延伸：分配律、De Morgan 與條件取反</summary>
+<div class="detail-body"><h3>集合條件如何展開與取反</h3>
 <p>在機率題與資料篩選中，分配律和 De Morgan 定律能幫你改寫條件：</p>
 $$A\cap(B\cup C)=(A\cap B)\cup(A\cap C),$$
 $$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
@@ -774,7 +785,7 @@ $$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
 這等價於它在 $A\cap B$ 或 $A\cap C$ 中，所以兩集合相同。
 同理，ω 不屬於 $A\cup B$，恰好表示它既不在 A 也不在 B；ω 不屬於 $A\cap B$，則表示至少不在其中一個集合。
 逐一改寫便得到兩條 De Morgan 定律。</p>
-</div></details><p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · 分配律與 De Morgan 定律</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="20">PDF p.20</a>。本頁文字、例題與圖均重新製作。</p>
+</div></details><p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · 分配律與 De Morgan 定律</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="20">PDF p.20</a>。本頁文字、例題與圖均重新製作。</p></div></details>
 </section>
 <section id="conditional">
 <!-- GEN:BEGIN sec:conditional -->
@@ -876,24 +887,25 @@ $$(A\cup B)^c=A^c\cap B^c,\qquad (A\cap B)^c=A^c\cup B^c.$$
   <p>若 $A$ 與 $A^c$ 分割所有人，分母可用全機率公式展開：</p>
   $$P(B)=P(B\mid A)P(A)+P(B\mid A^c)P(A^c).$$
 
-  <p><strong>數值例。</strong>某疾病盛行率為 1%，檢測對病人的陽性率為 90%，
+  <details class="qa-item reading-detail" id="w22detail-bayes-example"><summary>算一次：陽性結果與基準率</summary>
+<div class="detail-body"><p><strong>數值例。</strong>某疾病盛行率為 1%，檢測對病人的陽性率為 90%，
   對健康者的偽陽性率為 5%。在 10,000 人中，預期有 100 位病人，其中 90 位陽性；
   9,900 位健康者中約 495 位也陽性。因此：</p>
   $$P(\text{疾病}\mid +)=\frac{90}{90+495}\approx0.154.$$
   <p>陽性結果確實提高了罹病機率，從 1% 變成約 15.4%；但高敏感度本身無法保證陽性後機率很高。
   這就是基準率（base rate）不可省略的原因。</p>
 
-<div class="info-box purple">
-  <span class="info-label">🔗 後續用途</span>
-  <a href='classification.html#lda'>分類第 LDA 節</a>會用 Bayes 定理把類別條件密度轉成後驗類別機率；<a href='statistical_learning.html#bayes'>統計學習的 Bayes 分類器</a>則選後驗機率最大的類別。
-</div>
-
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p>沿用上例，一個人驗出陽性後，最接近的罹病機率是哪一個？</p>
   <div class="quiz-options" id="qBayesOptions"><div class="quiz-opt" data-correct="false" data-fb="90% 是 P(陽性｜疾病)，條件方向與題目要的 P(疾病｜陽性) 相反。" onclick="quizCheck('qBayes', this)"><span class="opt-letter">(A)</span> 90%</div><div class="quiz-opt" data-correct="true" data-fb="對。陽性者預期共有 90+495=585 人，其中 90 人有病，90/585 約為 15.4%。" onclick="quizCheck('qBayes', this)"><span class="opt-letter">(B)</span> 15%</div><div class="quiz-opt" data-correct="false" data-fb="1% 是檢測前的基準率；陽性結果會更新這個機率。" onclick="quizCheck('qBayes', this)"><span class="opt-letter">(C)</span> 1%</div></div>
   <div class="quiz-feedback" id="qBayesFeedback"></div>
+</div></div></details><div class="info-box purple">
+  <span class="info-label">🔗 後續用途</span>
+  <a href='classification.html#lda'>分類第 LDA 節</a>會用 Bayes 定理把類別條件密度轉成後驗類別機率；<a href='statistical_learning.html#bayes'>統計學習的 Bayes 分類器</a>則選後驗機率最大的類別。
 </div>
+
+
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Bayes Rule</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="28">PDF p.28</a>。本頁文字、例題與圖均重新製作。</p>
 <details class="qa-item proof" id="w22proof-bayes"><summary>證明：從條件機率得到 Bayes 公式</summary>
 <div class="qa-a">
@@ -910,7 +922,8 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
   <div class="section-number">PART 05 · 計數〔選讀〕</div>
   <h2>計數〔選讀〕 <span class="sec-badge"><a href="#w22-source-seeing-theory">統計入門參考 · 第 2 章</a></span></h2>
 <!-- GEN:END sec:counting -->
-
+<p>當結果等可能，機率可以用符合條件的結果數除以全部結果數。更多計數技巧可在需要時再讀。</p><details class="qa-item reading-detail" id="w22detail-counting"><summary>選讀：排列、組合與完整計數練習</summary>
+<div class="detail-body">
   <p>當每個基本結果等可能時，機率常化成「符合條件的數量／全部數量」。計數時先問順序是否重要。
   從 $n$ 個不同物件中選 $r$ 個：若順序重要，用排列；若只在乎選了哪一些，用組合。</p>
   $$P_{n,r}=\frac{n!}{(n-r)!},\qquad
@@ -933,6 +946,12 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
   <div class="quiz-feedback" id="qCountFeedback"></div>
 </div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章 · Counting</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="23">PDF p.23</a>。本頁文字、例題與圖均重新製作。</p>
+<div class="quiz-box">
+  <div class="quiz-label">EXERCISE 4 · 計數延伸〔選讀〕</div>
+  <p>八位跑者選出金、銀、銅牌，假設不並列，共有幾種名次結果？</p>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="獎牌有順序，同三人交換金銀銅會是不同結果。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> $\binom{{8}}{{3}}=56$</div><div class="quiz-opt" data-correct="true" data-fb="對。依序選金、銀、銅，每次少一人。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> $8\times7\times6=336$</div><div class="quiz-opt" data-correct="false" data-fb="這允許同一人同時拿多面獎牌，不符合不重複。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> $8^3=512$</div></div>
+  <div class="quiz-feedback" id="qEx4Feedback"></div>
+</div></div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -961,12 +980,7 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
   <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="音量不在目前的機率模型裡，無法補出 Bayes 公式的先驗。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> 警報音量</div><div class="quiz-opt" data-correct="true" data-fb="對。還需要 P(火災)，才能加權真陽性與偽陽性。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 火災的基準率</div><div class="quiz-opt" data-correct="false" data-fb="兩個條件機率不能直接相加；它們還要分別乘上火災與無火災的機率。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 把 98% 和 2% 相加</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
-<div class="quiz-box">
-  <div class="quiz-label">EXERCISE 4 · 計數延伸〔選讀〕</div>
-  <p>八位跑者選出金、銀、銅牌，假設不並列，共有幾種名次結果？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="獎牌有順序，同三人交換金銀銅會是不同結果。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> $\binom{{8}}{{3}}=56$</div><div class="quiz-opt" data-correct="true" data-fb="對。依序選金、銀、銅，每次少一人。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> $8\times7\times6=336$</div><div class="quiz-opt" data-correct="false" data-fb="這允許同一人同時拿多面獎牌，不符合不重複。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> $8^3=512$</div></div>
-  <div class="quiz-feedback" id="qEx4Feedback"></div>
-</div>
+
   <p class="source-note"><strong>題目來源：</strong>四題均為本站原創，觀念範圍對照
   <a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory 第 2 章</a>與<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="19">PDF pp.19–30</a>。</p>
 </section>
@@ -974,9 +988,10 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>條件機率與獨立速查表 <span class="sec-badge">先備 · S2 統計</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w22-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 2 章。</li></ul></div>
+<details class="qa-item reading-detail" id="w22-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w22-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 2 章。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w22detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>看到的語句</th><th>分母／計算</th><th>先檢查</th></tr></thead>
   <tbody><tr><td>A 或 B</td><td>$P(A)+P(B)-P(A\cap B)$</td><td>交集是否被重複計算</td></tr><tr><td>已知 B，求 A</td><td>$P(A\cap B)/P(B)$</td><td>$P(B)>0$</td></tr><tr><td>A、B 獨立</td><td>$P(A\cap B)=P(A)P(B)$</td><td>不能只靠語感判斷</td></tr><tr><td>由 B 反推 A</td><td>$P(B\mid A)P(A)/P(B)$</td><td>先驗／基準率與分母</td></tr><tr><td>選 r 個且順序重要</td><td>$n!/(n-r)!$</td><td>是否可重複選</td></tr><tr><td>選 r 個且順序不重要</td><td>$\binom{{n}}{{r}}$</td><td>是否每組等可能</td></tr></tbody>
@@ -984,6 +999,7 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
   <p><a href="https://seeing-theory.brown.edu/compound-probability/index.html">Seeing Theory · Compound Probability</a>提供集合、計數與條件機率的原始互動章節；
   <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="19">Seeing Theory PDF pp.19–30</a>提供公式推導與完整例題脈絡。</p>
   <p class="ver-note">本頁例題、測驗與互動圖均為本站原創；即時計算不使用外部資料。本頁不引用課程 lab，也不使用預先產生的圖表；互動重置會完整回到預設人數。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -991,12 +1007,13 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡整理本頁依 Seeing Theory 編寫的概念解說中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w22-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -1022,10 +1039,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -1547,13 +1568,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

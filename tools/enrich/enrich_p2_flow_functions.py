@@ -841,4 +841,8 @@ BODIES['func'] += f"""
 """
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('p2_flow_functions', BODIES, PAGEJS)
+
 apply("p2_flow_functions", BODIES, PAGEJS)

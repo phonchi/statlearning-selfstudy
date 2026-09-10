@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import proof
 from lib import apply, info, qa, quiz, table, ver_note  # noqa: E402
 from intro_catalog import dataset_table  # noqa: E402
 from intro_visuals import PAGEJS, dataset_examples, frames  # noqa: E402
@@ -236,12 +235,18 @@ BODIES["eda"] = f"""
     ["摘要與圖形", "典型值、散開程度、異常值與變數關係各長什麼樣？"],
 ])}
 
-  <h3>用摘要回答位置與離散程度</h3>
-{table(["問題", "講義列出的摘要", "閱讀時注意"], [
-    ["資料大致在哪裡？", "平均數（mean）、中位數（median）、截尾平均數（trimmed mean）、眾數（mode）",
-     "平均數容易被極端值拉動；中位數看排序中間的位置；截尾平均去掉兩端一部分再平均；眾數看最常出現的值。"],
-    ["資料散得多開？", "變異數（variance）、平均絕對離差、中位絕對離差、四分位距（IQR）",
-     "變異數使用平方距離；絕對離差使用絕對距離；IQR 是第 75 百分位減第 25 百分位，描述中間一半資料的範圍。"],
+  <h3>先用摘要統計量認識資料</h3>
+  <p>開始 EDA 時，可以先計算一些<strong>摘要統計量</strong>（summary statistics），
+  快速掌握資料大致落在哪裡、分散到什麼程度。講義介紹的統計量可以這樣理解：</p>
+{table(["統計量", "直覺與用途"], [
+    ["平均數（mean）", "把所有數值加總後取平均，容易被極端值拉動。"],
+    ["中位數（median）", "排序後位在中間的值，較不受極端值影響。"],
+    ["截尾平均數（trimmed mean）", "去掉兩端各一小部分資料後再取平均，減少極端值的影響。"],
+    ["眾數（mode）", "出現次數最多的值，可用來看最常見的數值或類別。"],
+    ["變異數（variance）", "衡量資料離平均數有多分散；偏離很大的值會有較大的影響。"],
+    ["平均絕對離差", "看各數值離平均數的平均距離，描述整體的分散程度。"],
+    ["中位絕對離差", "先找中位數，再取各數值離它的距離的中位數，較不受極端值影響。"],
+    ["四分位距（IQR）", "第 75 百分位減去第 25 百分位，看中間一半資料散得多開。"],
 ])}
 
   <p>摘要不能代替完整分布。兩組資料可能有接近的平均值，卻有不同的偏斜、群組或極端值。
@@ -392,50 +397,10 @@ BODIES["reference"] = f"""
 """
 
 
-# COVERAGE-20260910 BEGIN
 
-# 逐項教材補全：摘要必須足以自行計算。
-BODIES['eda'] += r"""
-<h3>同一組資料，親手比較摘要</h3>
-<p>以排序後的 $1,2,3,4,20$ 為例，平均數是 6，中位數是 3。兩端各去掉一筆再平均，得到 20% 截尾平均 $(2+3+4)/3=3$。沒有重複值，因此這組資料沒有唯一眾數。</p>
-$$\bar x=\frac1n\sum_i x_i,\qquad s^2=\frac{\sum_i(x_i-\bar x)^2}{n-1}.$$
-<p>此例平方離差和為 250，樣本變異數為 62.5。下列兩種絕對離差的中心和最後的聚合方式都不同，縮寫 MAD 可能指其中任一種，使用時要寫清楚：</p>
-$$\text{平均絕對離差}=\frac1n\sum_i|x_i-\bar x|=5.6,$$
-$$\text{中位絕對離差}=\operatorname{median}_i|x_i-\operatorname{median}(x)|=1.$$
-<p>採用線性插值的樣本分位數，此例 $Q_1=2,Q_3=4$，所以 IQR 為 2。不同軟體的分位數慣例可能略有差異，報告小樣本四分位數時應註明方式。20 會明顯拉動平均數與變異數，中位數、截尾平均、IQR 則較能保留中間資料的樣貌；仍要搭配完整分布看資料。</p>
-"""
-
-# COVERAGE-20260910 END
-
-# LINK-CLOSURE-CH1-3
-
-BODIES['eda'] += r"""
-<h3>中位數的穩健性與相對效率</h3>
-<p>對稱常態母體的平均與中位數相同，可以比較兩個樣本估計量估計同一中心的精度。
-獨立常態樣本下，平均數的變異數為 $\sigma^2/n$；大樣本中位數的變異數近似為 $\pi\sigma^2/(2n)$。
-以「平均數變異數／中位數變異數」定義相對效率，極限是 $2/\pi\approx0.637$。</p>
-<p>這個數字有<strong>常態與大樣本條件</strong>，不是中位數在任何分布下都比較差。
-重尾、污染或離群值會改變兩者的表現；不對稱分布的平均與中位數還可能是不同的研究目標，不能只比變異數就說誰估得較好。</p>
-""" + proof('w01proofMedianEfficiency','常態下 2／π 的漸近效率',r"""
-<p>設母體中位數為 m，附近有連續且正的密度 f(m)。經驗分布 $F_n(m)$ 是 n 個成功機率 1/2 的指示變數平均，變異數為 $1/(4n)$。
-樣本中位數附近的一階近似給 $\hat m-m\approx-[F_n(m)-1/2]/f(m)$，因此漸近變異數為 $1/[4nf(m)^2]$。
-常態密度在中心為 $1/(\sigma\sqrt{2\pi})$，代入得到 $\pi\sigma^2/(2n)$，再與平均數變異數相比即得 $2/\pi$。
-這使用分位數的大樣本近似，不是有限樣本精確公式。</p>
-""") + r"""
-<h3>資料表的形狀與合併鍵</h3>
-<p><strong>寬表</strong>把不同量測放在不同欄，<strong>長表</strong>以一欄記量測種類、另一欄記數值。
-例如兩人 A、B 各有期中／期末兩次成績，寬表是兩列；轉成長表後是四列「人、考試、成績」。
-<code>melt</code> 把量測欄收成長表；<code>pivot</code> 展回寬表，需要每個人與考試的組合最多一筆。
-有重複組合時，先查原因；<code>pivot_table</code> 會依指定聚合方式合併，可能改變資料意義。</p>
-<p><code>concat</code> 沿列或欄串接；<code>merge</code> 依鍵配對。
-左表鍵是 A、B，右表鍵是 B、C，inner join 只留 B，left join 留 A、B，outer join 留 A、B、C，沒有對應的欄值為遺漏。
-若同一鍵在左表有兩列、右表有三列，多對多合併會產生六列；合併後列數增加不一定是新觀測。
-指定預期的一對一／多對一關係並核對筆數，再做摘要或建模。</p>
-<p class="source-note">來源：講義 01 pp.27–28 的 <a href="https://pandas.pydata.org/docs/getting_started/index.html">pandas 入門</a>與
-<a href="https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf">官方整理資料速查表 pp.1–2</a>。
-中位數效率由講義直接討論引出，以上條件與推導經獨立核對；不採用討論串省略母體分布的概括。</p>
-"""
-
+# Approved reading-flow organization; keep all source-backed detail content.
+from reading_flow_ch1_6 import organize
+BODIES, PAGEJS = organize(1, BODIES, PAGEJS)
 
 if __name__ == "__main__":
     apply("introduction", BODIES, PAGEJS, frames())

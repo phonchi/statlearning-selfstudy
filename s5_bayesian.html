@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -698,7 +708,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S5 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。計算細節、完整實作與證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -750,11 +760,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="section-number">PART 02 · 概似與最大概似</div>
   <h2>概似與最大概似 <span class="sec-badge"><a href="#w25-source-seeing-theory">統計入門參考 · 第 5 章</a></span></h2>
 <!-- GEN:END sec:likelihood -->
-
+<p>短例：10 次投擲有 7 次正面，這批資料的最大概似估計為 0.7。它描述目前資料較支持哪個參數，不是參數本身的機率。</p>
   <p>固定已觀察的資料，把未知參數當成可變輸入，就得到<strong>概似函數（likelihood）</strong>。
   它寫成 $L(p\mid x)$，數值等於在指定 $p$ 下看到資料 $x$ 的機率或密度，但閱讀方向是「哪些
   $p$ 比較支持這批固定資料」。概似不是 $p$ 的機率分布，因此不要求對 $p$ 積分為 1。</p>
-  <p>假設每次投擲互相獨立，而且都使用同一個正面機率 $p$。得到 $s$ 次正面、$f$ 次反面時，
+  <details class="qa-item reading-detail" id="w25detail-likelihood-calculation"><summary>完整計算：二項概似與相對支持度</summary>
+<div class="detail-body"><p>假設每次投擲互相獨立，而且都使用同一個正面機率 $p$。得到 $s$ 次正面、$f$ 次反面時，
   忽略與 $p$ 無關的二項係數後，</p>
   $$L(p\mid s,f)\propto p^s(1-p)^f,\qquad
     \hat p_{\mathrm{MLE}}=\frac{s}{s+f}\quad(s+f&gt;0).$$
@@ -763,7 +774,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   $0.7^7 0.3^3/(0.5^{10})\approx2.28$。這表示目前資料在前一參數下約有 2.28 倍支持度；
   它不表示「$p=0.7$ 的機率是 2.28 倍」。若完全沒有資料，所有 $p$ 都使概似達到同一最大值，
   因此 MLE 不唯一，資料無法選出單一估計。</p>
-<div class="info-box warm">
+</div></details><div class="info-box warm">
   <span class="info-label">機率與概似的方向</span>
   機率固定參數、比較可能資料；概似固定已看到的資料、比較可能參數。公式相同，問題方向不同。
 </div><div class="quiz-box">
@@ -785,13 +796,14 @@ $$\ell'(p)=\frac{s}{p}-\frac{f}{1-p}=0\ \Longrightarrow\ \hat p=\frac{s}{s+f},\q
   <div class="section-number">PART 03 · 先驗到後驗</div>
   <h2>先驗到後驗 <span class="sec-badge"><a href="#w25-source-seeing-theory">統計入門參考 · 第 5 章</a></span></h2>
 <!-- GEN:END sec:posterior -->
-
-  <p>Beta 分布常用來描述硬幣正面機率 $p$ 的先驗，其中 $0\le p\le1$、$\alpha&gt;0$、$\beta&gt;0$。
+<p>Beta 分布可描述未知的正面機率 p，兩個正參數決定先驗的形狀。更新時，第一個參數加正面次數，第二個加反面次數；例如 Beta(2,2) 加上 7 正、3 反，變成 Beta(9,5)。</p>
+  <details class="qa-item reading-detail" id="w25detail-beta-density"><summary>查公式：Beta 先驗密度、正規化與更新</summary>
+<div class="detail-body"><p>Beta 分布常用來描述硬幣正面機率 $p$ 的先驗，其中 $0\le p\le1$、$\alpha&gt;0$、$\beta&gt;0$。
   $B(\alpha,\beta)$ 是正規化常數，用來讓整條密度曲線下的面積等於 1。當
   $p\sim\operatorname{Beta}(\alpha,\beta)$，而資料有 $s$ 次正面與 $f$ 次反面，後驗仍是 Beta：</p>
   $$\pi(p)=\frac{p^{\alpha-1}(1-p)^{\beta-1}}{B(\alpha,\beta)},\qquad
     p\mid s,f\sim\operatorname{Beta}(\alpha+s,\beta+f).$$
-  <p>Beta 先驗可用兩個較清楚的量來讀：先驗平均是
+  </div></details><p>Beta 先驗可用兩個較清楚的量來讀：先驗平均是
   $\alpha/(\alpha+\beta)$，先驗總量是 $\alpha+\beta$。前者決定中心，後者描述分布集中程度。
   更新後的平均為 $(\alpha+s)/(\alpha+\beta+s+f)$。</p>
   <p><strong>算例。</strong>$\operatorname{Beta}(2,2)$ 先驗加上 7 次正面、3 次反面，得到
@@ -826,7 +838,8 @@ $$\ell'(p)=\frac{s}{p}-\frac{f}{1-p}=0\ \Longrightarrow\ \hat p=\frac{s}{s+f},\q
   <div class="quiz-options" id="qPosteriorOptions"><div class="quiz-opt" data-correct="true" data-fb="對。正面次數加到第一個參數，反面次數加到第二個參數。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(A)</span> $\operatorname{Beta}(8,6)$</div><div class="quiz-opt" data-correct="false" data-fb="這只留下資料計數，漏掉了先驗中的參數。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(B)</span> $\operatorname{Beta}(5,2)$</div><div class="quiz-opt" data-correct="false" data-fb="正、反面計數加反了；第一個參數對應正面。" onclick="quizCheck('qPosterior', this)"><span class="opt-letter">(C)</span> $\operatorname{Beta}(6,9)$</div></div>
   <div class="quiz-feedback" id="qPosteriorFeedback"></div>
 </div><p><a href="https://seeing-theory.brown.edu/bayesian-inference/index.html#section3">來源：Seeing Theory Ch.5 · Prior to Posterior</a>；<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="52">講義</a>。</p>
-<h3>一般的更新公式與正規化</h3>
+<details class="qa-item reading-detail" id="w25detail-bayes-density"><summary>計算細節：一般 Bayes 密度與共軛推導</summary>
+<div class="detail-body"><h3>一般的更新公式與正規化</h3>
 <p>參數 θ 為連續量時，先驗與後驗都是密度。固定資料 x，以概似乘上先驗，再除以整個參數範圍上的積分：</p>
 $$\pi(\theta\mid x)=\frac{L(\theta;x)\pi(\theta)}{\int L(u;x)\pi(u)\,du}.$$
 <p>分母必須有限且大於 0；它讓後驗密度積分為 1。離散參數則把積分換成加總。
@@ -839,7 +852,7 @@ $$\pi(p\mid s,f)\propto p^s(1-p)^f p^{\alpha-1}(1-p)^{\beta-1}
 <p>這正是 Beta 密度的形狀。由 $B(a,b)=\int_0^1u^{a-1}(1-u)^{b-1}\,du$，其正規化後為</p>
 $$\pi(p\mid s,f)=\frac{p^{\alpha+s-1}(1-p)^{\beta+f-1}}{B(\alpha+s,\beta+f)}.$$
 <p>α、β 均大於 0 時，零筆資料也有合法後驗，且後驗等於先驗。</p>
-</div></details>
+</div></details></div></details>
 </section>
 <section id="influence">
 <!-- GEN:BEGIN sec:influence -->
@@ -848,10 +861,11 @@ $$\pi(p\mid s,f)=\frac{p^{\alpha+s-1}(1-p)^{\beta+f-1}}{B(\alpha+s,\beta+f)}.$$
 <!-- GEN:END sec:influence -->
 
   <p>後驗是先驗資訊與目前資料的折衷。對 Beta–Binomial 模型，後驗平均可直接拆成兩個平均的加權：</p>
-  $$E[p\mid s,f]
+  <details class="qa-item reading-detail" id="w25detail-posterior-weights"><summary>查看後驗平均的加權分解</summary>
+<div class="detail-body">$$E[p\mid s,f]
     =\frac{\alpha+\beta}{\alpha+\beta+s+f}\frac{\alpha}{\alpha+\beta}
     +\frac{s+f}{\alpha+\beta+s+f}\frac{s}{s+f},
-    \qquad s+f&gt;0.$$
+    \qquad s+f&gt;0.$$</div></details>
   <p>若 $s+f=0$，不要代入最後一個分數；此時後驗直接等於先驗。</p>
   <p>若要預測下一次投擲，正面的後驗預測機率等於 $p$ 的後驗平均：
   $(\alpha+s)/(\alpha+\beta+s+f)$。</p>
@@ -861,10 +875,11 @@ $$\pi(p\mid s,f)=\frac{p^{\alpha+s-1}(1-p)^{\beta+f-1}}{B(\alpha+s,\beta+f)}.$$
   $\operatorname{Beta}(1,1)$ 產生 $\operatorname{Beta}(4,2)$，後驗平均為 $2/3$；
   集中在 0.5 的 $\operatorname{Beta}(20,20)$ 產生 $\operatorname{Beta}(23,21)$，後驗平均約 0.523。
   四筆資料對較集中的先驗影響較小。</p>
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w25detail-prior-comparison-1"><summary>完整比較：不同先驗強度與資料量</summary>
+<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>情況</th><th>後驗參數</th><th>後驗平均</th><th>閱讀重點</th></tr></thead>
   <tbody><tr><td>Beta(1,1)＋3 正 1 反</td><td>Beta(4,2)</td><td>0.667</td><td>資料比例影響明顯</td></tr><tr><td>Beta(20,20)＋3 正 1 反</td><td>Beta(23,21)</td><td>0.523</td><td>先驗總量較大</td></tr><tr><td>Beta(20,20)＋300 正 100 反</td><td>Beta(320,120)</td><td>0.727</td><td>大量資料取得較大權重</td></tr></tbody>
-</table></div><div class="quiz-box">
+</table></div></details></div><div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p>兩位分析者使用平均都為 0.5 的 Beta(2,2) 與 Beta(40,40) 先驗。看到相同少量資料後，何者後驗移動較少？</p>
   <div class="quiz-options" id="qInfluenceOptions"><div class="quiz-opt" data-correct="false" data-fb="較小的參數總量代表先驗較分散，少量資料就能占較大權重。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(A)</span> Beta(2,2)，因為參數比較小</div><div class="quiz-opt" data-correct="true" data-fb="對。兩者中心相同，但 Beta(40,40) 更集中，相當於較多的先前資訊。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(B)</span> Beta(40,40)，因為先驗總量較大</div><div class="quiz-opt" data-correct="false" data-fb="先驗平均只描述中心；集中程度也會影響更新幅度。" onclick="quizCheck('qInfluence', this)"><span class="opt-letter">(C)</span> 兩者完全相同，因為先驗平均相同</div></div>
@@ -911,9 +926,10 @@ $$P(X_{\rm new}=1\mid s,f)=\int_0^1P(X_{\rm new}=1\mid p)\pi(p\mid s,f)\,dp
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>貝氏推論〔選讀〕速查表 <span class="sec-badge">先備 · S5 統計</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w25-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 5 章。</li></ul></div>
+<details class="qa-item reading-detail" id="w25-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w25-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 5 章。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w25detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
   <p>先判斷你要算的是事件機率、參數的相對支持度，或參數的後驗分布，再選公式。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>概念</th><th>用途</th><th>Seeing Theory 原站</th><th>講義頁</th></tr></thead>
@@ -922,6 +938,7 @@ $$P(X_{\rm new}=1\mid s,f)=\int_0^1P(X_{\rm new}=1\mid p)\pi(p\mid s,f)\,dp
   <p class="ver-note">本頁為不需要 Python 的概念先備頁。原始參數與公式依 Seeing Theory Chapter 5：
   網頁定義「L(θ | x) = P(x | θ)」，並以 Beta(α, β) 先驗更新硬幣正面機率；PDF 印刷頁 49–54。
   本頁算例、正規化密度、相對概似與端點處理均重新計算，未複製原站文字、程式碼或圖片。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -929,12 +946,13 @@ $$P(X_{\rm new}=1\mid s,f)=\int_0^1P(X_{\rm new}=1\mid p)\pi(p\mid s,f)\,dp
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡整理本頁依 Seeing Theory 編寫的概念解說中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w25-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -960,10 +978,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -1485,13 +1507,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

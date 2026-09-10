@@ -945,4 +945,8 @@ BODIES['model'] += f"""
 """
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('p5_visualization', BODIES, PAGEJS)
+
 apply("p5_visualization", BODIES, PAGEJS)

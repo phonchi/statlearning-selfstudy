@@ -427,8 +427,10 @@ def check_concept_grounding(p, w, src):
         if not 1 <= int(page) <= 66:
             fail("GROUNDING-CONCEPT", w, f"PDF 頁碼超出 1–66：{page}")
     ex = re.search(r'<section id="exercises">(.*?)</section>', src, re.S)
-    if not ex or ex.group(1).count('class="quiz-box"') != 4:
-        fail("GROUNDING-CONCEPT", w, "EX 必須有四題概念練習")
+    # Advanced exercises may follow their prerequisite topic inside a detail.
+    # Require each original exercise identity exactly once across the whole page.
+    if not ex or any(src.count(f'id="qEx{i}Options"') != 1 for i in range(1, 5)):
+        fail("GROUNDING-CONCEPT", w, "頁內必須完整保留 EX1–4；計算題可隨所屬教學收合")
     if 'class="ver-note"' not in src:
         fail("GROUNDING-CONCEPT", w, "缺算例與模擬來源註記")
 

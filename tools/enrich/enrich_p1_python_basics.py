@@ -725,4 +725,8 @@ BODIES['list'] += """
 """
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('p1_python_basics', BODIES, PAGEJS)
+
 apply("p1_python_basics", BODIES, PAGEJS)

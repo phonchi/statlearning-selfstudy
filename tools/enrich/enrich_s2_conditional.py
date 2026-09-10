@@ -318,5 +318,9 @@ $$P(B)=\sum_kP(B\mid A_k)P(A_k).$$
 """)
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('s2_conditional', BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("s2_conditional", BODIES, PAGEJS)

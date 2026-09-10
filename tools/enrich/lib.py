@@ -100,6 +100,12 @@ def proof(pid, title, body):
             f'<div class="qa-a">{body}</div></details>')
 
 
+def detail(pid, title, body):
+    """完整教學細節預設收合；正文保留概念、必要公式與短例。"""
+    return (f'<details class="qa-item reading-detail" id="{pid}"><summary>{title}</summary>\n'
+            f'<div class="detail-body">{body}</div></details>')
+
+
 def quiz(qid, label, question, options):
     """三選一 quiz。options = [(是否正解, 選項 HTML, 為什麼), ...]，錯的也要寫為什麼。"""
     letters = "ABC"

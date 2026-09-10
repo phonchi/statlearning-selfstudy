@@ -1494,5 +1494,9 @@ $$\hat v_t=\beta_0+\sum_{\ell=1}^L(\beta_{v\ell}v_{t-\ell}+\beta_{r\ell}r_{t-\el
 """
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('deep_learning', BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("deep_learning", BODIES, PAGEJS, frames())

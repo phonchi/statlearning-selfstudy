@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -764,10 +774,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>答案是否明確</strong>、<strong>核對成本是否低</strong>，以及
   <strong>錯了會造成什麼後果</strong>。越接近標準流程、核對成本越低，就越適合交給 AI 起草。</p>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-triage-1"><summary>詳細比較：不同任務的驗證方式</summary>
+<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>分級</th><th>適合的任務</th><th>至少要做的檢查</th></tr></thead>
   <tbody><tr><td>低風險</td><td>查語法、讀錯誤訊息、格式轉換、你熟悉的資料整理樣板</td><td>執行並比對一個已知小例子</td></tr><tr><td>中風險</td><td>EDA、標準圖表、特徵工程、模型與檢定程式草稿</td><td>檢查假設、資料切分、單位與完整輸出</td></tr><tr><td>高風險</td><td>因果解釋、族群代表性、模型上線、正式結論與政策建議</td><td>由人主導；補領域與倫理審查，由資料與研究設計提供判斷依據</td></tr></tbody>
-</table></div>
+</table></div></details></div>
 
 <div class="info-box">
   <span class="info-label">一個好用的分流問題</span>
@@ -795,10 +806,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>分析資料需要做許多決定。提問時可以拆成一次只交付一個
   可驗收的小任務，並給足必要脈絡。以下五項資訊可以幫你交代清楚：</p>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-context-1"><summary>提示五要素的完整對照</summary>
+<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>要素</th><th>你要說清楚什麼</th><th>例句</th></tr></thead>
   <tbody><tr><td>方向</td><td>現在在哪一階段、這次只做什麼</td><td>「先檢查欄位型態，不要建模」</td></tr><tr><td>格式</td><td>工具、輸入輸出與呈現方式</td><td>「回傳可執行 pandas 程式與檢查表」</td></tr><tr><td>例子</td><td>一個正確小例子或預期結果</td><td>「缺值字串 '?' 應轉成 NaN」</td></tr><tr><td>脈絡</td><td>資料字典、單位、樣本範圍、已做步驟與限制</td><td>「year 是西元年；不可上傳個資」</td></tr><tr><td>驗收</td><td>怎樣才算完成、哪些條件不能破壞</td><td>「列數不變；轉換前後缺值數要列出」</td></tr></tbody>
-</table></div>
+</table></div></details></div>
 
   <p>先從資料文件確認 <code>?</code> 是否代表遺漏，再提供欄位定義與少量去識別範例。不同來源的 Auto.csv 與 Auto.data 的內容與讀法可能不同；不要在提示裡假定所有檔案都有相同的特殊值。</p>
 
@@ -824,10 +836,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>生成 → 執行 → 解析錯誤 → 修改 → 重跑</strong>。資料分析還要再加一層：
   程式即使沒有報錯，也要檢查它做的是否真是你要求的事。第一次提示只有「幫我清理 Auto」，若 AI 擅自刪除含缺值的列，就回到上一節的提示，加上「不得刪列，回報前後列數與缺值數」，再執行。</p>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-iterate-1"><summary>查閱：每輪交付物與檢查項目</summary>
+<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>每一輪</th><th>交付物</th><th>通過才往下走</th></tr></thead>
   <tbody><tr><td>1. 先說清楚任務</td><td>一個小任務與驗收條件</td><td>AI 沒有自行補關鍵假設</td></tr><tr><td>2. 再生成</td><td>最小可執行程式與必要說明</td><td>變更範圍看得懂</td></tr><tr><td>3. 親自執行</td><td>錯誤訊息、警告、完整輸出</td><td>核對實際執行的結果</td></tr><tr><td>4. 對照預期</td><td>小例子、筆數、摘要或測試</td><td>能跑，而且做對</td></tr><tr><td>5. 保存再擴大</td><td>通過版本與下一個小任務</td><td>一次只新增一個不確定來源</td></tr></tbody>
-</table></div>
+</table></div></details></div>
 
 <div class="info-box">
   <span class="info-label">把錯誤原樣帶回去</span>
@@ -919,10 +932,11 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   <strong>資料版本、執行環境、程式、輸出與人工決策</strong>；同時，能重現不代表
   可以把敏感資料交給任意雲端模型。</p>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-record-1"><summary>查閱：完整重現紀錄清單</summary>
+<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>至少要留下</th><th>具體內容</th></tr></thead>
   <tbody><tr><td>任務與對話</td><td>原始 prompt、關鍵追問、日期、模型／工具名稱</td></tr><tr><td>資料來源</td><td>檔名或版本、下載日期、資料字典、篩選與排除規則</td></tr><tr><td>程式與環境</td><td>完整程式、套件版本、作業環境、seed／random_state</td></tr><tr><td>結果與檢查</td><td>完整輸出、警告、驗收結果、失敗嘗試與修正原因</td></tr><tr><td>人工決策</td><td>採納／拒絕哪個建議、誰核准、結論的適用範圍</td></tr></tbody>
-</table></div>
+</table></div></details></div>
 
 <div class="info-box warm">
   <span class="info-label">上傳前先做資料分級</span>
@@ -984,10 +998,11 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>AI 輔助統計分析：從提問到驗證速查表 <span class="sec-badge">課前 · AI 協作</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w20-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li>
-<li id="w20-source-ai-stats"><strong>AI 協作參考書</strong>：<cite>AI-Assisted Statistics for Data Scientists</cite>。Peter Bruce、Andrew Bruce、Peter Gedeck，第三版，2026。<a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists" target="_blank" rel="noopener">作者提供的程式與資料</a><br>本頁對應：參考：AI 協作的責任界線（前言）；參考：AI 分析的限制與責任（第 11 章）；參考：生成式 AI 與提示設計（第 10 章）。</li></ul></div>
+<details class="qa-item reading-detail" id="w20-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w20-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li>
+<li id="w20-source-ai-stats"><strong>AI 協作參考書</strong>：<cite>AI-Assisted Statistics for Data Scientists</cite>。Peter Bruce、Andrew Bruce、Peter Gedeck，第三版，2026。<a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists" target="_blank" rel="noopener">作者提供的程式與資料</a><br>本頁對應：參考：AI 協作的責任界線（前言）；參考：AI 分析的限制與責任（第 11 章）；參考：生成式 AI 與提示設計（第 10 章）。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w20detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
   <p>下列來源說明本頁使用的協作流程與實作方法。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.8rem;">
@@ -1001,6 +1016,7 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
 </div>
 
 <p class="ver-note">本頁「預期輸出」逐字取自課程 lab notebook（Ch01、Ch03、Ch05）（老師在課程環境實跑）；考前的 Python 與套件版本請依<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/packages.txt">電腦教室版本清單</a>核對。每張程式碼卡下方可開啟對應的 lab 筆記本。</p>
+</div></details>
 </section>
 <!-- GEN:BEGIN chapternav -->
 <div class="chapter-nav"><a class="prev" href="00b_setup.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">環境安裝</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="introduction.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">統計學習導論與 EDA</div></a></div>
@@ -1025,10 +1041,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -1550,13 +1570,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

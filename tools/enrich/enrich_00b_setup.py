@@ -431,4 +431,8 @@ function w13clTopDown() {
 }
 """
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('00b_setup', BODIES, PAGEJS)
+
 apply("00b_setup", BODIES, PAGEJS)

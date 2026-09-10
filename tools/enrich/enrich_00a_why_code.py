@@ -192,4 +192,8 @@ BODIES["reference"] = f"""
 # 本頁沒有專屬互動元件；quiz 使用全站共用 JavaScript。
 PAGEJS = ""
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('00a_why_code', BODIES, PAGEJS)
+
 apply("00a_why_code", BODIES, PAGEJS)

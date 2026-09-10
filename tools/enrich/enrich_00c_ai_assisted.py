@@ -355,4 +355,8 @@ BODIES["reference"] = f"""
 PAGEJS = ""
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('00c_ai_assisted', BODIES, PAGEJS)
+
 apply("00c_ai_assisted", BODIES, PAGEJS)

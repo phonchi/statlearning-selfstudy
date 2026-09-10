@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -698,7 +708,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S1 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。計算細節、完整實作與證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -829,7 +839,8 @@ $$E[X]=1\cdot\frac16+2\cdot\frac16+\cdots+6\cdot\frac16=\frac{21}{6}=3.5.$$
   <div class="quiz-options" id="qExpectationOptions"><div class="quiz-opt" data-correct="false" data-fb="骰子只有 1 到 6 點，單次不可能得到 3.5。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(A)</span> 下一次最可能擲出 3.5。</div><div class="quiz-opt" data-correct="false" data-fb="六次仍有隨機波動，不保證六種點數各一次。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(B)</span> 任意六次投擲的平均必須是 3.5。</div><div class="quiz-opt" data-correct="true" data-fb="在同一公平模型下，期望值是長期平均的目標；單次或有限次結果可以不同。" onclick="quizCheck('qExpectation', this)"><span class="opt-letter">(C)</span> 許多次獨立投擲的平均會趨近 3.5。</div></div>
   <div class="quiz-feedback" id="qExpectationFeedback"></div>
 </div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="10" target="_blank" rel="noopener">Seeing Theory 講義 · Expectation</a>。</p>
-<h3>加總與加權平均</h3>
+<details class="qa-item reading-detail" id="w21detail-expectation-rules"><summary>計算延伸：期望值的加法規則</summary>
+<div class="detail-body"><h3>加總與加權平均</h3>
 <p>只要相關期望值存在，期望值具有線性性，<strong>不需要獨立</strong>：</p>
 $$E[aX+bY+c]=aE[X]+bE[Y]+c.$$
 <p>例如兩天各有期望通勤時間 20 分鐘，總時間的期望是 40 分鐘；即使兩天都受同一交通狀況影響，這個加法仍成立。</p>
@@ -839,7 +850,7 @@ $$E[aX+bY+c]=aE[X]+bE[Y]+c.$$
 $$E[aX+bY+c]=\sum_{x,y}(ax+by+c)P(X=x,Y=y)
 =a\sum_x xP(X=x)+b\sum_y yP(Y=y)+c.$$
 <p>這裡只用了邊際機率等於聯合機率的加總，沒有將聯合機率拆成乘積。</p>
-</div></details>
+</div></details></div></details>
 </section>
 <section id="variation">
 <!-- GEN:BEGIN sec:variation -->
@@ -852,7 +863,8 @@ $$E[aX+bY+c]=\sum_{x,y}(ax+by+c)P(X=x,Y=y)
 <p><strong>變異數（variance）</strong>是偏離期望值的平方之期望。
 直接把正負偏差平均會相互抵銷，平方能保留偏離的大小。
 <strong>標準差（standard deviation）</strong>是變異數的平方根，單位回到原本的測量單位。</p>
-$$\operatorname{Var}(X)=E[(X-E[X])^2]=E[X^2]-(E[X])^2,\qquad \sigma=\sqrt{\operatorname{Var}(X)}.$$
+<details class="qa-item reading-detail" id="w21detail-variance-formula"><summary>查公式：變異數的兩種寫法</summary>
+<div class="detail-body">$$\operatorname{Var}(X)=E[(X-E[X])^2]=E[X^2]-(E[X])^2,\qquad \sigma=\sqrt{\operatorname{Var}(X)}.$$</div></details>
 <p>上述 X 的變異數是 (1² + 1²)/2 = 1，Y 的變異數是 (3² + 3²)/2 = 9，標準差分別為 1 與 3。
 對 0／1 硬幣，X² = X，所以 Var(X) = p − p² = p(1−p)。
 p = 0.5 時是 0.25；p = 0 或 1 時結果固定，變異數為 0。可回上方滑桿核對。</p>
@@ -860,12 +872,13 @@ p = 0.5 時是 0.25；p = 0 或 1 時結果固定，變異數為 0。可回上�
 $$E[Y]=aE[X]+b,\qquad \operatorname{Var}(Y)=a^2\operatorname{Var}(X).$$
 <p>例如 X 的變異數為 1，Y = 3X + 10 的變異數就是 9，標準差是 3。
 做單位換算時也一樣：乘數在變異數裡要平方，標準差則乘上乘數的絕對值。</p>
-<p>手上若只有樣本，常用以下公式估計母體變異數（n ≥ 2）：</p>
+<details class="qa-item reading-detail" id="w21detail-sample-variance"><summary>查公式：樣本變異數、n−1 與適用條件</summary>
+<div class="detail-body"><p>手上若只有樣本，常用以下公式估計母體變異數（n ≥ 2）：</p>
 $$s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2.$$
 <p>用 n−1 作分母，能在獨立同分布、有限變異數的抽樣下得到母體變異數的不偏估計。
 若只是描述手上 n 筆資料的平均平方偏差，也可以除以 n，但要說清楚目的。
 例如樣本 {2, 4} 的樣本平均為 3，s² = 2；這與上面「完整機率分布」的變異數 1 使用不同資訊及分母。</p>
-<p><strong>大數法則（law of large numbers）</strong>說明：在獨立同分布且期望值存在等條件下，
+</div></details><p><strong>大數法則（law of large numbers）</strong>說明：在獨立同分布且期望值存在等條件下，
 樣本平均會隨樣本數增加而趨近母體期望值。本頁的有限值硬幣模型符合條件。
 觀察平均更穩定，並不代表每一次投擲本身變得更穩定；單次變異數仍為 p(1−p)。</p>
 <div class="quiz-box">
@@ -874,7 +887,8 @@ $$s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2.$$
   <div class="quiz-options" id="qVarianceOptions"><div class="quiz-opt" data-correct="false" data-fb="兩者平均都是 3，但偏離平均的距離分別是 1 與 3。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(A)</span> 平均相同，所以變異數相同。</div><div class="quiz-opt" data-correct="true" data-fb="X 的變異數為 1，Y 為 9，平方使三倍的偏離對應九倍變異數。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(B)</span> Y 的變異數是 X 的 9 倍。</div><div class="quiz-opt" data-correct="false" data-fb="標準差取平方根，因此 Y 的標準差是 X 的 3 倍。" onclick="quizCheck('qVariance', this)"><span class="opt-letter">(C)</span> Y 的標準差是 X 的 9 倍。</div></div>
   <div class="quiz-feedback" id="qVarianceFeedback"></div>
 </div><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="12" target="_blank" rel="noopener">Seeing Theory 講義 · Variance</a>。</p><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="17" target="_blank" rel="noopener">Seeing Theory 講義 · Consistency of Estimators：長期穩定的例子</a>。</p>
-<h3>加總後的變異數，以及平均為什麼較穩定</h3>
+<details class="qa-item reading-detail" id="w21detail-variance-rules"><summary>計算延伸：共變異數、樣本平均與機率界限</summary>
+<div class="detail-body"><h3>加總後的變異數，以及平均為什麼較穩定</h3>
 <p>期望值可以直接相加，變異數則要考慮變數是否一起波動。定義
 $\operatorname{Cov}(X,Y)=E[(X-E[X])(Y-E[Y])]$，有限二階動差下有：</p>
 $$\operatorname{Var}(aX+bY)=a^2\operatorname{Var}(X)+b^2\operatorname{Var}(Y)+2ab\operatorname{Cov}(X,Y).$$
@@ -905,7 +919,7 @@ P(|X-\mu|\ge\varepsilon)\le\frac{\sigma^2}{\varepsilon^2}.$$
 <p>因為 $X\ge a\mathbf1_{\{X\ge a\}}$，取期望得 $E[X]\ge aP(X\ge a)$，這就是 Markov 不等式。
 再把非負變數 $(X-\mu)^2$ 與門檻 $\varepsilon^2$ 代入，得到 Chebyshev 不等式。
 最後代入 $\operatorname{Var}(\bar X)=\sigma^2/n$；固定 $\varepsilon&gt;0$ 時右邊隨 n 增大而趨近 0。</p>
-</div></details><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="10" target="_blank" rel="noopener">Seeing Theory 講義 · 期望值與變異數性質</a>。</p><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="14" target="_blank" rel="noopener">Seeing Theory 講義 · Markov 與 Chebyshev 不等式；一致性見 pp.17–18</a>。</p>
+</div></details><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="10" target="_blank" rel="noopener">Seeing Theory 講義 · 期望值與變異數性質</a>。</p><p class="source-note">延伸閱讀：<a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="14" target="_blank" rel="noopener">Seeing Theory 講義 · Markov 與 Chebyshev 不等式；一致性見 pp.17–18</a>。</p></div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -941,15 +955,16 @@ P(|X-\mu|\ge\varepsilon)\le\frac{\sigma^2}{\varepsilon^2}.$$
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>機率、平均與變異速查表 <span class="sec-badge">先備 · S1 統計</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w21-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 1 章。</li></ul></div>
+<details class="qa-item reading-detail" id="w21-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w21-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 1 章。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w21detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>概念</th><th>怎麼算／怎麼讀</th></tr></thead>
   <tbody><tr><td>樣本平均</td><td>把已觀察的數值加總後除以 n。</td></tr><tr><td>期望值</td><td>把模型中每個可能值乘上機率後加總。</td></tr><tr><td>變異數</td><td>E[(X−E[X])²] = E[X²] − (E[X])²。</td></tr><tr><td>標準差</td><td>變異數開平方根，單位與原資料相同。</td></tr><tr><td>樣本變異數</td><td>估計母體變異數時常用 Σ(xᵢ−x̄)²／(n−1)，n ≥ 2。</td></tr><tr><td>大數法則</td><td>合適抽樣條件下，樣本平均隨 n 增加而趨近期望值；不保證每一步更接近。</td></tr></tbody>
 </table></div>
 <p class="ver-note">通勤與二點分布為本站自訂算例。硬幣互動使用本站固定種子模擬（2106），
 採獨立且固定機率的 Bernoulli 模型；重置會回到同一序列。正文公式與算例獨立計算，未引用課程 lab 的執行輸出。</p>
-<p>接著讀<a href="s2_conditional.html">條件機率與獨立</a>；若已熟悉這些概念，可<a href="introduction.html">直接進入正課</a>。</p>
+<p>接著讀<a href="s2_conditional.html">條件機率與獨立</a>；若已熟悉這些概念，可<a href="introduction.html">直接進入正課</a>。</p></div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -957,12 +972,13 @@ P(|X-\mu|\ge\varepsilon)\le\frac{\sigma^2}{\varepsilon^2}.$$
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡整理本頁依 Seeing Theory 編寫的概念解說中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w21-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -988,10 +1004,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -1513,13 +1533,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

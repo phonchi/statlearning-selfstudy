@@ -514,5 +514,9 @@ P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
 """) + source('Poisson、二項、指數與常態',34)
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('s3_distributions', BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("s3_distributions", BODIES, PAGEJS)

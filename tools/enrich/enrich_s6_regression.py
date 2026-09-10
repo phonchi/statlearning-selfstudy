@@ -289,5 +289,9 @@ $$2(\bar y_j-\bar y)\sum_i(y_{ij}-\bar y_j)=0.$$
 """)
 
 
+# Reading flow: short main text with complete optional details.
+from reading_supplements import apply_reading
+PAGEJS = apply_reading('s6_regression', BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("s6_regression", BODIES, PAGEJS)

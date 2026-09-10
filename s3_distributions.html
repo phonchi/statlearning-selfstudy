@@ -662,6 +662,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   /* Keep the fixed rail outside the 1180px reading column; use the TOC on narrower screens. */
   .float-nav{display:none;}
 }
+
+
+/* Optional reading units reuse the existing disclosure vocabulary. */
+.reading-detail{margin:1.1rem 0;scroll-margin-top:1.5rem;}
+.reading-detail>.detail-body{padding:1rem;min-width:0;font-size:1rem;}
+.reading-detail>.detail-body>:first-child{margin-top:0;}
+.reading-detail>.detail-body>:last-child{margin-bottom:0;}
+.reading-detail .viz-layout>*{min-width:0;}
+.reading-detail>summary:focus-visible{outline:2px solid var(--accent2);outline-offset:-4px;}
+@media(max-width:600px){.reading-detail>.detail-body{padding:.7rem;}}
 </style>
 </head>
 <!-- GEN:END head -->
@@ -699,7 +709,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（先備 · S3 統計）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
-  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
+  ② <strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。計算細節、完整實作與證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
   ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">統計入門參考：<cite>Seeing Theory</cite>。章節旁的來源標記可點到本頁書目。</p>
@@ -831,10 +841,11 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   </div>
 </div>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w23detail-distribution-table-1"><summary>查閱：四種分布的平均與變異數</summary>
+<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>分佈</th><th>記號與參數</th><th>平均值</th><th>變異數</th><th>常見用途</th></tr></thead>
   <tbody><tr><td>Bernoulli</td><td>$X\sim\mathrm{{Bernoulli}}(p)$</td><td>$p$</td><td>$p(1-p)$</td><td>一次成敗</td></tr><tr><td>二項</td><td>$X\sim\mathrm{{Binomial}}(n,p)$</td><td>$np$</td><td>$np(1-p)$</td><td>$n$ 次獨立同率試驗的成功數</td></tr><tr><td>均勻</td><td>$X\sim U(a,b)$</td><td>$(a+b)/2$</td><td>$(b-a)^2/12$</td><td>區間內等長範圍等可能</td></tr><tr><td>常態</td><td>$X\sim N(\mu,\sigma^2)$</td><td>$\mu$</td><td>$\sigma^2$</td><td>許多小效應相加的連續量</td></tr></tbody>
-</table></div>
+</table></div></details></div>
 
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
@@ -844,7 +855,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 </div>
 <p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Discrete and Continuous</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="35">PDF p.35</a>。本頁文字、例題與圖均重新製作。</p>
 
-<h3>從公式算出每根柱與每一段面積</h3>
+<details class="qa-item reading-detail" id="w23detail-distribution-formulas"><summary>查公式與算例：各分布的 PMF／PDF</summary>
+<div class="detail-body"><h3>從公式算出每根柱與每一段面積</h3>
 <p>下列 PMF／PDF 連同支撐範圍定義分布；沒有列入的離散值或區間外的密度皆為 0。</p>
 <div class="table-wrap"><table><thead><tr><th>分布</th><th>PMF／PDF</th><th>範圍與參數</th></tr></thead><tbody>
 <tr><td>Bernoulli</td><td>$P(X=1)=p,\ P(X=0)=1-p$</td><td>$0\le p\le1$</td></tr>
@@ -862,7 +874,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 不同序列互斥，所以加總得到 PMF。由期望值線性性及獨立性，</p>
 $$E[X]=\sum_i p=np,\qquad \operatorname{Var}(X)=\sum_i p(1-p)=np(1-p).$$
 </div></details>
-<h3>計數與等待：Poisson、Exponential</h3>
+</div></details><details class="qa-item reading-detail" id="w23detail-count-wait"><summary>延伸：Poisson 計數與指數等待時間</summary>
+<div class="detail-body"><h3>計數與等待：Poisson、Exponential</h3>
 <p><strong>Poisson 分布</strong>描述固定觀察範圍內的非負整數計數，例如一段時間內到站的人數。
 參數 λ 是該範圍的期望計數；模型同時限制平均與變異數相等：</p>
 $$P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!},\quad k=0,1,\ldots,\quad\lambda&gt;0;
@@ -881,18 +894,19 @@ $$\int_0^\infty\lambda e^{-\lambda u}\,du=1,\qquad
 P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
 <p>以分部積分得 $E[T]=1/\lambda$、$E[T^2]=2/\lambda^2$，相減可得變異數 $1/\lambda^2$。
 此外，$P(T&gt;s+t\mid T&gt;s)=e^{-\lambda(s+t)}/e^{-\lambda s}=e^{-\lambda t}$，這稱為無記憶性。</p>
-</div></details><p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Poisson、二項、指數與常態</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="34">PDF p.34</a>。本頁文字、例題與圖均重新製作。</p>
+</div></details><p class="source-note"><strong>原始教材：</strong><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory 第 3 章 · Poisson、二項、指數與常態</a><a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="34">PDF p.34</a>。本頁文字、例題與圖均重新製作。</p></div></details>
 </section>
 <section id="sampling">
 <!-- GEN:BEGIN sec:sampling -->
   <div class="section-number">PART 04 · 抽樣分布</div>
   <h2>抽樣分布 <span class="sec-badge"><a href="#w23-source-seeing-theory">統計入門參考 · 第 3 章</a></span></h2>
 <!-- GEN:END sec:sampling -->
-
+<p>獨立同分布且母體變異數有限時，樣本平均的標準差是 $\sigma/\sqrt n$。例如 $\sigma=12,n=36$，便是 $12/6=2$；平均多個觀測會比單一觀測穩定。</p>
   <p>母體分佈描述單一觀測 $X$ 可能長什麼樣；抽樣分佈（sampling distribution）描述
   一個統計量在<strong>重複抽取新樣本</strong>時如何變動。兩者描述的隨機量不同。</p>
 
-  <p><strong>數值例。</strong>若一次公平擲骰的平均為 $\mu=3.5$、變異數為
+  <details class="qa-item reading-detail" id="w23detail-sampling-example"><summary>完整算例：25 顆骰子的平均</summary>
+<div class="detail-body"><p><strong>數值例。</strong>若一次公平擲骰的平均為 $\mu=3.5$、變異數為
   $\sigma^2=35/12$，每次獨立擲 25 顆並取平均，則</p>
   $$E(\bar X)=3.5,\qquad
     \operatorname{Var}(\bar X)=\frac{35/12}{25}=\frac{7}{60},\qquad
@@ -900,7 +914,7 @@ P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
   <p>單顆骰子的結果仍然散在 1 到 6；25 顆的平均會集中在 3.5 附近。
   樣本平均的變異數縮小為原來的 $1/n$，標準差縮小為 $1/\sqrt n$。</p>
 
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+</div></details><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>分佈</th><th>一次重複實驗記錄什麼</th><th>平均</th><th>標準差</th></tr></thead>
   <tbody><tr><td>原始分佈</td><td>一個觀測 $X$</td><td>$\mu$</td><td>$\sigma$</td></tr><tr><td>樣本平均的抽樣分佈</td><td>$n$ 個觀測的平均 $\bar X$</td><td>$\mu$</td><td>$\sigma/\sqrt n$</td></tr></tbody>
 </table></div>
@@ -927,8 +941,9 @@ P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
   <p>中央極限定理（central limit theorem, CLT）描述樣本平均的<strong>分佈形狀</strong>。
   若 $X_1,X_2,\ldots$ 獨立同分佈（i.i.d.），且有有限平均 $\mu$ 與
   $0&lt;\sigma^2&lt;\infty$，則</p>
-  $$\frac{\bar X-\mu}{\sigma/\sqrt n}
-    \xrightarrow{d}N(0,1),$$
+  <details class="qa-item reading-detail" id="w23detail-clt-notation"><summary>查看中央極限定理的標準化寫法</summary>
+<div class="detail-body">$$\frac{\bar X-\mu}{\sigma/\sqrt n}
+    \xrightarrow{d}N(0,1),$$</div></details>
   <p>也就是 $n$ 足夠大時，$\bar X$ 的分佈近似 $N(\mu,\sigma^2/n)$。
   「足夠大」沒有統一門檻；母體愈偏斜或尾端愈重，常態近似通常需要更大的 $n$。</p>
 
@@ -1005,9 +1020,10 @@ P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>分布與抽樣速查表 <span class="sec-badge">先備 · S3 統計</span></h2>
-<div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w23-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 3 章。</li></ul></div>
+<details class="qa-item reading-detail" id="w23-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w23-source-seeing-theory"><strong>統計入門參考</strong>：<cite>Seeing Theory</cite>。Tyler Dae Devlin、Jingru Guo、Daniel Kunin、Daniel Xiang，2018 年講義草稿。<a href="https://seeing-theory.brown.edu/" target="_blank" rel="noopener">原書與下載資訊</a><br>本頁對應：統計入門參考 · 第 3 章。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
-
+<p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w23detail-reference"><summary>查閱完整速查與延伸提醒</summary>
+<div class="detail-body">
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>概念</th><th>核心式</th><th>常見誤讀</th></tr></thead>
   <tbody><tr><td>PMF</td><td>$P(X=x)=p(x)$</td><td>柱高就是離散點機率</td></tr><tr><td>PDF</td><td>$P(a\le X\le b)=\int_a^b f(x)dx$</td><td>密度高度不是單點機率</td></tr><tr><td>樣本平均</td><td>$E(\bar X)=\mu$</td><td>平均不會除以 n</td></tr><tr><td>樣本平均的變異</td><td>$\operatorname{{Var}}(\bar X)=\sigma^2/n$</td><td>標準差是 $\sigma/\sqrt n$</td></tr><tr><td>LLN</td><td>$\bar X$ 靠近 $\mu$</td><td>不保證逐步單調</td></tr><tr><td>CLT</td><td>$(\bar X-\mu)/(\sigma/\sqrt n)\Rightarrow N(0,1)$</td><td>描述抽樣分佈，不要求原始母體常態</td></tr></tbody>
@@ -1015,6 +1031,7 @@ P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
   <p><a href="https://seeing-theory.brown.edu/probability-distributions/index.html">Seeing Theory · Probability Distributions</a>提供隨機變數、離散／連續分佈與 CLT 的原始互動章節；
   <a href="https://seeing-theory.brown.edu/doc/seeing-theory.pdf" data-source-page="31">Seeing Theory PDF pp.31–40</a>提供定義、分佈族與定理脈絡。</p>
   <p class="ver-note">本頁例題、測驗與互動圖均為本站原創；CLT 圖使用固定種子 20260923，每次最多模擬 1,600 個觀測。本頁不引用課程 lab，也不使用預先產生的圖表；重置會完整回到預設分佈、參數與種子狀態。</p>
+</div></details>
 </section>
 <section id="cards">
 <!-- GEN:BEGIN sec:cards -->
@@ -1022,12 +1039,13 @@ P(T&gt;t)=\int_t^\infty\lambda e^{-\lambda u}\,du=e^{-\lambda t}.$$
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">先備 · 詞彙</span></h2>
   <p>詞彙卡整理本頁依 Seeing Theory 編寫的概念解說中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w23-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
 <!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
@@ -1053,10 +1071,14 @@ const $ = id => document.getElementById(id);
 
 /* ---------- MathJax：注入後的內容不會自動排版 ---------- */
 const HC = {};
+HC._mathQueue = Promise.resolve();
 HC.retype = el => {
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    try { window.MathJax.typesetPromise(el ? [el] : undefined); } catch (e) { /* 排版失敗不擋互動 */ }
-  }
+  if (!window.MathJax?.typesetPromise) return Promise.resolve();
+  HC._mathQueue = HC._mathQueue
+    .then(() => window.MathJax.startup?.promise)
+    .then(() => window.MathJax.typesetPromise(el ? [el] : undefined))
+    .catch(e => { console.error('MathJax 排版失敗', e); });
+  return HC._mathQueue;
 };
 
 /* ---------- quiz ---------- */
@@ -1578,13 +1600,56 @@ HC.stat = {
   update();
 })();
 
-/* 觀念 Q&A：MathJax CHTML 在 display:none 下會量錯字寬，首次展開時重排一次 */
+/* Reading details: layout, explicit player lifecycles and preserved deep links. */
+HC._detailHooks = new Map();
+HC.onDetail = (id, hooks) => { HC._detailHooks.set(id, hooks); };
+HC.refreshDetail = root => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!root.isConnected || !root.getClientRects().length) return;
+    root.querySelectorAll('canvas').forEach(cv => {
+      if (cv.getBoundingClientRect().width > 0) HC.get(cv.id)?.resize();
+    });
+    window.dispatchEvent(new Event('resize'));
+  }));
+};
 document.addEventListener('toggle', e => {
   const d = e.target;
-  if (d.tagName !== 'DETAILS' || !d.open || d.dataset.mj) return;
-  d.dataset.mj = '1';
-  HC.retype(d);
+  if (d.tagName !== 'DETAILS') return;
+  if (d.open) {
+    HC.retype(d);
+    HC.refreshDetail(d);
+    HC._detailHooks.get(d.id)?.open?.();
+  } else {
+    d.querySelectorAll('canvas').forEach(cv => HC.get(cv.id)?.stop());
+    for (const [id, hooks] of HC._detailHooks) {
+      const unit = $(id);
+      if (unit && (unit === d || d.contains(unit))) hooks.close?.();
+    }
+  }
 }, true);
+HC.revealHash = () => {
+  let id;
+  try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (_) { return; }
+  const target = id && $(id);
+  if (!target) return;
+  const ancestors = [];
+  for (let el = target.parentElement; el; el = el.parentElement) {
+    if (el.tagName === 'DETAILS') ancestors.push(el);
+  }
+  ancestors.reverse().forEach(el => { el.open = true; });
+  if (target.tagName === 'DETAILS') target.open = true;
+  if (ancestors.length || target.tagName === 'DETAILS') {
+    HC.refreshDetail(ancestors[0] || target);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+    }));
+  }
+};
+window.addEventListener('hashchange', HC.revealHash);
+window.addEventListener('load', HC.revealHash);
+document.addEventListener('click', e => {
+  if (e.target.closest?.('a[href^="#"]')) setTimeout(HC.revealHash, 0);
+});
 
 /* 詞彙卡（FLASHCARDS 由 tools/inject_data.py 注入在本檔之後） */
 HC.initFlashcards = () => {

@@ -119,16 +119,16 @@ def studyguide(p: P.Page) -> str:
     deck_note = f'\n  <p class="source-intro">{p.deck_note}</p>' if p.deck_note else ""
     if p.grounding_mode == "concept":
         step2 = ("<strong>對照來源與算例</strong>：先算過本頁例子，再操作互動。"
-                 "證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。")
+                 "計算細節、完整實作與證明預設收合，可按需要展開；各節附 Seeing Theory 網站與講義連結供對照。")
     elif p.kind == "prep":
         step2 = ("<strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）"
                  "；需要實作時，再打開原始筆記本對照。")
     elif p.deck:
         step2 = ("<strong>對照來源</strong>：章節旁標示課本章節與講義主題，"
-                 "正文保留公式、條件與算例；證明預設收合，可按需要展開。來源標記可查原教材。")
+                 "正文保留公式、條件與算例；計算細節、完整實作與證明預設收合，可按需要展開。來源標記可查原教材。")
     else:
         step2 = ("<strong>對照課本</strong>：章節旁標示課本節號，"
-                 "正文保留公式與算例，證明預設收合；可展開推導，並對照原書。")
+                 "正文保留核心公式與短例，細節與證明預設收合；可展開推導，並對照原書。")
     return f"""<div class="study-guide">
   <div class="sg-title">📌 本頁使用方式（{p.islp_label}{deck_bit}）</div>
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
@@ -229,12 +229,13 @@ def cards_block(p: P.Page) -> str:
   <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">{badge}</span></h2>
   <p>詞彙卡整理{src}中常用的統計或機器學習專有名詞，正面附英文名稱。
   先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
-  <div class="fc-controls">
+  <details class="qa-item reading-detail" id="w{p.n:02d}-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
     <button id="fcShuffle">🔀 洗牌</button>
     <button id="fcFlipAll">全部翻面</button>
     <button id="fcUnflip">全部翻回</button>
   </div>
-  <div class="fc-grid" id="fcGrid"></div>"""
+  <div class="fc-grid" id="fcGrid"></div></div></details>"""
 
 
 def bankquiz_head(p: P.Page) -> str:
@@ -242,7 +243,9 @@ def bankquiz_head(p: P.Page) -> str:
     badge = "課程題庫"
     return (f'  <div class="section-number">QUIZ · 自我檢測</div>\n'
             f'  <h2>本章自我檢測 <span class="sec-badge">{badge}</span></h2>\n'
-            f'  <p>這些題目取自課程題庫，只給對錯與說明，不計分。答錯就回到對應章節重讀。</p>')
+            f'  <p>這些題目取自課程題庫，只給對錯與說明，不計分。答錯就回到對應章節重讀。</p>'
+            f'<details class="qa-item reading-detail" id="w{p.n:02d}-detail-bank"><summary>更多練習：展開課程題庫</summary>'
+            '<div class="detail-body"><div id="bqBox"></div></div></details>')
 
 
 def chapternav(p: P.Page) -> str:
@@ -277,7 +280,8 @@ def sharedjs(p: P.Page) -> str:
 def reference_head(p: P.Page) -> str:
     return ('  <div class="section-number">重點速查與來源</div>\n'
             f'  <h2>{p.plain}速查表 {S.badge(p, p.islp_label)}</h2>\n'
-            + S.bibliography(p))
+            + f'<details class="qa-item reading-detail" id="w{p.n:02d}-detail-sources"><summary>來源：完整書目與章節定位</summary>'
+            + '<div class="detail-body">' + S.bibliography(p) + '</div></details>')
 
 
 # ── 組裝 ────────────────────────────────────────────────────────────────
@@ -294,7 +298,7 @@ def render_new(p: P.Page) -> str:
             inner = (gen(f"sec:{s.id}", reference_head(p))
                      + "\n  <!-- 比較表、重點回顧、.ver-note 寫在這裡 -->")
         elif s.id == "bankquiz":
-            inner = gen(f"sec:{s.id}", bankquiz_head(p)) + '\n  <div id="bqBox"></div>'
+            inner = gen(f"sec:{s.id}", bankquiz_head(p))
         else:
             inner = gen(f"sec:{s.id}", sec_head(p, s, number)) + "\n" + stub_body(p, s)
         parts.append(f'<section id="{s.id}">\n{inner}\n</section>')
@@ -322,6 +326,8 @@ def refresh(p: P.Page, src: str):
         section = '<section id="cards">\n' + gen('sec:cards', cards_block(p)) + '\n</section>\n'
         src = src.replace(marker, section + marker, 1)
         changed.append("add-cards")
+    src = src.replace("<!-- GEN:END sec:bankquiz -->\n  <div id=\"bqBox\"></div>",
+                      "<!-- GEN:END sec:bankquiz -->")
     regions = {"head": head(p), "floatnav": floatnav(p), "hero": hero(p),
                "studyguide": studyguide(p), "toc": toc(p),
                "chapternav": chapternav(p), "footer": footer(p), "sharedjs": sharedjs(p)}

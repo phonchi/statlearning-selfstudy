@@ -860,5 +860,9 @@ HC.ready(() => {
 """
 
 
+# Approved reading-flow organization; keep all source-backed detail content.
+from reading_flow_ch1_6 import organize
+BODIES, PAGEJS = organize(5, BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("resampling_methods", BODIES, PAGEJS, frames())

@@ -123,7 +123,7 @@ BODIES["slr"] = f"""
        '<span><i style="background:var(--pt-train);"></i>可拖動的觀測值</span>'
        '<span><i class="ln" style="border-top-color:var(--fit-line);"></i>最小平方線</span>'
        '<span><i class="ln" style="border-top-color:var(--resid);"></i>殘差（要平方後相加）</span>'
-       '<span><i class="ln" style="border-top-color:var(--fit-true);"></i>P01 下半滑桿選的試探線</span>'
+       '<span><i class="ln" style="border-top-color:var(--fit-true);"></i>展開 RSS 計算細節可調整的試探線</span>'
        '</div>',
      [rows_card("即時最小平方解",
                 [("β̂₀（截距）", "—", "w03dragB0"), ("β̂₁（斜率）", "—", "w03dragB1"),
@@ -1827,6 +1827,10 @@ HC.ready(function () {
    資料一定要先於初始化，所以這裡不呼叫。 */
 """
 
+
+# Approved reading-flow organization; keep all source-backed detail content.
+from reading_flow_ch1_6 import organize
+BODIES, PAGEJS = organize(3, BODIES, PAGEJS)
 
 if __name__ == "__main__":
     apply("linear_regression", BODIES, PAGEJS, frames())
