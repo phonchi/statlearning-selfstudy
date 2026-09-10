@@ -477,7 +477,7 @@ PAGES = [
         formula="新聞與應用｜領域區別｜推薦系統｜10 個重要想法｜先看資料再建模｜22 個資料集",
         deck="01_Introduction.pdf", deck_pages=39, lab="Ch01-lab-zh.ipynb",
         islp=1, islp_label="ISLP Ch.1", esl_label="",
-        playlist="PLHNZtBNWQ-85VI_x3duODyfYm4r3pOl3e",
+        playlist="PLM37wbEIt77U",
         hero_svg=_svg_map(),
         group="core",
         nav_prev="00c_ai_assisted",
