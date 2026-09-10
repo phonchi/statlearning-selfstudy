@@ -107,6 +107,44 @@ BODIES["prologue"] = f"""
         "所以 ε 也包含未量到的變數所造成的變動。")])}
 """
 
+# 講義 02 · p.11 的條件均方誤差推導。用 raw string 保留 LaTeX，
+# 不必為了 f-string 把每個大括號加倍。
+IRR_PROOF = qa("完整推導", [(
+    r"把 $E[(Y - \hat f(x))^2 \mid X = x]$ 一步一步拆成 $[f(x) - \hat f(x)]^2 + \mathrm{Var}(\varepsilon)$",
+    r"""<p><strong>前提。</strong>模型是 $Y = f(X) + \varepsilon$，其中
+    $E[\varepsilon \mid X] = 0$、$\mathrm{Var}(\varepsilon \mid X) = \sigma^2$。
+    把 $X = x$ 固定住，並且把 $\hat f$ 當成<strong>已經訓練好、不再變動</strong>的函數。
+    於是 $f(x)$ 與 $\hat f(x)$ 都只是常數，式子裡唯一還在隨機的東西只有 $\varepsilon$。</p>
+
+    <p><strong>第 1 步：把 $Y$ 換掉。</strong>令 $d(x) = f(x) - \hat f(x)$，它是一個常數：</p>
+    $$Y - \hat f(x) = f(x) + \varepsilon - \hat f(x) = d(x) + \varepsilon$$
+
+    <p><strong>第 2 步：平方展開。</strong></p>
+    $$\left(Y - \hat f(x)\right)^2 = d(x)^2 + 2\,d(x)\,\varepsilon + \varepsilon^2$$
+
+    <p><strong>第 3 步：取條件期望。</strong>期望是線性的，常數提得出來：</p>
+    $$E\left[(Y - \hat f(x))^2 \mid X = x\right]
+      = d(x)^2 + 2\,d(x)\,E[\varepsilon \mid X = x] + E[\varepsilon^2 \mid X = x]$$
+
+    <p><strong>第 4 步：把後面兩項算掉。</strong>中間那一項因為
+    $E[\varepsilon \mid X = x] = 0$ 而整項消失。最後一項用同一個條件：</p>
+    $$E[\varepsilon^2 \mid X = x]
+      = \mathrm{Var}(\varepsilon \mid X = x) + \left(E[\varepsilon \mid X = x]\right)^2
+      = \sigma^2 + 0 = \mathrm{Var}(\varepsilon)$$
+
+    <p><strong>結論。</strong>兩項留下來，正好就是講義寫的那一行：</p>
+    $$E\left[(Y - \hat f(x))^2 \mid X = x\right]
+      = \underbrace{\left[f(x) - \hat f(x)\right]^2}_{\text{可縮減}}
+      + \underbrace{\mathrm{Var}(\varepsilon)}_{\text{不可縮減}}$$
+
+    <p><strong>怎麼讀它。</strong>第一項是你動得到的：換方法、加資料、加變數都會讓它變小，
+    理論上可以趨近 0。第二項完全不受方法影響，就算 $\hat f = f$ 也一樣在。</p>
+
+    <p>另外請注意「$\hat f$ 固定不動」這個前提。如果把<strong>訓練資料本身的隨機性</strong>
+    也算進來（每換一份訓練集就得到不同的 $\hat f$），第一項還會再拆成偏差平方與變異兩塊，
+    那是本頁後面<a href="#biasvar">偏差–變異拆解</a>那一節的事。</p>""")])
+
+
 # ── P01 irreducible ───────────────────────────────────────────────────
 BODIES["irreducible"] = f"""
   <p>先考慮一個問題：<strong>如果你猜對了 f，誤差會是 0 嗎？</strong>
@@ -126,14 +164,16 @@ BODIES["irreducible"] = f"""
     因為 $Y$ 本來就有一部分變異跟 $X$ 沒關係。</li>
   </ul>
 
-  <p>順帶把「最好的 f」講清楚。在平方誤差的意義下，最好的預測函數就是條件期望值，
-  也就是<strong>迴歸函數</strong>（regression function）：</p>
+  <p>講義第 11 頁把同一件事寫成<strong>條件版本</strong>——把 $X = x$ 固定住，
+  只看這一個點上的均方誤差。這是後面每一章都會再用到的一行：</p>
 
-  $$f(x) = E\\left[Y \\mid X = x\\right], \\qquad
-    \\varepsilon = Y - f(x)$$
+  $$E\\left[\\left(Y - \\hat f(x)\\right)^2 \\mid X = x\\right]
+    = \\left[f(x) - \\hat f(x)\\right]^2 + \\mathrm{{Var}}(\\varepsilon)$$
 
-  <p>講義第 11 頁畫的就是這個：在 $x$ 這條垂直線上，$Y$ 有一整個分佈，
-  $f(x)$ 是那個分佈的平均。觀測值相對於平均的上下變動就是 $\\varepsilon$，仍然存在。</p>
+{IRR_PROOF}
+
+  <p>下面的元件把這兩塊分開來看：真實的 $f$ 固定不動，只有雜訊的 $\\sigma$ 在變。
+  在 $x$ 這條垂直線上，$Y$ 有一整個分佈，觀測值相對於中心的上下變動就是 $\\varepsilon$。</p>
 
 {viz(svg("w02irrSvg", 320),
      [info_card("怎麼玩這個元件",
@@ -158,17 +198,9 @@ BODIES["irreducible"] = f"""
      '<button class="btn btn-toggle" onclick="w02irrToggleLin()">切換線性 f̂</button>',
      provenance=("simulation", "固定訓練樣本；期望誤差在獨立 x 網格上計算"))}
 
-  <p>講義第 12–15 頁接著問：那要怎麼估 $E[Y \\mid X = x]$？最直覺的辦法是
-  <strong>最近鄰平均</strong>（nearest neighbor averaging）。把 $x$ 附近一小塊區域裡的
-  $y$ 平均起來當作 $f(x)$。一維、二維時這招很好用，可是</p>
-
-{info("維度詛咒：最近鄰平均在高維難以估準", '''在 p 維空間裡，要圈到 10% 的資料，
-  每個座標軸上平均得覆蓋 0.10<sup>1/p</sup> 的範圍：p = 1 要 10%，
-  p = 10 要 <strong>80%</strong>，p = 20 要 <strong>89%</strong>。
-  也就是說「最近的那幾個鄰居」其實離得非常遠，鄰域裡的 f 早就不是近似常數了，
-  平均值未必能準確估計目標位置的函數值。<br>
-  這就是講義第 13–15 頁的維度詛咒（curse of dimensionality），
-  也是高維問題偏好參數式模型（下一節）的根本理由。''', "warm")}
+  <p>到這裡還有一個坑沒有填：我們一直講「真實的 $f$」，可是
+  <strong>$f$ 本身到底是什麼？</strong>在 $X = x$ 這一點上，$f(x)$ 要取哪個數字才算最好？
+  下一節先把它定義清楚、證明它真的最好，再處理「拿不到它的時候怎麼辦」。</p>
 
   <h3 id="dx-eps">講義完整實作：親手做出一個 Y = f(X) + ε</h3>
 
@@ -219,6 +251,284 @@ BODIES["irreducible"] = f"""
         "方向錯了。重新蒐集<strong>同樣的變數</strong>不會改變 Var(ε)，它是母體的性質。"
         "要壓低它得<strong>多量一些變數</strong>，讓原本歸入 ε 的系統性成分能由模型解釋。")])}
 """
+
+# ── P02 regfunc（講義 02 · p.10–12） ──────────────────────────────────
+# 這一節與下一節都用 raw string ＋ 串接，不用 f-string，
+# 這樣 LaTeX 的大括號可以照原樣寫。
+REG_PROOF = qa("完整證明", [(
+    r"證明：在每一點 $X = x$ 上，$c = E[Y \mid X = x]$ 讓 $E[(Y - c)^2 \mid X = x]$ 最小",
+    r"""<p><strong>要證的事。</strong>對任意函數 $f$，在每一點 $X = x$ 上都有</p>
+    $$E\left[(Y - f(X))^2 \mid X = x\right] \;\ge\; E\left[(Y - \mu(x))^2 \mid X = x\right],
+      \qquad \mu(x) = E[Y \mid X = x]$$
+
+    <p><strong>第 0 步：把「對所有函數」降級成「對一個數字」。</strong>
+    $X = x$ 固定之後，$f(X)$ 就只是一個數字 $f(x)$，不再是函數。
+    所以「在所有函數裡找最好的」可以拆成「在每一點各自找最好的常數 $c = f(x)$」。
+    只要每一點的最佳常數都是 $\mu(x)$，把這些點串起來的那個函數就是最佳函數。
+    這正是講義那句 <em>over all functions $f$ at all points $X = x$</em> 的意思。</p>
+
+    <p><strong>第 1 步：加一項、減一項。</strong>硬把 $\mu(x)$ 塞進去：</p>
+    $$Y - c = \underbrace{\left(Y - \mu(x)\right)}_{\text{隨機，條件期望 } 0}
+      + \underbrace{\left(\mu(x) - c\right)}_{\text{常數}}$$
+    <p>左邊那一塊的條件期望確實是 0：$E[Y - \mu(x) \mid X = x] = \mu(x) - \mu(x) = 0$。
+    這就是整個證明的樞紐。</p>
+
+    <p><strong>第 2 步：平方展開，取條件期望。</strong></p>
+    $$E\left[(Y - c)^2 \mid X = x\right]
+      = E\left[(Y - \mu(x))^2 \mid X = x\right]
+      + 2\left(\mu(x) - c\right)\underbrace{E\left[Y - \mu(x) \mid X = x\right]}_{=\,0}
+      + \left(\mu(x) - c\right)^2$$
+
+    <p><strong>第 3 步：交叉項歸零。</strong>剩下乾乾淨淨的兩項：</p>
+    $$E\left[(Y - c)^2 \mid X = x\right]
+      = \underbrace{\mathrm{Var}\left(Y \mid X = x\right)}_{\text{跟 } c \text{ 完全無關}}
+      + \underbrace{\left(\mu(x) - c\right)^2}_{\ \ge\ 0}$$
+
+    <p><strong>第 4 步：讀式子。</strong>第一項是資料本身的條件變異，你挑什麼 $c$ 都改不動它；
+    第二項是一個平方，最小值 0 只在 $c = \mu(x)$ 時取到，而且只有這一點取到。所以</p>
+    $$\arg\min_{c} E\left[(Y - c)^2 \mid X = x\right] = \mu(x) = E[Y \mid X = x]$$
+    <p>順帶得到一件事：<strong>能達到的最小值就是 $\mathrm{Var}(Y \mid X = x)$</strong>，
+    也就是上一節的不可縮減誤差 $\mathrm{Var}(\varepsilon)$。兩節在這裡接起來了。</p>
+
+    <p><strong>第 5 步：從一點推到全部。</strong>上式對每一個 $x$ 分別成立，
+    所以函數 $f^{*}(x) = E[Y \mid X = x]$ 在每一點都不輸給任何其他函數。
+    要全域版本就再對 $X$ 取一次期望（全期望公式）：</p>
+    $$E\left[(Y - f(X))^2\right] = E\Big[\,E\left[(Y - f(X))^2 \mid X\right]\Big]$$
+    <p>括號裡的東西逐點被 $f^{*}$ 最小化，外面再取期望當然也最小。$\blacksquare$</p>
+
+    <p><strong>換個誤差就換個答案。</strong>如果改用絕對誤差
+    $E\left[\,\left|Y - c\right| \mid X = x\right]$，最佳的 $c$ 會變成條件<strong>中位數</strong>。
+    所以「取平均」不是天經地義，是<strong>平方誤差</strong>挑出來的。
+    這也解釋了為什麼本課後面量準確度時，回歸看 MSE、分類看錯誤率——
+    量尺不同，最佳預測就不同。</p>""")])
+
+BODIES["regfunc"] = "".join([
+    r"""
+  <p>上一節一直在講「真實的 $f$」，但沒說 $f$ 在某一點上該取哪個數字。
+  講義第 10 頁用一個非常具體的問題把答案逼出來：手上的資料裡，
+  $X = 4$ 的地方有<strong>一整群</strong>不同的 $Y$，而你只能給一個預測值。要給哪一個？</p>
+""",
+    info("答案：取那一群 Y 的平均",
+         """f(4) = E(Y | X = 4)，也就是「在 X = 4 的條件下，Y 的平均值」。
+  每個 x 都這樣做，串起來的那個函數就叫<strong>迴歸函數</strong>（regression function）。"""),
+    r"""
+  $$f(x) = E\left[Y \mid X = x\right]$$
+
+  <p>$X$ 是向量時完全一樣，只是條件多掛幾個（講義第 11 頁）：</p>
+
+  $$f(x) = f(x_1, x_2, x_3) = E\left[Y \mid X_1 = x_1,\, X_2 = x_2,\, X_3 = x_3\right]$$
+
+  <p>問題來了：為什麼是<strong>平均</strong>？中位數不行嗎？眾數不行嗎？
+  行不行取決於你用什麼量尺算帳，而這門課的回歸量尺是平方誤差。
+  講義第 11 頁那一行講的就是這件事：</p>
+""",
+    info("講義第 11 頁的原句",
+         """The ideal or optimal predictor of Y with regard to mean-squared prediction error:
+  <strong>f(x) = E(Y | X = x)</strong> is the function that minimizes E[(Y − f(X))² | X = x]
+  over all functions f at all points X = x.<br>
+  翻成白話：在平方誤差之下，條件期望值不是「一個還不錯的選擇」，
+  而是<strong>所有函數裡最好的那一個</strong>——沒有任何函數能贏過它。下面把它證出來。"""),
+    REG_PROOF,
+    r"""
+  <p><strong>如果資料點夠多，故事到這裡就結束了。</strong>
+  假設 $X = 4$ 這個位置真的躺著幾百筆觀測，那你什麼模型都不用建：
+  把那幾百筆的 $y$ 平均起來，就是 $E[Y \mid X = 4]$ 的估計，
+  而且照剛才的證明，它已經是平方誤差下最好的預測。
+  這也是「資料夠多」在統計學習裡為什麼是這麼強的一句話——
+  <strong>夠多的時候，最佳解是照定義抄下來的，不需要任何模型假設。</strong></p>
+
+  <p>麻煩在於「夠多」幾乎不會發生。講義第 12 頁下一頁就潑冷水：</p>
+""",
+    info("講義第 12 頁：Typically, we have few if any data points with X = 4 exactly!",
+         """X 是連續變數時，恰好落在 4 的機率是 0；就算 X 是離散的，
+  只要多掛幾個維度，每一格的資料筆數也會很快掉到 1 筆或 0 筆。
+  <strong>所以 E(Y | X = x) 這個定義沒辦法照字面計算。</strong>
+  不是它不對，是你手上沒有那麼多剛好落在 x 的資料。""", "warm"),
+    r"""
+  <p>那就把定義放鬆：不要求「剛好等於 $x$」，改成「離 $x$ 夠近」。
+  這就是<strong>最近鄰平均</strong>（nearest neighbor averaging），講義第 12 頁的式子：</p>
+
+  $$\hat f(x) = \mathrm{Ave}\left(Y \mid X \in N(x)\right)$$
+
+  <p>$N(x)$ 是 $x$ 的一個<strong>鄰域</strong>——可以是「離 $x$ 最近的 $k$ 筆」，
+  也可以是「$\left|X - x\right| \le h$ 的那些筆」。這一步看起來只是權宜之計，
+  其實是整個非參數式方法的原型：第 7 章的核平滑與樣條、第 8 章的樹、
+  第 4 章的 KNN 分類，骨子裡都是它的變形。</p>
+
+  <p>放鬆是有代價的，而且代價正好是一組拉鋸。下面這個元件讓你親手拉：</p>
+""",
+    viz(svg("w02nbrSvg", 330),
+        [info_card("怎麼玩這個元件",
+                   """綠虛線是真實的 f（跟上一節同一條），灰點是 200 筆觀測。
+  紫線是你要預測的位置 x₀，黃帶是鄰域 |X − x₀| ≤ h，帶子裡的點會亮起來。
+  橘色橫線是<strong>鄰域內 y 的平均</strong>，也就是 f̂(x₀)。<br>
+  <strong>先把 h 拉到最小</strong>：鄰域裡只剩兩三個點，橘線會抖得很厲害——這是變異。
+  <strong>再把 h 拉到最大</strong>：點很多、橘線很穩，但它開始明顯偏離綠虛線——這是偏差，
+  因為鄰域一大，裡面的 f 就不再近似常數了。""", "講義 02 · p.12"),
+         rows_card("目前這個鄰域",
+                   [("鄰域寬度 h", "0.80", "w02nbrHVal2"),
+                    ("鄰域內的點數 m", "—", "w02nbrM"),
+                    ("鄰域平均 f̂(x₀)", "—", "w02nbrAve"),
+                    ("真值 f(x₀)", "—", "w02nbrTrue"),
+                    ("差距 |f̂ − f|", "—", "w02nbrErr"),
+                    ("平均值的標準誤 σ/√m", "—", "w02nbrSe")]),
+         info_card("為什麼這正是後面偏差–變異的伏筆",
+                   """h 小 → m 小 → σ/√m 大 → <strong>變異大</strong>。<br>
+  h 大 → 鄰域裡的 f 不再是常數 → <strong>偏差大</strong>。<br>
+  沒有哪個 h 能同時把兩邊壓下去，只能挑一個折衷點。
+  這門課後面所有「選 K、選 df、選 λ」的動作，都是同一場拉鋸的不同外衣。""")],
+        "w02nbrStatus", "拖動 h 看鄰域平均如何在「抖」與「偏」之間擺盪。",
+        '<div class="slider-row" style="flex:1;min-width:200px;">'
+        '<span class="slider-label">鄰域寬度 h</span>'
+        '<input type="range" id="w02nbrH" min="0.15" max="3.5" step="0.05" value="0.8" '
+        'oninput="w02nbrDraw()">'
+        '<span class="slider-val" id="w02nbrHVal">0.80</span></div>'
+        '<div class="slider-row" style="flex:1;min-width:200px;">'
+        '<span class="slider-label">目標位置 x₀</span>'
+        '<input type="range" id="w02nbrX0" min="1" max="9" step="0.1" value="4" '
+        'oninput="w02nbrDraw()">'
+        '<span class="slider-val" id="w02nbrX0Val">4.0</span></div>',
+        provenance=("simulation", "固定種子的 200 筆樣本，真實 f 與上一節同一條")),
+    r"""
+  <p>最近鄰平均能用的前提是「鄰域夠小，小到裡面的 $f$ 幾乎是常數；
+  同時鄰域裡又有夠多的點，多到平均值不抖」。一維的時候這兩件事很容易同時成立。
+  下一節要說的是：<strong>維度一高，它們就再也不能同時成立了。</strong></p>
+""",
+    quiz("qReg", "QUIZ · 理想的 f",
+         "有人說：「既然 f(x) = E(Y | X = x) 是最好的預測，那我把它算出來，預測誤差就是 0 了。」"
+         "這句話錯在哪裡？",
+         [(True, "最小的條件均方誤差是 Var(Y | X = x)，不是 0；f 只是把可縮減的那一塊清成 0",
+           "對。證明的第 3 步把它拆成 Var(Y | X = x) ＋ (μ(x) − c)²，"
+           "選 c = μ(x) 只能讓第二項歸零，第一項是資料本身的條件變異，也就是 Var(ε)，怎麼選都在。"),
+          (False, "錯在 E(Y | X = x) 其實不是最好的預測，中位數才是",
+           "不對。在<strong>平方</strong>誤差之下條件期望值就是最佳解，這是證明出來的。"
+           "中位數是<strong>絕對</strong>誤差的最佳解——換量尺才換答案。"),
+          (False, "錯在只有 X 是離散變數時 E(Y | X = x) 才存在",
+           "不對。條件期望對連續的 X 一樣有定義。"
+           "連續帶來的問題是<strong>估不出來</strong>（沒有資料剛好落在 x），不是<strong>不存在</strong>。"
+           "這正是下面要用鄰域平均的理由。")]),
+])
+
+
+# ── P03 curse（講義 02 · p.13–15） ────────────────────────────────────
+BODIES["curse"] = "".join([
+    r"""
+  <p>講義第 13 頁先給最近鄰平均一個明確的適用範圍：
+  <strong>$p \le 4$、$n$ 又大的時候它很好用</strong>，
+  本課後面的核平滑與樣條（第 7 章）都是它的精緻版本。
+  可是 $p$ 一大它就壞掉，而且壞得比直覺快非常多。這個現象叫
+  <strong>維度詛咒</strong>（curse of dimensionality）。</p>
+
+  <p>先想清楚鄰域為什麼不能太小。上一節的元件已經看到了：
+  鄰域平均的變異大約是 $\sigma^2 / m$，$m$ 是鄰域裡的點數。
+  要把它壓下來，鄰域就得裝進<strong>一定比例</strong>的資料——講義第 13 頁舉的例子是 10%。</p>
+
+  <p>那麼問題變成：在 $p$ 維的單位超立方體裡，要圈到 10% 的體積，
+  每個座標軸上得吃掉多長？答案很短：</p>
+
+  $$e_p(r) = r^{1/p}, \qquad e_p(0.1) = 0.1^{1/p}$$
+""",
+    table(["維度 p", "1", "2", "3", "5", "10", "20", "50"],
+          [["每個軸要覆蓋的比例 $0.1^{1/p}$",
+            "10.0%", "31.6%", "46.4%", "63.1%", "79.4%", "89.1%", "95.5%"]]),
+    r"""
+  <p>$p = 10$ 的時候，這個所謂的「鄰域」在<strong>每一個</strong>座標軸上都得覆蓋 79% 的範圍。
+  它已經不是鄰域，是整個空間的縮小版。
+  <strong>「局部」這兩個字消失了</strong>——而局部正是我們用它來近似 $E[Y \mid X = x]$ 的唯一理由。
+  講義第 13 頁最後一行寫得很直接：a 10% neighborhood in high dimensions need no longer be local,
+  so we lose the spirit of estimating $E(Y \mid X = x)$ by local averaging。</p>
+
+  <p>講義第 14–15 頁換一個角度說同一件事，而且更震撼：
+  <strong>高維空間的體積幾乎全部躲在角落。</strong>
+  拿一個邊長 2 的超立方體，塞進它的內接球（半徑 $R = 1$，剛好碰到每一面）。
+  $p$ 維球的體積有閉式解：</p>
+
+  $$V_{\text{ball}}(R) = \frac{\pi^{p/2}}{\Gamma\!\left(\frac{p}{2} + 1\right)} R^{p},
+    \qquad V_{\text{cube}} = 2^{p}$$
+
+  $$r = \frac{V_{\text{ball}}}{V_{\text{cube}}}
+      = \frac{\pi^{p/2}}{2^{p}\,\Gamma\!\left(\frac{p}{2} + 1\right)}\, R^{p}$$
+
+  <p>講義第 15 頁把前六維逐項列出來，值得逐格看一次：</p>
+""",
+    table(["$p$", "1", "2", "3", "4", "5", "6"],
+          [["(a) 半徑 $R$ 的球體積",
+            "$2R$", r"$\pi R^2$", r"$\frac{4}{3}\pi R^3$", r"$\frac{\pi^2}{2} R^4$",
+            r"$\frac{8\pi^2}{15} R^5$", r"$\frac{\pi^3}{6} R^6$"],
+           ["(b) 超立方體體積 $2^p$", "2", "4", "8", "16", "32", "64"],
+           ["$r = (a)/(b)$", "$R$", r"$\frac{\pi R^2}{4}$", r"$\frac{\pi R^3}{6}$",
+            r"$\frac{\pi^2 R^4}{32}$", r"$\frac{\pi^2 R^5}{60}$", r"$\frac{\pi^3 R^6}{384}$"]]),
+    r"""
+  <p>把 $R = 1$（剛好內接）代進去，$r$ 就是「內接球佔整個立方體的比例」：
+  $p = 1$ 是 100%、$p = 2$ 是 78.5%、$p = 3$ 是 52.4%、$p = 4$ 只剩 30.8%、
+  $p = 6$ 剩 8.1%、$p = 10$ 剩 <strong>0.25%</strong>、$p = 20$ 剩 $2.5 \times 10^{-8}$。
+  換句話說，<strong>十維立方體裡有 99.75% 的體積不在內接球裡，全部在角落。</strong>
+  你以為自己站在中間，其實資料都在你摸不到的邊邊。</p>
+
+  <p>反過來問更有感：如果我就是要圈到超立方體的 10% 體積，球的半徑要多大？
+  把上面的式子解出 $R$（講義第 15 頁）：</p>
+
+  $$R = \frac{2}{\sqrt{\pi}}\left[\,r\,\Gamma\!\left(\frac{p}{2} + 1\right)\right]^{1/p},
+    \qquad
+    \Gamma\!\left(\frac{p}{2} + 1\right) \sim \sqrt{\pi p}\,\left(\frac{p}{2e}\right)^{p/2}$$
+
+  <p>右邊那個 $\Gamma$ 的 Stirling 近似說明了為什麼會炸：
+  $\Gamma\!\left(\frac{p}{2}+1\right)$ 大致以 $(p/2e)^{p/2}$ 的速度成長，
+  開 $p$ 次方之後仍留下一個隨 $p$ 增大的 $\sqrt{p}$ 量級因子。代進去算：
+  $p = 1$ 要 $R = 0.10$、$p = 3$ 要 0.58、$p = 6$ 就已經 <strong>1.04</strong>——
+  超過內接球的半徑 1，球戳出立方體的面了；$p = 20$ 要 2.14，
+  是立方體半邊長的兩倍多。要「只看 10% 的鄰居」，你得把手伸出房間外面。</p>
+""",
+    viz(svg("w02curSvg", 360) + "\n" + chart("w02curChart", fallback="；表格與公式仍可閱讀"),
+        [info_card("怎麼玩這個元件",
+                   """左圖是一個邊長 2 的立方體剖面（灰框）與它的內接球（綠圈，半徑 1）。
+  紅色虛線圈是<strong>要圈到 10% 體積所需要的半徑</strong>。
+  拖 p 看它怎麼從綠圈裡面一路長到綠圈外面、甚至戳出灰框。<br>
+  圖形是二維剖面示意，但右側每一個數字都是<strong>真正 p 維的值</strong>，
+  由講義第 15 頁的公式即時算出。""", "講義 02 · p.14–15"),
+         rows_card("這個維度的實際數字",
+                   [("維度 p", "3", "w02curPVal2"),
+                    ("內接球佔立方體比例 r", "—", "w02curRatio"),
+                    ("躲在角落的體積", "—", "w02curCorner"),
+                    ("圈到 10% 體積所需半徑 R", "—", "w02curR"),
+                    ("R 有沒有超出立方體的面", "—", "w02curOut"),
+                    ("每個軸要覆蓋的比例 0.1^(1/p)", "—", "w02curEdge")]),
+         info_card("下面那張圖在說什麼",
+                   """兩條線都對 p = 1…20 畫。綠線是內接球佔比 r，
+  它掉得比任何人的直覺都快；橘線是要圈到 10% 資料時每個軸得覆蓋的比例，
+  它爬得比任何人的直覺都快。<strong>兩條線在 p = 3 與 4 之間交叉</strong>——
+  過了那裡，「要覆蓋的範圍」就比「球裝得下的比例」還大，
+  正好對應講義第 13 頁那句「p ≤ 4 才好用」。""")],
+        "w02curStatus", "拖動 p，看紅色虛線圈什麼時候戳出立方體。",
+        '<div class="slider-row" style="flex:1;min-width:220px;">'
+        '<span class="slider-label">維度 p</span>'
+        '<input type="range" id="w02curP" min="1" max="20" step="1" value="3" '
+        'oninput="w02curDraw()">'
+        '<span class="slider-val" id="w02curPVal">3</span></div>',
+        provenance=("book-redraw", "講義 02 · p.15 的體積比與半徑公式，數值由閉式解即時計算")),
+    info("三句話收掉維度詛咒",
+         """<strong>1.</strong> 要壓低變異，鄰域就得裝進固定比例的資料。<br>
+  <strong>2.</strong> 在高維，那個比例對應的鄰域大到不再局部——每個軸都要覆蓋七八成。<br>
+  <strong>3.</strong> 於是鄰域裡的 f 不再近似常數，平均出來的東西不再是 E(Y | X = x)。<br>
+  <strong>結果：</strong>最近鄰這一類方法在 p 大的時候會很糟，
+  而這正是下一節「參數式方法」存在的理由——
+  先假設 f 的形狀，用結構把要估的東西從「一個 p 維任意函數」壓成「幾個參數」。""", "warm"),
+    quiz("qCur", "QUIZ · 維度詛咒",
+         "同事說：「我的資料有 n = 100000 筆，維度 p = 20，樣本數這麼大，用 KNN 取 10% 當鄰域就好。」"
+         "最關鍵的問題是什麼？",
+         [(True, "p = 20 時，10% 的鄰域在每個軸上都要覆蓋約 89% 的範圍，鄰域早就不是局部了",
+           "對。0.1^(1/20) ≈ 0.891。鄰域幾乎涵蓋整個資料範圍，"
+           "裡面的 f 不可能近似常數，平均出來的值跟 E(Y | X = x) 沒什麼關係。"
+           "n 再大也救不了這一點——它是幾何問題，不是樣本數問題。"),
+          (False, "n = 100000 不夠大，至少要一百萬筆才行",
+           "方向不對。問題不在 n 不夠，而在<strong>要覆蓋的比例是固定的</strong>："
+           "不管 n 多大，10% 的鄰域在 20 維都得覆蓋每個軸的 89%。"
+           "把 n 加十倍只會讓每個鄰域裡的點變多，鄰域的<strong>幾何大小</strong>一點都沒縮小。"),
+          (False, "KNN 只能用於分類，不能拿來做回歸",
+           "不對。KNN 回歸就是本節的鄰域平均，第 3 章還會拿它跟線性迴歸比較。"
+           "問題出在維度，不是出在任務類型。")]),
+])
+
 
 # ── P02 parametric ────────────────────────────────────────────────────
 BODIES["parametric"] = f"""
@@ -1140,9 +1450,179 @@ function w02bayesDraw() {
     + '。這是母體期望錯誤率的下限；有限測試集的觀察值可以在其兩側波動。');
 }
 
+/* ---------- P02 鄰域平均：資料點不夠時的替代品（live，固定種子） ---------- */
+const w02nbrN = 200;
+const w02nbrSigma = 1.0;
+const w02nbrX = [];
+const w02nbrY = [];
+(() => {
+  const rand = HC.stat.lcg(20260910);
+  for (let i = 0; i < w02nbrN; i++) {
+    const x = 0.2 + 9.6 * rand();
+    w02nbrX.push(x);
+    w02nbrY.push(w02irrF(x) + w02nbrSigma * HC.stat.normal(rand));
+  }
+})();
+let w02nbrSvc = null;
+function w02nbrSetup() {
+  w02nbrSvc = HC.svg('w02nbrSvg', { xd: [0, 10], yd: [-1.5, 13.5], h: 330 });
+}
+function w02nbrDraw() {
+  const s = w02nbrSvc;
+  if (!s) return;
+  const h = parseFloat($('w02nbrH').value);
+  const x0 = parseFloat($('w02nbrX0').value);
+  $('w02nbrHVal').textContent = HC.fmt(h, 2);
+  $('w02nbrX0Val').textContent = HC.fmt(x0, 1);
+  $('w02nbrHVal2').textContent = HC.fmt(h, 2);
+  s.grid(5, 4, { xtitle: 'x', ytitle: 'y', xdec: 0, ydec: 0 });
+  const g = s.clearLayer('main');
+  const lo = Math.max(0, x0 - h);
+  const hi = Math.min(10, x0 + h);
+  s.box(lo, s.yd[0], hi, s.yd[1],
+        { fill: 'rgba(243,156,18,.16)', stroke: 'none' }, g);
+  s.poly(HC.stat.seq(0, 10, 201).map(x => [x, w02irrF(x)]), { cls: 'truef' }, g);
+  const inside = [];
+  w02nbrX.forEach((x, i) => {
+    const near = Math.abs(x - x0) <= h;
+    if (near) inside.push(w02nbrY[i]);
+    s.dot(x, w02nbrY[i], {
+      r: near ? 4.2 : 2.6,
+      fill: near ? HC.tok.train : HC.tok.muted,
+      stroke: near ? '#fff' : null,
+      sw: near ? 1 : null,
+      opacity: near ? 1 : 0.4,
+    }, g);
+  });
+  s.seg(x0, s.yd[0], x0, s.yd[1], { cls: 'aux', stroke: '#8e44ad', sw: 1.8, dash: '5 4' }, g);
+  const truth = w02irrF(x0);
+  const m = inside.length;
+  const ave = m ? HC.stat.mean(inside) : null;
+  if (m) s.poly([[lo, ave], [hi, ave]], { cls: 'fit', sw: 3.2 }, g);
+  s.dot(x0, truth, { r: 5.2, fill: HC.tok.truef, stroke: '#fff', sw: 1.4 }, g);
+  s.txtPx(s.pad.l + 6, 22,
+          '綠虛線＝真實的 f · 黃帶＝鄰域 · 橘線＝鄰域平均 · 紫虛線＝目標位置 x₀',
+          { cls: 'axtitle' }, g);
+  const se = m ? w02nbrSigma / Math.sqrt(m) : null;
+  $('w02nbrM').textContent = String(m);
+  $('w02nbrAve').textContent = m ? HC.fmt(ave, 3) : '—';
+  $('w02nbrTrue').textContent = HC.fmt(truth, 3);
+  $('w02nbrErr').textContent = m ? HC.fmt(Math.abs(ave - truth), 3) : '—';
+  $('w02nbrSe').textContent = m ? HC.fmt(se, 3) : '—';
+  const tag = m === 0 ? '鄰域裡一個點都沒有，這個位置根本估不出來'
+    : (m <= 6 ? '鄰域太窄：只有 ' + m + ' 個點，平均值會隨資料抖動（變異大）'
+      : (h >= 2.2 ? '鄰域太寬：點雖然多，但裡面的 f 早就不是常數了（偏差大）'
+        : '差不多剛好：點夠多、鄰域內的 f 又還算平坦'));
+  setStatus('w02nbrStatus', 'h = ' + HC.fmt(h, 2) + '、x₀ = ' + HC.fmt(x0, 1)
+    + ' ⇒ 鄰域內 ' + m + ' 個點，鄰域平均 '
+    + (m ? HC.fmt(ave, 3) : '—') + '，真值 ' + HC.fmt(truth, 3)
+    + '，差距 ' + (m ? HC.fmt(Math.abs(ave - truth), 3) : '—')
+    + '（σ/√m ≈ ' + (m ? HC.fmt(se, 3) : '—') + '）。' + tag + '。');
+}
+
+/* ---------- P03 維度詛咒：球與超立方體（live，講義 p.15 閉式解） ---------- */
+function w02lgamma(z) {
+  /* Lanczos 近似（g = 7），本頁只用到 z ≥ 1，精度遠超過顯示需求 */
+  const c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+             771.32342877765313, -176.61502916214059, 12.507343278686905,
+             -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  const t = z - 1;
+  let x = c[0];
+  for (let i = 1; i < 9; i++) x += c[i] / (t + i);
+  const w = t + 7.5;
+  return 0.5 * Math.log(2 * Math.PI) + (t + 0.5) * Math.log(w) - w + Math.log(x);
+}
+/* 半徑 1 的內接球佔邊長 2 的超立方體的比例 */
+function w02curRatioOf(p) {
+  return Math.exp((p / 2) * Math.log(Math.PI) - p * Math.LN2 - w02lgamma(p / 2 + 1));
+}
+/* 要圈到比例 r 的體積，球的半徑要多大 */
+function w02curRadiusOf(p, r) {
+  return (2 / Math.sqrt(Math.PI)) * Math.exp((Math.log(r) + w02lgamma(p / 2 + 1)) / p);
+}
+function w02curPctText(v) {
+  if (v >= 0.001) return HC.pct(v, 2);
+  return (v * 100).toExponential(1).replace('e', ' × 10^') + '%';
+}
+let w02curSvc = null;
+function w02curSetup() {
+  w02curSvc = HC.svg('w02curSvg', { xd: [0, 1], yd: [0, 1], h: 360 });
+}
+function w02curDraw() {
+  const s = w02curSvc;
+  if (!s) return;
+  const p = parseInt($('w02curP').value, 10);
+  $('w02curPVal').textContent = String(p);
+  $('w02curPVal2').textContent = String(p);
+  const g = s.clearLayer('main');
+  const U = 66, cx = 168, cy = 186;
+  const r = w02curRatioOf(p);
+  const R = w02curRadiusOf(p, 0.1);
+  const edge = Math.pow(0.1, 1 / p);
+  s.add('rect', { x: cx - U, y: cy - U, width: 2 * U, height: 2 * U, rx: 2,
+                  fill: 'rgba(127,140,141,.10)', stroke: HC.tok.muted, 'stroke-width': 2 }, g);
+  s.add('circle', { cx: cx, cy: cy, r: U, fill: 'rgba(26,107,74,.16)',
+                    stroke: HC.tok.truef, 'stroke-width': 2 }, g);
+  s.add('circle', { cx: cx, cy: cy, r: Math.min(U * R, 168), fill: 'none',
+                    stroke: HC.tok.resid, 'stroke-width': 2.4, 'stroke-dasharray': '6 4' }, g);
+  s.txtPx(cx, 30, '邊長 2 的超立方體剖面（灰）與內接球（綠，半徑 1）',
+          { cls: 'axtitle', anchor: 'middle' }, g);
+  s.txtPx(cx, cy + U + 30, '紅虛線＝要圈到 10% 體積所需半徑 R = ' + HC.fmt(R, 3),
+          { cls: 'axlab', anchor: 'middle' }, g);
+  s.txtPx(cx, cy + U + 50, R > 1 ? '已經戳出立方體的面：鄰域不再是局部'
+                                 : '仍在立方體之內：鄰域還算局部',
+          { cls: 'axlab', anchor: 'middle' }, g);
+  const bx = 348, bw = 246, by = 132, bh = 28;
+  s.txtPx(bx, 30, 'p = ' + p + ' 時，立方體的體積分給了誰', { cls: 'axtitle' }, g);
+  s.add('rect', { x: bx, y: by, width: bw, height: bh, rx: 3,
+                  fill: 'rgba(127,140,141,.20)', stroke: HC.tok.muted, 'stroke-width': 1 }, g);
+  s.add('rect', { x: bx, y: by, width: Math.max(1.5, bw * r), height: bh, rx: 3,
+                  fill: 'rgba(26,107,74,.55)', stroke: 'none' }, g);
+  s.txtPx(bx, by - 10, '綠＝內接球 ' + w02curPctText(r)
+          + ' · 灰＝角落 ' + w02curPctText(1 - r), { cls: 'axlab' }, g);
+  s.txtPx(bx, by + bh + 26, '要裝下 10% 的資料，', { cls: 'axlab' }, g);
+  s.txtPx(bx, by + bh + 46, '每個座標軸得覆蓋 ' + HC.pct(edge, 1) + ' 的範圍',
+          { cls: 'axlab' }, g);
+  s.txtPx(bx, by + bh + 76, p <= 4 ? '講義第 13 頁：p ≤ 4 時鄰域平均還好用'
+                                   : '講義第 13 頁：p 大時最近鄰會很糟', { cls: 'axlab' }, g);
+  $('w02curRatio').textContent = w02curPctText(r);
+  $('w02curCorner').textContent = w02curPctText(1 - r);
+  $('w02curR').textContent = HC.fmt(R, 3);
+  $('w02curOut').textContent = R > 1 ? '已經超出（不再局部）' : '還沒超出';
+  $('w02curEdge').textContent = HC.pct(edge, 1);
+  setStatus('w02curStatus', 'p = ' + p + '：內接球只佔立方體的 ' + w02curPctText(r)
+    + '，其餘 ' + w02curPctText(1 - r) + ' 的體積都在角落；要圈到 10% 的體積，'
+    + '球的半徑要 ' + HC.fmt(R, 3) + '（內接球是 1），'
+    + '而每個座標軸得覆蓋 ' + HC.pct(edge, 1) + ' 的範圍。');
+}
+function w02curChartDraw() {
+  const ps = [];
+  for (let i = 1; i <= 20; i++) ps.push(i);
+  HC.line('w02curChart', {
+    labels: ps,
+    datasets: [
+      { label: '內接球佔立方體的比例 r', data: ps.map(w02curRatioOf),
+        borderColor: HC.tok.truef, backgroundColor: HC.tok.truef,
+        borderWidth: 2.8, pointRadius: 2.8, fill: false },
+      { label: '10% 鄰域每個軸要覆蓋的比例', data: ps.map(i => Math.pow(0.1, 1 / i)),
+        borderColor: HC.tok.test, backgroundColor: HC.tok.test,
+        borderWidth: 2.8, pointRadius: 2.8, fill: false },
+    ],
+  }, {
+    scales: {
+      x: { title: { display: true, text: '維度 p' } },
+      y: { min: 0, max: 1, title: { display: true, text: '比例' } },
+    },
+  });
+}
+
 /* ---------- 啟動 ---------- */
 w02irrSetup();
 w02irrDraw();
+w02nbrSetup();
+w02nbrDraw();
+w02curSetup();
+w02curDraw();
 w02flexSetup();
 w02flexDraw();
 w02knnSetup();
@@ -1151,6 +1631,7 @@ w02bayesSetup();
 w02bayesDraw();
 HC.ready(() => {
   w02bvDraw();
+  w02curChartDraw();
 });
 /* 詞彙卡由 tools/inject_data.py 在 DATA 區段內呼叫 HC.initFlashcards()，
    資料一定要先於初始化，所以這裡不呼叫。 */

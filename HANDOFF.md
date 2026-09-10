@@ -19,7 +19,7 @@
 | 頁面 | ISLP | 大小 | 圖表 | SVG 元件 | 詞彙卡 | 題庫 |
 |---|---|---|---|---|---|---|
 | `introduction` | Ch.1 | 160 KB | 1 | 3 | 23 | — |
-| `statistical_learning` | Ch.2 | 191 KB | 2 | 6 | 26 | — |
+| `statistical_learning` | Ch.2 | 229 KB | 2 | 7 | 26 | — |
 | `linear_regression` | Ch.3 | 261 KB | 4 | 5 | 28 | 6 |
 | `classification` | Ch.4 | 218 KB | 2 | 5 | 28 | 6 |
 | `resampling_methods` | Ch.5 | 162 KB | 5 | 3 | 23 | — |
@@ -489,3 +489,32 @@ SHOT_DIR=/tmp/statistics-20260906/all node tools/browser_check.js s1_probability
 移除首頁的統計「核心路徑」宣示與 S1–S4 對應徽章；頁面提示正課需要時查閱、不必先讀完。
 S6 頁尾與 P6 相同，不再把正課導論標成「下一章」；正課回補連結仍保留。
 頁面網址、n 編號、正文、自測與數值資料保持原樣，位置由 pages.py 與 build_index.py 生成。
+
+---
+
+## 18. 第 2 章補上迴歸函數與維度詛咒兩節（2026-09-10）
+
+使用者指出講義 02 的 p.10–15 是重點，但自學站只用兩三句話帶過。這一輪把它拆成兩個新的小節，
+夾在既有的「兩種誤差」與「參數式與非參數式」之間，`pages.py` 的節表是唯一真實來源：
+
+| 節 | id | 徽章 | 內容 |
+|---|---|---|---|
+| PART 02 | `regfunc` | ISLP §2.1｜講義 02 · p.10–12 | 迴歸函數 f(x) = E(Y \| X = x)、最佳性的完整證明、資料點夠／不夠、最近鄰平均 |
+| PART 03 | `curse` | ESL §2.5｜講義 02 · p.13–15 | 每軸覆蓋比例 0.1^(1/p)、講義 p.15 的球／超立方體體積比表、Γ 公式與 10% 鄰域所需半徑 |
+
+同時「兩種誤差」那一節補上講義 p.11 的**條件版本**與完整推導；原本濃縮在該節的最近鄰與
+維度詛咒段落移到新節，該節徽章改成「講義 02 · p.11」。
+
+- 兩段推導都放在 `<details class="qa-item">`（`lib.qa()`）裡，預設收合，展開時由 shared.js 重排數學。
+  推導的 LaTeX 用 module 層的 raw string（`IRR_PROOF`、`REG_PROOF`）寫，不塞進 f-string，
+  才不用把每個大括號加倍。
+- 新元件：`w02nbr`（鄰域平均，固定種子 200 筆，live）與 `w02cur`（球／超立方體 SVG ＋ Chart.js 曲線，
+  講義 p.15 閉式解即時計算，含 Lanczos 的 `w02lgamma`）。SVG 的 setup／draw 在 `HC.ready()` 外面，
+  Chart.js 的 `w02curChartDraw()` 在裡面。
+- **新增 section 時 `build_page.py` 不會自己長出 `<section>`**（它只重繪既有 GEN 區段，
+  只有 `cards` 會自動補）。作法是先改 `pages.py`，再用 `build_page` 的 `gen()`／`sec_head()`／
+  `stub_body()` 產生骨架插到目標 section 前面，然後照常跑 `build_page.py` 重編號。
+- 驗收：`validate.py --net` 0 失敗（3 個是既有的檔案大小警告）、
+  `browser_check.js statistical_learning` 0 問題（2 圖表 · 7 SVG · 10 按鈕 · 26 詞彙卡），
+  並逐節看過截圖確認兩個推導盒展開後的數學與新元件的數值。
+
