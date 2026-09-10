@@ -638,6 +638,68 @@ BODIES["tradeoff"] = f"""
 """
 
 # ── P04 mse ───────────────────────────────────────────────────────────
+# 講義 02 · p.27 最後一行那句話的證明。raw string 保留 LaTeX。
+MSE_PROOF = qa("完整證明", [(
+    r"證明：$E[\text{訓練誤差}] \le E[\text{測試誤差}]$，只要兩批資料同分布、而 $\hat f$ 是在訓練集上挑出來的",
+    r"""<p><strong>先把話說精確。</strong>「典型上比較高」講的是<strong>期望值</strong>，
+    不是「每一次都」。要證的是這一條：</p>
+    $$E_{Tr}\left[\widehat{R}(\hat f)\right] \;\le\; E_{Tr}\left[R(\hat f)\right]$$
+
+    <p><strong>記號。</strong>訓練集 $Tr = \{(x_i, y_i)\}_{i=1}^{n}$ 是從母體分布 $P$ 獨立抽出來的。
+    對任何一個函數 $f$，定義</p>
+    $$\widehat{R}(f) = \frac{1}{n}\sum_{i=1}^{n}\left(y_i - f(x_i)\right)^2
+      \quad\text{（訓練誤差）},\qquad
+      R(f) = E_{(X, Y)\sim P}\left[(Y - f(X))^2\right]
+      \quad\text{（測試誤差）}$$
+    <p>模型類是 $\mathcal{F}$，而 $\hat f = \arg\min_{f \in \mathcal{F}} \widehat{R}(f)$——
+    <strong>它是看過 $Tr$ 之後才挑出來的</strong>，這是整件事的關鍵。
+    再令 $f^{*} = \arg\min_{f \in \mathcal{F}} R(f)$ 是類裡真正最好的那一個
+    （它只由母體決定，跟 $Tr$ 無關）。</p>
+
+    <p><strong>第 1 步：對固定的 $f$，訓練誤差是測試誤差的不偏估計。</strong>
+    只要 $f$ 不依賴 $Tr$，每一項的期望都是 $R(f)$：</p>
+    $$E_{Tr}\left[\widehat{R}(f)\right]
+      = \frac{1}{n}\sum_{i=1}^{n} E\left[(y_i - f(x_i))^2\right] = R(f)$$
+    <p>注意這一步<strong>對 $\hat f$ 不成立</strong>，因為 $\hat f$ 是用 $y_i$ 挑出來的，
+    跟 $y_i$ 有相關。整個「訓練誤差太樂觀」就是從這裡漏出來的。</p>
+
+    <p><strong>第 2 步：訓練誤差的期望不會超過類裡最好的風險。</strong>
+    $\hat f$ 是最小值，所以對<strong>每一個</strong> $f \in \mathcal{F}$ 都有
+    $\widehat{R}(\hat f) \le \widehat{R}(f)$。兩邊取期望，再用第 1 步：</p>
+    $$E_{Tr}\left[\widehat{R}(\hat f)\right] \;\le\; E_{Tr}\left[\widehat{R}(f)\right] = R(f)
+      \qquad \text{對每個 } f \in \mathcal{F}$$
+    <p>對右邊取下確界，得 $E_{Tr}[\widehat{R}(\hat f)] \le R(f^{*})$。
+    （這就是 $E[\min] \le \min[E]$：先看答案再挑，當然挑得比較低。）</p>
+
+    <p><strong>第 3 步：測試誤差的期望不會低於類裡最好的風險。</strong>
+    $\hat f$ 本身也在 $\mathcal{F}$ 裡，所以不管抽到哪一份 $Tr$ 都有
+    $R(\hat f) \ge R(f^{*})$。取期望：</p>
+    $$E_{Tr}\left[R(\hat f)\right] \;\ge\; R(f^{*})$$
+
+    <p><strong>合起來。</strong>把兩條夾在 $R(f^{*})$ 的兩側：</p>
+    $$E_{Tr}\left[\widehat{R}(\hat f)\right] \;\le\; R(f^{*}) \;\le\; E_{Tr}\left[R(\hat f)\right]
+      \qquad \blacksquare$$
+
+    <p><strong>「typically」到底在哪裡。</strong>上面證的是期望值的不等式，
+    有兩個地方會讓它在單一次實驗裡看起來不成立：<br>
+    <strong>1.</strong> 有限的測試集只是 $R(\hat f)$ 的一個估計，運氣好時可以低於訓練誤差。<br>
+    <strong>2.</strong> 如果 $\hat f$ <strong>不是</strong>用 $Tr$ 挑的（例如模型是別人給你的、參數也不重估），
+    第 1 步就對它成立，兩邊期望相等，不等式退化成等號。
+    <strong>差距完全來自「用同一批資料又挑模型又評分」。</strong></p>
+
+    <p><strong>差距有多大？</strong>可以算得出來。把樂觀程度定義成
+    $\omega = E\left[R_{\text{in}}(\hat f) - \widehat{R}(\hat f)\right]$
+    （$R_{\text{in}}$ 是在同樣的 $x_i$ 上換一批新的 $y$），平方誤差之下</p>
+    $$\omega = \frac{2}{n}\sum_{i=1}^{n}\mathrm{Cov}\left(\hat y_i,\, y_i\right)$$
+    <p>擬合愈是「跟著 $y_i$ 跑」，這個共變異數就愈大。對用了 $d$ 個參數的線性擬合、
+    誤差變異數為 $\sigma^2$ 時，$\sum_i \mathrm{Cov}(\hat y_i, y_i) = d\,\sigma^2$，於是</p>
+    $$\omega = \frac{2 d \sigma^2}{n}$$
+    <p>參數愈多、樣本愈少，訓練誤差就愈樂觀。這條式子正是
+    <a href="model_selection.html">第 6 章</a>的 $C_p$、AIC、BIC 之所以要「罰參數個數」的來源，
+    也解釋了 1-最近鄰的極端情形：它把每個訓練點都完美記住，訓練誤差 0，
+    但測試誤差一點都不是 0。</p>""")])
+
+
 BODIES["mse"] = f"""
   <p>要比較方法，得先有量尺。迴歸問題最常用的是<strong>均方誤差</strong>（MSE）：</p>
 
@@ -652,6 +714,15 @@ BODIES["mse"] = f"""
   <p>為什麼不能用訓練 MSE 當代理？因為大部分方法就是<strong>直接或間接在最小化它</strong>。
   你拿一個「已經被最佳化過的目標值」當成公正的評分，當然會太樂觀。
   極端一點：一條通過每一個訓練點的曲線，訓練 MSE 是 0，但它什麼都沒學到。</p>
+
+  <p>講義第 27 頁最後一行把這件事寫成一句斷言，值得把它證出來：</p>
+
+{info("講義第 27 頁的原句", '''A model's test error is <strong>typically higher</strong> than its
+  training error, assuming both datasets are drawn from the same underlying distribution.<br>
+  兩批資料<strong>同分布</strong>是前提；「typically」不是模糊其辭，
+  它精確地說明這是一個<strong>期望值</strong>的不等式。''')}
+
+{MSE_PROOF}
 
 {viz(svg("w02fitSvg", 300) + "\n" + svg("w02mseSvg", 250),
      [info_card("怎麼看這兩張圖",
@@ -731,6 +802,77 @@ BODIES["mse"] = f"""
 """
 
 # ── P05 biasvar ───────────────────────────────────────────────────────
+# 講義 02 · p.28 只寫了「Proof of the decomposition」，這裡把它補完。
+BV_PROOF = qa("完整證明", [(
+    r"證明：$E\left[(y_0 - \hat f(x_0))^2\right] = \mathrm{Var}(\hat f(x_0)) + \left[\mathrm{Bias}(\hat f(x_0))\right]^2 + \mathrm{Var}(\varepsilon)$",
+    r"""<p><strong>設定與記號。</strong>把測試點的位置 $x_0$ 固定住，
+    真實模型是 $Y = f(X) + \varepsilon$，其中 $f(x) = E[Y \mid X = x]$、
+    $E[\varepsilon] = 0$、$\mathrm{Var}(\varepsilon) = \sigma^2$。測試觀測值是</p>
+    $$y_0 = f(x_0) + \varepsilon_0$$
+    <p>為了讀起來不擠，令 $f_0 = f(x_0)$、$\hat\mu = \hat f(x_0, Tr)$、
+    $m = E_{Tr}\left[\hat\mu\right]$。</p>
+
+    <p><strong>這裡有兩層隨機，一定要分清楚：</strong><br>
+    <strong>1.</strong> 訓練集 $Tr$——每換一份訓練資料，$\hat\mu$ 就是另一個數字。<br>
+    <strong>2.</strong> 測試點的雜訊 $\varepsilon_0$——它是<strong>新抽的</strong>，沒有參與訓練。<br>
+    所以 $\varepsilon_0$ 與 $Tr$ 獨立，因而與 $\hat\mu$ 獨立。外面那個 $E$ 是對這兩層一起取的，
+    這正是講義那句 the expectation averages over the variability of $y_0$ as well as
+    the variability in $Tr$ 的意思。<strong>本頁 P01 那條推導是把 $\hat f$ 固定住的版本，
+    這裡把 $\hat f$ 的隨機性也放進來，所以可縮減的那一塊會再裂成兩塊。</strong></p>
+
+    <p><strong>第 1 步：把 $y_0$ 換掉、湊出 $\varepsilon_0$。</strong></p>
+    $$y_0 - \hat\mu = \left(f_0 + \varepsilon_0\right) - \hat\mu
+      = \varepsilon_0 + \left(f_0 - \hat\mu\right)$$
+
+    <p><strong>第 2 步：平方展開、取期望。</strong></p>
+    $$E\left[(y_0 - \hat\mu)^2\right]
+      = E\left[\varepsilon_0^2\right]
+      + 2\,E\left[\varepsilon_0\left(f_0 - \hat\mu\right)\right]
+      + E\left[\left(f_0 - \hat\mu\right)^2\right]$$
+    <p>中間那一項因為獨立而可以拆開，再用 $E[\varepsilon_0] = 0$：</p>
+    $$E\left[\varepsilon_0\left(f_0 - \hat\mu\right)\right]
+      = E[\varepsilon_0]\;E\left[f_0 - \hat\mu\right] = 0$$
+    <p>第一項則是 $E[\varepsilon_0^2] = \mathrm{Var}(\varepsilon) = \sigma^2$。
+    於是只剩下</p>
+    $$E\left[(y_0 - \hat\mu)^2\right]
+      = \mathrm{Var}(\varepsilon) + E\left[\left(\hat\mu - f_0\right)^2\right]$$
+
+    <p><strong>第 3 步：把剩下那一項再拆一次——一樣是加一項、減一項。</strong>
+    這次塞進去的是 $\hat\mu$ 自己的平均 $m$：</p>
+    $$\hat\mu - f_0 = \underbrace{\left(\hat\mu - m\right)}_{\text{隨 } Tr \text{ 變動，期望 } 0}
+      + \underbrace{\left(m - f_0\right)}_{\text{常數}}$$
+    $$E\left[\left(\hat\mu - f_0\right)^2\right]
+      = E\left[\left(\hat\mu - m\right)^2\right]
+      + 2\left(m - f_0\right)\underbrace{E\left[\hat\mu - m\right]}_{=\,0}
+      + \left(m - f_0\right)^2$$
+
+    <p><strong>第 4 步：認出這兩塊是誰。</strong></p>
+    $$E\left[\left(\hat\mu - m\right)^2\right] = \mathrm{Var}_{Tr}\left(\hat f(x_0)\right),
+      \qquad
+      m - f_0 = E\left[\hat f(x_0)\right] - f(x_0) = \mathrm{Bias}\left(\hat f(x_0)\right)$$
+
+    <p><strong>合起來就是講義第 28 頁那一行：</strong></p>
+    $$E\left[\left(y_0 - \hat f(x_0)\right)^2\right]
+      = \underbrace{\mathrm{Var}\!\left(\hat f(x_0)\right)}_{\text{換一份訓練資料會抖多少}}
+      + \underbrace{\left[\mathrm{Bias}\!\left(\hat f(x_0)\right)\right]^2}_{\text{平均而言偏掉多少}}
+      + \underbrace{\mathrm{Var}(\varepsilon)}_{\text{怎麼樣都在}}
+      \qquad \blacksquare$$
+
+    <p><strong>三個立刻讀得出來的推論。</strong><br>
+    <strong>1.</strong> 三項都非負，所以期望測試 MSE 有下限 $\mathrm{Var}(\varepsilon)$，
+    跟 <a href="#irreducible">P01</a> 得到的下限是同一件事。<br>
+    <strong>2.</strong> 偏差與變異都是<strong>對 $Tr$ 取的</strong>統計量，
+    所以「這一次擬合的殘差有多大」跟它們是兩回事——要看它們得想像重抽很多份訓練集。<br>
+    <strong>3.</strong> 彈性一升，$\mathrm{Var}(\hat f(x_0))$ 通常上去、
+    $\mathrm{Bias}$ 通常下來，兩者相加才有 U 型。<strong>沒有哪一邊可以單獨最佳化</strong>——
+    這就是講義說的 bias-variance trade-off。</p>
+
+    <p><strong>整條曲線的版本。</strong>上面只證了單一個 $x_0$。
+    把等式對測試點的分布再取一次期望（或在測試網格上平均），
+    左邊變成期望測試 MSE、右邊三項變成各自的平均，形式一模一樣。
+    下面那張圖畫的就是這個平均版本。</p>""")])
+
+
 BODIES["biasvar"] = f"""
   <p>上一節看到了 U 型，這一節解釋它是怎麼長出來的。可以證明：
   在某個測試點 $x_0$ 上，<strong>期望</strong>測試 MSE 一定能拆成三塊
@@ -755,6 +897,10 @@ BODIES["biasvar"] = f"""
     一般而言愈彈性 → 變異愈高。</li>
     <li><strong>$\\mathrm{{Var}}(\\varepsilon)$</strong>：跟方法無關的常數。</li>
   </ul>
+
+  <p>講義第 28 頁只寫了一行 <em>Proof of the decomposition</em> 就跳過去了，這裡補完：</p>
+
+{BV_PROOF}
 
 {viz(chart("w02bvChart", "tall",
            "。此圖的重點：偏差² 隨彈性下降、變異隨彈性上升，兩者相加再加上 Var(ε) 得到期望測試 MSE；"
