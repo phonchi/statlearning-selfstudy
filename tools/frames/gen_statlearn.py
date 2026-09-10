@@ -12,7 +12,8 @@
 彈性度一律用「樣條自由度 df」＝配適時估的參數個數（含截距）：
   df = 2/3/4 → 一次／二次／三次多項式
   df ≥ 5     → 三次迴歸樣條，節點依 van der Corput 順序逐一加入（巢狀！）
-               節點集合巢狀 ⇒ 模型空間巢狀 ⇒ 訓練 MSE 與偏差² 保證單調不上升
+               節點集合巢狀 ⇒ 模型空間巢狀 ⇒ 訓練 MSE 保證單調不上升
+               （偏差² 是在測試網格上以蒙地卡羅估的，巢狀不保證它單調）
                rank([1|X]) 實測恰好等於 df
 
 跑法（用 pinned 環境，數字才可重現）：
@@ -290,7 +291,9 @@ print(f"KNN：Bayes 錯誤率 = {bayes_err:.4f}；"
 assert kerr["1"]["train"] == 0.0, "K = 1 的訓練錯誤率必須是 0"
 assert kerr["10"]["test"] < kerr["1"]["test"], "K=10 應該比 K=1 好"
 assert kerr["10"]["test"] < kerr["100"]["test"], "K=10 應該比 K=100 好"
-assert min(ktest) >= bayes_err, "任何 K 的測試錯誤率都不該低於 Bayes 錯誤率"
+# bayes_err 本身是 5000 個測試位置上 min(p, 1-p) 的蒙地卡羅估計，而有限測試集的
+# 觀察錯誤率本來就可以低於母體風險。這裡只固定住本種子下的既有數值，不宣稱普遍定律。
+assert min(ktest) >= bayes_err - 0.01, "本種子下沒有任何 K 應該明顯低於 Bayes 錯誤率的估計"
 assert ktrain[0] == 0.0 and ktest[0] > bayes_err, "圖 2.17 的左端應該是訓練 0、測試偏高"
 print(f"1/K 曲線：測試錯誤率最低在 K = {best_k}（{min(ktest):.4f}）；"
       f"K=150 測試 {ktest[-1]:.4f}；Bayes 邊界線段 {len(segs)} 段", file=e)

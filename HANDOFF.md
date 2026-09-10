@@ -19,7 +19,7 @@
 | 頁面 | ISLP | 大小 | 圖表 | SVG 元件 | 詞彙卡 | 題庫 |
 |---|---|---|---|---|---|---|
 | `introduction` | Ch.1 | 160 KB | 1 | 3 | 23 | — |
-| `statistical_learning` | Ch.2 | 244 KB | 2 | 7 | 26 | — |
+| `statistical_learning` | Ch.2 | 253 KB | 2 | 7 | 26 | — |
 | `linear_regression` | Ch.3 | 261 KB | 4 | 5 | 28 | 6 |
 | `classification` | Ch.4 | 218 KB | 2 | 5 | 28 | 6 |
 | `resampling_methods` | Ch.5 | 162 KB | 5 | 3 | 23 | — |
@@ -531,4 +531,38 @@ S6 頁尾與 P6 相同，不再把正課導論標成「下一章」；正課回�
 - 驗收：`validate.py --net` 0 失敗（3 個是既有的檔案大小警告）、
   `browser_check.js statistical_learning` 0 問題（2 圖表 · 7 SVG · 10 按鈕 · 26 詞彙卡），
   並逐節看過截圖確認兩個推導盒展開後的數學與新元件的數值。
+
+### 18.2 分類的耐維度補充，以及 Codex 全章數學複查（2026-09-10）
+
+先補上講義 p.33 的「分類比較耐得住維度」：在 `bayes` 節的 KNN 公式之後加一個收合盒
+（`CLS_ROBUST`），內容是兩類的等式 `R(Ĉ) − R(C*) = E[|2η(X) − 1| · I(Ĉ ≠ C*)]`、
+由它得到的 plug-in 界 `R(Ĉ) − R(C*) ≤ 2E|η̂ − η|`，以及這條界是單向的意義；
+並說明它仍然 breaks down（邊界薄殼變厚、要機率本身時沒有保護）。
+
+接著用 `claude-codex-collab` 請 Codex 唯讀複查**整章**的數學與數值
+（job `0aa550f0-9edf-48dd-b568-e9d39d6a0a91`，`--target codex`，read-only）。
+Codex 重算了維度詛咒的每一格、模擬與 KNN 的每個引用數字、以及 lab 的輸出，
+確認五條證明的主要代數步驟與所有幾何／模擬數字**無誤**，但指出前提與敘述上的問題。
+已採納並修正的（逐項核實過，不是照單全收）：
+
+| 主題 | 改法 |
+|---|---|
+| `MSE_PROOF` optimism | 條件在訓練輸入 `X` 上，`ω(X) = (2/n)ΣCov(ŷᵢ, yᵢ | X)`；線性平滑器 `ω = 2σ²tr(S)/n`，說明 `d` 要用 `tr(S)`、這是 in-sample 樂觀程度、BIC 不由此推出 |
+| `MSE_PROOF` 前提 | 標題與設定改成「模型類事先固定 ＋ 精確 ERM」，並給出 `f̂ ≡ −y₁` 這個反例說明「看過資料才決定」不夠 |
+| `BV_PROOF` 前提 | `E[ε|X] = 0`、`Var(ε|X) = σ²` 的條件版本，並註明異變異時要讀成 `Var(Y|X = x₀)` |
+| `regfunc` 資料點夠 | 樣本平均是**估計**，`E[(Y_new − ȳ_m)²|x] = τ² + τ²/m`，`m → ∞` 才收斂 |
+| `curse` | 固定比例是講義的示範不是必然（`m → ∞` 而 `m/n → 0` 可行）；`R > 1` 之後整球體積 ≠ 落在立方體內的體積（p = 6 實際覆蓋 9.9985%）；`p = 20` 的 `2.5 × 10⁻⁸` 補上單位；兩曲線交叉不是理論門檻，並補上均勻分布與超立方體鄰域的前提 |
+| `irreducible` | 加變數後方向寫反 → 改成 `E[Var(Y|X, Z)] ≤ E[Var(Y|X)]`；相關係數的缺口不是不可縮減誤差 |
+| ESL 式 7.10 | 補上固定訓練輸入的條件；偏差對 `k` 不保證單調 |
+| `w02flexDraw` | df = 25 的狀態文字原本寫「測試 MSE 最大」，實際 df = 2 才最大（3.260 vs 1.495）——真的講錯，已改 |
+| quiz／敘述 | `qIrr` 87% → 87.5%；`qKnn` 不再說「跟不可縮減無關」；`qEx3` 的 U 型改成典型形狀；「什麼都沒學到」「它大於 0」「無法分開估」「60.9 當基準線」都收緊 |
+| `gen_statlearn.py` | `assert min(ktest) >= bayes_err` 是不成立的普遍斷言（`bayes_err` 本身是 MC 估計），改成本種子下的容差檢查；巢狀保證的註解只保留訓練 MSE |
+| `reference` 表 | 二次四捨五入 3.433／0.788／1.046 → 3.432／0.787／1.047 |
+
+**沒改的**：`K` 在 Bayes 證明是類別數、在 KNN 是鄰居數（各處都有局部定義，不算錯）；
+Codex 建議把類別數改記成 `C`，但那會跟講義與 ISLP 的符號不一致。
+
+驗收：`validate.py --net` 0 失敗、`browser_check.js statistical_learning` 0 問題，
+`bayes` 節截圖逐條看過。Codex 的完整回覆存於
+`~/.local/share/claude-codex-collab/runs/0aa550f0-9edf-48dd-b568-e9d39d6a0a91`。
 

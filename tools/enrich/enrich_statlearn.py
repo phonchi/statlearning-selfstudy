@@ -211,7 +211,9 @@ BODIES["irreducible"] = f"""
            "而 ε 是標準差 1 的常態。既然 f 完全正確，相關係數為什麼不是 1？"
            "因為 Var(x) = 1、Var(ε) = 1，理論相關是 1/√2 ≈ 0.707，"
            "實測 <strong>0.787</strong>（50 筆的抽樣波動）。"
-           "<strong>那個缺口就是不可縮減誤差。</strong>")}
+           "<strong>雜訊把相關係數壓在 1 以下；但注意「相關係數離 1 的差距」"
+           "本身不是不可縮減誤差——量綱都不一樣。</strong>這一題裡平方誤差意義下的"
+           "不可縮減部分是 Var(ε) = 1。")}
 
 {card("講義 02 · 用樣本變異數估 Var(ε)", lab_code(CH, 84) + "\n" + lab_code(CH, 85),
       lab_output(CH, 85), src=src("84、85"),
@@ -230,8 +232,10 @@ BODIES["irreducible"] = f"""
      "$\\mathrm{Var}(\\varepsilon)$ 是母體的性質，跟你抽了幾筆完全無關。</p>"
      "<p>加變數就不一樣了。假設病人的反應其實還跟基因型有關，而你原本沒量。"
      "那部分變異現在被塞在 $\\varepsilon$ 裡。一旦把基因型加進 X，"
-     "$E[Y \\mid X]$ 這個條件期望值本身就換了一個（更小的變異、更複雜的 f），"
-     "$\\mathrm{Var}(\\varepsilon)$ 於是變小。所以嚴格說法是："
+     "條件期望值換成了 $E[Y \\mid X, \\text{基因型}]$——它能解釋的變異<strong>只多不少</strong>，"
+     "剩下的殘差因此只小不大：$E\\big[\\mathrm{Var}(Y \\mid X, \\text{基因型})\\big] \\le "
+     "E\\big[\\mathrm{Var}(Y \\mid X)\\big]$。"
+     "（新變數真的帶進資訊時才會嚴格變小；毫無關係的變數只會讓等號成立。）所以嚴格說法是："
      "<strong>不可縮減誤差的下限由你使用的這組 X 決定。</strong></p>"
      "<p>實務上的意義：如果經重複評估得到的測試風險已逼近你估計的 $\\mathrm{Var}(\\varepsilon)$，"
      "可優先考慮蒐集新變數，再評估是否需要更換模型或調整參數。"),
@@ -242,7 +246,7 @@ BODIES["irreducible"] = f"""
       "已知 Var(ε) = 2.0。下列哪個判斷最合理？",
       [(True, "可縮減誤差從約 3.2 降到約 0.4，剩下的空間已經很小，可優先考慮蒐集新變數",
         "對。期望測試 MSE 減掉 Var(ε) 就是可縮減那一塊：5.2 − 2.0 = 3.2 → 2.4 − 2.0 = 0.4。"
-        "已經減少 87%，繼續加彈性的邊際效益很低，而且風險是開始過度擬合。"),
+        "已經減少 87.5%，可縮減的空間剩下 0.4，繼續加彈性最多也只能再拿回這麼多。"),
        (False, "還能再降到 0，因為彈性可以無限提高",
         "不對。三項拆解裡 Var(ε) = 2.0 是加在最後的常數，"
         "<strong>母體的期望測試 MSE 不可能低於 2.0</strong>，不管方法多彈性。"
@@ -330,12 +334,22 @@ BODIES["regfunc"] = "".join([
   而是<strong>所有函數裡最好的那一個</strong>——沒有任何函數能贏過它。下面把它證出來。"""),
     REG_PROOF,
     r"""
-  <p><strong>如果資料點夠多，故事到這裡就結束了。</strong>
+  <p><strong>如果資料點夠多，事情就簡單得多。</strong>
   假設 $X = 4$ 這個位置真的躺著幾百筆觀測，那你什麼模型都不用建：
-  把那幾百筆的 $y$ 平均起來，就是 $E[Y \mid X = 4]$ 的估計，
-  而且照剛才的證明，它已經是平方誤差下最好的預測。
-  這也是「資料夠多」在統計學習裡為什麼是這麼強的一句話——
-  <strong>夠多的時候，最佳解是照定義抄下來的，不需要任何模型假設。</strong></p>
+  把那幾百筆的 $y$ 平均起來，就是 $E[Y \mid X = 4]$ 的<strong>估計</strong>，
+  而它要估的那個東西，照剛才的證明就是平方誤差下最好的預測。
+  獨立抽樣、變異數有限時，鄰域內筆數 $m$ 愈多，樣本平均就愈接近母體的條件期望。</p>
+
+  <p>要說清楚的是：<strong>樣本平均本身還不是「最佳」，它只是最佳解的估計。</strong>
+  在 $X = 4$ 這一點上用 $m$ 筆的平均 $\bar y_m$ 去預測一筆新的 $Y$，期望平方誤差是</p>
+
+  $$E\left[(Y_{\text{new}} - \bar y_m)^2 \mid X = 4\right]
+    = \underbrace{\tau^2}_{\text{不可縮減}} + \underbrace{\frac{\tau^2}{m}}_{\text{估計誤差}},
+    \qquad \tau^2 = \mathrm{Var}(Y \mid X = 4)$$
+
+  <p>第二項要到 $m \to \infty$ 才消失。所以正確的說法是：
+  <strong>資料夠多的時候，最佳解可以直接照定義估出來，不需要任何模型假設</strong>——
+  這已經夠強了，強到值得把它當成整章的參照點。</p>
 
   <p>麻煩在於「夠多」幾乎不會發生。講義第 12 頁下一頁就潑冷水：</p>
 """,
@@ -420,8 +434,12 @@ BODIES["curse"] = "".join([
   <strong>維度詛咒</strong>（curse of dimensionality）。</p>
 
   <p>先想清楚鄰域為什麼不能太小。上一節的元件已經看到了：
-  鄰域平均的變異大約是 $\sigma^2 / m$，$m$ 是鄰域裡的點數。
-  要把它壓下來，鄰域就得裝進<strong>一定比例</strong>的資料——講義第 13 頁舉的例子是 10%。</p>
+  鄰域平均的變異大約是 $\sigma^2 / m$，$m$ 是鄰域裡的點數。要把它壓下來就得讓 $m$ 夠大。
+  講義第 13 頁的做法是拿一個<strong>固定比例</strong>來示範——例如 10% 的資料。</p>
+
+  <p>嚴格說，$n$ 一起變大時可以讓 $m \to \infty$ 而比例 $m/n \to 0$，
+  所以「一定要固定比例」不是數學上的必然。固定比例是為了把問題講清楚：
+  它讓「要多大的鄰域」變成一個可以直接算的幾何問題。</p>
 
   <p>那麼問題變成：在 $p$ 維的單位超立方體裡，要圈到 10% 的體積，
   每個座標軸上得吃掉多長？答案很短：</p>
@@ -461,8 +479,10 @@ BODIES["curse"] = "".join([
     r"""
   <p>把 $R = 1$（剛好內接）代進去，$r$ 就是「內接球佔整個立方體的比例」：
   $p = 1$ 是 100%、$p = 2$ 是 78.5%、$p = 3$ 是 52.4%、$p = 4$ 只剩 30.8%、
-  $p = 6$ 剩 8.1%、$p = 10$ 剩 <strong>0.25%</strong>、$p = 20$ 剩 $2.5 \times 10^{-8}$。
-  換句話說，<strong>十維立方體裡有 99.75% 的體積不在內接球裡，全部在角落。</strong>
+  $p = 6$ 剩 8.1%、$p = 10$ 剩 <strong>0.25%</strong>、
+  $p = 20$ 剩 $2.5 \times 10^{-6}\%$（比例 $2.5 \times 10^{-8}$）。
+  換句話說，<strong>十維立方體裡有 99.75% 的體積落在內接球之外</strong>——
+  也就是靠近各個角落的那些區域。
   你以為自己站在中間，其實資料都在你摸不到的邊邊。</p>
 
   <p>反過來問更有感：如果我就是要圈到超立方體的 10% 體積，球的半徑要多大？
@@ -471,6 +491,11 @@ BODIES["curse"] = "".join([
   $$R = \frac{2}{\sqrt{\pi}}\left[\,r\,\Gamma\!\left(\frac{p}{2} + 1\right)\right]^{1/p},
     \qquad
     \Gamma\!\left(\frac{p}{2} + 1\right) \sim \sqrt{\pi p}\,\left(\frac{p}{2e}\right)^{p/2}$$
+
+  <p>這條式子解的是「<strong>整顆球</strong>的體積等於立方體體積的 10%」。
+  $R > 1$ 之後球已經有一部分跑到立方體外面，真正落在立方體<strong>裡面</strong>的比例會略低於 10%，
+  所以它其實是「覆蓋 10% 所需半徑」的下界。講義第 15 頁用的是同一個簡化；
+  差距很小（$p = 6$ 時實際覆蓋 9.9985%），不影響結論的方向。</p>
 
   <p>右邊那個 $\Gamma$ 的 Stirling 近似說明了為什麼會炸：
   $\Gamma\!\left(\frac{p}{2}+1\right)$ 大致以 $(p/2e)^{p/2}$ 的速度成長，
@@ -496,9 +521,10 @@ BODIES["curse"] = "".join([
          info_card("下面那張圖在說什麼",
                    """兩條線都對 p = 1…20 畫。綠線是內接球佔比 r，
   它掉得比任何人的直覺都快；橘線是要圈到 10% 資料時每個軸得覆蓋的比例，
-  它爬得比任何人的直覺都快。<strong>兩條線在 p = 3 與 4 之間交叉</strong>——
-  過了那裡，「要覆蓋的範圍」就比「球裝得下的比例」還大，
-  正好對應講義第 13 頁那句「p ≤ 4 才好用」。""")],
+  它爬得比任何人的直覺都快。兩條線在 p = 3 與 4 之間交叉。<br>
+  <strong>注意這個交叉點是兩個不同幾何量的相遇，不是 KNN 適用維度的理論門檻</strong>；
+  講義第 13 頁的「p ≤ 4 才好用」是經驗準則。另外邊長那條線假設輸入均勻分布、
+  鄰域取等邊超立方體；一般的歐氏 KNN 用的是球形鄰域。""")],
         "w02curStatus", "拖動 p，看紅色虛線圈什麼時候戳出立方體。",
         '<div class="slider-row" style="flex:1;min-width:220px;">'
         '<span class="slider-label">維度 p</span>'
@@ -509,7 +535,8 @@ BODIES["curse"] = "".join([
     info("三句話收掉維度詛咒",
          """<strong>1.</strong> 要壓低變異，鄰域就得裝進固定比例的資料。<br>
   <strong>2.</strong> 在高維，那個比例對應的鄰域大到不再局部——每個軸都要覆蓋七八成。<br>
-  <strong>3.</strong> 於是鄰域裡的 f 不再近似常數，平均出來的東西不再是 E(Y | X = x)。<br>
+  <strong>3.</strong> 鄰域一大，就<strong>不再保證</strong>裡面的 f 近似常數，
+  平均出來的東西也就不再貼近 E(Y | X = x)。<br>
   <strong>結果：</strong>最近鄰這一類方法在 p 大的時候會很糟，
   而這正是下一節「參數式方法」存在的理由——
   先假設 f 的形狀，用結構把要估的東西從「一個 p 維任意函數」壓成「幾個參數」。""", "warm"),
@@ -613,8 +640,9 @@ BODIES["tradeoff"] = f"""
 
 {card("講義 02 · 數值摘要", lab_code(CH, 271), lab_output(CH, 271), src=src("271"),
       note="<code>describe()</code> 一次給你 count／mean／std／五數摘要。"
-           "<code>mpg</code> 的標準差 7.805 是「什麼都不做、直接猜平均」的誤差尺度——"
-           "平方起來約 <strong>60.9</strong>。任何模型的測試 MSE 都要拿它當基準線比："
+           "<code>mpg</code> 的樣本標準差 7.805 可以當成誤差的尺度參考——"
+           "平方起來約 <strong>60.9</strong>（正式比較時要用訓練集的平均值去預測"
+           "同一份測試資料再算 MSE，不是直接拿樣本變異數）。有了尺度感才好判斷："
            "比不過它，就要重新檢查模型是否適合這份資料。")}
 
 {card("講義 02 · 散佈圖矩陣：一眼看出線性夠不夠", lab_code(CH, 269), None,
@@ -640,7 +668,7 @@ BODIES["tradeoff"] = f"""
 # ── P04 mse ───────────────────────────────────────────────────────────
 # 講義 02 · p.27 最後一行那句話的證明。raw string 保留 LaTeX。
 MSE_PROOF = qa("完整證明", [(
-    r"證明：$E[\text{訓練誤差}] \le E[\text{測試誤差}]$，只要兩批資料同分布、而 $\hat f$ 是在訓練集上挑出來的",
+    r"證明：$E[\text{訓練誤差}] \le E[\text{測試誤差}]$——前提是模型類事先固定，且 $\hat f$ 是它裡面訓練誤差最小的那一個",
     r"""<p><strong>先把話說精確。</strong>「典型上比較高」講的是<strong>期望值</strong>，
     不是「每一次都」。要證的是這一條：</p>
     $$E_{Tr}\left[\widehat{R}(\hat f)\right] \;\le\; E_{Tr}\left[R(\hat f)\right]$$
@@ -651,8 +679,12 @@ MSE_PROOF = qa("完整證明", [(
       \quad\text{（訓練誤差）},\qquad
       R(f) = E_{(X, Y)\sim P}\left[(Y - f(X))^2\right]
       \quad\text{（測試誤差）}$$
-    <p>模型類是 $\mathcal{F}$，而 $\hat f = \arg\min_{f \in \mathcal{F}} \widehat{R}(f)$——
-    <strong>它是看過 $Tr$ 之後才挑出來的</strong>，這是整件事的關鍵。
+    <p>模型類 $\mathcal{F}$ <strong>事先固定、不依賴訓練資料</strong>，
+    而 $\hat f = \arg\min_{f \in \mathcal{F}} \widehat{R}(f)$——
+    <strong>它是看過 $Tr$ 之後才在 $\mathcal{F}$ 裡挑出來的</strong>，這是整件事的關鍵。
+    （這兩個條件都要。「隨便一個看過資料才決定的 $\hat f$」不夠：
+    $n = 1$、$Y$ 零均值變異 $\sigma^2$ 時，故意取 $\hat f \equiv -y_1$，
+    期望訓練誤差是 $4\sigma^2$、期望測試誤差是 $2\sigma^2$，不等號會反過來。）
     再令 $f^{*} = \arg\min_{f \in \mathcal{F}} R(f)$ 是類裡真正最好的那一個
     （它只由母體決定，跟 $Tr$ 無關）。</p>
 
@@ -687,16 +719,30 @@ MSE_PROOF = qa("完整證明", [(
     第 1 步就對它成立，兩邊期望相等，不等式退化成等號。
     <strong>差距完全來自「用同一批資料又挑模型又評分」。</strong></p>
 
-    <p><strong>差距有多大？</strong>可以算得出來。把樂觀程度定義成
-    $\omega = E\left[R_{\text{in}}(\hat f) - \widehat{R}(\hat f)\right]$
-    （$R_{\text{in}}$ 是在同樣的 $x_i$ 上換一批新的 $y$），平方誤差之下</p>
-    $$\omega = \frac{2}{n}\sum_{i=1}^{n}\mathrm{Cov}\left(\hat y_i,\, y_i\right)$$
-    <p>擬合愈是「跟著 $y_i$ 跑」，這個共變異數就愈大。對用了 $d$ 個參數的線性擬合、
-    誤差變異數為 $\sigma^2$ 時，$\sum_i \mathrm{Cov}(\hat y_i, y_i) = d\,\sigma^2$，於是</p>
-    $$\omega = \frac{2 d \sigma^2}{n}$$
-    <p>參數愈多、樣本愈少，訓練誤差就愈樂觀。這條式子正是
-    <a href="model_selection.html">第 6 章</a>的 $C_p$、AIC、BIC 之所以要「罰參數個數」的來源，
-    也解釋了 1-最近鄰的極端情形：它把每個訓練點都完美記住，訓練誤差 0，
+    <p><strong>差距有多大？</strong>在一個更受限的設定下可以算出來（ESL §7.4）。
+    <strong>把訓練輸入 $\mathbf{X}$ 固定住</strong>，只讓反應值隨機，
+    並把樂觀程度定義成「同樣那些 $x_i$ 上換一批新的 $y$」與訓練誤差的差：</p>
+    $$\omega(\mathbf{X}) = E\left[R_{\text{in}}(\hat f) - \widehat{R}(\hat f)
+      \;\middle|\; \mathbf{X}\right]
+      = \frac{2}{n}\sum_{i=1}^{n}\mathrm{Cov}\left(\hat y_i,\, y_i \;\middle|\; \mathbf{X}\right)$$
+    <p>擬合愈是「跟著 $y_i$ 跑」，這個共變異數就愈大。
+    <strong>條件在 $\mathbf{X}$ 上這件事不能省</strong>：不然一個完全不看資料的
+    $\hat y_i = f(x_i)$ 樂觀程度明明是 0，無條件的共變異數卻是 $\mathrm{Var}(f(X_i)) \neq 0$。</p>
+
+    <p>再多一個假設就有漂亮的閉式：若擬合是<strong>線性平滑器</strong>
+    $\hat{\mathbf{y}} = S\mathbf{y}$（給定 $\mathbf{X}$ 後 $S$ 固定），
+    且 $\mathrm{Cov}(\varepsilon \mid \mathbf{X}) = \sigma^2 I$，則</p>
+    $$\omega(\mathbf{X}) = \frac{2\sigma^2}{n}\,\mathrm{tr}(S)$$
+    <p>固定設計的普通最小平方法裡 $\mathrm{tr}(S) = \mathrm{rank}(\mathbf{X})$，
+    滿秩時就是含截距的參數個數 $d$，於是回到常見的 $\omega = 2 d \sigma^2 / n$：
+    <strong>參數愈多、樣本愈少，訓練誤差就愈樂觀。</strong></p>
+
+    <p>兩個要提醒的地方：這是 <strong>in-sample</strong> 的樂觀程度（$x_i$ 沒有換），
+    不是一般測試誤差差距的精確公式；而且 $d$ 要用 $\mathrm{tr}(S)$，
+    <strong>資料驅動地選變數、選節點之後不能再拿名目參數個數去代</strong>。
+    這條式子正是 <a href="model_selection.html">第 6 章</a> $C_p$ 與 AIC
+    「罰一項與 $\mathrm{tr}(S)$ 成正比的量」的來源（BIC 的 $d\log n$ 是另一套推導）。
+    它也解釋了 1-最近鄰的極端情形：它把每個訓練點都完美記住，訓練誤差 0，
     但測試誤差一點都不是 0。</p>""")])
 
 
@@ -713,7 +759,8 @@ BODIES["mse"] = f"""
 
   <p>為什麼不能用訓練 MSE 當代理？因為大部分方法就是<strong>直接或間接在最小化它</strong>。
   你拿一個「已經被最佳化過的目標值」當成公正的評分，當然會太樂觀。
-  極端一點：一條通過每一個訓練點的曲線，訓練 MSE 是 0，但它什麼都沒學到。</p>
+  極端一點：一條通過每一個訓練點的曲線，訓練 MSE 是 0——
+  而這個 0 完全沒有告訴你它在新資料上會怎樣。</p>
 
   <p>講義第 27 頁最後一行把這件事寫成一句斷言，值得把它證出來：</p>
 
@@ -807,7 +854,9 @@ BV_PROOF = qa("完整證明", [(
     r"證明：$E\left[(y_0 - \hat f(x_0))^2\right] = \mathrm{Var}(\hat f(x_0)) + \left[\mathrm{Bias}(\hat f(x_0))\right]^2 + \mathrm{Var}(\varepsilon)$",
     r"""<p><strong>設定與記號。</strong>把測試點的位置 $x_0$ 固定住，
     真實模型是 $Y = f(X) + \varepsilon$，其中 $f(x) = E[Y \mid X = x]$、
-    $E[\varepsilon] = 0$、$\mathrm{Var}(\varepsilon) = \sigma^2$。測試觀測值是</p>
+    $E[\varepsilon \mid X] = 0$，並沿用本章的<strong>同變異假設</strong>
+    $\mathrm{Var}(\varepsilon \mid X) = \sigma^2$（允許異變異時，
+    下面的 $\mathrm{Var}(\varepsilon)$ 都要讀成 $\mathrm{Var}(Y \mid X = x_0)$）。測試觀測值是</p>
     $$y_0 = f(x_0) + \varepsilon_0$$
     <p>為了讀起來不擠，令 $f_0 = f(x_0)$、$\hat\mu = \hat f(x_0, Tr)$、
     $m = E_{Tr}\left[\hat\mu\right]$。</p>
@@ -937,14 +986,18 @@ BODIES["biasvar"] = f"""
   提高彈性可以大幅降低誤差，要到 df = 18 才觸底。<br>
   真實的 f 你看不到，所以這個最佳點得靠<strong>第 5 章的交叉驗證</strong>去估。''')}
 
-  <p>ESL §7.3 也給出一個可直接計算的特例。對 KNN 迴歸，三項有封閉形式（ESL 式 7.10）：</p>
+  <p>ESL §7.3 也給出一個可直接計算的特例。對 KNN 迴歸，
+  <strong>在固定訓練輸入（因而鄰居的位置也固定）、雜訊零均值同變異且彼此獨立</strong>的條件下，
+  三項有封閉形式（ESL 式 7.10）：</p>
 
   $$\\mathrm{{Err}}(x_0) = \\sigma_\\varepsilon^2
     + \\left[f(x_0) - \\frac{{1}}{{k}} \\sum_{{\\ell=1}}^{{k}} f(x_{{(\\ell)}})\\right]^2
     + \\frac{{\\sigma_\\varepsilon^2}}{{k}}$$
 
-  <p>看第三項：<strong>變異就是 $\\sigma_\\varepsilon^2 / k$</strong>，$k$ 愈大愈小。
-  第二項是「$f(x_0)$ 與 $k$ 個鄰居上 $f$ 的平均」之差，$k$ 愈大鄰居愈遠、這個差愈大。
+  <p>看第三項：<strong>在這個固定設計之下，變異就是 $\\sigma_\\varepsilon^2 / k$</strong>，$k$ 愈大愈小。
+  第二項是「$f(x_0)$ 與 $k$ 個鄰居上 $f$ 的平均」之差：$k$ 愈大鄰居愈遠，
+  這個差<strong>通常</strong>愈大（但不保證單調——$f$ 是直線而鄰居左右對稱時，
+  多收一個對面的鄰居反而可能把偏差抵消掉）。
   一條式子把偏差–變異取捨寫得清清楚楚，也預告了本頁最後一節的 KNN。</p>
 
   <h3 id="dx-seed">蒙地卡羅的重現性</h3>
@@ -1017,7 +1070,8 @@ BAYES_FRAME = "".join([
          r"""這個名字來自 <strong>Bayes 決策理論</strong>（Bayes decision theory）：
   固定一個損失函數之後，期望損失的下限叫 <strong>Bayes 風險</strong>，達到它的規則叫 Bayes 規則。
   用 0–1 損失時，Bayes 風險就是 Bayes 錯誤率。<br>
-  <strong>它不需要你給任何先驗分布，也沒有做後驗更新。</strong>
+  <strong>它不需要你對未知參數指定貝氏先驗，也沒有做後驗更新。</strong>
+  （類別本身的邊際機率當然存在，它已經包含在母體的聯合分布裡了。）
   式子裡出現的 $\Pr(Y = k \mid X = x)$ 只是「知道 $X$ 之後 $Y$ 的條件機率」，
   分類文獻習慣叫它後驗機率（名字的由來），但整段推導從頭到尾只用到母體的聯合分布。
   本站<a href="s5_bayesian.html">附錄的貝氏推論</a>談的是對<strong>參數</strong>給先驗，
@@ -1082,6 +1136,47 @@ BAYES_PROOF = qa("完整證明", [(
     <p>框架沒有變，只是量尺換了——這也是<a href="classification.html">第 4 章</a>調整門檻與看 ROC 的出發點。</p>""")])
 
 
+# 講義 02 · p.33：最近鄰在分類上一樣會壞掉，但對 Ĉ(x) 的衝擊小於對 p̂_k(x)。
+CLS_ROBUST = qa("為什麼分類比較耐得住維度", [(
+    r"講義第 33 頁：the impact on $\hat C(x)$ is less than on $\hat p_k(x)$——這句話怎麼算出來",
+    r"""<p><strong>直覺先講。</strong>分類最後只用到<strong>誰最大</strong>，
+    不是<strong>大多少</strong>。$\arg\max$ 把一整組機率壓成一個標籤，
+    是比機率本身<strong>粗糙得多</strong>的資訊。
+    只要估計誤差沒有大到把排名弄反，決策就跟用真實機率時<strong>一模一樣</strong>。</p>
+
+    <p><strong>兩類情形可以寫成等式。</strong>令 $\eta(x) = \Pr(Y = 1 \mid X = x)$，
+    $C^{*}$ 是 Bayes 規則、$\hat C$ 是你手上那個插入式（plug-in）分類器
+    $\hat C(x) = I\!\left(\hat\eta(x) > 0.5\right)$。把 BAYES 那條證明的第 1 步逐點展開再相減：</p>
+    $$R(\hat C) - R(C^{*})
+      = E\Big[\left|2\eta(X) - 1\right| \cdot
+        I\!\left(\hat C(X) \neq C^{*}(X)\right)\Big]$$
+
+    <p>這條式子有兩個很強的讀法：<br>
+    <strong>1.</strong> 右邊有一個指示函數——<strong>只有在你猜錯邊的那些 $x$ 上才付代價</strong>。
+    $\hat\eta$ 估成 0.9 而真值是 0.6？只要兩個都在 0.5 的同一側，超額風險是 <strong>0</strong>。<br>
+    <strong>2.</strong> 付的代價還被 $\left|2\eta(x) - 1\right|$ 加權。
+    愈靠近決策邊界（$\eta \approx 0.5$）猜錯，罰得<strong>愈輕</strong>；
+    而那裡剛好就是最容易猜錯的地方。兩個效應互相抵消。</p>
+
+    <p><strong>由此得到一條乾淨的界。</strong>在 $\hat C \neq C^{*}$ 的地方，
+    $\hat\eta$ 與 $\eta$ 一定落在 0.5 的兩側，所以
+    $\left|\eta - 0.5\right| \le \left|\hat\eta - \eta\right|$，代進去：</p>
+    $$R(\hat C) - R(C^{*}) \;\le\; 2\,E\left|\hat\eta(X) - \eta(X)\right|$$
+
+    <p><strong>這條界是單向的，而單向正是重點。</strong>
+    機率估得準 $\Rightarrow$ 分類一定準；
+    但<strong>反過來完全不成立</strong>——機率可以估得一塌糊塗，分類卻幾乎沒有損失。
+    這就是講義那句 the impact on $\hat C(x)$ is less than on $\hat p_k(x)$ 的數學內容。</p>
+
+    <p><strong>但不要過度樂觀。</strong>講義的原句是 <em>also breaks down as the dimension grows</em>——
+    分類<strong>還是會</strong>壞掉，只是慢一點：<br>
+    <strong>·</strong> 「排名弄反」的那一層薄殼繞在決策邊界附近。維度一高、鄰域不再局部，
+    $\hat\eta$ 的誤差變大，這層殼就跟著變厚。<br>
+    <strong>·</strong> 如果你真正要的是<strong>機率本身</strong>——風險分數、期望損失、
+    調整門檻、畫 ROC——那就<strong>沒有這層保護</strong>，$\hat p_k$ 的誤差會原封不動傳下去。
+    什麼時候需要機率、什麼時候只需要標籤，是<a href="classification.html">第 4 章</a>的主題。</p>""")])
+
+
 BODIES["bayes"] = f"""
   <p>前面全都在講迴歸。搬到分類問題，觀念一個都不用丟，只要換掉量尺：
   把 MSE 換成<strong>錯誤率</strong>（error rate）。</p>
@@ -1125,7 +1220,8 @@ BODIES["bayes"] = f"""
 
 {BAYES_PROOF}
 
-  <p>它大於 0，因為兩類在母體裡本來就重疊。
+  <p>只要有一塊 $x$（機率為正）上沒有任何類別的條件機率是 1，它就大於 0——
+  也就是兩類在母體裡本來就重疊。
   <strong>Bayes 錯誤率就是分類問題版本的不可縮減誤差。</strong>
   下面這個元件把「重疊」直接畫出來：</p>
 
@@ -1173,6 +1269,17 @@ BODIES["bayes"] = f"""
   以及「鄰近的 X 有相近條件分佈」這項局部假設。在這個基本元件裡，$K$ 是控制平滑程度的旋鈕：
   <strong>$1/K$ 可視為 KNN 的彈性度</strong>。</p>
 
+  <p>看到這裡應該會有一個疑問：<strong>PART 03 不是說最近鄰在高維會壞掉嗎？</strong>
+  講義第 33 頁把話補完了——會壞，但分類壞得比較慢：</p>
+
+{info("講義第 33 頁的原句", '''Nearest-neighbor averaging can be used as before.
+  It <strong>also breaks down</strong> as the dimension grows.
+  However, <strong>the impact on Ĉ(x) is less than on p̂<sub>k</sub>(x)</strong>.<br>
+  也就是說：<strong>估「機率」會被維度詛咒打得很慘，估「哪一類」則相對耐打。</strong>
+  這不是安慰的話，可以寫成不等式。''')}
+
+{CLS_ROBUST}
+
 {viz(svg("w02knnSvg", 400),
      [info_card("怎麼看這張圖",
                 '底色是 KNN 的<strong>決策區域</strong>（30 × 30 格點，各自問一次 KNN 要猜哪一類），'
@@ -1183,11 +1290,11 @@ BODIES["bayes"] = f"""
                  ("彈性度 1 ⁄ K", "0.100", "w02knnInv"),
                  ("訓練錯誤率", "—", "w02knnTrain"),
                  ("測試錯誤率（5000 筆）", "—", "w02knnTest"),
-                 ("Bayes 母體錯誤率（期望下限）", "0.1382", "w02knnBayes")]),
+                 ("Bayes 錯誤率（母體值的估計）", "0.1382", "w02knnBayes")]),
       info_card("三個 K 的結果",
                 '<strong>K = 1：</strong>訓練錯誤率 0.000，測試 0.1964。'
                 '邊界破碎，抓到的是雜訊——低偏差、極高變異。<br>'
-                '<strong>K = 10：</strong>測試 0.1470，最接近 Bayes 下限 0.1382。<br>'
+                '<strong>K = 10：</strong>測試 0.1470，最接近 Bayes 錯誤率。<br>'
                 '<strong>K = 100：</strong>測試 0.1758。邊界過度平滑、快變成直線——'
                 '高偏差、低變異。')],
      "w02knnStatus", "切換 K，看決策區域與 Bayes 邊界（紫色虛線）差多少。",
@@ -1256,8 +1363,9 @@ BODIES["bayes"] = f"""
         "本頁模擬的測試錯誤率呈 U 型，兩端都不好。"),
        (False, "這表示資料的 Bayes 錯誤率很高，換任何 K 都沒有用",
         "不對。Bayes 錯誤率高會讓<strong>所有</strong> K 的錯誤率一起抬高，"
-        "K = 1 與 K = 25 之間的差距則來自方法的偏差與變異，"
-        "跟不可縮減的那一塊無關。")])}
+        "但不同 K 之間的差距反映的是各方法估計條件機率與決策邊界的品質，"
+        "不是 Bayes 錯誤率本身。<strong>注意迴歸那條三項拆解不能原封不動搬到 0–1 損失</strong>——"
+        "分類的超額風險有自己的寫法，見本節後面的補充。")])}
 """
 
 # ── EX ────────────────────────────────────────────────────────────────
@@ -1300,13 +1408,16 @@ BODIES["exercises"] = f"""
         "對，這就是本頁 P05 那張圖再加上訓練誤差。三個關鍵："
         "期望測試誤差 = 偏差² + 變異 + 不可縮減，所以它<strong>不低於那條水平線</strong>；"
         "訓練誤差<strong>可以</strong>降到水平線之下（甚至到 0），因為這些資料已參與擬合；"
-        "測試誤差的最低點就在「偏差²下降速度 = 變異上升速度」的地方。"),
+        "測試誤差的最低點落在「偏差²下降速度 = 變異上升速度」的地方"
+        "（這是把彈性當成連續、且最低點在內部時的說法；離散的 df 或最低點在端點時就不適用）。"
+        "另外請注意這題問的是<strong>典型形狀</strong>：單調下降的偏差²與單調上升的變異是常見趨勢，"
+        "不是每個問題都必然如此。"),
        (False, "偏差²與變異都單調下降，訓練誤差與測試誤差都是 U 型",
         "兩處錯。變異隨彈性<strong>上升</strong>（愈彈性的模型換一份資料就變一個樣）；"
         "訓練誤差<strong>單調下降</strong>不會回頭——模型空間變大，最小值只可能更小。"),
        (False, "訓練誤差與測試誤差最後會收斂到同一條線，因為彈性夠高就能學到真實的 f",
-        "不對，兩者的差距<strong>隨彈性擴大</strong>。彈性極高時訓練誤差趨近 0，"
-        "測試誤差卻因為變異暴增而上升。它們永遠不會會合。")])}
+        "不對。彈性極高時訓練誤差趨近 0，測試誤差卻因為變異上升而回頭，"
+        "兩者的差距<strong>隨彈性擴大</strong>——那個差距正是本頁 P06 講的「樂觀程度」。")])}
 
 {quiz("qEx4", "EXERCISE 4 · ISLP 2.4 第 7 題（b）（c）",
       "第 7 題給了六筆資料（X₁, X₂, X₃, Y）："
@@ -1355,12 +1466,12 @@ BODIES["reference"] = f"""
 
   <h3>本頁模擬跑出來的數字</h3>
 {table(["樣條自由度 df", "2（線性）", "4", "6", "7", "12", "18", "25"],
-       [["訓練 MSE（單一資料集）", "3.433", "1.125", "0.961", "0.955", "0.890", "0.788", "0.480"],
+       [["訓練 MSE（單一資料集）", "3.432", "1.125", "0.961", "0.955", "0.890", "0.787", "0.480"],
         ["測試 MSE（單一資料集）", "3.260", "1.180", "1.036", "<strong>1.021</strong>",
          "1.072", "1.170", "1.495"],
         ["情境 A 期望測試 MSE", "3.373", "1.249", "1.137", "<strong>1.136</strong>",
          "1.219", "1.332", "1.486"],
-        ["情境 B（接近線性）", "<strong>1.046</strong>", "1.077", "1.116", "1.134",
+        ["情境 B（接近線性）", "<strong>1.047</strong>", "1.077", "1.116", "1.134",
          "1.219", "1.332", "1.486"],
         ["情境 C（高度非線性）", "21.099", "10.146", "4.702", "4.470", "2.432",
          "<strong>1.336</strong>", "1.486"]])}
@@ -1410,7 +1521,8 @@ BODIES["reference"] = f"""
   仍須比較新資料表現才能判定過度擬合。<br>
   <strong>3. 偏差與變異的期望是對「重複抽訓練集」取的。</strong>
   變異是「換一份訓練資料，f̂ 會變多少」，不是「f̂ 這條曲線起伏多大」。
-  真實資料上兩者無法分開估，只能估總和（第 5 章的交叉驗證）。''')}
+  真實資料上、不知道真實 f 時，通常沒辦法把兩者分開算出來；
+  特定模型假設或重抽樣之下可以估其中一部分，而第 5 章的交叉驗證估的是<strong>整體預測風險</strong>。''')}
 
 {ver_note()}
 """
@@ -1539,7 +1651,7 @@ function w02flexDraw() {
   $('w02flexVar').textContent = HC.fmt(F.sigma2, 2);
   const best = F.dfs[F.testMse.indexOf(Math.min(...F.testMse))];
   const tag = w02flexDf === 2 ? '彈性不足：直線無法呈現彎曲的關係，偏差大'
-    : (w02flexDf >= 25 ? '彈性過高：擬合雜訊，訓練 MSE 最小但測試 MSE 最大'
+    : (w02flexDf >= 25 ? '彈性過高：擬合雜訊，訓練 MSE 最小，但測試 MSE 已從最低點回升'
       : '差不多剛好：測試 MSE 接近最低點');
   setStatus('w02flexStatus', 'df = ' + w02flexDf + '：訓練 MSE '
     + HC.fmt(F.trainMse[idx], 3) + '、測試 MSE ' + HC.fmt(F.testMse[idx], 3)
