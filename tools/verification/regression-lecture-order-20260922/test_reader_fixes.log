@@ -1,0 +1,33 @@
+FF.......
+======================================================================
+FAIL: test_baked_frames_byte_identical (__main__.ReaderFixes.test_baked_frames_byte_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/phonchi/statlearning-selfstudy/tools/test_reader_fixes.py", line 117, in test_baked_frames_byte_identical
+    self.assertEqual(current, hashes, name)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'FRAMES_w08lowess': '6db80a329f7bcbf46d1a588a221e67b[457 chars]a75'} != {'FRAMES_w08wage': '8c3a4603a0c3dd5bcad3e6fc3243c3244[369 chars]a75'}
+  {'FRAMES_w08gam': 'c0d3857a78b45ad25160a89f0ef7be2986eee405750d3a276b17e8b709787a75',
+   'FRAMES_w08lam': 'a055d386881466919f4d313ed9470b8703f7850f61fe91d1df16c23c4e5b7ab8',
+-  'FRAMES_w08lowess': '6db80a329f7bcbf46d1a588a221e67b4e0a334cc0d63150dcde151fd294ad9a3',
+   'FRAMES_w08nat': '66a2b10d0d59256dff5738e4c2073af588646c5835ba365e3851eac0f320d8ba',
+   'FRAMES_w08poly': '4986858f0ab7d134ad9cc51c8fd450c0512662099bf6b5a389dbeb339886d9b2',
+-  'FRAMES_w08wage': 'b3401d4cbcc3e98e9b3828f4db880042af7b22cc6ee209bb455adfd9d2bd93ad'}
++  'FRAMES_w08wage': '8c3a4603a0c3dd5bcad3e6fc3243c32442181684517a1766d37c63c48ba92faf'} : beyond_linearity.html
+
+======================================================================
+FAIL: test_existing_sources_and_outputs_unchanged (__main__.ReaderFixes.test_existing_sources_and_outputs_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/phonchi/statlearning-selfstudy/tools/test_reader_fixes.py", line 103, in test_existing_sources_and_outputs_unchanged
+    self.assertEqual(hashlib.sha256((ROOT/name).read_bytes()).hexdigest(), digest, name)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'b14ba99c2c3a69c75df1dd0186d55b38c47a21c6c7a006bd5466bd415e2d7340' != '90dd69b4259ee865411b735c3599975c91e9347cece888d947b5cf688177734c'
+- b14ba99c2c3a69c75df1dd0186d55b38c47a21c6c7a006bd5466bd415e2d7340
++ 90dd69b4259ee865411b735c3599975c91e9347cece888d947b5cf688177734c
+ : data/source_index/lab_ch1.md
+
+----------------------------------------------------------------------
+Ran 9 tests in 2.105s
+
+FAILED (failures=2)

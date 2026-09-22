@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import proof
+from lib import proof, detail
 from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -93,31 +93,378 @@ BODIES["prologue"] = f"""
         "在同一份訓練資料上比較含截距的巢狀最小平方模型時，加變數只會讓 R² 上升或不變（P03 會算給你看）。")])}
 """
 
+
+# ── 講義 p.4–5：模型與 LINE、加權平均、尺度不變（可見段落，raw string 免去 f-string 跳脫） ──
+SLR_INTRO = r"""
+  <p>先只用一個變數。講義的出發點是一個<strong>模型</strong>：假設 sales 與 TV 預算的關係是一條直線，
+  再加上一個誤差項</p>
+
+  $$Y = \beta_0 + \beta_1 X + \varepsilon$$
+
+  <p>$\beta_0$ 是截距、$\beta_1$ 是斜率，兩個都是未知常數，合稱係數或參數；
+  $\varepsilon$ 是誤差項，收集所有直線沒解釋到的部分。講義用四個字母交代對 $\varepsilon$ 的假設，
+  合稱 <strong>LINE</strong>：</p>
+
+  <ul>
+    <li><strong>L（Linearity，線性）</strong>：$E[Y\mid X]=\beta_0+\beta_1X$，Y 的平均值真的落在一條直線上。</li>
+    <li><strong>I（Independence，獨立）</strong>：不同觀測的誤差 $\varepsilon_i$ 彼此獨立。</li>
+    <li><strong>N（Normality，常態）</strong>：誤差服從常態分布。</li>
+    <li><strong>E（Equal variance，等變異）</strong>：每一筆誤差的變異數都是同一個 $\sigma^2$。</li>
+  </ul>
+
+  <p>四條合起來就是講義寫的 $\varepsilon_i$ i.i.d. $\sim N(0,\sigma^2)$，等價於
+  $Y\mid X\sim N(\beta_0+\beta_1X,\ \sigma^2)$：給定 X 之後，Y 是以直線上那一點為中心、寬度固定的常態分布。
+  這四條假設不會一開始全部用到。下表先標出<strong>哪個結果需要哪個假設</strong>，讀到 P02 與 P06 時再回來對照。</p>
+""" + table(["要得到的結果", "需要的假設", "在哪一節"],
+            [["最小平方解 $\\hat\\beta_0$、$\\hat\\beta_1$", "一條都不需要，純代數", "P01"],
+             ["無偏：$E[\\hat\\beta_1]=\\beta_1$", "L，加上 $E[\\varepsilon\\mid X]=0$", "P02"],
+             ["標準誤公式 $\\sigma^2/\\sum(x_i-\\bar x)^2$", "I 與 E（誤差不相關、同變異）", "P02"],
+             ["t 分布、信賴區間、預測區間", "再加 N；n 大時中央極限定理可放寬", "P02"],
+             ["哪一條壞了、怎麼看出來", "殘差圖等診斷工具", "P06"]]) + r"""
+
+  <p>模型寫好了，但 $\beta_0$、$\beta_1$ 不知道。手上有 n 對觀測值
+  $(x_1, y_1), \dots, (x_n, y_n)$，要挑一條「最靠近」這些點的線。
+  「靠近」有很多種定義，但幾乎所有人都用同一個：<strong>讓殘差平方和最小</strong>。
+  第 i 筆的殘差是 $e_i = y_i - \hat y_i$，於是</p>
+
+  $$\mathrm{RSS} = e_1^2 + e_2^2 + \cdots + e_n^2
+    = \sum_{i=1}^{n} \left(y_i - \hat\beta_0 - \hat\beta_1 x_i\right)^2$$
+
+  <p>對 $\hat\beta_0$、$\hat\beta_1$ 各偏微分等於零，解出來就是<strong>封閉解</strong>——不需要反覆更新參數、
+  不需要調學習率。這一步只用到代數，上面的 LINE 一條都還沒用到；它們要到 P02 問「這個斜率可信嗎」時才登場：</p>
+
+  $$\hat\beta_1 = \frac{\sum_{i=1}^{n}(x_i-\bar x)(y_i-\bar y)}
+    {\sum_{i=1}^{n}(x_i-\bar x)^2}, \qquad
+    \hat\beta_0 = \bar y - \hat\beta_1 \bar x$$
+
+  <p>第二式順便告訴你一件事：<strong>最小平方線一定通過 $(\bar x, \bar y)$</strong>。</p>
+
+  <h3>斜率是個別資料點斜率的加權平均</h3>
+  <p>講義把第一式多寫了一步：把分子的 $(x_i-\bar x)(y_i-\bar y)$ 拆成 $(x_i-\bar x)^2$ 乘上一個比值。</p>
+
+  $$\hat\beta_1
+    = \frac{\sum_{i=1}^{n}(x_i-\bar x)^2\,\dfrac{y_i-\bar y}{x_i-\bar x}}
+           {\sum_{i=1}^{n}(x_i-\bar x)^2}
+    = \sum_{i=1}^{n} w_i\, s_i,\qquad
+    w_i=\frac{(x_i-\bar x)^2}{\sum_{j}(x_j-\bar x)^2},\quad
+    s_i=\frac{y_i-\bar y}{x_i-\bar x}$$
+
+  <p>$s_i$ 是「從中心點 $(\bar x,\bar y)$ 連到第 i 個資料點」這條線的斜率，每個點各有一條；
+  $w_i$ 非負、加總為 1，所以最小平方斜率就是<strong>這 n 條個別斜率的加權平均</strong>。
+  權重是 $(x_i-\bar x)^2$ 佔總和的比例：x 離平均越遠的點，權重越大；
+  剛好落在 $x_i=\bar x$ 的點權重是 0，它的 $s_i$ 沒有定義也無妨，因為它對斜率完全沒有發言權。
+  這解釋了兩件事：為什麼拖動最右邊的點斜率動得特別厲害（下面的元件可以試），
+  以及 P06 的槓桿值為什麼長成 $h_i = 1/n + w_i$ 這個樣子。</p>
+
+  <h3>尺度與標準化不改變擬合值</h3>
+  <p>講義在同一頁補了一句：<strong>x 的尺度不影響 $\hat y$ 的估計</strong>。
+  換單位、減掉平均、除以標準差，這些都是線性重新參數化 $x'=(x-c)/s$；代進公式，斜率與截距跟著換算</p>
+
+  $$\hat\beta_1' = s\,\hat\beta_1,\qquad \hat\beta_0' = \hat\beta_0 + c\,\hat\beta_1,$$
+
+  <p>但每一筆的 $\hat y_i$、殘差、RSS、R²、t 統計量一個都不變（本節結尾的 QUIZ 會再考一次換單位）。
+  所以在多元迴歸裡不能拿係數大小比較變數重要性；P05 的收合盒也會談中心化為什麼只改變截距的意義。
+  對 y 做線性變換 $y'=ay+b$ 同理，擬合值變成 $\hat y'=a\hat y+b$。</p>
+""" + proof('w03proofScale', '線性重新參數化不改變擬合值', r"""
+<p>令 $x_i'=(x_i-c)/s$，$s\ne0$。則 $\bar x'=(\bar x-c)/s$、$x_i'-\bar x'=(x_i-\bar x)/s$，代入最小平方解：</p>
+$$\hat\beta_1'=\frac{\sum_i (x_i'-\bar x')(y_i-\bar y)}{\sum_i (x_i'-\bar x')^2}
+=\frac{\frac1s\sum_i (x_i-\bar x)(y_i-\bar y)}{\frac1{s^2}\sum_i (x_i-\bar x)^2}=s\,\hat\beta_1,\qquad
+\hat\beta_0'=\bar y-\hat\beta_1'\bar x'=\bar y-\hat\beta_1(\bar x-c)=\hat\beta_0+c\,\hat\beta_1.$$
+<p>於是 $\hat\beta_0'+\hat\beta_1'x_i'=\hat\beta_0+c\hat\beta_1+s\hat\beta_1\cdot\frac{x_i-c}{s}=\hat\beta_0+\hat\beta_1x_i=\hat y_i$。
+擬合值逐筆相同，殘差、RSS、TSS、R² 與 RSE 因此相同。
+標準誤 $\mathrm{SE}(\hat\beta_1')=\hat\sigma/\sqrt{\sum(x_i'-\bar x')^2}=s\,\mathrm{SE}(\hat\beta_1)$，與係數同比例放大，t 統計量不變。</p>
+<p>矩陣版更短：任何可逆的線性重新參數化 $X'=XA$（A 可逆）有相同欄空間，
+擬合值 $\hat y=X(X^TX)^{-1}X^Ty$ 只依賴欄空間，故不變；係數換成 $\hat\beta'=A^{-1}\hat\beta$。
+對 y 作 $y'=ay+b$ 時，含截距的模型把 b 吸進截距欄，得 $\hat y'=a\hat y+b$。</p>
+""") + r"""
+
+  <p>拖動下面元件中的任何一個點，係數、RSS、R² 全部即時重算。
+  先預測「把最右邊那個點往上拖，斜率會怎麼變」，再動手驗證。</p>
+"""
+
+# ── 講義 p.7–11：抽樣分布、線性組合 → 常態 → t → 區間（收合） ──
+NORMAL_DETAIL = detail('w03-detail-normal-ci', '計算細節：β̂₁ 是 y 的線性組合，所以服從常態', r"""
+<p>P01 的 N 假設到這裡才派上用場。若 $\varepsilon_i$ 獨立且服從 $N(0,\sigma^2)$，則每個 $y_i$ 是獨立的常態變數，
+而<strong>獨立常態變數的線性組合仍是常態</strong>。所以</p>
+$$\hat\beta_1=\sum_i c_i\,y_i\ \sim\ N\!\left(\beta_1,\ \frac{\sigma^2}{S_{xx}}\right),\qquad
+\frac{\hat\beta_1-\beta_1}{\sigma/\sqrt{S_{xx}}}\sim N(0,1).$$
+<p>這就是 $\hat\beta_1$ 抽樣分布的完整形狀，不只是中心與標準差。母體 σ 不知道，換成殘差算出的 RSE 之後，
+分母多了一個獨立的 $\sqrt{\chi^2_{n-2}/(n-2)}$：常態模型下 $\mathrm{RSS}/\sigma^2$ 服從 $\chi^2_{n-2}$ 且與 $\hat\beta$ 獨立
+（矩陣版證明見下方「係數共變異數與 CI／PI」），比值變成自由度 n−2 的 t 分布：</p>
+$$\frac{\hat\beta_1-\beta_1}{\mathrm{SE}(\hat\beta_1)}\sim t_{n-2},\qquad
+\mathrm{SE}(\hat\beta_1)=\frac{\mathrm{RSE}}{\sqrt{S_{xx}}}.$$
+<p>信賴區間就是把這句話反過來讀：這個比值有 95% 的機率落在 $\pm t_{0.975,\,n-2}$ 之間，整理成 $\beta_1$ 的範圍，得到</p>
+$$\hat\beta_1\pm t_{0.975,\,n-2}\,\mathrm{SE}(\hat\beta_1).$$
+<p>n 超過約 30 之後 $t_{0.975,\,n-2}$ 已經接近 1.96，所以講義直接寫成 $\hat\beta_1\pm2\,\mathrm{SE}(\hat\beta_1)$。
+t 檢定則是把 $\beta_1=0$ 代進同一個比值：$t=\hat\beta_1/\mathrm{SE}(\hat\beta_1)$ 讀作「$\hat\beta_1$ 離 0 有幾個標準誤」，
+$H_0$ 成立時它服從 $t_{n-2}$，所以 |t| 超過 2 左右就落在 5% 的尾巴外。
+沒有常態假設時，這個比值在大樣本下仍近似常態（中央極限定理），小樣本則沒有精確的 t 分布。</p>
+""")
+
+# ── 講義 p.23–24：CI 與 PI（可見小節＋示意元件） ──
+CIPI_SECTION = r"""
+  <h3>信賴區間與預測區間：兩個問題、兩種寬度</h3>
+  <p>同一個 $x_0$，模型給出同一個點估計 $\hat y_0=\hat\beta_0+\hat\beta_1x_0$，但它可以回答兩個不同的問題：</p>
+  <ul>
+    <li><strong>信賴區間</strong>（confidence interval, CI）：所有 $X=x_0$ 的個體，<em>平均</em> Y 是多少？
+      它只反映我們對母體迴歸線 $f(x_0)=\beta_0+\beta_1x_0$ 估得多準，也就是第二章說的<strong>可縮減誤差</strong>。</li>
+    <li><strong>預測區間</strong>（prediction interval, PI）：<em>某一個</em>新的 $X=x_0$ 個體，它的 Y 會落在哪裡？
+      就算 $\beta_0$、$\beta_1$ 全知道，這個個體還帶著自己的 $\varepsilon$，也就是<strong>不可縮減誤差</strong>；
+      PI 要把兩種誤差一起算進去。</li>
+  </ul>
+  <p>講義的簡單迴歸公式把差別寫得很清楚，兩式只差根號裡多了一個 1：</p>
+  $$\text{CI}:\ \hat y_0\pm t_{\alpha/2,\,n-2}\,\hat\sigma\sqrt{\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}},\qquad
+    \text{PI}:\ \hat y_0\pm t_{\alpha/2,\,n-2}\,\hat\sigma\sqrt{1+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}}$$
+""" + table(["", "信賴區間（CI）", "預測區間（PI）"],
+            [["回答的問題", "$X=x_0$ 時 Y 的<em>平均</em>在哪裡", "<em>一個新個體</em>的 Y 在哪裡"],
+             ["包含的不確定性", "只有估計 f 的誤差（可縮減）", "估計 f 的誤差＋個體自己的 ε（不可縮減）"],
+             ["寬度", "較窄；在 $\\bar x$ 最窄，往兩側張開", "一定較寬；同樣在 $\\bar x$ 最窄"],
+             ["n 變大時", "縮到 0：平均可以估到任意準", "不會縮到 0：最窄也約 $\\pm2\\sigma$"]]) + r"""
+  <p>用教材的數字對照。lab 用 Boston 的 <code>medv</code> 對 <code>lstat</code>，
+  在 <code>lstat = 10</code> 這一點預測值是 <strong>25.05</strong>，
+  CI 是 (24.47, 25.63)，PI 是 (12.83, 37.28)，程式在下方「完整實作」。
+  課本的 Advertising 版本：TV 花 100,000 美元、radio 花 20,000 美元時預測銷售 11,256 單位，
+  CI 是 [10,985, 11,528]，PI 是 [7,930, 14,580]。兩個區間中心相同，PI 寬了好幾倍，
+  因為市場與市場之間的 ε 遠比「平均線估不準」大得多。下面的示意元件讓你調 n 與 σ，
+  看兩條帶各自怎麼變：</p>
+""" + viz(svg("w03bandSvg", 330)
+          + '\n      <div class="viz-legend">'
+            '<span><i style="background:rgba(44,62,122,.35);"></i>信賴區間（平均反應）</span>'
+            '<span><i style="background:rgba(26,107,74,.18);"></i>預測區間（新觀測）</span>'
+            '<span><i class="ln" style="border-top-color:var(--fit-line);"></i>最小平方線</span>'
+            '</div>',
+          [rows_card("在 x 的平均這一點",
+                     [("n", "—", "w03bandNr"), ("RSE（估計的 σ）", "—", "w03bandRse"),
+                      ("CI 半寬", "—", "w03bandCi"), ("PI 半寬", "—", "w03bandPi"),
+                      ("PI 半寬 ÷ CI 半寬", "—", "w03bandRatio")], "LIVE"),
+           info_card("怎麼看這張圖",
+                     '深藍帶是 CI、淡綠帶是 PI，兩條都在 x̄ 最窄、往兩側張開。'
+                     '<br>① 把 n 拉大：CI 明顯變窄，PI 幾乎不動，因為個體的 ε 不會因為樣本多而變小；'
+                     '<br>② 把 σ 拉大：兩條都變寬，但 PI 寬得多；'
+                     '<br>③ 按「重抽一次」：換一份樣本，線與帶都會動，這就是 P02 開頭的抽樣變動。'),
+           info_card("對照教材",
+                     '講義的兩條公式只差根號裡的 1；課本 Advertising 的 CI [10,985, 11,528] 與 '
+                     'PI [7,930, 14,580] 中心同為 11,256。', "講義 03")],
+          "w03bandStatus", "推 n 的滑桿：CI 帶會變窄，PI 帶幾乎不變。",
+          '<div class="slider-row" style="flex:1 1 220px;margin-bottom:0;">'
+          '<span class="slider-label">n</span>'
+          '<input type="range" id="w03bandN" min="20" max="200" step="10" value="40" oninput="w03bandRender()">'
+          '<span class="slider-val" id="w03bandNv">40</span></div>'
+          '<div class="slider-row" style="flex:1 1 220px;margin-bottom:0;">'
+          '<span class="slider-label">σ</span>'
+          '<input type="range" id="w03bandS" min="5" max="40" step="5" value="25" oninput="w03bandRender()">'
+          '<span class="slider-val" id="w03bandSv">2.5</span></div>'
+          '<button class="btn btn-step" onclick="w03bandRedraw()">→ 重抽一次</button>'
+          '<button class="btn btn-reset" onclick="w03bandReset()">重置</button>',
+          provenance=("illustrative", "固定種子示意資料；兩條帶依講義的 CI／PI 公式即時計算"))
+
+
+# ── 講義附錄：兩張靜態 DAG（中介／混淆） ──
+def _dag(mid, nodes, arrows, note):
+    """三個節點的小型有向圖；純靜態 SVG，不經 viz()。"""
+    out = [f'<svg viewBox="0 0 340 120" width="340" style="max-width:100%;height:auto;display:block;margin:.4rem auto;" '
+           f'role="img" aria-label="{note}">'
+           f'<defs><marker id="{mid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
+           f'<path d="M0,0 L10,5 L0,10 z" fill="#2c3e7a"/></marker></defs>']
+    for (x, y, label) in nodes:
+        out.append(f'<rect x="{x-44}" y="{y-16}" width="88" height="32" rx="8" fill="#fffdf7" stroke="#2c3e7a" stroke-width="1.4"/>'
+                   f'<text x="{x}" y="{y+5}" text-anchor="middle" font-size="13" font-family="JetBrains Mono, monospace" fill="#1a1a2e">{label}</text>')
+    for (x1, y1, x2, y2, dashed) in arrows:
+        d = ' stroke-dasharray="5,4"' if dashed else ''
+        out.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#2c3e7a" stroke-width="1.6" marker-end="url(#{mid})"{d}/>')
+    out.append('</svg>')
+    return ''.join(out)
+
+DAG_MED = _dag('w03dagArrowMed',
+               [(60, 60, 'newspaper'), (170, 60, 'radio'), (280, 60, 'sales')],
+               [(106, 60, 124, 60, False), (216, 60, 234, 60, False)],
+               '中介結構：newspaper 影響 radio，radio 影響 sales')
+DAG_CONF = _dag('w03dagArrowConf',
+                [(170, 24, '預算／規模'), (60, 96, 'newspaper'), (170, 96, 'radio'), (280, 96, 'sales')],
+                [(140, 40, 82, 78, False), (170, 40, 170, 78, False), (216, 96, 234, 96, False)],
+                '混淆結構：共同原因同時影響 newspaper 與 radio，只有 radio 影響 sales')
+
+# ── 講義 p.37–52：問題與工具箱（可見段落） ──
+P06_INTRO = r"""
+  <p>線性迴歸擬合起來很容易，擬合出<strong>錯的</strong>結論也一樣容易。先回頭看 P01 的 LINE：
+  哪一條假設失效，壞掉的東西不一樣。</p>
+  <ul>
+    <li><strong>L 壞掉</strong>：$E[Y\mid X]$ 根本不是直線，係數描述的形狀就是錯的，後面的推論再精準也沒有意義。</li>
+    <li><strong>I 壞掉</strong>：誤差彼此相關，資料的有效筆數比 n 少，傳統 SE 通常低估，t、p 值與區間都偏樂觀。</li>
+    <li><strong>E 壞掉</strong>：變異隨 x 改變，SE 公式把每一筆都當成同樣可信，SE 與檢定失準；
+      只要 $E[\varepsilon\mid X]=0$ 仍成立，係數本身仍無偏。</li>
+    <li><strong>N 壞掉</strong>：小樣本的 t 與 F 分布不再精確；n 大時中央極限定理會幫忙。</li>
+    <li><strong>$E[\varepsilon\mid X]=0$ 失敗</strong>（例如漏掉重要變數）：係數本身會偏掉，這不是 SE 的問題，也不是換一種 SE 就能修的。</li>
+  </ul>
+  <p>講義整理了六個最常見的潛在問題，每一個都有對應的<strong>診斷工具</strong>（diagnostic tool）與處理方式；
+  講義自己也說，辨認與處理這些問題「既是科學也是藝術」。先看全表，再逐一動手看：</p>
+""" + table(["#", "問題", "診斷工具（標準名稱）", "為什麼這個工具看得到它", "講義的處理方式"],
+            [["1", "<strong>非線性</strong>（non-linearity）",
+              "殘差圖（residual plot）：$e_i$ 對 $\\hat y_i$",
+              "直線假設正確時殘差沒有結構；殘差隨 $\\hat y$ 彎成 U 形，就是模型漏了曲率",
+              "加入 $x^2$ 等多項式項"],
+             ["2", "<strong>誤差相關</strong>（correlated errors）",
+              "殘差對觀測順序圖（residuals vs time／order plot）",
+              "時間或空間相鄰的觀測若誤差相關，相鄰殘差會同號、成串漂移",
+              "指出後果：SE 低估、區間太窄；有時間結構的資料要換模型"],
+             ["3", "<strong>異質變異</strong>（heteroscedasticity）",
+              "同一張殘差圖看漏斗形",
+              "變異隨反應水準放大時，殘差的散布隨橫軸張開",
+              "對 Y 取 $\\log$ 或開根號"],
+             ["4", "<strong>離群值</strong>（outlier，y 怪）",
+              "學生化殘差圖（studentized residual plot）",
+              "原始殘差各筆尺度不同，除以自己的 SE 後才能用同一把尺比；$|r_i|>3$ 可疑",
+              "確認是記錄錯誤才刪；否則可能是模型缺變數"],
+             ["5", "<strong>高槓桿</strong>（high leverage，x 怪）",
+              "槓桿統計量（leverage statistic）$h_i$、Cook's distance、影響圖（influence plot）",
+              "$h_i$ 是第 i 筆的 y 對自己擬合值的權重；遠超過平均 $(p+1)/n$ 的點能扳動整條線",
+              "檢查該筆資料是否有效；那一區資料太少時補資料"],
+             ["6", "<strong>共線性</strong>（collinearity）",
+              "相關矩陣（correlation matrix）、變異數膨脹因子（VIF）",
+              "兩個變數幾乎重複時，RSS 沿一條溝幾乎不變，係數各自估不準，SE 膨脹 $\\sqrt{\\mathrm{VIF}}$",
+              "拿掉一個，或合成一個變數"]], fontsize=".82rem")
+
+P06_AXES = r"""
+  <h3>診斷圖的橫軸為什麼是 ŷ，不是觀測編號或 y</h3>
+  <p>殘差圖（residual plot）是後面幾乎每一個工具的底圖，先把它的橫軸講清楚。
+  殘差 $e_i=y_i-\hat y_i$ 放縱軸沒有爭議，橫軸有三種候選：</p>
+  <ul>
+    <li><strong>觀測編號 i</strong>：只在順序本身有意義時才是資訊。時間序列的編號就是時間，
+      殘差對它畫能看出相鄰殘差同號，這正是第 2 個問題的工具。但 Advertising 的 200 個市場排序是任意的，
+      把資料列洗牌一次，圖就整個變樣；一張換個排序就改變結論的圖，不能拿來當診斷。</li>
+    <li><strong>擬合值 $\hat y_i$</strong>：它是模型對<em>所有</em>預測變數的一維摘要
+      $\hat\beta_0+\sum_j\hat\beta_jx_{ij}$，而且按「模型認為的訊號大小」排序。
+      簡單迴歸時它只是 x 的線性變換，殘差對 $\hat y$ 就是殘差對 x；多元迴歸時 p 個變數畫不進一個橫軸，
+      $\hat y$ 把它們壓成一條。更重要的是，含截距的最小平方保證 $\sum_i e_i=0$ 與 $\sum_i e_i\hat y_i=0$，
+      也就是殘差與擬合值<strong>正交</strong>：殘差對 $\hat y$ 的最小平方直線斜率恰好是 0，
+      圖上絕不會出現假的線性趨勢；看到 U 形或漏斗，就是模型真的漏了東西。</li>
+    <li><strong>觀測值 $y_i$</strong>：它含有殘差本身（$y_i=\hat y_i+e_i$），所以 $\mathrm{Cov}(e,y)=\mathrm{Var}(e)$ 恆為正。
+      殘差對 y 的相關係數恰好是 $\sqrt{1-R^2}$，最小平方斜率是 $1-R^2$；R² 越低這條假趨勢越陡，
+      會讓人誤以為模型誤設。</li>
+  </ul>
+  <p>結論：整體形狀（非線性、漏斗）看殘差對 $\hat y$；要知道<em>是哪一個</em>變數需要非線性項，
+  改看殘差對單一 $x_j$，或 P04 收合盒裡的部分迴歸圖；懷疑誤差相關時才看殘差對時間。
+  下面用同一組示意資料把三種橫軸擺在一起，按「洗牌觀測順序」看哪一張會變：</p>
+""" + viz(svg("w03axisSvg", 320),
+          [rows_card("這一張圖的數字",
+                     [("橫軸", "擬合值 ŷ", "w03axisModeV"),
+                      ("corr(e, 橫軸)", "—", "w03axisCorr"),
+                      ("殘差對橫軸的最小平方斜率", "—", "w03axisSlope"),
+                      ("理論值", "0", "w03axisPred"),
+                      ("這組資料的 R²", "—", "w03axisR2")], "LIVE"),
+           info_card("怎麼看",
+                     '同一組殘差（縱軸）、三種橫軸。'
+                     '<br>① <strong>ŷ</strong>：紅線斜率恰為 0，形狀是真的；'
+                     '<br>② <strong>y</strong>：紅線一定往右上，斜率 ≈ 1−R²，相關 ≈ √(1−R²)，這是假象；'
+                     '<br>③ <strong>編號</strong>：按「洗牌觀測順序」，只有這張會變，'
+                     '因為橫斷面資料的編號沒有資訊。'),
+           info_card("對應講義",
+                     '講義的殘差圖橫軸是 $\\hat y_i$、縱軸是 $e_i=y_i-\\hat y_i$，多元迴歸也一樣；'
+                     '要看時間相依才改用觀測順序當橫軸。', "講義 03")],
+          "w03axisStatus", "橫軸是 ŷ：殘差與擬合值正交，紅線斜率恰為 0。切換橫軸比較看看。",
+          '<button class="btn btn-toggle" onclick="w03axisSet(\'fit\')">橫軸：擬合值 ŷ</button>'
+          '<button class="btn btn-toggle" onclick="w03axisSet(\'y\')">橫軸：觀測值 y</button>'
+          '<button class="btn btn-toggle" onclick="w03axisSet(\'idx\')">橫軸：觀測編號</button>'
+          '<button class="btn btn-step" onclick="w03axisShuffleOrder()">→ 洗牌觀測順序</button>'
+          '<button class="btn btn-reset" onclick="w03axisReset()">重置</button>',
+          provenance=("illustrative", "固定種子示意資料；三種橫軸由同一組殘差即時繪製")) + proof('w03proofResidualAxes', '殘差與觀測值的共用成分', r"""
+<p>在 $\operatorname{Cov}(\varepsilon\mid X)=\sigma^2I$ 下，$e=(I-H)\varepsilon$、$\hat y=X\beta+H\varepsilon$，故</p>
+$$\operatorname{Cov}(e,\hat y\mid X)=\sigma^2(I-H)H=0,\qquad
+\operatorname{Cov}(e,y\mid X)=\sigma^2(I-H).$$
+<p>單筆的共變異數因此為 $\sigma^2(1-h_{ii})$，通常為正；即使線性平均模型正確，也不應期待 e 與原始 y 無關。
+樣本層次更直接：由 normal equations，$\sum_i e_i=0$、$\sum_i e_i\hat y_i=0$，所以 e 對 $\hat y$ 的樣本共變異數為零；
+而 $\sum_i e_i y_i=\sum_i e_i(\hat y_i+e_i)=\mathrm{RSS}$，故 e 對 y 的樣本相關係數為
+$\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方斜率為 $\mathrm{RSS}/\mathrm{TSS}=1-R^2$。</p>
+""") + r"""
+  <p class="source-note">講義補充連結：<a href="https://stats.stackexchange.com/questions/71352/why-are-residual-plots-constructed-using-the-residuals-vs-the-predicted-values" target="_blank" rel="noopener">為什麼殘差圖用擬合值當橫軸</a>、
+  <a href="https://stats.stackexchange.com/questions/5235/what-is-the-expected-correlation-between-residual-and-the-dependent-variable" target="_blank" rel="noopener">殘差與反應變數的相關係數</a>。</p>
+"""
+
+P06_TOOLS_A = r"""
+  <h3>殘差圖（residual plot）：非線性與異質變異</h3>
+  <p>橫軸 $\hat y_i$、縱軸 $e_i$，理想狀況是一團沒有結構的雲。講義用 Auto 資料示範：mpg 對 horsepower 的殘差彎成明顯的 U 形，
+  這是<strong>非線性</strong>的強烈證據；加入 horsepower² 之後 U 形消失，殘差幾乎沒有形狀，表示二次項確實改善了模型
+  （上方元件的第 ② 組就是這份資料）。同一張圖也看<strong>異質變異</strong>：殘差的散布隨 $\hat y$ 張開成漏斗形，
+  表示誤差的變異隨反應水準放大。講義的處理方式是對反應變數做壓縮尺度的變換，例如 $\log Y$ 或 $\sqrt{Y}$，
+  大值被壓得比小值多，漏斗就收攏了。</p>
+
+  <h3>殘差對觀測順序圖（residuals vs time／order plot）：誤差相關</h3>
+  <p>LINE 的 I 假設說誤差互不相關：知道 $\varepsilon_i$ 是正的，對 $\varepsilon_{i+1}$ 的正負沒有任何提示。
+  時間序列資料最容易違反，相鄰時間點的誤差往往同號。診斷方式是把殘差依時間（或收集順序）畫出來：
+  誤差不相關時看不到任何模式；相關越強，相鄰殘差越傾向取相近的值，圖上就出現一段一段的漂移。</p>
+  <p>後果講義用一個極端例子說明：把資料不小心複製一份，n 變成 2n，最小平方解完全不變，但 SE 公式以為多了一倍的資訊，
+  信賴區間會縮成原來的 $1/\sqrt2$，這當然是假的。一般而言誤差正相關時，估計出的 SE 會<strong>低估</strong>真正的 SE，
+  信賴區間與預測區間都比應有的窄，p 值偏小。這種資料要換用能描述時間相依的模型，超出本章範圍。</p>
+  <p class="source-note">講義補充連結：<a href="https://math.stackexchange.com/questions/2957686/explain-about-the-correlation-of-error-terms-in-linear-regression-models" target="_blank" rel="noopener">誤差相關對線性迴歸的影響</a>。</p>
+
+  <h3>學生化殘差圖（studentized residual plot）：離群值</h3>
+  <p>離群值是 y 離模型預測很遠的點。要判斷「多遠算遠」，不能直接比原始殘差，因為每一筆殘差的尺度不一樣。
+  <strong>學生化殘差</strong>（studentized residual）是把殘差除以它自己的估計標準差：</p>
+
+  $$r_i = \frac{e_i}{\mathrm{RSE}\sqrt{1-h_i}}$$
+
+  <p>為什麼要除以 $\sqrt{1-h_i}$？因為 $\mathrm{Var}(e_i) = \sigma^2(1-h_i)$，高槓桿點的殘差天生就小，
+  直接比原始殘差對它不公平。學生化之後才有共同尺度，講義的判準是 $|r_i|>3$ 的觀測是可能的<strong>離群值</strong>（outlier）。
+  把 $r_i$ 對 $\hat y_i$ 畫出來就是學生化殘差圖，上方元件的第 ④ 組可以看到那一個點。</p>
+  <p>離群值對最小平方線的影響通常有限（它的 x 不怪、槓桿低），但會推高 RSE：課本的例子裡，
+  含那一點時 RSE 是 1.09，拿掉後只有 0.77。RSE 是所有 SE、區間與 p 值的原料，一個點就能改變整份推論的解讀。
+  處理方式：確認是資料收集或記錄錯誤才刪除；否則它可能在提醒模型缺了一個變數。</p>
+  <p class="source-note">講義補充連結：<a href="https://en.wikipedia.org/wiki/Studentized_residual" target="_blank" rel="noopener">Studentized residual</a>。</p>
+
+  <h3>槓桿統計量（leverage statistic）、Cook's distance 與影響圖（influence plot）：高槓桿與影響點</h3>
+  <p><strong>槓桿值</strong> $h_i$ 是帽子矩陣的對角元，衡量「第 i 筆的 x 有多不尋常」。簡單線性迴歸有明確公式：</p>
+
+  $$h_i = \frac{1}{n} + \frac{(x_i-\bar x)^2}{\sum_{j=1}^{n}(x_j-\bar x)^2}$$
+
+  <p>回想 P01：$h_i=1/n+w_i$，第二項正是第 i 筆在「斜率是加權平均」裡的權重。更一般地 $\hat y_i=\sum_j h_{ij}y_j$，
+  所以 $h_i$ 就是第 i 筆自己的 y 對自己擬合值的權重，介於 1/n 與 1 之間，而且<strong>所有 $h_i$ 的平均恰好是 $(p+1)/n$</strong>。
+  遠超過這個平均（實務上常用 2 倍或 3 倍當門檻值）的點就是<strong>高槓桿點</strong>（high leverage point）：
+  它的 x 不尋常，一個點就能扳動整條線。</p>
+  <p>高槓桿不等於有影響。講義區分兩個詞：拿掉之後迴歸式明顯改變的觀測叫<strong>影響點</strong>（influential observation）；
+  影響點通常槓桿高，但高槓桿點若剛好落在趨勢上，反而幫忙把 x 的範圍拉開、降低 $\mathrm{SE}(\hat\beta_1)$。
+  要同時看「x 怪不怪」與「y 怪不怪」，講義用 <strong>Cook's distance</strong>：</p>
+
+  $$D_i=\frac{\sum_{j=1}^{n}\left(\hat y_j-\hat y_{j(-i)}\right)^2}{(p+1)\,\hat\sigma^2}
+       =\frac{r_i^2}{p+1}\cdot\frac{h_i}{1-h_i}$$
+
+  <p>$\hat y_{j(-i)}$ 是拿掉第 i 筆後重新擬合、對第 j 筆的預測值；左式問「少了這一筆，全部的擬合值一共動了多少」，
+  右式說這個量正好是學生化殘差平方乘上槓桿比 $h_i/(1-h_i)$。把 $h_i$ 放橫軸、$r_i$ 放縱軸、氣泡大小畫 $D_i$，
+  就是<strong>影響圖</strong>（influence plot），也就是上方元件的「殘差對槓桿圖」（residuals vs leverage plot）：
+  右上與右下角的點最危險。講義給的處理方式有兩個：這些點特別值得回頭檢查資料是否有效；
+  它們也標出設計空間裡資料太少的區域，能補資料就補。</p>
+"""
+
+P06_TOOLS_B = r"""
+  <p class="source-note">講義補充連結：<a href="https://en.wikipedia.org/wiki/Leverage_(statistics)" target="_blank" rel="noopener">Leverage (statistics)</a>、
+  <a href="https://stats.stackexchange.com/questions/65912/precise-meaning-of-and-comparison-between-influential-point-high-leverage-point" target="_blank" rel="noopener">影響點與高槓桿點的差別</a>。</p>
+
+  <h3>相關矩陣（correlation matrix）與變異數膨脹因子（VIF）：共線性</h3>
+  <p>第六個問題自己一節。<strong>共線性</strong>（collinearity）是指兩個以上的預測變數彼此高度相關。
+  它不會讓估計有偏，但會讓 RSS 的等高線<strong>從碗變成一條狹長的溝</strong>——
+  沿著溝走，RSS 幾乎不變，於是「哪一組係數最好」變得極難分辨，係數的 SE 跟著膨脹、檢定力下降。
+  最直接的檢查是看預測變數的<strong>相關矩陣</strong>：某一對相關係數很高就要留意。
+  但講義提醒這不夠：三個以上的變數可能整體高度共線（multicollinearity），而任何一對的相關都不特別高。
+  更好的工具是<strong>變異數膨脹因子</strong>：</p>
+"""
+
+P06_EXTRA = detail('w03-detail-extra-diagnostics', '延伸閱讀：講義之外的診斷與補救', r"""
+<p>以下工具不在講義的教學範圍，lab 的 <code>results.summary()</code> 輸出或課本會提到，列出名稱與用途供查閱。</p>
+<ul style="padding-left:1.4rem;">
+  <li><strong>常態分位圖</strong>（normal Q-Q plot）：學生化殘差的分位數對標準常態分位數作圖，貼著 45 度線表示殘差接近常態，
+    兩端翹起表示厚尾或離群值。lab 摘要表下方的 Omnibus 與 Jarque-Bera 是對應的常態性檢定。上方元件的「Q-Q 圖」按鈕就是這張。</li>
+  <li><strong>尺度–位置圖</strong>（scale-location plot）：$\sqrt{|r_i|}$ 對 $\hat y_i$ 作圖，專門看變異是否隨擬合值上升；
+    漏斗形在殘差圖上不明顯時，這張圖會放大它。上方元件的「scale-location」按鈕就是這張。</li>
+  <li><strong>Durbin–Watson 統計量</strong>：檢查相鄰殘差的一階自相關，理想值接近 2，明顯小於 2 表示正相關。
+    lab 的 Boston 模型給出 0.892，殘差有明顯的順序相依。</li>
+  <li><strong>加權最小平方</strong>（weighted least squares）：課本對異質變異的另一個處理，知道各筆變異的比例時，
+    把每筆觀測乘上權重 $1/\sigma_i$ 再做最小平方。</li>
+  <li><strong>穩健標準誤</strong>（heteroscedasticity-consistent standard errors）：係數不變，只把 SE 的估計換成不依賴等變異假設的版本。</li>
+</ul>
+""")
+
 # ── P01 slr ───────────────────────────────────────────────────────────
 BODIES["slr"] = f"""
-  <p>先只用一個變數。假設 sales 跟 TV 預算大致是一條直線：</p>
-
-  $$Y \\approx \\beta_0 + \\beta_1 X$$
-
-  <p>β₀ 是截距、β₁ 是斜率，兩個都不知道。手上有 n 對觀測值
-  $(x_1, y_1), \\dots, (x_n, y_n)$，要挑一條「最靠近」這些點的線。
-  「靠近」有很多種定義，但幾乎所有人都用同一個：<strong>讓殘差平方和最小</strong>。
-  第 i 筆的殘差是 $e_i = y_i - \\hat y_i$，於是</p>
-
-  $$\\mathrm{{RSS}} = e_1^2 + e_2^2 + \\cdots + e_n^2
-    = \\sum_{{i=1}}^{{n}} \\left(y_i - \\hat\\beta_0 - \\hat\\beta_1 x_i\\right)^2$$
-
-  <p>對 β₀、β₁ 各偏微分等於零，解出來就是<strong>封閉解</strong>——不需要反覆更新參數、不需要調學習率、
-  不需要任何機率假設：</p>
-
-  $$\\hat\\beta_1 = \\frac{{\\sum_{{i=1}}^{{n}}(x_i-\\bar x)(y_i-\\bar y)}}
-    {{\\sum_{{i=1}}^{{n}}(x_i-\\bar x)^2}}, \\qquad
-    \\hat\\beta_0 = \\bar y - \\hat\\beta_1 \\bar x$$
-
-  <p>第二式順便告訴你一件事：<strong>最小平方線一定通過 $(\\bar x, \\bar y)$</strong>。
-  拖動下面元件中的任何一個點，係數、RSS、R² 全部即時重算。
-  先預測「把最右邊那個點往上拖，斜率會怎麼變」，再動手驗證。</p>
-
+{SLR_INTRO}
 {viz(svg("w03dragSvg", 350)
      + '\n      <div class="viz-legend">'
        '<span><i style="background:var(--pt-train);"></i>可拖動的觀測值</span>'
@@ -126,19 +473,19 @@ BODIES["slr"] = f"""
        '<span><i class="ln" style="border-top-color:var(--fit-true);"></i>展開 RSS 計算細節可調整的試探線</span>'
        '</div>',
      [rows_card("即時最小平方解",
-                [("β̂₀（截距）", "—", "w03dragB0"), ("β̂₁（斜率）", "—", "w03dragB1"),
+                [("$\\hat\\beta_0$（截距）", "—", "w03dragB0"), ("$\\hat\\beta_1$（斜率）", "—", "w03dragB1"),
                  ("RSS", "—", "w03dragRss"), ("RSE", "—", "w03dragRse"),
-                 ("R²", "—", "w03dragR2"), ("SE(β̂₁)", "—", "w03dragSe1"),
-                 ("t = β̂₁ / SE(β̂₁)", "—", "w03dragT1")], "LIVE"),
+                 ("R²", "—", "w03dragR2"), ("$\\mathrm{{SE}}(\\hat\\beta_1)$", "—", "w03dragSe1"),
+                 ("$t=\\hat\\beta_1/\\mathrm{{SE}}(\\hat\\beta_1)$", "—", "w03dragT1")], "LIVE"),
       info_card("怎麼玩",
                 '用滑鼠或手指<strong>直接把點拖走</strong>。三件事值得試：'
                 '<br>① 把某一點往上下拖 → 看 RSS 怎麼跳；'
-                '<br>② 把<strong>最右邊</strong>那點上下拖 → 斜率動得比拖中間的點厲害得多，'
-                '這就是 P06「高槓桿點」的預告；'
+                '<br>② 把<strong>最右邊</strong>那點上下拖 → 斜率動得比拖中間的點厲害得多：'
+                '它離 x̄ 最遠、權重 wᵢ 最大，這也是 P06「高槓桿點」的預告；'
                 '<br>③ 把所有點排成一條線 → RSS 趨近 0、R² 趨近 1。'),
       info_card("對照課本",
                 'ISLP 圖 3.1 是同一件事的 Advertising 版本：'
-                'sales 對 TV 的最小平方線是 β̂₀ = 7.03、β̂₁ = 0.0475。'
+                'sales 對 TV 的最小平方線是 $\\hat\\beta_0 = 7.03$、$\\hat\\beta_1 = 0.0475$。'
                 '斜率的意思是「TV 預算多花 1000 美元，平均多賣約 47.5 單位」。', "ISLP 圖 3.1")],
      "w03dragStatus", "拖動任何一個藍點，係數與 RSS 會即時重算。灰紫色虛線是殘差。",
      '<button class="btn btn-reset" onclick="w03dragReset()">重置</button>'
@@ -165,16 +512,16 @@ BODIES["slr"] = f"""
      [rows_card("目前的參數點",
                 [("β₀", "—", "w03rssB0"), ("β₁", "—", "w03rssB1"),
                  ("RSS", "—", "w03rssVal"), ("RSS / RSS 最小值", "—", "w03rssRatio"),
-                 ("最小點 (β̂₀, β̂₁)", "—", "w03rssMin")], "LIVE"),
+                 ("最小點 $(\\hat\\beta_0, \\hat\\beta_1)$", "—", "w03rssMin")], "LIVE"),
       info_card("怎麼看這張圖",
                 '紅點是最小平方解（碗底），橢圓上的標籤是 RSS 相對於最小值的倍數。'
                 '推滑桿讓橘點離開碗底，<strong>看它跨過幾條等高線</strong>，'
                 '同時上面那張圖會出現一條綠色虛線，那就是這組係數畫出來的線。'
                 '橢圓是<strong>斜的</strong>：β₀ 猜大一點時 β₁ 要猜小一點才補得回來，'
-                '這就是 β̂₀ 與 β̂₁ 負相關的意思。'),
+                '這就是 $\\hat\\beta_0$ 與 $\\hat\\beta_1$ 負相關的意思。'),
       info_card("課本的版本",
                 'ISLP 圖 3.2 用 Advertising 的 sales~TV 畫同一張圖：'
-                '最小點在 β̂₀ = 7.0326、β̂₁ = 0.0475，RSS 最小值 = 2102.53。'
+                '最小點在 $\\hat\\beta_0 = 7.0326$、$\\hat\\beta_1 = 0.0475$，RSS 最小值 = 2102.53。'
                 '課本畫的等高線標了 2.11、2.15、2.2、2.3、2.5、3（單位是千），'
                 '對應的就是這裡的倍數。', "ISLP 圖 3.2")],
      "w03rssStatus", "橘點在碗底時 RSS 最小。推滑桿讓它離開，看 RSS 上升多少倍。",
@@ -235,17 +582,17 @@ BODIES["slr"] = f"""
 
 {quiz("qOls", "QUIZ · 最小平方法",
       "把資料裡<strong>某一個</strong>點沿著<em>垂直</em>方向往上移動，最小平方線一定會怎麼變？",
-      [(True, "整條線會往那個點的方向轉／移，而且那個點離 x̄ 愈遠、影響愈大",
-        "對。RSS 對每一筆的貢獻是殘差<strong>平方</strong>，所以離線遠的點權重特別重；而 β̂₁ 的公式裡每一筆的權重是 (xᵢ−x̄)，離 x̄ 愈遠的點對斜率的影響愈大。上面拖著玩就看得到。"),
+      [(True, "整條線會往那個點的方向轉／移，而且那個點離 $\\bar x$ 愈遠、影響愈大",
+        "對。RSS 對每一筆的貢獻是殘差<strong>平方</strong>，所以離線遠的點權重特別重；而 $\\hat\\beta_1$ 是個別斜率的加權平均，權重 $w_i\\propto(x_i-\\bar x)^2$，離 $\\bar x$ 愈遠的點對斜率的影響愈大。上面拖著玩就看得到。"),
        (False, "只有截距會變，斜率不變",
-        "只有一種特例成立：那個點剛好在 x = x̄ 上。一般情況下 β̂₁ 的分子 Σ(xᵢ−x̄)(yᵢ−ȳ) 會跟著 yᵢ 變，斜率也會動。"),
+        "只有一種特例成立：那個點剛好在 $x=\\bar x$ 上，它的權重 $w_i$ 是 0。一般情況下 $\\hat\\beta_1$ 的分子 $\\sum(x_i-\\bar x)(y_i-\\bar y)$ 會跟著 $y_i$ 變，斜率也會動。"),
        (False, "線不會變，因為最小平方法對單一個點不敏感",
         "剛好相反。最小平方法對單一個點<strong>非常</strong>敏感，正因為它罰的是殘差平方而不是絕對值。這是 P06 要討論離群值與高槓桿點的理由。")])}
 """
 
 # ── P02 inference ─────────────────────────────────────────────────────
 BODIES["inference"] = f"""
-  <p>β̂₁ = 0.0475 這個數字，可信嗎？先弄清楚在問什麼。真實世界裡有一條看不到的
+  <p>$\\hat\\beta_1 = 0.0475$ 這個數字，可信嗎？先弄清楚在問什麼。P01 的模型說真實世界裡有一條看不到的
   <strong>母體迴歸線</strong>（population regression line）</p>
 
   $$Y = \\beta_0 + \\beta_1 X + \\varepsilon$$
@@ -254,14 +601,25 @@ BODIES["inference"] = f"""
   <a href="s4_inference.html#standard_error">S4 的標準誤</a>與
   <a href="s4_inference.html#intervals">信賴區間</a>。</p>
 
-  <p>我們只有一份樣本，用它算出來的是<strong>最小平方線</strong>。
-  換一份樣本就會得到另一條最小平方線。在本節的線性條件平均模型
-  $E[\\varepsilon\\mid X]=0$ 下，最小平方估計<strong>無偏</strong>：
-  這些線平均起來會落在母體迴歸線上，沒有系統性偏移。不過，單獨一條線仍可能偏離母體迴歸線不少，
-  而我們手上就只有一條。</p>
+  <p>我們只有一份樣本，用它算出來的是<strong>最小平方線</strong>；換一份樣本，就會得到另一條。
+  把「換樣本」這件事想成可以重複做很多次：每一次都得到一個 $\\hat\\beta_1$，這些值排成的分布叫做
+  <strong>抽樣分布</strong>（sampling distribution）。估計量是樣本的函數，樣本會變，估計量就有自己的分布；
+  下面元件右邊的直方圖畫的就是它。抽樣分布回答兩個問題：中心在哪裡（有沒有偏）、散得多開（估得準不準）。</p>
 
-  <p>偏多少？這就是<strong>標準誤</strong>（standard error）要量的東西——
-  估計量在重複抽樣下的標準差：</p>
+  <p>中心先講。$\\hat\\beta_1$ 可以整理成 y 的<strong>線性組合</strong>：</p>
+
+  $$\\hat\\beta_1=\\sum_{{i=1}}^{{n}}c_i\\,y_i,\\qquad
+    c_i=\\frac{{x_i-\\bar x}}{{S_{{xx}}}},\\quad S_{{xx}}=\\sum_{{j=1}}^{{n}}(x_j-\\bar x)^2$$
+
+  <p>係數 $c_i$ 只跟 x 有關，而且 $\\sum_i c_i=0$、$\\sum_i c_ix_i=1$。
+  把 $y_i=\\beta_0+\\beta_1x_i+\\varepsilon_i$ 代進去，$\\beta_0$ 那一項被 $\\sum c_i=0$ 消掉、
+  $\\beta_1$ 那一項被 $\\sum c_ix_i=1$ 留下，得到 $\\hat\\beta_1=\\beta_1+\\sum_i c_i\\varepsilon_i$。
+  在 LINE 的線性假設加上 $E[\\varepsilon\\mid X]=0$ 下，最小平方估計<strong>無偏</strong>：
+  抽樣分布的中心就在 $\\beta_1$。不過單獨一條線仍可能偏離母體迴歸線不少，而我們手上就只有一條。</p>
+
+  <p>散得多開？這就是<strong>標準誤</strong>（standard error）要量的東西，也就是抽樣分布的標準差。
+  由 $\\hat\\beta_1-\\beta_1=\\sum_i c_i\\varepsilon_i$，用 I 與 E（誤差不相關、同變異 $\\sigma^2$）算變異數，
+  $\\mathrm{{Var}}(\\hat\\beta_1)=\\sigma^2\\sum_i c_i^2=\\sigma^2/S_{{xx}}$：</p>
 
   $$\\mathrm{{SE}}(\\hat\\beta_1)^2 = \\frac{{\\sigma^2}}{{\\sum_{{i=1}}^{{n}}(x_i-\\bar x)^2}},
     \\qquad
@@ -270,24 +628,28 @@ BODIES["inference"] = f"""
 
   <p>第一條式子把「什麼會讓斜率估得準」講完了：
   <strong>雜訊 σ² 小、樣本多、x 散得開</strong>。σ² 通常不知道，
-  就用殘差算出的 RSE² 估計（下一節會定義 RSE）。下面的示意圖讓你觀察重複抽樣時，估計出的迴歸線如何改變：</p>
+  就用殘差算出的 RSE² 估計（下一節會定義 RSE）。下面的示意圖讓你觀察重複抽樣時，估計出的迴歸線如何改變，
+  右邊的直方圖就是 $\\hat\\beta_1$ 的抽樣分布：</p>
 
 {viz(svg("w03sampSvg", 320)
      + "\n" + chart("w03sampChart", "",
-                    "。此圖呈現重複抽樣時斜率估計值的散布，"
-                    "標準誤描述這種估計量的抽樣變動。"),
+                    "。此圖是 β̂₁ 的抽樣分布：重複抽樣時斜率估計值的散布，"
+                    "標準誤就是它的標準差。"),
      ["",
       rows_card("抽樣示意", [("已畫出的迴歸線", "0", "w03sampCount")], "示意"),
       info_card("為什麼要看這張圖",
                 '<strong>SE 描述重複抽樣時，估計出的係數會散開多少。</strong>'
                 '你手上只有一條線，永遠不知道它偏了多少；但公式可以告訴你'
                 '「換一份訓練資料，估計會如何變動」。'
-                '每條線代表一次重新抽樣後的估計；下圖整理這些斜率的分布。', "ISLP 圖 3.3 右")],
+                '每條線代表一次重新抽樣後的估計；下圖把這些斜率排成直方圖，就是抽樣分布，'
+                '它的中心在母體斜率、寬度由 SE 決定。', "ISLP 圖 3.3 右")],
      "w03sampStatus", "按「抽一次」觀察估計的變動，或多次抽樣查看斜率分布。",
      '<button class="btn btn-step" onclick="w03sampOne()">→ 抽一次</button>'
      '<button class="btn btn-play" onclick="w03sampMany()">▶ 多次抽樣</button>'
      '<button class="btn btn-reset" onclick="w03sampReset()">重置</button>',
      provenance=("illustrative", "固定種子重複抽樣；對照 ISLP 圖 3.3"))}
+
+{NORMAL_DETAIL}
 
   <p>有了 SE，兩個標準工具就出來了。<strong>95% 信賴區間</strong>：</p>
 
@@ -299,7 +661,7 @@ BODIES["inference"] = f"""
 
   $$t = \\frac{{\\hat\\beta_1 - 0}}{{\\mathrm{{SE}}(\\hat\\beta_1)}}$$
 
-  <p>它衡量「β̂₁ 離 0 有幾個標準誤」。$H_0$ 成立時 t 服從自由度 n − 2 的 t 分佈，
+  <p>它衡量「$\\hat\\beta_1$ 離 0 有幾個標準誤」。$H_0$ 成立時 t 服從自由度 n − 2 的 t 分佈（為什麼是 t 分布，見上方收合的「線性組合」推導），
   n 大於約 30 之後跟標準常態幾乎一樣，所以 <strong>|t| 超過大約 2 就對應 5% 的顯著水準</strong>。
   p 值是「假設 $H_0$ 為真，看到這麼極端或更極端的 t 的機率」。
   注意它<strong>不是</strong>「$H_0$ 為真的機率」。</p>
@@ -314,27 +676,8 @@ BODIES["inference"] = f"""
   P04 會比較這一列在多元迴歸中的變化。課本的 β₀ 信賴區間是 [6.130, 7.935]、
   β₁ 是 [0.042, 0.053]：「完全不打廣告時，銷售量平均落在 6130 到 7935 單位之間」。</p>
 
-{qa("觀念釐清", [
-    ("Q：線性迴歸的 LINE 假設，到底假設了什麼？",
-     "<p><strong>L</strong>inearity、<strong>I</strong>ndependence、"
-     "<strong>N</strong>ormality、<strong>E</strong>qual variance。"
-     "四個字首拼成 LINE；下面分別說明<strong>違反各假設會影響哪些結果</strong>。</p>"
-     "<p><strong>L（線性）</strong>：$E[Y \\mid X] = \\beta_0+\\beta_1X$ 這個形狀是對的。"
-     "壞掉時，係數不再描述完整的條件平均形狀，"
-     "所以殘差圖是必看的（P06 第 1 個問題）。</p>"
-     "<p><strong>I（獨立）</strong>：不同觀測的誤差獨立；傳統 SE 公式所用的較弱結果是誤差彼此不相關。"
-     "出現誤差相關時，傳統 SE 會失準，偏高或偏低取決於相關結構與設計，"
-     "因此 t、p 值與信賴區間也可能失準。"
-     "時間序列與空間資料最常犯（P06 第 2 個問題）。</p>"
-     "<p><strong>N（常態）</strong>：誤差服從常態分佈。<strong>估計完全不需要它</strong>——"
-     "最小平方解是純代數；它只用在「t 統計量真的服從 t 分佈」這件事上。"
-     "而且 n 大時中央極限定理會幫忙，因此大樣本下，推論對常態假設的要求可能較不嚴格。</p>"
-     "<p><strong>E（等變異）</strong>：所有誤差有共同的 σ²。若 $E[\\varepsilon\\mid X]=0$ 仍成立，估計仍無偏，"
-     "但 SE 的公式失準（有些點被過度信任），檢定與區間都不可靠（P06 第 3 個問題）。</p>"
-     "<p>還有一個基本條件：$E[\\varepsilon\\mid X]=0$。它表示給定 X 後誤差沒有系統性方向；"
-     "若此條件失敗，遺漏變數等問題會使係數估計偏掉。只在條件平均模型正確且此外生性成立時，"
-     "才能說誤差相關或異質變異主要影響傳統 SE，而不必然影響係數。</p>"),
-])}
+
+{CIPI_SECTION}
 
   <h3 id="dx-inf">講義完整實作：完整摘要與兩種區間</h3>
 {card("講義 03 · print(results.summary())：一次看完 SE、t、p、信賴區間、F、R²",
@@ -361,13 +704,13 @@ BODIES["inference"] = f"""
 
 {quiz("qSe", "QUIZ · 標準誤",
       "同一份資料，你把預測變數 x 的單位從「元」換成「千元」（也就是全部除以 1000）。"
-      "β̂₁ 與它的 <em>t</em> 統計量會怎麼變？",
-      [(True, "β̂₁ 變成 1000 倍，SE(β̂₁) 也變成 1000 倍，<em>t</em> 完全不變",
-        "對。單位換算只是把 x 乘上一個常數，擬合值、殘差、RSS 一個都沒動，所以 R² 與 RSE 也不變。β̂₁ 與 SE(β̂₁) 同比例放大，比值 t 就被消掉了——<strong>顯著性不會因為換單位而改變</strong>，這也是為什麼不能靠「係數大小」判斷變數重不重要。"),
-       (False, "β̂₁ 變成 1000 倍，SE 不變，所以 <em>t</em> 也變成 1000 倍",
-        "不對。SE(β̂₁)² = σ²/Σ(xᵢ−x̄)²，分母裡的 x 也跟著縮小 1000 倍，所以 Σ(xᵢ−x̄)² 縮小 10⁶ 倍、SE 放大 1000 倍。SE 不可能不動。"),
+      "$\\hat\\beta_1$ 與它的 <em>t</em> 統計量會怎麼變？",
+      [(True, "$\\hat\\beta_1$ 變成 1000 倍，$\\mathrm{{SE}}(\\hat\\beta_1)$ 也變成 1000 倍，<em>t</em> 完全不變",
+        "對。單位換算只是把 x 乘上一個常數，擬合值、殘差、RSS 一個都沒動，所以 R² 與 RSE 也不變（P01 的「尺度不改變擬合值」）。$\\hat\\beta_1$ 與 $\\mathrm{{SE}}(\\hat\\beta_1)$ 同比例放大，比值 t 就被消掉了——<strong>顯著性不會因為換單位而改變</strong>，這也是為什麼不能靠「係數大小」判斷變數重不重要。"),
+       (False, "$\\hat\\beta_1$ 變成 1000 倍，SE 不變，所以 <em>t</em> 也變成 1000 倍",
+        "不對。$\\mathrm{{SE}}(\\hat\\beta_1)^2=\\sigma^2/\\sum(x_i-\\bar x)^2$，分母裡的 x 也跟著縮小 1000 倍，所以 $\\sum(x_i-\\bar x)^2$ 縮小 $10^6$ 倍、SE 放大 1000 倍。SE 不可能不動。"),
        (False, "兩個都不變，因為線性迴歸對單位免疫",
-        "只有<strong>無單位</strong>的量（t、p、R²）免疫。有單位的量（β̂₁、SE、信賴區間的端點）一定會跟著單位變。它們的單位是「y 的單位 ÷ x 的單位」。")])}
+        "只有<strong>無單位</strong>的量（t、p、R²）免疫。有單位的量（$\\hat\\beta_1$、SE、信賴區間的端點）一定會跟著單位變。它們的單位是「y 的單位 ÷ x 的單位」。")])}
 """
 
 # ── P03 accuracy ──────────────────────────────────────────────────────
@@ -385,7 +728,7 @@ BODIES["accuracy"] = f"""
   相對誤差大約 12%。這個「12%」用銷售量的尺度呈現誤差大小。</p>
 
   <p><strong>R²</strong> 把它換成無單位的比例。先定義總平方和
-  $\\mathrm{{TSS}} = \\sum(y_i - \\bar y)^2$（完全不看 x、只用 ȳ 猜的誤差），則</p>
+  $\\mathrm{{TSS}} = \\sum(y_i - \\bar y)^2$（完全不看 x、只用 $\\bar y$ 猜的誤差），則</p>
 
   $$R^2 = \\frac{{\\mathrm{{TSS}} - \\mathrm{{RSS}}}}{{\\mathrm{{TSS}}}}
         = 1 - \\frac{{\\mathrm{{RSS}}}}{{\\mathrm{{TSS}}}}$$
@@ -418,11 +761,11 @@ BODIES["accuracy"] = f"""
 {qa("觀念釐清", [
     ("Q：R² 有可能是負的嗎？",
      "<p>用<strong>含截距的最小平方法擬合在同一份資料上</strong>時，不可能。"
-     "因為「只用 ȳ 猜」本身就是這個模型的一個特例（β̂₁ = 0），"
+     "因為「只用 $\\bar y$ 猜」本身就是這個模型的一個特例（$\\hat\\beta_1 = 0$），"
      "而最小平方法挑的是 RSS 最小的那組，所以一定 RSS ≤ TSS，於是 $R^2 \\ge 0$。</p>"
      "<p>但下面三種情況它真的會變成負的：</p><ul>"
-     "<li><strong>模型沒有截距項</strong>：這時 β̂₁ = 0 不再是可選的方案，"
-     "擬合出來的線可能比水平線 ȳ 還差。順帶一提，這也是為什麼 "
+     "<li><strong>模型沒有截距項</strong>：這時 $\\hat\\beta_1 = 0$ 不再是可選的方案，"
+     "擬合出來的線可能比水平線 $\\bar y$ 還差。順帶一提，這也是為什麼 "
      "<code>sm.OLS()</code> 不自動加截距是個容易忽略的地方。</li>"
      "<li><strong>在測試資料上算 R²</strong>：$1 - \\mathrm{RSS}_{\\text{test}}/"
      "\\mathrm{TSS}_{\\text{test}}$ 完全可以是負的，意思是"
@@ -492,21 +835,28 @@ BODIES["mlr"] = f"""
      "<p>單變數迴歸的係數回答：「只看 newspaper 這一欄，它跟 sales 有沒有線性關聯？」"
      "多變數迴歸的係數回答：「<strong>在 TV 與 radio 都已知的情況下</strong>，"
      "再多知道 newspaper 有沒有幫助？」第二個問題嚴格得多。</p>"
-     "<p>機制就在相關矩陣裡：corr(radio, newspaper) = 0.354。"
-     "假設資料生成機制是「radio 影響 sales、newspaper 不影響」。"
-     "報紙預算高的市場通常廣播預算也高，廣播帶動了銷售，"
-     "於是「報紙預算高的市場銷售也高」——單變數迴歸只看得到這個共同變動，"
-     "就把功勞記在報紙頭上。等 radio 進了模型，功勞被歸還，報紙的係數就掉到 0 附近。</p>"
-     "<p>這個假設性的資料生成機制在因果推論裡叫<strong>混淆</strong>（confounding）；"
-     "單憑這份觀察資料的迴歸係數，無法確認哪個變數造成銷售改變。"
-     "radio 是 newspaper 與 sales 之間的混淆變數。同一個結構也可能反過來："
+     "<p>機制就在相關矩陣裡：corr(radio, newspaper) = 0.354，報紙預算高的市場，廣播預算通常也高。"
+     "一個說得通的故事是<strong>中介</strong>（mediation）：行銷部門先決定報紙預算，廣播預算跟著報紙預算走，"
+     "而真正帶動銷售的是廣播。</p>" + DAG_MED +
+     "<p>在這個結構裡，newspaper 對 sales 沒有<em>直接</em>效果，但透過 radio 有<em>間接</em>效果。"
+     "單變數迴歸看到的是總效果（間接那條路還開著），所以顯著；把 radio 放進模型等於把那條路堵住，"
+     "剩下的直接效果是 0，係數就掉到 0 附近。注意這裡的「newspaper 沒用」只是「控制 radio 之後沒有額外貢獻」，"
+     "它的總效果並不是 0：若減少報紙預算，廣播預算也會跟著減少，銷售照樣受影響。</p>"
+     "<p>另一個同樣說得通的故事是<strong>混淆</strong>（confounding）：有一個共同原因，例如市場規模或整體行銷預算，"
+     "同時推高廣播與報紙的花費，而只有廣播帶動銷售。</p>" + DAG_CONF +
+     "<p>這時 newspaper 與 sales 的關聯完全是假象：它們只是共用一個上游原因。混淆變數是那個共同原因，不是 radio；"
+     "radio 只是剛好坐在那條後門路徑上，所以控制它也能把假關聯關掉。</p>"
+     "<p><strong>迴歸分不出這兩個故事。</strong>兩種結構都會產生「單變數顯著、加入 radio 後歸零」的同一組係數表；"
+     "newspaper 是否真的影響銷售，要靠研究設計（例如隨機分配預算）或額外的因果假設才能回答。"
+     "這正是講義結尾提醒的：觀察資料上應避免因果宣稱。同一個結構也可能反過來："
      "$X_j$ 單獨看不顯著、控制別的變數後才顯著（被壓抑效應蓋住）。"
      "所以「單變數篩選再進多變數模型」是個危險的習慣。</p>"
+     "<p class=\"source-note\">講義補充連結：<a href=\"https://www.causeweb.org/cause/resources/fun/cartoons/ice-cream-sales-and-shark-sightings\" target=\"_blank\" rel=\"noopener\">冰淇淋銷量與鯊魚出沒</a>的漫畫是「相關不等於因果」的經典例子。</p>"
      "<p>另一個常見但<strong>不同</strong>的成因是共線性："
      "$X_j$ 真的有用，只是它跟別的變數太像，SE 被膨脹到檢不出來"
      "（P06 的 Credit <code>limit</code>／<code>rating</code>）。"
      "分辨方法：看 VIF。這裡 newspaper 的 VIF 只有 1.145，"
-     "這裡不能把不顯著主要歸因於高共線性；但低 VIF 也不能證明特定的因果混淆結構。</p>"),
+     "不能把不顯著歸因於高共線性；但低 VIF 也不能分辨上面的中介與混淆結構。</p>"),
     ("Q：有了 t 檢定，為什麼還要 F 檢定？",
      "<p>因為<strong>多重比較</strong>。單一個 t 檢定在 α = 0.05 下有 5% 的機率誤判；"
      "但如果你有 100 個變數、逐一做 t 檢定，即使它們全部無用，"
@@ -616,7 +966,7 @@ BODIES["qualitative"] = f"""
                 'ISLP 圖 3.7 就是這兩張圖。最小平方解：'
                 '無交互作用時兩條線的共同斜率是 <strong>5.98</strong>；'
                 '有交互作用時非學生 <strong>6.22</strong>、學生 '
-                '<strong>4.22</strong>（β̂₃ = −2.00）。'
+                '<strong>4.22</strong>（$\\hat\\beta_3 = -2.00$）。'
                 '也就是說學生組的 income–balance 條件斜率較小。'
                 '不過這一項的 <em>t</em> = −1.15、p = 0.25，並不顯著。', "ISLP 圖 3.7")],
      "w03interStatus", "兩條線平行＝沒有交互作用。切換後推滑桿，看學生那條線轉起來。",
@@ -679,42 +1029,26 @@ BODIES["qualitative"] = f"""
 
 # ── P06 problems ──────────────────────────────────────────────────────
 BODIES["problems"] = f"""
-  <p>線性迴歸擬合起來很容易，擬合出<strong>錯的</strong>結論也一樣容易。
-  ISLP §3.3.3 與講義整理了六個潛在問題。
-  先看全表，再一個一個動手看：</p>
+{P06_INTRO}
+{P06_AXES}
 
-{table(["#", "問題", "怎麼看出來", "會影響什麼", "怎麼處理"],
-       [["1", "<strong>非線性</strong>", "殘差 vs 擬合值有 U 形或曲線結構",
-         "<strong>係數本身就沒意義</strong>", "加 x²、log x、√x，或第 7 章的樣條"],
-        ["2", "<strong>誤差相關</strong>", "殘差按順序畫出來有波動、Durbin–Watson 遠離 2",
-         "傳統 SE 失準，方向視相關結構與設計而定", "改用時間序列模型、混合模型、群聚穩健 SE"],
-        ["3", "<strong>異質變異</strong>", "殘差圖呈漏斗形、scale-location 往上爬",
-         "傳統 SE 失準；外生性成立時估計仍無偏", "log y 或 √y、加權最小平方、穩健 SE"],
-        ["4", "<strong>離群值</strong>（y 怪）", "學生化殘差 |值| &gt; 3",
-         "RSE 變大、R² 變小；係數可能還好", "查是不是記錄錯誤；不要只因為難看就刪"],
-        ["5", "<strong>高槓桿</strong>（x 怪）", "槓桿值遠超過平均 (p+1)/n",
-         "一個點就能扳動整條線", "檢查該筆資料；報告拿掉它之後的結果"],
-        ["6", "<strong>共線性</strong>", "相關矩陣、VIF &gt; 5 或 10",
-         "SE 膨脹 → 檢定力下降，變數有用卻檢不出來", "拿掉一個、或把它們合成一個變數"]])}
-
-  <p>問題 1 到 5 全部靠<strong>四張診斷圖</strong>看。下面這個元件把五組資料
-  （一組乾淨的、四組各有一種特徵）跟四張圖交叉組合起來。
+  <p>問題 1 到 5 都靠殘差類的圖看：講義用殘差圖、殘差對觀測順序圖、學生化殘差圖，再加上槓桿值。
+  下面這個元件把五組資料（一組乾淨的、四組各有一種特徵）跟四張圖交叉組合起來，
+  其中 Q-Q 圖與 scale-location 是講義之外的補充。
   <strong>先切換資料，再切換診斷圖，觀察各種問題的圖形特徵</strong>：</p>
 
 {viz(chart("w03diagChart", "square",
            "。此圖的重點：殘差圖出現 U 形＝非線性；漏斗形＝異質變異；"
-           "Q-Q 圖偏離 45 度線＝誤差不常態；右下角遠離群體＝高槓桿點。"),
+           "學生化殘差絕對值超過 3＝離群值；殘差對槓桿圖右下角遠離群體＝高槓桿點。"),
      [info_card("四張圖各看什麼",
-                '<strong>① 殘差 vs 擬合值：</strong>最重要的一張。應該是一團沒有結構的雲，'
+                '<strong>① 殘差對擬合值（residual plot）：</strong>講義的主工具。應該是一團沒有結構的雲，'
                 '紅線（分箱平均，用來觀察殘差趨勢）應該貼著 0。有 U 形＝非線性，有漏斗＝異質變異。<br>'
-                '<strong>② Q-Q 圖：</strong>學生化殘差的分位數對常態分位數。'
-                '貼著 45 度線＝常態；兩端翹起＝厚尾（有離群值）。<br>'
-                '<strong>③ scale-location：</strong>看 √|學生化殘差| 有沒有隨擬合值上升，'
-                '專門抓異質變異。<br>'
-                '<strong>④ 殘差 vs 槓桿值：</strong>右上／右下角的點最危險，'
-                '同時是離群值又是高槓桿點。'),
+                '<strong>② Q-Q 圖、③ scale-location：</strong>講義之外的補充，分別看常態性與變異是否隨擬合值上升，'
+                '說明收在本節末的延伸閱讀。<br>'
+                '<strong>④ 殘差對槓桿（residuals vs leverage plot）：</strong>縱軸是學生化殘差，'
+                '右上／右下角的點最危險，同時是離群值又是高槓桿點；講義的影響圖就是這張。'),
       rows_card("這一組資料的診斷數字",
-                [("n", "—", "w03diagN"), ("β̂₁", "—", "w03diagB1"),
+                [("n", "—", "w03diagN"), ("$\\hat\\beta_1$", "—", "w03diagB1"),
                  ("RSE", "—", "w03diagRse"), ("R²", "—", "w03diagR2"),
                  ("最大 |學生化殘差|", "—", "w03diagMaxRes"),
                  ("最大槓桿值", "—", "w03diagMaxLev"),
@@ -738,36 +1072,18 @@ BODIES["problems"] = f"""
      '<button class="btn btn-toggle" onclick="w03diagView(3)">殘差 vs 槓桿</button>',
      provenance=("illustrative", "固定種子診斷案例；非線性面板使用 ISLP Auto"))}
 
-  <p>離群值與高槓桿點的判準要說清楚。<strong>學生化殘差</strong>是把殘差除以它自己的
-  估計標準差：</p>
-
-  $$r_i = \\frac{{e_i}}{{\\mathrm{{RSE}}\\sqrt{{1-h_i}}}}$$
-
-  <p>為什麼要除以 $\\sqrt{{1-h_i}}$？因為每一筆殘差的變異數其實不一樣
-  （$\\mathrm{{Var}}(e_i) = \\sigma^2(1-h_i)$）——高槓桿點的殘差天生就小，
-  直接比原始殘差對它不公平。學生化之後才有共同尺度，|rᵢ| > 3 就可疑。</p>
-
-  <p><strong>槓桿值</strong> $h_i$ 是帽子矩陣的對角元，衡量「第 i 筆的 x 有多不尋常」。
-  簡單線性迴歸有明確公式：</p>
-
-  $$h_i = \\frac{{1}}{{n}} + \\frac{{(x_i-\\bar x)^2}}{{\\sum_{{j=1}}^{{n}}(x_j-\\bar x)^2}}$$
-
-  <p>它介於 1/n 與 1 之間，而且<strong>所有 $h_i$ 的平均恰好是 (p+1)/n</strong>。
-  遠超過這個平均（實務上常用 2 倍或 3 倍當門檻）就是高槓桿點。</p>
+{P06_TOOLS_A}
 
 {info("最危險的組合是「離群值 ＋ 高槓桿」", '''只是離群值（y 怪、x 正常）：它會推高 RSE、
   拉低 R²，但因為槓桿小，對係數的影響有限。<br>
   只是高槓桿（x 怪、但落在趨勢上）：它其實幫忙。把 x 的範圍拉開會<strong>降低</strong>
-  SE(β̂₁)。<br>
+  $\\mathrm{{SE}}(\\hat\\beta_1)$。<br>
   兩個同時發生（ISLP 圖 3.13 的第 41 筆）：<strong>一個點就能把整條線扳過去</strong>，
   而且因為槓桿高、殘差被壓小，它在原始殘差圖上還不一定顯眼。
-  這就是為什麼一定要看「殘差 vs 槓桿值」那張圖，
-  以及為什麼 Cook's distance（同時算進兩者）是標準工具。''', "warm")}
+  這就是為什麼一定要看殘差對槓桿圖，以及為什麼上面的 Cook's distance
+  把兩者一起算進去。''', "warm")}
 
-  <p>第六個問題自己一節。<strong>共線性</strong>是指兩個以上的預測變數彼此高度相關。
-  它不會讓估計有偏，但會讓 RSS 的等高線<strong>從碗變成一條狹長的溝</strong>——
-  沿著溝走，RSS 幾乎不變，於是「哪一組係數最好」變得極難分辨。
-  量化的工具是變異數膨脹因子：</p>
+{P06_TOOLS_B}
 
   $$\\mathrm{{VIF}}(\\hat\\beta_j) = \\frac{{1}}{{1 - R^2_{{X_j \\mid X_{{-j}}}}}}
     \\qquad\\Longrightarrow\\qquad
@@ -778,6 +1094,7 @@ BODIES["problems"] = f"""
   <p>$R^2_{{X_j \\mid X_{{-j}}}}$ 是「拿 $X_j$ 對其他所有預測變數做迴歸」得到的 R²。
   它接近 1 就代表 $X_j$ 的資訊已經被別人講完了，VIF 就會變得很大。
   最小值是 1（完全無共線性），<strong>超過 5 或 10 就要處理</strong>。
+  講義給的處理方式有兩個：拿掉其中一個多餘的變數；或把共線的變數合成一個（例如取平均）。
   推下面這根滑桿，看信賴區域怎麼從圓變成溝：</p>
 
 {viz(svg("w03vifSvg", 330),
@@ -815,6 +1132,10 @@ BODIES["problems"] = f"""
      '<button class="btn btn-reset" onclick="w03vifHome()">重置</button>',
      provenance=("book-redraw", "依 ISLP 圖 3.15 與 VIF 公式重繪"))}
 
+  <p class="source-note">講義補充連結：<a href="https://stats.stackexchange.com/questions/545148/why-is-multicollinearity-different-than-correlation" target="_blank" rel="noopener">多重共線性與相關的差別</a>。</p>
+
+{P06_EXTRA}
+
   <h3 id="dx-prob">講義完整實作：VIF、多項式與 anova_lm</h3>
 {card("講義 03 · 用串列生成式算每一欄的 VIF", lab_code(CH, 87), None,
       src=src("87、89"),
@@ -846,7 +1167,7 @@ BODIES["problems"] = f"""
       [(True, "線性假設被違反了，係數本身的解讀就已經有問題，要先修模型的形狀",
         "對。這表示目前的線性條件平均形狀不合適。若 E[ε｜X] = 0 仍成立，誤差相關或異質變異主要使傳統 SE 與檢定失準；若外生性也失敗，係數同樣可能偏掉。修法是加 x²、log x，或第 7 章的樣條。ISLP 圖 3.9 左就是這個特徵，加了 horsepower² 之後 U 形就消失了。"),
        (False, "誤差不是常態分佈，應該對 y 取 log",
-        "不對，看錯圖了。常態性要看 <strong>Q-Q 圖</strong>，不是殘差 vs 擬合值。U 形講的是「模型的形狀錯了」，跟誤差的分佈是兩件事。"),
+        "不對。殘差對擬合值圖看的是形狀與散布，U 形講的是「模型的形狀錯了」，跟誤差的分布是兩件事；對 y 取 log 是講義處理<strong>漏斗形</strong>（異質變異）的方式，不是處理 U 形的。"),
        (False, "有離群值把殘差拉歪了，把最大的幾個殘差刪掉重新擬合就好",
         "不對。這裡的 U 形反映<strong>系統性</strong>的結構；刪掉最大的殘差之後，剩下的點仍會排成 U 形。應調整模型的形狀，避免刪除資料後仍留下同樣的問題。")])}
 
@@ -947,7 +1268,7 @@ BODIES["exercises"] = f"""
               "對應的結果變成 R² = Cor(y, ŷ)²",
         "對。多元的版本是 R² = Cor(Y, Ŷ)²，也就是反應變數與<strong>擬合值</strong>的相關係數平方。而且最小平方擬合出來的 Ŷ 有一個漂亮性質：在所有線性模型中，它讓這個相關係數最大。單變數時 ŷ 是 x 的線性函數，Cor(y, ŷ) = |Cor(y, x)|，兩個版本就對上了。"),
        (False, "因為多元迴歸的 R² 不再介於 0 與 1 之間",
-        "不對。含截距的最小平方多元迴歸，R² 照樣介於 0 與 1（推理跟簡單迴歸一樣：只用 ȳ 猜是它的一個特例）。會跑出負值的是沒有截距、或在測試資料上算的情況。"),
+        "不對。含截距的最小平方多元迴歸，R² 照樣介於 0 與 1（推理跟簡單迴歸一樣：只用 $\\bar y$ 猜是它的一個特例）。會跑出負值的是沒有截距、或在測試資料上算的情況。"),
        (False, "因為多元迴歸要用調整後 R²，普通 R² 不再有意義",
         "不對。普通 R² 的意義沒有改變（被解釋的變異比例），它只是<strong>不適合用來比較變數個數不同的模型</strong>。調整後 R² 是為了那個特定用途才發明的，不是因為普通 R² 失效。")])}
 """
@@ -993,6 +1314,12 @@ BODIES["reference"] = f"""
         ["最小平方解",
          "$\\hat\\beta_1 = \\frac{\\sum(x_i-\\bar x)(y_i-\\bar y)}{\\sum(x_i-\\bar x)^2}$，"
          "$\\hat\\beta_0 = \\bar y - \\hat\\beta_1\\bar x$", "式 3.4；必過 $(\\bar x,\\bar y)$"],
+        ["斜率＝加權平均",
+         "$\\hat\\beta_1=\\sum_i w_is_i$，$w_i=\\frac{(x_i-\\bar x)^2}{S_{xx}}$，$s_i=\\frac{y_i-\\bar y}{x_i-\\bar x}$",
+         "講義；離 $\\bar x$ 遠的點權重大"],
+        ["斜率＝y 的線性組合",
+         "$\\hat\\beta_1=\\sum_i c_iy_i$，$c_i=\\frac{x_i-\\bar x}{S_{xx}}$",
+         "$\\sum c_i=0$、$\\sum c_ix_i=1$；常態誤差下 $\\hat\\beta_1$ 服從常態"],
         ["矩陣寫法", "$\\hat\\beta = (X^\\top X)^{-1}X^\\top y$", "多元迴歸的封閉解"],
         ["斜率的標準誤", "$\\mathrm{SE}(\\hat\\beta_1)^2 = \\sigma^2/\\sum(x_i-\\bar x)^2$",
          "式 3.8；x 散得開就小"],
@@ -1002,6 +1329,12 @@ BODIES["reference"] = f"""
         ["95% 信賴區間", "$\\hat\\beta_1 \\pm 2\\,\\mathrm{SE}(\\hat\\beta_1)$",
          "式 3.9；嚴格版用 t 分位數"],
         ["t 統計量", "$t = \\hat\\beta_1/\\mathrm{SE}(\\hat\\beta_1)$", "式 3.14；df = n−2"],
+        ["平均反應的 CI",
+         "$\\hat y_0\\pm t_{\\alpha/2,n-2}\\,\\hat\\sigma\\sqrt{\\frac1n+\\frac{(x_0-\\bar x)^2}{S_{xx}}}$",
+         "在 $\\bar x$ 最窄；n 大時縮到 0"],
+        ["新觀測的 PI",
+         "$\\hat y_0\\pm t_{\\alpha/2,n-2}\\,\\hat\\sigma\\sqrt{1+\\frac1n+\\frac{(x_0-\\bar x)^2}{S_{xx}}}$",
+         "根號裡多 1，一定比 CI 寬"],
         ["殘差標準誤", "$\\mathrm{RSE} = \\sqrt{\\mathrm{RSS}/(n-p-1)}$",
          "式 3.15／3.25；有單位"],
         ["R²", "$R^2 = 1 - \\mathrm{RSS}/\\mathrm{TSS}$",
@@ -1012,7 +1345,10 @@ BODIES["reference"] = f"""
         ["學生化殘差", "$r_i = e_i/(\\mathrm{RSE}\\sqrt{1-h_i})$", "$|r_i|>3$ 可疑"],
         ["槓桿值",
          "$h_i = \\frac1n + \\frac{(x_i-\\bar x)^2}{\\sum(x_j-\\bar x)^2}$",
-         "式 3.37；平均恰為 $(p+1)/n$"],
+         "式 3.37；平均恰為 $(p+1)/n$；$h_i=1/n+w_i$"],
+        ["Cook's distance",
+         "$D_i=\\frac{r_i^2}{p+1}\\cdot\\frac{h_i}{1-h_i}$",
+         "同時算進殘差與槓桿；影響圖的氣泡大小"],
         ["VIF", "$\\mathrm{VIF}(\\hat\\beta_j) = 1/(1-R^2_{X_j\\mid X_{-j}})$",
          "$>5$ 或 $10$ 要處理；SE 膨脹 $\\sqrt{\\mathrm{VIF}}$"],
         ["交互作用", "$Y = \\beta_0 + (\\beta_1+\\beta_3X_2)X_1 + \\beta_2X_2 + \\varepsilon$",
@@ -1041,13 +1377,13 @@ BODIES["reference"] = f"""
   <strong>同一欄資料，三個結論。</strong>差別只在「控制了什麼」。</p>
 
   <h3>六個潛在問題的一頁速查</h3>
-{table(["問題", "看哪張圖／哪個數字", "會影響係數嗎", "會影響 SE／檢定嗎"],
-       [["1. 非線性", "殘差 vs 擬合值（U 形）", "<strong>會</strong>", "會"],
-        ["2. 誤差相關", "殘差按順序排列、Durbin–Watson", "外生性成立時不必然", "<strong>會（方向不固定）</strong>"],
-        ["3. 異質變異", "殘差圖漏斗形、scale-location", "外生性成立時不會", "<strong>會</strong>"],
-        ["4. 離群值", "學生化殘差 $|r_i|>3$", "可能（槓桿低時影響小）", "會（RSE 變大）"],
-        ["5. 高槓桿", "$h_i \\gg (p+1)/n$", "<strong>會（一個點就夠）</strong>", "會"],
-        ["6. 共線性", "相關矩陣、VIF", "外生性成立時不會",
+{table(["問題", "診斷工具（標準名稱）", "會影響係數嗎", "會影響 SE／檢定嗎"],
+       [["1. 非線性", "殘差圖（residual plot）出現 U 形", "<strong>會</strong>", "會"],
+        ["2. 誤差相關", "殘差對觀測順序圖（residuals vs time／order plot）", "外生性成立時不必然", "<strong>會（通常低估）</strong>"],
+        ["3. 異質變異", "殘差圖呈漏斗形", "外生性成立時不會", "<strong>會</strong>"],
+        ["4. 離群值", "學生化殘差圖（studentized residual plot）$|r_i|>3$", "可能（槓桿低時影響小）", "會（RSE 變大）"],
+        ["5. 高槓桿", "槓桿統計量 $h_i \\gg (p+1)/n$、Cook's distance、影響圖", "<strong>會（一個點就夠）</strong>", "會"],
+        ["6. 共線性", "相關矩陣（correlation matrix）、VIF", "外生性成立時不會",
          "<strong>會（SE 膨脹 $\\sqrt{\\mathrm{VIF}}$）</strong>"]])}
 
 {info("三個一定要記住的觀念", '''<strong>1. 多元迴歸係數描述控制模型中其他變數後的條件平均差。</strong>
@@ -1150,19 +1486,8 @@ $$\hat\beta_{(i)}=\hat\beta-\frac{(X^TX)^{-1}x_ie_i}{1-h_{ii}},\qquad
 常態模型下，刪除模型對第 i 筆的預測誤差除以其真實標準差為標準常態，且與刪除模型的 RSS 獨立。
 除以獨立的 $\sqrt{\chi^2_{\nu-1}/(\nu-1)}$，便得到外部學生化的 t 分布。</p>
 """) + r"""
-<h3>殘差為什麼對擬合值畫？</h3>
-<p>在相同訓練資料、含截距的 OLS 中，殘差與擬合值正交。
-但觀測值 $y_i=\hat y_i+e_i$ 本身含有殘差，所以把 e 對原始 y 畫，可能僅因兩者共用 e 就出現關聯。
-殘差對擬合值或個別解釋變數的圖較適合檢查平均形狀與散布；非線性或異質變異仍須結合模型與資料判斷。</p>
-""" + proof('w03proofResidualAxes','殘差與觀測值的共用成分',r"""
-<p>在 $\operatorname{Cov}(\varepsilon\mid X)=\sigma^2I$ 下，$e=(I-H)\varepsilon$、$\hat y=X\beta+H\varepsilon$，故</p>
-$$\operatorname{Cov}(e,\hat y\mid X)=\sigma^2(I-H)H=0,\qquad
-\operatorname{Cov}(e,y\mid X)=\sigma^2(I-H).$$
-<p>單筆的共變異數因此為 $\sigma^2(1-h_{ii})$，通常為正；即使線性平均模型正確，也不應期待 e 與原始 y 無關。</p>
-""") + r"""
-
-<p class="source-note">來源：講義 03 pp.39–47 的殘差、相關與槓桿討論；
-<a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/influence.measures.html">R 官方刪除診斷</a>區分整體與 leave-one-out 的變異估計。
+<p class="source-note">來源：講義的殘差、相關與槓桿討論；
+<a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/influence.measures.html" target="_blank" rel="noopener">R 官方刪除診斷</a>區分整體與 leave-one-out 的變異估計。
 </p>
 """
 BODIES['accuracy'] += r"""
@@ -1738,6 +2063,149 @@ function w03interDraw() {
   }
 }
 
+/* ---------- P02 CI 帶與 PI 帶（講義的兩條公式） ---------- */
+let w03bandSvc = null, w03bandDrawNo = 0;
+function w03tq975(nu) {
+  /* t 分布 0.975 分位數的 Cornish–Fisher 近似；nu ≥ 5 時誤差小於 0.03 */
+  const z = 1.959964;
+  return z + (z * z * z + z) / (4 * nu) + (5 * Math.pow(z, 5) + 16 * z * z * z + 3 * z) / (96 * nu * nu);
+}
+function w03bandSetup() {
+  w03bandSvc = HC.svg('w03bandSvg', { xd: [0, 10], yd: [-12, 45], h: 330 });
+  if (!w03bandSvc) return;
+  w03bandSvc.grid(5, 5, { xtitle: 'x', ytitle: 'y', xdec: 0, ydec: 0 });
+  ['pi', 'ci', 'pts', 'fit'].forEach(function (l) { w03bandSvc.layer(l); });
+}
+function w03bandRedraw() { w03bandDrawNo += 1; w03bandRender(); }
+function w03bandReset() {
+  w03bandDrawNo = 0;
+  if ($('w03bandN')) $('w03bandN').value = '40';
+  if ($('w03bandS')) $('w03bandS').value = '25';
+  w03bandRender();
+}
+function w03bandRender() {
+  const s = w03bandSvc;
+  if (!s) return;
+  const n = $('w03bandN') ? parseInt($('w03bandN').value, 10) : 40;
+  const sig = $('w03bandS') ? parseInt($('w03bandS').value, 10) / 10 : 2.5;
+  if ($('w03bandNv')) $('w03bandNv').textContent = n;
+  if ($('w03bandSv')) $('w03bandSv').textContent = HC.fmt(sig, 1);
+  const rand = HC.stat.lcg(4200 + w03bandDrawNo * 101 + n);
+  const xs = HC.stat.seq(0.3, 9.7, n);
+  const ys = xs.map(function (x) { return 2 + 3 * x + sig * HC.stat.normal(rand); });
+  const f = HC.stat.ols(xs, ys);
+  const mx = HC.stat.mean(xs);
+  let sxx = 0;
+  for (let i = 0; i < n; i++) sxx += (xs[i] - mx) * (xs[i] - mx);
+  const t = w03tq975(n - 2);
+  const grid = HC.stat.seq(0, 10, 61), ci = [], pi = [];
+  grid.forEach(function (x) {
+    const m = f.b0 + f.b1 * x, q = 1 / n + (x - mx) * (x - mx) / sxx;
+    const hc = t * f.rse * Math.sqrt(q), hp = t * f.rse * Math.sqrt(1 + q);
+    ci.push([x, m + hc, m - hc]);
+    pi.push([x, m + hp, m - hp]);
+  });
+  s.area(pi, { cls: 'w03piband', fill: 'rgba(26,107,74,.18)' }, s.clearLayer('pi'));
+  s.area(ci, { cls: 'w03ciband', fill: 'rgba(44,62,122,.35)' }, s.clearLayer('ci'));
+  const gp = s.clearLayer('pts');
+  for (let i = 0; i < n; i++) s.dot(xs[i], ys[i], { r: 2.6, fill: HC.tok.train, opacity: 0.7 }, gp);
+  s.poly([[0, f.b0], [10, f.b0 + 10 * f.b1]], { cls: 'fit', sw: 2.4 }, s.clearLayer('fit'));
+  const hc0 = t * f.rse / Math.sqrt(n), hp0 = t * f.rse * Math.sqrt(1 + 1 / n);
+  $('w03bandNr').textContent = n;
+  $('w03bandRse').textContent = HC.fmt(f.rse, 2);
+  $('w03bandCi').textContent = '± ' + HC.fmt(hc0, 2);
+  $('w03bandPi').textContent = '± ' + HC.fmt(hp0, 2);
+  $('w03bandRatio').textContent = HC.fmt(hp0 / hc0, 1) + ' 倍';
+  setStatus('w03bandStatus', 'n = ' + n + '、σ = ' + HC.fmt(sig, 1) + '：在 x 的平均處，CI 半寬 ± '
+    + HC.fmt(hc0, 2) + '、PI 半寬 ± ' + HC.fmt(hp0, 2) + '。CI 隨 1/√n 縮小，PI 最窄也有 ±t·σ̂。');
+}
+
+/* ---------- P06 殘差圖的三種橫軸 ---------- */
+const w03axisN = 60;
+let w03axisSvc = null, w03axisMode = 'fit', w03axisShuffle = 0, w03axisD = null;
+function w03axisMake() {
+  const rand = HC.stat.lcg(7301);
+  const xs = [], ys = [];
+  for (let i = 0; i < w03axisN; i++) {
+    const x = 0.3 + 9.4 * rand();
+    xs.push(x);
+    ys.push(2 + 0.8 * x + 2.5 * HC.stat.normal(rand));
+  }
+  const f = HC.stat.ols(xs, ys);
+  const fit = xs.map(function (x) { return f.b0 + f.b1 * x; });
+  const res = ys.map(function (y, i) { return y - fit[i]; });
+  const order = xs.map(function (_, i) { return i; });
+  w03axisD = { xs: xs, ys: ys, fit: fit, res: res, order: order, r2: f.r2 };
+}
+function w03axisSetup() {
+  w03axisSvc = HC.svg('w03axisSvg', { xd: [0, 1], yd: [-10, 10], h: 320 });
+  if (!w03axisSvc) return;
+  w03axisMake();
+  ['zero', 'pts', 'trend'].forEach(function (l) { w03axisSvc.layer(l); });
+}
+function w03axisSet(mode) { w03axisMode = mode; w03axisDraw(); }
+function w03axisShuffleOrder() {
+  if (!w03axisD) return;
+  w03axisShuffle += 1;
+  const rand = HC.stat.lcg(9100 + w03axisShuffle * 37);
+  const o = w03axisD.order;
+  for (let i = o.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1)), tmp = o[i];
+    o[i] = o[j]; o[j] = tmp;
+  }
+  w03axisMode = 'idx';
+  w03axisDraw();
+}
+function w03axisReset() { w03axisShuffle = 0; w03axisMake(); w03axisMode = 'fit'; w03axisDraw(); }
+function w03axisDraw() {
+  const s = w03axisSvc, D = w03axisD;
+  if (!s || !D) return;
+  let hx, title, lo, hi, label;
+  if (w03axisMode === 'idx') {
+    const pos = new Array(D.order.length);
+    D.order.forEach(function (idx, k) { pos[idx] = k + 1; });
+    hx = pos; title = '觀測編號 i（目前的排列順序）'; lo = 0; hi = w03axisN + 1; label = '觀測編號 i';
+  } else if (w03axisMode === 'y') {
+    hx = D.ys; title = '觀測值 y'; label = '觀測值 y';
+    lo = Math.min.apply(null, D.ys) - 1; hi = Math.max.apply(null, D.ys) + 1;
+  } else {
+    hx = D.fit; title = '擬合值 ŷ'; label = '擬合值 ŷ';
+    lo = Math.min.apply(null, D.fit) - 1; hi = Math.max.apply(null, D.fit) + 1;
+  }
+  s.domain([lo, hi], [-10, 10]);
+  s.grid(5, 4, { xtitle: title, ytitle: '殘差 e', xdec: w03axisMode === 'idx' ? 0 : 1, ydec: 0 });
+  s.seg(lo, 0, hi, 0, { cls: 'truef', sw: 1.4 }, s.clearLayer('zero'));
+  const gp = s.clearLayer('pts');
+  for (let i = 0; i < w03axisN; i++) s.dot(hx[i], D.res[i], { r: 3.6, fill: HC.tok.train, opacity: 0.8 }, gp);
+  const f = HC.stat.ols(hx, D.res);
+  s.poly([[lo, f.b0 + f.b1 * lo], [hi, f.b0 + f.b1 * hi]], { cls: 'fit', sw: 2.2 }, s.clearLayer('trend'));
+  const mx = HC.stat.mean(hx), my = HC.stat.mean(D.res);
+  let sxy = 0, sxx = 0, syy = 0;
+  for (let i = 0; i < w03axisN; i++) {
+    sxy += (hx[i] - mx) * (D.res[i] - my);
+    sxx += (hx[i] - mx) * (hx[i] - mx);
+    syy += (D.res[i] - my) * (D.res[i] - my);
+  }
+  const corr = sxy / Math.sqrt(sxx * syy), r2 = D.r2;
+  $('w03axisModeV').textContent = label;
+  $('w03axisCorr').textContent = HC.fmt(corr, 3);
+  $('w03axisSlope').textContent = HC.fmt(f.b1, 3);
+  $('w03axisR2').textContent = HC.fmt(r2, 3);
+  if (w03axisMode === 'y') {
+    $('w03axisPred').textContent = '相關 √(1−R²) = ' + HC.fmt(Math.sqrt(1 - r2), 3) + '、斜率 1−R² = ' + HC.fmt(1 - r2, 3);
+    setStatus('w03axisStatus', '橫軸是 y：相關係數 ' + HC.fmt(corr, 3) + ' 正好是 √(1−R²)，斜率 ' + HC.fmt(f.b1, 3)
+      + ' 正好是 1−R²。這條上升趨勢是內建的假象，不是模型誤設。');
+  } else if (w03axisMode === 'idx') {
+    $('w03axisPred').textContent = '沒有理論值：編號不帶資訊';
+    setStatus('w03axisStatus', '橫軸是觀測編號：這份橫斷面資料的編號沒有意義。再按一次「洗牌觀測順序」，'
+      + '這張圖會整個變樣，ŷ 與 y 兩張圖則完全不變（已洗牌 ' + w03axisShuffle + ' 次）。');
+  } else {
+    $('w03axisPred').textContent = '相關 0、斜率 0（正交）';
+    setStatus('w03axisStatus', '橫軸是 ŷ：殘差與擬合值正交，最小平方斜率 ' + HC.fmt(f.b1, 3)
+      + '、相關係數 ' + HC.fmt(corr, 3) + '，只剩浮點誤差。看到的任何形狀都是真的。');
+  }
+}
+
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。
    Chart.js 從 CDN 載不到時 HC.ready() 不會執行，若把 SVG 初始化放進去，
@@ -1748,10 +2216,14 @@ w03rssSetup();
 w03sampSetup();
 w03vifSetup();
 w03interSetup();
+w03bandSetup();
+w03axisSetup();
 w03dragReset();
 w03sampReset();
 w03vifDraw();
 w03interDraw();
+w03bandRender();
+w03axisDraw();
 HC.ready(function () {
   w03diagDraw();
   w03sampHist();

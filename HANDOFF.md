@@ -22,7 +22,7 @@
 |---|---|---|---|---|---|---|
 | `introduction` | Ch.1 | 160 KB | 1 | 3 | 23 | — |
 | `statistical_learning` | Ch.2 | 253 KB | 2 | 7 | 26 | — |
-| `linear_regression` | Ch.3 | 261 KB | 4 | 5 | 28 | 6 |
+| `linear_regression` | Ch.3 | 306 KB | 2 | 7 | 32 | 5 |
 | `classification` | Ch.4 | 218 KB | 2 | 5 | 28 | 6 |
 | `resampling_methods` | Ch.5 | 162 KB | 5 | 3 | 23 | — |
 | `model_selection` | Ch.6 | 205 KB | 6 | 4 | 27 | — |
@@ -602,3 +602,31 @@ Codex 建議把類別數改記成 `C`，但那會跟講義與 ISLP 的符號不�
 `validate.py --net` 0 失敗、`check_taiwan_wording.py` PASS、
 `browser_check.js` 對五頁 0 問題。契約條文見 `tools/STYLE_CONTRACT.md` §6「英文的去留」。
 
+## 20. 第 3 章依講義 03 重整：LINE 前移、推導補齊、因果與區間釐清、診斷工具箱（2026-09-22）
+
+使用者看完 `linear_regression.html` 後提出九點加兩則插話，核心是「照講義循序漸進」。
+決策（grill 確認）：因果段改成**中介為主、混淆作對照**；LINE 移到 P01 開頭可見；
+兩個新的概念互動圖都加；診斷工具**嚴格只講講義工具**，其餘收合；工具一律「中文（標準英文名）」。
+
+| 節 | 改動 | 新 id |
+|---|---|---|
+| P01 `slr` | 開頭改為講義 p.4 的模型與 LINE 四假設，附「哪個結果需要哪個假設」表；新可見小節「斜率是個別資料點斜率的加權平均」（$\hat\beta_1=\sum w_is_i$、$h_i=1/n+w_i$ 預告）與「尺度與標準化不改變擬合值」 | `w03proofScale` |
+| P02 `inference` | 命名抽樣分布並接到 `w03samp` 直方圖；可見寫出 $\hat\beta_1=\sum c_iy_i$ 與 $\sum c_i=0$、$\sum c_ix_i=1$ → SE；常態→t→區間收合；散文中 `β̂₁` 等 Unicode 組合字元改為 MathJax（修正顯示異常）；刪除 LINE Q&A；新可見小節「信賴區間與預測區間：兩個問題、兩種寬度」含講義兩式、教材數字與 CI／PI 帶元件；徽章加 `3.2.2`、`p.23–24` | `w03-detail-normal-ci`、`w03band*` |
+| P04 `mlr` | newspaper Q&A 重寫：中介結構（newspaper→radio→sales）為主，共同原因的混淆結構作對照，兩張靜態 SVG DAG，明講迴歸分不出兩者；附 causeweb 漫畫連結 | `w03dagArrowMed`、`w03dagArrowConf` |
+| P06 `problems` | 開頭「LINE 失效會壞掉什麼」；六問題表改五欄（工具標準名／為什麼看得到／講義處理）；新可見小節「診斷圖的橫軸為什麼是 ŷ」含三軸洗牌元件與既有 `w03proofResidualAxes`；逐工具小節：殘差圖、殘差對觀測順序圖、學生化殘差圖、槓桿＋Cook's distance（講義 p.47 公式）＋影響圖、相關矩陣＋VIF；Q-Q、scale-location、Durbin–Watson、WLS、穩健 SE 移入收合；講義 StackExchange／Wikipedia 補充連結 | `w03axis*`、`w03-detail-extra-diagnostics` |
+| `reference` | 公式速查加加權平均、線性組合、CI／PI、Cook's distance；六問題速查改標準名 | — |
+
+其他檔案：`reading_flow_ch1_6.py` 的 `GROUPS[3]['problems']` 移除 `residual-geometry`（改可見），
+`BRIDGES[3]['inference']` 改為只指回 P01 的 LINE；`pages.py` P02 徽章；
+`data/flashcards_zh/ch3.json` 修 VIF 卡的裸 LaTeX、新增「抽樣分布」「Cook's Distance」「中介變數」三張。
+講義的 PSU（online.stat.psu.edu）連結一律**不放**：本機連不上，`validate.py --net` 會以連線例外 fail；
+StackExchange 對 HEAD 回 403，只 warn。
+
+驗收（log 與截圖在 `tools/verification/regression-lecture-order-20260922/`）：
+`rebuild_content.py` 保留 FRAMES（`git diff` 的 `const FRAMES_` 行數 0）；`validate.py --net` 對第 3 章 0 失敗
+（全站僅 `support_vector_machines` 三條既存的 NTU SSL 連結失敗）；`check_taiwan_wording`、`check_reader_contract`、
+`check_lab_rendered`、`check_teaching_scope`、`check_visual_claims`、`check_reading_flow` 全過；
+`check_english_prose` 0 處；`browser_check.js` 0 問題（2 圖表、7 SVG、22 按鈕、32 詞彙卡）；
+`test_reader_fixes.py` 的兩個失敗（`FRAMES_w08*` 與 `lab_ch1.md` 基準）在 HEAD 上同樣失敗，與本次無關。
+數學性質（$\sum w_i=1$、$\sum c_i=0$、$\sum c_ix_i=1$、$h_i=1/n+w_i$、$\mathrm{Corr}(e,y)=\sqrt{1-R^2}$、
+斜率 $1-R^2$、Cook's D 兩式相等、尺度不變）以 numpy 隨機資料逐項核對。
