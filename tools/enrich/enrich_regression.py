@@ -183,7 +183,7 @@ $$\hat\beta_1'=\frac{\sum_i (x_i'-\bar x')(y_i-\bar y)}{\sum_i (x_i'-\bar x')^2}
 """
 
 # ── 講義 p.7–11：抽樣分布、線性組合 → 常態 → t → 區間（收合） ──
-NORMAL_DETAIL = detail('w03-detail-normal-ci', '計算細節：β̂₁ 是 y 的線性組合，所以服從常態', r"""
+NORMAL_DETAIL = detail('w03-detail-normal-ci', '計算細節：斜率估計是 y 的線性組合，所以服從常態', r"""
 <p>P01 的 N 假設到這裡才派上用場。若 $\varepsilon_i$ 獨立且服從 $N(0,\sigma^2)$，則每個 $y_i$ 是獨立的常態變數，
 而<strong>獨立常態變數的線性組合仍是常態</strong>。所以</p>
 $$\hat\beta_1=\sum_i c_i\,y_i\ \sim\ N\!\left(\beta_1,\ \frac{\sigma^2}{S_{xx}}\right),\qquad
@@ -238,7 +238,7 @@ CIPI_SECTION = r"""
                       ("CI 半寬", "—", "w03bandCi"), ("PI 半寬", "—", "w03bandPi"),
                       ("PI 半寬 ÷ CI 半寬", "—", "w03bandRatio")], "LIVE"),
            info_card("怎麼看這張圖",
-                     '深藍帶是 CI、淡綠帶是 PI，兩條都在 x̄ 最窄、往兩側張開。'
+                     '深藍帶是 CI、淡綠帶是 PI，兩條都在 $\\bar x$ 最窄、往兩側張開。'
                      '<br>① 把 n 拉大：CI 明顯變窄，PI 幾乎不動，因為個體的 ε 不會因為樣本多而變小；'
                      '<br>② 把 σ 拉大：兩條都變寬，但 PI 寬得多；'
                      '<br>③ 按「重抽一次」：換一份樣本，線與帶都會動，這就是 P02 開頭的抽樣變動。'),
@@ -481,7 +481,7 @@ BODIES["slr"] = f"""
                 '用滑鼠或手指<strong>直接把點拖走</strong>。三件事值得試：'
                 '<br>① 把某一點往上下拖 → 看 RSS 怎麼跳；'
                 '<br>② 把<strong>最右邊</strong>那點上下拖 → 斜率動得比拖中間的點厲害得多：'
-                '它離 x̄ 最遠、權重 wᵢ 最大，這也是 P06「高槓桿點」的預告；'
+                '它離 $\\bar x$ 最遠、權重 $w_i$ 最大，這也是 P06「高槓桿點」的預告；'
                 '<br>③ 把所有點排成一條線 → RSS 趨近 0、R² 趨近 1。'),
       info_card("對照課本",
                 'ISLP 圖 3.1 是同一件事的 Advertising 版本：'

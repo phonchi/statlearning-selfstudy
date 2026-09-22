@@ -627,6 +627,6 @@ StackExchange 對 HEAD 回 403，只 warn。
 （全站僅 `support_vector_machines` 三條既存的 NTU SSL 連結失敗）；`check_taiwan_wording`、`check_reader_contract`、
 `check_lab_rendered`、`check_teaching_scope`、`check_visual_claims`、`check_reading_flow` 全過；
 `check_english_prose` 0 處；`browser_check.js` 0 問題（2 圖表、7 SVG、22 按鈕、32 詞彙卡）；
-`test_reader_fixes.py` 的兩個失敗（`FRAMES_w08*` 與 `lab_ch1.md` 基準）在 HEAD 上同樣失敗，與本次無關。
+`test_reader_fixes.py` 的兩個失敗（`FRAMES_w08*` 與 `lab_ch1.md` 基準）在改動前的 HEAD 上同樣失敗，而且該測試在第一個不合就中止，不會走到第 3 章；因此另外直接比對：第 3 章 6 張 `.expected-out` 的 sha256 與順序與改動前完全相同（2026-09-06 的 baseline 記 12 張，是後來「依講義清理額外算例」那次提交留下的落差），`FRAMES_w03*` 與 baseline 逐 byte 相同。
 數學性質（$\sum w_i=1$、$\sum c_i=0$、$\sum c_ix_i=1$、$h_i=1/n+w_i$、$\mathrm{Corr}(e,y)=\sqrt{1-R^2}$、
 斜率 $1-R^2$、Cook's D 兩式相等、尺度不變）以 numpy 隨機資料逐項核對。
