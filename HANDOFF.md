@@ -630,3 +630,31 @@ StackExchange 對 HEAD 回 403，只 warn。
 `test_reader_fixes.py` 的兩個失敗（`FRAMES_w08*` 與 `lab_ch1.md` 基準）在改動前的 HEAD 上同樣失敗，而且該測試在第一個不合就中止，不會走到第 3 章；因此另外直接比對：第 3 章 6 張 `.expected-out` 的 sha256 與順序與改動前完全相同（2026-09-06 的 baseline 記 12 張，是後來「依講義清理額外算例」那次提交留下的落差），`FRAMES_w03*` 與 baseline 逐 byte 相同。
 數學性質（$\sum w_i=1$、$\sum c_i=0$、$\sum c_ix_i=1$、$h_i=1/n+w_i$、$\mathrm{Corr}(e,y)=\sqrt{1-R^2}$、
 斜率 $1-R^2$、Cook's D 兩式相等、尺度不變）以 numpy 隨機資料逐項核對。
+
+### 20.1 Codex（gpt-6-astra）獨立唯讀複查與後續修正（2026-09-22）
+
+依使用者要求，用 `claude-codex-collab` 的 supervisor 請 Codex（設定檔 model `gpt-6-astra`，read-only 沙箱）
+複查第 3 章的斷裂感、不一致與正確性。job ID `97568d2b-07b4-4409-94f0-aa883c875eb2`，
+prompt 與輸出在 `~/.local/share/claude-codex-collab/runs/97568d2b-…/`（不進 repo）。
+它回報 21 項，逐項核實後全部採納並修正（含既存問題），重點：
+
+- 假設對照表：PI 的常態要求不能靠大樣本放寬，拆成獨立一列；「標準誤公式」改標為估計量變異數。
+- 尺度不變：SE 用 $|s|$、只有 $s>0$ 時斜率 t 不變、截距的 t 一般會變；交叉引用改指「下一節的標準誤 QUIZ」與「下方的直方圖」。
+- 加權平均的求和明定只取 $x_i\ne\bar x$ 的項；LINE 的等價敘述補上各 $Y_i$ 相互獨立。
+- t 分位數全頁統一為 $t_{1-\alpha/2,\,n-2}$，並註明講義的 $t_{\alpha/2}$ 是同一個上尾臨界值。
+- 誤差相關的 SE 方向：限定「講義示範的正相關情境下低估」，一般方向視相關結構；資料複製例子改為「大約 $1/\sqrt2$」。
+- 因果段：壓抑效應改寫成「其他結構也可能…」，不再說兩張 DAG「同一個結構反過來」。
+- 既存錯誤：p 值不是係數除以 SE；沒有截距時失去的是 $\hat y=\bar y$，標準 ridge／lasso 訓練 R² 不為負；
+  未拒絕 $H_0$ 不寫成「無關」；換基準水準的敘述改為「可能改變」；KNN quiz 限定為圖 3.20 的實驗；
+  RSS「不可能上升」、R² 只是顯示值相同；$X^TX$ 是 $(p+1)\times(p+1)$；VIF 5／10 改為警戒值。
+- 速查表：共線性「仍無偏但不穩定」、高槓桿「可能，要合看殘差與 Cook's distance」。
+- 元件：殘差對槓桿圖的點大小改依 Cook's distance 編碼，名符其實成為影響圖；VIF 滑桿改千分之一刻度，
+  「跳到 Credit」改用 `FRAMES_w03vif.corr.limitRating`（0.9969，VIF 約 160）。
+
+同一輪依使用者指示，四圖診斷元件改成只放講義有教的四張圖：殘差圖／殘差對觀測順序圖／學生化殘差圖／殘差對槓桿圖（影響圖），
+Q-Q 與 scale-location 按鈕移除（說明仍在收合的延伸閱讀）；新增第 ⑥ 組「誤差相關（示意時間序列）」，
+資料在瀏覽器內以 `HC.stat.lcg(6103)` 產生 AR(1)、ρ = 0.9 的誤差，不動 `FRAMES_w03diag`；
+FRAMES 內含「配適值」與 scale-location 的舊旁白改由 JS 的 `w03diagNotes` 覆蓋。
+驗收：`validate.py --page linear_regression` 0 失敗、五支 check 腳本全過、`browser_check.js` 見 `browser_check_round2.log`，
+截圖 `shots/r2_*.png`。
+
