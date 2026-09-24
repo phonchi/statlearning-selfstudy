@@ -536,7 +536,7 @@ PAGES = [
         formula="β̂ = (XᵀX)⁻¹Xᵀy｜RSS｜SE 與 t 檢定｜F 檢定｜R² 與 RSE｜交互作用｜VIF",
         deck="03_Regression.pdf", deck_pages=70, lab="Ch03-linreg-lab-zh.ipynb",
         islp=3, islp_label="ISLP Ch.3", esl_label="ESL §3.1–3.3",
-        playlist="PLHNZtBNWQ-87GVk0NXHo19GPagNc7g-ba",
+        playlist="PLFJni7Ws0IM0",
         hero_svg=_svg_scatter(), bankquiz=True,
         group="core",
         secs=[
