@@ -562,6 +562,9 @@ PAGES = [
         plain="分類",
         subtitle="ISLP 第 4 章 — 對應講義 04",
         formula=r"$\operatorname{logit}(p)=\beta_0+\beta^\mathsf{T}x$｜勝算比｜Bayes 定理｜LDA｜QDA｜Naive Bayes｜混淆矩陣｜ROC 與 AUC",
+        # MathJax's zero-line-height inline boxes must allow tall glyphs to paint.
+        # Long equations keep the existing display-math / table scrolling.
+        page_css='mjx-container:not([display="true"]){overflow:visible;max-width:none;}',
         deck="04_Classification.pdf", deck_pages=61, lab="Ch04-classification-lab-zh.ipynb",
         islp=4, islp_label="ISLP Ch.4", esl_label="ESL §4.1–4.4",
         playlist="PLHNZtBNWQ-86o54cIAZDsEQH85i1Sf8XT",
