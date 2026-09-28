@@ -1154,7 +1154,8 @@ $$\ell(\beta)=\sum_i\left[\eta_{i,y_i}-\log\left(\sum_{\ell=1}^Ke^{\eta_{i\ell}}
 <p>Logistic regression 是<strong>判別式模型</strong>（discriminative model），直接描述 $P(Y=k\mid X=x)$。<strong>生成式模型</strong>（generative model）則先描述類別比例與各類的 $X$ 分布，組成聯合分布，再用 Bayes 定理求後驗機率。</p>
 <p>令 $\pi_k=P(Y=k)$ 為先驗機率，$f_k(x)$ 為 $X\mid Y=k$ 的密度。對連續 $X$，密度不是單點機率 $P(X=x\mid Y=k)$。分類用的是</p>
   $$P(Y=k\mid X=x)=\frac{\pi_kf_k(x)}{\sum_{\ell=1}^K\pi_\ell f_\ell(x)}.$$
-  <p>分母對所有類別相同，所以選 $\pi_kf_k(x)$ 最大的類別即可。和前面的 Bernoulli／Categorical 不同，這裡接下來的常態與共變異數限制是<strong>額外的模型假設</strong>，需要檢查是否適合資料。</p>
+  <p>對同一筆 $x$，若選第 $k$ 類，判錯的機率就是 $1-P(Y=k\mid X=x)$。因此，誤判代價相同時，選後驗機率最大的類別，會讓這筆資料的條件錯誤率最小。這是 Bayes 分類的理由；LDA／QDA 再用資料估計其中的機率，所以實際表現仍有估計誤差。</p>
+<p>分母對所有類別相同，所以選 $\pi_kf_k(x)$ 最大的類別即可。和前面的 Bernoulli／Categorical 不同，這裡接下來的常態與共變異數限制是<strong>額外的模型假設</strong>，需要檢查是否適合資料。</p>
 <details class="qa-item reading-detail" id="w04-detail-generative-uses"><summary>生成式模型除了分類，還能做什麼？</summary><div class="detail-body">
   <p>生成式模型同時描述「各類出現的比例」與「每一類裡的資料長什麼樣」。因此，有了先驗 $\pi_k$ 和類內分布 $f_k$，就能進一步討論整筆資料如何產生、常不常見，以及未觀測部分可能是什麼。</p>
   <h4>生成新的資料：先抽類別，再抽特徵</h4>
@@ -1264,6 +1265,14 @@ $$\ell(\beta)=\sum_i\left[\eta_{i,y_i}-\log\left(\sum_{\ell=1}^Ke^{\eta_{i\ell}}
 <p>矩陣寫法看似複雜，但令 $c_k=\Sigma^{-1}\mu_k$、$c_{k0}=-\mu_k^\mathsf T\Sigma^{-1}\mu_k/2+\log\pi_k$，就能看出</p>
   $$\boxed{\delta_k(x)=c_{k0}+c_{k1}x_1+\cdots+c_{kp}x_p}.$$
   <p>它是 $x$ 的線性函數（含截距）。比較兩類分數的邊界 $\delta_k(x)=\delta_\ell(x)$ 是超平面。在二維、三類的圖中，至多有三條兩兩分數相等的直線；只有沒有被第三類分數超過的部分才構成實際分類邊界。</p>
+<h3 id="w04-score-intuition">判別分數、機率與距離怎麼連起來？</h3>
+<p>$\delta_k(x)$ 是用來比較類別的分數，可以是負數，也不必介於 0 與 1。前面的推導保留了後驗機率的大小順序，因此分數最大的類，後驗機率也最大。若要把這裡的 LDA 分數還原成機率，可以再經過前面學過的 softmax：</p>
+  $$P(Y=k\mid X=x)=\frac{e^{\delta_k(x)}}{\sum_{\ell=1}^K e^{\delta_\ell(x)}}.$$
+  <p>這就連回 logistic regression：兩者都能用線性分數得到分類機率。LDA 先估各類的平均、共用共變異數與先驗，再算出線性分數；logistic 則直接用類別標籤估計線性分數的係數。因此形式相近，估計結果卻不一定相同。</p>
+<p>也可以從距離理解 LDA：<strong>看觀測離哪個類別中心較近，同時考慮類內散布與先驗。</strong>一維時，偏離中心一個單位算不算遠，要看這一類本來有多分散；多維時，還要看偏離的方向。</p>
+<p>前章判斷殘差大小會考慮其尺度；這裡則用特徵的類內散布調整距離。沿著資料雲本來就拉得很長的方向移動，比朝很窄的方向偏離更常見。這種同時考慮尺度與相關性的距離，就是 <strong>Mahalanobis 距離</strong>。只將各欄分別標準化，還沒有處理資料雲傾斜所反映的相關性。</p>
+<p>若各類都是同樣大小的球形、先驗也相同，就回到普通的「選最近中心」。先驗不同時，較常見的類別會得到較高的分數；前面的一維圖可以直接觀察先驗改變如何移動邊界。白化後為什麼能用普通距離比較，留在 Fisher LDA 收合區說明。</p>
+<p>延伸閱讀：<a href="https://arxiv.org/abs/1906.02590">Ghojogh 與 Crowley：LDA／QDA tutorial</a> 的第 5、7、9 節，分別連接判別分數、距離及 logistic regression。</p>
 <p>多變數時，類別平均改成向量，共用變異數改成共變異數矩陣：</p>
   $$\hat\mu_k=\frac1{n_k}\sum_{i:y_i=k}x_i,\qquad
   \hat\Sigma=\frac1{n-K}\sum_{k=1}^K\sum_{i:y_i=k}
@@ -1272,7 +1281,7 @@ $$\ell(\beta)=\sum_i\left[\eta_{i,y_i}-\log\left(\sum_{\ell=1}^Ke^{\eta_{i\ell}}
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：LDA 與邏輯斯迴歸都給線性邊界，那差在哪？什麼時候該選哪個？</summary>
-    <div class="qa-a"><p>差在<strong>係數是怎麼決定的</strong>。ISLP §4.5.1 把兩者都寫成同一個形式：</p><p>$\log\!\left(\frac{\Pr(Y=k|X=x)}{\Pr(Y=K|X=x)}\right) = a_k + \sum_{j=1}^{p} b_{kj}x_j$</p><p>兩邊的<strong>函數形式一模一樣</strong>，都是 x 的線性函數。差別是：LDA 的 $a_k, b_{kj}$ 是「假設各類 X 服從共用共變異數的常態」之後，由 $\hat\pi_k, \hat\mu_k, \hat\Sigma$ 算出來的；邏輯斯迴歸的係數則是直接讓<strong>條件概似</strong>最大。它不要求 X 的類內分布為常態，但仍對條件機率的形式作了假設。</p><p>可依資料與用途比較：</p><ul><li><strong>各類內的 X 真的近似常態、n 又小</strong>：共用共變異數也合理時，可優先比較 LDA。它利用了分布資訊，估計可能較穩定。ISLP 情境 1 中 LDA 表現良好。</li><li><strong>X 明顯不常態（重尾、類別型變數、極端值多）</strong>：可考慮邏輯斯迴歸，並評估條件機率形式是否合理。ISLP 情境 3 把資料換成 t 分布，邏輯斯就贏了 LDA。</li><li><strong>兩類完全可分</strong>：未正則化 logistic 可能沒有有限 MLE；共變異數能穩定估計時，可比較 LDA。</li><li><strong>要做推論、要 p 值、要處理類別型預測變數</strong>：邏輯斯迴歸能直接納入 indicator，並用係數、標準誤與檢定描述條件關聯。</li></ul><p>兩者可能給出相近的分類結果。以 Lag1、Lag2 擬合的 LDA 混淆矩陣（35／35／76／106）跟使用相同變數的邏輯斯<strong>相同</strong>。這是這份資料上的結果。式 4.32 只說兩者的 log-odds 都是線性形式；估計係數的方法不同，並不保證預測機率、分類結果或混淆矩陣相同。</p></div>
+    <div class="qa-a"><p>前面的 softmax 連結說明兩者可有相同的機率函數形式；這裡補充選擇時要檢查的條件。LDA 需要類內常態與共用共變異數，logistic 則直接限制 log-odds 的形式。</p><p>可依資料與用途比較：</p><ul><li><strong>各類內的 X 真的近似常態、n 又小</strong>：共用共變異數也合理時，可優先比較 LDA。它利用了分布資訊，估計可能較穩定。ISLP 情境 1 中 LDA 表現良好。</li><li><strong>X 明顯不常態（重尾、類別型變數、極端值多）</strong>：可考慮邏輯斯迴歸，並評估條件機率形式是否合理。ISLP 情境 3 把資料換成 t 分布，邏輯斯就贏了 LDA。</li><li><strong>兩類完全可分</strong>：未正則化 logistic 可能沒有有限 MLE；共變異數能穩定估計時，可比較 LDA。</li><li><strong>要做推論、要 p 值、要處理類別型預測變數</strong>：邏輯斯迴歸能直接納入 indicator，並用係數、標準誤與檢定描述條件關聯。</li></ul><p>兩者可能給出相近的分類結果。以 Lag1、Lag2 擬合的 LDA 混淆矩陣（35／35／76／106）跟使用相同變數的邏輯斯<strong>相同</strong>。這是這份資料上的結果。式 4.32 只說兩者的 log-odds 都是線性形式；估計係數的方法不同，並不保證預測機率、分類結果或混淆矩陣相同。</p></div>
   </details>
 </div>
 <details class="qa-item reading-detail" id="w04-detail-lab-lda-1"><summary>完整實作：擬合 LDA 並讀出估計的參數</summary>
@@ -1320,26 +1329,39 @@ Up           76  106</pre></div>
 <details class="qa-item reading-detail" id="w04-detail-fisher"><summary>延伸閱讀：Fisher 判別方向與 Iris 投影</summary>
 <div class="detail-body"><h3 id="w04fisher">LDA 與 Fisher LDA：分類規則與判別方向</h3>
 <p>生成式 LDA 從各類的常態分布與共用共變異數出發，計算後驗機率。
-Fisher 線性判別分析則直接尋找「類別平均分得開、同類資料又集中」的投影方向；
-定義這個準則不需要常態假設。當兩者使用相同的類別平均與共用類內共變異數時，判別方向有相同的幾何結構。</p>
+Fisher 線性判別分析先問另一個問題：<strong>把資料投影到哪個方向，最容易看出類別差異？</strong>
+投影就像把資料點在一條直線上留下位置；選不同方向，原本的兩團資料可能分開，也可能重疊。</p>
+<h4>平均分得開，還要看同類資料有多散</h4>
+<p>只比較兩個投影平均的距離還不夠。若平均雖然分開，每類資料卻在那個方向上散得很廣，兩類仍可能大量重疊。Fisher 因此同時看類間與類內散布：希望投影後各類中心分得開，同一類的資料又聚得近。</p>
+<p>這個準則使用類別標籤，但定義它不需要常態假設。使用相同的類別平均與 pooled 類內共變異數時，它找到的方向和生成式 LDA 的判別方向相連；要變成完整分類規則，仍須加上切點與先驗。</p>
+<h4>白化：先把各個方向的尺度調整好</h4>
 <p>先把 LDA 的分數改寫成距離。省略與類別無關的項，分類等同於最小化</p>
 $$\frac12(x-\mu_k)^T\Sigma^{-1}(x-\mu_k)-\log\pi_k.$$
 <p>第一項是 Mahalanobis 距離平方的一半。令 $z=\Sigma^{-1/2}x$、
 $m_k=\Sigma^{-1/2}\mu_k$，就是把共用類內共變異數變成單位矩陣的<strong>白化（whitening）</strong>。
 此時第一項變成 $\|z-m_k\|^2/2$。先驗相等時選最近的中心；先驗不等時仍須扣掉 $\log\pi_k$，
 較常見的類別因而得到較大的決策區域。</p>
-<p>白化可以想成先轉動座標，再依類內散布縮放各方向，讓同類資料不再沿某個方向特別拉長。這時 Mahalanobis 距離就成了普通的 Euclidean 距離。</p>
+<p>白化可想成先沿著資料雲的主要方向重新取座標，再依各方向的類內標準差縮放。原本的橢圓形散布因而變成球形，在這個座標裡用普通的 Euclidean 距離，就等於原座標裡的 Mahalanobis 距離。LDA 對所有類別使用同一個轉換，因為它們共用共變異數。</p>
+<p><strong>白化本身不一定降維。</strong>共變異數正定時，白化只是可逆的座標轉換，原有方向都還在。下一步才是只保留分類所需的方向。</p>
+<h4>為什麼還能再降到 K−1 維？</h4>
 <p>白化後的 $K$ 個平均向量 $m_1,\ldots,m_K$ 都在某個至多 $K-1$ 維的仿射子空間 $H$：兩點在一條線上，三點在一個平面上。把新點 $z$ 投影到 $H$，各類距離平方都減去相同的垂直距離：</p>
 $$\|z-m_k\|^2=\|\operatorname{proj}_H(z)-m_k\|^2+
 \|z-\operatorname{proj}_H(z)\|^2.$$
 <p>最後一項不隨類別改變，因此投影不會改變距離的比較，加上相同的先驗修正後也保留分類。LDA 的分類資訊於是集中在至多 $\min(p,K-1)$ 維。這是白化後的幾何關係；不能直接在未白化的原始座標中用普通距離取代 Mahalanobis 距離。</p>
-<p>來源：<a href="https://scikit-learn.org/stable/modules/lda_qda.html#mathematical-formulation-of-lda-dimensionality-reduction">講義引用的 LDA 幾何與降維說明</a>。</p>
+<p>可以把兩個中心想成放在同一條線上。新點離這條線的垂直距離，對兩個中心都一樣；決定較靠近哪一個的，是沿線的位置。多類別只是把這條線換成容納所有中心的平面或更高維空間。保留整個空間時，不會丟掉 LDA 比較類別需要的資訊。</p>
+<p>來源：<a href="https://scikit-learn.org/stable/modules/lda_qda.html#mathematical-formulation-of-lda-dimensionality-reduction">講義引用的 LDA 幾何與降維說明</a>，以及 <a href="https://arxiv.org/abs/1906.02590">LDA／QDA tutorial 第 7–8 節</a>的距離與 Fisher 觀點。</p>
+<h4>和 PCA 比：散得最開的方向，未必最能分開類別</h4>
+<p>PCA 不使用類別標籤，尋找整體變異最大的方向。Fisher 則關心類別平均的差異，相對於各類內部散布有多明顯。</p>
+<p>想像兩類的中心主要是左右分開，每一類卻都上下拉得很長。若上下的類內變異足夠大，PCA 可能優先保留上下方向；Fisher 則可能選左右方向，因為它較能區分類別。兩者回答的問題不同，所以同樣投影到二維，也不一定得到相同的圖。</p>
+<p>Fisher 主要依靠類別平均與類內散布。如果同一類其實分成幾團，平均又剛好和另一類接近，這些摘要可能忽略重要結構。每類用一個 Gaussian 的 LDA／QDA 也有類似限制；實際資料形狀仍需檢查。</p>
+<h4>把直覺寫成 Fisher 準則</h4>
 <p>以 $n_k$ 表示第 k 類筆數、$\bar x_k$ 表示類平均、$\bar x$ 表示總平均，定義類內與類間散布矩陣：</p>
 $$W=\sum_{k=1}^K\sum_{i\in C_k}(x_i-\bar x_k)(x_i-\bar x_k)^T.$$
 $$B=\sum_{k=1}^K n_k(\bar x_k-\bar x)(\bar x_k-\bar x)^T.$$
 <p>$W$ 加總同類觀測的散布，$B$ 加總各類中心相對於總中心的散布；它們尚未除以自由度。
 投影成 $a^Tx$ 後，Fisher 比值為</p>
 $$J(a)=\frac{a^TBa}{a^TWa}.$$
+<p>分子衡量各類平均投影後有多分散，分母衡量同類資料投影後有多分散。比值大，表示類間差異相對於類內散布更明顯；把方向向量整體放大不會改善這個比值，所以重點是選方向。</p>
 <p>假設 $W$ 正定，Fisher 最優方向滿足廣義特徵值問題
 $Ba=\lambda Wa$。取最大特徵值對應的方向，再依特徵值遞減取後續方向。
 不同方向可規範成 $a_i^TWa_j=\delta_{ij}$：這是 <strong>W 內積下的正交</strong>，原始座標中不一定垂直。
@@ -1349,7 +1371,7 @@ $$B=\frac{n_1n_2}{n}(\bar x_1-\bar x_2)(\bar x_1-\bar x_2)^T.$$
 $$a\propto W^{-1}(\bar x_1-\bar x_2).$$
 <p>由於 pooled 共變異數 $\hat\Sigma=W/(n-K)$ 只差一個倍數，
 LDA 分數差中的 $\hat\Sigma^{-1}(\bar x_1-\bar x_2)$ 和 Fisher 方向平行。
-<strong>方向相同還不等於分類完全相同</strong>：仍要用平均、尺度與先驗設定切點；任意取投影零點當切點並不正確。</p>
+可以把這分成兩個動作：Fisher 決定往哪個方向看，LDA 再依平均、尺度與先驗決定在哪裡切開。因此<strong>方向相同還不等於分類完全相同</strong>，任意取投影零點當切點並不正確。固定類內分布、只改先驗時，兩類邊界的方向維持不變，但切點會移動；這也對應前面先驗滑桿的作用。</p>
 <h4>多類：為什麼最多只有 K−1 個方向？</h4>
 <p>類間散布的秩滿足 $\operatorname{rank}(B)\le\min(p,K-1)$。
 在白化空間中，各類中心都落在至多 K−1 維的仿射子空間。完整的距離分解見下方證明。保留完整的判別子空間，並保留同樣的尺度與先驗，便可重現原 LDA 分類。</p>
@@ -1561,6 +1583,10 @@ $$F_1=\frac{2\,\mathrm{precision}\,\mathrm{recall}}{\mathrm{precision}+\mathrm{r
 
   <p>展開之後會出現 $x^{\mathsf{T}} \Sigma_k^{-1} x$。<strong>因為 $\Sigma_k$ 隨 k 不同，
   這一項在兩類相減時不會抵消</strong>，所以邊界是 x 的二次曲面——名字裡的「二次」就是這麼來的。</p>
+<h3 id="w04-qda-distance">QDA：每一類用自己的形狀衡量距離</h3>
+<p>在下面的圖中，每一類都是一團橢圓形的資料。LDA 用同一個形狀來衡量各類；QDA 則容許橢圓的方向、長短與寬窄各自不同。同一個觀測相對於某類可能很常見，相對於另一類卻可能偏離很遠，邊界因此可以彎曲。</p>
+<p>判別函數裡有三個角色：第一項看<strong>依該類散布調整後的距離</strong>；$-\tfrac12\log|\Sigma_k|$ 處理<strong>分布攤開的程度</strong>；$\log\pi_k$ 則反映<strong>先驗</strong>。分布若攤得更廣，雖然某些點的標準化距離變小，中心的密度峰值也會降低。因此不能只選 Mahalanobis 距離最小的類，還要把後兩項一起比較。</p>
+<p>將圖中的兩個相關係數調成相同，兩類便共用一個共變異數，QDA 的邊界會和 LDA 重合。這時各類可以一起白化；一般 QDA 則使用各類自己的共變異數，沒有同一個白化轉換把所有類同時變成單位共變異數。</p>
 <p>先驗與類別平均的估法和 LDA 相同，各類共變異數則分別計算：</p>
   $$\hat\Sigma_k=\frac1{n_k-1}\sum_{i:y_i=k}(x_i-\hat\mu_k)(x_i-\hat\mu_k)^\mathsf T.$$
   <p>這是不偏估計；Gaussian MLE 改除以 $n_k$。每一類都要有足夠資料估計自己的共變異數，這也是 QDA 比 LDA 需要更多資料的原因。</p>
@@ -3007,7 +3033,7 @@ HC.ready(() => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [{"front":"分類（Classification）","back":"反應變數是類別的監督式學習問題，目標是把每筆觀測指派到某一類。模型可先估各類機率，再選機率最大的類；二類問題也常用門檻值把機率轉成標籤。"},{"front":"勝算（Odds）","back":"p /(1 − p)，即事件發生機率除以不發生機率。當 0 < p < 1 時，勝算介於 0 與無限大之間；p = 0 時勝算是 0，p 接近 1 時勝算趨近無限大。"},{"front":"對數勝算（Log-odds / Logit）","back":"log[p/(1 − p)]，當 0 < p < 1 時可取任意實數值。邏輯斯迴歸把這個量設成預測變數的線性函數，因此係數描述 log-odds 的變化。固定機率門檻後，分類也根據這個線性函數決定。"},{"front":"邏輯斯函數（Logistic Function）","back":"令 η 是預測變數的線性組合，logistic 函數 p = exp(η)/(1 + exp(η)) 把任意實數轉成 (0, 1) 內的機率。單次 0／1 結果給定 X 後必為 Bernoulli 分布，且 E(Y｜X) = P(Y = 1｜X) = p；logistic 模型指定的是 p 如何隨 X 改變。"},{"front":"勝算比（Odds Ratio）","back":"固定模型中的其他變數後，某個預測變數增加一單位，勝算乘上該變數係數取指數後的值 exp(β)。這是模型中的條件關聯；因果解讀還需要相應的研究設計與假設。"},{"front":"最大概似法（Maximum Likelihood）","back":"選擇讓已觀察資料的概似最大的參數。對獨立分類資料，把每筆資料實際所屬類別的預測機率乘起來，再找使乘積最大的係數。邏輯斯與 Poisson 迴歸通常用數值方法求解；Gaussian 線性迴歸在獨立、同變異誤差下，係數的最大概似估計等同最小平方法。"},{"front":"混淆（Confounding）","back":"加入其他變數後，原有係數可能改變甚至變號。Default 例子中，student 單獨擬合的係數是 +0.4049，加入 balance 與 income 後為 −0.6468。兩個模型比較的條件不同：多元模型的係數描述固定其他變數後的關聯，並不自動具有因果意義。"},{"front":"多類別邏輯斯迴歸（Multinomial Logistic Regression）","back":"單次結果屬於 K 個互斥類別時，給定 X 後是 categorical 分布。多類別邏輯斯迴歸用 softmax 指定各類機率，總和為 1。可選一類當基準，估其餘 K − 1 組係數；換基準會改變係數數值，但不改變預測機率。"},{"front":"生成式模型（Generative Model）","back":"先建模類別的先驗機率與各類內 X 的條件分布，再用 Bayes 定理算出後驗機率。LDA、QDA、Naive Bayes 都採這個方向；邏輯斯迴歸則直接建模給定 X 後的類別機率，屬於判別式模型。"},{"front":"先驗機率（Prior Probability）","back":"尚未觀察 X 時，一筆觀測屬於某類的機率。常用訓練資料中的類別比例估計：該類筆數除以總筆數。"},{"front":"後驗機率（Posterior Probability）","back":"Pr(Y = k｜X = x)，即觀察到 x 後屬於第 k 類的機率。使用真實後驗機率、且各種錯分成本相同時，選機率最大的類可使期望分類錯誤率最低。"},{"front":"Bayes 定理（Bayes Theorem）","back":"某類的後驗機率，等於「該類先驗 × 該類內 x 的密度」，再除以所有類別對應乘積的總和。生成式分類器用這個公式把類內分布與先驗轉成分類機率。"},{"front":"線性判別分析（LDA, Linear Discriminant Analysis）","back":"假設各類內的 X 服從多變量常態，各類有自己的平均向量，並共用共變異數矩陣。比較兩類分數時，共同的二次項抵消，留下 x 的線性函數，因此兩類間的決策邊界是線性的。"},{"front":"判別函數（Discriminant Function）","back":"用來比較類別的分數。生成式分類器可對 Bayes 後驗取 log，再省略各類共同的項，得到判別分數；選分數最大的類。LDA 的分數是 x 的線性函數，QDA 則含二次項。"},{"front":"二次判別分析（QDA, Quadratic Discriminant Analysis）","back":"假設各類內的 X 服從多變量常態，每類有自己的平均向量與共變異數矩陣，因此決策邊界通常是二次曲面。共變異數共需估 K·p(p+1)/2 個參數，比 LDA 的 p(p+1)/2 個多，各類須有足夠資料才能穩定估計。"},{"front":"Naive Bayes 分類器（Naive Bayes Classifier）","back":"假設給定類別後，各預測變數互相獨立，便能把聯合條件分布拆成一維分布的乘積。常態版為每類、每個變數估計平均與變異數，相當於共變異數矩陣為對角矩陣的 QDA；變異數再跨類共用時，才對應對角共變異數的 LDA。"},{"front":"混淆矩陣（Confusion Matrix）","back":"把預測標籤與真實標籤交叉列出的 2 × 2（或 K × K）表。對角元素是正確分類，非對角元素是錯分。閱讀時先確認哪一軸是真實值，才能正確計算敏感度與精確率。"},{"front":"敏感度（Sensitivity / Recall）","back":"TP/(TP + FN)，真實正類中，被正確預測為正類的比例。分母是真實正類總數。篩檢常重視這個指標，以減少漏判。"},{"front":"特異度（Specificity）","back":"TN/(TN + FP)，真實負類中，被正確預測為負類的比例。分母是真實負類總數。1 − 特異度就是假陽率，也是 ROC 曲線的橫軸。"},{"front":"精確率（Precision / PPV）","back":"TP/(TP + FP)，預測為正類的觀測中，實際為正類的比例。分母是預測正類總數，例如可用來評估被挑選的行銷名單中有多少人確實購買。"},{"front":"多數類基準（Majority-class Baseline）","back":"一律預測多數類的表現。基準正確率是多數類比例，基準錯誤率是 1 減該比例；例如 Default 分別為 96.67% 與 3.33%。比較模型時要用同一量尺，並查看混淆矩陣及錯誤成本。"},{"front":"決策門檻值（Decision Threshold）","back":"二類分類中，把預測機率轉成類別的切點。若機率正確且兩種錯分成本相同，0.5 可使期望錯誤率最小，類別不平衡本身不改變這點。若更在意漏判等錯誤，可另選門檻值；Default 例子從 0.5 降到 0.2，漏掉的違約戶從 252 降到 138。"},{"front":"ROC 曲線（ROC Curve）","back":"把所有可能門檻值下的（假陽率、真陽率）畫成一條曲線。曲線越靠近左上角，表示能在較低假陽率下得到較高真陽率。對角線是與類別無關的隨機分數的母體基準。"},{"front":"曲線下面積（AUC, Area Under the ROC Curve）","back":"ROC 曲線下的面積，用來總結分類分數區分正負類的能力。隨機分數的母體基準是 0.5，完美排序是 1；有限樣本的結果會有波動。LDA 在 Default 上的 AUC 是 0.95。"},{"front":"Poisson 迴歸（Poisson Regression）","back":"給定 X 後，假設計數 Y 服從平均為 λ 的 Poisson 分布，並令 log λ 為預測變數的線性組合。條件平均與條件變異數同為 λ；這是模型假設，計數本身不保證符合。固定其他變數後，某變數增加一單位，平均計數乘上該係數的指數 exp(β)。"},{"front":"廣義線性模型（GLM, Generalized Linear Model）","back":"指定 Y｜X 的條件分布，再以連結函數把條件平均連到線性預測式。Gaussian、Bernoulli、Poisson 模型的條件變異數分別為 σ²、p(1 − p)、λ；Bernoulli 與 Poisson 沒有額外自由的變異參數。"},{"front":"連結函數（Link Function）","back":"把條件平均 μ = E(Y｜X) 轉成線性預測值 η 的函數，寫成 g(μ) = η。線性迴歸常用 g(μ) = μ，邏輯斯迴歸用 log[μ/(1−μ)]，Poisson 迴歸常用 log μ。"},{"front":"Fisher LDA 與生成式 LDA","back":"Fisher LDA 尋找讓類間分散程度相對於類內分散程度最大的投影方向。生成式 LDA 則假設各類內常態且共用共變異數。使用相同平均與共用類內共變異數時，二類的判別方向相同；分類還要設定切點、尺度與先驗。"},{"front":"判別子空間","back":"將共用類內共變異數白化成單位矩陣後，K 個類別中心位於至多 min(p, K − 1) 維的仿射子空間。投影到這個完整空間會移除各類共同的距離項；保留尺度與先驗即可重現 LDA 分類，再刪去非零判別方向則可能改變結果。"}];
+const FLASHCARDS = [{"front":"分類（Classification）","back":"反應變數是類別的監督式學習問題，目標是把每筆觀測指派到某一類。模型可先估各類機率，再選機率最大的類；二類問題也常用門檻值把機率轉成標籤。"},{"front":"勝算（Odds）","back":"p /(1 − p)，即事件發生機率除以不發生機率。當 0 < p < 1 時，勝算介於 0 與無限大之間；p = 0 時勝算是 0，p 接近 1 時勝算趨近無限大。"},{"front":"對數勝算（Log-odds / Logit）","back":"log[p/(1 − p)]，當 0 < p < 1 時可取任意實數值。邏輯斯迴歸把這個量設成預測變數的線性函數，因此係數描述 log-odds 的變化。固定機率門檻後，分類也根據這個線性函數決定。"},{"front":"邏輯斯函數（Logistic Function）","back":"令 η 是預測變數的線性組合，logistic 函數 p = exp(η)/(1 + exp(η)) 把任意實數轉成 (0, 1) 內的機率。單次 0／1 結果給定 X 後必為 Bernoulli 分布，且 E(Y｜X) = P(Y = 1｜X) = p；logistic 模型指定的是 p 如何隨 X 改變。"},{"front":"勝算比（Odds Ratio）","back":"固定模型中的其他變數後，某個預測變數增加一單位，勝算乘上該變數係數取指數後的值 exp(β)。這是模型中的條件關聯；因果解讀還需要相應的研究設計與假設。"},{"front":"最大概似法（Maximum Likelihood）","back":"選擇讓已觀察資料的概似最大的參數。對獨立分類資料，把每筆資料實際所屬類別的預測機率乘起來，再找使乘積最大的係數。邏輯斯與 Poisson 迴歸通常用數值方法求解；Gaussian 線性迴歸在獨立、同變異誤差下，係數的最大概似估計等同最小平方法。"},{"front":"混淆（Confounding）","back":"加入其他變數後，原有係數可能改變甚至變號。Default 例子中，student 單獨擬合的係數是 +0.4049，加入 balance 與 income 後為 −0.6468。兩個模型比較的條件不同：多元模型的係數描述固定其他變數後的關聯，並不自動具有因果意義。"},{"front":"多類別邏輯斯迴歸（Multinomial Logistic Regression）","back":"單次結果屬於 K 個互斥類別時，給定 X 後是 categorical 分布。多類別邏輯斯迴歸用 softmax 指定各類機率，總和為 1。可選一類當基準，估其餘 K − 1 組係數；換基準會改變係數數值，但不改變預測機率。"},{"front":"生成式模型（Generative Model）","back":"先建模類別的先驗機率與各類內 X 的條件分布，再用 Bayes 定理算出後驗機率。LDA、QDA、Naive Bayes 都採這個方向；邏輯斯迴歸則直接建模給定 X 後的類別機率，屬於判別式模型。"},{"front":"先驗機率（Prior Probability）","back":"尚未觀察 X 時，一筆觀測屬於某類的機率。常用訓練資料中的類別比例估計：該類筆數除以總筆數。"},{"front":"後驗機率（Posterior Probability）","back":"Pr(Y = k｜X = x)，即觀察到 x 後屬於第 k 類的機率。使用真實後驗機率、且各種錯分成本相同時，選機率最大的類可使期望分類錯誤率最低。"},{"front":"Bayes 定理（Bayes Theorem）","back":"某類的後驗機率，等於「該類先驗 × 該類內 x 的密度」，再除以所有類別對應乘積的總和。生成式分類器用這個公式把類內分布與先驗轉成分類機率。"},{"front":"線性判別分析（LDA, Linear Discriminant Analysis）","back":"假設各類內的 X 服從多變量常態，各類有自己的平均向量，並共用共變異數矩陣。比較兩類分數時，共同的二次項抵消，留下 x 的線性函數，因此兩類間的決策邊界是線性的。"},{"front":"判別函數（Discriminant Function）","back":"比較類別的分數，可以是負數，不必介於 0 與 1。LDA／QDA 對類別加權密度取 log，再省略各類共同項；分數最大的類也有最大的後驗機率。依本章定義，把各類分數送入 softmax 可還原後驗機率。"},{"front":"二次判別分析（QDA, Quadratic Discriminant Analysis）","back":"假設各類內的 X 服從多變量常態，每類有自己的平均向量與共變異數矩陣，因此決策邊界通常是二次曲面。共變異數共需估 K·p(p+1)/2 個參數，比 LDA 的 p(p+1)/2 個多，各類須有足夠資料才能穩定估計。"},{"front":"Naive Bayes 分類器（Naive Bayes Classifier）","back":"假設給定類別後，各預測變數互相獨立，便能把聯合條件分布拆成一維分布的乘積。常態版為每類、每個變數估計平均與變異數，相當於共變異數矩陣為對角矩陣的 QDA；變異數再跨類共用時，才對應對角共變異數的 LDA。"},{"front":"混淆矩陣（Confusion Matrix）","back":"把預測標籤與真實標籤交叉列出的 2 × 2（或 K × K）表。對角元素是正確分類，非對角元素是錯分。閱讀時先確認哪一軸是真實值，才能正確計算敏感度與精確率。"},{"front":"敏感度（Sensitivity / Recall）","back":"TP/(TP + FN)，真實正類中，被正確預測為正類的比例。分母是真實正類總數。篩檢常重視這個指標，以減少漏判。"},{"front":"特異度（Specificity）","back":"TN/(TN + FP)，真實負類中，被正確預測為負類的比例。分母是真實負類總數。1 − 特異度就是假陽率，也是 ROC 曲線的橫軸。"},{"front":"精確率（Precision / PPV）","back":"TP/(TP + FP)，預測為正類的觀測中，實際為正類的比例。分母是預測正類總數，例如可用來評估被挑選的行銷名單中有多少人確實購買。"},{"front":"多數類基準（Majority-class Baseline）","back":"一律預測多數類的表現。基準正確率是多數類比例，基準錯誤率是 1 減該比例；例如 Default 分別為 96.67% 與 3.33%。比較模型時要用同一量尺，並查看混淆矩陣及錯誤成本。"},{"front":"決策門檻值（Decision Threshold）","back":"二類分類中，把預測機率轉成類別的切點。若機率正確且兩種錯分成本相同，0.5 可使期望錯誤率最小，類別不平衡本身不改變這點。若更在意漏判等錯誤，可另選門檻值；Default 例子從 0.5 降到 0.2，漏掉的違約戶從 252 降到 138。"},{"front":"ROC 曲線（ROC Curve）","back":"把所有可能門檻值下的（假陽率、真陽率）畫成一條曲線。曲線越靠近左上角，表示能在較低假陽率下得到較高真陽率。對角線是與類別無關的隨機分數的母體基準。"},{"front":"曲線下面積（AUC, Area Under the ROC Curve）","back":"ROC 曲線下的面積，用來總結分類分數區分正負類的能力。隨機分數的母體基準是 0.5，完美排序是 1；有限樣本的結果會有波動。LDA 在 Default 上的 AUC 是 0.95。"},{"front":"Poisson 迴歸（Poisson Regression）","back":"給定 X 後，假設計數 Y 服從平均為 λ 的 Poisson 分布，並令 log λ 為預測變數的線性組合。條件平均與條件變異數同為 λ；這是模型假設，計數本身不保證符合。固定其他變數後，某變數增加一單位，平均計數乘上該係數的指數 exp(β)。"},{"front":"廣義線性模型（GLM, Generalized Linear Model）","back":"指定 Y｜X 的條件分布，再以連結函數把條件平均連到線性預測式。Gaussian、Bernoulli、Poisson 模型的條件變異數分別為 σ²、p(1 − p)、λ；Bernoulli 與 Poisson 沒有額外自由的變異參數。"},{"front":"連結函數（Link Function）","back":"把條件平均 μ = E(Y｜X) 轉成線性預測值 η 的函數，寫成 g(μ) = η。線性迴歸常用 g(μ) = μ，邏輯斯迴歸用 log[μ/(1−μ)]，Poisson 迴歸常用 log μ。"},{"front":"Fisher LDA 與生成式 LDA","back":"Fisher 使用類別標籤，找類間差異相對於類內散布最大的投影方向；PCA 則找整體變異大的方向。Fisher 準則本身不需要常態假設。使用相同平均與 pooled 共變異數時，二類 Fisher 與生成式 LDA 的方向相同，分類還需設定尺度、切點與先驗。"},{"front":"判別子空間","back":"將共用類內共變異數白化成單位矩陣後，K 個類別中心位於至多 min(p, K − 1) 維的仿射子空間。投影到這個完整空間會移除各類共同的距離項；保留尺度與先驗即可重現 LDA 分類，再刪去非零判別方向則可能改變結果。"}];
 HC.initFlashcards();
 </script>
 <script>
