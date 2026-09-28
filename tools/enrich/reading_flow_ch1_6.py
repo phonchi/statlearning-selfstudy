@@ -104,13 +104,12 @@ GROUPS = {2: {'bayes': [('KNN 的彈性與有效自由度', 'knn-df', '計算細
      'problems': [('內部與外部學生化殘差', 'studentization', '計算細節：內部與外部學生化殘差')],
      'reference': [('Advertising 的迴歸結果', 'advertising-numbers', '計算細節：Advertising 完整數值對照')]},
  4: {'logistic': [('從觀測到估計：完整的最大概似問題', 'logistic-fit', '計算細節：概似、Newton／IRLS 與標準誤'),
-                  ('預測機率的區間與模型比較', 'probability-intervals', '延伸閱讀：預測機率的區間與模型比較'),
+                  ('預測機率的信賴區間', 'probability-intervals', '計算細節：預測機率的信賴區間'),
                   ('反應誤差、潛在變數與完全分離', 'latent-logistic', '延伸閱讀：反應誤差、潛在變數與分離')],
-     'multinomial': [('多類別模型如何估計？', 'multinomial-fit', '計算細節：多類別概似與識別限制'),
-                     ('二元分類器如何組成多類別分類？', 'ovr-ovo', '延伸閱讀：OVR 與 OVO 的組合規則')],
+     'multinomial': [('多類別模型如何估計？', 'multinomial-fit', '計算細節：多類別概似與識別限制')],
      'lda': [('LDA 與 Fisher LDA：分類規則與判別方向', 'fisher', '延伸閱讀：Fisher 判別方向與 Iris 投影'),
              ('把生成式模型的參數估出來', 'generative-fit', '計算細節：生成式模型的參數與共變異數'),
-             ('為什麼二類的最小平方與 LDA 方向有關？', 'ols-lda', '延伸閱讀：OLS、LDA 與降秩迴歸')],
+             ('為什麼二類的最小平方與 LDA 方向有關？', 'ols-lda', '延伸閱讀：二類 OLS 與 LDA 的方向')],
      'threshold': [('F1 與隨機分數的 AUC 基準', 'f1-auc', '延伸閱讀：F1 與隨機分數的 AUC 基準')],
      'compare': [('QDA log-odds 中的係數到底是什麼？', 'qda-coefficients', '計算細節：QDA log-odds 的完整係數')],
      'poisson': [('Poisson 的估計與 GLM 的變異數', 'glm-fit', '計算細節：Poisson 估計與 GLM 指數族'),
@@ -145,12 +144,7 @@ BRIDGES = {
         'mlr': r'<p>整體 F 檢定問所有斜率是否同時為零；部分 F 則比較同一批資料上的兩個巢狀模型，一次檢定一組係數。係數仍描述控制模型內其他變數後的條件關聯，不能直接當成因果效果。</p>',
         'accuracy': r'<p>本節 0≤R²≤1 與相關係數平方的性質，使用含截距、在訓練資料上做普通最小平方的設定；任意預測或測試資料的 R² 可以為負。判斷預測好壞仍要使用獨立資料。</p>',
     },
-    4: {
-        'logistic': r'<p>給定 X，模型假設各 Yᵢ 獨立且為 Bernoulli。係數用最大概似估計：找出讓已觀測標籤最可能的一組 β。完整的估計目標是</p>$$\max_\beta L(\beta)=\prod_i p_i^{y_i}(1-p_i)^{1-y_i},\qquad p_i=\sigma(x_i^T\beta).$$<p>這與最小化負對數概似相同。完全或準完全分離時，無懲罰模型可能沒有有限的最大概似解；係數的 z 檢定使用大樣本近似，不是一般有限樣本精確 t 檢定。</p>',
-        'multinomial': r'<p>多類別 logistic 用同一個 softmax 給出加總為 1 的類別機率。選一個基準類是為了識別係數；換基準類不改變預測機率。OVR／OVO 則是把多類別任務拆成多個二元模型的其他做法，完整規則可展開查閱。</p>',
-        'threshold': r'<p>敏感度描述真實正類中抓到多少；精確率描述預測正類中有多少是真的。AUC 衡量分數的排序能力；與類別獨立的同分布隨機分數，其母體 AUC 為 0.5。降低門檻值不保證提高精確率或總正確率。</p>',
-        'poisson': r'<p>Poisson 迴歸模型化的是給定 X 的計數分布：條件平均與變異數都等於 μ，log μ 才是線性預測量。它不是先對觀測計數取 log 再做普通最小平方。係數每增加一單位使平均計數乘上 eᵝ；比較前須先確認變數的原始單位。</p>',
-    },
+    4: {},
     5: {
         'cvwrong': r'<p>分割方式須配合預測情境：同一受試者的資料通常一起分組，時間資料用較早訓練、較晚驗證。調參和最終評估也要分開；內層 CV 選模型，外層 CV 或保留測試集評估整個選模流程。</p>',
         'bootstrap': r'<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法。</p>',
@@ -228,6 +222,9 @@ def organize(ch, bodies, pagejs):
         if p and target:target.insert_before(p.extract())
         pagejs += "\nHC.onDetail('w03-detail-rss-surface', { open: () => { w03rssRender(); } });\n"
     if ch == 4:
+        inference=soups['logistic'].select_one('#w04proofMLELimit')
+        following=heading(soups['logistic'],'預測機率的信賴區間')
+        if inference and following: following.insert_before(inference.extract())
         p=soups['lda'].select_one('#w04proofFisher');target=heading(soups['lda'],'把生成式模型的參數估出來')
         if p and target:target.insert_before(p.extract())
     if ch == 5:
