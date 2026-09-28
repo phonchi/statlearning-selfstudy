@@ -1533,7 +1533,7 @@ $$\beta_0+\beta_1x+\beta_2z+\beta_3xz
   講義自己也說，辨認與處理這些問題「既是科學也是藝術」。先看全表，再逐一動手看：</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.82rem;">
   <thead><tr><th>#</th><th>問題</th><th>診斷工具（標準名稱）</th><th>為什麼這個工具看得到它</th><th>講義的處理方式</th></tr></thead>
-  <tbody><tr><td>1</td><td><strong>非線性</strong>（non-linearity）</td><td>殘差圖（residual plot）：$e_i$ 對 $\hat y_i$</td><td>直線假設正確時殘差沒有結構；殘差隨 $\hat y$ 彎成 U 形，就是模型漏了曲率</td><td>加入 $x^2$ 等多項式項</td></tr><tr><td>2</td><td><strong>誤差相關</strong>（correlated errors）</td><td>殘差對觀測順序圖（residuals vs time／order plot）</td><td>時間或空間相鄰的觀測若誤差相關，相鄰殘差會同號、成串漂移</td><td>指出後果：講義情境下 SE 低估、區間太窄；有時間結構的資料要換模型</td></tr><tr><td>3</td><td><strong>異質變異</strong>（heteroscedasticity）</td><td>同一張殘差圖看漏斗形</td><td>變異隨反應水準放大時，殘差的散布隨橫軸張開</td><td>對 Y 取 $\log$ 或開根號</td></tr><tr><td>4</td><td><strong>離群值</strong>（outlier，y 怪）</td><td>學生化殘差圖（studentized residual plot）</td><td>原始殘差各筆尺度不同，除以自己的 SE 後才能用同一把尺比；$|r_i|&gt;3$ 可疑</td><td>確認是記錄錯誤才刪；否則可能是模型缺變數</td></tr><tr><td>5</td><td><strong>高槓桿</strong>（high leverage，x 怪）</td><td>槓桿統計量（leverage statistic）$h_i$、Cook's distance、影響圖（influence plot）</td><td>$h_i$ 是第 i 筆的 y 對自己擬合值的權重；遠超過平均 $(p+1)/n$ 的點能扳動整條線</td><td>檢查該筆資料是否有效；那一區資料太少時補資料</td></tr><tr><td>6</td><td><strong>共線性</strong>（collinearity）</td><td>相關矩陣（correlation matrix）、變異數膨脹因子（VIF）</td><td>兩個變數幾乎重複時，RSS 沿一條溝幾乎不變，係數各自估不準，SE 膨脹 $\sqrt{\mathrm{VIF}}$</td><td>拿掉一個，或合成一個變數</td></tr></tbody>
+  <tbody><tr><td>1</td><td><strong>非線性</strong>（non-linearity）</td><td>殘差圖（residual plot）：$e_i$ 對 $\hat y_i$</td><td>直線假設正確時殘差沒有結構；殘差隨 $\hat y$ 彎成 U 形，就是模型漏了曲率</td><td>加入 $x^2$ 等多項式項</td></tr><tr><td>2</td><td><strong>誤差相關</strong>（correlated errors）</td><td>殘差對觀測順序圖（residuals vs time／order plot）</td><td>正相關可能形成同號漂移；其他 lag 的模式可再用 ACF 檢查</td><td>指出後果：講義情境下 SE 低估、區間太窄；有時間結構的資料要換模型</td></tr><tr><td>3</td><td><strong>異質變異</strong>（heteroscedasticity）</td><td>同一張殘差圖看漏斗形</td><td>變異隨反應水準放大時，殘差的散布隨橫軸張開</td><td>對 Y 取 $\log$ 或開根號</td></tr><tr><td>4</td><td><strong>離群值</strong>（outlier，y 怪）</td><td>學生化殘差圖（studentized residual plot）</td><td>原始殘差各筆尺度不同，除以自己的 SE 後才能用同一把尺比；$|r_i|&gt;3$ 可疑</td><td>確認是記錄錯誤才刪；否則可能是模型缺變數</td></tr><tr><td>5</td><td><strong>高槓桿</strong>（high leverage，x 怪）</td><td>槓桿統計量（leverage statistic）$h_i$、Cook's distance、影響圖（influence plot）</td><td>$h_i$ 是第 i 筆的 y 對自己擬合值的權重；遠超過平均 $(p+1)/n$ 的點能扳動整條線</td><td>檢查該筆資料是否有效；那一區資料太少時補資料</td></tr><tr><td>6</td><td><strong>共線性</strong>（collinearity）</td><td>相關矩陣（correlation matrix）、變異數膨脹因子（VIF）</td><td>兩個變數幾乎重複時，RSS 沿一條溝幾乎不變，係數各自估不準，SE 膨脹 $\sqrt{\mathrm{VIF}}$</td><td>拿掉一個，或合成一個變數</td></tr></tbody>
 </table></div>
 <h3>診斷圖的橫軸為什麼是 ŷ，不是觀測編號或 y</h3>
 <p>殘差圖（residual plot）是後面幾乎每一個工具的底圖，先把它的橫軸講清楚。
@@ -1607,7 +1607,7 @@ $\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方�
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">四張圖各看什麼</div>
-      <strong>① 殘差圖（residual plot）：</strong>殘差對擬合值，講義的主工具。應該是一團沒有結構的雲，紅線（分箱平均，用來觀察殘差趨勢）應該貼著 0。有 U 形＝非線性，有漏斗＝異質變異。<br/><strong>② 殘差對觀測順序圖（residuals vs time／order plot）：</strong>橫軸是收集順序。誤差不相關時看不出模式；誤差相關時相鄰殘差同號、成串漂移（第 ⑥ 組）。<br/><strong>③ 學生化殘差圖（studentized residual plot）：</strong>殘差除以自己的 SE 後對擬合值畫，超出 ±3 的點是可能的離群值（第 ④ 組）。<br/><strong>④ 殘差對槓桿圖（residuals vs leverage plot）：</strong>縱軸是學生化殘差、橫軸是槓桿值，就是講義的影響圖；右上／右下角的點最危險，同時是離群值又是高槓桿點（第 ⑤ 組）。
+      <strong>① 殘差圖（residual plot）：</strong>殘差對擬合值，講義的主工具。應該是一團沒有結構的雲，紅線（分箱平均，用來觀察殘差趨勢）應該貼著 0。有 U 形＝非線性，有漏斗＝異質變異。<br/><strong>② 殘差對觀測順序圖（residuals vs time／order plot）：</strong>橫軸是收集順序。持續的正相關可能讓殘差同號、成串漂移（第 ⑥ 組）；不是所有相關都只出現在相鄰點。<br/><strong>③ 學生化殘差圖（studentized residual plot）：</strong>殘差除以自己的 SE 後對擬合值畫，超出 ±3 的點是可能的離群值（第 ④ 組）。<br/><strong>④ 殘差對槓桿圖（residuals vs leverage plot）：</strong>縱軸是學生化殘差、橫軸是槓桿值，就是講義的影響圖；右上／右下角的點最危險，同時是離群值又是高槓桿點（第 ⑤ 組）。
     </div>
     <div class="info-card">
       <div class="ic-title">這一組資料的診斷數字</div>
@@ -1624,29 +1624,96 @@ $\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方�
   這是<strong>非線性</strong>的強烈證據；加入 horsepower² 之後 U 形消失，殘差幾乎沒有形狀，表示二次項確實改善了模型
   （上方元件的第 ② 組就是這份資料）。同一張圖也看<strong>異質變異</strong>：殘差的散布隨 $\hat y$ 張開成漏斗形，
   表示誤差的變異隨反應水準放大。講義的處理方式是對反應變數做壓縮尺度的變換，例如 $\log Y$ 或 $\sqrt{Y}$，
-  大值被壓得比小值多，漏斗就收攏了。</p>
+  大值被壓得比小值多，可能改善漏斗形；是否合適仍要看轉換後的模型與殘差。</p>
+<details class="qa-item reading-detail" id="w03-detail-wls"><summary>異質變異還可以怎麼處理？加權最小平方</summary>
+<div class="detail-body">
+<p>普通最小平方（OLS）讓每筆觀測在平方誤差中使用相同的權重：</p>
+$$\min_\beta\sum_{i=1}^n (y_i-x_i^\top\beta)^2.$$
+<p>若各筆誤差的變異不同，$\operatorname{Var}(\epsilon_i\mid X)=\sigma_i^2$，
+加權最小平方（WLS）改為</p>
+$$\min_\beta\sum_{i=1}^n w_i(y_i-x_i^\top\beta)^2.$$
+$$w_i\propto\frac{1}{\sigma_i^2}.$$
+<p><strong>變異大、較不精確的觀測，權重較小；變異小、較精確的觀測，權重較大。</strong>
+這是根據觀測的精確度分配權重，不是看到某筆殘差大就任意降低它的權重。</p>
+<p>例如，若有理由假設誤差變異與平均反應的平方成正比：</p>
+$$\mu_i=E(Y_i\mid X),\qquad \sigma_i^2\propto\mu_i^2,$$
+<p>便可先用初步模型的 $\hat y_i$ 估計 $\mu_i$，考慮 $w_i\propto1/\hat y_i^2$。
+但這需要合理的變異模型；$\hat y_i$ 接近零時，不能直接套用倒數平方，否則權重會暴增。</p>
+<p>WLS 的計算也等於把每列的 $y_i$ 和整個設計向量 $x_i$（含截距那一欄）
+同乘 $\sqrt{w_i}$，再做最小平方。<strong>目標函數的權重是 $1/\sigma_i^2$，轉換資料的倍率則是 $1/\sigma_i$。</strong></p>
+<p>WLS 仍在原本的 $Y$ 尺度上建模；對 $Y$ 取 $\log$ 則改成描述 $E(\log Y\mid X)$，
+連係數的解讀也會改變。兩者都是處理異質變異的可能方向，並不是同一種操作；WLS 本身也不會處理誤差間的相關。</p>
+</div></details>
 <h3>殘差對觀測順序圖（residuals vs time／order plot）：誤差相關</h3>
-<p>LINE 的 I 假設說誤差互不相關：知道 $\varepsilon_i$ 是正的，對 $\varepsilon_{i+1}$ 的正負沒有任何提示。
+<p>線性模型的誤差不相關假設要求 $\operatorname{Cov}(\epsilon_i,\epsilon_j\mid X)=0$（$i\ne j$），不是只檢查相鄰兩筆。
   時間序列資料最容易違反，相鄰時間點的誤差往往同號。診斷方式是把殘差依時間（或收集順序）畫出來：
-  誤差不相關時看不到任何模式；相關越強，相鄰殘差越傾向取相近的值，圖上就出現一段一段的漂移。</p>
+  持續的正相關可能讓相鄰殘差傾向取相近的值，圖上出現一段一段的漂移；其他 lag 的相關則要再看 ACF。</p>
 <p>後果講義用一個極端例子說明：把資料不小心複製一份，n 變成 2n，最小平方解完全不變，但 SE 公式以為多了一倍的資訊，
   信賴區間大約縮成原來的 $1/\sqrt2$（大樣本下的近似，精確比例還牽涉 RSE 與 t 分位數的自由度），這當然是假的。
   講義的結論是：像這樣誤差正相關時，估計出的 SE 會<strong>低估</strong>真正的 SE，信賴區間與預測區間都比應有的窄，p 值偏小；
   更一般的相關結構下方向不一定，要看設計與相關的樣式。這種資料要換用能描述時間相依的模型，超出本章範圍。</p>
 <p class="source-note">講義補充連結：<a href="https://math.stackexchange.com/questions/2957686/explain-about-the-correlation-of-error-terms-in-linear-regression-models" rel="noopener" target="_blank">誤差相關對線性迴歸的影響</a>。</p>
+<details class="qa-item reading-detail" id="w03-detail-error-correlation"><summary>不只看相鄰點：用 ACF 找不同 lag 的相關</summary>
+<div class="detail-body">
+<p>不相關要求<strong>每一對不同觀測</strong>都滿足 $\operatorname{Cov}(\epsilon_i,\epsilon_j\mid X)=0$，
+相鄰時間點只是其中一種情形。不相關也不等於獨立：相關係數為零，仍可能有非線性的相依。</p>
+<p>對有自然時間順序、等間隔且相關結構大致穩定的資料，可以用殘差 ACF（自相關函數）
+觀察不同時間間隔的相關：</p>
+$$\rho_k=\operatorname{Corr}(e_t,e_{t-k}).$$
+<p>這裡 $k=1,2,3,\ldots$，不只看相鄰的 lag 1。</p>
+<p>圖上各 lag 的高度是用殘差算出的樣本估計 $\hat\rho_k$。
+例如 $\hat\rho_1\approx0$、$\hat\rho_2\approx0.6$、$\hat\rho_3\approx0$，
+就表示相鄰的相關不明顯，但隔兩個時間點值得注意；這並沒有假設其餘 lag 都是零。</p>
+<p>可以依序做三件事：</p>
+<ol style="padding-left:1.4rem;"><li><strong>殘差對時間圖：</strong>先看趨勢、成串漂移或週期。</li>
+<li><strong>ACF：</strong>看哪些 lag 出現明顯相關；單根柱子超出參考範圍不等於整個模型一定錯。</li>
+<li><strong>Ljung–Box：</strong>把選定的前 $m$ 個 lag 放在一起檢查：</li></ol>
+$$H_0:\rho_1=\rho_2=\cdots=\rho_m=0.$$
+<p>這是對所選 lag 的整體自相關檢查，不是所有形式相依的通用檢定。
+套用在擬合後殘差時，還須依模型處理自由度與檢定適用條件。</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;">
+<thead><tr><th>資料結構或問題</th><th>常見工具與用途</th></tr></thead><tbody>
+<tr><td>有自然時間順序</td><td>ACF／PACF 觀察不同 lag；Ljung–Box 整體檢查選定的多個 lag。</td></tr>
+<tr><td>特別關心一階或多階相關</td><td>Durbin–Watson 著重 lag 1；Breusch–Godfrey 可檢查指定的多個 lag。</td></tr>
+<tr><td>空間資料</td><td>Moran’s $I$、variogram；需要位置、距離或鄰近關係。</td></tr>
+<tr><td>重複測量／群聚資料</td><td>看組內殘差模式；ICC 可描述模型下的組內相關，mixed model／random effects 可用來描述群聚結構，並非同一種檢定。</td></tr>
+<tr><td>沒有自然順序或分組</td><td>不能任意排序殘差後，就把時間序列診斷當成一般相關檢定。</td></tr>
+</tbody></table></div>
+<p>為什麼沒有一個工具能直接檢查任意兩筆的誤差相關？令</p>
+$$\Sigma=\operatorname{Cov}(\boldsymbol\epsilon\mid X),$$
+$$\Sigma=\begin{pmatrix}\sigma_1^2&amp;\sigma_{12}&amp;\cdots\\
+\sigma_{12}&amp;\sigma_2^2&amp;\cdots\\\vdots&amp;\vdots&amp;\ddots\end{pmatrix}.$$
+<p>不相關表示非對角元素全為零；再加上等變異，才得到 $\Sigma=\sigma^2I$。
+任意的 $\Sigma$ 有 $n(n-1)/2$ 個不同的非對角 covariance。
+只有一組資料、每筆一個殘差，又不提供結構或重複資訊，就無法自由估計這些量。</p>
+<p>還要分清<strong>誤差</strong>與<strong>擬合後的殘差</strong>：即使 $\Sigma=\sigma^2I$，
+OLS 仍有 $\operatorname{Cov}(e\mid X)=\sigma^2(I-H)$，殘差彼此不必完全不相關。
+因此診斷看的是符合資料結構、值得追查的模式，不能把任何殘差相關都直接判成誤差假設違反。</p>
+</div></details>
 <h3>學生化殘差圖（studentized residual plot）：離群值</h3>
 <p>離群值是 y 離模型預測很遠的點。要判斷「多遠算遠」，不能直接比原始殘差，因為每一筆殘差的尺度不一樣。
-  <strong>學生化殘差</strong>（studentized residual）是把殘差除以它自己的估計標準差：</p>
+  <strong>學生化殘差</strong>（studentized residual）是把殘差除以它自己的估計標準差。
+  這種用估計標準差做標準化的動作稱為 studentization，與 Student’s t 統計量的標準化想法相同：</p>
 
   $$r_i = \frac{e_i}{\mathrm{RSE}\sqrt{1-h_i}}$$
 
   <p>為什麼要除以 $\sqrt{1-h_i}$？因為 $\mathrm{Var}(e_i) = \sigma^2(1-h_i)$，高槓桿點的殘差天生就小，
-  直接比原始殘差對它不公平。學生化之後才有共同尺度，講義的判準是 $|r_i|&gt;3$ 的觀測是可能的<strong>離群值</strong>（outlier）。
+  直接比原始殘差對它不公平。學生化之後才有共同尺度，常用 $|r_i|&gt;3$ 作為回查線索，這些觀測是可能的<strong>離群值</strong>（outlier）。
   把 $r_i$ 對 $\hat y_i$ 畫出來就是學生化殘差圖，上方元件的第 ④ 組可以看到那一個點。</p>
 <p>離群值對最小平方線的影響通常有限（它的 x 不怪、槓桿低），但會推高 RSE：課本的例子裡，
   含那一點時 RSE 是 1.09，拿掉後只有 0.77。RSE 是所有 SE、區間與 p 值的原料，一個點就能改變整份推論的解讀。
   處理方式：確認是資料收集或記錄錯誤才刪除；否則它可能在提醒模型缺了一個變數。</p>
 <p class="source-note">講義補充連結：<a href="https://en.wikipedia.org/wiki/Studentized_residual" rel="noopener" target="_blank">Studentized residual</a>。</p>
+<details class="qa-item reading-detail" id="w03-detail-studentized-cutoff"><summary>為什麼常用 |rᵢ| &gt; 3？</summary>
+<div class="detail-body">
+<p>$r_i$ 把殘差換成「幾個估計標準差」的尺度。以標準常態作為直覺參考，
+約 99.73% 的值落在 $[-3,3]$，所以超過三個標準差的點值得回查。</p>
+<p>但這不是內部學生化殘差的精確常態機率，也不是自動刪點的依據。
+同時檢查很多筆資料時，即使模型合理，也可能出現少數大的殘差。</p>
+<p>本頁用整份資料的 RSE 定義內部學生化 $r_i$；若刪掉第 $i$ 筆再估標準差，則得到外部學生化 $t_i$。
+只有在常態、等變異、獨立誤差等條件成立時，固定一筆的外部學生化量才有相應的精確 $t$ 分布。
+兩者的計算與證明見下方「內部與外部學生化殘差」。</p>
+</div></details>
 <h3>槓桿統計量（leverage statistic）、Cook's distance 與影響圖（influence plot）：高槓桿與影響點</h3>
 <p><strong>槓桿值</strong> $h_i$ 是帽子矩陣的對角元，衡量「第 i 筆的 x 有多不尋常」。簡單線性迴歸有明確公式：</p>
 
@@ -1655,9 +1722,26 @@ $\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方�
   <p>回想 P01：$h_i=1/n+w_i$，第二項正是第 i 筆在「斜率是加權平均」裡的權重。更一般地 $\hat y_i=\sum_j h_{ij}y_j$，
   所以 $h_i$ 就是第 i 筆自己的 y 對自己擬合值的權重，介於 1/n 與 1 之間，而且<strong>所有 $h_i$ 的平均恰好是 $(p+1)/n$</strong>。
   遠超過這個平均（實務上常用 2 倍或 3 倍當門檻值）的點就是<strong>高槓桿點</strong>（high leverage point）：
-  它的 x 不尋常，一個點就能扳動整條線。</p>
+  它的 x 不尋常，對擬合值可能有較大的影響。</p>
+<details class="qa-item reading-detail" id="w03-detail-leverage-sensitivity"><summary>hᵢ 的意思：只改 yᵢ，自己的擬合值會改多少？</summary>
+<div class="detail-body">
+<p>固定設計矩陣 $X$ 時，OLS 有</p>
+$$\hat{\mathbf y}=H\mathbf y,\qquad
+H=X(X^\top X)^{-1}X^\top.$$
+<p>第 $i$ 個擬合值是</p>
+$$\hat y_i=\sum_{j=1}^n h_{ij}y_j,\qquad h_i=h_{ii}.$$
+<p>現在保持所有其他 $y_j$ 不變，只把 $y_i$ 增加 $\Delta$，便得到</p>
+$$\hat y_i^{\mathrm{new}}=\hat y_i+h_i\Delta,
+\qquad \Delta\hat y_i=h_i\Delta y_i.$$
+<p>也可以寫成敏感度：</p>
+$$\frac{\partial\hat y_i}{\partial y_i}=h_i.$$
+<p>例如 $h_i=0.8$，只把 $y_i$ 提高 1，重新擬合後它自己的 $\hat y_i$ 就提高 0.8。
+這是固定 $X$ 時的數學權重，並不是觀測值有意識地「控制」模型。
+$h_i$ 由 $X$ 決定；是否真的對整體擬合有影響，還要一起看殘差。</p>
+</div></details>
 <p>高槓桿不等於有影響。講義區分兩個詞：拿掉之後迴歸式明顯改變的觀測叫<strong>影響點</strong>（influential observation）；
-  影響點通常槓桿高，但高槓桿點若剛好落在趨勢上，反而幫忙把 x 的範圍拉開、降低 $\mathrm{SE}(\hat\beta_1)$。
+  槓桿高代表位置敏感，但仍需看它偏離模型的程度；在簡單線性、等變異模型下，
+  增加遠離平均的有效 x 觀測可增加設計資訊，不代表所有高槓桿點都應保留或刪除。
   要同時看「x 怪不怪」與「y 怪不怪」，講義用 <strong>Cook's distance</strong>：</p>
 
   $$D_i=\frac{\sum_{j=1}^{n}\left(\hat y_j-\hat y_{j(-i)}\right)^2}{(p+1)\,\hat\sigma^2}
@@ -1668,12 +1752,60 @@ $\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方�
   就是<strong>影響圖</strong>（influence plot），也就是上方元件的「殘差對槓桿圖」（residuals vs leverage plot）：
   右上與右下角的點最危險。講義給的處理方式有兩個：這些點特別值得回頭檢查資料是否有效；
   它們也標出設計空間裡資料太少的區域，能補資料就補。</p>
+<details class="qa-item reading-detail" id="w03-detail-cook-derivation"><summary>Cook’s distance：從刪除一點推到 residual × leverage</summary>
+<div class="detail-body">
+<p>拿掉第 $i$ 筆後重新擬合，再對<strong>原本全部 $n$ 個位置</strong>計算預測。
+Cook’s distance 衡量這些擬合值的平方變動總和：</p>
+$$D_i=\frac{\sum_{j=1}^n(\hat y_j-\hat y_{j(-i)})^2}{(p+1)\hat\sigma^2}.$$
+<p>其中 $p$ 是不含截距的 predictor 數，$p+1$ 是模型參數數量；
+$\hat\sigma^2=\mathrm{RSS}/(n-p-1)$ 來自完整模型。
+分母用誤差尺度與模型維度標準化，所以不同單位不會任意改變 $D_i$。</p>
+<p>令 $x_i$ 是含截距的第 $i$ 筆設計<strong>欄向量</strong>，$X$ 的第 $i$ 列為 $x_i^\top$。
+當 $X$ 滿欄秩、$h_i&lt;1$、刪除後模型仍可估計時，刪除公式給出</p>
+$$\hat\beta-\hat\beta_{(-i)}
+=\frac{(X^\top X)^{-1}x_i e_i}{1-h_i}.$$
+<p>因此全部擬合值的變動為</p>
+$$\hat{\mathbf y}-\hat{\mathbf y}_{(-i)}
+=\frac{X(X^\top X)^{-1}x_i e_i}{1-h_i}.$$
+<p>令 $A=(X^\top X)^{-1}$、$u_i=XA x_i$。由 $AX^\top XA=A$，</p>
+$$\begin{aligned}
+\|u_i\|^2&amp;=x_i^\top AX^\top XA x_i\\
+&amp;=x_i^\top A x_i=h_i.
+\end{aligned}$$
+<p>所以全部擬合值的平方變動總和為</p>
+$$\begin{aligned}
+\|\hat{\mathbf y}-\hat{\mathbf y}_{(-i)}\|^2
+&amp;=\frac{e_i^2}{(1-h_i)^2}\|u_i\|^2\\
+&amp;=\frac{e_i^2h_i}{(1-h_i)^2}.
+\end{aligned}$$
+<p>代回定義，並使用<strong>內部學生化殘差</strong> $r_i=e_i/[\hat\sigma\sqrt{1-h_i}]$：</p>
+$$\begin{aligned}
+D_i&amp;=\frac{e_i^2}{(p+1)\hat\sigma^2}\frac{h_i}{(1-h_i)^2}\\
+&amp;=\frac{r_i^2}{p+1}\frac{h_i}{1-h_i}.
+\end{aligned}$$
+<p>這裡不能直接把 $r_i$ 換成使用刪除後標準差的外部學生化 $t_i$。</p>
+<ul style="padding-left:1.4rem;"><li><strong>殘差大、槓桿小：</strong>槓桿因子較小，但殘差極大時仍可能有影響，不能只憑低槓桿排除。</li>
+<li><strong>槓桿大、殘差小：</strong>若 $e_i=0$ 且 $h_i&lt;1$，則 $D_i=0$；若殘差只是很小，仍須看槓桿因子放大後的乘積。</li>
+<li><strong>殘差與槓桿都大：</strong>兩個因子一起放大，尤其值得檢查。</li></ul>
+<p><strong>高槓桿不必然有影響。</strong>Cook’s distance 同時問「偏離模型多少」與「這個位置能把模型拉動多少」，
+而不只看某一點自己的原始殘差。</p>
+</div></details><details class="qa-item reading-detail" id="w03-detail-cook-cutoff"><summary>為什麼常用 Cook’s distance &gt; 4/n？</summary>
+<div class="detail-body">
+<p>$4/n$ 是提醒回查的經驗門檻，不是精確檢定的臨界值。可以從公式理解它的量級：</p>
+$$D_i=\frac{r_i^2}{p+1}\frac{h_i}{1-h_i}.$$
+$$\bar h=\frac{p+1}{n}.$$
+<p>對一個槓桿接近平均的點，若 $n$ 相對於參數數量夠大，使 $h_i\ll1$，則</p>
+$$D_i\approx\frac{r_i^2}{p+1}h_i
+\approx\frac{r_i^2}{n}.$$
+<p>把約兩個估計標準差、$|r_i|\approx2$，視為值得留意的偏離，就得到 $D_i\approx4/n$。
+這只是幫助理解門檻的<strong>近似直覺</strong>；高槓桿點或參數占資料量比例很高時，近似不適用。</p>
+<p>超過門檻表示要檢查資料、模型及刪除前後的差異，不代表應該直接刪掉該筆。</p>
+</div></details>
 <div class="info-box warm">
   <span class="info-label">最危險的組合是「離群值 ＋ 高槓桿」</span>
   只是離群值（y 怪、x 正常）：它會推高 RSE、
-  拉低 R²，但因為槓桿小，對係數的影響有限。<br/>
-  只是高槓桿（x 怪、但落在趨勢上）：它其實幫忙。把 x 的範圍拉開會<strong>降低</strong>
-  $\mathrm{{SE}}(\hat\beta_1)$。<br/>
+  可能改變 R²；槓桿小會減弱對擬合的影響，但殘差極大時仍可能是影響點。<br/>
+  只是高槓桿（x 怪、但落在趨勢上）：不一定有影響；是否需要處理，還要一起看殘差與資料是否有效。<br/>
   兩個同時發生（ISLP 圖 3.13 的第 41 筆）：<strong>一個點就能把整條線扳過去</strong>，
   而且因為槓桿高、殘差被壓小，它在原始殘差圖上還不一定顯眼。
   這就是為什麼一定要看殘差對槓桿圖，以及為什麼上面的 Cook's distance
@@ -1683,12 +1815,28 @@ $\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方�
   <a href="https://stats.stackexchange.com/questions/65912/precise-meaning-of-and-comparison-between-influential-point-high-leverage-point" rel="noopener" target="_blank">影響點與高槓桿點的差別</a>。</p>
 <h3>相關矩陣（correlation matrix）與變異數膨脹因子（VIF）：共線性</h3>
 <p>第六個問題自己一節。<strong>共線性</strong>（collinearity）是指兩個以上的預測變數彼此高度相關。
-  它不會讓估計有偏，但會讓 RSS 的等高線<strong>從碗變成一條狹長的溝</strong>——
+  在條件平均模型正確且 $E(\epsilon\mid X)=0$ 下，共線性本身不造成偏差，但會讓 RSS 的等高線<strong>從碗變成一條狹長的溝</strong>——
   沿著溝走，RSS 幾乎不變，於是「哪一組係數最好」變得極難分辨，係數的 SE 跟著膨脹、檢定力下降。
   最直接的檢查是看預測變數的<strong>相關矩陣</strong>：某一對相關係數很高就要留意。
   但講義提醒這不夠：三個以上的變數可能整體高度共線（multicollinearity），而任何一對的相關都不特別高。
   更好的工具是<strong>變異數膨脹因子</strong>：</p>
-
+<details class="qa-item reading-detail" id="w03-detail-collinearity-valley"><summary>為什麼共線性會讓 RSS 變成狹長山谷？</summary>
+<div class="detail-body">
+<p>考慮兩個 predictor 的模型：</p>
+$$\hat y=\beta_0+\beta_1x_1+\beta_2x_2.$$
+<p>若 $x_2\approx2x_1$，預測就近似</p>
+$$\hat y\approx\beta_0+(\beta_1+2\beta_2)x_1.$$
+<p>資料比較能辨認的是組合 $\beta_1+2\beta_2$，而不是兩個係數各自的值。
+例如 $(\beta_1,\beta_2)=(4,1)$ 和 $(2,2)$ 都使這個組合等於 6，因而產生接近的擬合值與 RSS。</p>
+<p>在係數平面上，維持同一個組合 $C$ 等於沿著</p>
+$$\beta_2=\frac{C-\beta_1}{2}$$
+<p>移動。沿這個方向 RSS 改變很少，垂直方向卻改變較快，等高線因此拉成細長橢圓。
+一點資料擾動就可能使最低點沿著山谷移動很多，兩個係數可以互相補償。</p>
+<p>若 $x_2=2x_1$ 完全成立，則設計矩陣不滿秩，兩個係數無法唯一決定；
+若只是很接近，係數通常仍有唯一解，但估計不穩定。</p>
+<p>山谷方向取決於變數比例。下方互動使用相同尺度的兩個變數，因此接近共線時展示的是係數和大致不變，
+與此例的 $\beta_1+2\beta_2$ 是同一種補償原理。</p>
+</div></details>
 
   $$\mathrm{VIF}(\hat\beta_j) = \frac{1}{1 - R^2_{X_j \mid X_{-j}}}
     \qquad\Longrightarrow\qquad
@@ -1700,7 +1848,30 @@ $\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方�
   它接近 1 就代表 $X_j$ 的資訊已經被別人講完了，VIF 就會變得很大。
   最小值是 1（完全無共線性），<strong>超過 5 或 10 是常用的警戒值</strong>，表示該進一步檢查；要不要改模型仍看分析目的與估計精度。
   講義給的處理方式有兩個：拿掉其中一個多餘的變數；或把共線的變數合成一個（例如取平均）。
-  推下面這根滑桿，看信賴區域怎麼從圓變成溝：</p>
+  下方滑桿可觀察信賴區域如何從圓變成溝。</p>
+<details class="qa-item reading-detail" id="w03-detail-vif-cutoff"><summary>VIF 為什麼常用 5 或 10 當警戒值？</summary>
+<div class="detail-body">
+<p>令 $R_j^2$ 是把 $X_j$ 對其他 predictors（含截距）做迴歸所得到的 $R^2$。
+用 $S_j$ 簡寫 $X_j$ 離平均的平方和：</p>
+$$S_j=\sum_{i=1}^n(x_{ij}-\bar x_j)^2.$$
+<p>在滿秩、等變異且誤差互不相關的線性模型中，第 $j$ 個斜率的估計標準誤為</p>
+$$\begin{aligned}
+\mathrm{SE}(\hat\beta_j)
+&amp;=\frac{\hat\sigma}{\sqrt{S_j(1-R_j^2)}}\\
+&amp;=\frac{\hat\sigma}{\sqrt{S_j}}\sqrt{\mathrm{VIF}_j}.
+\end{aligned}$$
+$$\mathrm{VIF}_j=\frac{1}{1-R_j^2}.$$
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;">
+<thead><tr><th>VIF</th><th>$R_j^2$</th><th>未被其他 predictors 線性解釋的變異</th><th>SE 膨脹倍數</th></tr></thead>
+<tbody><tr><td>5</td><td>0.8</td><td>20%</td><td>$\sqrt5\approx2.24$</td></tr>
+<tr><td>10</td><td>0.9</td><td>10%</td><td>$\sqrt{10}\approx3.16$</td></tr></tbody></table></div>
+<p>也就是說，80% 或 90% 的 $X_j$ 樣本變異已可由其他 predictors 線性解釋，
+留下能區分這個係數的資訊較少。這裡的「未被解釋」不表示統計獨立。</p>
+<p>膨脹倍數比較的是<strong>相同誤差尺度與 $X_j$ 自身變異</strong>下的情形，
+不表示任意刪掉一個變數後，實際 SE 就一定縮小這麼多。</p>
+<p>5 和 10 都只是經驗警戒值，不是正式假設檢定的臨界值。
+是否處理，要看係數需要多精確、樣本量以及分析目的是解釋還是預測。</p>
+</div></details>
 <div class="viz-layout" data-provenance="book-redraw" data-source-note="依 ISLP 圖 3.15 與 VIF 公式重繪">
   <div>
     <div class="viz-panel">
@@ -1735,9 +1906,9 @@ $\mathrm{RSS}/\sqrt{\mathrm{RSS}\cdot\mathrm{TSS}}=\sqrt{1-R^2}$，最小平方�
   <li><strong>尺度–位置圖</strong>（scale-location plot）：$\sqrt{|r_i|}$ 對 $\hat y_i$ 作圖，專門看變異是否隨擬合值上升；
     漏斗形在殘差圖上不明顯時，這張圖會放大它。</li>
   <li><strong>Durbin–Watson 統計量</strong>：檢查相鄰殘差的一階自相關，理想值接近 2，明顯小於 2 表示正相關。
-    lab 的 Boston 模型給出 0.892，殘差有明顯的順序相依。</li>
+    lab 的 Boston 模型給出 0.892，但解讀前須確認資料列順序代表什麼，不能直接把它當成時間相關的證據。</li>
   <li><strong>加權最小平方</strong>（weighted least squares）：課本對異質變異的另一個處理，知道各筆變異的比例時，
-    把每筆觀測乘上權重 $1/\sigma_i$ 再做最小平方。</li>
+    在平方誤差前乘 $1/\sigma_i^2$，等價於把每列反應與設計向量同乘 $1/\sigma_i$；詳見上方 WLS 說明。</li>
   <li><strong>穩健標準誤</strong>（heteroscedasticity-consistent standard errors）：係數不變，只把 SE 的估計換成不依賴等變異假設的版本。</li>
 </ul>
 </div></details>
@@ -1828,7 +1999,11 @@ $$\hat\beta_{(i)}=\hat\beta-\frac{(X^TX)^{-1}x_ie_i}{1-h_{ii}},\qquad
 
   $$\hat f(x_0) = \frac{1}{K} \sum_{i \in \mathcal{N}_0} y_i$$
 
-  <p>它對 f 的形狀不做任何假設。K 小＝很有彈性但很不穩（K = 1 會穿過每一個訓練點）；
+  <p><strong>鄰居包含自己嗎？</strong>新的測試點不在訓練集合裡，所以沒有「自己」可選。
+  但直接在訓練資料上預測某個訓練點時，它到自己的距離是 0，通常會包含自己。
+  沒有重複座標時，K = 1 因而可以得到零訓練誤差，卻不代表對新資料也準；
+  leave-one-out 或交叉驗證會把被驗證的觀測排除在該次的訓練集合之外。若有同距離或重複座標，還須看平手的處理方式。</p>
+<p>它不預先指定 f 的參數形式。K 小＝很有彈性但很不穩；
   K 大＝很平滑但可能糊掉真正的結構。這是第 2 章介紹的偏差–變異取捨。</p>
 <p>ISLP 圖 3.19–3.20 的結論是：真實關係接近直線時線性迴歸占優勢；
   關係明顯彎曲且 p 很小時 KNN 可能較好，但加入無關變數後 KNN 會迅速受維度詛咒影響。
