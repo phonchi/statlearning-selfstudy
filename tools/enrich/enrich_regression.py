@@ -454,8 +454,47 @@ P06_STUDENT_RULE = detail('w03-detail-studentized-cutoff', '為什麼常用 |r�
 兩者的計算與證明見下方「內部與外部學生化殘差」。</p>
 """)
 
-P06_LEVERAGE = detail('w03-detail-leverage-sensitivity', 'hᵢ 的意思：只改 yᵢ，自己的擬合值會改多少？', r"""
-<p>固定設計矩陣 $X$ 時，OLS 有</p>
+P06_LEVERAGE = detail('w03-detail-leverage-sensitivity', 'hᵢ 怎麼推導？從迴歸公式看自己的擬合值會改多少', r"""
+<h4>第一步：把擬合值寫成平均值加上斜率項</h4>
+<p>考慮<strong>含截距的簡單線性迴歸</strong>，固定所有 $x_j$，且 $x_j$ 不全相同。
+記 $S_{xx}=\sum_{j=1}^n(x_j-\bar x)^2>0$。最小平方法給出</p>
+$$\hat\beta_1=\frac{\sum_{j=1}^n(x_j-\bar x)(y_j-\bar y)}{S_{xx}}.$$
+$$\hat\beta_0=\bar y-\hat\beta_1\bar x.$$
+<p>把截距代回第 $i$ 筆的擬合值：</p>
+$$\hat y_i=\hat\beta_0+\hat\beta_1x_i
+=\bar y+(x_i-\bar x)\hat\beta_1.$$
+<h4>第二步：整理出每個 yⱼ 前面的係數</h4>
+<p>因為 $\sum_j(x_j-\bar x)=0$，斜率分子中的 $\bar y$ 項會消掉：</p>
+$$\begin{aligned}
+&\sum_j(x_j-\bar x)(y_j-\bar y)\\
+&\quad=\sum_j(x_j-\bar x)y_j\\
+&\qquad-\bar y\underbrace{\sum_j(x_j-\bar x)}_{=0}\\
+&=\sum_j(x_j-\bar x)y_j.
+\end{aligned}$$
+<p>再用 $\bar y=\frac1n\sum_j y_j$，就能把 $\hat y_i$ 寫成所有觀測值 $y_j$ 的線性組合：</p>
+$$\begin{aligned}
+\hat y_i
+&=\frac1n\sum_{j=1}^n y_j
++\frac{x_i-\bar x}{S_{xx}}\sum_{j=1}^n(x_j-\bar x)y_j\\
+&=\sum_{j=1}^n\left[\frac1n+
+\frac{(x_i-\bar x)(x_j-\bar x)}{S_{xx}}\right]y_j.
+\end{aligned}$$
+<p>這裡 $i$ 是我們要預測的資料位置，$j$ 則走過所有用來擬合的觀測。
+把方括號中的係數記為 $h_{ij}$：</p>
+$$h_{ij}=\frac1n+\frac{(x_i-\bar x)(x_j-\bar x)}{S_{xx}}.$$
+<h4>第三步：取出自己對自己的係數</h4>
+<p>槓桿值 $h_i$ 就是 $\hat y_i$ 中<strong>自己的 $y_i$ 前面的係數</strong>。
+在上式令 $j=i$，便得到</p>
+$$h_i=h_{ii}=\frac1n+
+\frac{(x_i-\bar x)^2}{\sum_{j=1}^n(x_j-\bar x)^2}.$$
+<p>$1/n$ 來自 $y_i$ 對平均值 $\bar y$ 的貢獻；第二項來自 $y_i$ 改變斜率後，
+對位置 $x_i$ 的擬合值所造成的貢獻。當 $x_i=\bar x$ 時，第二項為零；離 $\bar x$ 越遠，第二項越大。
+這也說明了前面寫的 $h_i=1/n+w_i$。</p>
+<p>例如固定 $x=(0,1,2)$，則 $\bar x=1$、$S_{xx}=2$，所以
+$h_1=h_3=1/3+1/2=5/6$，$h_2=1/3$。
+端點的觀測值改變時，自己的擬合值會比中央的點改變得更多。</p>
+<h4>接回帽子矩陣與敏感度</h4>
+<p>上面是單一解釋變數的推導。更一般地，固定滿欄秩的設計矩陣 $X$ 時，OLS 有</p>
 $$\hat{\mathbf y}=H\mathbf y,\qquad
 H=X(X^\top X)^{-1}X^\top.$$
 <p>第 $i$ 個擬合值是</p>
