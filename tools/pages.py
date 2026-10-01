@@ -537,6 +537,10 @@ PAGES = [
         deck="03_Regression.pdf", deck_pages=70, lab="Ch03-linreg-lab-zh.ipynb",
         islp=3, islp_label="ISLP Ch.3", esl_label="ESL §3.1–3.3",
         playlist="PLFJni7Ws0IM0",
+        extra_pills=[
+            ('▶ 課程錄影：KNN 與線性迴歸比較', 'https://youtu.be/Ex0mpZAdRwA'),
+            ('▶ 課程錄影：線性迴歸的潛在問題', 'https://youtu.be/Q_9-ws5yLek'),
+        ],
         hero_svg=_svg_scatter(), bankquiz=True,
         group="core",
         secs=[
@@ -567,7 +571,10 @@ PAGES = [
         page_css='mjx-container:not([display="true"]){overflow:visible;max-width:none;}',
         deck="04_Classification.pdf", deck_pages=61, lab="Ch04-classification-lab-zh.ipynb",
         islp=4, islp_label="ISLP Ch.4", esl_label="ESL §4.1–4.4",
-        playlist="PLHNZtBNWQ-86o54cIAZDsEQH85i1Sf8XT",
+        playlist="PLQRwzhmUVm0A",
+        extra_pills=[
+            ('▶ 課程錄影：邏輯斯迴歸', 'https://youtu.be/D3--1_Nix7I'),
+        ],
         hero_svg=_svg_boundary(), bankquiz=True,
         group="core",
         secs=[
