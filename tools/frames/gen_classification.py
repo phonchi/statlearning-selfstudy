@@ -126,6 +126,102 @@ for name, pr in models.items():
     cms[name] = [int(c[0, 0]), int(c[0, 1]), int(c[1, 0]), int(c[1, 1])]
 
 
+
+# ── 4. ISLP §4.5.2 六個模擬情境（示意重現；書上未給的參數在 SCEN_NOTE 標明）──
+from scipy import stats as _st  # noqa: E402
+from sklearn.linear_model import LogisticRegression  # noqa: E402
+from sklearn.model_selection import GridSearchCV, StratifiedKFold  # noqa: E402
+from sklearn.neighbors import KNeighborsClassifier  # noqa: E402
+
+SCEN_SEED = 20261006
+SCEN_REPS = 100
+SCEN_NTEST = 2000                       # 每類測試點數
+SCEN_MU = np.array([1.0, 1.0])          # 第 2 類平均；第 1 類在原點
+SCEN_NOTE = ("ISLP 只描述各情境的分布、相關與每類筆數；平均差 (1,1)、t 分布自由度 3、"
+             "情境 4 與 5 每類筆數、情境 5 的非線性函數、情境 6 的對角變異數，以及測試集大小，"
+             "都是本頁為了示意自選的設定。因此只比較方法的相對排序，不對照書上的錯誤率數字。")
+R_NEG = np.array([[1.0, -0.5], [-0.5, 1.0]])
+R_POS = np.array([[1.0, 0.5], [0.5, 1.0]])
+
+
+def _mvn(rng, mu, cov, n):
+    return rng.multivariate_normal(mu, cov, size=n)
+
+
+def _mvt(rng, mu, shape, n, df=3):
+    return _st.multivariate_t(loc=mu, shape=shape, df=df).rvs(size=n, random_state=rng).reshape(n, 2)
+
+
+def _two_class(rng, gen1, gen2, n1, n2):
+    X = np.vstack([gen1(rng, n1), gen2(rng, n2)])
+    return X, np.r_[np.zeros(n1, int), np.ones(n2, int)]
+
+
+def _scen5_eta(X):
+    return 2 * (X[:, 0] + X[:, 1]) + np.where(X[:, 0] * X[:, 1] > 0, 1.5, -1.5) + 0.8 * X[:, 0] ** 2
+
+
+def _scen5(rng, n):
+    X = rng.standard_normal((n, 2))
+    y = (rng.random(n) < 1 / (1 + np.exp(-_scen5_eta(X)))).astype(int)
+    return X, y
+
+
+I2 = np.eye(2)
+S6A, S6B = np.diag([1.0, 4.0]), np.diag([4.0, 1.0])
+SCENARIOS = [
+    ("情境 1", lambda r, n: _two_class(r, lambda g, m: _mvn(g, [0, 0], I2, m),
+                                       lambda g, m: _mvn(g, SCEN_MU, I2, m), n, n), 20, True),
+    ("情境 2", lambda r, n: _two_class(r, lambda g, m: _mvn(g, [0, 0], R_NEG, m),
+                                       lambda g, m: _mvn(g, SCEN_MU, R_NEG, m), n, n), 20, True),
+    ("情境 3", lambda r, n: _two_class(r, lambda g, m: _mvt(g, [0, 0], R_NEG, m),
+                                       lambda g, m: _mvt(g, SCEN_MU, R_NEG, m), n, n), 50, True),
+    ("情境 4", lambda r, n: _two_class(r, lambda g, m: _mvn(g, [0, 0], R_POS, m),
+                                       lambda g, m: _mvn(g, SCEN_MU, R_NEG, m), n, n), 50, False),
+    ("情境 5", lambda r, n: _scen5(r, 2 * n), 50, False),
+    ("情境 6", lambda r, n: _two_class(r, lambda g, m: _mvn(g, [0, 0], S6A, m),
+                                       lambda g, m: _mvn(g, [0.5, 0.5], S6B, m), n, n), 6, False),
+]
+SCEN_METHODS = ["KNN-1", "KNN-CV", "LDA", "Logistic", "NBayes", "QDA"]
+
+
+def _fit_predict(name, Xtr, ytr, Xte):
+    if name == "KNN-1":
+        m = KNeighborsClassifier(n_neighbors=1)
+    elif name == "KNN-CV":
+        kmax = max(1, min(15, int(min(np.bincount(ytr)) * 4 / 5 * 2) - 1))
+        cv = StratifiedKFold(n_splits=min(5, int(min(np.bincount(ytr)))), shuffle=True, random_state=0)
+        m = GridSearchCV(KNeighborsClassifier(), {"n_neighbors": list(range(1, kmax + 1))}, cv=cv)
+    elif name == "LDA":
+        m = LDA()
+    elif name == "Logistic":
+        m = LogisticRegression(C=1e6, max_iter=5000)
+    elif name == "NBayes":
+        m = GaussianNB()
+    else:
+        m = QDA(reg_param=1e-6)
+    return m.fit(Xtr, ytr).predict(Xte)
+
+
+scen_rows = []
+for si, (label, gen, n_per, linear) in enumerate(SCENARIOS):
+    srng = np.random.default_rng(SCEN_SEED + si)
+    errs = {mname: [] for mname in SCEN_METHODS}
+    for _ in range(SCEN_REPS):
+        while True:
+            Xtr, ytr = gen(srng, n_per)
+            if min(np.bincount(ytr, minlength=2)) >= 3:
+                break
+        Xte, yte = gen(srng, SCEN_NTEST)
+        for mname in SCEN_METHODS:
+            errs[mname].append(float(np.mean(_fit_predict(mname, Xtr, ytr, Xte) != yte)))
+    box = {}
+    for mname, v in errs.items():
+        q = np.quantile(v, [0, 0.25, 0.5, 0.75, 1.0])
+        box[mname] = [round(float(t), 4) for t in q]
+    n_text = f"共 {2 * n_per} 筆，各類筆數隨機" if label == "情境 5" else f"每類 {n_per} 筆"
+    scen_rows.append({"label": label, "nPerClass": n_per, "nText": n_text, "linear": linear, "box": box})
+
 # ── 輸出 ────────────────────────────────────────────────────────────────
 def js(name, obj, src, seed, note=""):
     meta = {"src": src, "seed": seed, "versions": VERSIONS, "gen": GEN}
@@ -160,6 +256,11 @@ out = [
        "直方圖每格寬 0.005，閾值只走 0.005 的倍數，所以 JS 累加出來的 2×2 表是精確值："
        "閾值 0.5 得 9644/23/252/81（表 4.4）、閾值 0.2 得 9432/235/138/195（表 4.5）"),
 
+    js("FRAMES_w04scen",
+       {"reps": SCEN_REPS, "nTestPerClass": SCEN_NTEST, "methods": SCEN_METHODS, "rows": scen_rows},
+       "依 ISLP §4.5.2 六情境的文字描述自行模擬（示意，非書上原始資料）",
+       f"np.random.default_rng({SCEN_SEED}+情境序號)，每情境 {SCEN_REPS} 組訓練集",
+       SCEN_NOTE),
 ]
 print("\n".join(out))
 

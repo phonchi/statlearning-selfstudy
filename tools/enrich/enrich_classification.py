@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import proof
+from lib import detail, proof
 from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -45,12 +45,118 @@ def frames():
 # ══════════════════════════════════════════════════════════════════════
 BODIES = {}
 
+
+def links(*pairs, lead="講義補充連結"):
+    """講義附的外部補充連結：中文描述＋原網址。"""
+    items = "、".join(f'<a href="{u}" target="_blank" rel="noopener">{t}</a>' for t, u in pairs)
+    return f'<p class="source-note">{lead}：{items}。</p>'
+
+
+# ── 講義 04 逐頁對齊（2026-10-06）：新增可見小節與收合補充 ─────────────────
+LOGIT_INVERSE = r"""
+  <p><strong>logit 與 logistic 互為反函數。</strong>logit 把機率 $p\in(0,1)$ 送到整條實數線，logistic 再把任意實數送回 $(0,1)$：</p>
+  $$\operatorname{logit}(p)=\log\frac{p}{1-p},\qquad
+  \operatorname{logistic}(z)=\frac{1}{1+e^{-z}},\qquad
+  \operatorname{logistic}\bigl(\operatorname{logit}(p)\bigr)=p.$$
+  <p>所以模型可以從兩個方向讀：左邊寫成 $\operatorname{logit}(p(x))=\beta_0+\beta^\mathsf{T}x$，強調線性的是 log-odds；右邊寫成 $p(x)=\operatorname{logistic}(\beta_0+\beta^\mathsf{T}x)$，強調輸出是機率。機器學習常說的 sigmoid 函數，通常就是這個 logistic 函數。</p>
+""" + detail("w04-detail-logit-inverse", "推導：從 logit 解回機率", r"""
+  <p>令 $z=\log\{p/(1-p)\}$，目標是把 $p$ 寫成 $z$ 的函數。</p>
+  <p><strong>第一步：兩邊取指數。</strong></p>
+  $$e^z=\frac{p}{1-p}.$$
+  <p><strong>第二步：移項，把含 $p$ 的項放在同一邊。</strong></p>
+  $$e^z(1-p)=p\quad\Longrightarrow\quad e^z=p\,(1+e^z).$$
+  <p><strong>第三步：解出 $p$，再上下同除 $e^z$。</strong></p>
+  $$p=\frac{e^z}{1+e^z}=\frac{1}{1+e^{-z}}=\operatorname{logistic}(z).$$
+  <p>反過來把 $p=\operatorname{logistic}(z)$ 代入 logit，會得到 $\log\{e^z\}=z$。兩個方向都回到原值，因此兩者互為反函數。logistic 嚴格遞增，這也是「機率大於 $t$」等價於「線性分數大於 $\operatorname{logit}(t)$」的原因。</p>
+""")
+
+MAHA_SECTION = r"""
+  <h3 id="w04-maha">Mahalanobis 距離：用資料自己的尺度量距離</h3>
+  <p>講義把多變數判別函數寫成距離形式。令共用共變異數 $\Sigma$ 正定，定義 <strong>Mahalanobis 距離</strong>（Mahalanobis distance）</p>
+  $$d_M(x,\mu)=\sqrt{(x-\mu)^\mathsf{T}\Sigma^{-1}(x-\mu)}.$$
+  <p>LDA 的分數可以改寫成「距離平方的一半取負號，再加上先驗」；與類別無關的項不影響比較：</p>
+  $$\delta_k(x)=-\tfrac12\,d_M^2(x,\mu_k)+\log\pi_k+\text{（與 }k\text{ 無關的項）}.$$
+  <p>先驗相等時，LDA 就是選 Mahalanobis 距離最近的類別中心。它衡量的不是原始座標差了多少，而是<strong>相對於資料本身的散布，差了多少</strong>。</p>
+
+  <h4>一維：離平均幾個標準差</h4>
+  <p>只有一個變數時，$\Sigma$ 就是變異數 $\sigma^2$：</p>
+  $$d_M(x,\mu)=\sqrt{\frac{(x-\mu)^2}{\sigma^2}}=\frac{|x-\mu|}{\sigma}.$$
+  <p>這就是「$x$ 離平均幾個標準差」。例如兩個變數，$X_1$ 的標準差是 100、$X_2$ 的標準差是 1。兩個方向都差 10 時，歐氏距離（Euclidean distance）把它們當成一樣遠；但 $10/100=0.1$ 在 $X_1$ 方向只是很小的偏離，$10/1=10$ 在 $X_2$ 方向卻非常異常。</p>
+
+  <h4>多維：變異大的方向權重小</h4>
+  <p>多維時 $\Sigma$ 還包含<strong>相關</strong>。若資料大致沿著 $x_2\approx x_1$ 的斜線分布，沿斜線移動是常見的變化；垂直斜線移動同樣的歐氏距離，卻可能很少見。對 $\Sigma$ 做特徵分解 $\Sigma=Q\Lambda Q^\mathsf{T}$，令 $y=Q^\mathsf{T}(x-\mu)$ 為沿主軸的座標，則</p>
+  $$d_M^2(x,\mu)=\sum_{i=1}^p\frac{y_i^2}{\lambda_i}.$$
+  <ul>
+    <li>$\lambda_i$ 大：資料在這個方向本來就分散，偏離同樣的量，距離懲罰小。</li>
+    <li>$\lambda_i$ 小：資料在這個方向很集中，一點點偏離就算遠。</li>
+  </ul>
+  <p>這說明為什麼是乘上 $\Sigma^{-1}$：反矩陣讓變異大的方向權重變小、變異小的方向權重變大。只把每一欄分別標準化，處理了各變數的尺度，還沒有處理資料雲傾斜所反映的相關性。</p>
+
+  <h4>白化之後就是普通距離</h4>
+  <p>令 $z=\Sigma^{-1/2}(x-\mu)$，其中 $\Sigma^{-1/2}=Q\Lambda^{-1/2}Q^\mathsf{T}$。這個轉換把共變異數變成單位矩陣，稱為<strong>白化</strong>（whitening），而</p>
+  $$d_M^2(x,\mu)=z^\mathsf{T}z=\|z\|^2.$$
+  <p>也就是說，Mahalanobis 距離是<strong>把變異數與相關都消掉之後的歐氏距離</strong>。多變量常態的密度只透過 $d_M$ 依賴 $x$，所以等密度線是橢圓，不是圓；$d_M$ 可以理解成跨過了幾層這樣的共變異數橢圓。下面的元件可以拖動觀測點，比較歐氏距離與 Mahalanobis 距離。</p>
+""" + "{MAHA_VIZ}" + links(
+    ("逆共變異數矩陣與 Mahalanobis 距離的分解", "https://stats.stackexchange.com/questions/140056/decomposition-of-inverse-covariance-matrix"),
+    ("LDA／QDA 教學文件中的判別函數", "https://arxiv.org/abs/1906.02590")) + detail(
+    "w04-detail-maha-eigen", "計算細節：特徵分解、白化矩陣與距離公式", r"""
+  <p><strong>第一步：分解共變異數。</strong>$\Sigma$ 對稱正定，所以可寫成 $\Sigma=Q\Lambda Q^\mathsf{T}$，$Q$ 的各欄是單位正交的特徵向量，$\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_p)$ 且每個 $\lambda_i>0$。</p>
+  <p><strong>第二步：寫出反矩陣。</strong>因為 $Q^\mathsf{T}Q=I$，</p>
+  $$\Sigma^{-1}=Q\Lambda^{-1}Q^\mathsf{T}.$$
+  <p><strong>第三步：代入距離。</strong>令 $y=Q^\mathsf{T}(x-\mu)$：</p>
+  $$\begin{aligned}d_M^2&=(x-\mu)^\mathsf{T}Q\Lambda^{-1}Q^\mathsf{T}(x-\mu)\\
+  &=y^\mathsf{T}\Lambda^{-1}y=\sum_{i=1}^p\frac{y_i^2}{\lambda_i}.\end{aligned}$$
+  <p><strong>第四步：白化矩陣。</strong>定義 $\Sigma^{-1/2}=Q\Lambda^{-1/2}Q^\mathsf{T}$，它對稱，而且 $\Sigma^{-1/2}\Sigma^{-1/2}=\Sigma^{-1}$。令 $z=\Sigma^{-1/2}(x-\mu)$：</p>
+  $$z^\mathsf{T}z=(x-\mu)^\mathsf{T}\Sigma^{-1/2}\Sigma^{-1/2}(x-\mu)=d_M^2.$$
+  <p>若 $X\sim N(\mu,\Sigma)$，則 $\operatorname{Cov}(Z)=\Sigma^{-1/2}\Sigma\Sigma^{-1/2}=I$，各方向的變異都變成 1，而且彼此不相關。$\Lambda^{-1/2}Q^\mathsf{T}$ 也能白化（PCA 白化），差別只在最後少乘一次旋轉 $Q$；兩者給出相同的距離。</p>
+""")
+
+MAHA_SECTION = MAHA_SECTION.replace("{MAHA_VIZ}", viz(
+    svg("w04mahaSvg", 360),
+    [rows_card("觀測點與投影方向",
+               [("相關係數 $\\rho$", "0.80", "w04mahaRho"),
+                ("歐氏距離 $\\|x-\\mu\\|$", "—", "w04mahaEuc"),
+                ("Mahalanobis 距離 $d_M$", "—", "w04mahaMah"),
+                ("投影座標 $a^\\mathsf{T}(x-\\mu)$", "—", "w04mahaProj"),
+                ("投影後變異 $a^\\mathsf{T}\\Sigma a$", "—", "w04mahaVar"),
+                ("150 點投影的樣本變異", "—", "w04mahaSampVar")]),
+     info_card("怎麼看這張圖",
+               '灰點是 $N(0,\\Sigma)$ 的固定抽樣；三個<strong>實線橢圓</strong>是 $d_M=1,2,3$。'
+               '<span style="color:var(--pt-b);font-weight:700;">紅點</span>是可拖動的觀測 $x$，'
+               '<strong>虛線圓</strong>是和 $x$ 歐氏距離相同的點，<strong>粗線橢圓</strong>是和 $x$ 的 Mahalanobis 距離相同的點。'
+               '直線是方向 $a$，小方塊是 $x$ 在 $a$ 上的投影。'),
+     info_card("兩個對照",
+               '「沿長軸」與「沿短軸」兩個按鈕把 $x$ 放在歐氏距離都是 2 的位置，'
+               'Mahalanobis 距離卻差很多。轉動 $a$，$a^\\mathsf{T}\\Sigma a$ 在長軸方向最大、短軸方向最小；'
+               '它就是下一小節 Fisher 準則裡「投影後的散布」。')],
+    "w04mahaStatus", "拖動紅點或使用按鈕；滑桿改變相關係數與投影方向。",
+    slider("w04mahaR", "ρ", -0.9, 0.9, 0.05, 0.8, "w04mahaDraw")
+    + slider("w04mahaT", "a 的角度（度）", 0, 180, 5, 45, "w04mahaDraw")
+    + '<button class="btn btn-step" onclick="w04mahaPreset(1)">→ 沿長軸放 x</button>'
+    + '<button class="btn btn-step" onclick="w04mahaPreset(-1)">→ 沿短軸放 x</button>'
+    + '<button class="btn btn-reset" onclick="w04mahaReset()">重置</button>',
+    provenance=("illustrative", "二維常態 N(0, Σ)，Σ 的對角為 1、相關係數由滑桿決定")))
+
+BAYES_BOUNDARY = r"""
+  <h3 id="w04-bayes-boundary">Bayes 決策邊界與 LDA 估計出的邊界</h3>
+  <p>講義的二維、三類圖同時畫了兩種邊界。<strong>Bayes 決策邊界</strong>（Bayes decision boundary）使用<strong>真實</strong>的先驗與類內分布，例如真正的 $\mu_k$、$\Sigma$、$\pi_k$，算出真正的後驗機率再分類。在 0–1 損失（每種誤判代價相同）下，它能達到所有分類規則中最低的期望錯誤率，稱為 <strong>Bayes 錯誤率</strong>（Bayes error rate）；證明見第 2 章的 <a href="statistical_learning.html#w02proofBayes">Bayes 分類器最佳性</a>。</p>
+  <p>實際上我們不知道母體參數，只能用訓練資料估計：</p>
+  $$\mu_k\to\hat\mu_k,\qquad \Sigma\to\hat\Sigma,\qquad \pi_k\to\hat\pi_k.$$
+  <p>把估計值代入判別函數得到的，就是 <strong>LDA 邊界</strong>；QDA 則估計各類自己的 $\hat\Sigma_k$。因此：</p>
+  <ul>
+    <li><strong>Bayes 邊界</strong>：用真實分布得到的理想邊界，是理論上的比較基準，通常無法直接計算。</li>
+    <li><strong>LDA／QDA 邊界</strong>：用樣本估計參數後的近似邊界，會隨訓練資料變動。</li>
+  </ul>
+  <p>ISLP 圖 4.6 每類 20 筆訓練資料，Bayes 與 LDA 的測試錯誤率分別是 0.0746 與 0.0770，兩條邊界很接近。要注意前提：這裡的 Bayes 邊界由<strong>真正的資料分布</strong>決定。若真實分布不是共用共變異數的常態，就算把常態模型的參數估得再準，LDA 邊界也<strong>不保證</strong>收斂到 Bayes 邊界；只有在某些特殊情況（例如後面情境 3 那種同尺度、等先驗的 t 分布）兩者的邊界才剛好一致。後面 QDA 一節的互動圖會把兩種邊界畫在一起。</p>
+"""
+
 # ── P00 prologue ──────────────────────────────────────────────────────
 BODIES["prologue"] = f"""
   <p>第 3 章的 y 是連續的數字。現在換一種問題：<strong>y 是類別</strong>。這個人會不會違約、
   今天股市漲還是跌、這封信是不是垃圾信。這叫做<strong>分類</strong>（classification）。
   本章用 ISLP 的 <code>Default</code> 資料（n = 10000，違約率 3.33%）與課程 lab 的
   <code>Smarket</code> 資料當主線。</p>
+{links(("ISLP 的 Default 資料說明", "https://islp.readthedocs.io/en/latest/datasets/Default.html"))}
 
   <p>直覺會說：把類別編成數字，然後照第 3 章擬合線性迴歸就好。<strong>這樣做會遇到兩個問題</strong>，
   這兩個問題都會影響結果的解讀。</p>
@@ -143,6 +249,7 @@ BODIES["logistic"] = f"""
   $$\\operatorname{{Var}}(Y\\mid X=x)=p(x)\\{{1-p(x)\\}}.$$
   <p>若想沿用「觀測值減掉條件平均」的想法，仍可定義 $\\varepsilon=Y-p(X)$，寫成 $Y=p(X)+\\varepsilon$。但給定 $X=x$ 後，誤差只有 $1-p(x)$ 與 $-p(x)$ 兩個可能值；它的分布和變異數會隨 $x$ 改變。這不具有前章獨立、同變異加法雜訊的結構，也沒有另一個可自由估計的 $\\sigma^2$。</p>
   <p>估計時還會假設：給定各筆預測變數後，觀測結果彼此獨立。<strong>獨立不等於同變異</strong>，因為各筆的 $p(x)$ 可以不同。</p>
+{links(("為什麼線性迴歸要寫雜訊項，邏輯斯迴歸卻不用", "https://stats.stackexchange.com/questions/481391/why-do-we-model-noise-in-linear-regression-but-not-logistic-regression"))}
 
   <p>整理式子後，可以定義勝算與 log-odds。先移項：</p>
 
@@ -154,12 +261,14 @@ BODIES["logistic"] = f"""
   <p><strong>勝算</strong>（odds）是「發生機率 ÷ 不發生機率」，範圍 (0, ∞)；
   取 log 之後範圍變成整個實數線，這個量叫 <strong>log-odds</strong> 或 <strong>logit</strong>。
   所以邏輯斯迴歸的 <strong>log-odds 是線性函數</strong>；機率則隨 x 呈 S 形變化，係數須依 log-odds 解讀。</p>
+{LOGIT_INVERSE}
 
   <h3>為什麼仍叫線性分類器？</h3>
   <p><strong>分類是根據 $x$ 的線性函數來決定的</strong>。機率曲線雖然是 S 形，但 logistic 函數單調遞增。若用固定門檻 $0\\lt t\\lt1$：</p>
   $$p(x)>t\\iff\\beta_0+\\beta_1x_1+\\cdots+\\beta_px_p>
   \\log\\frac{{t}}{{1-t}}.$$
   <p>門檻為 0.5 時，就是看線性分數是否大於 0；兩個預測變數的邊界是直線，多個變數則是超平面。這裡指模型使用的特徵空間：若加入平方項或交互作用，邊界在原始座標中就可能彎曲。</p>
+{links(("為什麼邏輯斯迴歸是線性分類器", "https://stats.stackexchange.com/questions/93569/why-is-logistic-regression-a-linear-classifier"))}
   <h3>係數如何估計？</h3>
   <p>最大概似法（MLE）選擇讓已觀察到的 0／1 結果最可能出現的係數。對每筆資料，若結果為 1 就拿 $p_i$，若為 0 就拿 $1-p_i$，再把它們乘起來：</p>
   $$L(\\beta)=\\prod_{{i=1}}^n p_i^{{y_i}}(1-p_i)^{{1-y_i}}.$$
@@ -177,6 +286,7 @@ BODIES["logistic"] = f"""
   <p><strong>依據是 MLE 的大樣本常態近似。</strong>模型與一般正則條件成立、樣本夠大且有有限估計時，檢定 $H_0:\\beta_j=\\beta_{{j,0}}$ 使用</p>
   $$z=\\frac{{\\hat\\beta_j-\\beta_{{j,0}}}}{{SE(\\hat\\beta_j)}}\\approx N(0,1).$$
   <p>常見的係數表檢定 $\\beta_j=0$，所以分子只剩 $\\hat\\beta_j$。這裡的標準誤一樣是估出來的；估計標準誤本身並不代表要用 $t$。Bernoulli 沒有額外的 $\\sigma^2$，也沒有 Gaussian 線性迴歸那個精確的 $t$ 結構。小樣本或分離情況下，這個 $z$ 近似可能不可靠。</p>
+{links(("邏輯斯迴歸的 Wald 檢定", "https://stats.stackexchange.com/questions/60074/wald-test-for-logistic-regression"))}
 
 {viz(svg("w04shapeSvg", 250) + "\n" + svg("w04shapeSvg2", 220),
      [rows_card("目前的模型",
@@ -274,6 +384,7 @@ BODIES["multinomial"] = f"""
   多元迴歸的每個係數描述「<strong>控制模型中其他變數後</strong>」的條件關聯。
   這是模型中的比較，沒有因果設計與相應假設時，不代表改變學生身分會造成違約率改變。
   ISLP 圖 4.3 左圖比較違約機率曲線，右圖用箱形圖呈現學生與非學生的 balance 分布。''', "warm")}
+{links(("冰淇淋銷量與鯊魚目擊次數：共同原因的漫畫", "https://www.causeweb.org/cause/resources/fun/cartoons/ice-cream-sales-and-shark-sightings"))}
 
   <p>用表 4.3 的係數算兩個具體的人（ISLP 式 4.8、4.9）：balance = 1500、income = 40（千元）的
   <strong>學生</strong>違約機率是 0.058，同樣條件的<strong>非學生</strong>是 0.105——
@@ -349,7 +460,7 @@ BODIES["lda"] = f"""
   <p>代價是要承擔假設不合適的偏差。若類內資料明顯偏離常態，或各類散布差很多，LDA 的限制也可能妨礙預測。因此，講義說的是在假設合理時 LDA <em>可能</em>更穩定，實際表現仍需和 logistic 等方法一起比較。</p>
   <h4>3. 多類別的分類規則，也能提供低維視圖</h4>
   <p>LDA 為每一類計算一個判別分數，選分數最大的類，二類與多類使用同一套規則。Logistic 也能透過 softmax 處理多類別；LDA 的另一個用途，是找出最能呈現類別差異的投影方向。</p>
-  <p>例如 Iris 有四個測量變數、三個品種。LDA 的完整判別資訊最多只需兩個方向，就能畫成一張平面圖，同時觀察類別分離與重疊的位置。為什麼最多是 $K-1$ 個方向，會在本節的 Fisher LDA 收合區用幾何方式解釋。</p>
+  <p>例如 Iris 有四個測量變數、三個品種。LDA 的完整判別資訊最多只需兩個方向，就能畫成一張平面圖，同時觀察類別分離與重疊的位置。為什麼最多是 $K-1$ 個方向，會在本節後段的 Fisher LDA 小節用幾何方式解釋。</p>
 
   <h3>判別式與生成式：分別在建模什麼？</h3>
   <p>Logistic regression 是<strong>判別式模型</strong>（discriminative model），直接描述 $P(Y=k\\mid X=x)$。<strong>生成式模型</strong>（generative model）則先描述類別比例與各類的 $X$ 分布，組成聯合分布，再用 Bayes 定理求後驗機率。</p>
@@ -357,6 +468,7 @@ BODIES["lda"] = f"""
   $$P(Y=k\\mid X=x)=\\frac{{\\pi_kf_k(x)}}{{\\sum_{{\\ell=1}}^K\\pi_\\ell f_\\ell(x)}}.$$
   <p>對同一筆 $x$，若選第 $k$ 類，判錯的機率就是 $1-P(Y=k\\mid X=x)$。因此，誤判代價相同時，選後驗機率最大的類別，會讓這筆資料的條件錯誤率最小。這是 Bayes 分類的理由；LDA／QDA 再用資料估計其中的機率，所以實際表現仍有估計誤差。</p>
   <p>分母對所有類別相同，所以選 $\\pi_kf_k(x)$ 最大的類別即可。和前面的 Bernoulli／Categorical 不同，這裡接下來的常態與共變異數限制是<strong>額外的模型假設</strong>，需要檢查是否適合資料。</p>
+{links(("判別式與生成式模型的比較", "https://www.analyticsvidhya.com/blog/2021/07/deep-understanding-of-discriminative-and-generative-models-in-machine-learning/"))}
   <details class="qa-item reading-detail" id="w04-detail-generative-uses"><summary>生成式模型除了分類，還能做什麼？</summary><div class="detail-body">
   <p>生成式模型同時描述「各類出現的比例」與「每一類裡的資料長什麼樣」。因此，有了先驗 $\\pi_k$ 和類內分布 $f_k$，就能進一步討論整筆資料如何產生、常不常見，以及未觀測部分可能是什麼。</p>
   <h4>生成新的資料：先抽類別，再抽特徵</h4>
@@ -480,7 +592,7 @@ BODIES["lda"] = f"""
   <p>這就連回 logistic regression：兩者都能用線性分數得到分類機率。LDA 先估各類的平均、共用共變異數與先驗，再算出線性分數；logistic 則直接用類別標籤估計線性分數的係數。因此形式相近，估計結果卻不一定相同。</p>
   <p>也可以從距離理解 LDA：<strong>看觀測離哪個類別中心較近，同時考慮類內散布與先驗。</strong>一維時，偏離中心一個單位算不算遠，要看這一類本來有多分散；多維時，還要看偏離的方向。</p>
   <p>前章判斷殘差大小會考慮其尺度；這裡則用特徵的類內散布調整距離。沿著資料雲本來就拉得很長的方向移動，比朝很窄的方向偏離更常見。這種同時考慮尺度與相關性的距離，就是 <strong>Mahalanobis 距離</strong>。只將各欄分別標準化，還沒有處理資料雲傾斜所反映的相關性。</p>
-  <p>若各類都是同樣大小的球形、先驗也相同，就回到普通的「選最近中心」。先驗不同時，較常見的類別會得到較高的分數；前面的一維圖可以直接觀察先驗改變如何移動邊界。白化後為什麼能用普通距離比較，留在 Fisher LDA 收合區說明。</p>
+  <p>若各類都是同樣大小的球形、先驗也相同，就回到普通的「選最近中心」。先驗不同時，較常見的類別會得到較高的分數；前面的一維圖可以直接觀察先驗改變如何移動邊界。白化後為什麼能用普通距離比較，下面的 Mahalanobis 小節會一步步說明。</p>
   <p>延伸閱讀：<a href="https://arxiv.org/abs/1906.02590">Ghojogh 與 Crowley：LDA／QDA tutorial</a> 的第 5、7、9 節，分別連接判別分數、距離及 logistic regression。</p>
 
   <p>多變數時，類別平均改成向量，共用變異數改成共變異數矩陣：</p>
@@ -488,6 +600,8 @@ BODIES["lda"] = f"""
   \\hat\\Sigma=\\frac1{{n-K}}\\sum_{{k=1}}^K\\sum_{{i:y_i=k}}
   (x_i-\\hat\\mu_k)(x_i-\\hat\\mu_k)^\\mathsf T.$$
   <p>這同樣是不偏的 pooled 估計；MLE 分母仍為 $n$。以下使用共變異數可逆的情況，推導與估計細節可在本節收合區查閱。</p>
+{MAHA_SECTION}
+{BAYES_BOUNDARY}
 
 {qa("觀念釐清", [
     ("Q：LDA 與邏輯斯迴歸都給線性邊界，那差在哪？什麼時候該選哪個？",
@@ -541,19 +655,58 @@ BODIES["lda"] = f"""
 """
 
 
+
+PROJ_VAR_DETAIL = detail("w04-detail-projected-variance", "推導：投影後的變異數", r"""
+<p>令 $\mu=E[X]$。$a$ 是固定向量，所以 $E[a^\mathsf{T}X]=a^\mathsf{T}\mu$。</p>
+<p><strong>第一步：寫成平方的期望。</strong></p>
+$$\operatorname{Var}(a^\mathsf{T}X)=E\bigl[(a^\mathsf{T}X-a^\mathsf{T}\mu)^2\bigr]=E\bigl[(a^\mathsf{T}(X-\mu))^2\bigr].$$
+<p><strong>第二步：純量的平方等於它乘上自己的轉置。</strong>$a^\mathsf{T}(X-\mu)$ 是純量，等於 $(X-\mu)^\mathsf{T}a$，所以</p>
+$$(a^\mathsf{T}(X-\mu))^2=a^\mathsf{T}(X-\mu)(X-\mu)^\mathsf{T}a.$$
+<p><strong>第三步：把常數向量移出期望。</strong></p>
+$$\operatorname{Var}(a^\mathsf{T}X)=a^\mathsf{T}E\bigl[(X-\mu)(X-\mu)^\mathsf{T}\bigr]a=a^\mathsf{T}\Sigma a.$$
+<p>同樣的步驟用在樣本上：把樣本共變異數 $S$ 代入，$a^\mathsf{T}Sa$ 就是投影後分數 $a^\mathsf{T}x_i$ 的樣本變異數。變異數不能是負的，所以 $a^\mathsf{T}\Sigma a\ge0$ 對所有 $a$ 成立，這也是共變異數矩陣必為半正定的原因。</p>
+""")
+FISHER_LINKS_A = links(
+    ("scikit-learn 的 LDA／QDA 說明", "https://scikit-learn.org/stable/modules/lda_qda.html#lda-qda"))
+FISHER_EIG_DETAIL = detail("w04-detail-fisher-eigen", "計算細節：廣義特徵值、W 正交與降秩 LDA", r"""
+<p><strong>為什麼是 $W^{-1}B$ 的特徵向量？</strong>比值 $J(a)$ 不受 $a$ 的長度影響，所以可以固定分母 $a^\mathsf{T}Wa=1$，改成在這個限制下最大化 $a^\mathsf{T}Ba$。拉格朗日乘數法給出</p>
+$$\nabla_a\bigl[a^\mathsf{T}Ba-\lambda(a^\mathsf{T}Wa-1)\bigr]=2Ba-2\lambda Wa=0\ \Longrightarrow\ Ba=\lambda Wa.$$
+<p>左乘 $a^\mathsf{T}$ 得 $a^\mathsf{T}Ba=\lambda\,a^\mathsf{T}Wa=\lambda$，所以比值就等於特徵值，取最大的 $\lambda$ 即可。$W$ 正定時兩邊左乘 $W^{-1}$，就是講義寫的「$W^{-1}B$ 的最大特徵值」。</p>
+<p><strong>後續方向與 $W$ 正交。</strong>依特徵值遞減取第二、第三個方向，可規範成 $a_i^\mathsf{T}Wa_j=\delta_{ij}$：這是 $W$ 內積下的正交，原始座標中不一定垂直。實作上常先解對稱矩陣 $W^{-1/2}BW^{-1/2}$ 的特徵問題，再轉回原座標。</p>
+<p><strong>降秩 LDA。</strong>若只保留前 $L\lt\operatorname{rank}(B)$ 個方向，就是降秩 LDA（reduced-rank LDA，ESL §4.3.3、習題 4.8）。它保留分離最強的方向；在共用常態模型下可連到類平均的秩受限最大概似估計。刪掉非零判別方向可能改變分類與後驗機率。用 $W$ 規範的座標做最近中心分類前，還須換成共變異數白化尺度；講義寫的規則是在判別座標中選</p>
+$$\arg\min_k\ \tfrac12\|\tilde x-\tilde\mu_k\|^2-\log\pi_k.$$
+<p>若 $W$ 奇異，須先處理共線性、降維或使用正則化，不能直接套逆矩陣公式。</p>
+""") + links(("如何最大化廣義 Rayleigh 比值", "https://math.stackexchange.com/questions/1769712/how-to-maximize-generalized-rayleigh-ratio"))
+
 # 講義的判別子空間推導；使用 raw string 保留數學語法。
 BODIES["lda"] += r"""
-<h3 id="w04fisher">LDA 與 Fisher LDA：分類規則與判別方向</h3>
+<h3 id="w04fisher">〔選讀〕Fisher LDA：找出最能分開類別的投影方向</h3>
 <p>生成式 LDA 從各類的常態分布與共用共變異數出發，計算後驗機率。
 Fisher 線性判別分析先問另一個問題：<strong>把資料投影到哪個方向，最容易看出類別差異？</strong>
 投影就像把資料點在一條直線上留下位置；選不同方向，原本的兩團資料可能分開，也可能重疊。</p>
+<h4>投影：$a^\mathsf{T}x$ 是一維座標</h4>
+<p>Fisher 的作法是把 $p$ 維的點壓成一個數 $z=a^\mathsf{T}x$。由內積公式 $a^\mathsf{T}x=\|a\|\,\|x\|\cos\theta$，其中 $\theta$ 是 $a$ 與 $x$ 的夾角。若 $a$ 是單位向量（$\|a\|=1$），</p>
+$$a^\mathsf{T}x=\|x\|\cos\theta,$$
+<p>正好是 $x$ 沿著 $a$ 方向的<strong>有號長度</strong>，也就是投影後在那條直線上的座標。例如 $x=(3,4)^\mathsf{T}$、$a=(1,0)^\mathsf{T}$，$a^\mathsf{T}x=3$：投影到水平軸後座標是 3。</p>
+<p>要分清楚兩個東西：</p>
+<ul>
+<li><strong>投影座標</strong>（一個數）：$a^\mathsf{T}x$，前提是 $\|a\|=1$。</li>
+<li><strong>投影向量</strong>（一個點）：$(a^\mathsf{T}x)\,a$。若 $a\ne0$ 不是單位向量，投影向量是 $\dfrac{a^\mathsf{T}x}{a^\mathsf{T}a}\,a$，座標則要除以 $\|a\|$。</li>
+</ul>
+<p>LDA 寫 $z=a^\mathsf{T}x$ 時就是在降維：把每個資料點沿著方向 $a$ 投影到一條線上。Fisher 準則只在乎方向，把 $a$ 整體放大不會改變分類比較，所以常把 $a$ 規範成某種單位長度。</p>
+
+<h4>投影後的散布：$\operatorname{Var}(a^\mathsf{T}X)=a^\mathsf{T}\Sigma a$</h4>
+<p>若隨機向量 $X$ 的共變異數是 $\Sigma$，投影後的 $Z=a^\mathsf{T}X$ 只是一個數，它的變異數為</p>
+$$\boxed{\operatorname{Var}(a^\mathsf{T}X)=a^\mathsf{T}\Sigma a}.$$
+<p>直覺上，$\Sigma$ 記錄原本 $p$ 維資料「各個方向有多分散」，$a^\mathsf{T}\Sigma a$ 只取出 <strong>$a$ 方向上的那一份</strong>。例如 $\Sigma=\operatorname{diag}(4,1)$：投影到 $x_1$ 軸時 $a^\mathsf{T}\Sigma a=4$，投影到 $x_2$ 軸時是 1，投影到斜 45° 的 $a=(1,1)^\mathsf{T}/\sqrt2$ 時是 $(4+1)/2=2.5$。上面 Mahalanobis 元件的「投影後變異」讀數就是這個量。對應到 Fisher：把 $\Sigma$ 換成類內散布矩陣 $W$，$a^\mathsf{T}Wa$ 就衡量投影到 $a$ 之後，<strong>同一類內部</strong>還有多散。</p>
+""" + PROJ_VAR_DETAIL + r"""
 <h4>平均分得開，還要看同類資料有多散</h4>
 <p>只比較兩個投影平均的距離還不夠。若平均雖然分開，每類資料卻在那個方向上散得很廣，兩類仍可能大量重疊。Fisher 因此同時看類間與類內散布：希望投影後各類中心分得開，同一類的資料又聚得近。</p>
 <p>這個準則使用類別標籤，但定義它不需要常態假設。使用相同的類別平均與 pooled 類內共變異數時，它找到的方向和生成式 LDA 的判別方向相連；要變成完整分類規則，仍須加上切點與先驗。</p>
 <h4>白化：先把各個方向的尺度調整好</h4>
 <p>先把 LDA 的分數改寫成距離。省略與類別無關的項，分類等同於最小化</p>
 $$\frac12(x-\mu_k)^T\Sigma^{-1}(x-\mu_k)-\log\pi_k.$$
-<p>第一項是 Mahalanobis 距離平方的一半。令 $z=\Sigma^{-1/2}x$、
+<p>第一項是前面 Mahalanobis 小節的距離平方的一半。令 $z=\Sigma^{-1/2}x$、
 $m_k=\Sigma^{-1/2}\mu_k$，就是把共用類內共變異數變成單位矩陣的<strong>白化（whitening）</strong>。
 此時第一項變成 $\|z-m_k\|^2/2$。先驗相等時選最近的中心；先驗不等時仍須扣掉 $\log\pi_k$，
 較常見的類別因而得到較大的決策區域。</p>
@@ -566,6 +719,7 @@ $$\|z-m_k\|^2=\|\operatorname{proj}_H(z)-m_k\|^2+
 <p>最後一項不隨類別改變，因此投影不會改變距離的比較，加上相同的先驗修正後也保留分類。LDA 的分類資訊於是集中在至多 $\min(p,K-1)$ 維。這是白化後的幾何關係；不能直接在未白化的原始座標中用普通距離取代 Mahalanobis 距離。</p>
 <p>可以把兩個中心想成放在同一條線上。新點離這條線的垂直距離，對兩個中心都一樣；決定較靠近哪一個的，是沿線的位置。多類別只是把這條線換成容納所有中心的平面或更高維空間。保留整個空間時，不會丟掉 LDA 比較類別需要的資訊。</p>
 <p>來源：<a href="https://scikit-learn.org/stable/modules/lda_qda.html#mathematical-formulation-of-lda-dimensionality-reduction">講義引用的 LDA 幾何與降維說明</a>，以及 <a href="https://arxiv.org/abs/1906.02590">LDA／QDA tutorial 第 7–8 節</a>的距離與 Fisher 觀點。</p>
+""" + FISHER_LINKS_A + r"""
 <h4>和 PCA 比：散得最開的方向，未必最能分開類別</h4>
 <p>PCA 不使用類別標籤，尋找整體變異最大的方向。Fisher 則關心類別平均的差異，相對於各類內部散布有多明顯。</p>
 <p>想像兩類的中心主要是左右分開，每一類卻都上下拉得很長。若上下的類內變異足夠大，PCA 可能優先保留上下方向；Fisher 則可能選左右方向，因為它較能區分類別。兩者回答的問題不同，所以同樣投影到二維，也不一定得到相同的圖。</p>
@@ -575,13 +729,12 @@ $$\|z-m_k\|^2=\|\operatorname{proj}_H(z)-m_k\|^2+
 $$W=\sum_{k=1}^K\sum_{i\in C_k}(x_i-\bar x_k)(x_i-\bar x_k)^T.$$
 $$B=\sum_{k=1}^K n_k(\bar x_k-\bar x)(\bar x_k-\bar x)^T.$$
 <p>$W$ 加總同類觀測的散布，$B$ 加總各類中心相對於總中心的散布；它們尚未除以自由度。
+因此 $a^TWa$ 是投影後的<strong>類內離差平方和</strong>，等於 pooled 類內變異數乘上 $n-K$，比較方向時兩者等價。
 投影成 $a^Tx$ 後，Fisher 比值為</p>
 $$J(a)=\frac{a^TBa}{a^TWa}.$$
 <p>分子衡量各類平均投影後有多分散，分母衡量同類資料投影後有多分散。比值大，表示類間差異相對於類內散布更明顯；把方向向量整體放大不會改善這個比值，所以重點是選方向。</p>
-<p>假設 $W$ 正定，Fisher 最優方向滿足廣義特徵值問題
-$Ba=\lambda Wa$。取最大特徵值對應的方向，再依特徵值遞減取後續方向。
-不同方向可規範成 $a_i^TWa_j=\delta_{ij}$：這是 <strong>W 內積下的正交</strong>，原始座標中不一定垂直。
-也可以先解對稱矩陣 $W^{-1/2}BW^{-1/2}$，再轉回原始座標。</p>
+<p>假設 $W$ 正定，最大化這個比值等同解<strong>廣義特徵值問題</strong> $Ba=\lambda Wa$，也就是取 $W^{-1}B$ 最大特徵值對應的方向；後續方向依特徵值遞減取出。這些方向稱為<strong>判別座標</strong>（discriminant coordinates）。</p>
+""" + FISHER_EIG_DETAIL + r"""
 <h4>二類：Fisher 的方向就是 LDA 邊界的法向量</h4>
 $$B=\frac{n_1n_2}{n}(\bar x_1-\bar x_2)(\bar x_1-\bar x_2)^T.$$
 $$a\propto W^{-1}(\bar x_1-\bar x_2).$$
@@ -591,11 +744,7 @@ LDA 分數差中的 $\hat\Sigma^{-1}(\bar x_1-\bar x_2)$ 和 Fisher 方向平行
 <h4>多類：為什麼最多只有 K−1 個方向？</h4>
 <p>類間散布的秩滿足 $\operatorname{rank}(B)\le\min(p,K-1)$。
 在白化空間中，各類中心都落在至多 K−1 維的仿射子空間。完整的距離分解見下方證明。保留完整的判別子空間，並保留同樣的尺度與先驗，便可重現原 LDA 分類。</p>
-<p>若只保留前 $L&lt;\operatorname{rank}(B)$ 個方向，就得到<strong>降秩 LDA（reduced-rank LDA）</strong>。
-它依 Fisher 準則保留分離最強的方向；在共用常態模型下可連結到類平均的秩受限最大概似估計。
-刪去非零判別方向可能改變分類與後驗機率。K 大於 3 時的二維圖因此通常只是近似視圖。
-用 $W$ 規範的座標做最近中心分類前，還須換成共變異數白化尺度；先驗項不能隨意和距離乘上不同倍數。
-若 $W$ 奇異，須先處理共線性、降維或使用正則化，不能直接套逆矩陣公式。</p>
+<p>K 大於 3 時，只畫前兩個判別方向的二維圖通常只是近似視圖；只保留前幾個方向的做法稱為降秩 LDA，細節放在上方「廣義特徵值」收合區。</p>
 <h4>講義的 Iris 例子</h4>
 <p>Iris 有花萼長、花萼寬、花瓣長、花瓣寬四個變數；Setosa、Versicolor、Virginica 各 50 筆。
 三類最多兩個判別方向，因此完整二維判別圖能保留這個 LDA 分類規則。
@@ -604,9 +753,10 @@ LDA 分數差中的 $\hat\Sigma^{-1}(\bar x_1-\bar x_2)$ 和 Fisher 方向平行
 <tr><th>Setosa</th><td>50</td><td>0</td><td>0</td></tr>
 <tr><th>Versicolor</th><td>0</td><td>48</td><td>2</td></tr>
 <tr><th>Virginica</th><td>0</td><td>1</td><td>49</td></tr></tbody></table></div>
-<p>合計錯 3 筆，訓練正確率 98%，與講義一致。這是對擬合資料的回算，不能當作新花朵的測試正確率。
+<p>合計錯 3 筆（講義圖中兩個橘點、一個綠點被分錯），訓練正確率 98%，與講義一致。這是對擬合資料的回算，不能當作新花朵的測試正確率。
 兩個非零廣義特徵值約 32.191929、0.285391；它們衡量類間與類內散布比，不是原始資料的 PCA 解釋變異比。</p>
-""" + quiz("qFisher", "QUIZ · 判別方向與分類", "三類、四個變數的 LDA，保留兩個判別方向一定可以解讀成什麼？", [
+""" + links(
+    ("Fisher 判別與 PCA 在 Iris 上的比較", "https://scikit-learn.org/stable/auto_examples/decomposition/plot_pca_vs_lda.html")) + quiz("qFisher", "QUIZ · 判別方向與分類", "三類、四個變數的 LDA，保留兩個判別方向一定可以解讀成什麼？", [
 (True, "使用相同尺度與先驗，可保留完整 LDA 決策所需的類平均差異", "類間散布的秩至多為 2；完整白化判別子空間以外的距離對各類相同。"),
 (False, "兩個方向必定解釋原始資料最多的變異", "這是 PCA 的目標；Fisher LDA 使用類別標籤，最大化類間／類內散布比。"),
 (False, "先驗機率不再影響分類", "即使降到完整判別子空間，仍須保留先驗的 log 項。")])
@@ -617,6 +767,13 @@ _nb_code = (lab_code(CH, 102) + "\n\n" + lab_code(CH, 110) + "\n\n"
             + lab_code(CH, 116) + "\n\n" + lab_code(CH, 117))
 
 BODIES["qda"] = f"""
+  <p>講義先回到 Bayes 公式：$\\Pr(Y=k\\mid X=x)=\\pi_kf_k(x)/\\sum_l\\pi_lf_l(x)$。<strong>換掉 $f_k(x)$ 的形式，就得到不同的分類器</strong>：</p>
+  <ul>
+    <li>各類常態、共用 $\\Sigma$：LDA。</li>
+    <li>各類常態、各自 $\\Sigma_k$：QDA。</li>
+    <li>$f_k(x)=\\prod_{{j=1}}^pf_{{kj}}(x_j)$（類內條件獨立）：Naive Bayes；若每個 $f_{{kj}}$ 再取常態，就等於 $\\Sigma_k$ 為對角矩陣。</li>
+    <li>其他密度模型，包括直方圖、核密度估計等無母數方法。</li>
+  </ul>
   <p>LDA 要求所有類共用同一個 $\\Sigma$。<strong>QDA</strong>（quadratic discriminant analysis）
   讓每一類有自己的共變異數，即 $X\\mid Y=k\\sim N_p(\\mu_k,\\Sigma_k)$。它仍使用 Gaussian 類內分布，但放寬共用共變異數的假設。判別函數為：</p>
 
@@ -624,21 +781,35 @@ BODIES["qda"] = f"""
     - \\frac{{1}}{{2}} \\log |\\Sigma_k| + \\log \\pi_k$$
 
   <p>展開之後會出現 $x^{{\\mathsf{{T}}}} \\Sigma_k^{{-1}} x$。<strong>因為 $\\Sigma_k$ 隨 k 不同，
-  這一項在兩類相減時不會抵消</strong>，所以邊界是 x 的二次曲面——名字裡的「二次」就是這麼來的。</p>
+  這一項在兩類相減時不會抵消</strong>，所以邊界是 x 的二次曲面——名字裡的「二次」就是這麼來的。講義把它完整展開成</p>
+
+  $$\\delta_k(x)=-\\tfrac12x^{{\\mathsf{{T}}}}\\Sigma_k^{{-1}}x+x^{{\\mathsf{{T}}}}\\Sigma_k^{{-1}}\\mu_k-\\tfrac12\\mu_k^{{\\mathsf{{T}}}}\\Sigma_k^{{-1}}\\mu_k-\\tfrac12\\log|\\Sigma_k|+\\log\\pi_k.$$
+
+  <p>和 LDA 對照：LDA 的第一項 $-\\tfrac12x^{{\\mathsf{{T}}}}\\Sigma^{{-1}}x$ 對每類都一樣，所以能刪掉；$\\log|\\Sigma|$ 也一樣。QDA 的這兩項隨 $k$ 改變，必須保留。</p>
+{links(("講義引用的 QDA 推導", "https://dafriedman97.github.io/mlbook/content/c4/concept.html#quadratic-discriminative-analysis-qda"))}
 
   <h3 id="w04-qda-distance">QDA：每一類用自己的形狀衡量距離</h3>
   <p>在下面的圖中，每一類都是一團橢圓形的資料。LDA 用同一個形狀來衡量各類；QDA 則容許橢圓的方向、長短與寬窄各自不同。同一個觀測相對於某類可能很常見，相對於另一類卻可能偏離很遠，邊界因此可以彎曲。</p>
   <p>判別函數裡有三個角色：第一項看<strong>依該類散布調整後的距離</strong>；$-\\tfrac12\\log|\\Sigma_k|$ 處理<strong>分布攤開的程度</strong>；$\\log\\pi_k$ 則反映<strong>先驗</strong>。分布若攤得更廣，雖然某些點的標準化距離變小，中心的密度峰值也會降低。因此不能只選 Mahalanobis 距離最小的類，還要把後兩項一起比較。</p>
-  <p>將圖中的兩個相關係數調成相同，兩類便共用一個共變異數，QDA 的邊界會和 LDA 重合。這時各類可以一起白化；一般 QDA 則使用各類自己的共變異數，沒有同一個白化轉換把所有類同時變成單位共變異數。</p>
+  <p>將圖中的兩個相關係數調成相同，兩類便共用一個母體共變異數，<strong>Bayes 邊界</strong>變成直線，和母體版本的 LDA 一致；但 QDA 用各類自己的樣本共變異數估計，樣本估計不會剛好相同，所以估計出的 QDA 邊界仍會微彎。母體共變異數相同時，各類可以一起白化；一般 QDA 則使用各類自己的共變異數，沒有同一個白化轉換把所有類同時變成單位共變異數。</p>
 
   <p>先驗與類別平均的估法和 LDA 相同，各類共變異數則分別計算：</p>
   $$\\hat\\Sigma_k=\\frac1{{n_k-1}}\\sum_{{i:y_i=k}}(x_i-\\hat\\mu_k)(x_i-\\hat\\mu_k)^\\mathsf T.$$
   <p>這是不偏估計；Gaussian MLE 改除以 $n_k$。每一類都要有足夠資料估計自己的共變異數，這也是 QDA 比 LDA 需要更多資料的原因。</p>
 
-{info("共用 Σ 與否，涉及偏差–變異取捨", '''<strong>參數量：</strong>LDA 只估一個 Σ，
-  要 p(p+1)/2 個數；QDA 每類一個，要 K·p(p+1)/2 個。p = 50、K = 2 時是
-  1275 對 <strong>2550</strong>。<br>
-  <strong>選擇時：</strong>訓練資料少且共用共變異數合理，可先比較 LDA；每類資料充足，
+  <h3 id="w04-param-count">要估多少參數：LDA、QDA 與 Naive Bayes</h3>
+  <p>假設有 $p$ 個特徵、$K$ 類，三者都用 Gaussian 類內分布。差別幾乎全在共變異數：</p>
+{table(["方法", "平均", "共變異數／變異數", "先驗", "主要階數"],
+       [["LDA", "$Kp$", "$p(p+1)/2$（共用一個對稱矩陣）", "$K-1$", "$O(p^2+Kp)$"],
+        ["QDA", "$Kp$", "$K\\cdot p(p+1)/2$（每類一個）", "$K-1$", "$O(Kp^2)$"],
+        ["Gaussian Naive Bayes", "$Kp$", "$Kp$（每類只留對角線）", "$K-1$", "$O(Kp)$"]])}
+  <p>對稱的 $p\\times p$ 矩陣只需要對角線加上半個三角形，所以是 $p(p+1)/2$ 個數。以 $p=100$、$K=3$ 為例（先不算先驗）：</p>
+  $$\\begin{{aligned}}\\text{{LDA}}&:\\ 3\\times100+\\frac{{100\\times101}}2=300+5050=5350,\\\\
+  \\text{{QDA}}&:\\ 300+3\\times5050=15450,\\\\
+  \\text{{NB}}&:\\ 2\\times3\\times100=600.\\end{{aligned}}$$
+  <p>加上 $K-1=2$ 個先驗，分別是 5352、15452、602。高維、小樣本時差距特別重要：QDA 每類都要估 $O(p^2)$ 個共變異數，通常需要比 LDA 多得多的資料。三者因此形成一條偏差–變異的光譜：Naive Bayes 假設最強、參數最少，估計變異小但偏差可能大；QDA 最有彈性，偏差可能小但容易過擬合；LDA 在中間。這是常見的傾向，實際誰比較好仍要用獨立資料比較，不能只憑參數量斷定。</p>
+
+{info("共用 Σ 與否，涉及偏差–變異取捨", '''<strong>選擇時：</strong>訓練資料少且共用共變異數合理，可先比較 LDA；每類資料充足，
   且各類共變異數明顯不同時，可比較 QDA。<br>
   ISLP 圖 4.9 兩張圖可直接比較這個差異：左圖真實邊界是線性的，LDA 贏（QDA 增加了估計變異）；
   右圖兩類的相關係數一個 +0.7 一個 −0.7，真實邊界是彎的，QDA 贏。''', "warm")}
@@ -649,25 +820,27 @@ BODIES["qda"] = f"""
                  ("ρ₁（藍類）", "0.70", "w04lda2R1T"),
                  ("ρ₂（紅類）", "0.70", "w04lda2R2T"),
                  ("邊界的形狀", "—", "w04lda2Shape"),
-                 ("獨立測試錯誤（4000 點）", "—", "w04lda2Err")]),
+                 ("估計規則的測試錯誤（4000 點）", "—", "w04lda2Err"),
+                 ("Bayes 規則的測試錯誤（同一批點）", "—", "w04lda2Bayes")]),
       info_card("怎麼看這張圖",
-                '兩個橢圓是各類含 95% 機率的等高線，點是各類固定的 30 筆抽樣。'
-                '<span style="color:var(--fit-line);font-weight:700;">紅線</span>是目前模式的決策邊界，'
-                '<span style="color:var(--muted);font-weight:700;">灰虛線</span>永遠是 LDA 的線性邊界，'
-                '留在那裡當對照。<strong>把 ρ₁ 與 ρ₂ 調成一樣，紅線會壓在灰線上</strong>，'
-                '因為 Σ₁ = Σ₂ 時 QDA 退化成 LDA。', "圖 4.9"),
+                '兩個橢圓是各類含 95% 機率的等高線，點是各類固定的 30 筆訓練資料。'
+                '<span style="color:var(--pt-c);font-weight:700;">綠虛線</span>是用真參數算的 <strong>Bayes 邊界</strong>；'
+                '<span style="color:var(--fit-line);font-weight:700;">紅線</span>是用這 60 點<strong>估計</strong>平均與共變異數後的邊界，'
+                'QDA 模式另以灰虛線保留 LDA 的估計邊界當對照。'
+                '<strong>把 ρ₁ 與 ρ₂ 調成一樣</strong>，Bayes 邊界變直線，QDA 卻仍會因估計誤差而微彎。', "圖 4.9"),
       info_card("為什麼 QDA 的邊界會是圓錐曲線",
                 '$\\delta_1(x) - \\delta_2(x) = 0$ 是 x 的二次式，'
                 '所以邊界一般是圓錐曲線，特殊參數下也可能退化成直線等情況。'
                 '把 ρ₁ 與 ρ₂ 拉到正負兩端，你會看到邊界彎成兩支。'
-                '<strong>切換 LDA／QDA 時資料點不會改變</strong>；只改用來分類同一批資料的規則。')],
-     "w04lda2Status", "切換共用／各自共變異數，看邊界從直線變成二次曲線。",
+                '<strong>切換 LDA／QDA 時資料點不會改變</strong>；只改用來估計的模型。'
+                '估計規則的錯誤率不可能長期低於 Bayes 規則；在這 4000 個測試點上偶爾略低，是有限測試集的隨機誤差。')],
+     "w04lda2Status", "切換共用／各自共變異數，比較估計邊界與 Bayes 邊界。",
      slider("w04lda2R1", "ρ₁", -0.9, 0.9, 0.05, 0.7, "w04lda2Draw")
      + slider("w04lda2R2", "ρ₂", -0.9, 0.9, 0.05, 0.7, "w04lda2Draw")
      + slider("w04lda2D", "μ 位移", 0.6, 2.4, 0.1, 1.4, "w04lda2Draw")
      + '<button class="btn btn-toggle" onclick="w04lda2Toggle()">切換 LDA ↔ QDA</button>'
      + '<button class="btn btn-reset" onclick="w04lda2Reset()">重置</button>',
-     provenance=("illustrative", "固定種子同一資料；只切換 LDA／QDA 分類規則"))}
+     provenance=("illustrative", "固定種子的二維常態；Bayes 邊界用真參數，LDA／QDA 邊界用 60 筆樣本估計"))}
 
   <h3>Naive Bayes：用類內條件獨立簡化模型</h3>
 
@@ -676,8 +849,27 @@ BODIES["qda"] = f"""
 
   $$f_k(x) = f_{{k1}}(x_1) \\times f_{{k2}}(x_2) \\times \\cdots \\times f_{{kp}}(x_p)$$
 
-  <p>條件獨立是額外的簡化假設，不是類別資料自動具有的性質。它把估計一個 $p$ 維聯合分布，拆成估計 $p$ 個一維分布；即使不完全成立，也可能藉由減少估計變異而有不錯的預測表現。</p>
-  <p>一維分布仍需選擇或估計。講義對連續特徵使用 Gaussian，估計各類內的平均與變異數；對類別特徵則用該類內各水準的比例。Gaussian Naive Bayes 允許各類有不同的對角共變異數；它對應對角版本的 QDA，若變異數也跨類共用才退回對角版本的 LDA。</p>
+  <p>條件獨立是額外的簡化假設，不是類別資料自動具有的性質。一般而言，估計 $p$ 維密度很困難；這個假設把它拆成估計 $p$ 個一維分布。即使不完全成立，也可能藉由減少估計變異而有不錯的預測表現，特別是 $n$ 相對於 $p$ 不夠大、無法好好估計類內聯合分布的時候。代回 Bayes 公式，後驗機率是</p>
+  $$\\Pr(Y=k\\mid X=x)=\\frac{{\\pi_k\\,f_{{k1}}(x_1)\\,f_{{k2}}(x_2)\\cdots f_{{kp}}(x_p)}}{{\\sum_{{l=1}}^K\\pi_l\\,f_{{l1}}(x_1)\\,f_{{l2}}(x_2)\\cdots f_{{lp}}(x_p)}}.$$
+  <p>一維分布仍需選擇或估計。講義列出三種做法：</p>
+  <ul>
+    <li><strong>連續特徵、取常態</strong>：$X_j\\mid Y=k\\sim N(\\mu_{{kj}},\\sigma_{{kj}}^2)$，估計各類內的平均與變異數。這等於各類共變異數為對角矩陣的 QDA；若變異數也跨類共用，才退回對角版本的 LDA。</li>
+    <li><strong>連續特徵、不取常態</strong>：用直方圖或核密度估計當 $f_{{kj}}$ 的無母數估計。</li>
+    <li><strong>類別特徵</strong>：直接用第 $k$ 類訓練資料中，第 $j$ 個變數各水準出現的比例。</li>
+  </ul>
+{links(("講義引用的 Naive Bayes 推導", "https://dafriedman97.github.io/mlbook/content/c4/concept.html#naive-bayes"))}
+
+  <h4>講義的玩具例子：三個特徵、兩類</h4>
+  <p>$p=3$、$K=2$：前兩個特徵是連續的，第三個是有三個水準的類別特徵，先驗 $\\hat\\pi_1=\\hat\\pi_2=0.5$。新觀測 $x^*=(0.4,\\,1.5,\\,1)^{{\\mathsf{{T}}}}$ 在各類的一維密度（或比例）估計為：</p>
+{table(["", "$\\hat f_{k1}(0.4)$", "$\\hat f_{k2}(1.5)$", "$\\hat f_{k3}(1)$", "$\\hat\\pi_k\\times$ 三者乘積"],
+       [["第 1 類", "0.368", "0.484", "0.226", "$0.5\\times0.368\\times0.484\\times0.226\\approx0.02013$"],
+        ["第 2 類", "0.030", "0.130", "0.616", "$0.5\\times0.030\\times0.130\\times0.616\\approx0.00120$"]])}
+  <p>分母是兩列相加約 0.02133，所以</p>
+  $$\\Pr(Y=1\\mid X=x^*)\\approx\\frac{{0.02013}}{{0.02133}}\\approx0.944,\\qquad \\Pr(Y=2\\mid X=x^*)\\approx0.056.$$
+  <p>第三個特徵其實比較支持第 2 類（0.616 對 0.226），但前兩個連續特徵強烈支持第 1 類；乘起來後第 1 類勝出。這說明 Naive Bayes 把各特徵的證據<strong>相乘</strong>，取 log 後就是相加。</p>
+
+  <h4>講義的 Default 結果：為什麼 Naive Bayes 沒有贏過 LDA？</h4>
+  <p>在 <code>Default</code> 上用 Gaussian Naive Bayes：門檻 0.5 時錯誤率 2.90%（LDA 為 2.75%），漏掉 244 個違約戶；門檻降到 0.2，錯誤率 4.58%、敏感度 61.0%（ISLP 表 4.8、4.9）。它沒有勝過 LDA，講義給的理由是 $n=10000$、$p=2$：資料量相對於特徵數非常充足，LDA 估一個 $2\\times2$ 共變異數完全沒有困難，Naive Bayes 用獨立假設換來的「少估幾個參數」在這裡沒有好處，反而丟掉了兩個特徵之間的相關資訊。</p>
 
 {table(["", "對 f<sub>k</sub>(x) 的假設", "邊界形狀", "參數量（p 大時）", "適合考慮的情境"],
        [["LDA", "多變量常態，Σ 共用", "線性", "少", "真實邊界線性、各類近常態、n 小"],
@@ -717,6 +909,24 @@ BODIES["qda"] = f"""
         "而且 QDA 的邊界形狀本身就比較不穩（會彎）。ISLP 的模擬顯示這個差距看得出來。")])}
 """
 
+
+PR_SECTION = r"""
+  <h3 id="w04-pr">不平衡資料：為什麼常改看 PR 曲線</h3>
+  <p>講義在 ROC 頁最後提醒：<strong>不平衡資料可以改用 PR 曲線</strong>（precision–recall curve）。它的兩個軸是</p>
+  $$\text{Precision}=\frac{TP}{TP+FP},\qquad \text{Recall}=\frac{TP}{TP+FN}.$$
+  <p>門檻值改變時，PR 曲線同時呈現兩件事：<strong>抓到多少正類</strong>（recall），以及<strong>報出來的正類有多可信</strong>（precision）。</p>
+  <h4>一個小例子：1000 個負類、10 個正類</h4>
+  <p>假設模型報出 20 個正類，其中 $TP=8$、$FP=12$。於是</p>
+  $$\text{Recall}=\frac{8}{10}=0.8,\qquad \text{Precision}=\frac{8}{20}=0.4,\qquad \text{FPR}=\frac{12}{12+988}=0.012.$$
+  <p>ROC 的橫軸只看到 1.2% 的假陽率，看起來很好；但模型報出的 20 個正類裡有 12 個是假的。原因是 ROC 的兩個軸都以<strong>真實類別</strong>為分母：FPR 的分母包含大量 TN，同樣 12 個誤報被 1000 個負類「稀釋」了。精確率完全不用 TN，所以直接反映「模型說是正類時到底準不準」。</p>
+  <p>要說得精確一點：類內分數分布固定時，ROC 曲線本身不隨盛行率改變，它不會因為不平衡就「算錯」。問題在於它沒有直接呈現預測正類裡的誤報比例；當我們真正關心的是少數正類（疾病、詐騙、罕見事件），PR 曲線通常更有資訊。結論是：<strong>ROC 仍可看，但關心少數正類時，PR 通常更能說明問題</strong>。</p>
+  <h4>兩條曲線的隨機基準不同</h4>
+  <ul>
+    <li><strong>ROC</strong>：分數與類別無關的隨機分類器落在對角線上，AUC 約為 0.5，不論盛行率多少。</li>
+    <li><strong>PR</strong>：隨機分類器的精確率約等於正類的<strong>盛行率</strong> $N_+/N$。只有 1% 正類時，隨機基準的精確率只有 0.01。</li>
+  </ul>
+  <p>在 <code>Default</code> 上，PR 的隨機基準是 333/10000 = 0.033。上方元件切到 PR 後，可以看到 LDA 的曲線遠高於這條水平線，但在高 recall 端精確率下降得很快：想抓到大部分違約戶，就得接受報出名單裡有很多不會違約的人。</p>
+""" + links(("隨機分類器的 ROC AUC", "https://datascience.stackexchange.com/questions/31872/auc-roc-of-a-random-classifier/31877#31877"))
 # ── P05 threshold / confusion matrix / ROC ────────────────────────────
 _thr_code1 = lab_code(CH, 57) + "\n\n" + lab_code(CH, 58)
 _thr_code2 = lab_code(CH, 156) + "\n\n" + lab_code(CH, 158) + "\n\n" + lab_code(CH, 159)
@@ -759,9 +969,14 @@ BODIES["threshold"] = f"""
 {info("兩種錯誤有名字，而且權重通常不一樣", '''把「違約 / 有病 / 是垃圾信」當成正類（+）：<br>
   <strong>FP（假陽性）</strong>＝真實為負類，卻預測成正類。<br>
   <strong>FN（假陰性）</strong>＝真實為正類，卻預測成負類。<br>
-  <strong>敏感度</strong>（sensitivity, recall）= TP/(TP+FN)＝真實正類中被正確找出的比例。<br>
+  <strong>假陽率</strong>（false positive rate, FPR）= FP/(TN+FP)＝真實負類中被誤判為正類的比例＝1 − 特異度，對應第一型錯誤。<br>
+  <strong>假陰率</strong>（false negative rate, FNR）= FN/(TP+FN)＝真實正類中被漏掉的比例＝1 − 敏感度，對應第二型錯誤。<br>
+  <strong>敏感度</strong>（sensitivity, recall）= TP/(TP+FN)＝真實正類中被正確找出的比例，也叫真陽率或檢定力。<br>
   <strong>特異度</strong>（specificity）= TN/(TN+FP)＝真實負類中被正確排除的比例。<br>
   <strong>精確率</strong>（precision）= TP/(TP+FP)＝預測為正類的觀測中，實際為正類的比例。''', "warm")}
+
+  <p>回到 <code>Default</code>：LDA 的假陽率只有 23/9667 = 0.2%，假陰率卻高達 252/333 = <strong>75.7%</strong>。總錯誤率很低，是因為負類占了 96.7%。</p>
+{links(("什麼是 recall 與 precision", "https://becominghuman.ai/whats-recall-and-precision-4a801b1ac0da"))}
 
   <p>門檻值就是調節這兩種錯誤比例的設定。把 0.5 降到 0.2：</p>
 
@@ -770,7 +985,8 @@ BODIES["threshold"] = f"""
 
   <p>ISLP 表 4.5 的結果是：漏掉的違約戶從 252 掉到 <strong>138</strong>（敏感度從 24.3% 升到 58.6%），
   代價是誤報從 23 升到 <strong>235</strong>，總錯誤率從 2.75% 升到 3.73%。
-  是否值得取決於漏判與誤報的成本。拖動滑桿，觀察各類錯誤的變化：</p>
+  換成假陰率來說，就是從 75.7% 降到 <strong>41.4%</strong>（138/333）。若還想再降低假陰率，可以把門檻值降到 0.1 或更低。
+  是否值得取決於漏判與誤報的成本。拖動滑桿，觀察各類錯誤的變化；按「切換 ROC／PR」可以改看下一小節的 PR 曲線：</p>
 
 {viz(_CM + "\n" + chart("w04thrRoc", "square",
                         "。此圖的重點：LDA 在 Default 上的 ROC 曲線緊貼左上角，AUC = 0.95；"
@@ -781,6 +997,7 @@ BODIES["threshold"] = f"""
                  ("敏感度（抓到幾成違約戶）", "24.3%", "w04thrSens"),
                  ("特異度", "99.8%", "w04thrSpec"),
                  ("精確率", "77.9%", "w04thrPrec"),
+                 ("假陰率 FNR", "75.7%", "w04thrFnr"),
                  ("總錯誤率", "2.75%", "w04thrErr")]),
       info_card("三種分類規則的結果",
                 '<strong>門檻值 0.5：</strong>錯誤率 2.75%，但漏掉 252 / 333 = 75.7% 的違約戶。<br>'
@@ -791,12 +1008,14 @@ BODIES["threshold"] = f"""
                 'ROC 曲線把<strong>所有</strong>門檻值的（假陽率、真陽率）畫成一條線，'
                 '橫軸是假陽率 FP/(FP+TN)，縱軸是敏感度 TP/(TP+FN)。'
                 'AUC（area under the curve）是 ROC 曲線下面積，用來概括分數區分正負類的能力。'
-                '<strong>AUC = 0.95</strong>（ISLP §4.4.2）；隨機猜是 0.5，完美是 1。'
+                '<strong>AUC = 0.95</strong>（ISLP §4.4.2）；隨機猜是對角線、AUC 為 0.5，完美是 1。'
+                '切到 PR 時，橫軸換成 recall、縱軸換成精確率，水平虛線是盛行率 333/10000。'
                 '紅點是你現在選的門檻值在曲線上的位置。')],
      "w04thrStatus", "拖動門檻值：混淆矩陣、四個指標與 ROC 上的紅點會同步重算。",
      slider("w04thrSlider", "門檻值", 0, 1, 0.005, 0.5, "w04thrMove")
      + '<button class="btn btn-step" onclick="w04thrSet(0.5)">→ 回到 0.5</button>'
      + '<button class="btn btn-step" onclick="w04thrSet(0.2)">→ 調到 0.2</button>'
+     + '<button class="btn btn-toggle" onclick="w04thrTogglePr()">切換 ROC／PR</button>'
      + '<button class="btn btn-reset" onclick="w04thrReset()">重置</button>',
      provenance=("course-data", "ISLP Default；對照表 4.4–4.5 與圖 4.8"))}
 
@@ -833,6 +1052,8 @@ BODIES["threshold"] = f"""
      "把門檻值從 0.5 降到 0.25，挑出 29 個人、9 個真的買，精確率 31%，"
      "相較於這批測試資料 6.7% 的購買比例，約為 4.6 倍。</p>"),
 ])}
+
+{PR_SECTION}
 
   <h3 id="dx-thr">講義完整實作：從混淆矩陣算出四個指標</h3>
 {card("講義 04 · 手動算 accuracy / sensitivity / precision / FPR", _thr_code1,
@@ -872,6 +1093,76 @@ BODIES["threshold"] = f"""
   N、P 是真實的負／正類總數；N*、P* 是被預測為負／正的總數。</p>
 """
 
+SCEN_SECTION = r"""
+  <h3 id="w04-scenarios">實證比較：ISLP 的六個模擬情境</h3>
+  <p>解析比較只說明各方法<strong>能表達</strong>什麼函數；實際表現還取決於樣本數與估計變異。ISLP §4.5.2 設計了六個二元分類情境，每個都有兩個連續預測變數：</p>
+  <ul>
+    <li>三個情境的 Bayes 決策邊界是線性的，另外三個是非線性的。</li>
+    <li>每個情境產生 100 組訓練資料；每組都擬合各方法，再在一個很大的測試集上算錯誤率。</li>
+    <li>KNN 用兩種 K：$K=1$，以及用交叉驗證（第 5 章）自動選的 K（KNN-CV）。</li>
+    <li>Naive Bayes 對每個特徵假設一維 Gaussian 類內分布。</li>
+  </ul>
+""" + table(["情境", "資料怎麼產生", "書上的結果", "為什麼"],
+       [["1（線性）", "每類 20 筆，類內兩變數不相關的常態，兩類平均不同", "LDA 最好，logistic 略差；QDA 較差；Naive Bayes 略優於 QDA；KNN 差",
+         "這正是 LDA 的模型；QDA 擬合了不必要的彈性；KNN 的變異沒有換到偏差的降低；Naive Bayes 的獨立假設正確"],
+        ["2（線性）", "同情境 1，但類內兩變數相關係數 −0.5", "多數方法與情境 1 相近；<strong>Naive Bayes 很差</strong>",
+         "獨立假設被違反"],
+        ["3（線性）", "同樣有 −0.5 的類內負相關，但改由多變量 t 分布產生，每類 50 筆", "logistic 勝過 LDA，兩者都優於其他方法；QDA 明顯變差；Naive Bayes 很差",
+         "Bayes 邊界仍是線性的，但資料不常態，違反 LDA 的假設；t 分布較常出現極端點"],
+        ["4（非線性）", "常態；第 1 類相關 +0.5、第 2 類相關 −0.5", "QDA 最好；Naive Bayes 差",
+         "正好是 QDA 的假設，邊界是二次的；獨立假設被違反"],
+        ["5（非線性）", "不相關的常態 X；再把 X 的複雜非線性函數經 logistic 函數轉成機率，依此抽出 Y", "KNN-CV 最好；QDA、Naive Bayes 略優於線性方法；<strong>KNN-1 最差</strong>",
+         "邊界很複雜；但平滑程度沒選對時，無母數方法仍會很差"],
+        ["6（非線性）", "常態，兩類的對角共變異數不同，<strong>每類只有 6 筆</strong>", "Naive Bayes 最好；QDA 稍差；LDA、logistic 差；KNN 也差",
+         "Naive Bayes 的假設成立；共變異數不同使邊界非線性；樣本極少時 QDA 估相關的變異太大"]]) + r"""
+  <p>下面的箱形圖依上表的文字設定重新模擬。書上沒有給出兩類平均差、t 分布自由度、情境 5 的非線性函數等細節，這裡自選合理的數值，所以<strong>只能看各方法的相對排序與分散程度，數字不會和課本圖 4.11、4.12 相同</strong>，有些情境的差距也比書上小。</p>
+""" + "{SCEN_VIZ}" + r"""
+  <p>六個情境合起來說明：<strong>沒有一種方法在所有情況都最好</strong>。真實邊界線性時，LDA 與 logistic 傾向表現好；中度非線性時，QDA 或 Naive Bayes 可能較好；更複雜的邊界，KNN 這類無母數方法可能較好，但平滑程度必須小心選擇。第 5 章的交叉驗證就是用來做這個選擇。</p>
+""" + qa("觀念釐清", [
+    ("Q：情境 3 是類內負相關的 t 分布、每類 50 筆，Bayes 邊界為什麼還是線性的？",
+     r"""<p>關鍵是兩類的 t 分布<strong>共用尺度矩陣 $\Sigma$、自由度 $\nu$ 也相同</strong>，只有中心不同。$p$ 維多變量 t 的密度是</p>
+$$f_k(x)\propto\Bigl[1+\tfrac1\nu\,d_k^2(x)\Bigr]^{-(\nu+p)/2},\qquad d_k^2(x)=(x-\mu_k)^\mathsf{T}\Sigma^{-1}(x-\mu_k).$$
+<p>兩類的比例常數相同。若<strong>先驗也相等</strong>，邊界 $f_1(x)=f_2(x)$ 等價於 $1+d_1^2/\nu=1+d_2^2/\nu$，也就是 $d_1^2=d_2^2$。展開後兩邊都有 $x^\mathsf{T}\Sigma^{-1}x$，二次項抵消，剩下 $x$ 的一次式，所以<strong>邊界是直線</strong>。情境 3 每類各 50 筆，正好對應等先驗。</p>
+<p>幾個要分清楚的地方：</p>
+<ul>
+<li><strong>強負相關不會讓邊界彎曲。</strong>它只讓等密度橢圓往負斜率方向傾斜；兩類共用這個形狀，邊界仍是直線。</li>
+<li><strong>邊界線性，不代表 log-odds 線性。</strong>t 分布的 $\log f_1(x)-\log f_2(x)=-\tfrac{\nu+p}2\log\frac{\nu+d_1^2}{\nu+d_2^2}$ 不是 $x$ 的線性函數；只是它等於 0 的那條線恰好是直線。這也是 LDA 的常態假設在這裡不成立、logistic 的線性 log-odds 只是近似的原因。</li>
+<li><strong>先驗不相等時會變彎。</strong>邊界變成 $1+d_1^2/\nu=c\,(1+d_2^2/\nu)$，$c=(\pi_1/\pi_2)^{2/(\nu+p)}\ne1$，二次項係數 $1-c$ 不為零，邊界成為二次曲線。這和常態 LDA 不同：常態時不等先驗只會平移直線。</li>
+<li><strong>兩類尺度矩陣或自由度不同時</strong>，二次項或非線性項通常無法抵消，邊界通常是非線性的。</li>
+<li><strong>每類只有 50 筆</strong>影響的是估計穩不穩定，不改變理論上的 Bayes 邊界是否線性。另外，t 分布的尺度矩陣不等於共變異數：$\nu>2$ 時共變異數是 $\nu\Sigma/(\nu-2)$。</li>
+</ul>"""),
+    ("Q：可以把 $x^2$ 或交互作用項加進 LDA、QDA、Naive Bayes 或 logistic 嗎？",
+     r"""<p>可以。這些方法都不限制特徵一定只能是原始的 $x_1,\ldots,x_p$；可以先做特徵擴充，例如</p>
+$$\phi(x)=(x_1,\ x_2,\ x_1^2,\ x_2^2,\ x_1x_2),$$
+<p>再把 $\phi(x)$ 當成新的特徵。ISLP §4.5.2 結尾就提到，logistic regression 可以加入 $X^2$、$X^3$ 甚至 $X^4$；把所有平方項與交叉乘積加進 LDA，模型形式會和 QDA 相同，只是參數估計不同，這讓我們能在 LDA 與 QDA 之間取得折衷。</p>
+<ul>
+<li><strong>LDA 或 logistic ＋ 多項式特徵</strong>：在新特徵空間仍是線性邊界 $\beta_0+\beta_1x_1+\beta_2x_2+\beta_3x_1^2+\beta_4x_2^2+\beta_5x_1x_2=0$，映回原始空間就是二次曲線。</li>
+<li><strong>QDA ＋ 多項式特徵</strong>：QDA 對原始特徵已經會產生 $x_i^2$ 與 $x_ix_j$；再對 $z=x^2$ 這類新特徵取二次，回到原始 $x$ 就可能出現 $x^4$，邊界更高階。</li>
+<li><strong>Naive Bayes ＋ 多項式特徵</strong>：技術上可以，擴充後邊界也能非線性；但 $x_1$ 與 $x_1^2$、$x_1x_2$ 是由原變數決定的，幾乎不可能條件獨立，所以這個假設會更不合理。即使如此，分類不一定需要把聯合分布估準，有時預測仍不錯。</li>
+</ul>
+<p>代價有兩個。第一，擴充後的特徵通常不再服從常態，LDA／QDA 的分布假設更難成立。第二，參數量快速增加，QDA 還要對擴充後的特徵估完整共變異數，很容易過擬合。加不加、加到幾次，應該用交叉驗證比較。</p>"""),
+])
+
+SCEN_SECTION = SCEN_SECTION.replace("{SCEN_VIZ}", viz(
+    svg("w04scenSvg", 340),
+    [rows_card("目前的情境",
+               [("情境", "1", "w04scenLab"),
+                ("訓練筆數", "每類 20 筆", "w04scenN"),
+                ("Bayes 邊界", "線性", "w04scenLin"),
+                ("中位數最低", "—", "w04scenBest"),
+                ("中位數最高", "—", "w04scenWorst")]),
+     info_card("怎麼看箱形圖",
+               '每個方法一個箱子，畫的是 100 組訓練資料各自的<strong>測試錯誤率</strong>：'
+               '箱子是第 1 到第 3 四分位數，中間橫線是中位數，上下細線延伸到最小值與最大值。'
+               '箱子愈低愈好，愈短表示換一組訓練資料時愈穩定。', "圖 4.11／4.12"),
+     info_card("對照課本時",
+               '這是依課本文字重建的示意模擬，不是課本的原始資料。'
+               '請比較同一情境裡各方法的<strong>相對位置</strong>，例如情境 2 的 Naive Bayes、'
+               '情境 5 的 KNN-1、情境 6 的 LDA 與 logistic。')],
+    "w04scenStatus", "選一個情境，比較六個方法的測試錯誤率分布。",
+    "".join(f'<button class="btn btn-step" onclick="w04scenShow({i})">情境 {i + 1}</button>' for i in range(6)),
+    provenance=("simulation", "依 ISLP §4.5.2 的文字描述重建；平均差、自由度與非線性函數為自選示意設定")))
+
 # ── P06 compare ───────────────────────────────────────────────────────
 BODIES["compare"] = f"""
   <p>把各模型的 log-odds 寫成相對於第 K 類的形式，就能比較它們允許的線性、二次與加性項。以下對照 ISLP §4.5.1：</p>
@@ -879,11 +1170,16 @@ BODIES["compare"] = f"""
   $$\\text{{LDA：}}\\;\\log\\!\\left(\\frac{{\\Pr(Y = k \\mid x)}}{{\\Pr(Y = K \\mid x)}}\\right)
     = a_k + \\sum_{{j=1}}^{{p}} b_{{kj}} x_j$$
 
+  <p>LDA 的 $a_k$、$b_{{kj}}$ 可以寫成明式。把共用 $\\Sigma$ 的兩個判別函數相減：</p>
+  $$\\log\\frac{{\\Pr(Y=k\\mid x)}}{{\\Pr(Y=K\\mid x)}}=\\underbrace{{\\log\\frac{{\\pi_k}}{{\\pi_K}}-\\tfrac12(\\mu_k+\\mu_K)^{{\\mathsf{{T}}}}\\Sigma^{{-1}}(\\mu_k-\\mu_K)}}_{{a_k}}+x^{{\\mathsf{{T}}}}\\underbrace{{\\Sigma^{{-1}}(\\mu_k-\\mu_K)}}_{{b_k}}.$$
+  <p>所以 LDA 和 logistic regression 一樣，假設後驗機率的 log-odds 是 $x$ 的線性函數；$b_k$ 的第 $j$ 個分量就是 $b_{{kj}}$。</p>
+{links(("LDA log-odds 的向量寫法推導", "https://math.stackexchange.com/questions/913918/deriving-equation-in-vector-notation/914243#914243?newreg=28b8da457ff240a3b468c1e4b609f5b7"), ("QDA log-odds 的展開", "https://math.stackexchange.com/questions/4612174/write-a-function-of-the-log-odds-of-the-posterior-probabilities-qda-to-see-it"))}
+
   $$\\text{{QDA：}}\\;\\log\\!\\left(\\frac{{\\Pr(Y = k \\mid x)}}{{\\Pr(Y = K \\mid x)}}\\right)
     = a_k + \\sum_{{j=1}}^{{p}} b_{{kj}} x_j + \\sum_{{j=1}}^{{p}}\\sum_{{l=1}}^{{p}} c_{{kjl}} x_j x_l$$
 
   $$\\text{{Naive Bayes：}}\\;\\log\\!\\left(\\frac{{\\Pr(Y = k \\mid x)}}{{\\Pr(Y = K \\mid x)}}\\right)
-    = a_k + \\sum_{{j=1}}^{{p}} g_{{kj}}(x_j)$$
+    = \\log\\frac{{\\pi_k}}{{\\pi_K}}+\\sum_{{j=1}}^p\\log\\frac{{f_{{kj}}(x_j)}}{{f_{{Kj}}(x_j)}}= a_k + \\sum_{{j=1}}^{{p}} g_{{kj}}(x_j)$$
 
   <p>比較這三種形式，可得以下四個關係：</p>
 
@@ -892,7 +1188,7 @@ BODIES["compare"] = f"""
   <strong>2. 線性的 log-odds 是加性 log-odds 的特例</strong>（取 g<sub>kj</sub>(x<sub>j</sub>) = b<sub>kj</sub>x<sub>j</sub>）。
   所以 LDA 的 log-odds 屬於這個加性函數形式。這比較的是可表達的後驗函數；LDA 的聯合分布並不因此滿足 Naive Bayes 的類內獨立假設，估計方法也不會相同。<br>
   <strong>3. 常態 Naive Bayes 一般是各類 Σₖ 為對角矩陣的 QDA。</strong>
-  若再要求每個變數的變異數跨類別共用，才成為對角 Σ 的 LDA；lab 的 GaussianNB 每類各估變異數。<br>
+  若再要求每個變數的變異數跨類別共用，即 f<sub>kj</sub> 取 N(μ<sub>kj</sub>, σ<sub>j</sub>²)，則 g<sub>kj</sub>(x<sub>j</sub>) = b<sub>kj</sub>x<sub>j</sub>（再加常數），其中 b<sub>kj</sub> = (μ<sub>kj</sub> − μ<sub>Kj</sub>)/σ<sub>j</sub>²；這時 Naive Bayes 是 Σ 限制為對角、第 j 個對角元素為 σ<sub>j</sub>² 的 LDA。lab 的 GaussianNB 每類各估變異數，屬於前一種。<br>
   <strong>4. QDA 與 Naive Bayes 誰都不是誰的特例。</strong>Naive Bayes 的 g<sub>kj</sub> 可以是任意函數（更彈性），
   但在所用特徵中，它的 log-odds 是加性的，沒有不同特徵間的交互項；QDA 有交互項但被鎖在二次式裡。''')}
 
@@ -902,6 +1198,14 @@ BODIES["compare"] = f"""
 
   <p>本章的 KNN 採用另一種估計方式：它不寫任何 log-odds 的式子，直接看鄰居投票。
   距離是否有意義、資料是否足夠密集，以及鄰居數和尺度的選擇，都會影響結果；它也不提供可直接解讀的迴歸係數。</p>
+
+  <p>講義把這些比較整理成幾條原則：</p>
+  <ul>
+    <li><strong>LDA 對 logistic</strong>：常態假設成立時 LDA 可能較好；不成立時 logistic 可能勝出。</li>
+    <li><strong>KNN 完全無母數</strong>：不假設邊界形狀，偏差小但變異大，所以需要相對於預測變數個數<strong>很多的觀測</strong>。</li>
+    <li><strong>QDA 是折衷</strong>：介於無母數的 KNN 與線性的 LDA／logistic 之間。二次邊界比線性有彈性，又比 KNN 多了參數形式的限制，在樣本不多時仍可能表現不錯。</li>
+  </ul>
+  <p>依真實決策邊界的複雜度，大致可以這樣選：<strong>線性</strong>時 LDA 與 logistic 表現好；<strong>中度非線性</strong>時 QDA 或 Naive Bayes 可能較好；<strong>更複雜</strong>時 KNN 這類無母數方法可能較好，但平滑程度（例如 K）要選對。這些是傾向，不是保證。</p>
 
   <p>Default 上四個方法的 AUC 幾乎相同；上面的門檻值元件已經完整呈現 ROC 與 AUC，
   可用這個元件比較不同門檻值下的表現。選擇方法時，把候選方法放進
@@ -916,19 +1220,7 @@ BODIES["compare"] = f"""
            "lab 比較的這幾個設定中，在 <code>Smarket</code> 上 QDA 最好。"
            "K = 1 對個別鄰居很敏感；這次結果沒有顯示它比一律猜 Up 的基準更好。")}
 
-{table(["ISLP 情境（§4.5.2）", "資料怎麼產生", "誰贏", "為什麼"],
-       [["情境 1", "各類內兩變數不相關的常態，每類 20 筆", "LDA、邏輯斯",
-         "邊界是線性的，較有彈性的 KNN 增加了估計變異"],
-        ["情境 2", "同上，但類內相關 −0.5", "LDA、邏輯斯",
-         "<strong>Naive Bayes 表現變差</strong>——獨立假設被違反"],
-        ["情境 3", "類內強負相關的 t 分布，每類 50 筆", "邏輯斯",
-         "邊界仍線性但不常態，LDA／QDA 吃虧"],
-        ["情境 4", "兩類相關係數 +0.5 與 −0.5 的常態", "QDA",
-         "真實邊界二次，正好是 QDA 的假設"],
-        ["情境 5", "不相關常態，反應由複雜非線性函數生成", "KNN-CV",
-         "邊界很彎；<strong>KNN-1 最差</strong>——平滑度沒選對"],
-        ["情境 6", "各類對角但不同的 Σ，每類只有 6 筆", "Naive Bayes",
-         "類內獨立假設成立，而樣本太少，QDA 共變異數估計較不穩定"]])}
+{SCEN_SECTION}
 
 {quiz("qCmp", "QUIZ · 解析比較",
       "ISLP §4.5.1 說「LDA 是 Naive Bayes 的特例」。這句話怎麼可能成立？"
@@ -945,12 +1237,20 @@ BODIES["compare"] = f"""
         "「QDA 與 Naive Bayes 誰都不是誰的特例」表示兩者的函數族沒有包含關係。")])}
 """
 
+
 # ── P07 Poisson / GLM ─────────────────────────────────────────────────
 BODIES["poisson"] = f"""
   <p>講義最後用計數資料，把線性迴歸與 logistic regression 連到廣義線性模型（GLM）。</p>
 
   <p>前面兩種 y：連續的（第 3 章）與類別的（本章）。還有第三種常見的 y——<strong>計數</strong>。
-  ISLP 用 <code>Bikeshare</code>（華盛頓特區每小時的單車租借數，n = 8645）示範。</p>
+  ISLP 用 <code>Bikeshare</code>（華盛頓特區每小時的單車租借數，n = 8645）示範。反應 <code>bikers</code> 是每小時的使用人數，只取非負整數，很難歸成單純的質性或量化變數。講義用五個預測變數：</p>
+  <ul>
+    <li><code>mnth</code>：月份；<code>hr</code>：一天中的小時（0 到 23）。</li>
+    <li><code>workingday</code>：既不是週末也不是假日時為 1 的指示變數。</li>
+    <li><code>temp</code>：標準化後的攝氏溫度。</li>
+    <li><code>weathersit</code>：四個水準的質性變數，晴、霧或陰、小雨或小雪、大雨或大雪。</li>
+  </ul>
+{links(("ISLP 的 Bikeshare 資料說明", "https://islp.readthedocs.io/en/latest/datasets/Bikeshare.html"))}
 
   <p>直接對計數擬合線性迴歸會遇到三個問題：</p>
 
@@ -975,7 +1275,9 @@ BODIES["poisson"] = f"""
     \\qquad\\Longleftrightarrow\\qquad
     \\lambda = e^{{\\beta_0 + \\beta_1 X_1 + \\cdots + \\beta_p X_p}}$$
 
-  <p>log link 讓 $\\lambda(x)=e^{{\\eta(x)}}$ 永遠為正，因而避免負的平均租借數。條件平均等於條件變異數，則是 Poisson 分布本身的性質。平均數可以不是整數；真正的觀測值仍是非負整數。</p>
+  <p>給定 $n$ 筆獨立觀測，概似是各筆 Poisson 機率的乘積：</p>
+  $$\\ell(\\beta_0,\\ldots,\\beta_p)=\\prod_{{i=1}}^n\\frac{{e^{{-\\lambda(x_i)}}\\lambda(x_i)^{{y_i}}}}{{y_i!}},$$
+  <p>係數用最大概似估計。log link 讓 $\\lambda(x)=e^{{\\eta(x)}}$ 永遠為正，因而避免負的平均租借數。條件平均等於條件變異數，則是 Poisson 分布本身的性質。平均數可以不是整數；真正的觀測值仍是非負整數。</p>
 
 {info("係數要用乘法解讀", '''因為線性的是 log λ，所以 X<sub>j</sub> 增加一單位讓
   <strong>λ 乘上 e^βⱼ</strong>，不是加上 βⱼ。<br>
@@ -992,6 +1294,7 @@ BODIES["poisson"] = f"""
   <tr><td>Logistic regression</td><td>$\\operatorname{{Bernoulli}}(p(x))$</td><td>$\\mu(x)=p(x)$</td><td>$p(x)(1-p(x))$</td><td>$g(p)=\\log\\{{p/(1-p)\\}}$</td></tr>
   <tr><td>Poisson regression</td><td>$\\operatorname{{Poisson}}(\\lambda(x))$</td><td>$\\mu(x)=\\lambda(x)=e^{{\\eta(x)}}$</td><td>$\\lambda(x)$</td><td>$g(\\lambda)=\\log\\lambda$</td></tr>
   </tbody></table></div>
+{links(("講義引用的 Poisson 迴歸例子", "https://dafriedman97.github.io/mlbook/content/c2/s1/GLMs.html#example-poisson-regression"))}
   <p>Gaussian、Bernoulli 與 Poisson 都屬於指數分布族。GLM 以這類條件分布、線性預測式與連結函數組成模型。對單次二元結果，Bernoulli 由反應值的形式決定；Gaussian 或 Poisson 的分布形狀則仍是額外假設。</p>
   <p>在 <code>sm.GLM()</code> 中，三者分別使用 <code>sm.families.Gaussian()</code>、<code>sm.families.Binomial()</code> 與 <code>sm.families.Poisson()</code>。單次 Bernoulli 是試驗次數為 1 的 Binomial，因此 logistic 範例使用 Binomial family。</p>
 
@@ -1123,6 +1426,7 @@ BODIES["reference"] = f"""
 {table(["名稱", "式子", "備註"],
        [["邏輯斯函數", "$p(X) = \\dfrac{e^{\\beta_0+\\beta_1X}}{1+e^{\\beta_0+\\beta_1X}}$", "式 4.2"],
         ["logit / log-odds", "$\\log\\dfrac{p(X)}{1-p(X)} = \\beta_0+\\beta_1X$", "式 4.4，線性的是這個"],
+        ["logit 與 logistic", "$\\operatorname{logistic}(\\operatorname{logit}(p))=p$", "互為反函數"],
         ["多類別邏輯斯", "$\\log\\dfrac{\\Pr(Y=k|x)}{\\Pr(Y=K|x)} = \\beta_{k0}+\\sum_j\\beta_{kj}x_j$",
          "式 4.12"],
         ["softmax", "$\\Pr(Y=k|x) = \\dfrac{e^{\\beta_{k0}+\\sum_j\\beta_{kj}x_j}}{\\sum_l e^{\\beta_{l0}+\\sum_j\\beta_{lj}x_j}}$",
@@ -1134,6 +1438,11 @@ BODIES["reference"] = f"""
         ["LDA 判別函數（p &gt; 1）",
          "$\\delta_k(x) = x^{\\mathsf{T}}\\Sigma^{-1}\\mu_k - \\tfrac12\\mu_k^{\\mathsf{T}}\\Sigma^{-1}\\mu_k + \\log\\pi_k$",
          "式 4.24"],
+        ["Mahalanobis 距離", "$d_M^2=(x-\\mu)^{\\mathsf{T}}\\Sigma^{-1}(x-\\mu)=\\sum_i y_i^2/\\lambda_i$", "白化後的歐氏距離"],
+        ["投影後變異", "$\\operatorname{Var}(a^{\\mathsf{T}}X)=a^{\\mathsf{T}}\\Sigma a$", "Fisher 的 $a^{\\mathsf{T}}Wa$、$a^{\\mathsf{T}}Ba$"],
+        ["Fisher 準則", "$J(a)=\\dfrac{a^{\\mathsf{T}}Ba}{a^{\\mathsf{T}}Wa}$", "取 $W^{-1}B$ 最大特徵值的方向"],
+        ["假陽率／假陰率", "$\\mathrm{FPR}=\\dfrac{FP}{TN+FP}$，$\\mathrm{FNR}=\\dfrac{FN}{TP+FN}$", "1 − 特異度／1 − 敏感度"],
+        ["Precision／Recall", "$\\dfrac{TP}{TP+FP}$，$\\dfrac{TP}{TP+FN}$", "PR 曲線；隨機基準＝盛行率"],
         ["QDA 判別函數",
          "$\\delta_k(x) = -\\tfrac12(x-\\mu_k)^{\\mathsf{T}}\\Sigma_k^{-1}(x-\\mu_k) - \\tfrac12\\log|\\Sigma_k| + \\log\\pi_k$",
          "式 4.28，x 的二次式"],
@@ -1150,8 +1459,11 @@ BODIES["reference"] = f"""
   共用 Σ 給線性邊界、各自 Σ<sub>k</sub> 給二次邊界、類內獨立給加性邊界。<br>
   <strong>3. 0.5 這個門檻值只是「總錯誤率最小」的產物。</strong>
   比較分類規則時，先問「哪種錯誤比較貴」，再調門檻值，
-  並且把同一量尺的多數類基準與混淆矩陣一起報出來。''')}
+  並且把同一量尺的多數類基準與混淆矩陣一起報出來；關心少數正類時，再搭配 PR 曲線。<br>
+  <strong>4. 距離要用資料自己的尺度量。</strong>
+  LDA 比的是 Mahalanobis 距離加上先驗；Fisher 方向同時看類間散布與投影後的類內散布 $a^{\\mathsf{T}}Wa$。''')}
 
+{links(("Stanford STATS 191 邏輯斯迴歸範例的 Python 版本", "https://coolum001.github.io/stats19114.html"), lead="講義最後附的延伸練習")}
 
 """
 
@@ -1237,6 +1549,39 @@ BODIES['poisson'] += r"""
 <tr><td>陰天／霧</td><td>−12.89</td><td>−0.08</td></tr><tr><td>小雨／雪</td><td>−66.49</td><td>−0.58</td></tr><tr><td>大雨／雪</td><td>−109.75</td><td>−0.93</td></tr></tbody></table>
 <p>例如控制模型內其他欄位後，小雨／雪在線性模型中是平均租借數少約 66.49；Poisson 模型則是平均租借數乘 $e^{-0.58}\approx0.56$。溫度的一單位須依資料原來的編碼解讀，不能直接當攝氏一度。月份／時段圖顯示冬季較低、夏季較高，以及早晚時段的高峰；線性模型的縱軸是平均租借數的加法差，Poisson 圖則是 log 平均的差，兩張圖不能直接比較係數高度。</p>
 """
+BODIES['poisson'] += r"""
+<h3>附錄：GLM 與線性迴歸的誤差項、係數標準誤與多類別策略</h3>
+<p><strong>GLM 建模的是平均，變異數跟著平均走。</strong>線性迴歸寫成「平均＋獨立同變異的誤差」；GLM 則直接指定 $Y\mid X$ 的條件分布，平均由連結函數決定，變異數再由分布決定：Bernoulli 是 $p(1-p)$，Poisson 是 $\lambda$。所以對 Bernoulli 與 Poisson 模型，若硬要定義誤差 $Y-E(Y\mid X)$，它的變異會隨 $x$ 改變，各筆誤差也不是同分布，沒有另一個可自由估計的 $\sigma^2$；Gaussian GLM 則是例外，它就是有共同 $\sigma^2$ 的線性迴歸。講義建議把 GLM 想成在建模<strong>條件分布</strong>，而不是在「平均上加雜訊」。</p>
+<p><strong>係數與標準誤。</strong>logistic regression 的係數用最大概似估計，標準誤來自觀測資訊矩陣（負對數概似的 Hessian）的逆矩陣，見本頁邏輯斯一節的收合推導；LDA／QDA 的參數估計見生成式模型的收合區；一般 GLM 的推導可參考 SAGE 的 GLM 章節。</p>
+<p><strong>多類別：OvO 與 OvR。</strong>只能處理兩類的分類器，可用兩種策略推廣到 $K$ 類。一對其餘（one-vs-rest, OvR）訓練 $K$ 個「第 $k$ 類對其他所有類」的分類器，選分數最高的類；一對一（one-vs-one, OvO）對每一對類別各訓練一個分類器，共 $K(K-1)/2$ 個，最後投票。多類別 logistic（softmax）與 LDA 則直接處理 $K$ 類，不需要這兩種包裝。</p>
+""" + links(
+    ("為什麼貝氏邏輯斯迴歸沒有變異數項", "https://stats.stackexchange.com/questions/401045/why-no-variance-term-in-bayesian-logistic-regression"),
+    ("邏輯斯迴歸有沒有 i.i.d. 假設", "https://stats.stackexchange.com/questions/259704/is-there-i-i-d-assumption-on-logistic-regression"),
+    ("Poisson 迴歸有沒有誤差項", "https://stats.stackexchange.com/questions/55538/does-poisson-regression-have-an-error-term"),
+    ("邏輯斯迴歸中的條件分布", "https://stats.stackexchange.com/questions/353231/conditional-distribution-in-logistic-regression"),
+    ("邏輯斯迴歸係數的標準誤", "https://stats.stackexchange.com/questions/303180/standard-error-of-the-estimate-in-logistic-regression"),
+    ("Fisher 資訊矩陣與 Hessian 的關係", "https://stats.stackexchange.com/questions/68080/basic-question-about-fisher-information-matrix-and-relationship-to-hessian-and-s"),
+    ("SAGE：廣義線性模型章節", "https://www.sagepub.com/sites/default/files/upm-binaries/21121_Chapter_15.pdf"),
+    ("多類別分類與 OvO／OvR", "https://en.wikipedia.org/wiki/Multiclass_classification"))
+
+BODIES['reference'] += r"""
+<h3>附錄：共變異數矩陣、特徵分解與白化</h3>
+<p>本章的 Mahalanobis 距離與 Fisher 方向都用到這幾個工具；講義在附錄複習，第 6 章 <a href="model_selection.html#w06-detail-whitening">PCR 的白化</a>與非監督式學習一章的<a href="unsupervised_learning.html#pca">主成分分析</a>會再完整使用。</p>
+<p><strong>樣本共變異數。</strong>令 $x_1,\ldots,x_n$ 是長度 $p$ 的觀測向量，先假設平均是零向量（不失一般性），把它們排成 $p\times n$ 的資料矩陣 $X=(x_1,\ldots,x_n)$。樣本共變異數為</p>
+$$S=\frac{XX^\mathsf{T}}{n-1}=\frac1{n-1}\sum_{i=1}^n x_ix_i^\mathsf{T}=\frac1{n-1}\sum_{i=1}^n(x_i-\bar x)(x_i-\bar x)^\mathsf{T}.$$
+<p><strong>最大變異方向。</strong>找單位向量 $u_1$（$u_1^\mathsf{T}u_1=1$）讓投影後的樣本變異最大。由前面的 $\operatorname{Var}(a^\mathsf{T}X)=a^\mathsf{T}\Sigma a$，投影後樣本變異是 $u_1^\mathsf{T}Su_1$（講義這頁寫成除以 $n$，和前一頁 $S$ 的 $n-1$ 只差常數，不影響最佳方向；這裡統一用 $n-1$）。加入拉格朗日乘數 $\lambda_1$：</p>
+$$\max_{u_1}\ u_1^\mathsf{T}Su_1+\lambda_1(1-u_1^\mathsf{T}u_1)\ \Longrightarrow\ Su_1=\lambda_1u_1.$$
+<p>左乘 $u_1^\mathsf{T}$ 得 $u_1^\mathsf{T}Su_1=\lambda_1$：投影變異就是特徵值，所以取最大特徵值的特徵向量，這是<strong>第一主成分方向</strong>。依序在與前面方向正交的條件下再最大化，$r$ 維時取前 $r$ 大特徵值的特徵向量 $u_1,\ldots,u_r$。</p>
+<p><strong>PCA 與 SVD。</strong>把特徵向量收成 $U$、特徵值收成 $\Lambda$：$S=U\Lambda U^\mathsf{T}$。若 $X=UDV^\mathsf{T}$ 是奇異值分解，</p>
+$$S=\frac{XX^\mathsf{T}}{n-1}=\frac{UDV^\mathsf{T}VDU^\mathsf{T}}{n-1}=U\,\frac{D^2}{n-1}\,U^\mathsf{T},\qquad \Lambda=\frac{D^2}{n-1},$$
+<p>主成分分數是 $U^\mathsf{T}X=DV^\mathsf{T}$。最大變異的寫法也等價於<strong>最小重建誤差</strong>：在 $U\in O_{p,r}$ 中最小化 $\sum_i\|(x_i-\bar x)-UU^\mathsf{T}(x_i-\bar x)\|^2$。實務上常先把各變數標準化再做 PCA。</p>
+<p><strong>兩種白化。</strong>都把資料變成單位共變異數：</p>
+<ul>
+<li>PCA 白化：$\Lambda^{-1/2}U^\mathsf{T}X$，結果落在主成分座標，可以順便降維。</li>
+<li>ZCA 白化：$U\Lambda^{-1/2}U^\mathsf{T}X=\Sigma^{-1/2}X$，再轉回原本的座標軸，結果最接近原始資料，通常不降維。本章 Mahalanobis 小節的 $\Sigma^{-1/2}$ 就是這一種。</li>
+</ul>
+"""
+
 BODIES['logistic'] += r"""
 <h3>預測機率的信賴區間</h3>
 <p>對固定新輸入 $x_0$，令 $\hat\eta=x_0^T\hat\beta$、$s_\eta^2=x_0^T\widehat Vx_0$，其中 $\widehat V$ 是完整係數共變異數矩陣。常用近似 95% 機率信賴區間為 $[\operatorname{logistic}(\hat\eta-1.96s_\eta),\operatorname{logistic}(\hat\eta+1.96s_\eta)]$。不能把每個係數 CI 的下端一起代入、上端一起代入：那會漏掉係數間的共變異數。</p>
@@ -1545,98 +1890,217 @@ function w04lda2Ellipse(mu, rho) {
   }
   return pts;
 }
+/* 一般 2×2 共變異數：S = [a, b, b, d]；回傳每類的二次判別分數 */
+function w04lda2Rule(mu, S) {
+  const I = w04lda2Inv(S);
+  return (u, v) => {
+    const x = u - mu[0], y = v - mu[1];
+    return -0.5 * (I.inv[0] * x * x + (I.inv[1] + I.inv[2]) * x * y + I.inv[3] * y * y) - 0.5 * Math.log(I.det);
+  };
+}
+function w04lda2Est(pts) {
+  const n = pts.length, m = [0, 0];
+  pts.forEach(p => { m[0] += p[0] / n; m[1] += p[1] / n; });
+  let a = 0, b = 0, d = 0;
+  pts.forEach(p => {
+    const x = p[0] - m[0], y = p[1] - m[1];
+    a += x * x; b += x * y; d += y * y;
+  });
+  return { mu: m, ss: [a, b, b, d], n: n };
+}
+/* 邊界 f(u, v) = 0：f 對 v 至多二次，用三點取樣求係數再解根 */
+function w04lda2Curve(f) {
+  const us = HC.stat.seq(-5, 5, 170), br1 = [], br2 = [];
+  us.forEach(u => {
+    const f0 = f(u, 0), fp = f(u, 1), fm = f(u, -1);
+    const a = (fp + fm) / 2 - f0, b = (fp - fm) / 2, c = f0;
+    let roots = [];
+    if (Math.abs(a) < 1e-9) {
+      if (Math.abs(b) > 1e-10) roots = [-c / b];
+    } else {
+      const disc = b * b - 4 * a * c;
+      if (disc >= 0) {
+        const rr = Math.sqrt(disc);
+        roots = [(-b - rr) / (2 * a), (-b + rr) / (2 * a)].sort((x, y) => x - y);
+      }
+    }
+    br1.push([u, roots.length ? roots[0] : NaN]);
+    br2.push([u, roots.length > 1 ? roots[1] : NaN]);
+  });
+  return [br1, br2];
+}
 function w04lda2Draw() {
   const r1i = parseFloat($('w04lda2R1').value), r2i = parseFloat($('w04lda2R2').value);
   const d = parseFloat($('w04lda2D').value);
   w04lab('w04lda2R1', r1i, 2); w04lab('w04lda2R2', r2i, 2); w04lab('w04lda2D', d, 1);
-  const pooledR = (r1i + r2i) / 2;
-  const r1 = w04lda2Qda ? r1i : pooledR, r2 = w04lda2Qda ? r2i : pooledR;
   const mu1 = [-d, -d], mu2 = [d, d];
-  const S1 = [1, r1, r1, 1], S2 = [1, r2, r2, 1];
-  const SP = [1, pooledR, pooledR, 1];
-  const A = w04lda2Inv(S1), B = w04lda2Inv(S2), P = w04lda2Inv(SP);
   const s = w04lda2Svc, g = s.clearLayer('main');
-  /* LDA 的線性邊界（永遠畫，當對照）：w·x = c */
-  const dm = [mu1[0] - mu2[0], mu1[1] - mu2[1]];
-  const w1 = P.inv[0] * dm[0] + P.inv[1] * dm[1];
-  const w2 = P.inv[2] * dm[0] + P.inv[3] * dm[1];
-  const mid = [(mu1[0] + mu2[0]) / 2, (mu1[1] + mu2[1]) / 2];
-  const cc = w1 * mid[0] + w2 * mid[1];
-  const linePts = [];
-  if (Math.abs(w2) > 1e-9) {
-    HC.stat.seq(-5, 5, 60).forEach(u => linePts.push([u, (cc - w1 * u) / w2]));
-  } else if (Math.abs(w1) > 1e-9) {
-    HC.stat.seq(-5, 5, 60).forEach(v => linePts.push([cc / w1, v]));
-  }
-  if (linePts.length) {
-    w04clip(s, linePts, { stroke: HC.tok.muted, sw: 1.8, dash: '5 4', cls: 'ln' }, g);
-  }
-  /* QDA 的二次邊界：對每個 u 解 v 的二次式（係數用三點取樣反推） */
-  const Q = (u, v) => {
-    const q = (M, mu) => {
-      const a = u - mu[0], b = v - mu[1];
-      return M[0] * a * a + (M[1] + M[2]) * a * b + M[3] * b * b;
-    };
-    return 0.5 * (q(B.inv, mu2) - q(A.inv, mu1)) + 0.5 * Math.log(B.det / A.det);
-  };
-  if (w04lda2Qda) {
-    const us = HC.stat.seq(-5, 5, 170), br1 = [], br2 = [];
-    us.forEach(u => {
-      const f0 = Q(u, 0), fp = Q(u, 1), fm = Q(u, -1);
-      const a = (fp + fm) / 2 - f0, b = (fp - fm) / 2, c = f0;
-      let roots = [];
-      if (Math.abs(a) < 1e-10) {
-        if (Math.abs(b) > 1e-10) roots = [-c / b, NaN];
-      } else {
-        const disc = b * b - 4 * a * c;
-        if (disc >= 0) {
-          const rr = Math.sqrt(disc);
-          roots = [(-b - rr) / (2 * a), (-b + rr) / (2 * a)].sort((x, y) => x - y);
-        }
-      }
-      br1.push([u, roots.length ? roots[0] : NaN]);
-      br2.push([u, roots.length > 1 ? roots[1] : NaN]);
-    });
-    w04clip(s, br1, { cls: 'fit', sw: 2.8 }, g);
-    w04clip(s, br2, { cls: 'fit', sw: 2.8 }, g);
-  } else if (linePts.length) {
-    w04clip(s, linePts, { cls: 'fit', sw: 2.8 }, g);
-  }
-  /* 資料分布固定由輸入的 rho1/rho2 決定；切換模式只改分類規則。 */
+  /* 資料分布固定由輸入的 rho1/rho2 決定；切換模式只改用來估計的規則。 */
+  const p1 = w04lda2Sample(mu1, r1i, 4041), p2 = w04lda2Sample(mu2, r2i, 4042);
+  /* Bayes 規則：真參數、等先驗 */
+  const tb1 = w04lda2Rule(mu1, [1, r1i, r1i, 1]), tb2 = w04lda2Rule(mu2, [1, r2i, r2i, 1]);
+  const bayes = (u, v) => tb1(u, v) - tb2(u, v);
+  /* 估計規則：樣本平均、各類或合併的樣本共變異數（不偏版本） */
+  const e1 = w04lda2Est(p1), e2 = w04lda2Est(p2);
+  const S1 = e1.ss.map(v => v / (e1.n - 1)), S2 = e2.ss.map(v => v / (e2.n - 1));
+  const SP = e1.ss.map((v, i) => (v + e2.ss[i]) / (e1.n + e2.n - 2));
+  const ldaF = (() => { const a = w04lda2Rule(e1.mu, SP), b = w04lda2Rule(e2.mu, SP); return (u, v) => a(u, v) - b(u, v); })();
+  const qdaF = (() => { const a = w04lda2Rule(e1.mu, S1), b = w04lda2Rule(e2.mu, S2); return (u, v) => a(u, v) - b(u, v); })();
+  const est = w04lda2Qda ? qdaF : ldaF;
+  if (w04lda2Qda) w04lda2Curve(ldaF).forEach(br => w04clip(s, br, { stroke: HC.tok.muted, sw: 1.8, dash: '5 4', cls: 'ln' }, g));
+  w04lda2Curve(bayes).forEach(br => w04clip(s, br, { stroke: HC.tok.c, sw: 2.4, dash: '7 4', cls: 'ln' }, g));
+  w04lda2Curve(est).forEach(br => w04clip(s, br, { cls: 'fit', sw: 2.8 }, g));
   s.poly(w04lda2Ellipse(mu1, r1i), { stroke: HC.tok.a, sw: 2.2, cls: 'ln' }, g);
   s.poly(w04lda2Ellipse(mu2, r2i), { stroke: HC.tok.b, sw: 2.2, cls: 'ln' }, g);
-  w04txt(s, s.pad.l + 8, s.pad.t + 14, '藍＝第 1 類（ρ₁）　紅＝第 2 類（ρ₂）　'
-    + '灰虛線＝LDA 線性邊界', HC.tok.muted, g);
-  const p1 = w04lda2Sample(mu1, r1i, 4041), p2 = w04lda2Sample(mu2, r2i, 4042);
+  w04txt(s, s.pad.l + 8, s.pad.t + 14, '綠虛線＝Bayes 邊界（真參數）　紅＝' + (w04lda2Qda ? 'QDA' : 'LDA')
+    + ' 估計邊界' + (w04lda2Qda ? '　灰虛線＝LDA 估計邊界' : ''), HC.tok.muted, g);
   p1.forEach(p => s.dot(p[0], p[1], { r: 3.4, fill: HC.tok.a, stroke: '#fff', sw: .9 }, g));
   p2.forEach(p => s.dot(p[0], p[1], { r: 3.4, fill: HC.tok.b, stroke: '#fff', sw: .9 }, g));
-  /* 顯示點只負責畫圖；錯誤率另用固定且獨立的 4000 個測試點。 */
-  const rule = p => {
-    if (w04lda2Qda) return Q(p[0], p[1]) > 0 ? 1 : 2;
-    return (w1 * p[0] + w2 * p[1] - cc) > 0 ? 1 : 2;
-  };
+  /* 顯示點只負責估計與畫圖；錯誤率另用固定且獨立的 4000 個測試點（蒙地卡羅估計）。 */
   const t1 = w04lda2Sample(mu1, r1i, 14041, 2000);
   const t2 = w04lda2Sample(mu2, r2i, 14042, 2000);
-  let bad = 0;
-  t1.forEach(p => { if (rule(p) !== 1) bad++; });
-  t2.forEach(p => { if (rule(p) !== 2) bad++; });
-  w04tx('w04lda2Mode', w04lda2Qda ? 'QDA（各自 Σ）' : 'LDA（共用 Σ）');
+  let bad = 0, badB = 0;
+  t1.forEach(p => { if (est(p[0], p[1]) <= 0) bad++; if (bayes(p[0], p[1]) <= 0) badB++; });
+  t2.forEach(p => { if (est(p[0], p[1]) > 0) bad++; if (bayes(p[0], p[1]) > 0) badB++; });
+  w04tx('w04lda2Mode', w04lda2Qda ? 'QDA（各自 Σ̂ₖ）' : 'LDA（共用 Σ̂）');
   w04tx('w04lda2R1T', HC.fmt(r1i, 2));
   w04tx('w04lda2R2T', HC.fmt(r2i, 2));
-  w04tx('w04lda2Shape', w04lda2Qda
-    ? (Math.abs(r1i - r2i) < 1e-9 ? '二次式退化成直線' : '二次曲線') : '直線');
+  w04tx('w04lda2Shape', w04lda2Qda ? '二次曲線（估計）' : '直線（估計）');
   w04tx('w04lda2Err', bad + ' / 4000（' + HC.pct(bad / 4000, 1) + '）');
+  w04tx('w04lda2Bayes', badB + ' / 4000（' + HC.pct(badB / 4000, 1) + '）');
   setStatus('w04lda2Status', (w04lda2Qda ? 'QDA' : 'LDA') + ' 模式，ρ₁ = '
-    + HC.fmt(r1i, 2) + '、ρ₂ = ' + HC.fmt(r2i, 2) + '，同一批 60 點上的邊界是'
-    + (w04lda2Qda && Math.abs(r1i - r2i) > 1e-9 ? '二次曲線（紅）' : '直線')
-    + '，灰虛線是 LDA 的線性邊界。獨立 4000 個測試點的錯誤率為 '
-    + HC.pct(bad / 4000, 1) + '。');
+    + HC.fmt(r1i, 2) + '、ρ₂ = ' + HC.fmt(r2i, 2) + '。紅線是用這 60 點估出的邊界，綠虛線是用真參數算的 Bayes 邊界。'
+    + '同一組 4000 個測試點上，估計規則錯 ' + HC.pct(bad / 4000, 1) + '，Bayes 規則錯 ' + HC.pct(badB / 4000, 1) + '。');
 }
 function w04lda2Toggle() { w04lda2Qda = !w04lda2Qda; w04lda2Draw(); }
 function w04lda2Reset() {
   w04lda2Qda = false;
   $('w04lda2R1').value = '0.7'; $('w04lda2R2').value = '0.7'; $('w04lda2D').value = '1.4';
   w04lda2Draw();
+}
+
+/* ---------- P03 Mahalanobis 距離與投影（live，閉式解）---------- */
+/* 同時依 x 與 y 定義域切段，避免大橢圓畫出繪圖區 */
+function w04clip2(s, pts, attrs, g) {
+  let run = [];
+  for (const p of pts) {
+    const ok = p[0] >= s.xd[0] && p[0] <= s.xd[1] && p[1] >= s.yd[0] && p[1] <= s.yd[1];
+    if (ok) { run.push(p); } else { if (run.length > 1) s.poly(run, attrs, g); run = []; }
+  }
+  if (run.length > 1) s.poly(run, attrs, g);
+}
+let w04mahaSvc = null, w04mahaX = [1.4, -0.6], w04mahaZ = null;
+function w04mahaSetup() {
+  w04mahaSvc = HC.svg('w04mahaSvg', { xd: [-4, 4], yd: [-4, 4], h: 360 });
+  w04mahaSvc.grid(4, 4, { xtitle: 'X₁', ytitle: 'X₂', xdec: 0, ydec: 0 });
+  /* 固定的標準常態抽樣，ρ 改變時只換線性轉換，點的「身分」不變 */
+  const rand = HC.stat.lcg(4107);
+  w04mahaZ = [];
+  for (let i = 0; i < 150; i++) w04mahaZ.push([HC.stat.normal(rand), HC.stat.normal(rand)]);
+  const s = w04mahaSvc;
+  s.el.addEventListener('pointerdown', function (ev) {
+    const d = s.toData(ev);
+    w04mahaX = [Math.max(-4, Math.min(4, d.x)), Math.max(-4, Math.min(4, d.y))];
+    w04mahaDraw();
+  });
+  HC.drag(s.el, s, function (m) { w04mahaX = [m.x, m.y]; w04mahaDraw(); });
+}
+function w04mahaPts(rho, z) {
+  /* Σ = [[1, ρ], [ρ, 1]] 的主軸：e₁ = (1, 1)/√2（變異 1 + ρ）、e₂ = (1, −1)/√2（變異 1 − ρ） */
+  const a = Math.sqrt(1 + rho) / Math.SQRT2, b = Math.sqrt(1 - rho) / Math.SQRT2;
+  return [a * z[0] + b * z[1], a * z[0] - b * z[1]];
+}
+function w04mahaD(rho, x) {
+  return Math.sqrt((x[0] * x[0] - 2 * rho * x[0] * x[1] + x[1] * x[1]) / (1 - rho * rho));
+}
+function w04mahaDraw() {
+  const s = w04mahaSvc;
+  if (!s) return;
+  const rho = parseFloat($('w04mahaR').value), th = parseFloat($('w04mahaT').value) * Math.PI / 180;
+  w04lab('w04mahaR', rho, 2); w04lab('w04mahaT', th * 180 / Math.PI, 0);
+  const g = s.clearLayer('main');
+  const pts = w04mahaZ.map(z => w04mahaPts(rho, z));
+  pts.forEach(q => s.dot(q[0], q[1], { r: 2.6, fill: HC.tok.muted, opacity: 0.45 }, g));
+  const ring = c => HC.stat.seq(0, 2 * Math.PI, 97).map(t => w04mahaPts(rho, [c * Math.cos(t), c * Math.sin(t)]));
+  [1, 2, 3].forEach(c => w04clip2(s, ring(c), { stroke: HC.tok.a, sw: 1.3, cls: 'ln' }, g));
+  const x = w04mahaX, dm = w04mahaD(rho, x), de = Math.hypot(x[0], x[1]);
+  w04clip2(s, HC.stat.seq(0, 2 * Math.PI, 241).map(t => [de * Math.cos(t), de * Math.sin(t)]),
+           { stroke: HC.tok.muted, sw: 1.4, dash: '5 4', cls: 'ln' }, g);
+  w04clip2(s, HC.stat.seq(0, 2 * Math.PI, 241).map(t => w04mahaPts(rho, [dm * Math.cos(t), dm * Math.sin(t)])),
+           { stroke: HC.tok.b, sw: 2.6, cls: 'ln' }, g);
+  /* 方向 a 與投影 */
+  const a = [Math.cos(th), Math.sin(th)];
+  w04clip2(s, HC.stat.seq(-6, 6, 121).map(t => [t * a[0], t * a[1]]), { stroke: HC.tok.accent2, sw: 2, cls: 'ln' }, g);
+  const c = a[0] * x[0] + a[1] * x[1];
+  s.seg(x[0], x[1], c * a[0], c * a[1], { stroke: HC.tok.accent2, sw: 1.2, dash: '3 3', cls: 'ln' }, g);
+  s.box(c * a[0] - 0.09, c * a[1] - 0.09, c * a[0] + 0.09, c * a[1] + 0.09, { fill: HC.tok.accent2 }, g);
+  s.dot(0, 0, { r: 3.5, fill: HC.tok.ink || '#333' }, g);
+  s.dot(x[0], x[1], { r: 7, fill: HC.tok.b, stroke: '#fff', sw: 1.8 }, g);
+  const v = 1 + rho * Math.sin(2 * th);
+  const proj = pts.map(q => a[0] * q[0] + a[1] * q[1]);
+  w04tx('w04mahaRho', HC.fmt(rho, 2));
+  w04tx('w04mahaEuc', HC.fmt(de, 2));
+  w04tx('w04mahaMah', HC.fmt(dm, 2));
+  w04tx('w04mahaProj', HC.fmt(c, 2));
+  w04tx('w04mahaVar', HC.fmt(v, 3));
+  w04tx('w04mahaSampVar', HC.fmt(HC.stat.variance(proj), 3));
+  setStatus('w04mahaStatus', 'ρ = ' + HC.fmt(rho, 2) + '：x 的歐氏距離 ' + HC.fmt(de, 2)
+    + '、Mahalanobis 距離 ' + HC.fmt(dm, 2) + '。方向 a 的投影變異 aᵀΣa = '
+    + HC.fmt(v, 3) + '（主軸上介於 ' + HC.fmt(1 - Math.abs(rho), 2) + ' 與 '
+    + HC.fmt(1 + Math.abs(rho), 2) + ' 之間）。');
+}
+function w04mahaPreset(sign) {
+  /* 歐氏距離都是 2：ρ ≥ 0 時長軸是 (1,1)/√2、短軸是 (1,−1)/√2；ρ < 0 時相反 */
+  const r = 2 / Math.SQRT2;
+  /* ρ < 0 時長軸是 (1, −1) 方向，兩個按鈕的方向要交換 */
+  const rho = parseFloat($('w04mahaR').value), longAxis = (rho >= 0) === (sign > 0);
+  w04mahaX = longAxis ? [r, r] : [r, -r];
+  w04mahaDraw();
+}
+function w04mahaReset() {
+  $('w04mahaR').value = '0.8'; $('w04mahaT').value = '45';
+  w04mahaX = [1.4, -0.6];
+  w04mahaDraw();
+}
+
+/* ---------- P06 六個模擬情境的箱形圖（baked）---------- */
+let w04scenSvc = null, w04scenIdx = 0;
+function w04scenSetup() {
+  w04scenSvc = HC.svg('w04scenSvg', { xd: [0, 6], yd: [0, 0.6], h: 340, pad: { l: 50, r: 14, t: 18, b: 40 } });
+}
+function w04scenShow(i) {
+  w04scenIdx = i;
+  const F = FRAMES_w04scen, row = F.rows[i], s = w04scenSvc;
+  if (!s) return;
+  let hi = 0;
+  F.methods.forEach(m => { hi = Math.max(hi, row.box[m][4]); });
+  const top = Math.min(0.7, Math.ceil((hi + 0.02) * 20) / 20);
+  s.domain([0, F.methods.length], [0, top]);
+  s.grid(F.methods.length, 5, { ytitle: '測試錯誤率', ydec: 2, xfmt: () => '' });
+  const g = s.clearLayer('main');
+  const meds = F.methods.map(m => row.box[m][2]);
+  const best = meds.indexOf(Math.min(...meds)), worst = meds.indexOf(Math.max(...meds));
+  F.methods.forEach((m, j) => {
+    const b = row.box[m], x = j + 0.5, w = 0.28;
+    const col = j === best ? HC.tok.c : (j === worst ? HC.tok.b : HC.tok.a);
+    s.seg(x, b[0], x, b[1], { stroke: col, sw: 1.4, cls: 'ln' }, g);
+    s.seg(x, b[3], x, b[4], { stroke: col, sw: 1.4, cls: 'ln' }, g);
+    s.seg(x - w / 2, b[0], x + w / 2, b[0], { stroke: col, sw: 1.4, cls: 'ln' }, g);
+    s.seg(x - w / 2, b[4], x + w / 2, b[4], { stroke: col, sw: 1.4, cls: 'ln' }, g);
+    const r = s.box(x - w, b[1], x + w, b[3], { fill: col, stroke: col, sw: 1.6 }, g);
+    r.setAttribute('fill-opacity', '0.22');
+    s.seg(x - w, b[2], x + w, b[2], { stroke: col, sw: 2.6, cls: 'ln' }, g);
+    w04txt(s, s.X(x), s.pad.t + s.ih + 16, m, HC.tok.ink, g, 'middle');
+  });
+  w04tx('w04scenLab', row.label);
+  w04tx('w04scenN', row.nText);
+  w04tx('w04scenLin', row.linear ? '線性' : '非線性');
+  w04tx('w04scenBest', F.methods[best] + '（' + HC.fmt(meds[best], 3) + '）');
+  w04tx('w04scenWorst', F.methods[worst] + '（' + HC.fmt(meds[worst], 3) + '）');
+  setStatus('w04scenStatus', row.label + '（' + row.nText + '，Bayes 邊界'
+    + (row.linear ? '線性' : '非線性') + '）：中位數最低的是 ' + F.methods[best]
+    + '，最高的是 ' + F.methods[worst] + '。綠色＝最低、紅色＝最高；每個箱子來自 '
+    + F.reps + ' 組訓練資料。');
 }
 
 /* ---------- P05 閾值 + 混淆矩陣 + ROC（hybrid）---------- */
@@ -1669,7 +2133,42 @@ function w04thrStats(t) {
     err: (fp + fn) / F.n,
   };
 }
+let w04thrPr = false;
+const w04thrPrPts = (() => {
+  const F = FRAMES_w04thr, out = [];
+  for (let k = 0; k <= F.nbins; k++) {
+    const tp = w04thrCum.cy[k], fp = w04thrCum.cn[k];
+    if (tp + fp > 0) out.push({ x: tp / F.nPos, y: tp / (tp + fp) });
+  }
+  return out;
+})();
+function w04thrTogglePr() {
+  w04thrPr = !w04thrPr;
+  w04thrDrawRoc();
+  w04thrMove();
+}
 function w04thrDrawRoc() {
+  const F = FRAMES_w04thr;
+  if (w04thrPr) {
+    const base = F.nPos / F.n;
+    HC.line('w04thrRoc', {
+      datasets: [
+        { label: 'LDA 的 PR 曲線', data: w04thrPrPts, borderColor: HC.tok.accent2,
+          borderWidth: 2.4, pointRadius: 0, fill: false },
+        { label: '目前門檻值', data: [{ x: 0, y: 0 }], borderColor: HC.tok.accent,
+          backgroundColor: HC.tok.accent, pointRadius: 6.5, showLine: false },
+        { label: '隨機基準＝盛行率', data: [{ x: 0, y: base }, { x: 1, y: base }], borderColor: HC.tok.muted,
+          borderWidth: 1.2, borderDash: [5, 4], pointRadius: 0, fill: false },
+      ],
+    }, {
+      interaction: { mode: 'nearest', intersect: true },
+      scales: {
+        x: { type: 'linear', min: 0, max: 1, title: { display: true, text: 'Recall = 敏感度' } },
+        y: { min: 0, max: 1, title: { display: true, text: 'Precision = 精確率' } },
+      },
+    });
+    return;
+  }
   HC.line('w04thrRoc', {
     datasets: [
       { label: 'LDA 的 ROC', data: w04thrRocPts, borderColor: HC.tok.accent2,
@@ -1697,7 +2196,12 @@ function w04thrApply(s) {
   w04tx('w04thrSpec', HC.pct(s.spec, 1));
   w04tx('w04thrPrec', Number.isNaN(s.prec) ? '—（沒有人被判為違約）' : HC.pct(s.prec, 1));
   w04tx('w04thrErr', HC.pct(s.err, 2));
-  HC.update('w04thrRoc', c => { c.data.datasets[1].data = [{ x: s.fpr, y: s.sens }]; });
+  w04tx('w04thrFnr', HC.pct(s.fn / FRAMES_w04thr.nPos, 1));
+  HC.update('w04thrRoc', c => {
+    c.data.datasets[1].data = w04thrPr
+      ? (Number.isNaN(s.prec) ? [] : [{ x: s.sens, y: s.prec }])
+      : [{ x: s.fpr, y: s.sens }];
+  });
   setStatus('w04thrStatus', '門檻值 ' + HC.fmt(s.t, 3) + '：預測會違約 ' + (s.fp + s.tp)
     + ' 人，抓到 ' + s.tp + ' / ' + FRAMES_w04thr.nPos + ' 個真違約戶（敏感度 '
     + HC.pct(s.sens, 1) + '），誤報 ' + s.fp + ' 人，總錯誤率 ' + HC.pct(s.err, 2) + '。');
@@ -1708,7 +2212,10 @@ function w04thrMove() {
   w04thrApply(w04thrStats(t));
 }
 function w04thrSet(t) { $('w04thrSlider').value = String(t); w04thrMove(); }
-function w04thrReset() { w04thrSet(0.5); }
+function w04thrReset() {
+  if (w04thrPr) { w04thrPr = false; w04thrDrawRoc(); }
+  w04thrSet(0.5);
+}
 
 /* ---------- 啟動 ----------
    規則：SVG 元件的初始化一律放在 HC.ready() 外面。
@@ -1721,8 +2228,12 @@ w04shapeSetup();
 w04shapeDraw();
 w04lda1Setup();
 w04lda1Draw();
+w04mahaSetup();
+w04mahaDraw();
 w04lda2Setup();
 w04lda2Draw();
+w04scenSetup();
+w04scenShow(0);
 w04thrApply(w04thrStats(0.5));
 HC.ready(() => {
   w04thrDrawRoc();

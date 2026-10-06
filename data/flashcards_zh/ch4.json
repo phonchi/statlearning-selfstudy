@@ -114,5 +114,25 @@
   {
     "front": "判別子空間",
     "back": "將共用類內共變異數白化成單位矩陣後，K 個類別中心位於至多 min(p, K − 1) 維的仿射子空間。投影到這個完整空間會移除各類共同的距離項；保留尺度與先驗即可重現 LDA 分類，再刪去非零判別方向則可能改變結果。"
+  },
+  {
+    "front": "Mahalanobis 距離（Mahalanobis Distance）",
+    "back": "d_M(x, μ) = √[(x − μ)ᵀ Σ⁻¹ (x − μ)]，Σ 須正定。它依資料自己的變異與相關衡量距離：變異大的方向權重小。白化 z = Σ^(−1/2)(x − μ) 之後，就等於普通的歐氏距離。先驗相等時，LDA 選 Mahalanobis 距離最近的類別中心。"
+  },
+  {
+    "front": "Bayes 錯誤率（Bayes Error Rate）",
+    "back": "在 0–1 損失下，用真實分布算出的 Bayes 分類器所達到的期望錯誤率，是任何分類規則都無法再降低的下限。實際的 LDA、QDA 用估計參數，只能近似 Bayes 決策邊界。"
+  },
+  {
+    "front": "假陰率（False Negative Rate, FNR）",
+    "back": "FN /(TP + FN)，真實正類中被漏判成負類的比例，等於 1 − 敏感度，對應第二型錯誤。Default 的 LDA 在門檻 0.5 時 FNR 為 75.7%，門檻 0.2 時降到 41.4%。"
+  },
+  {
+    "front": "PR 曲線（Precision–Recall Curve）",
+    "back": "門檻值改變時，以 recall 為橫軸、precision 為縱軸畫出的曲線。精確率不使用 TN，直接反映預測為正類者有多少是真的；隨機分類器的精確率約等於正類盛行率，所以在類別不平衡、關心少數正類時通常比 ROC 更有資訊。"
+  },
+  {
+    "front": "投影後變異（Variance of a Projection）",
+    "back": "Var(aᵀX) = aᵀΣa，Σ 是 X 的共變異數矩陣。當 ‖a‖ = 1 時，aᵀx 是 x 在方向 a 上的投影座標。Fisher 判別用 aᵀBa 與 aᵀWa 比較投影後的類間與類內散布。"
   }
 ]
