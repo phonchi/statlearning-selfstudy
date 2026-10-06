@@ -50,6 +50,17 @@ const IGNORE = [
   /Failed to load resource/i,
 ];
 
+/* 全頁截圖：頁面高度超過 Chrome 上限（Page is too large）時，改截最上方 16000px，其餘檢查照常 */
+async function shot(page, file) {
+  try {
+    await page.screenshot({ path: file, fullPage: true });
+  } catch (e) {
+    if (!/too large/i.test(String(e))) throw e;
+    const vp = page.viewport();
+    await page.screenshot({ path: file, clip: { x: 0, y: 0, width: vp.width, height: 16000 } });
+  }
+}
+
 async function checkOne(browser, stem) {
   const url = 'file://' + path.join(ROOT, stem + '.html');
   const page = await browser.newPage();
@@ -80,7 +91,7 @@ async function checkOne(browser, stem) {
     if (!d.id || !d.summary) note(stem, '收合區缺少錨點或摘要');
   });
   fs.mkdirSync(SHOT_DIR, { recursive: true });
-  await page.screenshot({ path: path.join(SHOT_DIR, stem + '_reading.png'), fullPage: true });
+  await shot(page, path.join(SHOT_DIR, stem + '_reading.png'));
   const readingSummary = await page.$('details.reading-detail > summary');
   if (readingSummary) {
     await readingSummary.focus(); await page.keyboard.press('Enter');
@@ -217,7 +228,7 @@ async function checkOne(browser, stem) {
 
   // 全頁截圖
   fs.mkdirSync(SHOT_DIR, { recursive: true });
-  await page.screenshot({ path: path.join(SHOT_DIR, stem + '.png'), fullPage: true });
+  await shot(page, path.join(SHOT_DIR, stem + '.png'));
 
   // 手機版：頁面本體不得橫向滾動
   await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
@@ -238,7 +249,7 @@ async function checkOne(browser, stem) {
     return null;
   });
   if (overflow) note(stem, `手機版橫向溢出 ${overflow.over}px：${overflow.wide.join(' | ')}`);
-  await page.screenshot({ path: path.join(SHOT_DIR, stem + '_mobile.png'), fullPage: true });
+  await shot(page, path.join(SHOT_DIR, stem + '_mobile.png'));
 
   const reflowBad = await page.evaluate(async () => {
     document.querySelectorAll('details.reading-detail').forEach(d => { d.open = false; });

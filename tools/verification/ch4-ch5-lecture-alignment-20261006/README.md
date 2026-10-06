@@ -8,7 +8,8 @@
 - `verify_math.py`：新公式與數字的數值核對（seed 20261006；`conda run -n m524 python verify_math.py`）。
 - `verify.py <rev>`：與基準版比對——既有 `FRAMES_w04*`／`FRAMES_w05*` 逐 byte 相同（只允許新增 `FRAMES_w04scen`、`FRAMES_w05sim` 與重產 `FRAMES_w05misuse`）、既有 lab 程式與輸出文字仍在、講義每個連結都出現在頁面（兩個確認 404 的連結除外）、id 不重複、沒有預設展開的 details。
 - `shots.py <stem> <id|@css>[|action] ...`：Playwright 1440／390 px 截圖，檢查 MathJax 錯誤、頁面錯誤與橫向溢出；截圖在 `shots/`。
-- `run.log`：最終一輪完整檢查輸出。
+- `run.log`：第一輪最終完整檢查輸出。
+- `check_polish.py <before> <after>`：第二輪潤稿防護，數學式、數字、網址、id、程式、quiz 正解須完全相同。
 
 注意：`verify.py` 的 lab 文字檢查是「基準版的每段程式／輸出仍是新版某張卡的子字串」，以容許本次把儲存格 53 併入 55 的卡片；它比 aadb695 的 `verify_refinement.py`（逐字相等）寬鬆，無法偵測「被截短後仍是別張卡子字串」的情形。
 

@@ -685,3 +685,15 @@ FRAMES 內含「配適值」與 scale-location 的舊旁白改由 JS 的 `w03dia
 
 **驗證**（`tools/verification/ch4-ch5-lecture-alignment-20261006/`，見其 README 與 `run.log`）：`verify_math.py` 18/18；`verify.py HEAD` 0 失敗（既有 FRAMES 逐 byte 相同、lab 文字保留、講義連結全數在頁）；`validate.py` 兩頁 0 失敗（classification 331 KB 只有 SIZE 警告）；`check_*` 全過；`browser_check.js` 0 問題；1440／390 px 截圖已逐張檢視。已知非本次問題見該 README。`check_teaching_scope.py` 會重寫 `tools/verification/teaching-scope-20260910/` 的清單 JSON，本次一併提交（內容是依目前頁面重算的 details 清單與計數）。
 
+### 21.1 第二輪 refine：第 5 章貼合講義頁序、選讀收合、橘框；第 4 章 GLM 加深；補充連結改寫成收合（2026-10-06）
+
+使用者要求：「選讀盡量收合、適當加入橘框、貼合講義」，並追加第 4 章 GLM（為什麼不用線性迴歸、指數分布族與為何選它、收合補充負二項與 Gamma 迴歸），以及把主文中的「講義補充連結」直接寫成收合內容；完成後用 `speak-human-tw` 潤稿（兩個 subagent 平行）。grill 決定：**講義主線可見、其餘收合**；「為什麼不用線性迴歸」只補計數資料。
+
+- **第 5 章**：講義 p.20–21（Optional）整段移到 p.19 之後並收合為 `w05-detail-shuffle`（含切分元件，`HC.onDetail` 開啟時重繪）；超參數細節 `w05-detail-hyper`、LOOCV 捷徑直覺 `w05-detail-loocv-intuition`、三缺點詳解 `w05-detail-loocv-drawbacks`、分類切分器 `w05-detail-splitters`、名稱由來、區塊 bootstrap 步驟、三分之二推導、訓練 vs 測試 MSE 推導 `w05-detail-train-test-mse` 皆收合；圖 5.6 說明移回 k-fold 節；bootstrap 依講義頁序（模擬 → 回到真實世界 → 一般圖像與 SE_B → 區間 → 區塊 → 預測誤差）。橘框 8 個：兩種方法分工、驗證集兩缺點、LOOCV 捷徑、CV 最小值位置、k=5／10、模擬結果、SE_B、bootstrap vs 預測誤差（另有既存「一句話原則」）。收合群組 `bootstrap-intervals` 改為只談預測區間（標題「用 bootstrap 建立預測區間」，GROUPS[5] 同步）。
+- **第 4 章**：`poisson` 節改寫為 `w04-why-not-lm`（三問題＋取 log 的限制，橘框）、`w04-poisson`（自然選擇理由、λ=5 例）、`w04-glm`（兩個共同點、連結函數、指數族定義與三分布對照表、典型連結、GLM 一般做法、「為什麼選指數分布族」橘框）；收合 `w04-detail-expfam-why`（平均／變異推導、典型連結 score 與凹性、IRLS）、`w04-detail-negbin`、`w04-detail-gamma`。
+- **補充連結改寫成收合**：第 4 章 `w04-detail-qda-derivation`、`w04-detail-nb-derivation`、`w04-detail-lda-logodds`、`w04-detail-noise`、`w04-detail-linear-classifier`、`w04-detail-wald`、`w04-detail-common-cause`、`w04-detail-iris-pca`；Mahalanobis、Fisher、ROC AUC、recall／precision、判別 vs 生成等連結移入既有收合。資料集說明頁連結（Default、Auto、Bikeshare）、sklearn CV 總覽、資料洩漏、lowess 仍為主文一行。
+- **潤稿**：兩個 subagent 依 `speak-human-tw` 只改新增散文（第 4 章 13 處、第 5 章 8 處）；`tools/verification/ch4-ch5-lecture-alignment-20261006/check_polish.py` 比對潤稿前後的數學式、數字、網址、id、`<code>`、quiz 正解完全相同。
+- **Codex 唯讀複查** job `8193fd38-f5da-4f89-a4e8-87b8bfc10c4b`：4 項皆核實並修正（凹性唯一性補「X 滿欄秩」、GLM 表的線性平均改為 $\beta_0+\beta^\mathsf{T}x$、區塊 bootstrap 補整除條件、潛在變數交叉引用改指後方收合）。
+- **工具**：`tools/browser_check.js` 加 `shot()` 後援——全部收合展開後頁面超過 Chrome 全頁截圖上限（Page is too large）時改截前 16000px，其餘檢查照常。
+- **驗證**：`validate.py` 全站 0 失敗；`verify.py HEAD` 0 失敗（FRAMES 不變、講義連結全在）；`verify_math.py` 18/18；`check_*` 全過；`browser_check.js` 兩頁 0 問題；1440／390 px 截圖已檢視。classification.html 現為約 348 KB（SIZE 警告）。
+

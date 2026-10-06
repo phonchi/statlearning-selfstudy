@@ -119,7 +119,7 @@ GROUPS = {2: {'bayes': [('KNN 的彈性與有效自由度', 'knn-df', '計算細
  5: {'loocv': [('LOOCV 捷徑何時可用？', 'press', '計算細節：LOOCV 捷徑與槓桿值')],
      'cvwrong': [('分折也要反映未來的預測情境', 'splits', '延伸閱讀：群組、時間與重複切分'),
                  ('調參、外層評估與折外預測', 'nested-cv', '延伸閱讀：巢狀 CV 與折外預測')],
-     'bootstrap': [('從標準誤到信賴區間與預測區間', 'bootstrap-intervals', '延伸閱讀：bootstrap 信賴區間與預測區間'),
+     'bootstrap': [('用 bootstrap 建立預測區間', 'bootstrap-intervals', '延伸閱讀：用 bootstrap 建立預測區間'),
                    ('Jackknife：逐筆刪除，估計量會變多少？', 'jackknife-se', '延伸閱讀：Jackknife 的標準誤'),
                    ('Permutation test：假如 X 與標籤沒有關聯？', 'permutation', '延伸閱讀：置換檢定與分類器評估'),
                    ('Jackknife也能估計偏差', 'jackknife-bias', '計算細節：Jackknife 的偏差修正'),

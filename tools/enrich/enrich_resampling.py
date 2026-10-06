@@ -49,52 +49,66 @@ def slider(sid, label, lo, hi, step, val, fn, shown=None):
 
 # ── 講義 05 逐頁對齊（2026-10-06）────────────────────────────────────────
 HYPER_SECTION = r"""
-  <h3 id="w05-hyper">交叉驗證要選的是什麼：參數與超參數</h3>
-  <p>講義開頭把兩種重抽樣方法的任務分開：<strong>交叉驗證</strong>估計測試誤差，並用它選擇模型的彈性；<strong>bootstrap</strong> 估計參數估計值的標準差，也用在集成學習（第 8 章的 bagging）。「選擇彈性」選的通常是<strong>超參數</strong>（hyperparameter）。</p>
+  <h3 id="w05-hyper">交叉驗證與 bootstrap</h3>
+  <p>本章介紹兩種重抽樣方法。<strong>交叉驗證</strong>（cross-validation）估計測試誤差，並用它挑選適當的模型彈性，也就是選<strong>超參數</strong>（hyperparameter）。講義的定義是：超參數是用來<strong>控制學習過程</strong>的參數，無法在把模型擬合到訓練集時順便推得。它分成兩類：</p>
+  <ul>
+    <li><strong>模型超參數</strong>：決定「學什麼模型」，例如 KNN 的 $k$、多項式次數、ridge 的 $\lambda$。</li>
+    <li><strong>演算法超參數</strong>：決定「怎麼學」，例如梯度下降的學習率、batch size。</li>
+  </ul>
+  <p><strong>bootstrap</strong> 則用來估計參數估計值的標準差，也用在集成學習（第 8 章的 bagging）。</p>
+""" + info("兩種方法的分工", r"""<strong>交叉驗證估「預測誤差」</strong>，用來比較模型、選超參數；<strong>bootstrap 估「估計量的不確定性」</strong>，例如標準誤與信賴區間。兩者都在重抽樣，問的問題不同。""", "warm") + detail("w05-detail-hyper", "延伸閱讀：參數、超參數與兩類超參數的例子", r"""
   <p><strong>參數</strong>（parameter）是擬合時由訓練資料直接學出來的量，例如線性迴歸的 $\beta_0,\beta_1,\ldots,\beta_p$，或神經網路的權重；最佳化程序會把它們算出來。<strong>超參數</strong>則是用來<strong>控制學習過程</strong>的設定值：在擬合模型之前就要先指定，訓練程序本身不會順便把它估出來，通常要靠驗證集或交叉驗證來選。例如 ridge regression：</p>
   $$\hat\beta=\arg\min_\beta\Bigl[\sum_{i=1}^n(y_i-x_i^\mathsf{T}\beta)^2+\lambda\|\beta\|^2\Bigr].$$
-  <p>這裡 $\beta$ 是參數，$\lambda$ 是超參數：給定 $\lambda$，最佳化會解出 $\hat\beta$；但若把 $\lambda$ 也拿來最小化訓練誤差，永遠會選 $\lambda=0$，所以要另外用 CV 評估。講義再把超參數分成兩類：</p>
+  <p>這裡 $\beta$ 是參數，$\lambda$ 是超參數：給定 $\lambda$，最佳化會解出 $\hat\beta$；但若把 $\lambda$ 也拿來最小化訓練誤差，永遠會選 $\lambda=0$，所以要另外用 CV 評估。兩類超參數的對照：</p>
 """ + table(["", "模型超參數（model hyperparameter）", "演算法超參數（algorithm hyperparameter）"],
             [["控制什麼", "<strong>學什麼模型</strong>：模型的形式、複雜度或假設空間", "<strong>怎麼學</strong>：最佳化程序如何把模型訓練出來"],
              ["例子", "KNN 的 $k$、多項式的次數、決策樹的最大深度、ridge 的 $\\lambda$、神經網路的層數與每層神經元數",
               "學習率、batch size、epoch 數、最佳化器的選擇、momentum"],
              ["改變它會", "改變可能的擬合結果與偏差–變異取捨", "改變收斂速度、穩定性，或最後停在哪個解"]]) + r"""
-  <p>例如梯度下降 $\theta^{(t+1)}=\theta^{(t)}-\eta\nabla L(\theta^{(t)})$ 的學習率 $\eta$：太大可能跳過最佳點、甚至不收斂；太小則學得很慢。它不改變模型的形式，只控制最佳化怎麼走，所以算演算法超參數。這兩類的界線並不嚴格；dropout 比例既改變有效的模型，也影響訓練過程，常被視為訓練／模型兩用的超參數。實務上大家通常統稱為超參數，重點是：<strong>它們都不由擬合程序直接估出，要靠獨立於訓練的評估來選</strong>，這正是本章的工具。</p>
-"""
+  <p>例如梯度下降 $\theta^{(t+1)}=\theta^{(t)}-\eta\nabla L(\theta^{(t)})$ 的學習率 $\eta$：太大可能跳過最佳點、甚至不收斂；太小則學得很慢。它不改變模型的形式，只控制最佳化怎麼走，所以算演算法超參數。這兩類的界線並不嚴格；dropout 比例既改變有效的模型，也影響訓練過程，常被視為訓練／模型兩用的超參數。實務上大家通常統稱為超參數，重點是：<strong>它們都不由擬合程序直接估出，要靠獨立於訓練的評估來選</strong>，本章介紹的正是這類評估工具。</p>
+""")
 
 LOOCV_INTUITION = r"""
-  <h3 id="w05-loocv-shortcut">LOOCV 捷徑的直覺：訓練殘差要依槓桿值放大</h3>
-  <p>對最小平方線性或多項式迴歸，講義寫出（ISLP 式 5.2；ESL §5.5、§7.10）：</p>
-  $$\mathrm{CV}_{(n)}=\frac1n\sum_{i=1}^n\left(\frac{y_i-\hat y_i}{1-h_i}\right)^2.$$
-  <p>意思是：把第 $i$ 筆刪掉重新擬合、再回來預測它所造成的誤差，可以直接從<strong>一次</strong>完整擬合的殘差 $e_i=y_i-\hat y_i$ 與槓桿值 $h_i$ 算出來，不需要擬合 $n$ 次。記 $e_{(i)}=y_i-\hat y_{(i)}$ 為留一殘差，精確關係是</p>
-  $$\boxed{e_{(i)}=\frac{e_i}{1-h_i}}.$$
+  <h3 id="w05-loocv-shortcut">一個好用的特例：最小平方的 LOOCV 捷徑</h3>
+""" + info("講義：LOOCV 的捷徑公式", r"""對最小平方的線性或多項式迴歸（ISLP 式 5.2；ESL §5.5、§7.10），
+  $$\mathrm{CV}_{(n)}=\frac1n\sum_{i=1}^n\left(\frac{y_i-\hat y_i}{1-h_i}\right)^2,$$
+  其中 $\hat y_i$ 是用<strong>全部資料</strong>擬合一次的預測值，$h_i$ 是第 3 章的槓桿值。只要擬合<strong>一次</strong>，就能算出 LOOCV，不必擬合 $n$ 次。""", "warm") + r"""
+  <p>它像普通的訓練 MSE，只是每個殘差除以 $1-h_i$：槓桿值愈大的點，愈能把擬合結果拉向自己，訓練殘差就愈樂觀，所以要放大得愈多。這個公式只適用於最小平方這類模型；scikit-learn 的通用 <code>cross_validate()</code> 不會用它，仍然真的擬合 $n$ 次。</p>
+""" + detail("w05-detail-loocv-intuition", "延伸閱讀：為什麼要除以 $1-h_i$？", r"""
   <h4>$h_i$ 是「自己對自己擬合值」的權重</h4>
   <p>最小平方的擬合值是 $\hat y=Hy$，$H=X(X^\mathsf{T}X)^{-1}X^\mathsf{T}$ 是帽子矩陣，$h_i=H_{ii}$ 是第 3 章學過的槓桿值。把第 $i$ 個擬合值拆開：</p>
   $$\hat y_i=\underbrace{h_iy_i}_{\text{自己對自己的影響}}+\underbrace{\sum_{j\ne i}H_{ij}y_j}_{\text{其他資料的影響}}.$$
   <p>$h_i$ 愈大，這筆資料愈能把擬合結果拉向自己，訓練殘差 $e_i$ 就愈<strong>過度樂觀</strong>。LOOCV 不允許 $y_i$ 參與預測自己，所以要把這部分影響拿掉；刪掉一筆後係數也會重新調整，最後精確的修正剛好是除以 $1-h_i$。代數上可以先寫出刪除後的預測</p>
   $$\hat y_{(i)}=\hat y_i-\frac{h_i}{1-h_i}\,e_i,$$
-  <p>於是 $y_i-\hat y_{(i)}=e_i\bigl(1+\tfrac{h_i}{1-h_i}\bigr)=\dfrac{e_i}{1-h_i}$。完整推導見本節的收合區。</p>
+  <p>於是 $y_i-\hat y_{(i)}=e_i\bigl(1+\tfrac{h_i}{1-h_i}\bigr)=\dfrac{e_i}{1-h_i}$。完整推導見本節最後的「計算細節：LOOCV 捷徑與槓桿值」。</p>
   <h4>兩個數字感受修正幅度</h4>
   <ul>
     <li>高槓桿點 $h_i=0.8$、訓練殘差 $e_i=1$：留一殘差是 $1/(1-0.8)=5$。它在完整擬合裡大幅參與了「預測自己」，真正的樣本外誤差比訓練殘差大得多。</li>
     <li>低槓桿點 $h_i=0.02$：$e_i/0.98\approx e_i$。這筆資料本來就幾乎不影響擬合，拿掉它模型幾乎不變。</li>
   </ul>
   <p>所以這個公式看起來像普通的訓練 MSE $\frac1n\sum e_i^2$，只是每個殘差都做了<strong>槓桿修正</strong>：$e_i\to e_i/(1-h_i)$。<strong>愈能影響自己擬合值的觀測，它的訓練殘差愈不可信，LOOCV 就把它放大得愈多。</strong>可以把 $1-h_i$ 理解成「不是由自己的影響造成的那一部分」。</p>
-""" + links(("LOOCV 捷徑公式的證明", "https://stats.stackexchange.com/questions/164223/proof-of-loocv-formula?noredirect=1&lq=1"))
+""" + links(("LOOCV 捷徑公式的證明", "https://stats.stackexchange.com/questions/164223/proof-of-loocv-formula?noredirect=1&lq=1")))
 
 LOOCV_DRAWBACKS = r"""
-  <h3 id="w05-loocv-drawbacks">LOOCV 的三個缺點</h3>
+  <h3 id="w05-loocv-drawbacks">LOOCV 的缺點</h3>
+  <p>講義列出三點：</p>
+  <ol>
+    <li><strong>對資料的擾動不夠大</strong>：每次只拿掉一筆，各輪的訓練資料幾乎相同。</li>
+    <li><strong>仍然很花時間</strong>：捷徑只適用於最小平方；一般方法要真的擬合 $n$ 次。</li>
+    <li><strong>各折的估計高度相關</strong>：許多高度相關的數字取平均，變異降不太下來，估計可能仍有較大的變異。</li>
+  </ol>
+""" + detail("w05-detail-loocv-drawbacks", "延伸閱讀：三個缺點的詳細說明與平均的變異數", r"""
   <p>假設 $n=100$。LOOCV 每次都是 99 筆訓練、1 筆驗證。例如 $D_{-1}=\{2,3,\ldots,100\}$ 與 $D_{-2}=\{1,3,\ldots,100\}$ 有 98 筆完全相同，訓練出來的兩個模型通常也非常像。講義列出三個後果：</p>
   <p><strong>1. 對資料的擾動不夠大</strong>。每次只移除一筆，$n\to n-1$，不同輪的訓練資料幾乎一樣；相比之下，10-fold CV 每次拿掉約 10%（$100\to90$），模型受到比較明顯的擾動。LOOCV 因此沒有充分觀察到「訓練樣本改變時，模型表現會怎麼變」。</p>
   <p><strong>2. 仍然很花時間。</strong>上面的捷徑只適用於最小平方這類線性平滑器。一般的機器學習方法沒有這種捷徑：$n=10000$ 時 LOOCV 要真的擬合 10000 次模型，10-fold CV 只要 10 次。對隨機森林、支持向量機、神經網路等方法，LOOCV 通常成本很高。</p>
   <p><strong>3. 各折的估計高度相關，平均之後的變異可能仍然很大。</strong>令第 $i$ 折的誤差為 $E_i$，$\mathrm{CV}=\frac1n\sum_iE_i$。若各 $E_i$ 獨立，平均的變異是 $\sigma^2/n$；但它們的訓練集幾乎相同，$\operatorname{Cov}(E_i,E_j)>0$。一般地</p>
   $$\operatorname{Var}\Bigl(\frac1n\sum_{i=1}^nE_i\Bigr)=\frac1{n^2}\Bigl[\sum_i\operatorname{Var}(E_i)+\sum_{i\ne j}\operatorname{Cov}(E_i,E_j)\Bigr].$$
   <p>各折高度正相關時，第二項很大，平均很多折也不像平均很多獨立觀測那樣有效降低變異。極端情況 $E_1=E_2=\cdots=E_n$，平均 100 次的資訊和只有 1 次差不多。所以這句話的意思<strong>不是</strong>「取平均會增加變異」，而是<strong>因為各折太相關，取平均無法像獨立樣本那樣降低變異</strong>。</p>
-  <p>綜合起來：LOOCV 偏差較低，但各折高度相關，變異可能較高，而且計算昂貴；5-fold 或 10-fold 通常提供較好的偏差、變異與計算量取捨。</p>
-"""
+  <p>三點合起來看：LOOCV 偏差較低，但各折高度相關，變異可能較高，而且計算昂貴；5-fold 或 10-fold 通常提供較好的偏差、變異與計算量取捨。</p>
+""")
 
 SHUFFLE_SECTION = r"""
-  <h3 id="w05-shuffle">〔選讀〕為什麼分折前通常要先洗牌</h3>
+  <h4 id="w05-shuffle">為什麼分折前通常要先洗牌</h4>
   <p>一般的 $k$-fold CV 希望每一折都像是「從整體資料抽出的一小部分」。若原始資料有排序，不洗牌就切，各折的分布會不一樣，CV 估計就會偏掉。</p>
   <ul>
     <li><strong>依反應值排序</strong>：$y_1\le y_2\le\cdots\le y_n$ 直接切 5 折，第 1 折全是最小的一群、第 5 折全是最大的一群。驗證折與訓練資料的分布差很多，量到的除了泛化誤差，還混進了排序造成的分布偏移。</li>
@@ -110,8 +124,8 @@ SHUFFLE_SECTION = r"""
   </ul>
   <p>簡單記：<strong>i.i.d. 資料通常先洗牌</strong>；<strong>有時間、群組或空間結構時不能隨便洗牌</strong>。</p>
 
-  <h3 id="w05-shufflesplit">〔選讀〕KFold 與 ShuffleSplit：分割與重複抽樣</h3>
-  <p>講義另外介紹可以精確控制驗證集大小的 <code>ShuffleSplit</code>。兩者的差別在於：<strong><code>KFold</code> 把資料切成互斥的 $k$ 份，每一筆資料恰好當一次驗證；<code>ShuffleSplit</code> 每次都重新隨機抽一組訓練／驗證，不同次的驗證集可以重疊。</strong>假設 100 筆資料：</p>
+  <h4 id="w05-shufflesplit">KFold 與 ShuffleSplit：分割與重複抽樣</h4>
+  <p>講義的選讀頁另外介紹可以精確控制驗證集大小的 <code>ShuffleSplit</code>。兩者的差別在於：<strong><code>KFold</code> 把資料切成互斥的 $k$ 份，每一筆資料恰好當一次驗證；<code>ShuffleSplit</code> 每次都重新隨機抽一組訓練／驗證，不同次的驗證集可以重疊。</strong>假設 100 筆資料：</p>
   <ul>
     <li><code>KFold(n_splits=5)</code>：先分成 $F_1,\ldots,F_5$，第 $j$ 次拿 $F_j$ 當驗證；各驗證折互不重疊，每筆剛好被驗證一次。</li>
     <li><code>ShuffleSplit(n_splits=5, test_size=0.2)</code>：做 5 次彼此獨立的隨機 80／20 切分。某筆資料可能多次進入驗證集，也可能一次都沒被抽到。它比較接近<strong>重複隨機切分</strong>，有時也稱為蒙地卡羅交叉驗證（Monte Carlo cross-validation）。</li>
@@ -147,7 +161,7 @@ SPLIT_VIZ = viz(
     '<button class="btn btn-step" onclick="w05splitShow(2)">StratifiedKFold</button>'
     '<button class="btn btn-step" onclick="w05splitShow(3)">ShuffleSplit</button>',
     provenance=("illustrative", "40 筆依類別排序的示意索引；在瀏覽器內以固定種子產生切分"))
-SHUFFLE_SECTION = SHUFFLE_SECTION.replace("{SPLIT_VIZ}", SPLIT_VIZ)
+SHUFFLE_SECTION = detail("w05-detail-shuffle", "〔選讀〕洗牌、KFold 與 ShuffleSplit", SHUFFLE_SECTION.replace("{SPLIT_VIZ}", SPLIT_VIZ))
 
 MISUSE_VIZ = viz(
     chart("w05misChart", "", "。此圖的重點：在純雜訊資料上，先選特徵再做 CV 回報的錯誤率接近 0，正確流程則接近 0.5。"),
@@ -168,8 +182,10 @@ MISUSE_VIZ = viz(
     provenance=("simulation", "依講義的 5000／50／100 流程，以純雜訊資料重複 100 次"))
 
 BOOT_NAME = r"""
-  <p>這個名字來自英文俗語「拉著自己的靴帶把自己提起來」，常和吹牛男爵 Munchausen 的故事連在一起：看似不可能，只靠自己手上的東西就做到。bootstrap 也是只靠手上這一份資料，就估出估計量的不確定性。</p>
-""" + links(("bootstrap 這個名字的由來", "https://mentallyagile.com/blog/2022/5/23/bootstrap-absurdity"))
+  <p>這個名字來自英文俗語「拉著自己的靴帶把自己提起來」：只靠手上這一份資料，就估出估計量的不確定性。</p>
+""" + detail("w05-detail-boot-name", "延伸閱讀：bootstrap 名稱的由來", r"""
+  <p>這句俗語常和吹牛男爵 Munchausen 的故事連在一起：他聲稱抓著自己的頭髮（後來的版本變成靴帶）把自己從沼澤裡拉出來。這件看似不可能的事，後來被用來形容「不靠外力、只用自己手上的東西完成」。統計上的 bootstrap 也是這樣：沒有新的資料，只從原本那一份資料重抽，就估出估計量的抽樣變異。</p>
+""" + links(("bootstrap 這個名字的由來", "https://mentallyagile.com/blog/2022/5/23/bootstrap-absurdity")))
 
 BOOT_SIM = r"""
   <h3 id="w05-boot-sim">先看理想情況：如果能從母體反覆抽樣</h3>
@@ -177,17 +193,21 @@ BOOT_SIM = r"""
   $$\bar\alpha=\frac1{1000}\sum_{r=1}^{1000}\hat\alpha_r=0.5996,$$
   <p>很接近 $\alpha=0.6$；標準差</p>
   $$\sqrt{\frac1{1000-1}\sum_{r=1}^{1000}(\hat\alpha_r-\bar\alpha)^2}=0.083,$$
-  <p>也就是 $\mathrm{SE}(\hat\alpha)\approx0.083$：ISLP 的說法是，$\hat\alpha$ 和 $\alpha$ 的差距大約在 0.08 這個量級。<strong>問題是真實世界只有一份資料，無法從母體反覆抽樣。</strong>bootstrap 改從手上的資料有放回地重抽，模仿這個過程。下圖左邊是從母體重抽的 $\hat\alpha$，右邊是只從一份資料做 bootstrap 的 $\hat\alpha^*$。書上圖 5.10 的 bootstrap 直方圖來自一份從同一母體模擬的資料，這裡改用課程 lab 的 <code>Portfolio</code>；兩者的中心不同（一個在真值 0.6 附近，一個在這份資料的 $\hat\alpha$ 附近），但<strong>散布寬度相近</strong>，而 bootstrap 要估的正是這個寬度。</p>
-""" + "{SIM_VIZ}" + r"""
-  <h3 id="w05-boot-world">真實世界與 bootstrap 世界</h3>
+""" + info("講義的模擬結果", r"""1000 個 $\hat\alpha$ 的平均 0.5996 很接近真值 0.6；標準差 0.083，也就是 $\mathrm{SE}(\hat\alpha)\approx0.083$：$\hat\alpha$ 和 $\alpha$ 的差距大約在 0.08 這個量級。""", "warm") + r"""
+  <p><strong>問題是真實世界只有一份資料，無法從母體反覆抽樣。</strong>bootstrap 改從手上的資料有放回地重抽，模仿這個過程。下圖左邊是從母體重抽的 $\hat\alpha$，右邊是只從一份資料做 bootstrap 的 $\hat\alpha^*$。書上圖 5.10 的 bootstrap 直方圖來自一份從同一母體模擬的資料，這裡改用課程 lab 的 <code>Portfolio</code>；兩者的中心不同（一個在真值 0.6 附近，一個在這份資料的 $\hat\alpha$ 附近），但<strong>散布寬度相近</strong>，而 bootstrap 要估的正是這個寬度。</p>
+""" + "{SIM_VIZ}"
+
+BOOT_WORLD = r"""
+  <h3 id="w05-boot-world">bootstrap 的一般圖像：真實世界與 bootstrap 世界</h3>
   <p>講義用兩個平行的世界整理這個想法：</p>
 """ + table(["", "真實世界", "bootstrap 世界"],
             [["母體", "未知的分布 $P$", "手上的資料 $Z$（每筆機率 $1/n$ 的經驗分布）"],
              ["抽一份資料", "從 $P$ 抽 $n$ 筆", "從 $Z$ <strong>有放回</strong>抽 $n$ 筆，得到 $Z^{*r}$"],
              ["算估計量", "$\\hat\\alpha$", "$\\hat\\alpha^{*r}$"],
              ["重複", "理論上重複很多次（做不到）", "$r=1,\\ldots,B$，電腦可以做"]]) + r"""
-  <p>只有 3 筆資料的例子最容易看清楚：原資料是觀測 1、2、3；一份 bootstrap 樣本可能是 3、1、3，第 3 筆出現兩次、第 2 筆沒出現。重複 $B$ 次得到 $\hat\alpha^{*1},\ldots,\hat\alpha^{*B}$，標準誤的 bootstrap 估計就是它們的標準差：</p>
-  $$\mathrm{SE}_B(\hat\alpha)=\sqrt{\frac1{B-1}\sum_{r=1}^B\Bigl(\hat\alpha^{*r}-\frac1B\sum_{r'=1}^B\hat\alpha^{*r'}\Bigr)^2}.$$
+  <p>只有 3 筆資料的例子最容易看清楚：原資料是觀測 1、2、3；一份 bootstrap 樣本可能是 3、1、3，第 3 筆出現兩次、第 2 筆沒出現。重複 $B$ 次得到 $\hat\alpha^{*1},\ldots,\hat\alpha^{*B}$。</p>
+""" + info("講義：bootstrap 標準誤", r"""以 $B$ 份 bootstrap 樣本 $Z^{*1},\ldots,Z^{*B}$ 算出 $\hat\alpha^{*1},\ldots,\hat\alpha^{*B}$，它們的標準差就是 $\hat\alpha$ 標準誤的估計：
+  $$\mathrm{SE}_B(\hat\alpha)=\sqrt{\frac1{B-1}\sum_{r=1}^B\Bigl(\hat\alpha^{*r}-\frac1B\sum_{r'=1}^B\hat\alpha^{*r'}\Bigr)^2}.$$""", "warm") + r"""
   <p>ISLP 用 $B=1000$ 得到 $\mathrm{SE}_B(\hat\alpha)=0.087$，和上面理想模擬的 0.083 很接近；課程 lab 用自己的種子得到 0.0912。</p>
 """
 
@@ -221,9 +241,35 @@ BOOT_CI = r"""
   <p>這是<strong>逐點</strong>區間：每個 $x$ 各自有 95% 的近似涵蓋，不代表整條曲線同時落在帶內的機率是 95%。它描述平均曲線的不確定性，不包含新觀測本身的雜訊，所以不是預測區間。</p>
 """ + links(("statsmodels 的 lowess 範例（含 bootstrap 信賴區間帶）", "https://www.statsmodels.org/stable/examples/notebooks/generated/lowess.html")) + r"""
   <h3 id="w05-boot-block">資料不獨立時：區塊 bootstrap</h3>
-  <p>bootstrap 每次抽一筆觀測，隱含假設觀測彼此獨立。時間序列的相鄰觀測相關，逐筆有放回重抽會打散這個相關結構。講義的做法是改抽<strong>連續的區塊</strong>（block bootstrap）：把序列切成長度相同、不重疊（或可重疊）的區塊，有放回地抽區塊，再串接成和原資料等長的 bootstrap 序列。區塊內保留了短距離的相關；區塊長度需要依相關的持續程度選擇。</p>
+  <p>bootstrap 每次抽一筆觀測，隱含假設觀測彼此獨立。時間序列的相鄰觀測相關，講義的做法是改成有放回地抽<strong>連續的區塊</strong>，以保留區塊內的相關結構。</p>
+""" + detail("w05-detail-block-bootstrap", "延伸閱讀：區塊 bootstrap 怎麼做？", r"""
+  <p><strong>為什麼逐筆重抽不行。</strong>逐筆有放回重抽會把相鄰觀測打散，重抽出來的序列沒有原本的自我相關；用它估出的標準誤通常偏小，因為正相關的資料提供的獨立資訊比筆數看起來少。</p>
+  <p><strong>步驟</strong>（以長度 $n$ 的序列、區塊長度 $l$ 為例）：</p>
+  <ol>
+    <li>把序列切成區塊。不重疊的做法得到 $n/l$ 個區塊；移動區塊（moving block）則取所有連續的 $l$ 筆，共 $n-l+1$ 個，可以重疊。</li>
+    <li>從這些區塊中有放回地抽出 $n/l$ 個（這裡假設 $n$ 是 $l$ 的倍數；不整除時抽 $\lceil n/l\rceil$ 個，串接後只取前 $n$ 筆）。</li>
+    <li>依抽出的順序把區塊串接起來，得到一條長度 $n$ 的 bootstrap 序列。</li>
+    <li>在這條序列上重算估計量；重複 $B$ 次，用這些估計值的標準差估標準誤。</li>
+  </ol>
+  <p><strong>區塊長度的取捨。</strong>區塊要長到足以保留主要的相關（相關持續幾期，區塊大致就要涵蓋那麼長）；但區塊太長，能組合的方式變少，bootstrap 樣本彼此太像，估計反而不穩。循環區塊（把序列頭尾接起來再切）可以讓每筆觀測被抽到的機會相同。這些變形都只保留一部分相依結構，使用時要說明所選的版本與區塊長度。</p>
 """ + links(("如何對時間序列做 bootstrap", "https://stats.stackexchange.com/questions/25706/how-do-you-do-bootstrapping-with-time-series-data"),
-            ("區塊 bootstrap 的應用文獻", "https://www.sciencedirect.com/science/article/pii/S0003267000008503"))
+            ("區塊 bootstrap 的應用文獻", "https://www.sciencedirect.com/science/article/pii/S0003267000008503")))
+
+TWO_THIRDS_D = detail("w05-detail-two-thirds", "推導：為什麼每份 bootstrap 樣本約含三分之二的觀測", r"""
+  <p><strong>第一步：某筆在一次抽籤中沒被抽到。</strong>從 $n$ 筆中有放回抽一次，抽到第 $j$ 筆的機率是 $1/n$，沒抽到的機率是 $1-1/n$。</p>
+  <p><strong>第二步：$n$ 次都沒被抽到。</strong>各次抽籤獨立，所以第 $j$ 筆完全不在 bootstrap 樣本裡的機率是 $(1-1/n)^n$。</p>
+  <p><strong>第三步：取極限。</strong>由 $\lim_{n\to\infty}(1-1/n)^n=e^{-1}\approx0.368$，第 $j$ 筆<strong>至少出現一次</strong>的機率趨近 $1-e^{-1}\approx0.632$。</p>
+  <p><strong>第四步：期望的不同觀測數。</strong>令 $I_j$ 表示第 $j$ 筆是否至少出現一次，則一份 bootstrap 樣本中不同觀測的個數是 $\sum_jI_j$，期望為 $n\{1-(1-1/n)^n\}\approx0.632n$，大約三分之二。各 $I_j$ 不獨立也不影響這個期望；每一份樣本的實際比例會在 0.632 附近起伏。</p>
+""" + links(("為什麼每份 bootstrap 樣本平均約含三分之二的觀測", "https://stats.stackexchange.com/questions/88980/why-on-average-does-each-bootstrap-sample-contain-roughly-two-thirds-of-observat")))
+
+TRAIN_TEST_D = detail("w05-detail-train-test-mse", "推導：為什麼訓練 MSE 的期望小於測試 MSE？", r"""
+  <p>以最小平方線性迴歸為例：$y=X\beta+\varepsilon$，$X$ 為 $n\times p$ 滿欄秩（含截距），誤差獨立、平均 0、變異數 $\sigma^2$。</p>
+  <p><strong>訓練 MSE。</strong>殘差 $e=(I-H)y=(I-H)\varepsilon$，$H=X(X^\mathsf{T}X)^{-1}X^\mathsf{T}$。$I-H$ 對稱且冪等，跡為 $n-p$，所以</p>
+  $$E\Bigl[\frac1n\|e\|^2\Bigr]=\frac1n E\bigl[\varepsilon^\mathsf{T}(I-H)\varepsilon\bigr]=\frac{\sigma^2}{n}\operatorname{tr}(I-H)=\sigma^2\Bigl(1-\frac pn\Bigr).$$
+  <p><strong>在同樣的 $X$ 上重新觀測的測試 MSE。</strong>新反應 $y^{new}=X\beta+\varepsilon^{new}$，$\varepsilon^{new}$ 與訓練誤差獨立。預測誤差 $y^{new}-X\hat\beta=\varepsilon^{new}-H\varepsilon$，兩項獨立，</p>
+  $$E\Bigl[\frac1n\|y^{new}-X\hat\beta\|^2\Bigr]=\sigma^2+\frac{\sigma^2}{n}\operatorname{tr}(H)=\sigma^2\Bigl(1+\frac pn\Bigr).$$
+  <p>兩者相差 $2p\sigma^2/n$：參數愈多、樣本愈少，訓練誤差就愈樂觀。這正是第 6 章 $C_p$ 在訓練誤差上加 $2p\hat\sigma^2/n$ 的由來。更一般的結論（模型類事先固定、取訓練誤差最小者時，期望訓練誤差不大於期望測試誤差）見第 2 章的<a href="statistical_learning.html#w02proofRisk">證明</a>。</p>
+""" + links(("證明訓練資料上的期望 MSE 小於測試資料", "https://stats.stackexchange.com/questions/310687/prove-that-the-expected-mse-is-smaller-in-training-than-in-test")))
 
 BOOT_APPENDIX_LINKS = links(
     ("bootstrap 預測區間的討論", "https://stats.stackexchange.com/questions/226565/bootstrap-prediction-interval"),
@@ -233,6 +279,21 @@ BOOT_APPENDIX_LINKS = links(
     ("Jackknife 與 bootstrap 的比較", "https://stats.stackexchange.com/questions/249333/comparison-of-the-jacknife-vs-the-bootstrap"),
     ("scikit-learn：用置換檢定評估分類分數的顯著性", "https://scikit-learn.org/stable/auto_examples/feature_selection/plot_permutation_test_for_classification.html#test-with-permutations-the-significance-of-a-classification-score"),
     lead="講義附錄的補充連結")
+
+SPLITTERS_D = detail("w05-detail-splitters", "延伸閱讀：分類問題的切分器與指標",
+    info("實務上要注意的三件事", '''<strong>1. 類別不平衡就要分層：</strong>用
+  <code>StratifiedKFold</code>，讓每一折的類別比例跟整體一致。類別很少的時候，
+  普通 <code>KFold</code> 可能切出「某一折完全沒有正例」的情況。<br>
+  <strong>2. 錯誤率不一定是你要的指標：</strong>正例只佔 1% 時，全部猜負例就有 99% 正確率。
+  改用 AUC、F1 或 recall，作法完全相同——換掉 <code>scoring</code> 參數就好。<br>
+  <strong>3. 資料有群組結構就要用 GroupKFold：</strong>同一個病人的多次就診、
+  同一個使用者的多筆紀錄，不能一部分在訓練、一部分在驗證。''')
+    + table(["情況", "該用的切分器", "為什麼"],
+       [["一般迴歸／分類", "<code>KFold(shuffle=True)</code>", "最基本"],
+        ["類別不平衡", "<code>StratifiedKFold</code>", "維持每折的類別比例"],
+        ["同一實體有多筆資料", "<code>GroupKFold</code>", "同組資料不可跨訓練／驗證"],
+        ["時間序列", "<code>TimeSeriesSplit</code>", "不能用未來預測過去"],
+        ["只想快速看一眼", "<code>ShuffleSplit(n_splits=1)</code>", "等於驗證集法"]]))
 
 # ══════════════════════════════════════════════════════════════════════
 BODIES = {}
@@ -246,8 +307,11 @@ BODIES["prologue"] = f"""
   <p>如果手上有一大筆獨立的測試資料，事情很簡單。但真實情況通常是資料就這麼多，
   再切出去一塊當測試集就不夠訓練了。<strong>重抽樣</strong>（resampling）的想法是：
   反覆從同一批資料裡切出訓練／驗證組合，用它們的平均表現估計測試誤差。</p>
+{HYPER_SECTION}
+
+  <h3 id="w05-train-test">訓練誤差與測試誤差</h3>
   <p>講義先複習兩個定義。<strong>測試誤差</strong>是用學好的方法去預測一筆<strong>沒參與訓練</strong>的新觀測時的平均誤差；<strong>訓練誤差</strong>則把方法套回訓練用的那些觀測就能算出來，通常會低估測試誤差。</p>
-{links(("證明訓練資料上的期望 MSE 小於測試資料", "https://stats.stackexchange.com/questions/310687/prove-that-the-expected-mse-is-smaller-in-training-than-in-test"))}
+{TRAIN_TEST_D}
   <p>最好的解法是一個夠大的獨立測試集，但通常拿不到。講義列出兩條替代路線：</p>
   <ol>
     <li><strong>用數學修正訓練誤差</strong>：例如 $C_p$、AIC、BIC，在訓練誤差上加一個隨模型複雜度增加的懲罰。第 6 章<a href="model_selection.html#criteria">模型選擇準則</a>會詳細介紹。</li>
@@ -259,16 +323,11 @@ BODIES["prologue"] = f"""
   <strong>2. 交叉驗證（cross-validation）：</strong>LOOCV 與 <em>k</em>-fold，讓每個樣本都輪到當一次測試資料。<br>
   <strong>3. Bootstrap：</strong>有放回地重抽，不靠公式就能算出任何估計量的標準誤。''')}
 
-  <p>這三個工具的分工可以先記住：<strong>交叉驗證是用來估「預測誤差」並藉此選模型</strong>，
-  <strong>bootstrap 是用來估「某個估計量的不確定性」</strong>。兩者都在重抽樣，但問的問題不同。</p>
-
 {table(["", "切幾次", "每次訓練用多少", "有隨機性嗎", "主要用途"],
        [["驗證集法", "1", "約 n/2", "有，換 seed 就變", "快速粗估"],
         ["LOOCV", "n", "n − 1", "沒有（分割唯一）", "小資料、要穩定"],
         ["<em>k</em>-fold CV", "k（通常 5 或 10）", "n(k−1)/k", "有，但比驗證集小很多", "選模型的標準做法"],
         ["Bootstrap", "B（通常 1000）", "n（有放回）", "有，B 大就穩", "估標準誤與信賴區間"]])}
-
-{HYPER_SECTION}
 
 {quiz("qWhy", "QUIZ · 為什麼不能用訓練誤差",
       "為什麼「訓練誤差」不能拿來當測試誤差的估計？",
@@ -319,6 +378,9 @@ BODIES["validation"] = f"""
       note="degree 1／2／3 的驗證 MSE 從 <code>[25.57, 22.22, 22.67]</code> 變成 "
            "<code>[20.76, 16.95, 16.97]</code>。<strong>同一份資料、同一個模型，只是切法不同，"
            "數字差了快 5。</strong>但兩次都指向同一個結論：二次比一次好，三次沒有再更好。")}
+
+{info("講義：驗證集法的兩個缺點", '''<strong>1. 估計的變異很大</strong>：測試誤差的估計取決於哪些觀測剛好被分到訓練集、哪些分到驗證集，上圖十條曲線就是例子。<br>
+  <strong>2. 容易高估測試誤差</strong>：只有一半的觀測用來訓練；訓練資料較少時模型通常較差，所以驗證誤差傾向高估「用全部資料訓練的模型」的測試誤差。''', "warm")}
 
 {qa("觀念釐清", [
     ("Q：驗證集法為什麼會「高估」測試誤差？",
@@ -405,6 +467,11 @@ BODIES["kfold"] = f"""
 
   <p>LOOCV 其實就是 k = n 的特例。實務上 k 取 5 或 10——原因下一節講。</p>
 
+  <p>講義接著用三組模擬資料比較真正的測試 MSE、LOOCV 與 10-fold CV（ISLP 圖 5.6）。三張圖中，CV 曲線的<strong>高度</strong>有時低估、有時高估真正的測試 MSE，但<strong>最小值出現的位置</strong>大致正確。選擇模型彈性時，我們在乎的正是最小值的位置，所以 CV 即使數值不準，仍然有用。</p>
+
+{info("講義：真正在乎的是最小值的位置", '''用 CV 選模型彈性時，重點是<strong>CV 曲線在哪個彈性達到最小</strong>，最小值本身的數字倒在其次。CV 的數值可能高估或低估真正的測試 MSE，但最小值的位置通常接近真正測試誤差最小的位置。''', "warm")}
+
+
 {table(["方法", "每輪訓練", "每輪驗證", "輪數", "分割是否唯一"],
        [["5-fold", "4/5 的資料", "1/5 的資料", "5", "否；需固定分割以公平比較模型"],
         ["10-fold", "9/10 的資料", "1/10 的資料", "10", "否"],
@@ -416,14 +483,6 @@ BODIES["kfold"] = f"""
            "不打亂就會讓每一折的分佈完全不同。<code>random_state=0</code> 是為了"
            "<strong>讓不同 degree 用同一組分割</strong>。這樣比較才公平。"
            "這格 lab 沒存下輸出，下一節的圖用同樣設定重算了一次。")}
-
-{SHUFFLE_SECTION}
-
-  <h3 id="dx-kf-ss">講義完整實作：用 <code>ShuffleSplit</code> 做驗證集法與重複切分</h3>
-{card("講義 05 · ShuffleSplit(n_splits=1) 就是驗證集法", lab_code(CH, 44), lab_output(CH, 44), src=src("44"),
-      note="驗證 MSE 23.62。它和驗證集法一節圖中 <code>random_state=0</code> 那次切分的一次式數字相同，因為兩者用了同一種隨機切法。")}
-{card("講義 05 · 重複 10 次隨機切分", lab_code(CH, 46), lab_output(CH, 46), src=src("46"),
-      note="10 次切分的平均 23.80、標準差 1.42。各次的訓練樣本重疊、彼此相關，所以這個標準差只反映換不同隨機切分的<strong>蒙地卡羅變異</strong>，不能當作平均測試分數的抽樣標準誤。")}
 
 {quiz("qKf", "QUIZ · k-fold",
       "比較不同模型（例如 degree 1 到 10）的 CV 誤差時，為什麼要讓每個模型用<strong>同一組</strong>折分割？",
@@ -437,8 +496,6 @@ BODIES["kfold"] = f"""
 
 # ── P04 k 該取多少 ─────────────────────────────────────────────────────
 BODIES["kbias"] = f"""
-  <p>講義用三組模擬資料比較真正的測試 MSE、LOOCV 與 10-fold CV（ISLP 圖 5.6）。三張圖中，CV 曲線的<strong>高度</strong>有時低估、有時高估真正的測試 MSE，但<strong>最小值出現的位置</strong>大致正確。選擇模型彈性時，我們在乎的正是最小值的位置，所以 CV 即使數值不準，仍然有用。</p>
-
   <p>k 該取多少？講義從偏差與變異兩個方向說明：</p>
 
   <ul>
@@ -446,9 +503,9 @@ BODIES["kbias"] = f"""
     <li><strong>變異：LOOCV 的估計可能有較高的變異。</strong>LOOCV 平均的是 n 個訓練集幾乎相同的模型的結果，講義指出這些估計高度正相關；許多高度相關的量取平均，變異會比平均許多相關較弱的量來得大。k-fold（k &lt; n）的各折訓練集重疊較少，相關也較低。</li>
   </ul>
 
-  <p>ISLP §5.1.4 的結論是：<strong>k = 5 或 k = 10 在偏差與變異之間取得不錯的平衡</strong>，經驗上給出的測試誤差估計既不會偏差太大、也不會變異太高，而且計算量只有 LOOCV 的 5/n 或 10/n。講義以 <code>Auto</code> 比較不同次數的模型：</p>
+{info("講義的結論：k = 5 或 10", '''考慮偏差與變異的取捨，實務上通常用 <strong>k = 5 或 k = 10</strong>：經驗上，它們給出的測試誤差估計既不會偏差太大、也不會變異太高，計算量也只有 LOOCV 的 5/n 或 10/n。''', "warm")}
 
-{links(("相關與不相關資料的平均，其變異數如何不同", "https://stats.stackexchange.com/questions/223446/variance-of-the-mean-of-correlated-and-uncorrelated-data"), ("LOOCV 與 k-fold CV 的偏差與變異", "https://stats.stackexchange.com/questions/61783/bias-and-variance-in-leave-one-out-vs-k-fold-cross-validation?noredirect=1&lq=1"))}
+  <p>講義以 <code>Auto</code> 比較不同次數的模型：</p>
 
 {viz(chart("w05cvChart", "tall", "。此圖的重點：從 degree 1 到 2，CV 誤差從 24.2 掉到 19.2；之後就平了。LOOCV 與 10-fold 的曲線幾乎重疊。"),
      [info_card("怎麼看這張圖",
@@ -509,22 +566,9 @@ BODIES["cvclass"] = f"""
   <p>$I(\\cdot)$ 是指示函數：預測錯就是 1、對就是 0。其餘完全一樣：切 k 折、輪流當驗證集、平均。
   ISLP 圖 5.7–5.8 用邏輯斯迴歸加上不同次數的多項式項示範：<strong>訓練錯誤率</strong>隨彈性增加持續下降，
   <strong>真正的測試錯誤率</strong>先降後升，而 <strong>10-fold CV 錯誤率</strong>雖然略為低估測試錯誤率，
-  最小值的位置卻和測試錯誤率接近，所以能用來挑多項式的次數；KNN 的 $1/K$ 也呈現同樣的樣子。</p>
+  最小值的位置卻和測試錯誤率接近，所以能用來挑多項式的次數；KNN 的 $1/K$ 也呈現同樣的趨勢。</p>
 
-{info("實務上要注意的三件事", '''<strong>1. 類別不平衡就要分層：</strong>用
-  <code>StratifiedKFold</code>，讓每一折的類別比例跟整體一致。類別很少的時候，
-  普通 <code>KFold</code> 可能切出「某一折完全沒有正例」的情況。<br>
-  <strong>2. 錯誤率不一定是你要的指標：</strong>正例只佔 1% 時，全部猜負例就有 99% 正確率。
-  改用 AUC、F1 或 recall，作法完全相同——換掉 <code>scoring</code> 參數就好。<br>
-  <strong>3. 資料有群組結構就要用 GroupKFold：</strong>同一個病人的多次就診、
-  同一個使用者的多筆紀錄，不能一部分在訓練、一部分在驗證。''')}
-
-{table(["情況", "該用的切分器", "為什麼"],
-       [["一般迴歸／分類", "<code>KFold(shuffle=True)</code>", "最基本"],
-        ["類別不平衡", "<code>StratifiedKFold</code>", "維持每折的類別比例"],
-        ["同一實體有多筆資料", "<code>GroupKFold</code>", "同組資料不可跨訓練／驗證"],
-        ["時間序列", "<code>TimeSeriesSplit</code>", "不能用未來預測過去"],
-        ["只想快速看一眼", "<code>ShuffleSplit(n_splits=1)</code>", "等於驗證集法"]])}
+{SPLITTERS_D}
 
 {qa("觀念釐清", [
     ("Q：時間序列為什麼不能用普通的 k-fold？",
@@ -594,6 +638,14 @@ BODIES["cvwrong"] = f"""
         "這只對部分模型成立，例如含截距、未正則化的最小平方。一般流程仍不應用驗證折估平均與標準差；正則化、距離式方法等也可能改變預測。"),
        (False, "沒問題：標準化沒有用到 y，所以不算洩漏",
         "沒用到 y 不等於能用驗證折估參數；它仍用了驗證資料的分佈資訊。應在每折訓練部分 fit，再套到該折驗證部分。")])}
+
+{SHUFFLE_SECTION}
+
+  <h3 id="dx-kf-ss">講義完整實作：用 <code>ShuffleSplit</code> 做驗證集法與重複切分</h3>
+{card("講義 05 · ShuffleSplit(n_splits=1) 就是驗證集法", lab_code(CH, 44), lab_output(CH, 44), src=src("44"),
+      note="驗證 MSE 23.62。它和驗證集法一節圖中 <code>random_state=0</code> 那次切分的一次式數字相同，因為兩者用了同一種隨機切法。")}
+{card("講義 05 · 重複 10 次隨機切分", lab_code(CH, 46), lab_output(CH, 46), src=src("46"),
+      note="10 次切分的平均 23.80、標準差 1.42。各次的訓練樣本重疊、彼此相關，所以這個標準差只反映換不同隨機切分的<strong>蒙地卡羅變異</strong>，不能當作平均測試分數的抽樣標準誤。")}
 """
 
 # ── P07 Bootstrap ─────────────────────────────────────────────────────
@@ -613,7 +665,8 @@ BODIES["bootstrap"] = f"""
 
 {BOOT_NAME}
 {BOOT_SIM}
-  <h3 id="w05-boot-real">回到真實世界：bootstrap 的做法</h3>
+  <h3 id="w05-boot-real">回到真實世界</h3>
+  <p>上面的程序在真實資料上做不到，因為無法從原本的母體產生新樣本。bootstrap 讓電腦模仿「取得新資料」的過程：它不從母體重複抽獨立的資料集，改成<strong>從原始資料有放回地重複抽樣</strong>。每份 bootstrap 資料集和原資料一樣大，所以有些觀測會出現不只一次，有些一次也沒出現。</p>
   <p><strong>Bootstrap 的做法：把手上這份資料當成母體，從裡面有放回地抽 n 筆</strong>，
   當成一份「新」資料集，重算 $\\hat\\alpha^*$。重複 B 次，那 B 個 $\\hat\\alpha^*$ 的標準差
   就是 $\\mathrm{{SE}}(\\hat\\alpha)$ 的估計。不必指定常態分布，但重抽單位須符合資料的獨立性與研究設計。</p>
@@ -640,6 +693,8 @@ BODIES["bootstrap"] = f"""
      '<button class="btn btn-play" onclick="w05bootMany()">▶ 連抽 200 次</button>'
      '<button class="btn btn-reset" onclick="w05bootReset()">重置</button>',
      provenance=("course-data", "ISLP Portfolio；與 Ch05 lab 的 α̂ 統計量一致"))}
+
+{BOOT_WORLD}
 
 {BOOT_CI}
 
@@ -677,8 +732,10 @@ BODIES["bootstrap"] = f"""
 {table(["n", "5", "20", "100", "n → ∞"],
        [["$1-(1-1/n)^n$", "0.6723", "0.6415", "0.6340", "$1-e^{-1}=0.6321$"]])}
 
-  <p>這也回答了講義的問題「bootstrap 能估預測誤差嗎？」交叉驗證的 k 個驗證折和訓練用的其他 k − 1 折<strong>沒有重疊</strong>，這是它成功的關鍵。若拿每份 bootstrap 樣本訓練、用原始資料驗證，每份訓練樣本約含三分之二的原始觀測，<strong>驗證資料大量出現在訓練資料裡</strong>，會嚴重低估真正的預測誤差。只用沒抽到的觀測來驗證可以部分修正，但方法會變複雜；最後還是交叉驗證比較簡單。</p>
-{links(("為什麼每份 bootstrap 樣本平均約含三分之二的觀測", "https://stats.stackexchange.com/questions/88980/why-on-average-does-each-bootstrap-sample-contain-roughly-two-thirds-of-observat"))}
+  <p>這也回答了講義的問題「bootstrap 能估預測誤差嗎？」交叉驗證的 k 個驗證折和訓練用的其他 k − 1 折<strong>沒有重疊</strong>，交叉驗證行得通靠的就是這一點。若拿每份 bootstrap 樣本訓練、用原始資料驗證，每份訓練樣本約含三分之二的原始觀測，<strong>驗證資料大量出現在訓練資料裡</strong>，會嚴重低估真正的預測誤差。只用沒抽到的觀測來驗證可以部分修正，但方法會變複雜；最後還是交叉驗證比較簡單。</p>
+{info("講義：bootstrap 能估預測誤差嗎？", '''每份 bootstrap 樣本約含三分之二的原始觀測，拿它訓練、再用原始資料驗證，驗證資料大量重疊，會<strong>嚴重低估</strong>預測誤差。只用沒被抽到的觀測驗證能部分修正，但方法變得複雜。結論：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong>''', "warm")}
+
+{TWO_THIRDS_D}
 
 {qa("觀念釐清", [
     ("Q：Bootstrap 可以用來估「預測誤差」嗎？",
@@ -687,7 +744,7 @@ BODIES["bootstrap"] = f"""
      "所以如果你用 bootstrap 樣本訓練、用原始全部資料當測試，"
      "那個「測試集」裡有三分之二的資料模型已經看過了，誤差會嚴重低估。</p>"
      "<p>補救方式是只用 OOB 的那 36.8% 來評估，這就接近 k-fold 的精神了。"
-     "所以講義第 36 頁的答案是：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong></p>"),
+     "所以講義的答案是：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong></p>"),
     ("Q：B 要取多少？",
      "<p>估標準誤時 B = 1000 通常就很夠；要估信賴區間的尾端分位數（例如 2.5% 與 97.5%），"
      "B 建議拉到 2000 以上，因為尾端需要更多樣本才穩。</p>"
@@ -766,11 +823,8 @@ BODIES["cvwrong"] += r"""
 不同輪的驗證集可能重疊，不能當作互相獨立的測試實驗；標準化、補值、特徵選擇與調參都須遵守相同的分割界線。</p>
 """
 BODIES["bootstrap"] += r"""
-<h3>從標準誤到信賴區間與預測區間</h3>
-<p>把 B 次估計值排序，取 5% 與 95% 分位數可得近似 90% percentile 信賴區間。
-迴歸曲線則在每次重抽觀測對並重新擬合後，用固定 x 網格收集預測，再逐點取分位數。
-逐點區間不是整條曲線的同時信賴區間；估計偏差、樣本太少或統計量不規則時，簡單 percentile 法的涵蓋率也可能不足。</p>
-<p><strong>預測區間</strong>還須包含新觀測的隨機誤差。在獨立、同變異數的迴歸設定，可用下方固定設計流程估計參數造成的預測誤差，再加上獨立抽取的新觀測誤差，從總預測誤差的分位數建立區間。只重抽係數或平均值曲線會漏掉這一項。
+<h3>用 bootstrap 建立預測區間</h3>
+<p>主文的百分位區間與曲線區間描述的是<strong>平均</strong>的不確定性。<strong>預測區間</strong>還須包含新觀測的隨機誤差。在獨立、同變異數的迴歸設定，可用下方固定設計流程估計參數造成的預測誤差，再加上獨立抽取的新觀測誤差，從總預測誤差的分位數建立區間。只重抽係數或平均值曲線會漏掉這一項。
 異變異數、群聚或時間相依資料需要對應的殘差模型或重抽設計；block bootstrap 以連續區塊保留部分時間相依性。</p>
 <h3>Jackknife：逐筆刪除，估計量會變多少？</h3>
 <p>令 $\hat\theta_{(-i)}$ 是刪去第 i 筆後的估計，$\bar\theta_{(-)}$ 是這 n 個估計的平均。
@@ -857,7 +911,9 @@ BODIES['kbias'] += detail('w05-detail-loocv-variance', '延伸閱讀：LOOCV 的
 <li>對很穩定的學習方法（例如低次多項式的最小平方），各留一模型幾乎相同，LOOCV 與 10-fold 的估計往往很接近，前面 <code>Auto</code> 的兩條曲線就是例子；對不穩定的方法，差異才較明顯。</li>
 <li>實務上的建議不變：一般用 5-fold 或 10-fold；LOOCV 適合資料很少或有最小平方捷徑的情況。</li>
 </ul>
-""" + proof('w05proofCvVariance', '平均相關誤差的變異數', r"""
+<p><strong>偏差的一面。</strong>每輪訓練集只有 $(k-1)n/k$ 筆。若測試誤差隨訓練筆數增加而下降（學習曲線向下），用較少資料訓練的模型誤差較大，所以 CV 估計傾向高估「用全部 $n$ 筆訓練」的測試誤差；$k$ 愈大，差距愈小。</p>
+<p><strong>變異的一面。</strong>平均 $K$ 個折誤差 $E_k$ 時，若各折獨立、變異都是 $v$，平均的變異是 $v/K$；若兩兩相關都是 $\rho$，變異變成下式的 $v/K+(K-1)\rho v/K$，當 $K$ 很大時趨近 $\rho v$，再多平均也降不下去。</p>
+""" + links(("相關與不相關資料的平均，其變異數如何不同", "https://stats.stackexchange.com/questions/223446/variance-of-the-mean-of-correlated-and-uncorrelated-data"), ("LOOCV 與 k-fold CV 的偏差與變異", "https://stats.stackexchange.com/questions/61783/bias-and-variance-in-leave-one-out-vs-k-fold-cross-validation?noredirect=1&lq=1")) + proof('w05proofCvVariance', '平均相關誤差的變異數', r"""
 <p>對 K 個有有限變異數的折誤差 $E_1,\ldots,E_K$，由平方展開與期望線性性：</p>
 $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\operatorname{Var}(E_k)+2\sum_{k\lt l}\operatorname{Cov}(E_k,E_l)\right].$$
 <p>若每折變異數為 v、兩兩相關均為 ρ，則結果為 $v/K+(K-1)\rho v/K$。ρ=0 才有熟悉的 v/K；正相關會限制平均所能降低的變異。不過不同 K 的 v 與相關結構也會改變，因此這個公式解釋取捨，沒有證明每個問題的 LOOCV 都比 10-fold 變異大。</p>
@@ -1173,6 +1229,7 @@ function w05bootReset() {
 w05bootReset();
 w05splitSetup();
 w05splitShow(0);
+HC.onDetail('w05-detail-shuffle', { open: () => { w05splitShow(0); } });
 HC.ready(() => {
   w05valDraw();
   w05cvDraw();
