@@ -70,18 +70,79 @@ LOGIT_INVERSE = r"""
   <p>反過來把 $p=\operatorname{logistic}(z)$ 代入 logit，會得到 $\log\{e^z\}=z$。兩個方向都回到原值，因此兩者互為反函數。logistic 嚴格遞增，這也是「機率大於 $t$」等價於「線性分數大於 $\operatorname{logit}(t)$」的原因。</p>
 """)
 
+# ── 講義補充連結改寫成收合內容（2026-10-06 第二輪）──────────────────────────
+NOISE_D = detail("w04-detail-noise", "延伸閱讀：為什麼線性迴歸要寫雜訊項，邏輯斯迴歸卻不用？", r"""
+  <p>線性迴歸寫成 $Y=\eta(X)+\varepsilon$：條件平均 $\eta(X)$ 之外，還需要一個參數 $\sigma^2$ 描述觀測值在平均附近散得多開，所以要另外寫出雜訊項並估計它的變異數。</p>
+  <p>邏輯斯迴歸直接指定 $Y\mid X\sim\operatorname{Bernoulli}(p(X))$。Bernoulli 只有一個參數 $p$：平均是 $p$，變異數 $p(1-p)$ 也由 $p$ 決定，觀測值的隨機性已經完整包含在這個分布裡。沒有另一個可以自由調整的散布參數，所以不必、也不能再加一個獨立的常態雜訊。若想用「雜訊」的語言理解，可看本節後面「反應誤差、潛在變數與分離」收合中的潛在變數表示 $Y=I\{x^\mathsf{T}\beta+\epsilon>0\}$，其中的 $\epsilon$ 服從標準 logistic 分布，它的尺度被固定下來才能識別係數。</p>
+""" + links(("為什麼線性迴歸要寫雜訊項，邏輯斯迴歸卻不用", "https://stats.stackexchange.com/questions/481391/why-do-we-model-noise-in-linear-regression-but-not-logistic-regression")))
+
+LINEAR_CLS_D = detail("w04-detail-linear-classifier", "延伸閱讀：機率曲線是 S 形，為什麼邊界是直線？", r"""
+  <p>分類規則是「$p(x)>t$ 就判為 1」。logistic 函數嚴格遞增，所以</p>
+  $$p(x)>t\iff \operatorname{logistic}(\eta(x))>t\iff \eta(x)>\operatorname{logit}(t).$$
+  <p>$\eta(x)=\beta_0+\beta^\mathsf{T}x$ 是 $x$ 的線性函數，所以判為 1 的區域 $\{x:\beta_0+\beta^\mathsf{T}x>\operatorname{logit}(t)\}$ 是半空間，邊界是超平面。S 形只決定「離邊界多遠時機率變化多快」，不改變邊界的形狀。若特徵裡放了 $x^2$ 或交互作用，邊界在擴充後的特徵空間仍是超平面，回到原始座標才會彎曲。</p>
+""" + links(("為什麼邏輯斯迴歸是線性分類器", "https://stats.stackexchange.com/questions/93569/why-is-logistic-regression-a-linear-classifier")))
+
+WALD_D = detail("w04-detail-wald", "延伸閱讀：邏輯斯迴歸的 Wald 檢定", r"""
+  <p>檢定 $H_0:\beta_j=0$ 時，Wald 統計量是 $z=\hat\beta_j/\widehat{SE}(\hat\beta_j)$，大樣本下近似 $N(0,1)$；等價地 $z^2$ 近似自由度 1 的卡方分布。對應的近似 95% 信賴區間是 $\hat\beta_j\pm1.96\,\widehat{SE}(\hat\beta_j)$，換成勝算比就是兩端各取指數。</p>
+  <p>Wald 檢定只需要擬合一次完整模型，所以軟體的係數表都用它。它的弱點出現在係數很大、資料接近分離時：標準誤增加得比係數快，$z$ 反而變小，檢定力下降。這時可改用概似比檢定，比較含與不含 $X_j$ 兩個模型的偏差差異。</p>
+""" + links(("邏輯斯迴歸的 Wald 檢定", "https://stats.stackexchange.com/questions/60074/wald-test-for-logistic-regression")))
+
+CAUSE_D = detail("w04-detail-common-cause", "延伸閱讀：冰淇淋與鯊魚——共同原因造成的關聯", r"""
+  <p>講義附的漫畫：冰淇淋銷量和鯊魚目擊次數一起上升，但兩者沒有因果關係，背後的共同原因是天氣熱：天熱時海邊遊客多，冰淇淋也賣得多。只看兩個變數會得到正相關；把氣溫放進模型、比較同樣氣溫的日子，這個關聯就大致消失。</p>
+  <p><code>Default</code> 的學生身分也是同樣的結構：學生的 <code>balance</code> 整體偏高，而 <code>balance</code> 高的人容易違約。只看 <code>student</code> 時學生顯得風險高；控制 <code>balance</code> 之後，係數變成負的。</p>
+""" + links(("冰淇淋銷量與鯊魚目擊次數：共同原因的漫畫", "https://www.causeweb.org/cause/resources/fun/cartoons/ice-cream-sales-and-shark-sightings")))
+
+QDA_DERIV_D = detail("w04-detail-qda-derivation", "推導：QDA 判別函數怎麼展開成講義的五項", r"""
+  <p><strong>第一步：比較 $\log\pi_k+\log f_k(x)$。</strong>和 LDA 一樣，Bayes 公式的分母對所有類別相同。現在 $X\mid Y=k\sim N_p(\mu_k,\Sigma_k)$：</p>
+  $$\log\pi_k+\log f_k(x)=\log\pi_k-\frac p2\log(2\pi)-\frac12\log|\Sigma_k|-\frac12(x-\mu_k)^\mathsf{T}\Sigma_k^{-1}(x-\mu_k).$$
+  <p><strong>第二步：刪掉與類別無關的項。</strong>只有 $-\frac p2\log(2\pi)$ 對每一類相同；$\log|\Sigma_k|$ 隨 $k$ 改變，必須保留。</p>
+  <p><strong>第三步：展開二次型。</strong>$\Sigma_k^{-1}$ 對稱，所以兩個交叉項相等：</p>
+  $$(x-\mu_k)^\mathsf{T}\Sigma_k^{-1}(x-\mu_k)=x^\mathsf{T}\Sigma_k^{-1}x-2x^\mathsf{T}\Sigma_k^{-1}\mu_k+\mu_k^\mathsf{T}\Sigma_k^{-1}\mu_k.$$
+  <p><strong>第四步：代回並乘上 $-\frac12$。</strong></p>
+  $$\delta_k(x)=-\tfrac12x^\mathsf{T}\Sigma_k^{-1}x+x^\mathsf{T}\Sigma_k^{-1}\mu_k-\tfrac12\mu_k^\mathsf{T}\Sigma_k^{-1}\mu_k-\tfrac12\log|\Sigma_k|+\log\pi_k.$$
+  <p>第一項 $x^\mathsf{T}\Sigma_k^{-1}x$ 是 $x$ 的二次式，而且每類的 $\Sigma_k$ 不同，比較兩類時消不掉，邊界因此是二次曲面。若所有 $\Sigma_k=\Sigma$，第一項與 $\log|\Sigma_k|$ 都對各類相同，就回到 LDA 的線性判別函數。</p>
+""" + links(("講義引用的 QDA 推導", "https://dafriedman97.github.io/mlbook/content/c4/concept.html#quadratic-discriminative-analysis-qda")))
+
+NB_DERIV_D = detail("w04-detail-nb-derivation", "推導：Naive Bayes 的後驗機率與參數估計", r"""
+  <p><strong>第一步：條件獨立讓聯合密度變成乘積。</strong>假設在第 $k$ 類內，$X_1,\ldots,X_p$ 互相獨立：</p>
+  $$f_k(x)=\prod_{j=1}^pf_{kj}(x_j).$$
+  <p><strong>第二步：代入 Bayes 公式。</strong></p>
+  $$\Pr(Y=k\mid X=x)=\frac{\pi_k\prod_jf_{kj}(x_j)}{\sum_{l=1}^K\pi_l\prod_jf_{lj}(x_j)}.$$
+  <p><strong>第三步：取 log 比較。</strong>分母對各類相同，所以選</p>
+  $$\arg\max_k\Bigl\{\log\pi_k+\sum_{j=1}^p\log f_{kj}(x_j)\Bigr\}.$$
+  <p>乘積變成加總：每個特徵各自貢獻一份證據，彼此相加。實作時也用 log 加總，避免許多小機率相乘造成數值下溢。</p>
+  <p><strong>第四步：估計一維分布。</strong>先驗 $\hat\pi_k=n_k/n$。Gaussian 版本用第 $k$ 類資料估每個特徵的平均與變異數：</p>
+  $$\hat\mu_{kj}=\frac1{n_k}\sum_{i:y_i=k}x_{ij},\qquad \hat\sigma_{kj}^2=\frac1{n_k}\sum_{i:y_i=k}(x_{ij}-\hat\mu_{kj})^2.$$
+  <p>類別特徵則用第 $k$ 類中各水準的比例 $\hat f_{kj}(v)=\#\{i:y_i=k,\ x_{ij}=v\}/n_k$。某個水準在某類從未出現時比例為 0，會讓整個乘積變成 0，實務上常加一個小的平滑常數。每類每特徵只估一維分布，所以 Gaussian 版本共 $2Kp$ 個參數加上先驗。</p>
+""" + links(("講義引用的 Naive Bayes 推導", "https://dafriedman97.github.io/mlbook/content/c4/concept.html#naive-bayes")))
+
+LDA_LOGODDS_D = detail("w04-detail-lda-logodds", "推導：LDA log-odds 的 $a_k$ 與 $b_k$", r"""
+  <p>LDA 的後驗比等於 $\pi_kf_k(x)/\{\pi_Kf_K(x)\}$，取 log 後</p>
+  $$\log\frac{\Pr(Y=k\mid x)}{\Pr(Y=K\mid x)}=\log\frac{\pi_k}{\pi_K}-\frac12(x-\mu_k)^\mathsf{T}\Sigma^{-1}(x-\mu_k)+\frac12(x-\mu_K)^\mathsf{T}\Sigma^{-1}(x-\mu_K).$$
+  <p><strong>展開兩個二次型。</strong>共用 $\Sigma$ 時兩邊都有 $x^\mathsf{T}\Sigma^{-1}x$，相減後抵消，剩下</p>
+  $$x^\mathsf{T}\Sigma^{-1}\mu_k-\tfrac12\mu_k^\mathsf{T}\Sigma^{-1}\mu_k-x^\mathsf{T}\Sigma^{-1}\mu_K+\tfrac12\mu_K^\mathsf{T}\Sigma^{-1}\mu_K.$$
+  <p><strong>整理常數項。</strong>利用 $\Sigma^{-1}$ 對稱，$\mu_k^\mathsf{T}\Sigma^{-1}\mu_k-\mu_K^\mathsf{T}\Sigma^{-1}\mu_K=(\mu_k+\mu_K)^\mathsf{T}\Sigma^{-1}(\mu_k-\mu_K)$。於是</p>
+  $$\log\frac{\Pr(Y=k\mid x)}{\Pr(Y=K\mid x)}=\underbrace{\log\frac{\pi_k}{\pi_K}-\tfrac12(\mu_k+\mu_K)^\mathsf{T}\Sigma^{-1}(\mu_k-\mu_K)}_{a_k}+x^\mathsf{T}\underbrace{\Sigma^{-1}(\mu_k-\mu_K)}_{b_k}.$$
+  <p>QDA 的 $\Sigma_k$ 各不相同，$x^\mathsf{T}\Sigma_k^{-1}x$ 與 $x^\mathsf{T}\Sigma_K^{-1}x$ 不會抵消，於是多出 $\sum_j\sum_lc_{kjl}x_jx_l$ 這組二次項；完整係數見本節後面的「QDA log-odds 的完整係數」收合。</p>
+""" + links(("LDA log-odds 的向量寫法推導", "https://math.stackexchange.com/questions/913918/deriving-equation-in-vector-notation/914243#914243?newreg=28b8da457ff240a3b468c1e4b609f5b7"),
+            ("QDA log-odds 的展開", "https://math.stackexchange.com/questions/4612174/write-a-function-of-the-log-odds-of-the-posterior-probabilities-qda-to-see-it")))
+
+IRIS_PCA_D = detail("w04-detail-iris-pca", "延伸閱讀：Iris 上 PCA 與 LDA 的二維投影", r"""
+  <p>scikit-learn 的範例把 Iris 分別投影到 PCA 的前兩個主成分與 LDA 的兩個判別方向。PCA 不看品種標籤，只找整體變異最大的方向；LDA 使用標籤，找類間散布相對於類內散布最大的方向。兩張圖都能看出 Setosa 和另外兩種分得很開，但 LDA 的圖中 Versicolor 與 Virginica 的重疊較少，因為它的方向正是為了分開類別而選的。</p>
+""" + links(("Fisher 判別與 PCA 在 Iris 上的比較", "https://scikit-learn.org/stable/auto_examples/decomposition/plot_pca_vs_lda.html")))
+
 MAHA_SECTION = r"""
   <h3 id="w04-maha">Mahalanobis 距離：用資料自己的尺度量距離</h3>
   <p>講義把多變數判別函數寫成距離形式。令共用共變異數 $\Sigma$ 正定，定義 <strong>Mahalanobis 距離</strong>（Mahalanobis distance）</p>
   $$d_M(x,\mu)=\sqrt{(x-\mu)^\mathsf{T}\Sigma^{-1}(x-\mu)}.$$
   <p>LDA 的分數可以改寫成「距離平方的一半取負號，再加上先驗」；與類別無關的項不影響比較：</p>
   $$\delta_k(x)=-\tfrac12\,d_M^2(x,\mu_k)+\log\pi_k+\text{（與 }k\text{ 無關的項）}.$$
-  <p>先驗相等時，LDA 就是選 Mahalanobis 距離最近的類別中心。它衡量的不是原始座標差了多少，而是<strong>相對於資料本身的散布，差了多少</strong>。</p>
+  <p>先驗相等時，LDA 就是選 Mahalanobis 距離最近的類別中心。它不看原始座標差了多少，看的是<strong>相對於資料本身的散布，差了多少</strong>。</p>
 
   <h4>一維：離平均幾個標準差</h4>
   <p>只有一個變數時，$\Sigma$ 就是變異數 $\sigma^2$：</p>
   $$d_M(x,\mu)=\sqrt{\frac{(x-\mu)^2}{\sigma^2}}=\frac{|x-\mu|}{\sigma}.$$
-  <p>這就是「$x$ 離平均幾個標準差」。例如兩個變數，$X_1$ 的標準差是 100、$X_2$ 的標準差是 1。兩個方向都差 10 時，歐氏距離（Euclidean distance）把它們當成一樣遠；但 $10/100=0.1$ 在 $X_1$ 方向只是很小的偏離，$10/1=10$ 在 $X_2$ 方向卻非常異常。</p>
+  <p>這就是「$x$ 離平均幾個標準差」。例如有兩個變數，$X_1$ 的標準差是 100、$X_2$ 的標準差是 1。兩個方向都差 10 時，歐氏距離（Euclidean distance）把它們當成一樣遠；但 $10/100=0.1$ 在 $X_1$ 方向只是很小的偏離，$10/1=10$ 在 $X_2$ 方向卻已經非常極端。</p>
 
   <h4>多維：變異大的方向權重小</h4>
   <p>多維時 $\Sigma$ 還包含<strong>相關</strong>。若資料大致沿著 $x_2\approx x_1$ 的斜線分布，沿斜線移動是常見的變化；垂直斜線移動同樣的歐氏距離，卻可能很少見。對 $\Sigma$ 做特徵分解 $\Sigma=Q\Lambda Q^\mathsf{T}$，令 $y=Q^\mathsf{T}(x-\mu)$ 為沿主軸的座標，則</p>
@@ -90,15 +151,13 @@ MAHA_SECTION = r"""
     <li>$\lambda_i$ 大：資料在這個方向本來就分散，偏離同樣的量，距離懲罰小。</li>
     <li>$\lambda_i$ 小：資料在這個方向很集中，一點點偏離就算遠。</li>
   </ul>
-  <p>這說明為什麼是乘上 $\Sigma^{-1}$：反矩陣讓變異大的方向權重變小、變異小的方向權重變大。只把每一欄分別標準化，處理了各變數的尺度，還沒有處理資料雲傾斜所反映的相關性。</p>
+  <p>這就是乘上 $\Sigma^{-1}$ 的理由：反矩陣讓變異大的方向權重變小、變異小的方向權重變大。只把每一欄分別標準化，處理的只是各變數的尺度，資料雲傾斜所反映的相關性還沒處理。</p>
 
   <h4>白化之後就是普通距離</h4>
   <p>令 $z=\Sigma^{-1/2}(x-\mu)$，其中 $\Sigma^{-1/2}=Q\Lambda^{-1/2}Q^\mathsf{T}$。這個轉換把共變異數變成單位矩陣，稱為<strong>白化</strong>（whitening），而</p>
   $$d_M^2(x,\mu)=z^\mathsf{T}z=\|z\|^2.$$
   <p>也就是說，Mahalanobis 距離是<strong>把變異數與相關都消掉之後的歐氏距離</strong>。多變量常態的密度只透過 $d_M$ 依賴 $x$，所以等密度線是橢圓，不是圓；$d_M$ 可以理解成跨過了幾層這樣的共變異數橢圓。下面的元件可以拖動觀測點，比較歐氏距離與 Mahalanobis 距離。</p>
-""" + "{MAHA_VIZ}" + links(
-    ("逆共變異數矩陣與 Mahalanobis 距離的分解", "https://stats.stackexchange.com/questions/140056/decomposition-of-inverse-covariance-matrix"),
-    ("LDA／QDA 教學文件中的判別函數", "https://arxiv.org/abs/1906.02590")) + detail(
+""" + "{MAHA_VIZ}" + detail(
     "w04-detail-maha-eigen", "計算細節：特徵分解、白化矩陣與距離公式", r"""
   <p><strong>第一步：分解共變異數。</strong>$\Sigma$ 對稱正定，所以可寫成 $\Sigma=Q\Lambda Q^\mathsf{T}$，$Q$ 的各欄是單位正交的特徵向量，$\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_p)$ 且每個 $\lambda_i>0$。</p>
   <p><strong>第二步：寫出反矩陣。</strong>因為 $Q^\mathsf{T}Q=I$，</p>
@@ -109,7 +168,9 @@ MAHA_SECTION = r"""
   <p><strong>第四步：白化矩陣。</strong>定義 $\Sigma^{-1/2}=Q\Lambda^{-1/2}Q^\mathsf{T}$，它對稱，而且 $\Sigma^{-1/2}\Sigma^{-1/2}=\Sigma^{-1}$。令 $z=\Sigma^{-1/2}(x-\mu)$：</p>
   $$z^\mathsf{T}z=(x-\mu)^\mathsf{T}\Sigma^{-1/2}\Sigma^{-1/2}(x-\mu)=d_M^2.$$
   <p>若 $X\sim N(\mu,\Sigma)$，則 $\operatorname{Cov}(Z)=\Sigma^{-1/2}\Sigma\Sigma^{-1/2}=I$，各方向的變異都變成 1，而且彼此不相關。$\Lambda^{-1/2}Q^\mathsf{T}$ 也能白化（PCA 白化），差別只在最後少乘一次旋轉 $Q$；兩者給出相同的距離。</p>
-""")
+""" + links(
+    ("逆共變異數矩陣與 Mahalanobis 距離的分解", "https://stats.stackexchange.com/questions/140056/decomposition-of-inverse-covariance-matrix"),
+    ("LDA／QDA 教學文件中的判別函數", "https://arxiv.org/abs/1906.02590")))
 
 MAHA_SECTION = MAHA_SECTION.replace("{MAHA_VIZ}", viz(
     svg("w04mahaSvg", 360),
@@ -249,7 +310,7 @@ BODIES["logistic"] = f"""
   $$\\operatorname{{Var}}(Y\\mid X=x)=p(x)\\{{1-p(x)\\}}.$$
   <p>若想沿用「觀測值減掉條件平均」的想法，仍可定義 $\\varepsilon=Y-p(X)$，寫成 $Y=p(X)+\\varepsilon$。但給定 $X=x$ 後，誤差只有 $1-p(x)$ 與 $-p(x)$ 兩個可能值；它的分布和變異數會隨 $x$ 改變。這不具有前章獨立、同變異加法雜訊的結構，也沒有另一個可自由估計的 $\\sigma^2$。</p>
   <p>估計時還會假設：給定各筆預測變數後，觀測結果彼此獨立。<strong>獨立不等於同變異</strong>，因為各筆的 $p(x)$ 可以不同。</p>
-{links(("為什麼線性迴歸要寫雜訊項，邏輯斯迴歸卻不用", "https://stats.stackexchange.com/questions/481391/why-do-we-model-noise-in-linear-regression-but-not-logistic-regression"))}
+{NOISE_D}
 
   <p>整理式子後，可以定義勝算與 log-odds。先移項：</p>
 
@@ -268,7 +329,7 @@ BODIES["logistic"] = f"""
   $$p(x)>t\\iff\\beta_0+\\beta_1x_1+\\cdots+\\beta_px_p>
   \\log\\frac{{t}}{{1-t}}.$$
   <p>門檻為 0.5 時，就是看線性分數是否大於 0；兩個預測變數的邊界是直線，多個變數則是超平面。這裡指模型使用的特徵空間：若加入平方項或交互作用，邊界在原始座標中就可能彎曲。</p>
-{links(("為什麼邏輯斯迴歸是線性分類器", "https://stats.stackexchange.com/questions/93569/why-is-logistic-regression-a-linear-classifier"))}
+{LINEAR_CLS_D}
   <h3>係數如何估計？</h3>
   <p>最大概似法（MLE）選擇讓已觀察到的 0／1 結果最可能出現的係數。對每筆資料，若結果為 1 就拿 $p_i$，若為 0 就拿 $1-p_i$，再把它們乘起來：</p>
   $$L(\\beta)=\\prod_{{i=1}}^n p_i^{{y_i}}(1-p_i)^{{1-y_i}}.$$
@@ -286,7 +347,7 @@ BODIES["logistic"] = f"""
   <p><strong>依據是 MLE 的大樣本常態近似。</strong>模型與一般正則條件成立、樣本夠大且有有限估計時，檢定 $H_0:\\beta_j=\\beta_{{j,0}}$ 使用</p>
   $$z=\\frac{{\\hat\\beta_j-\\beta_{{j,0}}}}{{SE(\\hat\\beta_j)}}\\approx N(0,1).$$
   <p>常見的係數表檢定 $\\beta_j=0$，所以分子只剩 $\\hat\\beta_j$。這裡的標準誤一樣是估出來的；估計標準誤本身並不代表要用 $t$。Bernoulli 沒有額外的 $\\sigma^2$，也沒有 Gaussian 線性迴歸那個精確的 $t$ 結構。小樣本或分離情況下，這個 $z$ 近似可能不可靠。</p>
-{links(("邏輯斯迴歸的 Wald 檢定", "https://stats.stackexchange.com/questions/60074/wald-test-for-logistic-regression"))}
+{WALD_D}
 
 {viz(svg("w04shapeSvg", 250) + "\n" + svg("w04shapeSvg2", 220),
      [rows_card("目前的模型",
@@ -384,7 +445,7 @@ BODIES["multinomial"] = f"""
   多元迴歸的每個係數描述「<strong>控制模型中其他變數後</strong>」的條件關聯。
   這是模型中的比較，沒有因果設計與相應假設時，不代表改變學生身分會造成違約率改變。
   ISLP 圖 4.3 左圖比較違約機率曲線，右圖用箱形圖呈現學生與非學生的 balance 分布。''', "warm")}
-{links(("冰淇淋銷量與鯊魚目擊次數：共同原因的漫畫", "https://www.causeweb.org/cause/resources/fun/cartoons/ice-cream-sales-and-shark-sightings"))}
+{CAUSE_D}
 
   <p>用表 4.3 的係數算兩個具體的人（ISLP 式 4.8、4.9）：balance = 1500、income = 40（千元）的
   <strong>學生</strong>違約機率是 0.058，同樣條件的<strong>非學生</strong>是 0.105——
@@ -468,7 +529,6 @@ BODIES["lda"] = f"""
   $$P(Y=k\\mid X=x)=\\frac{{\\pi_kf_k(x)}}{{\\sum_{{\\ell=1}}^K\\pi_\\ell f_\\ell(x)}}.$$
   <p>對同一筆 $x$，若選第 $k$ 類，判錯的機率就是 $1-P(Y=k\\mid X=x)$。因此，誤判代價相同時，選後驗機率最大的類別，會讓這筆資料的條件錯誤率最小。這是 Bayes 分類的理由；LDA／QDA 再用資料估計其中的機率，所以實際表現仍有估計誤差。</p>
   <p>分母對所有類別相同，所以選 $\\pi_kf_k(x)$ 最大的類別即可。和前面的 Bernoulli／Categorical 不同，這裡接下來的常態與共變異數限制是<strong>額外的模型假設</strong>，需要檢查是否適合資料。</p>
-{links(("判別式與生成式模型的比較", "https://www.analyticsvidhya.com/blog/2021/07/deep-understanding-of-discriminative-and-generative-models-in-machine-learning/"))}
   <details class="qa-item reading-detail" id="w04-detail-generative-uses"><summary>生成式模型除了分類，還能做什麼？</summary><div class="detail-body">
   <p>生成式模型同時描述「各類出現的比例」與「每一類裡的資料長什麼樣」。因此，有了先驗 $\\pi_k$ 和類內分布 $f_k$，就能進一步討論整筆資料如何產生、常不常見，以及未觀測部分可能是什麼。</p>
   <h4>生成新的資料：先抽類別，再抽特徵</h4>
@@ -484,6 +544,7 @@ BODIES["lda"] = f"""
   $$f_k(x_{{\\mathrm{{obs}}}})=\\int f_k(x_{{\\mathrm{{obs}}}},x_{{\\mathrm{{mis}}}})\\,dx_{{\\mathrm{{mis}}}}.$$
   <p>接著用這個邊際密度代入 Bayes 公式，根據已知特徵計算各類的後驗機率。若想推估缺失數值，則使用缺失特徵在已知特徵下的條件分布；模型中的變數相關性，可能提供比直接填整體平均更具體的資訊。</p>
   <p>是否適合這樣處理，仍取決於模型及缺值原因。這裡說明的是聯合機率模型提供的計算途徑；一般 LDA 套件未必直接提供缺值估計功能。</p>
+{links(("判別式與生成式模型的比較", "https://www.analyticsvidhya.com/blog/2021/07/deep-understanding-of-discriminative-and-generative-models-in-machine-learning/"))}
   </div></details>
 
   <p><strong>LDA</strong>（linear discriminant analysis，線性判別分析）的假設是：
@@ -666,8 +727,7 @@ $$(a^\mathsf{T}(X-\mu))^2=a^\mathsf{T}(X-\mu)(X-\mu)^\mathsf{T}a.$$
 $$\operatorname{Var}(a^\mathsf{T}X)=a^\mathsf{T}E\bigl[(X-\mu)(X-\mu)^\mathsf{T}\bigr]a=a^\mathsf{T}\Sigma a.$$
 <p>同樣的步驟用在樣本上：把樣本共變異數 $S$ 代入，$a^\mathsf{T}Sa$ 就是投影後分數 $a^\mathsf{T}x_i$ 的樣本變異數。變異數不能是負的，所以 $a^\mathsf{T}\Sigma a\ge0$ 對所有 $a$ 成立，這也是共變異數矩陣必為半正定的原因。</p>
 """)
-FISHER_LINKS_A = links(
-    ("scikit-learn 的 LDA／QDA 說明", "https://scikit-learn.org/stable/modules/lda_qda.html#lda-qda"))
+FISHER_LINKS_A = ""
 FISHER_EIG_DETAIL = detail("w04-detail-fisher-eigen", "計算細節：廣義特徵值、W 正交與降秩 LDA", r"""
 <p><strong>為什麼是 $W^{-1}B$ 的特徵向量？</strong>比值 $J(a)$ 不受 $a$ 的長度影響，所以可以固定分母 $a^\mathsf{T}Wa=1$，改成在這個限制下最大化 $a^\mathsf{T}Ba$。拉格朗日乘數法給出</p>
 $$\nabla_a\bigl[a^\mathsf{T}Ba-\lambda(a^\mathsf{T}Wa-1)\bigr]=2Ba-2\lambda Wa=0\ \Longrightarrow\ Ba=\lambda Wa.$$
@@ -676,7 +736,8 @@ $$\nabla_a\bigl[a^\mathsf{T}Ba-\lambda(a^\mathsf{T}Wa-1)\bigr]=2Ba-2\lambda Wa=0
 <p><strong>降秩 LDA。</strong>若只保留前 $L\lt\operatorname{rank}(B)$ 個方向，就是降秩 LDA（reduced-rank LDA，ESL §4.3.3、習題 4.8）。它保留分離最強的方向；在共用常態模型下可連到類平均的秩受限最大概似估計。刪掉非零判別方向可能改變分類與後驗機率。用 $W$ 規範的座標做最近中心分類前，還須換成共變異數白化尺度；講義寫的規則是在判別座標中選</p>
 $$\arg\min_k\ \tfrac12\|\tilde x-\tilde\mu_k\|^2-\log\pi_k.$$
 <p>若 $W$ 奇異，須先處理共線性、降維或使用正則化，不能直接套逆矩陣公式。</p>
-""") + links(("如何最大化廣義 Rayleigh 比值", "https://math.stackexchange.com/questions/1769712/how-to-maximize-generalized-rayleigh-ratio"))
+""" + links(("如何最大化廣義 Rayleigh 比值", "https://math.stackexchange.com/questions/1769712/how-to-maximize-generalized-rayleigh-ratio"),
+            ("scikit-learn 的 LDA／QDA 說明", "https://scikit-learn.org/stable/modules/lda_qda.html#lda-qda")))
 
 # 講義的判別子空間推導；使用 raw string 保留數學語法。
 BODIES["lda"] += r"""
@@ -755,8 +816,7 @@ LDA 分數差中的 $\hat\Sigma^{-1}(\bar x_1-\bar x_2)$ 和 Fisher 方向平行
 <tr><th>Virginica</th><td>0</td><td>1</td><td>49</td></tr></tbody></table></div>
 <p>合計錯 3 筆（講義圖中兩個橘點、一個綠點被分錯），訓練正確率 98%，與講義一致。這是對擬合資料的回算，不能當作新花朵的測試正確率。
 兩個非零廣義特徵值約 32.191929、0.285391；它們衡量類間與類內散布比，不是原始資料的 PCA 解釋變異比。</p>
-""" + links(
-    ("Fisher 判別與 PCA 在 Iris 上的比較", "https://scikit-learn.org/stable/auto_examples/decomposition/plot_pca_vs_lda.html")) + quiz("qFisher", "QUIZ · 判別方向與分類", "三類、四個變數的 LDA，保留兩個判別方向一定可以解讀成什麼？", [
+""" + IRIS_PCA_D + quiz("qFisher", "QUIZ · 判別方向與分類", "三類、四個變數的 LDA，保留兩個判別方向一定可以解讀成什麼？", [
 (True, "使用相同尺度與先驗，可保留完整 LDA 決策所需的類平均差異", "類間散布的秩至多為 2；完整白化判別子空間以外的距離對各類相同。"),
 (False, "兩個方向必定解釋原始資料最多的變異", "這是 PCA 的目標；Fisher LDA 使用類別標籤，最大化類間／類內散布比。"),
 (False, "先驗機率不再影響分類", "即使降到完整判別子空間，仍須保留先驗的 log 項。")])
@@ -786,7 +846,7 @@ BODIES["qda"] = f"""
   $$\\delta_k(x)=-\\tfrac12x^{{\\mathsf{{T}}}}\\Sigma_k^{{-1}}x+x^{{\\mathsf{{T}}}}\\Sigma_k^{{-1}}\\mu_k-\\tfrac12\\mu_k^{{\\mathsf{{T}}}}\\Sigma_k^{{-1}}\\mu_k-\\tfrac12\\log|\\Sigma_k|+\\log\\pi_k.$$
 
   <p>和 LDA 對照：LDA 的第一項 $-\\tfrac12x^{{\\mathsf{{T}}}}\\Sigma^{{-1}}x$ 對每類都一樣，所以能刪掉；$\\log|\\Sigma|$ 也一樣。QDA 的這兩項隨 $k$ 改變，必須保留。</p>
-{links(("講義引用的 QDA 推導", "https://dafriedman97.github.io/mlbook/content/c4/concept.html#quadratic-discriminative-analysis-qda"))}
+{QDA_DERIV_D}
 
   <h3 id="w04-qda-distance">QDA：每一類用自己的形狀衡量距離</h3>
   <p>在下面的圖中，每一類都是一團橢圓形的資料。LDA 用同一個形狀來衡量各類；QDA 則容許橢圓的方向、長短與寬窄各自不同。同一個觀測相對於某類可能很常見，相對於另一類卻可能偏離很遠，邊界因此可以彎曲。</p>
@@ -807,7 +867,7 @@ BODIES["qda"] = f"""
   $$\\begin{{aligned}}\\text{{LDA}}&:\\ 3\\times100+\\frac{{100\\times101}}2=300+5050=5350,\\\\
   \\text{{QDA}}&:\\ 300+3\\times5050=15450,\\\\
   \\text{{NB}}&:\\ 2\\times3\\times100=600.\\end{{aligned}}$$
-  <p>加上 $K-1=2$ 個先驗，分別是 5352、15452、602。高維、小樣本時差距特別重要：QDA 每類都要估 $O(p^2)$ 個共變異數，通常需要比 LDA 多得多的資料。三者因此形成一條偏差–變異的光譜：Naive Bayes 假設最強、參數最少，估計變異小但偏差可能大；QDA 最有彈性，偏差可能小但容易過擬合；LDA 在中間。這是常見的傾向，實際誰比較好仍要用獨立資料比較，不能只憑參數量斷定。</p>
+  <p>加上 $K-1=2$ 個先驗，分別是 5352、15452、602。這個差距在高維、小樣本時特別要緊：QDA 每類都要估 $O(p^2)$ 個共變異數，通常需要比 LDA 多得多的資料。三者因此形成一條偏差–變異的光譜：Naive Bayes 假設最強、參數最少，估計變異小但偏差可能大；QDA 最有彈性，偏差可能小但容易過擬合；LDA 在中間。這是常見的傾向，實際誰比較好仍要用獨立資料比較，不能只憑參數量斷定。</p>
 
 {info("共用 Σ 與否，涉及偏差–變異取捨", '''<strong>選擇時：</strong>訓練資料少且共用共變異數合理，可先比較 LDA；每類資料充足，
   且各類共變異數明顯不同時，可比較 QDA。<br>
@@ -849,7 +909,7 @@ BODIES["qda"] = f"""
 
   $$f_k(x) = f_{{k1}}(x_1) \\times f_{{k2}}(x_2) \\times \\cdots \\times f_{{kp}}(x_p)$$
 
-  <p>條件獨立是額外的簡化假設，不是類別資料自動具有的性質。一般而言，估計 $p$ 維密度很困難；這個假設把它拆成估計 $p$ 個一維分布。即使不完全成立，也可能藉由減少估計變異而有不錯的預測表現，特別是 $n$ 相對於 $p$ 不夠大、無法好好估計類內聯合分布的時候。代回 Bayes 公式，後驗機率是</p>
+  <p>條件獨立是額外的簡化假設，不是類別資料自動具有的性質。估計 $p$ 維密度本來就很困難；這個假設把它拆成估計 $p$ 個一維分布。即使不完全成立，也可能藉由減少估計變異而有不錯的預測表現，特別是 $n$ 相對於 $p$ 不夠大、無法好好估計類內聯合分布的時候。代回 Bayes 公式，後驗機率是</p>
   $$\\Pr(Y=k\\mid X=x)=\\frac{{\\pi_k\\,f_{{k1}}(x_1)\\,f_{{k2}}(x_2)\\cdots f_{{kp}}(x_p)}}{{\\sum_{{l=1}}^K\\pi_l\\,f_{{l1}}(x_1)\\,f_{{l2}}(x_2)\\cdots f_{{lp}}(x_p)}}.$$
   <p>一維分布仍需選擇或估計。講義列出三種做法：</p>
   <ul>
@@ -857,7 +917,7 @@ BODIES["qda"] = f"""
     <li><strong>連續特徵、不取常態</strong>：用直方圖或核密度估計當 $f_{{kj}}$ 的無母數估計。</li>
     <li><strong>類別特徵</strong>：直接用第 $k$ 類訓練資料中，第 $j$ 個變數各水準出現的比例。</li>
   </ul>
-{links(("講義引用的 Naive Bayes 推導", "https://dafriedman97.github.io/mlbook/content/c4/concept.html#naive-bayes"))}
+{NB_DERIV_D}
 
   <h4>講義的玩具例子：三個特徵、兩類</h4>
   <p>$p=3$、$K=2$：前兩個特徵是連續的，第三個是有三個水準的類別特徵，先驗 $\\hat\\pi_1=\\hat\\pi_2=0.5$。新觀測 $x^*=(0.4,\\,1.5,\\,1)^{{\\mathsf{{T}}}}$ 在各類的一維密度（或比例）估計為：</p>
@@ -866,10 +926,10 @@ BODIES["qda"] = f"""
         ["第 2 類", "0.030", "0.130", "0.616", "$0.5\\times0.030\\times0.130\\times0.616\\approx0.00120$"]])}
   <p>分母是兩列相加約 0.02133，所以</p>
   $$\\Pr(Y=1\\mid X=x^*)\\approx\\frac{{0.02013}}{{0.02133}}\\approx0.944,\\qquad \\Pr(Y=2\\mid X=x^*)\\approx0.056.$$
-  <p>第三個特徵其實比較支持第 2 類（0.616 對 0.226），但前兩個連續特徵強烈支持第 1 類；乘起來後第 1 類勝出。這說明 Naive Bayes 把各特徵的證據<strong>相乘</strong>，取 log 後就是相加。</p>
+  <p>第三個特徵其實比較支持第 2 類（0.616 對 0.226），但前兩個連續特徵強烈支持第 1 類；乘起來後第 1 類勝出。可見 Naive Bayes 把各特徵的證據<strong>相乘</strong>，取 log 後就是相加。</p>
 
   <h4>講義的 Default 結果：為什麼 Naive Bayes 沒有贏過 LDA？</h4>
-  <p>在 <code>Default</code> 上用 Gaussian Naive Bayes：門檻 0.5 時錯誤率 2.90%（LDA 為 2.75%），漏掉 244 個違約戶；門檻降到 0.2，錯誤率 4.58%、敏感度 61.0%（ISLP 表 4.8、4.9）。它沒有勝過 LDA，講義給的理由是 $n=10000$、$p=2$：資料量相對於特徵數非常充足，LDA 估一個 $2\\times2$ 共變異數完全沒有困難，Naive Bayes 用獨立假設換來的「少估幾個參數」在這裡沒有好處，反而丟掉了兩個特徵之間的相關資訊。</p>
+  <p>在 <code>Default</code> 上用 Gaussian Naive Bayes：門檻 0.5 時錯誤率 2.90%（LDA 為 2.75%），漏掉 244 個違約戶；門檻降到 0.2，錯誤率 4.58%、敏感度 61.0%（ISLP 表 4.8、4.9）。它沒有勝過 LDA，講義給的理由是 $n=10000$、$p=2$：資料量相對於特徵數非常充足，LDA 估一個 $2\\times2$ 共變異數完全沒有困難，Naive Bayes 用獨立假設換來的「少估幾個參數」在這裡派不上用場，反而丟掉了兩個特徵之間的相關資訊。</p>
 
 {table(["", "對 f<sub>k</sub>(x) 的假設", "邊界形狀", "參數量（p 大時）", "適合考慮的情境"],
        [["LDA", "多變量常態，Σ 共用", "線性", "少", "真實邊界線性、各類近常態、n 小"],
@@ -919,14 +979,14 @@ PR_SECTION = r"""
   <p>假設模型報出 20 個正類，其中 $TP=8$、$FP=12$。於是</p>
   $$\text{Recall}=\frac{8}{10}=0.8,\qquad \text{Precision}=\frac{8}{20}=0.4,\qquad \text{FPR}=\frac{12}{12+988}=0.012.$$
   <p>ROC 的橫軸只看到 1.2% 的假陽率，看起來很好；但模型報出的 20 個正類裡有 12 個是假的。原因是 ROC 的兩個軸都以<strong>真實類別</strong>為分母：FPR 的分母包含大量 TN，同樣 12 個誤報被 1000 個負類「稀釋」了。精確率完全不用 TN，所以直接反映「模型說是正類時到底準不準」。</p>
-  <p>要說得精確一點：類內分數分布固定時，ROC 曲線本身不隨盛行率改變，它不會因為不平衡就「算錯」。問題在於它沒有直接呈現預測正類裡的誤報比例；當我們真正關心的是少數正類（疾病、詐騙、罕見事件），PR 曲線通常更有資訊。結論是：<strong>ROC 仍可看，但關心少數正類時，PR 通常更能說明問題</strong>。</p>
+  <p>要說得精確一點：類內分數分布固定時，ROC 曲線本身不隨盛行率改變，它不會因為不平衡就「算錯」。問題在於它沒有直接呈現預測正類裡的誤報比例；當我們真正關心的是少數正類（疾病、詐騙、罕見事件），PR 曲線通常更有資訊。所以<strong>ROC 仍可看，但關心少數正類時，PR 通常更能說明問題</strong>。</p>
   <h4>兩條曲線的隨機基準不同</h4>
   <ul>
     <li><strong>ROC</strong>：分數與類別無關的隨機分類器落在對角線上，AUC 約為 0.5，不論盛行率多少。</li>
     <li><strong>PR</strong>：隨機分類器的精確率約等於正類的<strong>盛行率</strong> $N_+/N$。只有 1% 正類時，隨機基準的精確率只有 0.01。</li>
   </ul>
   <p>在 <code>Default</code> 上，PR 的隨機基準是 333/10000 = 0.033。上方元件切到 PR 後，可以看到 LDA 的曲線遠高於這條水平線，但在高 recall 端精確率下降得很快：想抓到大部分違約戶，就得接受報出名單裡有很多不會違約的人。</p>
-""" + links(("隨機分類器的 ROC AUC", "https://datascience.stackexchange.com/questions/31872/auc-roc-of-a-random-classifier/31877#31877"))
+"""
 # ── P05 threshold / confusion matrix / ROC ────────────────────────────
 _thr_code1 = lab_code(CH, 57) + "\n\n" + lab_code(CH, 58)
 _thr_code2 = lab_code(CH, 156) + "\n\n" + lab_code(CH, 158) + "\n\n" + lab_code(CH, 159)
@@ -976,7 +1036,7 @@ BODIES["threshold"] = f"""
   <strong>精確率</strong>（precision）= TP/(TP+FP)＝預測為正類的觀測中，實際為正類的比例。''', "warm")}
 
   <p>回到 <code>Default</code>：LDA 的假陽率只有 23/9667 = 0.2%，假陰率卻高達 252/333 = <strong>75.7%</strong>。總錯誤率很低，是因為負類占了 96.7%。</p>
-{links(("什麼是 recall 與 precision", "https://becominghuman.ai/whats-recall-and-precision-4a801b1ac0da"))}
+
 
   <p>門檻值就是調節這兩種錯誤比例的設定。把 0.5 降到 0.2：</p>
 
@@ -1173,7 +1233,7 @@ BODIES["compare"] = f"""
   <p>LDA 的 $a_k$、$b_{{kj}}$ 可以寫成明式。把共用 $\\Sigma$ 的兩個判別函數相減：</p>
   $$\\log\\frac{{\\Pr(Y=k\\mid x)}}{{\\Pr(Y=K\\mid x)}}=\\underbrace{{\\log\\frac{{\\pi_k}}{{\\pi_K}}-\\tfrac12(\\mu_k+\\mu_K)^{{\\mathsf{{T}}}}\\Sigma^{{-1}}(\\mu_k-\\mu_K)}}_{{a_k}}+x^{{\\mathsf{{T}}}}\\underbrace{{\\Sigma^{{-1}}(\\mu_k-\\mu_K)}}_{{b_k}}.$$
   <p>所以 LDA 和 logistic regression 一樣，假設後驗機率的 log-odds 是 $x$ 的線性函數；$b_k$ 的第 $j$ 個分量就是 $b_{{kj}}$。</p>
-{links(("LDA log-odds 的向量寫法推導", "https://math.stackexchange.com/questions/913918/deriving-equation-in-vector-notation/914243#914243?newreg=28b8da457ff240a3b468c1e4b609f5b7"), ("QDA log-odds 的展開", "https://math.stackexchange.com/questions/4612174/write-a-function-of-the-log-odds-of-the-posterior-probabilities-qda-to-see-it"))}
+{LDA_LOGODDS_D}
 
   $$\\text{{QDA：}}\\;\\log\\!\\left(\\frac{{\\Pr(Y = k \\mid x)}}{{\\Pr(Y = K \\mid x)}}\\right)
     = a_k + \\sum_{{j=1}}^{{p}} b_{{kj}} x_j + \\sum_{{j=1}}^{{p}}\\sum_{{l=1}}^{{p}} c_{{kjl}} x_j x_l$$
@@ -1238,6 +1298,100 @@ BODIES["compare"] = f"""
 """
 
 
+
+GLM_MAIN = r"""
+  <h3 id="w04-why-not-lm">為什麼不直接用線性迴歸？</h3>
+  <p>講義先對 <code>Bikeshare</code> 擬合一般的線性迴歸（ISLP 表 4.10、圖 4.13）。月份與時段的係數看起來合理：冬天租借少、夏天多，早上與傍晚通勤時段有尖峰。但仔細檢查會發現三個問題：</p>
+  <ol>
+    <li><strong>會預測出負數。</strong><code>Bikeshare</code> 有 <strong>9.6%</strong> 的擬合值是負的，等於說模型在 9.6% 的時段預測出負的使用人數。</li>
+    <li><strong>變異數不是常數。</strong>平均租借量大的時段，租借量的起伏也大。例如清晨下雨的時段平均 5.05 人、標準差 3.73；春天早上晴天的時段平均 243.59 人、標準差 131.7。線性迴歸假設誤差的變異數固定，這裡明顯不成立。</li>
+    <li><strong>反應是整數。</strong>線性迴歸把 $Y$ 當成連續的量化變數，<code>bikers</code> 卻只取 0、1、2、…這些整數，線性模型不能描述這種離散的分布。</li>
+  </ol>
+  <h4>先取 log 再做線性迴歸可以嗎？</h4>
+  <p>一個常見的補救是改擬合</p>
+  $$\log(Y)=\beta_0+\sum_{j=1}^p\beta_jX_j+\varepsilon.$$
+  <p>這樣不會預測出負的租借數，取 log 後變異數也比較穩定（ISLP 圖 4.14 右）。但它仍不理想：</p>
+  <ul>
+    <li><strong>解讀變了。</strong>預測與推論都在 $\log Y$ 的尺度上，係數的意思是「$X_j$ 增加一單位，<strong>$\log Y$ 的平均</strong>增加 $\beta_j$」，不是租借量本身的平均。</li>
+    <li><strong>不能處理 0。</strong>只要有某個時段租借數是 0，$\log 0$ 就沒有定義，而計數資料常常有 0。</li>
+  </ul>
+""" + info("計數資料為什麼要換模型", r"""線性迴歸會給出負的預測、假設固定變異數、也沒顧到反應是整數；先取 $\log Y$ 只解決一部分，還會帶來解讀與 0 值的問題。<br>
+  <strong>Poisson 迴歸</strong>改成直接描述「給定預測變數時，計數 $Y$ 的分布」，再讓這個分布的平均隨預測變數改變。""", "warm") + r"""
+
+  <h3 id="w04-poisson">Poisson 迴歸</h3>
+  <p>若隨機變數 $Y$ 只取非負整數 $0,1,2,\ldots$，而且服從 Poisson 分布，則</p>
+  $$\Pr(Y=k)=\frac{e^{-\lambda}\lambda^k}{k!},\qquad k=0,1,2,\ldots,\qquad \lambda=E(Y)=\operatorname{Var}(Y)>0.$$
+  <p>Poisson 分布常用來描述計數，理由很直接：它和計數一樣只取非負整數；而且平均等於變異數，<strong>平均愈大、變異也愈大</strong>，正好對上前面在 <code>Bikeshare</code> 看到的現象。舉例來說，若某個時段、某種天氣下的平均使用人數是 $\lambda=5$，則</p>
+  $$\Pr(Y=0)=e^{-5}=0.0067,\quad \Pr(Y=1)=5e^{-5}=0.034,\quad \Pr(Y=2)=\frac{5^2e^{-5}}{2!}=0.084.$$
+  <p>實際上平均人數會隨時段、月份、天氣而變，所以讓 $\lambda$ 成為預測變數的函數。給定預測變數後</p>
+  $$Y\mid X\sim\operatorname{Poisson}(\lambda(X)),\qquad \log\lambda(X_1,\ldots,X_p)=\beta_0+\beta_1X_1+\cdots+\beta_pX_p.$$
+  <p>等價地 $\lambda=e^{\beta_0+\beta_1X_1+\cdots+\beta_pX_p}$，永遠為正，不會出現負的平均租借數。給定 $n$ 筆獨立觀測，概似是各筆 Poisson 機率的乘積，係數用最大概似估計：</p>
+  $$\ell(\beta_0,\ldots,\beta_p)=\prod_{i=1}^n\frac{e^{-\lambda(x_i)}\lambda(x_i)^{y_i}}{y_i!}.$$
+  <p>計數不一定真的服從 Poisson；這仍是對分布形狀與平均–變異關係的假設，要依資料檢查。平均可以不是整數，觀測值才是非負整數。</p>
+""" + info("係數要用乘法解讀", r"""因為線性的是 $\log\lambda$，所以 $X_j$ 增加一單位讓
+  <strong>$\lambda$ 乘上 $e^{\beta_j}$</strong>，不是加上 $\beta_j$。<br>
+  ISLP 表 4.11 的例子：<code>weathersit[cloudy/misty]</code> 的係數是 −0.08，
+  $e^{-0.08}=0.923$：<strong>陰天的平均租借量只有晴天的 92.3%</strong>。<br>
+  這跟邏輯斯迴歸的「勝算乘上 $e^\beta$」是同一個模式：<strong>連結函數取了 log，解讀就從加法變乘法。</strong>""") + r"""
+
+  <h3 id="w04-glm">廣義線性模型：三個模型的共同結構</h3>
+  <p>到這裡我們看過線性、邏輯斯、Poisson 三種迴歸。講義指出它們有兩個共同點：</p>
+  <ol>
+    <li><strong>給定 $X_1,\ldots,X_p$，$Y$ 屬於某一族分布。</strong>線性迴歸通常假設 $Y\mid X$ 是常態，邏輯斯迴歸是 Bernoulli，Poisson 迴歸是 Poisson。</li>
+    <li><strong>都把 $Y$ 的平均寫成預測變數的函數：</strong></li>
+  </ol>
+  $$\begin{aligned}
+  \text{線性：}&\ E(Y\mid X)=\beta_0+\beta_1X_1+\cdots+\beta_pX_p,\\
+  \text{邏輯斯：}&\ E(Y\mid X)=\frac{e^{\beta_0+\beta_1X_1+\cdots+\beta_pX_p}}{1+e^{\beta_0+\beta_1X_1+\cdots+\beta_pX_p}},\\
+  \text{Poisson：}&\ E(Y\mid X)=e^{\beta_0+\beta_1X_1+\cdots+\beta_pX_p}.
+  \end{aligned}$$
+  <p>三個平均式都可以用一個<strong>連結函數</strong>（link function）$\eta$ 統一：先把平均轉換，讓轉換後的平均成為預測變數的線性函數，</p>
+  $$\eta\bigl(E(Y\mid X_1,\ldots,X_p)\bigr)=\beta_0+\beta_1X_1+\cdots+\beta_pX_p.$$
+  <p>三者的連結函數分別是 $\eta(\mu)=\mu$、$\eta(\mu)=\log\{\mu/(1-\mu)\}$、$\eta(\mu)=\log\mu$。</p>
+""" + table(["模型", "條件分布", "條件平均", "條件變異數", "連結函數"],
+       [["Gaussian 線性迴歸", "$N(\\mu(x),\\sigma^2)$", "$\\mu(x)=\\beta_0+\\beta^{\\mathsf{T}}x$", "$\\sigma^2$", "$\\eta(\\mu)=\\mu$"],
+        ["邏輯斯迴歸", "$\\operatorname{Bernoulli}(p(x))$", "$p(x)$", "$p(x)\\{1-p(x)\\}$", "$\\eta(p)=\\log\\{p/(1-p)\\}$"],
+        ["Poisson 迴歸", "$\\operatorname{Poisson}(\\lambda(x))$", "$\\lambda(x)$", "$\\lambda(x)$", "$\\eta(\\lambda)=\\log\\lambda$"]]) + r"""
+
+  <h4>指數分布族</h4>
+  <p>講義接著說：Gaussian、Bernoulli、Poisson 都屬於一個更大的分布類別，叫<strong>指數分布族</strong>（exponential family）。它的成員都能寫成</p>
+  $$f(y;\theta,\phi)=\exp\Bigl\{\frac{y\,\theta-b(\theta)}{a(\phi)}+c(y,\phi)\Bigr\},$$
+  <p>其中 $\theta$ 是和平均有關的<strong>自然參數</strong>（natural parameter），$\phi$ 是散布參數，$b(\cdot)$、$a(\cdot)$、$c(\cdot)$ 是決定分布種類的已知函數。把三個分布改寫成這個形式：</p>
+""" + table(["分布", "自然參數 $\\theta$", "$b(\\theta)$", "$a(\\phi)$", "平均 $\\mu=b'(\\theta)$", "變異數 $a(\\phi)\\,b''(\\theta)$"],
+       [["常態 $N(\\mu,\\sigma^2)$", "$\\mu$", "$\\theta^2/2$", "$\\sigma^2$", "$\\theta$", "$\\sigma^2$"],
+        ["Bernoulli$(p)$", "$\\log\\{p/(1-p)\\}$", "$\\log(1+e^\\theta)$", "1", "$e^\\theta/(1+e^\\theta)=p$", "$p(1-p)$"],
+        ["Poisson$(\\lambda)$", "$\\log\\lambda$", "$e^\\theta$", "1", "$e^\\theta=\\lambda$", "$\\lambda$"]]) + r"""
+  <p>表中的自然參數正好就是三個模型使用的連結函數：$\mu$、logit、log。讓連結函數等於自然參數，$\theta=\eta(\mu)$，稱為<strong>典型連結</strong>（canonical link）。</p>
+  <p>於是有一個通用的做法：<strong>選一個指數分布族的成員來描述 $Y\mid X$，再用連結函數把平均轉換成預測變數的線性函數。</strong>依這個做法建立的迴歸，都叫<strong>廣義線性模型</strong>（generalized linear model, GLM）。線性、邏輯斯、Poisson 迴歸是其中三例；指數分布、Gamma 分布、負二項分布也是指數族成員（負二項須固定其散布參數），對應的 Gamma 迴歸與負二項迴歸也是 GLM，下方收合有說明。</p>
+""" + info("為什麼選指數分布族", r"""<strong>1. 平均決定變異數的形狀。</strong>平均 $\mu=b'(\theta)$、變異數 $a(\phi)\,b''(\theta)$ 都由同一個 $b$ 決定，所以變異數會依分布種類自動隨平均改變：Poisson 是 $\mu$，Bernoulli 是 $\mu(1-\mu)$。這正好處理線性迴歸「固定變異數」的問題。<br>
+  <strong>2. 估計方程式長得一樣。</strong>使用典型連結時，每個成員的分數函數都是 $X^\mathsf{T}(y-\mu)/a(\phi)$，對數概似是 $\beta$ 的凹函數；$X$ 滿欄秩、而且有限的最大概似解存在時，這個解是唯一的。<br>
+  <strong>3. 一套演算法與推論工具通用。</strong>同一個反覆加權最小平方（IRLS）可以擬合所有成員，標準誤、Wald 檢定、偏差（deviance）的算法也相同；<code>sm.GLM()</code> 只要換 <code>family</code>。<br>
+  <strong>4. 涵蓋常見的反應類型。</strong>連續（常態）、二元（Bernoulli）、計數（Poisson、負二項）、正值且右偏（Gamma）都在裡面。""", "warm") + detail("w04-detail-expfam-why", "推導：指數分布族的平均、變異數與典型連結的估計方程式", r"""
+  <p><strong>第一步：平均是 $b'(\theta)$。</strong>密度積分為 1：$\int\exp\{[y\theta-b(\theta)]/a(\phi)+c(y,\phi)\}\,dy=1$。對 $\theta$ 微分（假設可交換微分與積分）：</p>
+  $$\int\frac{y-b'(\theta)}{a(\phi)}\,f(y)\,dy=0\ \Longrightarrow\ E(Y)=b'(\theta).$$
+  <p><strong>第二步：變異數是 $a(\phi)b''(\theta)$。</strong>再微分一次：</p>
+  $$\int\Bigl[\frac{(y-b'(\theta))^2}{a(\phi)^2}-\frac{b''(\theta)}{a(\phi)}\Bigr]f(y)\,dy=0\ \Longrightarrow\ \operatorname{Var}(Y)=a(\phi)\,b''(\theta).$$
+  <p>因為 $\mu=b'(\theta)$ 是 $\theta$ 的遞增函數，$b''(\theta)$ 可以寫成 $\mu$ 的函數 $V(\mu)$，叫<strong>變異函數</strong>（variance function）：常態 $V=1$、Bernoulli $V=\mu(1-\mu)$、Poisson $V=\mu$。</p>
+  <p><strong>第三步：典型連結的分數函數。</strong>令 $\theta_i=\eta_i=x_i^\mathsf{T}\beta$。第 $i$ 筆的對數概似是 $[y_i\theta_i-b(\theta_i)]/a(\phi)+c(y_i,\phi)$，對 $\beta$ 微分：</p>
+  $$U(\beta)=\frac1{a(\phi)}\sum_{i=1}^n\bigl(y_i-b'(\theta_i)\bigr)x_i=\frac{X^\mathsf{T}(y-\mu)}{a(\phi)}.$$
+  <p>邏輯斯與 Poisson 一節推出的 $X^\mathsf{T}(y-p)$、$X^\mathsf{T}(y-\mu)$ 都是這個式子的特例。</p>
+  <p><strong>第四步：凹性。</strong>再微分得 $\nabla^2\ell=-X^\mathsf{T}WX/a(\phi)$，$W=\operatorname{diag}\{b''(\theta_i)\}$ 的對角元素就是各筆的變異函數，為正；所以對數概似對 $\beta$ 是凹函數，$X$ 滿欄秩時嚴格凹。Newton 法在這裡就是 IRLS：每一步用權重 $W$ 做一次加權最小平方。</p>
+  <p>非典型連結（例如 Gamma 迴歸常用的 log 連結）仍是 GLM，只是分數函數多一個權重項，凹性不一定成立。</p>
+""" + links(("講義引用的 GLM 與 Poisson 迴歸例子", "https://dafriedman97.github.io/mlbook/content/c2/s1/GLMs.html#example-poisson-regression"), lead="延伸閱讀")) + r"""
+  <p>在 <code>sm.GLM()</code> 中，三者分別使用 <code>sm.families.Gaussian()</code>、<code>sm.families.Binomial()</code> 與 <code>sm.families.Poisson()</code>。單次 Bernoulli 是試驗次數為 1 的 Binomial，因此 logistic 範例使用 Binomial family。</p>
+"""
+
+GLM_FAMILY_DETAILS = detail("w04-detail-negbin", "延伸閱讀：負二項迴歸——計數資料過度分散時", r"""
+  <p>Poisson 要求條件變異數等於條件平均。實際的計數常常更分散（上面的 <code>Bikeshare</code> 就是），這時可以改用<strong>負二項迴歸</strong>（negative binomial regression）。它保留 log 連結 $\log\mu(x)=x^\mathsf{T}\beta$，但讓變異數比平均大：</p>
+  $$\operatorname{Var}(Y\mid X=x)=\mu(x)+\frac{\mu(x)^2}{k},\qquad k>0.$$
+  <p>$k$ 控制過度分散的程度：$k$ 愈小，變異比平均大得愈多；$k\to\infty$ 時退回 Poisson。一種直覺是：每個時段的平均人數本身還帶有 Poisson 沒描述到的隨機起伏（例如服從 Gamma 分布的「真實強度」），把這層起伏平均掉，就得到負二項分布。</p>
+  <p>固定 $k$ 時，負二項分布屬於指數分布族，自然參數 $\theta=\log\{\mu/(\mu+k)\}$、$b(\theta)=-k\log(1-e^\theta)$，因此是一個 GLM；實務上 $k$ 也要估計。係數的解讀和 Poisson 相同：$X_j$ 增加一單位，平均乘上 $e^{\beta_j}$。但標準誤會反映額外的變異，通常比 Poisson 的大，修正了過度分散造成 z 值被高估的問題。<code>statsmodels</code> 可用 <code>sm.families.NegativeBinomial()</code>（固定 $k$ 的 GLM）或 <code>sm.NegativeBinomial()</code>（同時估計散布參數）。</p>
+""") + detail("w04-detail-gamma", "延伸閱讀：Gamma 迴歸——正值、右偏的連續反應", r"""
+  <p>有些反應是<strong>正的連續值</strong>，而且右偏、平均愈大起伏愈大，例如保險理賠金額、等待時間、醫療費用。線性迴歸可能預測出負值，也假設固定變異數；這時可以用 <strong>Gamma 迴歸</strong>，假設 $Y\mid X$ 服從 Gamma 分布，其變異數為</p>
+  $$\operatorname{Var}(Y\mid X=x)=\phi\,\mu(x)^2.$$
+  <p>也就是標準差和平均成正比，<strong>變異係數</strong>（標準差 ÷ 平均）固定為 $\sqrt\phi$。改寫成指數族時，自然參數 $\theta=-1/\mu$、$b(\theta)=-\log(-\theta)$，所以典型連結是倒數 $1/\mu$（差一個負號）。倒數連結的係數不易解讀，也不保證平均為正，實務上更常用 <strong>log 連結</strong> $\log\mu(x)=x^\mathsf{T}\beta$，係數同樣讀成「平均乘上 $e^{\beta_j}$」。</p>
+  <p>和「先取 $\log Y$ 再做線性迴歸」比：Gamma 迴歸建模的是 $\log E(Y\mid X)$，可以直接回到原尺度的平均；取 log 的線性迴歸建模的是 $E(\log Y\mid X)$，兩者一般不相等。<code>statsmodels</code> 用 <code>sm.families.Gamma(link=sm.families.links.Log())</code>。</p>
+""")
 # ── P07 Poisson / GLM ─────────────────────────────────────────────────
 BODIES["poisson"] = f"""
   <p>講義最後用計數資料，把線性迴歸與 logistic regression 連到廣義線性模型（GLM）。</p>
@@ -1252,51 +1406,7 @@ BODIES["poisson"] = f"""
   </ul>
 {links(("ISLP 的 Bikeshare 資料說明", "https://islp.readthedocs.io/en/latest/datasets/Bikeshare.html"))}
 
-  <p>直接對計數擬合線性迴歸會遇到三個問題：</p>
-
-  <ul>
-    <li><strong>會預測出負數。</strong>ISLP 說 <code>Bikeshare</code> 上有 <strong>9.6%</strong>
-    的擬合值是負的——負的租借數沒有意義。</li>
-    <li><strong>變異數不是常數。</strong>清晨下雨的時段平均 5.05 人、標準差 3.73；
-    春天早上晴天的時段平均 243.59 人、標準差 131.7。<strong>平均大變異也大</strong>，
-    這提示變異可能隨平均改變；是否違反條件同變異假設，仍需檢查完整模型的殘差。</li>
-    <li><strong>y 是整數。</strong>Gaussian 線性模型使用連續的條件分布，無法直接描述計數的離散分布；線性條件平均本身仍可用於計數。</li>
-  </ul>
-
-  <p>反應是非負整數時，可以考慮 Poisson 分布。但<strong>計數不一定服從 Poisson</strong>；這是對分布形狀與平均–變異關係的模型假設，需要依資料判斷。給定預測變數後：</p>
-  $$Y\\mid X=x\\sim\\operatorname{{Poisson}}(\\lambda(x)).$$
-
-  $$\\Pr(Y = k \\mid X=x) = \\frac{{e^{{-\\lambda}} \\lambda^k}}{{k!}}, \\qquad k = 0, 1, 2, \\ldots
-    \\qquad\\text{{而且}}\\quad \\mathbb{{E}}(Y\\mid X=x) = \\mathrm{{Var}}(Y\\mid X=x) = \\lambda(x)$$
-
-  <p><strong>Poisson 迴歸</strong>讓 λ 隨預測變數而變，而且是對 <strong>log λ</strong> 擬合線性式：</p>
-
-  $$\\log \\lambda(X_1, \\ldots, X_p) = \\beta_0 + \\beta_1 X_1 + \\cdots + \\beta_p X_p
-    \\qquad\\Longleftrightarrow\\qquad
-    \\lambda = e^{{\\beta_0 + \\beta_1 X_1 + \\cdots + \\beta_p X_p}}$$
-
-  <p>給定 $n$ 筆獨立觀測，概似是各筆 Poisson 機率的乘積：</p>
-  $$\\ell(\\beta_0,\\ldots,\\beta_p)=\\prod_{{i=1}}^n\\frac{{e^{{-\\lambda(x_i)}}\\lambda(x_i)^{{y_i}}}}{{y_i!}},$$
-  <p>係數用最大概似估計。log link 讓 $\\lambda(x)=e^{{\\eta(x)}}$ 永遠為正，因而避免負的平均租借數。條件平均等於條件變異數，則是 Poisson 分布本身的性質。平均數可以不是整數；真正的觀測值仍是非負整數。</p>
-
-{info("係數要用乘法解讀", '''因為線性的是 log λ，所以 X<sub>j</sub> 增加一單位讓
-  <strong>λ 乘上 e^βⱼ</strong>，不是加上 βⱼ。<br>
-  ISLP 表 4.11 的例子：<code>weathersit[cloudy/misty]</code> 的係數是 −0.08，
-  e<sup>−0.08</sup> = 0.923——<strong>陰天的平均租借量只有晴天的 92.3%</strong>。<br>
-  這跟邏輯斯迴歸的「勝算乘上 e^β」是同一個模式：<strong>連結函數取了 log，解讀就從加法變乘法。</strong>''')}
-
-  <h3>GLM：把三個模型收進同一個框架</h3>
-
-  <p>三種模型都先描述 $Y\\mid X$ 的條件分布，再把條件平均 $\\mu(x)=E(Y\\mid X=x)$ 接到線性預測式。用 $g$ 表示<strong>連結函數</strong>，用 $\\eta$ 表示線性分數：</p>
-  $$g(\\mu(x))=\\eta(x)=\\beta_0+\\beta_1x_1+\\cdots+\\beta_px_p.$$
-  <div style="overflow-x:auto"><table class="cmp-table"><thead><tr><th>模型</th><th>條件分布</th><th>條件平均</th><th>條件變異數</th><th>連結函數</th></tr></thead><tbody>
-  <tr><td>Gaussian 線性迴歸</td><td>$N(\\mu(x),\\sigma^2)$</td><td>$\\mu(x)=\\eta(x)$</td><td>$\\sigma^2$</td><td>$g(\\mu)=\\mu$</td></tr>
-  <tr><td>Logistic regression</td><td>$\\operatorname{{Bernoulli}}(p(x))$</td><td>$\\mu(x)=p(x)$</td><td>$p(x)(1-p(x))$</td><td>$g(p)=\\log\\{{p/(1-p)\\}}$</td></tr>
-  <tr><td>Poisson regression</td><td>$\\operatorname{{Poisson}}(\\lambda(x))$</td><td>$\\mu(x)=\\lambda(x)=e^{{\\eta(x)}}$</td><td>$\\lambda(x)$</td><td>$g(\\lambda)=\\log\\lambda$</td></tr>
-  </tbody></table></div>
-{links(("講義引用的 Poisson 迴歸例子", "https://dafriedman97.github.io/mlbook/content/c2/s1/GLMs.html#example-poisson-regression"))}
-  <p>Gaussian、Bernoulli 與 Poisson 都屬於指數分布族。GLM 以這類條件分布、線性預測式與連結函數組成模型。對單次二元結果，Bernoulli 由反應值的形式決定；Gaussian 或 Poisson 的分布形狀則仍是額外假設。</p>
-  <p>在 <code>sm.GLM()</code> 中，三者分別使用 <code>sm.families.Gaussian()</code>、<code>sm.families.Binomial()</code> 與 <code>sm.families.Poisson()</code>。單次 Bernoulli 是試驗次數為 1 的 Binomial，因此 logistic 範例使用 Binomial family。</p>
+{GLM_MAIN}
 
   <h3 id="dx-poi">講義完整實作：用 <code>sm.GLM()</code> 建立三種模型</h3>
 {card("講義 04 · Poisson 迴歸（Bikeshare）",
@@ -1318,6 +1428,8 @@ BODIES["poisson"] = f"""
   <strong>導致表 4.11 的 z 值被高估</strong>（看起來比實際更顯著）。<br>
   補救方式是 quasi-Poisson 或負二項迴歸——超出本章範圍，但解讀結果時仍須留意：
   若條件平均模型正確且其他估計條件成立，係數仍可能一致；一般 Poisson 標準誤與 p 值則可能失準。''', "warm")}
+
+{GLM_FAMILY_DETAILS}
 
 {quiz("qPoi", "QUIZ · Poisson 迴歸",
       "Poisson 迴歸擬合的是 log λ 而不是 λ 本身。最主要的理由是什麼？",
@@ -1636,7 +1748,8 @@ BODIES['threshold'] += r"""
 $$F_1=\frac{2\,\mathrm{precision}\,\mathrm{recall}}{\mathrm{precision}+\mathrm{recall}}=\frac{2TP}{2TP+FP+FN}.$$
 <p>F1不使用TN，適合某些重視正類的任務，但不能代替錯誤成本分析。分母為零時須事先規定回報方式。門檻值降低保證recall不降，卻不保證precision下降或上升，因為新納入觀測的真實正類比例也會變。</p>
 <p>AUC可解讀為隨機抽一個正類和一個負類時，正類分數較高的機率，加上一半平手機率。若分數與類別獨立且兩類使用同一分數分布，母體AUC為0.5；有限測試集的實現值可高可低。把分數全部取反會把AUC變成1−AUC，但這個操作不能利用測試標籤來挑方向。</p>
-""" + proof('w04proofRandomAuc','獨立隨機分數的AUC為二分之一',r"""
+""" + links(("什麼是 recall 與 precision", "https://becominghuman.ai/whats-recall-and-precision-4a801b1ac0da"),
+            ("隨機分類器的 ROC AUC", "https://datascience.stackexchange.com/questions/31872/auc-roc-of-a-random-classifier/31877#31877")) + proof('w04proofRandomAuc','獨立隨機分數的AUC為二分之一',r"""
 <p>在虛無情境，正類分數 S+ 與負類分數 S− 為同分布的獨立抽樣，所以交換對稱性給 $P(S_+>S_-)=P(S_->S_+)$。令平手機率為 q，兩個嚴格排序的機率各為 (1−q)/2，因此 AUC=(1−q)/2+q/2=1/2。</p>
 """)
 
