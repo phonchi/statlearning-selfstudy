@@ -78,7 +78,7 @@ boot = [alpha_hat(*(lambda i: (PX[i], PY[i]))(rng.integers(0, n, n))) for _ in r
 boot_hist, boot_edges = np.histogram(boot, bins=24)
 
 # ── 4. CV 的錯用 vs 正用：p 遠大於 n 的純噪音資料 ────────────────────────
-n_obs, p_all, k_sel = 50, 500, 10
+n_obs, p_all, k_sel = 50, 5000, 100        # 講義 05 p.19 的設定
 from sklearn.linear_model import LogisticRegression  # noqa: E402
 
 
@@ -109,6 +109,20 @@ def cv_misuse_once(seed):
 misuse = np.asarray([cv_misuse_once(7000 + i) for i in range(100)])
 wrong_all, right_all = misuse[:, 0], misuse[:, 1]
 
+
+# ── 5. Portfolio 的「真實世界」模擬（講義 05 p.26–28；ISLP 圖 5.10 左）──────
+SIM_SX2, SIM_SY2, SIM_SXY = 1.0, 1.25, 0.5          # 講義給的母體參數 → α = 0.6
+SIM_ALPHA = (SIM_SY2 - SIM_SXY) / (SIM_SX2 + SIM_SY2 - 2 * SIM_SXY)
+srng = np.random.default_rng(20261006)
+sim_cov = np.array([[SIM_SX2, SIM_SXY], [SIM_SXY, SIM_SY2]])
+sim_alpha = []
+for _ in range(1000):
+    xy = srng.multivariate_normal([0.0, 0.0], sim_cov, size=100)
+    sim_alpha.append(alpha_hat(xy[:, 0], xy[:, 1]))
+sim_alpha = np.asarray(sim_alpha)
+common_edges = np.linspace(0.3, 0.95, 27)
+sim_hist = np.histogram(np.clip(sim_alpha, 0.3, 0.95 - 1e-9), bins=common_edges)[0]
+boot_hist_c = np.histogram(np.clip(np.asarray(boot), 0.3, 0.95 - 1e-9), bins=common_edges)[0]
 
 def summary(a):
     return {"mean": round(float(np.mean(a)), 4),
@@ -146,6 +160,16 @@ out = [
                             "wrong": summary(wrong_all), "right": summary(right_all)},
        "純噪音模擬（y 與 X 完全獨立）", "np.random.default_rng(7000..7099)",
        "報告 100 次獨立模擬的平均、中位數與 10–90 百分位，不以單次結果作一般結論"),
+    js("FRAMES_w05sim", {"alphaTrue": round(SIM_ALPHA, 4), "reps": 1000, "n": 100,
+                         "simMean": round(float(sim_alpha.mean()), 4),
+                         "simSD": round(float(sim_alpha.std(ddof=1)), 4),
+                         "bootMean": round(float(np.mean(boot)), 4),
+                         "bootSD": round(float(np.std(boot, ddof=1)), 4),
+                         "edges": [round(float(e), 4) for e in common_edges],
+                         "simHist": sim_hist.tolist(), "bootHist": boot_hist_c.tolist()},
+       "講義 05 p.26–28 的母體設定（σX²=1、σY²=1.25、σXY=0.5）自行模擬；bootstrap 欄沿用 FRAMES_w05boot",
+       "np.random.default_rng(20261006)，1000 份各 100 對的常態資料",
+       "講義的 0.5996 與 0.083 來自原書模擬；本頁新種子只會接近、不會逐位相同"),
 ]
 print("\n".join(out))
 

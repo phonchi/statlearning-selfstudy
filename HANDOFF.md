@@ -658,3 +658,30 @@ FRAMES 內含「配適值」與 scale-location 的舊旁白改由 JS 的 `w03dia
 驗收：`validate.py --page linear_regression` 0 失敗、五支 check 腳本全過、`browser_check.js` 見 `browser_check_round2.log`，
 截圖 `shots/r2_*.png`。
 
+## 21. 第 4 章後半與第 5 章依講義逐頁對齊，並嵌入 16 則概念問答（2026-10-06）
+
+使用者要求：第 4 章後半與第 5 章「全面對齊講義，包含補充連結，加深加廣，密度參考第 3 章」，另外併入 16 則概念問答；程式一律收合、補充可收合，並和 Codex 討論。
+
+**決策（grill）**：第 4 章範圍為講義 p.22–61（p.1–21 只補連結與 logit⇄logistic）；問答就地嵌入、由實作者 refine 並判斷可見或收合，保留使用者給的數值例子（`STYLE_CONTRACT.md` §13 已加註此例外）；Fisher LDA 由收合改為可見小節（標〔選讀〕）；附錄 p.56–60 在第 4 章寫精簡收合版並連到第 6 章與非監督式學習；LOOCV 變異主文照講義語氣，「不一定較高」集中在一個收合補充；新增 4 個元件＋3 組模擬示意圖；完成後兩個 commit 並 push。
+
+**第 4 章新增／改動（`enrich_classification.py`）**
+- `lda`：可見小節 `w04-maha`（一維標準差、特徵分解 $\sum y_i^2/\lambda_i$、白化，含元件 `w04mahaSvg`）、`w04-bayes-boundary`（Bayes 邊界 vs 估計邊界、Bayes 錯誤率，連到 `statistical_learning.html#w02proofBayes`）；Fisher 小節 `w04fisher` 改可見，新增投影座標／投影向量、$\operatorname{Var}(a^\mathsf{T}X)=a^\mathsf{T}\Sigma a$；收合 `w04-detail-maha-eigen`、`w04-detail-projected-variance`、`w04-detail-fisher-eigen`。`reading_flow_ch1_6.py` 移除 `fisher` 群組。
+- `qda`：講義 p.33 其他 $f_k$ 形式、p.34 完整展開、`w04-param-count`（含 p=100、K=3 的 5350／15450／600）、NB 後驗乘積、p.36 玩具例（0.944）、p.37 Default 結果。元件 `w04lda2Svg` 改為「綠虛線＝真參數 Bayes 邊界、紅線＝60 點估計的 LDA／QDA 邊界」，並列兩種測試錯誤率。
+- `threshold`：FPR／FNR 定義與 75.7%→41.4%；可見小節 `w04-pr`（1000 負／10 正例、盛行率基準）；`w04thrRoc` 加 ROC／PR 切換（由既有 `FRAMES_w04thr` 直方圖計算，FRAMES 未改）。
+- `compare`：LDA $a_k,b_k$ 明式、NB 共用 $\sigma_j^2$ 的 $b_{kj}$、講義 p.40 原則、`w04-scenarios` 六情境表與箱形圖 `w04scenSvg`（`FRAMES_w04scen`，依 ISLP 文字重建的示意模擬，平均差、t 自由度 3、情境 5 函數為自選）；兩則收合問答（t 分布邊界：同 Σ、同 ν、等先驗才線性，log-odds 仍非線性；多項式特徵加進 LDA／QDA／NB／logistic）。
+- `poisson`、`reference`：Bikeshare 變數、概似式、收合 `w04-detail-glm-appendix`（p.54–55 與 8 個連結、OvO／OvR）與 `w04-detail-linear-algebra`（p.56–60）；公式速查補 6 列。
+- 詞彙卡 +5（Mahalanobis、Bayes 錯誤率、FNR、PR 曲線、投影後變異）。
+
+**第 5 章新增／改動（`enrich_resampling.py`）**
+- `prologue`：測試／訓練誤差定義、Cp／AIC／BIC 預告、可見小節 `w05-hyper`（參數 vs 超參數、模型 vs 演算法超參數）。
+- `loocv`：可見 `w05-loocv-shortcut`（$h_i$ 直覺、$\hat y_{(i)}$ 公式、0.8／0.02 例）、`w05-loocv-drawbacks`（講義三缺點與平均的變異式）；刪掉原本重複 hedge 的問答。
+- `kfold`：講義加權式 $\sum (n_j/n)\mathrm{MSE}_j$；〔選讀〕`w05-shuffle`、`w05-shufflesplit`（含切分索引元件 `w05splitSvg`，瀏覽器內固定種子）；lab 儲存格 44、46 卡片（收合）。
+- `kbias`：依講義語氣改寫；收合 `w05-detail-loocv-variance` 包住既有 `w05proofCvVariance`。`cvclass` 改加權式並描述圖 5.8。
+- `cvwrong`：數字改回講義 5000／50／100；救回孤兒元件 `w05misChart`（`FRAMES_w05misuse` 以講義設定重產：錯誤流程 0.001、正確流程 0.501）。
+- `bootstrap`：名稱由來、`w05-boot-sim`（講義 0.5996／0.083，`w05simChart`＝新 `FRAMES_w05sim`，模擬 SD 0.0797）、`w05-boot-world`（$\mathrm{SE}_B$）、`w05-boot-ci`（百分位 (0.43, 0.72)、曲線 CI 五步驟、區塊 bootstrap）、預測誤差與 OOB 說明；lab 儲存格 53、65–77 卡片；置換檢定四步驟與附錄連結。
+- 詞彙卡 +3（超參數、模型 vs 演算法超參數、蒙地卡羅交叉驗證）。
+
+**Codex（gpt-6-astra，唯讀）**：大綱審查 job `53228626-9b28-4438-abcc-c02f06688ed7`、完稿複查 job `95961139-8ccc-4cee-a346-05310fc613dd`（紀錄在 `~/.local/share/claude-codex-collab/runs/`，不進 repo）。完稿複查 9 項中 8 項核實後修正（LDA 收斂改「不保證」、GLM 誤差敘述限定 Bernoulli／Poisson、QDA 元件說明與估計邊界一致、負相關時長短軸按鈕對調、StratifiedKFold 示意折大小改為各 8、SE 不寫成平均距離、情境 5 標「共 100 筆」、既存的「LOOCV 的 ρ 接近 1」改寫）；第 9 項是確認 404 而刻意不放的連結，不採納。
+
+**驗證**（`tools/verification/ch4-ch5-lecture-alignment-20261006/`，見其 README 與 `run.log`）：`verify_math.py` 18/18；`verify.py HEAD` 0 失敗（既有 FRAMES 逐 byte 相同、lab 文字保留、講義連結全數在頁）；`validate.py` 兩頁 0 失敗（classification 331 KB 只有 SIZE 警告）；`check_*` 全過；`browser_check.js` 0 問題；1440／390 px 截圖已逐張檢視。已知非本次問題見該 README。`check_teaching_scope.py` 會重寫 `tools/verification/teaching-scope-20260910/` 的清單 JSON，本次一併提交（內容是依目前頁面重算的 details 清單與計數）。
+
