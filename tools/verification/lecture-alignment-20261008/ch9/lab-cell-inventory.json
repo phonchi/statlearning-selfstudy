@@ -1,0 +1,675 @@
+[
+  {
+    "cell": 0,
+    "type": "markdown",
+    "source": "\n# Chapter 9\n",
+    "output_types": []
+  },
+  {
+    "cell": 1,
+    "type": "markdown",
+    "source": "<table align=\"left\">\n  <td>\n    <a href=\"https://colab.research.google.com/github/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>\n  </td>\n  <td>\n    <a target=\"_blank\" href=\"https://kaggle.com/kernels/welcome?src=https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb\"><img src=\"https://kaggle.com/static/images/open-in-kaggle.svg\" /></a>\n  </td>\n</table>\n",
+    "output_types": []
+  },
+  {
+    "cell": 2,
+    "type": "code",
+    "source": "%load_ext cudf.pandas\n%load_ext cuml.accel",
+    "output_types": []
+  },
+  {
+    "cell": 3,
+    "type": "code",
+    "source": "%pip install ISLP -qq",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 4,
+    "type": "code",
+    "source": "# 本 Notebook 使用的匯入（imports）\nimport numpy as np  # 數值運算與陣列處理\nimport pandas as pd  # 資料表格與資料處理\nimport seaborn as sns  # 統計視覺化\nimport matplotlib.pyplot as plt  # 繪圖指令與樣式\nfrom matplotlib.pyplot import subplots, cm  # 子圖與色盤\nimport sklearn.model_selection as skm  # 模型選擇/交叉驗證工具 (別名 skm)\nfrom sklearn.datasets import make_circles, make_blobs  # 合成資料集\nfrom sklearn.svm import SVC, NuSVC, LinearSVC  # 支援向量機 (核/nu/線性)\nfrom sklearn.kernel_approximation import RBFSampler  # RBF 核近似特徵\nfrom sklearn.linear_model import SGDClassifier  # 線性分類器 (SGD)\nfrom sklearn.metrics import accuracy_score, RocCurveDisplay  # 評估與 ROC 視覺化\nfrom ISLP import load_data, confusion_table  # ISLP 資料載入與混淆表\nfrom ISLP.svm import plot as plot_svm  # ISLP SVM 視覺化輔助",
+    "output_types": []
+  },
+  {
+    "cell": 5,
+    "type": "markdown",
+    "source": "# 實驗：支援向量機",
+    "output_types": []
+  },
+  {
+    "cell": 6,
+    "type": "markdown",
+    "source": "我們在此頂層匯入一些常用函式庫。",
+    "output_types": []
+  },
+  {
+    "cell": 7,
+    "type": "markdown",
+    "source": "在本實驗中，我們使用 `scikit-learn.svm` 函式庫來示範支援向量分類器與支援向量機。\n\n我們匯入一些常用函式庫。",
+    "output_types": []
+  },
+  {
+    "cell": 8,
+    "type": "code",
+    "source": "%matplotlib inline\nsns.set_context(\"notebook\", font_scale=1.5, rc={\"lines.linewidth\": 2.5})",
+    "output_types": []
+  },
+  {
+    "cell": 9,
+    "type": "markdown",
+    "source": "我們將使用函數 `RocCurveDisplay.from_estimator()` 來產生幾個 ROC 圖，使用簡寫 `roc_curve`。",
+    "output_types": []
+  },
+  {
+    "cell": 10,
+    "type": "code",
+    "source": "roc_curve = RocCurveDisplay.from_estimator # shorthand",
+    "output_types": []
+  },
+  {
+    "cell": 11,
+    "type": "markdown",
+    "source": "注意：`SVC`、`NuSVC` 和 `LinearSVC` 是能夠在資料集上執行二元和多類別分類的類別。`SVC` 和 `NuSVC` 是相似的方法，但接受略微不同的參數集合，並有不同的數學公式。另一方面，`LinearSVC` 是針對線性核情況的支援向量分類的另一種（更快的）實作。注意：LinearSVC 不接受 kernel 參數，因為假設它是線性的。它也缺少 `SVC` 和 `NuSVC` 的某些屬性，如 `support_`。",
+    "output_types": []
+  },
+  {
+    "cell": 12,
+    "type": "markdown",
+    "source": "## 支援向量分類器",
+    "output_types": []
+  },
+  {
+    "cell": 13,
+    "type": "markdown",
+    "source": "我們現在使用 `scikit-learn` 的 `SupportVectorClassifier()` 函數（簡稱 `SVC()`）來擬合給定參數 `C` 值的支援向量分類器。\n`C` 參數允許我們指定對邊界違反的成本。當 `cost` 參數很小時，邊界會很寬，許多支援向量會在邊界上或違反邊界。當 `C` 參數很大時，邊界會很窄，在邊界上或違反邊界的支援向量很少。\n\n在此我們示範在二維範例上使用 `SVC()`，這樣我們可以繪製產生的決策邊界。我們首先產生屬於兩個類別的觀測值，並檢查類別是否線性可分離。",
+    "output_types": []
+  },
+  {
+    "cell": 14,
+    "type": "code",
+    "source": "rng = np.random.default_rng(1)\nX = rng.standard_normal((50, 2))\ny = np.array([-1]*25+[1]*25)\nX[y==1] += 1\nfig, ax = subplots(figsize=(8,8))\nax.scatter(X[:,0],\n           X[:,1],\n           c=y,\n           cmap=cm.coolwarm);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 15,
+    "type": "markdown",
+    "source": "它們不是線性可分離的。我們現在擬合分類器。",
+    "output_types": []
+  },
+  {
+    "cell": 16,
+    "type": "code",
+    "source": "svm_linear = SVC(C=10, kernel='linear')\nsvm_linear.fit(X, y)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 17,
+    "type": "markdown",
+    "source": "具有兩個特徵的支援向量分類器可以透過繪製其 *決策函數* 的值來視覺化。我們在 `ISLP` 套件中包含了一個 [`plot_svm()`](https://islp.readthedocs.io/en/latest/helpers/svm.html) 函數來完成此功能（靈感來自 `scikit-learn` 文件中的類似範例）。",
+    "output_types": []
+  },
+  {
+    "cell": 18,
+    "type": "code",
+    "source": "fig, ax = subplots(figsize=(8,8))\nplot_svm(X,\n         y,\n         svm_linear,\n         ax=ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 19,
+    "type": "markdown",
+    "source": "兩個類別之間的決策邊界是線性的（因為我們使用參數 `kernel='linear'`）。支援向量標記為 `+`，其餘觀測值繪製為圓形。",
+    "output_types": []
+  },
+  {
+    "cell": 20,
+    "type": "markdown",
+    "source": "我們在此看到有 29 個支援向量。我們可以如下確定它們的身份：",
+    "output_types": []
+  },
+  {
+    "cell": 21,
+    "type": "code",
+    "source": "# get support vectors\npd.DataFrame(svm_linear.support_vectors_, index=svm_linear.support_)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 22,
+    "type": "code",
+    "source": "# get indices of support vectors\nsvm_linear.support_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 23,
+    "type": "code",
+    "source": "# get number of support vectors for each class\nsvm_linear.n_support_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 24,
+    "type": "markdown",
+    "source": "如果我們改為使用較小的成本參數值會怎樣？",
+    "output_types": []
+  },
+  {
+    "cell": 25,
+    "type": "code",
+    "source": "svm_linear_small = SVC(C=0.1, kernel='linear')\nsvm_linear_small.fit(X, y)\nfig, ax = subplots(figsize=(8,8))\nplot_svm(X,\n         y,\n         svm_linear_small,\n         ax=ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 26,
+    "type": "markdown",
+    "source": "使用較小的成本參數值，我們獲得更多的支援向量，因為邊界現在更寬。",
+    "output_types": []
+  },
+  {
+    "cell": 27,
+    "type": "code",
+    "source": "# get number of support vectors for each class\nsvm_linear_small.n_support_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 28,
+    "type": "markdown",
+    "source": "對於線性核，我們可以如下提取線性決策邊界的係數：",
+    "output_types": []
+  },
+  {
+    "cell": 29,
+    "type": "code",
+    "source": "svm_linear.coef_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 30,
+    "type": "markdown",
+    "source": "由於支援向量機是 `scikit-learn` 中的一個估算器，我們可以使用常見的機制來調參。",
+    "output_types": []
+  },
+  {
+    "cell": 31,
+    "type": "code",
+    "source": "kfold = skm.KFold(5,\n                  random_state=0,\n                  shuffle=True)\ngrid = skm.GridSearchCV(svm_linear,\n                        {'C':[0.001,0.01,0.1,1,5,10,100]},\n                        refit=True,\n                        cv=kfold,\n                        scoring='accuracy')\ngrid.fit(X, y)\ngrid.best_params_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 32,
+    "type": "markdown",
+    "source": "我們可以在 `grid.cv_results_` 中輕易地存取這些模型的交叉驗證誤差。這會印出很多細節，所以我們只提取準確率結果。",
+    "output_types": []
+  },
+  {
+    "cell": 33,
+    "type": "code",
+    "source": "grid.cv_results_[('mean_test_score')]",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 34,
+    "type": "markdown",
+    "source": "我們看到 `C=1` 導致最高的交叉驗證準確率 0.74，儘管對於幾個 `C` 值，準確率都是相同的。分類器 `grid.best_estimator_` 可用於預測測試觀測集合的類別標籤。讓我們產生測試資料集。",
+    "output_types": []
+  },
+  {
+    "cell": 35,
+    "type": "code",
+    "source": "X_test = rng.standard_normal((20, 2))\ny_test = np.array([-1]*10+[1]*10)\nX_test[y_test==1] += 1",
+    "output_types": []
+  },
+  {
+    "cell": 36,
+    "type": "markdown",
+    "source": "現在我們預測這些測試觀測值的類別標籤。在此我們使用透過交叉驗證選擇的最佳模型來進行預測。",
+    "output_types": []
+  },
+  {
+    "cell": 37,
+    "type": "code",
+    "source": "best_ = grid.best_estimator_\ny_test_hat = best_.predict(X_test)\nconfusion_table(y_test_hat, y_test)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 38,
+    "type": "markdown",
+    "source": "因此，使用這個 `C` 值，70% 的測試觀測值被正確分類。如果我們改為使用 `C=0.001` 會怎樣？",
+    "output_types": []
+  },
+  {
+    "cell": 39,
+    "type": "code",
+    "source": "svm_ = SVC(C=0.001,\n           kernel='linear').fit(X, y)\ny_test_hat = svm_.predict(X_test)\nconfusion_table(y_test_hat, y_test)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 40,
+    "type": "markdown",
+    "source": "在此情況下，60% 的測試觀測值被正確分類。\n\n我們現在考慮兩個類別線性可分離的情況。然後我們可以使用 `SVC()` 估算器找到最佳分離超平面。我們首先進一步分離模擬資料中的兩個類別，使它們線性可分離：",
+    "output_types": []
+  },
+  {
+    "cell": 41,
+    "type": "code",
+    "source": "X[y==1] += 1.9;\nfig, ax = subplots(figsize=(8,8))\nax.scatter(X[:,0], X[:,1], c=y, cmap=cm.coolwarm);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 42,
+    "type": "markdown",
+    "source": "現在觀測值剛好線性可分離。",
+    "output_types": []
+  },
+  {
+    "cell": 43,
+    "type": "code",
+    "source": "svm_ = SVC(C=1e5, kernel='linear').fit(X, y)\ny_hat = svm_.predict(X)\nconfusion_table(y_hat, y)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 44,
+    "type": "markdown",
+    "source": "我們擬合支援向量分類器並繪製產生的超平面，使用非常大的 `C` 值，這樣就不會有觀測值被錯誤分類。",
+    "output_types": []
+  },
+  {
+    "cell": 45,
+    "type": "code",
+    "source": "fig, ax = subplots(figsize=(8,8))\nplot_svm(X,\n         y,\n         svm_,\n         ax=ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 46,
+    "type": "markdown",
+    "source": "確實沒有產生訓練誤差，並且只使用了三個支援向量。事實上，`C` 的大值也意味著這三個支援點 *在邊界上*，並定義了邊界。人們可能會想知道僅依賴三個資料點的分類器在測試資料上能有多好！我們現在嘗試較小的 `C` 值。",
+    "output_types": []
+  },
+  {
+    "cell": 47,
+    "type": "code",
+    "source": "svm_ = SVC(C=0.1, kernel='linear').fit(X, y)\ny_hat = svm_.predict(X)\nconfusion_table(y_hat, y)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 48,
+    "type": "markdown",
+    "source": "使用 `C=0.1`，我們再次沒有錯誤分類任何訓練觀測值，但我們也獲得了更寬的邊界並使用十二個支援向量。它們共同定義決策邊界的方向，由於數量更多，因此更穩定。看起來這個模型可能在測試資料上比 `C=1e5` 的模型表現更好（事實上，使用大型測試集的簡單實驗會證實這一點）。",
+    "output_types": []
+  },
+  {
+    "cell": 49,
+    "type": "code",
+    "source": "fig, ax = subplots(figsize=(8,8))\nplot_svm(X,\n         y,\n         svm_,\n         ax=ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 50,
+    "type": "markdown",
+    "source": "## 核方法",
+    "output_types": []
+  },
+  {
+    "cell": 51,
+    "type": "code",
+    "source": "def feature_map_1(X):\n    return np.asarray((np.sqrt(2)*X[:,0]*X[:,1], X[:,0]**2, X[:,1]**2)).T\n\ndef my_kernel_1(X,Y):\n    return np.dot(feature_map_1(X),feature_map_1(Y).T )",
+    "output_types": []
+  },
+  {
+    "cell": 52,
+    "type": "code",
+    "source": "## Reference https://xavierbourretsicotte.github.io/Kernel_特徵_map.html\n\nX, y = make_circles(100, factor=.1, noise=.1, random_state = 0)\nZ = feature_map_1(X)\n\n#2D scatter plot\nfig = plt.figure(figsize = (16,8))\nax = fig.add_subplot(1, 2, 1)\nax.scatter(X[:,0], X[:,1], c = y, cmap = 'viridis')\nax.set_xlabel('$x_1$')\nax.set_ylabel('$x_2$')\nax.set_title('Original data')\n\n#3D scatter plot\nax = fig.add_subplot(1, 2, 2, projection='3d')\nax.scatter3D(Z[:,0],Z[:,1], Z[:,2],c = y, cmap = 'viridis' ) #,rstride = 5, cstride = 5, cmap = 'jet', alpha = .4, edgecolor = 'none' )\nax.set_xlabel('$z_1$')\nax.set_ylabel('$z_2$')\nax.set_zlabel('$z_3$')\nax.set_title('Transformed data: ')\n\n#SVM using linear kernel with 特徵 map 1\nclf = SVC(C = 1, kernel = 'linear')\nclf.fit(Z, y)\n\nw = clf.coef_.flatten()\nb = clf.intercept_.flatten()\nprint('w=',w,'b=',b)\n\n# create x,y\nxx, yy = np.meshgrid(np.linspace(-1,1), np.linspace(0,1))\n\n# calculate corresponding z\n# The equation of the separating plane is given by all x in R^3 such that:\n# np.dot(w, x) + b = 0. We should solve for the last coordinate\nboundary = (-w[0] * xx - w[1] * yy - b) * 1. /w[2]\n\n\n# plot the surface\n\nax.plot_surface(xx, yy, boundary, alpha = .3)\nax.set_ylim(.2,1.2)\nax.set_zlim(-.9,1.1)\n#ax.view_init(0, 260)\n\nplt.show()",
+    "output_types": [
+      "stream",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 53,
+    "type": "code",
+    "source": "#SVM using kernel 1 - 特徵 map 1\nclf2 = SVC(kernel=my_kernel_1)\nclf2.fit(X, y)\n\n# predict on training examples - print accuracy score\nprint('Accuracy score using feature map ',accuracy_score(y, clf2.predict(X)))\nprint('Accuracy score using feature map ',accuracy_score(y, clf.predict(Z)))",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 54,
+    "type": "code",
+    "source": "#Initialize data\nh = .01 #Stepsize in the mesh\nx_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5\ny_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5\nxx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))\n\n# Predict on meshgrid\nZ = clf2.predict(np.c_[xx.ravel(), yy.ravel()])\n\n# Put the result into a color plot\nZ = Z.reshape(xx.shape)\nplt.figure(figsize = (7,7))\nplt.contourf(xx, yy, Z, 1, colors = ['darkblue','yellow'], alpha = .1) # plot coutour surface\nplt.contour(xx, yy, Z, cmap = 'viridis') # plot coutour line\n\n# 繪圖 also the training points\nplt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', edgecolors = 'k')\nplt.title('Support Vector Machine with polynomial'\n          ' kernel')\nplt.xlabel('$x_1$')\nplt.ylabel('$x_2$')",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 55,
+    "type": "markdown",
+    "source": "## 支援向量機",
+    "output_types": []
+  },
+  {
+    "cell": 56,
+    "type": "markdown",
+    "source": "為了擬合使用 **非線性核函數** 的 SVM，我們再次使用 `SVC()` 估算器。然而，現在我們使用參數 `kernel` 的不同值。要擬合具有多項式核的 SVM，我們使用 `kernel=\"poly\"`，要擬合具有徑向基核的 SVM，我們使用 `kernel=\"rbf\"`。在前一種情況下，我們也使用 `degree` 參數來指定多項式核的次數（這是 (9.22) 中的 $d$），在後一種情況下，我們使用 `gamma` 來指定徑向基核的 $\\gamma$ 值 (9.24)。\n\n我們首先產生一些具有非線性類別邊界的資料，如下所示：",
+    "output_types": []
+  },
+  {
+    "cell": 57,
+    "type": "code",
+    "source": "X = rng.standard_normal((200, 2))\nX[:100] += 2\nX[100:150] -= 2\ny = np.array([1]*150+[2]*50)",
+    "output_types": []
+  },
+  {
+    "cell": 58,
+    "type": "markdown",
+    "source": "繪製資料清楚地表明類別邊界確實是非線性的。",
+    "output_types": []
+  },
+  {
+    "cell": 59,
+    "type": "code",
+    "source": "fig, ax = subplots(figsize=(8,8))\nax.scatter(X[:,0],\n           X[:,1],\n           c=y,\n           cmap=cm.coolwarm);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 60,
+    "type": "markdown",
+    "source": "資料被隨機分割為訓練組和測試組。然後我們使用具有徑向基核和 $\\gamma=1$ 的 `SVC()` 估算器擬合訓練資料：",
+    "output_types": []
+  },
+  {
+    "cell": 61,
+    "type": "code",
+    "source": "(X_train,\n X_test,\n y_train,\n y_test) = skm.train_test_split(X,\n                                y,\n                                test_size=0.5,\n                                random_state=0)\nsvm_rbf = SVC(kernel=\"rbf\", gamma=1, C=1)\nsvm_rbf.fit(X_train, y_train)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 62,
+    "type": "markdown",
+    "source": "圖形顯示產生的 SVM 具有明顯的非線性邊界。",
+    "output_types": []
+  },
+  {
+    "cell": 63,
+    "type": "code",
+    "source": "fig, ax = subplots(figsize=(8,8))\nplot_svm(X_train,\n         y_train,\n         svm_rbf,\n         ax=ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 64,
+    "type": "markdown",
+    "source": "我們可以從圖中看到此 SVM 擬合中有相當數量的訓練誤差。如果我們增加 `C` 的值，我們可以減少訓練誤差的數量。然而，這會以更不規則的決策邊界為代價，似乎有過度擬合資料的風險。",
+    "output_types": []
+  },
+  {
+    "cell": 65,
+    "type": "code",
+    "source": "svm_rbf = SVC(kernel=\"rbf\", gamma=1, C=1e5)\nsvm_rbf.fit(X_train, y_train)\nfig, ax = subplots(figsize=(8,8))\nplot_svm(X_train,\n         y_train,\n         svm_rbf,\n         ax=ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 66,
+    "type": "markdown",
+    "source": "我們可以使用 `skm.GridSearchCV()` 進行交叉驗證，為具有徑向基核的 SVM 選擇 $\\gamma$ 和 `C` 的最佳選擇：",
+    "output_types": []
+  },
+  {
+    "cell": 67,
+    "type": "code",
+    "source": "kfold = skm.KFold(5,\n                  random_state=0,\n                  shuffle=True)\ngrid = skm.GridSearchCV(svm_rbf,\n                        {'C':[0.1,1,10,100,1000],\n                         'gamma':[0.5,1,2,3,4]},\n                        refit=True,\n                        cv=kfold,\n                        scoring='accuracy');\ngrid.fit(X_train, y_train)\ngrid.best_params_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 68,
+    "type": "markdown",
+    "source": "在五摺交叉驗證下，參數的最佳選擇在 `C=1` 和 `gamma=0.5` 時達到，儘管其他幾個值也達到相同的值。",
+    "output_types": []
+  },
+  {
+    "cell": 69,
+    "type": "code",
+    "source": "best_svm = grid.best_estimator_\nfig, ax = subplots(figsize=(8,8))\nplot_svm(X_train,\n         y_train,\n         best_svm,\n         ax=ax)\n\ny_hat_test = best_svm.predict(X_test)\nconfusion_table(y_hat_test, y_test)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 70,
+    "type": "markdown",
+    "source": "使用這些參數，12% 的測試觀測值被此 SVM 錯誤分類。",
+    "output_types": []
+  },
+  {
+    "cell": 71,
+    "type": "markdown",
+    "source": "## ROC 曲線",
+    "output_types": []
+  },
+  {
+    "cell": 72,
+    "type": "markdown",
+    "source": "SVM 和支援向量分類器為每個觀測值輸出類別標籤。然而，也可以為每個觀測值獲得 *擬合值*，這些是用於獲得類別標籤的數值分數。例如，在支援向量分類器的情況下，觀測值 $X= (X_1, X_2, \\ldots, X_p)^T$ 的擬合值採用形式 $\\hat{\\beta}_0 + \\hat{\\beta}_1 X_1 + \\hat{\\beta}_2 X_2 + \\ldots + \\hat{\\beta}_p X_p$。對於具有非線性核的 SVM，產生擬合值的方程式在 (9.23) 中給出。擬合值的符號決定觀測值位於決策邊界的哪一側。因此，給定觀測值的擬合值與類別預測之間的關係很簡單：如果擬合值超過零，則觀測值被分配到一個類別；如果小於零，則被分配到另一個類別。透過將此閾值從零改變為某個正值，我們使分類偏向於一個類別而非另一個類別。透過考慮這些閾值的範圍（正值和負值），我們產生 ROC 圖的成分。我們可以透過呼叫擬合 SVM 估算器的 `decision_function()` 方法來存取這些值。\n\n函數 `ROCCurveDisplay.from_estimator()`（我們簡稱為 `roc_curve()`）將產生 ROC 曲線圖。它以擬合的估算器作為第一個參數，接著是模型矩陣 $X$ 和標籤 $y$。參數 `name` 用於圖例，而 `color` 用於線條的顏色。結果繪製在我們的軸物件 `ax` 上。",
+    "output_types": []
+  },
+  {
+    "cell": 73,
+    "type": "code",
+    "source": "fig, ax = subplots(figsize=(8,8))\nroc_curve(best_svm,\n          X_train,\n          y_train,\n          name='Training',\n          color='r',\n          ax=ax)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 74,
+    "type": "markdown",
+    "source": "在此範例中，SVM 似乎提供了準確的預測。透過增加 $\\gamma$，我們可以產生更靈活的擬合並進一步提升準確率。",
+    "output_types": []
+  },
+  {
+    "cell": 75,
+    "type": "code",
+    "source": "svm_flex = SVC(kernel=\"rbf\",\n              gamma=50,\n              C=1)\nsvm_flex.fit(X_train, y_train)\nfig, ax = subplots(figsize=(8,8))\nroc_curve(svm_flex,\n          X_train,\n          y_train,\n          name='Training $\\gamma=50$',\n          color='r',\n          ax=ax);",
+    "output_types": [
+      "stream",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 76,
+    "type": "markdown",
+    "source": "然而，這些 ROC 曲線都是在訓練資料上的。我們真正更感興趣的是測試資料上的預測準確率水準。當我們在測試資料上計算 ROC 曲線時，$\\gamma=0.5$ 的模型似乎提供最準確的結果。",
+    "output_types": []
+  },
+  {
+    "cell": 77,
+    "type": "code",
+    "source": "roc_curve(svm_flex,\n          X_test,\n          y_test,\n          name='Test $\\gamma=50$',\n          color='b',\n          ax=ax)\nfig;",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 78,
+    "type": "markdown",
+    "source": "讓我們看看我們調參後的 SVM。",
+    "output_types": []
+  },
+  {
+    "cell": 79,
+    "type": "code",
+    "source": "fig, ax = subplots(figsize=(8,8))\nfor (X_, y_, c, name) in zip(\n     (X_train, X_test),\n     (y_train, y_test),\n     ('r', 'b'),\n     ('CV tuned on training',\n      'CV tuned on test')):\n    roc_curve(best_svm,\n              X_,\n              y_,\n              name=name,\n              ax=ax,\n              color=c)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 80,
+    "type": "markdown",
+    "source": "## 多類別支援向量機",
+    "output_types": []
+  },
+  {
+    "cell": 81,
+    "type": "markdown",
+    "source": "如果回應是包含兩個以上水準的因子，那麼 `SVC()` 函數將使用一對一方法（當 `decision_function_shape=='ovo'` 時）或一對其餘方法（當 `decision_function_shape=='ovr'` 時）進行多類別分類。注意：一對其餘也稱為一對全部。\n\n我們透過產生第三類觀測值來簡要探索該設定。",
+    "output_types": []
+  },
+  {
+    "cell": 82,
+    "type": "code",
+    "source": "rng = np.random.default_rng(123)\nX = np.vstack([X, rng.standard_normal((50, 2))])\ny = np.hstack([y, [0]*50])\nX[y==0,1] += 2\nfig, ax = subplots(figsize=(8,8))\nax.scatter(X[:,0], X[:,1], c=y, cmap=cm.coolwarm);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 83,
+    "type": "markdown",
+    "source": "我們現在在資料上擬合 SVM：",
+    "output_types": []
+  },
+  {
+    "cell": 84,
+    "type": "code",
+    "source": "svm_rbf_3 = SVC(kernel=\"rbf\",\n                C=10,\n                gamma=1,\n                decision_function_shape='ovo');\nsvm_rbf_3.fit(X, y)\nfig, ax = subplots(figsize=(8,8))\nplot_svm(X,\n         y,\n         svm_rbf_3,\n         scatter_cmap=cm.tab10,\n         ax=ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 85,
+    "type": "markdown",
+    "source": "`scikit-learn.svm` 函式庫也可用於使用 `SupportVectorRegression()` 估算器執行具有數值回應的支援向量回歸。",
+    "output_types": []
+  },
+  {
+    "cell": 86,
+    "type": "markdown",
+    "source": "## 基因表現資料的應用",
+    "output_types": []
+  },
+  {
+    "cell": 87,
+    "type": "markdown",
+    "source": "我們現在檢查 [`Khan`](https://islp.readthedocs.io/en/latest/datasets/Khan.html) 資料集，該資料集包含對應於四種不同類型小圓藍細胞腫瘤的多個組織樣本。對於每個組織樣本，都有基因表現測量值。資料集包括訓練資料 `xtrain` 和 `ytrain`，以及測試資料 `xtest` 和 `ytest`。\n\n我們檢查資料的維度：",
+    "output_types": []
+  },
+  {
+    "cell": 88,
+    "type": "code",
+    "source": "Khan = load_data('Khan')\nKhan['xtrain'].shape, Khan['xtest'].shape",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 89,
+    "type": "markdown",
+    "source": "此資料集包含 2,308 個基因的表現測量值。訓練和測試集分別包含 63 和 20 個觀測值。\n\n我們將使用支援向量方法來使用基因表現測量值預測癌症亞型。在此資料集中，相對於觀測值的數量，特徵數量非常大。這表明我們應該使用線性核，因為使用多項式或徑向基核所產生的額外靈活性是不必要的。",
+    "output_types": []
+  },
+  {
+    "cell": 90,
+    "type": "code",
+    "source": "khan_linear = SVC(kernel='linear', C=10)\nkhan_linear.fit(Khan['xtrain'], Khan['ytrain'])\nconfusion_table(khan_linear.predict(Khan['xtrain']),\n                Khan['ytrain'])",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 91,
+    "type": "markdown",
+    "source": "我們看到 *沒有* 訓練誤差。事實上，這並不令人驚訝，因為相對於觀測值數量的大量變數意味著很容易找到完全分離類別的超平面。我們更感興趣的是支援向量分類器在測試觀測值上的表現。",
+    "output_types": []
+  },
+  {
+    "cell": 92,
+    "type": "code",
+    "source": "confusion_table(khan_linear.predict(Khan['xtest']),\n                Khan['ytest'])",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 93,
+    "type": "markdown",
+    "source": "我們看到在這些資料上使用 `C=10` 產生了兩個測試集誤差。",
+    "output_types": []
+  },
+  {
+    "cell": 94,
+    "type": "markdown",
+    "source": "## SGD 分類器",
+    "output_types": []
+  },
+  {
+    "cell": 95,
+    "type": "code",
+    "source": "# we create 50 separable points\nX, Y = make_blobs(n_samples=50, centers=2, random_state=0, cluster_std=0.60)\n\n# fit the model\nclf = SGDClassifier(loss=\"hinge\", alpha=0.01, max_iter=200)\n\nclf.fit(X, Y)\n\n# plot the line, the points, and the nearest vectors to the plane\nxx = np.linspace(-1, 5, 10)\nyy = np.linspace(-1, 5, 10)\n\nX1, X2 = np.meshgrid(xx, yy)\nZ = np.empty(X1.shape)\nfor (i, j), val in np.ndenumerate(X1):\n    x1 = val\n    x2 = X2[i, j]\n    p = clf.decision_function([[x1, x2]])\n    Z[i, j] = p[0]\nlevels = [-1.0, 0.0, 1.0]\nlinestyles = [\"dashed\", \"solid\", \"dashed\"]\ncolors = \"k\"\nplt.contour(X1, X2, Z, levels, colors=colors, linestyles=linestyles)\nplt.scatter(X[:, 0], X[:, 1], c=Y, cmap=plt.cm.Paired, edgecolor=\"black\", s=20)\n\nplt.axis(\"tight\")\nplt.show()",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 96,
+    "type": "code",
+    "source": "np.random.seed(1)\n\nX = np.random.normal(size=400).reshape(200, 2)\nX[0:100, :] += 2\nX[100:150, :] -= 2\ny = np.concatenate((np.full(150, 1, dtype=np.int64), np.full(50, 2, dtype=np.int64)))\n\nX = np.concatenate((X, np.random.normal(size=100).reshape(50, 2)))\ny = np.concatenate((y, np.full(50, 0, dtype=np.int64)))\n\nX[y == 0, 1] += 2\n\nplt.scatter(X[:, 0], X[:, 1], c=y+1, cmap='Spectral');",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 97,
+    "type": "code",
+    "source": "rbf_feature = RBFSampler(gamma=1, random_state=1)\nX_features = rbf_feature.fit_transform(X)\nclf = SGDClassifier(loss=\"hinge\", alpha=0.01, max_iter=200)\nclf.fit(X_features, y)\nclf.score(X_features, y)",
+    "output_types": [
+      "execute_result"
+    ]
+  }
+]

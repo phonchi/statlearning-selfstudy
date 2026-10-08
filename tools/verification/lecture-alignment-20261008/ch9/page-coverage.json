@@ -1,0 +1,358 @@
+[
+  {
+    "page": 1,
+    "text": "Support Vector Machines\nSzu-Chi Chung\nDepartment of Applied Mathematics, National Sun Yat-sen University\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-generative-discriminative",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 2,
+    "text": "Generative and Discriminative Models for Classiﬁcation\nModel the separating criterion 𝑃𝑟(𝑌|𝑋) directly\nModel the distribution of 𝑋in each of the classes 𝑃𝑟(𝑋|𝑌) separately, and then \nuse Bayes theorem to ﬂip things around and obtain 𝑃𝑟(𝑌|𝑋)\n2\nhttps://www.analyticsvidhya.com/blog/2021/07/deep-understanding-of-discriminative-and-generative-models-in-\nmachine-learning/\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-generative-discriminative",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.analyticsvidhya.com/blog/2021/07/deep-understanding-of-discriminative-and-generative-models-in-machine-learning/"
+    ]
+  },
+  {
+    "page": 3,
+    "text": "Support Vector Machines\nThe support vector machine is a generalization of a simple and intuitive\nclassifier called the maximal margin classifier and support vector \nclassifier\nHere we approach the two-class classiﬁcation problem in a direct way:\nWe try and ﬁnd a plane that separates the classes in feature space\nIf we cannot, we get creative in two ways:\nWe soften what we mean by “separates”, and\nWe enrich and enlarge the feature space so that separation is possible\n3\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-generative-discriminative",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 4,
+    "text": "Why Support Vector Machine?\nFor classification task we only need to know the hyperplane. Why bother a \nmodel?\nSupport Vector Machine has the following advantages\nStill effective in cases where number of dimensions is greater than the number of samples\nUses a subset of training points in the decision function (called support vectors), so it is \nalso efficient in both execution time and memory\nVersatile: different Kernel functions can be specified for the decision function. Common \nkernels are provided, but it is also possible to specify custom kernels\nX The disadvantage is that it does not directly provide probability estimates. In \naddition, if 𝑝≫𝑛, the regularization is crucial\n4\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-generative-discriminative",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 5,
+    "text": "What is a Hyperplane?\nA hyperplane in 𝑝dimensions is a ﬂat aﬃne subspace of dimension 𝑝−1\nIn general the equation for a hyperplane has the form\n𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+ 𝛽𝑝𝑋𝑝= 0\nIf 𝑝= 2 dimensions a hyperplane is a line\nIf 𝑝= 3 dimensions a hyperplane is a plane\nIf 𝛽0 = 0, the hyperplane goes through the origin, otherwise not\nThe vector 𝛽= (𝛽1, 𝛽2, … , 𝛽𝑝) is called the normal vector — it points in a \ndirection orthogonal to the surface of a hyperplane\n5\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-distance",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 6,
+    "text": "Hyperplane in 2 Dimensions\n6\nNote the distance between point 𝑥0, 𝑦0\nto line 𝛽1𝑋1 + 𝛽2𝑋2 + 𝛽0 = 0 is \n|𝛽1𝑥0+𝛽2𝑦0+𝛽0|\n𝛽12+𝛽22\n, where\n𝛽1𝑥0+𝛽2𝑦0+𝛽0\n𝛽12+𝛽22\nis the scalar projection\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-distance",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line",
+      "https://en.wikipedia.org/wiki/Scalar_projection"
+    ]
+  },
+  {
+    "page": 7,
+    "text": "Separating Hyperplanes\nIf 𝑓𝑋= 𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+ 𝛽𝑝𝑋𝑝\n𝑓(𝑋) > 0 for points on one side of the hyperplane, and 𝑓(𝑋) < 0 for points on the other\nIf we code the colored points as 𝑦𝑖= +1 for blue, say, and 𝑦𝑖= −1 for purple, 𝑓(𝑋) = 0\ndeﬁnes a separating hyperplane. Therefore, 𝑦𝑖𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝> 0 for all 𝑦𝑖, \n𝑖= 1, … , 𝑛!\n𝑦𝑖(𝛽0 + 𝛽1𝑥1\n∗+ ⋯+ 𝛽𝑝𝑥𝑝∗) represents the confidence of our assignment\n7\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-distance",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 8,
+    "text": "1. Maximal Margin Classiﬁer\nAmong all separating hyperplanes, ﬁnd the one that \nmakes the biggest margin between the two classes\nThe minimal distance from the training observations to the \nhyperplane is known as the margin\nWe try to choose the maximal margin hyperplane \nClassify a test observation based on which side of the \nmaximal margin hyperplane it lies\nThree training observations are equidistant from the \nmaximal margin which are known as support vectors\nThe maximal margin hyperplane does not depends on all \nother training points\n8\n",
+    "section": "maxmargin",
+    "target_anchor": "w10-detail-hard-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 9,
+    "text": "1. Maximal Margin Classiﬁer\nThe maximal margin hyperplane can be obtained via the constrained \noptimization problem\nmax\n𝛽0,𝛽1,…,𝛽𝑝𝑀\nsubject to σ𝑗=1\n𝑝\n𝛽𝑗\n2 = 1, \n𝑦𝑖(𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝) ≥𝑀\nfor all 𝑖= 1, … , 𝑛\nThe first constraint means that the perpendicular distance from the 𝑖th observation \nto the hyperplane is given by 𝑦𝑖(𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝)\nThe second one guarantees that each observation will be on the correct side of the \nhyperplane with some cushion, provided that 𝑀is positive\n9\n",
+    "section": "maxmargin",
+    "target_anchor": "w10-detail-hard-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 10,
+    "text": "Non-separable Data\nThe data below are not separable by a linear boundary\nThis is often the case, unless 𝑛< 𝑝\n10\n",
+    "section": "maxmargin",
+    "target_anchor": "w10-detail-hard-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 11,
+    "text": "Noisy Data\nSometimes the data are separable, but noisy. This can lead to a poor solution \nfor the maximal-margin classiﬁer\nThe support vector classiﬁer maximizes a soft margin\n11\n",
+    "section": "maxmargin",
+    "target_anchor": "w10-detail-hard-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 12,
+    "text": "2. Support Vector Classiﬁer (SVC)\nIn this case, we might be willing to consider a soft margin classifier that \ndoes not perfectly separate the two classes, but\nGreater robustness to individual observations, and\nBetter classification of most of the training observations\n12\n",
+    "section": "soft",
+    "target_anchor": "w10-detail-soft-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 13,
+    "text": "2. Support Vector Classiﬁer (SVC)\nThe hyperplane is chosen to correctly separate most of the training \nobservations into the two classes, but may misclassify a few observations via\nmax\n𝛽0,𝛽1,…,𝛽𝑝,𝜖1,…,𝜖𝑛𝑀\nsubject to σ𝑗=1\n𝑝\n𝛽𝑗\n2 = 1, \n𝑦𝑖𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝≥𝑀1 −𝜖𝑖,\n𝜖𝑖≥0, σ𝑖=1\n𝑛\n𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛\n𝜖1, … , 𝜖𝑛are slack variables that allow individual observations to be on the wrong \nside of the margin or the hyperplane\n𝜖𝑖= 0 means observation is on the correct side of the margin, 𝜖𝑖> 0 means observation \nis on the wrong side of the margin. 𝜖𝑖> 1 means on the wrong side of the hyperplane\n13\n",
+    "section": "soft",
+    "target_anchor": "w10-detail-soft-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 14,
+    "text": "Const is a regularization parameter\nConst as a budget for the amount that \nthe margin can be violated\nIf 𝑐𝑜𝑛𝑠𝑡= 0, it is maximal margin \nhyperplane\nFor 𝑐𝑜𝑛𝑠𝑡> 0 no more than 𝑐𝑜𝑛𝑠𝑡\nobservations can be on the wrong side of \nthe hyperplane\n𝑐𝑜𝑛𝑠𝑡is small, we seek narrow margins \nthat are rarely violated and vice versa\nObservations that lie directly on the \nmargin, or on the wrong side of the margin \nfor their class, are known as support \nvectors\n14\n",
+    "section": "soft",
+    "target_anchor": "w10-detail-soft-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 15,
+    "text": "Computing the Support Vector Classiﬁer \nmax\n𝛽0,𝛽, 𝛽=1,𝜖1,…,𝜖𝑛𝑀\n𝑦𝑖𝑥𝑖\n𝑇𝛽+ 𝛽0 ≥𝑀1 −𝜖𝑖,\n𝜖𝑖≥0, σ𝑖=1\n𝑛\n𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛\nIs equivalent to \nm𝑎𝑥\n𝛽0,𝛽,𝜖1,…,𝜖𝑛𝑀\n1\n|𝛽| 𝑦𝑖𝑥𝑖\n𝑇𝛽+ 𝛽0 ≥𝑀1 −𝜖𝑖,\n𝜖𝑖≥0, σ𝑖=1\n𝑛\n𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛\nLet 𝑀=\nΤ\n1 |𝛽|\nm𝑖𝑛\n𝛽0,𝛽,𝜖0,𝜖1,…,𝜖𝑛|𝛽|\n𝑦𝑖𝑥𝑖\n𝑇𝛽+ 𝛽0 ≥1 −𝜖𝑖,\n𝜖𝑖≥0, σ𝑖=1\n𝑛\n𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛\n15\n",
+    "section": "soft",
+    "target_anchor": "w10-detail-soft-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 16,
+    "text": "Computing the Support Vector Classiﬁer \nσ𝑖=1\n𝑛\n𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡\n16\n",
+    "section": "soft",
+    "target_anchor": "w10-detail-soft-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 17,
+    "text": "Computing the Maximal Margin Classiﬁer (Assume 𝜖𝑖= 0)\nThe Lagrange (primal) problem is (suitable for small 𝑝) to minimizing\n𝐿𝑃= 1\n2 |𝛽|2\nSubject to 𝑦𝑖𝑥𝑖\n𝑇𝛽+ 𝛽0 ≥1\n𝑝+ 1 variables, 𝑛constraints\nThe Lagrangian (dual) problem is (suitable for small 𝑛, can use the kernel trick) \nto maximizing\n𝐿𝐷= ෍\n𝑖=1\n𝑛\n𝛼𝑖−1\n2 ෍\n𝑖=1\n𝑛\n෍\n𝑖′=1\n𝑛\n𝛼𝑖𝛼𝑖′ 𝑦𝑖𝑦𝑖′𝑥𝑖\n𝑇𝑥𝑖′\nSubject to 0 ≤𝛼𝑖and σ𝑖=1\n𝑛\n𝛼𝑖𝑦𝑖= 0\n𝑛variables, 𝑛+ 1 constraints\n17\n",
+    "section": "soft",
+    "target_anchor": "w10-detail-soft-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Duality_(optimization)",
+      "https://www.csie.ntu.edu.tw/~htlin/mooc/doc/202_handout.pdf"
+    ]
+  },
+  {
+    "page": 18,
+    "text": "Computing the Support Vector Classiﬁer (Assume 𝜖𝑖≠0)\nThe Lagrange (primal) problem is to minimizing (𝐶is inverse proportional to 𝑐𝑜𝑛𝑠𝑡)\n𝐿𝑃= 1\n2 |𝛽|2 + 𝐶෍\n𝑖=1\n𝑛\n𝜖𝑖\nSubject to 𝜖𝑖≥0, 𝑦𝑖𝑥𝑖\n𝑇𝛽+ 𝛽0 ≥1 −𝜖𝑖\n𝑝+ 1 + 𝑛variables, 2𝑛constraints\nThe Lagrangian (dual) problem is to maximizing\n𝐿𝐷= ෍\n𝑖=1\n𝑛\n𝛼𝑖−1\n2 ෍\n𝑖=1\n𝑛\n෍\n𝑖′=1\n𝑛\n𝛼𝑖𝛼𝑖′ 𝑦𝑖𝑦𝑖′𝑥𝑖\n𝑇𝑥𝑖′\nSubject to 0 ≤𝛼𝑖≤𝐶and σ𝑖=1\n𝑛\n𝛼𝑖𝑦𝑖= 0\n𝑛variables, 2𝑛+ 1 constraints\nIt is noted that the solution has the form መ𝛽= σ𝑖=1\n𝑛\nො𝛼𝑖𝑦𝑖𝑥𝑖\n18\n",
+    "section": "soft",
+    "target_anchor": "w10-detail-soft-dual",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.cs.cmu.edu/~epxing/Class/10701-08s/recitation/svm.pdf",
+      "https://www.csie.ntu.edu.tw/~htlin/mooc/doc/204_handout.pdf"
+    ]
+  },
+  {
+    "page": 19,
+    "text": "Linear boundary can fail\nSometimes a linear boundary simply won’t work, no matter what value of const\nThe example below is such a case. What to do?\n19\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 20,
+    "text": "Feature Expansion\nEnlarge the space of features by including transformations; e.g. \n𝑋1\n2, 𝑋1\n3, 𝑋1𝑋2, 𝑋1𝑋2\n3, … . Hence go from a 𝑝-dimensional space to a larger \ndimensional space\nFit a support-vector classiﬁer in the enlarged space\nThis results in non-linear decision boundaries in the original space\nExample: Suppose we use (𝑋1, 𝑋2, 𝑋1\n2, 𝑋2\n2, 𝑋1𝑋2) instead of just (𝑋1, 𝑋2). Then \nthe decision boundary would be of the form\n𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + 𝛽3𝑋1\n2 + 𝛽4𝑋2\n2 + 𝛽5𝑋1𝑋2 = 0\nThis leads to nonlinear decision boundaries in the original space (quadratic conic sections)\n20\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 21,
+    "text": "Feature Expansion - Cubic Polynomials\nHere we use a basis expansion of cubic polynomials. From 2 variables to 9 \nThe support-vector classiﬁer in the enlarged space solves the problem in the \nlower-dimensional space\n𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + 𝛽3𝑋1\n2 + 𝛽4𝑋2\n2 + 𝛽5𝑋1𝑋2 + 𝛽6𝑋1\n3 + 𝛽7𝑋2\n3 + 𝛽8𝑋1𝑋2\n2 + 𝛽9𝑋1\n2𝑋2 = 0\n21\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 22,
+    "text": "Nonlinearities and Kernels\n1.\nPolynomials (especially high-dimensional ones) get wild rather fast\n2.\nThere is a more elegant and controlled way to introduce nonlinearities in \nsupport-vector classiﬁers — through the use of kernels\nMain idea: feature mapping to a high dimensional space\n𝑥→Φ 𝑥= 𝜑1 𝑥, 𝜑2 𝑥, 𝜑3 𝑥, … , Φ 𝑥𝑇Φ 𝑢= 𝐾(𝑥, 𝑢)\nKernel Trick: We do not really need to know Φ 𝑥. Instead, we work on original space \nusing the Kernel\nA kernel is a function that quantifies the similarity of two observations\nRecall the role of inner products in statistical learning\n22\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 23,
+    "text": "Inner products and support vectors\nMany problems involve the following inner product\n𝑥𝑖, 𝑥𝑖′ = ෍\n𝑗=1\n𝑝\n𝑥𝑖𝑗𝑥𝑖′𝑗\nThe linear support vector classiﬁer can be represented as \n𝑓𝑥= 𝛽0 + ෍\n𝑖=1\n𝑛\n𝛼𝑖𝑦𝑖𝑥, 𝑥𝑖\nTo estimate the parameters 𝛼1, … , 𝛼𝑛and 𝛽0, all we need are the 𝑛\n2 inner \nproducts 𝑥𝑖, 𝑥𝑖′ between all pairs of training observations\nIt turns out that most of the ො𝛼𝑖can be zero except for the support vectors:\n𝑓𝑥= 𝛽0 + ෍\n𝑖∈𝑆\nො𝛼𝑖𝑦𝑖𝑥, 𝑥𝑖\n𝑆is the support set of indices 𝑖such that ො𝛼𝑖> 0\n23\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 24,
+    "text": "3. Kernels and Support Vector Machines\nThe support vector machine (SVM) is an \nextension of the support vector classifier \nthat results from enlarging the feature \nspace in a specific way, using kernels\nConsider the second degree mapping\nΦ 𝑥= Φ\n2𝑥1𝑥2\n𝑥1\n2\n𝑥2\n2\nΦ 𝑎𝑇Φ 𝑏=\n2𝑎1𝑎2\n𝑎1\n2\n𝑎2\n2\n𝑇\n2𝑏1𝑏2\n𝑏1\n2\n𝑏2\n2\n= (𝑎1𝑏1 + 𝑎2𝑏2)2=\n𝑎1\n𝑎2\n𝑇𝑏1\n𝑏2\n2\n= (𝑎𝑇𝑏)2\n24\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://xavierbourretsicotte.github.io/Kernel_feature_map.html"
+    ]
+  },
+  {
+    "page": 25,
+    "text": "3. Kernels and Support Vector Machines\nIf we can compute inner-products between observations, we can ﬁt a SV classiﬁer. \nThe Support Vector Machines is an extension of SVC (linear kernel) using kernels \nIn fact, SVC is a SVM with linear kernel\n𝐾𝑥𝑖, 𝑥𝑖′ = ෍\n𝑗=1\n𝑝\n𝑥𝑖𝑗𝑥𝑖′𝑗\nSome special kernel functions are useful. E.g. the polynomial kernel\n𝐾𝑥𝑖, 𝑥𝑖′ = (1 + σ𝑗=1\n𝑝\n𝑥𝑖𝑗𝑥𝑖′𝑗)𝑑(Add constant and variable itself)\ncomputes the inner-products needed for 𝑑dimensional polynomials\nThe solution now has the form\n𝑓𝑥= 𝛽0 + ෍\n𝑖∈𝑆\nො𝛼𝑖𝑦𝑖𝐾𝑥, 𝑥𝑖\n25\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://cs229.stanford.edu/notes2021fall/cs229-notes3.pdf"
+    ]
+  },
+  {
+    "page": 26,
+    "text": "Radial Basis Kernel\nControls variance by squashing down most \ndimensions severely\n𝐾𝑥, 𝑥𝑖= exp(−𝛾෍\n𝑗=1\n𝑝\n(𝑥𝑖𝑗−𝑥𝑖′𝑗)2)\n𝑓𝑥= 𝛽0 + ෍\n𝑖∈𝑆\nො𝛼𝑖𝑦𝑖𝐾𝑥, 𝑥𝑖\n𝛾is also a regularization parameter (You \nshould reduce it if overfitting)\nThe feature space is implicit and infinite-\ndimensional (By Mercer’s theorem, exact Φ is \nintractable)\n26\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Mercer's_theorem",
+      "https://stackoverflow.com/questions/23581508/why-gaussian-radial-basis-function-maps-the-examples-into-an-infinite-dimensiona"
+    ]
+  },
+  {
+    "page": 27,
+    "text": "Example: Heart Data\nROC curve is obtained by changing the threshold 0 to threshold 𝑡in መ𝑓𝑋≥𝑡, \nand recording false positive and true positive rates as 𝑡varies. Here we see \nROC curves on training data\n27\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-score-roc",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 28,
+    "text": "Example continued: Heart Test Data\nROC curves on testing data\n28\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-score-roc",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 29,
+    "text": "SVMs: more than 2 classes?\nThe SVM as deﬁned works for 𝐾= 2 classes. What do we do if we have 𝐾> 2\nclasses?\nOVA (One versus All or OVR): Fit 𝐾diﬀerent 2-class SVM classiﬁers መ𝑓(𝑥), 𝑘= 1, . . . , 𝐾; \neach class versus the rest. Classify 𝑥∗to the class for which መ𝑓(𝑥∗), is largest\nOVO (One versus One): Fit all 𝐾\n2 pairwise classiﬁers መ𝑓𝑘𝑙(𝑥). Classify 𝑥∗to the class that \nwins the most pairwise competitions\nWhich to choose? If 𝐾is not too large, use OVO\n29\n",
+    "section": "multiclass",
+    "target_anchor": "w10-detail-multiclass-table",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 30,
+    "text": "Support Vector versus Logistic Regression?\nWith 𝑓𝑋= 𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+\n𝛽𝑝𝑋𝑝, we can rephrase support-vector \nclassiﬁer optimization as (ESL exercise 12.1)\nmin\n𝛽0,𝛽1,…,𝛽𝑝{෍\n𝑖=1\n𝑛\nmax 0,1 −𝑦𝑖𝑓𝑥𝑖\n+ λ ෍\n𝑗=1\n𝑝\n𝛽𝑗\n2}\nWhen λ is large then 𝛽is small, more violations to \nthe margin are tolerated. It is proportional to \n𝑐𝑜𝑛𝑠𝑡\nThis has the form loss plus penalty. The loss is \nknown as the hinge loss\nVery similar to “loss” in logistic regression \n(negative log-likelihood)\n30\n",
+    "section": "hinge",
+    "target_anchor": "w10-detail-loss-normalization",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://math.stackexchange.com/questions/3576111/hinge-loss-why-1",
+      "https://stats.stackexchange.com/questions/229645/why-there-are-two-different-logistic-loss-formulation-notations?noredirect=1&lq=1",
+      "https://yuhangzhou88.github.io/ESL_Solution/ESL-Solution/_12-Flexible-Discriminants/ex12-01/"
+    ]
+  },
+  {
+    "page": 31,
+    "text": "Support Vector versus Logistic Regression?\nThe loss function shown above is exactly zero for observations for which \n𝑦𝑖(𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+ 𝛽𝑝𝑋𝑝) ≥1\nThe loss function for logistic regression shown in Figure is not exactly zero anywhere. \nBut it is very small for observations that are far from the decision boundary \nWhen classes are (nearly) separable, SVC does better than LR. So does LDA\nWhen not, LR (with ridge penalty) and SVC very similar\nIf you wish to estimate probabilities, LR is the choice\nFor nonlinear boundaries, kernel SVMs are popular. Can use kernels with LR \nand LDA as well, but computations are more expensive\nWe could also just as well perform logistic regression or many of the other \nclassification methods seen in this book using non-linear kernels!\n31\n",
+    "section": "hinge",
+    "target_anchor": "w10-detail-loss-normalization",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 32,
+    "text": "SGD classifier\nStochastic Gradient Descent (SGD) is a simple yet very efficient approach to \nfitting linear classifiers and regressors under convex loss functions such as \n(linear) Support Vector Machines and Logistic Regression\nEven though SGD has been around in the machine learning community for a long time, it \nhas received a considerable amount of attention just recently in large-scale learning\nSGD is sensitive to feature scaling\nKernel Approximation can be used with SGD\nFor large-scaled problem, try to use SGDClassifier with hinge loss\n32\n",
+    "section": "vslogit",
+    "target_anchor": "w10-detail-solvers",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://scikit-learn.org/stable/modules/kernel_approximation.html",
+      "https://scikit-learn.org/stable/modules/sgd.html"
+    ]
+  },
+  {
+    "page": 33,
+    "text": "Computations\nSupport Vector Machine algorithms are not scale invariant, so it is highly \nrecommended to scale your data\nFor the linear case, the algorithm used in LinearSVC by the liblinear implementation. Note \nthat LinearSVC does not accept parameter kernel, as this is assumed to be linear \nFor nonlinear case, SVC (relies on libsvm) and NuSVC are similar methods, but accept \nslightly different sets of parameters \nliblinear and libsvm are efficient library developed by Chih-Jen Lin\nSVM can also estimating the probability\n𝐶is 1 by default and it’s a reasonable default choice. If you have a lot of noisy \nobservations you should decrease it: decreasing 𝐶corresponds to more \nregularization\n33\n",
+    "section": "vslogit",
+    "target_anchor": "w10-detail-solvers",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://axk51013.medium.com/%E6%A8%A1%E5%9E%8B%E5%B0%8D%E8%87%AA%E5%B7%B1%E6%9C%89%E5%A4%9A%E5%B0%91%E4%BF%A1%E5%BF%83-sklearn%E8%A7%A3%E5%AF%86-predict-proba%E6%98%AF%E7%94%9A%E9%BA%BC-part-2-svm-c21f2b856443"
+    ]
+  },
+  {
+    "page": 34,
+    "text": "SVM\nThe key features of SVMs are the use of kernels, the absence of local minima, \nthe sparseness of the solution and the capacity control obtained by optimizing \nthe margin\nSVM can also be extended to regression, density estimation and novelty \ndetection problem\nSupport vector regression instead seeks coefficients that minimize a different type of loss, \nwhere only residuals larger in absolute value than some positive constant contribute to the \nloss function\n34\n",
+    "section": "vslogit",
+    "target_anchor": "w10-detail-svr",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.csie.ntu.edu.tw/~htlin/mooc/doc/206_handout.pdf"
+    ]
+  },
+  {
+    "page": 35,
+    "text": "Appendix\n35\n",
+    "section": "vslogit",
+    "target_anchor": "w10-detail-svr",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 36,
+    "text": "Reference\nhttps://www.csie.ntu.edu.tw/~htlin/mooc/\nhttps://cs229.stanford.edu/notes2021fall/cs229-notes3.pdf\nhttps://cs229.stanford.edu/notes2022fall/main_notes.pdf chapter 5 and 6\nhttps://scikit-learn.org/stable/modules/svm.html\n36\n",
+    "section": "vslogit",
+    "target_anchor": "w10-detail-svr",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://cs229.stanford.edu/notes2021fall/cs229-notes3.pdf",
+      "https://cs229.stanford.edu/notes2022fall/main_notes.pdf",
+      "https://scikit-learn.org/stable/modules/svm.html",
+      "https://www.csie.ntu.edu.tw/~htlin/mooc/"
+    ]
+  },
+  {
+    "page": 37,
+    "text": "Statistical Modeling Y ∼X:\n𝑌continuous, 𝑋continuous: Regression Analysis\n𝑌discrete, 𝑋continuous:\n𝑋is Gaussian: Linear Discriminant Analysis\n𝑋is non-Gaussian: Logistic Regression\n𝑌discrete, 𝑋discrete: Discriminant Correspondent Analysis\n𝑌continuous, 𝑋discrete: ANOVA\n37\n",
+    "section": "prologue",
+    "target_anchor": "w10-detail-generative-discriminative",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 38,
+    "text": "Perceptron: I only need to know the hyperplane!\nWhy bother a model?\nPerceptron: On-Line learning Classiﬁcation\nThe hyperplane is sequentially updated by the training set. Calculate the actual output and \nthen update the weight whose increment is proportional to the diﬀerence of the actual \noutput and the desired output\nGiven an initial 𝑤, for each training pair (𝑥𝑖, 𝑦𝑖) where 1 ≤𝑖≤𝑛, do the two \nsteps:\n𝑜𝑖= 𝑓(𝑤𝑇(𝑡)𝑥𝑖) (the decision rule)\n𝑤𝑡+ 1 = 𝑤𝑡+ 𝛼(𝑜𝑖−𝑦𝑖)𝑥𝑖\n38\n",
+    "section": "maxmargin",
+    "target_anchor": "w10-detail-perceptron",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://scikit-learn.org/stable/modules/linear_model.html#perceptron"
+    ]
+  },
+  {
+    "page": 39,
+    "text": "From Perceptron to SVM\nIntroduce the concept of Margin → a unique solution\nIntroduce the slack variables → soft margin\nIntroduce Kernel method → non-linear feature mapping\n39\n",
+    "section": "maxmargin",
+    "target_anchor": "w10-detail-perceptron",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 40,
+    "text": "Common kernels\nLinear kernel\nPros: safe, fast (QP solvers), explainable (by 𝑤and SVs )\nCons: restricted (not always separable)\nA basic tool\nPolynomial kernel\nPros: less restricted than linear, strong physical control by knowing the degree \nCons: numerical diﬃculty for large degree \nPerhaps small degree only\nGaussian kernel\nPros: more powerful than linear and poly ones, bounded (less numerical diﬃculty than \nPoly one), only one parameter to be selected\nCons: mysterious (no 𝑤), slower than linear, overﬁtting problem\nPopular but be used carefully\n40\n",
+    "section": "kernel",
+    "target_anchor": "w10-detail-kernel-validity",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  }
+]

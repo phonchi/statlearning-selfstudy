@@ -759,7 +759,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <strong>3. 支持向量機（support vector machine, SVM）：</strong>把內積換成核，
   邊界就彎起來了。<br>
   三者是<strong>逐步擴充的三個層次</strong>。最外面那層用線性核時
-  會原地退回最裡面那層。
+  就得到線性的支持向量分類器，仍然是第二層的軟邊界；線性核本身不會移除容錯懲罰。
 </div>
 
   <p>起點是<strong>超平面</strong>（hyperplane）。p 維空間裡的超平面是一個 p − 1 維的
@@ -846,6 +846,14 @@ $\|x-z\|=|t|\|w\|=|w^Tx+b|/\|w\|$。
   <div class="quiz-options" id="qHypOptions"><div class="quiz-opt" data-correct="true" data-fb="對。係數整體縮放不改變 f(x) = 0 這個集合，所以線不動；乘上負數則把兩側的符號調換。這就是為什麼式 9.10 要加上 Σβⱼ² = 1——不加限制，「距離」這個詞沒有意義。" onclick="quizCheck('qHyp', this)"><span class="opt-letter">(A)</span> 超平面本身完全不動，但每個點的 f(x) 變成 −2 倍，正負兩側因此互換</div><div class="quiz-opt" data-correct="false" data-fb="不對。平移是只改 β₀；這裡三個係數一起乘，f(x) = 0 的解集合完全一樣。你可以把滑桿的 β₀、β₁、β₂ 從 1、2、3 改成 −2、−4、−6 試試，線會停在原處。" onclick="quizCheck('qHyp', this)"><span class="opt-letter">(B)</span> 超平面會平移，但方向不變</div><div class="quiz-opt" data-correct="false" data-fb="‖β‖ 也變成 2 倍。不過結論反而對了一半：|f(x)| 與 ‖β‖ 都變 2 倍，相除之後&lt;strong&gt;距離真的不變&lt;/strong&gt;，但「一切照舊」是錯的，正負號整組翻了。" onclick="quizCheck('qHyp', this)"><span class="opt-letter">(C)</span> ‖β‖ 不變，所以距離不變，一切照舊</div></div>
   <div class="quiz-feedback" id="qHypFeedback"></div>
 </div>
+<details class="qa-item reading-detail" id="w10-detail-generative-discriminative"><summary>生成式與判別式：SVM 到底學了什麼？</summary>
+<div class="detail-body">
+<p>回想第四章：LDA 先估計每類的特徵分布，再用 Bayes 定理把它轉成類別機率；邏輯斯迴歸直接為給定特徵的類別機率建模。SVM 也屬於判別式方法，但它直接學的是分界與決策分數，沒有先建立完整的機率模型。學分界、估機率與描述每類資料，是三種不同的建模選擇。</p>
+$$P(Y=k\mid x)=\frac{\pi_k p(x\mid Y=k)}{\sum_\ell\pi_\ell p(x\mid Y=\ell)},\qquad \hat y_{\rm SVM}=\operatorname{sign}(f(x)).$$
+<p>生成式方法的問題是「每類通常會產生怎樣的資料？」判別式方法的問題是「給定這筆資料，類別應該怎麼分？」SVM 進一步把學習問題寫成「保留間隔，同時付出多少違反間隔的成本？」因此不需要假設每一類都是 Gaussian，也不能從沒有 Gaussian 假設推論 SVM 一定更準。</p>
+<p>講義附錄以回應／特徵的資料型態整理統計方法，那是選方法的起點。LDA 需要檢查類別條件分布及共變異數假設；邏輯斯迴歸不要求特徵為非 Gaussian，也可以處理 Gaussian 特徵。ANOVA 與迴歸也不是互斥的工具：類別特徵可以透過指示碼進入迴歸。</p>
+<p>高維資料即使容易分開，測試資料仍可能分錯。SVM 的正則化與核選擇尤其重要。預測只用支持向量不代表訓練成本低：核矩陣仍可能涉及大量成對計算。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/lda_qda.html" target="_blank" rel="noopener">LDA／QDA 的機率模型</a>、<a href="https://scikit-learn.org/1.6/modules/svm.html" target="_blank" rel="noopener">SVM 的用途與限制</a>。</p></div></details>
 </section>
 <section id="maxmargin">
 <!-- GEN:BEGIN sec:maxmargin -->
@@ -936,7 +944,13 @@ w=\sum_i\alpha_i y_ix_i,\quad\sum_i\alpha_i y_i&=0 &&\text{stationarity},\\
 </div></details>
 
 
-</div></details><div class="viz-layout" data-provenance="illustrative" data-source-note="自訂可拖曳二維點；最大邊界由兩類凸包最近點即時計算。">
+<!-- lecture-alignment-ch9:w10-detail-hard-dual:b075ed770f95 -->
+<h3>為什麼要由 primal 轉到 dual？</h3>
+<p>Primal 直接找法向量與截距，因此有 $p+1$ 個主要未知數；dual 改為找每筆資料的權重 $\alpha_i$，有 $n$ 個未知數。當特徵很多而樣本相對少時，dual 提供另一種表達；更關鍵的是，dual 只透過內積接觸特徵，可以在後面直接換成核函數。Dual 的計算速度還受資料稀疏度與求解器影響，不能只由未知數數量判斷。</p>
+<p>弱對偶表示任何可行 dual 值都是 primal 最小值的下界。線性可分時，縮放一個分隔面可使所有間隔限制嚴格成立；在這個凸問題下可使用強對偶，最適值相等。KKT 條件用來檢查 primal 與 dual 是否共同達到最適。</p>
+<p>實際讀解時依序檢查：$y_if(x_i)\ge1$、$\alpha_i\ge0$、$\sum_i\alpha_i y_i=0$、$w=\sum_i\alpha_i y_ix_i$，最後檢查 $\alpha_i[y_if(x_i)-1]=0$。只有正乘子的點會在最後的 $f(x)$ 留下貢獻。剛好位在間隔上的點未必都有正乘子，退化資料尤其如此。</p>
+<p>最大間隔固定法向量的最佳方向；如果最小值或資料幾何有退化，不能把「加入 margin」說成任何情況下所有參數都唯一。不可分時也不能直接強迫硬邊界問題有解。</p>
+<p>完整推導：<a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/202_handout.pdf" target="_blank" rel="noopener">林軒田：Dual SVM</a>、<a href="https://cs229.stanford.edu/notes2021fall/cs229-notes3.pdf" target="_blank" rel="noopener">Stanford CS229：SVM</a>。</p></div></details><div class="viz-layout" data-provenance="illustrative" data-source-note="自訂可拖曳二維點；最大邊界由兩類凸包最近點即時計算。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10marginSvg" height="430"></svg>
@@ -1000,7 +1014,10 @@ w=\sum_i\alpha_i y_ix_i,\quad\sum_i\alpha_i y_i&=0 &&\text{stationarity},\\
 
 <details class="qa-item reading-detail" id="w10-detail-perceptron"><summary>延伸：從感知器到最大邊界</summary>
 <div class="detail-body"><h3>從感知器到最大邊界</h3><p>感知器（perceptron）逐筆檢查標籤 $y_i\in\{-1,1\}$。若 $y_i(w^Tx_i+b)\le0$，更新 $w\leftarrow w+\eta y_i x_i$ 與 $b\leftarrow b+\eta y_i$；這會增加該筆資料的帶符號分數。正確可分時停止更新。線性可分且樣本有界時可保證有限次修正後找到分隔面，但分隔面依初值與順序而變，也不以最大化邊界為目標。SVM 加入範數／邊界準則，軟邊界再容許違反限制，核方法則擴展特徵空間。</p><p>判別式方法直接學分類分數或 $P(Y\mid X)$；生成式 LDA 先建模 $P(X\mid Y)$ 與先驗。邏輯斯迴歸不要求 $X$ 為非高斯，也可用於高斯特徵；選擇方法應看模型假設與獨立評估，不能只用特徵是否高斯來劃分。</p>
-</div></details>
+<!-- lecture-alignment-ch9:w10-detail-perceptron:70e3fe6e341a -->
+<h3>更新方向怎麼判斷？</h3>
+<p>標籤採 $\{-1,1\}$ 且分類錯誤時，感知器的更新 $w\leftarrow w+\eta y_ix_i$、$b\leftarrow b+\eta y_i$ 會提高這筆資料的 signed score。若用 0／1 輸出 $o_i$ 與目標 $y_i$ 表示，修正方向是「目標減輸出」。使用「輸出減目標」卻仍加到權重上會往錯誤方向走；不同記號必須連同更新的正負號一起核對。</p>
+<p>感知器找到任一分隔面便可能停止；SVM 在可行分隔面間再比較間隔。非線性可分資料上，基本感知器不保證有限步收斂，軟邊界 SVM 則明確用損失接受部分違反。閱讀：<a href="https://scikit-learn.org/1.6/modules/linear_model.html#perceptron" target="_blank" rel="noopener">Perceptron 的學習規則</a>。</p></div></details>
 </section>
 <section id="soft">
 <!-- GEN:BEGIN sec:soft -->
@@ -1017,7 +1034,7 @@ w=\sum_i\alpha_i y_ix_i,\quad\sum_i\alpha_i y_i&=0 &&\text{stationarity},\\
   甚至跑到超平面錯的一側。換來的是兩件 ISLP 明列的好處——
   <strong>對單一觀測值更穩健</strong>，以及<strong>大多數點分得更好</strong>。
   這個分類器叫<strong>支持向量分類器</strong>，也叫<strong>軟邊界分類器</strong>
-  （margin 之所以「軟」，就是因為它可以被違反）。</p><p>下方互動採用 SVC 的懲罰權重 C：較大 C 更重視減少違反間隔的損失；較小 C 容許更多違反，以換取較寬的間隔。正文用 B 表示違反量預算，兩者沒有普遍的倒數換算。</p><details class="qa-item reading-detail" id="w10-detail-soft-dual"><summary>完整軟邊界對偶：slack、限制、KKT 與截距</summary>
+  （margin 之所以「軟」，就是因為它可以被違反）。</p><p>下方互動採用 SVC 的懲罰權重 C：較大 C 更重視減少違反間隔的損失；較小 C 容許更多違反，以換取較寬的間隔。講義的違反量預算也記作 C；下方延伸推導將這個預算改記為 B，以區分它與 SVC 的懲罰權重。兩者沒有普遍的倒數換算。</p><details class="qa-item reading-detail" id="w10-detail-soft-dual"><summary>完整軟邊界對偶：slack、限制、KKT 與截距</summary>
 <div class="detail-body">
 
   $$\begin{aligned}
@@ -1092,7 +1109,13 @@ $y_if(x_i)=1-\xi_i\le1$。這導出正文三類，而不是「支持向量都剛
   <div class="quiz-options" id="qDualBoundsOptions"><div class="quiz-opt" data-correct="false" data-fb="上界乘子也可能對應間隔上的點，或分對但位於間隔帶內的點。" onclick="quizCheck('qDualBounds', this)"><span class="opt-letter">(A)</span> 此點一定被錯誤分類</div><div class="quiz-opt" data-correct="true" data-fb="由互補鬆弛有 $y_if(x_i)=1-\xi_i$，且 $\xi_i\ge0$。分錯還要 $y_if(x_i)&amp;lt;0$。" onclick="quizCheck('qDualBounds', this)"><span class="opt-letter">(B)</span> $y_if(x_i)\le1$，但不一定分錯</div><div class="quiz-opt" data-correct="false" data-fb="這個等式需要 $\xi_i=0$。自由支持向量可保證它，上界支持向量則不能。" onclick="quizCheck('qDualBounds', this)"><span class="opt-letter">(C)</span> 可以無條件用 $b=y_i-w^Tx_i$ 求截距</div></div>
   <div class="quiz-feedback" id="qDualBoundsFeedback"></div>
 </div>
-</div></details><div class="info-box warm">
+<!-- lecture-alignment-ch9:w10-detail-soft-dual:49908d6d1c23 -->
+<h3>預算、懲罰與錯分數不是同一個量</h3>
+<p>講義的 <code>const</code> 限制總違反量；sklearn 的 <code>C</code> 則把違反量放進目標函數。預算較大表示容許更多違反；懲罰較大表示更不願付出違反量。兩者在正則化路徑上對應，但沒有適用所有資料的固定 $C=1/\mathrm{const}$ 公式。</p>
+<p>若 $\epsilon_i>1$，這筆資料在分界的錯誤側，所以每個嚴格錯分點都花掉超過一單位預算。這只給錯分數的上界，不能把總 slack 直接當成錯分筆數；分類正確但進入間隔的點也會消耗預算。$\epsilon_i=1$ 則在分界上，類別取決於 tie 的約定。</p>
+<p>在懲罰形式中，$0\lt\alpha_i\lt C$ 的點位在間隔上，可由 $b=y_i-w^Tx_i$ 恢復截距；$\alpha_i=C$ 只表示可能違反間隔，不表示一定錯分。如果所有支持向量都在上界，應以可行截距區間求解，不能除以不存在的自由支持向量數。</p>
+<p>連到 Lab：較小 $C$ 的線性模型容許更寬的間隔，可能使用更多支持向量。支持向量多寡描述模型使用了哪些資料點；模型品質仍要以保留資料上的指標比較，不能由支持向量數直接判斷。</p>
+<p>閱讀：<a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/204_handout.pdf" target="_blank" rel="noopener">Soft-Margin SVM</a>、<a href="https://www.cs.cmu.edu/~epxing/Class/10701-08s/recitation/svm.pdf" target="_blank" rel="noopener">CMU 的 primal／dual 複習</a>。</p></div></details><div class="info-box warm">
   <span class="info-label">先辨認 C 是預算還是懲罰</span>
   ISLP 的 C 是違反量總和的上限；
   scikit-learn 的 <code>SVC(C=…)</code> 是目標函數中違反量的懲罰權重。
@@ -1191,6 +1214,27 @@ $y_if(x_i)=1-\xi_i\le1$。這導出正文三類，而不是「支持向量都剛
   <div class="quiz-options" id="qSoftOptions"><div class="quiz-opt" data-correct="true" data-fb="對。C 是懲罰權重。支持向量數與 0–1 錯誤率都不能直接由此推成嚴格單調。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(A)</span> 提高總 hinge loss 的懲罰；最佳總 hinge loss 不增加，但測試誤差不保證下降</div><div class="quiz-opt" data-correct="false" data-fb="這是把 ISLP 的預算 C 與 SVC 的懲罰 C 混用。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(B)</span> 增加違反量的預算上限</div><div class="quiz-opt" data-correct="false" data-fb="最適化直接控制總 hinge loss；點數與 0–1 錯誤沒有這個保證。" onclick="quizCheck('qSoft', this)"><span class="opt-letter">(C)</span> 所有資料的分類錯誤與支持向量數都一定下降</div></div>
   <div class="quiz-feedback" id="qSoftFeedback"></div>
 </div>
+
+<details class="qa-item reading-detail" id="w10-detail-tuning-practice"><summary>跟著 Lab 選 C：訓練、交叉驗證與測試各做什麼？</summary>
+<div class="detail-body">
+<p>Lab 先用模擬的兩類資料比較不同 $C$，再用五折 CV 搜尋候選值。固定一個候選 $C$ 時，五個模型分別只用四折擬合，拿剩下一折評分，將五個分數平均；接著才在候選參數間比較。搜尋物件的 <code>best_estimator_</code> 是選定參數後在傳入搜尋的完整訓練集重新擬合的模型。</p>
+<p><code>mean_test_score</code> 裡的「test」是 CV 的驗證折，不是另留的外部測試集。搜尋後再用 <code>X_test</code> 評估，才能看出已選模型對未參與選擇資料的表現。若反覆看測試集來選 $C$，測試集也變成調參資料。</p>
+<p>原 Lab 明確使用打散的 <code>KFold</code>；不能把原程式解說成 <code>StratifiedKFold</code>。實務上類別比例不均衡時，可考慮分層；同一病人多筆資料則還需群組隔離，這與第五章的切分原則一致。</p><div class="deck-extra">
+  <div class="dx-label">原 Lab：五折交叉驗證選擇 C</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">kfold = skm.KFold(<span class="num">5</span>,</span>
+  <span class="line">                  random_state=<span class="num">0</span>,</span>
+  <span class="line">                  shuffle=<span class="num">True</span>)</span>
+  <span class="line">grid = skm.GridSearchCV(svm_linear,</span>
+  <span class="line">                        {<span class="str">&#x27;C&#x27;</span>:[<span class="num">0.001</span>,<span class="num">0.01</span>,<span class="num">0.1</span>,<span class="num">1</span>,<span class="num">5</span>,<span class="num">10</span>,<span class="num">100</span>]},</span>
+  <span class="line">                        refit=<span class="num">True</span>,</span>
+  <span class="line">                        cv=kfold,</span>
+  <span class="line">                        scoring=<span class="str">&#x27;accuracy&#x27;</span>)</span>
+  <span class="line">grid.fit(X, y)</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="31">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+</div>
+<p>線性模型若需標準化，應把縮放和分類器放在同一個 <code>Pipeline</code> 裡，使每折只用自己的訓練部分估計平均與標準差。完整訓練後的測試資料使用相同轉換，不再自行估計一組尺度。原模擬範例的兩個座標使用同一尺度；處理真實資料時仍要先檢查尺度。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/grid_search.html" target="_blank" rel="noopener">超參數搜尋</a>、<a href="resampling_methods.html#w05-detail-nested-cv">一般 CV 與 Nested CV</a>。</p></div></details>
 </section>
 <section id="hinge">
 <!-- GEN:BEGIN sec:hinge -->
@@ -1266,7 +1310,12 @@ $-z\log p-(1-z)\log(1-p)$。改記 $y=2z-1\in\{-1,+1\}$ 後，
 $z=0$ 時 $y=-1$，$-\log[1-\sigma(f)]=\log(1+e^f)$。
 兩種情形合成 $\log(1+e^{-yf})$。來源：Stanford CS229 的 logistic regression 概似定義。</p>
 </div></details>
-</div></details><p>現在看那條曲線。橫軸是 $y_i f(x_i)$——分對了是正的，愈大愈篤定；分錯了是負的。</p>
+<!-- lecture-alignment-ch9:w10-detail-loss-normalization:d7b3164cbfe7 -->
+<h3>為什麼 hinge 的轉折在 1？</h3>
+<p>分類只看 $\operatorname{sign}(f)$，同時放大 $w,b$ 不改變分界。但如果沒有固定尺度，$y_if$ 不能直接拿來比較間隔。將間隔邊界定為 $y_if=1$ 是可識別的標準化約定，不是資料中有一個天然機率 1。幾何間隔仍是 $1/\|w\|$。</p>
+<p>兩種標籤編碼也要先統一：$y\in\{-1,1\}$ 時用 $\log(1+e^{-yf})$；$z\in\{0,1\}$ 時用 $-z\log\sigma(f)-(1-z)\log[1-\sigma(f)]$，兩式在 $y=2z-1$ 後完全一致。損失相同不代表 hinge 與 logistic 會擬合同樣係數；hinge 在正確側間隔外為零，logistic 只會逐漸接近零。</p>
+<p>將 $\tfrac12\|w\|^2+C\sum_i\ell_i$ 除以 $C$，得到 $\sum_i\ell_i+\tfrac1{2C}\|w\|^2$；若再改成平均損失，懲罰係數還要除以 $n$。因此比較 SGD 的 <code>alpha</code> 與 SVC 的 <code>C</code> 時，必須看清楚套件的目標函數，不能只比數字大小。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/sgd.html#mathematical-formulation" target="_blank" rel="noopener">SGD 的損失與正則化</a>。</p></div></details><p>現在看那條曲線。橫軸是 $y_i f(x_i)$——分對了是正的，愈大愈篤定；分錯了是負的。</p>
 
 <div class="viz-layout" data-provenance="book-redraw" data-source-note="依 ISLP 圖 9.12 的 hinge、logistic 與 0–1 loss 公式即時計算。">
   <div>
@@ -1414,7 +1463,13 @@ $$e^{-\gamma(x-z)^2}=e^{-\gamma x^2}e^{-\gamma z^2}e^{2\gamma xz}
 
 
 
-</div></details><div class="viz-layout" data-provenance="course-data" data-source-note="同心圓取自 Ch09 lab 儲存格 51–54；一維 lift 為公式機制示意。">
+<!-- lecture-alignment-ch9:w10-detail-kernel-validity:69fff06137cf -->
+<h3>次數、維度與核矩陣如何對回講義？</h3>
+<p>兩個變數的三次多項式展開有九個非截距項：一階兩個、二階三個、三階四個。$d$ 次核中的 $d$ 是多項式次數，不是特徵空間只有 $d$ 維。含常數的 $(1+x^Tu)^d$ 與齊次的 $(x^Tu)^d$ 也不是同一個核：前者包含低階項。</p>
+<p>講義的二次映射與 Lab 的 <code>my_kernel_1</code> 都是齊次二次核。sklearn 內建多項式核為 $(\gamma x^Tu+\mathrm{coef0})^d$；若沒有核對 <code>gamma</code> 與 <code>coef0</code>，不能直接聲稱它與自訂核完全相同。</p>
+<p>核函數傳入兩個資料矩陣 $X$ 與 $Y$，回傳的矩陣形狀必須是「X 的樣本數 × Y 的樣本數」。訓練時計算 train–train，預測時計算 test–train；不能對測試資料改算成 test–test。核技巧省掉顯式的高維特徵，但沒有消除樣本數平方級矩陣可能帶來的負擔。</p>
+<p>RBF 的指數可展開成各階內積，因此有無限多個可能的特徵座標；「無限維」並不等於必須在電腦儲存無限座標，也不等於能任意插值且保證泛化。$\gamma$ 改變相似度的衰減速度，$C$ 改變違反間隔的代價，兩者都要選。</p>
+<p>閱讀：<a href="https://xavierbourretsicotte.github.io/Kernel_feature_map.html" target="_blank" rel="noopener">作者的核映射推導</a>、<a href="https://scikit-learn.org/1.6/modules/svm.html#kernel-functions" target="_blank" rel="noopener">sklearn 核函數介面</a>。</p></div></details><div class="viz-layout" data-provenance="course-data" data-source-note="同心圓取自 Ch09 lab 儲存格 51–54；一維 lift 為公式機制示意。">
   <div>
     <div class="viz-panel">
       <svg class="viz-svg" id="w10kernSvg" height="430"></svg>
@@ -1560,7 +1615,12 @@ $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$。
 
 
 
-</div></details>
+<!-- lecture-alignment-ch9:w10-detail-score-roc:9dc8307a24e7 -->
+<h3>ROC、機率與分類標籤要分開讀</h3>
+<p>Lab 用 <code>RocCurveDisplay.from_estimator</code>，從模型的決策分數掃過門檻，不需要先把分數變成機率。二元分類時，先核對 <code>classes_</code> 的順序，因為正分數指向後一個類別。AUC 描述正負例的排序，與固定零門檻下的準確率不同。</p>
+<p>原 Lab 比較 $\gamma=50$ 的彈性模型與 CV 選出的模型，先畫訓練 ROC 再畫測試 ROC。訓練曲線較漂亮只說明更貼近已見資料；如果測試曲線變差，就不能用訓練 AUC 宣稱改善。最後一張圖是在訓練資料調參後，分別對訓練／測試資料評分，沒有在測試資料上再次執行 GridSearchCV。</p>
+<p><code>SVC(probability=True)</code> 另外以訓練資料的交叉驗證分數作 Platt scaling，二元形式可寫成 $P(Y=1\mid f)=1/(1+\exp(Af+B))$，其中 $A,B$ 另外估計。這個額外步驟提供校準機率，原本的 hinge loss 訓練目標維持不變。<code>predict()</code> 與 <code>predict_proba()</code> 的最大機率類別也可能不同；需要決策成本時，應在訓練／驗證資料上評估校準與門檻。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/svm.html#scores-and-probabilities" target="_blank" rel="noopener">分數與機率</a>、<a href="https://scikit-learn.org/1.6/modules/calibration.html" target="_blank" rel="noopener">機率校準</a>。</p></div></details>
 </section>
 <section id="multiclass">
 <!-- GEN:BEGIN sec:multiclass -->
@@ -1587,7 +1647,7 @@ $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$。
   <strong>① 分類器的個數：</strong>OVO 是 K(K−1)/2，OVA 是 K。
   K = 3 時兩者都是 3（所以下面的元件看不到個數差別）；K = 10 時是 <strong>45 對 10</strong>。<br>
   <strong>② 每個分類器看到什麼：</strong>OVO 的每個分類器只吃兩類的資料，
-  問題小、類別平衡、通常分得開。OVA 的每個分類器要面對一個把好幾類混在一起的
+  問題較小；兩類是否平衡與能否分開，仍取決於資料。OVA 的每個分類器要面對一個把好幾類混在一起的
   「其餘」——樣本不平衡，而且那一團的形狀可能無法用一個超平面分開。<br>
   ISLP 的建議：<strong>K 不太大就用 OVO</strong>（講義同樣的結論）。
 </div>
@@ -1599,7 +1659,7 @@ $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$。
 </table></div>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th></th><th>一對一（OVO）</th><th>一對其餘（OVA）</th></tr></thead>
-  <tbody><tr><td>分類器個數</td><td>K(K−1)/2</td><td>K</td></tr><tr><td>每個分類器的訓練資料</td><td>只用相關的兩類</td><td>全部 n 筆</td></tr><tr><td>類別平衡</td><td>好（兩類各自的量）</td><td>差（1 對 K−1）</td></tr><tr><td>決策規則</td><td>投票，最多票者勝</td><td>取 f_k(x*) 最大者</td></tr><tr><td>模糊情形</td><td>可能平手（票數相同）</td><td>可能兩個 f 都很小</td></tr><tr><td>真正的訓練方式</td><td><code>SVC</code>（OVO 訓練）</td><td><code>OneVsRestClassifier(SVC(...))</code></td></tr><tr><td>ISLP 的建議</td><td><strong>K 不太大就用這個</strong></td><td>K 很大時考慮</td></tr></tbody>
+  <tbody><tr><td>分類器個數</td><td>K(K−1)/2</td><td>K</td></tr><tr><td>每個分類器的訓練資料</td><td>只用相關的兩類</td><td>全部 n 筆</td></tr><tr><td>類別平衡</td><td>依兩類各自樣本數決定</td><td>差（1 對 K−1）</td></tr><tr><td>決策規則</td><td>投票，最多票者勝</td><td>取 f_k(x*) 最大者</td></tr><tr><td>模糊情形</td><td>可能平手（票數相同）</td><td>可能兩個 f 都很小</td></tr><tr><td>真正的訓練方式</td><td><code>SVC</code>（OVO 訓練）</td><td><code>OneVsRestClassifier(SVC(...))</code></td></tr><tr><td>ISLP 的建議</td><td><strong>K 不太大就用這個</strong></td><td>K 很大時考慮</td></tr></tbody>
 </table></div>
 <div class="info-box warm">
   <span class="info-label">關於 decision_function_shape 的一個常見誤解</span>
@@ -1634,6 +1694,27 @@ $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$。
   <div class="quiz-options" id="qMultiOptions"><div class="quiz-opt" data-correct="true" data-fb="對。OVO 是所有配對 C(10,2) = 45，OVA 是每類一個共 10 個。不過分類器多不等於慢：OVO 的每個問題只用兩類的資料，所以總計算量常常還是比 OVA 少。ISLP 對 K 不大的情況建議 OVO。" onclick="quizCheck('qMulti', this)"><span class="opt-letter">(A)</span> OVO 要 45 個（10×9/2），OVA 要 10 個</div><div class="quiz-opt" data-correct="false" data-fb="決策規則說對了，個數說錯了。OVO 是所有&lt;strong&gt;配對&lt;/strong&gt;：1 對 2、1 對 3、…、9 對 10，共 45 個。K = 3 時兩者剛好都是 3，很容易記錯。" onclick="quizCheck('qMulti', this)"><span class="opt-letter">(B)</span> 兩者都要 10 個，只是決策規則不同（投票 vs 取最大）</div><div class="quiz-opt" data-correct="false" data-fb="反了。&lt;strong&gt;OVA 是「每一類一個」&lt;/strong&gt;所以是 K = 10；OVO 是「每一對一個」所以是 K(K−1)/2 = 45。從名字記：one-versus-&lt;em&gt;all&lt;/em&gt; 一次就把其餘全部處理掉，所以個數少。" onclick="quizCheck('qMulti', this)"><span class="opt-letter">(C)</span> OVO 要 10 個，OVA 要 45 個</div></div>
   <div class="quiz-feedback" id="qMultiFeedback"></div>
 </div>
+<details class="qa-item reading-detail" id="w10-detail-khan-lab"><summary>Khan 基因表現資料：高維可以完全分隔，測試仍會出錯</summary>
+<div class="detail-body">
+<p>Khan 資料用基因表現預測四種腫瘤類型。每個樣本有 2,308 個基因測量值，訓練集有 63 筆、測試集有 20 筆；特徵數遠大於樣本數，所以即使用線性邊界，也可能把訓練資料完全分開。零訓練誤差在這個情況下並不難達成。</p>
+<p>Lab 先以線性核及 <code>C=10</code> 擬合，再分別製作訓練與測試混淆表。它在訓練資料沒有錯分，測試資料卻有兩筆錯分；這正好說明「能找到分隔面」與「能預測未見樣本」是兩個問題。測試混淆表還能看出哪些類型容易互相混淆，資訊比單一正確率更完整。</p><div class="deck-extra">
+  <div class="dx-label">原 Lab：Khan 的線性分類器</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">khan_linear = SVC(kernel=<span class="str">&#x27;linear&#x27;</span>, C=<span class="num">10</span>)</span>
+  <span class="line">khan_linear.fit(Khan[<span class="str">&#x27;xtrain&#x27;</span>], Khan[<span class="str">&#x27;ytrain&#x27;</span>])</span>
+  <span class="line">confusion_table(khan_linear.predict(Khan[<span class="str">&#x27;xtrain&#x27;</span>]),</span>
+  <span class="line">                Khan[<span class="str">&#x27;ytrain&#x27;</span>])</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="90">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+</div><div class="deck-extra">
+  <div class="dx-label">原 Lab：保留測試樣本的混淆表</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">confusion_table(khan_linear.predict(Khan[<span class="str">&#x27;xtest&#x27;</span>]),</span>
+  <span class="line">                Khan[<span class="str">&#x27;ytest&#x27;</span>])</span></div>
+  <span class="dx-src" data-lab-ch="9" data-lab-cells="92">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch09-svm-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch09-svm-lab-zh.ipynb</code></a></span>
+</div>
+<p>線性核可作為高維資料的起點，避免先加入不必要的非線性；是否需要更靈活的核仍要由訓練資料中的驗證決定。真實基因資料還需檢查尺度、批次效應與可能的病人重複量測，不能只因 $p\gg n$ 就跳過正則化或資料切分的檢查。</p>
+<p>多類別 <code>SVC</code> 的底層仍以 OVO 訓練；<code>decision_function_shape="ovr"</code> 只調整輸出形狀。原 Lab 的文字把兩種輸出形狀說成兩種訓練策略，讀程式時應依估計器的實際行為區分。</p>
+<p>資料：<a href="https://islp.readthedocs.io/en/latest/datasets/Khan.html" target="_blank" rel="noopener">Khan 資料的訓練／測試欄位</a>、<a href="https://scikit-learn.org/1.6/modules/svm.html#multi-class-classification" target="_blank" rel="noopener">SVC 的多類別訓練與輸出</a>。</p></div></details>
 </section>
 <section id="vslogit">
 <!-- GEN:BEGIN sec:vslogit -->
@@ -1703,7 +1784,7 @@ $\mathrm{FPR}=\mathrm{FP}/(\mathrm{FP}+\mathrm{TN})$。
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：SVM 與邏輯斯迴歸該選哪一個？</summary>
-    <div class="qa-a"><p><strong>需要類別機率時，可選邏輯斯迴歸。</strong>它可直接估計類別機率。風險分數、期望成本決策、某些需要可解釋機率的集成流程，需要校準過的機率；ROC 或排序門檻本身只需要分數，SVM 給不了（<code>probability=True</code> 使用事後機率校準，還會慢好幾倍）。</p><p>不要機率的話，看類別分得多開。<strong>分得很開 → SVM</strong>：邏輯斯迴歸在完全可分的資料上係數會發散，而 SVM 的 margin 概念天生就處理這種情形。<strong>重疊很多 → 邏輯斯迴歸</strong>：這時 hinge 的稀疏性沒什麼好處，而邏輯斯迴歸的本身就提供機率輸出，係數也可解讀。重疊的中間地帶兩者結果會很像，因為損失函數很像。</p><p>另外兩個實務考量。<strong>n 很大</strong>：<code>SVC</code> 是 O(n²)～O(n³) 的，幾萬筆以上時計算負擔就會增加，這時用 <code>LinearSVC</code>、<code>SGDClassifier</code> 或邏輯斯迴歸。<strong>要看變數重要度</strong>：線性核的 <code>coef_</code> 可以看，RBF 核沒有 β 可看（講義列為高斯核的缺點：「神祕」）。</p></div>
+    <div class="qa-a"><p><strong>需要類別機率時，可選邏輯斯迴歸。</strong>它可直接估計類別機率。風險分數、期望成本決策、某些需要可解釋機率的集成流程，需要校準過的機率；ROC 或排序門檻本身只需要分數，SVM 的 <code>decision_function</code> 可提供這類分數。若需要校準機率，<code>probability=True</code> 會另做機率校準並增加計算成本。</p><p>不要機率的話，看類別分得多開。<strong>分得很開 → SVM</strong>：邏輯斯迴歸在完全可分的資料上係數會發散，而 SVM 的 margin 概念天生就處理這種情形。<strong>重疊很多 → 邏輯斯迴歸</strong>：這時 hinge 的稀疏性沒什麼好處，而邏輯斯迴歸的本身就提供機率輸出，係數也可解讀。重疊的中間地帶兩者結果會很像，因為損失函數很像。</p><p>另外兩個實務考量。<strong>n 很大</strong>：<code>SVC</code> 是 O(n²)～O(n³) 的，幾萬筆以上時計算負擔就會增加，這時用 <code>LinearSVC</code>、<code>SGDClassifier</code> 或邏輯斯迴歸。<strong>要看變數重要度</strong>：線性核的 <code>coef_</code> 可以看，RBF 核沒有 β 可看（講義列為高斯核的缺點：「神祕」）。</p></div>
   </details>
   <details class="qa-item"><summary>Q：為什麼核方法特別常用於 SVM？</summary>
     <div class="qa-a"><p>ISLP 明確回答了：<strong>「歷史原因」</strong>。任何只透過內積接觸資料的方法都能核化（核邏輯斯迴歸、核 PCA、核嶺迴歸都存在），但核在 SVM 的脈絡裡遠比在其他地方普及。</p><p>不過也有技術上的理由。SVM 的解是<strong>稀疏</strong>的——只有支持向量的 $\alpha_i$ 非零，所以預測時只要算 |S| 個核值。核邏輯斯迴歸沒有這個性質：每一筆訓練資料的權重都非零，預測一個點要算 n 個核值，訓練還要處理一個 n × n 的核矩陣。n 稍微大一點就吃不消。<strong>hinge loss 那段「剛好等於 0」，換來的正是核方法在計算上的可行性。</strong></p></div>
@@ -1779,7 +1860,12 @@ $E_\omega\cos(\omega^T(x-x'))=\exp[-\gamma\|x-x'\|^2]$。
 來源：講義 09連結的 scikit-learn Kernel Approximation。</p>
 </div></details>
 
-</div></details><details class="qa-item reading-detail" id="w10-detail-kernel-extensions"><summary>延伸：單類別 SVM</summary>
+<!-- lecture-alignment-ch9:w10-detail-solvers:2725919acb0a -->
+<h3>核近似為什麼可以接上 SGD？</h3>
+<p>原 Lab 以 <code>RBFSampler</code> 產生有限個隨機 Fourier 特徵，再以線性的 <code>SGDClassifier(loss="hinge")</code> 擬合。此時真正儲存的是有限長度的特徵與線性係數，並不需要保留完整的訓練核矩陣。近似特徵數增加可改善核近似，但同時增加時間與記憶體；近似好壞仍不是測試誤差的保證。</p>
+<p>SGD 每次用一筆或小批資料估計更新方向。hinge 在 $yf\lt1$ 時，對 $w$ 的次梯度包含 $-yx$；在 $yf>1$ 時，這筆資料的 hinge 梯度為零，但正則化仍可縮小係數。特徵尺度、步長與迭代次數都影響是否充分收斂。這是在近似後的特徵空間解線性問題，得到的是近似核模型，與精確的 RBF SVC 有別。</p>
+<p>線性 SVC、LinearSVC 與 SGDClassifier 的預設損失、截距處理及求解策略不同。比較時先對齊目標再比較泛化；不能以「三個都畫直線」推成三者必定得到一樣答案。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/kernel_approximation.html" target="_blank" rel="noopener">核近似</a>、<a href="https://scikit-learn.org/1.6/modules/sgd.html" target="_blank" rel="noopener">SGDClassifier</a>。</p></div></details><details class="qa-item reading-detail" id="w10-detail-kernel-extensions"><summary>延伸：單類別 SVM</summary>
 <div class="detail-body"><h4>單類別邊界</h4>
 
 <p>單類別 SVM 使用未標記的正常訓練樣本，$0&lt;\nu\le1$。其問題為</p>

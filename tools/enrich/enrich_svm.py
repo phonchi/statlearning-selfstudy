@@ -69,7 +69,7 @@ BODIES["prologue"] = f"""
   <strong>3. 支持向量機（support vector machine, SVM）：</strong>把內積換成核，
   邊界就彎起來了。<br>
   三者是<strong>逐步擴充的三個層次</strong>。最外面那層用線性核時
-  會原地退回最裡面那層。''')}
+  就得到線性的支持向量分類器，仍然是第二層的軟邊界；線性核本身不會移除容錯懲罰。''')}
 
   <p>起點是<strong>超平面</strong>（hyperplane）。p 維空間裡的超平面是一個 p − 1 維的
   平坦仿射子空間；p = 2 就是一條線，p = 3 就是一個平面。它的方程式是：</p>
@@ -851,7 +851,7 @@ BODIES["vslogit"] = f"""
     ("Q：SVM 與邏輯斯迴歸該選哪一個？",
      "<p><strong>需要類別機率時，可選邏輯斯迴歸。</strong>它可直接估計類別機率。"
      "風險分數、期望成本決策、某些需要可解釋機率的集成流程，需要校準過的機率；ROC 或排序門檻本身只需要分數，"
-     "SVM 給不了（<code>probability=True</code> 使用事後機率校準，還會慢好幾倍）。</p>"
+     "SVM 的 <code>decision_function</code> 可提供這類分數。若需要校準機率，<code>probability=True</code> 會另做機率校準並增加計算成本。</p>"
      "<p>不要機率的話，看類別分得多開。<strong>分得很開 → SVM</strong>："
      "邏輯斯迴歸在完全可分的資料上係數會發散，而 SVM 的 margin 概念天生就處理這種情形。"
      "<strong>重疊很多 → 邏輯斯迴歸</strong>：這時 hinge 的稀疏性沒什麼好處，"
@@ -1721,6 +1721,9 @@ from reading_flow_ch7_8_9_12 import apply_reading_flow
 PAGEJS += apply_reading_flow('support_vector_machines', BODIES)
 from teaching_scope_ch7_8_9_12 import clean_pagejs
 PAGEJS = clean_pagejs('support_vector_machines', PAGEJS)
+
+from lecture_alignment_ch9 import augment
+augment(BODIES)
 
 if __name__ == "__main__":
     apply("support_vector_machines", BODIES, PAGEJS, frames())

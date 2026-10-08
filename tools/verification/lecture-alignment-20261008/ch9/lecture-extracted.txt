@@ -1,0 +1,612 @@
+PAGE 1
+Support Vector Machines
+Szu-Chi Chung
+Department of Applied Mathematics, National Sun Yat-sen University
+
+
+PAGE 2
+Generative and Discriminative Models for Classiﬁcation
+Model the separating criterion 𝑃𝑟(𝑌|𝑋) directly
+Model the distribution of 𝑋in each of the classes 𝑃𝑟(𝑋|𝑌) separately, and then 
+use Bayes theorem to ﬂip things around and obtain 𝑃𝑟(𝑌|𝑋)
+2
+https://www.analyticsvidhya.com/blog/2021/07/deep-understanding-of-discriminative-and-generative-models-in-
+machine-learning/
+
+
+PAGE 3
+Support Vector Machines
+The support vector machine is a generalization of a simple and intuitive
+classifier called the maximal margin classifier and support vector 
+classifier
+Here we approach the two-class classiﬁcation problem in a direct way:
+We try and ﬁnd a plane that separates the classes in feature space
+If we cannot, we get creative in two ways:
+We soften what we mean by “separates”, and
+We enrich and enlarge the feature space so that separation is possible
+3
+
+
+PAGE 4
+Why Support Vector Machine?
+For classification task we only need to know the hyperplane. Why bother a 
+model?
+Support Vector Machine has the following advantages
+Still effective in cases where number of dimensions is greater than the number of samples
+Uses a subset of training points in the decision function (called support vectors), so it is 
+also efficient in both execution time and memory
+Versatile: different Kernel functions can be specified for the decision function. Common 
+kernels are provided, but it is also possible to specify custom kernels
+X The disadvantage is that it does not directly provide probability estimates. In 
+addition, if 𝑝≫𝑛, the regularization is crucial
+4
+
+
+PAGE 5
+What is a Hyperplane?
+A hyperplane in 𝑝dimensions is a ﬂat aﬃne subspace of dimension 𝑝−1
+In general the equation for a hyperplane has the form
+𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+ 𝛽𝑝𝑋𝑝= 0
+If 𝑝= 2 dimensions a hyperplane is a line
+If 𝑝= 3 dimensions a hyperplane is a plane
+If 𝛽0 = 0, the hyperplane goes through the origin, otherwise not
+The vector 𝛽= (𝛽1, 𝛽2, … , 𝛽𝑝) is called the normal vector — it points in a 
+direction orthogonal to the surface of a hyperplane
+5
+
+
+PAGE 6
+Hyperplane in 2 Dimensions
+6
+Note the distance between point 𝑥0, 𝑦0
+to line 𝛽1𝑋1 + 𝛽2𝑋2 + 𝛽0 = 0 is 
+|𝛽1𝑥0+𝛽2𝑦0+𝛽0|
+𝛽12+𝛽22
+, where
+𝛽1𝑥0+𝛽2𝑦0+𝛽0
+𝛽12+𝛽22
+is the scalar projection
+
+
+PAGE 7
+Separating Hyperplanes
+If 𝑓𝑋= 𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+ 𝛽𝑝𝑋𝑝
+𝑓(𝑋) > 0 for points on one side of the hyperplane, and 𝑓(𝑋) < 0 for points on the other
+If we code the colored points as 𝑦𝑖= +1 for blue, say, and 𝑦𝑖= −1 for purple, 𝑓(𝑋) = 0
+deﬁnes a separating hyperplane. Therefore, 𝑦𝑖𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝> 0 for all 𝑦𝑖, 
+𝑖= 1, … , 𝑛!
+𝑦𝑖(𝛽0 + 𝛽1𝑥1
+∗+ ⋯+ 𝛽𝑝𝑥𝑝∗) represents the confidence of our assignment
+7
+
+
+PAGE 8
+1. Maximal Margin Classiﬁer
+Among all separating hyperplanes, ﬁnd the one that 
+makes the biggest margin between the two classes
+The minimal distance from the training observations to the 
+hyperplane is known as the margin
+We try to choose the maximal margin hyperplane 
+Classify a test observation based on which side of the 
+maximal margin hyperplane it lies
+Three training observations are equidistant from the 
+maximal margin which are known as support vectors
+The maximal margin hyperplane does not depends on all 
+other training points
+8
+
+
+PAGE 9
+1. Maximal Margin Classiﬁer
+The maximal margin hyperplane can be obtained via the constrained 
+optimization problem
+max
+𝛽0,𝛽1,…,𝛽𝑝𝑀
+subject to σ𝑗=1
+𝑝
+𝛽𝑗
+2 = 1, 
+𝑦𝑖(𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝) ≥𝑀
+for all 𝑖= 1, … , 𝑛
+The first constraint means that the perpendicular distance from the 𝑖th observation 
+to the hyperplane is given by 𝑦𝑖(𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝)
+The second one guarantees that each observation will be on the correct side of the 
+hyperplane with some cushion, provided that 𝑀is positive
+9
+
+
+PAGE 10
+Non-separable Data
+The data below are not separable by a linear boundary
+This is often the case, unless 𝑛< 𝑝
+10
+
+
+PAGE 11
+Noisy Data
+Sometimes the data are separable, but noisy. This can lead to a poor solution 
+for the maximal-margin classiﬁer
+The support vector classiﬁer maximizes a soft margin
+11
+
+
+PAGE 12
+2. Support Vector Classiﬁer (SVC)
+In this case, we might be willing to consider a soft margin classifier that 
+does not perfectly separate the two classes, but
+Greater robustness to individual observations, and
+Better classification of most of the training observations
+12
+
+
+PAGE 13
+2. Support Vector Classiﬁer (SVC)
+The hyperplane is chosen to correctly separate most of the training 
+observations into the two classes, but may misclassify a few observations via
+max
+𝛽0,𝛽1,…,𝛽𝑝,𝜖1,…,𝜖𝑛𝑀
+subject to σ𝑗=1
+𝑝
+𝛽𝑗
+2 = 1, 
+𝑦𝑖𝛽0 + 𝛽1𝑥𝑖1 + ⋯+ 𝛽𝑝𝑥𝑖𝑝≥𝑀1 −𝜖𝑖,
+𝜖𝑖≥0, σ𝑖=1
+𝑛
+𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛
+𝜖1, … , 𝜖𝑛are slack variables that allow individual observations to be on the wrong 
+side of the margin or the hyperplane
+𝜖𝑖= 0 means observation is on the correct side of the margin, 𝜖𝑖> 0 means observation 
+is on the wrong side of the margin. 𝜖𝑖> 1 means on the wrong side of the hyperplane
+13
+
+
+PAGE 14
+Const is a regularization parameter
+Const as a budget for the amount that 
+the margin can be violated
+If 𝑐𝑜𝑛𝑠𝑡= 0, it is maximal margin 
+hyperplane
+For 𝑐𝑜𝑛𝑠𝑡> 0 no more than 𝑐𝑜𝑛𝑠𝑡
+observations can be on the wrong side of 
+the hyperplane
+𝑐𝑜𝑛𝑠𝑡is small, we seek narrow margins 
+that are rarely violated and vice versa
+Observations that lie directly on the 
+margin, or on the wrong side of the margin 
+for their class, are known as support 
+vectors
+14
+
+
+PAGE 15
+Computing the Support Vector Classiﬁer 
+max
+𝛽0,𝛽, 𝛽=1,𝜖1,…,𝜖𝑛𝑀
+𝑦𝑖𝑥𝑖
+𝑇𝛽+ 𝛽0 ≥𝑀1 −𝜖𝑖,
+𝜖𝑖≥0, σ𝑖=1
+𝑛
+𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛
+Is equivalent to 
+m𝑎𝑥
+𝛽0,𝛽,𝜖1,…,𝜖𝑛𝑀
+1
+|𝛽| 𝑦𝑖𝑥𝑖
+𝑇𝛽+ 𝛽0 ≥𝑀1 −𝜖𝑖,
+𝜖𝑖≥0, σ𝑖=1
+𝑛
+𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛
+Let 𝑀=
+Τ
+1 |𝛽|
+m𝑖𝑛
+𝛽0,𝛽,𝜖0,𝜖1,…,𝜖𝑛|𝛽|
+𝑦𝑖𝑥𝑖
+𝑇𝛽+ 𝛽0 ≥1 −𝜖𝑖,
+𝜖𝑖≥0, σ𝑖=1
+𝑛
+𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡, for all 𝑖= 1, … , 𝑛
+15
+
+
+PAGE 16
+Computing the Support Vector Classiﬁer 
+σ𝑖=1
+𝑛
+𝜖𝑖≤𝑐𝑜𝑛𝑠𝑡
+16
+
+
+PAGE 17
+Computing the Maximal Margin Classiﬁer (Assume 𝜖𝑖= 0)
+The Lagrange (primal) problem is (suitable for small 𝑝) to minimizing
+𝐿𝑃= 1
+2 |𝛽|2
+Subject to 𝑦𝑖𝑥𝑖
+𝑇𝛽+ 𝛽0 ≥1
+𝑝+ 1 variables, 𝑛constraints
+The Lagrangian (dual) problem is (suitable for small 𝑛, can use the kernel trick) 
+to maximizing
+𝐿𝐷= ෍
+𝑖=1
+𝑛
+𝛼𝑖−1
+2 ෍
+𝑖=1
+𝑛
+෍
+𝑖′=1
+𝑛
+𝛼𝑖𝛼𝑖′ 𝑦𝑖𝑦𝑖′𝑥𝑖
+𝑇𝑥𝑖′
+Subject to 0 ≤𝛼𝑖and σ𝑖=1
+𝑛
+𝛼𝑖𝑦𝑖= 0
+𝑛variables, 𝑛+ 1 constraints
+17
+
+
+PAGE 18
+Computing the Support Vector Classiﬁer (Assume 𝜖𝑖≠0)
+The Lagrange (primal) problem is to minimizing (𝐶is inverse proportional to 𝑐𝑜𝑛𝑠𝑡)
+𝐿𝑃= 1
+2 |𝛽|2 + 𝐶෍
+𝑖=1
+𝑛
+𝜖𝑖
+Subject to 𝜖𝑖≥0, 𝑦𝑖𝑥𝑖
+𝑇𝛽+ 𝛽0 ≥1 −𝜖𝑖
+𝑝+ 1 + 𝑛variables, 2𝑛constraints
+The Lagrangian (dual) problem is to maximizing
+𝐿𝐷= ෍
+𝑖=1
+𝑛
+𝛼𝑖−1
+2 ෍
+𝑖=1
+𝑛
+෍
+𝑖′=1
+𝑛
+𝛼𝑖𝛼𝑖′ 𝑦𝑖𝑦𝑖′𝑥𝑖
+𝑇𝑥𝑖′
+Subject to 0 ≤𝛼𝑖≤𝐶and σ𝑖=1
+𝑛
+𝛼𝑖𝑦𝑖= 0
+𝑛variables, 2𝑛+ 1 constraints
+It is noted that the solution has the form መ𝛽= σ𝑖=1
+𝑛
+ො𝛼𝑖𝑦𝑖𝑥𝑖
+18
+
+
+PAGE 19
+Linear boundary can fail
+Sometimes a linear boundary simply won’t work, no matter what value of const
+The example below is such a case. What to do?
+19
+
+
+PAGE 20
+Feature Expansion
+Enlarge the space of features by including transformations; e.g. 
+𝑋1
+2, 𝑋1
+3, 𝑋1𝑋2, 𝑋1𝑋2
+3, … . Hence go from a 𝑝-dimensional space to a larger 
+dimensional space
+Fit a support-vector classiﬁer in the enlarged space
+This results in non-linear decision boundaries in the original space
+Example: Suppose we use (𝑋1, 𝑋2, 𝑋1
+2, 𝑋2
+2, 𝑋1𝑋2) instead of just (𝑋1, 𝑋2). Then 
+the decision boundary would be of the form
+𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + 𝛽3𝑋1
+2 + 𝛽4𝑋2
+2 + 𝛽5𝑋1𝑋2 = 0
+This leads to nonlinear decision boundaries in the original space (quadratic conic sections)
+20
+
+
+PAGE 21
+Feature Expansion - Cubic Polynomials
+Here we use a basis expansion of cubic polynomials. From 2 variables to 9 
+The support-vector classiﬁer in the enlarged space solves the problem in the 
+lower-dimensional space
+𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + 𝛽3𝑋1
+2 + 𝛽4𝑋2
+2 + 𝛽5𝑋1𝑋2 + 𝛽6𝑋1
+3 + 𝛽7𝑋2
+3 + 𝛽8𝑋1𝑋2
+2 + 𝛽9𝑋1
+2𝑋2 = 0
+21
+
+
+PAGE 22
+Nonlinearities and Kernels
+1.
+Polynomials (especially high-dimensional ones) get wild rather fast
+2.
+There is a more elegant and controlled way to introduce nonlinearities in 
+support-vector classiﬁers — through the use of kernels
+Main idea: feature mapping to a high dimensional space
+𝑥→Φ 𝑥= 𝜑1 𝑥, 𝜑2 𝑥, 𝜑3 𝑥, … , Φ 𝑥𝑇Φ 𝑢= 𝐾(𝑥, 𝑢)
+Kernel Trick: We do not really need to know Φ 𝑥. Instead, we work on original space 
+using the Kernel
+A kernel is a function that quantifies the similarity of two observations
+Recall the role of inner products in statistical learning
+22
+
+
+PAGE 23
+Inner products and support vectors
+Many problems involve the following inner product
+𝑥𝑖, 𝑥𝑖′ = ෍
+𝑗=1
+𝑝
+𝑥𝑖𝑗𝑥𝑖′𝑗
+The linear support vector classiﬁer can be represented as 
+𝑓𝑥= 𝛽0 + ෍
+𝑖=1
+𝑛
+𝛼𝑖𝑦𝑖𝑥, 𝑥𝑖
+To estimate the parameters 𝛼1, … , 𝛼𝑛and 𝛽0, all we need are the 𝑛
+2 inner 
+products 𝑥𝑖, 𝑥𝑖′ between all pairs of training observations
+It turns out that most of the ො𝛼𝑖can be zero except for the support vectors:
+𝑓𝑥= 𝛽0 + ෍
+𝑖∈𝑆
+ො𝛼𝑖𝑦𝑖𝑥, 𝑥𝑖
+𝑆is the support set of indices 𝑖such that ො𝛼𝑖> 0
+23
+
+
+PAGE 24
+3. Kernels and Support Vector Machines
+The support vector machine (SVM) is an 
+extension of the support vector classifier 
+that results from enlarging the feature 
+space in a specific way, using kernels
+Consider the second degree mapping
+Φ 𝑥= Φ
+2𝑥1𝑥2
+𝑥1
+2
+𝑥2
+2
+Φ 𝑎𝑇Φ 𝑏=
+2𝑎1𝑎2
+𝑎1
+2
+𝑎2
+2
+𝑇
+2𝑏1𝑏2
+𝑏1
+2
+𝑏2
+2
+= (𝑎1𝑏1 + 𝑎2𝑏2)2=
+𝑎1
+𝑎2
+𝑇𝑏1
+𝑏2
+2
+= (𝑎𝑇𝑏)2
+24
+
+
+PAGE 25
+3. Kernels and Support Vector Machines
+If we can compute inner-products between observations, we can ﬁt a SV classiﬁer. 
+The Support Vector Machines is an extension of SVC (linear kernel) using kernels 
+In fact, SVC is a SVM with linear kernel
+𝐾𝑥𝑖, 𝑥𝑖′ = ෍
+𝑗=1
+𝑝
+𝑥𝑖𝑗𝑥𝑖′𝑗
+Some special kernel functions are useful. E.g. the polynomial kernel
+𝐾𝑥𝑖, 𝑥𝑖′ = (1 + σ𝑗=1
+𝑝
+𝑥𝑖𝑗𝑥𝑖′𝑗)𝑑(Add constant and variable itself)
+computes the inner-products needed for 𝑑dimensional polynomials
+The solution now has the form
+𝑓𝑥= 𝛽0 + ෍
+𝑖∈𝑆
+ො𝛼𝑖𝑦𝑖𝐾𝑥, 𝑥𝑖
+25
+
+
+PAGE 26
+Radial Basis Kernel
+Controls variance by squashing down most 
+dimensions severely
+𝐾𝑥, 𝑥𝑖= exp(−𝛾෍
+𝑗=1
+𝑝
+(𝑥𝑖𝑗−𝑥𝑖′𝑗)2)
+𝑓𝑥= 𝛽0 + ෍
+𝑖∈𝑆
+ො𝛼𝑖𝑦𝑖𝐾𝑥, 𝑥𝑖
+𝛾is also a regularization parameter (You 
+should reduce it if overfitting)
+The feature space is implicit and infinite-
+dimensional (By Mercer’s theorem, exact Φ is 
+intractable)
+26
+
+
+PAGE 27
+Example: Heart Data
+ROC curve is obtained by changing the threshold 0 to threshold 𝑡in መ𝑓𝑋≥𝑡, 
+and recording false positive and true positive rates as 𝑡varies. Here we see 
+ROC curves on training data
+27
+
+
+PAGE 28
+Example continued: Heart Test Data
+ROC curves on testing data
+28
+
+
+PAGE 29
+SVMs: more than 2 classes?
+The SVM as deﬁned works for 𝐾= 2 classes. What do we do if we have 𝐾> 2
+classes?
+OVA (One versus All or OVR): Fit 𝐾diﬀerent 2-class SVM classiﬁers መ𝑓(𝑥), 𝑘= 1, . . . , 𝐾; 
+each class versus the rest. Classify 𝑥∗to the class for which መ𝑓(𝑥∗), is largest
+OVO (One versus One): Fit all 𝐾
+2 pairwise classiﬁers መ𝑓𝑘𝑙(𝑥). Classify 𝑥∗to the class that 
+wins the most pairwise competitions
+Which to choose? If 𝐾is not too large, use OVO
+29
+
+
+PAGE 30
+Support Vector versus Logistic Regression?
+With 𝑓𝑋= 𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+
+𝛽𝑝𝑋𝑝, we can rephrase support-vector 
+classiﬁer optimization as (ESL exercise 12.1)
+min
+𝛽0,𝛽1,…,𝛽𝑝{෍
+𝑖=1
+𝑛
+max 0,1 −𝑦𝑖𝑓𝑥𝑖
++ λ ෍
+𝑗=1
+𝑝
+𝛽𝑗
+2}
+When λ is large then 𝛽is small, more violations to 
+the margin are tolerated. It is proportional to 
+𝑐𝑜𝑛𝑠𝑡
+This has the form loss plus penalty. The loss is 
+known as the hinge loss
+Very similar to “loss” in logistic regression 
+(negative log-likelihood)
+30
+
+
+PAGE 31
+Support Vector versus Logistic Regression?
+The loss function shown above is exactly zero for observations for which 
+𝑦𝑖(𝛽0 + 𝛽1𝑋1 + 𝛽2𝑋2 + ⋯+ 𝛽𝑝𝑋𝑝) ≥1
+The loss function for logistic regression shown in Figure is not exactly zero anywhere. 
+But it is very small for observations that are far from the decision boundary 
+When classes are (nearly) separable, SVC does better than LR. So does LDA
+When not, LR (with ridge penalty) and SVC very similar
+If you wish to estimate probabilities, LR is the choice
+For nonlinear boundaries, kernel SVMs are popular. Can use kernels with LR 
+and LDA as well, but computations are more expensive
+We could also just as well perform logistic regression or many of the other 
+classification methods seen in this book using non-linear kernels!
+31
+
+
+PAGE 32
+SGD classifier
+Stochastic Gradient Descent (SGD) is a simple yet very efficient approach to 
+fitting linear classifiers and regressors under convex loss functions such as 
+(linear) Support Vector Machines and Logistic Regression
+Even though SGD has been around in the machine learning community for a long time, it 
+has received a considerable amount of attention just recently in large-scale learning
+SGD is sensitive to feature scaling
+Kernel Approximation can be used with SGD
+For large-scaled problem, try to use SGDClassifier with hinge loss
+32
+
+
+PAGE 33
+Computations
+Support Vector Machine algorithms are not scale invariant, so it is highly 
+recommended to scale your data
+For the linear case, the algorithm used in LinearSVC by the liblinear implementation. Note 
+that LinearSVC does not accept parameter kernel, as this is assumed to be linear 
+For nonlinear case, SVC (relies on libsvm) and NuSVC are similar methods, but accept 
+slightly different sets of parameters 
+liblinear and libsvm are efficient library developed by Chih-Jen Lin
+SVM can also estimating the probability
+𝐶is 1 by default and it’s a reasonable default choice. If you have a lot of noisy 
+observations you should decrease it: decreasing 𝐶corresponds to more 
+regularization
+33
+
+
+PAGE 34
+SVM
+The key features of SVMs are the use of kernels, the absence of local minima, 
+the sparseness of the solution and the capacity control obtained by optimizing 
+the margin
+SVM can also be extended to regression, density estimation and novelty 
+detection problem
+Support vector regression instead seeks coefficients that minimize a different type of loss, 
+where only residuals larger in absolute value than some positive constant contribute to the 
+loss function
+34
+
+
+PAGE 35
+Appendix
+35
+
+
+PAGE 36
+Reference
+https://www.csie.ntu.edu.tw/~htlin/mooc/
+https://cs229.stanford.edu/notes2021fall/cs229-notes3.pdf
+https://cs229.stanford.edu/notes2022fall/main_notes.pdf chapter 5 and 6
+https://scikit-learn.org/stable/modules/svm.html
+36
+
+
+PAGE 37
+Statistical Modeling Y ∼X:
+𝑌continuous, 𝑋continuous: Regression Analysis
+𝑌discrete, 𝑋continuous:
+𝑋is Gaussian: Linear Discriminant Analysis
+𝑋is non-Gaussian: Logistic Regression
+𝑌discrete, 𝑋discrete: Discriminant Correspondent Analysis
+𝑌continuous, 𝑋discrete: ANOVA
+37
+
+
+PAGE 38
+Perceptron: I only need to know the hyperplane!
+Why bother a model?
+Perceptron: On-Line learning Classiﬁcation
+The hyperplane is sequentially updated by the training set. Calculate the actual output and 
+then update the weight whose increment is proportional to the diﬀerence of the actual 
+output and the desired output
+Given an initial 𝑤, for each training pair (𝑥𝑖, 𝑦𝑖) where 1 ≤𝑖≤𝑛, do the two 
+steps:
+𝑜𝑖= 𝑓(𝑤𝑇(𝑡)𝑥𝑖) (the decision rule)
+𝑤𝑡+ 1 = 𝑤𝑡+ 𝛼(𝑜𝑖−𝑦𝑖)𝑥𝑖
+38
+
+
+PAGE 39
+From Perceptron to SVM
+Introduce the concept of Margin → a unique solution
+Introduce the slack variables → soft margin
+Introduce Kernel method → non-linear feature mapping
+39
+
+
+PAGE 40
+Common kernels
+Linear kernel
+Pros: safe, fast (QP solvers), explainable (by 𝑤and SVs )
+Cons: restricted (not always separable)
+A basic tool
+Polynomial kernel
+Pros: less restricted than linear, strong physical control by knowing the degree 
+Cons: numerical diﬃculty for large degree 
+Perhaps small degree only
+Gaussian kernel
+Pros: more powerful than linear and poly ones, bounded (less numerical diﬃculty than 
+Poly one), only one parameter to be selected
+Cons: mysterious (no 𝑤), slower than linear, overﬁtting problem
+Popular but be used carefully
+40
