@@ -35,4 +35,4 @@ python tools/verification/lecture-alignment-20261008/coverage_check.py
 python tools/verification/lecture-alignment-20261008/browser_acceptance.py
 ```
 
-來源索引以實際課程路徑為準。要重建歷史驗收，使用 `source_manifest.json` 的 baseline_head 與 source_sha256；已保存的 `inputs/` 不應以新的HEAD覆蓋後再當作原基準。
+來源索引以實際課程路徑為準。重建入口沿用 `source_manifest.json` 的 baseline_head 與 source_sha256；來源不符會停止，避免把新的 PDF／Lab 或 HEAD 冒充歷史基準。
