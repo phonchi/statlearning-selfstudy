@@ -574,6 +574,8 @@ PAGES = [
         playlist="",
         extra_pills=[
             ('▶ 課程錄影：邏輯斯迴歸', 'https://youtu.be/D3--1_Nix7I'),
+            ('▶ 課程錄影：LDA 與 Fisher LDA', 'https://youtu.be/XCNBR9blfA0'),
+            ('▶ 課程錄影：QDA、Naive Bayes 與分類方法比較', 'https://youtu.be/-PchtiCNGPQ'),
         ],
         hero_svg=_svg_boundary(), bankquiz=True,
         group="core",
@@ -604,6 +606,9 @@ PAGES = [
         deck="05_Resampling_Methods.pdf", deck_pages=42, lab="Ch05-resample-lab-zh.ipynb",
         islp=5, islp_label="ISLP Ch.5", esl_label="ESL §7.1–7.4、7.10–7.11",
         playlist="PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN",
+        extra_pills=[
+            ('▶ 課程錄影：GLM 與交叉驗證', 'https://youtu.be/_ILYSXojMEk'),
+        ],
         hero_svg=_svg_folds(),
         group="core",
         secs=[
