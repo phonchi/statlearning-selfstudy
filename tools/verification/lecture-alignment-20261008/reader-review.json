@@ -1,0 +1,163 @@
+{
+  "read_only_reviews": [
+    {
+      "reader": "/root/reader_ch5_6",
+      "chapters": [
+        5,
+        6
+      ],
+      "status": "all findings corrected and independently rechecked",
+      "findings": [
+        {
+          "id": "R56-1",
+          "issue": "Block-bootstrap covariance formula lost because raw i<j parsed as HTML",
+          "fix": "Use i\\lt j; verify complete DOM formula and MathJax",
+          "verification": "reader DOM recheck + independent variance derivation"
+        },
+        {
+          "id": "R56-2",
+          "issue": "Ch06 Lab wrongly described as only a single outer holdout",
+          "fix": "Distinguish cells155/157 holdout from cell159 outer5 inner5 Nested CV",
+          "verification": "actual notebook cells checked"
+        },
+        {
+          "id": "R56-3",
+          "issue": "Saturated adjusted R2 wrongly said to equal1",
+          "fix": "Training R2 may be1; usual adjustedR2 undefined when residual df0; rank-aware df stated",
+          "verification": "independent n2,p3 rank2 example"
+        },
+        {
+          "id": "R56-4",
+          "issue": "PLS covariance objective confused with correlation maximization",
+          "fix": "Table says unit-weight covariance maximum",
+          "verification": "independent equal-scale correlated-column counterexample"
+        },
+        {
+          "id": "R56-5",
+          "issue": "Lasso correlated-column penalty and Ridge equal-sharing claims overstated",
+          "fix": "Same columns (2,0)/(1,1) same L1; Ridge square penalties4/2; equal-sharing conditions",
+          "verification": "independent penalty calculation"
+        },
+        {
+          "id": "R56-6",
+          "issue": "one-SE heuristic wrongly treated as statistical equivalence test",
+          "fix": "Use best CV plus one-SE rule; avoid equal-risk claim",
+          "verification": "main narrative and QA rechecked"
+        }
+      ]
+    },
+    {
+      "reader": "/root/reader_ch7_8",
+      "chapters": [
+        7,
+        8
+      ],
+      "status": "all findings corrected and independently rechecked",
+      "findings": [
+        {
+          "id": "R78-1",
+          "issue": "Repeated-x smoothing interpolation and df upper bound inconsistent",
+          "fix": "RSS0 only distinct x; repeated x fit group means; upper bound distinct count m",
+          "verification": "3000 Wage rows,61 ages; independent grouped-mean RSS4686410.704"
+        },
+        {
+          "id": "R78-2",
+          "issue": "Boosting d mixed total split count and maximum depth",
+          "fix": "Keep textbook total d; UI max depth D; d+1 vs at-most2^D leaves",
+          "verification": "source algorithm,Lab and widget code reviewed"
+        },
+        {
+          "id": "R78-3",
+          "issue": "criterion path and accuracy selection conflated",
+          "fix": "criterion builds pruning path; validation metric selects alpha; QA also corrected",
+          "verification": "official sklearn pruning documentation + final reader recheck"
+        },
+        {
+          "id": "R78-4",
+          "issue": "EX1 claimed every concave split has strictly positive impurity reduction",
+          "fix": "Strict concavity plus nonempty children with different proportions",
+          "verification": "equal50/50->25/25 counterexample"
+        },
+        {
+          "id": "R78-5",
+          "issue": "15-degree polynomial said equal complexity to15df natural spline",
+          "fix": "Degree14 including intercept has15 parameters; recap d+1",
+          "verification": "actual lecture p23 and parameter counts"
+        },
+        {
+          "id": "R78-6",
+          "issue": "Missing800-case references and incomplete Heart arithmetic",
+          "fix": "Use actual Heart9/11 split with explicit weighted error/Gini calculation",
+          "verification": "E0.2 unchanged,G0.32->0.254545,delta0.065455"
+        },
+        {
+          "id": "R78-7",
+          "issue": "RF finite test curves claimed monotonic with B",
+          "fix": "Typically stabilize; finite curves may fluctuate",
+          "verification": "embedded m=p curve B2->3 increases13.7849->16.403"
+        }
+      ]
+    },
+    {
+      "reader": "/root/reader_ch9_12",
+      "chapters": [
+        9,
+        12
+      ],
+      "status": "all findings corrected and independently rechecked",
+      "findings": [
+        {
+          "id": "R912-1",
+          "issue": "SVM alpha inequality swallowed intercept explanation in DOM",
+          "fix": "Use0\\lt alpha_i\\lt C",
+          "verification": "DOM restored and reader recheck"
+        },
+        {
+          "id": "R912-2",
+          "issue": "Linear kernel wrongly equated to hard-margin solution",
+          "fix": "Linear kernel returns soft-margin support vector classifier",
+          "verification": "independent2point C0.1 solutionw0.2 vs hardw1"
+        },
+        {
+          "id": "R912-3",
+          "issue": "SVM decision scores wrongly said unavailable forROC",
+          "fix": "decision_function supplies ranking scores; calibrated probability additional",
+          "verification": "Lab/official decision score and ROC APIs"
+        },
+        {
+          "id": "R912-4",
+          "issue": "low_rank Lab falsely said to center each iteration",
+          "fix": "Initially standardized data; direct truncated SVD each iteration, no recenter/addmean",
+          "verification": "actual cells48,58,64"
+        },
+        {
+          "id": "R912-5",
+          "issue": "Mississippi incorrectly called low-crime",
+          "fix": "ND low crime;MS low urbanization with high Murder/Assault",
+          "verification": "USArrests raw values and embedded PCA scores"
+        },
+        {
+          "id": "R912-6",
+          "issue": "0–1 range and recap scaling criteria inconsistent",
+          "fix": "Decide by units,variance meaning,analysis purpose; all tables andFAQ harmonized",
+          "verification": "two-stage reader recheck"
+        },
+        {
+          "id": "R912-7",
+          "issue": "KMeans n_init default10 outdated forsklearn1.6.1",
+          "fix": "auto with1 kmeans++ /10 random; distinguish explicitLab20/50",
+          "verification": "official1.6 API and live environment"
+        }
+      ]
+    }
+  ],
+  "confirmed_findings_closed": 20,
+  "limitations": "Readers performed content/source/math/DOM checks; browser acceptance performed separately by root.",
+  "root_visual_review": [
+    {
+      "issue": "Main soft-margin formula uses lecture budget C while bridge said all main text used B",
+      "fix": "Explicitly retain lecture C and introduce B only as alias in subsequent derivation",
+      "scope": "soft-margin bridge, no mathematical or API change"
+    }
+  ]
+}
