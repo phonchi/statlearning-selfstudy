@@ -97,7 +97,7 @@ def nonlin(b):
     b['splines']=tables(b['splines'],'w08-detail-spline-count','比較連續性限制與參數個數')
     b['natural']=wrap_range(b['natural'],'w08-detail-natural-basis','深入基底：自然樣條與 B-spline 的計算',heading('自然樣條與 B-spline 基底'))
     b['smooth']=wrap_range(b['smooth'],'w08-detail-smoothing-computation','深入計算：平滑矩陣、交叉驗證與 IRLS',heading('平滑矩陣與邏輯斯平滑'))
-    b['smooth']=wrap_range(b['smooth'],'w08-detail-smoothing-df','有效自由度與留一法的完整公式',contains('既然每個點都是節點'),cls('viz-panel'))
+    b['smooth']=wrap_range(b['smooth'],'w08-detail-smoothing-df','有效自由度與留一法的完整公式',contains('令 m 為相異設計點的數目'),cls('viz-panel'))
     b['loess']=one_viz(b['loess'],'w08-detail-lowess-lab-plot','課程資料比較：兩個跨距的 LOWESS 曲線','w08lowessLab')
     b['loess']=wrap_range(b['loess'],'w08-detail-local-calculation','局部加權擬合的算例與多變數延伸',heading('局部加權擬合的一次計算'))
     b['loess']=tables(b['loess'],'w08-detail-span-table','對照不同跨距的有效自由度')
@@ -238,7 +238,7 @@ def polish(stem,b):
         b['soft']=wrap_range(b['soft'],'w10-detail-budget-slack','預算形式與違反量的完整定義',lambda n,r:n['tag']=='text' and r'\epsilon_1' in r,lambda n,r:klass(n,'info-box') and '先辨認 C' in words(r))
         b['soft']=merge_entries(b['soft'],['w10-detail-budget-slack','w10-detail-slack-table','w10-detail-soft-dual'],'w10-detail-soft-dual','完整軟邊界對偶：slack、限制、KKT 與截距')
         # Keep the notation warning before the detail, so the C slider is self-contained.
-        b['soft']=add_before(b['soft'],'w10-detail-soft-dual',r'<p>下方互動採用 SVC 的懲罰權重 C：較大 C 更重視減少違反間隔的損失；較小 C 容許更多違反，以換取較寬的間隔。正文用 B 表示違反量預算，兩者沒有普遍的倒數換算。</p>')
+        b['soft']=add_before(b['soft'],'w10-detail-soft-dual',r'<p>下方互動採用 SVC 的懲罰權重 C：較大 C 更重視減少違反間隔的損失；較小 C 容許更多違反，以換取較寬的間隔。講義的違反量預算也記作 C；下方延伸推導將這個預算改記為 B，以區分它與 SVC 的懲罰權重。兩者沒有普遍的倒數換算。</p>')
         b['hinge']=condense(b['hinge'],'w10-detail-hinge-objective','展開 hinge 目標與 λ／C 記號',contains('前面把支持向量分類器'),contains('現在看那條曲線'),r'<p>Hinge loss 以帶標籤分數 $y f(x)$ 衡量違反間隔的程度：</p>$$\ell(y,f(x))=\max(0,1-yf(x)).$$<p>例如分數為 0.5 時損失為 0.5，分數超過 1 後損失為 0；間隔上的折角仍可能對解有影響。擬合時把這個損失與係數的平方懲罰相加。</p>')
         b['hinge']=merge_entries(b['hinge'],['w10-detail-hinge-objective','w10-detail-loss-normalization'],'w10-detail-loss-normalization','完整目標與尺度：hinge、slack、預算及標籤')
         b['kernel']=wrap_range(b['kernel'],'w10-detail-polynomial-map','算例：二次映射的內積與核函數',contains('講義第 24 頁的例子'),cls('viz-panel'))

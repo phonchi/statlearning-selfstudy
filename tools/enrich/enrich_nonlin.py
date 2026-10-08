@@ -466,8 +466,8 @@ BODIES["natural"] = f"""
      '<button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button>',
      provenance=("course-data", "Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴區間。"))}
 
-  <p>ISLP 圖 7.7 把這件事推到極端：<strong>15 個自由度的自然樣條 vs 15 次多項式</strong>。
-  兩者複雜度相同，但多項式在尾端大幅振盪，自然樣條則較穩定。
+  <p>ISLP 圖 7.7 把這件事推到極端：<strong>15 個自由度的自然樣條 vs 14 次多項式</strong>。
+  兩者均含截距、各有 15 個自由度，但多項式在尾端大幅振盪，自然樣條則較穩定。
   這就是「樣條通常優於多項式」的理由：<strong>樣條靠加節點取得彈性、把次數鎖在 3；
   多項式只能靠拉高次數，而高次的代價全部集中在邊界。</strong></p>
 
@@ -520,7 +520,7 @@ BODIES["smooth"] = f"""
 
 {info("這是「損失＋懲罰」，跟脊迴歸相同的做法", '''第一項是<strong>損失</strong>，逼 g 貼近資料；
   第二項是<strong>懲罰</strong>，逼 g 平滑。λ ≥ 0 是調整參數：<br>
-  <strong>λ = 0：</strong>懲罰失效，g 會穿過每一個點（內插），RSS = 0，完全過度擬合。<br>
+  <strong>λ = 0：</strong>懲罰失效。設計點相異時可內插到 RSS = 0；同一 x 若有不同 y，擬合值只能取該組平均，RSS 通常不為 0。兩者都可能追隨資料中的雜訊。<br>
   <strong>λ → ∞：</strong>懲罰無限重，只有 $\\int g''^2 = 0$ 的函數不受懲罰，
   也就是<strong>直線</strong>。這時損失項退化成普通的線性最小平方，
   所以 g 就是那條最小平方直線。<br>
@@ -531,14 +531,14 @@ BODIES["smooth"] = f"""
   但它不等於「拿全部 x 當節點去擬合自然樣條」。在相異設計點上不加懲罰會插值，因而容易過度擬合；
   它是那個自然樣條的<strong>收縮版</strong>，收縮的程度由 λ 決定。</p>
 
-  <p>既然每個點都是節點，名目上有 n 個參數。所以我們不用「參數個數」描述它的彈性，
+  <p>令 m 為相異設計點的數目；自然樣條可在這 m 個位置調整擬合值。所以我們不用「參數個數」描述它的彈性，
   改用<strong>有效自由度</strong>（effective degrees of freedom）。把擬合值寫成</p>
 
   $$\\hat g_\\lambda = S_\\lambda \\, y, \\qquad
     \\mathrm{{df}}_\\lambda = \\sum_{{i=1}}^{{n}} \\{{S_\\lambda\\}}_{{ii}} \\tag{{7.12–7.13}}$$
 
   <p>$S_\\lambda$ 是那個 $n \\times n$ 的平滑矩陣，$\\mathrm{{df}}_\\lambda$ 是它的跡。
-  λ 從 0 增到 ∞ 時，$\\mathrm{{df}}_\\lambda$ 從 n 一路降到 2。
+  在至少有兩個相異設計點時，λ 從 0 增到 ∞，$\\mathrm{{df}}_\\lambda$ 從 m 降到 2；只有 x 全部相異時 m = n。
   它是<strong>連續值</strong>，可以是 6.8 這種數字。</p>
 
   <p>λ 怎麼選？交叉驗證。而且平滑樣條的 LOOCV 有捷徑，只擬合一次模型就算得出來
@@ -580,7 +580,7 @@ BODIES["smooth"] = f"""
      "它們一定是整數；四次多項式含截距有 5 個參數，3 個內部節點的立方樣條有 7 個，分別對應到"
      "設計矩陣有幾欄。這裡均含截距；設計矩陣的欄向量線性獨立時，殘差自由度是 n 減去參數個數。</p>"
      "<p><strong>（3）平滑樣條的 $\\mathrm{df}_\\lambda$：</strong>這個量由平滑矩陣的跡定義。"
-     "平滑樣條名目上有 n 個參數（每個 x 都是節點），但它們被懲罰項<strong>限制住</strong>。"
+     "精確自然平滑樣條的彈性上界是 m 個相異設計點，而非一律 n；這些擬合值又被懲罰項<strong>限制住</strong>。"
      "所以我們改量「這個平滑器實際上用掉多少彈性」，定義成平滑矩陣的跡 "
      "$\\sum_i \\{S_\\lambda\\}_{ii}$。它是連續的（6.8、5.64 都合法），"
      "而且會隨 λ 連續變化。</p>"
@@ -890,7 +890,7 @@ BODIES["reference"] = f"""
         ["線性樣條", "$x, (x-\\xi_k)_+$", "內部節點數 K", "K + 2", "尚可", "CV"],
         ["立方樣條", "$x, x^2, x^3, (x-\\xi_k)^3_+$", "內部節點數 K", "K + 4", "差（信賴區間可能很寬）", "CV（圖 7.6 右）"],
         ["自然樣條", "立方樣條 + 兩個自然邊界條件", "內部節點數 K", "K + 2", "<span class='best'>好</span>", "CV（圖 7.6 左）"],
-        ["平滑樣條", "全部 x 當節點 + 二階導數懲罰", "λ", "df$_\\lambda$（連續，2 到 n）", "好", "LOOCV 捷徑 / GCV"],
+        ["平滑樣條", "全部 x 當節點 + 二階導數懲罰", "λ", "df$_\\lambda$（連續，2 到 m；m 是相異 x 數）", "好", "LOOCV 捷徑 / GCV"],
         ["局部迴歸", "鄰域內加權最小平方", "跨距 s", "以等效 df 表示", "差（單邊資料）", "CV"]])}
 
   <h3>Wage 上的實測數字（本頁元件用的就是這些）</h3>
@@ -921,7 +921,7 @@ BODIES["reference"] = f"""
         ["自然樣條的自由度", "K + 2", "K 個內部節點；兩端點各 1 個二階導數為 0 的條件；含截距"],
         ["平滑樣條", "$\\min_g \\sum_i (y_i - g(x_i))^2 + \\lambda \\int g''(t)^2 dt$", "式 7.11；損失＋懲罰"],
         ["有效自由度", "$\\mathrm{df}_\\lambda = \\sum_i \\{S_\\lambda\\}_{ii}$，$\\hat g_\\lambda = S_\\lambda y$",
-         "式 7.12–7.13；λ: 0→∞ 時 df: n→2"],
+         "式 7.12–7.13；λ: 0→∞ 時 df: m→2（相異設計點數 m）"],
         ["平滑樣條的 LOOCV",
          "$\\sum_i \\left[\\dfrac{y_i - \\hat g_\\lambda(x_i)}{1 - \\{S_\\lambda\\}_{ii}}\\right]^2$",
          "擬合一次就算完，對照式 5.2"],
@@ -935,7 +935,7 @@ BODIES["reference"] = f"""
   <strong>2. 樣條把次數鎖在 3、靠加節點取得彈性；多項式只能拉高次數，代價全落在邊界。</strong>
   自然樣條再加兩個自然邊界條件，實測把 80 歲那端的信賴區間從 65.8 砍到 37.1。<br>
   <strong>3. 「自由度」在這一章有兩種身分。</strong>
-  多項式的 d 與 K 個內部節點之立方樣條的 K + 4 是參數個數；平滑樣條的 df$_\\lambda$ 是平滑矩陣的跡，
+  d 次多項式的 d + 1 與 K 個內部節點之立方樣條的 K + 4 是含截距的參數個數；平滑樣條的 df$_\\lambda$ 是平滑矩陣的跡，
   是連續值。它們都能描述彈性，使用時仍要區分各自的定義。''')}
 
 {ver_note()}
@@ -1725,6 +1725,9 @@ from reading_flow_ch7_8_9_12 import apply_reading_flow
 PAGEJS += apply_reading_flow('beyond_linearity', BODIES)
 from teaching_scope_ch7_8_9_12 import clean_pagejs
 PAGEJS = clean_pagejs('beyond_linearity', PAGEJS)
+
+from lecture_alignment_ch7 import augment
+augment(BODIES)
 
 if __name__ == "__main__":
     apply("beyond_linearity", BODIES, PAGEJS, frames())
