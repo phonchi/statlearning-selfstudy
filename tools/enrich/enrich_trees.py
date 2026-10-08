@@ -342,12 +342,11 @@ BODIES["classtree"] = f"""
   <strong>錯誤率完全沒降</strong>，可是右邊那 9 筆全是 <code>Yes</code>、左邊只有 7/11，
   純度差很多。這一刀之所以被切，就是因為 Gini 與交叉熵看得到差別。</p>
 
-{info("剪枝的時候可以換回錯誤率", '''分裂用 Gini／交叉熵，
-  <strong>剪枝時三個都可以用</strong>；如果你最終在意的是預測正確率，
-  剪枝階段用錯誤率反而更對題。<code>scikit-learn</code> 的
-  <code>DecisionTreeClassifier(criterion=...)</code> 只管分裂準則；
-  剪枝用的是 <code>ccp_alpha</code>，而 <code>GridSearchCV(scoring='accuracy')</code>
-  那一步就等於「用錯誤率挑 α」。lab 正是這樣寫的。''')}
+{info("剪枝路徑與選參數的指標要分開", '''分裂使用 Gini／交叉熵時，sklearn 的成本複雜度剪枝路徑也依同一 criterion 的加權葉不純度建立。
+  <code>ccp_alpha</code> 決定在這條路徑選哪棵樹；
+  <code>GridSearchCV(scoring='accuracy')</code> 則以驗證正確率挑 α。
+  所以 Lab 是<strong>先依 entropy 建立剪枝路徑，再以 accuracy 選剪枝強度</strong>，
+  並沒有把路徑本身改成以分類錯誤率計算。''')}
 
   <h3 id="dx-ent">講義完整實作：用交叉熵長分類樹，再把樹印成文字</h3>
 {card("講義 08 · DecisionTreeClassifier(criterion='entropy') ＋ export_text",
@@ -370,13 +369,11 @@ BODIES["classtree"] = f"""
      "對嚴格凹的函數，這個下降量<strong>永遠大於 0</strong>（除非兩邊的 $\\hat p$ 剛好相同）；"
      "對線性的函數，只要兩邊的 $\\hat p$ 落在 0.5 的同一側，加權平均就剛好等於父節點的值，"
      "下降量是 0。</p>"
-     "<p>上面那張 800 筆的表就是這件事的實例：切法 B 生出一個完全純的葉子，"
-     "錯誤率卻報「跟切法 A 一樣」。純度也影響預測的可信程度："
-     "落在純葉子裡的測試點，我們對它的預測有信心；落在 7/11 那個葉子裡的，我們沒有。"
-     "這個差別在需要輸出<strong>機率</strong>時尤其要緊，而集成方法（bagging 的多數投票、"
-     "boosting 的加權和）都依賴葉子的機率估計。</p>"
-     "<p>最後補一句實務規則：<strong>分裂用 Gini／交叉熵，剪枝與最終評估用錯誤率</strong>（或 AUC）。"
-     "兩者的角色不同，不必統一。</p>"),
+     "<p>上面 Heart 的右葉 9 筆全是 Yes、左葉 11 筆有 7 筆 Yes。父節點共 16 筆 Yes、4 筆 No，錯誤率是 4/20 = 0.2；子節點的加權錯誤率為 (11/20)(4/11) + (9/20)0 = 0.2，與不切相同。</p>"
+     "<p>父節點 Gini 是 2(16/20)(4/20) = 0.32；子節點的加權 Gini 是 (11/20) × 2(7/11)(4/11) = 0.254545，因此下降 0.065455。這一刀讓類別分布更集中，但沒有改變整體多數類別的判對比例。</p>"
+     "<p>葉子的類別比例可以作為訓練樣本的經驗機率，但純葉並不保證對新資料就有高信心；是否校準仍須用保留資料檢查。Bagging 可平均分類器的機率或投票；boosting 依採用的損失與模型更新分數，不是一律把葉機率直接加總。</p>"
+     "<p>實務上，sklearn 的分裂與剪枝路徑依 criterion 的不純度定義；再依問題用驗證錯誤率、accuracy 或 AUC 選 α 和評估。建立候選樹與比較候選樹的指標可以不同。</p>"),
+
 ])}
 
 {quiz("qImp", "QUIZ · 不純度",
@@ -736,7 +733,7 @@ BODIES["boosting"] = f"""
      "w09gbStatus", "直接調 B 看第 b 棵樹後的擬合與殘差；自動播放只是可選總覽。",
      slider("w09gbSlLam", "λ", 5, 100, 5, 35, "0.35", "w09gbSetLam()", "200px")
      + slider("w09gbSlB", "B", 0, 40, 1, 0, "0", "w09gbSetB()", "180px")
-     + '<label class="slider-label" style="margin:0 .3rem;">深度 d</label>'
+     + '<label class="slider-label" style="margin:0 .3rem;">最大深度 D</label>'
      '<select id="w09gbSel" class="mono" onchange="w09gbSetDepth()">'
      '<option value="1" selected>1（stump）</option><option value="2">2</option></select>'
      '<button class="btn btn-play" onclick="w09gbStart()">▶ 自動播放（可選）</button>'
@@ -751,11 +748,14 @@ BODIES["boosting"] = f"""
          "<strong>太大會過度擬合</strong>（只是通常發生得很慢）。bagging 沒有這個問題"],
         ["<strong>λ</strong>（學習率／收縮）", "每棵樹只採用 λ 倍", "0.01 或 0.001",
          "太小 → 需要非常大的 B；太大 → 幾步就衝過頭，開始擬合雜訊"],
-        ["<strong>d</strong>（每棵樹幾刀）", "交互作用深度", "常常 1 就夠",
+        ["<strong>d</strong>（每棵樹的總分裂數）", "交互作用深度", "常常 1 就夠",
          "d = 1（stump）的集成是<strong>加法模型</strong>；d 愈大能抓愈高階的交互作用，也愈容易過度擬合"]])}
 
   <p>$B$ 與 $\\lambda$ 是綁在一起的：<strong>λ 砍十倍，B 大約要放大十倍</strong>。
   lab 用的是 <code>n_estimators=5000, learning_rate=0.001</code>，
+  互動元件與 Lab 用 <code>max_depth</code> 限制最大深度，這裡記為 D；
+  它與課本演算法的總分裂數 d 不同。最大深度 D 的二元樹至多有 2^D 個葉，
+  實際葉數可以更少；總共 d 次分裂則有 d + 1 個葉。
   換成 <code>learning_rate=0.2</code> 之後測試 MSE 幾乎一樣（14.48 vs 14.50）——
   在這份資料上兩組設定都落在「已經收斂」的區域裡。</p>
 
@@ -1071,8 +1071,8 @@ BODIES["exercises"] = f"""
 {quiz("qEx1", "EXERCISE 1 · ISLP 8.4 第 3 題",
       "課本第 3 題要你把 Gini 指數、錯誤率、交叉熵都畫成 $\\hat p_{{m1}}$ 的函數（兩類）。"
       "畫出來之後，哪一句話最能說明「為什麼分裂準則不用錯誤率」？",
-      [(True, "錯誤率是兩段直線，Gini 與交叉熵是嚴格凹的曲線；只有凹的函數才保證「切一刀」的不純度下降量嚴格大於 0",
-        "對。這正是本頁 PART 04 那個 800 筆例子的數學根源：對線性的錯誤率，兩個子節點的加權平均可能等於父節點的值，下降量為 0；對嚴格凹的 Gini／交叉熵不會。"),
+      [(True, "錯誤率是兩段直線，Gini 與交叉熵是嚴格凹的曲線；嚴格凹且兩個非空子節點的類別比例不同時，不純度下降量才嚴格大於 0",
+        "對。這正是前面 Heart 的 9 筆／11 筆切分例子的數學根源：對線性的錯誤率，兩個子節點的加權平均可能等於父節點的值，下降量為 0；Gini／交叉熵在兩個非空子節點的類別比例不同時會嚴格下降；比例相同時，下降量同樣為 0。"),
        (False, "三條曲線的最大值都在 p̂ = 0.5，所以錯誤率沒有辦法分辨純與不純",
         "前半句對（三者都在 0.5 最大、在 0 與 1 為 0），但後半句有誤：錯誤率可以分辨純與不純（純的時候它是 0）。問題在於對純度變化的敏感程度。"),
        (False, "交叉熵的最大值是 log 2 ≈ 0.693，跟另外兩個不同，所以三者不能一起比較",
@@ -1102,7 +1102,7 @@ BODIES["exercises"] = f"""
 {quiz("qEx4", "EXERCISE 4 · ISLP 8.4 第 7 題",
       "課本第 7 題要你在 <code>Boston</code> 上掃過一整片 <code>max_features</code>（m）與 "
       "<code>n_estimators</code>（B）的組合，畫成圖 8.10 那樣。預期會看到什麼？",
-      [(True, "每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低",
+      [(True, "隨 B 增加，曲線通常逐漸穩定，但途中可以上下波動；不同 m 的曲線可有不同的穩定高度，而在 Boston 上 m = p 那條最低",
         "對，本頁 PART 08 的元件就是這張圖。兩個重點：① <strong>B 大不會過度擬合</strong>，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 儲存格 70 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\\sqrt{p}$ 只是預設值。"),
        (False, "曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B",
         "那是 <strong>boosting</strong> 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 說的是<strong>「把 B 加大並不會讓隨機森林過度擬合」</strong>。"),
@@ -2185,6 +2185,9 @@ from reading_flow_ch7_8_9_12 import apply_reading_flow
 PAGEJS += apply_reading_flow('tree_based_methods', BODIES)
 from teaching_scope_ch7_8_9_12 import clean_pagejs
 PAGEJS = clean_pagejs('tree_based_methods', PAGEJS)
+
+from lecture_alignment_ch8 import augment
+augment(BODIES)
 
 if __name__ == "__main__":
     apply("tree_based_methods", BODIES, PAGEJS, frames())

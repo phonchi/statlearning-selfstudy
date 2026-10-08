@@ -1,0 +1,370 @@
+{
+  "skill": "speak-human-tw",
+  "mode": "explicit user authorization: direct polish without additional confirmation",
+  "scene": "Traditional Chinese statistics teaching; medium polish, preserve density",
+  "modified_paragraphs": 42,
+  "changes": [
+    {
+      "line": 23,
+      "original": "<p>講義先刪除缺失 Salary，再取對數。第一個門檻是 Years 4.5：較少經驗者同屬第一葉；其餘人再用 Hits 117.5 分成兩葉。因此 Hits 的作用取決於 Years 所在區域，樹自動表達了互動作用。每葉的值是該葉訓練資料的<strong>平均 log Salary</strong>。將它指數轉換是幾何平均尺度，不自動等於平均 Salary；如需原尺度的條件平均，須另處理對數轉換偏差。</p>",
+      "reason": [
+        "專業術語：統計 interaction 使用交互作用，與前章一致。"
+      ],
+      "rewrite": "<p>講義先刪除缺失 Salary，再取對數。第一個門檻是 Years 4.5：較少經驗者同屬第一葉；其餘人再用 Hits 117.5 分成兩葉。因此 Hits 的作用取決於 Years 所在區域，樹自動表達了交互作用。每葉的值是該葉訓練資料的<strong>平均 log Salary</strong>。將它指數轉換是幾何平均尺度，不自動等於平均 Salary；如需原尺度的條件平均，須另處理對數轉換偏差。</p>"
+    },
+    {
+      "line": 23,
+      "original": "<p>在當前節點中，對每個特徵先排序相異值，候選切點只需放在相鄰相異值之間。逐一計算左右葉的最佳平均與 RSS，總 RSS 最小者成為當前分裂。選定後遞迴處理子節點；這就是 greedy，因為不會為了未來某個有利的兩層分裂，暫時接受當前更差的第一層。</p>",
+      "reason": [
+        "補中文解釋，直接接續只看當下的原因。"
+      ],
+      "rewrite": "<p>在當前節點中，對每個特徵先排序相異值，候選切點只需放在相鄰相異值之間。逐一計算左右葉的最佳平均與 RSS，總 RSS 最小者成為當前分裂。選定後遞迴處理子節點；這就是貪婪搜尋（greedy）：不會為了未來某個有利的兩層分裂，暫時接受當前更差的第一層。</p>"
+    },
+    {
+      "line": 23,
+      "original": "<p>相同特徵可在多個節點反覆使用；一條從根到葉的路徑相當於多個條件的交集，所以最終區域不重疊而覆蓋預測空間。不同葉可以給出相同預測，仍可能因更深層純度或結構有不同用途。講義 Heart 例子裡兩子葉的分類標籤相同，不代表 Gini 必定不變；類別機率不同仍可降低加權不純度。</p>",
+      "reason": [
+        "讓指涉和量詞完整。"
+      ],
+      "rewrite": "<p>相同特徵可在多個節點反覆使用；一條從根到葉的路徑相當於多個條件的交集，所以最終區域不重疊而覆蓋預測空間。不同葉可以給出相同預測，仍可能因更深層純度或結構有不同用途。講義 Heart 例子裡兩個子葉節點的分類標籤相同，不代表 Gini 必定不變；類別機率不同仍可降低加權不純度。</p>"
+    },
+    {
+      "line": 23,
+      "original": "<p>ID3 使用資訊增益處理離散分支；C4.5 增加連續特徵、增益比與剪枝；CART 使用二元分裂且支援回歸。知道名稱可以辨認演演演算法家族，但不能由「都是樹」推定剪枝方式、缺失值處理和類別支援一致。實際使用時以當前估計器檔案與 Lab 的前處理為準。</p>",
+      "reason": [
+        "校正轉換造成的重複字。"
+      ],
+      "rewrite": "<p>ID3 使用資訊增益處理離散分支；C4.5 增加連續特徵、增益比與剪枝；CART 使用二元分裂且支援回歸。知道名稱可以辨認演算法家族，但不能由「都是樹」推定剪枝方式、缺失值處理和類別支援一致。實際使用時以當前估計器檔案與 Lab 的前處理為準。</p>"
+    },
+    {
+      "line": 24,
+      "original": "<p>限制「本次 RSS 降幅太小就停止」可能錯過必須先做一個小改善、後續才能得到大改善的結構。成本複雜度剪枝先得到足夠大的 $T_0$，再在其子樹中比較 $RSS(T)+\\alpha|T|$。$\\alpha$ 是每片葉的成本，增大時偏向較少葉；不要把它當成所有葉值的 L2 收縮係數。</p>",
+      "reason": [
+        "說明成本附在葉節點，量詞與教材一致。"
+      ],
+      "rewrite": "<p>限制「本次 RSS 降幅太小就停止」可能錯過必須先做一個小改善、後續才能得到大改善的結構。成本複雜度剪枝先得到足夠大的 $T_0$，再在其子樹中比較 $RSS(T)+\\alpha|T|$。$\\alpha$ 是每個葉節點的成本，增大時偏向較少葉；不要把它當成所有葉值的 L2 收縮係數。</p>"
+    },
+    {
+      "line": 25,
+      "original": "<p>線性迴歸用整個空間的加法平面描述條件平均，樹以軸向門檻把空間分成區域。真正邊界接近直線時，線性模型用少數係數就能有效描述；用很多矩形葉去逼近斜線可能需要較大樹。真正關係是區域性條件和互動作用時，樹的區域規則更自然。講義對比圖是在說明這個偏差與變異取捨，並非保證某方法永遠勝出。</p>",
+      "reason": [
+        "專業術語：local regression 在本課統一稱局部迴歸。",
+        "專業術語：統計 interaction 使用交互作用，與前章一致。"
+      ],
+      "rewrite": "<p>線性迴歸用整個空間的加法平面描述條件平均，樹以軸向門檻把空間分成區域。真正邊界接近直線時，線性模型用少數係數就能有效描述；用很多矩形葉去逼近斜線可能需要較大樹。真正關係是局部條件和交互作用時，樹的區域規則更自然。講義對比圖是在說明這個偏差與變異取捨，並非保證某方法永遠勝出。</p>"
+    },
+    {
+      "line": 25,
+      "original": "<p>樹預測在每片葉內是常數，因此對於超出訓練範圍的新數值通常延用最外側葉的預測，不作線性外推。它可以適應門檻型變化，卻不能用同一葉內的線性趨勢預測更遠的值。是否需要外推，是選模型時應明確考慮的問題。</p>",
+      "reason": [
+        "葉節點採用一致量詞。"
+      ],
+      "rewrite": "<p>樹預測在每個葉節點內是常數，因此對於超出訓練範圍的新數值通常延用最外側葉的預測，不作線性外推。它可以適應門檻型變化，卻不能用同一葉內的線性趨勢預測更遠的值。是否需要外推，是選模型時應明確考慮的問題。</p>"
+    },
+    {
+      "line": 26,
+      "original": "<p>共用同一批資料和高度相似的演演演算法，往往在同一批觀測上一起犯錯。增加數量不保證改善這些錯誤。Bagging 利用訓練重抽樣創造差異，random forest 再限制每個節點可選特徵；投票的目的不只是找一批各自準確的模型，也需要可互補的錯誤。</p>",
+      "reason": [
+        "校正轉換造成的重複字。"
+      ],
+      "rewrite": "<p>共用同一批資料和高度相似的演算法，往往在同一批觀測上一起犯錯。增加數量不保證改善這些錯誤。Bagging 利用訓練重抽樣創造差異，random forest 再限制每個節點可選特徵；投票的目的不只是找一批各自準確的模型，也需要可互補的錯誤。</p>"
+    },
+    {
+      "line": 27,
+      "original": "<p>Lab 用 <code>RandomForestRegressor(max_features=p)</code> 表示每次分裂可用全部特徵的 bagging，再改 <code>max_features</code> 比較 random forest。增加樹數主要穩定隨機平均；深度、葉大小與特徵抽樣仍控制基模型和整合的複雜度，不能把「更多樹通常不增加過度擬合」讀成訓練流程無須驗證。</p>",
+      "reason": [
+        "ensemble 在本課統一稱集成模型。"
+      ],
+      "rewrite": "<p>Lab 用 <code>RandomForestRegressor(max_features=p)</code> 表示每次分裂可用全部特徵的 bagging，再改 <code>max_features</code> 比較 random forest。增加樹數主要穩定隨機平均；深度、葉大小與特徵抽樣仍控制基模型和集成模型的複雜度，不能把「更多樹通常不增加過度擬合」讀成訓練流程無須驗證。</p>"
+    },
+    {
+      "line": 28,
+      "original": "<p>講義的基因表達例子先選出 500 個預測變數，再比較不同候選特徵數與樹數；圖中的結果只針對該資料與切分，不能把 $\\sqrt p$ 當成所有任務的最優值。Lab 的 Boston 回歸同樣透過保留資料判斷特徵子抽樣是否改善，分類和回歸的預設設定需分別查證。</p>",
+      "reason": [
+        "使用課堂常用詞。"
+      ],
+      "rewrite": "<p>講義的基因表達例子先選出 500 個預測變數，再比較不同候選特徵數與樹數；圖中的結果只針對該資料與切分，不能把 $\\sqrt p$ 當成所有任務的最佳值。Lab 的 Boston 回歸同樣透過保留資料判斷特徵子抽樣是否改善，分類和回歸的預設設定需分別查證。</p>"
+    },
+    {
+      "line": 28,
+      "original": "<p>Extra-trees 把候選門檻也隨機化，選隨機候選中最好的分裂；更便宜的搜尋與額外隨機性可能減少變異，也可能增加偏差。<code>ExtraTreesClassifier</code> 預設 <code>bootstrap=False</code>，故不能直接假設有 OOB。Random subspaces 指抽特徵，random patches 指同時抽特徵與觀測；它們是組合抽樣的描述，不是可互換的演演演算法名稱。</p>",
+      "reason": [
+        "校正轉換造成的重複字。"
+      ],
+      "rewrite": "<p>Extra-trees 把候選門檻也隨機化，選隨機候選中最好的分裂；更便宜的搜尋與額外隨機性可能減少變異，也可能增加偏差。<code>ExtraTreesClassifier</code> 預設 <code>bootstrap=False</code>，故不能直接假設有 OOB。Random subspaces 指抽特徵，random patches 指同時抽特徵與觀測；它們是組合抽樣的描述，不是可互換的演算法名稱。</p>"
+    },
+    {
+      "line": 29,
+      "original": "<p>AdaBoost 則提高答錯樣本下一輪的權重，其 exponential loss 與 gradient boosting 的平方損失不是同一目標。困難但正確的觀測與標籤雜聲都會獲得較高權重，因此容易受離群標籤影響；沒有理由無條件認為一直加弱分類器都會改善泛化。</p>",
+      "reason": [
+        "統一課程中的 noise 用語。"
+      ],
+      "rewrite": "<p>AdaBoost 則提高答錯樣本下一輪的權重，其 exponential loss 與 gradient boosting 的平方損失不是同一目標。困難但正確的觀測與標籤雜訊都會獲得較高權重，因此容易受離群標籤影響；沒有理由無條件認為一直加弱分類器都會改善泛化。</p>"
+    },
+    {
+      "line": 29,
+      "original": "<p>Lab 的 <code>GradientBoostingRegressor</code> 比較 <code>n_estimators</code>、<code>learning_rate</code> 與 <code>max_depth</code>。樹深決定一棵基樹能表示的互動作用層次；深度 1 的 stump 只能用單一特徵分裂，加很多棵也仍是加法結構。控制樹數用 CV 或獨立驗證集，測試集只供最後評價。</p>",
+      "reason": [
+        "專業術語：統計 interaction 使用交互作用，與前章一致。",
+        "evaluation 是效能評估，具體指出用途。"
+      ],
+      "rewrite": "<p>Lab 的 <code>GradientBoostingRegressor</code> 比較 <code>n_estimators</code>、<code>learning_rate</code> 與 <code>max_depth</code>。樹深決定一棵基樹能表示的交互作用層次；深度 1 的 stump 只能用單一特徵分裂，加很多棵也仍是加法結構。控制樹數用 CV 或獨立驗證集，測試集只供最後效能評估。</p>"
+    },
+    {
+      "line": 30,
+      "original": "<p>精確搜尋排序後的全部候選切點；加權分位數草圖選少數代表性候選，使二階目標中曲率大的區域有適當覆蓋。直方圖方法先把數值壓成箱碼，再逐箱累計梯度與 Hessian。兩者都可減少候選數，但不能假設一定找到與完整精確搜尋相同的分裂。箱數應與精度、速度和資料量一起選擇。</p>",
+      "reason": [
+        "以候選切點說明覆蓋，減少抽象表述。",
+        "讓語句接回先前已教的近似目標，不新增方法。"
+      ],
+      "rewrite": "<p>精確搜尋排序後的全部候選切點；加權分位數草圖選少數代表性候選，讓二階近似目標中曲率較大的區域也有代表性切點。直方圖方法先把數值壓成箱碼，再逐箱累計梯度與 Hessian。兩者都可減少候選數，但不能假設一定找到與完整精確搜尋相同的分裂。箱數應與精度、速度和資料量一起選擇。</p>"
+    },
+    {
+      "line": 30,
+      "original": "<p>稀疏感知搜尋分開處理有值與缺失的觀測。對每個候選分裂，比較缺失值全部走左或走右的收益，記下較好的預設方向；預測時缺失值沿這個方向走。稀疏儲存中「沒有記錄的項」如何解讀依庫與輸入格式而定，不等於一般數值零。</p>",
+      "reason": [
+        "library 在本課使用套件。"
+      ],
+      "rewrite": "<p>稀疏感知搜尋分開處理有值與缺失的觀測。對每個候選分裂，比較缺失值全部走左或走右的收益，記下較好的預設方向；預測時缺失值沿這個方向走。稀疏儲存中「沒有記錄的項」如何解讀依使用的套件與輸入格式而定，不等於一般數值零。</p>"
+    },
+    {
+      "line": 30,
+      "original": "<p>Leaf-wise 每輪選擇目前收益最大的葉，level-wise 在同層擴充套件。相同葉數不保證兩者深度相同；前者可能在區域性不斷加深。<code>num_leaves</code> 控制葉數，<code>max_depth</code> 限制最長路徑，<code>min_data_in_leaf</code> 限制區域性樣本；少量資料需要更保守的限制。</p>",
+      "reason": [
+        "專業術語：local regression 在本課統一稱局部迴歸。",
+        "校正自動詞組轉換錯字，說清生長方式。"
+      ],
+      "rewrite": "<p>Leaf-wise 每輪選擇目前收益最大的葉，level-wise 依同一層的節點逐步分裂。相同葉數不保證兩者深度相同；leaf-wise 可能持續加深同一個局部區域。<code>num_leaves</code> 控制葉數，<code>max_depth</code> 限制最長路徑，<code>min_data_in_leaf</code> 限制局部樣本；少量資料需要更保守的限制。</p>"
+    },
+    {
+      "line": 30,
+      "original": "<p>GOSS 保留大梯度並從小梯度取樣，透過補權近似原統計量；它不是均勻 bagging。EFB 壓縮很少同時非零的特徵，透過不同箱碼保留它們的身份；如果特徵常同時非零，就不能直接無損合並。這兩項加速工具依資料結構發揮作用，不能簡單把「少樣本、少特徵」說成一定無損。</p>",
+      "reason": [
+        "使用臺灣常用詞。"
+      ],
+      "rewrite": "<p>GOSS 保留大梯度並從小梯度取樣，透過補權近似原統計量；它不是均勻 bagging。EFB 壓縮很少同時非零的特徵，透過不同箱碼保留它們的身份；如果特徵常同時非零，就不能直接無損合併。這兩項加速工具依資料結構發揮作用，不能簡單把「少樣本、少特徵」說成一定無損。</p>"
+    },
+    {
+      "line": 30,
+      "original": "<h3>CatBoost、DART 與 Lab 的引數對照</h3>",
+      "reason": [
+        "模型設定使用參數，與既有章節一致。"
+      ],
+      "rewrite": "<h3>CatBoost、DART 與 Lab 的參數對照</h3>"
+    },
+    {
+      "line": 30,
+      "original": "<p>DART 每輪暫時略去部分舊樹，在剩餘整合上計算梯度，再加入新樹並重新正規化權重。它旨在避免後續樹過度依賴少數舊樹，不是推論時任意少算樹而維持原分數。應按當前版本的完整迭代範圍作預測，並用驗證資料決定樹數和 dropout 引數。</p>",
+      "reason": [
+        "模型設定使用參數，與既有章節一致。",
+        "ensemble 在本課統一稱集成模型。"
+      ],
+      "rewrite": "<p>DART 每輪暫時略去部分舊樹，在剩餘的集成模型上計算梯度，再加入新樹並重新正規化權重。它旨在避免後續樹過度依賴少數舊樹，不是推論時任意少算樹而維持原分數。應按當前版本的完整迭代範圍作預測，並用驗證資料決定樹數和 dropout 參數。</p>"
+    },
+    {
+      "line": 30,
+      "original": "<p>Lab 比較 XGBoost、LightGBM、CatBoost 的分類、回歸、速度與 Melbourne 類別資料。相同 <code>n_estimators</code> 不等於相同葉數或計算量；不同庫的 <code>min_child_weight</code>、<code>min_data_in_leaf</code> 與 CatBoost 的 <code>min_data_in_leaf</code> 支援條件也不能只按名稱硬套。速度先控觀測／特徵子抽樣與箱數，準確度再考慮學習率、輪次與葉數，防過擬合則檢查葉內資料、懲罰與 early stopping。</p>",
+      "reason": [
+        "library 在本課使用套件。"
+      ],
+      "rewrite": "<p>Lab 比較 XGBoost、LightGBM、CatBoost 的分類、回歸、速度與 Melbourne 類別資料。相同 <code>n_estimators</code> 不等於相同葉數或計算量；不同套件的 <code>min_child_weight</code>、<code>min_data_in_leaf</code> 與 CatBoost 的 <code>min_data_in_leaf</code> 支援條件也不能只按名稱硬套。速度先控觀測／特徵子抽樣與箱數，準確度再考慮學習率、輪次與葉數，防過擬合則檢查葉內資料、懲罰與 early stopping。</p>"
+    },
+    {
+      "line": 31,
+      "original": "<p>Ordinal encoding 把名目類別編成 0、1、2，會給門檻值樹一個人為排序；Cat、Dog、Hamster 的編碼不意味著動物具有數值距離。真正有順序的類別可以明確定義順序；無順序類別若僅為方便整數化，必須瞭解它允許的分割及其限制。<code>LabelEncoder</code> 用來編碼目標，特徵類別通常用 <code>OrdinalEncoder</code> 或 <code>OneHotEncoder</code>。</p>",
+      "reason": [
+        "避免生硬的自創複合名詞。"
+      ],
+      "rewrite": "<p>Ordinal encoding 把名目類別編成 0、1、2，會給以門檻值分裂的樹一個人為排序；Cat、Dog、Hamster 的編碼不意味著動物具有數值距離。真正有順序的類別可以明確定義順序；無順序類別若僅為方便整數化，必須瞭解它允許的分割及其限制。<code>LabelEncoder</code> 用來編碼目標，特徵類別通常用 <code>OrdinalEncoder</code> 或 <code>OneHotEncoder</code>。</p>"
+    },
+    {
+      "line": 31,
+      "original": "<li>在訓練部分內部再分折。每一折的類別對映只從其他折的目標估計，用來編碼該折，合成完整折外訓練特徵。</li>",
+      "reason": [
+        "mapping 以編碼對照說明動作。"
+      ],
+      "rewrite": "<li>在訓練部分內部再分折。每一折的類別編碼對照只從其他折的目標估計，用來編碼該折，合成完整折外訓練特徵。</li>"
+    },
+    {
+      "line": 31,
+      "original": "<li>驗證或測試的對映從完整訓練部分估計，不能使用留出部分的目標；未見類別回退到訓練總體平均。</li>",
+      "reason": [
+        "mapping 以編碼對照說明動作。"
+      ],
+      "rewrite": "<li>驗證或測試的編碼對照從完整訓練部分估計，不能使用留出部分的目標；未見類別回退到訓練總體平均。</li>"
+    },
+    {
+      "line": 31,
+      "original": "<li>每個外層 CV 內重做這套程式，再訓練預測器。先用全資料編碼、再對預測器 CV，會讓驗證目標流入輸入。</li>",
+      "reason": [
+        "此處指分折與編碼的完整步驟，不是單支程式。"
+      ],
+      "rewrite": "<li>每個外層 CV 內重做這套流程，再訓練預測器。先用全資料編碼、再對預測器 CV，會讓驗證目標流入輸入。</li>"
+    },
+    {
+      "line": 31,
+      "original": "<p>sklearn 的 <code>TargetEncoder.fit_transform</code> 會內部交叉擬合，而 <code>fit(...).transform(...)</code> 對同一訓練資料並不等價；這正是為何要把它放入 <code>Pipeline</code> 與模型一起評價。CatBoost 的有序類別統計用排列字首避免自己的目標，它與一般 K-fold 編碼是不同策略；仍要尊重外部驗證與群組／時間切分。</p>",
+      "reason": [
+        "使用課堂常用詞。",
+        "避免把統計排列 prefix 寫成字串字首。",
+        "把抽象的尊重改成具體的切分要求。"
+      ],
+      "rewrite": "<p>sklearn 的 <code>TargetEncoder.fit_transform</code> 會內部交叉擬合，而 <code>fit(...).transform(...)</code> 對同一訓練資料並不等價；這正是為何要把它放入 <code>Pipeline</code> 與模型一起評估。CatBoost 的有序類別統計用排列中排在該筆之前的資料避免自己的目標，它與一般 K-fold 編碼是不同策略；仍須在外部驗證時遵守群組或時間的切分限制。</p>"
+    },
+    {
+      "line": 32,
+      "original": "<p>一棵深樹可能幾乎記住訓練標籤。若用它在同一訓練資料的預測訓練 blender，後者會以為深樹近乎完美，新資料卻沒有這種優勢。折外預測讓每筆在產生基模型特徵時都沒有參與相應基模型的訓練，才較接近未來預測情境。</p>",
+      "reason": [
+        "第一次出現補充 blender 的角色，保留專名。"
+      ],
+      "rewrite": "<p>一棵深樹可能幾乎記住訓練標籤。若用它在同一訓練資料的預測訓練負責合併預測的模型（blender），後者會以為深樹近乎完美，新資料卻沒有這種優勢。折外預測讓每筆在產生基模型特徵時都沒有參與相應基模型的訓練，才較接近未來預測情境。</p>"
+    },
+    {
+      "line": 32,
+      "original": "<li>依原觀測順序合並折外預測。回歸可用各模型的預測值，分類可用類別機率，形成 blender 的訓練矩陣。</li>",
+      "reason": [
+        "使用臺灣常用詞。",
+        "補充 blender 角色，讓流程可直接理解。"
+      ],
+      "rewrite": "<li>依原觀測順序合併折外預測。回歸可用各模型的預測值，分類可用類別機率，形成合併模型（blender）的訓練矩陣。</li>"
+    },
+    {
+      "line": 32,
+      "original": "<p>Lab 的 <code>StackingClassifier</code> 內部 CV 是產生 blender 輸入，不是整個 stacking 的最終評價。外部 <code>cross_val_score</code> 再劃分資料，才能估計完整流程；兩層承擔不同任務，不等同在單個模型上無條件應用 nested hyperparameter search。</p>",
+      "reason": [
+        "evaluation 是效能評估，具體指出用途。",
+        "直接比較兩層的用途，避免密集但不清楚的否定。"
+      ],
+      "rewrite": "<p>Lab 的 <code>StackingClassifier</code> 內部 CV 是產生 blender 輸入，不是整個 stacking 的最後效能評估。外部 <code>cross_val_score</code> 再劃分資料，才能估計完整流程；這裡內層產生折外特徵，外層評估整個流程；一般的 nested hyperparameter search 則用內層選超參數，兩者的內層用途不同。</p>"
+    },
+    {
+      "line": 34,
+      "original": "<h3>樹數 K 與抽樣輪數 B 不要混成同一個引數</h3>",
+      "reason": [
+        "統一模型參數用語。"
+      ],
+      "rewrite": "<h3>樹數 K 與抽樣輪數 B 不要混成同一個參數</h3>"
+    },
+    {
+      "line": 34,
+      "original": "<p>BART 的每個 posterior draw 都包含 K 棵樹的總和。更新單棵樹時先扣除其餘 K−1 棵，得到偏殘差；再修改現有結構和葉值，而非每次對殘差從頭擬合一棵任意樹。樹深與葉值先驗讓每棵樹只承擔一小部分訊號；它與不帶先驗的 boosting 逐輪加新樹有不同的正規化來源。</p>",
+      "reason": [
+        "保留英文術語並補中文說明。"
+      ],
+      "rewrite": "<p>BART 的每次後驗抽樣（posterior draw） 都包含 K 棵樹的總和。更新單棵樹時先扣除其餘 K−1 棵，得到偏殘差；再修改現有結構和葉值，而非每次對殘差從頭擬合一棵任意樹。樹深與葉值先驗讓每棵樹只承擔一小部分訊號；它與不帶先驗的 boosting 逐輪加新樹有不同的正規化來源。</p>"
+    },
+    {
+      "line": 34,
+      "original": "<p>B 是 MCMC 的總輪數，L 是丟棄的暖機輪數。每個保留輪的 $f^{(b)}(x)$ 已經把 K 棵樹加總；預測再跨保留輪平均。增加 B 改善 posterior Monte Carlo 精度，不等於增加模型中的 K 或逐輪累加新樹。講義 K=200、B=1000、L=100 是設定示例，不保證所有資料都已收斂。</p>",
+      "reason": [
+        "把精度的對象說清楚；保留原有後驗估計意義。"
+      ],
+      "rewrite": "<p>B 是 MCMC 的總輪數，L 是丟棄的暖機輪數。每個保留輪的 $f^{(b)}(x)$ 已經把 K 棵樹加總；預測再跨保留輪平均。增加 B 改善 後驗 Monte Carlo 估計的精度，不等於增加模型中的 K 或逐輪累加新樹。講義 K=200、B=1000、L=100 是設定示例，不保證所有資料都已收斂。</p>"
+    },
+    {
+      "line": 34,
+      "original": "<p>Lab 的 <code>ISLP.bart.BART</code> 展示 Boston 回歸；訓練結果應按它的 draw、樹數及 burn-in 引數讀。後驗平均描述潛在平均反應，抽樣分位數可量化該平均的不確定性。個別新觀測的預測還包含殘差雜聲，不能把平均函式的 credible interval 直接稱為新觀測預測區間。</p>",
+      "reason": [
+        "統一課程中的 noise 用語。",
+        "模型設定使用參數，與既有章節一致。",
+        "補充貝氏区間的中文名稱，與預測區間區分。"
+      ],
+      "rewrite": "<p>Lab 的 <code>ISLP.bart.BART</code> 展示 Boston 回歸；訓練結果應按它的 draw、樹數及 burn-in 參數讀。後驗平均描述潛在平均反應，抽樣分位數可量化該平均的不確定性。個別新觀測的預測還包含殘差雜訊，不能把平均函式的可信區間（credible interval） 直接稱為新觀測預測區間。</p>"
+    },
+    {
+      "line": 34,
+      "original": "<p>樹結構的提議可能被拒絕，連續輪的結果也相關。檢查穩定性應觀察多個鏈或軌跡、有效樣本數及預測穩定，而不是隻因一次訓練成功就宣稱 posterior 樣本獨立或已收斂。這裡重點是解釋講義的隨機小改動與偏殘差更新，不把 BART 當成另一種多數投票。</p>",
+      "reason": [
+        "校正量詞與副詞混用。",
+        "把樣本獨立的指涉補完整。",
+        "用已教的後驗模型與偏殘差直接比較，移除章節自述式收尾。"
+      ],
+      "rewrite": "<p>樹結構的提議可能被拒絕，連續輪的結果也相關。檢查穩定性應觀察多個鏈或軌跡、有效樣本數及預測穩定，而不是只因一次訓練成功就宣稱 posterior 樣本彼此獨立或已收斂。因此，講義中的隨機小改動是在抽取後驗模型，偏殘差則用來更新單棵樹；這與分類樹的多數投票不同。</p>"
+    },
+    {
+      "line": 23,
+      "original": "<p>ID3 使用資訊增益處理離散分支；C4.5 增加連續特徵、增益比與剪枝；CART 使用二元分裂且支援回歸。知道名稱可以辨認演算法家族，但不能由「都是樹」推定剪枝方式、缺失值處理和類別支援一致。實際使用時以當前估計器檔案與 Lab 的前處理為準。</p>",
+      "reason": [
+        "documentation 指官方文件，不是資料檔案。"
+      ],
+      "rewrite": "<p>ID3 使用資訊增益處理離散分支；C4.5 增加連續特徵、增益比與剪枝；CART 使用二元分裂且支援回歸。知道名稱可以辨認演算法家族，但不能由「都是樹」推定剪枝方式、缺失值處理和類別支援一致。實際使用時以目前估計器的官方文件與 Lab 的前處理為準。</p>",
+      "pass": 2
+    },
+    {
+      "line": 24,
+      "original": "<p>Lab 的 <code>cost_complexity_pruning_path</code> 回傳候選 <code>ccp_alphas</code>。用 <code>GridSearchCV</code> 在訓練資料內部選 <code>ccp_alpha</code>，再用該引數重新擬合完整訓練資料，最後一次評價測試資料。講義 Hitters 的 132／131 切分與 Lab 具體隨機切分各有來源，不混成同一次結果。</p>",
+      "reason": [
+        "剪枝參數與程式函數引數分開。",
+        "使用具體的模型評估動作。"
+      ],
+      "rewrite": "<p>Lab 的 <code>cost_complexity_pruning_path</code> 回傳候選 <code>ccp_alphas</code>。用 <code>GridSearchCV</code> 在訓練資料內部選 <code>ccp_alpha</code>，再用該參數重新擬合完整訓練資料，最後再用測試資料評估效能。講義 Hitters 的 132／131 切分與 Lab 具體隨機切分各有來源，不混成同一次結果。</p>",
+      "pass": 2
+    },
+    {
+      "line": 26,
+      "original": "<p>假設每個分類器對同一目標的成功機率為 $p&gt;1/2$，且各分類器的成功事件獨立。奇數 $B$ 個分類器的多數正確機率為 $\\sum_{k=(B+1)/2}^B{B\\choose k}p^k(1-p)^{B-k}$。這是二項分佈的尾機率；獨立條件是公式的一部分，不是任何整合都自動滿足的性質。</p>",
+      "reason": [
+        "統一 ensemble 用語。",
+        "機率分布用語與課程一致。"
+      ],
+      "rewrite": "<p>假設每個分類器對同一目標的成功機率為 $p&gt;1/2$，且各分類器的成功事件獨立。奇數 $B$ 個分類器的多數正確機率為 $\\sum_{k=(B+1)/2}^B{B\\choose k}p^k(1-p)^{B-k}$。這是二項分布的尾機率；獨立條件是公式的一部分，不是任何集成模型都自動滿足的性質。</p>",
+      "pass": 2
+    },
+    {
+      "line": 28,
+      "original": "<p>減少 <code>max_features</code> 能降低相關性，但也可能讓節點找不到強特徵而增加單樹偏差。固定位置的平均預測變異 $\\rho\\sigma^2+(1-\\rho)\\sigma^2/B$ 清楚表示不相關部分隨樹數縮小，相關部分保留；$\\rho$ 與單樹變異也會隨抽樣策略改變，因此不能只盯著最小相關性。</p>",
+      "reason": [
+        "改掉盯著的口語隱喻，具體說明選設定的取捨。"
+      ],
+      "rewrite": "<p>減少 <code>max_features</code> 能降低相關性，但也可能讓節點找不到強特徵而增加單樹偏差。固定位置的平均預測變異 $\\rho\\sigma^2+(1-\\rho)\\sigma^2/B$ 清楚表示不相關部分隨樹數縮小，相關部分保留；$\\rho$ 與單樹變異也會隨抽樣策略改變，因此不能只按相關性最低來選設定。</p>",
+      "pass": 2
+    },
+    {
+      "line": 30,
+      "original": "<p>Lab 比較 XGBoost、LightGBM、CatBoost 的分類、回歸、速度與 Melbourne 類別資料。相同 <code>n_estimators</code> 不等於相同葉數或計算量；不同套件的 <code>min_child_weight</code>、<code>min_data_in_leaf</code> 與 CatBoost 的 <code>min_data_in_leaf</code> 支援條件也不能只按名稱硬套。速度先控觀測／特徵子抽樣與箱數，準確度再考慮學習率、輪次與葉數，防過擬合則檢查葉內資料、懲罰與 early stopping。</p>",
+      "reason": [
+        "避免速度先控的生硬省略句，保留原來的設定方向。",
+        "使用完整動作與本課 overfitting 用語。"
+      ],
+      "rewrite": "<p>Lab 比較 XGBoost、LightGBM、CatBoost 的分類、回歸、速度與 Melbourne 類別資料。相同 <code>n_estimators</code> 不等於相同葉數或計算量；不同套件的 <code>min_child_weight</code>、<code>min_data_in_leaf</code> 與 CatBoost 的 <code>min_data_in_leaf</code> 支援條件也不能只按名稱硬套。要加快訓練，可先調整觀測或特徵的子抽樣比例與箱數，準確度再考慮學習率、輪次與葉數，要控制過度擬合，則檢查葉內資料、懲罰與 early stopping。</p>",
+      "pass": 2
+    },
+    {
+      "line": 32,
+      "original": "<p>Lab 的 <code>StackingClassifier</code> 內部 CV 是產生 blender 輸入，不是整個 stacking 的最後效能評估。外部 <code>cross_val_score</code> 再劃分資料，才能估計完整流程；這裡內層產生折外特徵，外層評估整個流程；一般的 nested hyperparameter search 則用內層選超參數，兩者的內層用途不同。</p>",
+      "reason": [
+        "分開效能評估與內外層用途，避免連續分號。"
+      ],
+      "rewrite": "<p>Lab 的 <code>StackingClassifier</code> 內部 CV 是產生 blender 輸入，不是整個 stacking 的最後效能評估。外部 <code>cross_val_score</code> 再劃分資料，才能估計完整流程。這裡內層產生折外特徵，外層評估整個流程；一般的 nested hyperparameter search 則用內層選超參數，兩者的內層用途不同。</p>",
+      "pass": 2
+    },
+    {
+      "line": 34,
+      "original": "<p>BART 的每次後驗抽樣（posterior draw） 都包含 K 棵樹的總和。更新單棵樹時先扣除其餘 K−1 棵，得到偏殘差；再修改現有結構和葉值，而非每次對殘差從頭擬合一棵任意樹。樹深與葉值先驗讓每棵樹只承擔一小部分訊號；它與不帶先驗的 boosting 逐輪加新樹有不同的正規化來源。</p>",
+      "reason": [
+        "移除中文標點後不必要空格。"
+      ],
+      "rewrite": "<p>BART 的每次後驗抽樣（posterior draw）都包含 K 棵樹的總和。更新單棵樹時先扣除其餘 K−1 棵，得到偏殘差；再修改現有結構和葉值，而非每次對殘差從頭擬合一棵任意樹。樹深與葉值先驗讓每棵樹只承擔一小部分訊號；它與不帶先驗的 boosting 逐輪加新樹有不同的正規化來源。</p>",
+      "pass": 2
+    },
+    {
+      "line": 34,
+      "original": "<p>B 是 MCMC 的總輪數，L 是丟棄的暖機輪數。每個保留輪的 $f^{(b)}(x)$ 已經把 K 棵樹加總；預測再跨保留輪平均。增加 B 改善 後驗 Monte Carlo 估計的精度，不等於增加模型中的 K 或逐輪累加新樹。講義 K=200、B=1000、L=100 是設定示例，不保證所有資料都已收斂。</p>",
+      "reason": [
+        "移除不必要空格。"
+      ],
+      "rewrite": "<p>B 是 MCMC 的總輪數，L 是丟棄的暖機輪數。每個保留輪的 $f^{(b)}(x)$ 已經把 K 棵樹加總；預測再跨保留輪平均。增加 B 改善後驗 Monte Carlo 估計的精度，不等於增加模型中的 K 或逐輪累加新樹。講義 K=200、B=1000、L=100 是設定示例，不保證所有資料都已收斂。</p>",
+      "pass": 2
+    },
+    {
+      "line": 34,
+      "original": "<p>Lab 的 <code>ISLP.bart.BART</code> 展示 Boston 回歸；訓練結果應按它的 draw、樹數及 burn-in 參數讀。後驗平均描述潛在平均反應，抽樣分位數可量化該平均的不確定性。個別新觀測的預測還包含殘差雜訊，不能把平均函式的可信區間（credible interval） 直接稱為新觀測預測區間。</p>",
+      "reason": [
+        "移除中文標點後不必要空格。",
+        "避免為省字而使用不完整動詞。"
+      ],
+      "rewrite": "<p>Lab 的 <code>ISLP.bart.BART</code> 展示 Boston 回歸；訓練結果應按它的 draw、樹數及 burn-in 參數解讀。後驗平均描述潛在平均反應，抽樣分位數可量化該平均的不確定性。個別新觀測的預測還包含殘差雜訊，不能把平均函式的可信區間（credible interval）直接稱為新觀測預測區間。</p>",
+      "pass": 2
+    }
+  ]
+}

@@ -1,0 +1,642 @@
+[
+  {
+    "page": 1,
+    "title": "Tree-Based Methods",
+    "section": "prologue",
+    "anchor": "w09-detail-tree-compare",
+    "text": "Tree-Based Methods\nSzu-Chi Chung\nDepartment of Applied Mathematics, National Sun Yat-sen University\n",
+    "type": "teaching"
+  },
+  {
+    "page": 2,
+    "title": "Tree-based Methods",
+    "section": "prologue",
+    "anchor": "w09-detail-tree-compare",
+    "text": "Tree-based Methods\nHere we describe tree-based methods for regression and classiﬁcation\nFirstly stratifying or segmenting the predictor space into a number of simple regions\nUse the mean or the mode response value for the training observations in the region to \nwhich it belongs for inference\nSince the set of splitting rules used to segment the predictor space can be \nsummarized in a tree, these types of approaches are known as decision-tree\nmethods\n2\n",
+    "type": "teaching"
+  },
+  {
+    "page": 3,
+    "title": "Pros and Cons",
+    "section": "prologue",
+    "anchor": "w09-detail-tree-compare",
+    "text": "Pros and Cons\nTree-based methods are simple and useful for interpretation\nx However, they typically are not competitive with the best supervised learning \napproaches in terms of prediction accuracy\nHence we also discuss \nbagging\nrandom forests\nboosting \nThese methods grow multiple trees which are then combined to yield a single \nconsensus prediction\nCombining a large number of trees can often result in dramatic improvements in prediction \naccuracy, at the expense of some loss interpretation\n3\n",
+    "type": "teaching"
+  },
+  {
+    "page": 4,
+    "title": "Baseball salary data: how would you stratify it?",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Baseball salary data: how would you stratify it?\nWe first remove missing data and log-transform Salary in the Hitters dataset\nSalary is color-coded from low (blue, green) to high (yellow, red)\n4\n",
+    "type": "teaching"
+  },
+  {
+    "page": 5,
+    "title": "A taste of decision tree",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "A taste of decision tree\nOverall, the tree stratiﬁes or segments the players into three regions of \npredictor space:\n𝑅1 = { 𝑋| 𝑌𝑒𝑎𝑟𝑠< 4.5 }\n𝑅2 = { 𝑋| 𝑌𝑒𝑎𝑟𝑠≥4.5, 𝐻𝑖𝑡𝑠< 117.5 }\n𝑅3 =\n𝑋𝑌𝑒𝑎𝑟𝑠≥4.5, 𝐻𝑖𝑡𝑠≥117.5 }\n5\n",
+    "type": "teaching"
+  },
+  {
+    "page": 6,
+    "title": "Decision tree for these data",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Decision tree for these data\n6\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 7,
+    "title": "Details of previous ﬁgure",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Details of previous ﬁgure\nFor the Hitters data, a regression tree for predicting the log salary of a \nbaseball player, based on the number of years that he has played in the major \nleagues and the number of hits that he made in the previous year\nAt a given internal node, the label (of the form 𝑋𝑗< 𝑡𝑘) indicates the left-hand branch \nemanating from that split, and the right-hand branch corresponds to 𝑋𝑗≥𝑡𝑘. For instance, \nthe split at the top of the tree results in two large branches. The left-hand branch \ncorresponds to Years< 4.5, and the right-hand branch corresponds to Years ≥4.5\nThe tree has two internal nodes and three terminal nodes, or leaves. The number in each \nleaf is the mean of the response for the observations that fall there\n7\n",
+    "type": "teaching"
+  },
+  {
+    "page": 8,
+    "title": "Details of previous ﬁgure",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Details of previous ﬁgure\nIn keeping with the tree analogy, the regions 𝑅1, 𝑅2, and 𝑅3 are also known as \nterminal nodes\nDecision trees are typically drawn upside down, in the sense that the leaves are at the \nbottom of the tree\nThe points along the tree where the predictor space is split are referred to as internal nodes\nIn the hitters tree, the two internal nodes are indicated by the text 𝑌𝑒𝑎𝑟𝑠< 4.5 and 𝐻𝑖𝑡𝑠<\n117.5\n8\n",
+    "type": "teaching"
+  },
+  {
+    "page": 9,
+    "title": "Interpretation",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Interpretation\n1.\nYears is the most important factor in determining Salary, and players with \nless experience earn lower salaries than more experienced players\n2.\nGiven that a player is less experienced, the number of Hits that he made in \nthe previous year seems to play little role in his Salary\n3.\nBut among players who have been in the major leagues for ﬁve or more years, \nthe number of Hits made in the previous year does aﬀect Salary, and \nplayers who made more Hits last year tend to have higher salaries\nSurely an over-simpliﬁcation, but compared to a regression model, it is easy to \ndisplay, interpret and explain\n9\n",
+    "type": "teaching"
+  },
+  {
+    "page": 10,
+    "title": "Details of the tree-building process",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Details of the tree-building process\n1.\nWe divide the predictor space — that is, the set of possible values for \n𝑋1, 𝑋2, … , 𝑋𝑝— into 𝐽distinct and non-overlapping regions, 𝑅1, 𝑅2, … , 𝑅𝐽\n2.\nFor every observation that falls into the region 𝑅𝑗, we make the same \nprediction, which is simply the mean of the response values for the training \nobservations in 𝑅𝑗\n10\nHow do we construct the regions \n𝑅1, 𝑅2, … , 𝑅𝐽? \nIn theory, the regions could have any shape! \nHowever, we choose to divide the predictor \nspace into high-dimensional rectangles, or \nboxes, for simplicity and for ease of \ninterpretation of the resulting predictive model\n",
+    "type": "teaching"
+  },
+  {
+    "page": 11,
+    "title": "Details of the tree-building process – Step 1",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Details of the tree-building process – Step 1\nThe goal is to ﬁnd boxes 𝑅1, 𝑅2, … , 𝑅𝐽that minimize the RSS, given by\n෍\n𝑗=1\n𝐽\n෍\n𝑖∈𝑅𝑗\n(𝑦𝑖−ො𝑦𝑅𝑗)2\nො𝑦𝑅𝑗is the mean response for the training observations within the 𝑗th box\nUnfortunately, it is still computationally infeasible to consider every possible \npartition of the feature space into 𝐽boxes\n1.\nWe take a top-down, greedy approach that is known as recursive binary splitting\n2.\nThe approach is top-down because it begins at the top of the tree and then successively \nsplits the predictor space\n3.\nIt is greedy because, at each step, the best split is made at that particular step, rather than \nlooking ahead and picking a split that will lead to a better tree in some future step\n11\n",
+    "type": "teaching"
+  },
+  {
+    "page": 12,
+    "title": "Details of the tree-building process – Step 1",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Details of the tree-building process – Step 1\nWe ﬁrst select the predictor 𝑋𝑗and the cutpoint 𝑠such that splitting the \npredictor space into the regions {𝑋|𝑋𝑗< 𝑠} and {𝑋|𝑋𝑗≥𝑠} leads to the \ngreatest possible reduction in RSS (choosing 𝑗and 𝑠)\n෍\n𝑖:𝑥𝑖𝜖𝑅1(𝑗,𝑠)\n(𝑦𝑖−ො𝑦𝑅1)2+\n෍\n𝑖:𝑥𝑖𝜖𝑅2(𝑗,𝑠)\n(𝑦𝑖−ො𝑦𝑅2)2\nNext, we look for the best predictor and best cutpoint in order to split the data \nfurther so as to minimize the RSS within each of the resulting regions\nInstead of splitting the entire predictor space, we split one of the two previously identiﬁed \nregions. We now have three regions\nAgain, we look to split one of these three regions further, so as to minimize the RSS\nThe process continues until a stopping criterion is reached; for instance, we may continue \nuntil no region contains more than ﬁve observations\n12\n",
+    "type": "teaching"
+  },
+  {
+    "page": 13,
+    "title": "Details of the tree-building process – Step 1",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Details of the tree-building process – Step 1\nIf the predictor is quantitative, this means considering all possible thresholds \nfor splitting\nThe threshold value is drawn from the sorted observation\nIf the predictor is categorical, this means considering all ways to split the \ncategories into two groups\nWe may rank the categories according to the average value of the target variable for \nobservations in each category (label encoding) and split them like quantitative variables\nIf the target is qualitative, we may use this strategy (All combinations or one versus rest)\n13\n",
+    "type": "teaching"
+  },
+  {
+    "page": 14,
+    "title": "Predictions",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "Predictions\nA ﬁve-region example of \nthis approach is shown\nWe predict the response for \na given test observation \nusing the mean of the \ntraining observations in the \nregion to which that test \nobservation belongs\n14\n",
+    "type": "teaching"
+  },
+  {
+    "page": 15,
+    "title": "Regularization",
+    "section": "prune",
+    "anchor": "w09-detail-prune-compute",
+    "text": "Regularization\nThe process described above may produce good predictions on the training set, \nbut is likely to overﬁt the data, leading to poor test set performance\nA smaller tree with fewer splits (that is, fewer regions 𝑅1, 𝑅2, … , 𝑅𝐽) might lead \nto lower variance and better interpretation at the cost of a little bias\nA simple way to limit a tree’s size is to directly regulate its depth, the size of its terminal \nnodes (training data belongs to them), or both\nOne possible alternative to the process described above is to grow the tree only so long as \nthe decrease in the RSS due to each split exceeds some threshold\nThese strategy will result in smaller trees, but is too short-sighted: a seemingly worthless \nsplit early on in the tree might be followed by a very good split — that is, a split that leads \nto a large reduction in RSS later on\n15\n",
+    "type": "teaching"
+  },
+  {
+    "page": 16,
+    "title": "Pruning a tree",
+    "section": "prune",
+    "anchor": "w09-detail-prune-compute",
+    "text": "Pruning a tree\nA better strategy is to grow a very large tree 𝑇0, and then prune it back in order \nto obtain a subtree\nAgain, considering all possible subtrees is not practical! Cost complexity pruning — also \nknown as weakest link pruning — is used to do this\nWe consider a sequence of trees indexed by a nonnegative tuning parameter 𝛼. For each \nvalue of 𝛼, there corresponds a subtree 𝑇⊂𝑇0 such that\n෍\n𝑚=1\n|𝑇|\n෍\n𝑖:𝑥𝑖∈𝑅𝑚\n(𝑦𝑖−ො𝑦𝑅𝑚)2 + 𝛼|𝑇|\nis as small as possible\nHere |𝑇| indicates the number of terminal nodes of the tree 𝑇, 𝑅𝑚is the rectangle (i.e. the \nsubset of predictor space) corresponding to the 𝑚th terminal node, and ො𝑦𝑅𝑚is the mean of \nthe training observations in 𝑅𝑚\n16\n",
+    "type": "teaching"
+  },
+  {
+    "page": 17,
+    "title": "Choosing the best subtree",
+    "section": "prune",
+    "anchor": "w09-detail-prune-compute",
+    "text": "Choosing the best subtree\nThe tuning parameter 𝛼controls a trade-oﬀ between the subtree’s complexity \nand its ﬁt to the training data\nNote that a similar formulation was used in order to control the complexity of a \nlinear model when we discuss lasso!\nIt turns out that as we increase 𝛼from zero, branches get pruned from the tree \nin a nested and predictable fashion!\nWe select an optimal value ො𝛼using cross-validation\nWe then return to the full data set and obtain the subtree corresponding to ො𝛼\n17\n",
+    "type": "teaching"
+  },
+  {
+    "page": 18,
+    "title": "18",
+    "section": "prune",
+    "anchor": "w09-detail-prune-compute",
+    "text": "18\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 19,
+    "title": "Baseball example revisit",
+    "section": "prune",
+    "anchor": "w09-detail-prune-compute",
+    "text": "Baseball example revisit\n1.\nFirst, we randomly divided the data set in half, yielding 132 observations in \nthe training set and 131 observations in the test set\n2.\nWe then built a large regression tree on the training data and varied 𝛼in order \nto create subtrees with diﬀerent numbers of terminal nodes\n3.\nFinally, we performed six-fold cross-validation in order to estimate the cross-\nvalidated MSE of the trees as a function of 𝛼\n19\n",
+    "type": "teaching"
+  },
+  {
+    "page": 20,
+    "title": "Baseball example revisit",
+    "section": "prune",
+    "anchor": "w09-detail-prune-compute",
+    "text": "Baseball example revisit\n20\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 21,
+    "title": "Baseball example continued",
+    "section": "prune",
+    "anchor": "w09-detail-prune-compute",
+    "text": "Baseball example continued\n21\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 22,
+    "title": "Classiﬁcation Trees",
+    "section": "classtree",
+    "anchor": "w09-detail-classtree-lab",
+    "text": "Classiﬁcation Trees\nVery similar to a regression tree, except that it is used to predict a qualitative \nresponse rather than a quantitative one\nFor a classiﬁcation tree, we predict that each observation belongs to the most commonly \noccurring class of training observations in the region to which it belongs\nThe proportions among the training observations that fall into that region also matter!\nWe also use recursive binary splitting to grow a classiﬁcation tree\nIn the classiﬁcation setting, RSS cannot be used as a criterion for making the binary splits\n22\n",
+    "type": "teaching"
+  },
+  {
+    "page": 23,
+    "title": "Details of classiﬁcation trees",
+    "section": "classtree",
+    "anchor": "w09-detail-classtree-lab",
+    "text": "Details of classiﬁcation trees\nA natural alternative to RSS is the classiﬁcation error rate\nThis is simply the fraction of the training observations in that region that do not belong to \nthe most common class\n𝐸= 1\n𝑁𝑚\n෍\n𝑖∈𝑅𝑚\n𝐼(𝑦𝑖≠ො𝑦𝑖) = 1 −max\n𝑘\nƸ𝑝𝑚𝑘\nWhere ො𝑦𝑖= 𝑎𝑟𝑔max\n𝑘\nƸ𝑝𝑚𝑘and Ƹ𝑝𝑚𝑘represents the proportion of training observations in the \n𝑚th region that are from the 𝑘th class\nHowever classiﬁcation error is not suﬃciently sensitive for tree-growing, and \nin practice two other measures are preferable\n23\n",
+    "type": "teaching"
+  },
+  {
+    "page": 24,
+    "title": "Gini index and cross-entropy",
+    "section": "classtree",
+    "anchor": "w09-detail-classtree-lab",
+    "text": "Gini index and cross-entropy\nThe Gini index for a specific node is deﬁned by\n𝐺= 1 −෍\n𝑖=1\n𝐾\nƸ𝑝𝑚𝑘\n2 = ෍\n𝑖=1\n𝐾\nƸ𝑝𝑚𝑘(1 −Ƹ𝑝𝑚𝑘)\nThe Gini index takes on a small value if all of the Ƹ𝑝𝑚𝑘’s are close to zero or one\nFor this reason, the Gini index is referred to as a measure of node purity — a small value \nindicates that a node contains predominantly observations from a single class\nAn alternative to the Gini index is cross-entropy, given by\n𝐷= −෍\n𝑘=1\n𝐾\nƸ𝑝𝑚𝑘log Ƹ𝑝𝑚𝑘\nIt turns out that the Gini index and the cross-entropy are very similar \nnumerically and both differentiable\n24\n",
+    "type": "teaching"
+  },
+  {
+    "page": 25,
+    "title": "Gini index and cross-entropy",
+    "section": "classtree",
+    "anchor": "w09-detail-classtree-lab",
+    "text": "Gini index and cross-entropy\nIn order to evaluate the purity of a split (rather than that of a node), we use the \nweighted Gini index or weighted cross-entropy\nConsider a split of node which creates children 𝑅𝑚\n𝐿and 𝑅𝑚\n𝑅\nLet the fraction of training observations going to 𝑅𝑚\n𝐿be 𝑁𝐿and the fraction going to 𝑅𝑚\n𝑅be \n𝑁𝑅. The weighted loss (whether with the Gini index or the cross-entropy) is defined as\n𝐿= 𝑁𝐿𝐺𝑅𝑚\n𝐿\n+ 𝑁𝑅𝐺(𝑅𝑚\n𝑅)\nor \n𝐿= 𝑁𝐿𝐶𝑅𝑚\n𝐿\n+ 𝑁𝑅𝐶(𝑅𝑚\n𝑅)\n25\n",
+    "type": "teaching"
+  },
+  {
+    "page": 26,
+    "title": "Example: Heart data",
+    "section": "classtree",
+    "anchor": "w09-detail-classtree-lab",
+    "text": "Example: Heart data\nThese data contain a binary outcome HD for 303 patients who presented with \nchest pain\nAn outcome value of Yes indicates the presence of heart disease based on an \nangiographic test, while No means no heart disease. There are 13 predictors \nincluding Age, Sex, Chol (a cholesterol measurement), and other heart and lung \nfunction measurements\nCross-validation yields a tree with six terminal nodes. See next ﬁgure\n26\n",
+    "type": "teaching"
+  },
+  {
+    "page": 27,
+    "title": "There are some qualitative predictors",
+    "section": "classtree",
+    "anchor": "w09-detail-classtree-lab",
+    "text": "There are some qualitative predictors\nSome of the splits yield two terminal nodes \nthat have the same predicted value\nThough the split 𝑅𝑒𝑠𝑡𝐸𝐶𝐺< 1 does not reduce the \nclassification error, it improves the Gini index and \nthe entropy, which are more sensitive to node purity\n(weighted by the observation in each subtree)\n27\n",
+    "type": "teaching"
+  },
+  {
+    "page": 28,
+    "title": "Trees Versus Linear Models",
+    "section": "vslinear",
+    "anchor": "w09-detail-tree-implementations",
+    "text": "Trees Versus Linear Models\nRegression tree assume a model \nof a form\n𝑓𝑋= ෍\n𝑚=1\n𝑀\n𝑐𝑚1(𝑋∈𝑅𝑚)\nTop Row: True linear boundary; \nBottom row: true non-linear \nboundary\nLeft column: linear model; \nRight column: tree-based \nmodel\n28\n",
+    "type": "teaching"
+  },
+  {
+    "page": 29,
+    "title": "Advantages and Disadvantages of Trees",
+    "section": "vslinear",
+    "anchor": "w09-detail-tree-implementations",
+    "text": "Advantages and Disadvantages of Trees\nPros\nTrees are very easy to explain to people. In fact, they are even easier to explain than linear \nregression!\nSome people believe that decision trees more closely mirror human decision-making than \ndo the regression and classiﬁcation approaches seen in previous chapters\nTrees can be displayed graphically, and are easily interpreted even by a non-expert \n(especially if they are small)\nTrees can easily handle qualitative predictors without the need to create dummy variables\nCons\nx Unfortunately, trees generally do not have the same level of predictive accuracy as some of \nthe other regression and classiﬁcation approaches seen in this book\nHowever, by aggregating many decision trees, the predictive performance of \ntrees can be substantially improved. We introduce these concepts next\n29\n",
+    "type": "teaching"
+  },
+  {
+    "page": 30,
+    "title": "Why and when to use ensemble learning?",
+    "section": "why",
+    "anchor": "w09-detail-voting-probability",
+    "text": "Why and when to use ensemble learning?\nSuppose you pose a complex question to thousands of random people and then \naggregate their answers. In many cases, you will find aggregated answer is \nbetter than an expert’s answer. This is called the wisdom of the crowd\nIf you aggregate the predictions of a group of predictors (such as classifiers or regressors), \nyou will often get better predictions than with the best individual predictor\nA group of predictors is called an ensemble; thus, this technique is called Ensemble \nLearning, and an Ensemble Learning algorithm is called an Ensemble method\nYou will often use Ensemble methods near the end of a project, once you have already built a few \ngood predictors, to combine them into an even better predictor\nIn fact, the winning solutions in Machine Learning competitions often involve several \nEnsemble methods\n30\n",
+    "type": "teaching"
+  },
+  {
+    "page": 31,
+    "title": "Simple example - Voting classifier",
+    "section": "why",
+    "anchor": "w09-detail-voting-probability",
+    "text": "Simple example - Voting classifier\nSuppose you train a few classifiers, each one achieving about 80% accuracy\nA very simple way to create an even better classifier is to aggregate the predictions of each \nclassifier and predict the class that gets the most votes. This majority-vote classifier is \ncalled a hard voting classifier\n31\nIf you build an ensemble containing 1,000 \nclassifiers that are weak learners and individually \ncorrect only 51% of the time. If you predict the \nmajority voted class, you can hope for up to 75% \naccuracy! \nOnly true if all classifiers are perfectly independent \nand make uncorrelated errors!\nOne way to get diverse classifiers is to train them \nusing very different algorithms\n",
+    "type": "teaching"
+  },
+  {
+    "page": 32,
+    "title": "Ensemble method - Bagging",
+    "section": "bagging",
+    "anchor": "w09-detail-bagging-lab",
+    "text": "Ensemble method - Bagging\nAnother approach is to use the same training algorithm for every predictor but \ntrain them on a different dataset\nRecall that given a set of 𝑛independent observations 𝑍1, … , 𝑍𝑛, each with \nvariance 𝜎2, the variance of the mean ҧ𝑍of the observations is given by 𝜎2/𝑛\nIn other words, averaging a set of observations reduces variance. Of course, \nthis is not practical because we generally do not have access to multiple \ntraining sets\nBootstrap aggregation, or bagging, is a general-purpose procedure for reducing the \nvariance of a statistical learning method\n32\n",
+    "type": "teaching"
+  },
+  {
+    "page": 33,
+    "title": "Bagging— continued",
+    "section": "bagging",
+    "anchor": "w09-detail-bagging-lab",
+    "text": "Bagging— continued\nWe can bootstrap, by taking repeated samples from the (single) training data \nset\n33\nIn this approach, we generate 𝐵diﬀerent \nbootstrapped training data sets\nWe then train our method on the 𝑏th\nbootstrapped training set in order to get \nመ𝑓∗𝑏(𝑥), the prediction at a point 𝑥. We then \naverage all the predictions to obtain\nመ𝑓𝑏𝑎𝑔𝑥= 1\n𝐵෍\n𝑏=1\n𝐵\nመ𝑓∗𝑏𝑥\n",
+    "type": "teaching"
+  },
+  {
+    "page": 34,
+    "title": "Bagging classiﬁcation trees",
+    "section": "bagging",
+    "anchor": "w09-detail-bagging-lab",
+    "text": "Bagging classiﬁcation trees\nThe above prescription applied to regression trees\nThese trees are grown deep, and are not pruned. Hence each individual tree has high \nvariance, but low bias. For classiﬁcation, we take a majority vote among the 𝐵predictions\nIt scales well because the predictors can all be trained in parallel and the predictions can be \nmade in parallel, too\nFeature sampling is also possible, which is called random subspaces methods\nWhen combining both, it is called random patches\n34\n",
+    "type": "teaching"
+  },
+  {
+    "page": 35,
+    "title": "Bagging the heart data",
+    "section": "bagging",
+    "anchor": "w09-detail-bagging-lab",
+    "text": "Bagging the heart data\nThe number of trees 𝐵is not a \ncritical parameter with bagging; \nusing a very large value of 𝐵\nwill not lead to overfitting\nIn practice, we use a value of 𝐵\nsufficiently large that the error \nhas settled down\n35\n",
+    "type": "teaching"
+  },
+  {
+    "page": 36,
+    "title": "Details of previous ﬁgure",
+    "section": "bagging",
+    "anchor": "w09-detail-bagging-lab",
+    "text": "Details of previous ﬁgure\nBagging and random forest results for the Heart data.\nThe dashed line indicates the test error resulting from a single classiﬁcation tree. The test \nerror (black and orange) is shown as a function of 𝐵, the number of bootstrapped training \nsets used\nRandom forests were applied with 𝑚=\n𝑝\nThe green and blue traces show the OOB error, which in this case is considerably lower by \nchance\n36\n",
+    "type": "teaching"
+  },
+  {
+    "page": 37,
+    "title": "Out-of-Bag Error Estimation",
+    "section": "bagging",
+    "anchor": "w09-detail-bagging-lab",
+    "text": "Out-of-Bag Error Estimation\nIt turns out that there is a very straightforward way to estimate the test error of \na bagged model\nRecall that the key to bagging is that trees are repeatedly ﬁt to bootstrapped subsets of the \nobservations. One can show that, on average, each bagged tree makes use of around two-\nthirds of the observations (Exercise 2 of Chapter 5)\nThe remaining one-third of the observations not used to ﬁt a given bagged tree are referred \nto as out-of-bag (OOB) observations\nWe can predict the response for the 𝑖th observation using each of the trees in which that \nobservation was OOB. This will yield around 𝐵/3 predictions for the 𝑖th observation, \nwhich we average (or vote)\nThis estimate is essentially the LOO cross-validation error for bagging, if 𝐵is large (ESL, \nexercise 15.2)\n37\n",
+    "type": "teaching"
+  },
+  {
+    "page": 38,
+    "title": "Ensemble method - Random Forests",
+    "section": "rf",
+    "anchor": "w09-detail-extra-trees",
+    "text": "Ensemble method - Random Forests\nRandom forests provide an improvement over bagged trees by way of a small \ntweak that decorrelates the trees. This reduces the variance when we average \nAs in bagging, we build a number of decision trees on bootstrapped training samples\nBut when building these decision trees, each time a split in a tree is considered, a random \nselection of 𝑚predictors is chosen as split candidates from the full set of 𝑝predictors\nThe split is allowed to use only one of those 𝑚predictors!\nA fresh selection of 𝑚predictors is taken at each split, and typically we choose 𝑚≈\n𝑝— that is, \nthe number of predictors considered at each split is approximately equal to the square root of the \ntotal number of predictors (4 out of the 13 for the Heart data)\n38\n",
+    "type": "teaching"
+  },
+  {
+    "page": 39,
+    "title": "Ensemble method - Random Forests",
+    "section": "rf",
+    "anchor": "w09-detail-extra-trees",
+    "text": "Ensemble method - Random Forests\nSuppose that there is one very strong predictor in the data set. Then, in \nthe collection of bagged trees, most or all of the trees will use this strong \npredictor in the top split \nConsequently, all of the bagged trees will look quite similar to each other\nRandom forests overcome this problem by forcing each split to consider only a subset \nof the predictors\nUsing a small value of 𝑚in building a random forest will typically be helpful when we \nhave a large number of strongly correlated predictors\nC.f. Extra tree\n39\n",
+    "type": "teaching"
+  },
+  {
+    "page": 40,
+    "title": "Example: gene expression data",
+    "section": "rf",
+    "anchor": "w09-detail-extra-trees",
+    "text": "Example: gene expression data\nWe applied random forests to a high-dimensional biological data set consisting of \nexpression measurements of 4,718 genes measured on tissue samples from 349 \npatients\nThere are around 20,000 genes in humans, and individual genes have diﬀerent levels of activity, or \nexpression, in particular cells, tissues, and biological conditions\nEach of the patient samples has a qualitative label with 15 diﬀerent levels: either normal or one of \n14 diﬀerent types of cancer\nPreprocessing\nWe use random forests to predict cancer type based on the 500 genes that have the largest variance \nin the training set\nWe randomly divided the observations into a training and a test set, and applied random forests to \nthe training set for three diﬀerent values of the number of splitting variables 𝑚\n40\n",
+    "type": "teaching"
+  },
+  {
+    "page": 41,
+    "title": "Results: gene expression data",
+    "section": "rf",
+    "anchor": "w09-detail-extra-trees",
+    "text": "Results: gene expression data\nAs with bagging, random forests will not overfit if we increase 𝐵, so in \npractice we use a value of 𝐵sufficiently large for the error rate to have \nsettled down\n41\n",
+    "type": "teaching"
+  },
+  {
+    "page": 42,
+    "title": "Details of previous ﬁgure",
+    "section": "rf",
+    "anchor": "w09-detail-extra-trees",
+    "text": "Details of previous ﬁgure\nResults from random forests for the ﬁfteen-class gene expression data set with \n𝑝= 500 predictors\nThe test error is displayed as a function of the number of trees. Each colored \nline corresponds to a diﬀerent value of 𝑚, the number of predictors available \nfor splitting at each interior tree node\nRandom forests (𝑚< 𝑝) lead to a slight improvement over bagging (𝑚=\n𝑝). Note that a single classiﬁcation tree has an error rate of 45.7%\n42\n",
+    "type": "teaching"
+  },
+  {
+    "page": 43,
+    "title": "Ensemble method - Boosting",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Ensemble method - Boosting\nLike bagging, boosting is a general approach that can be applied to many \nstatistical learning methods for regression or classiﬁcation\nRecall that bagging involves creating multiple copies of the original training \ndata set using the bootstrap, ﬁtting a separate decision tree to each copy, and \nthen combining all of the trees in order to create a single predictive model\nNotably, each tree is built on a bootstrap data set, independent of the other trees\nBoosting works in a similar way, except that the trees are grown sequentially:\neach tree is grown using information from previously grown trees\nBoosting does not involve bootstrap sampling; instead, each tree is fit on a modified \nversion of the original data set\n43\n",
+    "type": "teaching"
+  },
+  {
+    "page": 44,
+    "title": "Ensemble method - AdaBoost",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Ensemble method - AdaBoost\nOne way for a new predictor to correct its predecessor is to pay a bit more \nattention to the training instances that the predecessor underfitted\nThis results in new predictors focusing more and more on the hard cases. This is the \ntechnique used by AdaBoost\n44\nThe algorithm increases the relative \nweight of misclassified training instances. \nThen it trains a second classifier, using \nthe updated weights, and again makes \npredictions on the training set, updates \nthe instance weights, and so on\n𝛼𝑗= η log 1 −𝑒𝑗\n𝑒𝑗\nො𝑦= 𝑎𝑟𝑔𝑚𝑎𝑥𝑘\n෍\n𝑗=1,ℎ𝑗(𝑥) =𝑘\n𝐵\n𝛼𝑗\n𝑤𝑗+1(𝑖) = ൝𝑤𝑗𝑖× 𝑒−𝛼𝑗𝑖𝑓ℎ𝑗(𝑥𝑖) = 𝑦𝑖\n𝑤𝑗𝑖× 𝑒𝛼𝑗𝑖𝑓ℎ𝑗(𝑥𝑖) ≠𝑦𝑖\n",
+    "type": "teaching"
+  },
+  {
+    "page": 45,
+    "title": "Gradient Boosting",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Gradient Boosting\nA very popular boosting algorithm is \nGradient Boosting\n45\nGradient Boosting works by sequentially \nadding predictors to an ensemble, each one \ncorrecting its predecessor\nInstead of tweaking the instance weights at \nevery iteration like AdaBoost does, this method \ntries to fit the new predictor to the residual \nerrors made by the previous predictor\nhttps://sefiks.com/2018/10/04/a-step-by-step-gradient-boosting-decision-tree-example/\n",
+    "type": "teaching"
+  },
+  {
+    "page": 46,
+    "title": "Gradient Boosting algorithm for regression trees (GBDT/GBRT)",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Gradient Boosting algorithm for regression trees (GBDT/GBRT)\n46\n",
+    "type": "teaching"
+  },
+  {
+    "page": 47,
+    "title": "What is the idea behind this procedure?",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "What is the idea behind this procedure?\nUnlike ﬁtting a single large decision tree to the data, which amounts to ﬁtting \nthe data and potentially overﬁtting, the boosting approach instead learns slowly\nGiven the current model, we ﬁt a decision tree to the residuals (gradient) from the model. \nWe then add this new decision tree into the ﬁtted function in order to update the residuals\nEach of these trees can be rather small, with just a few terminal nodes, determined by the \nparameter 𝑑in the algorithm\nBy ﬁtting small trees to the residuals, we slowly improve መ𝑓in areas where it does not \nperform well. The shrinkage parameter 𝜆slows the process down even further, allowing \nmore and diﬀerent shaped trees to attack the residuals\n47\n",
+    "type": "teaching"
+  },
+  {
+    "page": 48,
+    "title": "Gradient Boosting",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Gradient Boosting\nGradient Boosting has three tuning parameters\nThe number of trees 𝐵(Boosting can overfit therefore choose this by CV)\nThe shrinkage parameter 𝜆(Typical values are 0.01 or 0.001)\nThe number 𝑑of splits in each tree (Often 𝑑= 1 works well, in which case each\ntree is a stump, consisting of a single split which leads to an additive model) is the interaction \ndepth\nGradient Boosting for classiﬁcation is similar in spirit to boosting for \nregression, but is a bit more complex (ESL ch10)\nThe Python package XGboost (gradient boosted models) handles a variety of \nregression and classiﬁcation problems\n48\n",
+    "type": "teaching"
+  },
+  {
+    "page": 49,
+    "title": "Gene expression data continued",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Gene expression data continued\n49\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 50,
+    "title": "Details of previous ﬁgure",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Details of previous ﬁgure\nResults from performing boosting and random forests on the ﬁfteen-class gene \nexpression data set in order to predict cancer versus normal (Binary \nclassification)\nThe test error is displayed as a function of the number of trees. For the two boosted models, \n𝜆= 0.01. Depth-1 trees slightly outperform depth-2 trees, and both outperform the random \nforest\nThe test error rate for a single tree is 24% \nIn boosting, because the growth of a particular tree takes into account the other \ntrees that have already been grown, smaller trees are typically sufficient. Using \nsmaller trees can aid in interpretability as well; for instance, using stumps leads to \nan additive model (Exercise 2)\n50\n",
+    "type": "teaching"
+  },
+  {
+    "page": 51,
+    "title": "Variable importance measure",
+    "section": "stacking",
+    "anchor": "w09-detail-importance",
+    "text": "Variable importance measure\nFor bagged/boosting regression trees, \nwe record the total amount that the \nRSS is decreased due to splits over a \ngiven predictor, averaged over all 𝐵\ntrees. A large value indicates an \nimportant predictor\nSimilarly, for bagged/boosting \nclassiﬁcation trees, we add up the \ntotal amount that the Gini index is \ndecreased by splits over a given \npredictor, averaged over all 𝐵trees\n51\n",
+    "type": "teaching"
+  },
+  {
+    "page": 52,
+    "title": "XGBoost",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "XGBoost\nXGBoost, short for Extreme Gradient Boosting, is a form of gradient boosting \nincluded built-in regularization and impressive gains in speed\nThe need for faster algorithms is evident when dealing with big data\nXGBoost or Gradient Boosting Decision Tree (GBDT)\nDon’t need to perform scaling (Only the relative size matters)\nDon’t need encoding\nWhen given a missing data point, XGBoost treats missing value as a feature and scores \ndifferent split options and chooses the one with the best results\n52\nhttps://towardsdatascience.com/catboost-vs-light-gbm-vs-xgboost-5f93620723db\n",
+    "type": "teaching"
+  },
+  {
+    "page": 53,
+    "title": "XGBoost",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "XGBoost\nPerformance gain\nXGBoost adds built-in regularization to achieve accuracy gains beyond gradient boosting. \nXGBoost is a regularized version of gradient boosting\nFor more information about the objective function, please refer to here or here\nIn addition to the regularization term, it used an approximation similar to Newton's Method\nwhich is more accurate than naïve gradient boosting. An in-depth discussion can be found here\nTake a look at how to handle categorical variables and missing value\nEncode categorical variable before entering the algorithm\nMissing values can be automatically handled\n53\n",
+    "type": "teaching"
+  },
+  {
+    "page": 54,
+    "title": "XGBoost",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "XGBoost\nXGBoot presents \nParallel computing – Quantile sketch\nApproximate split-finding algorithm on weighted quantile\n54\nhttps://www.youtube.com/watch?v=oRrKeUCEbq8\n",
+    "type": "teaching"
+  },
+  {
+    "page": 55,
+    "title": "XGBoost",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "XGBoost\nXGBoot presents \nCan handle sparse matrix (Sparsity-aware split finding)\nCache-aware access – improve cache performance (Puts gradient and hessian in it)\nBlock compression – compress data which is stored in hard disk and parallel reading\nRandom sampling on samples or features\n55\n",
+    "type": "teaching"
+  },
+  {
+    "page": 56,
+    "title": "LightGBM",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "LightGBM\nFor speed, use Histogram-based Gradient Boosting (HGB) and Exclusive \nFeature Bundling\nIt works by binning the input features, replacing them with integers. The number of bins is \ncontrolled defaults to 255 and cannot be set any higher than this. The way the bins are built \n(𝑂(𝑛)) removes the need for sorting (O(𝑛𝑙𝑜𝑔𝑛)) the features when training each tree\nThe complexity of split a single node reduce from 𝑂(𝑛𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠× 𝑛𝑙𝑜𝑔(𝑛)) to 𝑂(𝑛𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠× 𝑛)\nBinning can enormously reduce the number of possible thresholds that the training \nalgorithm needs to evaluate. Moreover, working with integers makes it possible to use \nfaster and more memory-efficient data structures\n56\nExclusive Feature Bundling algorithm, which \ncan reduce the number of features by \nregrouping mutually exclusive features into a \nbundle (c.f. One hot vs label encoding)\n",
+    "type": "teaching"
+  },
+  {
+    "page": 57,
+    "title": "LightGBM",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "LightGBM\nOptimization in accuracy\nGradient-based One-Side Sampling (GOSS), which adjust the sampling strategy\nKeeps all data instances with large gradients and performs random sampling for data instances \nwith small gradients. Data points with larger gradients have higher errors and would be important \nfor finding the optimal split point\nLeaf-wise (Best-first) tree growth instead of fixed ordered, see discussion here\nOptimal Split for Categorical Features\nUse a strategy similar to target encoding\n57\nhttps://medium.com/riskified-technology/xgboost-lightgbm-or-catboost-which-boosting-\nalgorithm-should-i-use-e7fda7bb36bc\n",
+    "type": "teaching"
+  },
+  {
+    "page": 58,
+    "title": "CatBoost",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "CatBoost\nSymmetric trees\nCatBoost builds symmetric (balanced) trees, unlike XGBoost and LightGBM. In every step, \nleaves from the previous tree are split using the same condition. The feature-split pair that \naccounts for the lowest loss is selected and used for all the level’s nodes\nThis balanced tree architecture aids in efficient CPU implementation, decreases prediction time \nand controls overfitting as the structure serves as regularization\n58\nOrdered boosting\nWhen calculating the gradient estimate of a data instance, classic algorithms use the same \ndata that the model was built with\nCatBoost, on the other hand, uses the concept of ordered boosting to train the model on a \nsubset of data while calculating residuals on another subset, thus preventing overfitting\n",
+    "type": "teaching"
+  },
+  {
+    "page": 59,
+    "title": "CatBoost",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "CatBoost\nSampling techniques\nMVS can be considered a variant of the GOSS, and provide a lower variance for estimating \nthe gradient \nCatBoost adds native supports for all kinds of features, be it numeric, \ncategorical, or text and saves time and effort in preprocessing\nTake a look at how to deal with categorical features here\nVisualization tools provided\n59\n",
+    "type": "teaching"
+  },
+  {
+    "page": 60,
+    "title": "Hyperparameters",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "Hyperparameters\n1. For faster speed\nSetting bagging fraction ratio to randomly choose instances\nUse feature sub-sampling (random subspace) by setting the fraction of features \nUse a smaller number of bins for Histogram-based Gradient Boosting \n2. For better accuracy\nUse a smaller learning rate with a larger number of iterations (number of estimators)\nUse a larger number of bins for Histogram-based Gradient Boosting \nTry different categorical encoding methods\n3. Prevent overfitting\nUse a larger value of the number of data in leaf to avoid splitting\nUse a smaller number of depth to avoid growing deeper tree\nTry to adjust regularization strength in the objective function\nUse DART (Like dropout in neural network)\n60\n",
+    "type": "teaching"
+  },
+  {
+    "page": 61,
+    "title": "Hyperparameters",
+    "section": "modern",
+    "anchor": "w09-detail-boost-engineering",
+    "text": "Hyperparameters\nXGBoost\nLightGBM\nCatBoost\nSpeed\nsubsample\ncolsample_bytree\nn_estimator\nbagging_fraction\nfeature_fraction\nnum_iterations\nsubsample\nrsm\niterations\nControl overfitting/accuracy\nlearning_rate (0.01~0.2)\nmax_depth\nmin_child_weight\nlearning_rate\nmax_depth, num_leaves\nmin_data_in_leaf\nlearning_rate\ndepth\nl2-leaf-reg\nCategorical variable\nExperimental\ncategorical_feature\ncat_features\none_hot_max_szie\n61\n",
+    "type": "teaching"
+  },
+  {
+    "page": 62,
+    "title": "Conclusion",
+    "section": "modern",
+    "anchor": "w09-detail-modern-comparison",
+    "text": "Conclusion\nIn conclusion, ensemble learning is versatile, powerful, and fairly simple to use\nEnsemble can help push your system’s performance to its limits\nRandom Forests and GBDT are among the first models you should test on most Machine \nLearning tasks, and they particularly shine with heterogeneous tabular data. Moreover, as \nthey require very little preprocessing, they’re great to get a prototype up and running \nquickly\nAbout the choice of the framework\nXGBoost has the largest community and provides sufficient support for production\nLightGBM may be a better choice when considering the speed and accuracy\nCatBoost is a choice when the dataset is small or when the categorical variables are \nimportant in the model\n62\n",
+    "type": "teaching"
+  },
+  {
+    "page": 63,
+    "title": "Appendix",
+    "section": "reference",
+    "anchor": "w09-detail-reference",
+    "text": "Appendix\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 64,
+    "title": "The tree training algorithm",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "The tree training algorithm\nID3 (Iterative Dichotomiser 3) was developed in 1986 by Ross Quinlan. The \nalgorithm creates a multiway tree, finding for each node (i.e. in a greedy \nmanner) the categorical feature that will yield the largest information gain for \ncategorical targets. Trees are grown to their maximum size and then a pruning \nstep is usually applied to improve the ability of the tree to generalise to unseen \ndata\nC4.5 is the successor to ID3 and removed the restriction that features must be \ncategorical by dynamically defining a discrete attribute (based on numerical \nvariables) that partitions the continuous attribute value into a discrete set of \nintervals. C4.5 converts the trained trees (i.e. the output of the ID3 algorithm) \ninto sets of if-then rules. These accuracy of each rule is then evaluated to \ndetermine the order in which they should be applied. Pruning is done by \nremoving a rule’s precondition if the accuracy of the rule improves without it\n64\n",
+    "type": "teaching"
+  },
+  {
+    "page": 65,
+    "title": "The tree training algorithm",
+    "section": "grow",
+    "anchor": "w09-detail-split-search",
+    "text": "The tree training algorithm\nC5.0 is Quinlan’s latest version release under a proprietary license. It uses less \nmemory and builds smaller rulesets than C4.5 while being more accurate\nCART (Classification and Regression Trees) is very similar to C4.5, but it \ndiffers in that it supports numerical target variables (regression) and does not \ncompute rule sets. CART constructs binary trees using the feature and \nthreshold that yield the largest information gain at each node\nscikit-learn uses an optimised version of the CART algorithm; however, scikit-\nlearn implementation does not support categorical variables for now\nScikit-learn’s default max _𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠= 𝑛_𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠\n65\n",
+    "type": "teaching"
+  },
+  {
+    "page": 66,
+    "title": "Other ensemble methods - Stacking",
+    "section": "stacking",
+    "anchor": "w09-detail-stacking",
+    "text": "Other ensemble methods - Stacking\nStacking is based on a simple idea: instead of using trivial functions (such as \nhard/soft voting) to aggregate the predictions of all predictors in an ensemble, \nwhy don’t we train a model to perform this aggregation? \n66\nTo train the blender (aggregator), you first need \nto build the blending training set\nYou can use cross-validation on every estimator \nin the ensemble to get out-of-sample \npredictions for each instance in the original \ntraining set\nThese can be used as the input features to train \nthe blender, and the targets can be simply be \ncopied from the original training set\n",
+    "type": "teaching"
+  },
+  {
+    "page": 67,
+    "title": "Other ensemble methods",
+    "section": "rf",
+    "anchor": "w09-detail-extra-trees",
+    "text": "Other ensemble methods\nExtra-trees\nIn extremely randomized trees, randomness goes one step further in the way splits are \ncomputed \nAs in random forests, a random subset of candidate features is used, but instead of looking \nfor the most discriminative thresholds, thresholds are drawn at random for each candidate \nfeature and the best of these randomly-generated thresholds is picked as the splitting rule\nThis usually allows to reduce the variance of the model a bit more, at the expense of a \nslightly greater increase in bias\n67\n",
+    "type": "teaching"
+  },
+  {
+    "page": 68,
+    "title": "Other ensemble methods - AdaBoost",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "Other ensemble methods - AdaBoost\nThe following shows the decision boundaries of five consecutive predictors on \nthe moons dataset \nThe first classifier gets many instances wrong, so their weights get boosted. The second \nclassifier therefore does a better job on these instances, and so on\n68\nThe plot on the right represents the \nsame sequence of predictors, except \nthat the learning rate is halved \nAs you can see, this sequential learning \ntechnique has some similarities with \nGradient Descent, except that instead \nof tweaking a single predictor’s \nparameters to minimize a cost function, \nAdaBoost adds predictors to the \nensemble, gradually making it better\n",
+    "type": "teaching"
+  },
+  {
+    "page": 69,
+    "title": "ESL 10.9 – Boosting Trees",
+    "section": "boosting",
+    "anchor": "w09-detail-gradient-general",
+    "text": "ESL 10.9 – Boosting Trees\n69\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 70,
+    "title": "Encoding categorical variable – One hot encoding",
+    "section": "modern",
+    "anchor": "w09-detail-category-encoding",
+    "text": "Encoding categorical variable – One hot encoding\nCategorical data can be extremely useful. However, in its original form, it is \nunrecognizable to most models. We can use different “encoding” techniques\nOne hot encoding convert it to dummy variables by produces one feature per category\nIn linear and logistic regression, one hot encoding causes problems with multicollinearity. In such \ncases, one dummy is omitted (its value can be inferred from the other values)\nThe number of categorical features should be small so that it can be effectively applied\n70\nAnimal\nTarget\nisCat\nisDog\nisHamster\nCat\n1\n1\n0\n0\nHamster\n0\n0\n0\n1\nCat\n0\n1\n0\n0\nDog\n1\n0\n1\n0\nHamster\n0\n0\n0\n1\nCat\n1\n1\n0\n0\nDog\n0\n0\n1\n0\n",
+    "type": "teaching"
+  },
+  {
+    "page": 71,
+    "title": "Encoding categorical variable – Label encoding",
+    "section": "modern",
+    "anchor": "w09-detail-category-encoding",
+    "text": "Encoding categorical variable – Label encoding\nOrdinal encoding or label encoding will transform each categorical feature to \none new feature of integers (0 to number of features-1)\nThis coding suggests an ordering. Furthermore, it implies that the diﬀerence between cat \nand dog is the same as between dog and hamster\n71\nAnimal\nTarget\nAnimal_encoded\nCat\n1\n0\nHamster\n0\n2\nCat\n0\n0\nDog\n1\n1\nHamster\n0\n2\nCat\n1\n0\nDog\n0\n1\n",
+    "type": "teaching"
+  },
+  {
+    "page": 72,
+    "title": "Encoding categorical variable – Target encoding",
+    "section": "modern",
+    "anchor": "w09-detail-category-encoding",
+    "text": "Encoding categorical variable – Target encoding\nTarget encoding or mean encoding will replace a feature's categories with some \nnumber derived from the target\nGroup the data by each category and count the number of occurrences of each target. \nCalculate the average of the target given each specific category and add it to a new column\nA target encoding derives numbers for the categories using the feature's most important \nproperty: its relationship with the target\n72\nAnimal\nTarget\nAnimal_encoded\nCat\n1\n0.67\nHamster\n0\n0.50\nCat\n0\n0.67\nDog\n0\n0.00\nHamster\n1\n0.50\nCat\n1\n0.67\nDog\n0\n0.00\n",
+    "type": "teaching"
+  },
+  {
+    "page": 73,
+    "title": "Encoding categorical variable – Target encoding",
+    "section": "modern",
+    "anchor": "w09-detail-category-encoding",
+    "text": "Encoding categorical variable – Target encoding\nWhen a category only occurs a few times in the dataset, any statistics \ncalculated on its group are unlikely to be very accurate and may leak the target\nTo avoid target leak and overfitting, target encoding need to be trained on an independent \n\"encoding\" split. You can use cross-validation in practice\n73\nhttps://medium.com/@pouryaayria/k-fold-target-encoding-dfe9a594874b\n",
+    "type": "teaching"
+  },
+  {
+    "page": 74,
+    "title": "Ensemble method - Bayesian Additive Regression Trees (BART)",
+    "section": "stacking",
+    "anchor": "w09-detail-bart",
+    "text": "Ensemble method - Bayesian Additive Regression Trees (BART)\nBART is related to the bagging and boosting approaches: each tree is \nconstructed in a random manner as in bagging and random forests, and each \ntree tries to capture signal not yet accounted for by the current model, as in \nboosting \nThe main novelty in BART is the way in which new trees are generated\nLet 𝐾denote the number of regression trees, and 𝐵the number of iterations for which the \nBART algorithm will be run. The notation መ𝑓𝑘\n𝑏(𝑥) represents the prediction at 𝑥for the 𝑘th \nregression tree used in the 𝑏th iteration\nAt the end of each iteration, the 𝐾trees from that iteration will be summed መ𝑓𝑏(𝑥) =\nσ𝑘=1\n𝐾\nመ𝑓𝑘\n𝑏(𝑥) for 𝑏= 1, … , 𝐵\n74\n",
+    "type": "teaching"
+  },
+  {
+    "page": 75,
+    "title": "Bayesian Additive Regression Trees (BART)",
+    "section": "stacking",
+    "anchor": "w09-detail-bart",
+    "text": "Bayesian Additive Regression Trees (BART)\nThere are two components to this \nperturbation:\n1.\nWe may change the structure of \nthe tree by adding or pruning \nbranches\n2.\nWe may change the prediction in \neach terminal node of the tree\nAlgorithm 8.3 can be viewed as a \nMarkov chain Monte Carlo for \nfitting the BART model\n75\n",
+    "type": "teaching"
+  },
+  {
+    "page": 76,
+    "title": "76",
+    "section": "stacking",
+    "anchor": "w09-detail-bart",
+    "text": "76\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 77,
+    "title": "Bayesian Additive Regression Trees (BART)",
+    "section": "stacking",
+    "anchor": "w09-detail-bart",
+    "text": "Bayesian Additive Regression Trees (BART)\nWe typically throw away the first few of these prediction models, since models \nobtained in the earlier iterations tend not to provide very good results\nWe can let 𝐿denote the number of burn-in iterations; for instance, we might take 𝐿= 200. \nThen, to obtain a single prediction, we simply take the average after the burn-in iterations, \nመ𝑓𝑥=\n1\n𝐵−𝐿σ𝑏=𝐿+1\n𝐵\nመ𝑓𝑏𝑥\nA key element is that in Step 3(a)ii., we do not fit a fresh tree to the current \npartial residual: instead, we try to improve the fit to the current partial residual \nby slightly modifying the tree obtained in the previous iteration\nThis guards against overfitting since it limits how “hard” we fit the data in each \niteration. Furthermore, the individual trees are typically quite small. We limit \nthe tree size in order to avoid overfitting the data, which would be more likely \nto occur if we grew very large trees\n77\n",
+    "type": "teaching"
+  },
+  {
+    "page": 78,
+    "title": "78",
+    "section": "stacking",
+    "anchor": "w09-detail-bart",
+    "text": "78\n",
+    "type": "figure-only"
+  },
+  {
+    "page": 79,
+    "title": "Tuning parameters for BART",
+    "section": "stacking",
+    "anchor": "w09-detail-bart",
+    "text": "Tuning parameters for BART\nWhen we apply BART, we must select the number of trees 𝐾, the number \nof iterations 𝐵, and the number of burn-in iterations 𝐿. We typically \nchoose large values for 𝐵and 𝐾, and a moderate value for 𝐿\nFor instance, 𝐾= 200, 𝐵= 1,000, and 𝐿= 100 is a reasonable choice. BART has \nbeen shown to have very impressive out-of-box performance — that is, it performs \nwell with minimal tuning\n79\n",
+    "type": "teaching"
+  },
+  {
+    "page": 80,
+    "title": "Reference",
+    "section": "reference",
+    "anchor": "w09-detail-reference",
+    "text": "Reference\nESL Chapter 8,9,10,15,16\nhttps://github.com/serengil/chefboost\n80\n",
+    "type": "teaching"
+  }
+]

@@ -897,7 +897,15 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>找第一刀時，演算法實際上比較了多少種可能？（p 個變數、n 筆資料）</p>
   <div class="quiz-options" id="qGrowOptions"><div class="quiz-opt" data-correct="true" data-fb="對。切點只要試「排序後相鄰兩個值的中間」就夠了，因為切在同一個間隔內的任何位置，分組結果完全一樣。所以候選數是變數數乘上間隔數，算得非常快。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(A)</span> 大約 p × (n−1) 種：每個變數都試過所有相鄰觀測值之間的切點</div><div class="quiz-opt" data-correct="false" data-fb="這是&lt;strong&gt;理想&lt;/strong&gt;的目標，但它的組合數隨 J 快速增加，算不完。這正是要退而求其次用貪婪法的原因。第一刀只考慮「切成兩塊」。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(B)</span> 所有可能的 J 塊分割，因為目標函數就是定義在整組方塊上的</div><div class="quiz-opt" data-correct="false" data-fb="不對。切點由演算法&lt;strong&gt;搜尋&lt;/strong&gt;決定。以中位數切分常見於某些 kd-tree；CART 會比較候選切點的損失。" onclick="quizCheck('qGrow', this)"><span class="opt-letter">(C)</span> 只有 p 種：每個變數用它的中位數當切點</div></div>
   <div class="quiz-feedback" id="qGrowFeedback"></div>
-</div></div></details>
+</div>
+<h3>從 Hitters 的三區域讀出預測規則</h3>
+<p>講義先刪除缺失 Salary，再取對數。第一個門檻是 Years 4.5：較少經驗者同屬第一葉；其餘人再用 Hits 117.5 分成兩葉。因此 Hits 的作用取決於 Years 所在區域，樹自動表達了交互作用。每葉的值是該葉訓練資料的<strong>平均 log Salary</strong>。將它指數轉換是幾何平均尺度，不自動等於平均 Salary；如需原尺度的條件平均，須另處理對數轉換偏差。</p>
+<p>在當前節點中，對每個特徵先排序相異值，候選切點只需放在相鄰相異值之間。逐一計算左右葉的最佳平均與 RSS，總 RSS 最小者成為當前分裂。選定後遞迴處理子節點；這就是貪婪搜尋（greedy）：不會為了未來某個有利的兩層分裂，暫時接受當前更差的第一層。</p>
+<p>相同特徵可在多個節點反覆使用；一條從根到葉的路徑相當於多個條件的交集，所以最終區域不重疊而覆蓋預測空間。不同葉可以給出相同預測，仍可能因更深層純度或結構有不同用途。講義 Heart 例子裡兩個子葉節點的分類標籤相同，不代表 Gini 必定不變；類別機率不同仍可降低加權不純度。</p>
+<h3>類別分割與套件支援要分開</h3>
+<p>理論 CART 可以對類別水準的子集合分割；平方損失迴歸在當前節點依水準平均反應排序，可將搜尋簡化。scikit-learn 的 <code>DecisionTreeClassifier</code> 和 <code>DecisionTreeRegressor</code> 目前接收數值設計欄，不自動把任意字串當作原生名目類別集合。Lab 先透過 <code>ModelSpec</code> 產生可用設計矩陣，再訓練樹；這與原生類別分割不是同一個搜尋空間。</p>
+<p>ID3 使用資訊增益處理離散分支；C4.5 增加連續特徵、增益比與剪枝；CART 使用二元分裂且支援回歸。知道名稱可以辨認演算法家族，但不能由「都是樹」推定剪枝方式、缺失值處理和類別支援一致。實際使用時以目前估計器的官方文件與 Lab 的前處理為準。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://islp.readthedocs.io/en/latest/datasets/Hitters.html" target="_blank" rel="noopener">Hitters 資料說明</a>、<a href="https://dafriedman97.github.io/mlbook/content/c5/s1/regression_tree.html" target="_blank" rel="noopener">迴歸樹的分裂推導</a>、<a href="https://stackoverflow.com/questions/45513511/decision-trees-choosing-thresholds-to-split-objects" target="_blank" rel="noopener">候選分裂門檻</a>、<a href="https://dafriedman97.github.io/mlbook/content/c5/s1/classification_tree.html#making-splits" target="_blank" rel="noopener">分類樹的分裂推導</a>、<a href="https://scikit-learn.org/stable/modules/tree.html#tree-algorithms-id3-c4-5-c5-0-and-cart" target="_blank" rel="noopener">樹演算法家族官方說明</a>、<a href="https://en.wikipedia.org/wiki/ID3_algorithm" target="_blank" rel="noopener">ID3 演算法背景</a>、<a href="https://en.wikipedia.org/wiki/Predictive_analytics#Classification_and_regression_trees_.28CART.29" target="_blank" rel="noopener">CART 背景</a>。</p></div></details>
 </section>
 <section id="prune">
 <!-- GEN:BEGIN sec:prune -->
@@ -956,7 +964,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
 <p>先在所有內部節點中找最小的非負臨界值，剪掉該弱連結，重新計算剩下的候選值，得到巢狀路徑。相同臨界值的多個分支需一致處理 ties。最後用訓練折中的剪枝路徑與驗證損失挑 $\alpha$。</p>
 <details class="qa-item proof" id="w09proof-prune"><summary>證明：剪枝臨界值</summary>
-<div class="qa-a"><p>保留子樹與收成一葉的成本差為 $R(T_t)+\alpha|T_t|-\{R(t)+\alpha\}=R(T_t)-R(t)+\alpha(|T_t|-1)$。令差為 0 即得正文的臨界值；大於此值時收成一葉更便宜。weakest-link 演算法逐次選最先達到這個臨界值的分支，無須列舉所有可能子樹。</p></div></details></div></details><div class="viz-layout" data-provenance="course-data" data-source-note="Hitters 固定 train/test split；α 候選格點由完整外層訓練資料的剪枝路徑建立，各固定 α 的六折 CV 由 generator 計算。">
+<div class="qa-a"><p>保留子樹與收成一葉的成本差為 $R(T_t)+\alpha|T_t|-\{R(t)+\alpha\}=R(T_t)-R(t)+\alpha(|T_t|-1)$。令差為 0 即得正文的臨界值；大於此值時收成一葉更便宜。weakest-link 演算法逐次選最先達到這個臨界值的分支，無須列舉所有可能子樹。</p></div></details>
+<h3>先長樹，再選子樹，避免只看當下一步</h3>
+<p>限制「本次 RSS 降幅太小就停止」可能錯過必須先做一個小改善、後續才能得到大改善的結構。成本複雜度剪枝先得到足夠大的 $T_0$，再在其子樹中比較 $RSS(T)+\alpha|T|$。$\alpha$ 是每個葉節點的成本，增大時偏向較少葉；不要把它當成所有葉值的 L2 收縮係數。</p>
+<p>一個候選分支 $T_t$ 若收成單葉，RSS 增加 $R(t)-R(T_t)$、葉數減少 $|T_t|-1$，兩目標相等的臨界值是該比值。每輪收掉當前臨界值最小的分支，形成一條有順序的子樹路徑。同一 $\alpha$ 附近可能有多個同分子樹，套件輸出的是它定義的路徑，而非所有子樹列舉。</p>
+<p>Lab 的 <code>cost_complexity_pruning_path</code> 回傳候選 <code>ccp_alphas</code>。用 <code>GridSearchCV</code> 在訓練資料內部選 <code>ccp_alpha</code>，再用該參數重新擬合完整訓練資料，最後再用測試資料評估效能。講義 Hitters 的 132／131 切分與 Lab 具體隨機切分各有來源，不混成同一次結果。</p>
+<p>數學講義的 $RSS$ 是總和，而 sklearn 成本採用加權節點不純度，並有樣本數正規化。結構相同的剪枝推導仍適用，但 $\alpha$ 數值尺度不可直接互換。若使用一標準誤規則，選的是在最小 CV 誤差加一個標準誤範圍內較小的樹；不能只因為圖上誤差差不多就宣稱已套用該規則。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://stats.stackexchange.com/questions/193538/how-to-choose-alpha-in-cost-complexity-pruning" target="_blank" rel="noopener">剪枝參數選擇</a>。</p></div></details><div class="viz-layout" data-provenance="course-data" data-source-note="Hitters 固定 train/test split；α 候選格點由完整外層訓練資料的剪枝路徑建立，各固定 α 的六折 CV 由 generator 計算。">
   <div>
     <div class="viz-panel">
       <div class="chart-wrap tall"><canvas id="w09pruneChart"></canvas>
@@ -1080,17 +1094,17 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
 
   
 
-<details class="qa-item reading-detail" id="w09-detail-classtree-lab"><summary>分類樹的分裂、剪枝與 Python 實作</summary>
-<div class="detail-body"><div class="info-box">
-  <span class="info-label">剪枝的時候可以換回錯誤率</span>
-  分裂用 Gini／交叉熵，
-  <strong>剪枝時三個都可以用</strong>；如果你最終在意的是預測正確率，
-  剪枝階段用錯誤率反而更對題。<code>scikit-learn</code> 的
-  <code>DecisionTreeClassifier(criterion=...)</code> 只管分裂準則；
-  剪枝用的是 <code>ccp_alpha</code>，而 <code>GridSearchCV(scoring='accuracy')</code>
-  那一步就等於「用錯誤率挑 α」。lab 正是這樣寫的。
+<div class="info-box">
+  <span class="info-label">剪枝路徑與選參數的指標要分開</span>
+  分裂使用 Gini／交叉熵時，sklearn 的成本複雜度剪枝路徑也依同一 criterion 的加權葉不純度建立。
+  <code>ccp_alpha</code> 決定在這條路徑選哪棵樹；
+  <code>GridSearchCV(scoring='accuracy')</code> 則以驗證正確率挑 α。
+  所以 Lab 是<strong>先依 entropy 建立剪枝路徑，再以 accuracy 選剪枝強度</strong>，
+  並沒有把路徑本身改成以分類錯誤率計算。
 </div>
 
+  <details class="qa-item reading-detail" id="w09-detail-classtree-lab"><summary>分類樹的分裂、剪枝與 Python 實作</summary>
+<div class="detail-body">
 <div class="deck-extra">
   <div class="dx-label">擬合分類樹</div>
   <div class="pseudo-code" style="font-size:.78rem;">
@@ -1099,15 +1113,13 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
   <span class="line">          random_state=<span class="num">0</span>)</span>
   <span class="line">clf.fit(X, High)</span></div>
   <span class="dx-src" data-lab-ch="8" data-lab-cells="17">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch08-baggboost-lab-zh.ipynb</code></a></span>
-</div></div></details>
-
-  
+</div><p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://dafriedman97.github.io/mlbook/content/c5/s1/classification_tree.html" target="_blank" rel="noopener">分類樹的分裂推導</a>、<a href="https://github.com/JWarmenhoven/ISLR-python/blob/master/Notebooks/Data/Heart.csv" target="_blank" rel="noopener">Heart 資料下載</a>、<a href="https://dafriedman97.github.io/mlbook/content/c5/s1/regression_tree.html#making-splits" target="_blank" rel="noopener">迴歸樹的分裂推導</a>。</p></div></details>
 
 
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：為什麼分裂準則用 Gini 或交叉熵，它們對純度的反應有何不同？</summary>
-    <div class="qa-a"><p>因為錯誤率<strong>對純度的變化不敏感</strong>，常常給出「下降量 0」的假訊號，讓貪婪演算法以為這一刀沒用而不切。</p><p>可以從函數形狀比較。兩類的情況下錯誤率是 $\min(\hat p, 1-\hat p)$，這是<strong>兩段直線</strong>；Gini 是 $2\hat p(1-\hat p)$、交叉熵是 $-\hat p \log \hat p - (1-\hat p)\log(1-\hat p)$，兩者都<strong>嚴格凹</strong>。而「切一刀的不純度下降量」等於父節點的不純度減掉兩個子節點不純度的加權平均。對嚴格凹的函數，這個下降量<strong>永遠大於 0</strong>（除非兩邊的 $\hat p$ 剛好相同）；對線性的函數，只要兩邊的 $\hat p$ 落在 0.5 的同一側，加權平均就剛好等於父節點的值，下降量是 0。</p><p>上面那張 800 筆的表就是這件事的實例：切法 B 生出一個完全純的葉子，錯誤率卻報「跟切法 A 一樣」。純度也影響預測的可信程度：落在純葉子裡的測試點，我們對它的預測有信心；落在 7/11 那個葉子裡的，我們沒有。這個差別在需要輸出<strong>機率</strong>時尤其要緊，而集成方法（bagging 的多數投票、boosting 的加權和）都依賴葉子的機率估計。</p><p>最後補一句實務規則：<strong>分裂用 Gini／交叉熵，剪枝與最終評估用錯誤率</strong>（或 AUC）。兩者的角色不同，不必統一。</p></div>
+    <div class="qa-a"><p>因為錯誤率<strong>對純度的變化不敏感</strong>，常常給出「下降量 0」的假訊號，讓貪婪演算法以為這一刀沒用而不切。</p><p>可以從函數形狀比較。兩類的情況下錯誤率是 $\min(\hat p, 1-\hat p)$，這是<strong>兩段直線</strong>；Gini 是 $2\hat p(1-\hat p)$、交叉熵是 $-\hat p \log \hat p - (1-\hat p)\log(1-\hat p)$，兩者都<strong>嚴格凹</strong>。而「切一刀的不純度下降量」等於父節點的不純度減掉兩個子節點不純度的加權平均。對嚴格凹的函數，這個下降量<strong>永遠大於 0</strong>（除非兩邊的 $\hat p$ 剛好相同）；對線性的函數，只要兩邊的 $\hat p$ 落在 0.5 的同一側，加權平均就剛好等於父節點的值，下降量是 0。</p><p>上面 Heart 的右葉 9 筆全是 Yes、左葉 11 筆有 7 筆 Yes。父節點共 16 筆 Yes、4 筆 No，錯誤率是 4/20 = 0.2；子節點的加權錯誤率為 (11/20)(4/11) + (9/20)0 = 0.2，與不切相同。</p><p>父節點 Gini 是 2(16/20)(4/20) = 0.32；子節點的加權 Gini 是 (11/20) × 2(7/11)(4/11) = 0.254545，因此下降 0.065455。這一刀讓類別分布更集中，但沒有改變整體多數類別的判對比例。</p><p>葉子的類別比例可以作為訓練樣本的經驗機率，但純葉並不保證對新資料就有高信心；是否校準仍須用保留資料檢查。Bagging 可平均分類器的機率或投票；boosting 依採用的損失與模型更新分數，不是一律把葉機率直接加總。</p><p>實務上，sklearn 的分裂與剪枝路徑依 criterion 的不純度定義；再依問題用驗證錯誤率、accuracy 或 AUC 選 α 和評估。建立候選樹與比較候選樹的指標可以不同。</p></div>
   </details>
 </div>
 
@@ -1170,6 +1182,13 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
   <div class="quiz-options" id="qVsLinOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 ISLP 圖 8.7 上排的情境。樹需要較多次分裂才能逼近斜線，刀愈多變異愈大，所以在這種資料上輸給一刀就完事的線性模型。" onclick="quizCheck('qVsLin', this)"><span class="opt-letter">(A)</span> 樹會用許多軸平行的小台階去逼近那條斜線，能逼近但需要很多刀</div><div class="quiz-opt" data-correct="false" data-fb="這個說法忽略了多次分裂的效果。單一刀確實只能軸平行，但&lt;strong&gt;很多刀疊起來&lt;/strong&gt;可以逼近任何邊界（樹是萬用近似器）。這個比較要看需要多少分裂才能逼近邊界。" onclick="quizCheck('qVsLin', this)"><span class="opt-letter">(B)</span> 樹完全擬合不出來，因為它只能表示水平或垂直的邊界</div><div class="quiz-opt" data-correct="false" data-fb="不會。標準的 CART 每一刀只看&lt;strong&gt;單一個&lt;/strong&gt;原始變數。oblique tree／斜樹等變體才會搜尋線性組合。" onclick="quizCheck('qVsLin', this)"><span class="opt-letter">(C)</span> 樹會自動找到 X₁ + X₂ 這個組合當新的分裂變數</div></div>
   <div class="quiz-feedback" id="qVsLinFeedback"></div>
 </div>
+<details class="qa-item reading-detail" id="w09-detail-tree-implementations"><summary>樹、線性模型與類別資料的實際選擇</summary>
+<div class="detail-body">
+<p>線性迴歸用整個空間的加法平面描述條件平均，樹以軸向門檻把空間分成區域。真正邊界接近直線時，線性模型用少數係數就能有效描述；用很多矩形葉去逼近斜線可能需要較大樹。真正關係是局部條件和交互作用時，樹的區域規則更自然。講義對比圖是在說明這個偏差與變異取捨，並非保證某方法永遠勝出。</p>
+<p>樹預測在每個葉節點內是常數，因此對於超出訓練範圍的新數值通常延用最外側葉的預測，不作線性外推。它可以適應門檻型變化，卻不能用同一葉內的線性趨勢預測更遠的值。是否需要外推，是選模型時應明確考慮的問題。</p>
+<p>樹常不需標準化數值，因為嚴格單調轉換保留候選切分的觀測排序；但它不表示任意轉換、不同分箱、捨入或近似搜尋都不影響結果。原生類別處理、one-hot 編碼以及把類別任意編成整數，提供的候選分割不同，必須對照使用的工具。</p>
+<p>CatBoost 的類別支援以有序統計及類別組合為工具；它與 sklearn 單樹的處理不同。特徵工程應先在訓練資料擬合，再套到驗證與測試；有序或原生類別功能仍不取代保留資料的效能驗證。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://catboost.ai/en/docs/concepts/algorithm-main-stages_cat-to-numberic" target="_blank" rel="noopener">CatBoost 有序類別統計</a>。</p></div></details>
 </section>
 <section id="why">
 <!-- GEN:BEGIN sec:why -->
@@ -1233,7 +1252,12 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
   ② 用<strong>不同的資料</strong>（bagging，下一節）<br>
   ③ 用<strong>不同的變數</strong>（random forest，PART 08）<br>
   ④ 讓後面的人<strong>專門修前面的錯</strong>（boosting，PART 09）
-</div></div></details>
+</div>
+<h3>投票改善需要錯誤不完全同步</h3>
+<p>假設每個分類器對同一目標的成功機率為 $p&gt;1/2$，且各分類器的成功事件獨立。奇數 $B$ 個分類器的多數正確機率為 $\sum_{k=(B+1)/2}^B{B\choose k}p^k(1-p)^{B-k}$。這是二項分布的尾機率；獨立條件是公式的一部分，不是任何集成模型都自動滿足的性質。</p>
+<p>共用同一批資料和高度相似的演算法，往往在同一批觀測上一起犯錯。增加數量不保證改善這些錯誤。Bagging 利用訓練重抽樣創造差異，random forest 再限制每個節點可選特徵；投票的目的不只是找一批各自準確的模型，也需要可互補的錯誤。</p>
+<p>Hard voting 數各類別標籤的票；soft voting 平均各類預測機率後選擇最大者。後者保留預測強弱，但不同模型的機率質量和校準程度會影響平均；「有 <code>predict_proba</code>」不代表數值可靠。Lab 的 Carseats 用不同基模型比較投票與 stacking，評估需用相同資料劃分或相同外層 CV 才公平。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://math.stackexchange.com/questions/4363939/how-did-you-get-75-and-97-with-which-formula" target="_blank" rel="noopener">多數投票的二項機率</a>。</p></div></details>
 
 
 
@@ -1335,7 +1359,13 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
   <span class="line">bag_boston = RF(max_features=X_train.shape[<span class="num">1</span>], random_state=<span class="num">0</span>)</span>
   <span class="line">bag_boston.fit(X_train, y_train)</span></div>
   <span class="dx-src" data-lab-ch="8" data-lab-cells="64">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch08-baggboost-lab-zh.ipynb</code></a></span>
-</div></div></details>
+</div>
+<h3>重抽樣、OOB 與平均機率是三個步驟</h3>
+<p>每棵樹從 $n$ 筆訓練資料抽 $n$ 次且允許重複，並非把原資料隨機切成互斥的 B 份。某筆資料完全未被抽中的機率是 $(1-1/n)^n\to e^{-1}$；它可以用那些沒看過自己的樹產生 OOB 預測。不同觀測的 OOB 樹數會不同，樹太少時可能沒有穩定的 OOB 估計。</p>
+<p>迴歸對樹預測取平均，分類可以投票或平均機率。scikit-learn 的 random forest 分類以平均類別機率決策；這與先把每棵樹硬分成一類再數票不總是相同。兩個規則都應先對照實現，再解讀講義中的「多數決」概念。</p>
+<p>OOB 只排除該筆對某棵樹的訓練，沒有自動排除在全資料預先估計的目標編碼、變數選擇或其他使用 $y$ 的前處理。若資料是同病人多筆記錄，另一筆同病人的記錄可能仍在樹內；OOB 不保證群組隔離。調參反覆挑最好的 OOB score，也會引入選擇偏差；最終報告仍要有與選參隔離的評估。</p>
+<p>Lab 用 <code>RandomForestRegressor(max_features=p)</code> 表示每次分裂可用全部特徵的 bagging，再改 <code>max_features</code> 比較 random forest。增加樹數主要穩定隨機平均；深度、葉大小與特徵抽樣仍控制基模型和集成模型的複雜度，不能把「更多樹通常不增加過度擬合」讀成訓練流程無須驗證。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://dafriedman97.github.io/mlbook/content/c6/s1/bagging.html" target="_blank" rel="noopener">Bagging 原理</a>、<a href="https://online.stat.psu.edu/stat414/lesson/24/24.4" target="_blank" rel="noopener">相關平均量的變異</a>、<a href="https://ieeexplore.ieee.org/document/709601" target="_blank" rel="noopener">分類器組合的理論來源</a>、<a href="https://link.springer.com/chapter/10.1007/978-3-642-33460-3_28" target="_blank" rel="noopener">分類器組合教材</a>、<a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">ESL 習題解答入口</a>。</p></div></details>
 
 
 <div class="qa-box">
@@ -1370,10 +1400,16 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
   <p>第二項 $\rho \sigma^2$ <strong>不管 B 多大都不會消失</strong>。
   $\rho$ 是樹跟樹之間預測的相關係數，而 bagging 的樹相關得很嚴重。原因很具體：</p>
 
-  
+
 <h3>Extra-trees、random subspaces 與 random patches</h3><p>Random forest 在每個節點抽候選變數，再搜尋其最佳門檻值；極端隨機樹（Extra-trees）還對候選變數隨機產生門檻值，再從這些候選中選損失最低者。這減少門檻值搜尋，也增加隨機性，偏差與變異的取捨須用驗證比較；它不等於完全隨機選一刀。</p><p>Random subspaces 對每個基礎模型固定抽一組特徵；random patches 同時抽樣本與特徵。它們與 RF 每個節點重新抽特徵的層次不同。例如三個特徵中，每棵樹固定用兩個是 subspace；同一棵樹根節點看前兩個、子節點又換一組才是 RF 的機制。bootstrap 與是否抽特徵是兩個獨立選項，不能由 Extra-trees 名稱推定一定有 OOB。</p><p>來源：<a href="https://scikit-learn.org/stable/modules/ensemble.html#extremely-randomized-trees" target="_blank" rel="noopener">scikit-learn 集成方法文件</a>。</p>
 <details class="qa-item proof" id="w09proof-forest-var"><summary>證明：平均樹的變異與相關性</summary>
-<div class="qa-a"><p>固定預測位置 $x$，若各隨機樹預測的變異都是 $\sigma^2$、兩兩相關都是 $\rho$，則 $\operatorname{Var}(B^{-1}\sum_bT_b)=B^{-2}\{B\sigma^2+B(B-1)\rho\sigma^2\}=\rho\sigma^2+(1-\rho)\sigma^2/B$。只有不相關部分隨樹數消失。共同訓練資料會帶來相關性；跨測試點計算的相關係數並不等於這個固定 $x$、對重複訓練取分布的 $\rho$。</p></div></details></div></details><p><strong>如果資料裡有一個特別強的變數</strong>，那麼幾乎每一棵 bagged 樹都會拿它當根節點的分裂變數。
+<div class="qa-a"><p>固定預測位置 $x$，若各隨機樹預測的變異都是 $\sigma^2$、兩兩相關都是 $\rho$，則 $\operatorname{Var}(B^{-1}\sum_bT_b)=B^{-2}\{B\sigma^2+B(B-1)\rho\sigma^2\}=\rho\sigma^2+(1-\rho)\sigma^2/B$。只有不相關部分隨樹數消失。共同訓練資料會帶來相關性；跨測試點計算的相關係數並不等於這個固定 $x$、對重複訓練取分布的 $\rho$。</p></div></details>
+<h3>為什麼特徵子抽樣必須發生在每個節點？</h3>
+<p>若某個特徵非常強，多棵 bagged tree 都傾向先用它，樹預測便高度相似。Random forest 在每個節點重新抽取候選特徵，讓部分樹必須考慮其他變數，降低相關性。這不同於先為每棵樹挑一組永久固定的特徵，也不同於只抽觀測不抽特徵。</p>
+<p>減少 <code>max_features</code> 能降低相關性，但也可能讓節點找不到強特徵而增加單樹偏差。固定位置的平均預測變異 $\rho\sigma^2+(1-\rho)\sigma^2/B$ 清楚表示不相關部分隨樹數縮小，相關部分保留；$\rho$ 與單樹變異也會隨抽樣策略改變，因此不能只按相關性最低來選設定。</p>
+<p>講義的基因表達例子先選出 500 個預測變數，再比較不同候選特徵數與樹數；圖中的結果只針對該資料與切分，不能把 $\sqrt p$ 當成所有任務的最佳值。Lab 的 Boston 回歸同樣透過保留資料判斷特徵子抽樣是否改善，分類和回歸的預設設定需分別查證。</p>
+<p>Extra-trees 把候選門檻也隨機化，選隨機候選中最好的分裂；更便宜的搜尋與額外隨機性可能減少變異，也可能增加偏差。<code>ExtraTreesClassifier</code> 預設 <code>bootstrap=False</code>，故不能直接假設有 OOB。Random subspaces 指抽特徵，random patches 指同時抽特徵與觀測；它們是組合抽樣的描述，不是可互換的演算法名稱。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://dafriedman97.github.io/mlbook/content/c6/s1/random_forests.html" target="_blank" rel="noopener">Random forest 去相關</a>、<a href="https://scikit-learn.org/stable/modules/ensemble.html#extremely-randomized-trees" target="_blank" rel="noopener">Extra-trees 官方說明</a>。</p></div></details><p><strong>如果資料裡有一個特別強的變數</strong>，那麼幾乎每一棵 bagged 樹都會拿它當根節點的分裂變數。
   根一樣，接下來的結構也就大同小異——B 棵樹長得像複製品，$\rho$ 接近 1，
   平均一百棵跟平均一棵差不多。</p>
 
@@ -1457,7 +1493,7 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
     <div class="viz-panel">
       <svg class="viz-svg" id="w09gbSvg" height="400"></svg>
       <div class="status-banner" id="w09gbStatus"><span class="status-icon">›</span><span class="status-text">直接調 B 看第 b 棵樹後的擬合與殘差；自動播放只是可選總覽。</span></div>
-      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">λ</span><input type="range" id="w09gbSlLam" min="5" max="100" step="5" value="35" oninput="w09gbSetLam()" aria-label="λ"><span class="slider-val" id="w09gbSlLamVal">0.35</span></span><span class="slider-row" style="margin-bottom:0;flex:1 1 180px;min-width:0;"><span class="slider-label">B</span><input type="range" id="w09gbSlB" min="0" max="40" step="1" value="0" oninput="w09gbSetB()" aria-label="B"><span class="slider-val" id="w09gbSlBVal">0</span></span><label class="slider-label" style="margin:0 .3rem;">深度 d</label><select id="w09gbSel" class="mono" onchange="w09gbSetDepth()"><option value="1" selected>1（stump）</option><option value="2">2</option></select><button class="btn btn-play" onclick="w09gbStart()">▶ 自動播放（可選）</button><button class="btn btn-reset" onclick="w09gbReset()">重置</button></div>
+      <div class="controls-bar"><span class="slider-row" style="margin-bottom:0;flex:1 1 200px;min-width:0;"><span class="slider-label">λ</span><input type="range" id="w09gbSlLam" min="5" max="100" step="5" value="35" oninput="w09gbSetLam()" aria-label="λ"><span class="slider-val" id="w09gbSlLamVal">0.35</span></span><span class="slider-row" style="margin-bottom:0;flex:1 1 180px;min-width:0;"><span class="slider-label">B</span><input type="range" id="w09gbSlB" min="0" max="40" step="1" value="0" oninput="w09gbSetB()" aria-label="B"><span class="slider-val" id="w09gbSlBVal">0</span></span><label class="slider-label" style="margin:0 .3rem;">最大深度 D</label><select id="w09gbSel" class="mono" onchange="w09gbSetDepth()"><option value="1" selected>1（stump）</option><option value="2">2</option></select><button class="btn btn-play" onclick="w09gbStart()">▶ 自動播放（可選）</button><button class="btn btn-reset" onclick="w09gbReset()">重置</button></div>
       <div class="viz-source"><span>模擬示意</span></div>
     </div>
   </div>
@@ -1487,11 +1523,14 @@ $$\alpha_{\rm eff}(t)=\frac{R(t)-R(T_t)}{|T_t|-1}.$$
 <details class="qa-item reading-detail" id="w09-detail-boost-parameters"><summary>對照樹數、學習率與深度</summary>
 <div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>參數</th><th>意思</th><th>典型值</th><th>調錯會怎樣</th></tr></thead>
-  <tbody><tr><td><strong>B</strong>（樹的棵數）</td><td>跑幾輪</td><td>由 CV 決定</td><td><strong>太大會過度擬合</strong>（只是通常發生得很慢）。bagging 沒有這個問題</td></tr><tr><td><strong>λ</strong>（學習率／收縮）</td><td>每棵樹只採用 λ 倍</td><td>0.01 或 0.001</td><td>太小 → 需要非常大的 B；太大 → 幾步就衝過頭，開始擬合雜訊</td></tr><tr><td><strong>d</strong>（每棵樹幾刀）</td><td>交互作用深度</td><td>常常 1 就夠</td><td>d = 1（stump）的集成是<strong>加法模型</strong>；d 愈大能抓愈高階的交互作用，也愈容易過度擬合</td></tr></tbody>
+  <tbody><tr><td><strong>B</strong>（樹的棵數）</td><td>跑幾輪</td><td>由 CV 決定</td><td><strong>太大會過度擬合</strong>（只是通常發生得很慢）。bagging 沒有這個問題</td></tr><tr><td><strong>λ</strong>（學習率／收縮）</td><td>每棵樹只採用 λ 倍</td><td>0.01 或 0.001</td><td>太小 → 需要非常大的 B；太大 → 幾步就衝過頭，開始擬合雜訊</td></tr><tr><td><strong>d</strong>（每棵樹的總分裂數）</td><td>交互作用深度</td><td>常常 1 就夠</td><td>d = 1（stump）的集成是<strong>加法模型</strong>；d 愈大能抓愈高階的交互作用，也愈容易過度擬合</td></tr></tbody>
 </table></div></div></details>
 
   <p>$B$ 與 $\lambda$ 是綁在一起的：<strong>λ 砍十倍，B 大約要放大十倍</strong>。
   lab 用的是 <code>n_estimators=5000, learning_rate=0.001</code>，
+  互動元件與 Lab 用 <code>max_depth</code> 限制最大深度，這裡記為 D；
+  它與課本演算法的總分裂數 d 不同。最大深度 D 的二元樹至多有 2^D 個葉，
+  實際葉數可以更少；總共 d 次分裂則有 d + 1 個葉。
   換成 <code>learning_rate=0.2</code> 之後測試 MSE 幾乎一樣（14.48 vs 14.50）——
   在這份資料上兩組設定都落在「已經收斂」的區域裡。</p>
 
@@ -1577,7 +1616,13 @@ $$r_{im}=-\left.\frac{\partial\ell(y_i,F)}{\partial F}\right|_{F=F_{m-1}(x_i)},\
 <h3>AdaBoost 的權重尺度</h3><p>經典二元 AdaBoost 採 $y_i,h_m(x_i)\in\{-1,1\}$，權重先正規化為總和 1。令 $e_m=\sum_iw_iI(y_i\ne h_m(x_i))$，當 $0&lt;e_m&lt;1/2$ 時取 $a_m=\frac12\log\{(1-e_m)/e_m\}$，更新 $w_i\leftarrow w_i e^{-a_my_ih_m(x_i)}$ 後再次正規化。最終以 $\operatorname{sign}\sum_ma_mh_m(x)$ 分類；$e_m=0$ 可停止，$e_m\ge1/2$ 需拒絕或更換弱分類器。</p><p>SAMME 的多類別寫法使用 $A_m=\nu[\log\{(1-e_m)/e_m\}+\log(K-1)]$，只把答錯者乘上 $e^{A_m}$，再正規化。二元且 $\nu=1$ 時與經典更新的相對權重一致，但不能把 $A_m$ 放進對稱的 $e^{\pm A_m}$ 後仍宣稱相同。</p>
 <details class="qa-item proof" id="w09proof-adaboost"><summary>證明：AdaBoost 的半個對數勝算從哪裡來</summary>
 <div class="qa-a"><p>固定本輪弱分類器，指數損失按目前權重寫成 $Z(a)=(1-e)e^{-a}+ee^a$。對 $a$ 微分並令其為 0，得到 $ee^a=(1-e)e^{-a}$，因此 $a=\frac12\log((1-e)/e)$。二階導數為正，所以是極小值。逐點權重與 $\exp\{-y_iF_{m-1}(x_i)\}$ 成正比；新增 $ah_m$ 後便多乘 $e^{-ay_ih_m(x_i)}$。正規化只除以共同常數，不改變下一輪加權錯誤率的相對權重。</p></div></details><details class="qa-item proof" id="w09proof-gradient"><summary>證明：為何擬合負梯度是下降方向</summary>
-<div class="qa-a"><p>把訓練點上的預測看成向量 $F$。對小步長 $\epsilon$，$L(F+\epsilon h)=L(F)+\epsilon\nabla L(F)^Th+O(\epsilon^2)$。選 $h=-\nabla L(F)$ 時一階變化為 $-\epsilon\|\nabla L(F)\|^2$。樹的函數空間有限，故以最小平方把負梯度投影近似成可用的小樹，再調步長。擬合出的樹若與負梯度方向不一致，不能僅由名稱保證每一步都下降。</p></div></details><h3>同一提升流程下的不同損失</h3><p>一般提升法可換損失，但每輪的工作反應和葉增量也要一起換。絕對損失 $|y-F|$ 的負次梯度為 $\operatorname{sign}(y-F)$，零殘差可取 0；初始常數是中位數，葉增量也以相應殘差中位數估計。Huber 損失在 $|r|\le\delta$ 時取 $r^2/2$，否則取 $\delta|r|-\delta^2/2$，負梯度為 $\operatorname{clip}(r,-\delta,\delta)$，因此限制極端殘差的影響。多類別 deviance 的第 $k$ 個分數負梯度為 $I(y_i=k)-p_{ik}$，需以 softmax 連結各類分數並固定可識別表示。</p></div></details>
+<div class="qa-a"><p>把訓練點上的預測看成向量 $F$。對小步長 $\epsilon$，$L(F+\epsilon h)=L(F)+\epsilon\nabla L(F)^Th+O(\epsilon^2)$。選 $h=-\nabla L(F)$ 時一階變化為 $-\epsilon\|\nabla L(F)\|^2$。樹的函數空間有限，故以最小平方把負梯度投影近似成可用的小樹，再調步長。擬合出的樹若與負梯度方向不一致，不能僅由名稱保證每一步都下降。</p></div></details><h3>同一提升流程下的不同損失</h3><p>一般提升法可換損失，但每輪的工作反應和葉增量也要一起換。絕對損失 $|y-F|$ 的負次梯度為 $\operatorname{sign}(y-F)$，零殘差可取 0；初始常數是中位數，葉增量也以相應殘差中位數估計。Huber 損失在 $|r|\le\delta$ 時取 $r^2/2$，否則取 $\delta|r|-\delta^2/2$，負梯度為 $\operatorname{clip}(r,-\delta,\delta)$，因此限制極端殘差的影響。多類別 deviance 的第 $k$ 個分數負梯度為 $I(y_i=k)-p_{ik}$，需以 softmax 連結各類分數並固定可識別表示。</p>
+<h3>從殘差更新到損失函式的選擇</h3>
+<p>平方損失時每輪樹學習目前殘差，是為了補目前模型尚未解釋的部分。它並不是先把所有樹獨立訓練再平均；第 $m$ 棵樹的訓練目標依賴前 $m-1$ 棵樹。小學習率讓每步修正更保守，通常需要更多輪，不能在固定很少輪時保證改善。</p>
+<p>絕對損失的負次梯度是殘差的正負號，而葉內最合適的常數更新與中位數有關；Huber 把極端殘差的梯度截斷，降低離群值影響。二元 logistic 用原始分數 $F$，$p=1/(1+e^{-F})$，負梯度是 $y-p$；樹是在修正分數，最終仍需 logistic 轉換。換損失時初始常數、梯度和葉值更新必須一起改變。</p>
+<p>AdaBoost 則提高答錯樣本下一輪的權重，其 exponential loss 與 gradient boosting 的平方損失不是同一目標。困難但正確的觀測與標籤雜訊都會獲得較高權重，因此容易受離群標籤影響；沒有理由無條件認為一直加弱分類器都會改善泛化。</p>
+<p>Lab 的 <code>GradientBoostingRegressor</code> 比較 <code>n_estimators</code>、<code>learning_rate</code> 與 <code>max_depth</code>。樹深決定一棵基樹能表示的交互作用層次；深度 1 的 stump 只能用單一特徵分裂，加很多棵也仍是加法結構。控制樹數用 CV 或獨立驗證集，測試集只供最後效能評估。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://dafriedman97.github.io/mlbook/content/c6/s1/boosting.html#boosting" target="_blank" rel="noopener">提升法推導</a>、<a href="https://www.youtube.com/watch?v=3CC4N4z3GJc&amp;t=0s" target="_blank" rel="noopener">Gradient boosting 影片</a>、<a href="https://dafriedman97.github.io/mlbook/content/c6/s1/boosting.html" target="_blank" rel="noopener">提升法推導</a>、<a href="https://sefiks.com/2018/10/04/a-step-by-step-gradient-boosting-decision-tree-example/" target="_blank" rel="noopener">Gradient boosting 逐步示範</a>、<a href="https://xgboost.readthedocs.io/en/latest/" target="_blank" rel="noopener">XGBoost 官方入口</a>。</p></div></details>
 </section>
 <section id="modern">
 <!-- GEN:BEGIN sec:modern -->
@@ -1645,7 +1690,7 @@ $$r_{im}=-\left.\frac{\partial\ell(y_i,F)}{\partial F}\right|_{F=F_{m-1}(x_i)},\
 
 <h3>類別特徵如何編碼</h3><p>One-hot encoding 用各水準的指示欄表示名目類別；label encoding 將水準編成整數，只有存在自然次序時，數值門檻值的順序才有直接意義。對名目類別任意編號會限制數值樹可做的分割。Target encoding 以各類別的目標平均取代類別，可用 $\tilde\mu_c=(n_c\bar y_c+a\bar y)/(n_c+a)$ 向整體平均收縮，避免稀有類別的估計過度波動。</p><p>訓練資料的 target encoding 必須用折外或有順序的估計，不能讓該筆 $y_i$ 進入自己的編碼；驗證與測試資料只使用訓練部分學到的映射，未見類別使用訓練整體平均。CatBoost 的有序類別統計與 ordered boosting 正是在處理這類目標洩漏及預測偏移，仍須保留外層獨立評估。</p>
 
-</div></details><details class="qa-item reading-detail" id="w09-detail-xgboost-math"><summary>XGBoost 的完整目標、葉值與分裂增益</summary>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://arxiv.org/pdf/2207.08815.pdf" target="_blank" rel="noopener">表格資料上的樹與深度學習比較</a>。</p></div></details><details class="qa-item reading-detail" id="w09-detail-xgboost-math"><summary>XGBoost 的完整目標、葉值與分裂增益</summary>
 <div class="detail-body"><h3>XGBoost：本輪的目標、葉值與分裂增益</h3><p>固定先前所有樹，第 $t$ 輪新增 $f_t(x)=w_{q(x)}$。用目前的原始分數 $F_i$ 計算 $g_i=\partial_F\ell(y_i,F_i)$、$h_i=\partial_F^2\ell(y_i,F_i)$；二階近似的本輪目標為</p>
 $$\widetilde L_t=\sum_i\{g_if_t(x_i)+\tfrac12h_if_t(x_i)^2\}+\gamma T+\tfrac\lambda2\sum_{j=1}^Tw_j^2.$$
 <p>$T$ 是葉數。葉 $j$ 中的集合 $I_j$ 給出 $G_j=\sum_{i\in I_j}g_i$、$H_j=\sum_{i\in I_j}h_i$。當 $H_j+\lambda>0$，最佳葉值與左右分裂的淨收益為</p>
@@ -1659,7 +1704,27 @@ $$w_j^*=-\frac{G_j}{H_j+\lambda},\qquad\operatorname{Gain}=\frac12\left(\frac{G_
 $$\operatorname{TS}_{\pi_r}=\frac{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a\mu_0}{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})+a}.$$
 <p>$\mu_0$ 是選定先驗平均。Ordered boosting 另使本點的梯度由只看過排列前綴的模型計算，降低訓練預測與新資料預測的偏移；有序編碼與有序 boosting 是不同步驟，並非單純固定切兩份資料。</p><p>對稱樹在同一深度共用同一個分裂條件；這種受限結構有助快速推論，但仍需驗證複雜度。MVS 則依梯度大小做重要性抽樣：基本形式取 $p_i=\min(1,|g_i|/\mu)$，抽中後用 $1/p_i$ 補權；$\mu$ 控制預期樣本數。實際的 <code>mvs_reg</code> 另平衡梯度和與樣本數估計，不能把 MVS 說成均勻抽樣。</p>
 <h3>DART：暫時拿掉部分既有樹</h3><p>DART 在本輪先隨機略去部分既有樹，以剩下的集成計算梯度，再擬合一棵新樹；之後把略去的樹放回，並調整新、舊樹的權重，避免模型分數因加回樹而跳升。以 XGBoost 的 <code>normalize_type="tree"</code> 為例，略去 $k$ 棵時，新樹的相對權重為 $1/(k+\eta)$，被略去樹的權重乘 $k/(k+\eta)$；這裡的樹葉值還包含其採用的學習率尺度。其他正規化模式不同，不能任選一套公式混用。</p><p><code>rate_drop</code> 控制略去比例，<code>skip_drop</code> 可跳過此操作；應以固定驗證集選樹數，預測時使用所選的完整樹範圍。來源：<a href="https://xgboost.readthedocs.io/en/stable/tutorials/dart.html" target="_blank" rel="noopener">XGBoost DART 文件</a>。</p>
-</div></details>
+
+<h3>搜尋加速的代價：候選切點與資料搬移</h3>
+<p>精確搜尋排序後的全部候選切點；加權分位數草圖選少數代表性候選，讓二階近似目標中曲率較大的區域也有代表性切點。直方圖方法先把數值壓成箱碼，再逐箱累計梯度與 Hessian。兩者都可減少候選數，但不能假設一定找到與完整精確搜尋相同的分裂。箱數應與精度、速度和資料量一起選擇。</p>
+<p>稀疏感知搜尋分開處理有值與缺失的觀測。對每個候選分裂，比較缺失值全部走左或走右的收益，記下較好的預設方向；預測時缺失值沿這個方向走。稀疏儲存中「沒有記錄的項」如何解讀依使用的套件與輸入格式而定，不等於一般數值零。</p>
+<p>快取友善的欄式資料、梯度和 Hessian 連續存取、壓縮與外部記憶體減少搬移與 I/O。它們不是新的損失函式；同樣的統計目標可以有不同執行時間。講義的記憶體延遲表用來說明這個硬體背景，具體數字依機器年代變化，不能當成所有執行環境的耗時預測。</p>
+<h3>LightGBM：生長策略與抽樣必須一起理解</h3>
+<p>Leaf-wise 每輪選擇目前收益最大的葉，level-wise 依同一層的節點逐步分裂。相同葉數不保證兩者深度相同；leaf-wise 可能持續加深同一個局部區域。<code>num_leaves</code> 控制葉數，<code>max_depth</code> 限制最長路徑，<code>min_data_in_leaf</code> 限制局部樣本；少量資料需要更保守的限制。</p>
+<p>GOSS 保留大梯度並從小梯度取樣，透過補權近似原統計量；它不是均勻 bagging。EFB 壓縮很少同時非零的特徵，透過不同箱碼保留它們的身份；如果特徵常同時非零，就不能直接無損合併。這兩項加速工具依資料結構發揮作用，不能簡單把「少樣本、少特徵」說成一定無損。</p>
+<h3>CatBoost、DART 與 Lab 的參數對照</h3>
+<p>CatBoost 的對稱樹在每一深度共用同一個條件，葉路徑可由一串二元判定編碼，利於快速推論。它是一種結構限制，不等於所有葉都有同樣數量的資料。MVS 用非均勻樣本機率與補權降低梯度統計的變異；與 GOSS 保留大梯度再均勻抽小梯度的機制有所不同。</p>
+<p>DART 每輪暫時略去部分舊樹，在剩餘的集成模型上計算梯度，再加入新樹並重新正規化權重。它旨在避免後續樹過度依賴少數舊樹，不是推論時任意少算樹而維持原分數。應按當前版本的完整迭代範圍作預測，並用驗證資料決定樹數和 dropout 參數。</p>
+<p>Lab 比較 XGBoost、LightGBM、CatBoost 的分類、回歸、速度與 Melbourne 類別資料。相同 <code>n_estimators</code> 不等於相同葉數或計算量；不同套件的 <code>min_child_weight</code>、<code>min_data_in_leaf</code> 與 CatBoost 的 <code>min_data_in_leaf</code> 支援條件也不能只按名稱硬套。要加快訓練，可先調整觀測或特徵的子抽樣比例與箱數，準確度再考慮學習率、輪次與葉數，要控制過度擬合，則檢查葉內資料、懲罰與 early stopping。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://arxiv.org/pdf/1603.02754.pdf" target="_blank" rel="noopener">XGBoost 原論文</a>、<a href="https://stats.stackexchange.com/questions/353462/what-are-the-implications-of-scaling-the-features-to-xgboost" target="_blank" rel="noopener">樹模型與特徵尺度</a>、<a href="https://towardsdatascience.com/catboost-vs-light-gbm-vs-xgboost-5f93620723db" target="_blank" rel="noopener">三個 boosting 套件比較</a>、<a href="https://xgboost.readthedocs.io/en/latest/tutorials/model.html#tree-boosting" target="_blank" rel="noopener">XGBoost 葉值與增益推導</a>、<a href="https://www.youtube.com/watch?v=ZVFeW798-2I" target="_blank" rel="noopener">XGBoost 概念影片</a>、<a href="https://stats.stackexchange.com/questions/202858/xgboost-loss-function-approximation-with-taylor-expansion" target="_blank" rel="noopener">二階 Taylor 近似</a>、<a href="https://xgboost.readthedocs.io/en/stable/tutorials/categorical.html" target="_blank" rel="noopener">XGBoost 原生類別支援</a>、<a href="https://xgboost.readthedocs.io/en/stable/faq.html#how-to-deal-with-missing-values" target="_blank" rel="noopener">XGBoost 缺失值處理</a>、<a href="https://www.youtube.com/watch?v=oRrKeUCEbq8" target="_blank" rel="noopener">XGBoost 搜尋與系統設計影片</a>、<a href="https://gist.github.com/jboner/2841832" target="_blank" rel="noopener">記憶體存取延遲背景</a>、<a href="https://lightgbm.readthedocs.io/en/latest/Features.html" target="_blank" rel="noopener">LightGBM 直方圖、GOSS 與 EFB</a>、<a href="https://hackmd.io/@WangJengYun/HyLtemyxI" target="_blank" rel="noopener">直方圖 boosting 補充</a>、<a href="https://datascience.stackexchange.com/questions/26699/decision-trees-leaf-wise-best-first-and-level-wise-tree-traverse" target="_blank" rel="noopener">Leaf-wise 與 level-wise</a>、<a href="https://www.tandfonline.com/doi/abs/10.1080/01621459.1958.10501479" target="_blank" rel="noopener">類別排序分裂的統計來源</a>、<a href="https://medium.com/riskified-technology/xgboost-lightgbm-or-catboost-which-boosting-algorithm-should-i-use-e7fda7bb36bc" target="_blank" rel="noopener">Boosting 套件選擇背景</a>、<a href="https://medium.com/riskified-technology/xgboost-lightgbm-or-catboost-which-boosting-" target="_blank" rel="noopener">Boosting 套件選擇背景</a>、<a href="https://proceedings.neurips.cc/paper/2018/file/14491b756b3a51daac41c24863285549-Paper.pdf" target="_blank" rel="noopener">CatBoost 原論文</a>、<a href="https://catboost.ai/en/docs/concepts/algorithm-main-stages_bootstrap-options#mvs" target="_blank" rel="noopener">CatBoost MVS</a>、<a href="https://neptune.ai/blog/when-to-choose-catboost-over-xgboost-or-lightgbm" target="_blank" rel="noopener">CatBoost 方法選擇背景</a>、<a href="https://github.com/catboost/tutorials/blob/master/categorical_features/categorical_features_parameters.ipynb" target="_blank" rel="noopener">CatBoost 類別參數範例</a>、<a href="https://xgboost.readthedocs.io/en/stable/tutorials/dart.html" target="_blank" rel="noopener">DART dropout 官方說明</a>。</p></div></details><details class="qa-item reading-detail" id="w09-detail-category-encoding"><summary>類別編碼：排序、洩漏與完整訓練流程</summary>
+<div class="detail-body">
+<p>One-hot 以每個類別的指示欄表示成員關係；線性模型含截距時通常刪去參考組以避免完全共線。樹不要求係數設計滿秩，但多個 dummy 給它的是「是不是某個類別」的候選條件，未必等同原生按子集合分割。高基數類別也會增加輸入欄數。</p>
+<p>Ordinal encoding 把名目類別編成 0、1、2，會給以門檻值分裂的樹一個人為排序；Cat、Dog、Hamster 的編碼不意味著動物具有數值距離。真正有順序的類別可以明確定義順序；無順序類別若僅為方便整數化，必須瞭解它允許的分割及其限制。<code>LabelEncoder</code> 用來編碼目標，特徵類別通常用 <code>OrdinalEncoder</code> 或 <code>OneHotEncoder</code>。</p>
+<p>Target encoding 以該組的目標平均表示類別。講義動物表中 Cat 的 0.67 是兩個 1 與一個 0 的平均；單筆類別會把自己目標完整暴露，產生特別嚴重的洩漏。平滑 $(n_c\bar y_c+a\bar y)/(n_c+a)$ 讓稀有組向整體平均收縮，但<strong>只有平滑仍沒有移除自己的目標</strong>。</p>
+<ol><li>在訓練部分內部再分折。每一折的類別編碼對照只從其他折的目標估計，用來編碼該折，合成完整折外訓練特徵。</li><li>驗證或測試的編碼對照從完整訓練部分估計，不能使用留出部分的目標；未見類別回退到訓練總體平均。</li><li>每個外層 CV 內重做這套流程，再訓練預測器。先用全資料編碼、再對預測器 CV，會讓驗證目標流入輸入。</li></ol>
+<p>sklearn 的 <code>TargetEncoder.fit_transform</code> 會內部交叉擬合，而 <code>fit(...).transform(...)</code> 對同一訓練資料並不等價；這正是為何要把它放入 <code>Pipeline</code> 與模型一起評估。CatBoost 的有序類別統計用排列中排在該筆之前的資料避免自己的目標，它與一般 K-fold 編碼是不同策略；仍須在外部驗證時遵守群組或時間的切分限制。</p>
+<p>Melbourne Lab 同時比較原生類別和 one-hot 設定時，傳給模型的欄位型別、<code>enable_categorical</code> 或 <code>cat_features</code> 是方法的一部分。XGBoost 與 LightGBM 可學習缺失預設方向；CatBoost 的數值缺失與字串類別處理則有各自規則。特別是字串類別中的缺失需一致地轉成可識別類別，不能用某套件的成功推定其他套件也可直接接受。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://axk51013.medium.com/kaggle-categorical-encoding-3%E5%A4%A7%E7%B5%95%E6%8B%9B-589780119470" target="_blank" rel="noopener">類別編碼教學</a>、<a href="https://medium.com/@pouryaayria/k-fold-target-encoding-dfe9a594874b" target="_blank" rel="noopener">K-fold target encoding</a>。</p></div></details>
 </section>
 <section id="stacking">
 <!-- GEN:BEGIN sec:stacking -->
@@ -1718,7 +1783,12 @@ $$\operatorname{TS}_{\pi_r}=\frac{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a
   所以「重要度排最後 → 可以刪掉」是危險的推論。
 </div>
 
-  </div></details><details class="qa-item reading-detail" id="w09-detail-stacking"><summary>Stacking 的折外預測與完整實作</summary>
+
+<h3>「常被用來分裂」與「預測依賴它」不完全相同</h3>
+<p>不純度重要度累加每個特徵帶來的加權 RSS、Gini 或 entropy 降幅，再正規化。連續值多或類別水準多的變數有更多候選切分，容易在訓練內找到偶然收益；所以高重要度不自動表示可靠訊號，更不表示因果影響。</p>
+<p>置換重要度在指定評估資料上打亂某欄，比較打亂前後評分。它保留擬合模型，問的是破壞這個特徵與其它資料的配對後，模型效能如何變化。應使用訓練外資料並重複置換以觀察波動；若在訓練資料上做，同樣可能量到過度擬合。</p>
+<p>高度相關的替代特徵可以彼此補償，使單欄置換低估共同貢獻；置換又可能製造現實中不存在的特徵組合。負的重要度表示本次打亂後評分改善，不一定表示「真正負貢獻」，也可能是樣本波動或模型原本用錯訊息。分類模型的 accuracy 與 log loss 關注不同表現，重要度也依 scoring 改變。</p>
+</div></details><details class="qa-item reading-detail" id="w09-detail-stacking"><summary>Stacking 的折外預測與完整實作</summary>
 <div class="detail-body"><h4 id="dx-stk2">Stacking：不用投票，訓練一個模型來合併</h4>
 
   <p>PART 06 的 voting 是用一個<strong>固定</strong>的規則（多數票、平均）去合併。
@@ -1746,7 +1816,13 @@ $$\operatorname{TS}_{\pi_r}=\frac{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a
   <span class="dx-src" data-lab-ch="8" data-lab-cells="240">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch08-baggboost-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch08-baggboost-lab-zh.ipynb</code></a></span>
 </div>
 
-  </div></details><details class="qa-item reading-detail" id="w09-detail-bart"><summary>BART 的完整模型、實作與後驗更新</summary>
+
+<h3>Blender 為什麼不能讀基模型的訓練內預測？</h3>
+<p>一棵深樹可能幾乎記住訓練標籤。若用它在同一訓練資料的預測訓練負責合併預測的模型（blender），後者會以為深樹近乎完美，新資料卻沒有這種優勢。折外預測讓每筆在產生基模型特徵時都沒有參與相應基模型的訓練，才較接近未來預測情境。</p>
+<ol><li>把訓練資料分成 K 折，對每個基模型與每個折只用其餘折訓練，再預測該折。</li><li>依原觀測順序合併折外預測。回歸可用各模型的預測值，分類可用類別機率，形成合併模型（blender）的訓練矩陣。</li><li>用該矩陣與訓練目標估計最終模型，然後將每個基模型重新擬合完整訓練資料。</li><li>新資料先經完整基模型產生輸入，再送入 blender。整個過程的泛化誤差還需外層 CV 或獨立測試集。</li></ol>
+<p>Lab 的 <code>StackingClassifier</code> 內部 CV 是產生 blender 輸入，不是整個 stacking 的最後效能評估。外部 <code>cross_val_score</code> 再劃分資料，才能估計完整流程。這裡內層產生折外特徵，外層評估整個流程；一般的 nested hyperparameter search 則用內層選超參數，兩者的內層用途不同。</p>
+<p><code>cv='prefit'</code> 假設基模型已擬合；如果這些模型看過同一組 blender 標籤，就沒有內部折外保護。基模型中的 scaler、類別編碼與變數篩選也應放在相應訓練折內部。Soft voting 固定平均權重，stacking 學權重或更複雜組合，因此需要更多資料與獨立驗證。</p>
+</div></details><details class="qa-item reading-detail" id="w09-detail-bart"><summary>BART 的完整模型、實作與後驗更新</summary>
 <div class="detail-body"><h4 id="dx-bart2">BART：貝氏版的加法樹</h4>
 
   <p><strong>BART</strong>（Bayesian additive regression trees）站在 bagging 與 boosting 中間：</p>
@@ -1779,7 +1855,13 @@ $$\operatorname{TS}_{\pi_r}=\frac{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a
 
 <h3>BART 每一輪究竟更新什麼</h3><p>回歸 BART 的觀測模型為 $y_i=\sum_{j=1}^Kg(x_i;T_j,M_j)+\varepsilon_i$，$\varepsilon_i\sim N(0,\sigma^2)$。$T_j$ 是樹結構，$M_j$ 是葉值。樹深度先驗偏好小樹，葉值先驗把個別樹貢獻縮小，並對 $\sigma^2$ 指定先驗；抑制過度擬合的來源包含這些先驗，並非只因每輪移動小。</p><ol><li>更新第 $j$ 棵樹前，算偏殘差 $r_{ij}=y_i-\sum_{k\ne j}g(x_i;T_k,M_k)$。</li><li>給定偏殘差與目前 $\sigma^2$，提議生長、剪枝或其他結構修改；以後驗比與提議機率比決定接受或拒絕。</li><li>依條件後驗抽取各葉的新值；完成所有樹後更新 $\sigma^2$。</li><li>丟掉暖機輪次，保留後續抽樣。對每個新 $x$ 加總該輪所有樹，再跨輪平均作預測。</li></ol><p>固定葉分配時，若葉值先驗 $\mu\sim N(0,\tau^2)$，該葉的 $m$ 個偏殘差給出條件後驗 $N(v\sum_i r_i/\sigma^2,v)$，其中 $v=(m/\sigma^2+1/\tau^2)^{-1}$。</p><p>各輪 $f^{(b)}(x)$ 的分位數描述平均反應的不確定性；若要個別新觀測的預測區間，還須加入該輪的噪聲抽樣。鏈內樣本相關，應檢查軌跡與有效樣本數；短示範的少量 draw 不能直接當作可靠的推論結果。來源：<a href="https://hedibert.org/wp-content/uploads/2018/06/BART.pdf" target="_blank" rel="noopener">BART 教材</a>。</p>
 <details class="qa-item proof" id="w09proof-bart-leaf"><summary>證明：Gaussian 葉值的條件後驗</summary>
-<div class="qa-a"><p>固定樹結構與其他樹後，葉內概似乘先驗為 $\exp\{-\sum_i(r_i-\mu)^2/(2\sigma^2)-\mu^2/(2\tau^2)\}$。收集依賴 $\mu$ 的項，平方項係數為 $m/\sigma^2+1/\tau^2$、一次項係數為 $\sum_i r_i/\sigma^2$。完成平方即可辨認常態分布，其變異與平均是正文的 $v$ 與 $v\sum_i r_i/\sigma^2$。</p></div></details></div></details><details class="qa-item reading-detail" id="w09-detail-stacking-check"><summary>自我檢查：折外預測與重要度</summary>
+<div class="qa-a"><p>固定樹結構與其他樹後，葉內概似乘先驗為 $\exp\{-\sum_i(r_i-\mu)^2/(2\sigma^2)-\mu^2/(2\tau^2)\}$。收集依賴 $\mu$ 的項，平方項係數為 $m/\sigma^2+1/\tau^2$、一次項係數為 $\sum_i r_i/\sigma^2$。完成平方即可辨認常態分布，其變異與平均是正文的 $v$ 與 $v\sum_i r_i/\sigma^2$。</p></div></details>
+<h3>樹數 K 與抽樣輪數 B 不要混成同一個參數</h3>
+<p>BART 的每次後驗抽樣（posterior draw）都包含 K 棵樹的總和。更新單棵樹時先扣除其餘 K−1 棵，得到偏殘差；再修改現有結構和葉值，而非每次對殘差從頭擬合一棵任意樹。樹深與葉值先驗讓每棵樹只承擔一小部分訊號；它與不帶先驗的 boosting 逐輪加新樹有不同的正規化來源。</p>
+<p>B 是 MCMC 的總輪數，L 是丟棄的暖機輪數。每個保留輪的 $f^{(b)}(x)$ 已經把 K 棵樹加總；預測再跨保留輪平均。增加 B 改善後驗 Monte Carlo 估計的精度，不等於增加模型中的 K 或逐輪累加新樹。講義 K=200、B=1000、L=100 是設定示例，不保證所有資料都已收斂。</p>
+<p>Lab 的 <code>ISLP.bart.BART</code> 展示 Boston 回歸；訓練結果應按它的 draw、樹數及 burn-in 參數解讀。後驗平均描述潛在平均反應，抽樣分位數可量化該平均的不確定性。個別新觀測的預測還包含殘差雜訊，不能把平均函式的可信區間（credible interval）直接稱為新觀測預測區間。</p>
+<p>樹結構的提議可能被拒絕，連續輪的結果也相關。檢查穩定性應觀察多個鏈或軌跡、有效樣本數及預測穩定，而不是只因一次訓練成功就宣稱 posterior 樣本彼此獨立或已收斂。因此，講義中的隨機小改動是在抽取後驗模型，偏殘差則用來更新單棵樹；這與分類樹的多數投票不同。</p>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://hedibert.org/wp-content/uploads/2018/06/BART.pdf" target="_blank" rel="noopener">BART 後驗更新教材</a>。</p></div></details><details class="qa-item reading-detail" id="w09-detail-stacking-check"><summary>自我檢查：折外預測與重要度</summary>
 <div class="detail-body"><div class="quiz-box">
   <div class="quiz-label">QUIZ · Stacking 與變數重要度</div>
   <p>訓練 stacking 的合併器時，成員模型的預測值一定要用<strong>交叉驗證</strong>產生。為什麼？</p>
@@ -1800,7 +1882,7 @@ $$\operatorname{TS}_{\pi_r}=\frac{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 1 · ISLP 8.4 第 3 題</div>
   <p>課本第 3 題要你把 Gini 指數、錯誤率、交叉熵都畫成 $\hat p_{{m1}}$ 的函數（兩類）。畫出來之後，哪一句話最能說明「為什麼分裂準則不用錯誤率」？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。這正是本頁 PART 04 那個 800 筆例子的數學根源：對線性的錯誤率，兩個子節點的加權平均可能等於父節點的值，下降量為 0；對嚴格凹的 Gini／交叉熵不會。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 錯誤率是兩段直線，Gini 與交叉熵是嚴格凹的曲線；只有凹的函數才保證「切一刀」的不純度下降量嚴格大於 0</div><div class="quiz-opt" data-correct="false" data-fb="前半句對（三者都在 0.5 最大、在 0 與 1 為 0），但後半句有誤：錯誤率可以分辨純與不純（純的時候它是 0）。問題在於對純度變化的敏感程度。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 三條曲線的最大值都在 p̂ = 0.5，所以錯誤率沒有辦法分辨純與不純</div><div class="quiz-opt" data-correct="false" data-fb="尺度不同是真的（錯誤率上限 0.5、Gini 上限 0.5、交叉熵上限 ln 2），這也是很多人畫圖時把熵除以 2 的原因。但尺度不影響「該選哪一刀」——選的是&lt;strong&gt;下降量最大&lt;/strong&gt;的那一刀，任何正的縮放都不改變排序。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 交叉熵的最大值是 log 2 ≈ 0.693，跟另外兩個不同，所以三者不能一起比較</div></div>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。這正是前面 Heart 的 9 筆／11 筆切分例子的數學根源：對線性的錯誤率，兩個子節點的加權平均可能等於父節點的值，下降量為 0；Gini／交叉熵在兩個非空子節點的類別比例不同時會嚴格下降；比例相同時，下降量同樣為 0。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 錯誤率是兩段直線，Gini 與交叉熵是嚴格凹的曲線；嚴格凹且兩個非空子節點的類別比例不同時，不純度下降量才嚴格大於 0</div><div class="quiz-opt" data-correct="false" data-fb="前半句對（三者都在 0.5 最大、在 0 與 1 為 0），但後半句有誤：錯誤率可以分辨純與不純（純的時候它是 0）。問題在於對純度變化的敏感程度。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 三條曲線的最大值都在 p̂ = 0.5，所以錯誤率沒有辦法分辨純與不純</div><div class="quiz-opt" data-correct="false" data-fb="尺度不同是真的（錯誤率上限 0.5、Gini 上限 0.5、交叉熵上限 ln 2），這也是很多人畫圖時把熵除以 2 的原因。但尺度不影響「該選哪一刀」——選的是&lt;strong&gt;下降量最大&lt;/strong&gt;的那一刀，任何正的縮放都不改變排序。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 交叉熵的最大值是 log 2 ≈ 0.693，跟另外兩個不同，所以三者不能一起比較</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
@@ -1821,7 +1903,7 @@ $$\operatorname{TS}_{\pi_r}=\frac{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · ISLP 8.4 第 7 題</div>
   <p>課本第 7 題要你在 <code>Boston</code> 上掃過一整片 <code>max_features</code>（m）與 <code>n_estimators</code>（B）的組合，畫成圖 8.10 那樣。預期會看到什麼？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，本頁 PART 08 的元件就是這張圖。兩個重點：① &lt;strong&gt;B 大不會過度擬合&lt;/strong&gt;，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 範例 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\sqrt{p}$ 只是預設值。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 每條曲線都隨 B 上升而下降、然後平掉；不同 m 的曲線收斂到不同高度，而在 Boston 上 m = p 那條最低</div><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;strong&gt;boosting&lt;/strong&gt; 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 說的是&lt;strong&gt;「把 B 加大並不會讓隨機森林過度擬合」&lt;/strong&gt;。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B</div><div class="quiz-opt" data-correct="false" data-fb="限制 m 可增加多樣性，也可能讓樹錯過重要變數，造成整體誤差上升；Boston 就呈現這種結果。樹的預測能力須連同偏差與變異一起看。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> m 愈小曲線一定愈低，因為去相關永遠讓變異更小</div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="true" data-fb="對，本頁 PART 08 的元件就是這張圖。兩個重點：① &lt;strong&gt;B 大不會過度擬合&lt;/strong&gt;，只會收斂；② 在 Boston 上限制 m 沒有幫助（lab 範例 的 20.04 比 bagging 的 14.63 差）。m 是超參數，$\sqrt{p}$ 只是預設值。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> 隨 B 增加，曲線通常逐漸穩定，但途中可以上下波動；不同 m 的曲線可有不同的穩定高度，而在 Boston 上 m = p 那條最低</div><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;strong&gt;boosting&lt;/strong&gt; 的形狀。random forest 是在平均一堆同分佈的樹，B 變大只會讓平均更穩。ISLP 說的是&lt;strong&gt;「把 B 加大並不會讓隨機森林過度擬合」&lt;/strong&gt;。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> 曲線會先下降、到某個 B 之後又上升，所以要用 CV 挑最佳的 B</div><div class="quiz-opt" data-correct="false" data-fb="限制 m 可增加多樣性，也可能讓樹錯過重要變數，造成整體誤差上升；Boston 就呈現這種結果。樹的預測能力須連同偏差與變異一起看。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> m 愈小曲線一定愈低，因為去相關永遠讓變異更小</div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </div></details>
@@ -1867,7 +1949,7 @@ $$\operatorname{TS}_{\pi_r}=\frac{\sum_{s&lt;r}I(x_{\pi_s}=x_{\pi_r})y_{\pi_s}+a
 </div>
 
 
-</div></details>
+<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://github.com/serengil/chefboost" target="_blank" rel="noopener">ChefBoost 樹工具入口</a>。</p></div></details>
 </section>
 <section id="bankquiz">
 <!-- GEN:BEGIN sec:bankquiz -->
