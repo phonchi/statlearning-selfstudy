@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib import detail, proof
+from lib import detail, proof, hl
 from lib import (apply, card, chart, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -280,20 +280,138 @@ BOOT_APPENDIX_LINKS = links(
     ("scikit-learn：用置換檢定評估分類分數的顯著性", "https://scikit-learn.org/stable/auto_examples/feature_selection/plot_permutation_test_for_classification.html#test-with-permutations-the-significance-of-a-classification-score"),
     lead="講義附錄的補充連結")
 
-SPLITTERS_D = detail("w05-detail-splitters", "延伸閱讀：分類問題的切分器與指標",
-    info("實務上要注意的三件事", '''<strong>1. 類別不平衡就要分層：</strong>用
-  <code>StratifiedKFold</code>，讓每一折的類別比例跟整體一致。類別很少的時候，
-  普通 <code>KFold</code> 可能切出「某一折完全沒有正例」的情況。<br>
-  <strong>2. 錯誤率不一定是你要的指標：</strong>正例只佔 1% 時，全部猜負例就有 99% 正確率。
-  改用 AUC、F1 或 recall，作法完全相同——換掉 <code>scoring</code> 參數就好。<br>
-  <strong>3. 資料有群組結構就要用 GroupKFold：</strong>同一個病人的多次就診、
-  同一個使用者的多筆紀錄，不能一部分在訓練、一部分在驗證。''')
-    + table(["情況", "該用的切分器", "為什麼"],
-       [["一般迴歸／分類", "<code>KFold(shuffle=True)</code>", "最基本"],
-        ["類別不平衡", "<code>StratifiedKFold</code>", "維持每折的類別比例"],
-        ["同一實體有多筆資料", "<code>GroupKFold</code>", "同組資料不可跨訓練／驗證"],
-        ["時間序列", "<code>TimeSeriesSplit</code>", "不能用未來預測過去"],
-        ["只想快速看一眼", "<code>ShuffleSplit(n_splits=1)</code>", "等於驗證集法"]]))
+SPLITTERS_CODE = """import numpy as np
+from sklearn.model_selection import (
+    StratifiedKFold, GroupKFold, StratifiedGroupKFold
+)
+
+# 12 位病人，每人 5 筆觀測；6 位為負例、6 位為正例。
+groups = np.repeat(np.arange(12), 5)
+y = np.repeat([0] * 6 + [1] * 6, 5)
+X = np.arange(60).reshape(-1, 1)
+
+splitters = {
+    "分層": StratifiedKFold(
+        n_splits=3, shuffle=True, random_state=42),
+    "分組": GroupKFold(n_splits=3),
+    "分層且分組": StratifiedGroupKFold(n_splits=3),
+}
+for name, cv in splitters.items():
+    folds = (cv.split(X, y) if name == "分層"
+             else cv.split(X, y, groups=groups))
+    for fold, (train, valid) in enumerate(folds, 1):
+        shared = np.intersect1d(groups[train], groups[valid])
+        print(name, fold, "驗證正例比例", y[valid].mean(),
+              "兩側共用病人數", len(shared))
+"""
+
+SPLITTERS_D = detail("w05-detail-splitters", "延伸閱讀：StratifiedKFold、GroupKFold 與分類指標", r"""
+  <p>承接講義的「分類問題的交叉驗證」與選讀的切分方式：Lab 匯入了 <code>StratifiedKFold</code>，但主要實作仍是 <code>Auto</code> 迴歸的 <code>KFold</code>。下面用小型分類資料展開分層與群組切分；病人編號是為了看清切分界線而設計的例子，不是 Auto 的欄位。</p>
+  <h3>先問：你要預測的是新觀測，還是新病人？</h3>
+  <p><strong>StratifiedKFold（分層）</strong>依照 <code>y</code> 的類別安排觀測，讓各折的類別比例<strong>盡量接近</strong>整體。例如 100 筆獨立觀測有 20 筆正例，分成 5 折時，每折 20 筆約有 4 筆正例。一般分類也可以用分層，不必等到嚴重不平衡才使用；它沒有增加少數類資料，也不會解決所有抽樣不確定性。</p>
+  <p>若正例只有 3 筆卻切成 5 折，就不可能每折都有正例。折數與評估指標要配合各類的筆數；ROC AUC 等指標在只有單一類別的驗證折上無法計算。分層可避免部分不良切分，但不能保證折分數的變異完整反映母體的不確定性。</p>
+  <p><strong>GroupKFold（分組）</strong>依照 <code>groups</code> 的群組編號安排<strong>整組</strong>觀測。同一病人的 5 次就診，應一起放在訓練或驗證的一側；每一折的兩側沒有共用病人，各群組在一輪 CV 中恰好當一次驗證資料。若逐筆隨機分折，模型可能在驗證時認出訓練過的病人；這樣的分數回答的是「熟悉病人的新紀錄」，不適合用來宣稱「新病人的表現」。至少要有 <code>n_splits</code> 個不同群組；群組大小不同時，驗證筆數也可能不一樣。</p>
+  <p><strong>分層與分組保護的是不同界線。</strong>分層不保證病人隔離；分組不保證類別比例相同。若兩者都需要，用 <code>StratifiedGroupKFold</code>：先確保群組不跨兩側，再嘗試維持類別比例。若正例都集中在少數大群組，比例可能無法平衡，仍應列出各折的群組數與各類筆數。</p>
+""" + table(["資料情境", "切分器", "切分時保留什麼"], [
+    ["獨立的迴歸觀測", "<code>KFold(shuffle=True)</code>", "讓觀測分散到各折"],
+    ["獨立的分類觀測", "<code>StratifiedKFold</code>", "各折類別比例盡量接近整體"],
+    ["同一病人／使用者有多筆紀錄", "<code>GroupKFold</code>", "同群組不跨訓練與驗證"],
+    ["分類且同一實體有多筆紀錄", "<code>StratifiedGroupKFold</code>", "群組隔離，並盡量維持類別比例"],
+    ["預測未來的時間序列", "<code>TimeSeriesSplit</code>", "用較早資料預測較晚資料；必要時留間隔"],
+]) + r"""
+  <h3>sklearn：直接檢查每折到底切了什麼</h3>
+  <p>下面的 <code>X</code> 只是用來示範索引，不拿來擬合模型。請比較各折的「驗證正例比例」與「兩側共用病人數」：分層可以維持比例，卻可能讓同一病人出現在兩側；分組版本的共用病人數應為 0。把 <code>y</code> 改成正例集中於少數病人，再觀察各折比例。</p>
+""" + hl(SPLITTERS_CODE, block_id="w05-splitters-code") + r"""
+  <p>真正評估模型時，例如 <code>cross_val_score(model, X, y, cv=GroupKFold(3), groups=groups)</code>，也要傳入群組。這是 sklearn 預設未啟用 metadata routing 的寫法；若已啟用，請依官方文件用 <code>params={"groups": groups}</code> 傳遞。</p>
+  <p><strong>切分器與指標要分別選。</strong>正例只佔 1% 時，全猜負例也有 99% accuracy；可依問題選 recall、precision、F1 或 ROC AUC，透過 <code>scoring</code> 指定。分層不會讓 accuracy 自動成為合適的指標，分組也不能取代時間順序限制。</p>
+""" + links(
+    ("scikit-learn：交叉驗證與資料相依性", "https://scikit-learn.org/stable/modules/cross_validation.html"),
+    ("StratifiedKFold：分層切分", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html"),
+    ("GroupKFold：群組隔離", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html"),
+    ("StratifiedGroupKFold：同時考慮類別與群組", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedGroupKFold.html")))
+
+NESTED_CODE = """from ISLP import load_data
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import (
+    KFold, GridSearchCV, cross_val_score, cross_validate
+)
+
+# 沿用 Ch05 Lab：以 horsepower 預測 Auto 的 mpg。
+Auto = load_data("Auto")
+X = Auto[["horsepower"]].to_numpy()
+y = Auto["mpg"].to_numpy()
+model = make_pipeline(PolynomialFeatures(degree=2, include_bias=False),
+                      LinearRegression())
+
+# 對齊 Lab 的 10-fold 切法，評估事先固定的二次模型。
+cv = KFold(10, shuffle=True, random_state=0)
+fixed_scores = cross_val_score(
+    model, X, y, cv=cv, scoring="neg_mean_squared_error")
+print("固定二次模型 CV MSE", -fixed_scores.mean())
+
+# 延伸：自動比較 Lab 的 1 到 5 次多項式。
+inner = KFold(3, shuffle=True, random_state=1)
+outer = KFold(5, shuffle=True, random_state=2)
+search = GridSearchCV(
+    model, {"polynomialfeatures__degree": [1, 2, 3, 4, 5]},
+    cv=inner, scoring="neg_mean_squared_error", refit=True)
+search.fit(X, y)
+print("完整資料的最佳次數", search.best_params_)
+print("用來選次數的 CV MSE", -search.best_score_)
+
+# Nested CV：每次只用 outer 訓練部分執行完整搜尋。
+result = cross_validate(search, X, y, cv=outer,
+                        scoring="neg_mean_squared_error",
+                        return_estimator=True)
+print("Nested CV 外層 MSE", -result["test_score"])
+print("Nested CV 外層平均 MSE", -result["test_score"].mean())
+print("各 outer fold 選的次數",
+      [est.best_params_ for est in result["estimator"]])
+
+# 評估完成後，在全部可用訓練資料重新搜尋並 refit。
+# 若另有 external test set，X、y 在此只包含 training data。
+search.fit(X, y)
+final_model = search.best_estimator_
+"""
+
+NESTED_GUIDE = r"""
+  <p>承接講義「Cross-validation: right and wrong」的原則：資料驅動的選擇必須放在適當的訓練折內。Lab 用 <code>Auto</code> 的 <code>horsepower</code> 預測 <code>mpg</code>，比較 1 到 5 次多項式的 CV 誤差；以下沿用同一資料與候選模型，延伸到自動選次數與獨立的外層評估。Nested CV 是這裡的延伸實作，並非原 Lab 已執行的步驟。</p>
+  <h4>一般 CV 與 Nested CV：評估的對象不同</h4>
+  <p><strong>一般 CV 有兩種用途。</strong>超參數事先固定時，它可評估這個訓練程序；搭配 <code>GridSearchCV</code> 等搜尋時，它可比較設定並選超參數。若同一份 CV 分數既用來選冠軍，又用來報告冠軍的表現，就可能偏樂觀：例如很多候選設定的真實表現接近，但估計有起伏，挑最高分等於偏向挑中在這次切分中運氣好的設定。</p>
+  <p><strong>Nested CV 評估包含選擇步驟的完整程序。</strong>它問的是：「收到一批新的訓練資料後，依照這套調參規則選模型，對未見資料的預測會多準？」因此每個外層折都要重新執行內層搜尋，不是先用全部資料選好設定，再做一次外層 CV。</p>
+""" + table(["比較項目", "一般 CV（單層）", "Nested CV（巢狀）"], [
+    ["主要目的", "評估固定訓練程序；或搭配搜尋選超參數", "評估包含超參數選擇的完整訓練程序"],
+    ["CV 結構", "單層", "雙層：Inner 選擇、Outer 評估"],
+    ["超參數選擇", "有搜尋時，依此層 CV 選擇；固定模型則不選", "只用各 Outer 訓練部分的 Inner CV 選擇"],
+    ["效能評估", "固定模型可用 CV score；搜尋後的最佳 CV score 可能偏樂觀", "使用未參與該折選擇的 Outer CV score"],
+    ["是否產生單一最佳超參數", "單次搜尋會選一組；單純 CV 不會", "評估時各 Outer Fold 各自選，結果可能相同或不同"],
+    ["Selection bias（選擇偏差）", "同一 CV 同時調參與報告效能時，可能偏樂觀", "可降低調參造成的偏差；不是消除所有偏差的保證"],
+    ["是否重新選擇最終超參數", "若已在全部可用訓練資料搜尋，通常不用再選；資料或流程改變則需重選", "一般會在全部可用訓練資料重新執行搜尋；不以 Outer 成績挑設定"],
+    ["是否重新訓練最終模型", "通常要用全部可用訓練資料擬合；搜尋器可自動 refit", "要：最後的搜尋選好設定後，在全部可用訓練資料擬合"],
+    ["計算成本", "較低；搜尋仍需對每個設定逐折擬合", "較高；每個 Outer Fold 都完整做一次 Inner 搜尋"],
+    ["適用情境", "固定模型的評估；或保留獨立測試集後，在訓練資料選設定", "需要評估包含調參步驟的泛化表現，尤其沒有獨立測試集時"],
+    ["有獨立 External Test Set 時", "訓練集內調參後，未碰過的測試集可作最終評估", "並非必要；可另外提供完整選模程序的內部評估"],
+]) + r"""
+  <h4>5 個外層折、3 個內層折：一輪怎麼做？</h4>
+  <ol>
+    <li><strong>外層留下 1/5。</strong>這份資料只供本輪評估；其餘 4/5 是外層訓練資料。</li>
+    <li><strong>在這 4/5 裡做 3-fold Inner CV。</strong>例如比較 Lab 的多項式次數 1、2、3、4、5。補值、標準化、特徵選擇等會學到資料資訊的步驟，都只在每個內層訓練折擬合。</li>
+    <li><strong>選出本輪設定後，重新擬合全部 4/5。</strong>再對最初留下的 1/5 計算一次分數。</li>
+    <li><strong>換下一個外層折，從搜尋開始重做。</strong>最後整理 5 個 Outer 分數；各折選不同多項式次數是正常的。不要挑最高分的外層模型作為最終模型，也不要把外層最佳設定投票當作預設調參規則。</li>
+  </ol>
+  <p>5 個候選次數、3 個 Inner Fold、5 個 Outer Fold，內層搜尋共擬合 $5\times3\times5=75$ 次；各外層搜尋的 refit 再加 5 次。評估後的最終搜尋另需 $5\times3+1=16$ 次，合計 96 次。這說明巢狀 CV 的成本；不包括下面另外示範的一般 CV 與單次搜尋。</p>
+  <h4>sklearn：把搜尋器交給外層 CV</h4>
+  <p><code>cross_val_score</code> 搭配固定模型是一般 CV；<code>GridSearchCV</code> 用內層折選設定；把這個搜尋器傳給 <code>cross_validate</code>，就讓外層每一折重新搜尋。<code>refit=True</code> 會把選好的設定重新擬合到該次 <code>fit</code> 收到的全部訓練資料，<code>return_estimator=True</code> 則方便查看每個外層折的選擇。</p>
+""" + hl(NESTED_CODE, block_id="w05-nested-code") + r"""
+  <p><strong>分數方向與 Lab 對齊。</strong>Lab 以 MSE 比較模型，愈小愈好；sklearn 的搜尋器則一律最大化 score，所以此處用 <code>neg_mean_squared_error</code>，印出時乘上 −1 還原成 MSE。原 Lab 的 <code>sklearn_sm</code> 可直接回傳 MSE；不要把這兩種介面的正負號混用。固定二次模型沿用 Lab 的 10-fold、<code>random_state=0</code>；Nested 範例為縮短搜尋改用外層 5 折、內層 3 折，分數不應要求與 Lab 的 10-fold 完全相同。</p>
+  <p><strong>評估完之後才訓練交付模型。</strong>上面的最後兩行會在全部可用訓練資料重新選設定並擬合。Nested CV 的平均分數描述這套程序在外層訓練規模下的表現，不是最終這個已擬合模型的獨立測試分數。若另有外部測試集，必須一直保留到所有決策完成，再評估一次；反覆看它並改模型，就失去獨立性。</p>
+  <p><strong>Nested CV 仍要選對切分方式。</strong>上例沿用 Lab 將 Auto 各列視為獨立迴歸觀測的設定，所以內外層都用 KFold；若是獨立的分類觀測，可改成 StratifiedKFold。群組資料則兩層都要隔離群組，Inner 只收到當輪 Outer 訓練資料的群組編號。時間資料也要兩層遵守時間順序。巢狀結構本身不會修復病人重疊、時間洩漏或外層結果被反覆拿來挑模型的問題。</p>
+""" + links(
+    ("scikit-learn：一般 CV 與 Pipeline", "https://scikit-learn.org/stable/modules/cross_validation.html"),
+    ("Nested versus non-nested cross-validation：官方範例", "https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html"),
+    ("GridSearchCV：best_params_、best_score_ 與 refit", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html"))
 
 # ══════════════════════════════════════════════════════════════════════
 BODIES = {}
@@ -924,7 +1042,8 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
 
 BODIES['cvwrong'] += r"""
 <h3>調參、外層評估與折外預測</h3>
-<p>若用同一組CV結果挑最好的模型，又拿最小的CV誤差當最終成績，會把搜尋造成的樂觀偏差帶進報告。可保留一次最終測試集；或採巢狀交叉驗證（nested CV）：外層留下評估資料，內層只用外層訓練資料做前處理、特徵選擇及調參，選好後重新擬合外層訓練資料，再評估外層留下的觀測。</p>
+""" + NESTED_GUIDE + r"""
+<h4>折外預測：另外一個常見用途</h4>
 <p><code>cross_val_predict</code>收集每筆未參與該次擬合時的折外（out-of-fold）預測，但把它們合併計算一次指標，不必等於先算每折指標再平均。逐點可加總的損失如MSE，可用折大小加權得到相同整體平均；AUC、F1等非線性指標沒有這種一般等價性。不同折的分數來自不同模型，合併AUC時也要考慮跨折分數尺度。</p>
 <p>時間切分應配合未來的預測期間，必要時在訓練尾端與驗證起點間保留間隔，避免滾動特徵或觀測重疊造成洩漏。固定seed讓同一切法可重現，但一次切分不會因此消除抽樣不確定性。</p>
 """

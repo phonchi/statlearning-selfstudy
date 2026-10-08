@@ -1,0 +1,49 @@
+CV 收合區驗證 2026-10-08
+範圍：resampling_methods.html 的 cvclass、cvwrong；enrich_resampling.py
+執行環境：範例 Python 3.9 / scikit-learn 1.6.1；產生器 Python 3.13
+來源：05_Resampling_Methods.pdf；Ch05-resample-lab-zh.ipynb（KFold/Auto 多項式範例）
+Nested：外層 KFold(5, shuffle=True, random_state=2)，內層 KFold(3, shuffle=True, random_state=1)，degree=[1,2,3,4,5]
+固定模型：degree=2，KFold(10, shuffle=True, random_state=0)
+瀏覽器：Chromium，1440x1000、390x1000；兩個收合區預設關閉、展開／收合、MathJax、無整頁橫向溢出
+來源／HTML 同步、重建冪等、其他 sections 保留：PASS
+
+splitters.log
+分層 1 驗證正例比例 0.5 兩側共用病人數 11
+分層 2 驗證正例比例 0.5 兩側共用病人數 11
+分層 3 驗證正例比例 0.5 兩側共用病人數 10
+分組 1 驗證正例比例 0.5 兩側共用病人數 0
+分組 2 驗證正例比例 0.5 兩側共用病人數 0
+分組 3 驗證正例比例 0.5 兩側共用病人數 0
+分層且分組 1 驗證正例比例 0.5 兩側共用病人數 0
+分層且分組 2 驗證正例比例 0.5 兩側共用病人數 0
+分層且分組 3 驗證正例比例 0.5 兩側共用病人數 0
+
+
+nested.log
+固定二次模型 CV MSE 19.1853314193751
+完整資料的最佳次數 {'polynomialfeatures__degree': 5}
+用來選次數的 CV MSE 19.438316993330858
+Nested CV 外層 MSE [17.8700254  16.34514423 20.59453081 23.87759304 18.06715294]
+Nested CV 外層平均 MSE 19.350889283495995
+各 outer fold 選的次數 [{'polynomialfeatures__degree': 5}, {'polynomialfeatures__degree': 5}, {'polynomialfeatures__degree': 5}, {'polynomialfeatures__degree': 5}, {'polynomialfeatures__degree': 3}]
+
+
+numeric.log
+sklearn 1.6.1
+Independent statsmodels 10-fold quadratic MSE 19.18533141937494
+Nested CV fit-count arithmetic: 96 PASS
+Group separation and each group validates once: PASS
+Stratified example ratio: PASS
+
+
+validate.log
+
+
+0 個失敗，0 個警告（檢查了 1 頁）
+
+
+browser.log
+[{"width": 1440, "detail": "w05-detail-splitters", "collapse": "PASS", "overflow": "PASS", "mathjax": "PASS"}, {"width": 1440, "detail": "w05-detail-nested-cv", "collapse": "PASS", "overflow": "PASS", "mathjax": "PASS"}, {"width": 390, "detail": "w05-detail-splitters", "collapse": "PASS", "overflow": "PASS", "mathjax": "PASS"}, {"width": 390, "detail": "w05-detail-nested-cv", "collapse": "PASS", "overflow": "PASS", "mathjax": "PASS"}]
+
+resampling_methods.html SHA-256 b13d07c56a9625c2cdccf3887467ec632b0c1967c7dae64fbd55dbd02a8569d4
+tools/enrich/enrich_resampling.py SHA-256 c9d27f8e829b262436a01a3dc9708d1d11f651efbad792f56b75e12b418e089f
