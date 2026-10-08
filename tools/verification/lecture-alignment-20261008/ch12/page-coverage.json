@@ -1,0 +1,944 @@
+[
+  {
+    "page": 1,
+    "text": "Unsupervised Learning\nSzu-Chi Chung\nDepartment of Applied Mathematics, National Sun Yat-sen University\n",
+    "section": "prologue",
+    "target_anchor": "w07-detail-other-goals",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 2,
+    "text": "Unsupervised Learning\nUnsupervised vs Supervised Learning:\nMost of this course focuses on supervised learning methods such as regression and \nclassification\nIn that setting we observe both a set of features 𝑋1, 𝑋2, … , 𝑋𝑝for each object, as well as a \nresponse or outcome variable 𝑌. The goal is then to predict 𝑌using 𝑋1, 𝑋2, … , 𝑋𝑝\nHere, we instead focus on unsupervised learning, where we observe only the features \n𝑋1, 𝑋2, … , 𝑋𝑝. We are not interested in prediction, because we do not have an associated \nresponse variable 𝑌\n2\n",
+    "section": "prologue",
+    "target_anchor": "w07-detail-other-goals",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 3,
+    "text": "Advantages\nIt is often easier to obtain unlabeled data - from a lab instrument or a computer \n- than labeled data, which can require human intervention\nPrepare labeling manuals, categories, hiring humans, creating GUIs, storage pipelines, etc.\nSometimes it is also hard to label the data. For example it is difficult to \nautomatically assess the overall sentiment of a movie review: is it favorable or \nnot?\nCognitive motivation: How animals / babies learn\n3\n“The brain has about 1014synapses and we only live for about \n109 seconds. So we have a lot more parameters than data. This \nmotivates the idea that we must do a lot of unsupervised \nlearning” - Geoffrey Hinton\n",
+    "section": "prologue",
+    "target_anchor": "w07-detail-other-goals",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 4,
+    "text": "The Challenge/Promising of Unsupervised Learning\nUnsupervised learning is more subjective than supervised learning, as there is \nno simple goal for the analysis, such as prediction of a response\nUnsupervised learning is often performed as part of an exploratory data analysis\nBut techniques for unsupervised learning are of growing importance in a \nnumber of fields:\nSubgroups of cancer patients grouped by their gene expression measurements,\nGroups of shoppers characterized by their browsing and purchase histories,\nMovies grouped by the ratings assigned by movie viewers,\nSearch engine based on the click histories of other individuals with similar search patterns\n4\n",
+    "section": "prologue",
+    "target_anchor": "w07-detail-other-goals",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 5,
+    "text": "The Goals of Unsupervised Learning\n1.\nDimensional reduction: Speedup the training and overcome the curse of \ndimensionality. In addition, reduce the dimension also helps visualization\n2.\nClustering methods: Great tool for data analysis, recommender systems, \nsearch engines, semi-supervised learning, image segmentation, \ndimensionality reduction and more\n3.\nAnomaly detection methods: Learn what “normal” data looks like, and use \nthis to detect abnormal instances, such as defective items on a production line \nor a new trend in a time series\n4.\nDensity estimation methods: Estimating the probability density function \n(PDF) of the dataset. This is commonly used for anomaly detection: instances \nlocated in very low-density regions are likely to be anomalies. It is also \nuseful for data analysis, visualization and generation\n5\n",
+    "section": "prologue",
+    "target_anchor": "w07-detail-other-goals",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 6,
+    "text": "What we would like to address\nWe discuss two families of methods:\n1.\nDimensional reduction and visualization by projection or manifold learning\nPrincipal components analysis (PCA), a tool used for data visualization or data pre-\nprocessing before supervised techniques are applied, and\nt-SNE, the state-of-the art visualization method that allows you understand the local \n(sometimes global) structure your data\n2.\nClustering, a class of methods for discovering unknown subgroups in data\n𝐾-means, the fastest and intuitive algorithm when the number of cluster is not large\nHierarchical clustering, a fast and powerful clustering algorithm when the number of \ncluster is large\nDBSCAN (or HDBSCAN), one of the state-of-the art clustering algorithm for EDA \n6\n",
+    "section": "prologue",
+    "target_anchor": "w07-detail-other-goals",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 7,
+    "text": "Dimensional reduction by linear projection\nIn most real-world problems, training instances are not spread out uniformly \nacross all dimensions\nMany features are almost constant, while others are highly correlated As a result, all \ntraining instances actually lie within much lower-dimensional subspace of the high-\ndimensional space\nDimensionality reduction tries to preserve various measure or structure in high dimensional \nspace like distance, topology, density etc\n7\n",
+    "section": "prologue",
+    "target_anchor": "w07-detail-other-goals",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 8,
+    "text": "Principal Components Analysis (PCA)\nSuppose that we wish to visualize 𝑛observations with measurements on a set \nof 𝑝features, 𝑋1, 𝑋2, … , 𝑋𝑝, as part of an exploratory data analysis\nWe could exam two-dimensional scatterplots of the data, each contains 𝑛observations’ \nmeasurements on two of the features. However, there are 𝑝\n2 such scatterplots\nMost likely none of them will be informative since they each contain just a small fraction \nof the total information present in the data set \nClearly, a better method is required to visualize the 𝑛observations when 𝑝is \nlarge. We would like to find a low-dimensional representation of the data that \ncaptures as much of the information as possible \n8\n",
+    "section": "pca",
+    "target_anchor": "w07-detail-pca-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 9,
+    "text": "Principal Components Analysis (PCA)\nPCA produces a low-dimensional representation of a dataset. It finds a \nsequence of linear combinations of the variables that have maximal variance\nThe information is measured by the amount that the observations vary along each dimension\nApart from producing derived variables for use in supervised learning problems, PCA also \nserves as a tool for data visualization\n9\nhttps://towardsdatascience.com/visualising-high-dimensional-datasets-using-pca-and-t-sne-in-python-8ef87e7915b\n",
+    "section": "pca",
+    "target_anchor": "w07-detail-pca-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://towardsdatascience.com/visualising-high-dimensional-datasets-using-pca-and-t-sne-in-python-8ef87e7915b"
+    ]
+  },
+  {
+    "page": 10,
+    "text": "Principal Components Analysis: details\nThe first principal component score of a set of features 𝑋1, 𝑋2, … , 𝑋𝑝is the \nnormalized linear combination of the features\n𝑍1 = Φ11𝑋1 + Φ21𝑋2 + ⋯+ Φ𝑝1𝑋𝑝\nthat has the largest variance\nBy normalized, we mean that σ𝑗=1\n𝑝\nΦ𝑗1\n2 = 1, . since otherwise setting these elements to be \narbitrarily large in absolute value could result in an arbitrarily large variance\nWe refer to the elements Φ11, … , Φ𝑝1 as the loadings of the first principal component; \ntogether, the loadings make up the principal component, Φ1 = (Φ11Φ21 … Φ𝑝1)𝑇\nFor a dataset that have been centered, we look for the linear combination of\n𝑧𝑖1 = Φ11𝑥𝑖1 + Φ21𝑥𝑖2 + ⋯+ Φ𝑝1𝑥𝑖𝑝\nfor 𝑖= 1, … , 𝑛that has largest sample variance, subject to the constraint that \nσ𝑗=1\n𝑝\nΦ𝑗1\n2 = 1\n10\n",
+    "section": "pca",
+    "target_anchor": "w07-detail-pca-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 11,
+    "text": "Principal Components Analysis: details\nThe sample variance of the 𝑧𝑖1 can be written as\n1\n𝑛σ𝑖=1\n𝑛\n𝑧𝑖1\n2 =\n1\n𝑛σ𝑖=1\n𝑛(σ𝑗=1\n𝑝\nΦ𝑗1𝑥𝑖𝑗)2\nThe first principal component loading vector solves the optimization problem\nmax\nΦ11,…,Φ𝑝1\n1\n𝑛σ𝑖=1\n𝑛(σ𝑗=1\n𝑝\nΦ𝑗1𝑥𝑖𝑗)2 subject to σ𝑗=1\n𝑝\nΦ𝑗1\n2 = 1\nThis problem can be solved via a singular-value decomposition of the data matrix 𝑋or the \neigenvalue decomposition of the covariance matrix 𝑋\nThe loading vector Φ1 with elements Φ11, Φ21, … Φ𝑝1 denfies a direction in feature \nspace along which the data vary the most\nIf we project the 𝑛data points 𝑥1, 𝑥2, … , 𝑥𝑛onto this direction, the projected values \nare the principal component scores 𝑧11, … , 𝑧𝑛1 themselves\n11\n",
+    "section": "pca",
+    "target_anchor": "w07-detail-pca-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 12,
+    "text": "Further principal components\nThe second principal component is the linear combination of 𝑋1, 𝑋2, … , 𝑋𝑝that \nhas maximal variance that are uncorrelated with 𝑍1\nThe second principal component scores 𝑧12, … , 𝑧𝑛2 take the form\n𝑧𝑖2 = Φ12𝑥𝑖1 + Φ22𝑥𝑖2 + ⋯+ Φ𝑝2𝑥𝑖𝑝\nWhere Φ2 is the second principal component loading vector, with elements Φ12, Φ22, … Φp2\nIt turns out that constraining 𝑍2 to be uncorrelated with 𝑍1 is equivalent to \nconstraining the direction Φ2 to be orthogonal (perpendicular) to the direction \nΦ1. And so on\nThere are at most min(𝑛−1, 𝑝) principal components\n12\n",
+    "section": "pca",
+    "target_anchor": "w07-detail-pca-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://stats.stackexchange.com/questions/123318/why-are-there-only-n-1-principal-components-for-n-data-if-the-number-of-dime",
+      "https://stats.stackexchange.com/questions/153928/why-are-principal-component-scores-uncorrelated"
+    ]
+  },
+  {
+    "page": 13,
+    "text": "PCA: example\nThe population size (pop) and ad spending (ad) for 100 different cities are \nshown as purple circles \nThe green solid line indicates the first principal component direction, and the \nblue dashed line indicates the second principal component direction\n13\n",
+    "section": "pca",
+    "target_anchor": "w07-detail-pca-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 14,
+    "text": "Illustration\nUSAarrests data: For each of the 50 states in the United States, the data set \ncontains the number of arrests per 100,000 residents for each of three crimes: \nAssault, Murder, and Rape. We also record UrbanPop (the percent of the \npopulation in each state living in urban areas)\nThe principal component score vectors have length 𝑛= 50, and the principal \ncomponent loading vectors have length 𝑝= 4\nPCA was performed after standardizing each variable to have mean zero and \nstandard deviation one\n14\n",
+    "section": "biplot",
+    "target_anchor": "w07-detail-biplot-reading",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://islp.readthedocs.io/en/latest/datasets/USArrests.html"
+    ]
+  },
+  {
+    "page": 15,
+    "text": "USAarrests data: PCA biplot\n15\n",
+    "section": "biplot",
+    "target_anchor": "w07-detail-biplot-reading",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 16,
+    "text": "Figure details\nThe first two principal components for the USArrests data\nThe blue state names represent the scores for the first two principal \ncomponents\nThe orange arrows indicate the first two principal component loading vectors \n(with axes on the top and right). For example, the loading for Rape on the first \ncomponent is 0.54, and its loading on the second principal component 0.17 [the \nword Rape is centered at the point (0.54; 0.17)]\nThis figure is known as a biplot, because it displays both the principal \ncomponent scores and the principal component loadings\n16\n",
+    "section": "biplot",
+    "target_anchor": "w07-detail-biplot-reading",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 17,
+    "text": "Another Interpretation of Principal Components\nPrincipal components provide low-dimensional linear surfaces that are \nclosest to the observations\n17\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 18,
+    "text": "Another Interpretation of Principal Components\nThe first principal component loading vector has a very special property: it is \nthe line in 𝑝-dimensional space that is closest to the 𝑛observations (using \naverage squared Euclidean distance as a measure of closeness)\nThe notion of principal components as the dimensions that are closest to the 𝑛\nobservations extends beyond just the first principal component\nFor instance, the first two principal components of a dataset span the plane that is closest to \nthe 𝑛observations, in terms of average squared Euclidean distance\n18\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 19,
+    "text": "Another interpretation of principal components\nThe first 𝑀principal component score vectors and the first 𝑀principal \ncomponent loading vectors provide the best 𝑀-dimensional approximation (in \nterms of Euclidean distance) to the 𝑖th observation 𝑥𝑖𝑗\n𝑥𝑖𝑗≈෍\n𝑚=1\n𝑀\n𝑧𝑖𝑚Φ𝑗𝑚\nSuppose the data matrix 𝑋is column-centered. Out of all approximations of the \nform 𝑥𝑖𝑗≈σ𝑚=1\n𝑀\n𝑎𝑖𝑚𝑏𝑗𝑚. We have\nmin\n𝐴∈𝑅𝑛×𝑀, 𝐵∈𝑅𝑝×𝑀{෍\n𝑗=1\n𝑝\n෍\n𝑖=1\n𝑛\n(𝑥𝑖𝑗−෍\n𝑚=1\n𝑀\n𝑎𝑖𝑚𝑏𝑗𝑚)2}\nIt can be shown that for any value of 𝑀, the columns of the matrices መ𝐴and ෠𝐵\nare in fact the first 𝑀principal components score and loading vectors\n19\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 20,
+    "text": "More on PCA – Proportion Variance Explained\nWe are interested in knowing the proportion of variance explained (PVE) by each \none. The total variance present in a data set (assuming that the variables have \nbeen centered to have mean zero) is defined as\n෍\n𝑗=1\n𝑝\n𝑉𝑎𝑟(𝑋𝑗) = ෍\n𝑗=1\n𝑝\n1\n𝑛෍\n𝑖=1\n𝑛\n𝑥𝑖𝑗\n2 ,\nand the variance explained by the 𝑚th principal component is\n𝑉𝑎𝑟𝑍𝑚= 1\n𝑛෍\n𝑖=1\n𝑛\n𝑧𝑖𝑚\n2 = 1\n𝑛෍\n𝑖=1\n𝑛\n(෍\n𝑗=1\n𝑝\nΦ𝑗𝑚𝑥𝑖𝑗)2\nIt can be shown that σ𝑗=1\n𝑝\n𝑉𝑎𝑟(𝑋𝑗) = σ𝑚=1\n𝑀\n𝑉𝑎𝑟(𝑍𝑚), with 𝑀= min(𝑛−1, 𝑝)\nσ𝑗=1\n𝑝\n1\n𝑛σ𝑖=1\n𝑛\n𝑥𝑖𝑗\n2 = σ𝑚=1\n𝑀\n1\n𝑛σ𝑖=1\n𝑛\n𝑧𝑖𝑚\n2 + 1\n𝑛σ𝑗=1\n𝑝\nσ𝑖=1\n𝑛(𝑥𝑖𝑗−σ𝑚=1\n𝑀\nΦ𝑗𝑚𝑧𝑖𝑚)2 (c.f. here)\n20\n",
+    "section": "pve",
+    "target_anchor": "w07-detail-pca-rank-selection",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://stats.stackexchange.com/questions/32174/pca-objective-function-what-is-the-connection-between-maximizing-variance-and-m"
+    ]
+  },
+  {
+    "page": 21,
+    "text": "Proportion Variance Explained: continued\nTherefore, the PVE of the 𝑚th principal component is given by the positive \nquantity between 0 and 1\nσ𝑖=1\n𝑛\n𝑧𝑖𝑚\n2\nσ𝑗=1\n𝑝\nσ𝑖=1\n𝑛\n𝑥𝑖𝑗\n2 =\nσ𝑖=1\n𝑛(σ𝑗=1\n𝑝\nΦ𝑗𝑚𝑥𝑖𝑗)2\nσ𝑗=1\n𝑝\nσ𝑖=1\n𝑛\n𝑥𝑖𝑗\n2\nThe PVEs sum to one. We sometimes display the cumulative PVEs\n21\n",
+    "section": "pve",
+    "target_anchor": "w07-detail-pca-rank-selection",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 22,
+    "text": "More on PCA - How many principal components should we use?\nIf we use principal components as a summary of our data, how many \ncomponents are sufficient?\nNo simple answer to this question, as cross-validation is not easy for this purpose\nThe “scree plot” on the previous slide can be used as a guide: we look for an \n“elbow”\nInformation criterion can be used instead, however, in high dimensional setting \nthe selection is quite challenge\n22\n",
+    "section": "pve",
+    "target_anchor": "w07-detail-pca-rank-selection",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://link.springer.com/article/10.1007/s00362-021-01276-7",
+      "https://stats.stackexchange.com/questions/93845/how-to-perform-cross-validation-for-pca-to-determine-the-number-of-principal-com"
+    ]
+  },
+  {
+    "page": 23,
+    "text": "More on PCA - Scaling of the variables matters\nIf the variables are in different units, scaling each to have standard deviation \nequal to one is recommended\nIf they are in the same units, you might or might not scale the variables\n23\n",
+    "section": "scaling",
+    "target_anchor": "w07-detail-scaling-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 24,
+    "text": "More on PCA – Uniqueness\nEach principal component loading vector is unique, up to a sign flip\nThis means that two different software packages will yield the same principal component \nloading vectors although the signs of those loading vectors may diﬀer\nThe signs may differ because each principal component loading vector specifies a direction \nin 𝑝-dimensional space: flipping the sign has no effect as the direction does not change. \nSimilarly, the score vectors are unique up to a sign flip, since the variance of 𝑍is the same \nas the variance of −𝑍\n24\n",
+    "section": "scaling",
+    "target_anchor": "w07-detail-scaling-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 25,
+    "text": "More on PCA – Connection with SVD and EVD\nLet the data matrix 𝑋be a 𝑛by 𝑝data matrix\nThe sample covariance matrix\n𝑆=\nΤ\n𝑋𝑇𝑋𝑛= ෍\n𝑖=1\n𝑛\n(𝑥𝑖−ҧ𝑥)(𝑥𝑖−ҧ𝑥)𝑇/𝑛\nFind a direction vector 𝑣1 ∈𝑅𝑝and 𝑣1\n𝑇𝑣1 = 1 such that the variance of the \nprojected data is maximized\n1\n𝑛෍\n𝑖=1\n𝑛\n(𝑥𝑖\n𝑇𝑣1 −ҧ𝑥𝑇𝑣1)2 = 𝑣1\n𝑇𝑆𝑣1\n25\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://stats.stackexchange.com/questions/134282/relationship-between-svd-and-pca-how-to-use-svd-to-perform-pca"
+    ]
+  },
+  {
+    "page": 26,
+    "text": "More on PCA – Connection with SVD and EVD\nTo enforce the constraint, we introduce a  Lagrange multiplier denoted by 𝜆1\nand get the unconstrained maximization of \n𝑣1\n𝑇𝑆𝑣1 + λ1(1 −𝑣1\n𝑇𝑣1) or maximized the Rayleigh quotient 𝑣𝑇𝑆𝑣\n𝑣𝑇𝑣\nBy setting the derivative with respect to 𝑣1 equal to zero, we see that this quantity will \nhave a stationary point when (c.f. matrix cookbook)\n𝑆𝑣1 = λ1𝑣1\n26\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf"
+    ]
+  },
+  {
+    "page": 27,
+    "text": "More on PCA – Connection with SVD and EVD\n𝑣1 must be an eigenvector of 𝑆, if we left-multiply by 𝑣1\n𝑇we get\n𝑣1\n𝑇𝑆𝑣1 = λ1\nand so the variance will be a maximum when we set 𝑣1 equal to the eigenvector having the \nlargest eigenvalue λ1. This eigenvector is known as the ﬁrst principal component\nWe can deﬁne additional principal components in an incremental fashion by \nchoosing each new direction to be that which maximizes the projected variance \namongst all possible directions orthogonal to those already considered.\nIn a 𝑀-dimensional projection space, we now consider the optimal linear projection for which \nthe variance of the projected data is maximized is deﬁned by the 𝑀eigenvectors 𝑣1, … , 𝑣𝑀of \nthe data covariance matrix S corresponding to the 𝑀largest eigenvalues λ1, … , λ𝑀. \n27\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://rich-d-wilkinson.github.io/MATH3030/4.2-pca-a-formal-description-with-proofs.html"
+    ]
+  },
+  {
+    "page": 28,
+    "text": "More on PCA – Connection with SVD and EVD\nIf we collect eigenvectors and eigenvalues into matrix forms the connection \nwith EVD\n𝑆𝑝×𝑝𝑉𝑝×𝑝= 𝑉𝑝×𝑝Λ𝑝×𝑝\n𝑆𝑝×𝑝= 𝑉𝑝×𝑝Λ𝑝×𝑝𝑉𝑝×𝑝\n𝑇\nConnection with SVD\nS = 𝑋𝑇𝑋\n𝑛\n= 𝑉𝐷𝑈𝑇𝑈𝐷𝑉𝑇\n𝑛\n= 𝑉𝐷2\n𝑛𝑉𝑇= 𝑉Λ𝑉𝑇\nNote 𝑋= 𝑈𝐷𝑉𝑇\nScores are  𝑋𝑉= 𝑈𝐷\nWe can perform randomized SVD\n28\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://github.com/fastai/numerical-linear-algebra"
+    ]
+  },
+  {
+    "page": 29,
+    "text": "Other Uses for Principal Components\nWe saw in Chapter 6 that we can perform regression using the principal \ncomponent score vectors as features\nIn fact, many statistical techniques, such as regression, classiﬁcation, and clustering, can be \neasily adapted to use the 𝑛× 𝑀matrix whose columns are the ﬁrst 𝑀≪𝑝principal \ncomponent score vectors, rather than using the full n × p data matrix\nThis can lead to less noisy results, since it is often the case that the signal (as opposed to \nthe noise) in a data set is concentrated in its ﬁrst few principal components!\n29\n",
+    "section": "lowrank",
+    "target_anchor": "w07-detail-lowrank-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 30,
+    "text": "Missing Values and Matrix Completion\nOften datasets have missing values, which can be a nuisance. How should we \nproceed?\n1.\nWe could remove the rows that contain missing observations and perform our \ndata analysis on the complete rows\nBut this seems wasteful, and depending on the fraction missing\n2.\nAlternatively, if 𝑥𝑖𝑗is missing, then we could replace it by the mean of the \n𝑗th column (using the non-missing entries to compute the mean)\nAlthough this is a common and convenient strategy, often we can do better by exploiting \nthe correlation between the variables\n30\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 31,
+    "text": "Missing Values and Matrix Completion\nWe show how principal components can be used to impute the missing values, \nthrough a process known as matrix completion if the data is missing at random\nThe complete matrix can then be used in a statistical learning method, such as \nlinear regression or LDA\nIn practice, sometimes data is missing by necessity \nFor example, if we form a matrix of the ratings (on a scale from 1 to 5) that 𝑛customers \nhave given to the entire Netflix catalog of 𝑝movies, then most of the matrix will be \nmissing, since no customer will have seen and rated more than a tiny fraction of the catalog\nIf we can impute the missing values well, then we will have an idea of what each customer \nwill think of movies they have not yet seen\n31\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 32,
+    "text": "Principal Components with Missing Values\nThe first 𝑀principal component score and loading vectors provide the “best” \napproximation to the data matrix 𝑋\nNow, some of the observations 𝑥𝑖𝑗are missing. One can both impute the \nmissing values and solve the principal component problem at the same time\nmin\n𝐴∈𝑅𝑛×𝑀, 𝐵∈𝑅𝑝×𝑀{ ෍\n(𝑖,𝑗)∈𝑂\n(𝑥𝑖𝑗−෍\n𝑚=1\n𝑀\n𝑎𝑖𝑚𝑏𝑗𝑚)2}\nwhere 𝑂is the set of all observed pairs of indices (𝑖, 𝑗), a subset of the possible 𝑛×\n𝑝pairs\nWe can estimate a missing observation 𝑥𝑖𝑗using 𝑥𝑖𝑗= σ𝑚=1\n𝑀\nො𝑎𝑖𝑚෠𝑏𝑗𝑚\nWe can (approximately) recover the 𝑀principal component scores and loadings, as we did \nwhen the data were complete\n32\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 33,
+    "text": "33\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 34,
+    "text": "Example on USArrests data\n𝑝= 4 and 𝑛= 50 observations \n(states). We first standardized the \ndata \nWe then randomly selected 20 of the \n50 states, and then for each of these \nwe randomly set one of the four \nvariables to be missing. Thus, 10% \nof the elements of the data matrix \nwere missing\nWe applied Algorithm 12.1 with \n𝑀= 1 principal component\n34\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Matrix_completion"
+    ]
+  },
+  {
+    "page": 35,
+    "text": "Example on USArrests data\nOver 100 random runs of this experiment, the average correlation between the \ntrue and imputed values of the missing elements is 0.63, with a standard \ndeviation of 0.11\nIf we had simply computed ො𝑥𝑖𝑗= 𝑧𝑖1Φ𝑗1, where 𝑧𝑖1 and Φ𝑗1 are elements of the first \nprincipal component score and loading vectors of the complete data. Using the complete \ndata in this way results in an average correlation of 0.79 between the true and estimated \nvalues for these 20 elements, with a standard deviation of 0.08\nThus, our imputation method does worse than the method that uses all of the data (0.63 ±\n0.11 versus 0.79 ± 0.08), but its performance is still pretty good\n35\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 36,
+    "text": "Example on USArrests data\n36\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 37,
+    "text": "Recommender Systems\nNetflix and Amazon use data about the content that a customer has viewed in \nthe past to suggest other content for the customer\nSome years back, Netflix had customers rate each movie that they had seen \nwith a score from 1–5. This resulted in a very big 𝑛× 𝑝matrix for which the \n(𝑖, 𝑗) element is the rating given by the 𝑖th customer to the 𝑗th movie\nNetflix needed a way to impute the missing values of this data matrix\nThe key idea is as follows: the set of movies that the 𝑖th customer has seen will overlap \nwith those that other customers have seen. Furthermore, some of those other customers will \nhave similar movie preferences to the 𝑖th customer\nBy applying Algorithm 12.1, we can predict the 𝑖th customer’s rating for the 𝑗th movie\n37\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 38,
+    "text": "Recommender Systems\n38\n",
+    "section": "completion",
+    "target_anchor": "w07-detail-completion-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 39,
+    "text": "Manifold Learning\nA M-dimensional manifold is a part of an p-dimensional space (where M < p) \nthat locally resembles a M-dimensional hyperplane \nIn the case of the Swiss roll, 𝑀= 2 and 𝑝= 3: it locally resembles a 2D plane, but it is \nbent and twisted in the third dimension\nSimply projecting onto a plane would squash different layers of the Swiss roll\nMany dimensionality reduction algorithms work by modeling the manifold on \nwhich the training instances lie; this is called Manifold Learning\n39\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 40,
+    "text": "Manifold Learning\nMake sure the same scale is used over all features\nBecause manifold learning methods are based on a nearest-neighbor search, the algorithm \nmay perform poorly otherwise\n40\nhttps://www.twblogs.net/a/5bcb6b332b7177796822b307\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.twblogs.net/a/5bcb6b332b7177796822b307"
+    ]
+  },
+  {
+    "page": 41,
+    "text": "t-SNE (t-distributed Stochastic Neighbor Embedding)\nt-SNE is popular manifold learning method that is specialized for visualization \nand EDA\n1.\nIt is a statistical method for visualizing high-dimensional data (𝑥𝑖) by giving each data \npoint a location in a two or three-dimensional map (𝑦𝑖)\n2.\nIt converts affinities of data points to probabilities and tends to preserve topology that \nsimilar objects are modeled by nearby points and dissimilar objects are modeled by \ndistant points\n3.\nIt is particularly sensitive to local structure and can revealing the structure at many scales \nor data lie on several manifolds on a single map\n4.\nHowever, the global structure is not explicitly preserved and we should use it with \ncaution for downstream analysis\n41\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://jlmelville.github.io/smallvis"
+    ]
+  },
+  {
+    "page": 42,
+    "text": "Stochastic Neighbor Embedding (SNE)\nPrevious linear or non-linear dimensionality reduction methods have a fixed \nassignment for a data point in the high-dimensional space\nSNE aims to best capture neighborhood identity by considering the probability that one point is the \nneighbor of all other points. It defines 𝑛× 𝑛similarity matrix 𝑃in the high dimensional space \nwhose entries are\n𝑝𝑗|𝑖=\n𝑒𝑥𝑝−\n(𝑥𝑖−𝑥𝑗)2\n2𝜎𝑖\n2\nσ𝑘≠𝑖𝑒𝑥𝑝−\n(𝑥𝑖−𝑥𝑘)2\n2𝜎𝑖\n2\n, 𝑝𝑖|𝑖= 0 and σ𝑗𝑝𝑗|𝑖= 1\nFrom the definition of 𝑃, note that SNE focuses on local structure because farther points result in \nsmaller 𝑝𝑗|𝑖and closer points result in greater 𝑝𝑗|𝑖\nand 𝑛× 𝑛similarity matrix 𝑄in the low dimensional space whose entries are\n𝑞𝑗|𝑖=\n𝑒𝑥𝑝−(𝑦𝑖−𝑦𝑗)2\nσ𝑘≠𝑖𝑒𝑥𝑝−(𝑦𝑖−𝑦𝑘)2 , 𝑞𝑖|𝑖= 0\n42\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 43,
+    "text": "Stochastic Neighbor Embedding\n𝑃𝑖= {𝑝1|𝑖, 𝑝2|𝑖, … , 𝑝𝑛|𝑖} and 𝑄𝑖= {𝑞1|𝑖, 𝑞2|𝑖, … , 𝑞𝑛|𝑖} are the distributions on \nthe neighbors of datapoint 𝑖. The cost function that SNE want to minimize is \nthe Kullback-Leibler divergence over 𝑃and 𝑄\n𝐶= ෍\n𝑖\n𝐾𝐿𝑃𝑖||𝑄𝑖= ෍\n𝑖\n෍\n𝑗\n𝑝𝑗|𝑖log\n𝑝𝑗|𝑖\n𝑞𝑗|𝑖\nUsing far away points to represent similar object will induce more cost than using nearby \npoints to represent dissimilar objects (𝑞𝑗|𝑖= 0.2 for 𝑝𝑗|𝑖= 0.8, 𝑐𝑜𝑠𝑡= 1.11. 𝑞𝑗|𝑖=0.8 for \n𝑝𝑗|𝑖=0.2, 𝑐𝑜𝑠𝑡= −0.277), thus, SNE prefer to preserve local structure\nThe gradient of 𝐶is \n𝛿𝐶\n𝛿𝑦𝑖\n= 2 ෍\n𝑗\n𝑦𝑖−𝑦𝑗\n𝑝𝑗|𝑖−𝑞𝑗|𝑖+ 𝑝𝑖|𝑗−𝑞𝑖|𝑗\n43\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 44,
+    "text": "The problem of SNE\nSNE suffers from the \"crowding problem\". Intuitively, there is less space in a \nlower dimension to accommodate moderately distant data points originally in \nhigher dimension\n44\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 45,
+    "text": "t-distribution\n𝑡-SNE use 𝑡distribution rather than a \nGaussian to compute the similarity in the \nlow-dimensional space to alleviate the \ncrowding problem\n𝑞𝑖𝑗=\n1 + (𝑦𝑖−𝑦𝑗)2 −1\nσ𝑘≠𝑖1 + (𝑦𝑘−𝑦𝑖)2 −1\nThe heavy tails of the 𝑡kernel allow \ndissimilar 𝑥𝑖and 𝑥𝑗to be modeled by 𝑦𝑖\nand 𝑦𝑗that are far apart\nIt also alleviate the outlier problem\n45\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 46,
+    "text": "Symmetry\n𝑡-SNE has a symmetrized version of the SNE cost function with simpler \ngradients \nIn SNE, 𝑝𝑗|𝑖≠𝑝𝑖|𝑗due to perplexity (perplexity is proportional to 𝜎)\nThus, in t-SNE 𝑝𝑖𝑗is defined instead as \n𝑝𝑖𝑗=\n𝑝𝑗|𝑖+ 𝑝𝑖|𝑗\n2𝑛\n, 𝑝𝑖𝑖= 0 and ෍\n𝑖,𝑗\n𝑝𝑖𝑗= 1\nThe gradient of the cost function is:\n𝛿𝐶\n𝛿𝑦𝑖= 4 σ𝑗=1,𝑗≠𝑖\n𝑛\n𝑝𝑖𝑗−𝑞𝑖𝑗𝑞𝑖𝑗𝑦𝑖−𝑦𝑗\n1 + (𝑦𝑖−𝑦𝑗)2 −1\n= 4 σ𝑗≠𝑖𝑝𝑖𝑗𝑞𝑖𝑗𝑍𝑦𝑖−𝑦𝑗−σ𝑗≠𝑖𝑞𝑖𝑗\n2 𝑍𝑦𝑖−𝑦𝑗\n𝑍= ෍\n𝑗≠𝑖\n1 + (𝑦𝑖−𝑦𝑗)2 −1\n46\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://epubs.siam.org/doi/pdf/10.1137/18M1216134"
+    ]
+  },
+  {
+    "page": 47,
+    "text": "t-Stochastic Neighbor Embedding\nInput: Dataset 𝑋= {𝑥1, … , 𝑥𝑛} ∈𝑅𝑝, perplexity 𝑘, exaggeration parameter 𝛼, \nstep size ℎ> 0, number of rounds 𝑇∈𝑁\n1. Initialize 𝑦1\n(0), 𝑦2\n(0), … , 𝑦𝑛\n(0) from the uniform distribution on [−0.01,0.01]2\n2. For 𝑡= 0 to 𝑇−1 do\n𝑍(𝑡) ←෍\n𝑖,𝑗,𝑖≠𝑗\n1 + (𝑦𝑖\n(𝑡) −𝑦𝑗\n(𝑡))2 −1\n𝑦𝑖\n(𝑡+1) ←𝑦𝑖\n(𝑡) + ℎ෍\n𝑗=1,𝑗≠𝑖\n𝑛\n𝛼𝑝𝑖𝑗−𝑞𝑖𝑗\n(𝑡) 𝑞𝑖𝑗\n(𝑡)𝑍(𝑡) 𝑦𝑖\n(𝑡) −𝑦𝑗\n(𝑡)\n𝑖= 1 … 𝑛\n3. Output 2D embedding Y = {𝑦1\n(T), … , 𝑦𝑛\n(T)} ∈𝑅2\n47\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 48,
+    "text": "t-Stochastic Neighbor Embedding\n48\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://dash.gallery/dash-tsne/"
+    ]
+  },
+  {
+    "page": 49,
+    "text": "Parameters\nThere are five parameters that control the optimization of t-SNE and therefore \npossibly the quality of the resulting embedding:\nPerplexity 𝑘\n𝑘is effectively the number of nearest neighbors t-SNE considers when generating the \nconditional probabilities. Larger perplexities lead to more nearest neighbors and less \nsensitive to small structures and generally, is chosen to take values between 5 and 50\n2. Early exaggeration factor\nThe optimization consists of two phases: the early exaggeration phase and the final \noptimization. During early exaggeration, the joint probabilities in the original space will be \nartificially increased by multiplication with a given factor \nThis encourages the algorithm to focus on modeling large 𝑝𝑖𝑗by fairly large 𝑞𝑖𝑗which will \nimprove the convergence speed and larger factors result in larger gaps between natural \nclusters in the data\n49\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 50,
+    "text": "Parameters\n3. Learning rate\nIf it is too low gradient descent will get stuck in a bad local minimum. If it is too high the \nKL divergence will increase during optimization. A heuristic suggested in opt-SNE is to set \nthe learning rate to the sample size divided by the early exaggeration factor\n4. Maximum number of iterations\nUsually high enough and does not need any tuning\n5. Angle (not used in the exact method, but use in the Barnes-Hut t-SNE)\nTradeoff between performance and accuracy. Larger angles imply that we can approximate \nlarger regions by a single point, leading to better speed but less accurate results\nMake sure the same scale is used over all features. Because manifold learning \nmethods are based on a nearest-neighbor search\n50\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://github.com/omiq-ai/Multicore-opt-SNE",
+      "https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf"
+    ]
+  },
+  {
+    "page": 51,
+    "text": "Caveats\nFirst, the perplexity parameter needs to be chosen carefully\nVarying perplexity can give drastically different visualizations that show different structures\nA more direct way to think about perplexity is that it is the continuous analogy to the 𝑘\nnumber of nearest neighbors for which we will preserve distances\n51\nhttps://distill.pub/2016/misread-tsne/\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://distill.pub/2016/misread-tsne/"
+    ]
+  },
+  {
+    "page": 52,
+    "text": "Coordinates after embedding have no meaning. The global structure is not \npreserve and the results obtain in each run may be different\nThis problem is mitigated by initializing points with PCA (using init='pca')\nThe density also not preserved\n52\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.nature.com/articles/s41467-019-13056-x"
+    ]
+  },
+  {
+    "page": 53,
+    "text": "Caveats\nt-SNE does not work well for general dimensionality problem where the \nembedded dimension is greater than 2D or 3D\nO(𝑀𝑛2) computational complexity. But can be reduced to 𝑂(𝑀𝑛log 𝑛) using Barnes-Hut \nt-SNE which only works for the target dimensionality is smaller than 3 and dense dataset. \nThe flt-tsne or UMAP can be use to give linear scalability\nWe can also add new data point into the embedding by parametric t-SNE \nThere are more and more theoretical guarantee for t-SNE. See here and here\nt-SNE is generally very good at capture local structure and best tool for visualization\nNoise may appear to have some structure and cluster may not discover by t-SNE \nGenerally, we do not use t-SNE for clustering purpose\nSee here for more experiments\nUMAP on the other hand can be used as a preprocessing methods\n53\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "http://proceedings.mlr.press/v75/arora18a/arora18a.pdf",
+      "https://epubs.siam.org/doi/pdf/10.1137/18M1216134",
+      "https://github.com/KlugerLab/FIt-SNE",
+      "https://jlmelville.github.io/smallvis/",
+      "https://lvdmaaten.github.io/publications/papers/AISTATS_2009.pdf",
+      "https://opentsne.readthedocs.io/en/latest/tsne_algorithm.html",
+      "https://umap-learn.readthedocs.io/en/latest/",
+      "https://umap-learn.readthedocs.io/en/latest/clustering.html"
+    ]
+  },
+  {
+    "page": 54,
+    "text": "Cluster analysis\nClustering refers to techniques for finding subgroups, or clusters, in a data set. \nWe seek a partition of the data into distinct groups so that the observations \nwithin each group are quite similar to each other\n1.\nOnce a dataset has been clustered, it is possible to measure each instance’s affinity with \neach cluster which reduce to 𝑘dimensional space (feature/representation learning)\n2.\nWe can cluster observations on the basis of the features in order to identify subgroups \namong the observations, or we can cluster features on the basis of the observations in order \nto discover subgroups among the features (feature clustering)\n3.\nFor semi-supervised learning: if you only have a few labels, you could perform clustering \nand propagate the labels to all the instances in the same cluster\n4.\nFor anomaly detection: any instance that has a low affinity to all the clusters is likely to be \nan anomaly\n54\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Cluster_analysis"
+    ]
+  },
+  {
+    "page": 55,
+    "text": "Clustering vs PCA\nBoth clustering and PCA seek to simplify the data via a small number of \nsummaries, but their mechanisms are different:\nPCA looks for a low-dimensional representation of the observations that explains a good \nfraction of the variance\nClustering looks for homogeneous subgroups among the observations\nIn clustering, to make the affinity concrete, we must define what it means for \ntwo or more observations to be similar or different\nIndeed, this is often a domain-specific consideration that must be made based on \nknowledge of the data being studied\nMetric learning may be helpful in this case\n55\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "http://contrib.scikit-learn.org/metric-learn/introduction.html"
+    ]
+  },
+  {
+    "page": 56,
+    "text": "Good EDA clustering algorithm\n1.\nDon’t be wrong: If you are doing EDA you are trying to learn and gain intuitions about \nyour data. In that case it is far better to get no result at all than a result that is wrong. This \nmeans a good EDA clustering algorithm needs to conservative in it’s clustering\n2.\nIntuitive Parameters: If you know little about your data it can be hard to determine what \nvalue or setting a parameter should have. This means parameters need to be intuitive \nenough that you can hopefully set them without having to know a lot about your data\n3.\nStable Clusters: If you run the algorithm twice with a different random initialization, you \nshould expect to get roughly the same clusters back. If you are sampling your data, taking a \ndifferent random sample shouldn’t change much. If you vary the clustering algorithm \nparameters you want the clustering to change in a somewhat stable predictable fashion\n4.\nPerformance: You can sub-sample, but ultimately you need a clustering algorithm that can \nscale to large data sizes. A clustering algorithm isn’t much use if you can only use it if you \ntake such a small sub-sample that it is no longer representative of the data at large!\n56\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 57,
+    "text": "57\nhttps://scikit-learn.org/stable/modules/clustering.html\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://scikit-learn.org/stable/modules/clustering.html"
+    ]
+  },
+  {
+    "page": 58,
+    "text": "Three clustering methods\n1.\nIn 𝐾-means clustering, we seek to partition the observations into a pre-\nspecified number of clusters\n2.\nIn hierarchical clustering, we do not know in advance how many clusters we \nwant; in fact, we end up with a tree-like visual representation of the \nobservations, called a dendrogram, that allows us to view at once the \nclustering obtained for each possible number of clusters, from 1 to 𝑛\n3.\nIn DBSCAN, we do not know in advance how many clusters we want. In \naddition, it doesn’t require that every point be assigned to a cluster and hence \ndoesn’t partition the data, but instead extracts the ‘dense’ clusters and leaves \nsparse background classified as ‘noise’\n58\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 59,
+    "text": "Details of K-means clustering\nA simulated data set with 150 observations in 2-dimensional space. The color \nof each observation indicates the cluster to which it was assigned using the 𝐾-\nmeans clustering algorithm\nThe cluster labels were not used in clustering; instead, they are the outputs of \nthe clustering procedure\n59\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 60,
+    "text": "Details of K-means clustering\nLet 𝐶1, … , 𝐶𝐾denote sets containing the indices of the observations in each \ncluster. These sets satisfy two properties:\n1.\n𝐶1 ∪𝐶2 ∪⋯∪𝐶𝐾= 1, … , 𝑛. In other words, each observation belongs to at \nleast one of the 𝐾clusters\n2.\n𝐶𝑘∩𝐶𝑘′ = 0 for all 𝑘≠𝑘′. In other words, the clusters are non-overlapping: \nno observation belongs to more than one cluster (In contrast to fuzzy \nclustering)\nFor instance, if the 𝑖th observation is in the 𝑘th cluster, then 𝑖∈𝐶𝑘\n60\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Fuzzy_clustering"
+    ]
+  },
+  {
+    "page": 61,
+    "text": "Details of K-means clustering: continued\nThe idea behind K-means clustering is that a good clustering is one for which \nthe within-cluster variation is as small as possible\nThe within-cluster variation for cluster 𝐶𝑘is a measure 𝑊(𝐶𝑘) of the amount by which the \nobservations within a cluster diﬀer from each other\nHence we want to solve the problem\nmin\n𝐶1,…,𝐶𝑘{෍\n𝑘=1\n𝐾\nW(𝐶𝑘)}\nIn words, this formula says that we want to partition the observations into 𝐾clusters such \nthat the total within-cluster variation, summed over all 𝐾clusters, is as small as possible\n61\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 62,
+    "text": "How to deﬁne within-cluster variation?\nTypically we use Euclidean distance\n𝑊(𝐶𝑘)=\n1\n|𝐶𝑘| σ𝑖,𝑖′∈𝐶𝑘σ𝑗=1\n𝑝\n(𝑥𝑖𝑗−𝑥𝑖′𝑗)2,\nWhere |𝐶𝑘| denotes the number of observations in the 𝑘th cluster\nCombining previous two equation gives the optimization problem which \nminimize the following objective function that deﬁnes 𝐾-means clustering,\nmin\n𝐶1,…,𝐶𝑘{෍\n𝑘=1\n𝐾\n1\n|𝐶𝑘| ෍\n𝑖,𝑖′∈𝐶𝑘\n෍\n𝑗=1\n𝑝\n(𝑥𝑖𝑗−𝑥𝑖′𝑗)2}\nThere are 𝐾𝑛ways to partition 𝑛observation into 𝐾clusters!\nFortunately, a very simple algorithm can be shown to provide a local optimum\n62\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 63,
+    "text": "Details of K-means clustering\n63\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 64,
+    "text": "Properties of the Algorithm\nThis algorithm is guaranteed to decrease the value of the objective function at \neach step. Note that (exercise 1)\n1\n|𝐶𝑘| ෍\n𝑖,𝑖′∈𝐶𝑘\n෍\n𝑗=1\n𝑝\n(𝑥𝑖𝑗−𝑥𝑖′𝑗)2 = 2 ෍\n𝑖∈𝐶𝑘\n෍\n𝑗=1\n𝑝\n(𝑥𝑖𝑗−ҧ𝑥𝑘𝑗)2\nWhere ҧ𝑥𝑘𝑗=\n1\n|𝐶𝑘| σ𝑖∈𝐶𝑘𝑥𝑖𝑗is the mean for feature 𝑗in cluster 𝐶𝑘\nHowever it is not guaranteed to give the global minimum\nIt is close related to Gaussian mixture model\n64\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://stats.stackexchange.com/questions/489459/in-cluster-analysis-how-does-gaussian-mixture-model-differ-from-k-means-when-we"
+    ]
+  },
+  {
+    "page": 65,
+    "text": "Example\n65\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.naftaliharris.com/blog/visualizing-k-means-clustering/"
+    ]
+  },
+  {
+    "page": 66,
+    "text": "Details of previous figure\nThe progress of the 𝐾-means algorithm with 𝐾= 3\nTop left: The observations are shown\nTop center: In Step 1 of the algorithm, each observation is randomly assigned to a cluster\nTop right: In Step 2(a), the cluster centroids are computed. These are shown as large \ncolored disks. Initially the centroids are almost completely overlapping because the initial \ncluster assignments were chosen at random\nBottom left: In Step 2(b), each observation is assigned to the nearest centroid\nBottom center: Step 2(a) is once again performed, leading to new cluster centroids\nBottom right: The results obtained after 10 iterations\n66\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 67,
+    "text": "Example: diﬀerent starting values and different 𝐾\n67\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 68,
+    "text": "Details of previous figure\n𝐾-means clustering performed six times on the data from previous ﬁgure with \n𝐾= 3, each time with a diﬀerent random assignment of the observations in \nStep 1 of the 𝐾-means algorithm\nAbove each plot is the value of the objective function\nThree diﬀerent local optima were obtained, one of which resulted in a smaller \nvalue of the objective and provides better separation between the clusters\nThose labeled in red all achieved the same best solution, with an objective \nvalue of 235.8\n68\n",
+    "section": "kmeans",
+    "target_anchor": "w07-detail-kmeans-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 69,
+    "text": "Hierarchical Clustering\n𝐾-means clustering requires us to pre-specify the number of clusters 𝐾. This \ncan be a disadvantage\nHierarchical clustering is an alternative approach which does not require that \nwe commit to a particular choice of 𝐾\nIn this section, we describe bottom-up or agglomerative clustering (cf. divisive clustering). \nThis is the most common type of hierarchical clustering, and refers to the fact that a \ndendrogram is built starting from the leaves and combining clusters up to the trunk\nIt can also be used as an effective feature clustering (dimension reduction) method\n69\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://chih-ling-hsu.github.io/2017/09/01/Divisive-Clustering",
+      "https://scikit-learn.org/stable/modules/generated/sklearn.cluster.FeatureAgglomeration.html"
+    ]
+  },
+  {
+    "page": 70,
+    "text": "Agglomerative (bottom up) Clustering\nStart with each point in it’s own cluster and then, for each cluster, use some \ncriterion to choose another cluster to merge with\nDo this repeatedly until you have only one cluster and you get a hierarchy, or binary tree, \nof clusters branching down to the last layer which has a leaf for each point in the dataset\n70\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 71,
+    "text": "An example dataset\n45 observations generated in 2-\ndimensional space. In reality there \nare three distinct classes, shown in \nseparate colors\nHowever, we will treat these class \nlabels as unknown and will seek to \ncluster the observations in order to \ndiscover the classes from the data\n71\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 72,
+    "text": "Application of hierarchical clustering\n72\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 73,
+    "text": "Details of previous figure\nLeft: Dendrogram obtained from hierarchically clustering the data from \nprevious slide, with complete linkage and Euclidean distance\nCenter: The dendrogram from the left-hand panel, cut at a height of 9 \n(indicated by the dashed line). This cut results in two distinct clusters, shown in \ndifferent colors\nRight: The dendrogram from the left-hand panel, now cut at a height of 5. This \ncut results in three distinct clusters, shown in different colors\nOne single dendrogram can be used to obtain any number of clusters. In \npractice, people often look at the dendrogram and select by eye a sensible \nnumber of clusters, based on the heights of the fusion and the number of \nclusters desired\n73\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 74,
+    "text": "Assumption behind Hierarchical Clustering\nThe term hierarchical refers to the fact that clusters obtained by cutting the \ndendrogram at a given height are necessarily nested within the clusters \nobtained by cutting the dendrogram at any greater height\nSuppose that our observations correspond to a group of men and women, evenly split \namong Americans, Japanese, and French. We can imagine a scenario in which the best \ndivision into two groups might split these people by gender, and the best division into three \ngroups might split them by nationality \nIn this case, the true clusters are not nested, in the sense that the best division into three \ngroups does not result from taking the best division into two groups and splitting up one of \nthose groups\n74\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 75,
+    "text": "Another Example\nAn illustration of how to properly interpret a \ndendrogram with nine observations in two-dimensional \nspace. The raw data on the bottom was used to generate \nthe dendrogram on the top\nObservations 5 and 7 are quite similar to each other, as are \nobservations 1 and 6\nHowever, observation 9 is no more similar to observation 2 \nthan it is to observations 8, 5, and 7, even though observations \n9 and 2 are close together in terms of horizontal distance\nThis is because observations 2, 8, 5; and 7 all fuse with \nobservation 9 at the same height, approximately 1.8\n75\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 76,
+    "text": "Merges in previous example\n76\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 77,
+    "text": "Hierarchical Clustering\nHow did we determine that the cluster {5, 7} should be fused with the cluster \n{8}?\n77\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 78,
+    "text": "Types of Linkage\nLinkage\nDescription\nComplete\nMaximal intercluster dissimilarity (distance). Compute all pairwise dissimilarities \nbetween the observations in cluster A and the observations in cluster B, and record \nthe largest of these dissimilarities\nSingle\nMinimal intercluster dissimilarity. Compute all pairwise dissimilarities between the \nobservations in cluster A and the observations in cluster B, and record the smallest\nof these dissimilarities\nAverage\nMean intercluster dissimilarity. Compute all pairwise dissimilarities between the \nobservations in cluster A and the observations in cluster B, and record the average of \nthese dissimilarities\nCentroid\nDissimilarity between the centroid for cluster A (a mean vector of length 𝑝) and the \ncentroid for cluster B. Centroid linkage can result in undesirable inversions\nWard\nThe difference between the pre and post variance. It is a variance-minimizing \napproach and in this sense is similar to the k-means objective function\n78\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://jbhender.github.io/Stats506/F18/GP/Group10.html"
+    ]
+  },
+  {
+    "page": 79,
+    "text": "Types of Linkage\n79\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 80,
+    "text": "Types of Linkage\nAgglomerative cluster has a “rich get \nricher” behavior that leads to uneven \ncluster sizes\nSingle linkage seems like the worst strategy, \nand Ward gives the most regular sizes\nHowever, the affinity cannot be varied \nwith Ward, thus for non Euclidean metrics, \naverage linkage is a good alternative\nSingle linkage, while not robust to noisy \ndata, can be computed very efficiently. It  \ncan also perform well on non-globular \ndata\n80\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 81,
+    "text": "Density-based spatial clustering of applications with noise\n(DBSCAN) (OPTICS, HDBSCAN)\nDBSCAN is a density based algorithm. It is also the actual clustering \nalgorithm: it doesn’t require that every point be assigned to a cluster and hence \ndoesn’t partition the data, but instead extracts the ‘dense’ clusters and leaves \nsparse background classified as ‘noise’\nA point p is a core point if at least minPts points are within distance ε of it \n(including p). Find the reachable points and clustered all points that are \nreachable\n81\nhttps://en.wikipedia.org/wiki/DBSCAN\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/DBSCAN"
+    ]
+  },
+  {
+    "page": 82,
+    "text": "DBSCAN\n1.\nPicking an arbitrary point and if there are more than minPts points within a \ndistance ε from the point, we consider all of them to as a \"cluster\". We then \nexpand that cluster by checking all of the new points and seeing if they have \nmore than minPts points within a distance ε, growing the cluster recursively\n82\n2.\nEventually, we run out of points to add \nto the cluster. We then pick a new \narbitrary point and repeat the process\n3.\nIt's possible that a point we pick has \nfewer than minPts points in its 𝜀ball, \nand is also not a part of any other cluster. \nThen it is a  \"noise point\" not belonging \nto any cluster\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://www.naftaliharris.com/blog/visualizing-dbscan-clustering/"
+    ]
+  },
+  {
+    "page": 83,
+    "text": "DBSCAN\nDBSCAN can be seen as special (efficient) variant of spectral clustering:\n1.\nClusters don’t need to be globular, and won’t have noise lumped in; varying density \nclusters may cause problems \n2.\nDBSCAN is stable across runs (and to some extent subsampling if you re-parameterize \nwell); stability over varying 𝜀and 𝑚𝑖𝑛𝑃𝑡𝑠is not so good\n3.\nDBSCAN can be very efficient; few clustering algorithms can tackle datasets as large as \nDBSCAN can\n4.\n𝜀is a distance value. In practice, however, this isn’t an especially intuitive parameter, nor \nis it easy to get right\n83\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Spectral_clustering"
+    ]
+  },
+  {
+    "page": 84,
+    "text": "Hierarchical DBSCAN (HDBSCAN)\nThe goal was to allow varying density clusters. It extends DBSCAN by \nconverting it into a hierarchical clustering algorithm\n84\nhttps://axk51013.medium.com/2021%E5%B9%B4%E8%B3%87%E6\n%96%99%E7%A7%91%E5%AD%B8%E5%AE%B6%E5%BF%85%\nE5%82%99%E5%88%86%E7%BE%A4%E6%B3%95hdbscan%E7%\nB0%A1%E4%BB%8B-fba8287e666c\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://axk51013.medium.com/2021%E5%B9%B4%E8%B3%87%E6%96%99%E7%A7%91%E5%AD%B8%E5%AE%B6%E5%BF%85%E5%82%99%E5%88%86%E7%BE%A4%E6%B3%95hdbscan%E7%B0%A1%E4%BB%8B-fba8287e666c"
+    ]
+  },
+  {
+    "page": 85,
+    "text": "Hierarchical DBSCAN (HDBSCAN)\nInstead of taking an 𝜀value and \nminPts, we have a new parameter \nmin_cluster_size which is used to \ndetermine whether points are \n‘falling out of a cluster’ or splitting \nto form two new clusters\nThis trades an unintuitive parameter for \none that is not so hard to choose for \nEDA \n85\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 86,
+    "text": "Choice of dissimilarity measure\nSo far have used Euclidean distance\nAn alternative is correlation-based distance which considers two observations \nto be similar if their features are highly correlated\nCorrelation-based distance focuses on the shapes of observation profiles rather than their \nmagnitudes\nMore metrics\n86\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://scikit-learn.org/stable/modules/metrics.html#metrics"
+    ]
+  },
+  {
+    "page": 87,
+    "text": "Choice of dissimilarity measure\nConsider an online retailer interested in clustering shoppers based on \ntheir past shopping histories\nThe data takes the form of a matrix where the rows are the shoppers and the \ncolumns are the items available for purchase; the elements of the data matrix \nindicate the number of times a given shopper has purchased a given item \nIf Euclidean distance is used, then shoppers who have bought very few items \noverall will be clustered together. This may not be desirable. On the other hand, if \ncorrelation-based distance is used, then shoppers with similar preferences will be \nclustered together\n87\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 88,
+    "text": "Scaling of the variables matters\n88\n",
+    "section": "hclust",
+    "target_anchor": "w07-detail-hclust-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 89,
+    "text": "Practical issues - Validating the clusters obtained\nAny time clustering is performed on a data set we find clusters. But we want to \nknow whether the clusters that have been found represent true subgroups in the \ndata, or whether they are simply a result of clustering the noise \nThis is a hard question to answer. There exist a number of techniques for \nassigning a 𝑝-value to a cluster in order to assess whether there is more \nevidence for the cluster than one would expect due to chance. However, there \nhas been no consensus on a single best approach\nMore details can be found in ESL\n89\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://stats.stackexchange.com/questions/723/how-can-i-test-whether-my-clustering-of-binary-data-is-significant"
+    ]
+  },
+  {
+    "page": 90,
+    "text": "Practical issues\nBoth 𝐾-means and hierarchical clustering will assign each observation to a \ncluster. However, sometimes this might not be appropriate\nSuppose a small subset of the observations are quite different from each other and from all \nother observations. The clusters found may be heavily distorted due to the presence of \noutliers that do not belong to any cluster \nMixture models or DBSCAN are an attractive approach for accommodating the presence \nof such outliers\nClustering methods generally are not very robust to perturbations to the data. \nFor instance, suppose that we cluster 𝑛observations, and then cluster the \nobservations again after removing a subset of the 𝑛observations at random. \nOne would hope that the two sets of clusters obtained would be quite similar, \nbut often this is not the case!\n90\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 91,
+    "text": "Practical issues\nClustering can be a very useful and valid statistical tool if used properly \nWe mentioned that small decisions in how clustering is performed\nSuch as how the data are standardized and what type of linkage is used, can have a large \neffect on the results \nTherefore, we recommend performing clustering with different choices of these parameters, \nand looking at the full set of results in order to see what patterns consistently emerge\nWe must be careful about how the results of a clustering analysis are reported. These \nresults should not be taken as the absolute truth about a data set. Rather, they should \nconstitute a starting point for the development of a scientific hypothesis and further study, \npreferably on an independent data set\n91\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 92,
+    "text": "Clustering for categorical data\n1.\nCluster using e.g., k-means or HDBSCAN, based on only the continuous \nfeatures!\n2.\nEncode the categorical data before clustering with e.g., k-means or \nHDBSCAN\n3.\nUse k-prototypes to directly cluster the mixed data\nSee here\n4.\nUse factor analysis of mixed data to reduce the mixed data to a set of derived \ncontinuous features which can then be clustered\n92\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://github.com/MaxHalford/prince#factor-analysis-of-mixed-data-famd",
+      "https://github.com/nicodv/kmodes",
+      "https://www.nature.com/articles/s41598-021-83340-8"
+    ]
+  },
+  {
+    "page": 93,
+    "text": "Conclusions\nUnsupervised learning is important for understanding the variation and \ngrouping structure of a set of unlabeled data, and can be a useful pre-processor \nfor supervised learning  \nIt is intrinsically more difficult than supervised learning because there is no \ngold standard (like an outcome variable) and no single objective (like test set \naccuracy)\nIt is an active field of research, with many recently developed tools. See The \nElements of Statistical Learning, chapter 14\n93\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 94,
+    "text": "Conclusions\nGoing further\nManifold learning\nSelf-supervised learning\nDeep learning\nGraphical models\nBayesian data analysis\n…\nPractical topics (https://phonchi.github.io/nsysu-math608/materials/)\nData cleaning, feature engineering\nDatabase and SQL\nModel serving …\nPretrained and transfer learning\nHigh-performance and distributed computing\n94\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://phonchi.github.io/nsysu-math608/materials/",
+      "https://phonchi.github.io/nsysu-math608/materials/)"
+    ]
+  },
+  {
+    "page": 95,
+    "text": "Appendix\n95\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 96,
+    "text": "Additional topics\nTensor decomposition\nhttp://tensorly.org/stable/index.html\nManifold learning\nhttps://scikit-learn.org/stable/modules/manifold.html\nSpectral clustering \nhttps://jlmelville.github.io/smallvis/spectral.html\nMixture models\nhttps://cs229.stanford.edu/syllabus.html\nhttps://cs229.stanford.edu/notes2021fall/cs229-notes7b.pdf\nVariational Bayesian Gaussian Mixture\n96\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "http://tensorly.org/stable/index.html",
+      "https://cs229.stanford.edu/notes2021fall/cs229-notes7b.pdf",
+      "https://cs229.stanford.edu/syllabus.html",
+      "https://jlmelville.github.io/smallvis/spectral.html",
+      "https://scikit-learn.org/stable/modules/manifold.html",
+      "https://scikit-learn.org/stable/modules/mixture.html#variational-bayesian-gaussian-mixture"
+    ]
+  },
+  {
+    "page": 97,
+    "text": "Self-supervised learning\nhttps://speech.ee.ntu.edu.tw/~hylee/ml/ml2021-course-data/bert_v8.pdf\n97\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-manifold-extensions",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://speech.ee.ntu.edu.tw/~hylee/ml/ml2021-course-data/bert_v8.pdf"
+    ]
+  },
+  {
+    "page": 98,
+    "text": "More on PCA – Connection with SVD and EVD\nIn practice, we will often scale data before PCA \nWhiten data matrix (identity covariance matrix)\nXVΛ−1/2\nZCA (Close to original data (often not reduce dimension))\nXVΛ−1/2𝑉𝑇\n98\n",
+    "section": "scaling",
+    "target_anchor": "w07-detail-scaling-advanced",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 99,
+    "text": "Perplexity, a smooth measure of the # of neighbors\nTo choose the appropriate 𝜎𝑖\n2, SNE performs a binary search for the value of 𝜎𝑖\nthat makes the entropy of the distribution over neighbors equal to log2(𝑘), \nwhere 𝑘is the hyper-parameter perplexity or the effective number of local \nneighbors. The perplexity is defined as:\n𝑘= 2𝐻(𝑃𝑖), where 𝐻𝑃𝑖= −σ𝑗𝑝𝑗|𝑖log2 𝑝𝑗|𝑖\nAnother consequence is that since the Gaussian kernel is used, the probability of being a \nneighbor decreases sharply for any point 𝑥𝑗that lies outside of the neighborhood of a point \n𝑥𝑖, and the neighborhood is determined exactly by 𝜎𝑖\n2\n99\n",
+    "section": "manifold",
+    "target_anchor": "w07-detail-tsne-algorithm",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 100,
+    "text": "Clustering analysis - Example\nFor instance, suppose that we have a set of 𝑛observations, each with 𝑝\nfeatures\nThe 𝑛observations could correspond to tissue samples for patients with breast \ncancer, and the 𝑝features could correspond to measurements collected for each \ntissue sample; these could be clinical measurements, such as tumor stage or grade, \nor they could be gene expression measurements\nWe may have a reason to believe that there is some heterogeneity among the 𝑛\ntissue samples; for instance, perhaps there are a few different unknown subtypes of \nbreast cancer\nClustering could be used to find these subgroups. This is an unsupervised problem \nbecause we are trying to discover structure—in this case, distinct clusters—on the \nbasis of a data set\n100\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-nci60-lab",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 101,
+    "text": "Mean shift\nIf you don’t want to have to specify the number of clusters. It is centroid based, \nlike K-Means, but can return clusters instead of a partition\nThe underlying idea of the Mean Shift algorithm is that there exists some \nprobability density function from which the data is drawn, and tries to place \ncentroids of clusters at the maxima of that density function\nIt approximates this via kernel density estimation techniques, and the key \nparameter is then the bandwidth of the kernel used\n101\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 102,
+    "text": "Mean shift\n1.\nWe begin with a circular sliding window centered at a point 𝑥𝑖(randomly \nselected) and having radius 𝑟as the kernel.\n2.\nGiven a candidate centroid 𝑥𝑖for iteration 𝑡, the candidate is updated \naccording to the following equation:\n1.\nThe means are shifted to the high density region \n3.\nWe continue shifting the sliding window according to the mean until there is \nno direction at which a shift can accommodate more points inside the kernel\n4.\nThis process of steps 1 to 3 is done with many sliding window\n102\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 103,
+    "text": "Example\n103\nhttps://medium.com/temp08050309-devpblog/cv-7-segmentation-as-clustering-k-means-\nmixture-of-gaussians-mean-shift-fe94d39bd2fc\nhttps://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-\na36d136ef68\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-density",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": [
+      "https://medium.com/temp08050309-devpblog/cv-7-segmentation-as-clustering-k-means-mixture-of-gaussians-mean-shift-fe94d39bd2fc",
+      "https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-a36d136ef68"
+    ]
+  },
+  {
+    "page": 104,
+    "text": "Clustering as a preprocessing method\n104\nLongitude\nLatitude\nCluster\nD_C0 …\nD_C3\n-93.619\n42.054\n3\n1.25\n5.24\n-93.619\n42.053\n3\n3.56\n3.33\n-93.638\n42.060\n1\n5.21\n0.89\n-93.602\n41.988\n0\n7.83\n4.31\nClustering can be an efficient approach to \ndimensionality reduction, in particular as a \npreprocessing step before a supervised learning \nalgorithm\nCluster labels as a feature\nThe motivating idea for adding cluster labels is \nthat the clusters will break up complicated \nrelationships across features into simpler \nchunks. Our model can then just learn the \nsimpler chunks one-by-one instead having to \nlearn the complicated whole all at once\nDistance to cluster centers can also be good \nfeatures\nFeature agglomeration by pooling function\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 105,
+    "text": "Clustering for semi-supervised learning\nAnother use case for clustering is in semi-supervised learning, when we have \nplenty of unlabeled instances and very few labeled instances\nWe can first cluster all the data points and ask for the label of the images that are most \nclose to the cluster center\nUsing this images to train classifier may be much better than random instances \nWe can also propagated the labels to all the other instances in the same cluster. This is \ncalled label propagation\n105\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  },
+  {
+    "page": 106,
+    "text": "Practical issues\nShould the observations or features first be standardized in some way? For \ninstance, maybe the variables should be centered to have mean zero and scaled \nto have standard deviation one. What dissimilarity measure should be used?\nIn the case of hierarchical clustering,\nWhat type of linkage should be used?\nHow many clusters to choose? (in both 𝐾-means or hierarchical clustering). \nDifficult problem. No agreed-upon method. See Elements of Statistical \nLearning, chapter 13 for more details\n106\n",
+    "section": "practical",
+    "target_anchor": "w07-detail-mixed-clustering",
+    "disposition": "lecture topic explained in existing and expanded teaching detail",
+    "urls": []
+  }
+]

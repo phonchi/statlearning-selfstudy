@@ -829,7 +829,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   
 <h3>主成分的完整條件</h3><p>以下 $X\in\mathbb R^{n\times p}$ 的每欄已置中，$n>1$，$S=X^TX/(n-1)$。第 $m$ 個方向需解 $\max_v v^TSv$，限制 $v^Tv=1$ 且與前面方向正交。依特徵值由大到小排列 $Sv_m=\lambda_mv_m$，得分 $z_m=Xv_m$ 的變異是 $\lambda_m$，不同得分不相關。</p><p>有非零變異的主成分數為 $r=\operatorname{rank}(X)\le\min(n-1,p)$。相異特徵值的方向僅差正負號；重複特徵值的特徵空間內，可以旋轉成不同的正交基底。若在第 $M$ 與第 $M+1$ 個特徵值之間有間隔，前 $M$ 維子空間唯一；若截斷點落在重根中，最佳子空間也可能不唯一。</p><p>來源：<a href="https://rich-d-wilkinson.github.io/MATH3030/4.2-pca-a-formal-description-with-proofs.html" target="_blank" rel="noopener">PCA 的形式化定義與證明</a>。</p>
 <details class="qa-item proof" id="w07proof-pca"><summary>證明：最大變異、特徵向量、正交與秩上限</summary>
-<div class="qa-a"><p>限制單位長度的 Lagrangian 是 $\mathcal L(v,\lambda)=v^TSv-\lambda(v^Tv-1)$。微分為 $2Sv-2\lambda v=0$，所以駐點滿足特徵方程。駐點不全是最大值；令 $S=V\Lambda V^T$、$v=Va$、$\sum_ja_j^2=1$，則 $v^TSv=\sum_j\lambda_ja_j^2\le\lambda_1$，取第一特徵向量達到上界。限制與前 $m-1$ 個方向正交後，同理得到第 $m$ 個特徵值。</p><p>得分共變異數為 $z_j^Tz_k/(n-1)=v_j^TSv_k=\lambda_kv_j^Tv_k$，在 $j\ne k$ 時為 0。反過來，和正特徵值方向的得分不相關才迫使方向正交；零變異得分不能用相關係數反推方向。置中使 $\mathbf1^TX=0$，所以列空間至多 $n-1$ 維，亦至多 $p$ 維，證得秩上限。</p></div></details></div></details><p>下面這個元件就是把「找最大變異方向」這件事用手轉一遍：拖動角度，看投影後的變異數怎麼變。</p>
+<div class="qa-a"><p>限制單位長度的 Lagrangian 是 $\mathcal L(v,\lambda)=v^TSv-\lambda(v^Tv-1)$。微分為 $2Sv-2\lambda v=0$，所以駐點滿足特徵方程。駐點不全是最大值；令 $S=V\Lambda V^T$、$v=Va$、$\sum_ja_j^2=1$，則 $v^TSv=\sum_j\lambda_ja_j^2\le\lambda_1$，取第一特徵向量達到上界。限制與前 $m-1$ 個方向正交後，同理得到第 $m$ 個特徵值。</p><p>得分共變異數為 $z_j^Tz_k/(n-1)=v_j^TSv_k=\lambda_kv_j^Tv_k$，在 $j\ne k$ 時為 0。反過來，和正特徵值方向的得分不相關才迫使方向正交；零變異得分不能用相關係數反推方向。置中使 $\mathbf1^TX=0$，所以列空間至多 $n-1$ 維，亦至多 $p$ 維，證得秩上限。</p></div></details><!-- lecture-alignment-ch12:w07-detail-pca-advanced:257025491d1f -->
+<h3>把係數、得分與資料形狀連在一起</h3>
+<p>每列是一筆觀測、每欄是一個特徵時，$X$ 是 $n\times p$，一個 loading $v$ 有 $p$ 個係數，投影 $z=Xv$ 則有 $n$ 個得分。USArrests 有 50 個州、4 個變數，因此每個方向有 4 個負荷量，每個方向上有 50 個州的得分。得分對應觀測，負荷量對應特徵，兩者的長度與用途不同。</p>
+<p>置中後 $\operatorname{Var}(Xv)=v^TSv$，限制 $v^Tv=1$ 讓不同方向在同一長度下比較。把 $v$ 展開成共變異數矩陣的正交特徵向量 $v=\sum_j a_je_j$，就有 $v^TSv=\sum_j a_j^2\lambda_j$ 且 $\sum_j a_j^2=1$；這是特徵值的加權平均，最大值自然是最大的特徵值。第二方向再限制與第一方向正交，依序找下一個。</p>
+<p>特徵向量正交給 $\operatorname{Cov}(Xv_j,Xv_k)=v_j^TSv_k=0$。這是「不相關」，不必然是統計獨立；要推到獨立還需要額外分布條件，例如聯合 Gaussian。置中使各欄和為零，所以 rank 最多 $n-1$；若另有線性相依，實際非零主成分還會更少。</p>
+<p>若某特徵值重複，對應空間中的任一正交基都可用。此時不唯一的不只正負號，整個重複特徵值子空間都可旋轉；仍可比較該空間的投影與累積解釋變異。</p>
+<p>閱讀：<a href="https://rich-d-wilkinson.github.io/MATH3030/4.2-pca-a-formal-description-with-proofs.html" target="_blank" rel="noopener">PCA 的正式推導</a>、<a href="https://scikit-learn.org/1.6/modules/decomposition.html#pca" target="_blank" rel="noopener">PCA 與 SVD 的實作</a>。</p></div></details><p>下面這個元件就是把「找最大變異方向」這件事用手轉一遍：拖動角度，看投影後的變異數怎麼變。</p>
 
 <div class="viz-layout" data-provenance="simulation" data-source-note="固定種子 7071 的二維橢圓常態模擬；投影變異由目前角度即時計算。">
   <div>
@@ -930,7 +936,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     </div>
     <div class="info-card">
       <div class="ic-title">為什麼有些州沒有標字 <span class="ic-badge">圖 12.1</span></div>
-      50 個州全部標字會擠成一團。這裡只標課本正文點名的八個：CA／NV／FL（犯罪率高）、ND／MS（低）、HI（都市化高但犯罪低）、IN（兩者都接近平均）、AK。其餘州以點呈現。<strong>這張 biplot 用來呈現整體結構。</strong>
+      50 個州全部標字會擠成一團。這裡只標課本正文點名的八個：CA／NV／FL（犯罪率高）、ND（犯罪率低）、MS（都市化低，Murder／Assault 偏高）、HI（都市化高但犯罪低）、IN（兩者都接近平均）、AK。其餘州以點呈現。<strong>這張 biplot 用來呈現整體結構。</strong>
     </div>
   </div>
 </div>
@@ -944,6 +950,14 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-options" id="qBiOptions"><div class="quiz-opt" data-correct="true" data-fb="對。箭頭座標呈現各變數在主成分中的係數；這是解讀主成分組成的依據。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(A)</span> PC1 主要綜合犯罪程度，PC2 的組成以都市化程度最突出</div><div class="quiz-opt" data-correct="false" data-fb="不對。這張圖使用標準化後的資料，負荷量表示主成分線性組合的係數。原始變異數需回原資料計算。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(B)</span> UrbanPop 的原始變異數一定比其他變數大</div><div class="quiz-opt" data-correct="false" data-fb="不對。本圖的箭頭夾角不能直接換成相關係數；即使相關係數為 0，也不代表獨立。" onclick="quizCheck('qBi', this)"><span class="opt-letter">(C)</span> 只要兩支負荷量箭頭垂直，就能證明兩個原始變數獨立</div></div>
   <div class="quiz-feedback" id="qBiFeedback"></div>
 </div>
+<details class="qa-item reading-detail" id="w07-detail-biplot-reading"><summary>USArrests 的 biplot：點與箭頭各在回答什麼？</summary>
+<div class="detail-body">
+<p>圖上的州是觀測；箭頭是變數。觀測點的 PC1／PC2 座標是得分，描述每個州在兩個方向的位置；箭頭的座標由負荷量決定，描述原變數如何組成這兩個方向。講義的圖用兩套刻度呈現，因此不能直接把箭頭尖端與州名的距離當成統計距離。</p>
+<p>PC1 的三個犯罪變數負荷方向相近，可以理解為共同的犯罪強度方向；PC2 額外表達城市人口比例與犯罪變數之間的差異。沿某一箭頭方向的州，通常在該變數的標準化值較高，但這是前兩個方向的投影摘要，不是每一欄原值的完整重建。</p>
+$$\hat x_{ij}^{(2)}=z_{i1}v_{j1}+z_{i2}v_{j2}.$$
+<p>要回到原單位，還要乘回該欄標準差並加上平均值。只有在採用合適的 biplot 縮放且兩維保留足夠資訊時，箭頭角度才可近似反映相關性；不能忽略圖的縮放方式與未顯示主成分。</p>
+<p>Lab 對各欄先標準化，再用 <code>fit_transform</code> 得得分、用 <code>components_.T</code> 讀負荷量。軟體可能把某個方向整體翻號，應同時翻轉得分及箭頭來比較，不能只翻一邊。</p>
+<p>資料：<a href="https://islp.readthedocs.io/en/latest/datasets/USArrests.html" target="_blank" rel="noopener">USArrests 的欄位意義</a>。</p></div></details>
 </section>
 <section id="lowrank">
 <!-- GEN:BEGIN sec:lowrank -->
@@ -982,7 +996,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <h3>最佳低秩近似的解與不唯一性</h3><p>若 $X=UDV^T$，奇異值 $d_1\ge\cdots\ge d_r>0$，最佳 rank 不超過 $M$ 的近似可取 $X_M=U_MD_MV_M^T=XV_MV_M^T$，平方誤差為 $\sum_{j>M}d_j^2$。這個近似的一種因子表示是得分 $A=U_MD_M$ 與負荷量 $B=V_M$；但任意可逆矩陣 $R$ 給出的 $AR$、$BR^{-T}$ 也有相同乘積，不能說不加限制的因子最佳化只會產生那一組 PCA 因子。</p><p>若矩陣全為 0，總平方和為 0，PVE 是 $0/0$，不應硬報成 0 或 1。大型資料可用 randomized SVD：取隨機測試矩陣 $\Omega$，對 $X\Omega$ 正交化得 $Q$，再分解較小的 $Q^TX$，最後把左因子乘回 $Q$；這是近似法，需記錄種子、過取樣與誤差。</p>
 <details class="qa-item proof" id="w07proof-lowrank"><summary>證明：投影誤差、截斷 SVD 與 PVE</summary>
-<div class="qa-a"><p>對任意正交的 $V_M$，分解 $X=XV_MV_M^T+X(I-V_MV_M^T)$，兩部分 Frobenius 內積為 0。因此 $\|X-XV_MV_M^T\|_F^2=\|X\|_F^2-\|XV_M\|_F^2$；最大化投影變異即最小化重建誤差。任意 rank-$M$ 矩陣 $Y$ 的行空間位於某個至多 $M$ 維空間 $W$，對固定 $W$ 最小誤差的矩陣是 $X$ 到 $W$ 的正交投影。再在所有 $W$ 中最大化保留的平方長度，特徵值排序給出前 $M$ 個右奇異向量，誤差便是其餘奇異值平方和。最後除以 $\|X\|_F^2=\sum_jd_j^2$，得到累積 PVE 與 $1-\operatorname{RSS}_M/\operatorname{TSS}$ 的等價式。</p></div></details></div></details><div class="info-box">
+<div class="qa-a"><p>對任意正交的 $V_M$，分解 $X=XV_MV_M^T+X(I-V_MV_M^T)$，兩部分 Frobenius 內積為 0。因此 $\|X-XV_MV_M^T\|_F^2=\|X\|_F^2-\|XV_M\|_F^2$；最大化投影變異即最小化重建誤差。任意 rank-$M$ 矩陣 $Y$ 的行空間位於某個至多 $M$ 維空間 $W$，對固定 $W$ 最小誤差的矩陣是 $X$ 到 $W$ 的正交投影。再在所有 $W$ 中最大化保留的平方長度，特徵值排序給出前 $M$ 個右奇異向量，誤差便是其餘奇異值平方和。最後除以 $\|X\|_F^2=\sum_jd_j^2$，得到累積 PVE 與 $1-\operatorname{RSS}_M/\operatorname{TSS}$ 的等價式。</p></div></details><!-- lecture-alignment-ch12:w07-detail-lowrank-advanced:30e8d9981074 -->
+<h3>SVD 如何一次給出方向、得分與誤差？</h3>
+<p>把中心化矩陣寫成 $X=UDV^T$。$V$ 的欄是特徵方向，$XV=UD$ 是得分，$D$ 的非負對角元素是奇異值。numpy 的第三個回傳值其實是 $V^T$；Lab 把它命名為 <code>V</code>，所以讀程式時必須以運算形狀判斷，不能只靠變數名稱。</p>
+<p>取前 $M$ 個方向，重建 $X_M=U_MD_MV_M^T$；因為不同奇異方向正交，捨棄第 $M+1$ 個以後的方向帶來平方誤差 $\sum_{m>M}d_m^2$。因此增加 rank 會降低完整資料上的重建誤差，但沒有自動告訴我們哪個方向是訊號、哪個是雜訊。</p>
+<p>講義把共變異數除以 $n$，sklearn 的 <code>explained_variance_</code> 則使用 $n-1$。兩者的特徵向量相同，特徵值相差比例 $n/(n-1)$；解釋變異比例不受共同分母影響。比較來源時應先對齊分母，而不是把正常尺度差異判成錯誤。</p>
+<p>資料很大時，randomized SVD 先以隨機投影抓住主要子空間，再在較小矩陣做分解；oversampling 與 power iteration 改善近似品質。它是在近似主要奇異方向，不能宣稱任意近似設定都得到精確 SVD。</p>
+<p>閱讀：<a href="https://github.com/fastai/numerical-linear-algebra" target="_blank" rel="noopener">講義連結的數值線性代數教材</a>、<a href="https://scikit-learn.org/1.6/modules/decomposition.html#pca-using-randomized-svd" target="_blank" rel="noopener">Randomized PCA</a>。</p></div></details><div class="info-box">
   <span class="info-label">實務上怎麼算：SVD</span>
   求主成分不必真的做特徵分解。把置中後的資料矩陣做
   <strong>奇異值分解</strong>（singular value decomposition, SVD）
@@ -1083,7 +1103,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <div class="quiz-feedback" id="qPveFeedback"></div>
 </div>
 <details class="qa-item reading-detail" id="w07-detail-pca-rank-selection"><summary>深入選維度：驗證目標與資訊準則</summary>
-<div class="detail-body"><h3>用什麼目的選 PCA 的維度</h3><p>描述資料可用累積 PVE 和 scree plot 提供讀圖依據；低變異方向仍可能含預測訊號，所以不能只靠 PVE 替監督式任務選維度。若目的是預測新觀測中的缺失欄位，可遮住格子做交叉驗證；若只是把完整新資料投影再重建，加入更多方向通常仍會降低重建誤差，這個目標不會自動懲罰過大的 rank。</p><p>高維 PCA 的資訊準則還需一個對訊號特徵值與噪聲的模型。講義連結的廣義資訊準則研究在高維條件下調整 rank 選擇懲罰；不能把普通回歸的 AIC 自由度原封不動套入。這是額外的建模選擇，沒有「PVE 過某固定百分比就一定正確」的規則。</p></div></details>
+<div class="detail-body"><h3>用什麼目的選 PCA 的維度</h3><p>描述資料可用累積 PVE 和 scree plot 提供讀圖依據；低變異方向仍可能含預測訊號，所以不能只靠 PVE 替監督式任務選維度。若目的是預測新觀測中的缺失欄位，可遮住格子做交叉驗證；若只是把完整新資料投影再重建，加入更多方向通常仍會降低重建誤差，這個目標不會自動懲罰過大的 rank。</p><p>高維 PCA 的資訊準則還需一個對訊號特徵值與噪聲的模型。講義連結的廣義資訊準則研究在高維條件下調整 rank 選擇懲罰；不能把普通回歸的 AIC 自由度原封不動套入。這是額外的建模選擇，沒有「PVE 過某固定百分比就一定正確」的規則。</p><!-- lecture-alignment-ch12:w07-detail-pca-rank-selection:e5b40eabac38 -->
+<h3>「選幾維」先問要保留什麼</h3>
+<p>若只想描述資料，可先看每個方向的 PVE、累積 PVE 與 scree plot 的轉折，再檢查負荷量是否有可解釋的意義。若目的是分類或迴歸，rank 應依下游驗證誤差選；小變異方向可能含關鍵的回應訊號。</p>
+<p>若目的是補未見格子，則可以在原本已觀測的格子中留出一部分，只用其餘格子擬合，再計算留出格子的預測誤差。完整新資料的重建誤差會隨 rank 增加而下降，光做這種評分常把 rank 推到最大，並不能取代「遮住格子後預測」的問題。</p>
+<p>講義連結的高維資訊準則針對特徵值的訊號／雜訊模型設計懲罰；它不是把迴歸 AIC 的參數數量直接搬到 PCA。若沒有採用該論文的模型條件，就不能只用其公式宣稱選到真實維度。</p>
+<p>閱讀：<a href="https://link.springer.com/article/10.1007/s00362-021-01276-7" target="_blank" rel="noopener">講義列出的高維 PCA 選維度研究</a>。</p></div></details>
 </section>
 <section id="scaling">
 <!-- GEN:BEGIN sec:scaling -->
@@ -1117,7 +1142,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>情況</th><th>要不要標準化</th><th>為什麼</th></tr></thead>
-  <tbody><tr><td>變數單位不同（USArrests、房價資料）</td><td><strong>要</strong></td><td>否則 PC1 只是「數字最大的那個變數」</td></tr><tr><td>同單位但量級差很多（收入 vs 年齡）</td><td><strong>要</strong></td><td>同上，量級差就是單位差的變形</td></tr><tr><td>同單位、尺度差異有意義（基因表現、畫素）</td><td>看情況</td><td>縮放會把真實的變異差異抹掉</td></tr><tr><td>已經是比例或分數（0–1 之間）</td><td>通常不用</td><td>尺度已經可比</td></tr><tr><td>變數是 0/1 指示變數</td><td>小心</td><td>標準化會放大罕見類別，考慮別的方法</td></tr></tbody>
+  <tbody><tr><td>變數單位不同（USArrests、房價資料）</td><td><strong>要</strong></td><td>否則數值變異大的欄位可能主導主成分</td></tr><tr><td>同單位但變異差很多</td><td>看情況</td><td>先判斷變異差異是要保留的訊號，還是需要調整的權重</td></tr><tr><td>同單位、尺度差異有意義（基因表現、畫素）</td><td>看情況</td><td>縮放會把真實的變異差異抹掉</td></tr><tr><td>已經是比例或分數（0–1 之間）</td><td>看情況</td><td>相同範圍不保證相同變異，依分析目的決定</td></tr><tr><td>變數是 0/1 指示變數</td><td>小心</td><td>標準化會放大罕見類別，考慮別的方法</td></tr></tbody>
 </table></div>
 
   <h3>二、符號：翻掉不影響任何結論</h3>
@@ -1139,7 +1164,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
     <div class="qa-a"><p>因為最佳化問題只約束了「方向」與「長度」，沒有約束「朝哪一邊」。$\phi_1$ 與 $-\phi_1$ 定義同一條直線；投影後 $Z_1$ 與 $-Z_1$ 的變異數相同，所以兩者都是最佳解，套件回傳哪一個取決於底層的 LAPACK 實作。同一份資料用 <code>numpy.linalg.svd</code> 與 <code>sklearn</code> 的 <code>PCA()</code> 跑，就可能拿到整組相反的符號（lab 範例 與 51 就差在這裡）。</p><p><strong>不影響任何實質結論</strong>，但會影響你「怎麼說」。如果 PC1 的負荷量全是正的，你會說「PC1 高 = 犯罪率高」；符號翻掉之後，同一個主成分要說成「PC1 高 = 犯罪率低」。得分也一起翻，所以哪些州靠在一起、哪些州離得遠——完全一樣。</p><p>實務上的兩個建議：（1）自己定一個約定並寫在報告裡，例如「讓負荷量總和為正」或「讓某個指標變數的負荷量為正」；（2）比較兩次分析的結果時，先對齊符號再比，不然會誤以為結果不穩定。</p></div>
   </details>
   <details class="qa-item"><summary>Q：為什麼 PCA 之前幾乎一定要標準化？什麼情況下不該標準化？</summary>
-    <div class="qa-a"><p>因為 PCA 的目標函數是變異數，而變異數的大小跟單位有關。USArrests 的 Assault 變異數 6945、Murder 只有 18.97，不標準化的話 PC1 的負荷量在 Assault 上是 0.995、在 Murder 上是 0.042——第一主成分退化成「Assault 換個名字」，PCA 什麼都沒做。</p><p>更關鍵的是：這個結果會隨著單位改變。把 Assault 的單位從「每十萬人」改成「每百人」，它的變異數變成百萬分之一，立刻讓位給 UrbanPop。<strong>結論不該取決於資料當初是用什麼單位記錄的</strong>，所以這裡先標準化，讓各變數以相同尺度參與分析。</p><p>不該標準化的情形：變數同單位、而且變異數的差異本身是你想保留的資訊。基因表現量、影像的畫素值、同一種感測器的多個通道都屬於這一類。還有一種情形是資料已經是比例（每欄都在 0 到 1 之間），再標準化沒什麼好處。判斷的準則很簡單：<strong>問自己「如果某一欄乘上 1000，我希望結論改變嗎？」</strong>不希望就標準化。</p></div>
+    <div class="qa-a"><p>因為 PCA 的目標函數是變異數，而變異數的大小跟單位有關。USArrests 的 Assault 變異數 6945、Murder 只有 18.97，不標準化的話 PC1 的負荷量在 Assault 上是 0.995、在 Murder 上是 0.042——第一主成分退化成「Assault 換個名字」，PCA 什麼都沒做。</p><p>更關鍵的是：這個結果會隨著單位改變。把 Assault 的單位從「每十萬人」改成「每百人」，它的變異數變成百萬分之一，立刻讓位給 UrbanPop。<strong>結論不該取決於資料當初是用什麼單位記錄的</strong>，所以這裡先標準化，讓各變數以相同尺度參與分析。</p><p>不該標準化的情形：變數同單位、而且變異數的差異本身是你想保留的資訊。基因表現量、影像的畫素值、同一種感測器的多個通道都屬於這一類。即使每欄都在 0 到 1 之間，變異數也可能不同；是否標準化仍要看這些變異差異是否有分析上的意義，不能只看範圍。判斷的準則很簡單：<strong>問自己「如果某一欄乘上 1000，我希望結論改變嗎？」</strong>不希望就標準化。</p></div>
   </details>
 </div>
 
@@ -1157,7 +1182,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <h3>白化與零特徵值</h3><p>只取 $r$ 個正特徵值方向，$Z=XV_r\Lambda_r^{-1/2}$ 滿足 $Z^TZ/(n-1)=I_r$。ZCA 乘回 $V_r^T$ 後回到原座標；若 $r&lt;p$，其共變異數是投影矩陣 $V_rV_r^T$，不是 $I_p$。零特徵值不能取倒平方根，小特徵值則可截斷或正則化，並明說這不再是所有方向的精確白化。</p>
 <details class="qa-item proof" id="w07proof-whitening"><summary>證明：白化的共變異數</summary>
-<div class="qa-a"><p>$\operatorname{Cov}(Z)=\Lambda_r^{-1/2}V_r^T\{X^TX/(n-1)\}V_r\Lambda_r^{-1/2}=I_r$。ZCA 結果 $ZV_r^T$ 的共變異數為 $V_rI_rV_r^T$；只有完整滿秩且 $V_r$ 為方形正交矩陣時才是 $I_p$。這區分了去相關、等變異與原座標表示。</p></div></details></div></details>
+<div class="qa-a"><p>$\operatorname{Cov}(Z)=\Lambda_r^{-1/2}V_r^T\{X^TX/(n-1)\}V_r\Lambda_r^{-1/2}=I_r$。ZCA 結果 $ZV_r^T$ 的共變異數為 $V_rI_rV_r^T$；只有完整滿秩且 $V_r$ 為方形正交矩陣時才是 $I_p$。這區分了去相關、等變異與原座標表示。</p></div></details><!-- lecture-alignment-ch12:w07-detail-scaling-advanced:556a2680a13e -->
+<h3>標準化、PCA 白化與 ZCA 白化要分清楚</h3>
+<p>標準化逐欄減平均、除標準差，讓每個原變數有單位變異，但不會消除變數間的相關。PCA 白化先旋轉到主成分，再以特徵值平方根縮放每個非零方向，所以得分座標的共變異數成為單位矩陣。ZCA 則把這些白化座標旋轉回原座標系；通常保留原特徵數，卻已改變各方向尺度。</p>
+<p>白化會放大小特徵值方向，連同其中的雜訊也可能放大。特徵值為零時不能直接取倒數；需限制在非零子空間或加入明確的正則化。維度縮減後再做 ZCA 所得矩陣的原座標共變異數是投影矩陣，不是完整的 $p\times p$ 單位矩陣。</p>
+<p>USArrests 的欄位單位與尺度不同，因此標準化有明確理由；NCI60 的基因表現有共同量測單位，是否標準化則改變分析目標：標準化會讓低變異基因與高變異基因同等加權，並非一律較好。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.decomposition.PCA.html" target="_blank" rel="noopener">PCA 的 whiten 介面</a>。</p></div></details>
 </section>
 <section id="completion">
 <!-- GEN:BEGIN sec:completion -->
@@ -1212,9 +1242,8 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <div class="info-box warm">
   <span class="info-label">使用矩陣補全前需檢查的條件</span>
-  <strong>1. 缺失必須是隨機的</strong>（missing at random）。
-  「電子秤剛好沒電」可以補；「病人太重上不了秤」不行——缺失本身帶著資訊，
-  補出來的值會系統性偏低。<br>
+  <strong>1. 缺失機制需要檢查</strong>（missing at random）。
+  隨機漏測與「病人太重上不了秤」的缺失不同：後者直接依賴未觀測的重量，單靠已觀測資料的低秩補值可能系統性偏低。即使符合 MAR，也不自動保證這個特定補值演算法無偏。<br>
   <strong>2. 變數之間要有相關。</strong>低秩近似能發揮作用是因為欄與欄之間可以互相預測；
   四個互相獨立的變數，補值不會比欄平均好。<br>
   <strong>3. M 要選。</strong>選太小補不出細節，選太大會把雜訊也擬合進去。
@@ -1272,7 +1301,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <details class="qa-item reading-detail" id="w07-detail-completion-advanced"><summary>補值驗證、可識別性與單調性推導</summary>
 <div class="detail-body"><h3>矩陣補全要驗證什麼</h3><p>把實際觀測集合分成擬合集合與保留格子，僅用擬合格子的資料做中心化、初始化和迭代，以保留格子 MSE 選 rank。若先用全部資料算完整 PCA 再遮值，就已用到要預測的資訊。每列每欄都需要足夠的觀測；整列缺失或觀測圖不連通時，低秩假設本身不足以識別答案。</p>
 <details class="qa-item proof" id="w07proof-completion"><summary>證明：固定觀測格的交替補值為何使目標不增</summary>
-<div class="qa-a"><p>令 $L^{(t)}$ 為目前 rank-$M$ 估計，構造 $Y^{(t)}$：觀測格用真值 $X$，缺失格用 $L^{(t)}$。截斷 SVD 給出 $L^{(t+1)}=\arg\min_{\operatorname{rank}(L)\le M}\|Y^{(t)}-L\|_F^2$。舊估計的缺失格損失為 0，因此 $\|Y^{(t)}-L^{(t)}\|_F^2=\sum_{(i,j)\in\mathcal O}(X_{ij}-L^{(t)}_{ij})^2$。新估計的觀測格損失不超過其全矩陣損失，後者又不超過舊估計損失，證得觀測格目標不增。這不保證找出全域解，也不保證缺失格預測正確。</p></div></details></div></details>
+<div class="qa-a"><p>令 $L^{(t)}$ 為目前 rank-$M$ 估計，構造 $Y^{(t)}$：觀測格用真值 $X$，缺失格用 $L^{(t)}$。截斷 SVD 給出 $L^{(t+1)}=\arg\min_{\operatorname{rank}(L)\le M}\|Y^{(t)}-L\|_F^2$。舊估計的缺失格損失為 0，因此 $\|Y^{(t)}-L^{(t)}\|_F^2=\sum_{(i,j)\in\mathcal O}(X_{ij}-L^{(t)}_{ij})^2$。新估計的觀測格損失不超過其全矩陣損失，後者又不超過舊估計損失，證得觀測格目標不增。這不保證找出全域解，也不保證缺失格預測正確。</p></div></details><!-- lecture-alignment-ch12:w07-detail-completion-advanced:74eaa8552f68 -->
+<h3>跟著 USArrests 補值流程看限制</h3>
+<p>Lab 從已標準化、置中的 <code>USArrests_scaled</code> 開始，再挖出缺失格。<code>low_rank()</code> 每次直接對當前填補矩陣做 SVD，保留前 M 項；它沒有逐輪重新算均值、置中或加回均值。迭代時觀測格永遠保留原值，只有缺失格由目前的低秩估計覆蓋，因此觀測值仍能約束下一輪的方向。</p>
+<p>講義用 50 州、4 欄的資料，在 20 個州各挖掉一格，共 20／200＝10% 缺失，取一個主成分。100 次抽樣得到的平均相關約 $0.63$、標準差 $0.11$，是講義的重複抽樣摘要；以完整資料的主成分估計被遮格子得到約 $0.79$，已使用真值資訊，不能當成可部署的公平比較。</p>
+<p>一次 Lab 的相關係數不應要求恰等於講義的 100 次平均。補值仍需檢查絕對誤差與偏差，因為相關高也可能整體偏移。推薦系統裡沒有評分通常還與使用者選擇有關，不是隨機漏測；低秩模式有用，但缺失機制與冷啟動使用者／項目仍要另外處理。</p>
+<p>閱讀：<a href="https://www.statlearning.com/" target="_blank" rel="noopener">ISLP：Matrix Completion 與推薦系統</a>。</p></div></details>
 </section>
 <section id="kmeans">
 <!-- GEN:BEGIN sec:kmeans -->
@@ -1300,7 +1334,12 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <h3>K-means 的停止條件</h3><p>完整演算法須維持每群非空，並固定同距時的處理規則，例如優先保留原指派。空群可重新初始化，這是額外步驟，需重新核對目標。沒有 ties 的非停止步驟嚴格改善目標，而指派組合有限，所以會停止；單純說「目標不增」尚不足以排除等值循環。停止的分割是交替更新的固定點，並非保證全域最小。</p>
 <details class="qa-item proof" id="w07proof-kmeans"><summary>證明：群內兩兩距離、群心與單調性</summary>
-<div class="qa-a"><p>對非空群 $C$，設 $m=|C|$。展開兩兩平方距離，$\sum_{i,j\in C}\|x_i-x_j\|^2=2m\sum_i\|x_i\|^2-2\|\sum_ix_i\|^2=2m\sum_i\|x_i-\bar x_C\|^2$。除以 $m$ 即得正文恆等式。固定指派時，$\sum_{i\in C}\|x_i-c\|^2=\sum_i\|x_i-\bar x_C\|^2+m\|c-\bar x_C\|^2$，所以取平均最優。固定中心時，把每點指派給最近中心逐項最小化距離；兩步都不增。此結論假設更新中群仍非空，並以一致方式處理同距情況。</p></div></details></div></details><div class="info-box">
+<div class="qa-a"><p>對非空群 $C$，設 $m=|C|$。展開兩兩平方距離，$\sum_{i,j\in C}\|x_i-x_j\|^2=2m\sum_i\|x_i\|^2-2\|\sum_ix_i\|^2=2m\sum_i\|x_i-\bar x_C\|^2$。除以 $m$ 即得正文恆等式。固定指派時，$\sum_{i\in C}\|x_i-c\|^2=\sum_i\|x_i-\bar x_C\|^2+m\|c-\bar x_C\|^2$，所以取平均最優。固定中心時，把每點指派給最近中心逐項最小化距離；兩步都不增。此結論假設更新中群仍非空，並以一致方式處理同距情況。</p></div></details><!-- lecture-alignment-ch12:w07-detail-kmeans-advanced:387a9ad1ecf8 -->
+<h3>為什麼一定要重新指派，再重新算平均？</h3>
+<p>固定中心時，每筆資料選最近中心會降低它對平方和的貢獻；固定指派時，一群的平均是平方距離總和最小的位置。輪流做這兩件事可使目標不增加，直到指派穩定或改善小於停止門檻，但只能保證局部解。</p>
+<p>Lab 的 <code>n_init=20</code> 代表以多組初始化重新執行，再選群內平方和較小的一次。它降低落入差解的風險，沒有保證全域最小。群的編號只是名稱：兩次結果若只交換 0／1，分群實際相同，不能把編號不一致當成不穩定。</p>
+<p>K-means 適合用平方歐氏距離定義的緊密群。細長、不同密度或不同大小的真實群，可能被它切開或併在一起。$K$ 增加會降低訓練群內平方和，因此不能只選平方和最小的 $K$；需要領域目標、結構穩定性與其他驗證。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/clustering.html#k-means" target="_blank" rel="noopener">K-means 與初始化</a>。</p></div></details><div class="info-box">
   <span class="info-label">演算法 12.2（K-means）</span>
   <strong>步驟 1：</strong>隨機給每一筆資料一個 1 到 K 的編號。<br>
   <strong>步驟 2：</strong>重複下面兩件事，直到指派不再改變：<br>
@@ -1361,7 +1400,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
   <details class="qa-item"><summary>Q：K-means 為什麼每次跑可能給不同答案？該怎麼辦？</summary>
-    <div class="qa-a"><p>因為演算法 12.2 的第 1 步是<strong>隨機</strong>指派。之後的每一步都只保證目標函數下降，不保證下降到全域最小。它會滑進離初始位置最近的那個「盆地」就停住。把 n 筆資料分成 K 群大約有 $K^n$ 種方式，要真的找到全域最小得全部列舉，這不可能，所以我們接受局部極小。</p><p>ISLP 圖 12.9 把同一份資料跑六次，得到三個不同的局部極小：目標函數 235.8（四次）、320.9、310.9。其中 235.8 明顯把三群分得最開。重點是：<strong>如果你只跑一次，剛好抽到 320.9 那組初值，程式不會告訴你有問題。</strong></p><p>標準做法就是<strong>多重初始化</strong>：跑很多組不同的初值，回報目標函數最小的那一次。<code>scikit-learn</code> 的 <code>n_init</code> 就是這件事（預設 10，lab 建議設 20 或 50）。另外一定要設 <code>random_state</code>——上面那張元件的「換初始值」按鈕，按幾次就會看到這個現象。</p></div>
+    <div class="qa-a"><p>因為演算法 12.2 的第 1 步是<strong>隨機</strong>指派。之後的每一步都只保證目標函數下降，不保證下降到全域最小。它會滑進離初始位置最近的那個「盆地」就停住。把 n 筆資料分成 K 群大約有 $K^n$ 種方式，要真的找到全域最小得全部列舉，這不可能，所以我們接受局部極小。</p><p>ISLP 圖 12.9 把同一份資料跑六次，得到三個不同的局部極小：目標函數 235.8（四次）、320.9、310.9。其中 235.8 明顯把三群分得最開。重點是：<strong>如果你只跑一次，剛好抽到 320.9 那組初值，程式不會告訴你有問題。</strong></p><p>標準做法就是<strong>多重初始化</strong>：跑很多組不同的初值，回報目標函數最小的那一次。<code>scikit-learn</code> 的 <code>n_init</code> 就是這件事（sklearn 1.6.1 預設為 auto，k-means++ 執行 1 次、random 執行 10 次；Lab 明設 20 或 50）。另外一定要設 <code>random_state</code>——上面那張元件的「換初始值」按鈕，按幾次就會看到這個現象。</p></div>
   </details>
 </div>
 
@@ -1443,7 +1482,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <details class="qa-item reading-detail" id="w07-detail-linkage-table"><summary>查閱四種 linkage 的完整定義</summary>
 <div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>Linkage</th><th>群間相異度的定義</th><th>樹的形狀</th><th>評語</th></tr></thead>
-  <tbody><tr><td><strong>Complete</strong></td><td>兩群之間<strong>最大</strong>的那個距離</td><td>平衡、群大小相近</td><td>最常用；對離群值不算敏感</td></tr><tr><td><strong>Average</strong></td><td>所有跨群配對距離的<strong>平均</strong></td><td>平衡</td><td>最常用；統計上性質較好</td></tr><tr><td><strong>Single</strong></td><td>兩群之間<strong>最小</strong>的那個距離</td><td>鏈狀、拖尾</td><td>容易產生一大群 + 多個單點群，少用</td></tr><tr><td><strong>Centroid</strong></td><td>兩群<strong>形心</strong>之間的距離</td><td>可能出現反轉</td><td>基因體學常用，但反轉讓樹難以解讀</td></tr></tbody>
+  <tbody><tr><td><strong>Complete</strong></td><td>兩群之間<strong>最大</strong>的那個距離</td><td>平衡、群大小相近</td><td>常用；最遠距離仍可能受離群值影響</td></tr><tr><td><strong>Average</strong></td><td>所有跨群配對距離的<strong>平均</strong></td><td>平衡</td><td>最常用；統計上性質較好</td></tr><tr><td><strong>Single</strong></td><td>兩群之間<strong>最小</strong>的那個距離</td><td>鏈狀、拖尾</td><td>容易產生一大群 + 多個單點群，少用</td></tr><tr><td><strong>Centroid</strong></td><td>兩群<strong>形心</strong>之間的距離</td><td>可能出現反轉</td><td>基因體學常用，但反轉讓樹難以解讀</td></tr></tbody>
 </table></div></div></details>
 
   <h3>相異度也要選：歐氏距離還是相關係數？</h3>
@@ -1479,7 +1518,13 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
 <h3>連結方式的比較</h3><p>凝聚式從單點群開始反覆合併；分裂式（divisive）從全體一群反覆拆分。Feature agglomeration 則把特徵當待分群的對象，再用平均等 pooling 函數合併相似欄位。無論合併觀察或特徵，距離 ties 都可能讓不同合法的樹產生；葉子左右換位只改圖的畫法，改合併對象則會改樹本身。</p>
 <details class="qa-item proof" id="w07proof-ward"><summary>證明：Ward 的平方和增加量</summary>
-<div class="qa-a"><p>令 $a=|A|,b=|B|$，合併中心 $\mu=(a\mu_A+b\mu_B)/(a+b)$。對各群使用平方和分解，合併後減去原群內平方和得到 $a\|\mu_A-\mu\|^2+b\|\mu_B-\mu\|^2$。代入 $\mu_A-\mu=b(\mu_A-\mu_B)/(a+b)$ 與 $\mu_B-\mu=-a(\mu_A-\mu_B)/(a+b)$，整理即得 $ab\|\mu_A-\mu_B\|^2/(a+b)$。這使用歐氏平方距離，不能任意把其他 dissimilarity 填入同一推導。</p></div></details><h3>分裂式階層分群</h3><p>一種分裂式方法先選目前直徑最大的群，找出對群內其他點平均相異度最大的點作為新群的種子；再把「到舊群平均距離減去到新群平均距離」最大的正值點移到新群，重複到沒有正值候選。持續拆分直到指定群數或單點群，空集合與 ties 需約定。</p></div></details>
+<div class="qa-a"><p>令 $a=|A|,b=|B|$，合併中心 $\mu=(a\mu_A+b\mu_B)/(a+b)$。對各群使用平方和分解，合併後減去原群內平方和得到 $a\|\mu_A-\mu\|^2+b\|\mu_B-\mu\|^2$。代入 $\mu_A-\mu=b(\mu_A-\mu_B)/(a+b)$ 與 $\mu_B-\mu=-a(\mu_A-\mu_B)/(a+b)$，整理即得 $ab\|\mu_A-\mu_B\|^2/(a+b)$。這使用歐氏平方距離，不能任意把其他 dissimilarity 填入同一推導。</p></div></details><h3>分裂式階層分群</h3><p>一種分裂式方法先選目前直徑最大的群，找出對群內其他點平均相異度最大的點作為新群的種子；再把「到舊群平均距離減去到新群平均距離」最大的正值點移到新群，重複到沒有正值候選。持續拆分直到指定群數或單點群，空集合與 ties 需約定。</p><!-- lecture-alignment-ch12:w07-detail-hclust-advanced:857c5e424ae2 -->
+<h3>樹狀圖是合併歷史，不是平面地圖</h3>
+<p>讀兩筆觀測的相似性，要看它們首次進入同一分支的合併高度，不看兩個葉節點的左右距離。左右子樹可以交換而不改變任何合併，這就是講義中觀測 9 與 2 看起來靠近、卻不比其他同高度合併的點更接近的原因。</p>
+<p>切低一點的樹得到較多群，每個細群都嵌在更高切割的一個大群中。若最佳兩群按性別分、最佳三群按國籍分，兩種分類未必能同時由一棵巢狀樹表達。階層方法保留的是一套巢狀合併，不是每個 $K$ 都獨立求到最佳分群。</p>
+<p>Centroid linkage 可能發生新合併高度低於舊高度的 inversion；Ward 的平方和增加量也不能拿去配任意非歐氏相異度。Single linkage 可以沿近鄰形成彎曲群，但一條稀疏鏈也可能把兩團接起來；Complete linkage 使用最遠距離，離群點可能明顯影響合併，不能把「較少鏈狀群」等同不受離群值影響。</p>
+<p>Lab 用 <code>compute_linkage</code> 把 sklearn 合併結果轉給 scipy 的 <code>dendrogram</code>，再用 <code>cut_tree</code> 取群標籤。<code>color_threshold</code> 是畫圖顏色門檻，不能以改顏色就當成模型已產生新的群標籤。</p>
+<p>閱讀：<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html" target="_blank" rel="noopener">各種 linkage 與距離條件</a>、<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.cluster.FeatureAgglomeration.html" target="_blank" rel="noopener">把階層式分群用在特徵</a>。</p></div></details>
 </section>
 <section id="practical">
 <!-- GEN:BEGIN sec:practical -->
@@ -1580,7 +1625,18 @@ $$d_{\rm mr}(x_i,x_j)=\max\{c_k(x_i),c_k(x_j),d(x_i,x_j)\}.$$
 <h3>Mean shift 的更新式</h3><p>使用平滑核密度時，令 $g(u)$ 是核輪廓導數所對應的非負權重，頻寬為 $h>0$。候選中心每輪更新</p>
 $$x^{(t+1)}=\frac{\sum_i g(\|x^{(t)}-x_i\|^2/h^2)x_i}{\sum_i g(\|x^{(t)}-x_i\|^2/h^2)}.$$
 <p>分母需大於 0，空鄰域須停止或重設。不同初值收斂到相近模態後合併標籤；頻寬決定模態是否被平滑成同一群。停止看中心位移或密度變化，不是要求每輪鄰域點數必須增加。</p>
-</div></details><details class="qa-item reading-detail" id="w07-detail-mixtures"><summary>混合模型：EM、責任值與變分貝氏</summary>
+<!-- lecture-alignment-ch12:w07-detail-density:a391e50f9de8 -->
+<h3>從 DBSCAN 的固定密度走到 HDBSCAN 的密度階層</h3>
+<p>DBSCAN 的群由核心點的連通性決定。核心點周圍的邊界點可以加入群，但不繼續向外擴張；離群點可能先被標成雜訊，稍後才發現它屬於另一個核心點的邊界。兩個群都能接到的邊界點可能受處理順序影響，因此「每次都得到完全相同標籤」需要區分核心群與邊界指派。</p>
+<p>HDBSCAN 以核心距離修正點對距離，$d_{\rm mr}(a,b)=\max\{d_{\rm core}(a),d_{\rm core}(b),d(a,b)\}$。稀疏區域的點即使偶然靠近，也會被較大的核心距離隔開。由這種距離建立最小生成樹及密度階層，再用 <code>min_cluster_size</code> 壓縮過小分支，依持續性選群。</p>
+<p><code>min_cluster_size</code> 控制什麼大小算一個可保留群；<code>min_samples</code> 控制密度判斷的保守程度。較大 <code>min_samples</code> 通常讓更多點變成雜訊，但不能把這兩個參數當成同一個。HDBSCAN 能比較多種密度尺度，仍會受資料尺度、距離和群選擇設定影響。</p>
+<p>Lab 使用外部 <code>hdbscan</code> 套件，而不是 sklearn 的同名估計器；兩者對 <code>min_samples</code> 是否包含自身的約定不同，不能只換 import 就宣稱設定完全相同。原 Lab 的兩種密度資料正好說明：固定一組 DBSCAN 門檻可能把稀疏群判成雜訊，同時又把密群過度合併。</p>
+<p>閱讀：<a href="https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html" target="_blank" rel="noopener">HDBSCAN 的密度階層</a>、<a href="https://hdbscan.readthedocs.io/en/latest/parameter_selection.html" target="_blank" rel="noopener">兩個大小參數</a>、<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.cluster.HDBSCAN.html" target="_blank" rel="noopener">sklearn 與外部實作的差別</a>。</p><!-- lecture-alignment-ch12:w07-detail-density:e2b6bb93c52d -->
+<h3>Mean shift：找密度峰，bandwidth 決定尺度</h3>
+<p>講義附錄的 mean shift 不先指定群數，而是反覆把候選中心移到附近觀測的加權平均。對 bandwidth $h$ 與非負權重核 $g$，更新為 $c^{(t+1)}=\sum_i g(\|x_i-c^{(t)}\|^2/h^2)x_i/\sum_i g(\|x_i-c^{(t)}\|^2/h^2)$；若窗口內沒有點，則不能把零分母拿來更新，需要停止或重新初始化。</p>
+<p>固定半徑窗口的直觀就是「看目前窗口中的平均在哪裡，把窗口搬過去再看一次」。多個初始窗口可能收斂到同一密度峰，最後合併相近的峰來形成群。它和 K-means 的差別在於：K-means 先給 $K$ 並最小化全域群內平方和；mean shift 的峰數由資料、核及 bandwidth 共同決定。</p>
+<p>小 bandwidth 看見很多局部峰，可能把雜訊也切成小群；大 bandwidth 會平滑掉細節，把原本不同的峰合併。對不同密度資料也未必有一個 bandwidth 同時合適。使用時仍要選 bandwidth 並設定停止條件；省下的是事先指定群數這一步。</p>
+<p>API 閱讀：<a href="https://scikit-learn.org/1.6/modules/clustering.html#mean-shift" target="_blank" rel="noopener">MeanShift 與 bandwidth</a>。講義的影像分割例子是以相似顏色／位置形成群，群的意義仍由選用特徵決定。</p></div></details><details class="qa-item reading-detail" id="w07-detail-mixtures"><summary>混合模型：EM、責任值與變分貝氏</summary>
 <div class="detail-body"><h3>高斯混合模型與 EM 的完整更新</h3><p>用 $K$ 個成分表示密度 $p(x)=\sum_{k=1}^K\pi_k\mathcal N(x;\mu_k,\Sigma_k)$，其中 $\pi_k\ge0,\sum_k\pi_k=1$、$\Sigma_k$ 正定。E 步算各點的責任值，M 步用它作權重更新：</p>
 $$r_{ik}=\frac{\pi_k\mathcal N(x_i;\mu_k,\Sigma_k)}{\sum_{\ell=1}^K\pi_\ell\mathcal N(x_i;\mu_\ell,\Sigma_\ell)},\quad N_k=\sum_ir_{ik},\quad\pi_k^{\rm new}=N_k/n,$$
 $$\mu_k^{\rm new}=\frac{\sum_ir_{ik}x_i}{N_k},\qquad\Sigma_k^{\rm new}=\frac{\sum_ir_{ik}(x_i-\mu_k^{\rm new})(x_i-\mu_k^{\rm new})^T}{N_k}.$$
@@ -1596,7 +1652,53 @@ $$\mu_k^{\rm new}=\frac{\sum_ir_{ik}x_i}{N_k},\qquad\Sigma_k^{\rm new}=\frac{\su
 <div class="detail-body"><h3>混合型資料的距離與可驗證的群</h3><p>k-prototypes 把連續與類別成本相加：</p>
 $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathcal C}I(x_{ij}\ne m_{c_i,j})\right].$$
 <p>固定分群後，連續中心更新為平均，類別中心更新為眾數；固定中心後，每點指派到混合成本最小的群。$\gamma$ 控制類別不一致與數值距離的相對重要性，數值欄先採適當尺度。</p><p>FAMD 把連續欄標準化、類別欄展開成指示碼並按類別頻率加權，再求共同低維表示；如此避免直接把「紅、藍、綠」編成等距的 0、1、2。群結果須附距離、尺度與參數，並比較重抽樣穩定性。來源：<a href="https://github.com/nicodv/kmodes" target="_blank" rel="noopener">k-modes／k-prototypes 作者實作</a>、<a href="https://maxhalford.github.io/prince/famd/" target="_blank" rel="noopener">Prince FAMD 文件</a>。</p>
-<h3>比較圖中的其他分群方法</h3><p>MiniBatch K-means 每次只讀小批次，依指派更新中心的累計平均；可降低成本，但小批次更新不保證每輪完整資料的目標都下降。BIRCH 以 clustering feature $(N,\sum x_i,\sum\|x_i\|^2)$ 建立可合併的小群摘要，再對摘要進一步分群，適合可壓縮的大型歐氏資料。Affinity propagation 在點間傳遞「適合作代表點」的 responsibility 與 availability，挑 exemplar；preference 改變代表點／群的數目，damping 用來減少震盪。它們在講義比較圖中的表現是特定模擬資料的結果，沒有任何一欄普遍最好。</p><h3>模糊分群與距離學習</h3><p>Fuzzy c-means 以隸屬度 $u_{ik}\ge0,\sum_ku_{ik}=1$ 取代硬標籤，最小化 $\sum_{i,k}u_{ik}^m\|x_i-c_k\|^2$，其中 $m>1$。固定隸屬度時，中心為 $c_k=\sum_i u_{ik}^mx_i/\sum_i u_{ik}^m$；固定中心且距離皆非零時，$u_{ik}=\left[\sum_\ell(\|x_i-c_k\|/\|x_i-c_\ell\|)^{2/(m-1)}\right]^{-1}$。零距離需把隸屬集中到重合中心並約定 ties。它的隸屬度不是由 Gaussian density 算出的後驗責任值。</p><p>若領域提供相似／不相似配對，metric learning 可估計 $d_A(x,y)^2=(x-y)^TA(x-y)$，$A\succeq0$；寫 $A=L^TL$ 就是先做 $Lx$ 轉換再算歐氏距離。若 $A$ 不滿秩，可能把不同點投到同一位置，得到的是偽距離。配對標籤加入了監督資訊，評估時也須限制在訓練折，不能把結果稱為完全未使用標籤。</p></div></details>
+<h3>比較圖中的其他分群方法</h3><p>MiniBatch K-means 每次只讀小批次，依指派更新中心的累計平均；可降低成本，但小批次更新不保證每輪完整資料的目標都下降。BIRCH 以 clustering feature $(N,\sum x_i,\sum\|x_i\|^2)$ 建立可合併的小群摘要，再對摘要進一步分群，適合可壓縮的大型歐氏資料。Affinity propagation 在點間傳遞「適合作代表點」的 responsibility 與 availability，挑 exemplar；preference 改變代表點／群的數目，damping 用來減少震盪。它們在講義比較圖中的表現是特定模擬資料的結果，沒有任何一欄普遍最好。</p><h3>模糊分群與距離學習</h3><p>Fuzzy c-means 以隸屬度 $u_{ik}\ge0,\sum_ku_{ik}=1$ 取代硬標籤，最小化 $\sum_{i,k}u_{ik}^m\|x_i-c_k\|^2$，其中 $m>1$。固定隸屬度時，中心為 $c_k=\sum_i u_{ik}^mx_i/\sum_i u_{ik}^m$；固定中心且距離皆非零時，$u_{ik}=\left[\sum_\ell(\|x_i-c_k\|/\|x_i-c_\ell\|)^{2/(m-1)}\right]^{-1}$。零距離需把隸屬集中到重合中心並約定 ties。它的隸屬度不是由 Gaussian density 算出的後驗責任值。</p><p>若領域提供相似／不相似配對，metric learning 可估計 $d_A(x,y)^2=(x-y)^TA(x-y)$，$A\succeq0$；寫 $A=L^TL$ 就是先做 $Lx$ 轉換再算歐氏距離。若 $A$ 不滿秩，可能把不同點投到同一位置，得到的是偽距離。配對標籤加入了監督資訊，評估時也須限制在訓練折，不能把結果稱為完全未使用標籤。</p><!-- lecture-alignment-ch12:w07-detail-mixed-clustering:eda8d0603728 -->
+<h3>類別編碼為什麼會改變相似性的意思？</h3>
+<p>把名目類別寫成 0、1、2 會人為加入次序與距離。One-hot 編碼消除這個次序，卻也改變欄位數與權重；稀有類別、連續尺度與大量二元欄仍可能主導距離。只用連續特徵可避免錯誤的類別距離，但也可能丟掉真正重要的類別資訊。</p>
+<p>k-prototypes 明確把數值平方距離和類別不一致成本相加，所以需選兩部分的相對權重；FAMD 則先形成對混合欄位可比較的表示，再分群。兩者在回答不同問題，沒有不需領域判斷的自動預設。</p>
+<p>以分群做監督式前處理時，群中心或特徵合併只能在每個訓練折估計。Lab 延伸的「到各群中心距離」是一組連續特徵；群編號是任意名目類別，不能直接當成連續數字。半監督情境可先找代表點請人標註，再把標籤傳到同群，但同一群可能包含不同的真實類別，須檢查群內類別是否一致，以及邊界點是否適合傳遞標籤。</p>
+<p>混合模型會對每筆資料給各成分的責任值，通常仍把離群點分給某些成分。若想明確拒絕離群資料，需要離群成分或偵測規則；不能把一般 Gaussian mixture 說成自動具有 DBSCAN 的雜訊標籤。</p>
+<p>閱讀：<a href="https://github.com/nicodv/kmodes" target="_blank" rel="noopener">k-modes／k-prototypes</a>、<a href="https://maxhalford.github.io/prince/famd/" target="_blank" rel="noopener">Prince：FAMD</a>、<a href="https://www.nature.com/articles/s41598-021-83340-8" target="_blank" rel="noopener">混合資料分群比較的研究條件</a>。</p></div></details><details class="qa-item reading-detail" id="w07-detail-density-lab"><summary>跟著 Lab 解讀 DBSCAN：群標籤、核心點與雜訊</summary>
+<div class="detail-body">
+<p>Lab 先產生三中心資料並標準化，再以 <code>eps=0.3, min_samples=10</code> 執行 DBSCAN。<code>labels_</code> 為每筆資料的群編號，<code>-1</code> 是雜訊；群數應排除這個標籤。<code>core_sample_indices_</code> 另指向核心點，因此「不是核心」還要再分邊界點與雜訊。</p><div class="deck-extra">
+  <div class="dx-label">原 Lab：DBSCAN 與群數</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># Compute DBSCAN</span></span>
+  <span class="line">db = DBSCAN(eps=<span class="num">0.3</span>, min_samples=<span class="num">10</span>).fit(X)</span>
+  <span class="line">core_samples_mask = np.zeros_like(db.labels_, dtype=bool)</span>
+  <span class="line">core_samples_mask[db.core_sample_indices_] = <span class="num">True</span></span>
+  <span class="line">labels = db.labels_</span>
+  <span class="line"> </span>
+  <span class="line"><span class="com"># Number of clusters in labels, ignoring noise if present.</span></span>
+  <span class="line">n_clusters_ = len(set(labels)) - (<span class="num">1</span> <span class="kw">if</span> -<span class="num">1</span> <span class="kw">in</span> labels <span class="kw">else</span> <span class="num">0</span>)</span>
+  <span class="line">n_noise_ = list(labels).count(-<span class="num">1</span>)</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="140">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+</div>
+<p>這個模擬範例保留已知 <code>labels_true</code>，可以做外部檢查；真實未標記資料則沒有這個答案。ARI 比較成對觀測是否被放在同群並校正偶然一致，不要求群編號相同。輪廓係數用群內平均距離 $a_i$ 與到最近其他群的平均距離 $b_i$ 定義 $s_i=(b_i-a_i)/\max(a_i,b_i)$；它量的是所選距離下的緊密程度，不是群存在的 p 值。只有一群、每點一群或沒有可用群時，輪廓係數不適用；有雜訊時還需說明是否把它當作一群參與計算。</p>
+<p>後續 Lab 在不同密度資料上變更 <code>eps</code>／<code>min_samples</code>，再比較 HDBSCAN 的 <code>min_cluster_size</code>。讀圖時同時看哪些點被保留、哪些點標成雜訊，不能只比較群數。</p>
+<p>閱讀：<a href="https://scikit-learn.org/1.6/modules/clustering.html#clustering-performance-evaluation" target="_blank" rel="noopener">分群的內部與外部評估</a>。</p></div></details><details class="qa-item reading-detail" id="w07-detail-nci60-lab"><summary>NCI60：先做無監督探索，再對照癌症類型</summary>
+<div class="detail-body">
+<p>NCI60 的 64 個細胞株各有 6830 個基因表現特徵。癌症類型已有標籤，但 PCA 與分群時不使用；完成後才上色與製作交叉表。這正是「標籤只用於解讀」與「用標籤選擇模型」的差別。</p><div class="deck-extra">
+  <div class="dx-label">原 Lab：NCI60 的標準化與 PCA</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">scaler = StandardScaler()</span>
+  <span class="line">nci_scaled = scaler.fit_transform(nci_data)</span>
+  <span class="line">nci_pca = PCA()</span>
+  <span class="line">nci_scores = nci_pca.fit_transform(nci_scaled)</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="159">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+</div>
+<p>Lab 的碎石圖在前幾個方向出現轉折，前七個主成分累積約解釋四成變異。可先觀察這些方向，但剩下六成仍可能含有訊號；前兩個成分也未必能分開所有癌症類型。</p>
+<p>接著比較 complete、average 與 single linkage，再切成四群與癌症標籤交叉比較。白血病細胞株集中，而乳癌細胞株分散，可能反映生物異質性，也可能與量測、尺度或分析選擇有關。單張交叉表不足以建立新的疾病亞型。</p><div class="deck-extra">
+  <div class="dx-label">原 Lab：四群與已知癌症類型的交叉表</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">linkage_comp = compute_linkage(hc_comp)</span>
+  <span class="line">comp_cut = cut_tree(linkage_comp, n_clusters=<span class="num">4</span>).reshape(-<span class="num">1</span>)</span>
+  <span class="line">pd.crosstab(nci_labs[<span class="str">&#x27;label&#x27;</span>],</span>
+  <span class="line">            pd.Series(comp_cut.reshape(-<span class="num">1</span>), name=<span class="str">&#x27;Complete&#x27;</span>))</span></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="172">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+</div>
+<p>最後比較四群 K-means 與階層分群，並改用前五個 PCA 得分做階層分群。前處理改變了距離：原基因空間中的差異可能被捨棄，因此兩種分群不同是需要解讀的結果，不是必定哪一種錯誤。群編號換名不改變群成員，應用交叉表或對編號不敏感的指標比較。</p>
+<p>資料：<a href="https://islp.readthedocs.io/en/latest/datasets/NCI60.html" target="_blank" rel="noopener">NCI60 的特徵與標籤</a>。</p></div></details>
 </section>
 <section id="manifold">
 <!-- GEN:BEGIN sec:manifold -->
@@ -1605,12 +1707,11 @@ $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathc
 <!-- GEN:END sec:manifold -->
 
   <details class="qa-item reading-detail" id="w07-detail-manifold-extensions"><summary>延伸方法、套件用途與理論保證範圍</summary>
-<div class="detail-body"><p class="skip-note">這一節是課堂沒細講的延伸（講義 12），第一輪可以直接跳過去看
-  <a href="#exercises">EX 練習</a>。t-SNE 在論文裡到處都是，解讀前應先了解它的限制。</p>
+<div class="detail-body"><p class="skip-note">這一節接續線性 PCA，說明講義的流形學習與 t-SNE。先讀核心直覺，再展開演算法與限制。</p>
 <div class="info-box warm">
   <span class="info-label">t-SNE 的使用範圍</span>
   <strong>t-SNE 幾乎只能用來「看」。</strong>
-  它沒有 <code>transform()</code>（新資料無法投影到既有的嵌入上，
+  sklearn 的 <code>TSNE</code> 沒有 <code>transform()</code>（新資料無法投影到既有的嵌入上，
   <code>openTSNE</code> 之類的套件才另外提供近似做法），
   也不像 PCA 有負荷量可以解讀「這個方向由哪些變數組成」。<br>
   要當前處理放進 pipeline，UMAP 比較合適。它有 <code>transform()</code>，
@@ -1620,7 +1721,17 @@ $$\sum_i\left[\sum_{j\in\mathcal N}(x_{ij}-\mu_{c_i,j})^2+\gamma\sum_{j\in\mathc
 </div>
 <h3>其他流形方法各自保留什麼</h3><p>Isomap 先建近鄰圖，以最短路估計測地距離，再對距離矩陣做 classical MDS；圖斷裂或跨流形捷徑會改變結果。LLE 先用鄰居重建每個高維點，權重滿足列和 1，再找低維座標最小化 $\sum_i\|z_i-\sum_jw_{ij}z_j\|^2$，並用置中與尺度限制排除全零解。UMAP 先構造局部尺度的模糊鄰接關係，再最佳化低維交叉熵；近鄰數與 <code>min_dist</code> 改變保留結構的尺度。它們都需適當前處理，鄰居圖本身不是現實資料流形存在的證明。</p><p>若把降維放進監督式 pipeline，應在每個訓練折擬合轉換；標籤只用於最後評估或上色時，要與有監督的 UMAP 分清楚。</p>
 <h3>張量與自監督延伸的最小數學框架</h3><p>三階張量的 CP 分解寫為 $\mathcal X_{ijk}\approx\sum_{r=1}^Ra_{ir}b_{jr}c_{kr}$；Tucker 分解寫為 $\mathcal X_{ijk}\approx\sum_{a,b,c}\mathcal G_{abc}U_{ia}V_{jb}W_{kc}$。前者把 rank-one 張量相加，後者另外保留核心中的多軸交互作用；尺度／排列等不唯一性仍存在。自監督則把輸入的一部分當作預測目標，例如遮罩文字的 $-\sum_{i\in\mathcal M}\log p(x_i\mid x_{\notin\mathcal M})$。這些是講義列出的後續方向，完整的深度模型訓練另查相應教材，不能由低維圖直接推論表示的品質。</p>
-<h3>能否映射新資料，以及理論保證的範圍</h3><p>Parametric t-SNE 用可訓練函數 $z=f_\theta(x)$ 表示座標，以鄰居機率目標調整 $\theta$；訓練後可直接對新 $x$ 評估。這和把一批座標自由最佳化的標準 t-SNE 是不同模型。固定既有嵌入後插入新點，也是另一種近似做法；不能把某個估計器沒有 <code>transform()</code> 推成所有 t-SNE 方法都不能映射新點。</p><p>講義列出的 t-SNE 理論研究，對資料分離、鄰居機率、初始化或 early exaggeration 使用明確假設，再證明特定群可被分開；它們不是對任意資料的全域距離保真或正確分群保證。實務上應回到高維鄰居、參數擾動和獨立資料檢查結構。來源：<a href="https://lvdmaaten.github.io/publications/papers/AISTATS_2009.pdf" target="_blank" rel="noopener">Parametric t-SNE</a>、<a href="https://proceedings.mlr.press/v75/arora18a/arora18a.pdf" target="_blank" rel="noopener">t-SNE 的理論分析</a>。</p></div></details>
+<h3>能否映射新資料，以及理論保證的範圍</h3><p>Parametric t-SNE 用可訓練函數 $z=f_\theta(x)$ 表示座標，以鄰居機率目標調整 $\theta$；訓練後可直接對新 $x$ 評估。這和把一批座標自由最佳化的標準 t-SNE 是不同模型。固定既有嵌入後插入新點，也是另一種近似做法；不能把某個估計器沒有 <code>transform()</code> 推成所有 t-SNE 方法都不能映射新點。</p><p>講義列出的 t-SNE 理論研究，對資料分離、鄰居機率、初始化或 early exaggeration 使用明確假設，再證明特定群可被分開；它們不是對任意資料的全域距離保真或正確分群保證。實務上應回到高維鄰居、參數擾動和獨立資料檢查結構。來源：<a href="https://lvdmaaten.github.io/publications/papers/AISTATS_2009.pdf" target="_blank" rel="noopener">Parametric t-SNE</a>、<a href="https://proceedings.mlr.press/v75/arora18a/arora18a.pdf" target="_blank" rel="noopener">t-SNE 的理論分析</a>。</p><!-- lecture-alignment-ch12:w07-detail-manifold-extensions:361eae85eae5 -->
+<h3>講義連結的圖與套件，各自可以支持哪種結論？</h3>
+<p>讀不同 perplexity 的嵌入時，先在原始空間檢查近鄰，再看鄰居是否穩定地放在一起。t-SNE 可讓純雜訊看起來分成小團；局部結構看起來穩定也不等於全域距離、密度或群大小被保留。講義的互動展示與參數實驗用來觀察這些變化，不作分群真值。</p>
+<p>FIt-SNE 以插值及 FFT 加速排斥項，Barnes–Hut 用空間樹近似遠方點，openTSNE 則提供擴充的嵌入操作。這些方法改善計算或映射能力，t-SNE 的讀圖限制仍然適用。理論文獻對資料分離、鄰居權重及 early exaggeration 的特定條件證明可視化結果；不是對任意資料都有正確群數保證。</p>
+<p>UMAP 的近鄰數決定局部到較廣尺度的取捨，<code>min_dist</code> 影響低維點的緊密程度。用它做分群前處理時，擬合表示與群模型的選擇都需驗證；其嵌入也可能改變密度，不能只挑群最清楚的圖。Lab 的「先 UMAP 再分類」須在訓練資料擬合轉換，再映射測試資料；使用標籤訓練表示則是另一個有監督設定。</p>
+<p>張量分解與自監督是講義附錄的後續方向。TensorLy 的 CP／Tucker 表示保留資料的多個軸；遮罩式自監督由輸入產生預測目標，仍有明確的損失與學習程序。這些方法雖然不需要人工標籤，仍有明確的訓練目標，效用要由重建或下游任務判定。</p>
+<p>閱讀：<a href="https://distill.pub/2016/misread-tsne/" target="_blank" rel="noopener">t-SNE 圖的常見誤讀</a>、<a href="https://opentsne.readthedocs.io/en/latest/tsne_algorithm.html" target="_blank" rel="noopener">openTSNE 的演算法說明</a>、<a href="https://umap-learn.readthedocs.io/en/latest/clustering.html" target="_blank" rel="noopener">UMAP 用於分群的條件</a>、<a href="https://tensorly.org/stable/user_guide/tensor_decomposition.html" target="_blank" rel="noopener">TensorLy 的分解方式</a>。</p><!-- lecture-alignment-ch12:w07-detail-manifold-extensions:5b4c6432cc8d -->
+<h3>從自監督目標接到下游任務</h3>
+<p>李宏毅的 BERT 教材以遮住文字再預測為例。未遮住的輸入提供上下文，被遮住的 token 提供目標；模型以交叉熵訓練，因此標籤不是人工另外附上的類別，而是資料自身的一部分。這與只把點畫成低維座標的 t-SNE 目標不同。</p>
+<p>先在大量未標記文字預訓練，再以少量標記資料調整分類或問答，是兩個不同的階段。能預測遮罩文字不自動保證癌症分群或所有下游任務都好；要判斷學到的表示是否有用，仍需獨立評估。講義把它列為後續學習方向，這裡保留目標、資料與驗證的關係，不把它混入本章 PCA 或分群的數學假設。</p>
+<p>教材：<a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2021-course-data/bert_v8.pdf" target="_blank" rel="noopener">李宏毅：Self-Supervised Learning</a>、<a href="https://www.nature.com/articles/s41467-019-13056-x" target="_blank" rel="noopener">t-SNE 的 PCA 初始化與多尺度實務研究</a>。</p></div></details>
 
   <p>PCA 是<strong>線性</strong>投影：它只能把資料壓到一個平面上。
   可是很多高維資料的結構是彎的——想像一張捲起來的紙，
@@ -1707,7 +1818,13 @@ $$\frac{\partial C}{\partial z_i}=4\sum_{j\ne i}(p_{ij}-q_{ij})\frac{z_i-z_j}{1+
 <h3>perplexity 與逐輪最佳化</h3><ol><li>選定 perplexity $k$，對每個點以二分搜尋調整 $\sigma_i$，使 $H(P_i)=-\sum_jp_{j\mid i}\log_2p_{j\mid i}\approx\log_2k$。它是有效鄰居數，並非硬性只保留 $k$ 個點。</li><li>建立固定 $P$，以小尺度隨機值或 PCA 初始化 $z$，記錄種子。不同初始化可能進入不同局部解。</li><li>每輪重算 $w,Z,Q$ 與上式梯度，以 $z_i^{(t+1)}=z_i^{(t)}-\eta\nabla_iC$ 更新；常見實作另加 momentum。</li><li>early exaggeration 階段把吸引項的 $p_{ij}$ 乘一個大於 1 的係數，再恢復原本目標。檢查進度、最後梯度和多次結果，不能只挑最分開的一張圖。</li></ol><p>鄰居距離完全相等時，不是任意 perplexity 都能靠改 $\sigma_i$ 達成。</p><p>精確的全配對計算需要平方級的配對數；Barnes–Hut 用空間樹近似遠處排斥，FIt-SNE 則用插值與 FFT 加速，改的是數值近似而非可任意改寫的目標。<code>angle</code> 控制 Barnes–Hut 的精度／速度取捨。KL 的跨次比較需固定資料、$P$、perplexity 與目標階段；early exaggeration 階段報值不能直接當成同一未誇張 KL 的可比數字。</p><p>來源：<a href="https://opentsne.readthedocs.io/en/latest/tsne_algorithm.html" target="_blank" rel="noopener">openTSNE：t-SNE 如何運作</a>與講義連結的原始演算法文獻。</p>
 <details class="qa-item proof" id="w07proof-tsne"><summary>證明：t-SNE 梯度與吸引／排斥項</summary>
 <div class="qa-a"><p>固定 $P$，利用 $q_{ij}=w_{ij}/Z$ 與 $\sum_{i\ne j}p_{ij}=1$，目標可寫成 $C=\mathrm{const}-\sum_{i\ne j}p_{ij}\log w_{ij}+\log Z$。因 $\nabla_{z_i}\log w_{ij}=-2w_{ij}(z_i-z_j)$，有序配對的 $(i,j)$ 和 $(j,i)$ 各貢獻一次，第一項導數為 $4\sum_jp_{ij}w_{ij}(z_i-z_j)$。同理 $\nabla_{z_i}Z=-4\sum_jw_{ij}^2(z_i-z_j)$，除以 $Z$ 得 $-4\sum_jq_{ij}w_{ij}(z_i-z_j)$，合併即得正文式子。梯度下降取負號：$p_{ij}>q_{ij}$ 的項拉近點，反之推開。</p><p>原始非對稱 SNE 同時有「$i$ 的鄰居分布」與「別人把 $i$ 當鄰居」兩類項，其梯度為 $2\sum_{j\ne i}(z_i-z_j)\{p_{j\mid i}-q_{j\mid i}+p_{i\mid j}-q_{i\mid j}\}$；不能只留下其中一個方向。</p></div></details>
-</div></details>
+<!-- lecture-alignment-ch12:w07-detail-tsne-algorithm:6245a577d5a2 -->
+<h3>對回講義的演算法，避免三個記號陷阱</h3>
+<p>高維 SNE 的鄰居機率逐列正規化；對稱 t-SNE 的低維機率則對所有非對角配對做全域正規化。兩種分母不能混用。SNE 的單項 $p\log(p/q)$ 可以為負，完整 KL 才非負；講義的兩個單項成本例子是在說明不對稱懲罰，並不是完整散度的範例。</p>
+<p>t-SNE 梯度中的 $p_{ij}-q_{ij}$ 已經包含吸引與排斥；不能再多乘一次 $q_{ij}$ 而未補回正規化常數。最佳化應沿負梯度更新，因此 $p_{ij}>q_{ij}$ 的點對在其他項不變時相互靠近。把梯度寫成加法更新時，必須同步改變差向量的方向。</p>
+<p>Lab 設 <code>init="pca"</code> 讓初始座標帶有部分全域線性結構，並設 <code>learning_rate="auto"</code>。sklearn 對 learning rate 的數值定義與部分其他 t-SNE 實作相差四倍；引用「樣本數／early exaggeration」的經驗公式時必須核對實作，不直接抄成所有套件共用的數字。</p>
+<p>Perplexity 是熵轉回的有效鄰居數。若機率在 $m$ 個鄰居上均勻，熵為 $\log_2m$，perplexity 就是 $m$；真實權重通常不均，因此它不是硬性的第 $k$ 近鄰截斷。不同樣本可得到不同 $\sigma_i$，這也解釋為何不同密度區域在圖上可能被放大／壓縮。</p>
+<p>閱讀：<a href="https://lvdmaaten.github.io/publications/papers/JMLR_2008.pdf" target="_blank" rel="noopener">t-SNE 原始論文</a>、<a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf" target="_blank" rel="noopener">Barnes–Hut t-SNE</a>、<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.manifold.TSNE.html" target="_blank" rel="noopener">TSNE 參數定義</a>。</p></div></details>
 </section>
 <section id="exercises">
 <!-- GEN:BEGIN sec:exercises -->
@@ -1762,7 +1879,7 @@ $$\frac{\partial C}{\partial z_i}=4\sum_{j\ne i}(p_{ij}-q_{ij})\frac{z_i-z_j}{1+
   <h3>PCA 與分群：同樣在化簡，問的問題不同</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th></th><th>PCA</th><th>K-means</th><th>階層式分群</th></tr></thead>
-  <tbody><tr><td>產出</td><td>連續的低維座標（得分）</td><td>K 個離散群標籤</td><td>一棵樹（1 到 n 群都在裡面）</td></tr><tr><td>要先決定</td><td>M（留幾個主成分）</td><td>K</td><td>相異度、linkage、切在哪</td></tr><tr><td>有隨機性嗎</td><td>精確分解無隨機性；近似求解器可能有</td><td><strong>有</strong>（初始指派）</td><td>沒有</td></tr><tr><td>結果唯一嗎</td><td>相異特徵值的方向僅差符號；重根可旋轉</td><td>局部極小，換初值會變</td><td>無距離 ties 且規則固定時確定；左右翻轉只改畫法</td></tr><tr><td>要標準化嗎</td><td>幾乎一定要</td><td>幾乎一定要</td><td>幾乎一定要</td></tr><tr><td>對離群值</td><td>會被拉走（變異最大化）</td><td>強迫入群，會扭曲</td><td>常自己掛高處，吃掉群額度</td></tr><tr><td>常見用途</td><td>視覺化、去雜訊、補值、當特徵</td><td>市場區隔、量化子群</td><td>探索階層結構、基因體學</td></tr></tbody>
+  <tbody><tr><td>產出</td><td>連續的低維座標（得分）</td><td>K 個離散群標籤</td><td>一棵樹（1 到 n 群都在裡面）</td></tr><tr><td>要先決定</td><td>M（留幾個主成分）</td><td>K</td><td>相異度、linkage、切在哪</td></tr><tr><td>有隨機性嗎</td><td>精確分解無隨機性；近似求解器可能有</td><td><strong>有</strong>（初始指派）</td><td>沒有</td></tr><tr><td>結果唯一嗎</td><td>相異特徵值的方向僅差符號；重根可旋轉</td><td>局部極小，換初值會變</td><td>無距離 ties 且規則固定時確定；左右翻轉只改畫法</td></tr><tr><td>要標準化嗎</td><td>依單位與變異差異的意義決定</td><td>依距離的各欄權重決定</td><td>依相異度與各欄尺度決定</td></tr><tr><td>對離群值</td><td>會被拉走（變異最大化）</td><td>強迫入群，會扭曲</td><td>常自己掛高處，吃掉群額度</td></tr><tr><td>常見用途</td><td>視覺化、去雜訊、補值、當特徵</td><td>市場區隔、量化子群</td><td>探索階層結構、基因體學</td></tr></tbody>
 </table></div>
 
   <h3>四種 linkage</h3>

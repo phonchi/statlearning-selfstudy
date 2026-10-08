@@ -1,0 +1,1216 @@
+[
+  {
+    "cell": 0,
+    "type": "markdown",
+    "source": "\n# Chapter 12\n",
+    "output_types": []
+  },
+  {
+    "cell": 1,
+    "type": "markdown",
+    "source": "<table align=\"left\">\n  <td>\n    <a href=\"https://colab.research.google.com/github/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>\n  </td>\n  <td>\n    <a target=\"_blank\" href=\"https://kaggle.com/kernels/welcome?src=https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb\"><img src=\"https://kaggle.com/static/images/open-in-kaggle.svg\" /></a>\n  </td>\n</table>\n",
+    "output_types": []
+  },
+  {
+    "cell": 2,
+    "type": "code",
+    "source": "%load_ext cudf.pandas\n%load_ext cuml.accel",
+    "output_types": []
+  },
+  {
+    "cell": 3,
+    "type": "code",
+    "source": "%pip install ISLP -qq\n%pip install fancyimpute -qq\n%pip install opentsne -qq\n%pip install umap-learn -qq\n%pip install git+https://github.com/dmuellner/fastcluster -qq\n%pip install hdbscan -qq\n%pip install phate -qq",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 4,
+    "type": "code",
+    "source": "# 本 Notebook 使用的匯入（imports）\nimport numpy as np  # 數值運算與陣列處理\nimport pandas as pd  # 資料表格與資料處理\nimport seaborn as sns  # 統計視覺化\nimport matplotlib.pyplot as plt  # 繪圖指令與樣式\nfrom matplotlib.pyplot import subplots  # 建立子圖與繪圖版面\nfrom sklearn.preprocessing import StandardScaler  # 特徵標準化\nfrom sklearn.decomposition import PCA  # 主成分分析 (PCA)\nfrom sklearn.manifold import TSNE  # t-SNE 降維\nfrom openTSNE import TSNE as oTSNE  # openTSNE 版本的 t-SNE\nimport umap  # UMAP 降維\nimport phate  # PHATE 降維\nfrom sklearn.cluster import (  # 聚類演算法\n    KMeans, AgglomerativeClustering, DBSCAN\n)\nfrom scipy.cluster.hierarchy import (  # 階層式聚類工具\n    linkage, dendrogram, cut_tree\n)\nfrom sklearn.datasets import load_digits, make_blobs  # 範例/合成資料集\nfrom sklearn.model_selection import train_test_split  # 訓練/測試切分\nfrom sklearn.neighbors import KNeighborsClassifier  # KNN 分類器\nfrom sklearn.svm import SVC  # 支援向量機 (SVC)\nfrom sklearn import metrics  # 評估（silhouette/CH/DB/ARI/NMI 等）\nfrom sklearn.metrics import adjusted_rand_score  # ARI 指標（直接使用名稱）\nfrom ISLP import load_data  # ISLP 資料載入\nfrom ISLP.cluster import compute_linkage  # ISLP 階層式聚類：快速連結計算\nimport fastcluster as fc  # fastcluster 加速\nimport hdbscan  # HDBSCAN 聚類\nfrom fancyimpute import SoftImpute  # 缺失值補全（矩陣分解）\nfrom statsmodels.datasets import get_rdataset  # 讀取 R 資料集\nfrom itertools import islice, cycle",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 5,
+    "type": "markdown",
+    "source": "# 實驗：無監督學習（Unsupervised Learning）",
+    "output_types": []
+  },
+  {
+    "cell": 6,
+    "type": "markdown",
+    "source": "我們在頂層匯入一些常用的函式庫。",
+    "output_types": []
+  },
+  {
+    "cell": 7,
+    "type": "markdown",
+    "source": "在本實驗中，我們將示範在數個資料集上進行PCA（主成分分析）和聚類分析（clustering）。\n\n如同其他實驗，我們在頂層匯入一些常用的函式庫。這讓程式碼更具可讀性，因為透過掃描notebook的前幾行，我們就能知道此notebook中使用了哪些函式庫。",
+    "output_types": []
+  },
+  {
+    "cell": 8,
+    "type": "code",
+    "source": "%matplotlib inline\nsns.set_context(\"notebook\", font_scale=1.5, rc={\"lines.linewidth\": 2.5})",
+    "output_types": []
+  },
+  {
+    "cell": 9,
+    "type": "markdown",
+    "source": "## 主成分分析（Principal Components Analysis）",
+    "output_types": []
+  },
+  {
+    "cell": 10,
+    "type": "markdown",
+    "source": "在本實驗中，我們對[`USArrests`](https://islp.readthedocs.io/en/latest/datasets/USArrests.html#notes)資料集進行PCA，這是`R`計算環境中的一個資料集。我們使用`get_rdataset()`來取得資料，此函數可以從許多標準的`R`套件中讀取資料。\n\n該資料集的行包含50個州，按字母順序排列。",
+    "output_types": []
+  },
+  {
+    "cell": 11,
+    "type": "code",
+    "source": "USArrests = get_rdataset('USArrests').data\nUSArrests",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 12,
+    "type": "markdown",
+    "source": "該資料集的列包含四個變數。",
+    "output_types": []
+  },
+  {
+    "cell": 13,
+    "type": "code",
+    "source": "USArrests.columns",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 14,
+    "type": "markdown",
+    "source": "我們首先簡單檢視資料。我們注意到各變數具有截然不同的均值。",
+    "output_types": []
+  },
+  {
+    "cell": 15,
+    "type": "code",
+    "source": "USArrests.mean()",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 16,
+    "type": "markdown",
+    "source": "Dataframes有數個有用的方法來計算\n逐列摘要統計。我們也可以使用`var()`方法來檢視\n四個變數的變異數。",
+    "output_types": []
+  },
+  {
+    "cell": 17,
+    "type": "code",
+    "source": "USArrests.var()",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 18,
+    "type": "markdown",
+    "source": "不出所料，各變數也有截然不同的變異數。\n`UrbanPop`變數測量每個州居住在城市地區的人口百分比，這與每個州每10萬人口中的強姦案件數量並不具可比性。\nPCA尋找能夠解釋資料集中最多變異數的衍生變數。\n如果我們在執行PCA之前不對變數進行標準化，那麼主成分將主要由\n`Assault`變數驅動，因為它具有最大的\n變異數。因此，如果變數以不同的單位測量或在尺度上變化很大，建議在執行PCA之前將變數標準化為具有標準差為1。\n通常我們也會將均值設為零。\n\n這種標準化可以透過上面匯入的`StandardScaler()`轉換來完成。我們首先`fit`（擬合）\n縮放器，它計算必要的均值和標準差，然後使用\n`transform`方法將其應用於我們的資料。如之前一樣，我們使用`fit_transform()`方法來結合這些步驟。",
+    "output_types": []
+  },
+  {
+    "cell": 19,
+    "type": "code",
+    "source": "scaler = StandardScaler(with_std=True,\n                        with_mean=True)\nUSArrests_scaled = scaler.fit_transform(USArrests)",
+    "output_types": []
+  },
+  {
+    "cell": 20,
+    "type": "markdown",
+    "source": "完成資料標準化後，我們接著可以\n使用`scikit-learn.decomposition`套件中的`PCA()`轉換\n來執行主成分分析。",
+    "output_types": []
+  },
+  {
+    "cell": 21,
+    "type": "code",
+    "source": "pcaUS = PCA()",
+    "output_types": []
+  },
+  {
+    "cell": 22,
+    "type": "markdown",
+    "source": "（預設情況下，`PCA()`轉換會將變數置中到均值為零，但不會縮放它們。）轉換器`pcaUS`\n可以用來尋找PCA\n`scores`，這些分數由`fit()`方法回傳。一旦呼叫了`fit`方法，`pcaUS`物件也會包含許多有用的數量。",
+    "output_types": []
+  },
+  {
+    "cell": 23,
+    "type": "code",
+    "source": "pcaUS.fit(USArrests_scaled)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 24,
+    "type": "markdown",
+    "source": "擬合後，`mean_`屬性對應於變數的均值。在這種情況下，由於我們使用`scaler()`對資料進行了置中和縮放，所以均值都將為0。",
+    "output_types": []
+  },
+  {
+    "cell": 25,
+    "type": "code",
+    "source": "pcaUS.mean_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 26,
+    "type": "markdown",
+    "source": "分數可以在擬合後使用`pcaUS`的`transform()`方法來計算。",
+    "output_types": []
+  },
+  {
+    "cell": 27,
+    "type": "code",
+    "source": "scores = pcaUS.transform(USArrests_scaled)",
+    "output_types": []
+  },
+  {
+    "cell": 28,
+    "type": "markdown",
+    "source": "我們將在下面進一步繪製這些分數。\n`components_`屬性提供主成分負載：\n`pcaUS.components_`的每一行都包含對應的\n主成分負載向量。",
+    "output_types": []
+  },
+  {
+    "cell": 29,
+    "type": "code",
+    "source": "pcaUS.components_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 30,
+    "type": "markdown",
+    "source": "雙標圖（`biplot`）是PCA常用的視覺化方法。這並非`scikit-learn`的標準內建功能，儘管有Python套件能產生這樣的圖表。在這裡我們\n手動製作簡單的雙標圖。",
+    "output_types": []
+  },
+  {
+    "cell": 31,
+    "type": "code",
+    "source": "i, j = 0, 1 # which components\nfig, ax = plt.subplots(1, 1, figsize=(8, 8))\nax.scatter(scores[:,0], scores[:,1])\nax.set_xlabel('PC%d' % (i+1))\nax.set_ylabel('PC%d' % (j+1))\nfor k in range(pcaUS.components_.shape[1]):\n    ax.arrow(0, 0, pcaUS.components_[i,k], pcaUS.components_[j,k])\n    ax.text(pcaUS.components_[i,k],\n            pcaUS.components_[j,k],\n            USArrests.columns[k])",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 32,
+    "type": "markdown",
+    "source": "注意這個圖形是圖12.1通過$y$軸的反射。回想起\n主成分只在符號變化上是唯一的，所以我們可以\n通過翻轉第二組分數和負載的符號來重現該圖形。\n我們也增加箭頭的長度來強調負載。",
+    "output_types": []
+  },
+  {
+    "cell": 33,
+    "type": "code",
+    "source": "scale_arrow = s_ = 2\nscores[:,1] *= -1\npcaUS.components_[1] *= -1 # flip the y-axis\nfig, ax = plt.subplots(1, 1, figsize=(8, 8))\nax.scatter(scores[:,0], scores[:,1])\nax.set_xlabel('PC%d' % (i+1))\nax.set_ylabel('PC%d' % (j+1))\nfor k in range(pcaUS.components_.shape[1]):\n    ax.arrow(0, 0, s_*pcaUS.components_[i,k], s_*pcaUS.components_[j,k])\n    ax.text(s_*pcaUS.components_[i,k],\n            s_*pcaUS.components_[j,k],\n            USArrests.columns[k])",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 34,
+    "type": "markdown",
+    "source": "主成分分數的標準差如下：",
+    "output_types": []
+  },
+  {
+    "cell": 35,
+    "type": "code",
+    "source": "scores.std(0, ddof=1)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 36,
+    "type": "markdown",
+    "source": "每個分數的變異數可以透過\n`explained_variance_`屬性直接從`pcaUS`物件中提取。",
+    "output_types": []
+  },
+  {
+    "cell": 37,
+    "type": "code",
+    "source": "pcaUS.explained_variance_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 38,
+    "type": "markdown",
+    "source": "每個主成分解釋的變異數比例（PVE）儲存在`explained_variance_ratio_`中：",
+    "output_types": []
+  },
+  {
+    "cell": 39,
+    "type": "code",
+    "source": "pcaUS.explained_variance_ratio_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 40,
+    "type": "markdown",
+    "source": "我們看到第一個主成分解釋了資料中62.0%的變異數，下一個主成分解釋了24.7%的變異數，依此類推。\n我們可以繪製每個成分解釋的PVE，以及累積PVE。我們首先\n繪製解釋的變異數比例。",
+    "output_types": []
+  },
+  {
+    "cell": 41,
+    "type": "code",
+    "source": "%%capture\nfig, axes = plt.subplots(1, 2, figsize=(15, 6))\nticks = np.arange(pcaUS.n_components_)+1\nax = axes[0]\nax.plot(ticks,\n        pcaUS.explained_variance_ratio_,\n        marker='o')\nax.set_xlabel('Principal Component');\nax.set_ylabel('Proportion of Variance Explained')\nax.set_ylim([0,1])\nax.set_xticks(ticks)",
+    "output_types": []
+  },
+  {
+    "cell": 42,
+    "type": "markdown",
+    "source": "注意使用`%%capture`，這會抑制部分完成圖形的顯示。",
+    "output_types": []
+  },
+  {
+    "cell": 43,
+    "type": "code",
+    "source": "ax = axes[1]\nax.plot(ticks,\n        pcaUS.explained_variance_ratio_.cumsum(),\n        marker='o')\nax.set_xlabel('Principal Component')\nax.set_ylabel('Cumulative Proportion of Variance Explained')\nax.set_ylim([0, 1])\nax.set_xticks(ticks)\nfig",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 44,
+    "type": "markdown",
+    "source": "結果與圖12.3所示相似。注意\n`cumsum()`方法計算數值向量元素的累積和。例如：",
+    "output_types": []
+  },
+  {
+    "cell": 45,
+    "type": "code",
+    "source": "a = np.array([1,2,8,-3])\nnp.cumsum(a)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 46,
+    "type": "markdown",
+    "source": "## 矩陣補全（Matrix Completion）",
+    "output_types": []
+  },
+  {
+    "cell": 47,
+    "type": "markdown",
+    "source": "我們現在重新創建在第12.3節中對`USArrests`資料進行的分析。\n\n我們在第12.2.2節中看到，在置中的資料矩陣$\\bf X$上求解最佳化\n問題(12.6)等價於計算資料的前$M$個主成分。我們使用下面我們標準化和置中的`USArrests`資料作為$\\bf X$。奇異值分解（*singular value decomposition*, SVD）是求解(12.6)的一般演算法。",
+    "output_types": []
+  },
+  {
+    "cell": 48,
+    "type": "code",
+    "source": "X = USArrests_scaled\nU, D, V = np.linalg.svd(X, full_matrices=False)\nU.shape, D.shape, V.shape",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 49,
+    "type": "markdown",
+    "source": "`np.linalg.svd()`函數回傳三個組件：`U`、`D`和`V`。矩陣`V`等價於主成分的負載矩陣（除了不重要的符號翻轉）。使用`full_matrices=False`選項確保對於高矩陣，`U`的形狀與`X`的形狀相同。",
+    "output_types": []
+  },
+  {
+    "cell": 50,
+    "type": "code",
+    "source": "V",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 51,
+    "type": "code",
+    "source": "pcaUS.components_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 52,
+    "type": "markdown",
+    "source": "矩陣`U`對應於PCA分數矩陣的*標準化*版本（每列標準化為平方和為1）。如果我們將`U`的每列乘以`D`的對應元素，我們就能精確地恢復PCA分數（除了無意義的符號翻轉）。",
+    "output_types": []
+  },
+  {
+    "cell": 53,
+    "type": "code",
+    "source": "(U * D[None,:])[:3]",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 54,
+    "type": "code",
+    "source": "scores[:3]",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 55,
+    "type": "markdown",
+    "source": "雖然使用`PCA()`估計器來進行此實驗是可能的，\n在這裡我們使用`np.linalg.svd()`函數以說明其使用方法。\n\n我們現在隨機省略$50\\times 4$資料矩陣中的20個項目。我們首先隨機選擇20行（州），然後在每行中隨機選取四個項目中的一個。這確保每行至少有三個觀察值。",
+    "output_types": []
+  },
+  {
+    "cell": 56,
+    "type": "code",
+    "source": "n_omit = 20\nnp.random.seed(15)\nr_idx = np.random.choice(np.arange(X.shape[0]),\n                         n_omit,\n                         replace=False)\nc_idx = np.random.choice(np.arange(X.shape[1]),\n                         n_omit,\n                         replace=True)\nXna = X.copy()\nXna[r_idx, c_idx] = np.nan",
+    "output_types": []
+  },
+  {
+    "cell": 57,
+    "type": "markdown",
+    "source": "這裡陣列`r_idx`包含從0到49的20個整數；這代表被選中包含缺失值的州（`X`的行）。而`c_idx`包含從0到3的20個整數，代表每個選定州中包含缺失值的特徵（`X`中的列）。\n\n我們現在編寫一些程式碼來實現演算法12.1。\n我們首先編寫一個函數，它接受一個矩陣，並使用`svd()`函數回傳該矩陣的近似值。\n這將在演算法12.1的步驟2中需要。",
+    "output_types": []
+  },
+  {
+    "cell": 58,
+    "type": "code",
+    "source": "def low_rank(X, M=1):\n    U, D, V = np.linalg.svd(X)\n    L = U[:,:M] * D[None,:M]\n    return L.dot(V[:M])",
+    "output_types": []
+  },
+  {
+    "cell": 59,
+    "type": "markdown",
+    "source": "為執行演算法的步驟1，我們初始化`Xhat`——這是演算法12.1中的$\\tilde{\\bf X}$——透過用非缺失項目的列均值來替代缺失值。這些均值在對行軸運行`np.nanmean()`後儲存在下面的`Xbar`中。\n我們製作一個副本，以便當我們在下面給`Xhat`賦值時，不會同時覆蓋`Xna`中的值。",
+    "output_types": []
+  },
+  {
+    "cell": 60,
+    "type": "code",
+    "source": "Xhat = Xna.copy()\nXbar = np.nanmean(Xhat, axis=0)\nXhat[r_idx, c_idx] = Xbar[c_idx]",
+    "output_types": []
+  },
+  {
+    "cell": 61,
+    "type": "markdown",
+    "source": "在我們開始步驟2之前，我們設置來測量迭代的\n進度：",
+    "output_types": []
+  },
+  {
+    "cell": 62,
+    "type": "code",
+    "source": "thresh = 1e-7\nrel_err = 1\ncount = 0\nismiss = np.isnan(Xna)\nmssold = np.mean(Xhat[~ismiss]**2)\nmss0 = np.mean(Xna[~ismiss]**2)",
+    "output_types": []
+  },
+  {
+    "cell": 63,
+    "type": "markdown",
+    "source": "這裡`ismiss`是一個與`Xna`具有相同維度的邏輯矩陣；\n如果對應的矩陣元素缺失，給定元素為`True`。記號`~ismiss`否定此布林向量。這很有用，因為它允許我們存取缺失和非缺失的項目。我們將非缺失元素的平方均值儲存在`mss0`中。\n我們將舊版本`Xhat`的非缺失元素的均方誤差（MSE）儲存在`mssold`中（目前與`mss0`一致）。我們計劃將當前版本`Xhat`的非缺失元素的均方誤差（MSE）儲存在`mss`中，然後迭代演算法12.1的步驟2，直到*相對誤差*（定義為`(mssold - mss) / mss0`）低於`thresh = 1e-7`。\n {演算法12.1告訴我們迭代步驟2直到(12.14)不再減少。判斷(12.14)是否在減少只需要我們追蹤`mssold - mss`。然而，在實際中，我們追蹤`(mssold - mss) / mss0`：這使得演算法12.1收斂所需的迭代次數不依賴於我們是否將原始資料$\\bf X$乘以常數因子。}\n\n在演算法12.1的步驟2(a)中，我們使用`low_rank()`來近似`Xhat`；我們稱之為`Xapp`。在步驟2(b)中，我們使用`Xapp`來更新`Xhat`中在`Xna`中缺失的元素的估計值。最後，在步驟2(c)中，我們計算相對誤差。這三個步驟包含在以下`while`迴圈中：",
+    "output_types": []
+  },
+  {
+    "cell": 64,
+    "type": "code",
+    "source": "while rel_err > thresh:\n    count += 1\n    # Step 2(a)\n    Xapp = low_rank(Xhat, M=1)\n    # Step 2(b)\n    Xhat[ismiss] = Xapp[ismiss]\n    # Step 2(c)\n    mss = np.mean(((Xna - Xapp)[~ismiss])**2)\n    rel_err = (mssold - mss) / mss0\n    mssold = mss\n    print(\"Iteration: {0}, MSS:{1:.3f}, Rel.Err {2:.2e}\"\n          .format(count, mss, rel_err))",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 65,
+    "type": "markdown",
+    "source": "我們看到經過八次迭代後，相對誤差已降到`thresh = 1e-7`以下，因此演算法終止。發生這種情況時，非缺失元素的均方誤差（MSE）等於0.381。\n\n最後，我們計算20個插補值與實際值之間的相關性：",
+    "output_types": []
+  },
+  {
+    "cell": 66,
+    "type": "code",
+    "source": "np.corrcoef(Xapp[ismiss], X[ismiss])[0,1]",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 67,
+    "type": "markdown",
+    "source": "在本實驗中，我們為了教學目的自行實現了演算法12.1。然而，希望將矩陣補全應用於其資料的讀者可能會尋求更專業的Python實作。在實際中，如果我們希望將矩陣補全應用於我們的\n資料，我們可以使用 https://github.com/iskandr/fancyimpute 套件，它提供此演算法的非常高效的實作和推廣。",
+    "output_types": []
+  },
+  {
+    "cell": 68,
+    "type": "code",
+    "source": "Xhat2 = Xna.copy()\nX_filled = SoftImpute(max_rank=1).fit_transform(Xhat2)",
+    "output_types": [
+      "stream",
+      "stream"
+    ]
+  },
+  {
+    "cell": 69,
+    "type": "code",
+    "source": "np.corrcoef(X_filled[ismiss], X[ismiss])[0,1]",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 70,
+    "type": "markdown",
+    "source": "### t-SNE降維",
+    "output_types": []
+  },
+  {
+    "cell": 71,
+    "type": "code",
+    "source": "digits = load_digits()",
+    "output_types": []
+  },
+  {
+    "cell": 72,
+    "type": "code",
+    "source": "X = digits.images.reshape(-1, digits.images.shape[1]*digits.images.shape[2]) #vectorize\nX.shape",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 73,
+    "type": "code",
+    "source": "fig, ax_array = plt.subplots(5, 5)\naxes = ax_array.flatten()\nfor i, ax in enumerate(axes):\n    ax.imshow(digits.images[i], cmap='gray_r')\nplt.setp(axes, xticks=[], yticks=[], frame_on=False)\nplt.tight_layout(h_pad=0.5, w_pad=0.01)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 74,
+    "type": "code",
+    "source": "tsne = TSNE(\n    n_components=2, perplexity=30, init=\"pca\", learning_rate=\"auto\", random_state=0, verbose=True\n)",
+    "output_types": []
+  },
+  {
+    "cell": 75,
+    "type": "code",
+    "source": "embedding = tsne.fit_transform(X)",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 76,
+    "type": "code",
+    "source": "plt.figure(figsize=(10, 8))\nplt.scatter(embedding[:, 0], embedding[:, 1], c=digits.target, cmap='Spectral', s=5)\nplt.gca().set_aspect('equal', 'datalim')\nplt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))\nplt.title('tSNE of the Digits dataset', fontsize=24)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 77,
+    "type": "markdown",
+    "source": "`openTSNE`提供快速的實作和更多與t-SNE相關的最佳化，詳情請見 https://opentsne.readthedocs.io/en/latest/ 。",
+    "output_types": []
+  },
+  {
+    "cell": 78,
+    "type": "code",
+    "source": "otsne = oTSNE(\n    n_components=2,\n    perplexity=30,\n    initialization='pca',\n    n_jobs=2,\n    random_state=0,\n    negative_gradient_method='auto',\n    verbose=True,\n)",
+    "output_types": []
+  },
+  {
+    "cell": 79,
+    "type": "code",
+    "source": "embedding = otsne.fit(X)",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 80,
+    "type": "code",
+    "source": "plt.figure(figsize=(10, 8))\nplt.scatter(embedding[:, 0], embedding[:, 1], c=digits.target, cmap='Spectral', s=5)\nplt.gca().set_aspect('equal', 'datalim')\nplt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))\nplt.title('tSNE of the Digits dataset', fontsize=24)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 81,
+    "type": "markdown",
+    "source": "### UMAP降維",
+    "output_types": []
+  },
+  {
+    "cell": 82,
+    "type": "markdown",
+    "source": "UMAP對於生成視覺化很有用，但如果我們想在機器學習任務中更廣泛地使用UMAP，重要的是能夠訓練模型，然後稍後將新資料傳遞給模型，並讓它將該資料轉換到學習的空間中。例如，如果我們使用UMAP學習潛在空間，然後在轉換到潛在空間的資料上訓練分類器，那麼分類器只有在我們能夠將想要預測的資料轉換到分類器使用的潛在空間時，才對預測有用。",
+    "output_types": []
+  },
+  {
+    "cell": 83,
+    "type": "code",
+    "source": "X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, stratify=digits.target, random_state=42)",
+    "output_types": []
+  },
+  {
+    "cell": 84,
+    "type": "code",
+    "source": "svc = SVC(gamma='auto').fit(X_train, y_train)\nknn = KNeighborsClassifier().fit(X_train, y_train)\nsvc.score(X_test, y_test), knn.score(X_test, y_test)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 85,
+    "type": "markdown",
+    "source": "現在的目標是將UMAP用作預處理步驟，可以潛在地整合到流水線中。",
+    "output_types": []
+  },
+  {
+    "cell": 86,
+    "type": "code",
+    "source": "trans = umap.UMAP(n_neighbors=5, random_state=42).fit(X_train)",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 87,
+    "type": "code",
+    "source": "plt.figure(figsize=(10, 8))\nplt.scatter(trans.embedding_[:, 0], trans.embedding_[:, 1], c=y_train, cmap='Spectral', s=5)\nplt.gca().set_aspect('equal', 'datalim')\nplt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))\nplt.title('Umap of the Digits dataset', fontsize=24)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 88,
+    "type": "markdown",
+    "source": "這看起來非常有前景！大多數類別都得到了很乾淨的分離，這給了我們一些希望，它可能有助於分類器性能。我們現在可以在嵌入的訓練資料上訓練一些新模型（再次使用SVC和KNN分類器）。這看起來與之前完全相同，但現在我們傳遞嵌入的資料。",
+    "output_types": []
+  },
+  {
+    "cell": 89,
+    "type": "code",
+    "source": "svc = SVC(gamma='auto').fit(trans.embedding_, y_train)\nknn = KNeighborsClassifier().fit(trans.embedding_, y_train)",
+    "output_types": []
+  },
+  {
+    "cell": 90,
+    "type": "code",
+    "source": "test_embedding = trans.transform(X_test)",
+    "output_types": []
+  },
+  {
+    "cell": 91,
+    "type": "markdown",
+    "source": "下一個重要問題是我們的測試資料經過了什麼轉換。原則上我們有了測試集的新二維表示，理想情況下這應該基於現有的訓練集嵌入",
+    "output_types": []
+  },
+  {
+    "cell": 92,
+    "type": "code",
+    "source": "plt.figure(figsize=(10, 8))\nplt.scatter(test_embedding[:, 0], test_embedding[:, 1], c=y_test, cmap='Spectral', s=5)\nplt.gca().set_aspect('equal', 'datalim')\nplt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))\nplt.title('Umap of the Digits dataset', fontsize=24)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 93,
+    "type": "markdown",
+    "source": "結果看起來如我們所期望的；測試資料已經被嵌入到二維中，位置正是我們根據上面視覺化的訓練資料嵌入應該期望的（按類別）。這意味著我們現在可以通過將新轉換的測試集傳遞給在嵌入的訓練資料上訓練的模型來試用這些模型。",
+    "output_types": []
+  },
+  {
+    "cell": 94,
+    "type": "code",
+    "source": "svc.score(trans.transform(X_test), y_test), knn.score(trans.transform(X_test), y_test)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 95,
+    "type": "markdown",
+    "source": "結果相當好。雖然KNN分類器的準確率沒有提升，但在給定資料的情況下，改進的空間不大。另一方面，SVC已經改進到與KNN分類器具有相等的準確率！\n\n對於更有趣的資料集，更大維度的嵌入可能會有顯著的增益——在包含UMAP的流水線的網格搜尋中，這絕對值得作為參數之一來探索。",
+    "output_types": []
+  },
+  {
+    "cell": 96,
+    "type": "markdown",
+    "source": "### PHATE降維",
+    "output_types": []
+  },
+  {
+    "cell": 97,
+    "type": "markdown",
+    "source": "PHATE（基於親和力軌跡嵌入的勢熱擴散，Potential Heat-diffusion for Affinity-based Trajectory Embedding）是一個視覺化高維資料的工具。PHATE使用新穎的概念框架來學習和視覺化同時保持局部和全域距離的流形。",
+    "output_types": []
+  },
+  {
+    "cell": 98,
+    "type": "code",
+    "source": "phate_op = phate.PHATE(n_components=2)\ndata_phate = phate_op.fit_transform(X)",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 99,
+    "type": "code",
+    "source": "plt.figure(figsize=(10, 8))\nplt.scatter(data_phate[:, 0], data_phate[:, 1], c=digits.target, cmap='Spectral', s=5)\nplt.gca().set_aspect('equal', 'datalim')\nplt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))\nplt.title('phate of the Digits dataset', fontsize=24)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 100,
+    "type": "markdown",
+    "source": "## 聚類分析（Clustering）",
+    "output_types": []
+  },
+  {
+    "cell": 101,
+    "type": "markdown",
+    "source": "### $K$-Means聚類分析",
+    "output_types": []
+  },
+  {
+    "cell": 102,
+    "type": "markdown",
+    "source": "估計器`scikit-learn.cluster.KMeans()`在Python中執行$K$-means聚類。我們從一個簡單的模擬範例開始，其中資料確實有兩個聚類：前25個觀察值相對於後25個觀察值有均值偏移。",
+    "output_types": []
+  },
+  {
+    "cell": 103,
+    "type": "code",
+    "source": "np.random.seed(0);\nX = np.random.standard_normal((50,2));\nX[:25,0] += 3;\nX[:25,1] -= 4;",
+    "output_types": []
+  },
+  {
+    "cell": 104,
+    "type": "markdown",
+    "source": "我們現在執行$K=2$的$K$-means聚類。",
+    "output_types": []
+  },
+  {
+    "cell": 105,
+    "type": "code",
+    "source": "kmeans = KMeans(n_clusters=2,\n                random_state=2,\n                n_init=20).fit(X)",
+    "output_types": []
+  },
+  {
+    "cell": 106,
+    "type": "markdown",
+    "source": "我們指定`random_state`以使結果可重現。50個觀察值的聚類指派包含在`kmeans.labels_`中。",
+    "output_types": []
+  },
+  {
+    "cell": 107,
+    "type": "code",
+    "source": "kmeans.labels_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 108,
+    "type": "markdown",
+    "source": "$K$-means聚類完美地將觀察值分離成兩個\n聚類，即使我們沒有向`KMeans()`提供任何分組資訊。我們可以繪製資料，每個觀察值\n根據其聚類指派進行著色。",
+    "output_types": []
+  },
+  {
+    "cell": 109,
+    "type": "code",
+    "source": "plt.scatter(X[:, 0], X[:, 1], c=kmeans.labels_, s=50, cmap=plt.cm.bwr)\n\ncenters = kmeans.cluster_centers_\nplt.scatter(centers[:, 0], centers[:, 1],marker = '*', c='black', s=200, alpha=1)\nplt.xlabel('X0')\nplt.ylabel('X1')",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 110,
+    "type": "markdown",
+    "source": "這裡觀察值可以輕易地繪製，因為它們是\n二維的。如果有超過兩個變數，那麼我們可以\n改為執行PCA並繪製前兩個主成分分數向量來代表聚類。\n\n在這個範例中，我們知道真的有兩個聚類，因為我們生成了資料。然而，對於真實資料，我們不知道聚類的真實數量，也不知道它們是否以任何精確的方式存在。我們也可以在這個範例上執行$K=3$的$K$-means聚類。",
+    "output_types": []
+  },
+  {
+    "cell": 111,
+    "type": "code",
+    "source": "kmeans = KMeans(n_clusters=3,\n                random_state=3,\n                n_init=20).fit(X)\nplt.figure(figsize=(6,5))\nplt.scatter(X[:,0], X[:,1], s=50, c=kmeans.labels_, cmap=plt.cm.prism)\nplt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], marker='*', s=150,\n            color='blue', label='Centers')\nplt.legend(loc='best')\nplt.xlabel('X0')\nplt.ylabel('X1')",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 112,
+    "type": "markdown",
+    "source": "當$K=3$時，$K$-means聚類將兩個聚類分割開。\n我們使用`n_init`參數來執行具有20個初始聚類指派的$K$-means（預設值為10）。如果使用大於1的`n_init`值，那麼$K$-means\n聚類將使用演算法12.2步驟1中的多個隨機指派來執行，而`KMeans()`\n函數將只報告最佳結果。這裡我們比較使用\n`n_init=1`和`n_init=20`。",
+    "output_types": []
+  },
+  {
+    "cell": 113,
+    "type": "code",
+    "source": "kmeans1 = KMeans(n_clusters=3,\n                random_state=3,\n                n_init=1).fit(X)\nkmeans20 = KMeans(n_clusters=3,\n                  random_state=3,\n                  n_init=20).fit(X);\nkmeans1.inertia_, kmeans20.inertia_",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 114,
+    "type": "markdown",
+    "source": "注意：`kmeans.inertia_`是聚類內平方和的總和，\n我們透過執行$K$-means\n聚類來尋求最小化這個值(12.17)。\n\n我們*強烈*建議總是以較大的`n_init`值（如20或50）運行$K$-means聚類，否則可能會獲得不理想的局部最優解。\n\n在執行$K$-means聚類時，除了使用多個初始聚類指派外，使用`KMeans()`的`random_state`參數設定隨機種子也很重要。這樣，步驟1中的初始聚類指派可以被複製，$K$-means輸出將完全可重現。",
+    "output_types": []
+  },
+  {
+    "cell": 115,
+    "type": "markdown",
+    "source": "### 階層式聚類（Hierarchical Clustering）",
+    "output_types": []
+  },
+  {
+    "cell": 116,
+    "type": "markdown",
+    "source": "`scikit-learn.clustering`套件中的`AgglomerativeClustering()`類別實現了階層式聚類。\n由於其名稱較長，我們使用*階層式聚類*的簡寫`HClust`。注意：這不會改變使用此方法時的回傳類型，所以實例仍然是`AgglomerativeClustering`類別。\n在以下範例中，我們使用前一個實驗的資料來繪製階層式聚類樹狀圖，使用完全連結、單一連結和平均連結聚類，以歐幾里得距離作為相異性度量。我們首先使用完全連結對觀察值進行聚類。",
+    "output_types": []
+  },
+  {
+    "cell": 117,
+    "type": "code",
+    "source": "HClust = AgglomerativeClustering\nhc_comp = HClust(distance_threshold=0,\n                 n_clusters=None,\n                 linkage='complete')\nhc_comp.fit(X)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 118,
+    "type": "markdown",
+    "source": "這會計算整棵階層式樹狀圖（dendrogram）。\n我們也可以選擇使用階層式分群中的 average linkage（平均連接）或 single linkage（單一連接）等方式來進行分群。\n",
+    "output_types": []
+  },
+  {
+    "cell": 119,
+    "type": "code",
+    "source": "hc_avg = HClust(distance_threshold=0,\n                n_clusters=None,\n                linkage='average');\nhc_avg.fit(X)\nhc_sing = HClust(distance_threshold=0,\n                 n_clusters=None,\n                 linkage='single');\nhc_sing.fit(X);",
+    "output_types": []
+  },
+  {
+    "cell": 120,
+    "type": "markdown",
+    "source": "使用預先計算好的距離矩陣時，我們需要額外提供參數 `metric=\"precomputed\"`。\n在下方程式碼中，前四行會計算出一個 $50\\times 50$ 的兩兩距離矩陣。\n",
+    "output_types": []
+  },
+  {
+    "cell": 121,
+    "type": "code",
+    "source": "D = np.zeros((X.shape[0], X.shape[0]));\nfor i in range(X.shape[0]):\n    x_ = np.multiply.outer(np.ones(X.shape[0]), X[i])\n    D[i] = np.sqrt(np.sum((X - x_)**2, 1));\nhc_sing_pre = HClust(distance_threshold=0,\n                     n_clusters=None,\n                     metric='precomputed',\n                     linkage='single')\nhc_sing_pre.fit(D)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 122,
+    "type": "markdown",
+    "source": "我們使用 `scipy.cluster.hierarchy` 套件中的 `dendrogram()` 函式來繪製階層式樹狀圖（dendrogram）。\n然而，`dendrogram()` 需要的是所謂的**連接矩陣（linkage matrix）表示法**，這並不是 `AgglomerativeClustering()` 所直接提供的結果，但可以額外計算取得。\n[`ISLP.cluster`](https://islp.readthedocs.io/en/latest/helpers/cluster.html) 套件中的 `compute_linkage()` 函式就是為了這個目的所設計的。\n\n接下來我們可以開始繪製 dendrogram。圖中下方的數字表示每筆觀測資料的編號。\n`dendrogram()` 函式預設會使用某個方法將不同分支上色，暗示在特定深度可以切割出預設的群集結果。\n我們傾向關閉這個預設行為，方式是將該閾值設定為無限大（infinite）。\n由於我們可能會繪製多張 dendrogram，因此我們將這些設定存成一個字典 `cargs`，並透過 `**cargs` 的語法以關鍵字參數形式傳入。\n",
+    "output_types": []
+  },
+  {
+    "cell": 123,
+    "type": "code",
+    "source": "cargs = {'color_threshold':-np.inf,\n         'above_threshold_color':'black'}\nlinkage_comp = compute_linkage(hc_comp)\nfig, ax = plt.subplots(1, 1, figsize=(8, 8))\ndendrogram(linkage_comp,\n           ax=ax,\n           **cargs);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 124,
+    "type": "markdown",
+    "source": "我們可能希望將樹狀圖中高於與低於切割閾值的分支以不同顏色顯示。\n這可以透過調整 `color_threshold` 參數來達成。\n例如，若我們想在高度為 4 的位置切割樹，並將所有在高度 4 以上（即合併發生在此高度以上）的連線標示為黑色，則可如下設定。\n",
+    "output_types": []
+  },
+  {
+    "cell": 125,
+    "type": "code",
+    "source": "fig, ax = plt.subplots(1, 1, figsize=(8, 8))\ndendrogram(linkage_comp,\n           ax=ax,\n           color_threshold=4,\n           above_threshold_color='black');",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 126,
+    "type": "markdown",
+    "source": "若要根據 dendrogram 的特定切割高度來決定每筆觀測資料所屬的群集標籤，我們可以使用 `scipy.cluster.hierarchy` 中的 `cut_tree()` 函式來達成：\n",
+    "output_types": []
+  },
+  {
+    "cell": 127,
+    "type": "code",
+    "source": "cut_tree(linkage_comp, n_clusters=4).T",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 128,
+    "type": "markdown",
+    "source": "這也可以透過在 `HClust()` 中提供參數 `n_clusters` 來達成；\n然而，每次切割都需要重新執行分群。\n\n同樣地，也可以透過提供 `distance_threshold` 給 `HClust()`，或是提供 `height` 給 `cut_tree()`，\n以距離閾值的方式對樹進行切割。\n",
+    "output_types": []
+  },
+  {
+    "cell": 129,
+    "type": "code",
+    "source": "cut_tree(linkage_comp, height=5)",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 130,
+    "type": "markdown",
+    "source": "在對觀測資料進行階層式分群之前，我們可以先對變數進行標準化處理，\n這可使用與主成分分析（PCA）範例中相同的 `StandardScaler()` 來完成：\n",
+    "output_types": []
+  },
+  {
+    "cell": 131,
+    "type": "code",
+    "source": "scaler = StandardScaler()\nX_scale = scaler.fit_transform(X)\nhc_comp_scale = HClust(distance_threshold=0,\n                       n_clusters=None,\n                       linkage='complete').fit(X_scale)\nlinkage_comp_scale = compute_linkage(hc_comp_scale)\nfig, ax = plt.subplots(1, 1, figsize=(8, 8))\ndendrogram(linkage_comp_scale, ax=ax, **cargs)\nax.set_title(\"Hierarchical Clustering with Scaled Features\");",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 132,
+    "type": "markdown",
+    "source": "以觀測值之間的相關性為基礎計算距離，可以用於分群。\n兩個觀測值之間的相關係數可用來衡量其特徵數值的相似程度。\n（假設每個觀測值具有 $p$ 個數值型特徵，我們可透過這 $p$ 對數字之間的相關性來衡量兩筆觀測資料的相似度。）\n\n對於 $n$ 筆觀測值，我們可以計算出一個 $n \\times n$ 的相關係數矩陣，將其視為**相似度矩陣**（similarity 或 affinity matrix）；\n而將「1 減去該相關係數矩陣」則可作為**不相似度矩陣**（dissimilarity matrix），用於分群分析。\n\n**注意**:僅當資料至少具有三個特徵時，使用相關係數才有意義，\n因為若觀測值僅含兩個特徵，任意兩筆觀測值之間的絕對相關係數一定為 1。\n因此，我們將使用具有三維特徵的資料集進行分群分析。\n",
+    "output_types": []
+  },
+  {
+    "cell": 133,
+    "type": "code",
+    "source": "X = np.random.standard_normal((30, 3))\ncorD = 1 - np.corrcoef(X)\nhc_cor = HClust(linkage='complete',\n                distance_threshold=0,\n                n_clusters=None,\n                metric='precomputed')\nhc_cor.fit(corD)\nlinkage_cor = compute_linkage(hc_cor)\nfig, ax = plt.subplots(1, 1, figsize=(8, 8))\ndendrogram(linkage_cor, ax=ax, **cargs)\nax.set_title(\"Complete Linkage with Correlation-Based Dissimilarity\");",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 134,
+    "type": "markdown",
+    "source": "你可以在 [http://danifold.net/fastcluster.html](http://danifold.net/fastcluster.html) 取得一個更高效的實作版本。其用法與 `Scipy` 相同。\n",
+    "output_types": []
+  },
+  {
+    "cell": 135,
+    "type": "code",
+    "source": "lk = fc.linkage(X, method='complete', metric='correlation', preserve_input=True)",
+    "output_types": []
+  },
+  {
+    "cell": 136,
+    "type": "code",
+    "source": "fig, ax = plt.subplots(1, 1, figsize=(8, 8))\ndendrogram(lk, ax=ax, **cargs);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 137,
+    "type": "markdown",
+    "source": "### DBSCAN\n",
+    "output_types": []
+  },
+  {
+    "cell": 138,
+    "type": "code",
+    "source": "# Generate sample data\ncenters = [[1, 1], [-1, -1], [1, -1]]\nX, labels_true = make_blobs(\n    n_samples=750, centers=centers, cluster_std=0.4, random_state=0\n)\n\nX = StandardScaler().fit_transform(X)",
+    "output_types": []
+  },
+  {
+    "cell": 139,
+    "type": "markdown",
+    "source": "更多有關分群效能評估的指標與方法，請參見：\nhttps://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation\n",
+    "output_types": []
+  },
+  {
+    "cell": 140,
+    "type": "code",
+    "source": "# Compute DBSCAN\ndb = DBSCAN(eps=0.3, min_samples=10).fit(X)\ncore_samples_mask = np.zeros_like(db.labels_, dtype=bool)\ncore_samples_mask[db.core_sample_indices_] = True\nlabels = db.labels_\n\n# Number of clusters in labels, ignoring noise if present.\nn_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)\nn_noise_ = list(labels).count(-1)\n\nprint(\"Estimated number of clusters: %d\" % n_clusters_)\nprint(\"Estimated number of noise points: %d\" % n_noise_)\nprint(\"Homogeneity: %0.3f\" % metrics.homogeneity_score(labels_true, labels))\nprint(\"Completeness: %0.3f\" % metrics.completeness_score(labels_true, labels))\nprint(\"V-measure: %0.3f\" % metrics.v_measure_score(labels_true, labels))\nprint(\"Adjusted Rand Index: %0.3f\" % metrics.adjusted_rand_score(labels_true, labels))\nprint(\n    \"Adjusted Mutual Information: %0.3f\"\n    % metrics.adjusted_mutual_info_score(labels_true, labels)\n)",
+    "output_types": [
+      "stream"
+    ]
+  },
+  {
+    "cell": 141,
+    "type": "code",
+    "source": "# Black removed and is used for noise instead.\nunique_labels = set(labels)\ncolors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]\nfor k, col in zip(unique_labels, colors):\n    if k == -1:\n        # Black used for noise.\n        col = [0, 0, 0, 1]\n\n    class_member_mask = labels == k\n\n    xy = X[class_member_mask & core_samples_mask]\n    plt.plot(\n        xy[:, 0],\n        xy[:, 1],\n        \"o\",\n        markerfacecolor=tuple(col),\n        markeredgecolor=\"k\",\n        markersize=14,\n    )\n\n    xy = X[class_member_mask & ~core_samples_mask]\n    plt.plot(\n        xy[:, 0],\n        xy[:, 1],\n        \"o\",\n        markerfacecolor=tuple(col),\n        markeredgecolor=\"k\",\n        markersize=6,\n    )\n\nplt.title(\"Estimated number of clusters: %d\" % n_clusters_);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 142,
+    "type": "markdown",
+    "source": "然而，DBSCAN 對於超參數設定相當敏感。\n",
+    "output_types": []
+  },
+  {
+    "cell": 143,
+    "type": "code",
+    "source": "# Generate sample data\ncenters = [[0, 0], [5, 5]]\nX, labels_true = make_blobs(\n    n_samples=500, centers=centers, cluster_std=[2.0,0.5], random_state=0\n)",
+    "output_types": []
+  },
+  {
+    "cell": 144,
+    "type": "code",
+    "source": "plt.scatter(X[:,0], X[:,1]);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 145,
+    "type": "code",
+    "source": "epss = [2,2,3,3]\nmin_sampless = [50,100,50,100]",
+    "output_types": []
+  },
+  {
+    "cell": 146,
+    "type": "code",
+    "source": "f, axes = plt.subplots(1, 4, sharex=False, sharey=False, figsize=(20,5))\n\nfor i in range(4):\n  db = DBSCAN(eps=epss[i], min_samples=min_sampless[i]).fit(X)\n  y_pred = db.labels_.astype(int)\n  colors = np.array(\n            list(\n                islice(\n                    cycle(\n                        [\n                            \"#377eb8\",\n                            \"#ff7f00\",\n                            \"#4daf4a\",\n                            \"#f781bf\",\n                            \"#a65628\",\n                            \"#984ea3\",\n                            \"#999999\",\n                            \"#e41a1c\",\n                            \"#dede00\",\n                        ]\n                    ),\n                    int(max(y_pred) + 1),\n                )\n            )\n        )\n  # add black color for outliers (if any)\n  colors = np.append(colors, [\"#000000\"])\n  axes[i].scatter(X[:, 0], X[:, 1], s=10, color=colors[y_pred])\n\n  axes[i].set_title(\"eps=%.1f, min_samples=%d\" % (epss[i],min_sampless[i]));",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 147,
+    "type": "markdown",
+    "source": "我們可以嘗試使用 HDBSCAN 作為替代方法。\n更多資訊請參考：[https://hdbscan.readthedocs.io/en/latest/index.html](https://hdbscan.readthedocs.io/en/latest/index.html)",
+    "output_types": []
+  },
+  {
+    "cell": 148,
+    "type": "code",
+    "source": "min_cluster_sizes = [5,10,30,50]",
+    "output_types": []
+  },
+  {
+    "cell": 149,
+    "type": "code",
+    "source": "f, axes = plt.subplots(1, 4, sharex=False, sharey=False, figsize=(20,5))\n\nfor i in range(4):\n  db = hdbscan.HDBSCAN(min_cluster_size=min_cluster_sizes[i]).fit(X)\n  y_pred = db.labels_.astype(int)\n  colors = np.array(\n            list(\n                islice(\n                    cycle(\n                        [\n                            \"#377eb8\",\n                            \"#ff7f00\",\n                            \"#4daf4a\",\n                            \"#f781bf\",\n                            \"#a65628\",\n                            \"#984ea3\",\n                            \"#999999\",\n                            \"#e41a1c\",\n                            \"#dede00\",\n                        ]\n                    ),\n                    int(max(y_pred) + 1),\n                )\n            )\n        )\n  # add black color for outliers (if any)\n  colors = np.append(colors, [\"#000000\"])\n  axes[i].scatter(X[:, 0], X[:, 1], s=10, color=colors[y_pred])\n  axes[i].set_title(\"min_cluster_size=%d\" % (min_cluster_sizes[i]))",
+    "output_types": [
+      "stream",
+      "display_data"
+    ]
+  },
+  {
+    "cell": 150,
+    "type": "markdown",
+    "source": "## NCI60資料範例",
+    "output_types": []
+  },
+  {
+    "cell": 151,
+    "type": "markdown",
+    "source": "無監督技術經常用於基因組資料分析。特別是PCA和階層式聚類是熱門工具。我們在[`NCI60`](https://islp.readthedocs.io/en/latest/datasets/NCI60.html)癌症細胞株微陣列資料上說明這些技術，該資料包含64個癌症細胞株上的6830個基因表現測量。",
+    "output_types": []
+  },
+  {
+    "cell": 152,
+    "type": "code",
+    "source": "NCI60 = load_data('NCI60')\nnci_labs = NCI60['labels']\nnci_data = NCI60['data']",
+    "output_types": []
+  },
+  {
+    "cell": 153,
+    "type": "markdown",
+    "source": "每個細胞株都標有癌症類型。我們在執行PCA和聚類時不使用\n這些癌症類型，因為這些是\n無監督技術。但在執行PCA和聚類後，我們\n將檢查這些癌症類型與這些無監督技術的結果在多大程度上一致。\n\n資料有64行和6830列。",
+    "output_types": []
+  },
+  {
+    "cell": 154,
+    "type": "code",
+    "source": "nci_data.shape",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 155,
+    "type": "markdown",
+    "source": "我們首先檢視細胞株的癌症類型。",
+    "output_types": []
+  },
+  {
+    "cell": 156,
+    "type": "code",
+    "source": "nci_labs.value_counts()",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 157,
+    "type": "markdown",
+    "source": "### 對NCI60資料進行PCA",
+    "output_types": []
+  },
+  {
+    "cell": 158,
+    "type": "markdown",
+    "source": "我們首先在將變數（基因）縮放到標準差為1後對資料執行PCA，儘管在這裡可以合理地論證不縮放基因更好，因為它們是以相同單位測量的。",
+    "output_types": []
+  },
+  {
+    "cell": 159,
+    "type": "code",
+    "source": "scaler = StandardScaler()\nnci_scaled = scaler.fit_transform(nci_data)\nnci_pca = PCA()\nnci_scores = nci_pca.fit_transform(nci_scaled)",
+    "output_types": []
+  },
+  {
+    "cell": 160,
+    "type": "markdown",
+    "source": "我們現在繪製前幾個主成分分數向量，以視覺化資料。對應於給定癌症類型的觀察值（細胞株）將以相同顏色繪製，這樣我們可以\n看到癌症類型內觀察值彼此相似的程度。",
+    "output_types": []
+  },
+  {
+    "cell": 161,
+    "type": "code",
+    "source": "cancer_types = list(np.unique(nci_labs))\nnci_groups = np.array([cancer_types.index(lab)\n                       for lab in nci_labs.values])\nfig, axes = plt.subplots(1, 2, figsize=(15,6))\nax = axes[0]\nax.scatter(nci_scores[:,0],\n           nci_scores[:,1],\n           c=nci_groups,\n           marker='o',\n           s=50, cmap=plt.cm.bwr)\nax.set_xlabel('PC1'); ax.set_ylabel('PC2')\nax = axes[1]\nax.scatter(nci_scores[:,0],\n           nci_scores[:,2],\n           c=nci_groups,\n           marker='o',\n           s=50, cmap=plt.cm.bwr)\nax.set_xlabel('PC1'); ax.set_ylabel('PC3');",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 162,
+    "type": "markdown",
+    "source": "總的來說，對應於單一癌症類型的細胞株確實傾向於在前幾個主成分分數向量上有相似的值。這表明來自相同癌症類型的細胞株傾向於有相當相似的基因表現水準。\n\n\n",
+    "output_types": []
+  },
+  {
+    "cell": 163,
+    "type": "markdown",
+    "source": "我們也可以繪製主成分解釋的變異數百分比以及累積變異數百分比解釋。\n這類似於我們之前為`USArrests`資料製作的圖表。",
+    "output_types": []
+  },
+  {
+    "cell": 164,
+    "type": "code",
+    "source": "fig, axes = plt.subplots(1, 2, figsize=(15,6))\nax = axes[0]\nticks = np.arange(nci_pca.n_components_)+1\nax.plot(ticks,\n        nci_pca.explained_variance_ratio_,\n        marker='o')\nax.set_xlabel('Principal Component');\nax.set_ylabel('PVE')\nax = axes[1]\nax.plot(ticks,\n        nci_pca.explained_variance_ratio_.cumsum(),\n        marker='o');\nax.set_xlabel('Principal Component')\nax.set_ylabel('Cumulative PVE');",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 165,
+    "type": "markdown",
+    "source": "我們看到，前七個主成分一起解釋了資料中約40%的變異數。這並不是大量的變異數。然而，看碎石圖，我們看到雖然前七個主成分中的每一個都解釋了大量變異數，但進一步的主成分解釋的變異數明顯減少。也就是說，在大約第七個主成分之後，圖中出現了*轉折點*。這表明檢視超過七個左右的主成分可能沒有多少好處（儘管即使檢視七個主成分可能都很困難）。",
+    "output_types": []
+  },
+  {
+    "cell": 166,
+    "type": "markdown",
+    "source": "### 對NCI60資料的觀察值進行聚類",
+    "output_types": []
+  },
+  {
+    "cell": 167,
+    "type": "markdown",
+    "source": "我們現在使用完全、單一和平均連結對`NCI60`資料中的細胞株進行階層式聚類。再次，目標是找出觀察值是否聚集成不同的癌症類型。歐幾里得距離用作相異性度量。我們首先編寫一個簡短的函數來產生三個樹狀圖。",
+    "output_types": []
+  },
+  {
+    "cell": 168,
+    "type": "code",
+    "source": "def plot_nci(linkage, ax, cut=-np.inf):\n    cargs = {'above_threshold_color':'black',\n             'color_threshold':cut}\n    hc = HClust(n_clusters=None,\n                distance_threshold=0,\n                linkage=linkage.lower()).fit(nci_scaled)\n    linkage_ = compute_linkage(hc)\n    dendrogram(linkage_,\n               ax=ax,\n               labels=np.asarray(nci_labs),\n               leaf_font_size=10,\n               **cargs)\n    ax.set_title('%s Linkage' % linkage)\n    return hc",
+    "output_types": []
+  },
+  {
+    "cell": 169,
+    "type": "markdown",
+    "source": "讓我們來將結果繪製出來。\n",
+    "output_types": []
+  },
+  {
+    "cell": 170,
+    "type": "code",
+    "source": "fig, axes = plt.subplots(3, 1, figsize=(15,30))\nax = axes[0]; hc_comp = plot_nci('Complete', ax)\nax = axes[1]; hc_avg = plot_nci('Average', ax)\nax = axes[2]; hc_sing = plot_nci('Single', ax)",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 171,
+    "type": "markdown",
+    "source": "我們可以觀察到，**連接方式（linkage）的選擇確實會影響最終的分群結果**。\n通常情況下，**single linkage（單一連接）** 容易產生「拖尾型（trailing）」分群：\n也就是形成一個非常大的主群集，其他觀測值則逐一附加上去。\n\n相對地，**complete linkage（完全連接）** 和 **average linkage（平均連接）**\n則更容易產生結構較平衡、形狀較吸引人的群集。\n因此，在實務上我們通常偏好使用 complete 或 average linkage，而非 single linkage。\n\n雖然某些相同癌症類型的細胞株傾向聚集在一起，但分群結果仍非完美。\n因此在接下來的分析中，我們將採用complete linkage 的階層式分群方法。\n\n我們也可以選擇在 dendrogram 中設定一個特定的高度來切割，\n以獲得指定數量的群集，例如：四個群集。\n",
+    "output_types": []
+  },
+  {
+    "cell": 172,
+    "type": "code",
+    "source": "linkage_comp = compute_linkage(hc_comp)\ncomp_cut = cut_tree(linkage_comp, n_clusters=4).reshape(-1)\npd.crosstab(nci_labs['label'],\n            pd.Series(comp_cut.reshape(-1), name='Complete'))",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 173,
+    "type": "markdown",
+    "source": "這裡可以觀察到一些明顯的模式：所有白血病細胞株都落在同一個群集中，而乳癌細胞株則分散在三個不同的群集中。\n\n我們可以在 dendrogram 上繪製一條切割線，以產生這四個群集：\n",
+    "output_types": []
+  },
+  {
+    "cell": 174,
+    "type": "code",
+    "source": "fig, ax = plt.subplots(figsize=(10,10))\nplot_nci('Complete', ax, cut=140)\nax.axhline(140, c='r', linewidth=4);",
+    "output_types": [
+      "display_data"
+    ]
+  },
+  {
+    "cell": 175,
+    "type": "markdown",
+    "source": "`axhline()` 函式會在現有座標軸上畫出一條水平線。\n在這裡，參數 `140` 會在 dendrogram 上的高度 140 處繪製一條水平線；這個高度對應切出四個明確群集的切割點。\n這樣的分群結果很容易驗證，與我們先前在 `comp_cut` 中所得到的群集相同。\n\n我們在第 12.4.2 節曾提到，\n即使 $K$-means 分群與階層式分群的 dendrogram 切割產生相同數量的群集，\n其分群結果可能會非常不同。\n\n那麼，我們現在的 `NCI60` 階層式分群結果，與若使用 $K$-means 且 $K=4$ 時相比，會有什麼差異呢？\n",
+    "output_types": []
+  },
+  {
+    "cell": 176,
+    "type": "code",
+    "source": "nci_kmeans = KMeans(n_clusters=4,\n                    random_state=0,\n                    n_init=20).fit(nci_scaled)\npd.crosstab(pd.Series(comp_cut, name='HClust'),\n            pd.Series(nci_kmeans.labels_, name='K-means'))",
+    "output_types": [
+      "execute_result"
+    ]
+  },
+  {
+    "cell": 177,
+    "type": "markdown",
+    "source": "我們可以看到，使用階層式分群與 $K$-means 分群所得到的四個群集略有不同。\n首先需要注意的是，兩種分群方法中群集的標籤是任意的，\n也就是說，即使群集的編號（identifier）對調，實際分群結果並不會改變。\n\n例如，$K$-means 中的第 3 群與階層式分群中的第 2 群是完全相同的。\n然而，其他群集則有所差異：\n例如，$K$-means 中的第 0 群同時包含階層式分群中第 0 群的一部分觀測值，\n以及階層式分群中全部被指派為第 1 群的觀測值。\n\n除了針對整份資料矩陣執行階層式分群外，\n我們也可以選擇先取前幾個主成分分數向量進行階層式分群，\n因為這些主成分可視為原始資料的低雜訊版本（less noisy version）。",
+    "output_types": []
+  },
+  {
+    "cell": 178,
+    "type": "code",
+    "source": "hc_pca = HClust(n_clusters=None,\n                distance_threshold=0,\n                linkage='complete'\n                ).fit(nci_scores[:,:5])\nlinkage_pca = compute_linkage(hc_pca)\nfig, ax = plt.subplots(figsize=(8,8))\ndendrogram(linkage_pca,\n           labels=np.asarray(nci_labs),\n           leaf_font_size=10,\n           ax=ax,\n           **cargs)\nax.set_title(\"Hier. Clust. on First Five Score Vectors\")\npca_labels = pd.Series(cut_tree(linkage_pca,\n                                n_clusters=4).reshape(-1),\n                       name='Complete-PCA')\npd.crosstab(nci_labs['label'], pca_labels)",
+    "output_types": [
+      "execute_result",
+      "display_data"
+    ]
+  }
+]

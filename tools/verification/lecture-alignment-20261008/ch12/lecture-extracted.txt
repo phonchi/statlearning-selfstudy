@@ -1,0 +1,1587 @@
+PAGE 1
+Unsupervised Learning
+Szu-Chi Chung
+Department of Applied Mathematics, National Sun Yat-sen University
+
+
+PAGE 2
+Unsupervised Learning
+Unsupervised vs Supervised Learning:
+Most of this course focuses on supervised learning methods such as regression and 
+classification
+In that setting we observe both a set of features 𝑋1, 𝑋2, … , 𝑋𝑝for each object, as well as a 
+response or outcome variable 𝑌. The goal is then to predict 𝑌using 𝑋1, 𝑋2, … , 𝑋𝑝
+Here, we instead focus on unsupervised learning, where we observe only the features 
+𝑋1, 𝑋2, … , 𝑋𝑝. We are not interested in prediction, because we do not have an associated 
+response variable 𝑌
+2
+
+
+PAGE 3
+Advantages
+It is often easier to obtain unlabeled data - from a lab instrument or a computer 
+- than labeled data, which can require human intervention
+Prepare labeling manuals, categories, hiring humans, creating GUIs, storage pipelines, etc.
+Sometimes it is also hard to label the data. For example it is difficult to 
+automatically assess the overall sentiment of a movie review: is it favorable or 
+not?
+Cognitive motivation: How animals / babies learn
+3
+“The brain has about 1014synapses and we only live for about 
+109 seconds. So we have a lot more parameters than data. This 
+motivates the idea that we must do a lot of unsupervised 
+learning” - Geoffrey Hinton
+
+
+PAGE 4
+The Challenge/Promising of Unsupervised Learning
+Unsupervised learning is more subjective than supervised learning, as there is 
+no simple goal for the analysis, such as prediction of a response
+Unsupervised learning is often performed as part of an exploratory data analysis
+But techniques for unsupervised learning are of growing importance in a 
+number of fields:
+Subgroups of cancer patients grouped by their gene expression measurements,
+Groups of shoppers characterized by their browsing and purchase histories,
+Movies grouped by the ratings assigned by movie viewers,
+Search engine based on the click histories of other individuals with similar search patterns
+4
+
+
+PAGE 5
+The Goals of Unsupervised Learning
+1.
+Dimensional reduction: Speedup the training and overcome the curse of 
+dimensionality. In addition, reduce the dimension also helps visualization
+2.
+Clustering methods: Great tool for data analysis, recommender systems, 
+search engines, semi-supervised learning, image segmentation, 
+dimensionality reduction and more
+3.
+Anomaly detection methods: Learn what “normal” data looks like, and use 
+this to detect abnormal instances, such as defective items on a production line 
+or a new trend in a time series
+4.
+Density estimation methods: Estimating the probability density function 
+(PDF) of the dataset. This is commonly used for anomaly detection: instances 
+located in very low-density regions are likely to be anomalies. It is also 
+useful for data analysis, visualization and generation
+5
+
+
+PAGE 6
+What we would like to address
+We discuss two families of methods:
+1.
+Dimensional reduction and visualization by projection or manifold learning
+Principal components analysis (PCA), a tool used for data visualization or data pre-
+processing before supervised techniques are applied, and
+t-SNE, the state-of-the art visualization method that allows you understand the local 
+(sometimes global) structure your data
+2.
+Clustering, a class of methods for discovering unknown subgroups in data
+𝐾-means, the fastest and intuitive algorithm when the number of cluster is not large
+Hierarchical clustering, a fast and powerful clustering algorithm when the number of 
+cluster is large
+DBSCAN (or HDBSCAN), one of the state-of-the art clustering algorithm for EDA 
+6
+
+
+PAGE 7
+Dimensional reduction by linear projection
+In most real-world problems, training instances are not spread out uniformly 
+across all dimensions
+Many features are almost constant, while others are highly correlated As a result, all 
+training instances actually lie within much lower-dimensional subspace of the high-
+dimensional space
+Dimensionality reduction tries to preserve various measure or structure in high dimensional 
+space like distance, topology, density etc
+7
+
+
+PAGE 8
+Principal Components Analysis (PCA)
+Suppose that we wish to visualize 𝑛observations with measurements on a set 
+of 𝑝features, 𝑋1, 𝑋2, … , 𝑋𝑝, as part of an exploratory data analysis
+We could exam two-dimensional scatterplots of the data, each contains 𝑛observations’ 
+measurements on two of the features. However, there are 𝑝
+2 such scatterplots
+Most likely none of them will be informative since they each contain just a small fraction 
+of the total information present in the data set 
+Clearly, a better method is required to visualize the 𝑛observations when 𝑝is 
+large. We would like to find a low-dimensional representation of the data that 
+captures as much of the information as possible 
+8
+
+
+PAGE 9
+Principal Components Analysis (PCA)
+PCA produces a low-dimensional representation of a dataset. It finds a 
+sequence of linear combinations of the variables that have maximal variance
+The information is measured by the amount that the observations vary along each dimension
+Apart from producing derived variables for use in supervised learning problems, PCA also 
+serves as a tool for data visualization
+9
+https://towardsdatascience.com/visualising-high-dimensional-datasets-using-pca-and-t-sne-in-python-8ef87e7915b
+
+
+PAGE 10
+Principal Components Analysis: details
+The first principal component score of a set of features 𝑋1, 𝑋2, … , 𝑋𝑝is the 
+normalized linear combination of the features
+𝑍1 = Φ11𝑋1 + Φ21𝑋2 + ⋯+ Φ𝑝1𝑋𝑝
+that has the largest variance
+By normalized, we mean that σ𝑗=1
+𝑝
+Φ𝑗1
+2 = 1, . since otherwise setting these elements to be 
+arbitrarily large in absolute value could result in an arbitrarily large variance
+We refer to the elements Φ11, … , Φ𝑝1 as the loadings of the first principal component; 
+together, the loadings make up the principal component, Φ1 = (Φ11Φ21 … Φ𝑝1)𝑇
+For a dataset that have been centered, we look for the linear combination of
+𝑧𝑖1 = Φ11𝑥𝑖1 + Φ21𝑥𝑖2 + ⋯+ Φ𝑝1𝑥𝑖𝑝
+for 𝑖= 1, … , 𝑛that has largest sample variance, subject to the constraint that 
+σ𝑗=1
+𝑝
+Φ𝑗1
+2 = 1
+10
+
+
+PAGE 11
+Principal Components Analysis: details
+The sample variance of the 𝑧𝑖1 can be written as
+1
+𝑛σ𝑖=1
+𝑛
+𝑧𝑖1
+2 =
+1
+𝑛σ𝑖=1
+𝑛(σ𝑗=1
+𝑝
+Φ𝑗1𝑥𝑖𝑗)2
+The first principal component loading vector solves the optimization problem
+max
+Φ11,…,Φ𝑝1
+1
+𝑛σ𝑖=1
+𝑛(σ𝑗=1
+𝑝
+Φ𝑗1𝑥𝑖𝑗)2 subject to σ𝑗=1
+𝑝
+Φ𝑗1
+2 = 1
+This problem can be solved via a singular-value decomposition of the data matrix 𝑋or the 
+eigenvalue decomposition of the covariance matrix 𝑋
+The loading vector Φ1 with elements Φ11, Φ21, … Φ𝑝1 denfies a direction in feature 
+space along which the data vary the most
+If we project the 𝑛data points 𝑥1, 𝑥2, … , 𝑥𝑛onto this direction, the projected values 
+are the principal component scores 𝑧11, … , 𝑧𝑛1 themselves
+11
+
+
+PAGE 12
+Further principal components
+The second principal component is the linear combination of 𝑋1, 𝑋2, … , 𝑋𝑝that 
+has maximal variance that are uncorrelated with 𝑍1
+The second principal component scores 𝑧12, … , 𝑧𝑛2 take the form
+𝑧𝑖2 = Φ12𝑥𝑖1 + Φ22𝑥𝑖2 + ⋯+ Φ𝑝2𝑥𝑖𝑝
+Where Φ2 is the second principal component loading vector, with elements Φ12, Φ22, … Φp2
+It turns out that constraining 𝑍2 to be uncorrelated with 𝑍1 is equivalent to 
+constraining the direction Φ2 to be orthogonal (perpendicular) to the direction 
+Φ1. And so on
+There are at most min(𝑛−1, 𝑝) principal components
+12
+
+
+PAGE 13
+PCA: example
+The population size (pop) and ad spending (ad) for 100 different cities are 
+shown as purple circles 
+The green solid line indicates the first principal component direction, and the 
+blue dashed line indicates the second principal component direction
+13
+
+
+PAGE 14
+Illustration
+USAarrests data: For each of the 50 states in the United States, the data set 
+contains the number of arrests per 100,000 residents for each of three crimes: 
+Assault, Murder, and Rape. We also record UrbanPop (the percent of the 
+population in each state living in urban areas)
+The principal component score vectors have length 𝑛= 50, and the principal 
+component loading vectors have length 𝑝= 4
+PCA was performed after standardizing each variable to have mean zero and 
+standard deviation one
+14
+
+
+PAGE 15
+USAarrests data: PCA biplot
+15
+
+
+PAGE 16
+Figure details
+The first two principal components for the USArrests data
+The blue state names represent the scores for the first two principal 
+components
+The orange arrows indicate the first two principal component loading vectors 
+(with axes on the top and right). For example, the loading for Rape on the first 
+component is 0.54, and its loading on the second principal component 0.17 [the 
+word Rape is centered at the point (0.54; 0.17)]
+This figure is known as a biplot, because it displays both the principal 
+component scores and the principal component loadings
+16
+
+
+PAGE 17
+Another Interpretation of Principal Components
+Principal components provide low-dimensional linear surfaces that are 
+closest to the observations
+17
+
+
+PAGE 18
+Another Interpretation of Principal Components
+The first principal component loading vector has a very special property: it is 
+the line in 𝑝-dimensional space that is closest to the 𝑛observations (using 
+average squared Euclidean distance as a measure of closeness)
+The notion of principal components as the dimensions that are closest to the 𝑛
+observations extends beyond just the first principal component
+For instance, the first two principal components of a dataset span the plane that is closest to 
+the 𝑛observations, in terms of average squared Euclidean distance
+18
+
+
+PAGE 19
+Another interpretation of principal components
+The first 𝑀principal component score vectors and the first 𝑀principal 
+component loading vectors provide the best 𝑀-dimensional approximation (in 
+terms of Euclidean distance) to the 𝑖th observation 𝑥𝑖𝑗
+𝑥𝑖𝑗≈෍
+𝑚=1
+𝑀
+𝑧𝑖𝑚Φ𝑗𝑚
+Suppose the data matrix 𝑋is column-centered. Out of all approximations of the 
+form 𝑥𝑖𝑗≈σ𝑚=1
+𝑀
+𝑎𝑖𝑚𝑏𝑗𝑚. We have
+min
+𝐴∈𝑅𝑛×𝑀, 𝐵∈𝑅𝑝×𝑀{෍
+𝑗=1
+𝑝
+෍
+𝑖=1
+𝑛
+(𝑥𝑖𝑗−෍
+𝑚=1
+𝑀
+𝑎𝑖𝑚𝑏𝑗𝑚)2}
+It can be shown that for any value of 𝑀, the columns of the matrices መ𝐴and ෠𝐵
+are in fact the first 𝑀principal components score and loading vectors
+19
+
+
+PAGE 20
+More on PCA – Proportion Variance Explained
+We are interested in knowing the proportion of variance explained (PVE) by each 
+one. The total variance present in a data set (assuming that the variables have 
+been centered to have mean zero) is defined as
+෍
+𝑗=1
+𝑝
+𝑉𝑎𝑟(𝑋𝑗) = ෍
+𝑗=1
+𝑝
+1
+𝑛෍
+𝑖=1
+𝑛
+𝑥𝑖𝑗
+2 ,
+and the variance explained by the 𝑚th principal component is
+𝑉𝑎𝑟𝑍𝑚= 1
+𝑛෍
+𝑖=1
+𝑛
+𝑧𝑖𝑚
+2 = 1
+𝑛෍
+𝑖=1
+𝑛
+(෍
+𝑗=1
+𝑝
+Φ𝑗𝑚𝑥𝑖𝑗)2
+It can be shown that σ𝑗=1
+𝑝
+𝑉𝑎𝑟(𝑋𝑗) = σ𝑚=1
+𝑀
+𝑉𝑎𝑟(𝑍𝑚), with 𝑀= min(𝑛−1, 𝑝)
+σ𝑗=1
+𝑝
+1
+𝑛σ𝑖=1
+𝑛
+𝑥𝑖𝑗
+2 = σ𝑚=1
+𝑀
+1
+𝑛σ𝑖=1
+𝑛
+𝑧𝑖𝑚
+2 + 1
+𝑛σ𝑗=1
+𝑝
+σ𝑖=1
+𝑛(𝑥𝑖𝑗−σ𝑚=1
+𝑀
+Φ𝑗𝑚𝑧𝑖𝑚)2 (c.f. here)
+20
+
+
+PAGE 21
+Proportion Variance Explained: continued
+Therefore, the PVE of the 𝑚th principal component is given by the positive 
+quantity between 0 and 1
+σ𝑖=1
+𝑛
+𝑧𝑖𝑚
+2
+σ𝑗=1
+𝑝
+σ𝑖=1
+𝑛
+𝑥𝑖𝑗
+2 =
+σ𝑖=1
+𝑛(σ𝑗=1
+𝑝
+Φ𝑗𝑚𝑥𝑖𝑗)2
+σ𝑗=1
+𝑝
+σ𝑖=1
+𝑛
+𝑥𝑖𝑗
+2
+The PVEs sum to one. We sometimes display the cumulative PVEs
+21
+
+
+PAGE 22
+More on PCA - How many principal components should we use?
+If we use principal components as a summary of our data, how many 
+components are sufficient?
+No simple answer to this question, as cross-validation is not easy for this purpose
+The “scree plot” on the previous slide can be used as a guide: we look for an 
+“elbow”
+Information criterion can be used instead, however, in high dimensional setting 
+the selection is quite challenge
+22
+
+
+PAGE 23
+More on PCA - Scaling of the variables matters
+If the variables are in different units, scaling each to have standard deviation 
+equal to one is recommended
+If they are in the same units, you might or might not scale the variables
+23
+
+
+PAGE 24
+More on PCA – Uniqueness
+Each principal component loading vector is unique, up to a sign flip
+This means that two different software packages will yield the same principal component 
+loading vectors although the signs of those loading vectors may diﬀer
+The signs may differ because each principal component loading vector specifies a direction 
+in 𝑝-dimensional space: flipping the sign has no effect as the direction does not change. 
+Similarly, the score vectors are unique up to a sign flip, since the variance of 𝑍is the same 
+as the variance of −𝑍
+24
+
+
+PAGE 25
+More on PCA – Connection with SVD and EVD
+Let the data matrix 𝑋be a 𝑛by 𝑝data matrix
+The sample covariance matrix
+𝑆=
+Τ
+𝑋𝑇𝑋𝑛= ෍
+𝑖=1
+𝑛
+(𝑥𝑖−ҧ𝑥)(𝑥𝑖−ҧ𝑥)𝑇/𝑛
+Find a direction vector 𝑣1 ∈𝑅𝑝and 𝑣1
+𝑇𝑣1 = 1 such that the variance of the 
+projected data is maximized
+1
+𝑛෍
+𝑖=1
+𝑛
+(𝑥𝑖
+𝑇𝑣1 −ҧ𝑥𝑇𝑣1)2 = 𝑣1
+𝑇𝑆𝑣1
+25
+
+
+PAGE 26
+More on PCA – Connection with SVD and EVD
+To enforce the constraint, we introduce a  Lagrange multiplier denoted by 𝜆1
+and get the unconstrained maximization of 
+𝑣1
+𝑇𝑆𝑣1 + λ1(1 −𝑣1
+𝑇𝑣1) or maximized the Rayleigh quotient 𝑣𝑇𝑆𝑣
+𝑣𝑇𝑣
+By setting the derivative with respect to 𝑣1 equal to zero, we see that this quantity will 
+have a stationary point when (c.f. matrix cookbook)
+𝑆𝑣1 = λ1𝑣1
+26
+
+
+PAGE 27
+More on PCA – Connection with SVD and EVD
+𝑣1 must be an eigenvector of 𝑆, if we left-multiply by 𝑣1
+𝑇we get
+𝑣1
+𝑇𝑆𝑣1 = λ1
+and so the variance will be a maximum when we set 𝑣1 equal to the eigenvector having the 
+largest eigenvalue λ1. This eigenvector is known as the ﬁrst principal component
+We can deﬁne additional principal components in an incremental fashion by 
+choosing each new direction to be that which maximizes the projected variance 
+amongst all possible directions orthogonal to those already considered.
+In a 𝑀-dimensional projection space, we now consider the optimal linear projection for which 
+the variance of the projected data is maximized is deﬁned by the 𝑀eigenvectors 𝑣1, … , 𝑣𝑀of 
+the data covariance matrix S corresponding to the 𝑀largest eigenvalues λ1, … , λ𝑀. 
+27
+
+
+PAGE 28
+More on PCA – Connection with SVD and EVD
+If we collect eigenvectors and eigenvalues into matrix forms the connection 
+with EVD
+𝑆𝑝×𝑝𝑉𝑝×𝑝= 𝑉𝑝×𝑝Λ𝑝×𝑝
+𝑆𝑝×𝑝= 𝑉𝑝×𝑝Λ𝑝×𝑝𝑉𝑝×𝑝
+𝑇
+Connection with SVD
+S = 𝑋𝑇𝑋
+𝑛
+= 𝑉𝐷𝑈𝑇𝑈𝐷𝑉𝑇
+𝑛
+= 𝑉𝐷2
+𝑛𝑉𝑇= 𝑉Λ𝑉𝑇
+Note 𝑋= 𝑈𝐷𝑉𝑇
+Scores are  𝑋𝑉= 𝑈𝐷
+We can perform randomized SVD
+28
+
+
+PAGE 29
+Other Uses for Principal Components
+We saw in Chapter 6 that we can perform regression using the principal 
+component score vectors as features
+In fact, many statistical techniques, such as regression, classiﬁcation, and clustering, can be 
+easily adapted to use the 𝑛× 𝑀matrix whose columns are the ﬁrst 𝑀≪𝑝principal 
+component score vectors, rather than using the full n × p data matrix
+This can lead to less noisy results, since it is often the case that the signal (as opposed to 
+the noise) in a data set is concentrated in its ﬁrst few principal components!
+29
+
+
+PAGE 30
+Missing Values and Matrix Completion
+Often datasets have missing values, which can be a nuisance. How should we 
+proceed?
+1.
+We could remove the rows that contain missing observations and perform our 
+data analysis on the complete rows
+But this seems wasteful, and depending on the fraction missing
+2.
+Alternatively, if 𝑥𝑖𝑗is missing, then we could replace it by the mean of the 
+𝑗th column (using the non-missing entries to compute the mean)
+Although this is a common and convenient strategy, often we can do better by exploiting 
+the correlation between the variables
+30
+
+
+PAGE 31
+Missing Values and Matrix Completion
+We show how principal components can be used to impute the missing values, 
+through a process known as matrix completion if the data is missing at random
+The complete matrix can then be used in a statistical learning method, such as 
+linear regression or LDA
+In practice, sometimes data is missing by necessity 
+For example, if we form a matrix of the ratings (on a scale from 1 to 5) that 𝑛customers 
+have given to the entire Netflix catalog of 𝑝movies, then most of the matrix will be 
+missing, since no customer will have seen and rated more than a tiny fraction of the catalog
+If we can impute the missing values well, then we will have an idea of what each customer 
+will think of movies they have not yet seen
+31
+
+
+PAGE 32
+Principal Components with Missing Values
+The first 𝑀principal component score and loading vectors provide the “best” 
+approximation to the data matrix 𝑋
+Now, some of the observations 𝑥𝑖𝑗are missing. One can both impute the 
+missing values and solve the principal component problem at the same time
+min
+𝐴∈𝑅𝑛×𝑀, 𝐵∈𝑅𝑝×𝑀{ ෍
+(𝑖,𝑗)∈𝑂
+(𝑥𝑖𝑗−෍
+𝑚=1
+𝑀
+𝑎𝑖𝑚𝑏𝑗𝑚)2}
+where 𝑂is the set of all observed pairs of indices (𝑖, 𝑗), a subset of the possible 𝑛×
+𝑝pairs
+We can estimate a missing observation 𝑥𝑖𝑗using 𝑥𝑖𝑗= σ𝑚=1
+𝑀
+ො𝑎𝑖𝑚෠𝑏𝑗𝑚
+We can (approximately) recover the 𝑀principal component scores and loadings, as we did 
+when the data were complete
+32
+
+
+PAGE 33
+33
+
+
+PAGE 34
+Example on USArrests data
+𝑝= 4 and 𝑛= 50 observations 
+(states). We first standardized the 
+data 
+We then randomly selected 20 of the 
+50 states, and then for each of these 
+we randomly set one of the four 
+variables to be missing. Thus, 10% 
+of the elements of the data matrix 
+were missing
+We applied Algorithm 12.1 with 
+𝑀= 1 principal component
+34
+
+
+PAGE 35
+Example on USArrests data
+Over 100 random runs of this experiment, the average correlation between the 
+true and imputed values of the missing elements is 0.63, with a standard 
+deviation of 0.11
+If we had simply computed ො𝑥𝑖𝑗= 𝑧𝑖1Φ𝑗1, where 𝑧𝑖1 and Φ𝑗1 are elements of the first 
+principal component score and loading vectors of the complete data. Using the complete 
+data in this way results in an average correlation of 0.79 between the true and estimated 
+values for these 20 elements, with a standard deviation of 0.08
+Thus, our imputation method does worse than the method that uses all of the data (0.63 ±
+0.11 versus 0.79 ± 0.08), but its performance is still pretty good
+35
+
+
+PAGE 36
+Example on USArrests data
+36
+
+
+PAGE 37
+Recommender Systems
+Netflix and Amazon use data about the content that a customer has viewed in 
+the past to suggest other content for the customer
+Some years back, Netflix had customers rate each movie that they had seen 
+with a score from 1–5. This resulted in a very big 𝑛× 𝑝matrix for which the 
+(𝑖, 𝑗) element is the rating given by the 𝑖th customer to the 𝑗th movie
+Netflix needed a way to impute the missing values of this data matrix
+The key idea is as follows: the set of movies that the 𝑖th customer has seen will overlap 
+with those that other customers have seen. Furthermore, some of those other customers will 
+have similar movie preferences to the 𝑖th customer
+By applying Algorithm 12.1, we can predict the 𝑖th customer’s rating for the 𝑗th movie
+37
+
+
+PAGE 38
+Recommender Systems
+38
+
+
+PAGE 39
+Manifold Learning
+A M-dimensional manifold is a part of an p-dimensional space (where M < p) 
+that locally resembles a M-dimensional hyperplane 
+In the case of the Swiss roll, 𝑀= 2 and 𝑝= 3: it locally resembles a 2D plane, but it is 
+bent and twisted in the third dimension
+Simply projecting onto a plane would squash different layers of the Swiss roll
+Many dimensionality reduction algorithms work by modeling the manifold on 
+which the training instances lie; this is called Manifold Learning
+39
+
+
+PAGE 40
+Manifold Learning
+Make sure the same scale is used over all features
+Because manifold learning methods are based on a nearest-neighbor search, the algorithm 
+may perform poorly otherwise
+40
+https://www.twblogs.net/a/5bcb6b332b7177796822b307
+
+
+PAGE 41
+t-SNE (t-distributed Stochastic Neighbor Embedding)
+t-SNE is popular manifold learning method that is specialized for visualization 
+and EDA
+1.
+It is a statistical method for visualizing high-dimensional data (𝑥𝑖) by giving each data 
+point a location in a two or three-dimensional map (𝑦𝑖)
+2.
+It converts affinities of data points to probabilities and tends to preserve topology that 
+similar objects are modeled by nearby points and dissimilar objects are modeled by 
+distant points
+3.
+It is particularly sensitive to local structure and can revealing the structure at many scales 
+or data lie on several manifolds on a single map
+4.
+However, the global structure is not explicitly preserved and we should use it with 
+caution for downstream analysis
+41
+
+
+PAGE 42
+Stochastic Neighbor Embedding (SNE)
+Previous linear or non-linear dimensionality reduction methods have a fixed 
+assignment for a data point in the high-dimensional space
+SNE aims to best capture neighborhood identity by considering the probability that one point is the 
+neighbor of all other points. It defines 𝑛× 𝑛similarity matrix 𝑃in the high dimensional space 
+whose entries are
+𝑝𝑗|𝑖=
+𝑒𝑥𝑝−
+(𝑥𝑖−𝑥𝑗)2
+2𝜎𝑖
+2
+σ𝑘≠𝑖𝑒𝑥𝑝−
+(𝑥𝑖−𝑥𝑘)2
+2𝜎𝑖
+2
+, 𝑝𝑖|𝑖= 0 and σ𝑗𝑝𝑗|𝑖= 1
+From the definition of 𝑃, note that SNE focuses on local structure because farther points result in 
+smaller 𝑝𝑗|𝑖and closer points result in greater 𝑝𝑗|𝑖
+and 𝑛× 𝑛similarity matrix 𝑄in the low dimensional space whose entries are
+𝑞𝑗|𝑖=
+𝑒𝑥𝑝−(𝑦𝑖−𝑦𝑗)2
+σ𝑘≠𝑖𝑒𝑥𝑝−(𝑦𝑖−𝑦𝑘)2 , 𝑞𝑖|𝑖= 0
+42
+
+
+PAGE 43
+Stochastic Neighbor Embedding
+𝑃𝑖= {𝑝1|𝑖, 𝑝2|𝑖, … , 𝑝𝑛|𝑖} and 𝑄𝑖= {𝑞1|𝑖, 𝑞2|𝑖, … , 𝑞𝑛|𝑖} are the distributions on 
+the neighbors of datapoint 𝑖. The cost function that SNE want to minimize is 
+the Kullback-Leibler divergence over 𝑃and 𝑄
+𝐶= ෍
+𝑖
+𝐾𝐿𝑃𝑖||𝑄𝑖= ෍
+𝑖
+෍
+𝑗
+𝑝𝑗|𝑖log
+𝑝𝑗|𝑖
+𝑞𝑗|𝑖
+Using far away points to represent similar object will induce more cost than using nearby 
+points to represent dissimilar objects (𝑞𝑗|𝑖= 0.2 for 𝑝𝑗|𝑖= 0.8, 𝑐𝑜𝑠𝑡= 1.11. 𝑞𝑗|𝑖=0.8 for 
+𝑝𝑗|𝑖=0.2, 𝑐𝑜𝑠𝑡= −0.277), thus, SNE prefer to preserve local structure
+The gradient of 𝐶is 
+𝛿𝐶
+𝛿𝑦𝑖
+= 2 ෍
+𝑗
+𝑦𝑖−𝑦𝑗
+𝑝𝑗|𝑖−𝑞𝑗|𝑖+ 𝑝𝑖|𝑗−𝑞𝑖|𝑗
+43
+
+
+PAGE 44
+The problem of SNE
+SNE suffers from the "crowding problem". Intuitively, there is less space in a 
+lower dimension to accommodate moderately distant data points originally in 
+higher dimension
+44
+
+
+PAGE 45
+t-distribution
+𝑡-SNE use 𝑡distribution rather than a 
+Gaussian to compute the similarity in the 
+low-dimensional space to alleviate the 
+crowding problem
+𝑞𝑖𝑗=
+1 + (𝑦𝑖−𝑦𝑗)2 −1
+σ𝑘≠𝑖1 + (𝑦𝑘−𝑦𝑖)2 −1
+The heavy tails of the 𝑡kernel allow 
+dissimilar 𝑥𝑖and 𝑥𝑗to be modeled by 𝑦𝑖
+and 𝑦𝑗that are far apart
+It also alleviate the outlier problem
+45
+
+
+PAGE 46
+Symmetry
+𝑡-SNE has a symmetrized version of the SNE cost function with simpler 
+gradients 
+In SNE, 𝑝𝑗|𝑖≠𝑝𝑖|𝑗due to perplexity (perplexity is proportional to 𝜎)
+Thus, in t-SNE 𝑝𝑖𝑗is defined instead as 
+𝑝𝑖𝑗=
+𝑝𝑗|𝑖+ 𝑝𝑖|𝑗
+2𝑛
+, 𝑝𝑖𝑖= 0 and ෍
+𝑖,𝑗
+𝑝𝑖𝑗= 1
+The gradient of the cost function is:
+𝛿𝐶
+𝛿𝑦𝑖= 4 σ𝑗=1,𝑗≠𝑖
+𝑛
+𝑝𝑖𝑗−𝑞𝑖𝑗𝑞𝑖𝑗𝑦𝑖−𝑦𝑗
+1 + (𝑦𝑖−𝑦𝑗)2 −1
+= 4 σ𝑗≠𝑖𝑝𝑖𝑗𝑞𝑖𝑗𝑍𝑦𝑖−𝑦𝑗−σ𝑗≠𝑖𝑞𝑖𝑗
+2 𝑍𝑦𝑖−𝑦𝑗
+𝑍= ෍
+𝑗≠𝑖
+1 + (𝑦𝑖−𝑦𝑗)2 −1
+46
+
+
+PAGE 47
+t-Stochastic Neighbor Embedding
+Input: Dataset 𝑋= {𝑥1, … , 𝑥𝑛} ∈𝑅𝑝, perplexity 𝑘, exaggeration parameter 𝛼, 
+step size ℎ> 0, number of rounds 𝑇∈𝑁
+1. Initialize 𝑦1
+(0), 𝑦2
+(0), … , 𝑦𝑛
+(0) from the uniform distribution on [−0.01,0.01]2
+2. For 𝑡= 0 to 𝑇−1 do
+𝑍(𝑡) ←෍
+𝑖,𝑗,𝑖≠𝑗
+1 + (𝑦𝑖
+(𝑡) −𝑦𝑗
+(𝑡))2 −1
+𝑦𝑖
+(𝑡+1) ←𝑦𝑖
+(𝑡) + ℎ෍
+𝑗=1,𝑗≠𝑖
+𝑛
+𝛼𝑝𝑖𝑗−𝑞𝑖𝑗
+(𝑡) 𝑞𝑖𝑗
+(𝑡)𝑍(𝑡) 𝑦𝑖
+(𝑡) −𝑦𝑗
+(𝑡)
+𝑖= 1 … 𝑛
+3. Output 2D embedding Y = {𝑦1
+(T), … , 𝑦𝑛
+(T)} ∈𝑅2
+47
+
+
+PAGE 48
+t-Stochastic Neighbor Embedding
+48
+
+
+PAGE 49
+Parameters
+There are five parameters that control the optimization of t-SNE and therefore 
+possibly the quality of the resulting embedding:
+Perplexity 𝑘
+𝑘is effectively the number of nearest neighbors t-SNE considers when generating the 
+conditional probabilities. Larger perplexities lead to more nearest neighbors and less 
+sensitive to small structures and generally, is chosen to take values between 5 and 50
+2. Early exaggeration factor
+The optimization consists of two phases: the early exaggeration phase and the final 
+optimization. During early exaggeration, the joint probabilities in the original space will be 
+artificially increased by multiplication with a given factor 
+This encourages the algorithm to focus on modeling large 𝑝𝑖𝑗by fairly large 𝑞𝑖𝑗which will 
+improve the convergence speed and larger factors result in larger gaps between natural 
+clusters in the data
+49
+
+
+PAGE 50
+Parameters
+3. Learning rate
+If it is too low gradient descent will get stuck in a bad local minimum. If it is too high the 
+KL divergence will increase during optimization. A heuristic suggested in opt-SNE is to set 
+the learning rate to the sample size divided by the early exaggeration factor
+4. Maximum number of iterations
+Usually high enough and does not need any tuning
+5. Angle (not used in the exact method, but use in the Barnes-Hut t-SNE)
+Tradeoff between performance and accuracy. Larger angles imply that we can approximate 
+larger regions by a single point, leading to better speed but less accurate results
+Make sure the same scale is used over all features. Because manifold learning 
+methods are based on a nearest-neighbor search
+50
+
+
+PAGE 51
+Caveats
+First, the perplexity parameter needs to be chosen carefully
+Varying perplexity can give drastically different visualizations that show different structures
+A more direct way to think about perplexity is that it is the continuous analogy to the 𝑘
+number of nearest neighbors for which we will preserve distances
+51
+https://distill.pub/2016/misread-tsne/
+
+
+PAGE 52
+Coordinates after embedding have no meaning. The global structure is not 
+preserve and the results obtain in each run may be different
+This problem is mitigated by initializing points with PCA (using init='pca')
+The density also not preserved
+52
+
+
+PAGE 53
+Caveats
+t-SNE does not work well for general dimensionality problem where the 
+embedded dimension is greater than 2D or 3D
+O(𝑀𝑛2) computational complexity. But can be reduced to 𝑂(𝑀𝑛log 𝑛) using Barnes-Hut 
+t-SNE which only works for the target dimensionality is smaller than 3 and dense dataset. 
+The flt-tsne or UMAP can be use to give linear scalability
+We can also add new data point into the embedding by parametric t-SNE 
+There are more and more theoretical guarantee for t-SNE. See here and here
+t-SNE is generally very good at capture local structure and best tool for visualization
+Noise may appear to have some structure and cluster may not discover by t-SNE 
+Generally, we do not use t-SNE for clustering purpose
+See here for more experiments
+UMAP on the other hand can be used as a preprocessing methods
+53
+
+
+PAGE 54
+Cluster analysis
+Clustering refers to techniques for finding subgroups, or clusters, in a data set. 
+We seek a partition of the data into distinct groups so that the observations 
+within each group are quite similar to each other
+1.
+Once a dataset has been clustered, it is possible to measure each instance’s affinity with 
+each cluster which reduce to 𝑘dimensional space (feature/representation learning)
+2.
+We can cluster observations on the basis of the features in order to identify subgroups 
+among the observations, or we can cluster features on the basis of the observations in order 
+to discover subgroups among the features (feature clustering)
+3.
+For semi-supervised learning: if you only have a few labels, you could perform clustering 
+and propagate the labels to all the instances in the same cluster
+4.
+For anomaly detection: any instance that has a low affinity to all the clusters is likely to be 
+an anomaly
+54
+
+
+PAGE 55
+Clustering vs PCA
+Both clustering and PCA seek to simplify the data via a small number of 
+summaries, but their mechanisms are different:
+PCA looks for a low-dimensional representation of the observations that explains a good 
+fraction of the variance
+Clustering looks for homogeneous subgroups among the observations
+In clustering, to make the affinity concrete, we must define what it means for 
+two or more observations to be similar or different
+Indeed, this is often a domain-specific consideration that must be made based on 
+knowledge of the data being studied
+Metric learning may be helpful in this case
+55
+
+
+PAGE 56
+Good EDA clustering algorithm
+1.
+Don’t be wrong: If you are doing EDA you are trying to learn and gain intuitions about 
+your data. In that case it is far better to get no result at all than a result that is wrong. This 
+means a good EDA clustering algorithm needs to conservative in it’s clustering
+2.
+Intuitive Parameters: If you know little about your data it can be hard to determine what 
+value or setting a parameter should have. This means parameters need to be intuitive 
+enough that you can hopefully set them without having to know a lot about your data
+3.
+Stable Clusters: If you run the algorithm twice with a different random initialization, you 
+should expect to get roughly the same clusters back. If you are sampling your data, taking a 
+different random sample shouldn’t change much. If you vary the clustering algorithm 
+parameters you want the clustering to change in a somewhat stable predictable fashion
+4.
+Performance: You can sub-sample, but ultimately you need a clustering algorithm that can 
+scale to large data sizes. A clustering algorithm isn’t much use if you can only use it if you 
+take such a small sub-sample that it is no longer representative of the data at large!
+56
+
+
+PAGE 57
+57
+https://scikit-learn.org/stable/modules/clustering.html
+
+
+PAGE 58
+Three clustering methods
+1.
+In 𝐾-means clustering, we seek to partition the observations into a pre-
+specified number of clusters
+2.
+In hierarchical clustering, we do not know in advance how many clusters we 
+want; in fact, we end up with a tree-like visual representation of the 
+observations, called a dendrogram, that allows us to view at once the 
+clustering obtained for each possible number of clusters, from 1 to 𝑛
+3.
+In DBSCAN, we do not know in advance how many clusters we want. In 
+addition, it doesn’t require that every point be assigned to a cluster and hence 
+doesn’t partition the data, but instead extracts the ‘dense’ clusters and leaves 
+sparse background classified as ‘noise’
+58
+
+
+PAGE 59
+Details of K-means clustering
+A simulated data set with 150 observations in 2-dimensional space. The color 
+of each observation indicates the cluster to which it was assigned using the 𝐾-
+means clustering algorithm
+The cluster labels were not used in clustering; instead, they are the outputs of 
+the clustering procedure
+59
+
+
+PAGE 60
+Details of K-means clustering
+Let 𝐶1, … , 𝐶𝐾denote sets containing the indices of the observations in each 
+cluster. These sets satisfy two properties:
+1.
+𝐶1 ∪𝐶2 ∪⋯∪𝐶𝐾= 1, … , 𝑛. In other words, each observation belongs to at 
+least one of the 𝐾clusters
+2.
+𝐶𝑘∩𝐶𝑘′ = 0 for all 𝑘≠𝑘′. In other words, the clusters are non-overlapping: 
+no observation belongs to more than one cluster (In contrast to fuzzy 
+clustering)
+For instance, if the 𝑖th observation is in the 𝑘th cluster, then 𝑖∈𝐶𝑘
+60
+
+
+PAGE 61
+Details of K-means clustering: continued
+The idea behind K-means clustering is that a good clustering is one for which 
+the within-cluster variation is as small as possible
+The within-cluster variation for cluster 𝐶𝑘is a measure 𝑊(𝐶𝑘) of the amount by which the 
+observations within a cluster diﬀer from each other
+Hence we want to solve the problem
+min
+𝐶1,…,𝐶𝑘{෍
+𝑘=1
+𝐾
+W(𝐶𝑘)}
+In words, this formula says that we want to partition the observations into 𝐾clusters such 
+that the total within-cluster variation, summed over all 𝐾clusters, is as small as possible
+61
+
+
+PAGE 62
+How to deﬁne within-cluster variation?
+Typically we use Euclidean distance
+𝑊(𝐶𝑘)=
+1
+|𝐶𝑘| σ𝑖,𝑖′∈𝐶𝑘σ𝑗=1
+𝑝
+(𝑥𝑖𝑗−𝑥𝑖′𝑗)2,
+Where |𝐶𝑘| denotes the number of observations in the 𝑘th cluster
+Combining previous two equation gives the optimization problem which 
+minimize the following objective function that deﬁnes 𝐾-means clustering,
+min
+𝐶1,…,𝐶𝑘{෍
+𝑘=1
+𝐾
+1
+|𝐶𝑘| ෍
+𝑖,𝑖′∈𝐶𝑘
+෍
+𝑗=1
+𝑝
+(𝑥𝑖𝑗−𝑥𝑖′𝑗)2}
+There are 𝐾𝑛ways to partition 𝑛observation into 𝐾clusters!
+Fortunately, a very simple algorithm can be shown to provide a local optimum
+62
+
+
+PAGE 63
+Details of K-means clustering
+63
+
+
+PAGE 64
+Properties of the Algorithm
+This algorithm is guaranteed to decrease the value of the objective function at 
+each step. Note that (exercise 1)
+1
+|𝐶𝑘| ෍
+𝑖,𝑖′∈𝐶𝑘
+෍
+𝑗=1
+𝑝
+(𝑥𝑖𝑗−𝑥𝑖′𝑗)2 = 2 ෍
+𝑖∈𝐶𝑘
+෍
+𝑗=1
+𝑝
+(𝑥𝑖𝑗−ҧ𝑥𝑘𝑗)2
+Where ҧ𝑥𝑘𝑗=
+1
+|𝐶𝑘| σ𝑖∈𝐶𝑘𝑥𝑖𝑗is the mean for feature 𝑗in cluster 𝐶𝑘
+However it is not guaranteed to give the global minimum
+It is close related to Gaussian mixture model
+64
+
+
+PAGE 65
+Example
+65
+
+
+PAGE 66
+Details of previous figure
+The progress of the 𝐾-means algorithm with 𝐾= 3
+Top left: The observations are shown
+Top center: In Step 1 of the algorithm, each observation is randomly assigned to a cluster
+Top right: In Step 2(a), the cluster centroids are computed. These are shown as large 
+colored disks. Initially the centroids are almost completely overlapping because the initial 
+cluster assignments were chosen at random
+Bottom left: In Step 2(b), each observation is assigned to the nearest centroid
+Bottom center: Step 2(a) is once again performed, leading to new cluster centroids
+Bottom right: The results obtained after 10 iterations
+66
+
+
+PAGE 67
+Example: diﬀerent starting values and different 𝐾
+67
+
+
+PAGE 68
+Details of previous figure
+𝐾-means clustering performed six times on the data from previous ﬁgure with 
+𝐾= 3, each time with a diﬀerent random assignment of the observations in 
+Step 1 of the 𝐾-means algorithm
+Above each plot is the value of the objective function
+Three diﬀerent local optima were obtained, one of which resulted in a smaller 
+value of the objective and provides better separation between the clusters
+Those labeled in red all achieved the same best solution, with an objective 
+value of 235.8
+68
+
+
+PAGE 69
+Hierarchical Clustering
+𝐾-means clustering requires us to pre-specify the number of clusters 𝐾. This 
+can be a disadvantage
+Hierarchical clustering is an alternative approach which does not require that 
+we commit to a particular choice of 𝐾
+In this section, we describe bottom-up or agglomerative clustering (cf. divisive clustering). 
+This is the most common type of hierarchical clustering, and refers to the fact that a 
+dendrogram is built starting from the leaves and combining clusters up to the trunk
+It can also be used as an effective feature clustering (dimension reduction) method
+69
+
+
+PAGE 70
+Agglomerative (bottom up) Clustering
+Start with each point in it’s own cluster and then, for each cluster, use some 
+criterion to choose another cluster to merge with
+Do this repeatedly until you have only one cluster and you get a hierarchy, or binary tree, 
+of clusters branching down to the last layer which has a leaf for each point in the dataset
+70
+
+
+PAGE 71
+An example dataset
+45 observations generated in 2-
+dimensional space. In reality there 
+are three distinct classes, shown in 
+separate colors
+However, we will treat these class 
+labels as unknown and will seek to 
+cluster the observations in order to 
+discover the classes from the data
+71
+
+
+PAGE 72
+Application of hierarchical clustering
+72
+
+
+PAGE 73
+Details of previous figure
+Left: Dendrogram obtained from hierarchically clustering the data from 
+previous slide, with complete linkage and Euclidean distance
+Center: The dendrogram from the left-hand panel, cut at a height of 9 
+(indicated by the dashed line). This cut results in two distinct clusters, shown in 
+different colors
+Right: The dendrogram from the left-hand panel, now cut at a height of 5. This 
+cut results in three distinct clusters, shown in different colors
+One single dendrogram can be used to obtain any number of clusters. In 
+practice, people often look at the dendrogram and select by eye a sensible 
+number of clusters, based on the heights of the fusion and the number of 
+clusters desired
+73
+
+
+PAGE 74
+Assumption behind Hierarchical Clustering
+The term hierarchical refers to the fact that clusters obtained by cutting the 
+dendrogram at a given height are necessarily nested within the clusters 
+obtained by cutting the dendrogram at any greater height
+Suppose that our observations correspond to a group of men and women, evenly split 
+among Americans, Japanese, and French. We can imagine a scenario in which the best 
+division into two groups might split these people by gender, and the best division into three 
+groups might split them by nationality 
+In this case, the true clusters are not nested, in the sense that the best division into three 
+groups does not result from taking the best division into two groups and splitting up one of 
+those groups
+74
+
+
+PAGE 75
+Another Example
+An illustration of how to properly interpret a 
+dendrogram with nine observations in two-dimensional 
+space. The raw data on the bottom was used to generate 
+the dendrogram on the top
+Observations 5 and 7 are quite similar to each other, as are 
+observations 1 and 6
+However, observation 9 is no more similar to observation 2 
+than it is to observations 8, 5, and 7, even though observations 
+9 and 2 are close together in terms of horizontal distance
+This is because observations 2, 8, 5; and 7 all fuse with 
+observation 9 at the same height, approximately 1.8
+75
+
+
+PAGE 76
+Merges in previous example
+76
+
+
+PAGE 77
+Hierarchical Clustering
+How did we determine that the cluster {5, 7} should be fused with the cluster 
+{8}?
+77
+
+
+PAGE 78
+Types of Linkage
+Linkage
+Description
+Complete
+Maximal intercluster dissimilarity (distance). Compute all pairwise dissimilarities 
+between the observations in cluster A and the observations in cluster B, and record 
+the largest of these dissimilarities
+Single
+Minimal intercluster dissimilarity. Compute all pairwise dissimilarities between the 
+observations in cluster A and the observations in cluster B, and record the smallest
+of these dissimilarities
+Average
+Mean intercluster dissimilarity. Compute all pairwise dissimilarities between the 
+observations in cluster A and the observations in cluster B, and record the average of 
+these dissimilarities
+Centroid
+Dissimilarity between the centroid for cluster A (a mean vector of length 𝑝) and the 
+centroid for cluster B. Centroid linkage can result in undesirable inversions
+Ward
+The difference between the pre and post variance. It is a variance-minimizing 
+approach and in this sense is similar to the k-means objective function
+78
+
+
+PAGE 79
+Types of Linkage
+79
+
+
+PAGE 80
+Types of Linkage
+Agglomerative cluster has a “rich get 
+richer” behavior that leads to uneven 
+cluster sizes
+Single linkage seems like the worst strategy, 
+and Ward gives the most regular sizes
+However, the affinity cannot be varied 
+with Ward, thus for non Euclidean metrics, 
+average linkage is a good alternative
+Single linkage, while not robust to noisy 
+data, can be computed very efficiently. It  
+can also perform well on non-globular 
+data
+80
+
+
+PAGE 81
+Density-based spatial clustering of applications with noise
+(DBSCAN) (OPTICS, HDBSCAN)
+DBSCAN is a density based algorithm. It is also the actual clustering 
+algorithm: it doesn’t require that every point be assigned to a cluster and hence 
+doesn’t partition the data, but instead extracts the ‘dense’ clusters and leaves 
+sparse background classified as ‘noise’
+A point p is a core point if at least minPts points are within distance ε of it 
+(including p). Find the reachable points and clustered all points that are 
+reachable
+81
+https://en.wikipedia.org/wiki/DBSCAN
+
+
+PAGE 82
+DBSCAN
+1.
+Picking an arbitrary point and if there are more than minPts points within a 
+distance ε from the point, we consider all of them to as a "cluster". We then 
+expand that cluster by checking all of the new points and seeing if they have 
+more than minPts points within a distance ε, growing the cluster recursively
+82
+2.
+Eventually, we run out of points to add 
+to the cluster. We then pick a new 
+arbitrary point and repeat the process
+3.
+It's possible that a point we pick has 
+fewer than minPts points in its 𝜀ball, 
+and is also not a part of any other cluster. 
+Then it is a  "noise point" not belonging 
+to any cluster
+
+
+PAGE 83
+DBSCAN
+DBSCAN can be seen as special (efficient) variant of spectral clustering:
+1.
+Clusters don’t need to be globular, and won’t have noise lumped in; varying density 
+clusters may cause problems 
+2.
+DBSCAN is stable across runs (and to some extent subsampling if you re-parameterize 
+well); stability over varying 𝜀and 𝑚𝑖𝑛𝑃𝑡𝑠is not so good
+3.
+DBSCAN can be very efficient; few clustering algorithms can tackle datasets as large as 
+DBSCAN can
+4.
+𝜀is a distance value. In practice, however, this isn’t an especially intuitive parameter, nor 
+is it easy to get right
+83
+
+
+PAGE 84
+Hierarchical DBSCAN (HDBSCAN)
+The goal was to allow varying density clusters. It extends DBSCAN by 
+converting it into a hierarchical clustering algorithm
+84
+https://axk51013.medium.com/2021%E5%B9%B4%E8%B3%87%E6
+%96%99%E7%A7%91%E5%AD%B8%E5%AE%B6%E5%BF%85%
+E5%82%99%E5%88%86%E7%BE%A4%E6%B3%95hdbscan%E7%
+B0%A1%E4%BB%8B-fba8287e666c
+
+
+PAGE 85
+Hierarchical DBSCAN (HDBSCAN)
+Instead of taking an 𝜀value and 
+minPts, we have a new parameter 
+min_cluster_size which is used to 
+determine whether points are 
+‘falling out of a cluster’ or splitting 
+to form two new clusters
+This trades an unintuitive parameter for 
+one that is not so hard to choose for 
+EDA 
+85
+
+
+PAGE 86
+Choice of dissimilarity measure
+So far have used Euclidean distance
+An alternative is correlation-based distance which considers two observations 
+to be similar if their features are highly correlated
+Correlation-based distance focuses on the shapes of observation profiles rather than their 
+magnitudes
+More metrics
+86
+
+
+PAGE 87
+Choice of dissimilarity measure
+Consider an online retailer interested in clustering shoppers based on 
+their past shopping histories
+The data takes the form of a matrix where the rows are the shoppers and the 
+columns are the items available for purchase; the elements of the data matrix 
+indicate the number of times a given shopper has purchased a given item 
+If Euclidean distance is used, then shoppers who have bought very few items 
+overall will be clustered together. This may not be desirable. On the other hand, if 
+correlation-based distance is used, then shoppers with similar preferences will be 
+clustered together
+87
+
+
+PAGE 88
+Scaling of the variables matters
+88
+
+
+PAGE 89
+Practical issues - Validating the clusters obtained
+Any time clustering is performed on a data set we find clusters. But we want to 
+know whether the clusters that have been found represent true subgroups in the 
+data, or whether they are simply a result of clustering the noise 
+This is a hard question to answer. There exist a number of techniques for 
+assigning a 𝑝-value to a cluster in order to assess whether there is more 
+evidence for the cluster than one would expect due to chance. However, there 
+has been no consensus on a single best approach
+More details can be found in ESL
+89
+
+
+PAGE 90
+Practical issues
+Both 𝐾-means and hierarchical clustering will assign each observation to a 
+cluster. However, sometimes this might not be appropriate
+Suppose a small subset of the observations are quite different from each other and from all 
+other observations. The clusters found may be heavily distorted due to the presence of 
+outliers that do not belong to any cluster 
+Mixture models or DBSCAN are an attractive approach for accommodating the presence 
+of such outliers
+Clustering methods generally are not very robust to perturbations to the data. 
+For instance, suppose that we cluster 𝑛observations, and then cluster the 
+observations again after removing a subset of the 𝑛observations at random. 
+One would hope that the two sets of clusters obtained would be quite similar, 
+but often this is not the case!
+90
+
+
+PAGE 91
+Practical issues
+Clustering can be a very useful and valid statistical tool if used properly 
+We mentioned that small decisions in how clustering is performed
+Such as how the data are standardized and what type of linkage is used, can have a large 
+effect on the results 
+Therefore, we recommend performing clustering with different choices of these parameters, 
+and looking at the full set of results in order to see what patterns consistently emerge
+We must be careful about how the results of a clustering analysis are reported. These 
+results should not be taken as the absolute truth about a data set. Rather, they should 
+constitute a starting point for the development of a scientific hypothesis and further study, 
+preferably on an independent data set
+91
+
+
+PAGE 92
+Clustering for categorical data
+1.
+Cluster using e.g., k-means or HDBSCAN, based on only the continuous 
+features!
+2.
+Encode the categorical data before clustering with e.g., k-means or 
+HDBSCAN
+3.
+Use k-prototypes to directly cluster the mixed data
+See here
+4.
+Use factor analysis of mixed data to reduce the mixed data to a set of derived 
+continuous features which can then be clustered
+92
+
+
+PAGE 93
+Conclusions
+Unsupervised learning is important for understanding the variation and 
+grouping structure of a set of unlabeled data, and can be a useful pre-processor 
+for supervised learning  
+It is intrinsically more difficult than supervised learning because there is no 
+gold standard (like an outcome variable) and no single objective (like test set 
+accuracy)
+It is an active field of research, with many recently developed tools. See The 
+Elements of Statistical Learning, chapter 14
+93
+
+
+PAGE 94
+Conclusions
+Going further
+Manifold learning
+Self-supervised learning
+Deep learning
+Graphical models
+Bayesian data analysis
+…
+Practical topics (https://phonchi.github.io/nsysu-math608/materials/)
+Data cleaning, feature engineering
+Database and SQL
+Model serving …
+Pretrained and transfer learning
+High-performance and distributed computing
+94
+
+
+PAGE 95
+Appendix
+95
+
+
+PAGE 96
+Additional topics
+Tensor decomposition
+http://tensorly.org/stable/index.html
+Manifold learning
+https://scikit-learn.org/stable/modules/manifold.html
+Spectral clustering 
+https://jlmelville.github.io/smallvis/spectral.html
+Mixture models
+https://cs229.stanford.edu/syllabus.html
+https://cs229.stanford.edu/notes2021fall/cs229-notes7b.pdf
+Variational Bayesian Gaussian Mixture
+96
+
+
+PAGE 97
+Self-supervised learning
+https://speech.ee.ntu.edu.tw/~hylee/ml/ml2021-course-data/bert_v8.pdf
+97
+
+
+PAGE 98
+More on PCA – Connection with SVD and EVD
+In practice, we will often scale data before PCA 
+Whiten data matrix (identity covariance matrix)
+XVΛ−1/2
+ZCA (Close to original data (often not reduce dimension))
+XVΛ−1/2𝑉𝑇
+98
+
+
+PAGE 99
+Perplexity, a smooth measure of the # of neighbors
+To choose the appropriate 𝜎𝑖
+2, SNE performs a binary search for the value of 𝜎𝑖
+that makes the entropy of the distribution over neighbors equal to log2(𝑘), 
+where 𝑘is the hyper-parameter perplexity or the effective number of local 
+neighbors. The perplexity is defined as:
+𝑘= 2𝐻(𝑃𝑖), where 𝐻𝑃𝑖= −σ𝑗𝑝𝑗|𝑖log2 𝑝𝑗|𝑖
+Another consequence is that since the Gaussian kernel is used, the probability of being a 
+neighbor decreases sharply for any point 𝑥𝑗that lies outside of the neighborhood of a point 
+𝑥𝑖, and the neighborhood is determined exactly by 𝜎𝑖
+2
+99
+
+
+PAGE 100
+Clustering analysis - Example
+For instance, suppose that we have a set of 𝑛observations, each with 𝑝
+features
+The 𝑛observations could correspond to tissue samples for patients with breast 
+cancer, and the 𝑝features could correspond to measurements collected for each 
+tissue sample; these could be clinical measurements, such as tumor stage or grade, 
+or they could be gene expression measurements
+We may have a reason to believe that there is some heterogeneity among the 𝑛
+tissue samples; for instance, perhaps there are a few different unknown subtypes of 
+breast cancer
+Clustering could be used to find these subgroups. This is an unsupervised problem 
+because we are trying to discover structure—in this case, distinct clusters—on the 
+basis of a data set
+100
+
+
+PAGE 101
+Mean shift
+If you don’t want to have to specify the number of clusters. It is centroid based, 
+like K-Means, but can return clusters instead of a partition
+The underlying idea of the Mean Shift algorithm is that there exists some 
+probability density function from which the data is drawn, and tries to place 
+centroids of clusters at the maxima of that density function
+It approximates this via kernel density estimation techniques, and the key 
+parameter is then the bandwidth of the kernel used
+101
+
+
+PAGE 102
+Mean shift
+1.
+We begin with a circular sliding window centered at a point 𝑥𝑖(randomly 
+selected) and having radius 𝑟as the kernel.
+2.
+Given a candidate centroid 𝑥𝑖for iteration 𝑡, the candidate is updated 
+according to the following equation:
+1.
+The means are shifted to the high density region 
+3.
+We continue shifting the sliding window according to the mean until there is 
+no direction at which a shift can accommodate more points inside the kernel
+4.
+This process of steps 1 to 3 is done with many sliding window
+102
+
+
+PAGE 103
+Example
+103
+https://medium.com/temp08050309-devpblog/cv-7-segmentation-as-clustering-k-means-
+mixture-of-gaussians-mean-shift-fe94d39bd2fc
+https://towardsdatascience.com/the-5-clustering-algorithms-data-scientists-need-to-know-
+a36d136ef68
+
+
+PAGE 104
+Clustering as a preprocessing method
+104
+Longitude
+Latitude
+Cluster
+D_C0 …
+D_C3
+-93.619
+42.054
+3
+1.25
+5.24
+-93.619
+42.053
+3
+3.56
+3.33
+-93.638
+42.060
+1
+5.21
+0.89
+-93.602
+41.988
+0
+7.83
+4.31
+Clustering can be an efficient approach to 
+dimensionality reduction, in particular as a 
+preprocessing step before a supervised learning 
+algorithm
+Cluster labels as a feature
+The motivating idea for adding cluster labels is 
+that the clusters will break up complicated 
+relationships across features into simpler 
+chunks. Our model can then just learn the 
+simpler chunks one-by-one instead having to 
+learn the complicated whole all at once
+Distance to cluster centers can also be good 
+features
+Feature agglomeration by pooling function
+
+
+PAGE 105
+Clustering for semi-supervised learning
+Another use case for clustering is in semi-supervised learning, when we have 
+plenty of unlabeled instances and very few labeled instances
+We can first cluster all the data points and ask for the label of the images that are most 
+close to the cluster center
+Using this images to train classifier may be much better than random instances 
+We can also propagated the labels to all the other instances in the same cluster. This is 
+called label propagation
+105
+
+
+PAGE 106
+Practical issues
+Should the observations or features first be standardized in some way? For 
+instance, maybe the variables should be centered to have mean zero and scaled 
+to have standard deviation one. What dissimilarity measure should be used?
+In the case of hierarchical clustering,
+What type of linkage should be used?
+How many clusters to choose? (in both 𝐾-means or hierarchical clustering). 
+Difficult problem. No agreed-upon method. See Elements of Statistical 
+Learning, chapter 13 for more details
+106
