@@ -1450,7 +1450,7 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
 <p>這個名字來自英文俗語「拉著自己的靴帶把自己提起來」：只靠手上這一份資料，就估出估計量的不確定性。</p>
 <details class="qa-item reading-detail" id="w05-detail-boot-name"><summary>延伸閱讀：bootstrap 名稱的由來</summary>
 <div class="detail-body">
-  <p>這句俗語常和吹牛男爵 Munchausen 的故事連在一起：他聲稱抓著自己的頭髮（後來的版本變成靴帶）把自己從沼澤裡拉出來。這件看似不可能的事，後來被用來形容「不靠外力、只用自己手上的東西完成」。統計上的 bootstrap 也是這樣：沒有新的資料，只從原本那一份資料重抽，就估出估計量的抽樣變異。</p>
+<p>這句俗語常和吹牛男爵 Munchausen 的故事連在一起：他聲稱抓著自己的頭髮（後來的版本變成靴帶）把自己從沼澤裡拉出來。這件看似不可能的事，後來被用來形容「不靠外力、只用自己手上的東西完成」。統計上的 bootstrap 也是這樣：沒有新的資料，只從原本那一份資料重抽，就估出估計量的抽樣變異。</p>
 <p class="source-note">講義補充連結：<a href="https://mentallyagile.com/blog/2022/5/23/bootstrap-absurdity" rel="noopener" target="_blank">bootstrap 這個名字的由來</a>。</p></div></details>
 <h3 id="w05-boot-sim">先看理想情況：如果能從母體反覆抽樣</h3>
 <p>講義先用模擬說明 bootstrap 想近似的東西。假設知道母體參數 $\sigma_X^2=1$、$\sigma_Y^2=1.25$、$\sigma_{XY}=0.5$，代入公式得真正的 $\alpha=0.6$。每次從母體抽 100 對 $(X,Y)$、算一次 $\hat\alpha$，重複 1000 次。講義（ISLP 圖 5.9、5.10）的四個例子 $\hat\alpha$ 為 0.576、0.532、0.657、0.651；1000 次的平均是</p>
@@ -1458,31 +1458,31 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
   <p>很接近 $\alpha=0.6$；標準差</p>
   $$\sqrt{\frac1{1000-1}\sum_{r=1}^{1000}(\hat\alpha_r-\bar\alpha)^2}=0.083,$$
 <div class="info-box warm">
-  <span class="info-label">講義的模擬結果</span>
+<span class="info-label">講義的模擬結果</span>
   1000 個 $\hat\alpha$ 的平均 0.5996 很接近真值 0.6；標準差 0.083，也就是 $\mathrm{SE}(\hat\alpha)\approx0.083$：$\hat\alpha$ 和 $\alpha$ 的差距大約在 0.08 這個量級。
 </div>
 <p><strong>問題是真實世界只有一份資料，無法從母體反覆抽樣。</strong>bootstrap 改從手上的資料有放回地重抽，模仿這個過程。下圖左邊是從母體重抽的 $\hat\alpha$，右邊是只從一份資料做 bootstrap 的 $\hat\alpha^*$。書上圖 5.10 的 bootstrap 直方圖來自一份從同一母體模擬的資料，這裡改用課程 lab 的 <code>Portfolio</code>；兩者的中心不同（一個在真值 0.6 附近，一個在這份資料的 $\hat\alpha$ 附近），但<strong>散布寬度相近</strong>，而 bootstrap 要估的正是這個寬度。</p>
 <div class="viz-layout" data-provenance="simulation" data-source-note="母體參數依講義；bootstrap 欄使用 ISLP Portfolio">
-  <div>
-    <div class="viz-panel">
-      <div class="chart-wrap tall"><canvas id="w05simChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：從母體重抽與 bootstrap 重抽的直方圖寬度相近。</div></div>
-      </div>
-      <div class="status-banner" id="w05simStatus"><span class="status-icon">›</span><span class="status-text">左右兩種重抽的分布寬度相近。</span></div>
-      <div class="controls-bar"></div>
-      <div class="viz-source"><span>模擬示意</span></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">兩種重抽的摘要</div>
-      <div class="ic-row"><span class="ic-label">真實 α</span><span class="ic-value" id="w05simTrue">0.6</span></div><div class="ic-row"><span class="ic-label">母體模擬：平均</span><span class="ic-value" id="w05simMean">—</span></div><div class="ic-row"><span class="ic-label">母體模擬：標準差</span><span class="ic-value" id="w05simSD">—</span></div><div class="ic-row"><span class="ic-label">bootstrap：平均</span><span class="ic-value" id="w05simBMean">—</span></div><div class="ic-row"><span class="ic-label">bootstrap：標準差</span><span class="ic-value" id="w05simBSD">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">怎麼看這張圖</div>
+<div>
+<div class="viz-panel">
+<div class="chart-wrap tall"><canvas id="w05simChart"></canvas>
+<div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。此圖的重點：從母體重抽與 bootstrap 重抽的直方圖寬度相近。</div></div>
+</div>
+<div class="status-banner" id="w05simStatus"><span class="status-icon">›</span><span class="status-text">左右兩種重抽的分布寬度相近。</span></div>
+<div class="controls-bar"></div>
+<div class="viz-source"><span>模擬示意</span></div>
+</div>
+</div>
+<div class="side-panel">
+<div class="info-card">
+<div class="ic-title">兩種重抽的摘要</div>
+<div class="ic-row"><span class="ic-label">真實 α</span><span class="ic-value" id="w05simTrue">0.6</span></div><div class="ic-row"><span class="ic-label">母體模擬：平均</span><span class="ic-value" id="w05simMean">—</span></div><div class="ic-row"><span class="ic-label">母體模擬：標準差</span><span class="ic-value" id="w05simSD">—</span></div><div class="ic-row"><span class="ic-label">bootstrap：平均</span><span class="ic-value" id="w05simBMean">—</span></div><div class="ic-row"><span class="ic-label">bootstrap：標準差</span><span class="ic-value" id="w05simBSD">—</span></div>
+</div>
+<div class="info-card">
+<div class="ic-title">怎麼看這張圖</div>
       兩組長條共用同一組區間。綠色是 1000 份新模擬資料的 α̂，藍色是 Portfolio 一份資料的 1000 個 bootstrap α̂*。本頁的模擬用了新的亂數種子，平均與標準差會接近、但不會和講義的 0.5996、0.083 逐位相同。書上圖 5.10 的 bootstrap 欄用的是一份模擬資料，這裡改用 Portfolio。
     </div>
-  </div>
+</div>
 </div>
 <h3 id="w05-boot-real">回到真實世界</h3>
 <p>上面的程序在真實資料上做不到，因為無法從原本的母體產生新樣本。bootstrap 讓電腦模仿「取得新資料」的過程：它不從母體重複抽獨立的資料集，改成<strong>從原始資料有放回地重複抽樣</strong>。每份 bootstrap 資料集和原資料一樣大，所以有些觀測會出現不只一次，有些一次也沒出現。</p>
@@ -1490,49 +1490,87 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
   當成一份「新」資料集，重算 $\hat\alpha^*$。重複 B 次，那 B 個 $\hat\alpha^*$ 的標準差
   就是 $\mathrm{SE}(\hat\alpha)$ 的估計。不必指定常態分布，但重抽單位須符合資料的獨立性與研究設計。</p>
 <div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Portfolio；與 Ch05 lab 的 α̂ 統計量一致">
-  <div>
-    <div class="viz-panel">
-      <div class="info-box" id="w05bootSvg" style="font-family:var(--mono);font-size:.78rem;">尚未重抽。按「抽一次」後會顯示 Portfolio 的抽樣索引摘要。</div>
-      <div class="chart-wrap"><canvas id="w05bootChart"></canvas>
-        <div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。圖中每一個值都是 Portfolio 的 α̂*，其標準差估計 SE(α̂)。</div></div>
-      </div>
-      <div class="status-banner" id="w05bootStatus"><span class="status-icon">›</span><span class="status-text">從 Portfolio 的 100 對 (X,Y) 有放回抽 100 對，再重算同一個 α̂。</span></div>
-      <div class="controls-bar"><button class="btn btn-step" onclick="w05bootDrawOne()">→ 抽一次</button><button class="btn btn-play" onclick="w05bootMany()">▶ 連抽 200 次</button><button class="btn btn-reset" onclick="w05bootReset()">重置</button></div>
-      <div class="viz-source"><span>課程／lab 資料</span></div>
-    </div>
-  </div>
-  <div class="side-panel">
-    <div class="info-card">
-      <div class="ic-title">虛擬碼</div>
-      <div class="pseudo-code" id="w05bootCode" style="font-size:.74rem;"><span class="line" data-l="1"><span class="kw">for</span> b <span class="kw">in</span> <span class="kw">range</span>(B):</span>
+<div>
+<div class="viz-panel">
+<div class="info-box" id="w05bootSvg" style="font-family:var(--mono);font-size:.78rem;">尚未重抽。按「抽一次」後會顯示 Portfolio 的抽樣索引摘要。</div>
+<div class="chart-wrap"><canvas id="w05bootChart"></canvas>
+<div class="chart-fallback"><div><b>圖表需要連網載入 Chart.js</b>。圖中每一個值都是 Portfolio 的 α̂*，其標準差估計 SE(α̂)。</div></div>
+</div>
+<div class="status-banner" id="w05bootStatus"><span class="status-icon">›</span><span class="status-text">從 Portfolio 的 100 對 (X,Y) 有放回抽 100 對，再重算同一個 α̂。</span></div>
+<div class="controls-bar"><button class="btn btn-step" onclick="w05bootDrawOne()">→ 抽一次</button><button class="btn btn-play" onclick="w05bootMany()">▶ 連抽 200 次</button><button class="btn btn-reset" onclick="w05bootReset()">重置</button></div>
+<div class="viz-source"><span>課程／lab 資料</span></div>
+</div>
+</div>
+<div class="side-panel">
+<div class="info-card">
+<div class="ic-title">虛擬碼</div>
+<div class="pseudo-code" id="w05bootCode" style="font-size:.74rem;"><span class="line" data-l="1"><span class="kw">for</span> b <span class="kw">in</span> <span class="kw">range</span>(B):</span>
 <span class="line" data-l="2">    idx = 有放回抽 n 個</span>
 <span class="line" data-l="3">    θ*[b] = f(資料[idx])</span>
 <span class="line" data-l="4">SE = std(θ*)</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">這一次重抽</div>
-      <div class="ic-row"><span class="ic-label">前 12 個抽樣索引</span><span class="ic-value" id="w05bootDraw">—</span></div><div class="ic-row"><span class="ic-label">沒被抽到（OOB）</span><span class="ic-value" id="w05bootOob">—</span></div><div class="ic-row"><span class="ic-label">這次的 α̂*</span><span class="ic-value" id="w05bootStat">—</span></div><div class="ic-row"><span class="ic-label">累計 B</span><span class="ic-value" id="w05bootB">0</span></div><div class="ic-row"><span class="ic-label">累計 SE</span><span class="ic-value" id="w05bootSE">—</span></div>
-    </div>
-    <div class="info-card">
-      <div class="ic-title">Portfolio 的真實結果 <span class="ic-badge">ISLP §5.2</span></div>
+</div>
+<div class="info-card">
+<div class="ic-title">這一次重抽</div>
+<div class="ic-row"><span class="ic-label">前 12 個抽樣索引</span><span class="ic-value" id="w05bootDraw">—</span></div><div class="ic-row"><span class="ic-label">沒被抽到（OOB）</span><span class="ic-value" id="w05bootOob">—</span></div><div class="ic-row"><span class="ic-label">這次的 α̂*</span><span class="ic-value" id="w05bootStat">—</span></div><div class="ic-row"><span class="ic-label">累計 B</span><span class="ic-value" id="w05bootB">0</span></div><div class="ic-row"><span class="ic-label">累計 SE</span><span class="ic-value" id="w05bootSE">—</span></div>
+</div>
+<div class="info-card">
+<div class="ic-title">Portfolio 的真實結果 <span class="ic-badge">ISLP §5.2</span></div>
       用全部 100 筆算：α̂ = <strong>0.5758</strong>。跑 B = 1000 次 bootstrap 後，SE(α̂) = <strong>0.0912</strong>。下面的 lab 卡片有逐字輸出。
     </div>
-  </div>
+</div>
 </div>
 <h3 id="w05-boot-world">bootstrap 的一般圖像：真實世界與 bootstrap 世界</h3>
 <p>講義用兩個平行的世界整理這個想法：</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th></th><th>真實世界</th><th>bootstrap 世界</th></tr></thead>
-  <tbody><tr><td>母體</td><td>未知的分布 $P$</td><td>手上的資料 $Z$（每筆機率 $1/n$ 的經驗分布）</td></tr><tr><td>抽一份資料</td><td>從 $P$ 抽 $n$ 筆</td><td>從 $Z$ <strong>有放回</strong>抽 $n$ 筆，得到 $Z^{*r}$</td></tr><tr><td>算估計量</td><td>$\hat\alpha$</td><td>$\hat\alpha^{*r}$</td></tr><tr><td>重複</td><td>理論上重複很多次（做不到）</td><td>$r=1,\ldots,B$，電腦可以做</td></tr></tbody>
+<thead><tr><th></th><th>真實世界</th><th>bootstrap 世界</th></tr></thead>
+<tbody><tr><td>母體</td><td>未知的分布 $P$</td><td>手上的資料 $Z$（每筆機率 $1/n$ 的經驗分布）</td></tr><tr><td>抽一份資料</td><td>從 $P$ 抽 $n$ 筆</td><td>從 $Z$ <strong>有放回</strong>抽 $n$ 筆，得到 $Z^{*r}$</td></tr><tr><td>算估計量</td><td>$\hat\alpha$</td><td>$\hat\alpha^{*r}$</td></tr><tr><td>重複</td><td>理論上重複很多次（做不到）</td><td>$r=1,\ldots,B$，電腦可以做</td></tr></tbody>
 </table></div>
 <p>只有 3 筆資料的例子最容易看清楚：原資料是觀測 1、2、3；一份 bootstrap 樣本可能是 3、1、3，第 3 筆出現兩次、第 2 筆沒出現。重複 $B$ 次得到 $\hat\alpha^{*1},\ldots,\hat\alpha^{*B}$。</p>
 <div class="info-box warm">
-  <span class="info-label">講義：bootstrap 標準誤</span>
+<span class="info-label">講義：bootstrap 標準誤</span>
   以 $B$ 份 bootstrap 樣本 $Z^{*1},\ldots,Z^{*B}$ 算出 $\hat\alpha^{*1},\ldots,\hat\alpha^{*B}$，它們的標準差就是 $\hat\alpha$ 標準誤的估計：
   $$\mathrm{SE}_B(\hat\alpha)=\sqrt{\frac1{B-1}\sum_{r=1}^B\Bigl(\hat\alpha^{*r}-\frac1B\sum_{r'=1}^B\hat\alpha^{*r'}\Bigr)^2}.$$
 </div>
 <p>ISLP 用 $B=1000$ 得到 $\mathrm{SE}_B(\hat\alpha)=0.087$，和上面理想模擬的 0.083 很接近；課程 lab 用自己的種子得到 0.0912。</p>
-<h3 id="w05-boot-ci">bootstrap 信賴區間</h3>
+<details class="qa-item reading-detail" id="w05-detail-bootstrap-ci-methods"><summary>計算細節：percentile、basic 區間與 Portfolio 實作</summary>
+<div class="detail-body">
+<h4>從 bootstrap 標準誤建立信賴區間</h4>
+<p>bootstrap 標準誤是重抽估計值的標準差，描述估計量的散布；信賴區間則要決定如何用這個散布涵蓋未知參數。講義的 90% 百分位區間 $(0.43,0.72)$ 是其模擬資料的結果，不能直接搬成 Portfolio 這份資料的區間。對手上的資料，要由自己的重抽估計值重算分位數。</p>
+<p>令 $q_a^*$ 為 bootstrap 估計值的第 $a$ 分位數，$\hat\theta$ 為原始估計值。兩個常見選擇是</p>
+$$\text{percentile}:\ [q_{\alpha/2}^*,q_{1-\alpha/2}^*],\qquad
+\text{basic}:\ [2\hat\theta-q_{1-\alpha/2}^*,2\hat\theta-q_{\alpha/2}^*].$$
+<p>basic 區間的方向可從估計誤差推回來：若 $\hat\theta^*-\hat\theta$ 模仿 $\hat\theta-\theta$，取這個誤差的中央區間後，解出 $\theta$，就要把兩端減回去並交換順序。percentile 則直接取估計值分布的分位數。兩者都只是依 bootstrap 近似建構，並非任何樣本、任何統計量都精確涵蓋。</p>
+<p>例如 $\hat\theta=10$，重抽的 2.5% 與 97.5% 分位數為 8、13。percentile 是 $[8,13]$；basic 是 $[7,12]$。若重抽分布向右偏，兩個區間不必同中心；所以不能把「畫出分位數」與「已處理估計偏差」視為同一件事。</p>
+<p>BCa（bias-corrected and accelerated）進一步調整所取的百分位位置，使用偏差校正與 jackknife 資訊來反映不對稱；studentized bootstrap 則重抽近似的標準化誤差，需要每次估計標準誤。它們增加計算與條件，也不是萬用保證。SciPy 的 <code>bootstrap</code> 提供 percentile、basic、BCa；講義先介紹容易解讀的 percentile。</p>
+<h4>沿用 Portfolio，自己算出兩種區間</h4>
+<p>下面延伸 Lab 的配對重抽，增加區間計算。使用 <code>default_rng</code> 的固定種子，與原 Lab 的亂數呼叫方式不同，因此不要求數值逐位等於原 Lab 已存輸出。對照時請檢查同列索引、共變異數估法，以及重抽估計值的標準差與分位數。</p>
+<div class="pseudo-code" id="w05-alignment-portfolio-code">
+<span class="line"><span class="kw">import</span> numpy <span class="kw">as</span> np</span>
+<span class="line"><span class="kw">from</span> ISLP <span class="kw">import</span> load_data</span>
+<span class="line"> </span>
+<span class="line">Portfolio = load_data(<span class="str">"Portfolio"</span>)</span>
+<span class="line">xy = Portfolio[[<span class="str">"X"</span>, <span class="str">"Y"</span>]].to_numpy()</span>
+<span class="line"> </span>
+<span class="line"><span class="kw">def</span> <span class="fn">alpha</span>(data):</span>
+<span class="line">    cov = np.cov(data, rowvar=<span class="num">False</span>, ddof=<span class="num">1</span>)</span>
+<span class="line">    denominator = cov[<span class="num">0</span>, <span class="num">0</span>] + cov[<span class="num">1</span>, <span class="num">1</span>] - <span class="num">2</span> * cov[<span class="num">0</span>, <span class="num">1</span>]</span>
+<span class="line"> <span class="kw">if</span> denominator &lt;= <span class="num">0</span>:</span>
+<span class="line"> <span class="kw">raise</span> ValueError(<span class="str">"X-Y 沒有變異，最小風險權重無法唯一決定"</span>)</span>
+<span class="line"> <span class="kw">return</span> (cov[<span class="num">1</span>, <span class="num">1</span>] - cov[<span class="num">0</span>, <span class="num">1</span>]) / denominator</span>
+<span class="line"> </span>
+<span class="line">rng = np.random.default_rng(<span class="num">0</span>)</span>
+<span class="line">B = <span class="num">1000</span></span>
+<span class="line">estimates = np.empty(B)</span>
+<span class="line"><span class="kw">for</span> b <span class="kw">in</span> range(B):</span>
+<span class="line">    index = rng.choice(len(xy), size=len(xy), replace=<span class="num">True</span>)</span>
+<span class="line">    estimates[b] = alpha(xy[index])  <span class="com"># X、Y 必須用同一組索引</span></span>
+<span class="line"> </span>
+<span class="line">estimate = alpha(xy)</span>
+<span class="line">se = estimates.std(ddof=<span class="num">1</span>)</span>
+<span class="line">q05, q95 = np.quantile(estimates, [<span class="num">0.05</span>, <span class="num">0.95</span>])</span>
+<span class="line">print(<span class="str">"估計權重與 bootstrap SE"</span>, estimate, se)</span>
+<span class="line">print(<span class="str">"90% percentile CI"</span>, q05, q95)</span>
+<span class="line">print(<span class="str">"90% basic CI"</span>, <span class="num">2</span> * estimate - q95, <span class="num">2</span> * estimate - q05)</span></div><p>延伸來源：<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html" rel="noopener" target="_blank">SciPy：bootstrap 的區間方法與配對抽樣</a>／<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank">Ch05 中文 Lab：Portfolio</a></p></div></details><h3 id="w05-boot-ci">bootstrap 信賴區間</h3>
 <p><strong>百分位區間。</strong>把 $B$ 個 $\hat\alpha^{*r}$ 排序，取第 5 與第 95 百分位數，就得到近似 90% 的信賴區間。講義的例子是 $(0.43,\,0.72)$。這叫 bootstrap 百分位信賴區間（percentile interval），是最簡單的一種；估計量偏差大、樣本太少或統計量不規則時，涵蓋率可能不足。</p>
 <p><strong>迴歸曲線的信賴區間。</strong>講義用局部迴歸（lowess）曲線示範，步驟是：</p>
 <ol>
@@ -1548,93 +1586,99 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
 <p>bootstrap 每次抽一筆觀測，隱含假設觀測彼此獨立。時間序列的相鄰觀測相關，講義的做法是改成有放回地抽<strong>連續的區塊</strong>，以保留區塊內的相關結構。</p>
 <details class="qa-item reading-detail" id="w05-detail-block-bootstrap"><summary>延伸閱讀：區塊 bootstrap 怎麼做？</summary>
 <div class="detail-body">
-  <p><strong>為什麼逐筆重抽不行。</strong>逐筆有放回重抽會把相鄰觀測打散，重抽出來的序列沒有原本的自我相關；用它估出的標準誤通常偏小，因為正相關的資料提供的獨立資訊比筆數看起來少。</p>
-  <p><strong>步驟</strong>（以長度 $n$ 的序列、區塊長度 $l$ 為例）：</p>
-  <ol>
-    <li>把序列切成區塊。不重疊的做法得到 $n/l$ 個區塊；移動區塊（moving block）則取所有連續的 $l$ 筆，共 $n-l+1$ 個，可以重疊。</li>
-    <li>從這些區塊中有放回地抽出 $n/l$ 個（這裡假設 $n$ 是 $l$ 的倍數；不整除時抽 $\lceil n/l\rceil$ 個，串接後只取前 $n$ 筆）。</li>
-    <li>依抽出的順序把區塊串接起來，得到一條長度 $n$ 的 bootstrap 序列。</li>
-    <li>在這條序列上重算估計量；重複 $B$ 次，用這些估計值的標準差估標準誤。</li>
-  </ol>
-  <p><strong>區塊長度的取捨。</strong>區塊要長到足以保留主要的相關（相關持續幾期，區塊大致就要涵蓋那麼長）；但區塊太長，能組合的方式變少，bootstrap 樣本彼此太像，估計反而不穩。循環區塊（把序列頭尾接起來再切）可以讓每筆觀測被抽到的機會相同。這些變形都只保留一部分相依結構，使用時要說明所選的版本與區塊長度。</p>
-<p class="source-note">講義補充連結：<a href="https://stats.stackexchange.com/questions/25706/how-do-you-do-bootstrapping-with-time-series-data" rel="noopener" target="_blank">如何對時間序列做 bootstrap</a>、<a href="https://www.sciencedirect.com/science/article/pii/S0003267000008503" rel="noopener" target="_blank">區塊 bootstrap 的應用文獻</a>。</p></div></details>
-<details class="qa-item reading-detail" id="w05-detail-lab-bootstrap-1"><summary>完整實作：定義 alpha_func 並用全部 100 筆</summary>
+<h4>為什麼不能把時間序列的每筆觀測獨立重抽？</h4>
+<p>假設每天的溫度有正向自我相關，今天偏高，明天也往往偏高。逐筆重抽會把連續的高溫段打散，重抽序列便不再有同樣的相依性。對平均數，差別可以直接從變異數展開看見：</p>
+$$\operatorname{Var}(\bar X)=\frac1{n^2}\left[\sum_i\operatorname{Var}(X_i)+2\sum_{i\lt j}\operatorname{Cov}(X_i,X_j)\right].$$
+<p>正共變異數增加平均數的變異；逐筆 bootstrap 打散相依結構後，可能漏掉這部分變異。方向仍取決於相依型態與統計量，不能斷言所有相依資料的標準誤都必定偏小。</p>
+<p><strong>移動區塊 bootstrap</strong>先取長度 l 的所有連續區塊，起點可為 1 到 $n-l+1$；再有放回抽區塊、按抽到的順序串接，直到至少 n 筆，最後裁成 n 筆。區塊內原本的先後與相關被保留，區塊接縫則不保留原序列的全部相依性。非重疊區塊、循環區塊與隨機區塊長度是不同版本，使用時要交代採用哪一種。</p>
+<p>例如序列 1 到 8、區塊長度 3，移動區塊有 $(1,2,3),(2,3,4),\ldots,(6,7,8)$。抽到起點 4、1、5，串成 $(4,5,6,1,2,3,5,6,7)$，裁前 8 筆後才重算估計量。重複的是整個步驟，不是只拿一次亂序結果當作所有樣本。</p>
+<p>區塊太短可能保留不了主要相依；太長又讓可重新組合的單位太少，估計不穩。平穩性、長期趨勢與季節性也會影響做法：若資料生成方式隨時間改變，單純抽區塊並不能自動處理。先判斷資料有哪些相依關係，再選區塊版本與長度，並檢查改變長度時結果是否穩定。</p>
+<p>群組資料同樣要先決定重抽的單位。例如病人內重複觀測相關、病人之間可視為獨立，就可考慮抽整位病人而非逐次就診；是否還要在病人內重抽，取決於研究的抽樣設計。bootstrap 的重抽單位與前面 GroupKFold 的群組界線都來自資料結構，但兩者的目的不同：一個估不確定性，一個評估未見群組的預測。</p>
+<p>延伸來源：<a href="https://stats.stackexchange.com/questions/25706/how-do-you-do-bootstrapping-with-time-series-data" rel="noopener" target="_blank">講義的區塊 bootstrap 討論</a>／<a href="https://www.sciencedirect.com/science/article/pii/S0003267000008503" rel="noopener" target="_blank">講義的區塊抽樣應用文獻</a>／<a href="https://arch.readthedocs.io/en/latest/bootstrap/bootstrap_examples.html" rel="noopener" target="_blank">arch 官方範例：時間相依資料的區塊與區間</a></p></div></details>
+<details class="qa-item reading-detail" id="w05-detail-bootstrap-pairing"><summary>延伸閱讀：配對重抽、退化樣本與重抽次數</summary>
+<div class="detail-body">
+<h4>配對資料要一起重抽</h4>
+<p>Portfolio 的一列是同一期的兩個報酬 $(X_i,Y_i)$。同一期兩個資產的共同漲跌決定共變異數，因此不能把 X 與 Y 分別洗牌或分別重抽；那會破壞原本的配對，回答另一個問題。每次抽的是列索引，兩欄一起跟著走。Lab 的 <code>alpha_func(data, idx)</code> 正是先取同一組 <code>idx</code>，再算兩欄的樣本共變異數。</p>
+<p>權重公式的分母是 $\operatorname{Var}(X-Y)=\sigma_X^2+\sigma_Y^2-2\sigma_{XY}$。它為正時，風險是嚴格凸的二次函數，最小值唯一；分母為零時兩個報酬的差是常數，不能直接除以零。公式原本允許任意實數權重。若另要求不放空、$0\le\alpha\le1$，則把無限制的最小點投影到 $[0,1]$；這是額外限制，不是 bootstrap 自動加上的條件。</p>
+<p>三筆觀測的重抽例子也要區分「位置」與「不同資料」：索引 $(3,1,3)$ 仍有三筆，但第三列出現兩次，第二列完全沒出現。對樣本平均數可列出全部 $3^3=27$ 個等機率索引組合；對 Portfolio 權重，若重抽後全是同一列，樣本共變異數可能退化，估計量便未必有定義。抽出索引後，還要確認重抽資料能不能算出要研究的統計量；資料退化時，bootstrap 估計也可能失去定義。</p>
+<p><strong>B 代表電腦重抽的次數；原始資料筆數仍是 n。</strong>增加 B 可降低重抽分位數與標準誤計算的 Monte Carlo 波動，卻不會增加原始資料的資訊，也不會修復不適合的抽樣單位。Lab 的 B=1000 是示範；實務上可比較不同種子與較大的 B，確認尾端分位數是否穩定。</p>
+</div></details><details class="qa-item reading-detail" id="w05-detail-lab-bootstrap-1"><summary>完整實作：定義 alpha_func 並用全部 100 筆</summary>
 <div class="detail-body"><h3 id="dx-boot">講義完整實作：<code>boot_SE()</code></h3>
 <div class="deck-extra">
-  <div class="dx-label">講義 05 · 定義 alpha_func 並用全部 100 筆</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">Portfolio = load_data(<span class="str">'Portfolio'</span>)</span>
-  <span class="line"><span class="kw">def</span> <span class="fn">alpha_func</span>(D, idx):</span>
-  <span class="line">   cov_ = np.cov(D[[<span class="str">'X'</span>,<span class="str">'Y'</span>]].loc[idx], rowvar=<span class="num">False</span>)</span>
-  <span class="line">   <span class="kw">return</span> ((cov_[<span class="num">1</span>,<span class="num">1</span>] - cov_[<span class="num">0</span>,<span class="num">1</span>]) /</span>
-  <span class="line">           (cov_[<span class="num">0</span>,<span class="num">0</span>]+cov_[<span class="num">1</span>,<span class="num">1</span>]-<span class="num">2</span>*cov_[<span class="num">0</span>,<span class="num">1</span>]))</span>
-  <span class="line"> </span>
-  <span class="line">alpha_func(Portfolio, range(<span class="num">100</span>))</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.57583207459283)</pre></div>
-  <p class="dx-note">這就是 ISLP 書上的 α̂ = 0.5758。</p>
-  <span class="dx-src" data-lab-cells="53,55" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+<div class="dx-label">講義 05 · 定義 alpha_func 並用全部 100 筆</div>
+<div class="pseudo-code" style="font-size:.78rem;">
+<span class="line">Portfolio = load_data(<span class="str">'Portfolio'</span>)</span>
+<span class="line"><span class="kw">def</span> <span class="fn">alpha_func</span>(D, idx):</span>
+<span class="line">   cov_ = np.cov(D[[<span class="str">'X'</span>,<span class="str">'Y'</span>]].loc[idx], rowvar=<span class="num">False</span>)</span>
+<span class="line"> <span class="kw">return</span> ((cov_[<span class="num">1</span>,<span class="num">1</span>] - cov_[<span class="num">0</span>,<span class="num">1</span>]) /</span>
+<span class="line">           (cov_[<span class="num">0</span>,<span class="num">0</span>]+cov_[<span class="num">1</span>,<span class="num">1</span>]-<span class="num">2</span>*cov_[<span class="num">0</span>,<span class="num">1</span>]))</span>
+<span class="line"> </span>
+<span class="line">alpha_func(Portfolio, range(<span class="num">100</span>))</span></div>
+<div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.57583207459283)</pre></div>
+<p class="dx-note">這就是 ISLP 書上的 α̂ = 0.5758。</p>
+<span class="dx-src" data-lab-cells="53,55" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
-  <div class="dx-label">講義 05 · 一次 bootstrap 重抽</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">rng = np.random.default_rng(<span class="num">0</span>)</span>
-  <span class="line">alpha_func(Portfolio,</span>
-  <span class="line">           rng.choice(<span class="num">100</span>,</span>
-  <span class="line">                      <span class="num">100</span>,</span>
-  <span class="line">                      replace=<span class="num">True</span>))</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.6074452469619004)</pre></div>
-  <p class="dx-note"><code>replace=True</code> 是關鍵：有放回，所以同一筆可能被抽到好幾次，也會有一些完全沒被抽到。這一次抽出來的 α̂* = 0.6074，跟 0.5758 差了不少。這個「差」正是我們要量化的東西。</p>
-  <span class="dx-src" data-lab-cells="57" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+<div class="dx-label">講義 05 · 一次 bootstrap 重抽</div>
+<div class="pseudo-code" style="font-size:.78rem;">
+<span class="line">rng = np.random.default_rng(<span class="num">0</span>)</span>
+<span class="line">alpha_func(Portfolio,</span>
+<span class="line">           rng.choice(<span class="num">100</span>,</span>
+<span class="line"> <span class="num">100</span>,</span>
+<span class="line">                      replace=<span class="num">True</span>))</span></div>
+<div class="expected-out"><span class="eo-tag">預期輸出</span><pre>np.float64(0.6074452469619004)</pre></div>
+<p class="dx-note"><code>replace=True</code> 是關鍵：有放回，所以同一筆可能被抽到好幾次，也會有一些完全沒被抽到。這一次抽出來的 α̂* = 0.6074，跟 0.5758 差了不少。這個「差」正是我們要量化的東西。</p>
+<span class="dx-src" data-lab-cells="57" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
-  <div class="dx-label">講義 05 · 通用的 boot_SE</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="kw">def</span> <span class="fn">boot_SE</span>(func,</span>
-  <span class="line">            D,</span>
-  <span class="line">            n=<span class="num">None</span>,</span>
-  <span class="line">            B=<span class="num">1000</span>,</span>
-  <span class="line">            seed=<span class="num">0</span>):</span>
-  <span class="line">    rng = np.random.default_rng(seed)</span>
-  <span class="line">    first_, second_ = <span class="num">0</span>, <span class="num">0</span></span>
-  <span class="line">    n = n <span class="kw">or</span> D.shape[<span class="num">0</span>]</span>
-  <span class="line">    <span class="kw">for</span> _ <span class="kw">in</span> trange(B):</span>
-  <span class="line">        idx = rng.choice(D.index,</span>
-  <span class="line">                         n,</span>
-  <span class="line">                         replace=<span class="num">True</span>)</span>
-  <span class="line">        value = func(D, idx)</span>
-  <span class="line">        first_ += value</span>
-  <span class="line">        second_ += value**<span class="num">2</span></span>
-  <span class="line">    <span class="kw">return</span> np.sqrt(second_ / B - (first_ / B)**<span class="num">2</span>)</span></div>
-  <p class="dx-note">在 Portfolio 資料上，SE(α̂) 的 bootstrap 估計是 <strong>0.0912</strong>。注意這支函式用 $E[\theta^2] - (E[\theta])^2$ 累加，不必存下 1000 個值。</p>
-  <span class="dx-src" data-lab-cells="59,61" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+<div class="dx-label">講義 05 · 通用的 boot_SE</div>
+<div class="pseudo-code" style="font-size:.78rem;">
+<span class="line"><span class="kw">def</span> <span class="fn">boot_SE</span>(func,</span>
+<span class="line">            D,</span>
+<span class="line">            n=<span class="num">None</span>,</span>
+<span class="line">            B=<span class="num">1000</span>,</span>
+<span class="line">            seed=<span class="num">0</span>):</span>
+<span class="line">    rng = np.random.default_rng(seed)</span>
+<span class="line">    first_, second_ = <span class="num">0</span>, <span class="num">0</span></span>
+<span class="line">    n = n <span class="kw">or</span> D.shape[<span class="num">0</span>]</span>
+<span class="line"> <span class="kw">for</span> _ <span class="kw">in</span> trange(B):</span>
+<span class="line">        idx = rng.choice(D.index,</span>
+<span class="line">                         n,</span>
+<span class="line">                         replace=<span class="num">True</span>)</span>
+<span class="line">        value = func(D, idx)</span>
+<span class="line">        first_ += value</span>
+<span class="line">        second_ += value**<span class="num">2</span></span>
+<span class="line"> <span class="kw">return</span> np.sqrt(second_ / B - (first_ / B)**<span class="num">2</span>)</span></div>
+<p class="dx-note">在 Portfolio 資料上，SE(α̂) 的 bootstrap 估計是 <strong>0.0912</strong>。注意這支函式用 $E[\theta^2] - (E[\theta])^2$ 累加，不必存下 1000 個值。</p>
+<span class="dx-src" data-lab-cells="59,61" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
-  <div class="dx-label">講義 05 · 用 bootstrap 估計迴歸係數的標準誤</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line"><span class="kw">def</span> <span class="fn">boot_OLS</span>(model_matrix, response, D, idx):</span>
-  <span class="line">    <span class="com"># 為了方便檢查，先確保 idx 是一個 NumPy array</span></span>
-  <span class="line">    idx = np.asarray(idx)</span>
-  <span class="line"> </span>
-  <span class="line">    <span class="com"># 檢查 idx 的資料類型 (dtype) 是否為整數類型</span></span>
-  <span class="line">    <span class="kw">if</span> np.issubdtype(idx.dtype, np.integer):</span>
-  <span class="line">        <span class="com"># 如果是整數，代表是位置 (position)，使用 .iloc</span></span>
-  <span class="line">        D_ = D.iloc[idx]</span>
-  <span class="line">    <span class="kw">else</span>:</span>
-  <span class="line">        <span class="com"># 否則，代表是標籤 (label)，使用 .loc</span></span>
-  <span class="line">        D_ = D.loc[idx]</span>
-  <span class="line"> </span>
-  <span class="line">    Y_ = D_[response]</span>
-  <span class="line">    X_ = clone(model_matrix).fit_transform(D_)</span>
-  <span class="line">    <span class="kw">return</span> sm.OLS(Y_, X_).fit().params</span>
-  <span class="line"> </span>
-  <span class="line">hp_func = partial(boot_OLS, MS([<span class="str">'horsepower'</span>]), <span class="str">'mpg'</span>)</span>
-  <span class="line"> </span>
-  <span class="line">rng = np.random.default_rng(<span class="num">0</span>)</span>
-  <span class="line">np.array([hp_func(Auto,</span>
-  <span class="line">          rng.choice(<span class="num">392</span>,</span>
-  <span class="line">                     <span class="num">392</span>,</span>
-  <span class="line">                     replace=<span class="num">True</span>)) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">10</span>)])</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[39.88064456, -0.1567849 ],
+<div class="dx-label">講義 05 · 用 bootstrap 估計迴歸係數的標準誤</div>
+<div class="pseudo-code" style="font-size:.78rem;">
+<span class="line"><span class="kw">def</span> <span class="fn">boot_OLS</span>(model_matrix, response, D, idx):</span>
+<span class="line"> <span class="com"># 為了方便檢查，先確保 idx 是一個 NumPy array</span></span>
+<span class="line">    idx = np.asarray(idx)</span>
+<span class="line"> </span>
+<span class="line"> <span class="com"># 檢查 idx 的資料類型 (dtype) 是否為整數類型</span></span>
+<span class="line"> <span class="kw">if</span> np.issubdtype(idx.dtype, np.integer):</span>
+<span class="line"> <span class="com"># 如果是整數，代表是位置 (position)，使用 .iloc</span></span>
+<span class="line">        D_ = D.iloc[idx]</span>
+<span class="line"> <span class="kw">else</span>:</span>
+<span class="line"> <span class="com"># 否則，代表是標籤 (label)，使用 .loc</span></span>
+<span class="line">        D_ = D.loc[idx]</span>
+<span class="line"> </span>
+<span class="line">    Y_ = D_[response]</span>
+<span class="line">    X_ = clone(model_matrix).fit_transform(D_)</span>
+<span class="line"> <span class="kw">return</span> sm.OLS(Y_, X_).fit().params</span>
+<span class="line"> </span>
+<span class="line">hp_func = partial(boot_OLS, MS([<span class="str">'horsepower'</span>]), <span class="str">'mpg'</span>)</span>
+<span class="line"> </span>
+<span class="line">rng = np.random.default_rng(<span class="num">0</span>)</span>
+<span class="line">np.array([hp_func(Auto,</span>
+<span class="line">          rng.choice(<span class="num">392</span>,</span>
+<span class="line"> <span class="num">392</span>,</span>
+<span class="line">                     replace=<span class="num">True</span>)) <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">10</span>)])</span></div>
+<div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[39.88064456, -0.1567849 ],
        [38.73298691, -0.14699495],
        [38.31734657, -0.14442683],
        [39.91446826, -0.15782234],
@@ -1644,45 +1688,45 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
        [39.0580588 , -0.14952908],
        [38.66688437, -0.14521037],
        [39.64280792, -0.15555698]])</pre></div>
-  <p class="dx-note"><code>partial()</code> 凍結模型與反應變數兩個參數，得到 <code>boot_SE()</code> 需要的 (D, idx) 函式。上面是前 10 份 bootstrap 樣本的截距與斜率。</p>
-  <span class="dx-src" data-lab-cells="65,67,69" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+<p class="dx-note"><code>partial()</code> 凍結模型與反應變數兩個參數，得到 <code>boot_SE()</code> 需要的 (D, idx) 函式。上面是前 10 份 bootstrap 樣本的截距與斜率。</p>
+<span class="dx-src" data-lab-cells="65,67,69" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
-  <div class="dx-label">講義 05 · bootstrap 標準誤與公式標準誤</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">hp_se = boot_SE(hp_func,</span>
-  <span class="line">                Auto,</span>
-  <span class="line">                B=<span class="num">1000</span>,</span>
-  <span class="line">                seed=<span class="num">10</span>)</span>
-  <span class="line">hp_se</span>
-  <span class="line"> </span>
-  <span class="line">hp_model.fit(Auto, Auto[<span class="str">'mpg'</span>])</span>
-  <span class="line">model_se = summarize(hp_model.results_)[<span class="str">'std err'</span>]</span>
-  <span class="line">model_se</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept     0.717
+<div class="dx-label">講義 05 · bootstrap 標準誤與公式標準誤</div>
+<div class="pseudo-code" style="font-size:.78rem;">
+<span class="line">hp_se = boot_SE(hp_func,</span>
+<span class="line">                Auto,</span>
+<span class="line">                B=<span class="num">1000</span>,</span>
+<span class="line">                seed=<span class="num">10</span>)</span>
+<span class="line">hp_se</span>
+<span class="line"> </span>
+<span class="line">hp_model.fit(Auto, Auto[<span class="str">'mpg'</span>])</span>
+<span class="line">model_se = summarize(hp_model.results_)[<span class="str">'std err'</span>]</span>
+<span class="line">model_se</span></div>
+<div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept     0.717
 horsepower    0.006
 Name: std err, dtype: float64</pre></div>
-  <p class="dx-note">lab 說明 1000 次 bootstrap 給 SE(β̂₀) ≈ 0.73、SE(β̂₁) ≈ 0.00609，公式給 0.717 與 0.006。差異來自公式的假設：它用殘差估 σ²，而直線模型漏掉了非線性，殘差被誇大；公式也假設 x 固定。bootstrap 不依賴這些假設。</p>
-  <span class="dx-src" data-lab-cells="71,73" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+<p class="dx-note">lab 說明 1000 次 bootstrap 給 SE(β̂₀) ≈ 0.73、SE(β̂₁) ≈ 0.00609，公式給 0.717 與 0.006。差異來自公式的假設：它用殘差估 σ²，而直線模型漏掉了非線性，殘差被誇大；公式也假設 x 固定。bootstrap 不依賴這些假設。</p>
+<span class="dx-src" data-lab-cells="71,73" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
-  <div class="dx-label">講義 05 · 二次模型：兩種標準誤更接近</div>
-  <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">quad_model = MS([poly(<span class="str">'horsepower'</span>, <span class="num">2</span>, raw=<span class="num">True</span>)])</span>
-  <span class="line">quad_func = partial(boot_OLS,</span>
-  <span class="line">                    quad_model,</span>
-  <span class="line">                    <span class="str">'mpg'</span>)</span>
-  <span class="line">boot_SE(quad_func, Auto, B=<span class="num">1000</span>)</span>
-  <span class="line"> </span>
-  <span class="line">M = sm.OLS(Auto[<span class="str">'mpg'</span>],</span>
-  <span class="line">           quad_model.fit_transform(Auto))</span>
-  <span class="line">summarize(M.fit())[<span class="str">'std err'</span>]</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept                                  1.800
+<div class="dx-label">講義 05 · 二次模型：兩種標準誤更接近</div>
+<div class="pseudo-code" style="font-size:.78rem;">
+<span class="line">quad_model = MS([poly(<span class="str">'horsepower'</span>, <span class="num">2</span>, raw=<span class="num">True</span>)])</span>
+<span class="line">quad_func = partial(boot_OLS,</span>
+<span class="line">                    quad_model,</span>
+<span class="line"> <span class="str">'mpg'</span>)</span>
+<span class="line">boot_SE(quad_func, Auto, B=<span class="num">1000</span>)</span>
+<span class="line"> </span>
+<span class="line">M = sm.OLS(Auto[<span class="str">'mpg'</span>],</span>
+<span class="line">           quad_model.fit_transform(Auto))</span>
+<span class="line">summarize(M.fit())[<span class="str">'std err'</span>]</span></div>
+<div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept                                  1.800
 poly(horsepower, degree=2, raw=True)[0]    0.031
 poly(horsepower, degree=2, raw=True)[1]    0.000
 Name: std err, dtype: float64</pre></div>
-  <p class="dx-note">二次模型對資料的擬合好得多，bootstrap 與公式的標準誤因此對應得更好。</p>
-  <span class="dx-src" data-lab-cells="75,77" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+<p class="dx-note">二次模型對資料的擬合好得多，bootstrap 與公式的標準誤因此對應得更好。</p>
+<span class="dx-src" data-lab-cells="75,77" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div></div></details>
 <h4 id="dx-632">bootstrap 樣本只含約 63.2% 的原始樣本</h4>
 <p>有放回地抽 n 次，每筆至少出現一次的機率如下；它也是不同原始觀測所占比例的期望，不代表每份樣本的固定比例。</p>
@@ -1694,38 +1738,46 @@ Name: std err, dtype: float64</pre></div>
   它們對這一輪的模型來說是天然的驗證集。<a href="tree_based_methods.html#bagging">樹狀方法的 bagging 與 random forest</a> 就靠這招
   不另切驗證集就能估計測試誤差。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>n</th><th>5</th><th>20</th><th>100</th><th>n → ∞</th></tr></thead>
-  <tbody><tr><td>$1-(1-1/n)^n$</td><td>0.6723</td><td>0.6415</td><td>0.6340</td><td>$1-e^{-1}=0.6321$</td></tr></tbody>
+<thead><tr><th>n</th><th>5</th><th>20</th><th>100</th><th>n → ∞</th></tr></thead>
+<tbody><tr><td>$1-(1-1/n)^n$</td><td>0.6723</td><td>0.6415</td><td>0.6340</td><td>$1-e^{-1}=0.6321$</td></tr></tbody>
 </table></div>
 <p>這也回答了講義的問題「bootstrap 能估預測誤差嗎？」交叉驗證的 k 個驗證折和訓練用的其他 k − 1 折<strong>沒有重疊</strong>，交叉驗證行得通靠的就是這一點。若拿每份 bootstrap 樣本訓練、用原始資料驗證，每份訓練樣本約含三分之二的原始觀測，<strong>驗證資料大量出現在訓練資料裡</strong>，會嚴重低估真正的預測誤差。只用沒抽到的觀測來驗證可以部分修正，但方法會變複雜；最後還是交叉驗證比較簡單。</p>
 <div class="info-box warm">
-  <span class="info-label">講義：bootstrap 能估預測誤差嗎？</span>
+<span class="info-label">講義：bootstrap 能估預測誤差嗎？</span>
   每份 bootstrap 樣本約含三分之二的原始觀測，拿它訓練、再用原始資料驗證，驗證資料大量重疊，會<strong>嚴重低估</strong>預測誤差。只用沒被抽到的觀測驗證能部分修正，但方法變得複雜。結論：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong>
 </div>
 <details class="qa-item reading-detail" id="w05-detail-two-thirds"><summary>推導：為什麼每份 bootstrap 樣本約含三分之二的觀測</summary>
 <div class="detail-body">
-  <p><strong>第一步：某筆在一次抽籤中沒被抽到。</strong>從 $n$ 筆中有放回抽一次，抽到第 $j$ 筆的機率是 $1/n$，沒抽到的機率是 $1-1/n$。</p>
-  <p><strong>第二步：$n$ 次都沒被抽到。</strong>各次抽籤獨立，所以第 $j$ 筆完全不在 bootstrap 樣本裡的機率是 $(1-1/n)^n$。</p>
-  <p><strong>第三步：取極限。</strong>由 $\lim_{n\to\infty}(1-1/n)^n=e^{-1}\approx0.368$，第 $j$ 筆<strong>至少出現一次</strong>的機率趨近 $1-e^{-1}\approx0.632$。</p>
-  <p><strong>第四步：期望的不同觀測數。</strong>令 $I_j$ 表示第 $j$ 筆是否至少出現一次，則一份 bootstrap 樣本中不同觀測的個數是 $\sum_jI_j$，期望為 $n\{1-(1-1/n)^n\}\approx0.632n$，大約三分之二。各 $I_j$ 不獨立也不影響這個期望；每一份樣本的實際比例會在 0.632 附近起伏。</p>
-<p class="source-note">講義補充連結：<a href="https://stats.stackexchange.com/questions/88980/why-on-average-does-each-bootstrap-sample-contain-roughly-two-thirds-of-observat" rel="noopener" target="_blank">為什麼每份 bootstrap 樣本平均約含三分之二的觀測</a>。</p></div></details>
+<p><strong>第一步：某筆在一次抽籤中沒被抽到。</strong>從 $n$ 筆中有放回抽一次，抽到第 $j$ 筆的機率是 $1/n$，沒抽到的機率是 $1-1/n$。</p>
+<p><strong>第二步：$n$ 次都沒被抽到。</strong>各次抽籤獨立，所以第 $j$ 筆完全不在 bootstrap 樣本裡的機率是 $(1-1/n)^n$。</p>
+<p><strong>第三步：取極限。</strong>由 $\lim_{n\to\infty}(1-1/n)^n=e^{-1}\approx0.368$，第 $j$ 筆<strong>至少出現一次</strong>的機率趨近 $1-e^{-1}\approx0.632$。</p>
+<p><strong>第四步：期望的不同觀測數。</strong>令 $I_j$ 表示第 $j$ 筆是否至少出現一次，則一份 bootstrap 樣本中不同觀測的個數是 $\sum_jI_j$，期望為 $n\{1-(1-1/n)^n\}\approx0.632n$，大約三分之二。各 $I_j$ 不獨立也不影響這個期望；每一份樣本的實際比例會在 0.632 附近起伏。</p>
+<p class="source-note">講義補充連結：<a href="https://stats.stackexchange.com/questions/88980/why-on-average-does-each-bootstrap-sample-contain-roughly-two-thirds-of-observat" rel="noopener" target="_blank">為什麼每份 bootstrap 樣本平均約含三分之二的觀測</a>。</p></div></details><details class="qa-item reading-detail" id="w05-detail-bootstrap-oob"><summary>延伸閱讀：重抽重疊、OOB 與預測誤差</summary>
+<div class="detail-body">
+<h4>為什麼「bootstrap 訓練、原始資料驗證」會重疊？</h4>
+<p>每份重抽資料雖有 n 筆，但平均只有約 0.632n 筆不同觀測；若用全部原始資料驗證，其中很大一部分已參與這次訓練。把訓練過的資料算進測試誤差，便會混入樂觀的訓練表現。重抽出不同排列，不等於有了獨立測試資料。</p>
+<p>一次抽籤沒抽到第 i 筆的機率是 $1-1/n$，連抽 n 次都沒抽到的機率是 $(1-1/n)^n\to e^{-1}\approx0.368$。這些完全沒出現的觀測稱為 out-of-bag（OOB）。用這次訓練好的模型，對它自己的 OOB 資料預測，才能避開直接的觀測重疊。</p>
+<p>例如原始索引 1 到 5，抽到 $(1,1,3,4,4)$，這次的 OOB 是 2、5。下一次抽到 $(2,3,3,5,5)$，OOB 是 1、4。各次可評估的資料與數目都不同；同一觀測會在多個重抽模型的 OOB 出現，模型也不是彼此獨立的。</p>
+<p>OOB 解決的是訓練／評估重疊，並沒有讓 bootstrap 訓練集等同於 n 筆獨立的新觀測。不同訓練規模、重複列、調參使用 OOB 以及如何平均分數，都會影響估計的解讀。講義因此以 CV 作為本章預測誤差評估的主線；第八章 bagging／random forest 再使用 OOB 對集成程序做內部評估。</p>
+<p>也要分清楚「逐模型的 OOB 損失」與「先把同筆觀測的多個 OOB 預測平均，再算集成損失」：後者評估的是集成模型，非線性指標下兩種平均更不會相同。OOB 的名稱不代表額外收集了一份外部測試集。</p>
+<p>延伸來源：<a href="https://stats.stackexchange.com/questions/88980/why-on-average-does-each-bootstrap-sample-contain-roughly-two-thirds-of-observat" rel="noopener" target="_blank">講義：為何 bootstrap 樣本約含三分之二的不同觀測</a></p></div></details>
 <div class="qa-box">
-  <div class="qa-head">觀念釐清</div>
-  <details class="qa-item"><summary>Q：Bootstrap 可以用來估「預測誤差」嗎？</summary>
-    <div class="qa-a"><p>可以，但要很小心，而且通常比不上交叉驗證。</p><p>問題出在重疊：bootstrap 樣本平均含有原始資料的 63.2%，所以如果你用 bootstrap 樣本訓練、用原始全部資料當測試，那個「測試集」裡有三分之二的資料模型已經看過了，誤差會嚴重低估。</p><p>補救方式是只用 OOB 的那 36.8% 來評估，這就接近 k-fold 的精神了。所以講義的答案是：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong></p></div>
-  </details>
-  <details class="qa-item"><summary>Q：B 要取多少？</summary>
-    <div class="qa-a"><p>估標準誤時 B = 1000 通常就很夠；要估信賴區間的尾端分位數（例如 2.5% 與 97.5%），B 建議拉到 2000 以上，因為尾端需要更多樣本才穩。</p><p>注意 B 大只會讓「bootstrap 對真實 SE 的估計」更穩定，<strong>不會讓原始資料變多</strong>。n 小的時候 bootstrap 本身就不可靠，拉高 B 也救不了。它只是把同一份資料提供的資訊算得更精確而已。</p></div>
-  </details>
-  <details class="qa-item"><summary>Q：bootstrap 什麼時候會失效？</summary>
-    <div class="qa-a"><p>幾種常見的限制：</p><ul><li><strong>估計量依賴極值</strong>（最大值、最小值、全距）：bootstrap 樣本的最大值永遠不會超過原始資料的最大值，所以分佈會被截斷。</li><li><strong>資料不獨立</strong>（時間序列、空間資料、群組結構）：直接對單筆有放回重抽會破壞相關結構。要改用 block bootstrap。</li><li><strong>n 很小</strong>：把 10 筆資料當母體，本來就沒什麼可抽的。</li></ul></div>
-  </details>
+<div class="qa-head">觀念釐清</div>
+<details class="qa-item"><summary>Q：Bootstrap 可以用來估「預測誤差」嗎？</summary>
+<div class="qa-a"><p>可以，但要很小心，而且通常比不上交叉驗證。</p><p>問題出在重疊：bootstrap 樣本平均含有原始資料的 63.2%，所以如果你用 bootstrap 樣本訓練、用原始全部資料當測試，那個「測試集」裡有三分之二的資料模型已經看過了，誤差會嚴重低估。</p><p>補救方式是只用 OOB 的那 36.8% 來評估，這就接近 k-fold 的精神了。所以講義的答案是：<strong>估標準誤用 bootstrap，估預測誤差用交叉驗證。</strong></p></div>
+</details>
+<details class="qa-item"><summary>Q：B 要取多少？</summary>
+<div class="qa-a"><p>估標準誤時 B = 1000 通常就很夠；要估信賴區間的尾端分位數（例如 2.5% 與 97.5%），B 建議拉到 2000 以上，因為尾端需要更多樣本才穩。</p><p>注意 B 大只會讓「bootstrap 對真實 SE 的估計」更穩定，<strong>不會讓原始資料變多</strong>。n 小的時候 bootstrap 本身就不可靠，拉高 B 也救不了。它只是把同一份資料提供的資訊算得更精確而已。</p></div>
+</details>
+<details class="qa-item"><summary>Q：bootstrap 什麼時候會失效？</summary>
+<div class="qa-a"><p>幾種常見的限制：</p><ul><li><strong>估計量依賴極值</strong>（最大值、最小值、全距）：bootstrap 樣本的最大值永遠不會超過原始資料的最大值，所以分佈會被截斷。</li><li><strong>資料不獨立</strong>（時間序列、空間資料、群組結構）：直接對單筆有放回重抽會破壞相關結構。要改用 block bootstrap。</li><li><strong>n 很小</strong>：把 10 筆資料當母體，本來就沒什麼可抽的。</li></ul></div>
+</details>
 </div>
 <p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法。</p><div class="quiz-box">
-  <div class="quiz-label">QUIZ · Bootstrap</div>
-  <p>n = 100 時，一筆特定的觀測值<strong>完全沒有</strong>出現在某個 bootstrap 樣本裡的機率約為多少？</p>
-  <div class="quiz-options" id="qBootOptions"><div class="quiz-opt" data-correct="true" data-fb="對。$(1-1/100)^{100} \approx 0.366$，很接近極限 $e^{-1} \approx 0.368$。沒被抽到的那些就是 OOB 樣本。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(A)</span> 約 0.366</div><div class="quiz-opt" data-correct="false" data-fb="這是「某一次抽籤剛好抽到它」的機率 1/100，不是「一百次都沒抽到」。要一百次都躲掉，是 $(1-1/100)^{100}$。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(B)</span> 約 0.01</div><div class="quiz-opt" data-correct="false" data-fb="不對。有放回意味著同一筆可以被抽到好幾次，也就意味著&lt;strong&gt;可能有觀測完全沒被抽到&lt;/strong&gt;；n=100 時預期約 36.6%，大樣本極限約 36.8%，並非每次重抽都相同。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(C)</span> 0，因為有放回抽 n 次一定會抽到每一筆</div></div>
-  <div class="quiz-feedback" id="qBootFeedback"></div>
+<div class="quiz-label">QUIZ · Bootstrap</div>
+<p>n = 100 時，一筆特定的觀測值<strong>完全沒有</strong>出現在某個 bootstrap 樣本裡的機率約為多少？</p>
+<div class="quiz-options" id="qBootOptions"><div class="quiz-opt" data-correct="true" data-fb="對。$(1-1/100)^{100} \approx 0.366$，很接近極限 $e^{-1} \approx 0.368$。沒被抽到的那些就是 OOB 樣本。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(A)</span> 約 0.366</div><div class="quiz-opt" data-correct="false" data-fb="這是「某一次抽籤剛好抽到它」的機率 1/100，不是「一百次都沒抽到」。要一百次都躲掉，是 $(1-1/100)^{100}$。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(B)</span> 約 0.01</div><div class="quiz-opt" data-correct="false" data-fb="不對。有放回意味著同一筆可以被抽到好幾次，也就意味著&lt;strong&gt;可能有觀測完全沒被抽到&lt;/strong&gt;；n=100 時預期約 36.6%，大樣本極限約 36.8%，並非每次重抽都相同。" onclick="quizCheck('qBoot', this)"><span class="opt-letter">(C)</span> 0，因為有放回抽 n 次一定會抽到每一筆</div></div>
+<div class="quiz-feedback" id="qBootFeedback"></div>
 </div><details class="qa-item proof" id="w05proofPortfolio"><summary>證明：投資組合最小變異權重與 bootstrap 唯一樣本數</summary>
 <div class="qa-a">
 <p>組合 $\alpha X+(1-\alpha)Y$ 的變異數為 $V(\alpha)=\alpha^2\sigma_X^2+(1-\alpha)^2\sigma_Y^2+2\alpha(1-\alpha)\sigma_{XY}$。微分並令為零：</p>
@@ -1734,40 +1786,91 @@ $$V'(\alpha)=2\alpha(\sigma_X^2+\sigma_Y^2-2\sigma_{XY})-2(\sigma_Y^2-\sigma_{XY
 <p>bootstrap 每次未抽到某筆的機率為 1−1/n，獨立抽 n 次都沒抽到的機率為 $(1-1/n)^n$。以指示變數 $I_i$ 表示是否至少出現一次，線性期望給 $E[\sum_i I_i]=n[1-(1-1/n)^n]$。比例趨近 $1-e^{-1}=0.6321$；各 $I_i$ 不必彼此獨立，也不是每份樣本恰好有 63.2% 不同觀測。</p>
 </div></details>
 <details class="qa-item reading-detail" id="w05-detail-bootstrap-intervals"><summary>延伸閱讀：用 bootstrap 建立預測區間</summary>
-<div class="detail-body"><h3>用 bootstrap 建立預測區間</h3>
-<p>主文的百分位區間與曲線區間描述的是<strong>平均</strong>的不確定性。<strong>預測區間</strong>還須包含新觀測的隨機誤差。在獨立、同變異數的迴歸設定，可用下方固定設計流程估計參數造成的預測誤差，再加上獨立抽取的新觀測誤差，從總預測誤差的分位數建立區間。只重抽係數或平均值曲線會漏掉這一項。
-異變異數、群聚或時間相依資料需要對應的殘差模型或重抽設計；block bootstrap 以連續區塊保留部分時間相依性。</p>
-</div></details><details class="qa-item reading-detail" id="w05-detail-jackknife-se"><summary>延伸閱讀：Jackknife 的標準誤</summary>
-<div class="detail-body"><h3>Jackknife：逐筆刪除，估計量會變多少？</h3>
-<p>令 $\hat\theta_{(-i)}$ 是刪去第 i 筆後的估計，$\bar\theta_{(-)}$ 是這 n 個估計的平均。
-Jackknife 的標準誤估計為</p>
-$$\widehat{SE}_{jack}=\sqrt{\frac{n-1}{n}\sum_i(\hat\theta_{(-i)}-\bar\theta_{(-)})^2}.$$
-<p>它和 LOOCV 都逐筆刪除，但這裡比較估計量本身的變化，LOOCV 則記錄被留下觀測的預測誤差。
-Jackknife 適合較平滑的統計量；對最大值等不平滑統計量不能期待一般公式可靠。</p>
-</div></details><details class="qa-item reading-detail" id="w05-detail-permutation"><summary>延伸閱讀：置換檢定與分類器評估</summary>
-<div class="detail-body"><h3>Permutation test：假如 X 與標籤沒有關聯？</h3>
-<p>講義比較兩者：bootstrap 從<strong>估計出的母體</strong>重抽，用來估標準誤與信賴區間；在簡單情況也能做檢定，例如虛無假設 $\theta=0$ 時，看 $\theta$ 的信賴區間是否包含 0。置換方法則從<strong>估計出的虛無分佈</strong>抽樣，用來算 p 值。前者想描述某個統計量的<strong>抽樣分佈</strong>，後者想描述<strong>虛無分佈</strong>。</p>
-<p>講義的置換檢定四步驟：</p>
-<ol>
-<li>定義檢定統計量 $T$。</li>
-<li>用原始資料算出觀察到的統計量 $T_a$。</li>
-<li>把資料置換 $N$ 次，每次算 $T_1,\ldots,T_N$，它們構成虛無假設下的分佈。</li>
-<li>以 $|T_i|\ge|T_a|$ 的比例作為 p 值（雙尾時兩邊都取絕對值；下方加一的公式可避免 p 值為零）。</li>
-</ol>
-<p>Bootstrap 近似估計量的抽樣分佈；<strong>置換檢定（permutation test）</strong>則利用虛無假設下的可交換性建立參考分佈。
-例如以兩組平均差為 T，在組別標籤可交換的虛無假設下打亂標籤，重算 T。
-雙尾檢定比較 $|T_b|\ge|T_{obs}|$，不能只把觀察統計量取絕對值而忽略置換統計量的負尾。</p>
-<p>若隨機抽 B 次置換，常用避免零 p 值的估計為</p>
-$$\hat p=\frac{1+\sum_{b=1}^B I(|T_b|\ge|T_{obs}|)}{B+1}.$$
-<p>分類器版本（scikit-learn 的 <code>permutation_test_score</code>）的虛無假設是：分類器沒有利用特徵與標籤之間的任何相依性，在留出資料上做出正確預測。可用交叉驗證正確率作 T：保留 X、打亂 y，每次重新訓練並執行相同評估流程，
-比較置換得分是否大於等於原始得分（此時是右尾，無須取絕對值）。有監督的特徵選擇或調參亦須在每次置換內重做。
-若使用損失當統計量，較小才是較好的表現，尾端方向須一起改變。</p>
-<p>小 p 值表示這個流程觀察到的表現難以用無關聯的置換資料解釋；大 p 值可能是沒有關聯，也可能是分類器未能抓到關聯。
-配對、群聚與時間資料不能任意逐筆置換，應使用符合虛無假設及設計的限制置換。
-由信賴區間是否包含虛無值所形成的 bootstrap 檢定，與置換的虛無分佈也不是同一程序。講義的例子是：原始資料得到低 p 值，同樣的特徵配上隨機標籤則得到高 p 值。</p>
-<p class="source-note">講義附錄的補充連結：<a href="https://stats.stackexchange.com/questions/226565/bootstrap-prediction-interval" rel="noopener" target="_blank">bootstrap 預測區間的討論</a>、<a href="https://mapie.readthedocs.io/en/latest/index.html" rel="noopener" target="_blank">MAPIE：以重抽樣與保形方法建立預測區間的套件</a>、<a href="https://en.wikipedia.org/wiki/Permutation_test" rel="noopener" target="_blank">置換檢定</a>、<a href="https://en.wikipedia.org/wiki/Jackknife_resampling" rel="noopener" target="_blank">Jackknife 重抽樣</a>、<a href="https://stats.stackexchange.com/questions/249333/comparison-of-the-jacknife-vs-the-bootstrap" rel="noopener" target="_blank">Jackknife 與 bootstrap 的比較</a>、<a href="https://scikit-learn.org/stable/auto_examples/feature_selection/plot_permutation_test_for_classification.html#test-with-permutations-the-significance-of-a-classification-score" rel="noopener" target="_blank">scikit-learn：用置換檢定評估分類分數的顯著性</a>。</p>
-
-</div></details><details class="qa-item reading-detail" id="w05-detail-jackknife-bias"><summary>計算細節：Jackknife 的偏差修正</summary>
+<div class="detail-body">
+<h4>平均曲線的不確定性，不等於新觀測的不確定性</h4>
+<p>講義先將觀測 $(x_i,y_i)$ 配對重抽、每次重新擬合，再在同一組 x-grid 評估曲線。每個 grid 點的重抽分位數描述平均曲線的估計不確定性，屬於逐點區間。它不涵蓋新觀測本身的誤差，也不是整條曲線同時涵蓋的區間。</p>
+<p>用車子資料想：我們問「100 horsepower 的車平均 mpg 大約多少」，與「下一台 100 horsepower 的車會有多少 mpg」，後者還有個別車輛的變動。即使平均曲線估得很準，新車的 mpg 仍會分散。如果只重抽係數或擬合線，再取曲線的分位數，就會漏掉新觀測的誤差。</p>
+<p>固定設計的線性模型 $y=X\beta+\varepsilon$ 下，令原始係數為 $\hat\beta$。先以適當處理的殘差近似誤差分布，產生 $y^*=X\hat\beta+\varepsilon^*$，並重新估 $\hat\beta^*$；再獨立抽一個新誤差 $\varepsilon_{new}^*$。若用這個 bootstrap 世界模仿「新觀測減去估計預測」，則</p>
+$$\Delta^*=x_0^\mathsf{T}(\hat\beta-\hat\beta^*)+\varepsilon_{new}^*.$$
+<p>所以近似預測區間是原始預測 $x_0^\mathsf{T}\hat\beta$ 加上 $\Delta^*$ 的兩個尾端分位數。這裡係數差的方向不能隨意交換：在 bootstrap 世界，$\hat\beta$ 扮演真係數，$\hat\beta^*$ 扮演重新估出的係數。</p>
+<h4>沿用 Auto，對照 CI 與 PI</h4>
+<p>下面只延伸 Lab 已使用的 horsepower 線性模型。將殘差除以 $\sqrt{1-h_i}$ 近似修正擬合造成的縮小，再中心化；這項近似以誤差獨立、同變異且模型合理為前提。若有異質變異、時間相依或模型型態錯誤，應換符合資料結構的方法，不能直接套用這段程式。</p>
+<div class="pseudo-code" id="w05-alignment-prediction-code">
+<span class="line"><span class="kw">import</span> numpy <span class="kw">as</span> np</span>
+<span class="line"><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm</span>
+<span class="line"><span class="kw">from</span> ISLP <span class="kw">import</span> load_data</span>
+<span class="line"> </span>
+<span class="line">Auto = load_data(<span class="str">"Auto"</span>)</span>
+<span class="line">X = sm.add_constant(Auto[[<span class="str">"horsepower"</span>]].to_numpy())</span>
+<span class="line">y = Auto[<span class="str">"mpg"</span>].to_numpy()</span>
+<span class="line">fit = sm.OLS(y, X).fit()</span>
+<span class="line">x0 = np.array([<span class="num">1.0</span>, <span class="num">100.0</span>])</span>
+<span class="line">mu0 = x0 @ fit.params</span>
+<span class="line"> </span>
+<span class="line"><span class="com"># 固定 X、獨立且同變異誤差的殘差 bootstrap。</span></span>
+<span class="line">leverage = fit.get_influence().hat_matrix_diag</span>
+<span class="line">residual = fit.resid / np.sqrt(<span class="num">1</span> - leverage)</span>
+<span class="line">residual = residual - residual.mean()</span>
+<span class="line">rng = np.random.default_rng(<span class="num">0</span>)</span>
+<span class="line">B = <span class="num">1000</span></span>
+<span class="line">mean_draws = np.empty(B)</span>
+<span class="line">prediction_errors = np.empty(B)</span>
+<span class="line"><span class="kw">for</span> b <span class="kw">in</span> range(B):</span>
+<span class="line">    y_star = X @ fit.params + rng.choice(residual, len(y), replace=<span class="num">True</span>)</span>
+<span class="line">    fit_star = sm.OLS(y_star, X).fit()</span>
+<span class="line">    mean_draws[b] = x0 @ fit_star.params</span>
+<span class="line">    new_error = rng.choice(residual)</span>
+<span class="line">    prediction_errors[b] = mu0 - mean_draws[b] + new_error</span>
+<span class="line"> </span>
+<span class="line">print(<span class="str">"100 horsepower 的平均預測"</span>, mu0)</span>
+<span class="line">print(<span class="str">"平均曲線的近似 percentile CI"</span>,</span>
+<span class="line">      np.quantile(mean_draws, [<span class="num">0.025</span>, <span class="num">0.975</span>]))</span>
+<span class="line">print(<span class="str">"新車 mpg 的近似 prediction interval"</span>,</span>
+<span class="line">      mu0 + np.quantile(prediction_errors, [<span class="num">0.025</span>, <span class="num">0.975</span>]))</span></div>
+<p>請比較兩個區間的寬度。它們的中心與端點不必恰好對稱；但新觀測區間包含新誤差，在這個同變異線性例子中通常明顯較寬。變更 <code>x0</code> 也可以觀察遠離常見 horsepower 時，係數估計不確定性如何增加。這段不使用未來車子的標籤估任何參數。</p>
+<p>講義連到的 MAPIE 是預測區間與保形預測工具。Split conformal 的想法是另留校準資料，以未參與訓練的殘差決定區間寬度；在交換性等條件下提供邊際涵蓋控制，不等於每個 horsepower 都有相同的條件涵蓋率。它的建構方式與假設和殘差 bootstrap 不同，解讀區間時要分清楚各自的涵蓋條件。套件各版本的 API 不同，實作應依使用版本的官方文件。</p>
+<p>延伸來源：<a href="https://www.statsmodels.org/stable/examples/notebooks/generated/lowess.html" rel="noopener" target="_blank">statsmodels：重抽 LOWESS 曲線的逐點區間</a>／<a href="https://stats.stackexchange.com/questions/226565/bootstrap-prediction-interval" rel="noopener" target="_blank">講義的 bootstrap 預測區間討論</a>／<a href="https://mapie.readthedocs.io/en/latest/index.html" rel="noopener" target="_blank">MAPIE 官方文件：預測區間與保形方法</a></p></div></details><details class="qa-item reading-detail" id="w05-detail-jackknife-se"><summary>延伸閱讀：Jackknife 的標準誤</summary>
+<div class="detail-body">
+<h4>刪掉一筆，量出估計量對每筆資料的敏感度</h4>
+<p>Jackknife 不用隨機重抽，而是第 i 次刪掉第 i 筆資料，得到 $\hat\theta_{(-i)}$，總共 n 次。令刪一估計的平均為 $\bar\theta_{(-)}$，其標準誤估計為</p>
+$$\widehat{SE}_{jack}=\sqrt{\frac{n-1}{n}\sum_{i=1}^n(\hat\theta_{(-i)}-\bar\theta_{(-)})^2}.$$
+<p>公式前面的 $(n-1)/n$ 用來校正刪一估計值的變動量。各次只刪一筆，刪一估計值的變動通常比 n 筆樣本重新抽出的變動小，不能直接把 n 個刪一估計的普通標準差當標準誤。</p>
+<p>樣本平均數能精確驗算：$\bar x_{(-i)}=(n\bar x-x_i)/(n-1)$，刪一估計的平均仍是 $\bar x$。代入上式得到 $\widehat{SE}_{jack}=s/\sqrt n$，與獨立觀測的樣本平均數標準誤一致。例如資料 $(2,4,9)$，平均 5，$s^2=13$，標準誤是 $\sqrt{13/3}\approx2.082$。</p>
+<p>同一組資料的非參數 bootstrap，條件於這份資料的平均數變異為 $13\times2/9=26/9$，標準差約 1.700：有限樣本的經驗分布變異與不偏樣本變異差一個因子，兩種重抽結果不必恰好相同。這個差距來自小樣本近似與估計方法，並非程式計算錯誤。</p>
+<p>Jackknife 常適用於對單筆資料影響平滑的統計量，也用於偏差修正和 BCa 的加速項；中位數、樣本最大值等非平滑或端點問題不能一概套用。與 bootstrap 相比，它只有 n 個決定性的刪一樣本，常較省計算，但不會給出同樣豐富的重抽分布。下方原有推導進一步說明偏差修正的成立條件。</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<thead><tr><th>方法</th><th>每次怎麼產生樣本</th><th>主要用途與限制</th></tr></thead>
+<tbody><tr><td>Bootstrap</td><td>從 n 筆有放回抽 n 筆，重複 B 次</td><td>近似估計量抽樣分布；必須選對重抽單位</td></tr><tr><td>Jackknife</td><td>逐次刪一筆，得到 n 份大小 n−1 的樣本</td><td>估標準誤與平滑偏差；對非平滑統計量有限制</td></tr><tr><td>Permutation</td><td>依虛無假設允許的交換方式重排標籤或觀測</td><td>近似虛無分布與 p-value；交換性與設計必須合理</td></tr></tbody>
+</table></div><p>延伸來源：<a href="https://en.wikipedia.org/wiki/Jackknife_resampling" rel="noopener" target="_blank">講義的 Jackknife 說明</a>／<a href="https://stats.stackexchange.com/questions/249333/comparison-of-the-jacknife-vs-the-bootstrap" rel="noopener" target="_blank">講義的 Jackknife 與 bootstrap 比較</a></p></div></details><details class="qa-item reading-detail" id="w05-detail-permutation"><summary>延伸閱讀：置換檢定與分類器評估</summary>
+<div class="detail-body">
+<h4>Bootstrap 與置換檢定各在近似什麼分布？</h4>
+<p>Bootstrap 通常從經驗分布重抽，問估計量在重複抽樣時如何波動；置換檢定則依虛無假設，把允許交換的部分重排，問「如果沒有這個關係，會得到多極端的統計量」。兩者都會重複計算；讀結果之前，先確認近似的是抽樣分布還是虛無分布。</p>
+<p>例如兩組的平均數差，先固定每組筆數並計算觀測差 $T_{obs}$。若虛無假設使觀測在兩組間可交換，就把組別標籤重排、重新計算差 T。隨機做 B 次雙尾置換，可用</p>
+$$\hat p=\frac{1+\sum_{b=1}^B I(|T_b|\ge |T_{obs}|)}{B+1}.$$
+<p>雙尾時兩邊都要取絕對值；只寫 $T_b\ge |T_{obs}|$ 會漏掉負方向的極端結果。加一是隨機置換常用的 Monte Carlo 校正，使原始排列也被計入比較；完整枚舉所有允許排列時，則直接以其精確比例計算。B=199 的隨機置換最小 p-value 是 1/200，不可能宣稱得到了 0。</p>
+<p>置換要求的是<strong>虛無假設下的交換性</strong>。同一病人的重複紀錄、配對實驗、時間序列不能任意逐筆洗牌；應尊重配對、區塊或隨機分派設計。兩組平均相同也不必表示整個分布相同，因此簡單重排標籤檢定的條件，比「只要平均相同」更強。</p>
+<h4>分類器：標籤重排後，完整重新訓練</h4>
+<p>講義的分類例子保留 X、重排 y。原始資料先得到交叉驗證分數；每次置換標籤後，重新擬合每一折的模型、重新得到 CV 分數，形成模型在虛無假設下的分數分布。不能只洗牌已算好的預測值，或固定原始資料訓練好的分類器，因為那沒有重做學習程序。</p>
+<p>sklearn 的 score 一律愈大愈好，所以 <code>permutation_test_score</code> 比較置換分數是否<strong>大於或等於</strong>原始分數。若使用負 MSE，也依這個方向比較，不另把 MSE 的「小才好」直接貼到 score 上。前處理包進 Pipeline；若原始程序含調參或特徵選擇，置換時也要重新執行同樣的選擇程序。</p>
+<div class="pseudo-code" id="w05-alignment-permutation-code">
+<span class="line"><span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris</span>
+<span class="line"><span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> make_pipeline</span>
+<span class="line"><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler</span>
+<span class="line"><span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC</span>
+<span class="line"><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> StratifiedKFold, permutation_test_score</span>
+<span class="line"> </span>
+<span class="line"><span class="com"># 承接講義的分類器置換檢定；此例是延伸實作，不是 Ch05 原 Lab。</span></span>
+<span class="line">X, y = load_iris(return_X_y=<span class="num">True</span>)</span>
+<span class="line">model = make_pipeline(StandardScaler(), SVC(kernel=<span class="str">"linear"</span>, C=<span class="num">1</span>))</span>
+<span class="line">cv = StratifiedKFold(<span class="num">5</span>, shuffle=<span class="num">True</span>, random_state=<span class="num">0</span>)</span>
+<span class="line">score, null_scores, p_value = permutation_test_score(</span>
+<span class="line">    model, X, y, cv=cv, scoring=<span class="str">"accuracy"</span>,</span>
+<span class="line">    n_permutations=<span class="num">199</span>, random_state=<span class="num">0</span>, n_jobs=<span class="num">1</span>)</span>
+<span class="line">print(<span class="str">"原始標籤的 CV accuracy"</span>, score)</span>
+<span class="line">print(<span class="str">"置換標籤後的平均 accuracy"</span>, null_scores.mean())</span>
+<span class="line">print(<span class="str">"置換檢定 p-value"</span>, p_value)</span></div>
+<p>這個例子沿用官方分類器示範的 Iris，用分層 CV 和線性 SVM；是講義附錄的延伸，而不是 Portfolio 重抽 Lab 的結果。低 p-value 表示觀測分數相對於這套置換程序很不尋常，支持特徵與標籤之間存在模型能利用的關係；不表示分數一定足夠高、模型一定適合部署，也不是虛無假設為真的機率。高 p-value 也可能是模型沒利用到關係或檢定力不足，不能證明完全沒有關係。</p>
+<p>延伸來源：<a href="https://en.wikipedia.org/wiki/Permutation_test" rel="noopener" target="_blank">講義：Permutation test</a>／<a href="https://scikit-learn.org/stable/auto_examples/feature_selection/plot_permutation_test_for_classification.html#test-with-permutations-the-significance-of-a-classification-score" rel="noopener" target="_blank">scikit-learn：分類分數的置換檢定示範</a>／<a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.permutation_test_score.html" rel="noopener" target="_blank">permutation_test_score：分數、群組與 p-value</a></p></div></details><details class="qa-item reading-detail" id="w05-detail-jackknife-bias"><summary>計算細節：Jackknife 的偏差修正</summary>
 <div class="detail-body"><h3>Jackknife也能估計偏差</h3>
 <p>設 $\bar\theta_{(-)}=n^{-1}\sum_i\hat\theta_{(-i)}$。除了前面的標準誤，jackknife的偏差估計與修正後估計量為</p>
 $$\widehat{\mathrm{bias}}_{jack}=(n-1)(\bar\theta_{(-)}-\hat\theta),\qquad \hat\theta_{bc}=n\hat\theta-(n-1)\bar\theta_{(-)}.$$
@@ -1776,12 +1879,14 @@ $$\widehat{\mathrm{bias}}_{jack}=(n-1)(\bar\theta_{(-)}-\hat\theta),\qquad \hat\
 <div class="qa-a">
 <p>若 $E[\hat\theta_n]=\theta+a/n+b/n^2+O(n^{-3})$，刪一估計的期望為 $\theta+a/(n-1)+b/(n-1)^2+O(n^{-3})$。因此 $nE[\hat\theta_n]-(n-1)E[\bar\theta_{(-)}]$ 的a項抵消，剩餘偏差為O(n⁻²)。這是平滑偏差展開下的結論，不適用於所有統計量。</p>
 <p>對平均數，$\bar x_{(-i)}=(n\bar x-x_i)/(n-1)$，所以刪一平均的平均是 $\bar x$，偏差估計為0。而 $\bar x_{(-i)}-\bar x=(\bar x-x_i)/(n-1)$，代入jackknife變異數公式，得到 $\sum_i(x_i-\bar x)^2/[n(n-1)]=s^2/n$。</p>
-</div></details></div></details><details class="qa-item reading-detail" id="w05-detail-bootstrap-prediction"><summary>計算細節：重抽預測誤差與區塊自助法</summary>
-<div class="detail-body"><h3>固定設計下用bootstrap估預測誤差</h3>
-<p>假設 $Y=X\beta+\varepsilon$、誤差iid且同變異。先擬合OLS，使用適當中心化、按槓桿值調整的殘差（例如 $e_i/\sqrt{1-h_{ii}}$）近似新誤差分布。每輪抽出n個誤差，產生 $y^*=X\hat\beta+e^*$ 並重新擬合得到 $\hat\beta^*$；另獨立抽一個 $e_{new}^*$。對固定新輸入 $x_0$ 計算</p>
-$$\Delta^*=x_0^T(\hat\beta-\hat\beta^*)+e_{new}^*.$$
-<p>用 $x_0^T\hat\beta+q_{\alpha/2}(\Delta^*)$ 與 $x_0^T\hat\beta+q_{1-\alpha/2}(\Delta^*)$ 作近似PI。這是模擬「新觀測減去估計預測值」的誤差，保留參數誤差的方向；只畫bootstrap平均曲線的分位數會漏掉新觀測雜訊。異質變異或時間相依時，這個iid殘差抽樣設計不適用。</p>
-<p>相依資料的一個替代是區塊自助法：選定區塊長度，抽取連續觀測區塊並串接到所需長度。區塊可重疊、循環或使用隨機長度；須說明所用版本，不能聲稱單一區塊長度保證保留全部相依性。</p>
+</div></details></div></details><details class="qa-item reading-detail" id="w05-detail-bootstrap-prediction"><summary>延伸閱讀：預測誤差、預測區間與相依資料的分工</summary>
+<div class="detail-body">
+<h4>先分清楚要估的對象，再決定怎麼重抽</h4>
+<p><strong>標準誤與信賴區間</strong>問的是「由這份訓練資料估出的量有多不穩」；<strong>預測區間</strong>問的是「一筆新觀測可能落在哪裡」；<strong>預測誤差</strong>則問學習程序對新資料的損失。三者可以從同一份資料開始，重抽與評估步驟卻不同。</p>
+<p>沿用 Auto：重抽訓練資料後，每次算 horsepower 的係數，可以估係數標準誤；每次對 100 horsepower 算平均曲線值，可以估平均曲線的不確定性；再加入獨立新誤差，才得到新車 mpg 的預測區間。若想估整個程序的 MSE，則要對未參與該次訓練與選模的觀測算平方誤差，例如 CV 或適當的 OOB 評估，而不是把上述係數的標準差叫作預測誤差。</p>
+<p>有些方法利用 bootstrap 同時模擬新資料與估計程序，建立預測區間或校正樂觀誤差；這並不推翻講義的提醒。問題在於是否正確分離訓練與評估、是否保留真實資料的結構，以及所模仿的生成模型是否合理。若把全部原始資料當驗證集，仍有部分觀測和重抽訓練資料重疊。</p>
+<p>同樣地，將逐筆重抽換成區塊重抽，是為了保留時間相依的部分結構；它本身沒有決定要估的是係數、區間還是預測損失。應先說清楚統計量和目標，再設計重抽單位、區塊長度及新觀測的生成方式。</p>
+<p>完整殘差 bootstrap 的假設、誤差方向與程式，見<a href="#w05-detail-bootstrap-intervals">預測區間收合區</a>；訓練／評估重疊與 OOB 的解讀，見<a href="#w05-detail-bootstrap-oob">OOB 收合區</a>。</p>
 </div></details>
 </section>
 <section id="exercises">
