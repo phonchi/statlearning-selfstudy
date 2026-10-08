@@ -1,0 +1,606 @@
+[
+  {
+    "page": 1,
+    "heading": "Linear model selection and regularization",
+    "target_anchor": "prologue",
+    "text": "Linear model selection and regularization\nSzu-Chi Chung\nDepartment of Applied Mathematics, National Sun Yat-sen University\n",
+    "urls": [],
+    "coverage": "title/divider"
+  },
+  {
+    "page": 2,
+    "heading": "Linear Model Selection and Regularization",
+    "target_anchor": "prologue",
+    "text": "Linear Model Selection and Regularization\nRecall the linear model (Can also apply to GLM)\n𝑌𝑌= 𝛽𝛽0 + 𝛽𝛽1𝑋𝑋1 + 𝛽𝛽2𝑋𝑋2 + ⋯+ 𝛽𝛽𝑝𝑝𝑋𝑋𝑝𝑝+ 𝜖𝜖\nIn the lectures that follow, we consider some approaches for extending the \nlinear model framework. In the lectures covering Chapter 7 of the text, we \ngeneralize the linear model in order to accommodate non-linear, but still \nadditive, relationships\nIn the lectures covering Chapter 8 and 9 we consider even more general non-\nlinear models\n2\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 3,
+    "heading": "In praise of linear models!",
+    "target_anchor": "prologue",
+    "text": "In praise of linear models!\nDespite its simplicity, the linear model has distinct advantages in terms of its \ninterpretability and often shows good predictive performance\nHence we discuss in this lecture some ways in which the simple linear model can be \nimproved, by replacing ordinary least squares fitting with some alternative fitting \nprocedures\nThis often applies to the case when 𝑛𝑛≈𝑝𝑝or 𝑝𝑝> 𝑛𝑛\n3\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 4,
+    "heading": "Why consider alternatives to least squares?",
+    "target_anchor": "prologue",
+    "text": "Why consider alternatives to least squares?\n1.\nPrediction Accuracy: especially when 𝑝𝑝≈𝑛𝑛or 𝑝𝑝> 𝑛𝑛, to control the \nvariance\n2.\nModel Interpretability: By removing irrelevant or redundant features – that \nis, by setting the corresponding coefficient estimates to zero – we can obtain \na model that is more easily interpreted. We will present some approaches for \nautomatically performing feature selection\n3.\nSpeed up the training/inference\n4.\nAvoid the curse of dimensionality\n4\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 5,
+    "heading": "Three classes of methods",
+    "target_anchor": "prologue",
+    "text": "Three classes of methods\n1.\nSubset Selection: We identify a subset of the 𝑝𝑝predictors that we believe to \nbe related to the response. We then fit a model using least squares on the \nreduced set of variables\n2.\nShrinkage: We fit a model involving all 𝑝𝑝predictors, but the estimated \ncoefficients are shrunken towards zero relative to the least squares estimates. \nThis shrinkage (also known as regularization) has the effect of reducing \nvariance and can also perform variable selection\n3.\nDimension Reduction: We project the 𝑝𝑝predictors into a 𝑀𝑀-dimensional \nsubspace, where 𝑀𝑀< 𝑝𝑝. This is achieved by computing 𝑀𝑀different linear \ncombinations, or projections, of the variables. Then these 𝑀𝑀projections are \nused as predictors to fit a linear regression model by least squares\n5\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 6,
+    "heading": "1. Subset Selection",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "1. Subset Selection\nBest subset selection procedures\n1.\nLet 𝑀𝑀0 denote the null model, which contains no predictors. This model \nsimply predicts the sample mean for each observation\n2.\nFor 𝑘𝑘= 1,2, … 𝑝𝑝: \na)\nFit all 𝑝𝑝\n𝑘𝑘models that contain exactly 𝑘𝑘predictors\nb)\nPick the best among these 𝑝𝑝\n𝑘𝑘models, and call it 𝑀𝑀𝑘𝑘. Here best is defined as having the \nsmallest RSS, or equivalently largest 𝑅𝑅2\n3.\nSelect a single best model from among 𝑀𝑀0, … , 𝑀𝑀𝑝𝑝using cross-validated \nprediction error, 𝐶𝐶𝑝𝑝(AIC), BIC, or adjusted 𝑅𝑅2\n6\n",
+    "urls": [
+      "https://math.stackexchange.com/questions/2554243/understanding-the-mean-minimizes-the-mean-squared-error"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 7,
+    "heading": "Example - Credit card data set",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "Example - Credit card data set\nFor each possible model containing a subset of the ten predictors in the credit \ncard dataset, the RSS and 𝑅𝑅2 are displayed\nThough the data set contains only ten predictors, the 𝑥𝑥-axis ranges from 1 to 11, since one \nof the variables is categorical and takes on three values, leading to the creation of two \ndummy variables\nThe red frontier tracks the best model for a given number of predictors\n7\n",
+    "urls": [
+      "https://islp.readthedocs.io/en/latest/datasets/Credit.html"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 8,
+    "heading": "Extensions to other models",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "Extensions to other models\nAlthough we have presented best subset selection here for least squares \nregression, the same ideas apply to other types of models, such as logistic \nregression\nThe deviance – proportion to negative two times the maximized log-likelihood \n- plays the role of RSS for a broader class of models\n8\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 9,
+    "heading": "Stepwise Selection",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "Stepwise Selection\nX For computational reasons, best subset selection cannot be applied with very \nlarge 𝑝𝑝\nX Best subset selection may also suffer from statistical problems when 𝑝𝑝is large: \nlarger the search space, the higher the chance of finding models that look good \non the training data, even though they might not have any predictive power on \nfuture data\nThus an enormous search space can lead to overfitting and high variance of the coefficient \nestimates\nFor both of these reasons, stepwise methods, which explore a far more \nrestricted set of models, are attractive alternatives to best subset selection\n9\n",
+    "urls": [
+      "https://quantifyinghealth.com/best-subset-selection/"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 10,
+    "heading": "Forward Stepwise Selection",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "Forward Stepwise Selection\nForward stepwise selection begins with a model containing no predictors, and \nthen adds predictors to the model, one-at-a-time, until all of the predictors are \nin the model\nIn particular, at each step the variable that gives the greatest additional \nimprovement to the fit is added to the model\n10\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 11,
+    "heading": "In Detail",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "In Detail\nForward Stepwise Selection\n1.\nLet 𝑀𝑀0 denote the null model, which contains no predictors\n2.\nFor 𝑘𝑘= 0, … 𝑝𝑝−1: \na)\nConsider all 𝑝𝑝−𝑘𝑘models that augment the predictors in 𝑀𝑀𝑘𝑘with one additional predictor\nb)\nChoose the best among these 𝑝𝑝−𝑘𝑘models, and call it 𝑀𝑀𝑘𝑘+1. Here best is defined as \nhaving the smallest RSS, or equivalently largest 𝑅𝑅2\n3.\nSelect a single best model from among 𝑀𝑀0, … , 𝑀𝑀𝑝𝑝using cross-validated prediction \nerror, 𝐶𝐶𝑝𝑝(AIC), BIC, or adjusted 𝑅𝑅2\n11\nThough forward stepwise selection considers 𝑝𝑝(𝑝𝑝+1)/2+1 models, it \nperforms a guided search over model space, and so the effective model \nspace considered contains substantially more than 𝑝𝑝(𝑝𝑝+1)/2+1 models\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 12,
+    "heading": "More on Forward Stepwise Selection",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "More on Forward Stepwise Selection\nThe computational advantage over best subset selection is clear\nFor high dimensional data with 𝑝𝑝> 𝑛𝑛, the forward selection can still be applied by \nconsidering only 𝑀𝑀1, … , 𝑀𝑀𝑛𝑛, since each submodel fit with least square will not have unique \nsolution for 𝑝𝑝> 𝑛𝑛\nX It is not guaranteed to find the best possible model (lowest training error) out \nof all 2𝑝𝑝models containing subsets of the 𝑝𝑝predictors\nSuppose that in a given data set with 𝑝𝑝= 3 predictors, the best possible one-variable model \ncontains 𝑋𝑋1, and the best possible two-variable model instead contains 𝑋𝑋2 and 𝑋𝑋3. Then \nforward stepwise selection will fail to select the best possible two-variable model, because \n𝑀𝑀1 will contain 𝑋𝑋1, so 𝑀𝑀2 must also contain 𝑋𝑋1 together with one additional variable\n12\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 13,
+    "heading": "Credit data example",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "Credit data example\nThe first four selected models for best subset selection and forward stepwise \nselection on the Credit data set. The first three models are identical but the \nfourth models differ\nIn this example, there is actually not much difference between the three and four-variable \nmodels in terms of RSS, so either of the four-variable models will likely be adequate\n13\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 14,
+    "heading": "Backward Stepwise Selection",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "Backward Stepwise Selection\nLike forward stepwise selection, backward stepwise selection provides an \nefficient alternative to best subset selection\nHowever, unlike forward stepwise selection, it begins with the full least \nsquares model containing all 𝑝𝑝predictors, and then iteratively removes the \nleast useful predictor, one-at-a-time\n14\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 15,
+    "heading": "Backward Stepwise Selection: details",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "Backward Stepwise Selection: details\nBackward Stepwise Selection\n1.\nLet 𝑀𝑀𝑝𝑝denote the full model, which contains all 𝑝𝑝predictors \n2.\nFor 𝑘𝑘= 𝑝𝑝, 𝑝𝑝−1, … , 1: \na)\nConsider all 𝑘𝑘models that contain all but one of the predictors in 𝑀𝑀𝑘𝑘, for a total of 𝑘𝑘−\n1 predictors\nb)\nChoose the best among these 𝑘𝑘models, and call it 𝑀𝑀𝑘𝑘−1. Here best is defined as having \nthe smallest RSS, or equivalently largest 𝑅𝑅2\n3.\nSelect a single best model from among 𝑀𝑀0, … , 𝑀𝑀𝑝𝑝using cross-validated \nprediction error, 𝐶𝐶𝑝𝑝(AIC), BIC, or adjusted 𝑅𝑅2\n15\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 16,
+    "heading": "More on Backward Stepwise Selection",
+    "target_anchor": "w06-detail-subset-foundations",
+    "text": "More on Backward Stepwise Selection\nLike forward stepwise selection, the backward selection approach searches \nthrough only 1 + 𝑝𝑝(𝑝𝑝+ 1)/2 models, and so can be applied in settings where \n𝑝𝑝is too large to apply the best subset selection\nX Backward selection requires that 𝑛𝑛≥𝑝𝑝(so that the full model can be fit). In \ncontrast, forward stepwise can be used even when 𝑛𝑛< 𝑝𝑝, and so is the only \nviable subset method when 𝑝𝑝is very large\nX Like forward stepwise selection, backward stepwise selection is not guaranteed \nto yield the best (lowest training error) model containing a subset of the 𝑝𝑝\npredictors\n16\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 17,
+    "heading": "Choosing the Optimal Model",
+    "target_anchor": "w06-detail-criteria-scale",
+    "text": "Choosing the Optimal Model\nThe model containing all of the predictors will always have the smallest RSS \nand the largest 𝑅𝑅2, since these quantities are related to the training error\nWe wish to choose a model with low test error, not a model with low training error. Recall \nthat training error is usually a poor estimate of test error\nTherefore, RSS and 𝑅𝑅2 are not suitable for selecting the best model among a collection of \nmodels with different numbers of predictors\nTherefore\nWe can directly estimate the test error, using either a validation set approach or a cross-\nvalidation approach, as discussed in previous lectures\nWe can indirectly estimate test error by making an adjustment to the training error to \naccount for the bias due to overfitting\n17\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/167827/why-is-sum-of-squared-residuals-non-increasing-when-adding-explanatory-variable"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 18,
+    "heading": "Credit data example",
+    "target_anchor": "w06-detail-criteria-scale",
+    "text": "Credit data example\nThe figure displays 𝐶𝐶𝑝𝑝(AIC), BIC, and adjusted 𝑅𝑅2 for the best model of each \nsize produced by best subset selection on the Credit card data set\n18\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 19,
+    "heading": "Details on 𝐶𝐶𝑝𝑝and AIC",
+    "target_anchor": "w06-detail-criteria-scale",
+    "text": "Details on 𝐶𝐶𝑝𝑝and AIC\nMallow’s 𝐶𝐶𝑝𝑝for estimated test MSE (for least square model):\n𝐶𝐶𝑝𝑝= 1\n𝑛𝑛(𝑅𝑅𝑅𝑅𝑅𝑅+ 2𝑑𝑑ො𝜎𝜎2) , ො𝜎𝜎2 =\n෢\n𝑅𝑅𝑅𝑅𝑅𝑅\n𝑛𝑛−𝑝𝑝−1\nwhere 𝑑𝑑is the total # of parameters used and ො𝜎𝜎2 is an estimate of the variance of the error  \n𝜖𝜖associated with each response measurement based on model containing all predictors\nThe AIC (Akaike Information Criterion) is defined for a large class of models \nfit by maximum likelihood:\n𝐴𝐴𝐴𝐴𝐴𝐴= −2 log 𝐿𝐿+ 2 ȉ 𝑑𝑑= 1\n𝑛𝑛𝑅𝑅𝑅𝑅𝑅𝑅+ 2𝑑𝑑ො𝜎𝜎2 + 𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶\nWhere 𝐿𝐿is the maximized value of the likelihood function for the estimated model\nIn the case of the linear model with Gaussian errors, maximum likelihood and least squares \nare the same thing, and 𝐶𝐶𝑝𝑝and AIC are equivalent\n19\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/205439/aic-equivalent-to-mallows-cp-and-mallows-cp-unbiased-for-test-mse"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 20,
+    "heading": "Details on BIC",
+    "target_anchor": "w06-detail-criteria-scale",
+    "text": "Details on BIC\nBIC (Bayesian information criterion) is motivated in quite a different way. It \narises in the Bayesian approach to model selection\n𝐵𝐵𝐵𝐵𝐵𝐵= −2 log 𝐿𝐿+ log 𝑛𝑛𝑑𝑑= 1\n𝑛𝑛𝑅𝑅𝑅𝑅𝑅𝑅+ log 𝑛𝑛𝑑𝑑ො𝜎𝜎2 + 𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶𝐶\nLike 𝐶𝐶𝑝𝑝, the BIC will tend to take on a small value for a model with a low test error, and so \ngenerally we select the model that has the lowest BIC value\nNotice that BIC replaces the 2𝑑𝑑ො𝜎𝜎2 used by 𝐶𝐶𝑝𝑝with a log(𝑛𝑛) 𝑑𝑑ො𝜎𝜎2 term, where 𝑛𝑛is the \nnumber of observations. Since log 𝑛𝑛> 2 for any 𝑛𝑛> 7, the BIC statistic generally places a \nheavier penalty on models with many variables, and hence results in the selection of \nsmaller models than 𝐶𝐶𝑝𝑝\n20\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/490056/aic-bic-formula-wrong-in-james-witten"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 21,
+    "heading": "Adjusted 𝑅𝑅2",
+    "target_anchor": "w06-detail-criteria-scale",
+    "text": "Adjusted 𝑅𝑅2\nFor a least squares model with 𝑑𝑑variables, the adjusted 𝑅𝑅2 statistic is \ncalculated as\n𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝐴𝑅𝑅2 = 1 −𝑅𝑅𝑅𝑅𝑅𝑅/(𝑛𝑛−𝑑𝑑−1)\n𝑇𝑇𝑇𝑇𝑇𝑇/(𝑛𝑛−1) (𝑅𝑅2 =\n𝑇𝑇𝑇𝑇𝑇𝑇−𝑅𝑅𝑅𝑅𝑅𝑅\n𝑇𝑇𝑇𝑇𝑇𝑇\n= 1 −\n𝑅𝑅𝑅𝑅𝑅𝑅\n𝑇𝑇𝑇𝑇𝑇𝑇)\nwhere TSS= ∑𝑖𝑖=1\n𝑛𝑛(𝑦𝑦𝑖𝑖−ത𝑦𝑦)2 = ∑𝑖𝑖=1\n𝑛𝑛(𝑦𝑦𝑖𝑖−ො𝑦𝑦𝑖𝑖)2 + ∑𝑖𝑖=1\n𝑛𝑛(ො𝑦𝑦𝑖𝑖−ത𝑦𝑦)2 is the total sum of squares\nMaximizing the adjusted 𝑅𝑅2 is equivalent to minimizing \n𝑅𝑅𝑅𝑅𝑅𝑅\n𝑛𝑛−𝑑𝑑−1. While RSS always \ndecreases as the number of variables in the model increases, 𝑅𝑅𝑅𝑅𝑅𝑅\n𝑛𝑛−𝑑𝑑−1 may increase or \ndecrease, due to the presence of 𝑑𝑑in the denominator\nUnlike the 𝑅𝑅2 statistic, the adjusted 𝑅𝑅2 statistic pays a price for the inclusion of \nunnecessary variables in the model\nUnlike 𝐶𝐶𝑝𝑝, AIC, and BIC, for which a small value indicates a model with a low test error, a \nlarge value of adjusted 𝑅𝑅2 indicates a model with a small test error\n21\n",
+    "urls": [
+      "https://en.wikipedia.org/wiki/Coefficient_of_determination#Adjusted_R2"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 22,
+    "heading": "Validation and cross-validation",
+    "target_anchor": "w06-detail-selection-cv",
+    "text": "Validation and cross-validation\nEach of the procedures returns a sequence of models 𝑀𝑀𝑘𝑘indexed by model size \n𝑘𝑘= 0,1,2 … . Our job here is to select ෠𝑘𝑘. Once selected, we return model 𝑀𝑀෠𝑘𝑘\nWe compute the validation set error or the cross-validation error for each model 𝑀𝑀𝑘𝑘under \nconsideration, and then select the 𝑘𝑘for which the resulting estimated test error is smallest\nThis procedure has an advantage relative to AIC, BIC, 𝐶𝐶𝑝𝑝, and adjusted 𝑅𝑅2, in that it \nprovides a direct estimate of the test error: It can also be used in a wider range of model \nselection tasks, even in cases where it is hard to pinpoint the model degrees of freedom (e.g. \nthe number of predictors in the model) or hard to estimate the error variance 𝜎𝜎2\nX It needs computational power\n22\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 23,
+    "heading": "Credit data example",
+    "target_anchor": "w06-detail-selection-cv",
+    "text": "Credit data example\nThe validation errors were calculated by randomly selecting three-quarters of the \nobservations as the training set, and the remainder as the validation set\nThe cross-validation errors were computed using 𝑘𝑘= 10 folds\n23\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 24,
+    "heading": "One-standard-error rule",
+    "target_anchor": "w06-detail-selection-cv",
+    "text": "One-standard-error rule\nAll three approaches suggest that the four-, five-, and six-variable models are \nroughly equivalent in terms of their test errors\n24\nIn this setting, we can select a model using the \none-standard-error rule. We first calculate the \nstandard error of the estimated test MSE for \neach model size, and then select the smallest \nmodel for which the estimated test error is \nwithin one standard error of the lowest point on \nthe curve\nhttps://www.cs.cmu.edu/~psarkar/sds383c_16/lecture9_scribe.pdf\n",
+    "urls": [
+      "https://www.cs.cmu.edu/%7Epsarkar/sds383c_16/lecture9_scribe.pdf"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 25,
+    "heading": "2. Shrinkage Methods",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "2. Shrinkage Methods\nHere we will discuss about Ridge regression and Lasso \nThe subset selection methods use least squares to fit a linear model that contains a subset of \nthe predictors\nAs an alternative, we can fit a model containing all 𝑝𝑝predictors using a technique that \nconstrains or regularizes the coefficient estimates, or equivalently, that shrinks the \ncoefficient estimates towards zero\nIt may not be immediately obvious why such a constraint should improve the fit, but it \nturns out that shrinking the coefficient estimates can significantly reduce their variance\n25\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 26,
+    "heading": "Ridge regression",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Ridge regression\nRecall that the least squares fitting procedure estimates 𝛽𝛽0, 𝛽𝛽1, … , 𝛽𝛽𝑝𝑝using the \nvalues that minimize\n𝑅𝑅𝑅𝑅𝑅𝑅= ෍\n𝑖𝑖=1\n𝑛𝑛\n(𝑦𝑦𝑖𝑖−𝛽𝛽0 −෍\n𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖)2\nIn contrast, the ridge regression coefficient estimates ̂𝛽𝛽𝜆𝜆\n𝑅𝑅are the values that \nminimize\n෍\n𝑖𝑖=1\n𝑛𝑛\n(𝑦𝑦𝑖𝑖−𝛽𝛽0 −෍\n𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖)2 + λ ෍\n𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗\n2 = 𝑅𝑅𝑅𝑅𝑅𝑅+ λ ෍\n𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗\n2\nwhere λ ≥0 is a tuning parameter, to be determined separately\n26\n",
+    "urls": [
+      "https://dafriedman97.github.io/mlbook/content/c2/s1/regularized.html"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 27,
+    "heading": "Ridge regression: continued",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Ridge regression: continued\nAs with least squares, ridge regression seeks coefficient estimates that fit the \ndata well, by making the RSS small\nHowever, the second term, λ ∑𝑗𝑗𝛽𝛽𝑗𝑗\n2 , called a shrinkage penalty, is small when 𝛽𝛽1, … , 𝛽𝛽𝑝𝑝are \nclose to zero, and so it has the effect of shrinking the estimates of 𝛽𝛽𝑗𝑗towards zero\nThe tuning parameter λ serves to control the relative impact of these two terms \non the regression coefficient estimates\nSelecting a good λ value for is critical; cross-validation is used for this\n27\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 28,
+    "heading": "Credit data example",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Credit data example\nFor all 10 features\n28\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 29,
+    "heading": "Details of Previous Figure",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Details of Previous Figure\nIn the left-hand panel, each curve corresponds to the ridge regression \ncoefficient estimate for one of the ten variables, plotted as a function of λ\nThe right-hand panel displays the same ridge coefficient estimates as the left-\nhand panel, but instead of displaying on the 𝑥𝑥-axis, we now display \nൗ̂\n𝛽𝛽λ\n𝑅𝑅\n2̂\n𝛽𝛽2 (0~1, shrinkage factor),where ̂𝛽𝛽denotes the vector of least \nsquares coefficient estimates\nThe notation 𝛽𝛽2 denotes the 𝑙𝑙2 norm (pronounced “ell 2”) of a vector, and is defined as \n𝛽𝛽2 =\n∑𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗\n2\n29\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 30,
+    "heading": "Ridge regression: scaling of predictors",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Ridge regression: scaling of predictors\nThe standard least squares coefficient estimates are scale equivalent: \nmultiplying 𝑋𝑋𝑗𝑗by a constant 𝑐𝑐simply leads to a scaling of the least squares \ncoefficient estimates by a factor of 1/𝑐𝑐. In other words, regardless of how the \n𝑗𝑗th predictor is scaled, 𝑋𝑋𝑗𝑗̂𝛽𝛽𝑗𝑗will remain the same\nIn contrast, the ridge regression coefficient estimates can change substantially when \nmultiplying a given predictor by a constant, due to the sum of squared coefficients term in \nthe penalty part of the ridge regression objective function\nTherefore, it is best to apply ridge regression after standardizing the predictors, using the \nformula (Same for the PLS in the following slides)\n෤𝑥𝑥𝑖𝑖𝑖𝑖=\n𝑥𝑥𝑖𝑖𝑖𝑖−̅ 𝑥𝑥𝑗𝑗\n1\n𝑛𝑛∑𝑖𝑖=1\n𝑛𝑛(𝑥𝑥𝑖𝑖𝑖𝑖−̅ 𝑥𝑥𝑗𝑗)2\n30\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 31,
+    "heading": "Why Does Ridge Regression Improve Over Least Squares?",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Why Does Ridge Regression Improve Over Least Squares?\nThe Bias-Variance tradeoff\nSimulated data with 𝑛𝑛= 50 observations, 𝑝𝑝= 45 predictors, all having nonzero \ncoefficients. Squared bias (black), variance (green), and test mean squared error (purple) \nfor the ridge regression predictions on a simulated data set, as a function of λ and \nൗ̂\n𝛽𝛽λ\n𝑅𝑅\n2̂\n𝛽𝛽2. The horizontal dashed lines indicate the minimum possible MSE. The purple \ncrosses indicate the ridge regression models for which the MSE is smallest\n31\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 32,
+    "heading": "The Lasso (Least Absolute Shrinkage and Selection Operator)",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "The Lasso (Least Absolute Shrinkage and Selection Operator)\nX Ridge regression does have one obvious disadvantage: unlike subset selection, \nwhich will generally select models that involve just a subset of the variables, \nridge regression will include all 𝑝𝑝predictors in the final model\nThe Lasso is a relatively recent alternative to ridge regression that overcomes \nthis disadvantage. The lasso coefficients, ̂𝛽𝛽λ\n𝐿𝐿, minimize the quantity\n෍\n𝑖𝑖=1\n𝑛𝑛\n(𝑦𝑦𝑖𝑖−𝛽𝛽0 −෍\n𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖)2 + λ ෍\n𝑗𝑗=1\n𝑝𝑝\n|𝛽𝛽𝑗𝑗| = 𝑅𝑅𝑅𝑅𝑅𝑅+ λ ෍\n𝑗𝑗=1\n𝑝𝑝\n|𝛽𝛽𝑗𝑗|\nIn statistical parlance, the lasso uses an 𝑙𝑙1 norm (pronounced “ell 1”) penalty instead of an 𝑙𝑙2\npenalty. The 𝑙𝑙1 norm of a coefficient vector 𝛽𝛽is given by 𝛽𝛽1 = ∑|𝛽𝛽𝑗𝑗|\n32\n",
+    "urls": [
+      "https://dafriedman97.github.io/mlbook/content/c2/s1/regularized.html#lasso-regression"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 33,
+    "heading": "The Lasso: continued",
+    "target_anchor": "w06-detail-lasso-solution",
+    "text": "The Lasso: continued\nAs ridge regression, the lasso shrinks the coefficient estimates towards zero\nHowever, in the case of the lasso, the 𝑙𝑙1 penalty has the effect of forcing some of the \ncoefficient estimates to be exactly equal to zero when the tuning parameter λ is sufficiently \nlarge. Hence, much like best subset selection, the lasso performs variable selection\nWe say that the lasso yields sparse models - that is, models that involve only a \nsubset of the variables\nAs in ridge regression, selecting a good value of λ for the lasso is critical; cross-validation \nis again the method of choice\n33\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 34,
+    "heading": "Example: Credit dataset",
+    "target_anchor": "w06-detail-lasso-solution",
+    "text": "Example: Credit dataset\n34\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 35,
+    "heading": "The Variable Selection Property of the Lasso",
+    "target_anchor": "w06-detail-lasso-solution",
+    "text": "The Variable Selection Property of the Lasso\nWhy is it that the lasso, unlike ridge regression, results in coefficient estimates \nthat are exactly equal to zero?\nOne can show that the lasso and ridge regression coefficient estimates solve the \nproblems (linked by the Lagrange multiplier)\nmin\n𝛽𝛽∑𝑖𝑖=1\n𝑛𝑛(𝑦𝑦𝑖𝑖−𝛽𝛽0 −∑𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖)2 subject to ∑𝑗𝑗=1\n𝑝𝑝\n|𝛽𝛽𝑗𝑗| ≤𝑠𝑠\nand\nmin\n𝛽𝛽∑𝑖𝑖=1\n𝑛𝑛(𝑦𝑦𝑖𝑖−𝛽𝛽0 −∑𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖)2 subject to ∑𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗\n2 ≤𝑠𝑠\nRespectively\nThe best subset selection can be viewed as (ESL, ch3)\nmin\n𝛽𝛽∑𝑖𝑖=1\n𝑛𝑛(𝑦𝑦𝑖𝑖−𝛽𝛽0 −∑𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖)2 subject to ∑𝑗𝑗=1\n𝑝𝑝\n𝐼𝐼(𝛽𝛽𝑗𝑗≠0) ≤𝑠𝑠\nSolving above formula is, however, computationally infeasible\n35\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/348494/the-proof-of-equivalent-formulas-of-ridge-regression"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 36,
+    "heading": "The Lasso Picture",
+    "target_anchor": "w06-detail-lasso-solution",
+    "text": "The Lasso Picture\n36\ncontour of RSS\n(budget) constraint by s\nhttps://stats.stackexchange.com/questions/350046/the-graphical-intuiton-of-the-lasso-in-case-p-\n2?noredirect=1&lq=1\nLasso\nRidge\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/348308/graphical-interpretation-of-lasso",
+      "https://stats.stackexchange.com/questions/414491/understanding-lasso-regressions-sparsity-geometrically",
+      "https://stats.stackexchange.com/questions/348308/graphical-interpretation-of-lasso",
+      "https://stats.stackexchange.com/questions/350046/the-graphical-intuiton-of-the-lasso-in-case-p-2?noredirect=1&lq=1"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 37,
+    "heading": "More about intuition (exercise 6)",
+    "target_anchor": "w06-detail-lasso-solution",
+    "text": "More about intuition (exercise 6)\nConsider 𝑋𝑋is a square diagonal matrix with its diagonal elements equal to 1 \nand we omit the intercept for simplicity\nThe least squares problem in this case is to minimized ∑𝑗𝑗=1\n𝑝𝑝\n(𝑦𝑦𝑗𝑗−𝛽𝛽𝑗𝑗)2 →̂ 𝛽𝛽𝑗𝑗= 𝑦𝑦𝑗𝑗\nRidge regression: ∑𝑗𝑗=1\n𝑝𝑝\n(𝑦𝑦𝑗𝑗−𝛽𝛽𝑗𝑗)2 + λ ∑𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗\n2 →̂ 𝛽𝛽𝑗𝑗\n𝑅𝑅= 𝑦𝑦𝑗𝑗/(1 + λ)\nLasso: ∑𝑗𝑗=1\n𝑝𝑝\n(𝑦𝑦𝑗𝑗−𝛽𝛽𝑗𝑗)2 + λ ∑𝑗𝑗=1\n𝑝𝑝\n|𝛽𝛽𝑗𝑗| →̂ 𝛽𝛽𝑗𝑗\n𝐿𝐿= ൞\n𝑦𝑦𝑗𝑗−⁄\nλ 2 𝑖𝑖𝑖𝑖𝑦𝑦𝑗𝑗> ⁄\nλ 2\n𝑦𝑦𝑗𝑗+ ⁄\nλ 2 𝑖𝑖𝑖𝑖𝑦𝑦𝑗𝑗< −⁄\nλ 2\n0\n𝑖𝑖𝑖𝑖|𝑦𝑦𝑗𝑗| ≤⁄\nλ 2\nClose-form solution available when features are uncorrelated for lasso\n37\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/17781/derivation-of-closed-form-lasso-solution"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 38,
+    "heading": "More about intuition",
+    "target_anchor": "w06-detail-lasso-solution",
+    "text": "More about intuition\nLeft: The ridge regression coefficient estimates are shrunken proportionally \ntowards zero, relative to the least squares estimates\nRight: The lasso coefficient estimates are soft-thresholded towards zero. In the \ncase of a more general data matrix 𝑋𝑋the main ideas still hold approximately\n38\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 39,
+    "heading": "(Optional) Bayesian interpretation (exercise 7)",
+    "target_anchor": "w06-detail-shrinkage-map",
+    "text": "(Optional) Bayesian interpretation (exercise 7)\n𝑝𝑝𝛽𝛽𝑋𝑋, 𝑌𝑌∝𝑓𝑓𝑌𝑌𝑋𝑋, 𝛽𝛽𝑝𝑝(𝛽𝛽)\nWe assume that 𝑝𝑝𝛽𝛽= ∏𝑗𝑗=1\n𝑝𝑝\n𝑔𝑔(𝛽𝛽𝑗𝑗) , for some density function 𝑔𝑔\nIf 𝑔𝑔is a Gaussian distribution with mean zero and standard deviation a function of 𝜆𝜆, then \nit follows that the posterior mode for 𝛽𝛽—that posterior is, the most likely value for 𝛽𝛽, \ngiven the data—is given by the ridge mode regression solution!\nIf 𝑔𝑔is a double-exponential (Laplace) distribution with mean zero and scale parameter a \nfunction of 𝜆𝜆, then it follows that the posterior mode for 𝛽𝛽is the lasso solution!\n39\n",
+    "urls": [
+      "https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression",
+      "https://ekamperi.github.io/mathematics/2020/08/02/bayesian-connection-to-lasso-and-ridge-regression.html"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 40,
+    "heading": "Comparing the Lasso and Ridge Regression",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Comparing the Lasso and Ridge Regression\nLeft: Plots of squared bias (black), variance (green), and test MSE (purple) for \nthe lasso on simulated data set of Slide 31\nRight: Comparison of squared bias, variance and test MSE between lasso (solid) \nand ridge (dashed). Both are plotted against their 𝑅𝑅2 on the training data, as a \ncommon form of indexing\n40\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 41,
+    "heading": "Comparing the Lasso and Ridge Regression: continued",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Comparing the Lasso and Ridge Regression: continued\nLeft: Plots of squared bias (black), variance (green), and test MSE (purple) for \nthe lasso. The simulated data is similar to that in Slide 31, except that now only \ntwo predictors are related to the response\nRight: Comparison of squared bias, variance and test MSE between lasso (solid) \nand ridge (dashed). Both are plotted against their 𝑅𝑅2 on the training data, as a \ncommon form of indexing\n41\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 42,
+    "heading": "Short Conclusions",
+    "target_anchor": "w06-detail-ridge-bias",
+    "text": "Short Conclusions\nThese two examples illustrate that neither ridge regression nor the lasso will \nuniversally dominate the other\nIn general, one might expect the lasso to perform better when the response is a \nfunction of only a relatively small number of predictors\nHowever, the number of predictors that is related to the response is never known a priori \nfor real data sets. A technique such as cross-validation can be used in order to determine \nwhich approach is better on a particular data set\n42\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 43,
+    "heading": "Selecting the Tuning Parameter for Ridge Regression and Lasso",
+    "target_anchor": "w06-detail-lambda-conventions",
+    "text": "Selecting the Tuning Parameter for Ridge Regression and Lasso\nAs for subset selection, for ridge regression and lasso we require a method to \ndetermine which of the models under consideration is best\nThat is, we require a method selecting a value for the tuning parameter λ or equivalently, \nthe value of the constraint 𝑠𝑠\nCross-validation provides a simple way to tackle this problem. We choose a \ngrid of 𝜆𝜆values, and compute the cross-validation error rate for each value of λ\nWe then select the tuning parameter value for which the cross-validation error is smallest\nFinally, the model is re-fit using all of the available observations and the selected value of \nthe tuning parameter\n43\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 44,
+    "heading": "Credit data example",
+    "target_anchor": "w06-detail-lambda-conventions",
+    "text": "Credit data example\nLeft: LOOCV errors that result from applying ridge regression to the Credit \ndata set with various values of λ\nRight: The coefficient estimates as a function of λ. The vertical dashed lines \nindicates the value of λ selected by cross-validation\n44\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 45,
+    "heading": "Simulated data example",
+    "target_anchor": "w06-detail-lambda-conventions",
+    "text": "Simulated data example\nLeft: Ten-fold cross-validation MSE for the lasso, applied to the sparse \nsimulated data set from Slide 41\nRight: The corresponding lasso coefficient estimates are displayed. The vertical \ndashed lines indicate the lasso fit for which the cross-validation error is \nsmallest\n45\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 46,
+    "heading": "3. Dimension Reduction Methods",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "3. Dimension Reduction Methods\nThe methods that we have discussed so far in this chapter have involved fitting \nlinear regression models, via least squares or a shrunken approach, using the \noriginal predictors, 𝑋𝑋1, 𝑋𝑋2, … , 𝑋𝑋𝑝𝑝or a subset of predictors\nWe now explore a class of approaches that transform the predictors and then fit \na least squares model using the transformed variables. We will refer to these \ntechniques as dimension reduction methods\n46\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 47,
+    "heading": "Dimension Reduction Methods: details",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Dimension Reduction Methods: details\nLet 𝑍𝑍1, 𝑍𝑍2, … , 𝑍𝑍𝑀𝑀represent 𝑀𝑀< 𝑝𝑝linear combinations of our original 𝑝𝑝\npredictors. That is,\n𝑍𝑍𝑚𝑚= ∑𝑗𝑗=1\n𝑝𝑝\n𝛷𝛷𝑗𝑗𝑚𝑚𝑋𝑋𝑗𝑗\nfor some constants 𝛷𝛷1𝑚𝑚, … , 𝛷𝛷𝑝𝑝𝑚𝑚\nWe can then fit the linear regression model using ordinary least squares\n𝑦𝑦𝑖𝑖= 𝜃𝜃0 + ෍\n𝑚𝑚=1\n𝑀𝑀\n𝜃𝜃𝑚𝑚𝑧𝑧𝑖𝑖𝑖𝑖+ 𝜖𝜖𝑖𝑖, 𝑖𝑖= 1, … , 𝑛𝑛\nNote that in the model, the regression coefficients are given by 𝜃𝜃0, 𝜃𝜃1, … , 𝜃𝜃𝑀𝑀. If \nthe constants 𝛷𝛷1𝑚𝑚, … , 𝛷𝛷𝑝𝑝𝑚𝑚are chosen wisely, then such dimension reduction \napproaches can often outperform OLS regression\n47\nBasis\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 48,
+    "heading": "Dimension Reduction Methods: details",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Dimension Reduction Methods: details\nNotice that from definition\n෍\n𝑚𝑚=1\n𝑀𝑀\n𝜃𝜃𝑚𝑚𝑧𝑧𝑖𝑖𝑖𝑖= ෍\n𝑚𝑚=1\n𝑀𝑀\n𝜃𝜃𝑚𝑚෍\n𝑗𝑗=1\n𝑝𝑝\n𝛷𝛷𝑗𝑗𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖= ෍\n𝑗𝑗=1\n𝑝𝑝\n෍\n𝑚𝑚=1\n𝑀𝑀\n𝜃𝜃𝑚𝑚𝛷𝛷𝑗𝑗𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖= ෍\n𝑗𝑗=1\n𝑝𝑝\n𝛽𝛽𝑗𝑗𝑥𝑥𝑖𝑖𝑖𝑖\nWhere 𝛽𝛽𝑗𝑗= ∑𝑚𝑚=1\n𝑀𝑀\n𝜃𝜃𝑚𝑚𝛷𝛷𝑗𝑗𝑗𝑗\nHence the model can be thought of as a special case of the original linear regression model\nDimension reduction serves to constrain the estimated 𝛽𝛽𝑗𝑗coefficients, since now they must \ntake the above form. Can win in the bias-variance tradeoff!\n48\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 49,
+    "heading": "Principal Components Regression",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Principal Components Regression\nHere we apply principal components analysis (PCA) (discussed in Chapter 12 \nof the text) to define the linear combinations of the predictors\nThe first principal component is that (normalized) direction with the largest variance\nThe second principal component score has largest variance, subject to being uncorrelated\nwith the first. And so on\nHence with many correlated original variables, we replace them with a small set of \nuncorrelated principal components scores that capture their joint variation\nThe principal components regression (PCR) approach involves constructing the \nﬁrst 𝑀𝑀principal components scores, 𝑍𝑍1, 𝑍𝑍2, … , 𝑍𝑍𝑀𝑀, and then using these \ncomponents scores as the predictors in a linear regression model that is ﬁt \nusing least squares\n49\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/171324/what-is-the-relationship-between-orthogonal-correlation-and-independence",
+      "https://stats.stackexchange.com/questions/153928/why-are-principal-component-scores-uncorrelated"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 50,
+    "heading": "Pictures of PCA",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Pictures of PCA\nThe population size (pop) and ad spending (ad) for 100 different cities are \nshown as purple circles. The green solid line indicates the first principal \ncomponent, and the blue dashed line indicates the second principal component\n50\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 51,
+    "heading": "Pictures of PCA: continued",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Pictures of PCA: continued\nLeft: The first principal component, chosen to minimize the sum of the squared \nperpendicular distances to each point, is shown in green. These distances are \nrepresented using the black dashed line segments\nRight: The left-hand panel has been rotated so that the first principal \ncomponent lies on the 𝑥𝑥-axis (We need to standardized the data first)\n51\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/22329/how-does-centering-the-data-get-rid-of-the-intercept-in-regression-and-pca"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 52,
+    "heading": "Pictures of PCA: continued",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Pictures of PCA: continued\nPlots of the first principal component scores 𝑧𝑧𝑖𝑖𝑖versus pop and ad. The \nrelationships are strong\nPlots of the second principal component scores 𝑧𝑧𝑖𝑖2 versus pop and ad. The \nrelationships are weak\n52\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 53,
+    "heading": "Application to Principal Components Regression",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Application to Principal Components Regression\nPCR was applied to two simulated data sets. The black, green, and purple lines \ncorrespond to squared bias, variance, and test mean squared error, respectively. \nLeft: Simulated data from slide 31. Right: Simulated data from slide 41\n53\n𝑛𝑛= 50\n𝑝𝑝= 45 significant predictors\n𝑛𝑛= 50\n𝑝𝑝= 2 significant predictors\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 54,
+    "heading": "Application to Principal Components Regression",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Application to Principal Components Regression\nPCR, ridge regression, and the lasso were applied to a simulated data set in \nwhich the ﬁrst ﬁve principal components of 𝑋𝑋contain all the information about \nthe response 𝑌𝑌(𝑀𝑀= 5). Lasso (solid) and ridge (dashed)\n54\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 55,
+    "heading": "Choosing the number of directions 𝑀𝑀",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Choosing the number of directions 𝑀𝑀\nLeft: PCR standardized coefficient estimates on the Credit data set for different \nvalues of 𝑀𝑀. Right: The 10-fold cross validation MSE obtained using PCR, as \na function of 𝑀𝑀\nNote that we also standardizing each predictor before PCR\n55\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 56,
+    "heading": "Partial Least Squares",
+    "target_anchor": "w06-detail-pls-reading",
+    "text": "Partial Least Squares\nPCR (dotted line) identifies linear combinations, or directions, that best \nrepresent the predictors 𝑋𝑋1, 𝑋𝑋2, … , 𝑋𝑋𝑝𝑝\nThese directions are identified in an unsupervised way, since the response 𝑌𝑌is not used to \nhelp determine the principal component directions\nThat is, the response does not supervise the identification of the principal components\nConsequently, PCR suffers from a potentially serious drawback: there is no guarantee that \nthe directions that best explain the predictors will also be the best directions to use for \npredicting the response\n56\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 57,
+    "heading": "Partial Least Squares: continued",
+    "target_anchor": "w06-detail-pls-reading",
+    "text": "Partial Least Squares: continued\nLike PCR, PLS is a dimension reduction method, which first identifies a new \nset of features 𝑍𝑍1, 𝑍𝑍2, … , 𝑍𝑍𝑀𝑀that are linear combinations of the original \nfeatures, and then fits a linear model via OLS using these 𝑀𝑀new features\nBut unlike PCR, PLS identifies these new features in a supervised way - that is, it makes \nuse of the response 𝑌𝑌in order to identify new features that not only approximate the old \nfeatures well, but also that are related to the response\nRoughly speaking, the PLS approach attempts to find directions that help explain both the \nresponse and the predictors\n57\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 58,
+    "heading": "Details of Partial Least Squares",
+    "target_anchor": "w06-detail-pls-reading",
+    "text": "Details of Partial Least Squares\nAfter standardizing the 𝑝𝑝predictors, PLS computes the first direction 𝑍𝑍1 by \nsetting 𝛷𝛷𝑗𝑗1 equal to the coefficient from the simple linear regression of 𝑌𝑌on 𝑋𝑋𝑗𝑗\nOne can show that this coefficient is proportional to the correlation between 𝑌𝑌and 𝑋𝑋𝑗𝑗. \nHence, in computing 𝑍𝑍1 = ∑𝑗𝑗=1\n𝑝𝑝\n𝛷𝛷𝑗𝑗𝑗𝑋𝑋𝑗𝑗PLS places the highest weight on the variables that \nare most strongly related to the response\nSubsequent directions are found by taking residuals and then repeating the above \nprescription (ESL 3.5)\nMore comparison about PLS to OLS\n58\n",
+    "urls": [
+      "https://stats.stackexchange.com/questions/32464/how-does-the-correlation-coefficient-differ-from-regression-slope",
+      "https://stats.stackexchange.com/questions/179733/theory-behind-partial-least-squares-regression"
+    ],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 59,
+    "heading": "4. Consideration in high dimensions",
+    "target_anchor": "w06-detail-highdim-cautions",
+    "text": "4. Consideration in high dimensions\nLeft: Least squares regression in the low-dimensional setting\nRight: Least squares regression with 𝑛𝑛= 2 observations and two parameters to \nbe estimated (an intercept and a coefficient). IC can not work in this setting!\n59\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 60,
+    "heading": "Consideration in high dimensions",
+    "target_anchor": "w06-detail-highdim-cautions",
+    "text": "Consideration in high dimensions\nOn a simulated example with 𝑛𝑛= 20 training observations, features that are \ncompletely unrelated to the outcome are added to the model\nLeft: The 𝑅𝑅2 increases to 1 as more features are included. Center: The training set MSE \ndecreases to 0 as more features are included\nRight: The test set MSE increases as more features are included\nThis indicates the importance of evaluating model performance on an independent test set\n60\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 61,
+    "heading": "The lasso was performed with 𝑛𝑛= 100 observations and three values of 𝑝𝑝. Of ",
+    "target_anchor": "w06-detail-highdim-cautions",
+    "text": "The lasso was performed with 𝑛𝑛= 100 observations and three values of 𝑝𝑝. Of \nthe 𝑝𝑝features, 20 were associated with the response. The boxplots show the \ntest MSEs that result using three different values of the tuning parameter\n1.\nRegularization or shrinkage plays a key role in high-dimensional problems\n2.\nAppropriate tuning parameter selection is crucial for good predictive performance\n3.\nThe test error tends to increase as the dimensionality of the problem increases, unless the \nadditional features are truly associated with the response\n61\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 62,
+    "heading": "Summary",
+    "target_anchor": "w06-detail-highdim-cautions",
+    "text": "Summary\nModel selection methods are an essential tool for data analysis, especially for \nbig datasets involving many predictors\nResearch into methods that give sparsity, such as the lasso is an especially hot \narea\nWe should be careful when interpreting results in high dimensions\n62\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 63,
+    "heading": "Appendix",
+    "target_anchor": "reference",
+    "text": "Appendix\n63\n",
+    "urls": [],
+    "coverage": "title/divider"
+  },
+  {
+    "page": 64,
+    "heading": "Comparison between the methods",
+    "target_anchor": "w06-detail-coefficient-paths",
+    "text": "Comparison between the methods\n𝛽𝛽1 = 4, 𝛽𝛽2 = 2\n64\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 65,
+    "heading": "Review of Covariance Matrix",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Review of Covariance Matrix\nLet 𝑥𝑥1, … , 𝑥𝑥𝑛𝑛be length-𝑝𝑝observation vectors\n𝑥𝑥𝑖𝑖=\n𝑥𝑥𝑖𝑖𝑖\n𝑥𝑥𝑖𝑖𝑖\n⋮\n𝑥𝑥𝑖𝑖𝑖𝑖\nWithout Loss Of Generality (WLOG), let their mean be length-𝑝𝑝0-vector\nLet the data matrix 𝑋𝑋= (𝑥𝑥1, 𝑥𝑥2, … , 𝑥𝑥𝑛𝑛) be a 𝑝𝑝by 𝑛𝑛matrix\nThe sample covariance matrix\n𝑆𝑆=\n⁄\n𝑋𝑋𝑋𝑋𝑇𝑇(𝑛𝑛−1) = ෍\n𝑖𝑖=1\n𝑛𝑛\n𝑥𝑥𝑖𝑖𝑥𝑥𝑖𝑖\n𝑇𝑇/(𝑛𝑛−1) = ෍\n𝑖𝑖=1\n𝑛𝑛\n(𝑥𝑥𝑖𝑖−̅ 𝑥𝑥)(𝑥𝑥𝑖𝑖−̅ 𝑥𝑥)𝑇𝑇/(𝑛𝑛−1)\n65\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 66,
+    "heading": "Review of  eigenvalue decomposition- Maximum variance ",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Review of  eigenvalue decomposition- Maximum variance \nformulation \nFind a direction vector 𝑢𝑢1 ∈𝑅𝑅𝑝𝑝and 𝑢𝑢1\n𝑇𝑇𝑢𝑢1 = 1 such that the variance of the \nprojected data is maximized\n1\n𝑛𝑛∑𝑖𝑖=1\n𝑛𝑛(𝑢𝑢1\n𝑇𝑇𝑥𝑥𝑖𝑖−𝑢𝑢1\n𝑇𝑇̅𝑥𝑥)2 = 𝑢𝑢1\n𝑇𝑇𝑆𝑆𝑢𝑢1\nTo enforce the constraint, we introduce a  Lagrange multiplier denoted by λ1 and get the \nunconstrained maximization of \n𝑢𝑢1\n𝑇𝑇𝑆𝑆𝑢𝑢1 + λ1(1 −𝑢𝑢1\n𝑇𝑇𝑢𝑢1) or maximize 𝑢𝑢𝑇𝑇𝑆𝑆𝑆𝑆\n𝑢𝑢𝑇𝑇𝑢𝑢\nBy setting the derivative with respect to 𝑢𝑢1 equal to zero, we see that this quantity will \nhave a stationary point when \n𝑆𝑆𝑢𝑢1 = λ1𝑢𝑢1\n66\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 67,
+    "heading": "Review of  eigenvalue decomposition- Maximum variance ",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Review of  eigenvalue decomposition- Maximum variance \nformulation \n𝑢𝑢1 must be an eigenvector of 𝑆𝑆, if we left-multiply by 𝑢𝑢1\n𝑇𝑇we get\n𝑢𝑢1\n𝑇𝑇𝑆𝑆𝑢𝑢1 = λ1\nand so the variance will be a maximum when we set 𝑢𝑢1 equal to the eigenvector having the \nlargest eigenvalue λ1. This eigenvector is known as the ﬁrst principal component.\nWe can deﬁne additional principal components in an incremental fashion by \nchoosing each new direction to be that which maximizes the projected variance \namongst all possible directions orthogonal to those already considered.\nIn a 𝑟𝑟-dimensional projection space, we now consider the optimal linear projection for which \nthe variance of the projected data is maximized is deﬁned by the 𝑟𝑟eigenvectors 𝑢𝑢1, … , 𝑢𝑢𝑟𝑟of \nthe data covariance matrix S corresponding to the 𝑟𝑟largest eigenvalues λ1, … , λ𝑟𝑟. \n67\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 68,
+    "heading": "Principal Component Analysis (PCA)  (1/2)",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Principal Component Analysis (PCA)  (1/2)\nIf we collect eigenvectors and eigenvalues into matrix\n𝑆𝑆𝑝𝑝×𝑝𝑝𝑈𝑈𝑝𝑝×𝑝𝑝= 𝑈𝑈𝑝𝑝×𝑝𝑝Λ𝑝𝑝×𝑝𝑝\n𝑆𝑆𝑝𝑝×𝑝𝑝= 𝑈𝑈𝑝𝑝×𝑝𝑝Λ𝑝𝑝×𝑝𝑝𝑈𝑈𝑝𝑝×𝑝𝑝\n𝑇𝑇\nNote 𝑋𝑋= 𝑈𝑈𝑈𝑈𝑉𝑉𝑇𝑇\nScores are 𝑈𝑈𝑇𝑇𝑋𝑋= 𝑆𝑆𝑉𝑉𝑇𝑇\nIt is equivalent to Minimum error formulation\n𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑎𝑈𝑈𝜖𝜖𝑂𝑂𝑝𝑝,𝑟𝑟෍\n𝑖𝑖=1\n𝑛𝑛\n|(𝑋𝑋𝑖𝑖−ത𝑋𝑋) −𝑈𝑈𝑈𝑈𝑇𝑇(𝑋𝑋𝑖𝑖−ത𝑋𝑋))|𝐹𝐹\n2\n68\nConvention 1\nConvention 2\n𝑈𝑈\nPrincipal component\nPrincipal direction\nLoading\nPrincipal axis\nPrincipal direction\n𝑈𝑈𝑇𝑇𝑋𝑋\nPrincipal component scores\nPrincipal component\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 69,
+    "heading": "Principal Component Analysis (PCA)  (2/2)",
+    "target_anchor": "w06-detail-pcr-appendix",
+    "text": "Principal Component Analysis (PCA)  (2/2)\nConnection with SVD\nS = 𝑋𝑋𝑋𝑋𝑇𝑇\n𝑛𝑛−1 = 𝑈𝑈𝑈𝑈𝑉𝑉𝑇𝑇𝑉𝑉𝑉𝑉𝑈𝑈𝑇𝑇\n𝑛𝑛−1\n= 𝑈𝑈𝐷𝐷2\n𝑛𝑛−1 𝑈𝑈𝑇𝑇= 𝑈𝑈Λ𝑈𝑈𝑇𝑇\nIn practice, we will often scale data before PCA \nWhiten data matrix (identity covariance matrix)\nΛ−1/2𝑈𝑈𝑇𝑇X\nZCA (Close to original data (often not reduce dimension))\n𝑈𝑈Λ−1/2𝑈𝑈𝑇𝑇X\n69\n",
+    "urls": [],
+    "coverage": "substantive topic aligned"
+  },
+  {
+    "page": 70,
+    "heading": "LAR and group Lasso in ESL",
+    "target_anchor": "w06-detail-lar-group",
+    "text": "LAR and group Lasso in ESL\nLeast Angle Regression\nhttps://scikit-learn.org/stable/modules/linear_model.html#least-angle-regression\nGroup Lasso\nhttps://group-lasso.readthedocs.io/en/latest/\nDeviance\nhttps://stackoverflow.com/questions/50975774/calculate-residual-deviance-from-scikit-\nlearn-logistic-regression-model\n70\n",
+    "urls": [
+      "https://scikit-learn.org/stable/modules/linear_model.html#least-angle-regression",
+      "https://group-lasso.readthedocs.io/en/latest/",
+      "https://stackoverflow.com/questions/50975774/calculate-residual-deviance-from-scikit-learn-logistic-regression-model"
+    ],
+    "coverage": "substantive topic aligned"
+  }
+]
