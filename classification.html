@@ -1847,11 +1847,22 @@ $$F_1=\frac{2\,\mathrm{precision}\,\mathrm{recall}}{\mathrm{precision}+\mathrm{r
 <p>分母是兩列相加約 0.02133，所以</p>
   $$\Pr(Y=1\mid X=x^*)\approx\frac{0.02013}{0.02133}\approx0.944,\qquad \Pr(Y=2\mid X=x^*)\approx0.056.$$
   <p>第三個特徵其實比較支持第 2 類（0.616 對 0.226），但前兩個連續特徵強烈支持第 1 類；乘起來後第 1 類勝出。可見 Naive Bayes 把各特徵的證據<strong>相乘</strong>，取 log 後就是相加。</p>
+<p><strong>加性（additive）</strong>就是把每個變數各自的作用相加：$a+g_1(x_1)+\cdots+g_p(x_p)$，每一項只看一個變數。各項可以彎曲，所以加性不一定是線性；它也不等於資料中的變數彼此獨立。本章比較 Naive Bayes 時，談的是<strong>log-odds 的加性</strong>。</p>
+<details class="qa-item reading-detail" id="w04-detail-additivity"><summary>名詞解釋：加性、線性與交互作用</summary>
+<div class="detail-body">
+  <p>令 $h(x)$ 代表模型分數；在本章的模型比較中，它是兩類之間的 log-odds。若能寫成</p>
+  $$h(x)=a+\sum_{j=1}^{p}g_j(x_j).$$
+  <p>就稱為<strong>加性</strong>：$a$ 是常數，各 $g_j$ 只接收自己的變數 $x_j$，算完再相加。某個變數的改變對這個分數帶來多少差異，不會隨其他變數的取值而改變。</p>
+  <p><strong>加性可以是非線性的。</strong>例如 $h(x_1,x_2)=x_1^2+3x_2$。把 $x_1$ 從 1 改成 2，第一項增加 $2^2-1^2=3$；無論 $x_2$ 是多少，分數都增加 3。$x_1^2$ 是彎曲的函數，但仍然只看 $x_1$，所以這個模型是加性的。</p>
+  <p><strong>交互作用</strong>則表示一個變數的作用會隨另一個變數而改變。例如加上 $x_1x_2$，把 $x_1$ 從 1 改成 2 時，這一項增加 $x_2$：$x_2=1$ 時增加 1，$x_2=5$ 時增加 5。它把兩個變數一起放進同一項，無法拆成只看 $x_1$ 與只看 $x_2$ 的兩項相加。</p>
+  <p><strong>線性模型是加性的特例。</strong>取 $g_j(x_j)=b_jx_j$，就得到 $a+\sum_jb_jx_j$。因此 LDA 或沒有交互項的邏輯斯迴歸，其線性 log-odds 也具有加性；Naive Bayes 允許各 $g_j$ 更彎曲，但在所用的特徵中沒有跨變數交互項。</p>
+  <p>Naive Bayes 的類內條件獨立假設，使類別密度可以相乘；取兩類後驗機率的比值再取 log，就得到各變數的 log 密度比相加。<strong>條件獨立是推出這個形式的模型假設，加性則是函數的形式</strong>，兩者不是同一個定義。最後把 log-odds 轉回機率時，轉換是非線性的，不能據此說機率也能拆成各變數的機率相加。</p>
+</div></details>
 <h4>講義的 Default 結果：為什麼 Naive Bayes 沒有贏過 LDA？</h4>
 <p>在 <code>Default</code> 上用 Gaussian Naive Bayes：門檻 0.5 時錯誤率 2.90%（LDA 為 2.75%），漏掉 244 個違約戶；門檻降到 0.2，錯誤率 4.58%、敏感度 61.0%（ISLP 表 4.8、4.9）。它沒有勝過 LDA，講義給的理由是 $n=10000$、$p=2$：資料量相對於特徵數非常充足，LDA 估一個 $2\times2$ 共變異數完全沒有困難，Naive Bayes 用獨立假設換來的「少估幾個參數」在這裡派不上用場，反而丟掉了兩個特徵之間的相關資訊。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th></th><th>對 f<sub>k</sub>(x) 的假設</th><th>邊界形狀</th><th>參數量（p 大時）</th><th>適合考慮的情境</th></tr></thead>
-  <tbody><tr><td>LDA</td><td>多變量常態，$\Sigma$ 共用</td><td>線性</td><td>少</td><td>真實邊界線性、各類近常態、n 小</td></tr><tr><td>QDA</td><td>多變量常態，$\Sigma$<sub>k</sub> 各自</td><td>二次</td><td>多（K·p(p+1)/2）</td><td>邊界明顯彎曲、n 大</td></tr><tr><td>Naive Bayes</td><td>類內獨立，一維密度任意</td><td>加性（可彎，但沒有交互項）</td><td>Gaussian 版本為 2Kp 個平均與變異數</td><td>p 大 n 小、變數近似獨立</td></tr><tr><td>邏輯斯迴歸</td><td>不假設（直接建模後驗）</td><td>線性</td><td>少（(K−1)(p+1)）</td><td>X 不常態、要做推論</td></tr><tr><td>KNN</td><td>不指定分布與邊界形式；仍依賴距離及鄰域</td><td>任意</td><td>—（存全部資料）</td><td>邊界極度彎曲、n ≫ p</td></tr></tbody>
+  <tbody><tr><td>LDA</td><td>多變量常態，$\Sigma$ 共用</td><td>線性</td><td>少</td><td>真實邊界線性、各類近常態、n 小</td></tr><tr><td>QDA</td><td>多變量常態，$\Sigma$<sub>k</sub> 各自</td><td>二次</td><td>多（K·p(p+1)/2）</td><td>邊界明顯彎曲、n 大</td></tr><tr><td>Naive Bayes</td><td>類內獨立，一維密度任意</td><td><a href="#w04-detail-additivity">加性</a>（可彎，但沒有交互項）</td><td>Gaussian 版本為 2Kp 個平均與變異數</td><td>p 大 n 小、變數近似獨立</td></tr><tr><td>邏輯斯迴歸</td><td>不假設（直接建模後驗）</td><td>線性</td><td>少（(K−1)(p+1)）</td><td>X 不常態、要做推論</td></tr><tr><td>KNN</td><td>不指定分布與邊界形式；仍依賴距離及鄰域</td><td>任意</td><td>—（存全部資料）</td><td>邊界極度彎曲、n ≫ p</td></tr></tbody>
 </table></div>
 <details class="qa-item reading-detail" id="w04-detail-lab-qda-1"><summary>完整實作：QuadraticDiscriminantAnalysis</summary>
 <div class="detail-body"><h3 id="dx-qda">講義完整實作：QDA 與 Naive Bayes</h3>
