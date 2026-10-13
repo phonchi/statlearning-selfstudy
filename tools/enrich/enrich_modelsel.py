@@ -194,10 +194,8 @@ BODIES["criteria"] = f"""
 {CP_CORE}
 
 {info("AIC 與 $C_p$ 的關係", '''對高斯誤差的最小平方模型，課本的 AIC 就是
-  $\\mathrm{RSS}+2d\\hat\\sigma^2$，跟 $C_p$ 成正比（所以 ISLP 圖 6.2 只畫 $C_p$）。
-  但實作（<code>statsmodels</code> 的 <code>.aic</code>）用的是 log-likelihood 版
-  $-2\\log L+2k$，它跟 $C_p$ <strong>不是</strong>單調對應，所以下圖把它畫成獨立一條線。
-  兩個版本都叫 AIC，看到數字差很多不要慌，先問是哪一個公式。''')}
+  $\\mathrm{{RSS}}+2d\\hat\\sigma^2$，跟 $C_p$ 成正比（所以 ISLP 圖 6.2 只畫 $C_p$）。
+  <code>statsmodels</code> 的 <code>.aic</code> 用的是 log-likelihood 版，數值與 $C_p$ 不同，所以下圖畫成獨立一條線；兩者的前提見下方「先分清估計量與比較量尺」收合區。''')}
 
 {table(["準則", "式子（最小平方）", "每多一個變數罰多少", "$n=400$ 時的懲罰", "Credit 選出"],
        [["$C_p$", "$(\\mathrm{RSS}+2d\\hat\\sigma^2)/n$", "$2\\hat\\sigma^2$", "$2\\hat\\sigma^2$", "<strong>6 個</strong>"],
@@ -215,25 +213,17 @@ BODIES["criteria"] = f"""
     ("Q：$C_p$、AIC、BIC 到底差在哪？為什麼 BIC 偏好小模型？",
      "<p>三個都是「訓練 RSS ＋ 一個隨模型變大而變大的懲罰」。差別只在懲罰的係數："
      "$C_p$ 與課本版 AIC 都是 $2d\\hat\\sigma^2$，BIC 是 $\\log(n)\\, d\\hat\\sigma^2$。"
-     "$\\log n > 2$ 對整數樣本數 $n\\ge8$ 成立（$e^2 \\approx 7.39$），所以 BIC 一律罰得比較重，"
-     "選出來的模型一律比較小或一樣大。$n=400$ 時 $\\log n \\approx 5.99$，懲罰差三倍。</p>"
-     "<p>背後的動機不同。$C_p$ 是<strong>估測試 MSE</strong>："
-     "對固定設計、預先指定的線性模型，計入全部投影維度的 $C_p$ 可估計同一 $X$ 上的新反應風險；完整條件與省略常數的差別見本節推導。"
-     "BIC 是從<strong>貝氏</strong>觀點來的，它在近似「這個模型是真模型的後驗機率」。"
-     "所以兩者的目標本來就不一樣：$C_p$／AIC 想預測得準，BIC 想找出<em>正確的</em>模型。"
-     "如果真模型確實在候選清單裡，$n$ 夠大時 BIC 會挑中它（一致性）；AIC 不保證，它會傾向多留幾個變數。</p>"
+     "BIC 的懲罰在 $n\\ge8$ 時較重（見上文），所以選出來的模型一律比較小或一樣大。</p>"
+     "<p>背後的動機不同：$C_p$／AIC 想預測得準，BIC 想找出<em>正確的</em>模型，詳見上方「漸近效率、選模一致性」收合區。</p>"
      "<p>實務上的建議：<strong>目的是預測就用 CV（或 AIC／$C_p$），目的是「哪些變數真的有關」就參考 BIC</strong>。"
      "而且兩者都要求你估得出 $\\hat\\sigma^2$——這在 $p&gt;n$ 的時候無法按全模型的常規公式計算（最後一節會講）。</p>"),
     ("Q：調整後 $R^2$ 為什麼「理論基礎比較弱」？",
-     "<p>$C_p$、AIC、BIC 都有明確的推導：$C_p$ 在固定模型與固定設計條件下修正樂觀偏差，AIC 來自 Kullback–Leibler 距離的漸近論證，"
-     "BIC 來自後驗機率的 Laplace 近似。調整後 $R^2$ 沒有這種東西。它就是「把 RSS 除以 $n-d-1$ 而不是 $n$」"
+     "<p>$C_p$、AIC、BIC 都有明確的推導目標（見上方收合區）。調整後 $R^2$ 沒有這種東西。它就是「把 RSS 除以 $n-d-1$ 而不是 $n$」"
      "這個直覺上合理的修正。</p>"
      "<p>它的直覺是對的：真正有用的變數都進來以後，再加雜訊變數通常只會讓 RSS 降一點點，"
      "但 $d$ 變大會讓分母 $n-d-1$ 變小，兩者相抵之下 $\\mathrm{RSS}/(n-d-1)$ 多半會變大、"
-     "調整後 $R^2$ 隨之下降；偶然的 RSS 改善也可能讓它上升（新增一欄時，上升等價於部分 $F>1$）。問題是「一點點」有多點沒有理論刻度，所以它的懲罰強度是任意的——"
-     "在 Credit 上它比 $C_p$ 還鬆（選 7 個 vs 6 個）。</p>"
-     "<p>順便記一件事：<strong>訓練 $R^2$ 在高維且設計矩陣列滿秩時可以做到 1</strong>，"
-     "但這時飽和模型的殘差自由度為 0，調整後 $R^2$ 的常規公式沒有定義。一般情況要按設計矩陣的秩計算自由度，不能直接把超過樣本數的欄數代入。</p>"),
+     "調整後 $R^2$ 隨之下降；偶然的 RSS 改善也可能讓它上升。問題是「一點點」有多點沒有理論刻度，所以它的懲罰強度是任意的——"
+     "在 Credit 上它比 $C_p$ 還鬆（選 7 個 vs 6 個）。</p>"),
 ])}
 
   <h3 id="dx-crit">講義完整實作：用 BIC 與調整後 $R^2$ 挑大小</h3>
@@ -292,8 +282,7 @@ BODIES["onese"] = f"""
     ("Q：既然 CV 最好，為什麼還要教 $C_p$、AIC、BIC？",
      "<p>三個理由。第一，運算成本：最佳子集有 $2^p$ 個模型，每個都跑 k-fold 是 $k \\cdot 2^p$ 次擬合；"
      "而 $C_p$ 只要一次擬合加一個修正項。第二，這三個準則會出現在<strong>別人的論文與報表</strong>裡，"
-     "你得看得懂。第三，它們解釋了「懲罰複雜度」這個想法的來源——"
-     "AIC 從 KL 散度來、BIC 從後驗機率來，各有各的目標。</p>"
+     "你得看得懂。第三，它們示範了「懲罰複雜度」這個想法，目標的差別見上一節。</p>"
      "<p>但如果你只是要挑一個模型來預測，而且資料量算得動：用 CV。</p>"),
     ("Q：one-SE 規則會不會選出「太簡單」的模型？",
      "<p>會，而且那是刻意的。它的立場是：<strong>在最佳 CV 誤差加一個標準誤的範圍內，偏好簡單</strong>。</p>"
@@ -744,17 +733,13 @@ BODIES["reference"] = f"""
 
 # 最新講義主題補全；維持既有 section 與導覽。
 BODIES['lasso'] += r"""
-<h3>收縮的貝氏解讀與延伸</h3>
-<p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 $\lambda$ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明；後驗眾數與後驗平均不同，Lasso 的後驗平均通常不會精確等於零。</p>
-<p>最小角度迴歸（least angle regression, LAR）從與殘差相關最大的特徵開始，沿活躍特徵的等角方向前進；其他特徵達到相同相關程度時加入。加上係數過零時退出的規則可追蹤 Lasso 路徑。Group Lasso 則以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰各組係數，讓同一類別變數的一組虛擬變數或同一組基底一起進出；選入的組內係數不必稀疏。</p>
+<h3>收縮的貝氏解讀</h3>
+<p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 $\lambda$ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明。</p>
 """
 BODIES['pcr'] += r"""
 <h3>從共變異數到白化</h3>
 <p>以下採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$。主成分方向是 $V$ 的欄，得分為 $XV=UD$；主成分方向滿足 $Sv=\lambda v$；最大變異與重建誤差的關係見下方證明。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
 <p>保留正特徵值方向後，白化得分 $Z=XV\Lambda^{-1/2}$ 的樣本共變異數為單位矩陣。ZCA 白化再乘上 $V^T$ 回到原特徵座標；保留全部正秩方向且滿秩時為 $XV\Lambda^{-1/2}V^T$。白化會把低變異方向放大，因此小特徵值可能放大雜訊；普通 PCR 不需要白化，也不能把白化當成保證改善預測的步驟。</p>
-"""
-BODIES['criteria'] += r"""
-<h3>分類模型的模型選擇</h3><p>子集搜尋也能套用邏輯斯迴歸等模型，但比較的擬合量要改為相應的概似。離差（deviance）定義為 $D=2(\ell_{\mathrm{sat}}-\ell_{\mathrm{fit}})$；它比較擬合模型與飽和模型，不能直接把分類誤差率代入 RSS 公式。AIC 為 $-2\ell_{\mathrm{fit}}+2k$，BIC 為 $-2\ell_{\mathrm{fit}}+k\log n$，$k$ 計入實際估計的參數。選定模型後的係數不確定性還受搜尋影響，不能忽略選模就直接沿用事先固定模型的推論。</p>
 """
 
 # COVERAGE-20260910 BEGIN
@@ -763,9 +748,8 @@ BODIES['criteria'] += r"""
 <h3>Cp 的風險目標、常數與選模</h3>
 <p>先固定 $X$ 及候選線性模型，不用 $y$ 搜尋欄位。令 $H$ 為其投影矩陣，$r=\operatorname{rank}(H)$ 計入截距，並假設 $y=\mu+\varepsilon$、$\operatorname{Cov}(\varepsilon)=\sigma^2I$。以相同 $X$ 上一組獨立新反應 $y^{new}$ 定義固定設計預測風險，完整的 $C_p$ 型估計為</p>
 $$\widehat R=\frac{\mathrm{RSS}+2r\hat\sigma^2}{n}.$$
-<p>$\hat\sigma^2$ 無偏時，這估計量對訓練反應重抽的期望等於上述風險；並非某次實現的測試 MSE，也不是任意新 X 的風險。若所有模型都含截距、$d$ 只數斜率，$r=d+1$；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
+<p>這是對訓練反應重抽的期望風險，不是某次實現的測試 MSE。若所有模型都含截距、$d$ 只數斜率，$r=d+1$；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
 <p>若每個大小的最佳模型也是用同一份 y 搜尋出來的，$H$ 已依賴 $y$，單純代入 $r$ 不會自動修正搜尋的樂觀偏差。</p>
-<p>AIC 的 $-2\hat\ell+2k$ 計入實際估計的參數；高斯模型共同固定 $\sigma^2$ 時，可化成 $\mathrm{RSS}/\sigma^2$ 加參數懲罰。各模型各自估 $\sigma^2$ 時，則出現 $n\log(\mathrm{RSS}/n)$，不能混用。BIC 以 $k\log n$ 懲罰，源於固定維度、正則模型的邊際概似近似；有限樣本、錯置或候選清單沒有真模型時，不保證找出真相。</p>
 """ + proof('w06proofCp', '固定設計預測風險的樂觀偏差', r"""
 <p>$H$ 對稱冪等，$\operatorname{tr}(H)=r$。訓練 RSS 的期望為</p>
 $$E\|(I-H)y\|^2=\|(I-H)\mu\|^2+\sigma^2(n-r).$$
@@ -782,25 +766,15 @@ BODIES['ridge'] += r"""
 """)
 BODIES['lasso'] += r"""
 <h3>Lasso 的零係數條件與座標更新</h3>
-<p>固定目標 $\|y-X\beta\|^2+\lambda\sum_j|\beta_j|$，令殘差 $r=y-X\hat\beta$。凸問題的最優條件是</p>
-$$2x_j^Tr=\lambda\operatorname{sign}(\hat\beta_j)\quad(\hat\beta_j\ne0),\qquad
-|2x_j^Tr|\le\lambda\quad(\hat\beta_j=0).$$
-<p>在零點要使用次梯度區間 $[-1,1]$，不能把絕對值當作處處可微。一般 $X$ 可採座標下降：固定其他係數，令 $r_{-j}=y-X_{-j}\beta_{-j}$，更新</p>
-$$\beta_j\leftarrow\frac{\operatorname{sign}(x_j^Tr_{-j})(|x_j^Tr_{-j}|-\lambda/2)_+}{x_j^Tx_j}.$$
-<p>常數欄須先處理；反覆更新直到目標或最優條件達到指定精度。不同套件若用 $\mathrm{RSS}/(2n)$，相同 $\lambda$ 的數字不能直接比較。</p>
-""" + proof('w06proofLasso', '軟門檻與零點的次梯度', r"""
-<p>正交設計 $X^TX=I$ 下，令 $z=X^Ty$，目標逐座標分開，和上方「解釋二」的對角情形相同（把 $y_j$ 換成 $z_j$），得到軟門檻 $\operatorname{sign}(z_j)(|z_j|-\lambda/2)_+$。</p>
-<p>$\beta=0$ 處，最優條件為 $0\in-2z+\lambda[-1,1]$，等價於 $|z|\le\lambda/2$。三種情況合併得到 soft threshold。一般座標更新把平方項換成 $(x_j^Tx_j)\beta_j^2-2(x_j^Tr_{-j})\beta_j$，同一推理給正文更新式。對整體目標做次梯度條件便得到零與非零係數的 KKT 條件。</p>
-""") + proof('w06proofMAP', '高斯／Laplace 先驗如何變成 Ridge／Lasso', r"""
+<p>一般的 $X$ 沒有閉式解。套件常用座標下降：固定其他係數，只對 $\beta_j$ 求解，結果正是解釋二的軟門檻（把 $y_j$ 換成 $x_j$ 對部分殘差的內積，再除以 $x_j^\top x_j$）；逐一更新直到收斂。不同套件若用 $\mathrm{RSS}/(2n)$，相同 $\lambda$ 的數字不能直接比較。</p>
+""" + proof('w06proofMAP', '高斯／Laplace 先驗如何變成 Ridge／Lasso', r"""
 <p>獨立 $N(x_i^T\beta,\sigma^2)$ 反應的負對數概似，除去與 $\beta$ 無關的常數後為 $\mathrm{RSS}/(2\sigma^2)$。各斜率獨立 $N(0,\tau^2)$ 的負對數先驗為 $\sum_j\beta_j^2/(2\tau^2)$；負對數後驗相加後乘以 $2\sigma^2$，成為 $\mathrm{RSS}+(\sigma^2/\tau^2)\sum_j\beta_j^2$。</p>
 <p>Laplace 密度為 $e^{-|\beta_j|/b}/(2b)$，負對數先驗為 $\sum_j|\beta_j|/b$ 加常數，因此乘以 $2\sigma^2$ 後 $\lambda=2\sigma^2/b$。截距使用不懲罰的設定；$\sigma$、$\tau$、$b$ 在此視為固定。這是後驗眾數，後驗平均須積分計算，一般不會因 Laplace 先驗精確歸零。</p>
 """)
 BODIES['lasso'] += r"""
 <h3>最小角度迴歸與 Group Lasso</h3>
-<p>LAR 先中心化 y，將特徵中心化並調成相同長度；從全零係數開始，找到與殘差絕對相關最大的特徵。沿其方向前進，直到另一個特徵達到相同絕對相關，再讓兩個特徵一起沿等角方向前進；重複加入活躍特徵，得到分段線性係數路徑。Lasso 路徑版本還要在活躍係數走到零時把它移除；所以 LAR 與 Lasso 不能當同一演算法。可用 <code>Lars</code>／<code>lars_path</code> 看 LAR 路徑，用 <code>LassoLars</code> 看對應 Lasso 版本。</p>
-<p>Group Lasso 在事先指定、不重疊的特徵組上解</p>
-$$\min_{\beta_0,\beta}\frac1{2n}\|y-\beta_0\mathbf1-X\beta\|^2+\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2.$$
-<p>$p_g$ 是組內欄數；截距不懲罰，組別與縮放應在擬合前交代。例如「季節」的三個虛擬欄可作一組，「溫度」為另一組。$\lambda$ 增大可把整組季節係數設成零；保留季節時，組內每個係數並不保證非零。應以同樣組別與前處理在訓練折內選 $\lambda$。</p>
+<p>講義附錄只列出這兩個方法的連結，這裡各用一句話說明。LAR 從與殘差相關最大的特徵開始，沿活躍特徵的「等角」方向前進，其他特徵的相關追平時再加入；加上「係數走到零就移出」的規則，就能算出整條 Lasso 路徑（sklearn 的 <code>lars_path</code>、<code>LassoLars</code>）。</p>
+<p>Group Lasso 以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰事先指定的各組係數，讓同一類別變數的虛擬欄或同一組基底整組進出模型；選入的組內係數不必稀疏。</p>
 <p>來源：<a href="https://scikit-learn.org/stable/modules/linear_model.html#least-angle-regression">LAR／Lasso 路徑官方說明</a>、<a href="https://group-lasso.readthedocs.io/en/latest/">Group Lasso 文件</a>。</p>
 """
 BODIES['pcr'] += r"""
@@ -814,12 +788,7 @@ BODIES['pcr'] += r"""
 """)
 BODIES['pls'] += r"""
 <h3>PLS1：從方向到可用於新資料的預測</h3>
-<p>以下固定單一反應的 PLS1 版本。先用訓練資料中心化 y，並按選定方式中心化及縮放 X；記 $X_0=X,y_0=y$。第 m 步依序計算：</p>
-$$w_m=\frac{X_{m-1}^Ty_{m-1}}{\|X_{m-1}^Ty_{m-1}\|},\quad t_m=X_{m-1}w_m,$$
-$$p_m=\frac{X_{m-1}^Tt_m}{t_m^Tt_m},\quad q_m=\frac{y_{m-1}^Tt_m}{t_m^Tt_m},\quad
-X_m=X_{m-1}-t_mp_m^T,\quad y_m=y_{m-1}-t_mq_m.$$
-<p>若方向分子或 $t_m^Tt_m$ 為零，已沒有可用的新成分，停止。第一方向會看 X 與 y 的共變動；後續方向用扣掉既有得分成分後的殘差。成分數 $M$ 在訓練折內選，縮放與方向都須重新估計。</p>
-<p>預測新的一列時，先用訓練平均與尺度轉換為 $x_0^*$。依序計算 $t_m^*=x_{m-1}^{*T}w_m$，更新 $x_m^*=x_{m-1}^*-t_m^*p_m$；預測為 $\bar y+\sum_mq_mt_m^*$，若 y 也有縮放須再乘回其尺度。這個遞迴明確規定了如何把訓練好的 PLS 用於新資料，不能每次用新資料重算方向。</p>
+<p>講義只說「取殘差後重複」：第一個方向 $w_1\propto X^\top y$ 算出得分 $t_1=Xw_1$ 後，把 $X$ 與 $y$ 中能由 $t_1$ 解釋的部分扣掉，在殘差上用同樣方式找第二個方向，依此類推。預測新資料時，沿用訓練時估好的平均、尺度與各步方向，不能用新資料重算方向。完整遞迴見 ESL 第 3.5 節。</p>
 
 """
 
@@ -835,11 +804,8 @@ BODIES['reference'] += r"""
 BODIES['lasso'] += r"""
 <h3>限制式與懲罰式：如何對應？</h3>
 <p>令 $P(\beta)=\|\beta\|_1$（Lasso）或 $\|\beta\|_2^2$（Ridge）。兩種問題分別為 $\min\{\mathrm{RSS}+\lambda P(\beta)\}$ 與 $\min\mathrm{RSS}$ subject to $P(\beta)\le s$。它們可用適當參數得到同一個解，但<strong>$\lambda$與$s$一般不是一對一</strong>，對應也依資料而變。</p>
-<p>Ridge的$s=0$強制斜率全零，但一般非零訊號須讓$\lambda$趨近$\infty$才達到，未必存在有限$\lambda$。Lasso也不保證任何正$\lambda$就產生零係數。</p>
-""" + proof('w06proofConstraint','凸限制問題與懲罰問題的解',r"""
-<p>若 $\hat\beta_\lambda$ 最小化 $L+\lambda P$，取 $s=P(\hat\beta_\lambda)$。假如有可行$\beta$使$L$更小，則$P(\beta)\le s$，故 $L(\beta)+\lambda P(\beta)&lt;L(\hat\beta_\lambda)+\lambda P(\hat\beta_\lambda)$，與最優性矛盾，因此同時解限制式。</p>
-<p>反向在凸$L$、凸$P$及嚴格可行性成立時（本例$s&gt;0$即可用$\beta=0$），KKT給某個$\lambda\ge0$，使 $0\in\nabla L(\hat\beta)+\lambda\partial P(\hat\beta)$ 與 $\lambda(P(\hat\beta)-s)=0$。前式就是懲罰問題的充分最優條件。限制不活躍可取$\lambda=0$；$s=0$等邊界需另查，不能用此論證強行宣稱有限$\lambda$存在。</p>
-""")
+<p>兩者之間的對應來自 Lagrange 乘數（凸最佳化的 KKT 條件）。</p>
+"""
 BODIES['pcr'] += r"""
 <h3>正交、不相關與獨立是三件事</h3>
 <p>向量正交表示內積為零；資料欄位的樣本不相關表示<strong>中心化之後</strong>的內積為零。PCA先中心化，得分共變異數是對角矩陣，所以不同得分欄位樣本不相關。這不等於它們統計獨立；獨立要求整個聯合分布可分解。</p>

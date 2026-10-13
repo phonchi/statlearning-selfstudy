@@ -50,22 +50,19 @@ $$-2\hat\ell=n\log(\mathrm{RSS}/n)+n[1+\log(2\pi)].$$
 $$\frac{R_1}{\nu-1}\lt\frac{R_0}{\nu}\quad\Longleftrightarrow\quad R_0-R_1\gt\frac{R_0}{\nu}.$$
 <p>用新模型殘差變異數寫出的單欄部分 F 值為 $(R_0-R_1)/(R_1/(\nu-1))$；上述條件也等價於 $F&gt;1$。這只是選模門檻，不等於常用顯著水準下的假設檢定門檻。</p>
 ''') + r'''
-<p>BIC 的目的是在正則、固定維度等條件下近似模型證據；較重懲罰常選較小模型，不等於其測試誤差一定較低，也不能把選中的變數當成因果因素。相反，CV 的選擇目標由 scoring 決定：用 MSE、$R^2$ 或分類對數損失可能得到不同的模型。</p>
+<p>CV 的選擇目標由 scoring 決定：用 MSE、$R^2$ 或分類對數損失可能得到不同的模型。</p>
 <p>延伸對照：<a href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.aic.html">OLSResults.aic</a>、<a href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.bic.html">OLSResults.bic</a>、<a href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.rsquared_adj.html">調整後 $R^2$ 定義</a>。</p>
 ''')],
-'onese': [('selection-cv','模型大小與 one-SE：CV 必須重做整段搜尋',r'''
-<p>對每個大小 $k$，CV 評估的是「在訓練資料上找出一個 $k$ 變數模型」這個程序，不是「全資料先選好一個固定欄位集合」之後再驗證。每一折都必須重新做 Forward／Backward 搜尋，然後用該折選出的欄位預測保留資料。不同折同樣是 $k$ 變數，實際的欄位仍可能不同。Lab 的完整路徑與自訂雙層迴圈都在教這一點。</p>
+'onese': [('selection-cv','模型大小與 one-SE 規則',r'''
 <p>設第 $b$ 折、大小 $k$ 的保留資料 MSE 為 $E_{bk}$，先算 $K$ 折的平均，再找最小者 $k^*$。one-SE 規則把可接受區間的上緣設為最佳模型的平均誤差加上<strong>最佳點的</strong>標準誤，最後取仍在區間內的最小 $k$：</p>
 $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.$$
-<p>one-SE 規則會在這個範圍內偏好較簡單的模型，但不能據此宣稱它們的真實風險相同。標準誤怎麼估、它為什麼只是粗略指標，以及 <code>RepeatedKFold</code> 的做法，見上方的<a href="#w06-detail-cv-se">CV 標準誤收合區</a>。</p>
-<p>講義 Credit 的驗證切分用四分之三訓練、四分之一驗證，CV 用十折；Hitters Lab 則示範五折及 20% 的單次驗證。二者都比較模型大小，但數據與分折設定不同，不能拿誤差值相互核對。若要報告選完大小後的泛化效能，應另留測試資料或用外層 CV，連到<a href="resampling_methods.html#w05-detail-nested-cv">第五章的 Nested CV</a>。</p>
+<p>標準誤怎麼估、它為什麼只是粗略指標，以及 <code>RepeatedKFold</code> 的做法，見上方的<a href="#w06-detail-cv-se">CV 標準誤收合區</a>。</p>
+<p>講義 Credit 的驗證切分用四分之三訓練、四分之一驗證，CV 用十折；Hitters Lab 則示範五折及 20% 的單次驗證。二者都比較模型大小，但數據與分折設定不同，不能拿誤差值相互核對。</p>
 <p>來源：<a href="https://www.cs.cmu.edu/~psarkar/sds383c_16/lecture9_scribe.pdf">講義連結的交叉驗證筆記</a>、<a href="https://scikit-learn.org/1.6/modules/cross_validation.html">sklearn CV 操作</a>。</p>
 ''')],
-'ridge': [('ridge-bias','收縮為何可能更準？從量尺、方向與偏差變異來看',r'''
-<p>對同一資料，若把 $x_j$ 乘 $c$，OLS 可把 $\beta_j$ 除 $c$，讓預測不變。但 Ridge 的係數平方懲罰會除以 $c^2$，於是量尺改變了對這個變數的懲罰。標準化讓各欄在選定的尺度上接受懲罰，並沒有把反應轉成常態分布。平均與尺度都只能由當次訓練資料估計，之後套到保留資料。</p>
+'ridge': [('ridge-bias','收縮為何可能更準？偏差與變異的取捨',r'''
 <p>不懲罰截距時，$\lambda$ 趨近無限會讓斜率趨近零，預測趨近訓練平均；不是所有預測都趨近零。有限 $\lambda$ 下，Ridge 不具有 Lasso 那樣的門檻選擇機制，但個別係數可能因對稱或恰好沒有方向訊號而等於零。因此「通常不產生稀疏解」比「任何資料都絕不會有零係數」精確。</p>
-<p>講義的正交例子 $X=I$ 讓 Ridge 的每個係數變成 $y_j/(1+\lambda)$。一般資料則是在主方向上收縮：小奇異值方向較不穩定，Ridge 對它們壓得更強。接受偏差可減少訓練樣本擾動引起的變異；但 $\lambda$ 太大又會把真正訊號壓掉。因此測試 MSE 常先降後升，不能以「懲罰越強越好」理解正則化。</p>
-<p>講義的第一個模擬含較多有用變數，第二個只保留兩個真正有用變數。這改變了 Ridge 與 Lasso 各自適合的結構，不是同一資料只改畫圖。稀疏訊號可能有利 Lasso，許多弱訊號可能有利 Ridge；真實資料不知道是哪一種，仍需以同一切分與評分比較。</p>
+<p>Ridge 接受一點偏差來減少訓練樣本擾動引起的變異；但 $\lambda$ 太大又會把真正訊號壓掉。因此測試 MSE 常先降後升，不能以「懲罰越強越好」理解正則化。</p>
 <p>方法推導：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/regularized.html">原作者的正則化教材</a>；軟體目標：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.Ridge.html">Ridge API</a>。</p>
 ''')],
 'lambda': [('lambda-conventions','$\\lambda$ 的名稱、套件的 alpha 與最終效能：Lab 要分三步讀',r'''
@@ -84,19 +81,17 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <p>講義用城市人口 pop 與廣告花費 ad 說明 PCA。先減去每一欄平均，第一方向沿點雲最大的變動方向，第二方向與其垂直。每個點投影到第一方向後的座標是得分，原點到該點的距離不是得分。旋轉座標後，第一得分與原來兩欄通常都有較強關係，第二得分表示第一方向未保留的差異。</p>
 <p>這個投影最小化的是<strong>各點到子空間的垂直平方距離</strong>，並不是把 ad 當反應、只最小化其縱向殘差的 OLS 直線。中心化決定方向要穿過平均點；縮放決定哪一種距離／變異受到重視。若原量尺本來具有共同科學意義，可以不標準化；若人口與費用量尺差異很大，標準化讓兩欄各以一個標準差衡量。PCA 不要求變數有相同物理單位，但要明確選定比較尺度。</p>
 <h3>附錄矩陣為何看起來轉置了？</h3>
-<p>本文用 $n\times p$ 的 $X$（每列一筆觀測），講義附錄用 $p\times n$ 的 $A=X^\top$（每欄一筆）。所以其 $S=AA^\top/(n-1)$ 對應本文的 $X^\top X/(n-1)$，講義得分 $U^\top A$ 對應本文 $XV$。閱讀 $U$、$V$ 時，要連同資料矩陣的排列一起看；相同字母在兩種排列下可能代表不同的方向。樣本共變異數用分母 $n-1$，投影變異若用分母 $n$，會相差 $(n-1)/n$；特徵方向不變，特徵值數值不同。</p>
-<p>把 $X$ 中心化後，第一方向最大化 $v^\top Sv$，且 $\|v\|=1$；後續方向要求與先前方向正交。對稱半正定 $S$ 的特徵值由大到小排列，各得分的樣本變異為對應特徵值。說「主成分」時，有時指方向、有時指得分；本文用 loading／方向代表 $p$ 維向量，用 score／得分代表每筆資料投影後的數值。</p>
+<p>本文用 $n\times p$ 的 $X$（每列一筆觀測），講義附錄用 $p\times n$ 的 $A=X^\top$（每欄一筆）。所以其 $S=AA^\top/(n-1)$ 對應本文的 $X^\top X/(n-1)$，講義得分 $U^\top A$ 對應本文 $XV$。閱讀 $U$、$V$ 時，要連同資料矩陣的排列一起看。</p>
 <h3>白化是不是更好的 PCR？</h3>
-<p>PCA 先去除得分之間的線性共變異，但各得分變異不同；白化再除以各方向標準差，讓保留得分的共變異數為 $I$。ZCA 再旋轉回原座標。零特徵值不能取倒數，降秩回投影只在保留子空間中白化；小特徵值會放大雜訊。若對<strong>相同的保留方向</strong>做無懲罰 OLS，任意非零縮放可由迴歸係數抵消，不會改變擬合空間；所以白化本身不等於降低 PCR 的測試誤差。</p>
+<p>不是。對相同的保留方向做無懲罰 OLS，各得分的縮放會被迴歸係數抵消，擬合不變；白化的定義與限制見上方<a href="#w06-detail-whitening">共變異數、SVD 與白化</a>。</p>
 <h3>解釋 $X$ 的變異，不是解釋 $y$ 的變異</h3>
 <p>Lab 的 <code>explained_variance_ratio_</code> 是 PCA 對 $X$ 的變異解釋比例；不能讀成 Salary 的解釋比例。少數 PC 捕捉大部分 $X$ 變異，仍可能漏掉對 $y$ 很重要的低變異方向。講義的模擬有一組把所有反應資訊放在前五個 PC，這才讓 $M=5$ 成為特別有效的結構；一般資料沒有這個保證。$M$ 的選擇應使用預測 CV，而非只以累積 $X$ 變異達到某百分比決定。</p>
 <p>PCR 的原始係數限制在前 $M$ 個方向張成的子空間。它保留的是主成分方向，而沒有直接選出一組原始欄。Lab 將 <code>StandardScaler</code>、<code>PCA</code> 與 <code>LinearRegression</code> 放在同一 Pipeline 搜尋 $M$，讓每折重新學方向。只含截距的空模型可另行計算，不能把某個 API 的零成分是否可用當成空模型不存在的理由。</p>
 <p>對照：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.decomposition.PCA.html">PCA API 與得分／解釋變異</a>、<a href="https://scikit-learn.org/1.6/auto_examples/cross_decomposition/plot_pcr_vs_pls.html">PCR 與 PLS 官方例子</a>；完整非監督式解讀見<a href="unsupervised_learning.html">非監督式學習章</a>。</p>
 ''')],
 'pls': [('pls-reading','PLS 與 OLS：看了 $y$ 的方向是否一定較好？',r'''
-<p>PLS 的第一方向由 $X^\top y$ 決定，因此需要已觀測的訓練反應；PCR 的方向只看 $X$。先把每一欄 $X$ 調成同一標準差後，個別單變數斜率與相關係數共用一個比例常數，於是講義用「與 $y$ 關係愈強，權重愈大」解釋第一方向。若沒標準化，斜率與相關的換算包含各欄不同的標準差，不能直接照相關排名配置權重。</p>
+<p>PLS 的第一方向由 $X^\top y$ 決定，因此需要已觀測的訓練反應；PCR 的方向只看 $X$。講義用「與 $y$ 關係愈強，權重愈大」解釋第一方向，這需要先標準化（見<a href="#w06-detail-pls-covariance">PLS 的共變異目標</a>）。</p>
 <p>PLS 第一方向不等於直接求 OLS 的係數：OLS 用 $X^\top X$ 的逆（或廣義逆）處理變數之間的相關，PLS 從 $X^\top y$ 的方向開始，再逐步消去已解釋的成分。對完整秩方向使用足夠多成分，PLS 可重現 OLS 擬合；保留少數方向才施加低維限制。PLS 會形成新方向並逐步扣除已解釋的部分，不能只把各欄單變數回歸的預測值相加。</p>
-<p>每一步扣除 $X$ 及 $y$ 中已由得分解釋的部分，再估下一方向，避免重複提取相同訊號。下方的 PLS1 演算法把方向、loading、反應係數分開表示，因為方向用來生成得分，loading 用來扣除 $X$，反應係數用來還原 $y$，三者不能混成同一向量。</p>
 <p>「看了 $y$」可避免 PCR 忽略低變異預測方向，但也可能把訓練雜訊當訊號。增加 $M$ 仍有偏差與變異取捨，所以 Lab 對 <code>PLSRegression(n_components=M)</code> 做 CV，而不是預設 $M$ 越大越好。其 <code>scale=True</code> 預設會在擬合時縮放 $X$ 與 $y$，若另加 StandardScaler 要分清每一步處理什麼；預測會回到 $y$ 的原量尺。</p>
 <p>比較 PCR、PLS、Ridge 或 Lasso 時，使用同樣資料、同樣保留折與相同 MSE 定義。講義圖中的方向關係和 Lab 的 Hitters 最佳成分數，不構成某方法在所有資料上比較好的證據。</p>
 <p>來源：<a href="https://scikit-learn.org/1.6/modules/cross_decomposition.html">PLS 官方方法說明</a>、<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.cross_decomposition.PLSRegression.html">PLSRegression API</a>。</p>
@@ -114,8 +109,7 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
             bodies[sec] += '\n' + detail('w06-detail-'+slug, title, body)
     # Expand existing topic blocks in place, preserving deep links and avoiding duplicates.
     extra = {
-'w06-detail-lar-group': r'''<h3>為何要整組選？如何讀路徑？</h3><p>類別因素的虛擬欄、樣條的一組基底或同一種測量的特徵，往往是共同描述一個現象。一般 Lasso 分別懲罰各欄，可能保留一部分；Group Lasso 用組內 L2 長度、組間 L1 型加總，把「整組是否保留」作為稀疏單位。$\sqrt{p_g}$ 是常見組大小權重，可降低大組僅因欄數多就較容易入選的影響，但具體權重仍要配合量尺與設計。</p><p>只有一欄一組時，組 L2 範數就是絕對值，退化為一般 Lasso。只有全部欄一組時，它懲罰係數長度 $\|\beta\|_2$，不是 Ridge 的平方長度，因此不能把兩者視為同一方法。若希望組內也能產生零係數，sparse-group lasso 會再加上 L1 項，因此要和原來的 Group Lasso 目標分開看。</p><p>LAR 的等角方向是與所有活躍欄（依相關符號對齊後）成相同角度；不是把多個迴歸係數做普通平均。沿著路徑前進時，下一個事件是其他特徵的相關程度追平；Lasso 版本還要處理活躍係數走到零時退出的情況。高度相關或重複欄會造成退化，實作的數值條件影響路徑。</p><p>Group Lasso 文件的套件另需安裝，並不是 sklearn 的內建 estimator；先確認組別編碼與截距、縮放設定。閱讀這個延伸主題就能理解講義附錄，沒有必要為此更換課堂環境。原始方法參考：<a href="https://hastie.su.domains/Papers/LARS/LeastAngle_2002.pdf">Least Angle Regression 作者論文</a>；<a href="https://group-lasso.readthedocs.io/en/latest/maths.html">Group Lasso 目標與權重</a>。</p>''',
-'w06-detail-shrinkage-map': r'''<h3>先驗密度與零係數是不同件事</h3><p>常態先驗把較大係數以平方尺度壓低機率密度，Laplace 先驗在零附近有尖角、尾部較厚；取後驗眾數時，尖角對應 L1 的次梯度區間，才可能把估計值停在零。Laplace 是連續分布，先驗本身並沒有在 $\beta=0$ 放一個正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」。</p><p>後驗正比於概似乘先驗，不必先算邊際化常數就能找眾數，因為常數不依 $\beta$ 改變。但若要後驗機率、區間或平均，就要處理整個分布。此處 MAP 的對照固定 $\sigma^2$ 及先驗尺度、不懲罰截距；若同時估 $\sigma^2$ 或改截距先驗，應重新寫目標。</p><p>原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。下方證明逐項保留 $\sigma^2$、$\tau^2$、$b$ 的常數，讓 $\lambda$ 的對照不會因 $\mathrm{RSS}/2$ 的寫法混淆。</p>''',
+'w06-detail-shrinkage-map': r'''<p>Laplace 是連續分布，先驗本身沒有在 $\beta=0$ 放正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」；歸零來自取後驗眾數時 L1 懲罰的尖角。原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。</p>''',
 'w06-detail-deviance': r'''<h3>為何分類要輸入機率？</h3><p>離差評估的是模型為已觀察標籤分配了多少機率。預測相同類別的兩個模型，若一個機率接近 0.5、另一個非常接近正確標籤，分類錯誤率可以相同而離差不同；錯誤且過度自信時，對數損失會很大。二元逐筆 Bernoulli 的飽和概似為零，故離差是總對數損失的兩倍；合併成分組二項計數時，飽和項通常不再是零，要重新用完整定義。</p><p>sklearn 的 <code>predict_proba</code> 欄序由 <code>classes_</code> 決定；<code>log_loss</code> 的平均或總和由 <code>normalize</code> 決定。相同樣本數時兩者排序一致，數值仍相差 $n$ 倍。若要求 AIC／BIC 的常規最大概似版本，也要檢查邏輯斯模型是否取消預設正則化，而非直接把懲罰擬合當 MLE。</p><p>來源：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.metrics.log_loss.html">log_loss 定義</a>、<a href="https://www.statsmodels.org/stable/generated/statsmodels.genmod.families.family.Binomial.deviance.html">Binomial deviance</a>。</p>'''
     }
     for sec in bodies:

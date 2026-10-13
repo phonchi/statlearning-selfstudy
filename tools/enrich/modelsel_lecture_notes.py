@@ -42,7 +42,7 @@ SUBSET_DEVIANCE = r"""
   <p>講義接著指出，這套做法不限最小平方，邏輯斯迴歸等其他模型也能用；這時以<strong>離差</strong>（deviance）取代 RSS 當擬合量。</p>
 """ + detail("w06-detail-subset-deviance", "延伸閱讀：離差為什麼能取代 RSS？", r"""
   <p>離差和負二倍最大對數概似成比例：$D=-2\log\hat L+\text{常數}$，常數只和資料有關、與模型無關。愈小代表擬合愈好，角色和 RSS 一樣。</p>
-  <p>對誤差變異數 $\sigma^2$ 已知的常態線性模型，$-2\log\hat L=\mathrm{RSS}/\sigma^2+\text{常數}$，離差就是 RSS 換了量尺。所以講義的兩階段法可以原封不動搬過去：第一階段在同大小模型間比離差；第二階段同樣不能用訓練離差（巢狀模型加變數不會讓它變大），要改用 AIC、BIC 或 CV。分類模型的完整定義、AIC／BIC 寫法與軟體量尺，見下一節的<a href="#w06-detail-classification-selection">分類模型的模型選擇</a>與<a href="#w06-detail-deviance">分類離差的數值</a>。</p>
+  <p>對誤差變異數 $\sigma^2$ 已知的常態線性模型，$-2\log\hat L=\mathrm{RSS}/\sigma^2+\text{常數}$，離差就是 RSS 換了量尺。所以講義的兩階段法可以原封不動搬過去：第一階段在同大小模型間比離差；第二階段同樣不能用訓練離差（巢狀模型加變數不會讓它變大），要改用 AIC、BIC 或 CV。這時 AIC 寫成 $-2\log\hat L+2k$、BIC 寫成 $-2\log\hat L+k\log n$，$k$ 計入實際估計的參數；軟體的數值量尺見下一節的<a href="#w06-detail-deviance">分類離差的數值</a>。</p>
 """)
 
 STEPWISE_WHY = r"""
@@ -56,7 +56,7 @@ STEPWISE_WHY = r"""
             [["母體的期望測試誤差（理想，實際上不知道）", "可以辨識每個候選模型的真實預測風險"],
              ["獨立驗證集，或正確執行的 CV", "可以緩解，但仍有估計誤差，挑最小值也有選擇偏差"],
              ["$C_p$、AIC、BIC", "可能修正不足"]]) + r"""
-  <p>$C_p$、AIC、BIC 的懲罰只看模型大小 $k$，沒有反映「從 $\binom{p}{k}$ 個候選中挑出最好的一個」所增加的選擇複雜度；它們的推導前提是模型事先固定。若先在整份資料上做第一階段，再對留下的模型做 CV，也不對：驗證折已經參與了變數選擇。正確的 CV 要在每個訓練折內重新做最佳子集。</p>
+  <p>$C_p$、AIC、BIC 的懲罰只看模型大小 $k$，沒有反映「從 $\binom{p}{k}$ 個候選中挑出最好的一個」所增加的選擇複雜度；它們的推導前提是模型事先固定。正確的 CV 要在每個訓練折內重新做最佳子集，見上方「為什麼要分兩階段」收合區。</p>
   <h4>什麼情況下最後的評估不受污染</h4>
   <ol>
     <li>在訓練資料上執行最佳子集選擇。</li>
@@ -249,7 +249,7 @@ LASSO_WHY_DIAG = r"""
     <li>$\beta_j<0$：$g'=-2(y_j-\beta_j)-\lambda=0$，得 $\beta_j=y_j+\lambda/2$，需要 $y_j<-\lambda/2$。</li>
     <li>$\beta_j=0$：絕對值在 0 不可微，改用次梯度：$0\in-2y_j+\lambda[-1,1]$，等價於 $|y_j|\le\lambda/2$。</li>
   </ul>
-  <p>三種情況正好把實數線分完，合併就是 $\hat\beta_j^L=\operatorname{sign}(y_j)\,(|y_j|-\lambda/2)_+$。關鍵在第三種情況：$|\beta_j|$ 在 0 有尖角，次梯度是一整段區間 $[-1,1]$，只要 $|y_j|$ 落在 $\lambda/2$ 以內，0 就滿足最優條件。$\beta_j^2$ 在 0 是平滑的，導數只有 0 一個值，只有 $y_j=0$ 時解才會是 0。一般 $X$ 的座標下降更新與 KKT 條件，見本節後面的<a href="#w06-detail-lasso-solution">Lasso 的零係數條件</a>。</p>
+  <p>三種情況正好把實數線分完，合併就是 $\hat\beta_j^L=\operatorname{sign}(y_j)\,(|y_j|-\lambda/2)_+$。關鍵在第三種情況：$|\beta_j|$ 在 0 有尖角，次梯度是一整段區間 $[-1,1]$，只要 $|y_j|$ 落在 $\lambda/2$ 以內，0 就滿足最優條件。$\beta_j^2$ 在 0 是平滑的，導數只有 0 一個值，只有 $y_j=0$ 時解才會是 0。一般 $X$ 怎麼求解，見本節後面的<a href="#w06-detail-lasso-solution">座標更新</a>。</p>
 """)
 
 LASSO_WHY_BAYES = r"""

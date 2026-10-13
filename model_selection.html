@@ -831,7 +831,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <details class="qa-item reading-detail" id="w06-detail-subset-deviance"><summary>延伸閱讀：離差為什麼能取代 RSS？</summary>
 <div class="detail-body">
 <p>離差和負二倍最大對數概似成比例：$D=-2\log\hat L+\text{常數}$，常數只和資料有關、與模型無關。愈小代表擬合愈好，角色和 RSS 一樣。</p>
-<p>對誤差變異數 $\sigma^2$ 已知的常態線性模型，$-2\log\hat L=\mathrm{RSS}/\sigma^2+\text{常數}$，離差就是 RSS 換了量尺。所以講義的兩階段法可以原封不動搬過去：第一階段在同大小模型間比離差；第二階段同樣不能用訓練離差（巢狀模型加變數不會讓它變大），要改用 AIC、BIC 或 CV。分類模型的完整定義、AIC／BIC 寫法與軟體量尺，見下一節的<a href="#w06-detail-classification-selection">分類模型的模型選擇</a>與<a href="#w06-detail-deviance">分類離差的數值</a>。</p>
+<p>對誤差變異數 $\sigma^2$ 已知的常態線性模型，$-2\log\hat L=\mathrm{RSS}/\sigma^2+\text{常數}$，離差就是 RSS 換了量尺。所以講義的兩階段法可以原封不動搬過去：第一階段在同大小模型間比離差；第二階段同樣不能用訓練離差（巢狀模型加變數不會讓它變大），要改用 AIC、BIC 或 CV。這時 AIC 寫成 $-2\log\hat L+2k$、BIC 寫成 $-2\log\hat L+k\log n$，$k$ 計入實際估計的參數；軟體的數值量尺見下一節的<a href="#w06-detail-deviance">分類離差的數值</a>。</p>
 </div></details>
 <p><strong>講義指出最佳子集的兩個問題。</strong>計算上，$2^p$ 長得太快，$p$ 超過 40 左右就算不完。統計上，搜尋空間愈大，愈容易找到在訓練資料上看起來很好、對未來資料卻沒有預測力的模型；龐大的搜尋空間會造成過度擬合，也讓係數估計的變異變大。逐步法只探索小得多的模型集合，所以是有吸引力的替代方案。</p>
 <details class="qa-item reading-detail" id="w06-detail-snooping"><summary>延伸閱讀：第二階段的驗證能不能抓出第一階段的過度擬合？</summary>
@@ -844,7 +844,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <thead><tr><th>第二階段的方法</th><th>能否處理第一階段的過度擬合？</th></tr></thead>
 <tbody><tr><td>母體的期望測試誤差（理想，實際上不知道）</td><td>可以辨識每個候選模型的真實預測風險</td></tr><tr><td>獨立驗證集，或正確執行的 CV</td><td>可以緩解，但仍有估計誤差，挑最小值也有選擇偏差</td></tr><tr><td>$C_p$、AIC、BIC</td><td>可能修正不足</td></tr></tbody>
 </table></div>
-<p>$C_p$、AIC、BIC 的懲罰只看模型大小 $k$，沒有反映「從 $\binom{p}{k}$ 個候選中挑出最好的一個」所增加的選擇複雜度；它們的推導前提是模型事先固定。若先在整份資料上做第一階段，再對留下的模型做 CV，也不對：驗證折已經參與了變數選擇。正確的 CV 要在每個訓練折內重新做最佳子集。</p>
+<p>$C_p$、AIC、BIC 的懲罰只看模型大小 $k$，沒有反映「從 $\binom{p}{k}$ 個候選中挑出最好的一個」所增加的選擇複雜度；它們的推導前提是模型事先固定。正確的 CV 要在每個訓練折內重新做最佳子集，見上方「為什麼要分兩階段」收合區。</p>
 <h4>什麼情況下最後的評估不受污染</h4>
 <ol>
 <li>在訓練資料上執行最佳子集選擇。</li>
@@ -1097,10 +1097,8 @@ $$\sum_i(y_i-c)^2=\sum_i(y_i-\bar y)^2+n(c-\bar y)^2.$$
 <div class="info-box">
 <span class="info-label">AIC 與 $C_p$ 的關係</span>
   對高斯誤差的最小平方模型，課本的 AIC 就是
-  $\mathrm{RSS}+2d\hat\sigma^2$，跟 $C_p$ 成正比（所以 ISLP 圖 6.2 只畫 $C_p$）。
-  但實作（<code>statsmodels</code> 的 <code>.aic</code>）用的是 log-likelihood 版
-  $-2\log L+2k$，它跟 $C_p$ <strong>不是</strong>單調對應，所以下圖把它畫成獨立一條線。
-  兩個版本都叫 AIC，看到數字差很多不要慌，先問是哪一個公式。
+  $\mathrm{{RSS}}+2d\hat\sigma^2$，跟 $C_p$ 成正比（所以 ISLP 圖 6.2 只畫 $C_p$）。
+  <code>statsmodels</code> 的 <code>.aic</code> 用的是 log-likelihood 版，數值與 $C_p$ 不同，所以下圖畫成獨立一條線；兩者的前提見下方「先分清估計量與比較量尺」收合區。
 </div>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
 <thead><tr><th>準則</th><th>式子（最小平方）</th><th>每多一個變數罰多少</th><th>$n=400$ 時的懲罰</th><th>Credit 選出</th></tr></thead>
@@ -1152,10 +1150,10 @@ $$\sum_i(y_i-c)^2=\sum_i(y_i-\bar y)^2+n(c-\bar y)^2.$$
 <div class="qa-box">
 <div class="qa-head">觀念釐清</div>
 <details class="qa-item"><summary>Q：$C_p$、AIC、BIC 到底差在哪？為什麼 BIC 偏好小模型？</summary>
-<div class="qa-a"><p>三個都是「訓練 RSS ＋ 一個隨模型變大而變大的懲罰」。差別只在懲罰的係數：$C_p$ 與課本版 AIC 都是 $2d\hat\sigma^2$，BIC 是 $\log(n)\, d\hat\sigma^2$。$\log n &gt; 2$ 對整數樣本數 $n\ge8$ 成立（$e^2 \approx 7.39$），所以 在此共用變異數的懲罰式中，BIC 罰得比較重，比較同一組候選模型時，最優模型的變數數目不會較大（並列時採相同的簡約規則）。$n=400$ 時 $\log n \approx 5.99$，懲罰差三倍。</p><p>背後的動機不同。$C_p$ 是<strong>估測試 MSE</strong>：對固定設計、預先指定的線性模型，計入全部投影維度的 $C_p$ 可估計同一 $X$ 上的新反應風險；完整條件與省略常數的差別見本節推導。BIC 是從<strong>貝氏</strong>觀點來的，它在近似「這個模型是真模型的後驗機率」。所以兩者的目標本來就不一樣：$C_p$／AIC 想預測得準，BIC 想找出<em>正確的</em>模型。如果真模型確實在候選清單裡，$n$ 夠大時 BIC 會挑中它（一致性）；AIC 不保證，它會傾向多留幾個變數。</p><p>實務上的建議：<strong>目的是預測就用 CV（或 AIC／$C_p$），目的是「哪些變數真的有關」就參考 BIC</strong>。而且兩者都要求你估得出 $\hat\sigma^2$——這在 $p&gt;n$ 的時候無法按全模型的常規公式計算（最後一節會講）。</p></div>
+<div class="qa-a"><p>三個都是「訓練 RSS ＋ 一個隨模型變大而變大的懲罰」。差別只在懲罰的係數：$C_p$ 與課本版 AIC 都是 $2d\hat\sigma^2$，BIC 是 $\log(n)\, d\hat\sigma^2$。BIC 的懲罰在 $n\ge8$ 時較重（見上文），所以比較同一組候選模型時，最優模型的變數數目不會較大（並列時採相同的簡約規則）。</p><p>背後的動機不同：$C_p$／AIC 想預測得準，BIC 想找出<em>正確的</em>模型，詳見上方「漸近效率、選模一致性」收合區。</p><p>實務上的建議：<strong>目的是預測就用 CV（或 AIC／$C_p$），目的是「哪些變數真的有關」就參考 BIC</strong>。而且兩者都要求你估得出 $\hat\sigma^2$——這在 $p&gt;n$ 的時候無法按全模型的常規公式計算（最後一節會講）。</p></div>
 </details>
 <details class="qa-item"><summary>Q：調整後 $R^2$ 為什麼「理論基礎比較弱」？</summary>
-<div class="qa-a"><p>$C_p$、AIC、BIC 都有明確的推導：$C_p$ 在固定模型與固定設計條件下修正樂觀偏差，AIC 來自 Kullback–Leibler 距離的漸近論證，BIC 來自後驗機率的 Laplace 近似。調整後 $R^2$ 沒有這種東西。它就是「把 RSS 除以 $n-d-1$ 而不是 $n$」這個直覺上合理的修正。</p><p>它的直覺是對的：真正有用的變數都進來以後，再加雜訊變數通常只會讓 RSS 降一點點，但 $d$ 變大會讓分母 $n-d-1$ 變小，兩者相抵之下 $\mathrm{RSS}/(n-d-1)$ 多半會變大、調整後 $R^2$ 隨之下降；偶然的 RSS 改善也可能讓它上升（新增一欄時，上升等價於部分 $F&gt;1$）。問題是「一點點」有多點沒有理論刻度，所以它的懲罰強度是任意的——在 Credit 上它比 $C_p$ 還鬆（選 7 個 vs 6 個）。</p><p>順便記一件事：<strong>訓練 $R^2$ 在高維且設計矩陣列滿秩時可以做到 1</strong>，但這時飽和模型的殘差自由度為 0，調整後 $R^2$ 的常規公式沒有定義。一般情況要按設計矩陣的秩計算自由度，不能直接把超過樣本數的欄數代入。</p></div>
+<div class="qa-a"><p>$C_p$、AIC、BIC 都有明確的推導目標（見上方收合區）。調整後 $R^2$ 沒有這種東西。它就是「把 RSS 除以 $n-d-1$ 而不是 $n$」這個直覺上合理的修正。</p><p>它的直覺是對的：真正有用的變數都進來以後，再加雜訊變數通常只會讓 RSS 降一點點，但 $d$ 變大會讓分母 $n-d-1$ 變小，兩者相抵之下 $\mathrm{RSS}/(n-d-1)$ 多半會變大、調整後 $R^2$ 隨之下降；偶然的 RSS 改善也可能讓它上升。問題是「一點點」有多點沒有理論刻度，所以它的懲罰強度是任意的——在 Credit 上它比 $C_p$ 還鬆（選 7 個 vs 6 個）。</p></div>
 </details>
 </div>
 <details class="qa-item reading-detail" id="w06-detail-lab-criteria-1"><summary>完整實作：前向路徑上的 BIC</summary>
@@ -1198,15 +1196,12 @@ $$\sum_i(y_i-c)^2=\sum_i(y_i-\bar y)^2+n(c-\bar y)^2.$$
 <div class="quiz-options" id="qCritOptions"><div class="quiz-opt" data-correct="true" data-fb="對。整數樣本數 $n\ge8$ 時 $\log n&gt;2$，所以 BIC 的懲罰項嚴格較重，最小值只會往左移或不動。Credit 上是 4 vs 6。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(A)</span> 一定小於或等於（$n\ge8$ 時），因為 BIC 每多一個變數要罰 $\log(n)\,\hat\sigma^2$，而 $C_p$ 只罰 $2\hat\sigma^2$</div><div class="quiz-opt" data-correct="false" data-fb="有用變數的多寡會影響&lt;em&gt;兩者各自&lt;/em&gt;選幾個，但不會改變「BIC 罰得更重」這個事實。兩條曲線的 RSS 部分完全一樣，只有懲罰斜率不同，所以 BIC 的最小值不可能落在 $C_p$ 的右邊。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(B)</span> 不一定，取決於資料裡有多少真的有用的變數</div><div class="quiz-opt" data-correct="false" data-fb="只有 $C_p$ 是測試 MSE 的無偏估計，BIC 不是——BIC 是從後驗機率近似來的，它刻意罰得更重以便挑出「正確的」模型而不是「預測最準的」模型。" onclick="quizCheck('qCrit', this)"><span class="opt-letter">(C)</span> 一定一樣，因為兩者都是測試 MSE 的無偏估計</div></div>
 <div class="quiz-feedback" id="qCritFeedback"></div>
 </div>
-<details class="qa-item reading-detail" id="w06-detail-classification-selection"><summary>延伸閱讀：分類模型的選擇</summary>
-<div class="detail-body"><h3>分類模型的模型選擇</h3><p>子集搜尋也能套用邏輯斯迴歸等模型，但比較的擬合量要改為相應的概似。離差（deviance）定義為 $D=2(\ell_{\mathrm{sat}}-\ell_{\mathrm{fit}})$；它比較擬合模型與飽和模型，不能直接把分類誤差率代入 RSS 公式。AIC 為 $-2\ell_{\mathrm{fit}}+2k$，BIC 為 $-2\ell_{\mathrm{fit}}+k\log n$，$k$ 計入實際估計的參數。選定模型後的係數不確定性還受搜尋影響，不能忽略選模就直接沿用事先固定模型的推論。</p>
-</div></details><details class="qa-item reading-detail" id="w06-detail-cp-risk"><summary>計算細節：$C_p$ 的風險目標與常數</summary>
+<details class="qa-item reading-detail" id="w06-detail-cp-risk"><summary>計算細節：$C_p$ 的風險目標與常數</summary>
 <div class="detail-body"><h3>Cp 的風險目標、常數與選模</h3>
 <p>先固定 $X$ 及候選線性模型，不用 $y$ 搜尋欄位。令 $H$ 為其投影矩陣，$r=\operatorname{rank}(H)$ 計入截距，並假設 $y=\mu+\varepsilon$、$\operatorname{Cov}(\varepsilon)=\sigma^2I$。以相同 $X$ 上一組獨立新反應 $y^{new}$ 定義固定設計預測風險，完整的 $C_p$ 型估計為</p>
 $$\widehat R=\frac{\mathrm{RSS}+2r\hat\sigma^2}{n}.$$
-<p>$\hat\sigma^2$ 無偏時，這估計量對訓練反應重抽的期望等於上述風險；並非某次實現的測試 MSE，也不是任意新 X 的風險。若所有模型都含截距、$d$ 只數斜率，$r=d+1$；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
+<p>這是對訓練反應重抽的期望風險，不是某次實現的測試 MSE。若所有模型都含截距、$d$ 只數斜率，$r=d+1$；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
 <p>若每個大小的最佳模型也是用同一份 y 搜尋出來的，$H$ 已依賴 $y$，單純代入 $r$ 不會自動修正搜尋的樂觀偏差。</p>
-<p>AIC 的 $-2\hat\ell+2k$ 計入實際估計的參數；高斯模型共同固定 $\sigma^2$ 時，可化成 $\mathrm{RSS}/\sigma^2$ 加參數懲罰。各模型各自估 $\sigma^2$ 時，則出現 $n\log(\mathrm{RSS}/n)$，不能混用。BIC 以 $k\log n$ 懲罰，源於固定維度、正則模型的邊際概似近似；有限樣本、錯置或候選清單沒有真模型時，不保證找出真相。</p>
 <details class="qa-item proof" id="w06proofCp"><summary>證明：固定設計預測風險的樂觀偏差</summary>
 <div class="qa-a">
 <p>$H$ 對稱冪等，$\operatorname{tr}(H)=r$。訓練 RSS 的期望為</p>
@@ -1236,7 +1231,7 @@ $$-2\hat\ell=n\log(\mathrm{RSS}/n)+n[1+\log(2\pi)].$$
 $$\frac{R_1}{\nu-1}\lt\frac{R_0}{\nu}\quad\Longleftrightarrow\quad R_0-R_1\gt\frac{R_0}{\nu}.$$
 <p>用新模型殘差變異數寫出的單欄部分 F 值為 $(R_0-R_1)/(R_1/(\nu-1))$；上述條件也等價於 $F&gt;1$。這只是選模門檻，不等於常用顯著水準下的假設檢定門檻。</p>
 </div></details>
-<p>BIC 的目的是在正則、固定維度等條件下近似模型證據；較重懲罰常選較小模型，不等於其測試誤差一定較低，也不能把選中的變數當成因果因素。相反，CV 的選擇目標由 scoring 決定：用 MSE、$R^2$ 或分類對數損失可能得到不同的模型。</p>
+<p>CV 的選擇目標由 scoring 決定：用 MSE、$R^2$ 或分類對數損失可能得到不同的模型。</p>
 <p>延伸對照：<a href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.aic.html">OLSResults.aic</a>、<a href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.bic.html">OLSResults.bic</a>、<a href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.rsquared_adj.html">調整後 $R^2$ 定義</a>。</p>
 <p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/167827/why-is-sum-of-squared-residuals-non-increasing-when-adding-explanatory-variable">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/205439/aic-equivalent-to-mallows-cp-and-mallows-cp-unbiased-for-test-mse">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/490056/aic-bic-formula-wrong-in-james-witten">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://en.wikipedia.org/wiki/Coefficient_of_determination#Adjusted_R2">en.wikipedia.org</a>。</p></div></details>
 </section>
@@ -1316,19 +1311,18 @@ $$\frac{R_1}{\nu-1}\lt\frac{R_0}{\nu}\quad\Longleftrightarrow\quad R_0-R_1\gt\fr
 <div class="qa-box">
 <div class="qa-head">觀念釐清</div>
 <details class="qa-item"><summary>Q：既然 CV 最好，為什麼還要教 $C_p$、AIC、BIC？</summary>
-<div class="qa-a"><p>三個理由。第一，運算成本：最佳子集有 $2^p$ 個模型，每個都跑 k-fold 是 $k \cdot 2^p$ 次擬合；而 $C_p$ 只要一次擬合加一個修正項。第二，這三個準則會出現在<strong>別人的論文與報表</strong>裡，你得看得懂。第三，它們解釋了「懲罰複雜度」這個想法的來源——AIC 從 KL 散度來、BIC 從後驗機率來，各有各的目標。</p><p>但如果你只是要挑一個模型來預測，而且資料量算得動：用 CV。</p></div>
+<div class="qa-a"><p>三個理由。第一，運算成本：最佳子集有 $2^p$ 個模型，每個都跑 k-fold 是 $k \cdot 2^p$ 次擬合；而 $C_p$ 只要一次擬合加一個修正項。第二，這三個準則會出現在<strong>別人的論文與報表</strong>裡，你得看得懂。第三，它們示範了「懲罰複雜度」這個想法，目標的差別見上一節。</p><p>但如果你只是要挑一個模型來預測，而且資料量算得動：用 CV。</p></div>
 </details>
 <details class="qa-item"><summary>Q：one-SE 規則會不會選出「太簡單」的模型？</summary>
 <div class="qa-a"><p>會，而且那是刻意的。它的立場是：<strong>在最佳 CV 誤差加一個標準誤的範圍內，偏好簡單</strong>。</p><p>這個偏好有實際理由——變數少的模型更好解釋、需要蒐集的資料更少、上線後更不容易因為某個變數的定義改變而壞掉。如果你的目標純粹是最小化預測誤差而完全不在意這些，那就選最低點；但要記得那個「最低」在下一份資料上很可能換人。</p></div>
 </details>
 </div>
-<details class="qa-item reading-detail" id="w06-detail-selection-cv"><summary>模型大小與 one-SE：CV 必須重做整段搜尋</summary>
+<details class="qa-item reading-detail" id="w06-detail-selection-cv"><summary>模型大小與 one-SE 規則</summary>
 <div class="detail-body">
-<p>對每個大小 $k$，CV 評估的是「在訓練資料上找出一個 $k$ 變數模型」這個程序，不是「全資料先選好一個固定欄位集合」之後再驗證。每一折都必須重新做 Forward／Backward 搜尋，然後用該折選出的欄位預測保留資料。不同折同樣是 $k$ 變數，實際的欄位仍可能不同。Lab 的完整路徑與自訂雙層迴圈都在教這一點。</p>
 <p>設第 $b$ 折、大小 $k$ 的保留資料 MSE 為 $E_{bk}$，先算 $K$ 折的平均，再找最小者 $k^*$。one-SE 規則把可接受區間的上緣設為最佳模型的平均誤差加上<strong>最佳點的</strong>標準誤，最後取仍在區間內的最小 $k$：</p>
 $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.$$
-<p>one-SE 規則會在這個範圍內偏好較簡單的模型，但不能據此宣稱它們的真實風險相同。標準誤怎麼估、它為什麼只是粗略指標，以及 <code>RepeatedKFold</code> 的做法，見上方的<a href="#w06-detail-cv-se">CV 標準誤收合區</a>。</p>
-<p>講義 Credit 的驗證切分用四分之三訓練、四分之一驗證，CV 用十折；Hitters Lab 則示範五折及 20% 的單次驗證。二者都比較模型大小，但數據與分折設定不同，不能拿誤差值相互核對。若要報告選完大小後的泛化效能，應另留測試資料或用外層 CV，連到<a href="resampling_methods.html#w05-detail-nested-cv">第五章的 Nested CV</a>。</p>
+<p>標準誤怎麼估、它為什麼只是粗略指標，以及 <code>RepeatedKFold</code> 的做法，見上方的<a href="#w06-detail-cv-se">CV 標準誤收合區</a>。</p>
+<p>講義 Credit 的驗證切分用四分之三訓練、四分之一驗證，CV 用十折；Hitters Lab 則示範五折及 20% 的單次驗證。二者都比較模型大小，但數據與分折設定不同，不能拿誤差值相互核對。</p>
 <p>來源：<a href="https://www.cs.cmu.edu/~psarkar/sds383c_16/lecture9_scribe.pdf">講義連結的交叉驗證筆記</a>、<a href="https://scikit-learn.org/1.6/modules/cross_validation.html">sklearn CV 操作</a>。</p>
 <p class="source-links">講義延伸來源：<a href="https://www.cs.cmu.edu/%7Epsarkar/sds383c_16/lecture9_scribe.pdf">www.cs.cmu.edu</a>。</p></div></details>
 </section>
@@ -1447,12 +1441,10 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 <p>目標的梯度是 $-2X^T(y-X\beta)+2\lambda\beta$。設為零得 $(X^TX+\lambda I)\beta=X^Ty$。對任意非零 $v$，$v^T(X^TX+\lambda I)v=\|Xv\|^2+\lambda\|v\|^2&gt;0$，所以解唯一。</p>
 <p>若 $X=UDV^T$ 為精簡 SVD，則 $\hat\beta=V\operatorname{diag}\{d_j/(d_j^2+\lambda)\}U^Ty$，擬合值為 $U\operatorname{diag}\{d_j^2/(d_j^2+\lambda)\}U^Ty$。相對 OLS，各方向乘上 $d_j^2/(d_j^2+\lambda)$，小奇異值方向收縮較強。這也說明 Ridge 不等於挑掉一些原始變數。</p>
 </div></details></div></details>
-<details class="qa-item reading-detail" id="w06-detail-ridge-bias"><summary>收縮為何可能更準？從量尺、方向與偏差變異來看</summary>
+<details class="qa-item reading-detail" id="w06-detail-ridge-bias"><summary>收縮為何可能更準？偏差與變異的取捨</summary>
 <div class="detail-body">
-<p>對同一資料，若把 $x_j$ 乘 $c$，OLS 可把 $\beta_j$ 除 $c$，讓預測不變。但 Ridge 的係數平方懲罰會除以 $c^2$，於是量尺改變了對這個變數的懲罰。標準化讓各欄在選定的尺度上接受懲罰，並沒有把反應轉成常態分布。平均與尺度都只能由當次訓練資料估計，之後套到保留資料。</p>
 <p>不懲罰截距時，$\lambda$ 趨近無限會讓斜率趨近零，預測趨近訓練平均；不是所有預測都趨近零。有限 $\lambda$ 下，Ridge 不具有 Lasso 那樣的門檻選擇機制，但個別係數可能因對稱或恰好沒有方向訊號而等於零。因此「通常不產生稀疏解」比「任何資料都絕不會有零係數」精確。</p>
-<p>講義的正交例子 $X=I$ 讓 Ridge 的每個係數變成 $y_j/(1+\lambda)$。一般資料則是在主方向上收縮：小奇異值方向較不穩定，Ridge 對它們壓得更強。接受偏差可減少訓練樣本擾動引起的變異；但 $\lambda$ 太大又會把真正訊號壓掉。因此測試 MSE 常先降後升，不能以「懲罰越強越好」理解正則化。</p>
-<p>講義的第一個模擬含較多有用變數，第二個只保留兩個真正有用變數。這改變了 Ridge 與 Lasso 各自適合的結構，不是同一資料只改畫圖。稀疏訊號可能有利 Lasso，許多弱訊號可能有利 Ridge；真實資料不知道是哪一種，仍需以同一切分與評分比較。</p>
+<p>Ridge 接受一點偏差來減少訓練樣本擾動引起的變異；但 $\lambda$ 太大又會把真正訊號壓掉。因此測試 MSE 常先降後升，不能以「懲罰越強越好」理解正則化。</p>
 <p>方法推導：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/regularized.html">原作者的正則化教材</a>；軟體目標：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.Ridge.html">Ridge API</a>。</p>
 </div></details>
 </section>
@@ -1516,20 +1508,19 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 <li>$\beta_j&lt;0$：$g'=-2(y_j-\beta_j)-\lambda=0$，得 $\beta_j=y_j+\lambda/2$，需要 $y_j&lt;-\lambda/2$。</li>
 <li>$\beta_j=0$：絕對值在 0 不可微，改用次梯度：$0\in-2y_j+\lambda[-1,1]$，等價於 $|y_j|\le\lambda/2$。</li>
 </ul>
-<p>三種情況正好把實數線分完，合併就是 $\hat\beta_j^L=\operatorname{sign}(y_j)\,(|y_j|-\lambda/2)_+$。關鍵在第三種情況：$|\beta_j|$ 在 0 有尖角，次梯度是一整段區間 $[-1,1]$，只要 $|y_j|$ 落在 $\lambda/2$ 以內，0 就滿足最優條件。$\beta_j^2$ 在 0 是平滑的，導數只有 0 一個值，只有 $y_j=0$ 時解才會是 0。一般 $X$ 的座標下降更新與 KKT 條件，見本節後面的<a href="#w06-detail-lasso-solution">Lasso 的零係數條件</a>。</p>
+<p>三種情況正好把實數線分完，合併就是 $\hat\beta_j^L=\operatorname{sign}(y_j)\,(|y_j|-\lambda/2)_+$。關鍵在第三種情況：$|\beta_j|$ 在 0 有尖角，次梯度是一整段區間 $[-1,1]$，只要 $|y_j|$ 落在 $\lambda/2$ 以內，0 就滿足最優條件。$\beta_j^2$ 在 0 是平滑的，導數只有 0 一個值，只有 $y_j=0$ 時解才會是 0。一般 $X$ 怎麼求解，見本節後面的<a href="#w06-detail-lasso-solution">座標更新</a>。</p>
 </div></details>
 <h4 id="w06-why-bayes">解釋三〔選讀〕：貝氏解讀（習題 7）</h4>
 <p>貝氏觀點下，後驗正比於概似乘以先驗：$p(\beta\mid X,Y)\propto f(Y\mid X,\beta)\,p(\beta)$，並假設 $p(\beta)=\prod_{j=1}^pg(\beta_j)$。若 $g$ 是平均為 0 的<strong>常態分布</strong>，後驗眾數（給定資料下最可能的 $\beta$）就是 Ridge 的解；若 $g$ 是平均為 0 的<strong>雙指數（Laplace）分布</strong>，後驗眾數就是 Lasso 的解。兩種先驗的尺度參數都對應到 $\lambda$。</p>
 <p>Laplace 密度在 0 有尖峰，取對數後就是 $-|\beta_j|/b$ 這個在 0 有尖角的懲罰，所以後驗眾數可能剛好停在 0；常態先驗在 0 是平滑的圓頂，後驗眾數通常只會被拉近 0。這和解釋二的「尖角」是同一件事。</p>
 <details class="qa-item reading-detail" id="w06-detail-shrinkage-map"><summary>延伸閱讀：收縮的貝氏解讀</summary>
-<div class="detail-body"><h3>收縮的貝氏解讀與延伸</h3>
-<p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 $\lambda$ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明；後驗眾數與後驗平均不同，Lasso 的後驗平均通常不會精確等於零。</p>
-<p>最小角度迴歸（least angle regression, LAR）從與殘差相關最大的特徵開始，沿活躍特徵的等角方向前進；其他特徵達到相同相關程度時加入。加上係數過零時退出的規則可追蹤 Lasso 路徑。Group Lasso 則以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰各組係數，讓同一類別變數的一組虛擬變數或同一組基底一起進出；選入的組內係數不必稀疏。</p>
+<div class="detail-body"><h3>收縮的貝氏解讀</h3>
+<p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 $\lambda$ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明。</p>
 <details class="qa-item proof" id="w06proofMAP"><summary>證明：高斯／Laplace 先驗如何變成 Ridge／Lasso</summary>
 <div class="qa-a">
 <p>獨立 $N(x_i^T\beta,\sigma^2)$ 反應的負對數概似，除去與 $\beta$ 無關的常數後為 $\mathrm{RSS}/(2\sigma^2)$。各斜率獨立 $N(0,\tau^2)$ 的負對數先驗為 $\sum_j\beta_j^2/(2\tau^2)$；負對數後驗相加後乘以 $2\sigma^2$，成為 $\mathrm{RSS}+(\sigma^2/\tau^2)\sum_j\beta_j^2$。</p>
 <p>Laplace 密度為 $e^{-|\beta_j|/b}/(2b)$，負對數先驗為 $\sum_j|\beta_j|/b$ 加常數，因此乘以 $2\sigma^2$ 後 $\lambda=2\sigma^2/b$。截距使用不懲罰的設定；$\sigma$、$\tau$、$b$ 在此視為固定。這是後驗眾數，後驗平均須積分計算，一般不會因 Laplace 先驗精確歸零。</p>
-</div></details><h3>先驗密度與零係數是不同件事</h3><p>常態先驗把較大係數以平方尺度壓低機率密度，Laplace 先驗在零附近有尖角、尾部較厚；取後驗眾數時，尖角對應 L1 的次梯度區間，才可能把估計值停在零。Laplace 是連續分布，先驗本身並沒有在 $\beta=0$ 放一個正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」。</p><p>後驗正比於概似乘先驗，不必先算邊際化常數就能找眾數，因為常數不依 $\beta$ 改變。但若要後驗機率、區間或平均，就要處理整個分布。此處 MAP 的對照固定 $\sigma^2$ 及先驗尺度、不懲罰截距；若同時估 $\sigma^2$ 或改截距先驗，應重新寫目標。</p><p>原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。下方證明逐項保留 $\sigma^2$、$\tau^2$、$b$ 的常數，讓 $\lambda$ 的對照不會因 $\mathrm{RSS}/2$ 的寫法混淆。</p><p class="source-links">講義延伸來源：<a href="https://ekamperi.github.io/mathematics/2020/08/02/bayesian-connection-to-lasso-and-ridge-regression.html">ekamperi.github.io</a>。</p></div></details><h3 id="w06-lasso-path">Credit 上的 Lasso 路徑</h3>
+</div></details><p>Laplace 是連續分布，先驗本身沒有在 $\beta=0$ 放正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」；歸零來自取後驗眾數時 L1 懲罰的尖角。原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。</p><p class="source-links">講義延伸來源：<a href="https://ekamperi.github.io/mathematics/2020/08/02/bayesian-connection-to-lasso-and-ridge-regression.html">ekamperi.github.io</a>。</p></div></details><h3 id="w06-lasso-path">Credit 上的 Lasso 路徑</h3>
 <div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Credit 的標準化 Lasso 路徑；對照圖 6.6">
 <div>
 <div class="viz-panel">
@@ -1590,41 +1581,25 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 <div class="qa-a"><p>Lasso 可能只保留其中一個，選擇也可能隨資料的小變動而改變；但這不是因為多留一個變數就必然多付一份 L1 懲罰。</p><p>若兩欄完全相同，係數 (2,0) 和 (1,1) 的預測相同，L1 懲罰也都等於 2，所以解的分配可能不唯一。高度相關但不完全相同時，微小差異及求解方式會影響最後保留哪一欄。解讀結果時，不能直接把被歸零的那欄判為沒有作用。</p><p>Ridge 的平方懲罰在這個例子分別為 4 和 2，因此偏好分散係數；只有完全相同且同尺度的兩欄，對稱的 Ridge 解才精確平分。Elastic net 可促進相關欄一起保留；group lasso 則對事先指定的群組做整組選擇。</p></div>
 </details>
 </div>
-<p>$\lambda$ 控制懲罰強度，$s$ 控制圖中的約束範圍；兩者可用適當值得到同一個解，但一般不是一對一。Lasso 允許係數精確歸零，並不保證任何正的 $\lambda$ 都會產生零係數；Ridge／Lasso 的勝負仍須以相同評估流程比較。</p><div class="quiz-box">
+<div class="quiz-box">
 <div class="quiz-label">QUIZ · Lasso 的幾何</div>
 <p>為什麼 L1 約束區域（菱形）會讓解落在座標軸上，而 L2（圓）不會？</p>
 <div class="quiz-options" id="qLassoOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是 ISLP 圖 6.7 的全部內容。維度更高時 L1 是超菱形，尖角與各種低維的稜、面都落在「某些座標為 0」的子空間上，所以稀疏解更容易發生。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(A)</span> 菱形的尖角剛好在座標軸上，橢圓等高線很容易先碰到尖角；圓處處平滑，碰到軸是機率 0 的事</div><div class="quiz-opt" data-correct="false" data-fb="$\lambda$ 可以調整懲罰強度；稀疏性來自約束區域的&lt;strong&gt;形狀&lt;/strong&gt;與尖角。同樣的收縮量下，L2 只是縮短向量，L1 會把它推到軸上。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(B)</span> 因為 L1 懲罰比 L2 懲罰強，把係數壓得更兇</div><div class="quiz-opt" data-correct="false" data-fb="絕對值在 0 是有定義的（等於 0），只是&lt;em&gt;不可微&lt;/em&gt;。不可微確實是機制的一部分（次微分在 0 是一整個區間），但「沒有定義」是錯的說法。" onclick="quizCheck('qLasso', this)"><span class="opt-letter">(C)</span> 因為 Lasso 用的是絕對值，絕對值函數在 0 沒有定義</div></div>
 <div class="quiz-feedback" id="qLassoFeedback"></div>
 </div>
-<details class="qa-item reading-detail" id="w06-detail-lasso-solution"><summary>計算細節：Lasso 的零點與座標下降</summary>
+<details class="qa-item reading-detail" id="w06-detail-lasso-solution"><summary>延伸閱讀：一般 X 的座標下降</summary>
 <div class="detail-body"><h3>Lasso 的零係數條件與座標更新</h3>
-<p>固定目標 $\|y-X\beta\|^2+\lambda\sum_j|\beta_j|$，令殘差 $r=y-X\hat\beta$。凸問題的最優條件是</p>
-$$2x_j^Tr=\lambda\operatorname{sign}(\hat\beta_j)\quad(\hat\beta_j\ne0),\qquad
-|2x_j^Tr|\le\lambda\quad(\hat\beta_j=0).$$
-<p>在零點要使用次梯度區間 $[-1,1]$，不能把絕對值當作處處可微。一般 $X$ 可採座標下降：固定其他係數，令 $r_{-j}=y-X_{-j}\beta_{-j}$，更新</p>
-$$\beta_j\leftarrow\frac{\operatorname{sign}(x_j^Tr_{-j})(|x_j^Tr_{-j}|-\lambda/2)_+}{x_j^Tx_j}.$$
-<p>常數欄須先處理；反覆更新直到目標或最優條件達到指定精度。不同套件若用 $\mathrm{RSS}/(2n)$，相同 $\lambda$ 的數字不能直接比較。</p>
-<details class="qa-item proof" id="w06proofLasso"><summary>證明：軟門檻與零點的次梯度</summary>
-<div class="qa-a">
-<p>正交設計 $X^TX=I$ 下，令 $z=X^Ty$，目標逐座標分開，和上方「解釋二」的對角情形相同（把 $y_j$ 換成 $z_j$），得到軟門檻 $\operatorname{sign}(z_j)(|z_j|-\lambda/2)_+$。</p>
-<p>$\beta=0$ 處，最優條件為 $0\in-2z+\lambda[-1,1]$，等價於 $|z|\le\lambda/2$。三種情況合併得到 soft threshold。一般座標更新把平方項換成 $(x_j^Tx_j)\beta_j^2-2(x_j^Tr_{-j})\beta_j$，同一推理給正文更新式。對整體目標做次梯度條件便得到零與非零係數的 KKT 條件。</p>
-</div></details>
+<p>一般的 $X$ 沒有閉式解。套件常用座標下降：固定其他係數，只對 $\beta_j$ 求解，結果正是解釋二的軟門檻（把 $y_j$ 換成 $x_j$ 對部分殘差的內積，再除以 $x_j^\top x_j$）；逐一更新直到收斂。不同套件若用 $\mathrm{RSS}/(2n)$，相同 $\lambda$ 的數字不能直接比較。</p>
 <p class="source-links">講義延伸來源：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/regularized.html#lasso-regression">dafriedman97.github.io</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/17781/derivation-of-closed-form-lasso-solution">stats.stackexchange.com</a>。</p></div></details><details class="qa-item reading-detail" id="w06-detail-lar-group"><summary>延伸閱讀：LAR 與 Group Lasso</summary>
 <div class="detail-body"><h3>最小角度迴歸與 Group Lasso</h3>
-<p>LAR 先中心化 y，將特徵中心化並調成相同長度；從全零係數開始，找到與殘差絕對相關最大的特徵。沿其方向前進，直到另一個特徵達到相同絕對相關，再讓兩個特徵一起沿等角方向前進；重複加入活躍特徵，得到分段線性係數路徑。Lasso 路徑版本還要在活躍係數走到零時把它移除；所以 LAR 與 Lasso 不能當同一演算法。可用 <code>Lars</code>／<code>lars_path</code> 看 LAR 路徑，用 <code>LassoLars</code> 看對應 Lasso 版本。</p>
-<p>Group Lasso 在事先指定、不重疊的特徵組上解</p>
-$$\min_{\beta_0,\beta}\frac1{2n}\|y-\beta_0\mathbf1-X\beta\|^2+\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2.$$
-<p>$p_g$ 是組內欄數；截距不懲罰，組別與縮放應在擬合前交代。例如「季節」的三個虛擬欄可作一組，「溫度」為另一組。$\lambda$ 增大可把整組季節係數設成零；保留季節時，組內每個係數並不保證非零。應以同樣組別與前處理在訓練折內選 $\lambda$。</p>
+<p>講義附錄只列出這兩個方法的連結，這裡各用一句話說明。LAR 從與殘差相關最大的特徵開始，沿活躍特徵的「等角」方向前進，其他特徵的相關追平時再加入；加上「係數走到零就移出」的規則，就能算出整條 Lasso 路徑（sklearn 的 <code>lars_path</code>、<code>LassoLars</code>）。</p>
+<p>Group Lasso 以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰事先指定的各組係數，讓同一類別變數的虛擬欄或同一組基底整組進出模型；選入的組內係數不必稀疏。</p>
 <p>來源：<a href="https://scikit-learn.org/stable/modules/linear_model.html#least-angle-regression">LAR／Lasso 路徑官方說明</a>、<a href="https://group-lasso.readthedocs.io/en/latest/">Group Lasso 文件</a>。</p>
-<h3>為何要整組選？如何讀路徑？</h3><p>類別因素的虛擬欄、樣條的一組基底或同一種測量的特徵，往往是共同描述一個現象。一般 Lasso 分別懲罰各欄，可能保留一部分；Group Lasso 用組內 L2 長度、組間 L1 型加總，把「整組是否保留」作為稀疏單位。$\sqrt{p_g}$ 是常見組大小權重，可降低大組僅因欄數多就較容易入選的影響，但具體權重仍要配合量尺與設計。</p><p>只有一欄一組時，組 L2 範數就是絕對值，退化為一般 Lasso。只有全部欄一組時，它懲罰係數長度 $\|\beta\|_2$，不是 Ridge 的平方長度，因此不能把兩者視為同一方法。若希望組內也能產生零係數，sparse-group lasso 會再加上 L1 項，因此要和原來的 Group Lasso 目標分開看。</p><p>LAR 的等角方向是與所有活躍欄（依相關符號對齊後）成相同角度；不是把多個迴歸係數做普通平均。沿著路徑前進時，下一個事件是其他特徵的相關程度追平；Lasso 版本還要處理活躍係數走到零時退出的情況。高度相關或重複欄會造成退化，實作的數值條件影響路徑。</p><p>Group Lasso 文件的套件另需安裝，並不是 sklearn 的內建 estimator；先確認組別編碼與截距、縮放設定。閱讀這個延伸主題就能理解講義附錄，沒有必要為此更換課堂環境。原始方法參考：<a href="https://hastie.su.domains/Papers/LARS/LeastAngle_2002.pdf">Least Angle Regression 作者論文</a>；<a href="https://group-lasso.readthedocs.io/en/latest/maths.html">Group Lasso 目標與權重</a>。</p></div></details><details class="qa-item reading-detail" id="w06-detail-penalty-constraint"><summary>計算細節：限制式與懲罰式的對應</summary>
+</div></details><details class="qa-item reading-detail" id="w06-detail-penalty-constraint"><summary>計算細節：限制式與懲罰式的對應</summary>
 <div class="detail-body"><h3>限制式與懲罰式：如何對應？</h3>
 <p>令 $P(\beta)=\|\beta\|_1$（Lasso）或 $\|\beta\|_2^2$（Ridge）。兩種問題分別為 $\min\{\mathrm{RSS}+\lambda P(\beta)\}$ 與 $\min\mathrm{RSS}$ subject to $P(\beta)\le s$。它們可用適當參數得到同一個解，但<strong>$\lambda$與$s$一般不是一對一</strong>，對應也依資料而變。</p>
-<p>Ridge的$s=0$強制斜率全零，但一般非零訊號須讓$\lambda$趨近$\infty$才達到，未必存在有限$\lambda$。Lasso也不保證任何正$\lambda$就產生零係數。</p>
-<details class="qa-item proof" id="w06proofConstraint"><summary>證明：凸限制問題與懲罰問題的解</summary>
-<div class="qa-a">
-<p>若 $\hat\beta_\lambda$ 最小化 $L+\lambda P$，取 $s=P(\hat\beta_\lambda)$。假如有可行$\beta$使$L$更小，則$P(\beta)\le s$，故 $L(\beta)+\lambda P(\beta)&lt;L(\hat\beta_\lambda)+\lambda P(\hat\beta_\lambda)$，與最優性矛盾，因此同時解限制式。</p>
-<p>反向在凸$L$、凸$P$及嚴格可行性成立時（本例$s&gt;0$即可用$\beta=0$），KKT給某個$\lambda\ge0$，使 $0\in\nabla L(\hat\beta)+\lambda\partial P(\hat\beta)$ 與 $\lambda(P(\hat\beta)-s)=0$。前式就是懲罰問題的充分最優條件。限制不活躍可取$\lambda=0$；$s=0$等邊界需另查，不能用此論證強行宣稱有限$\lambda$存在。</p>
-</div></details><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348494/the-proof-of-equivalent-formulas-of-ridge-regression">stats.stackexchange.com</a>。</p></div></details><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348308/graphical-interpretation-of-lasso">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/414491/understanding-lasso-regressions-sparsity-geometrically">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/350046/the-graphical-intuiton-of-the-lasso-in-case-p-2?noredirect=1&amp;lq=1">stats.stackexchange.com</a>。</p>
+<p>兩者之間的對應來自 Lagrange 乘數（凸最佳化的 KKT 條件）。</p>
+<p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348494/the-proof-of-equivalent-formulas-of-ridge-regression">stats.stackexchange.com</a>。</p></div></details><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348308/graphical-interpretation-of-lasso">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/414491/understanding-lasso-regressions-sparsity-geometrically">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/350046/the-graphical-intuiton-of-the-lasso-in-case-p-2?noredirect=1&amp;lq=1">stats.stackexchange.com</a>。</p>
 </section>
 <section id="lambda">
 <!-- GEN:BEGIN sec:lambda -->
@@ -1784,10 +1759,9 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <p>講義用城市人口 pop 與廣告花費 ad 說明 PCA。先減去每一欄平均，第一方向沿點雲最大的變動方向，第二方向與其垂直。每個點投影到第一方向後的座標是得分，原點到該點的距離不是得分。旋轉座標後，第一得分與原來兩欄通常都有較強關係，第二得分表示第一方向未保留的差異。</p>
 <p>這個投影最小化的是<strong>各點到子空間的垂直平方距離</strong>，並不是把 ad 當反應、只最小化其縱向殘差的 OLS 直線。中心化決定方向要穿過平均點；縮放決定哪一種距離／變異受到重視。若原量尺本來具有共同科學意義，可以不標準化；若人口與費用量尺差異很大，標準化讓兩欄各以一個標準差衡量。PCA 不要求變數有相同物理單位，但要明確選定比較尺度。</p>
 <h3>附錄矩陣為何看起來轉置了？</h3>
-<p>本文用 $n\times p$ 的 $X$（每列一筆觀測），講義附錄用 $p\times n$ 的 $A=X^\top$（每欄一筆）。所以其 $S=AA^\top/(n-1)$ 對應本文的 $X^\top X/(n-1)$，講義得分 $U^\top A$ 對應本文 $XV$。閱讀 $U$、$V$ 時，要連同資料矩陣的排列一起看；相同字母在兩種排列下可能代表不同的方向。樣本共變異數用分母 $n-1$，投影變異若用分母 $n$，會相差 $(n-1)/n$；特徵方向不變，特徵值數值不同。</p>
-<p>把 $X$ 中心化後，第一方向最大化 $v^\top Sv$，且 $\|v\|=1$；後續方向要求與先前方向正交。對稱半正定 $S$ 的特徵值由大到小排列，各得分的樣本變異為對應特徵值。說「主成分」時，有時指方向、有時指得分；本文用 loading／方向代表 $p$ 維向量，用 score／得分代表每筆資料投影後的數值。</p>
+<p>本文用 $n\times p$ 的 $X$（每列一筆觀測），講義附錄用 $p\times n$ 的 $A=X^\top$（每欄一筆）。所以其 $S=AA^\top/(n-1)$ 對應本文的 $X^\top X/(n-1)$，講義得分 $U^\top A$ 對應本文 $XV$。閱讀 $U$、$V$ 時，要連同資料矩陣的排列一起看。</p>
 <h3>白化是不是更好的 PCR？</h3>
-<p>PCA 先去除得分之間的線性共變異，但各得分變異不同；白化再除以各方向標準差，讓保留得分的共變異數為 $I$。ZCA 再旋轉回原座標。零特徵值不能取倒數，降秩回投影只在保留子空間中白化；小特徵值會放大雜訊。若對<strong>相同的保留方向</strong>做無懲罰 OLS，任意非零縮放可由迴歸係數抵消，不會改變擬合空間；所以白化本身不等於降低 PCR 的測試誤差。</p>
+<p>不是。對相同的保留方向做無懲罰 OLS，各得分的縮放會被迴歸係數抵消，擬合不變；白化的定義與限制見上方<a href="#w06-detail-whitening">共變異數、SVD 與白化</a>。</p>
 <h3>解釋 $X$ 的變異，不是解釋 $y$ 的變異</h3>
 <p>Lab 的 <code>explained_variance_ratio_</code> 是 PCA 對 $X$ 的變異解釋比例；不能讀成 Salary 的解釋比例。少數 PC 捕捉大部分 $X$ 變異，仍可能漏掉對 $y$ 很重要的低變異方向。講義的模擬有一組把所有反應資訊放在前五個 PC，這才讓 $M=5$ 成為特別有效的結構；一般資料沒有這個保證。$M$ 的選擇應使用預測 CV，而非只以累積 $X$ 變異達到某百分比決定。</p>
 <p>PCR 的原始係數限制在前 $M$ 個方向張成的子空間。它保留的是主成分方向，而沒有直接選出一組原始欄。Lab 將 <code>StandardScaler</code>、<code>PCA</code> 與 <code>LinearRegression</code> 放在同一 Pipeline 搜尋 $M$，讓每折重新學方向。只含截距的空模型可另行計算，不能把某個 API 的零成分是否可用當成空模型不存在的理由。</p>
@@ -1832,14 +1806,9 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <div class="quiz-options" id="qPlsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是「監督式降維」對「非監督式降維」。也因為方向是用 $y$ 估出來的，PLS 的變異比 PCR 大，兩者實務上常表現相近。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(A)</span> 挑方向時用到了 $y$，所以方向會跟著 $y$ 轉；但降維與不做變數選擇這兩點跟 PCR 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會。歸零是 &lt;strong&gt;Lasso&lt;/strong&gt; 的性質。PLS 的每個成分仍然是全部 $p$ 個變數的線性組合。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(B)</span> PLS 會把不重要的變數歸零，所以比 PCR 好解釋</div><div class="quiz-opt" data-correct="false" data-fb="兩者都需要，理由相同（方向的定義對單位敏感）。&lt;code&gt;PLSRegression&lt;/code&gt; 只是預設 &lt;code&gt;scale=True&lt;/code&gt; 幫你做了。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(C)</span> PLS 不需要標準化，PCR 需要</div></div>
 <div class="quiz-feedback" id="qPlsFeedback"></div>
 </div>
-<details class="qa-item reading-detail" id="w06-detail-pls-algorithm"><summary>計算細節：PLS1 的訓練與新資料預測</summary>
+<details class="qa-item reading-detail" id="w06-detail-pls-algorithm"><summary>延伸閱讀：PLS 的後續方向與新資料預測</summary>
 <div class="detail-body"><h3>PLS1：從方向到可用於新資料的預測</h3>
-<p>以下固定單一反應的 PLS1 版本。先用訓練資料中心化 y，並按選定方式中心化及縮放 X；記 $X_0=X,y_0=y$。第 m 步依序計算：</p>
-$$w_m=\frac{X_{m-1}^Ty_{m-1}}{\|X_{m-1}^Ty_{m-1}\|},\quad t_m=X_{m-1}w_m,$$
-$$p_m=\frac{X_{m-1}^Tt_m}{t_m^Tt_m},\quad q_m=\frac{y_{m-1}^Tt_m}{t_m^Tt_m},\quad
-X_m=X_{m-1}-t_mp_m^T,\quad y_m=y_{m-1}-t_mq_m.$$
-<p>若方向分子或 $t_m^Tt_m$ 為零，已沒有可用的新成分，停止。第一方向會看 X 與 y 的共變動；後續方向用扣掉既有得分成分後的殘差。成分數 $M$ 在訓練折內選，縮放與方向都須重新估計。</p>
-<p>預測新的一列時，先用訓練平均與尺度轉換為 $x_0^*$。依序計算 $t_m^*=x_{m-1}^{*T}w_m$，更新 $x_m^*=x_{m-1}^*-t_m^*p_m$；預測為 $\bar y+\sum_mq_mt_m^*$，若 y 也有縮放須再乘回其尺度。這個遞迴明確規定了如何把訓練好的 PLS 用於新資料，不能每次用新資料重算方向。</p>
+<p>講義只說「取殘差後重複」：第一個方向 $w_1\propto X^\top y$ 算出得分 $t_1=Xw_1$ 後，把 $X$ 與 $y$ 中能由 $t_1$ 解釋的部分扣掉，在殘差上用同樣方式找第二個方向，依此類推。預測新資料時，沿用訓練時估好的平均、尺度與各步方向，不能用新資料重算方向。完整遞迴見 ESL 第 3.5 節。</p>
 </div></details><details class="qa-item reading-detail" id="w06-detail-pls-covariance"><summary>計算細節：PLS 的共變異目標</summary>
 <div class="detail-body"><h3>PLS最大化共變異，並非直接最大化相關</h3>
 <p>中心化後，第一PLS方向在單位長度$w$下最大化 $\operatorname{Cov}(Xw,y)$。由 $\operatorname{Cov}(Xw,y)=\operatorname{Corr}(Xw,y)\operatorname{SD}(Xw)\operatorname{SD}(y)$，PLS同時考慮與$y$的關係及得分的變動量。OLS則最小化殘差平方和，兩個目標不能混寫。</p>
@@ -1850,9 +1819,8 @@ X_m=X_{m-1}-t_mp_m^T,\quad y_m=y_{m-1}-t_mq_m.$$
 </div></details><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/32464/how-does-the-correlation-coefficient-differ-from-regression-slope">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/179733/theory-behind-partial-least-squares-regression">stats.stackexchange.com</a>。</p></div></details>
 <details class="qa-item reading-detail" id="w06-detail-pls-reading"><summary>PLS 與 OLS：看了 $y$ 的方向是否一定較好？</summary>
 <div class="detail-body">
-<p>PLS 的第一方向由 $X^\top y$ 決定，因此需要已觀測的訓練反應；PCR 的方向只看 $X$。先把每一欄 $X$ 調成同一標準差後，個別單變數斜率與相關係數共用一個比例常數，於是講義用「與 $y$ 關係愈強，權重愈大」解釋第一方向。若沒標準化，斜率與相關的換算包含各欄不同的標準差，不能直接照相關排名配置權重。</p>
+<p>PLS 的第一方向由 $X^\top y$ 決定，因此需要已觀測的訓練反應；PCR 的方向只看 $X$。講義用「與 $y$ 關係愈強，權重愈大」解釋第一方向，這需要先標準化（見<a href="#w06-detail-pls-covariance">PLS 的共變異目標</a>）。</p>
 <p>PLS 第一方向不等於直接求 OLS 的係數：OLS 用 $X^\top X$ 的逆（或廣義逆）處理變數之間的相關，PLS 從 $X^\top y$ 的方向開始，再逐步消去已解釋的成分。對完整秩方向使用足夠多成分，PLS 可重現 OLS 擬合；保留少數方向才施加低維限制。PLS 會形成新方向並逐步扣除已解釋的部分，不能只把各欄單變數回歸的預測值相加。</p>
-<p>每一步扣除 $X$ 及 $y$ 中已由得分解釋的部分，再估下一方向，避免重複提取相同訊號。下方的 PLS1 演算法把方向、loading、反應係數分開表示，因為方向用來生成得分，loading 用來扣除 $X$，反應係數用來還原 $y$，三者不能混成同一向量。</p>
 <p>「看了 $y$」可避免 PCR 忽略低變異預測方向，但也可能把訓練雜訊當訊號。增加 $M$ 仍有偏差與變異取捨，所以 Lab 對 <code>PLSRegression(n_components=M)</code> 做 CV，而不是預設 $M$ 越大越好。其 <code>scale=True</code> 預設會在擬合時縮放 $X$ 與 $y$，若另加 StandardScaler 要分清每一步處理什麼；預測會回到 $y$ 的原量尺。</p>
 <p>比較 PCR、PLS、Ridge 或 Lasso 時，使用同樣資料、同樣保留折與相同 MSE 定義。講義圖中的方向關係和 Lab 的 Hitters 最佳成分數，不構成某方法在所有資料上比較好的證據。</p>
 <p>來源：<a href="https://scikit-learn.org/1.6/modules/cross_decomposition.html">PLS 官方方法說明</a>、<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.cross_decomposition.PLSRegression.html">PLSRegression API</a>。</p>

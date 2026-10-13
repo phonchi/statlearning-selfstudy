@@ -722,3 +722,10 @@ status banner 與 JS 寫入文字依契約保留 Unicode。注意 f-string 內 `
 
 **驗證**：見 `tools/verification/ch5-ch6-lecture-refine-20261013/README.md`。Codex job `db56457b-2c3b-4e0a-a6da-9179af2ccdaa` 的 4 項中度問題已核實修正。
 
+
+## 23. 第 5、6 章去冗餘與超綱內容（2026-10-13）
+
+規則：講義只給連結或一句帶過的主題，保留概念（1–2 句或既有對照表）＋講義連結，刪程式、推導與多段操作說明；新舊重複時保留使用者要求的新區塊、刪舊副本。
+- **第 5 章**（`5f5a63f`）：刪 `w05-detail-jackknife-bias`＋`w05proofJackknife`、`w05-detail-bootstrap-prediction`、`w05-detail-splits`、殘差 bootstrap PI 程式（`PREDICTION_CODE`）、巢狀 CV 對照表與程式（`NESTED_CODE`）、切分器示範程式（`SPLITTERS_CODE`）、OOB 集成段、BCa 殘留；`w05-detail-nested-cv` id 保留（第 9 章連入）。巢狀 CV／切分器原內容來自 `7f5adda`、`6c43579`，需要時可從那裡取回。
+- **第 6 章**：刪 `w06-detail-classification-selection`（AIC/BIC 一句併入 `w06-detail-subset-deviance`）、`w06proofLasso`、`w06proofConstraint`；`lasso-solution`、`lar-group`、`pls-algorithm`、`penalty-constraint`、`shrinkage-map`、`pcr-appendix`、`ridge-bias`、`selection-cv`、`cp-risk` 縮短（id 保留，`lecture_alignment_ch6.source_links` 會掛講義連結）。Q&A 與 info 框的重複段改成指向新收合區。
+- 驗證：`tools/verification/ch5-ch6-lecture-refine-20261013/trim-ch5.log`、`trim-ch6.log`、`trim_shots.log`（FRAMES diff 0、validate／reading_flow／coverage／browser 全過、MathJax error 0）。
