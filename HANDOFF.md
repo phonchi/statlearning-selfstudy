@@ -697,3 +697,28 @@ FRAMES 內含「配適值」與 scale-location 的舊旁白改由 JS 的 `w03dia
 - **工具**：`tools/browser_check.js` 加 `shot()` 後援——全部收合展開後頁面超過 Chrome 全頁截圖上限（Page is too large）時改截前 16000px，其餘檢查照常。
 - **驗證**：`validate.py` 全站 0 失敗；`verify.py HEAD` 0 失敗（FRAMES 不變、講義連結全在）；`verify_math.py` 18/18；`check_*` 全過；`browser_check.js` 兩頁 0 問題；1440／390 px 截圖已檢視。classification.html 現為約 348 KB（SIZE 警告）。
 
+## 22. 第 5、6 章依講義再修訂：bootstrap 觀念、兩階段選模、Lasso 三解釋與全面 LaTeX（2026-10-13）
+
+使用者提出 15 點。grill 決策：遺失的第 5 點貼文已補（為何不直接對所有子集做 CV）；第 10–13 點採「主文一句核心＋細節收合」；
+第 14 點 LaTeX 範圍為第 5、6 章全面；完成後 Codex 唯讀複查，再分章 commit 並 push。
+
+**第 5 章**（`enrich_resampling.py`、`lecture_alignment_ch5.py`）
+- cvwrong：新增收合 `w05-detail-misuse-code`，放產生 `FRAMES_w05misuse` 的同一模擬程式（未改 FRAMES）。
+- 刪除超出範圍的 percentile／basic／BCa 與 Portfolio 區間程式（原 `w05-detail-bootstrap-ci-methods`、`PORTFOLIO_CODE`）。
+  改為 `w05-boot-world` 主文一段「為什麼一定要有放回」與收合 `w05-detail-boot-why-replace`（plug-in、放回模擬獨立抽樣、iid／代表性／平滑性與矩條件）。
+- α 推導 `w05proofPortfolio` 移到 α 公式下方（`reading_flow_ch1_6.py` 移除原本搬到節末的規則）；預測區間收合移到 `w05-boot-block` 前、
+  預測誤差收合移到 OOB 後；新增 `w05-boot-appendix` 小標包住 jackknife／置換檢定。三分之二推導只保留 `w05-detail-two-thirds`。
+- 詞彙卡 +1（Plug-in 原則）。
+
+**第 6 章**（`enrich_modelsel.py`、新檔 `modelsel_lecture_notes.py`、`lecture_alignment_ch6.py`）
+- 序言改為講義四個理由；子集節依講義三步驟，新增 `w06-detail-two-stage`、`-subset-deviance`、`-snooping`、`-guided-search`、`-orthogonal-forward`。
+- 準則節新增 `w06-detail-cp-intuition`、`-aic-bic-goals`、`-adjr2-df`；one-SE 新增 `w06-detail-cv-se`（sd/√K、RepeatedKFold）。
+- Lasso 節 `dx-geom` 改為講義三種解釋（`w06-why-geom`／`-diag`／`-bayes`，`w06-detail-diag-closed-form`），`w06-detail-shrinkage-map` 移到解釋三旁；新 h3 `w06-lasso-path`。
+- 詞彙卡 +3（有效模型空間、資料窺探、漸近效率與選模一致性），修正軟門檻（λ/2、需 XᵀX=I）、BIC 的 n ≥ 8、Credit 分歧大小。
+
+**LaTeX**：兩章可見數學改 `$...$`（兩個 subagent 分章處理）；`pages.py` 的 h2 可用 MathJax，但 `formula`、nav 短名、詞彙卡、
+status banner 與 JS 寫入文字依契約保留 Unicode。注意 f-string 內 `\approx` 若寫成 `\a` 會變成 BEL 控制字元。
+讀者文字不能寫「講義 p.N」（`reader_sources.prose` 會刪除），新增段落已改寫。
+
+**驗證**：見 `tools/verification/ch5-ch6-lecture-refine-20261013/README.md`。Codex job `db56457b-2c3b-4e0a-a6da-9179af2ccdaa` 的 4 項中度問題已核實修正。
+

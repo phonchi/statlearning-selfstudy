@@ -11,6 +11,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib import proof
+from modelsel_lecture_notes import (ADJR2_CORE, AIC_BIC_CORE, CP_CORE, CV_SE_CORE,  # noqa: E402
+                                    GUIDED_SEARCH, LASSO_WHY_BAYES, LASSO_WHY_DIAG,
+                                    LASSO_WHY_INTRO, ORTHOGONAL_FORWARD, STEPWISE_WHY,
+                                    SUBSET_DEVIANCE, SUBSET_INTRO)
 from lib import (apply, card, chart, hl, info, info_card, lab_code, lab_output, qa,  # noqa: E402
                  quiz, rows_card, svg, table, ver_note, viz)
 
@@ -46,24 +50,25 @@ BODIES = {}
 
 # ── P00 prologue ──────────────────────────────────────────────────────
 BODIES["prologue"] = f"""
-  <p>第 3 章的最小平方法很好用：沒有調整參數、有封閉解、係數可以直接解讀。
-  當變數很多時，<strong>估計的穩定性與模型的可解讀性</strong>就需要更多考量。
-  本章介紹子集選擇、收縮與降維，處理這兩個問題。</p>
+  <p>第 3 章的最小平方法很好用：沒有調整參數、有封閉解、係數可以直接解讀。講義強調線性模型<strong>容易解讀，預測表現也常常不錯</strong>，所以本章不放棄線性模型，而是把「最小平方擬合」換成其他擬合方法。這在 $n\\approx p$ 或 $p>n$ 時特別重要。</p>
 
-  <p>問題出在兩個地方。第一是<strong>預測準確度</strong>：當 p 逼近 n，最小平方的估計會非常不穩定
-  （變異很大）；當 p &gt; n，它連唯一解都沒有。若設計矩陣的列滿秩，可以找到無限多組係數把訓練誤差壓到 0，
-  但它們在新資料上的預測不一定相同，訓練誤差無法幫你選出泛化較好的解。第二是<strong>可解讀性</strong>：一堆跟 y 沒關係的變數留在模型裡，
-  最小平方幾乎不可能把它們的係數估成剛好 0，於是你得到一個難以逐項解讀的模型。</p>
+  <p>講義列出四個<strong>考慮替代最小平方法的理由</strong>：</p>
+  <ol>
+    <li><strong>預測準確度</strong>：當 $p\\approx n$，最小平方的估計變異很大；當 $p>n$，它連唯一解都沒有。若設計矩陣的列滿秩，有無限多組係數能把訓練誤差壓到 0，但它們在新資料上的預測不一定相同。需要控制變異。</li>
+    <li><strong>可解讀性</strong>：把無關或重複的變數拿掉，也就是把對應係數設成 0，模型比較容易解讀。最小平方幾乎不會把係數估成剛好 0，因此需要能<strong>自動做特徵選擇</strong>的方法。</li>
+    <li><strong>加快訓練與推論</strong>：變數少了，擬合、儲存與預測的計算量都會下降，上線後要蒐集的資料也比較少。</li>
+    <li><strong>避開維度詛咒</strong>：維度愈高，資料在空間中愈稀疏，局部方法愈難找到夠近的鄰居（見<a href="statistical_learning.html#curse">第 2 章的維度詛咒</a>）。先降低有效維度，後續方法比較不受影響。</li>
+  </ol>
 
 {info("這一章的三大類方法", '''<strong>1. 子集選擇（subset selection）：</strong>挑出一部分變數，
   只用它們做最小平方。最佳子集、前向逐步、後向逐步。<br>
-  <strong>2. 收縮（shrinkage）／正則化：</strong>全部 p 個變數都留著，但把係數往 0 壓。
+  <strong>2. 收縮（shrinkage）／正則化：</strong>全部 $p$ 個變數都留著，但把係數往 0 壓。
   Ridge 用 L2 懲罰、Lasso 用 L1 懲罰（順便做變數選擇）。<br>
-  <strong>3. 降維（dimension reduction）：</strong>把 p 個變數投影成 M &lt; p 個線性組合，
-  再對這 M 個新變數做最小平方。PCR 與 PLS。''')}
+  <strong>3. 降維（dimension reduction）：</strong>把 $p$ 個變數投影成 $M&lt;p$ 個線性組合，
+  再對這 $M$ 個新變數做最小平方。PCR 與 PLS。''')}
 
   <p>三類方法都透過<strong>接受一些偏差來降低變異</strong>。最小平方是無偏的，
-  但在 p 大的時候，高變異會降低預測表現；只要願意接受一點偏差，測試誤差往往降得很明顯。
+  但在 $p$ 大的時候，高變異會降低預測表現；只要願意接受一點偏差，測試誤差往往降得很明顯。
   本章會比較這些方法如何取捨偏差與變異。</p>
 
   $$\\text{{RSS}} = \\sum_{{i=1}}^{{n}}\\left(y_i - \\beta_0 - \\sum_{{j=1}}^{{p}}\\beta_j x_{{ij}}\\right)^2$$
@@ -71,19 +76,19 @@ BODIES["prologue"] = f"""
   <p>下表整理三類方法的差別，讀完整章後可回來比較。</p>
 
 {table(["", "留幾個變數", "係數會剛好是 0 嗎", "有調整參數嗎", "座標系", "主要弱點"],
-       [["最小平方", "全部 p 個", "幾乎不會", "沒有", "原始變數", "p 大時變異很大"],
-        ["子集選擇", "k 個（自己選）", "沒被選的就是 0", "k", "原始變數", "搜尋空間太大、不穩定"],
-        ["Ridge（L2）", "全部 p 個", "<strong>不會</strong>", "λ", "原始變數", "不做變數選擇"],
-        ["Lasso（L1）", "由 λ 決定", "<strong>會</strong>", "λ", "原始變數", "相關變數之間的選擇很不穩"],
-        ["PCR / PLS", "全部 p 個都參與", "不會", "M", "<strong>換過的座標</strong>",
+       [["最小平方", "全部 $p$ 個", "幾乎不會", "沒有", "原始變數", "$p$ 大時變異很大"],
+        ["子集選擇", "$k$ 個（自己選）", "沒被選的就是 0", "$k$", "原始變數", "搜尋空間太大、不穩定"],
+        ["Ridge（L2）", "全部 $p$ 個", "<strong>不會</strong>", "$\\lambda$", "原始變數", "不做變數選擇"],
+        ["Lasso（L1）", "由 $\\lambda$ 決定", "<strong>會</strong>", "$\\lambda$", "原始變數", "相關變數之間的選擇很不穩"],
+        ["PCR / PLS", "全部 $p$ 個都參與", "不會", "$M$", "<strong>換過的座標</strong>",
          "新座標不好解讀"]])}
 
 {quiz("qWhy", "QUIZ · 為什麼要調整模型",
-      "為什麼 p 逼近 n 的時候，「把全部變數丟進去做最小平方」是個壞主意？",
+      "為什麼 $p$ 逼近 $n$ 的時候，「把全部變數丟進去做最小平方」是個壞主意？",
       [(True, "因為係數估計的變異會變得非常大，訓練資料稍微變動一點，擬合出來的模型就差很多",
-        "對。最小平方在 p ≪ n 時是低偏差、低變異；p 逼近 n 時偏差仍然是 0，但變異大到讓測試誤差變大。收縮就是拿一點偏差去換掉這塊變異。"),
+        "對。最小平方在 $p\\ll n$ 時是低偏差、低變異；$p$ 逼近 $n$ 時偏差仍然是 0，但變異大到讓測試誤差變大。收縮就是拿一點偏差去換掉這塊變異。"),
        (False, "因為最小平方法假設誤差是常態分佈，變數多了這個假設就不成立",
-        "不對。常態假設是用來做 t 檢定與信賴區間的，跟 p／n 的比例無關；而且就算誤差真的是常態，p 逼近 n 時最小平方照樣會變異很大。"),
+        "不對。常態假設是用來做 t 檢定與信賴區間的，跟 $p/n$ 的比例無關；而且就算誤差真的是常態，$p$ 逼近 $n$ 時最小平方照樣會變異很大。"),
        (False, "因為變數多了以後 RSS 會變大，擬合品質下降",
         "反了。加變數<strong>永遠</strong>不會讓訓練 RSS 變大（多一個變數最差就是係數估成 0）。訓練 RSS 單調下降正是問題所在。它不能用來選模型。")])}
 """
@@ -92,35 +97,25 @@ BODIES["prologue"] = f"""
 _sub_code = lab_code(CH, 12) + "\n" + lab_code(CH, 13) + "\n" + lab_code(CH, 15)
 
 BODIES["subset"] = f"""
-  <p>最直白的想法：<strong>每一種變數組合都試一次，挑最好的</strong>。這就是最佳子集選擇
-  （best subset selection）。p 個變數有 2<sup>p</sup> 種組合（含空模型），
-  演算法分兩階段。先在每個大小 k 裡挑出訓練 RSS 最小的 M<sub>k</sub>，
-  再從 M<sub>0</sub>, …, M<sub>p</sub> 裡挑一個。</p>
-
-  $$\\text{{總共要擬合}} \\; \\sum_{{k=0}}^{{p}} \\binom{{p}}{{k}} = 2^{{p}} \\;
-    \\text{{個模型}}$$
-
-{info("為什麼一定要分兩階段", '''第一階段用訓練 RSS 挑同大小的贏家沒問題（同樣的 k，
-  比 RSS 是公平的）。<strong>第二階段絕對不能再用訓練 RSS</strong>，因為 RSS 隨 k 單調下降、
-  R² 隨 k 單調上升，你一定會選到全部變數。第二階段要用 Cp、AIC、BIC、調整後 R²，或直接用交叉驗證。''',
-      "warm")}
-
-  <p>2<sup>p</sup> 長得太快，p 超過 40 就算不完了。<strong>前向逐步選擇</strong>
-  （forward stepwise selection）改成貪婪地走：從空模型開始，每一步加一個「讓 RSS 降最多」的變數。
-  <strong>後向逐步選擇</strong>（backward stepwise selection）反過來，從全模型開始每次砍一個。
+{SUBSET_INTRO}
+{SUBSET_DEVIANCE}
+{STEPWISE_WHY}
+  <p><strong>前向逐步選擇</strong>（forward stepwise selection）從空模型開始，每一步加入一個「讓訓練 RSS 降最多」的變數，直到所有變數都在模型裡。
+  <strong>後向逐步選擇</strong>（backward stepwise selection）反過來，從含全部 $p$ 個變數的模型開始，每次刪掉最沒用的一個。
   兩者都只要擬合</p>
 
   $$1 + \\sum_{{k=0}}^{{p-1}} (p-k) = 1 + \\frac{{p(p+1)}}{{2}} \\; \\text{{個模型}}$$
 
-  <p>p = 20 時這是 <strong>211</strong> 個，而最佳子集是 <strong>1,048,576</strong> 個。
-  代價是：<strong>貪婪走法不保證找到最佳子集</strong>。下面第二張圖用真實的 <code>Credit</code>
-  資料把這件事畫出來。</p>
+  <p>$p = 20$ 時這是 <strong>211</strong> 個，而最佳子集是 $2^{{20}}=$ <strong>1,048,576</strong> 個。
+  代價是<strong>貪婪走法不保證找到最佳子集</strong>（訓練誤差最低的子集）。講義的例子：$p=3$ 時，最佳單變數模型含 $X_1$，最佳雙變數模型卻是 $\\{{X_2,X_3\\}}$；前向法的 $M_1$ 含 $X_1$，$M_2$ 也只能含 $X_1$ 再加一個，於是錯過最佳的雙變數模型。下面第二張圖用四變數示意把這件事畫出來。</p>
+{GUIDED_SEARCH}
+{ORTHOGONAL_FORWARD}
 
 {viz(svg("w06subsetSvg", 190) + "\n" + svg("w06subsetLatSvg", 300),
      [rows_card("要擬合幾個模型",
-                [("p（變數個數）", "10", "w06subsetP2"),
-                 ("最佳子集 2ᵖ", "—", "w06subsetBest"),
-                 ("forward 1+p(p+1)/2", "—", "w06subsetFwd"),
+                [("$p$（變數個數）", "10", "w06subsetP2"),
+                 ("最佳子集 $2^p$", "—", "w06subsetBest"),
+                 ("forward $1+p(p+1)/2$", "—", "w06subsetFwd"),
                  ("差幾倍", "—", "w06subsetRatio")]),
       info_card("前向逐步選擇的虛擬碼",
                 '<div class="pseudo-code" id="w06subsetCode" style="font-size:.72rem;">'
@@ -137,8 +132,8 @@ BODIES["subset"] = f"""
                 '<span style="color:var(--accent);font-weight:700;">紅線</span>連接每個大小的最佳子集，'
                 '<span style="color:var(--accent3);font-weight:700;">綠線</span>表示 forward 逐步選擇的路徑。',
                 "示意")],
-     "w06subsetStatus", "用上面的滑桿觀察 2ᵖ 如何快速增加；下面按「開始」追蹤 forward 的選擇流程。",
-     slider("w06subsetP", "p =", 2, 20, 1, 10, "w06subsetCounts()", "w06subsetPv", "10")
+     "w06subsetStatus", "用上面的滑桿觀察 2 的 p 次方如何快速增加；下面按「開始」追蹤 forward 的選擇流程。",
+     slider("w06subsetP", "$p$ =", 2, 20, 1, 10, "w06subsetCounts()", "w06subsetPv", "10")
      + '<button class="btn btn-play" onclick="w06latStart()">▶ 開始</button>'
      + '<button class="btn btn-step" onclick="w06latPlayer &amp;&amp; w06latPlayer.step()">→ 單步</button>'
      + '<button class="btn btn-toggle" onclick="w06latToggleBest()">切換最佳前緣</button>'
@@ -163,81 +158,85 @@ BODIES["subset"] = f"""
            "而前向那邊（下一節）是 6 變數。<strong>同一份資料、同一個準則，兩個搜尋方向給出不同大小的模型</strong>"
            "——講義第 42 頁講的就是這件事。")}
 
-{table(["搜尋法", "要擬合幾個模型", "p = 20 時", "n &lt; p 能用嗎", "保證找到最佳子集嗎"],
-       [["最佳子集", "2<sup>p</sup>", "1,048,576", "可以（只比較可估計的小子集）", "<strong>會</strong>"],
-        ["前向逐步", "1 + p(p+1)/2", "211", "<strong>可以</strong>", "不保證"],
-        ["後向逐步", "1 + p(p+1)/2", "211", "不能（要先擬合全模型）", "不保證"],
+{table(["搜尋法", "要擬合幾個模型", "$p=20$ 時", "$n&lt;p$ 能用嗎", "保證找到最佳子集嗎"],
+       [["最佳子集", "$2^p$", "1,048,576", "可以（只比較可估計的小子集）", "<strong>會</strong>"],
+        ["前向逐步", "$1+p(p+1)/2$", "211", "<strong>可以</strong>", "不保證"],
+        ["後向逐步", "$1+p(p+1)/2$", "211", "不能（要先擬合全模型）", "不保證"],
         ["混合逐步", "略多於逐步", "約 211+", "看實作", "不保證（但比較接近）"]])}
 
 {quiz("qSub", "QUIZ · 子集選擇",
-      "同一份資料上做最佳子集、前向逐步、後向逐步。<strong>大小同樣是 k</strong> 的三個模型裡，"
+      "同一份資料上做最佳子集、前向逐步、後向逐步。<strong>大小同樣是 $k$</strong> 的三個模型裡，"
       "哪一個的訓練 RSS 最小？",
-      [(True, "最佳子集的一定最小（或並列最小），因為它窮舉了所有 k 變數子集",
+      [(True, "最佳子集的一定最小（或並列最小），因為它窮舉了所有 $k$ 變數子集",
         "對。這就是 ISLP 6.6 第 1 題 (a) 的答案。注意這只說訓練 RSS——測試 RSS 誰最小完全說不準，因為窮舉的搜尋空間更大，反而更容易擬合到雜訊。"),
        (False, "三個一定相同，因為它們都是在同一份資料上做最小平方",
-        "不對。都是最小平方沒錯，但<strong>用的變數不同</strong>。逐步法受前幾步的選擇綁住，可能拿不到那個 k 變數的最佳組合——本節的 Credit 格圖就是實例。"),
+        "不對。都是最小平方沒錯，但<strong>用的變數不同</strong>。逐步法受前幾步的選擇綁住，可能拿不到那個 $k$ 變數的最佳組合——本節的 Credit 格圖就是實例。"),
        (False, "後向逐步的最小，因為它從全模型開始，資訊最完整",
-        "不對。從全模型開始只影響搜尋路徑，不代表每個大小都能找到最佳組合。後向逐步同樣是貪婪的，而且它還多一個限制：要能擬合出全模型，所以需要 n &gt; p。")])}
+        "不對。從全模型開始只影響搜尋路徑，不代表每個大小都能找到最佳組合。後向逐步同樣是貪婪的，而且它還多一個限制：要能擬合出全模型，所以需要 $n&gt;p$。")])}
 """
 
 # ── P02 criteria ──────────────────────────────────────────────────────
 BODIES["criteria"] = f"""
-  <p>第二階段的問題是：<strong>怎麼比較「大小不同」的模型？</strong>訓練 RSS 與 R² 不能用，
+  <p>第二階段的問題是：<strong>怎麼比較「大小不同」的模型？</strong>訓練 RSS 與 $R^2$ 不能用，
   因為它們單調偏好大模型。兩條路——<strong>間接</strong>（把訓練誤差加一個懲罰項，修掉它的樂觀偏差）
   與<strong>直接</strong>（用驗證集或交叉驗證真的去估測試誤差，下一節講）。</p>
 
-  <p>常見的間接評估準則有四個。設模型有 d 個預測變數、σ̂² 是用<strong>全模型</strong>估出來的誤差變異數：</p>
+  <p>常見的間接評估準則有四個。設模型有 $d$ 個預測變數，$\\hat\\sigma^2$ 是用<strong>全模型</strong>估出來的誤差變異數：</p>
 
   $$C_p = \\frac{{1}}{{n}}\\left(\\mathrm{{RSS}} + 2 d \\hat\\sigma^2\\right), \\qquad
     \\mathrm{{BIC}} = \\frac{{1}}{{n}}\\left(\\mathrm{{RSS}} + \\log(n)\\, d \\hat\\sigma^2\\right)$$
 
   $$\\text{{Adjusted }} R^2 = 1 - \\frac{{\\mathrm{{RSS}}/(n-d-1)}}{{\\mathrm{{TSS}}/(n-1)}}$$
 
-  <p>兩個公式長得幾乎一樣，只差在<strong>每多一個變數要罰多少</strong>：Cp 罰 2σ̂²，
-  BIC 罰 log(n)·σ̂²。因為 n &gt; 7 就有 log n &gt; 2，<strong>BIC 罰得比 Cp 重，所以偏好更小的模型</strong>。
-  n 愈大這個差距愈誇張——<code>Credit</code> 的 n = 400，log 400 ≈ 5.99，BIC 的懲罰是 Cp 的三倍。</p>
+  <p>兩個公式長得幾乎一樣，只差在<strong>每多一個變數要罰多少</strong>：$C_p$ 罰 $2\\hat\\sigma^2$，
+  BIC 罰 $\\log(n)\\,\\hat\\sigma^2$。整數樣本數 $n\\ge8$ 時 $\\log n>2$，所以<strong>BIC 罰得比 $C_p$ 重，偏好更小的模型</strong>。
+  $n$ 愈大差距愈明顯：<code>Credit</code> 的 $n = 400$，$\\log 400 \\approx 5.99$，BIC 的懲罰約是 $C_p$ 的三倍。</p>
+{CP_CORE}
 
-{info("AIC 與 Cp 的關係", '''對高斯誤差的最小平方模型，課本的 AIC 就是
-  RSS + 2dσ̂²，跟 Cp 成正比（所以 ISLP 圖 6.2 只畫 Cp）。
+{info("AIC 與 $C_p$ 的關係", '''對高斯誤差的最小平方模型，課本的 AIC 就是
+  $\\mathrm{RSS}+2d\\hat\\sigma^2$，跟 $C_p$ 成正比（所以 ISLP 圖 6.2 只畫 $C_p$）。
   但實作（<code>statsmodels</code> 的 <code>.aic</code>）用的是 log-likelihood 版
-  −2·log L + 2k，它跟 Cp <strong>不是</strong>單調對應，所以下圖把它畫成獨立一條線。
+  $-2\\log L+2k$，它跟 $C_p$ <strong>不是</strong>單調對應，所以下圖把它畫成獨立一條線。
   兩個版本都叫 AIC，看到數字差很多不要慌，先問是哪一個公式。''')}
 
-{table(["準則", "式子（最小平方）", "每多一個變數罰多少", "n=400 時的懲罰", "Credit 選出"],
-       [["Cp", "(RSS + 2dσ̂²)/n", "2σ̂²", "2σ̂²", "<strong>6 個</strong>"],
-        ["AIC（課本）", "RSS + 2dσ̂²", "2σ̂²", "與 Cp 成正比", "同 Cp"],
-        ["BIC", "(RSS + log(n)·dσ̂²)/n", "log(n)·σ̂²", "<strong>5.99σ̂²</strong>",
+{table(["準則", "式子（最小平方）", "每多一個變數罰多少", "$n=400$ 時的懲罰", "Credit 選出"],
+       [["$C_p$", "$(\\mathrm{RSS}+2d\\hat\\sigma^2)/n$", "$2\\hat\\sigma^2$", "$2\\hat\\sigma^2$", "<strong>6 個</strong>"],
+        ["AIC（課本）", "$\\mathrm{RSS}+2d\\hat\\sigma^2$", "$2\\hat\\sigma^2$", "與 $C_p$ 成正比", "同 $C_p$"],
+        ["BIC", "$(\\mathrm{RSS}+\\log(n)\\,d\\hat\\sigma^2)/n$", "$\\log(n)\\,\\hat\\sigma^2$", "<strong>$5.99\\hat\\sigma^2$</strong>",
          "<strong>4 個</strong>"],
-        ["調整後 R²", "1 − [RSS/(n−d−1)] / [TSS/(n−1)]", "分母的 n−d−1 變小", "很輕",
+        ["調整後 $R^2$", "$1-[\\mathrm{RSS}/(n-d-1)]/[\\mathrm{TSS}/(n-1)]$", "分母的 $n-d-1$ 變小", "很輕",
          "<strong>7 個</strong>"],
-        ["交叉驗證", "直接估測試誤差", "不需要 σ̂²", "—", "<strong>6 個</strong>"]])}
+        ["交叉驗證", "直接估測試誤差", "不需要 $\\hat\\sigma^2$", "—", "<strong>6 個</strong>"]])}
+
+{AIC_BIC_CORE}
+{ADJR2_CORE}
 
 {qa("觀念釐清", [
-    ("Q：Cp、AIC、BIC 到底差在哪？為什麼 BIC 偏好小模型？",
+    ("Q：$C_p$、AIC、BIC 到底差在哪？為什麼 BIC 偏好小模型？",
      "<p>三個都是「訓練 RSS ＋ 一個隨模型變大而變大的懲罰」。差別只在懲罰的係數："
-     "Cp 與課本版 AIC 都是 $2d\\hat\\sigma^2$，BIC 是 $\\log(n)\\, d\\hat\\sigma^2$。"
-     "$\\log n > 2$ 對任何 $n > 7$ 都成立（$e^2 \\approx 7.39$），所以 BIC 一律罰得比較重，"
-     "選出來的模型一律比較小或一樣大。n = 400 時 $\\log n \\approx 5.99$，懲罰差三倍。</p>"
-     "<p>背後的動機不同。Cp 是<strong>估測試 MSE</strong>："
-     "對固定設計、預先指定的線性模型，計入全部投影維度的 Cp 可估計同一 X 上的新反應風險；完整條件與省略常數的差別見本節推導。"
+     "$C_p$ 與課本版 AIC 都是 $2d\\hat\\sigma^2$，BIC 是 $\\log(n)\\, d\\hat\\sigma^2$。"
+     "$\\log n > 2$ 對整數樣本數 $n\\ge8$ 成立（$e^2 \\approx 7.39$），所以 BIC 一律罰得比較重，"
+     "選出來的模型一律比較小或一樣大。$n=400$ 時 $\\log n \\approx 5.99$，懲罰差三倍。</p>"
+     "<p>背後的動機不同。$C_p$ 是<strong>估測試 MSE</strong>："
+     "對固定設計、預先指定的線性模型，計入全部投影維度的 $C_p$ 可估計同一 $X$ 上的新反應風險；完整條件與省略常數的差別見本節推導。"
      "BIC 是從<strong>貝氏</strong>觀點來的，它在近似「這個模型是真模型的後驗機率」。"
-     "所以兩者的目標本來就不一樣：Cp／AIC 想預測得準，BIC 想找出<em>正確的</em>模型。"
-     "如果真模型確實在候選清單裡，n 夠大時 BIC 會挑中它（一致性）；AIC 不保證，它會傾向多留幾個變數。</p>"
-     "<p>實務上的建議：<strong>目的是預測就用 CV（或 AIC／Cp），目的是「哪些變數真的有關」就參考 BIC</strong>。"
-     "而且兩者都要求你估得出 $\\hat\\sigma^2$——這在 p &gt; n 的時候無法按全模型的常規公式計算（最後一節會講）。</p>"),
-    ("Q：調整後 R² 為什麼「理論基礎比較弱」？",
-     "<p>Cp、AIC、BIC 都有明確的推導：Cp 在固定模型與固定設計條件下修正樂觀偏差，AIC 來自 Kullback–Leibler 距離的漸近論證，"
-     "BIC 來自後驗機率的 Laplace 近似。調整後 R² 沒有這種東西。它就是「把 RSS 除以 $n-d-1$ 而不是 n」"
+     "所以兩者的目標本來就不一樣：$C_p$／AIC 想預測得準，BIC 想找出<em>正確的</em>模型。"
+     "如果真模型確實在候選清單裡，$n$ 夠大時 BIC 會挑中它（一致性）；AIC 不保證，它會傾向多留幾個變數。</p>"
+     "<p>實務上的建議：<strong>目的是預測就用 CV（或 AIC／$C_p$），目的是「哪些變數真的有關」就參考 BIC</strong>。"
+     "而且兩者都要求你估得出 $\\hat\\sigma^2$——這在 $p&gt;n$ 的時候無法按全模型的常規公式計算（最後一節會講）。</p>"),
+    ("Q：調整後 $R^2$ 為什麼「理論基礎比較弱」？",
+     "<p>$C_p$、AIC、BIC 都有明確的推導：$C_p$ 在固定模型與固定設計條件下修正樂觀偏差，AIC 來自 Kullback–Leibler 距離的漸近論證，"
+     "BIC 來自後驗機率的 Laplace 近似。調整後 $R^2$ 沒有這種東西。它就是「把 RSS 除以 $n-d-1$ 而不是 $n$」"
      "這個直覺上合理的修正。</p>"
-     "<p>它的直覺是對的：真正有用的變數都進來以後，再加雜訊變數只會讓 RSS 降一點點，"
-     "但 $d$ 變大會讓分母 $n-d-1$ 變小，兩者相抵之下 $\\mathrm{RSS}/(n-d-1)$ 會變大、"
-     "調整後 R² 會下降。問題是「一點點」有多點沒有理論刻度，所以它的懲罰強度是任意的——"
-     "在 Credit 上它比 Cp 還鬆（選 7 個 vs 6 個）。</p>"
-     "<p>順便記一件事：<strong>訓練 R² 在高維且設計矩陣列滿秩時可以做到 1</strong>，"
-     "但這時飽和模型的殘差自由度為 0，調整後 R² 的常規公式沒有定義。一般情況要按設計矩陣的秩計算自由度，不能直接把超過樣本數的欄數代入。</p>"),
+     "<p>它的直覺是對的：真正有用的變數都進來以後，再加雜訊變數通常只會讓 RSS 降一點點，"
+     "但 $d$ 變大會讓分母 $n-d-1$ 變小，兩者相抵之下 $\\mathrm{RSS}/(n-d-1)$ 多半會變大、"
+     "調整後 $R^2$ 隨之下降；偶然的 RSS 改善也可能讓它上升（新增一欄時，上升等價於部分 $F>1$）。問題是「一點點」有多點沒有理論刻度，所以它的懲罰強度是任意的——"
+     "在 Credit 上它比 $C_p$ 還鬆（選 7 個 vs 6 個）。</p>"
+     "<p>順便記一件事：<strong>訓練 $R^2$ 在高維且設計矩陣列滿秩時可以做到 1</strong>，"
+     "但這時飽和模型的殘差自由度為 0，調整後 $R^2$ 的常規公式沒有定義。一般情況要按設計矩陣的秩計算自由度，不能直接把超過樣本數的欄數代入。</p>"),
 ])}
 
-  <h3 id="dx-crit">講義完整實作：用 BIC 與調整後 R² 挑大小</h3>
+  <h3 id="dx-crit">講義完整實作：用 BIC 與調整後 $R^2$ 挑大小</h3>
 {card("講義 06 · 前向路徑上的 BIC", lab_code(CH, 36) + "\n\n" + lab_code(CH, 37),
       lab_output(CH, 37), src=src("36、37"),
       note="<code>argmin()</code> 回傳 <strong>5</strong>，而 <code>bic_f</code> 是 0-based 的 "
@@ -246,30 +245,30 @@ BODIES["criteria"] = f"""
            "取到的是 5 變數模型（輸出列出 5 個特徵）。同一個 <code>5</code>，兩種索引意義完全不同，"
            "讀別人的程式碼時要分清楚。")}
 
-{card("講義 06 · 最佳子集 + 調整後 R²",
+{card("講義 06 · 最佳子集 + 調整後 $R^2$",
       lab_code(CH, 97) + "\n\n" + lab_code(CH, 98) + "\n\n" + lab_code(CH, 101),
       None, src=src("97、98、101"),
       note="這是 <code>adjust_r2()</code> 的定義（就是式 6.4）加上在最佳子集前緣上取最大值。"
-           "Hitters 上調整後 R² 選出 <strong>11 個變數</strong>；BIC 選 6 個。"
+           "Hitters 上調整後 $R^2$ 選出 <strong>11 個變數</strong>；BIC 選 6 個。"
            "兩個準則差了 5 個變數，反映了它們對模型複雜度採用不同的懲罰強度。")}
 
 {quiz("qCrit", "QUIZ · 選模型的準則",
-      "同一份資料上，BIC 選出的模型大小，跟 Cp 選出的比起來？",
-      [(True, "一定小於或等於（n &gt; 7 時），因為 BIC 每多一個變數要罰 log(n)·σ̂² 而 Cp 只罰 2σ̂²",
-        "對。log n > 2 對任何 n > 7 成立，所以 BIC 的懲罰項嚴格較重，最小值只會往左移或不動。Credit 上是 4 vs 6。"),
+      "同一份資料上，BIC 選出的模型大小，跟 $C_p$ 選出的比起來？",
+      [(True, "一定小於或等於（$n\\ge8$ 時），因為 BIC 每多一個變數要罰 $\\log(n)\\,\\hat\\sigma^2$，而 $C_p$ 只罰 $2\\hat\\sigma^2$",
+        "對。整數樣本數 $n\\ge8$ 時 $\\log n>2$，所以 BIC 的懲罰項嚴格較重，最小值只會往左移或不動。Credit 上是 4 vs 6。"),
        (False, "不一定，取決於資料裡有多少真的有用的變數",
-        "有用變數的多寡會影響<em>兩者各自</em>選幾個，但不會改變「BIC 罰得更重」這個事實。兩條曲線的 RSS 部分完全一樣，只有懲罰斜率不同，所以 BIC 的最小值不可能落在 Cp 的右邊。"),
+        "有用變數的多寡會影響<em>兩者各自</em>選幾個，但不會改變「BIC 罰得更重」這個事實。兩條曲線的 RSS 部分完全一樣，只有懲罰斜率不同，所以 BIC 的最小值不可能落在 $C_p$ 的右邊。"),
        (False, "一定一樣，因為兩者都是測試 MSE 的無偏估計",
-        "只有 Cp 是測試 MSE 的無偏估計，BIC 不是——BIC 是從後驗機率近似來的，它刻意罰得更重以便挑出「正確的」模型而不是「預測最準的」模型。")])}
+        "只有 $C_p$ 是測試 MSE 的無偏估計，BIC 不是——BIC 是從後驗機率近似來的，它刻意罰得更重以便挑出「正確的」模型而不是「預測最準的」模型。")])}
 """
 
 # ── P03 用 CV 選模型 + one-SE ──────────────────────────────────────────
 BODIES["onese"] = f"""
-  <p>Cp、AIC、BIC 都需要估 $\\hat\\sigma^2$，而在 p 接近 n 的時候那個估計本身就不可靠。
+  <p>$C_p$、AIC、BIC 都需要估 $\\hat\\sigma^2$，而在 $p$ 接近 $n$ 的時候那個估計本身就不可靠。
   交叉驗證不需要 $\\hat\\sigma^2$、不需要知道自由度、也不需要假設模型是對的。
   它<strong>直接估測試誤差</strong>。所以只要算得動，CV 是首選。</p>
 
-  <p>做法就是第 5 章那一套，只是把「模型」換成「模型大小」：對每個大小 k，
+  <p>做法就是第 5 章那一套，只是把「模型」換成「模型大小」：對每個大小 $k$，
   在每一折的訓練部分做子集選擇、在驗證折上算誤差。
   <strong>變數選擇必須只使用各折的訓練資料</strong>。這正是第 5 章 P06 講的那個錯誤。</p>
 
@@ -281,6 +280,8 @@ BODIES["onese"] = f"""
   四變數模型的 CV 誤差仍落在最佳點加一個標準誤的範圍內，規則因此偏好較簡單的四變數模型；這不是兩模型風險相同的統計檢定。上一節那張圖的橘色線就是 10-fold CV 誤差，
   大圓點是它的最低點。''')}
 
+{CV_SE_CORE}
+
 {card("講義 06 · 用 GridSearchCV 選調整參數", lab_code(CH, 134), None,
       src=src("134"),
       note="<code>Pipeline</code> 是關鍵：把標準化包進去，"
@@ -288,9 +289,9 @@ BODIES["onese"] = f"""
            "而不是用全部資料的平均與標準差。這一步做錯，CV 誤差會偏低而且不會報錯。")}
 
 {qa("觀念釐清", [
-    ("Q：既然 CV 最好，為什麼還要教 Cp、AIC、BIC？",
+    ("Q：既然 CV 最好，為什麼還要教 $C_p$、AIC、BIC？",
      "<p>三個理由。第一，運算成本：最佳子集有 $2^p$ 個模型，每個都跑 k-fold 是 $k \\cdot 2^p$ 次擬合；"
-     "而 Cp 只要一次擬合加一個修正項。第二，這三個準則會出現在<strong>別人的論文與報表</strong>裡，"
+     "而 $C_p$ 只要一次擬合加一個修正項。第二，這三個準則會出現在<strong>別人的論文與報表</strong>裡，"
      "你得看得懂。第三，它們解釋了「懲罰複雜度」這個想法的來源——"
      "AIC 從 KL 散度來、BIC 從後驗機率來，各有各的目標。</p>"
      "<p>但如果你只是要挑一個模型來預測，而且資料量算得動：用 CV。</p>"),
@@ -316,21 +317,21 @@ BODIES["ridge"] = f"""
     \\;=\\; \\mathrm{{RSS}} + \\lambda \\|\\beta\\|_2^2$$
 
   <p>$\\lambda = 0$ 就是最小平方；$\\lambda \\to \\infty$ 所有係數趨近 0。
-  注意<strong>截距 $\\beta_0$ 不罰</strong>——罰它等於在乎你把 y 的原點放在哪裡。</p>
+  注意<strong>截距 $\\beta_0$ 不罰</strong>——罰它等於在乎你把 $y$ 的原點放在哪裡。</p>
 
-{viz(chart("w06ridgeChart", "tall", "。此圖的重點：λ 變大時所有係數一起往零收縮，但沒有任何一個變成剛好 0。"),
+{viz(chart("w06ridgeChart", "tall", "。此圖的重點：$\\lambda$ 變大時所有係數一起往零收縮，但沒有任何一個變成剛好 0。"),
      [info_card("怎麼看上圖",
-                'x 軸可以切換 log λ 與 ‖β̂ᴿ‖₂ ⁄ ‖β̂‖₂（相對收縮量）。'
+                'x 軸可以切換 $\\log\\lambda$ 與 $\\|\\hat\\beta^R_\\lambda\\|_2/\\|\\hat\\beta\\|_2$（相對收縮量）。'
                 '<strong>每條線是一個變數的係數。</strong>注意它們一起往中線靠，'
                 '但到最右邊仍然沒有任何一條落在 0 上。', "圖 6.4"),
-      rows_card("目前的 λ",
-                [("λ", "—", "w06ridgeLam"), ("‖β̂ᴿ‖₂ ⁄ ‖β̂‖₂", "—", "w06ridgeRatio"),
+      rows_card("目前的 $\\lambda$",
+                [("$\\lambda$", "—", "w06ridgeLam"), ("$\\|\\hat\\beta^R_\\lambda\\|_2/\\|\\hat\\beta\\|_2$", "—", "w06ridgeRatio"),
                  ("非零係數", "—", "w06ridgeNz")]),
       info_card("為什麼收縮可能更準",
                 'Ridge 以小幅偏差換取較大的變異下降。第 2 章已用圖示說明這個偏差–變異取捨；'
                 '這裡用 Credit 的係數路徑觀察收縮的效果。')],
      "w06ridgeStatus", "拖動滑桿看係數怎麼收縮。",
-     '<label class="slider-label" style="margin-right:.4rem;">log λ</label>'
+     '<label class="slider-label" style="margin-right:.4rem;">$\\log\\lambda$</label>'
      '<input type="range" id="w06ridgeSl" min="0" max="39" step="1" value="20" '
      'oninput="w06ridgeMove()" style="flex:1 1 140px;max-width:220px;min-width:0;">'
      '<button class="btn btn-toggle" onclick="w06ridgeAxis()">切換 x 軸</button>',
@@ -339,17 +340,17 @@ BODIES["ridge"] = f"""
 {card("講義 06 · Ridge 與係數的 L2 範數",
       lab_code(CH, 122) + "\n\n" + lab_code(CH, 124), lab_output(CH, 124), src=src("122、124"),
       note="<code>ElasticNet</code> 的 <code>l1_ratio=0</code> 就是純 Ridge。"
-           "係數的 L2 範數會隨 λ 單調下降。這個數字就是上圖 x 軸比值的分子。")}
+           "係數的 L2 範數會隨 $\\lambda$ 單調下降。這個數字就是上圖 x 軸比值的分子。")}
 
-{card("講義 06 · 用 RidgeCV 選 λ", lab_code(CH, 144), None, src=src("144、145"),
-      note="<code>RidgeCV</code> 把「掃 λ ＋ 交叉驗證」包成一步。"
+{card("講義 06 · 用 RidgeCV 選 $\\lambda$", lab_code(CH, 144), None, src=src("144、145"),
+      note="<code>RidgeCV</code> 把「掃 $\\lambda$ ＋ 交叉驗證」包成一步。"
            "<code>alphas</code> 接收一組候選值；排列順序本身不表示 <code>RidgeCV</code> 使用暖啟動。"
            "這張 lab 卡把 scaler 放在內建 CV estimator 外層，因此 scaler 會先對傳入 pipeline 的全部資料擬合，"
            "<code>RidgeCV</code> 才在縮放後的資料內切折。")}
 
 {info("Ridge 之前一定要標準化", '''懲罰項 $\\sum \\beta_j^2$ 對<strong>單位敏感</strong>。
   同一個變數用「元」還是「千元」為單位，最小平方的預測完全一樣（係數等比例調整），
-  Ridge 的懲罰會隨係數尺度改變：係數變大 1000 倍，懲罰項就變大 10⁶ 倍，這個變數受到的收縮也會更強。<br><br>
+  Ridge 的懲罰會隨係數尺度改變：係數變大 1000 倍，懲罰項就變大 $10^6$ 倍，這個變數受到的收縮也會更強。<br><br>
   所以標準做法是先把每個 $x_j$ 標準化成標準差 1 再擬合。
   單純把 <code>StandardScaler</code> 放在 <code>RidgeCV</code> 或 <code>ElasticNetCV</code> 外層，
   只能保證 scaler 不會看到 pipeline 之外的外部測試集；內建 estimator 切 CV 折以前，資料已經縮放完畢。
@@ -375,12 +376,12 @@ grid = GridSearchCV(
 grid.fit(X_train, Y_train)''')}
   <p><code>GridSearchCV</code> 會在每一折複製並擬合整條 pipeline，因此該折的 scaler
   只看該折訓練資料。這段概念碼假設已備妥外層訓練資料 <code>X_train</code>、<code>Y_train</code>；
-  三個 α 是示意候選值，這裡以 5 折平均 MSE 選擇。外部測試集留到選模完成後再使用。</p>
+  三個 $\\alpha$ 是示意候選值，這裡以 5 折平均 MSE 選擇。外部測試集留到選模完成後再使用。</p>
 
 {quiz("qRidge", "QUIZ · Ridge",
       "把某個預測變數的單位從「元」改成「千元」（數值除以 1000）。Ridge 的預測會變嗎？",
       [(True, "會變，因為 L2 懲罰對單位敏感。這正是為什麼要先標準化",
-        "對。係數會變成 1000 倍，懲罰項變成 10⁶ 倍，這個變數於是被壓得特別兇，整個解就不同了。最小平方沒有這個問題。"),
+        "對。係數會變成 1000 倍，懲罰項變成 $10^6$ 倍，這個變數於是被壓得特別兇，整個解就不同了。最小平方沒有這個問題。"),
        (False, "不會，因為線性模型對預測變數的線性變換不變",
         "<strong>最小平方</strong>的係數等比例調整時，預測保持相同。Ridge 的懲罰項則依調整後的係數計算，換單位會改變懲罰與擬合之間的取捨。"),
        (False, "不會，因為 scikit-learn 會自動標準化",
@@ -389,58 +390,50 @@ grid.fit(X_train, Y_train)''')}
 
 # ── P05 Lasso ─────────────────────────────────────────────────────────
 BODIES["lasso"] = f"""
-  <p>Ridge 的缺點是：它留下全部 p 個變數。p = 500 的時候你得到 500 個很小但不為零的係數，
+  <p>Ridge 的缺點是：它留下全部 $p$ 個變數。$p=500$ 的時候你得到 500 個很小但不為零的係數，
   模型一點也不好解釋。Lasso 把 L2 換成 <strong>L1</strong>：</p>
 
   $$\\mathrm{{RSS}} + \\lambda \\sum_{{j=1}}^{{p}} |\\beta_j|
     \\;=\\; \\mathrm{{RSS}} + \\lambda \\|\\beta\\|_1$$
 
-  <p>只差一個平方，行為完全不同：<strong>λ 夠大時 Lasso 會把一部分係數壓成剛好 0</strong>，
+  <p>只差一個平方，行為完全不同：<strong>$\\lambda$ 夠大時 Lasso 會把一部分係數壓成剛好 0</strong>，
   於是它同時做了收縮與變數選擇。這種解叫做<strong>稀疏</strong>（sparse）。</p>
 
-  <h3 id="dx-geom">為什麼 L1 會歸零、L2 不會</h3>
-  <p>把兩者寫成等價的約束型式（$s$ 是預算，可與適當的 $\\lambda$ 對應，但一般不是一對一）：</p>
-
-  $$\\min_{{\\beta}} \\mathrm{{RSS}} \\quad \\text{{s.t.}} \\quad
-    \\|\\beta\\|_1 \\le s \\;\\;(\\text{{Lasso，菱形}})
-    \\qquad\\text{{或}}\\qquad
-    \\|\\beta\\|_2 \\le s \\;\\;(\\text{{Ridge，圓；預算重新參數化}})$$
-
-  <p>RSS 的等高線是以 $\\hat\\beta^{{\\mathrm{{OLS}}}}$ 為中心的同心橢圓。解就是
-  <strong>橢圓第一次碰到約束區域的那一點</strong>。菱形有<em>尖角</em>而且尖角剛好落在座標軸上，
-  所以碰撞很容易發生在尖角。那裡有一個座標是 0。圓沒有尖角，碰到座標軸是機率 0 的事。</p>
-
+{LASSO_WHY_INTRO}
 {viz(svg("w06geomSvg", 380),
      [info_card("動手玩",
-                '拖動滑桿縮小預算 s，看解怎麼被推出去。切換 L1／L2 比較兩者的接觸點：'
+                '拖動滑桿縮小預算 $s$，看解怎麼被推出去。切換 L1／L2 比較兩者的接觸點：'
                 '<strong>L1 的解常常「卡」在尖角上（某個係數變成剛好 0），'
                 'L2 的解只是變小、方向幾乎不變。</strong>', "圖 6.7"),
-      rows_card("這個 s 之下的解",
-                [("預算 s", "—", "w06geomS"), ("β₁", "—", "w06geomB1"),
-                 ("β₂", "—", "w06geomB2"), ("有幾個剛好是 0", "—", "w06geomNz"),
+      rows_card("這個 $s$ 之下的解",
+                [("預算 $s$", "—", "w06geomS"), ("$\\beta_1$", "—", "w06geomB1"),
+                 ("$\\beta_2$", "—", "w06geomB2"), ("有幾個剛好是 0", "—", "w06geomNz"),
                  ("RSS", "—", "w06geomRss")]),
       info_card("看不到尖角效應？",
-                '把 s 調到 1.5 以下，並注意橢圓的傾斜方向。'
-                'β̂ 的兩個座標差得愈多，尖角效應愈明顯。'
+                '把 $s$ 調到 1.5 以下，並注意橢圓的傾斜方向。'
+                '$\\hat\\beta$ 的兩個座標差得愈多，尖角效應愈明顯。'
                 '這也解釋了為什麼<strong>真實係數本來就稀疏</strong>時 Lasso 特別佔優勢。')],
      "w06geomStatus", "紅色橢圓是 RSS 等高線，藍色區域是約束。解在兩者相切處。",
-     '<label class="slider-label" style="margin-right:.4rem;">預算 s</label>'
+     '<label class="slider-label" style="margin-right:.4rem;">預算 $s$</label>'
      '<input type="range" id="w06geomSl" min="20" max="400" step="5" value="200" '
      'oninput="w06geomMove()" style="flex:1 1 140px;max-width:200px;min-width:0;">'
      '<button class="btn btn-toggle" id="w06geomBtn" onclick="w06geomToggle()">切換為 L2（Ridge）</button>',
      provenance=("book-redraw", "依講義圖 6.7；約束最佳解以解析邊與 Lagrange 方程求得"))}
 
-{viz(chart("w06lassoChart", "tall", "。此圖的重點：λ 變大時係數一個一個變成剛好 0，最後只剩幾個變數存活。"),
+{LASSO_WHY_DIAG}
+{LASSO_WHY_BAYES}
+  <h3 id="w06-lasso-path">Credit 上的 Lasso 路徑</h3>
+{viz(chart("w06lassoChart", "tall", "。此圖的重點：$\\lambda$ 變大時係數一個一個變成剛好 0，最後只剩幾個變數存活。"),
      [info_card("怎麼看",
                 '跟 Ridge 那張圖同樣的畫法，但這裡的線會<strong>真的碰到 0 並停在 0</strong>。'
-                '右側清單是在目前這個 λ 之下還沒被歸零的變數。', "圖 6.6"),
-      rows_card("目前的 λ",
-                [("λ", "—", "w06lassoLam"), ("非零係數", "—", "w06lassoNz"),
-                 ("CV 選出的 λ", "364.76", "w06lassoCv")]),
+                '右側清單是在目前這個 $\\lambda$ 之下還沒被歸零的變數。', "圖 6.6"),
+      rows_card("目前的 $\\lambda$",
+                [("$\\lambda$", "—", "w06lassoLam"), ("非零係數", "—", "w06lassoNz"),
+                 ("CV 選出的 $\\lambda$", "364.76", "w06lassoCv")]),
       info_card("保留的變數",
                 '<div id="w06lassoVars" class="mono" style="font-size:.74rem;line-height:1.9;">—</div>')],
      "w06lassoStatus", "拖動滑桿看變數一個一個被淘汰。",
-     '<label class="slider-label" style="margin-right:.4rem;">log λ</label>'
+     '<label class="slider-label" style="margin-right:.4rem;">$\\log\\lambda$</label>'
      '<input type="range" id="w06lassoSl" min="0" max="39" step="1" value="24" '
      'oninput="w06lassoMove()" style="flex:1 1 140px;max-width:220px;min-width:0;">'
      '<button class="btn btn-reset" onclick="w06lassoCvJump()">跳到 CV 選出的 λ</button>',
@@ -464,7 +457,7 @@ BODIES["lasso"] = f"""
      "會嚴重高估顯著性。那是同一份資料用了兩次，與第 5 章的 CV 誤用有相同的問題。</p>"
      "<p>要做選後推論（post-selection inference）需要專門的方法"
      "（selective inference、debiased lasso 等），已經超出本課範圍。"
-     "可以依實際的選擇結果說：<strong>「在這個 λ 之下，Lasso 保留了這些變數」</strong>，"
+     "可以依實際的選擇結果說：<strong>「在這個 $\\lambda$ 之下，Lasso 保留了這些變數」</strong>，"
      "而不是「這些變數顯著」。</p>"),
     ("Q：兩個高度相關的變數，Lasso 會怎麼處理？",
      "<p>Lasso 可能只保留其中一個，選擇也可能隨資料的小變動而改變；但這不是因為多留一個變數就必然多付一份 L1 懲罰。</p>"
@@ -478,88 +471,88 @@ BODIES["lasso"] = f"""
       [(True, "菱形的尖角剛好在座標軸上，橢圓等高線很容易先碰到尖角；圓處處平滑，碰到軸是機率 0 的事",
         "對。這是 ISLP 圖 6.7 的全部內容。維度更高時 L1 是超菱形，尖角與各種低維的稜、面都落在「某些座標為 0」的子空間上，所以稀疏解更容易發生。"),
        (False, "因為 L1 懲罰比 L2 懲罰強，把係數壓得更兇",
-        "λ 可以調整懲罰強度；稀疏性來自約束區域的<strong>形狀</strong>與尖角。同樣的收縮量下，L2 只是縮短向量，L1 會把它推到軸上。"),
+        "$\\lambda$ 可以調整懲罰強度；稀疏性來自約束區域的<strong>形狀</strong>與尖角。同樣的收縮量下，L2 只是縮短向量，L1 會把它推到軸上。"),
        (False, "因為 Lasso 用的是絕對值，絕對值函數在 0 沒有定義",
         "絕對值在 0 是有定義的（等於 0），只是<em>不可微</em>。不可微確實是機制的一部分（次微分在 0 是一整個區間），但「沒有定義」是錯的說法。")])}
 """
 
 # ── P06 怎麼選 λ ───────────────────────────────────────────────────────
 BODIES["lambda"] = f"""
-  <p>λ 是<strong>調整參數</strong>（tuning parameter），不是從資料估出來的參數。
+  <p>$\\lambda$ 是<strong>調整參數</strong>（tuning parameter），不是從資料估出來的參數。
   選它的方法跟第 5 章選多項式次數完全一樣：<strong>掃一排候選值，用交叉驗證比較。</strong></p>
 
   <ol>
-    <li>選一排 λ（通常是<strong>對數等距</strong>，例如從 10⁻² 到 10⁵ 取 100 個點）。</li>
-    <li>對每個 λ 做 k-fold CV，得到 CV 誤差。</li>
-    <li>選 CV 誤差最小的 λ，或用 one-SE 規則選一個更大（更收縮）的 λ。</li>
-    <li><strong>用全部資料在那個 λ 上重新擬合一次</strong>，交出這個模型。</li>
+    <li>選一排 $\\lambda$（通常是<strong>對數等距</strong>，例如從 $10^{{-2}}$ 到 $10^5$ 取 100 個點）。</li>
+    <li>對每個 $\\lambda$ 做 k-fold CV，得到 CV 誤差。</li>
+    <li>選 CV 誤差最小的 $\\lambda$，或用 one-SE 規則選一個更大（更收縮）的 $\\lambda$。</li>
+    <li><strong>用全部資料在那個 $\\lambda$ 上重新擬合一次</strong>，交出這個模型。</li>
   </ol>
 
-  <p>Credit 資料上 Lasso 的 CV 選出 λ = <strong>364.76</strong>，
-  在那個 λ 之下 11 個變數全部仍保留。這份資料的係數並不稀疏，
+  <p>Credit 資料上 Lasso 的 CV 選出 $\\lambda=$ <strong>364.76</strong>，
+  在那個 $\\lambda$ 之下 11 個變數全部仍保留。這份資料的係數並不稀疏，
   所以在這個設定下保留了全部變數。
-  <strong>Lasso 是否產生零係數，取決於資料與 λ 的選擇。</strong></p>
+  <strong>Lasso 是否產生零係數，取決於資料與 $\\lambda$ 的選擇。</strong></p>
 
-{info("為什麼用對數等距選 λ", '''因為 λ 的作用是乘性的。從 1 到 2 的改變跟從 1000 到 1001
+{info("為什麼用對數等距選 $\\lambda$", '''因為 $\\lambda$ 的作用是乘性的。從 1 到 2 的改變跟從 1000 到 1001
   的改變完全不同量級——前者讓懲罰加倍，後者幾乎沒差。等距取樣會把幾乎全部的點浪費在
   「懲罰太重、係數全被壓平」的那一端。<br><br>
   <code>np.logspace(-2, 5, 100)</code> 或 <code>10**np.linspace(a, b, 100)</code>
   才是對的做法。''')}
 
-{card("講義 06 · 用 ElasticNetCV 選 λ 並取最小 CV 誤差",
+{card("講義 06 · 用 ElasticNetCV 選 $\\lambda$ 並取最小 CV 誤差",
       lab_code(CH, 168), lab_output(CH, 168), src=src("162、168"),
-      note="<code>mse_path_</code> 的形狀是（λ 個數 × 折數），"
+      note="<code>mse_path_</code> 的形狀是（$\\lambda$ 個數 $\\times$ 折數），"
            "<code>.mean(1)</code> 先對折取平均、再取最小值，就是 CV 曲線的最低點。"
            "這張 lab 卡同樣把 scaler 放在 <code>ElasticNetCV</code> 外層；若要在每一折內重新估縮放統計量，"
            "改用上面的 <code>GridSearchCV(Pipeline(...))</code> 結構。")}
 
-{quiz("qLam", "QUIZ · 選 λ",
-      "用 CV 選好 λ 之後，最終交出的模型應該是？",
-      [(True, "用全部資料、在選出的那個 λ 上重新擬合一次的模型",
-        "對。CV 比較各個設定；每一折擬合出的模型只用了 (k−1)/k 的資料。選好設定後，依本頁流程用全部訓練資料重新擬合。"),
-       (False, "k 折各自擬合出來的模型的平均",
-        "線性模型可定義係數平均；非線性模型則缺少這種共同的係數平均定義。本頁的 CV 流程用來比較 λ，選好後用全部訓練資料重新擬合。"),
+{quiz("qLam", "QUIZ · 選 $\\lambda$",
+      "用 CV 選好 $\\lambda$ 之後，最終交出的模型應該是？",
+      [(True, "用全部資料、在選出的那個 $\\lambda$ 上重新擬合一次的模型",
+        "對。CV 比較各個設定；每一折擬合出的模型只用了 $(k-1)/k$ 的資料。選好設定後，依本頁流程用全部訓練資料重新擬合。"),
+       (False, "$k$ 折各自擬合出來的模型的平均",
+        "線性模型可定義係數平均；非線性模型則缺少這種共同的係數平均定義。本頁的 CV 流程用來比較 $\\lambda$，選好後用全部訓練資料重新擬合。"),
        (False, "CV 誤差最小的那一折所擬合出來的模型",
         "那一折之所以誤差最小，很可能只是它的驗證資料剛好比較好預測。挑「運氣最好的一折」是選擇偏差的典型例子。")])}
 """
 
 # ── P07 PCR ───────────────────────────────────────────────────────────
 BODIES["pcr"] = f"""
-  <p>第三條路：<strong>不動變數，改換座標。</strong>先把 p 個相關的預測變數壓成
-  M 個互不相關的方向（M ≪ p），再對這 M 個方向做最小平方。</p>
+  <p>第三條路：<strong>不動變數，改換座標。</strong>先把 $p$ 個相關的預測變數壓成
+  $M$ 個互不相關的方向（$M\\ll p$），再對這 $M$ 個方向做最小平方。</p>
 
   <p>主成分迴歸（principal components regression, PCR）用的方向就是第 12 章的主成分：
-  第一主成分是 X 變異最大的方向，第二個是在跟第一個正交的條件下變異最大的方向，依此類推。</p>
+  第一主成分是 $X$ 變異最大的方向，第二個是在跟第一個正交的條件下變異最大的方向，依此類推。</p>
 
   $$Z_m = \\sum_{{j=1}}^{{p}} \\phi_{{jm}} X_j, \\qquad
     y_i = \\theta_0 + \\sum_{{m=1}}^{{M}} \\theta_m z_{{im}} + \\varepsilon_i$$
 
-  <p>M 是調整參數，同樣用 CV 選。X 滿欄秩且 M = p 時 PCR 就退回最小平方（只是換了個座標）；
-  M 小的時候，被丟掉的那些低變異方向就是被收縮掉的部分。</p>
+  <p>$M$ 是調整參數，同樣用 CV 選。$X$ 滿欄秩且 $M=p$ 時 PCR 就退回最小平方（只是換了個座標）；
+  $M$ 小的時候，被丟掉的那些低變異方向就是被收縮掉的部分。</p>
 
 {viz(svg("w06dirSvg", 340),
      [info_card("PCA 方向 vs PLS 方向",
-                '拖動滑桿改變 y 對兩個 x 的依賴方向。'
+                '拖動滑桿改變 $y$ 對兩個 $x$ 的依賴方向。'
                 '<span style="color:var(--accent2);font-weight:700;">藍線 PC1</span> '
-                '只看 X 的散佈，所以<strong>完全不動</strong>；'
+                '只看 $X$ 的散佈，所以<strong>完全不動</strong>；'
                 '<span style="color:var(--accent);font-weight:700;">紅線 PLS1</span> '
-                '也看 y，所以會跟著轉。', "圖 6.14–6.15"),
+                '也看 $y$，所以會跟著轉。', "圖 6.14–6.15"),
       rows_card("目前的方向",
-                [("y 的真實方向", "—", "w06dirTrue"), ("PC1 方向", "—", "w06dirPca"),
+                [("$y$ 的真實方向", "—", "w06dirTrue"), ("PC1 方向", "—", "w06dirPca"),
                  ("PLS1 方向", "—", "w06dirPls"),
                  ("PC1 與真實方向的夾角", "—", "w06dirAng")]),
       info_card("這說明了什麼",
-                'PCR 的方向<strong>完全是非監督式的</strong>。當「X 變異大的方向也是跟 y 有關的方向」時，截取主成分較可能保留預測訊號。'
-                '這個假設常常成立，但沒有保證。PLS 讓 y 參與挑方向，'
+                'PCR 的方向<strong>完全是非監督式的</strong>。當「$X$ 變異大的方向也是跟 $y$ 有關的方向」時，截取主成分較可能保留預測訊號。'
+                '這個假設常常成立，但沒有保證。PLS 讓 $y$ 參與挑方向，'
                 '因此可能保留 PCR 忽略的訊號，但測試表現仍須驗證。')],
      "w06dirStatus", "灰點是資料，兩條線分別是 PC1 與 PLS1 的方向。",
-     '<label class="slider-label" style="margin-right:.4rem;">y 的方向</label>'
+     '<label class="slider-label" style="margin-right:.4rem;">$y$ 的方向</label>'
      '<input type="range" id="w06dirSl" min="0" max="180" step="3" value="20" '
      'oninput="w06dirMove()" style="flex:1 1 140px;max-width:220px;min-width:0;">'
      '<button class="btn btn-reset" onclick="w06dirReset()">重置</button>',
      provenance=("illustrative", "依講義圖 6.14–6.15 的 PCR／PLS 方向差異示意"))}
 
-{card("講義 06 · 用 CV 選主成分個數 M",
+{card("講義 06 · 用 CV 選主成分個數 $M$",
       lab_code(CH, 182), None, src=src("180、182"),
       note="<code>pca__n_components</code> 這種雙底線寫法是 <code>Pipeline</code> 的參數命名慣例："
            "步驟名 ＋ <code>__</code> ＋ 該步驟的參數名。標準化同樣包在 pipeline 裡，"
@@ -571,8 +564,8 @@ BODIES["pcr"] = f"""
 
 {qa("觀念釐清", [
     ("Q：PCR 算不算變數選擇？",
-     "<p>不算。每一個主成分都是<strong>全部 p 個原始變數的線性組合</strong>，"
-     "所以就算只留 M = 2，最終模型仍可能需要全部原始欄位；個別 loading 可為零。</p>"
+     "<p>不算。每一個主成分都是<strong>全部 $p$ 個原始變數的線性組合</strong>，"
+     "所以就算只留 $M=2$，最終模型仍可能需要全部原始欄位；個別 loading 可為零。</p>"
      "<p>這是 PCR 跟 Lasso 最重要的差別：Lasso 給你「這 5 個變數有用、其餘丟掉」；"
      "PCR 給你「這 2 個方向有用」，而每個方向都攪拌了所有變數。"
      "後者在解釋上通常更難。你得去看 loadings 才知道那個方向大致代表什麼。</p>"),
@@ -584,34 +577,34 @@ BODIES["pcr"] = f"""
 ])}
 
 {quiz("qPcr", "QUIZ · PCR",
-      "PCR 用 M = 2 個主成分。最終模型用到了幾個原始預測變數？",
-      [(True, "可能仍用到全部 p 個；M 指成分數，並非原始變數數量",
-        "對。PCR 不做變數選擇。這是它跟 Lasso 最重要的差別。它把 p 維壓進 M 維；一般仍可能需要全部原始欄位，個別 loading 則可以為零。"),
+      "PCR 用 $M=2$ 個主成分。最終模型用到了幾個原始預測變數？",
+      [(True, "可能仍用到全部 $p$ 個；$M$ 指成分數，並非原始變數數量",
+        "對。PCR 不做變數選擇。這是它跟 Lasso 最重要的差別。它把 $p$ 維壓進 $M$ 維；一般仍可能需要全部原始欄位，個別 loading 則可以為零。"),
        (False, "2 個，就是 loadings 最大的那兩個",
-        "M = 2 指的是<strong>主成分</strong>的個數，不是原始變數的個數。每個主成分的 loading 向量長度都是 p，而且通常每一項都不為零。"),
+        "$M=2$ 指的是<strong>主成分</strong>的個數，不是原始變數的個數。每個主成分的 loading 向量長度都是 $p$，而且通常每一項都不為零。"),
        (False, "不確定，要看 CV 選出多少",
-        "CV 選的是 M（主成分個數）。保留的 loading 決定哪些原始變數有貢獻；M 不是所用原始變數的個數。")])}
+        "CV 選的是 $M$（主成分個數）。保留的 loading 決定哪些原始變數有貢獻；$M$ 不是所用原始變數的個數。")])}
 """
 
 # ── P08 PLS ───────────────────────────────────────────────────────────
 BODIES["pls"] = f"""
-  <p>PCR 挑方向時<strong>完全沒看 y</strong>。若想讓 y 也參與方向的選擇，可以使用 PLS。</p>
+  <p>PCR 挑方向時<strong>完全沒看 $y$</strong>。若想讓 $y$ 也參與方向的選擇，可以使用 PLS。</p>
 
   <p>偏最小平方（partial least squares, PLS）修掉這一點：第一個方向的權重直接取
   $\\phi_{{j1}} \\propto$ 每個 $X_j$ 與 $y$ 的簡單線性迴歸係數，
-  也就是<strong>跟 y 相關性愈強的變數，權重愈大</strong>。
+  也就是<strong>跟 $y$ 相關性愈強的變數，權重愈大</strong>。
   取完第一個方向後，把各變數對它迴歸取殘差，再在殘差上重複同樣的步驟得到第二個方向。</p>
 
-  <p>上一節的互動示範了這個差別：拖滑桿改變 y 的方向，PLS1 跟著轉、PC1 不動。</p>
+  <p>上一節的互動示範了這個差別：拖滑桿改變 $y$ 的方向，PLS1 跟著轉、PC1 不動。</p>
 
-{table(["", "方向怎麼挑", "有沒有用到 y", "做變數選擇嗎", "何時較好"],
-       [["PCR", "X 變異最大的方向", "沒有", "沒有", "X 的主要變異方向剛好跟 y 有關時"],
-        ["PLS", "單位權重下與 y 共變異最大的方向", "有", "沒有", "X 的大變異方向跟 y 無關時"],
+{table(["", "方向怎麼挑", "有沒有用到 $y$", "做變數選擇嗎", "何時較好"],
+       [["PCR", "$X$ 變異最大的方向", "沒有", "沒有", "$X$ 的主要變異方向剛好跟 $y$ 有關時"],
+        ["PLS", "單位權重下與 $y$ 共變異最大的方向", "有", "沒有", "$X$ 的大變異方向跟 $y$ 無關時"],
         ["Ridge", "不換座標，全部收縮", "有（擬合時）", "沒有", "很多變數都有小貢獻"],
         ["Lasso", "不換座標，部分歸零", "有（擬合時）", "<strong>有</strong>", "真實係數稀疏"]])}
 
   <p>實務上 PLS 的表現常常<strong>跟 PCR 差不多</strong>，有時還略差。原因是：
-  它雖然降低了偏差（方向跟 y 有關），但也增加了變異（方向是估出來的，而且用到了 y）。
+  它雖然降低了偏差（方向跟 $y$ 有關），但也增加了變異（方向是估出來的，而且用到了 $y$）。
   ISLP §6.3.2 的結論就是這樣：PLS 沒有一致地贏過 PCR 或 Ridge。</p>
 
 {card("講義 06 · 用 CV 選 PLS 的成分個數", lab_code(CH, 194), None, src=src("192、194"),
@@ -621,27 +614,27 @@ BODIES["pls"] = f"""
 
 {quiz("qPls", "QUIZ · PLS",
       "PLS 相對於 PCR 的差別是什麼？",
-      [(True, "挑方向時用到了 y，所以方向會跟著 y 轉；但降維與不做變數選擇這兩點跟 PCR 一樣",
-        "對。這是「監督式降維」對「非監督式降維」。也因為方向是用 y 估出來的，PLS 的變異比 PCR 大，兩者實務上常表現相近。"),
+      [(True, "挑方向時用到了 $y$，所以方向會跟著 $y$ 轉；但降維與不做變數選擇這兩點跟 PCR 一樣",
+        "對。這是「監督式降維」對「非監督式降維」。也因為方向是用 $y$ 估出來的，PLS 的變異比 PCR 大，兩者實務上常表現相近。"),
        (False, "PLS 會把不重要的變數歸零，所以比 PCR 好解釋",
-        "不會。歸零是 <strong>Lasso</strong> 的性質。PLS 的每個成分仍然是全部 p 個變數的線性組合。"),
+        "不會。歸零是 <strong>Lasso</strong> 的性質。PLS 的每個成分仍然是全部 $p$ 個變數的線性組合。"),
        (False, "PLS 不需要標準化，PCR 需要",
         "兩者都需要，理由相同（方向的定義對單位敏感）。<code>PLSRegression</code> 只是預設 <code>scale=True</code> 幫你做了。")])}
 """
 
 # ── P09 高維度 ─────────────────────────────────────────────────────────
 BODIES["highdim"] = f"""
-  <p>基因資料、文字資料、感測器資料常常是 <strong>p 遠大於 n</strong>：
+  <p>基因資料、文字資料、感測器資料常常是 <strong>$p$ 遠大於 $n$</strong>：
   幾萬個變數、幾百個樣本。這時候傳統最小平方的<strong>唯一係數解與一般推論不再適用</strong>，需要額外的結構或選解規則。</p>
 
-  <p>當 p ≥ n，且含截距的設計矩陣有 n 個獨立的列時，最小平方能
-  <strong>完美擬合訓練資料</strong>：RSS = 0；y 非常數時訓練 R² = 1。
+  <p>當 $p\\ge n$，且含截距的設計矩陣有 $n$ 個獨立的列時，最小平方能
+  <strong>完美擬合訓練資料</strong>：$\\mathrm{{RSS}}=0$；$y$ 非常數時訓練 $R^2=1$。
   這只說明模型能插值，不代表一定能或一定不能預測新資料。係數通常不唯一，
   必須說明如何選解，再用獨立資料評估；不能拿訓練滿分當作泛化證據。</p>
 
 {""}
 
-{info("在高維度千萬不要相信這三個數字", '''<strong>1. 訓練資料上的 R²。</strong>
+{info("在高維度千萬不要相信這三個數字", '''<strong>1. 訓練資料上的 $R^2$。</strong>
   模型有足夠自由度時它可能接近 1；泛化表現仍須用未參與訓練的資料評估。<br>
   <strong>2. 訓練資料上的 RSS 或 MSE。</strong>同理，可能接近 0；測試誤差需要另外評估。<br>
   <strong>3. 用同一份資料選完變數之後算出來的 p 值。</strong>
@@ -650,10 +643,10 @@ BODIES["highdim"] = f"""
   獨立的測試集，或將所有選擇步驟留在訓練折內的交叉驗證（第 5 章 P06）。''', "warm")}
 
 {qa("觀念釐清", [
-    ("Q：p > n 的時候「維度的詛咒」到底詛咒了什麼？",
+    ("Q：$p&gt;n$ 的時候「維度的詛咒」到底詛咒了什麼？",
      "<p><strong>新增變數也會增加估計的不確定性。</strong></p>"
      "<p>每個新增變數都需要花"
-     "自由度去估它的係數，而估計本身帶進變異。一個跟 y 完全無關的變數，"
+     "自由度去估它的係數，而估計本身帶進變異。一個跟 $y$ 完全無關的變數，"
      "它的係數估計值是一個隨機的小數字，通常會偏離 0。那個隨機性直接進到預測裡。</p>"
      "<p>若加入的變數沒有提供新的預測資訊，"
      "加入更多候選變數後，訓練誤差下降，測試誤差卻可能上升。"
@@ -663,7 +656,7 @@ BODIES["highdim"] = f"""
      "<strong>子集／逐步選擇</strong>（明確減少變數）、"
      "<strong>收縮</strong>（Ridge 與 Lasso，Lasso 還順便選變數）、"
      "<strong>降維</strong>（PCR 與 PLS）。它們的共同點是<em>降低變異，代價是接受一點偏差</em>。</p>"
-     "<p>在 p ≫ n 的場景，Lasso 與 elastic net 特別受歡迎，因為稀疏假設常常合理"
+     "<p>在 $p\\gg n$ 的場景，Lasso 與 elastic net 特別受歡迎，因為稀疏假設常常合理"
      "（幾萬個基因裡有關的通常只有少數幾個），而且結果可以直接列出「這幾個變數」。</p>"),
 ])}
 
@@ -674,7 +667,7 @@ BODIES["highdim"] = f"""
 # ── EX ────────────────────────────────────────────────────────────────
 BODIES["exercises"] = f"""
 {quiz("qEx1", "EXERCISE 1 · ISLP 6.6 第 1 題（b）",
-      "最佳子集、forward stepwise、backward stepwise 各自選出的「k 個變數的最佳模型」中，"
+      "最佳子集、forward stepwise、backward stepwise 各自選出的「$k$ 個變數的最佳模型」中，"
       "<strong>測試</strong>誤差最低的會是哪一個？",
       [(True, "不確定。三者都有可能，因為測試誤差要看運氣，而三者選出的模型未必相同",
         "對。第 (a) 小題問的是<strong>訓練</strong> RSS，那個答案很確定（最佳子集必定最小或相等，因為它搜了全部）。測試誤差需要獨立評估；搜尋範圍擴大，也會增加選到恰好貼合訓練雜訊之模型的機會。"),
@@ -690,14 +683,14 @@ BODIES["exercises"] = f"""
        (False, "彈性較高，因此當「偏差的下降」大於「變異的上升」時會更好",
         "這是第 (c) 小題<strong>非線性方法</strong>的答案。Lasso 加了懲罰項，它的彈性比最小平方<em>低</em>，不是高。"),
        (False, "彈性一樣，只是係數的解不同",
-        "不一樣。λ = 0 時兩者相同，但 λ > 0 時 Lasso 的解空間被約束住了（‖β‖₁ ≤ s），那就是彈性較低。")])}
+        "不一樣。$\\lambda=0$ 時兩者相同，但 $\\lambda&gt;0$ 時 Lasso 的解空間被約束住了（$\\|\\beta\\|_1\\le s$），那就是彈性較低。")])}
 
 {quiz("qEx3", "EXERCISE 3 · ISLP 6.6 第 4 題",
-      "Ridge 的懲罰參數 λ 從 0 開始往上增加。<strong>訓練</strong> RSS 會怎麼變化？",
+      "Ridge 的懲罰參數 $\\lambda$ 從 0 開始往上增加。<strong>訓練</strong> RSS 會怎麼變化？",
       [(True, "單調上升",
-        "對。λ = 0 時就是最小平方，它<strong>定義上</strong>就是訓練 RSS 的最小值；任何約束都只會讓訓練 RSS 變大或不變。同一題還問了測試 RSS（先降後升的 U 型）、變異（單調下降）、偏差²（單調上升）、不可縮減誤差（不變）。"),
+        "對。$\\lambda=0$ 時就是最小平方，它<strong>定義上</strong>就是訓練 RSS 的最小值；任何約束都只會讓訓練 RSS 變大或不變。同一題還問了測試 RSS（先降後升的 U 型）、變異（單調下降）、偏差$^2$（單調上升）、不可縮減誤差（不變）。"),
        (False, "先下降再上升，呈 U 型",
-        "這是<strong>測試</strong> RSS 的形狀。訓練 RSS 沒有 U 型。它在 λ = 0 就已經是最小的了。"),
+        "這是<strong>測試</strong> RSS 的形狀。訓練 RSS 沒有 U 型。它在 $\\lambda=0$ 就已經是最小的了。"),
        (False, "單調下降",
         "方向相反。加懲罰只會讓「訓練 RSS 這個目標」被犧牲掉一部分，換取係數變小。")])}
 
@@ -707,7 +700,7 @@ BODIES["exercises"] = f"""
       [(True, "需以相同資料切分與各自的調參程序比較，不能預先指定勝負",
         "資料維度與相關結構可提供線索，但不能代替實際的獨立測試。比較前應固定切分，將標準化、降維與調參都留在訓練資料內。"),
        (False, "PCR 與 PLS 明顯勝出，因為它們降了維",
-        "降維可能減少變異，也可能丟失與 y 有關的方向；n 大於 p 並不能保證最小平方或降維模型誰比較好。"),
+        "降維可能減少變異，也可能丟失與 $y$ 有關的方向；$n$ 大於 $p$ 並不能保證最小平方或降維模型誰比較好。"),
        (False, "Lasso 一定最好，因為它同時做收縮與變數選擇",
         "Lasso 的優勢要在<strong>真實係數稀疏</strong>時才顯現。若很多變數都有小貢獻，把它們歸零反而引入偏差，Ridge 會較好。")])}
 """
@@ -718,22 +711,22 @@ BODIES["reference"] = f"""
 
   <h3>三類工具對照</h3>
 {table(["", "做什麼", "調整參數", "會歸零嗎", "運算成本", "何時最適合"],
-       [["最佳子集", "搜遍 2^p 個模型", "模型大小 k", "會（沒選就是 0）", "2^p，p &gt; 40 不可行", "p 很小"],
-        ["Forward／backward", "貪婪地一次加／減一個", "模型大小 k", "會", "1 ＋ p(p＋1)/2", "p 中等"],
-        ["Ridge（L2）", "全部係數一起收縮", "λ", "<strong>不會</strong>", "很快，有封閉解", "很多變數都有小貢獻"],
-        ["Lasso（L1）", "收縮 ＋ 部分歸零", "λ", "<strong>會</strong>", "很快（座標下降）", "真實係數稀疏"],
-        ["PCR", "換成 M 個非監督式方向", "M", "不會（用到全部變數）", "很快", "X 的大變異方向跟 y 有關"],
-        ["PLS", "換成 M 個監督式方向", "M", "不會", "很快", "X 的大變異方向跟 y 無關"]])}
+       [["最佳子集", "搜遍 $2^p$ 個模型", "模型大小 $k$", "會（沒選就是 0）", "$2^p$，$p&gt;40$ 不可行", "$p$ 很小"],
+        ["Forward／backward", "貪婪地一次加／減一個", "模型大小 $k$", "會", "$1+p(p+1)/2$", "$p$ 中等"],
+        ["Ridge（L2）", "全部係數一起收縮", "$\\lambda$", "<strong>不會</strong>", "很快，有封閉解", "很多變數都有小貢獻"],
+        ["Lasso（L1）", "收縮 ＋ 部分歸零", "$\\lambda$", "<strong>會</strong>", "很快（座標下降）", "真實係數稀疏"],
+        ["PCR", "換成 $M$ 個非監督式方向", "$M$", "不會（用到全部變數）", "很快", "$X$ 的大變異方向跟 $y$ 有關"],
+        ["PLS", "換成 $M$ 個監督式方向", "$M$", "不會", "很快", "$X$ 的大變異方向跟 $y$ 無關"]])}
 
   <h3>公式速查</h3>
 {table(["名稱", "式子", "備註"],
-       [["Cp", "$\\frac{1}{n}(\\mathrm{RSS} + 2d\\hat\\sigma^2)$", "式 6.2"],
-        ["AIC", "$\\frac{1}{n\\hat\\sigma^2}(\\mathrm{RSS} + 2d\\hat\\sigma^2)$", "式 6.3，常態誤差下與 Cp 等價"],
-        ["BIC", "$\\frac{1}{n}(\\mathrm{RSS} + \\log(n)\\,d\\hat\\sigma^2)$", "式 6.3，$\\log n > 2$ 時罰得比 Cp 重"],
-        ["調整後 R²", "$1 - \\frac{\\mathrm{RSS}/(n-d-1)}{\\mathrm{TSS}/(n-1)}$", "式 6.4"],
+       [["$C_p$", "$\\frac{1}{n}(\\mathrm{RSS} + 2d\\hat\\sigma^2)$", "式 6.2"],
+        ["AIC", "$\\frac{1}{n\\hat\\sigma^2}(\\mathrm{RSS} + 2d\\hat\\sigma^2)$", "式 6.3，常態誤差下與 $C_p$ 等價"],
+        ["BIC", "$\\frac{1}{n}(\\mathrm{RSS} + \\log(n)\\,d\\hat\\sigma^2)$", "式 6.3，$\\log n > 2$ 時罰得比 $C_p$ 重"],
+        ["調整後 $R^2$", "$1 - \\frac{\\mathrm{RSS}/(n-d-1)}{\\mathrm{TSS}/(n-1)}$", "式 6.4"],
         ["Ridge", "$\\mathrm{RSS} + \\lambda\\sum_j \\beta_j^2$", "式 6.5，等價於 $\\|\\beta\\|_2^2 \\le s$"],
         ["Lasso", "$\\mathrm{RSS} + \\lambda\\sum_j |\\beta_j|$", "式 6.7，等價於 $\\|\\beta\\|_1 \\le s$"],
-        ["主成分方向", "$Z_m = \\sum_j \\phi_{jm} X_j$", "式 6.16，$\\phi$ 由 X 的變異決定"]])}
+        ["主成分方向", "$Z_m = \\sum_j \\phi_{jm} X_j$", "式 6.16，$\\phi$ 由 $X$ 的變異決定"]])}
 
 {info("四個一定要記住的觀念", '''<strong>1. 三條路：選變數、收縮係數、換座標。</strong>
   共同點都是降低變異，代價是接受一點偏差。<br>
@@ -741,7 +734,7 @@ BODIES["reference"] = f"""
   菱形有尖角而尖角落在座標軸上；圓沒有。<br>
   <strong>3. Ridge、Lasso、PCR、PLS 之前都必須標準化。</strong>
   它們的目標函數對單位敏感，最小平方的預測則不受換單位影響。<br>
-  <strong>4. 高維度時訓練 R² 可能接近 1，不能據此判斷泛化。</strong>
+  <strong>4. 高維度時訓練 $R^2$ 可能接近 1，不能據此判斷泛化。</strong>
   只信沒參與過任何選擇的資料上算出來的誤差。''')}
 
 
@@ -752,8 +745,7 @@ BODIES["reference"] = f"""
 # 最新講義主題補全；維持既有 section 與導覽。
 BODIES['lasso'] += r"""
 <h3>收縮的貝氏解讀與延伸</h3>
-<p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 λ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明；後驗眾數與後驗平均不同，Lasso 的後驗平均通常不會精確等於零。</p>
-<p>當中心化設計矩陣滿足 $X^TX=I$，令 $z=X^Ty$，Ridge 解為 $z_j/(1+\lambda)$，Lasso 解為 $\operatorname{sign}(z_j)(|z_j|-\lambda/2)_+$。Ridge 比例收縮、Lasso 軟門檻的差異可直接從這兩式看見；若目標使用 $\mathrm{RSS}/2$，Lasso 的門檻值相應改為 $\lambda$。</p>
+<p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 $\lambda$ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明；後驗眾數與後驗平均不同，Lasso 的後驗平均通常不會精確等於零。</p>
 <p>最小角度迴歸（least angle regression, LAR）從與殘差相關最大的特徵開始，沿活躍特徵的等角方向前進；其他特徵達到相同相關程度時加入。加上係數過零時退出的規則可追蹤 Lasso 路徑。Group Lasso 則以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰各組係數，讓同一類別變數的一組虛擬變數或同一組基底一起進出；選入的組內係數不必稀疏。</p>
 """
 BODIES['pcr'] += r"""
@@ -769,23 +761,23 @@ BODIES['criteria'] += r"""
 
 BODIES['criteria'] += r"""
 <h3>Cp 的風險目標、常數與選模</h3>
-<p>先固定 X 及候選線性模型，不用 y 搜尋欄位。令 H 為其投影矩陣，$r=\operatorname{rank}(H)$ 計入截距，並假設 $y=\mu+\varepsilon$、$\operatorname{Cov}(\varepsilon)=\sigma^2I$。以相同 X 上一組獨立新反應 $y^{new}$ 定義固定設計預測風險，完整的 Cp 型估計為</p>
+<p>先固定 $X$ 及候選線性模型，不用 $y$ 搜尋欄位。令 $H$ 為其投影矩陣，$r=\operatorname{rank}(H)$ 計入截距，並假設 $y=\mu+\varepsilon$、$\operatorname{Cov}(\varepsilon)=\sigma^2I$。以相同 $X$ 上一組獨立新反應 $y^{new}$ 定義固定設計預測風險，完整的 $C_p$ 型估計為</p>
 $$\widehat R=\frac{\mathrm{RSS}+2r\hat\sigma^2}{n}.$$
-<p>σ̂² 無偏時，這估計量對訓練反應重抽的期望等於上述風險；並非某次實現的測試 MSE，也不是任意新 X 的風險。若所有模型都含截距、d 只數斜率，r=d+1；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
-<p>若每個大小的最佳模型也是用同一份 y 搜尋出來的，H 已依賴 y，單純代入 r 不會自動修正搜尋的樂觀偏差。</p>
-<p>AIC 的 $-2\hat\ell+2k$ 計入實際估計的參數；高斯模型共同固定 σ² 時，可化成 RSS/σ² 加參數懲罰。各模型各自估 σ² 時，則出現 $n\log(\mathrm{RSS}/n)$，不能混用。BIC 以 $k\log n$ 懲罰，源於固定維度、正則模型的邊際概似近似；有限樣本、錯置或候選清單沒有真模型時，不保證找出真相。</p>
+<p>$\hat\sigma^2$ 無偏時，這估計量對訓練反應重抽的期望等於上述風險；並非某次實現的測試 MSE，也不是任意新 X 的風險。若所有模型都含截距、$d$ 只數斜率，$r=d+1$；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
+<p>若每個大小的最佳模型也是用同一份 y 搜尋出來的，$H$ 已依賴 $y$，單純代入 $r$ 不會自動修正搜尋的樂觀偏差。</p>
+<p>AIC 的 $-2\hat\ell+2k$ 計入實際估計的參數；高斯模型共同固定 $\sigma^2$ 時，可化成 $\mathrm{RSS}/\sigma^2$ 加參數懲罰。各模型各自估 $\sigma^2$ 時，則出現 $n\log(\mathrm{RSS}/n)$，不能混用。BIC 以 $k\log n$ 懲罰，源於固定維度、正則模型的邊際概似近似；有限樣本、錯置或候選清單沒有真模型時，不保證找出真相。</p>
 """ + proof('w06proofCp', '固定設計預測風險的樂觀偏差', r"""
-<p>H 對稱冪等，$\operatorname{tr}(H)=r$。訓練 RSS 的期望為</p>
+<p>$H$ 對稱冪等，$\operatorname{tr}(H)=r$。訓練 RSS 的期望為</p>
 $$E\|(I-H)y\|^2=\|(I-H)\mu\|^2+\sigma^2(n-r).$$
 <p>新反應與訓練反應獨立，$y^{new}-Hy=(I-H)\mu+\varepsilon^{new}-H\varepsilon$，故</p>
 $$E\|y^{new}-Hy\|^2=\|(I-H)\mu\|^2+n\sigma^2+r\sigma^2.$$
-<p>相減得 2rσ²，再除以 n。σ̂² 無偏即可在期望中取代 σ²；不要求 σ̂² 與 RSS 獨立。若 H 隨 y 的搜尋結果改變，上述固定矩陣期望運算不再適用。</p>
+<p>相減得 $2r\sigma^2$，再除以 $n$。$\hat\sigma^2$ 無偏即可在期望中取代 $\sigma^2$；不要求 $\hat\sigma^2$ 與 RSS 獨立。若 $H$ 隨 $y$ 的搜尋結果改變，上述固定矩陣期望運算不再適用。</p>
 """)
 BODIES['ridge'] += r"""
 <h3>中心化後的 Ridge 解</h3>
-<p>先用訓練資料中心化 X 與 y，斜率的目標為 $\|y-X\beta\|^2+\lambda\|\beta\|^2$。λ&gt;0 時，無論 X 是否滿欄秩都有唯一斜率解 $(X^TX+\lambda I)^{-1}X^Ty$。還原截距用 $\bar y-\bar x^T\hat\beta$；不能把原始 X 的截距欄也按相同 λ 懲罰。</p>
+<p>先用訓練資料中心化 $X$ 與 $y$，斜率的目標為 $\|y-X\beta\|^2+\lambda\|\beta\|^2$。$\lambda&gt;0$ 時，無論 $X$ 是否滿欄秩都有唯一斜率解 $(X^TX+\lambda I)^{-1}X^Ty$。還原截距用 $\bar y-\bar x^T\hat\beta$；不能把原始 X 的截距欄也按相同 $\lambda$ 懲罰。</p>
 """ + proof('w06proofRidge', 'Ridge 閉式解與方向收縮', r"""
-<p>目標的梯度是 $-2X^T(y-X\beta)+2\lambda\beta$。設為零得 $(X^TX+\lambda I)\beta=X^Ty$。對任意非零 v，$v^T(X^TX+\lambda I)v=\|Xv\|^2+\lambda\|v\|^2>0$，所以解唯一。</p>
+<p>目標的梯度是 $-2X^T(y-X\beta)+2\lambda\beta$。設為零得 $(X^TX+\lambda I)\beta=X^Ty$。對任意非零 $v$，$v^T(X^TX+\lambda I)v=\|Xv\|^2+\lambda\|v\|^2>0$，所以解唯一。</p>
 <p>若 $X=UDV^T$ 為精簡 SVD，則 $\hat\beta=V\operatorname{diag}\{d_j/(d_j^2+\lambda)\}U^Ty$，擬合值為 $U\operatorname{diag}\{d_j^2/(d_j^2+\lambda)\}U^Ty$。相對 OLS，各方向乘上 $d_j^2/(d_j^2+\lambda)$，小奇異值方向收縮較強。這也說明 Ridge 不等於挑掉一些原始變數。</p>
 """)
 BODIES['lasso'] += r"""
@@ -793,32 +785,32 @@ BODIES['lasso'] += r"""
 <p>固定目標 $\|y-X\beta\|^2+\lambda\sum_j|\beta_j|$，令殘差 $r=y-X\hat\beta$。凸問題的最優條件是</p>
 $$2x_j^Tr=\lambda\operatorname{sign}(\hat\beta_j)\quad(\hat\beta_j\ne0),\qquad
 |2x_j^Tr|\le\lambda\quad(\hat\beta_j=0).$$
-<p>在零點要使用次梯度區間 [-1,1]，不能把絕對值當作處處可微。一般 X 可採座標下降：固定其他係數，令 $r_{-j}=y-X_{-j}\beta_{-j}$，更新</p>
+<p>在零點要使用次梯度區間 $[-1,1]$，不能把絕對值當作處處可微。一般 $X$ 可採座標下降：固定其他係數，令 $r_{-j}=y-X_{-j}\beta_{-j}$，更新</p>
 $$\beta_j\leftarrow\frac{\operatorname{sign}(x_j^Tr_{-j})(|x_j^Tr_{-j}|-\lambda/2)_+}{x_j^Tx_j}.$$
-<p>常數欄須先處理；反覆更新直到目標或最優條件達到指定精度。不同套件若用 RSS/(2n)，相同 λ 的數字不能直接比較。</p>
+<p>常數欄須先處理；反覆更新直到目標或最優條件達到指定精度。不同套件若用 $\mathrm{RSS}/(2n)$，相同 $\lambda$ 的數字不能直接比較。</p>
 """ + proof('w06proofLasso', '軟門檻與零點的次梯度', r"""
-<p>正交設計 $X^TX=I$ 下，目標除去常數後是 $\sum_j[(\beta_j-z_j)^2+\lambda|\beta_j|]$，$z=X^Ty$，因此逐座標最小化。β&gt;0 時微分給 β=z−λ/2，此分支要求 z&gt;λ/2；β&lt;0 時 β=z+λ/2，要求 z&lt;−λ/2。</p>
-<p>β=0 處，最優條件為 $0\in-2z+\lambda[-1,1]$，等價於 |z|≤λ/2。三種情況合併得到 soft threshold。一般座標更新把平方項換成 $(x_j^Tx_j)\beta_j^2-2(x_j^Tr_{-j})\beta_j$，同一推理給正文更新式。對整體目標做次梯度條件便得到零與非零係數的 KKT 條件。</p>
+<p>正交設計 $X^TX=I$ 下，令 $z=X^Ty$，目標逐座標分開，和上方「解釋二」的對角情形相同（把 $y_j$ 換成 $z_j$），得到軟門檻 $\operatorname{sign}(z_j)(|z_j|-\lambda/2)_+$。</p>
+<p>$\beta=0$ 處，最優條件為 $0\in-2z+\lambda[-1,1]$，等價於 $|z|\le\lambda/2$。三種情況合併得到 soft threshold。一般座標更新把平方項換成 $(x_j^Tx_j)\beta_j^2-2(x_j^Tr_{-j})\beta_j$，同一推理給正文更新式。對整體目標做次梯度條件便得到零與非零係數的 KKT 條件。</p>
 """) + proof('w06proofMAP', '高斯／Laplace 先驗如何變成 Ridge／Lasso', r"""
-<p>獨立 $N(x_i^T\beta,\sigma^2)$ 反應的負對數概似，除去與 β 無關的常數後為 RSS/(2σ²)。各斜率獨立 $N(0,\tau^2)$ 的負對數先驗為 $\sum_j\beta_j^2/(2\tau^2)$；負對數後驗相加後乘以 2σ²，成為 RSS＋$(\sigma^2/\tau^2)\sum_j\beta_j^2$。</p>
-<p>Laplace 密度為 $e^{-|\beta_j|/b}/(2b)$，負對數先驗為 $\sum_j|\beta_j|/b$ 加常數，因此乘以 2σ² 後 λ=2σ²/b。截距使用不懲罰的設定；σ、τ、b 在此視為固定。這是後驗眾數，後驗平均須積分計算，一般不會因 Laplace 先驗精確歸零。</p>
+<p>獨立 $N(x_i^T\beta,\sigma^2)$ 反應的負對數概似，除去與 $\beta$ 無關的常數後為 $\mathrm{RSS}/(2\sigma^2)$。各斜率獨立 $N(0,\tau^2)$ 的負對數先驗為 $\sum_j\beta_j^2/(2\tau^2)$；負對數後驗相加後乘以 $2\sigma^2$，成為 $\mathrm{RSS}+(\sigma^2/\tau^2)\sum_j\beta_j^2$。</p>
+<p>Laplace 密度為 $e^{-|\beta_j|/b}/(2b)$，負對數先驗為 $\sum_j|\beta_j|/b$ 加常數，因此乘以 $2\sigma^2$ 後 $\lambda=2\sigma^2/b$。截距使用不懲罰的設定；$\sigma$、$\tau$、$b$ 在此視為固定。這是後驗眾數，後驗平均須積分計算，一般不會因 Laplace 先驗精確歸零。</p>
 """)
 BODIES['lasso'] += r"""
 <h3>最小角度迴歸與 Group Lasso</h3>
 <p>LAR 先中心化 y，將特徵中心化並調成相同長度；從全零係數開始，找到與殘差絕對相關最大的特徵。沿其方向前進，直到另一個特徵達到相同絕對相關，再讓兩個特徵一起沿等角方向前進；重複加入活躍特徵，得到分段線性係數路徑。Lasso 路徑版本還要在活躍係數走到零時把它移除；所以 LAR 與 Lasso 不能當同一演算法。可用 <code>Lars</code>／<code>lars_path</code> 看 LAR 路徑，用 <code>LassoLars</code> 看對應 Lasso 版本。</p>
 <p>Group Lasso 在事先指定、不重疊的特徵組上解</p>
 $$\min_{\beta_0,\beta}\frac1{2n}\|y-\beta_0\mathbf1-X\beta\|^2+\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2.$$
-<p>$p_g$ 是組內欄數；截距不懲罰，組別與縮放應在擬合前交代。例如「季節」的三個虛擬欄可作一組，「溫度」為另一組。λ 增大可把整組季節係數設成零；保留季節時，組內每個係數並不保證非零。應以同樣組別與前處理在訓練折內選 λ。</p>
+<p>$p_g$ 是組內欄數；截距不懲罰，組別與縮放應在擬合前交代。例如「季節」的三個虛擬欄可作一組，「溫度」為另一組。$\lambda$ 增大可把整組季節係數設成零；保留季節時，組內每個係數並不保證非零。應以同樣組別與前處理在訓練折內選 $\lambda$。</p>
 <p>來源：<a href="https://scikit-learn.org/stable/modules/linear_model.html#least-angle-regression">LAR／Lasso 路徑官方說明</a>、<a href="https://group-lasso.readthedocs.io/en/latest/">Group Lasso 文件</a>。</p>
 """
 BODIES['pcr'] += r"""
 <h3>PCA 的最大變異與最小重建誤差</h3>
-<p>令 X 是中心化、每列一筆觀察的矩陣，$S=X^TX/(n-1)$。第一方向解 $\max_{\|v\|=1}v^TSv$，前 M 個方向組成 $V_M$，得分 $Z=XV_M$、重建 $\hat X=XV_MV_M^T$。同一組方向也最小化 $\|X-XVV^T\|_F^2$，其中 $V^TV=I_M$。這個目標只看 X，並沒有保證保留下來的方向最能預測 y。</p>
+<p>令 $X$ 是中心化、每列一筆觀察的矩陣，$S=X^TX/(n-1)$。第一方向解 $\max_{\|v\|=1}v^TSv$，前 $M$ 個方向組成 $V_M$，得分 $Z=XV_M$、重建 $\hat X=XV_MV_M^T$。同一組方向也最小化 $\|X-XVV^T\|_F^2$，其中 $V^TV=I_M$。這個目標只看 $X$，並沒有保證保留下來的方向最能預測 $y$。</p>
 <p>PCR 在得分上擬合 y，再把係數轉回 $\hat\beta=V_M\hat\theta$。保留所有正秩方向時，訓練擬合值與 OLS 相同；原始係數唯一性另需滿欄秩。主成分通常混合許多原始變數，但個別 loading 可為零，不能說每一欄必定有非零貢獻。</p>
 """ + proof('w06proofPCA', '特徵方向、重建誤差與白化', r"""
-<p>對 $v^TSv-\lambda(v^Tv-1)$ 微分給 $Sv=\lambda v$。把單位 v 寫在 S 的正交特徵基底上，$v=\sum_jc_jv_j$、$\sum_jc_j^2=1$，則 $v^TSv=\sum_j\lambda_jc_j^2\le\lambda_1$，所以最大特徵值方向達到全域最大。</p>
-<p>對正交 V，投影與殘差正交，故 $\|X-XVV^T\|_F^2=\|X\|_F^2-\|XV\|_F^2=\|X\|_F^2-(n-1)\operatorname{tr}(V^TSV)$。取前 M 個特徵方向最大化最後的 trace，所以同時最小化重建誤差。</p>
-<p>若 $X=UDV^T$，則 $S=VD^2V^T/(n-1)$，特徵值為 $d_j^2/(n-1)$，得分為 UD。只保留正特徵值，令 $Z=XV_r\Lambda_r^{-1/2}$，其樣本共變異數為 $\Lambda_r^{-1/2}V_r^TSV_r\Lambda_r^{-1/2}=I_r$。ZCA 的回投影 $ZV_r^T$ 在 p 維中的共變異數為 $V_rV_r^T$，只有 r=p 時才是 $I_p$。</p>
+<p>對 $v^TSv-\lambda(v^Tv-1)$ 微分給 $Sv=\lambda v$。把單位 $v$ 寫在 $S$ 的正交特徵基底上，$v=\sum_jc_jv_j$、$\sum_jc_j^2=1$，則 $v^TSv=\sum_j\lambda_jc_j^2\le\lambda_1$，所以最大特徵值方向達到全域最大。</p>
+<p>對正交 $V$，投影與殘差正交，故 $\|X-XVV^T\|_F^2=\|X\|_F^2-\|XV\|_F^2=\|X\|_F^2-(n-1)\operatorname{tr}(V^TSV)$。取前 $M$ 個特徵方向最大化最後的 trace，所以同時最小化重建誤差。</p>
+<p>若 $X=UDV^T$，則 $S=VD^2V^T/(n-1)$，特徵值為 $d_j^2/(n-1)$，得分為 $UD$。只保留正特徵值，令 $Z=XV_r\Lambda_r^{-1/2}$，其樣本共變異數為 $\Lambda_r^{-1/2}V_r^TSV_r\Lambda_r^{-1/2}=I_r$。ZCA 的回投影 $ZV_r^T$ 在 $p$ 維中的共變異數為 $V_rV_r^T$，只有 $r=p$ 時才是 $I_p$。</p>
 """)
 BODIES['pls'] += r"""
 <h3>PLS1：從方向到可用於新資料的預測</h3>
@@ -826,7 +818,7 @@ BODIES['pls'] += r"""
 $$w_m=\frac{X_{m-1}^Ty_{m-1}}{\|X_{m-1}^Ty_{m-1}\|},\quad t_m=X_{m-1}w_m,$$
 $$p_m=\frac{X_{m-1}^Tt_m}{t_m^Tt_m},\quad q_m=\frac{y_{m-1}^Tt_m}{t_m^Tt_m},\quad
 X_m=X_{m-1}-t_mp_m^T,\quad y_m=y_{m-1}-t_mq_m.$$
-<p>若方向分子或 $t_m^Tt_m$ 為零，已沒有可用的新成分，停止。第一方向會看 X 與 y 的共變動；後續方向用扣掉既有得分成分後的殘差。成分數 M 在訓練折內選，縮放與方向都須重新估計。</p>
+<p>若方向分子或 $t_m^Tt_m$ 為零，已沒有可用的新成分，停止。第一方向會看 X 與 y 的共變動；後續方向用扣掉既有得分成分後的殘差。成分數 $M$ 在訓練折內選，縮放與方向都須重新估計。</p>
 <p>預測新的一列時，先用訓練平均與尺度轉換為 $x_0^*$。依序計算 $t_m^*=x_{m-1}^{*T}w_m$，更新 $x_m^*=x_{m-1}^*-t_m^*p_m$；預測為 $\bar y+\sum_mq_mt_m^*$，若 y 也有縮放須再乘回其尺度。這個遞迴明確規定了如何把訓練好的 PLS 用於新資料，不能每次用新資料重算方向。</p>
 
 """
@@ -834,7 +826,7 @@ X_m=X_{m-1}-t_mp_m^T,\quad y_m=y_{m-1}-t_mq_m.$$
 
 BODIES['reference'] += r"""
 <h3>在係數平面比較方法</h3>
-<p>講義把兩個係數放在同一平面，以完整最小平方的 (4,2) 作共同終點，讓不同複雜度的解形成路徑。最佳子集只能在坐標軸上的受限模型或完整模型之間選擇；Ridge 平滑地收縮，Lasso 可以沿軸停留到某係數進入；PCR 由保留幾個主成分決定可達子空間，PLS 的方向也使用 y。這張圖比較解的幾何，沒有表示所有方法都沿同一條直線縮回原點，也沒有提供測試風險的排名。</p>
+<p>講義把兩個係數放在同一平面，以完整最小平方的 $(4,2)$ 作共同終點，讓不同複雜度的解形成路徑。最佳子集只能在坐標軸上的受限模型或完整模型之間選擇；Ridge 平滑地收縮，Lasso 可以沿軸停留到某係數進入；PCR 由保留幾個主成分決定可達子空間，PLS 的方向也使用 $y$。這張圖比較解的幾何，沒有表示所有方法都沿同一條直線縮回原點，也沒有提供測試風險的排名。</p>
 """
 
 
@@ -842,31 +834,31 @@ BODIES['reference'] += r"""
 
 BODIES['lasso'] += r"""
 <h3>限制式與懲罰式：如何對應？</h3>
-<p>令 $P(\beta)=\|\beta\|_1$（Lasso）或 $\|\beta\|_2^2$（Ridge）。兩種問題分別為 $\min\{\mathrm{RSS}+\lambda P(\beta)\}$ 與 $\min\mathrm{RSS}$ subject to $P(\beta)\le s$。它們可用適當參數得到同一個解，但<strong>λ與s一般不是一對一</strong>，對應也依資料而變。</p>
-<p>Ridge的s=0強制斜率全零，但一般非零訊號須讓λ趨近∞才達到，未必存在有限λ。Lasso也不保證任何正λ就產生零係數。</p>
+<p>令 $P(\beta)=\|\beta\|_1$（Lasso）或 $\|\beta\|_2^2$（Ridge）。兩種問題分別為 $\min\{\mathrm{RSS}+\lambda P(\beta)\}$ 與 $\min\mathrm{RSS}$ subject to $P(\beta)\le s$。它們可用適當參數得到同一個解，但<strong>$\lambda$與$s$一般不是一對一</strong>，對應也依資料而變。</p>
+<p>Ridge的$s=0$強制斜率全零，但一般非零訊號須讓$\lambda$趨近$\infty$才達到，未必存在有限$\lambda$。Lasso也不保證任何正$\lambda$就產生零係數。</p>
 """ + proof('w06proofConstraint','凸限制問題與懲罰問題的解',r"""
-<p>若 $\hat\beta_\lambda$ 最小化 $L+\lambda P$，取 $s=P(\hat\beta_\lambda)$。假如有可行β使L更小，則P(β)≤s，故 $L(\beta)+\lambda P(\beta)&lt;L(\hat\beta_\lambda)+\lambda P(\hat\beta_\lambda)$，與最優性矛盾，因此同時解限制式。</p>
-<p>反向在凸L、凸P及嚴格可行性成立時（本例s&gt;0即可用β=0），KKT給某個λ≥0，使 $0\in\nabla L(\hat\beta)+\lambda\partial P(\hat\beta)$ 與 $\lambda(P(\hat\beta)-s)=0$。前式就是懲罰問題的充分最優條件。限制不活躍可取λ=0；s=0等邊界需另查，不能用此論證強行宣稱有限λ存在。</p>
+<p>若 $\hat\beta_\lambda$ 最小化 $L+\lambda P$，取 $s=P(\hat\beta_\lambda)$。假如有可行$\beta$使$L$更小，則$P(\beta)\le s$，故 $L(\beta)+\lambda P(\beta)&lt;L(\hat\beta_\lambda)+\lambda P(\hat\beta_\lambda)$，與最優性矛盾，因此同時解限制式。</p>
+<p>反向在凸$L$、凸$P$及嚴格可行性成立時（本例$s&gt;0$即可用$\beta=0$），KKT給某個$\lambda\ge0$，使 $0\in\nabla L(\hat\beta)+\lambda\partial P(\hat\beta)$ 與 $\lambda(P(\hat\beta)-s)=0$。前式就是懲罰問題的充分最優條件。限制不活躍可取$\lambda=0$；$s=0$等邊界需另查，不能用此論證強行宣稱有限$\lambda$存在。</p>
 """)
 BODIES['pcr'] += r"""
 <h3>正交、不相關與獨立是三件事</h3>
 <p>向量正交表示內積為零；資料欄位的樣本不相關表示<strong>中心化之後</strong>的內積為零。PCA先中心化，得分共變異數是對角矩陣，所以不同得分欄位樣本不相關。這不等於它們統計獨立；獨立要求整個聯合分布可分解。</p>
-<p>只有在聯合常態等額外條件下，不相關才足以推出獨立。對未中心化的原始X做SVD，主方向最大化的是相對原點的平方量，不必是相對平均的變異數。</p>
+<p>只有在聯合常態等額外條件下，不相關才足以推出獨立。對未中心化的原始$X$做SVD，主方向最大化的是相對原點的平方量，不必是相對平均的變異數。</p>
 """ + proof('w06proofUncorrelated','PCA得分不相關',r"""
-<p>中心化X滿足 $\mathbf1^TX=0$，故Z=XV也中心化。由 $S=V\Lambda V^T$，$Z^TZ/(n-1)=V^TSV=\Lambda$，所有非對角元素為零。</p>
+<p>中心化X滿足 $\mathbf1^TX=0$，故$Z=XV$也中心化。由 $S=V\Lambda V^T$，$Z^TZ/(n-1)=V^TSV=\Lambda$，所有非對角元素為零。</p>
 """)
 BODIES['pls'] += r"""
 <h3>PLS最大化共變異，並非直接最大化相關</h3>
-<p>中心化後，第一PLS方向在單位長度w下最大化 $\operatorname{Cov}(Xw,y)$。由 $\operatorname{Cov}(Xw,y)=\operatorname{Corr}(Xw,y)\operatorname{SD}(Xw)\operatorname{SD}(y)$，PLS同時考慮與y的關係及得分的變動量。OLS則最小化殘差平方和，兩個目標不能混寫。</p>
-<p>單變數OLS斜率為 $\operatorname{Corr}(X_j,y)s_y/s_{X_j}$。只有先把每個Xj調成相同標準差，這些斜率才與相關係數使用共同倍數。因此講義PLS的「權重與相關成比例」須連同標準化條件閱讀。</p>
+<p>中心化後，第一PLS方向在單位長度$w$下最大化 $\operatorname{Cov}(Xw,y)$。由 $\operatorname{Cov}(Xw,y)=\operatorname{Corr}(Xw,y)\operatorname{SD}(Xw)\operatorname{SD}(y)$，PLS同時考慮與$y$的關係及得分的變動量。OLS則最小化殘差平方和，兩個目標不能混寫。</p>
+<p>單變數OLS斜率為 $\operatorname{Corr}(X_j,y)s_y/s_{X_j}$。只有先把每個$X_j$調成相同標準差，這些斜率才與相關係數使用共同倍數。因此講義PLS的「權重與相關成比例」須連同標準化條件閱讀。</p>
 """ + proof('w06proofPLSCov','第一PLS方向與相關係數量尺',r"""
-<p>令c=Xᵀy，中心化後的共變異為 $w^Tc/(n-1)$。Cauchy–Schwarz給 $w^Tc\le\|w\|\|c\|=\|c\|$，c≠0時等號在w=c/‖c‖達到，便是前述第一方向。單變數斜率為 $S_{xy}/S_{xx}$；再以相關係數 $S_{xy}/\sqrt{S_{xx}S_{yy}}$ 代入，即得 r·sy/sx。</p>
+<p>令$c=X^\top y$，中心化後的共變異為 $w^Tc/(n-1)$。Cauchy–Schwarz給 $w^Tc\le\|w\|\|c\|=\|c\|$，$c\ne0$時等號在$w=c/\|c\|$達到，便是前述第一方向。單變數斜率為 $S_{xy}/S_{xx}$；再以相關係數 $S_{xy}/\sqrt{S_{xx}S_{yy}}$ 代入，即得 $r\,s_y/s_x$。</p>
 """)
 
 
 BODIES['criteria'] += r"""
 <h3>分類離差的數值如何對回軟體？</h3>
-<p>獨立二元觀測的飽和模型逐筆令 $p_i=y_i$，以 $0\log0=0$ 慣例，其對數概似為0。故Bernoulli離差為 $D=-2\sum_i[y_i\log p_i+(1-y_i)\log(1-p_i)]$。對單筆二元標籤，可用 <code>2 * log_loss(y, predict_proba(X), normalize=False)</code> 計算；輸入必須是機率，不能把log機率再次當機率，也不能漏掉總和與平均的n倍差別。</p>
+<p>獨立二元觀測的飽和模型逐筆令 $p_i=y_i$，以 $0\log0=0$ 慣例，其對數概似為0。故Bernoulli離差為 $D=-2\sum_i[y_i\log p_i+(1-y_i)\log(1-p_i)]$。對單筆二元標籤，可用 <code>2 * log_loss(y, predict_proba(X), normalize=False)</code> 計算；輸入必須是機率，不能把log機率再次當機率，也不能漏掉總和與平均的$n$倍差別。</p>
 <p>這是固定模型的擬合量；有懲罰的係數估計不等於無懲罰MLE，不能直接把任意兩個正則化模型的離差差值當成一般卡方概似比檢定。</p>
 """
 
