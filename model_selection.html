@@ -803,7 +803,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <strong>第二階段只剩 $p+1$ 個候選</strong>，這時才花力氣估測試誤差。這一步不能再用訓練 RSS：RSS 隨 $k$ 單調下降、$R^2$ 單調上升，一定會選到全部變數。
 </div><details class="qa-item reading-detail" id="w06-detail-two-stage"><summary>延伸閱讀：為什麼不直接對所有子集做 CV？</summary>
 <div class="detail-body">
-<p>可以。直接用交叉驗證比較全部 $2^p$ 個子集，在統計上完全合理，甚至可能找到比兩階段法更好的預測模型。教科書仍介紹兩階段，主要有兩個原因。</p>
+<p>可以。直接用交叉驗證比較全部 $2^p$ 個子集，在統計上合理，也可能找到比兩階段法更好的預測模型。教科書仍介紹兩階段，主要有兩個原因。</p>
 <h4>1. 計算成本</h4>
 <p>以 $p=10$ 為例，共有 $2^{10}=1024$ 個候選模型。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
@@ -852,7 +852,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <li>用完全沒參與選模的測試資料評估最終模型。</li>
 </ol>
 <p>這時第一階段的搜尋不會直接影響第 3 步的測試誤差。但第 2 步挑出的最小驗證誤差仍偏樂觀；若還想對選中變數的係數做顯著性檢定，也不能忽略前面的選擇過程（選後推論的問題）。</p>
-<p>總結：最佳子集在高維時容易對訓練資料過度擬合，透過適當的樣本外驗證可以大幅緩解；兩階段法本身不保證完全消除選擇偏差。</p>
+<p>最佳子集在高維時容易對訓練資料過度擬合，透過適當的樣本外驗證可以大幅緩解；兩階段法本身不保證完全消除選擇偏差。</p>
 </div></details>
 <p><strong>前向逐步選擇</strong>（forward stepwise selection）從空模型開始，每一步加入一個「讓訓練 RSS 降最多」的變數，直到所有變數都在模型裡。
   <strong>後向逐步選擇</strong>（backward stepwise selection）反過來，從含全部 $p$ 個變數的模型開始，每次刪掉最沒用的一個。
@@ -873,7 +873,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <li>第四步：加入最後一個變數。</li>
 </ul>
 <p>加上空模型，一共擬合 $1+4+3+2+1=11$ 個模型，而全部可能的子集有 $2^4=16$ 個。</p>
-<p>關鍵是這 11 個模型<strong>不是事先固定的</strong>，而是由訓練資料決定的。換一批資料，可能先選 $X_1$ 再選 $X_3$，也可能先選 $X_4$ 再選 $X_2$。$p=4$ 時變數加入的順序共有 $4!=24$ 種；一次執行只沿其中一條路徑前進，但走哪條路本身就用了 $y$。每個子集都是某種加入順序的前段，所以在不同資料下，全部 16 個子集都可能被選中。</p>
+<p>這 11 個模型<strong>由訓練資料決定</strong>，並非事先固定。換一批資料，可能先選 $X_1$ 再選 $X_3$，也可能先選 $X_4$ 再選 $X_2$。$p=4$ 時變數加入的順序共有 $4!=24$ 種；一次執行只沿其中一條路徑前進，但走哪條路本身就用了 $y$。每個子集都是某種加入順序的前段，所以在不同資料下，全部 16 個子集都可能被選中。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
 <thead><tr><th>數什麼</th><th>$p=4$ 的數量</th></tr></thead>
 <tbody><tr><td>一次執行實際擬合的模型</td><td>11</td></tr><tr><td>不同資料下可能被選中的模型</td><td>全部 16 個子集</td></tr><tr><td>可能的加入順序</td><td>$4!=24$</td></tr></tbody>
