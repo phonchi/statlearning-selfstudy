@@ -78,15 +78,12 @@ LOOCV_INTUITION = r"""
   <h4>$h_i$ 是「自己對自己擬合值」的權重</h4>
   <p>最小平方的擬合值是 $\hat y=Hy$，$H=X(X^\mathsf{T}X)^{-1}X^\mathsf{T}$ 是帽子矩陣，$h_i=H_{ii}$ 是第 3 章學過的槓桿值。把第 $i$ 個擬合值拆開：</p>
   $$\hat y_i=\underbrace{h_iy_i}_{\text{自己對自己的影響}}+\underbrace{\sum_{j\ne i}H_{ij}y_j}_{\text{其他資料的影響}}.$$
-  <p>$h_i$ 愈大，這筆資料愈能把擬合結果拉向自己，訓練殘差 $e_i$ 就愈<strong>過度樂觀</strong>。LOOCV 不允許 $y_i$ 參與預測自己，所以要把這部分影響拿掉；刪掉一筆後係數也會重新調整，最後精確的修正剛好是除以 $1-h_i$。代數上可以先寫出刪除後的預測</p>
-  $$\hat y_{(i)}=\hat y_i-\frac{h_i}{1-h_i}\,e_i,$$
-  <p>於是 $y_i-\hat y_{(i)}=e_i\bigl(1+\tfrac{h_i}{1-h_i}\bigr)=\dfrac{e_i}{1-h_i}$。完整推導見本節最後的「計算細節：LOOCV 捷徑與槓桿值」。</p>
+  <p>$h_i$ 愈大，這筆資料愈能把擬合結果拉向自己，訓練殘差 $e_i$ 就愈<strong>過度樂觀</strong>。LOOCV 不允許 $y_i$ 參與預測自己，所以要把這部分影響拿掉；刪掉一筆後係數也會重新調整，最後精確的修正剛好是除以 $1-h_i$；完整推導見本節最後的「計算細節：LOOCV 捷徑與槓桿值」。</p>
   <h4>兩個數字感受修正幅度</h4>
   <ul>
     <li>高槓桿點 $h_i=0.8$、訓練殘差 $e_i=1$：留一殘差是 $1/(1-0.8)=5$。它在完整擬合裡大幅參與了「預測自己」，真正的樣本外誤差比訓練殘差大得多。</li>
     <li>低槓桿點 $h_i=0.02$：$e_i/0.98\approx e_i$。這筆資料本來就幾乎不影響擬合，拿掉它模型幾乎不變。</li>
   </ul>
-  <p>所以這個公式看起來像普通的訓練 MSE $\frac1n\sum e_i^2$，只是每個殘差都做了<strong>槓桿修正</strong>：$e_i\to e_i/(1-h_i)$。<strong>愈能影響自己擬合值的觀測，它的訓練殘差愈不可信，LOOCV 就把它放大得愈多。</strong>可以把 $1-h_i$ 理解成「不是由自己的影響造成的那一部分」。</p>
 """ + links(("LOOCV 捷徑公式的證明", "https://stats.stackexchange.com/questions/164223/proof-of-loocv-formula?noredirect=1&lq=1")))
 
 LOOCV_DRAWBACKS = r"""
@@ -101,9 +98,7 @@ LOOCV_DRAWBACKS = r"""
   <p>假設 $n=100$。LOOCV 每次都是 99 筆訓練、1 筆驗證。例如 $D_{-1}=\{2,3,\ldots,100\}$ 與 $D_{-2}=\{1,3,\ldots,100\}$ 有 98 筆完全相同，訓練出來的兩個模型通常也非常像。講義列出三個後果：</p>
   <p><strong>1. 對資料的擾動不夠大</strong>。每次只移除一筆，$n\to n-1$，不同輪的訓練資料幾乎一樣；相比之下，10-fold CV 每次拿掉約 10%（$100\to90$），模型受到比較明顯的擾動。LOOCV 因此沒有充分觀察到「訓練樣本改變時，模型表現會怎麼變」。</p>
   <p><strong>2. 仍然很花時間。</strong>上面的捷徑只適用於最小平方這類線性平滑器。一般的機器學習方法沒有這種捷徑：$n=10000$ 時 LOOCV 要真的擬合 10000 次模型，10-fold CV 只要 10 次。對隨機森林、支持向量機、神經網路等方法，LOOCV 通常成本很高。</p>
-  <p><strong>3. 各折的估計高度相關，平均之後的變異可能仍然很大。</strong>令第 $i$ 折的誤差為 $E_i$，$\mathrm{CV}=\frac1n\sum_iE_i$。若各 $E_i$ 獨立，平均的變異是 $\sigma^2/n$；但它們的訓練集幾乎相同，$\operatorname{Cov}(E_i,E_j)>0$。一般地</p>
-  $$\operatorname{Var}\Bigl(\frac1n\sum_{i=1}^nE_i\Bigr)=\frac1{n^2}\Bigl[\sum_i\operatorname{Var}(E_i)+\sum_{i\ne j}\operatorname{Cov}(E_i,E_j)\Bigr].$$
-  <p>各折高度正相關時，第二項很大，平均很多折也不像平均很多獨立觀測那樣有效降低變異。極端情況 $E_1=E_2=\cdots=E_n$，平均 100 次的資訊和只有 1 次差不多。所以這句話的意思<strong>不是</strong>「取平均會增加變異」，而是<strong>因為各折太相關，取平均無法像獨立樣本那樣降低變異</strong>。</p>
+  <p><strong>3. 各折的估計高度相關，平均之後的變異可能仍然很大。</strong>令第 $i$ 折的誤差為 $E_i$，$\mathrm{CV}=\frac1n\sum_iE_i$。若各 $E_i$ 獨立，平均的變異是 $\sigma^2/n$；但它們的訓練集幾乎相同，$\operatorname{Cov}(E_i,E_j)>0$，正相關會抵銷平均的效果（公式見下一節的「平均相關誤差的變異數」）。極端情況 $E_1=E_2=\cdots=E_n$，平均 100 次的資訊和只有 1 次差不多。所以這句話的意思<strong>不是</strong>「取平均會增加變異」，而是<strong>因為各折太相關，取平均無法像獨立樣本那樣降低變異</strong>。</p>
   <p>三點合起來看：LOOCV 偏差較低，但各折高度相關，變異可能較高，而且計算昂貴；5-fold 或 10-fold 通常提供較好的偏差、變異與計算量取捨。</p>
 """)
 
@@ -137,7 +132,7 @@ SHUFFLE_SECTION = r"""
              ["驗證集大小", "約 $n/k$", "自己指定 <code>test_size</code>"],
              ["切分次數", "$k$", "自己指定 <code>n_splits</code>"],
              ["分類、類別不平衡時", "<code>StratifiedKFold</code>", "<code>StratifiedShuffleSplit</code>"]]) + r"""
-  <p>即使兩者都是「5 次、驗證 20%」，概念也不同：<strong>KFold 是分割（partition），ShuffleSplit 是重複隨機抽樣</strong>。<code>ShuffleSplit(n_splits=1)</code> 就是驗證集法；lab 用 10 次切分得到平均 23.80、標準差 1.42。lab 也提醒，因為各次的訓練樣本重疊而相關，這個標準差不能當作平均測試分數的抽樣變異，只反映換不同隨機切分時的蒙地卡羅變異。下面的元件把幾種切分畫在一起，資料依類別排序，方便看出洗牌與分層的效果。</p>
+  <p>即使兩者都是「5 次、驗證 20%」，概念也不同：<strong>KFold 是分割（partition），ShuffleSplit 是重複隨機抽樣</strong>。<code>ShuffleSplit(n_splits=1)</code> 就是驗證集法；lab 用 10 次切分得到平均 23.80、標準差 1.42（這個標準差的解讀見 lab 區塊）。下面的元件把幾種切分畫在一起，資料依類別排序，方便看出洗牌與分層的效果。</p>
 """ + "{SPLIT_VIZ}" + links(
     ("scikit-learn：不同交叉驗證切分的視覺化", "https://scikit-learn.org/stable/auto_examples/model_selection/plot_cv_indices.html"),
     ("scikit-learn：關於洗牌的說明", "https://scikit-learn.org/stable/modules/cross_validation.html#a-note-on-shuffling"),
@@ -258,7 +253,7 @@ BOOT_WORLD = r"""
              ["抽一份資料", "從 $P$ 抽 $n$ 筆", "從 $Z$ <strong>有放回</strong>抽 $n$ 筆，得到 $Z^{*r}$"],
              ["算估計量", "$\\hat\\alpha$", "$\\hat\\alpha^{*r}$"],
              ["重複", "理論上重複很多次（做不到）", "$r=1,\\ldots,B$，電腦可以做"]]) + r"""
-  <p><strong>為什麼一定要「有放回」？</strong>真實世界的每一筆資料，都是從同一個母體 $P$ 獨立抽出來的；有放回地抽，每一次抽籤都面對同一個經驗分布 $Z$，抽出的 $n$ 筆因此彼此獨立、同分布，模仿的正是「從母體再抽一份 $n$ 筆資料」。若不放回地抽 $n$ 筆，只會把原資料重新排列；像 $\hat\alpha$ 這種不看資料順序的估計量，每次算出來都一樣，看不到任何變異。</p>
+  <p><strong>為什麼一定要「有放回」？</strong>有放回時，每次抽籤都面對同一個經驗分布，$n$ 筆彼此獨立，才能模仿「從母體再抽一份資料」；不放回只會得到原資料的重新排列，看不到變異。直覺與前提見下方「為什麼要有放回重抽？」收合區。</p>
   <p>只有 3 筆資料的例子最容易看清楚：原資料是觀測 1、2、3；一份 bootstrap 樣本可能是 3、1、3，第 3 筆出現兩次、第 2 筆沒出現。重複 $B$ 次得到 $\hat\alpha^{*1},\ldots,\hat\alpha^{*B}$。</p>
 """ + info("講義：bootstrap 標準誤", r"""以 $B$ 份 bootstrap 樣本 $Z^{*1},\ldots,Z^{*B}$ 算出 $\hat\alpha^{*1},\ldots,\hat\alpha^{*B}$，它們的標準差就是 $\hat\alpha$ 標準誤的估計：
   $$\mathrm{SE}_B(\hat\alpha)=\sqrt{\frac1{B-1}\sum_{r=1}^B\Bigl(\hat\alpha^{*r}-\frac1B\sum_{r'=1}^B\hat\alpha^{*r'}\Bigr)^2}.$$""", "warm") + r"""
@@ -334,33 +329,8 @@ BOOT_APPENDIX_LINKS = links(
     ("scikit-learn：用置換檢定評估分類分數的顯著性", "https://scikit-learn.org/stable/auto_examples/feature_selection/plot_permutation_test_for_classification.html#test-with-permutations-the-significance-of-a-classification-score"),
     lead="講義附錄的補充連結")
 
-SPLITTERS_CODE = """import numpy as np
-from sklearn.model_selection import (
-    StratifiedKFold, GroupKFold, StratifiedGroupKFold
-)
-
-# 12 位病人，每人 5 筆觀測；6 位為負例、6 位為正例。
-groups = np.repeat(np.arange(12), 5)
-y = np.repeat([0] * 6 + [1] * 6, 5)
-X = np.arange(60).reshape(-1, 1)
-
-splitters = {
-    "分層": StratifiedKFold(
-        n_splits=3, shuffle=True, random_state=42),
-    "分組": GroupKFold(n_splits=3),
-    "分層且分組": StratifiedGroupKFold(n_splits=3),
-}
-for name, cv in splitters.items():
-    folds = (cv.split(X, y) if name == "分層"
-             else cv.split(X, y, groups=groups))
-    for fold, (train, valid) in enumerate(folds, 1):
-        shared = np.intersect1d(groups[train], groups[valid])
-        print(name, fold, "驗證正例比例", y[valid].mean(),
-              "兩側共用病人數", len(shared))
-"""
-
-SPLITTERS_D = detail("w05-detail-splitters", "延伸閱讀：StratifiedKFold、GroupKFold 與分類指標", r"""
-  <p>承接講義的「分類問題的交叉驗證」與選讀的切分方式：Lab 匯入了 <code>StratifiedKFold</code>，但主要實作仍是 <code>Auto</code> 迴歸的 <code>KFold</code>。下面用小型分類資料展開分層與群組切分；病人編號是為了看清切分界線而設計的例子，不是 Auto 的欄位。</p>
+SPLITTERS_D = detail("w05-detail-splitters", "延伸閱讀：StratifiedKFold 與 GroupKFold", r"""
+  <p>承接講義的「分類問題的交叉驗證」與選讀的切分方式：Lab 匯入了 <code>StratifiedKFold</code>，但主要實作仍是 <code>Auto</code> 迴歸的 <code>KFold</code>。下面說明分層與群組切分；病人的例子是為了看清切分界線而設計的，不是 Auto 的欄位。</p>
   <h3>先問：你要預測的是新觀測，還是新病人？</h3>
   <p><strong>StratifiedKFold（分層）</strong>依照 <code>y</code> 的類別安排觀測，讓各折的類別比例<strong>盡量接近</strong>整體。例如 100 筆獨立觀測有 20 筆正例，分成 5 折時，每折 20 筆約有 4 筆正例。一般分類也可以用分層，不必等到嚴重不平衡才使用；它沒有增加少數類資料，也不會解決所有抽樣不確定性。</p>
   <p>若正例只有 3 筆卻切成 5 折，就不可能每折都有正例。折數與評估指標要配合各類的筆數；ROC AUC 等指標在只有單一類別的驗證折上無法計算。分層可避免部分不良切分，但不能保證折分數的變異完整反映母體的不確定性。</p>
@@ -373,95 +343,19 @@ SPLITTERS_D = detail("w05-detail-splitters", "延伸閱讀：StratifiedKFold、G
     ["分類且同一實體有多筆紀錄", "<code>StratifiedGroupKFold</code>", "群組隔離，並盡量維持類別比例"],
     ["預測未來的時間序列", "<code>TimeSeriesSplit</code>", "用較早資料預測較晚資料；必要時留間隔"],
 ]) + r"""
-  <h3>sklearn：直接檢查每折到底切了什麼</h3>
-  <p>下面的 <code>X</code> 只是用來示範索引，不拿來擬合模型。請比較各折的「驗證正例比例」與「兩側共用病人數」：分層可以維持比例，卻可能讓同一病人出現在兩側；分組版本的共用病人數應為 0。把 <code>y</code> 改成正例集中於少數病人，再觀察各折比例。</p>
-""" + hl(SPLITTERS_CODE, block_id="w05-splitters-code") + r"""
-  <p>真正評估模型時，例如 <code>cross_val_score(model, X, y, cv=GroupKFold(3), groups=groups)</code>，也要傳入群組。這是 sklearn 預設未啟用 metadata routing 的寫法；若已啟用，請依官方文件用 <code>params={"groups": groups}</code> 傳遞。</p>
-  <p><strong>切分器與指標要分別選。</strong>正例只佔 1% 時，全猜負例也有 99% accuracy；可依問題選 recall、precision、F1 或 ROC AUC，透過 <code>scoring</code> 指定。分層不會讓 accuracy 自動成為合適的指標，分組也不能取代時間順序限制。</p>
 """ + links(
     ("scikit-learn：交叉驗證與資料相依性", "https://scikit-learn.org/stable/modules/cross_validation.html"),
     ("StratifiedKFold：分層切分", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html"),
     ("GroupKFold：群組隔離", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html"),
     ("StratifiedGroupKFold：同時考慮類別與群組", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedGroupKFold.html")))
 
-NESTED_CODE = """from ISLP import load_data
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import (
-    KFold, GridSearchCV, cross_val_score, cross_validate
-)
-
-# 沿用 Ch05 Lab：以 horsepower 預測 Auto 的 mpg。
-Auto = load_data("Auto")
-X = Auto[["horsepower"]].to_numpy()
-y = Auto["mpg"].to_numpy()
-model = make_pipeline(PolynomialFeatures(degree=2, include_bias=False),
-                      LinearRegression())
-
-# 對齊 Lab 的 10-fold 切法，評估事先固定的二次模型。
-cv = KFold(10, shuffle=True, random_state=0)
-fixed_scores = cross_val_score(
-    model, X, y, cv=cv, scoring="neg_mean_squared_error")
-print("固定二次模型 CV MSE", -fixed_scores.mean())
-
-# 延伸：自動比較 Lab 的 1 到 5 次多項式。
-inner = KFold(3, shuffle=True, random_state=1)
-outer = KFold(5, shuffle=True, random_state=2)
-search = GridSearchCV(
-    model, {"polynomialfeatures__degree": [1, 2, 3, 4, 5]},
-    cv=inner, scoring="neg_mean_squared_error", refit=True)
-search.fit(X, y)
-print("完整資料的最佳次數", search.best_params_)
-print("用來選次數的 CV MSE", -search.best_score_)
-
-# Nested CV：每次只用 outer 訓練部分執行完整搜尋。
-result = cross_validate(search, X, y, cv=outer,
-                        scoring="neg_mean_squared_error",
-                        return_estimator=True)
-print("Nested CV 外層 MSE", -result["test_score"])
-print("Nested CV 外層平均 MSE", -result["test_score"].mean())
-print("各 outer fold 選的次數",
-      [est.best_params_ for est in result["estimator"]])
-
-# 評估完成後，在全部可用訓練資料重新搜尋並 refit。
-# 若另有 external test set，X、y 在此只包含 training data。
-search.fit(X, y)
-final_model = search.best_estimator_
-"""
-
 NESTED_GUIDE = r"""
   <p>承接講義「Cross-validation: right and wrong」的原則：資料驅動的選擇必須放在適當的訓練折內。Lab 用 <code>Auto</code> 的 <code>horsepower</code> 預測 <code>mpg</code>，比較 1 到 5 次多項式的 CV 誤差；以下沿用同一資料與候選模型，延伸到自動選次數與獨立的外層評估。Nested CV 是這裡的延伸實作，並非原 Lab 已執行的步驟。</p>
   <h4>一般 CV 與 Nested CV：評估的對象不同</h4>
   <p><strong>一般 CV 有兩種用途。</strong>超參數事先固定時，它可評估這個訓練程序；搭配 <code>GridSearchCV</code> 等搜尋時，它可比較設定並選超參數。若同一份 CV 分數既用來選冠軍，又用來報告冠軍的表現，就可能偏樂觀：例如很多候選設定的真實表現接近，但估計有起伏，挑最高分等於偏向挑中在這次切分中運氣好的設定。</p>
   <p><strong>Nested CV 評估包含選擇步驟的完整程序。</strong>它問的是：「收到一批新的訓練資料後，依照這套調參規則選模型，對未見資料的預測會多準？」因此每個外層折都要重新執行內層搜尋，不是先用全部資料選好設定，再做一次外層 CV。</p>
-""" + table(["比較項目", "一般 CV（單層）", "Nested CV（巢狀）"], [
-    ["主要目的", "評估固定訓練程序；或搭配搜尋選超參數", "評估包含超參數選擇的完整訓練程序"],
-    ["CV 結構", "單層", "雙層：Inner 選擇、Outer 評估"],
-    ["超參數選擇", "有搜尋時，依此層 CV 選擇；固定模型則不選", "只用各 Outer 訓練部分的 Inner CV 選擇"],
-    ["效能評估", "固定模型可用 CV score；搜尋後的最佳 CV score 可能偏樂觀", "使用未參與該折選擇的 Outer CV score"],
-    ["是否產生單一最佳超參數", "單次搜尋會選一組；單純 CV 不會", "評估時各 Outer Fold 各自選，結果可能相同或不同"],
-    ["Selection bias（選擇偏差）", "同一 CV 同時調參與報告效能時，可能偏樂觀", "可降低調參造成的偏差；不是消除所有偏差的保證"],
-    ["是否重新選擇最終超參數", "若已在全部可用訓練資料搜尋，通常不用再選；資料或流程改變則需重選", "一般會在全部可用訓練資料重新執行搜尋；不以 Outer 成績挑設定"],
-    ["是否重新訓練最終模型", "通常要用全部可用訓練資料擬合；搜尋器可自動 refit", "要：最後的搜尋選好設定後，在全部可用訓練資料擬合"],
-    ["計算成本", "較低；搜尋仍需對每個設定逐折擬合", "較高；每個 Outer Fold 都完整做一次 Inner 搜尋"],
-    ["適用情境", "固定模型的評估；或保留獨立測試集後，在訓練資料選設定", "需要評估包含調參步驟的泛化表現，尤其沒有獨立測試集時"],
-    ["有獨立 External Test Set 時", "訓練集內調參後，未碰過的測試集可作最終評估", "並非必要；可另外提供完整選模程序的內部評估"],
-]) + r"""
-  <h4>5 個外層折、3 個內層折：一輪怎麼做？</h4>
-  <ol>
-    <li><strong>外層留下 1/5。</strong>這份資料只供本輪評估；其餘 4/5 是外層訓練資料。</li>
-    <li><strong>在這 4/5 裡做 3-fold Inner CV。</strong>例如比較 Lab 的多項式次數 1、2、3、4、5。補值、標準化、特徵選擇等會學到資料資訊的步驟，都只在每個內層訓練折擬合。</li>
-    <li><strong>選出本輪設定後，重新擬合全部 4/5。</strong>再對最初留下的 1/5 計算一次分數。</li>
-    <li><strong>換下一個外層折，從搜尋開始重做。</strong>最後整理 5 個 Outer 分數；各折選不同多項式次數是正常的。不要挑最高分的外層模型作為最終模型，也不要把外層最佳設定投票當作預設調參規則。</li>
-  </ol>
-  <p>5 個候選次數、3 個 Inner Fold、5 個 Outer Fold，內層搜尋共擬合 $5\times3\times5=75$ 次；各外層搜尋的 refit 再加 5 次。評估後的最終搜尋另需 $5\times3+1=16$ 次，合計 96 次。這說明巢狀 CV 的成本；不包括下面另外示範的一般 CV 與單次搜尋。</p>
-  <h4>sklearn：把搜尋器交給外層 CV</h4>
-  <p><code>cross_val_score</code> 搭配固定模型是一般 CV；<code>GridSearchCV</code> 用內層折選設定；把這個搜尋器傳給 <code>cross_validate</code>，就讓外層每一折重新搜尋。<code>refit=True</code> 會把選好的設定重新擬合到該次 <code>fit</code> 收到的全部訓練資料，<code>return_estimator=True</code> 則方便查看每個外層折的選擇。</p>
-""" + hl(NESTED_CODE, block_id="w05-nested-code") + r"""
-  <p><strong>分數方向與 Lab 對齊。</strong>Lab 以 MSE 比較模型，愈小愈好；sklearn 的搜尋器則一律最大化 score，所以此處用 <code>neg_mean_squared_error</code>，印出時乘上 $-1$ 還原成 MSE。原 Lab 的 <code>sklearn_sm</code> 可直接回傳 MSE；不要把這兩種介面的正負號混用。固定二次模型沿用 Lab 的 10-fold、<code>random_state=0</code>；Nested 範例為縮短搜尋改用外層 5 折、內層 3 折，分數不應要求與 Lab 的 10-fold 完全相同。</p>
-  <p><strong>評估完之後才訓練交付模型。</strong>上面的最後兩行會在全部可用訓練資料重新選設定並擬合。Nested CV 的平均分數描述這套程序在外層訓練規模下的表現，不是最終這個已擬合模型的獨立測試分數。若另有外部測試集，必須一直保留到所有決策完成，再評估一次；反覆看它並改模型，就失去獨立性。</p>
-  <p><strong>Nested CV 仍要選對切分方式。</strong>上例沿用 Lab 將 Auto 各列視為獨立迴歸觀測的設定，所以內外層都用 KFold；若是獨立的分類觀測，可改成 StratifiedKFold。群組資料則兩層都要隔離群組，Inner 只收到當輪 Outer 訓練資料的群組編號。時間資料也要兩層遵守時間順序。巢狀結構本身不會修復病人重疊、時間洩漏或外層結果被反覆拿來挑模型的問題。</p>
+  <p>做法是兩層迴圈：外層每一折先留下一份資料只供評估，在其餘資料上用內層 CV 選超參數（例如 Lab 的多項式次數），選好後擬合並對留下的那份評分；換下一個外層折時，從搜尋開始重做。各外層折選到不同次數是正常的。評估完成後，再用全部資料重新搜尋、擬合交付的模型。sklearn 的寫法是把 <code>GridSearchCV</code> 搜尋器直接交給 <code>cross_validate</code>，見下方官方範例。</p>
+  <p><strong>Nested CV 仍要選對切分方式。</strong>群組資料兩層都要隔離群組，時間資料兩層都要遵守時間順序；巢狀結構本身不會修復病人重疊或時間洩漏。</p>
 """ + links(
     ("scikit-learn：一般 CV 與 Pipeline", "https://scikit-learn.org/stable/modules/cross_validation.html"),
     ("Nested versus non-nested cross-validation：官方範例", "https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html"),
@@ -559,8 +453,7 @@ BODIES["validation"] = f"""
      "<p>因為它只用了一半的資料訓練。統計模型通常有愈多訓練資料，表現愈好，"
      "所以用 $n/2$ 筆訓練出來的模型，本來就比用全部 $n$ 筆訓練出來的差。"
      "你量到的是「一個比較弱的模型」的誤差，因此系統性偏高。</p>"
-     "<p>這是驗證集法的兩個缺點之一。另一個是變異太大（就是上面那張圖）。"
-     "交叉驗證同時改善了這兩點：每一輪都用 $n(k-1)/k$ 筆訓練（比 $n/2$ 多），"
+     "<p>交叉驗證同時改善了講義列的兩個缺點：每一輪都用 $n(k-1)/k$ 筆訓練（比 $n/2$ 多），"
      "而且做 $k$ 輪再平均（變異變小）。</p>"),
     ("Q：那 <code>random_state</code> 到底該不該固定？",
      "<p>固定 seed 讓你和讀程式的人能重跑出同樣的數字，使結果<strong>可重現</strong>。</p>"
@@ -708,14 +601,6 @@ BODIES["kbias"] = f"""
      "講義的論點是 LOOCV 各折訓練出的模型幾乎相同，各折估計因而正相關；$\\rho>0$ 時第二項會抵銷一部分第一項隨 $k$ 減小的效果。實際的相關程度依方法與資料而定，不一定接近 1。</p>"
      "<p>直覺版：LOOCV 的 $n$ 個模型幾乎是同一個模型，所以你其實只有「一個」意見被重複算了 $n$ 次。</p>"
      "<p>這條式子假設每折變異 $\\sigma^2$ 與兩兩相關 $\\rho$ 都相同；$k$ 改變時 $\\sigma^2$ 與 $\\rho$ 也會一起變，詳見本節的收合補充。</p>"),
-    ("Q：跑 CV 之前要不要標準化？在哪一步做？",
-     "<p>要，而且<strong>必須在每一折裡面做</strong>：用該折的訓練部分算平均與標準差，再套到驗證部分。</p>"
-     "<p>如果先用全部資料標準化再切折，驗證資料的平均與標準差就洩漏進訓練流程了，"
-     "但 CV 誤差改變的方向與大小取決於模型與資料，不能只憑洩漏判定。"
-     "例如含截距、未正則化的最小平方在線性縮放下可張出同一模型空間，預測甚至不變。"
-     "<code>scikit-learn</code> 的正解仍是把標準化包進 "
-     "<code>Pipeline</code>，再把整個 pipeline 丟給 <code>cross_validate</code>。"
-     "它會自動在每折內重新 fit。下一節會繼續說明這類資料洩漏問題。</p>"),
 ])}
 
 {quiz("qK", "QUIZ · $k$ 的取捨",
@@ -921,12 +806,8 @@ BODIES["bootstrap"] = f"""
      "<strong>不會讓原始資料變多</strong>。$n$ 小的時候 bootstrap 本身就不可靠，"
      "拉高 $B$ 也救不了。它只是把同一份資料提供的資訊算得更精確而已。</p>"),
     ("Q：bootstrap 什麼時候會失效？",
-     "<p>幾種常見的限制：</p><ul>"
-     "<li><strong>估計量依賴極值</strong>（最大值、最小值、全距）：bootstrap 樣本的最大值"
-     "永遠不會超過原始資料的最大值，所以分佈會被截斷。</li>"
-     "<li><strong>資料不獨立</strong>（時間序列、空間資料、群組結構）：直接對單筆有放回重抽會"
-     "破壞相關結構。要改用 block bootstrap。</li>"
-     "<li><strong>$n$ 很小</strong>：把 10 筆資料當母體，本來就沒什麼可抽的。</li></ul>"),
+     "<p>常見的三種情況：估計量依賴極值（bootstrap 樣本的最大值永遠不超過原資料的最大值）、"
+     "資料不獨立（要改用區塊 bootstrap）、$n$ 很小。背後的原因見上方「為什麼要有放回重抽？直覺與前提」。</p>"),
 ])}
 
 {quiz("qBoot", "QUIZ · Bootstrap",
@@ -983,14 +864,6 @@ BODIES["exercises"] = f"""
 
 # ── REF ───────────────────────────────────────────────────────────────
 # 講義選讀與附錄：資料結構、信賴區間及虛無分佈。
-BODIES["cvwrong"] += r"""
-<h3>分折也要反映未來的預測情境</h3>
-<p>獨立同分佈資料可先打散再分折；類別不平衡時可分層保持類別比例。
-同一人的多筆資料應整組分到同一側，避免模型在驗證集認出訓練過的人。
-時間序列用較早資料訓練、較晚資料驗證，可採擴張或滑動訓練窗；任意打散會把未來資訊送進過去。</p>
-<p>需要精確控制驗證比例時，可採重複隨機切分（ShuffleSplit），每次獨立指定訓練與驗證大小。
-不同輪的驗證集可能重疊，不能當作互相獨立的測試實驗；標準化、補值、特徵選擇與調參都須遵守相同的分割界線。</p>
-"""
 BODIES["bootstrap"] += r"""
 <h3>用 bootstrap 建立預測區間</h3>
 <p>主文的百分位區間與曲線區間描述的是<strong>平均</strong>的不確定性。<strong>預測區間</strong>還須包含新觀測的隨機誤差。在獨立、同變異數的迴歸設定，可用下方固定設計流程估計參數造成的預測誤差，再加上獨立抽取的新觀測誤差，從總預測誤差的分位數建立區間。只重抽係數或平均值曲線會漏掉這一項。
@@ -1060,7 +933,7 @@ BODIES["reference"] = f"""
 
 BODIES['loocv'] += r"""
 <h3>LOOCV 捷徑何時可用？</h3>
-<p>固定的最小平方設計矩陣 $X$ 滿欄秩，而且每次刪一筆後仍滿欄秩，才能用 $e_i^{(-i)}=e_i/(1-h_{ii})$。其中 $H=X(X^TX)^{-1}X^T$、$h_{ii}=x_i^T(X^TX)^{-1}x_i$。例如原殘差 2、槓桿值 0.2，留一誤差為 2.5、平方誤差為 6.25。高槓桿點對自己的擬合拉力大，留掉它後誤差可能放大。</p>
+<p>固定的最小平方設計矩陣 $X$ 滿欄秩，而且每次刪一筆後仍滿欄秩，才能用 $e_i^{(-i)}=e_i/(1-h_{ii})$。其中 $H=X(X^TX)^{-1}X^T$、$h_{ii}=x_i^T(X^TX)^{-1}x_i$。</p>
 <p>$h_{ii}=1$ 時分母為零，刪除後也失去滿秩，不能把 $0/0$ 設成零。若每折重新選變數、選多項式次數或調整超參數，也不能只拿選好模型的一組 $H$ 取代整個流程。固定基底的普通最小平方適用；非線性估計器沒有此一般捷徑。</p>
 """ + proof('w05proofPress', '刪一筆殘差等於 $e/(1-h)$', r"""
 <p>令 $A=X^TX$、$b=X^Ty$。刪除第 $i$ 筆的 normal equations 為 $(A-x_ix_i^T)\hat\beta_{(-i)}=b-x_iy_i$。完整資料則有 $A\hat\beta=b$。兩式相減並整理：</p>
@@ -1074,8 +947,6 @@ BODIES['kbias'] += detail('w05-detail-loocv-variance', '延伸閱讀：LOOCV 的
 <li>對很穩定的學習方法（例如低次多項式的最小平方），各留一模型幾乎相同，LOOCV 與 10-fold 的估計往往很接近，前面 <code>Auto</code> 的兩條曲線就是例子；對不穩定的方法，差異才較明顯。</li>
 <li>實務上的建議不變：一般用 5-fold 或 10-fold；LOOCV 適合資料很少或有最小平方捷徑的情況。</li>
 </ul>
-<p><strong>偏差的一面。</strong>每輪訓練集只有 $(k-1)n/k$ 筆。若測試誤差隨訓練筆數增加而下降（學習曲線向下），用較少資料訓練的模型誤差較大，所以 CV 估計傾向高估「用全部 $n$ 筆訓練」的測試誤差；$k$ 愈大，差距愈小。</p>
-<p><strong>變異的一面。</strong>平均 $K$ 個折誤差 $E_k$ 時，若各折獨立、變異都是 $v$，平均的變異是 $v/K$；若兩兩相關都是 $\rho$，變異變成下式的 $v/K+(K-1)\rho v/K$，當 $K$ 很大時趨近 $\rho v$，再多平均也降不下去。</p>
 """ + links(("相關與不相關資料的平均，其變異數如何不同", "https://stats.stackexchange.com/questions/223446/variance-of-the-mean-of-correlated-and-uncorrelated-data"), ("LOOCV 與 $k$-fold CV 的偏差與變異", "https://stats.stackexchange.com/questions/61783/bias-and-variance-in-leave-one-out-vs-k-fold-cross-validation?noredirect=1&lq=1")) + proof('w05proofCvVariance', '平均相關誤差的變異數', r"""
 <p>對 $K$ 個有有限變異數的折誤差 $E_1,\ldots,E_K$，由平方展開與期望線性性：</p>
 $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\operatorname{Var}(E_k)+2\sum_{k\lt l}\operatorname{Cov}(E_k,E_l)\right].$$
@@ -1086,26 +957,9 @@ $$\operatorname{Var}\left(\frac1K\sum_k E_k\right)=\frac1{K^2}\left[\sum_k\opera
 # DIRECT-LINKS-20260910
 
 BODIES['cvwrong'] += r"""
-<h3>調參、外層評估與折外預測</h3>
+<h3>調參與外層評估</h3>
 """ + NESTED_GUIDE + r"""
-<h4>折外預測：另外一個常見用途</h4>
-<p><code>cross_val_predict</code>收集每筆未參與該次擬合時的折外（out-of-fold）預測，但把它們合併計算一次指標，不必等於先算每折指標再平均。逐點可加總的損失如MSE，可用折大小加權得到相同整體平均；AUC、F1等非線性指標沒有這種一般等價性。不同折的分數來自不同模型，合併AUC時也要考慮跨折分數尺度。</p>
-<p>時間切分應配合未來的預測期間，必要時在訓練尾端與驗證起點間保留間隔，避免滾動特徵或觀測重疊造成洩漏。固定seed讓同一切法可重現，但一次切分不會因此消除抽樣不確定性。</p>
 """
-BODIES['bootstrap'] += r"""
-<h3>Jackknife也能估計偏差</h3>
-<p>設 $\bar\theta_{(-)}=n^{-1}\sum_i\hat\theta_{(-i)}$。除了前面的標準誤，jackknife的偏差估計與修正後估計量為</p>
-$$\widehat{\mathrm{bias}}_{jack}=(n-1)(\bar\theta_{(-)}-\hat\theta),\qquad \hat\theta_{bc}=n\hat\theta-(n-1)\bar\theta_{(-)}.$$
-<p>這利用估計量偏差隨樣本數平滑變化的近似，不保證適用於最大值、中位數等非光滑統計量。平均數的jackknife偏差估計恰為零，標準誤恰為 $s/\sqrt n$；</p>
-<h3>固定設計下用bootstrap估預測誤差</h3>
-<p>假設 $Y=X\beta+\varepsilon$、誤差iid且同變異。先擬合OLS，使用適當中心化、按槓桿值調整的殘差（例如 $e_i/\sqrt{1-h_{ii}}$）近似新誤差分布。每輪抽出 $n$ 個誤差，產生 $y^*=X\hat\beta+e^*$ 並重新擬合得到 $\hat\beta^*$；另獨立抽一個 $e_{new}^*$。對固定新輸入 $x_0$ 計算</p>
-$$\Delta^*=x_0^T(\hat\beta-\hat\beta^*)+e_{new}^*.$$
-<p>用 $x_0^T\hat\beta+q_{\alpha/2}(\Delta^*)$ 與 $x_0^T\hat\beta+q_{1-\alpha/2}(\Delta^*)$ 作近似PI。這是模擬「新觀測減去估計預測值」的誤差，保留參數誤差的方向；只畫bootstrap平均曲線的分位數會漏掉新觀測雜訊。異質變異或時間相依時，這個iid殘差抽樣設計不適用。</p>
-<p>相依資料的一個替代是區塊自助法：選定區塊長度，抽取連續觀測區塊並串接到所需長度。區塊可重疊、循環或使用隨機長度；須說明所用版本，不能聲稱單一區塊長度保證保留全部相依性。</p>
-""" + proof('w05proofJackknife','Jackknife偏差修正與平均數標準誤',r"""
-<p>若 $E[\hat\theta_n]=\theta+a/n+b/n^2+O(n^{-3})$，刪一估計的期望為 $\theta+a/(n-1)+b/(n-1)^2+O(n^{-3})$。因此 $nE[\hat\theta_n]-(n-1)E[\bar\theta_{(-)}]$ 的 $a$ 項抵消，剩餘偏差為 $O(n^{-2})$。這是平滑偏差展開下的結論，不適用於所有統計量。</p>
-<p>對平均數，$\bar x_{(-i)}=(n\bar x-x_i)/(n-1)$，所以刪一平均的平均是 $\bar x$，偏差估計為0。而 $\bar x_{(-i)}-\bar x=(\bar x-x_i)/(n-1)$，代入jackknife變異數公式，得到 $\sum_i(x_i-\bar x)^2/[n(n-1)]=s^2/n$。</p>
-""") + ""
 
 # COVERAGE-20260910 END
 

@@ -117,13 +117,10 @@ GROUPS = {2: {'bayes': [('KNN 的彈性與有效自由度', 'knn-df', '計算細
      'reference': [('Default 的分類結果', 'default-numbers', '計算細節：Default 完整數值對照'),
                    ('附錄：共變異數矩陣、特徵分解與白化', 'linear-algebra', '延伸閱讀：共變異數、特徵分解、PCA 與白化')]},
  5: {'loocv': [('LOOCV 捷徑何時可用？', 'press', '計算細節：LOOCV 捷徑與槓桿值')],
-     'cvwrong': [('分折也要反映未來的預測情境', 'splits', '延伸閱讀：群組、時間與重複切分'),
-                 ('調參、外層評估與折外預測', 'nested-cv', '延伸閱讀：巢狀 CV 與折外預測')],
+     'cvwrong': [('調參與外層評估', 'nested-cv', '延伸閱讀：巢狀 CV')],
      'bootstrap': [('用 bootstrap 建立預測區間', 'bootstrap-intervals', '延伸閱讀：用 bootstrap 建立預測區間'),
                    ('Jackknife：逐筆刪除，估計量會變多少？', 'jackknife-se', '延伸閱讀：Jackknife 的標準誤'),
-                   ('Permutation test：假如 X 與標籤沒有關聯？', 'permutation', '延伸閱讀：置換檢定與分類器評估'),
-                   ('Jackknife也能估計偏差', 'jackknife-bias', '計算細節：Jackknife 的偏差修正'),
-                   ('固定設計下用bootstrap估預測誤差', 'bootstrap-prediction', '計算細節：重抽預測誤差與區塊自助法')]},
+                   ('Permutation test：假如 X 與標籤沒有關聯？', 'permutation', '延伸閱讀：置換檢定與分類器評估')]},
  6: {'criteria': [('分類模型的模型選擇', 'classification-selection', '延伸閱讀：分類模型的選擇'),
                   ('Cp 的風險目標、常數與選模', 'cp-risk', '計算細節：$C_p$ 的風險目標與常數'),
                   ('分類離差的數值如何對回軟體？', 'deviance', '完整實作：分類離差與軟體量尺')],
@@ -147,8 +144,7 @@ BRIDGES = {
     },
     4: {},
     5: {
-        'cvwrong': r'<p>分割方式須配合預測情境：同一受試者的資料通常一起分組，時間資料用較早訓練、較晚驗證。調參和最終評估也要分開；內層 CV 選模型，外層 CV 或保留測試集評估整個選模流程。</p>',
-        'bootstrap': r'<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法。</p>',
+        'bootstrap': r'<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸說明預測區間與講義附錄的其他重抽樣方法。</p>',
     },
     6: {
         'criteria': r'<p>比较準則前須使用同一候選集合並確認量尺。$C_p$ 的完整風險式要把截距也算入參數個數；各模型共用 $\hat\sigma^2$ 時，可以省掉共同常數作排序，但省略後的分數不再是完整風險值。下面 BIC／$C_p$ 的懲罰比較採這個共同變異數的設定；軟體各自估變異數的概似版本須另外對照。</p>',
@@ -231,8 +227,6 @@ def organize(ch, bodies, pagejs):
     if ch == 5:
         s=soups['bootstrap']
         # w05proofPortfolio 留在 α 公式下方（講義 p.24 的 Exercise 1），不再移到節末。
-        p=s.select_one('#w05proofJackknife');target=heading(s,'固定設計下用bootstrap估預測誤差')
-        if p and target:target.insert_before(p.extract())
     if ch == 6:
         s=soups['lasso'];p=s.select_one('#w06proofMAP');target=heading(s,'Lasso 的零係數條件與座標更新')
         if p and target:target.insert_before(p.extract())
