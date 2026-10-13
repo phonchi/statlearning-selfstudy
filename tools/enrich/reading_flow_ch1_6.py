@@ -125,7 +125,7 @@ GROUPS = {2: {'bayes': [('KNN 的彈性與有效自由度', 'knn-df', '計算細
                    ('Jackknife也能估計偏差', 'jackknife-bias', '計算細節：Jackknife 的偏差修正'),
                    ('固定設計下用bootstrap估預測誤差', 'bootstrap-prediction', '計算細節：重抽預測誤差與區塊自助法')]},
  6: {'criteria': [('分類模型的模型選擇', 'classification-selection', '延伸閱讀：分類模型的選擇'),
-                  ('Cp 的風險目標、常數與選模', 'cp-risk', '計算細節：Cp 的風險目標與常數'),
+                  ('Cp 的風險目標、常數與選模', 'cp-risk', '計算細節：$C_p$ 的風險目標與常數'),
                   ('分類離差的數值如何對回軟體？', 'deviance', '完整實作：分類離差與軟體量尺')],
      'ridge': [('中心化後的 Ridge 解', 'ridge-solution', '計算細節：Ridge 的矩陣解與方向收縮')],
      'lasso': [('收縮的貝氏解讀與延伸', 'shrinkage-map', '延伸閱讀：收縮的貝氏解讀'),
@@ -151,10 +151,10 @@ BRIDGES = {
         'bootstrap': r'<p>bootstrap 的主線是：以觀測為單位有放回重抽、每次重算同一估計量，再由這些估計值的散布估標準誤。平均曲線的信賴區間和新觀測的預測區間不同，後者還要包含新觀測雜訊。下面的延伸各自說明區間、其他重抽樣方法。</p>',
     },
     6: {
-        'criteria': r'<p>比较準則前須使用同一候選集合並確認量尺。Cp 的完整風險式要把截距也算入參數個數；各模型共用 σ̂² 時，可以省掉共同常數作排序，但省略後的分數不再是完整風險值。下面 BIC／Cp 的懲罰比較採這個共同變異數的設定；軟體各自估變異數的概似版本須另外對照。</p>',
-        'lasso': r'<p>λ 控制懲罰強度，s 控制圖中的約束範圍；兩者可用適當值得到同一個解，但一般不是一對一。Lasso 允許係數精確歸零，並不保證任何正 λ 都會產生零係數；Ridge／Lasso 的勝負仍須以相同評估流程比較。</p>',
-        'pcr': r'<p>PCR 的方向由 X 決定，不使用 y；保留 X 的高變異方向不保證保留最有用的預測訊號。成分數 M 與原始變數數不同，少量成分仍可能用到許多原始欄位；滿欄秩且保留全部方向時，擬合值回到普通最小平方。</p>',
-        'pls': r'<p>PLS 用 X 與 y 的共變動挑方向，所以 y 改變時方向也可能改變。它仍然是降維後迴歸，不是 Lasso 那種原始變數選擇；成分數和前處理一樣要在訓練折內選定，沒有一致勝過 PCR 的保證。</p>',
+        'criteria': r'<p>比较準則前須使用同一候選集合並確認量尺。$C_p$ 的完整風險式要把截距也算入參數個數；各模型共用 $\hat\sigma^2$ 時，可以省掉共同常數作排序，但省略後的分數不再是完整風險值。下面 BIC／$C_p$ 的懲罰比較採這個共同變異數的設定；軟體各自估變異數的概似版本須另外對照。</p>',
+        'lasso': r'<p>$\lambda$ 控制懲罰強度，$s$ 控制圖中的約束範圍；兩者可用適當值得到同一個解，但一般不是一對一。Lasso 允許係數精確歸零，並不保證任何正的 $\lambda$ 都會產生零係數；Ridge／Lasso 的勝負仍須以相同評估流程比較。</p>',
+        'pcr': r'<p>PCR 的方向由 $X$ 決定，不使用 $y$；保留 $X$ 的高變異方向不保證保留最有用的預測訊號。成分數 $M$ 與原始變數數不同，少量成分仍可能用到許多原始欄位；滿欄秩且保留全部方向時，擬合值回到普通最小平方。</p>',
+        'pls': r'<p>PLS 用 $X$ 與 $y$ 的共變動挑方向，所以 $y$ 改變時方向也可能改變。它仍然是降維後迴歸，不是 Lasso 那種原始變數選擇；成分數和前處理一樣要在訓練折內選定，沒有一致勝過 PCR 的保證。</p>',
     },
 }
 
@@ -230,13 +230,7 @@ def organize(ch, bodies, pagejs):
         if p and target:target.insert_before(p.extract())
     if ch == 5:
         s=soups['bootstrap']
-        # Keep each proof beside its own subject, rather than hiding unrelated
-        # portfolio algebra inside the permutation/conformal groups.
-        for pid,title in [('w05proofPortfolio','計算細節：投資組合權重與重抽樣唯一筆數')]:
-            p=s.select_one('#'+pid)
-            if p:
-                q=s.select_one('#qBootOptions').find_parent(class_='quiz-box')
-                q.insert_after(p.extract())
+        # w05proofPortfolio 留在 α 公式下方（講義 p.24 的 Exercise 1），不再移到節末。
         p=s.select_one('#w05proofJackknife');target=heading(s,'固定設計下用bootstrap估預測誤差')
         if p and target:target.insert_before(p.extract())
     if ch == 6:
