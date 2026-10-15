@@ -608,6 +608,7 @@ PAGES = [
         playlist="PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN",
         extra_pills=[
             ('▶ 課程錄影：GLM 與交叉驗證', 'https://youtu.be/_ILYSXojMEk'),
+            ('▶ 課程錄影：Bootstrap', 'https://youtu.be/Qpk6DH9GP0M'),
         ],
         hero_svg=_svg_folds(),
         group="core",
@@ -639,6 +640,10 @@ PAGES = [
         deck="06_Linear_Model_Selection.pdf", deck_pages=70, lab="Ch06-varselect-lab-zh.ipynb",
         islp=6, islp_label="ISLP Ch.6", esl_label="ESL §3.3–3.6、§7.1–7.7",
         playlist="PLHNZtBNWQ-86msOZdtaMyKHwk2mWpOWmu",
+        extra_pills=[
+            ('▶ 課程錄影：子集選擇', 'https://youtu.be/-TRvLn3K4_c'),
+            ('▶ 課程錄影：子集選擇與 Ridge 迴歸', 'https://youtu.be/NkBzX3Kh3mo'),
+        ],
         hero_svg=_svg_shrink(),
         group="core",
         secs=[
