@@ -135,10 +135,8 @@ AIC_BIC_CORE = r"""
   $$\frac{R(\hat M_{\text{AIC}})}{\min_kR(M_k)}\xrightarrow{P}1\qquad(n\to\infty),$$
   <p>也就是資料愈多，AIC 所選模型的風險愈接近候選中最好的那個。這裡的風險要適當定義（例如 KL 散度或超額預測風險），而且這是特定理論條件下的性質，不是所有選模問題都成立。AIC 設計的目標就是近似模型對新資料的期望 KL 差異，所以它偏向預測表現。</p>
 """ + table(["", "AIC", "BIC"],
-            [["公式", "$-2\\log L+2d$", "$-2\\log L+d\\log n$"],
-             ["主要目標", "預測能力", "辨識真實模型"],
+            [["主要目標", "預測能力", "辨識真實模型"],
              ["漸近性質（特定條件下）", "漸近效率", "選模一致性"],
-             ["懲罰隨 $n$ 增加", "固定為 $2d$", "隨 $\\log n$ 增加"],
              ["對微弱訊號", "較願意保留", "較容易排除"],
              ["理論優勢", "真實函數無法用有限維模型完整表示時", "真實模型固定、有限維且在候選清單中時"]]) + r"""
   <p>例如真正的模型只含 $X_1$，候選卻還有 $X_2,X_3$。即使樣本數愈來愈多，AIC 仍有正的機率選到多餘變數，所以它沒有一般意義下的選模一致性；BIC 在真實模型屬於候選清單等條件下，選中它的機率會趨近 1。反過來，若真正的函數非常複雜（例如無限多項的多項式），沒有任何有限維候選能完全表示它，選模的目標就變成找偏差–變異取捨好的近似模型，這時 AIC 的漸近效率比較有意義。</p>
@@ -158,24 +156,25 @@ AIC_BIC_CORE = r"""
     <li>AIC：修正最大對數概似對新資料的樂觀偏差，目標是和真實分布的 KL 散度。</li>
     <li>BIC：近似貝氏的邊際概似，挑後驗機率較高的模型。</li>
   </ul>
-  <p>共同的起點是：加變數不會讓訓練 RSS 變大，也不會讓最大對數概似變小，但這不代表預測變好。以下依序推導三個懲罰。記號：$d$ 是預測變數個數，$r$ 是迴歸係數個數（含截距時 $r=d+1$），$k$ 是所有實際估計的參數個數。</p>
+  <p>共同的起點是：加變數不會讓訓練 RSS 變大，也不會讓最大對數概似變小，但這不代表預測變好。以下依序推導三個懲罰。</p>
+  <p><strong>記號。</strong>$n$ 是訓練觀測數；$y=(y_1,\ldots,y_n)^\top$ 是訓練資料的反應向量；$X$ 是候選模型的 $n\times r$ 設計矩陣（每列一筆觀測，含截距欄）。$d$ 是候選模型的預測變數個數，$r$ 是迴歸係數個數（含截距時 $r=d+1$），$k$ 是所有實際估計的參數個數（例如再加上誤差變異數）。$\mathrm{RSS}=\|y-\hat y\|^2$ 是訓練殘差平方和，$\|\cdot\|$ 是向量長度，$E[\cdot]$ 是對資料的隨機性取期望。</p>
 
   <h4>一、$C_p$：訓練 RSS 的樂觀偏差</h4>
-  <p>先固定 $X$ 與候選模型，不用 $y$ 搜尋欄位。設 $y=\mu+\varepsilon$，$E[\varepsilon]=0$、$\operatorname{Cov}(\varepsilon)=\sigma^2I$。OLS 擬合值 $\hat y=Hy$，$H=X(X^\top X)^{-1}X^\top$ 對稱冪等，$\operatorname{tr}(H)=r$。</p>
+  <p>先固定 $X$ 與候選模型，不用 $y$ 搜尋欄位。設 $y=\mu+\varepsilon$：$\mu=E[y]$ 是真實的平均反應向量（不一定落在 $X$ 的欄空間內，也就是模型可以有偏差），$\varepsilon$ 是誤差向量，$E[\varepsilon]=0$、$\operatorname{Cov}(\varepsilon)=\sigma^2I$，$\sigma^2$ 是雜訊變異數，$I$ 是 $n\times n$ 單位矩陣。OLS 擬合值 $\hat y=Hy$，其中帽子矩陣 $H=X(X^\top X)^{-1}X^\top$ 把 $y$ 投影到 $X$ 的欄空間；它對稱冪等（$H^\top=H$、$H^2=H$），跡 $\operatorname{tr}(H)$（對角元素和）等於 $r$。</p>
   <p><strong>訓練 RSS。</strong>$y-\hat y=(I-H)\mu+(I-H)\varepsilon$，交叉項期望為 0，且 $E\|(I-H)\varepsilon\|^2=\sigma^2\operatorname{tr}(I-H)$：</p>
   $$E[\mathrm{RSS}]=\|(I-H)\mu\|^2+(n-r)\sigma^2.$$
   <p>第一項是近似偏差，第二項是雜訊。擬合時有 $r\sigma^2$ 的雜訊被模型「吃掉」，所以比 $n\sigma^2$ 少。</p>
-  <p><strong>新反應。</strong>在相同 $X$ 上取一組獨立的 $y^{\text{new}}=\mu+\varepsilon^{\text{new}}$。$y^{\text{new}}-\hat y=(I-H)\mu+\varepsilon^{\text{new}}-H\varepsilon$，三項之間的交叉項期望都是 0：</p>
+  <p><strong>新反應。</strong>在相同 $X$ 上取一組新的反應 $y^{\text{new}}=\mu+\varepsilon^{\text{new}}$，$\varepsilon^{\text{new}}$ 與 $\varepsilon$ 獨立、分布相同；測試 RSS 定義為 $\|y^{\text{new}}-\hat y\|^2$，也就是用訓練得到的 $\hat y$ 去預測新反應的誤差。$y^{\text{new}}-\hat y=(I-H)\mu+\varepsilon^{\text{new}}-H\varepsilon$，三項之間的交叉項期望都是 0：</p>
   $$E\|y^{\text{new}}-\hat y\|^2=\|(I-H)\mu\|^2+n\sigma^2+r\sigma^2.$$
   <p>多出的 $r\sigma^2$ 來自估計參數的變異。兩式相減，偏差項正好抵消：</p>
   $$E[\text{測試 RSS}]=E[\mathrm{RSS}]+2r\sigma^2.$$
-  <p>每多估一個參數，訓練 RSS 相對於預測誤差的樂觀偏差就多 $2\sigma^2$：一半來自擬合雜訊，一半來自估計的不確定性。用所有模型共用的 $\hat\sigma^2$ 取代 $\sigma^2$、再除以 $n$，就是 $C_p=(\mathrm{RSS}+2d\hat\sigma^2)/n$；各模型都有截距時，共同的 $2\hat\sigma^2/n$ 可以省略。$\hat\sigma^2$ 不偏就能在期望中取代 $\sigma^2$，不需要和 RSS 獨立。若模型本身是用同一份 $y$ 搜尋出來的，$H$ 已經依賴 $y$，這個推導就不再成立（見<a href="#w06-detail-cp-risk">$C_p$ 的風險目標與常數</a>）。</p>
+  <p>每多估一個參數，訓練 RSS 相對於預測誤差的樂觀偏差就多 $2\sigma^2$：一半來自擬合雜訊，一半來自估計的不確定性。用所有模型共用的 $\hat\sigma^2$ 取代 $\sigma^2$、再除以 $n$，就是 $C_p=(\mathrm{RSS}+2d\hat\sigma^2)/n$（截距的 $2\hat\sigma^2/n$ 各模型相同，省略與否見<a href="#w06-detail-cp-risk">$C_p$ 的風險目標與常數</a>）。$\hat\sigma^2$ 不偏就能在期望中取代 $\sigma^2$，不需要和 RSS 獨立。若模型本身是用同一份 $y$ 搜尋出來的，$H$ 已經依賴 $y$，這個推導就不再成立。</p>
 
   <h4>二、AIC：從 KL 散度出發</h4>
-  <p>設資料的真實分布為 $g$，候選模型為 $f(y\mid\theta)$，兩者的差距用 KL 散度衡量：</p>
+  <p>設 $g$ 是實際產生資料的未知機率密度（真實分布）。候選模型是一族密度 $f(y\mid\theta)$：$\theta$ 是模型的參數向量，$f(y\mid\theta)$ 是參數取 $\theta$ 時模型給資料 $y$ 的機率密度，簡寫為 $f_\theta$。令 $Y$ 是從 $g$ 抽出的一筆新觀測，$E_g$ 表示對 $Y\sim g$ 取期望。兩個分布的差距用 KL 散度衡量：</p>
   $$D_{\mathrm{KL}}(g\,\|\,f_\theta)=E_g\!\left[\log\frac{g(Y)}{f(Y\mid\theta)}\right]=E_g[\log g(Y)]-E_g[\log f(Y\mid\theta)].$$
-  <p>第一項和候選模型無關，所以比較模型只要看第二項：期望對數概似愈大，離真實分布愈近。$g$ 未知，參數只能用最大概似估計 $\hat\theta$。我們想知道 $\hat\theta$ 在<strong>另一組</strong>同樣大小、獨立的新資料上的對數概似 $\ell_{\text{new}}(\hat\theta)$，手上卻只有訓練資料的 $\ell(\hat\theta)$。$\hat\theta$ 本來就是讓 $\ell$ 最大的值，所以 $\ell(\hat\theta)$ 偏高。</p>
-  <p><strong>樂觀偏差約為 $k$。</strong>假設模型正確指定、參數個數 $k$ 固定，並滿足一般的正則條件。令 $\theta_0$ 為真實參數，$I(\theta_0)$ 為單筆觀測的費雪資訊，記 $Q=n(\hat\theta-\theta_0)^\top I(\theta_0)(\hat\theta-\theta_0)$；大樣本下 $Q$ 近似 $\chi^2_k$，$E[Q]\approx k$。在兩個最大值附近各做二階展開：</p>
+  <p>第一項和候選模型無關，所以比較模型只要看第二項：期望對數概似愈大，離真實分布愈近。$g$ 未知，參數只能用訓練資料估。記 $\ell(\theta)=\log f(y\mid\theta)$ 為訓練資料的對數概似，$\hat\theta=\arg\max_\theta\ell(\theta)$ 為最大概似估計。我們想知道 $\hat\theta$ 在<strong>另一組</strong>同樣大小、獨立的新資料 $y^{\text{new}}$ 上的對數概似 $\ell_{\text{new}}(\hat\theta)=\log f(y^{\text{new}}\mid\hat\theta)$，手上卻只有 $\ell(\hat\theta)$。$\hat\theta$ 本來就是讓 $\ell$ 最大的值，所以 $\ell(\hat\theta)$ 偏高。</p>
+  <p><strong>樂觀偏差約為 $k$。</strong>假設模型正確指定、參數個數 $k$ 固定，並滿足一般的正則條件。令 $\theta_0$ 為真實參數（模型正確時 $g=f_{\theta_0}$），$I(\theta_0)=-E_g\bigl[\partial^2\log f(Y\mid\theta)/\partial\theta\,\partial\theta^\top\bigr]_{\theta=\theta_0}$ 為單筆觀測的費雪資訊矩陣（對數密度曲率的期望）。記 $Q=n(\hat\theta-\theta_0)^\top I(\theta_0)(\hat\theta-\theta_0)$，它衡量 $\hat\theta$ 離 $\theta_0$ 多遠；大樣本下 $Q$ 近似自由度 $k$ 的卡方分布 $\chi^2_k$，所以 $E[Q]\approx k$。在兩個最大值附近各做二階展開：</p>
   <ul>
     <li>訓練資料：$\ell$ 在 $\hat\theta$ 的梯度為 0，所以 $\ell(\hat\theta)\approx\ell(\theta_0)+\tfrac12Q$。擬合時多賺了約 $k/2$。</li>
     <li>新資料：新資料的期望對數概似在 $\theta_0$ 最大，所以 $E[\ell_{\text{new}}(\hat\theta)]\approx E[\ell_{\text{new}}(\theta_0)]-\tfrac12E[Q]$。用估計值而不是真值，又少了約 $k/2$。</li>
@@ -184,8 +183,8 @@ AIC_BIC_CORE = r"""
   $$E[\ell(\hat\theta)]-E[\ell_{\text{new}}(\hat\theta)]\approx k.$$
   <p>結構和 $C_p$ 一樣：一半是擬合到訓練雜訊，一半是參數估計的不確定性。所以 $\ell(\hat\theta)-k$ 才是新資料對數概似的近似不偏估計，乘上 $-2$：</p>
   $$\mathrm{AIC}=-2\ell(\hat\theta)+2k.$$
-  <p>模型指定錯誤時，$k$ 要換成一個跡項 $\operatorname{tr}(J^{-1}K)$（$J$ 是對數概似的負期望 Hessian、$K$ 是分數函數的變異數，這個版本稱為 TIC）；只有模型正確時 $J=K$，跡才化簡成 $k$。</p>
-  <p><strong>高斯線性迴歸的寫法。</strong>$y_i\sim N(x_i^\top\beta,\sigma^2)$ 時</p>
+  <p>模型指定錯誤時，$k$ 要換成一個跡項 $\operatorname{tr}(J^{-1}K)$（令 $\theta^\ast$ 為使 KL 散度最小的參數值，$J=-E_g[\nabla^2\log f(Y\mid\theta^\ast)]$ 是單筆對數密度的負期望二階導數矩陣，$K=\operatorname{Var}_g[\nabla\log f(Y\mid\theta^\ast)]$ 是一階導數（分數函數）的變異數矩陣；這個版本稱為 TIC）；只有模型正確時 $J=K$，跡才化簡成 $k$。</p>
+  <p><strong>高斯線性迴歸的寫法。</strong>$x_i^\top$ 是 $X$ 的第 $i$ 列，$\beta$ 是 $r$ 維係數向量，$\theta=(\beta,\sigma^2)$。各觀測獨立且 $y_i\sim N(x_i^\top\beta,\sigma^2)$ 時，</p>
   $$\ell(\beta,\sigma^2)=-\frac n2\log(2\pi\sigma^2)-\frac{\mathrm{RSS}}{2\sigma^2}.$$
   <p>$\sigma^2$ 也要估時，最大概似估計是 $\hat\sigma^2=\mathrm{RSS}/n$，代回得 $-2\ell(\hat\theta)=n\log(\mathrm{RSS}/n)+n[1+\log(2\pi)]$。參數有 $d$ 個斜率、截距與 $\sigma^2$，$k=d+2$；後兩個每個模型都有，比較時可以略去：</p>
   $$\mathrm{AIC}=n\log(\mathrm{RSS}/n)+2d+\text{常數}.$$
@@ -199,13 +198,14 @@ AIC_BIC_CORE = r"""
   <p>和 $C_p$ 只差一個正倍數與常數，排序完全相同。這時 AIC 的「$\approx k$」變成等號：第一部分的 $2r\sigma^2$ 除以 $\sigma^2$ 正好是 $2r$。這不是巧合：高斯誤差下，負對數概似就是換了量尺的平方誤差。課本的 AIC 公式 $(\mathrm{RSS}+2d\hat\sigma^2)/(n\hat\sigma^2)$ 就是這個版本，把 $\sigma^2$ 換成共用的 $\hat\sigma^2$（省略共同的截距項）。若各模型各自重估 $\sigma^2$，用的是上面 $n\log(\mathrm{RSS}/n)$ 的版本，數值不同，排序通常接近，但不保證相同。</p>
 
   <h4>四、BIC：從貝氏模型選擇出發</h4>
-  <p>BIC 不估預測誤差，它問的是：哪個模型最可能產生這份資料？由貝氏定理，</p>
+  <p>BIC 不估預測誤差，它問的是：哪個模型最可能產生這份資料？這裡 $M$ 代表一個候選模型（例如「用某一組 $d$ 個預測變數的線性迴歸」），$y$ 是觀測到的訓練反應向量。$P(M)$ 是看資料之前對 $M$ 的先驗機率，$P(M\mid y)$ 是看到 $y$ 之後的後驗機率；$\pi(\theta\mid M)$ 是模型 $M$ 內參數 $\theta$ 的先驗密度，$f(y\mid\theta,M)$ 是模型 $M$ 在參數 $\theta$ 下產生 $y$ 的機率密度（也就是概似）。由貝氏定理，</p>
   $$P(M\mid y)\propto P(y\mid M)\,P(M),\qquad P(y\mid M)=\int f(y\mid\theta,M)\,\pi(\theta\mid M)\,d\theta.$$
   <p>$P(y\mid M)$ 稱為邊際概似（模型證據），是概似依先驗分布加權的平均。各模型的先驗機率相同時，比後驗機率就是比邊際概似。</p>
-  <p><strong>Laplace 近似。</strong>$n$ 大時，概似集中在 $\hat\theta$ 附近：$\ell(\theta)\approx\ell(\hat\theta)-\tfrac12(\theta-\hat\theta)^\top J_n(\theta-\hat\theta)$，$J_n\approx nI(\hat\theta)$ 是觀測資訊矩陣。先驗在這個小範圍內近乎常數，積分變成高斯積分：</p>
-  $$P(y\mid M)\approx e^{\ell(\hat\theta)}\,\pi(\hat\theta)\,(2\pi)^{k/2}\,|J_n|^{-1/2},\qquad |J_n|\approx n^k\,|I(\hat\theta)|.$$
+  <p><strong>Laplace 近似。</strong>$n$ 大時，概似集中在 $\hat\theta$ 附近：$\ell(\theta)\approx\ell(\hat\theta)-\tfrac12(\theta-\hat\theta)^\top J_n(\theta-\hat\theta)$，$J_n=-\nabla^2\ell(\hat\theta)$ 是觀測資訊矩陣（對數概似在最大值處的負二階導數），$n$ 大時 $J_n\approx nI(\hat\theta)$。先驗在這個小範圍內近乎常數，積分變成高斯積分：</p>
+  $$P(y\mid M)\approx e^{\ell(\hat\theta)}\,\pi(\hat\theta\mid M)\,(2\pi)^{k/2}\,|J_n|^{-1/2},\qquad |J_n|\approx n^k\,|I(\hat\theta)|.$$
+  <p>$|\cdot|$ 是矩陣的行列式，$k$ 是模型 $M$ 的參數個數。</p>
   <p>取對數：</p>
-  $$\log P(y\mid M)\approx\ell(\hat\theta)-\frac k2\log n+\underbrace{\log\pi(\hat\theta)+\frac k2\log(2\pi)-\frac12\log|I(\hat\theta)|}_{\text{不隨 }n\text{ 增長}}.$$
+  $$\log P(y\mid M)\approx\ell(\hat\theta)-\frac k2\log n+\underbrace{\log\pi(\hat\theta\mid M)+\frac k2\log(2\pi)-\frac12\log|I(\hat\theta)|}_{\text{不隨 }n\text{ 增長}}.$$
   <p>略去不隨 $n$ 增長的項，再乘上 $-2$：</p>
   $$\mathrm{BIC}=-2\ell(\hat\theta)+k\log n.$$
   <p>直覺：後驗在每個參數方向上只集中在寬度約 $1/\sqrt n$ 的範圍，先驗卻把機率攤在固定大小的範圍。參數愈多，先驗裡真正和資料吻合的比例愈小（約 $n^{-k/2}$），邊際概似就被這個比例拉低。複雜模型的最大概似雖然高，對整個參數空間平均起來卻不一定高。</p>
@@ -216,12 +216,8 @@ AIC_BIC_CORE = r"""
             [["想估計的量", "固定設計下的測試 RSS", "新資料的期望對數概似（KL 散度的相對大小）", "邊際概似 $P(y\\mid M)$"],
              ["懲罰的來源", "訓練 RSS 的樂觀偏差 $2r\\sigma^2$", "最大對數概似的樂觀偏差 $k$", "Laplace 近似的 $\\tfrac k2\\log n$"],
              ["理論工具", "投影矩陣的跡", "最大概似估計的漸近常態", "Laplace 近似"],
-             ["每多一個參數的懲罰（$-2\\log L$ 量尺）", "$2$", "$2$", "$\\log n$"],
+             ["每多一個參數的懲罰（$-2\\ell(\\hat\\theta)$ 量尺）", "$2$", "$2$", "$\\log n$"],
              ["主要假設", "固定設計、誤差同變異、模型不是用 $y$ 搜尋出來的", "模型正確指定、大樣本", "大樣本、先驗在 $\\hat\\theta$ 附近平滑且為正"]]) + r"""
-  <p>在 $-2\log L$ 量尺下，AIC 每個參數固定罰 2，BIC 罰 $\log n$，差距隨樣本數拉大：</p>
-""" + table(["$n$", "AIC／$C_p$", "BIC（$\\log n$）", "BIC 是 AIC 的幾倍"],
-            [["8", "2", "2.08", "1.04"], ["100", "2", "4.61", "2.30"],
-             ["400（Credit）", "2", "5.99", "3.00"], ["10000", "2", "9.21", "4.61"]]) + r"""
   <p>目標與漸近性質（漸近效率、選模一致性）的對照見上方<a href="#w06-detail-aic-bic-goals">漸近效率與選模一致性</a>。總結：$C_p$ 和 AIC 的 2 不是隨手挑的懲罰係數，而是訓練擬合相對於新資料的期望樂觀程度，可以算出來；BIC 的 $\log n$ 回答的是另一個問題（哪個模型最可能產生資料）。兩類準則的差別在目標，不只是罰多罰少。</p>
 """)
 

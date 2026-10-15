@@ -738,4 +738,6 @@ $\sigma^2$ 已知時 AIC 與 $C_p$ 的排序等價、Laplace→BIC，最後是�
 去除重複：`cp-intuition` 的「係數 2 的來源」縮成一段，改為指向新收合；`cp-risk` 刪除 `w06proofCp`（推導已移入新收合）；
 `criteria-scale` 的「$C_p$ 等於 AIC 有哪些前提」改為「軟體的 AIC 和課本的 $C_p$ 不是同一個量尺」；info 框與觀念釐清 Q&A 也改成指向新收合。
 驗證：`tools/verification/ch5-ch6-lecture-refine-20261013/criteria-origins.log`（validate／check_*／browser 全過）、`verify_criteria_origins.py`／`.log`（全數 PASS；AIC 的樂觀偏差與精確值 $\tfrac{n+r}{2}\tfrac{n}{n-r-2}-\tfrac n2$ 的差距在 3 個 MC SE 內）、
-`origins_shots.js`／`.log`（mjx-merror 0、無橫向捲動）。尚未 commit。
+`origins_shots.js`／`.log`（mjx-merror 0、無橫向捲動）。commit `34c6743`。
+
+**同日第二輪（冗餘與符號）**：刪 `aic-bic-goals` 表的「公式」「懲罰隨 n 增加」兩列（新收合對照表已有）、新收合的 $\log n$ 倍數表（與主文 $n\ge8$、$n=400$ 約三倍重複）；截距常數的說明只留在 `cp-risk`（`reading_flow_ch1_6.py` 收合前段落改為指向它，並修正「比较」簡體字）；`criteria-scale` 的等價段改成只指向新收合；兩則問答縮掉重述主文的段落。新收合補齊所有符號定義（$n,y,X,\mu,\varepsilon,H$、$g,f,\theta,Y,E_g,\ell,\ell_{\text{new}},\theta_0,I,Q,\theta^\ast,J,K$、$M,P(M),\pi,J_n$、行列式），表格改用 $-2\ell(\hat\theta)$ 量尺。檢查紀錄附加在 `criteria-origins.log`。
