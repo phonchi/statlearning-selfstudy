@@ -729,3 +729,13 @@ status banner 與 JS 寫入文字依契約保留 Unicode。注意 f-string 內 `
 - **第 5 章**（`5f5a63f`）：刪 `w05-detail-jackknife-bias`＋`w05proofJackknife`、`w05-detail-bootstrap-prediction`、`w05-detail-splits`、殘差 bootstrap PI 程式（`PREDICTION_CODE`）、巢狀 CV 對照表與程式（`NESTED_CODE`）、切分器示範程式（`SPLITTERS_CODE`）、OOB 集成段、BCa 殘留；`w05-detail-nested-cv` id 保留（第 9 章連入）。巢狀 CV／切分器原內容來自 `7f5adda`、`6c43579`，需要時可從那裡取回。
 - **第 6 章**：刪 `w06-detail-classification-selection`（AIC/BIC 一句併入 `w06-detail-subset-deviance`）、`w06proofLasso`、`w06proofConstraint`；`lasso-solution`、`lar-group`、`pls-algorithm`、`penalty-constraint`、`shrinkage-map`、`pcr-appendix`、`ridge-bias`、`selection-cv`、`cp-risk` 縮短（id 保留，`lecture_alignment_ch6.source_links` 會掛講義連結）。Q&A 與 info 框的重複段改成指向新收合區。
 - 驗證：`tools/verification/ch5-ch6-lecture-refine-20261013/trim-ch5.log`、`trim-ch6.log`、`trim_shots.log`（FRAMES diff 0、validate／reading_flow／coverage／browser 全過、MathJax error 0）。
+
+## 24. 第 6 章：$C_p$／AIC／BIC 懲罰項推導合併成一個收合（2026-10-14）
+
+使用者貼上三準則推導筆記，並選擇「合併成一個三準則總收合」。新增 `w06-detail-criteria-origins`（`modelsel_lecture_notes.py`，接在 `AIC_BIC_CORE` 的 `aic-bic-goals` 之後），
+包含五部分：$C_p$ 的 $2r\sigma^2$（含近似偏差抵消）、KL→AIC（兩次二階展開，各得 $k/2$；指定錯誤時改用 TIC 跡項）、高斯迴歸的 $n\log(\mathrm{RSS}/n)$、
+$\sigma^2$ 已知時 AIC 與 $C_p$ 的排序等價、Laplace→BIC，最後是對照表與 $\log n$ 表。記號：$d$ 是預測變數個數，$r$ 是迴歸係數個數（含截距），$k$ 是全部估計參數。
+去除重複：`cp-intuition` 的「係數 2 的來源」縮成一段，改為指向新收合；`cp-risk` 刪除 `w06proofCp`（推導已移入新收合）；
+`criteria-scale` 的「$C_p$ 等於 AIC 有哪些前提」改為「軟體的 AIC 和課本的 $C_p$ 不是同一個量尺」；info 框與觀念釐清 Q&A 也改成指向新收合。
+驗證：`tools/verification/ch5-ch6-lecture-refine-20261013/criteria-origins.log`（validate／check_*／browser 全過）、`verify_criteria_origins.py`／`.log`（全數 PASS；AIC 的樂觀偏差與精確值 $\tfrac{n+r}{2}\tfrac{n}{n-r-2}-\tfrac n2$ 的差距在 3 個 MC SE 內）、
+`origins_shots.js`／`.log`（mjx-merror 0、無橫向捲動）。尚未 commit。

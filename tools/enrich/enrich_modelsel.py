@@ -195,7 +195,7 @@ BODIES["criteria"] = f"""
 
 {info("AIC 與 $C_p$ 的關係", '''對高斯誤差的最小平方模型，課本的 AIC 就是
   $\\mathrm{{RSS}}+2d\\hat\\sigma^2$，跟 $C_p$ 成正比（所以 ISLP 圖 6.2 只畫 $C_p$）。
-  <code>statsmodels</code> 的 <code>.aic</code> 用的是 log-likelihood 版，數值與 $C_p$ 不同，所以下圖畫成獨立一條線；兩者的前提見下方「先分清估計量與比較量尺」收合區。''')}
+  <code>statsmodels</code> 的 <code>.aic</code> 用的是 log-likelihood 版，數值與 $C_p$ 不同，所以下圖畫成獨立一條線；為什麼成正比見下方「懲罰項各從哪裡來」收合區，軟體量尺見「先分清估計量與比較量尺」收合區。''')}
 
 {table(["準則", "式子（最小平方）", "每多一個變數罰多少", "$n=400$ 時的懲罰", "Credit 選出"],
        [["$C_p$", "$(\\mathrm{RSS}+2d\\hat\\sigma^2)/n$", "$2\\hat\\sigma^2$", "$2\\hat\\sigma^2$", "<strong>6 個</strong>"],
@@ -211,10 +211,10 @@ BODIES["criteria"] = f"""
 
 {qa("觀念釐清", [
     ("Q：$C_p$、AIC、BIC 到底差在哪？為什麼 BIC 偏好小模型？",
-     "<p>三個都是「訓練 RSS ＋ 一個隨模型變大而變大的懲罰」。差別只在懲罰的係數："
+     "<p>三個都是「訓練 RSS ＋ 一個隨模型變大而變大的懲罰」。形式上只差在懲罰的係數："
      "$C_p$ 與課本版 AIC 都是 $2d\\hat\\sigma^2$，BIC 是 $\\log(n)\\, d\\hat\\sigma^2$。"
      "BIC 的懲罰在 $n\\ge8$ 時較重（見上文），所以選出來的模型一律比較小或一樣大。</p>"
-     "<p>背後的動機不同：$C_p$／AIC 想預測得準，BIC 想找出<em>正確的</em>模型，詳見上方「漸近效率、選模一致性」收合區。</p>"
+     "<p>背後的動機不同：$C_p$／AIC 想預測得準，BIC 想找出<em>正確的</em>模型。三個係數各自怎麼推導出來，見上方「懲罰項各從哪裡來」收合區；目標的比較見「漸近效率、選模一致性」收合區。</p>"
      "<p>實務上的建議：<strong>目的是預測就用 CV（或 AIC／$C_p$），目的是「哪些變數真的有關」就參考 BIC</strong>。"
      "而且兩者都要求你估得出 $\\hat\\sigma^2$——這在 $p&gt;n$ 的時候無法按全模型的常規公式計算（最後一節會講）。</p>"),
     ("Q：調整後 $R^2$ 為什麼「理論基礎比較弱」？",
@@ -750,13 +750,8 @@ BODIES['criteria'] += r"""
 $$\widehat R=\frac{\mathrm{RSS}+2r\hat\sigma^2}{n}.$$
 <p>這是對訓練反應重抽的期望風險，不是某次實現的測試 MSE。若所有模型都含截距、$d$ 只數斜率，$r=d+1$；比較大小時可省掉共同的 $2\hat\sigma^2/n$，但省略後不能再宣稱數值本身是完整風險的無偏估計。</p>
 <p>若每個大小的最佳模型也是用同一份 y 搜尋出來的，$H$ 已依賴 $y$，單純代入 $r$ 不會自動修正搜尋的樂觀偏差。</p>
-""" + proof('w06proofCp', '固定設計預測風險的樂觀偏差', r"""
-<p>$H$ 對稱冪等，$\operatorname{tr}(H)=r$。訓練 RSS 的期望為</p>
-$$E\|(I-H)y\|^2=\|(I-H)\mu\|^2+\sigma^2(n-r).$$
-<p>新反應與訓練反應獨立，$y^{new}-Hy=(I-H)\mu+\varepsilon^{new}-H\varepsilon$，故</p>
-$$E\|y^{new}-Hy\|^2=\|(I-H)\mu\|^2+n\sigma^2+r\sigma^2.$$
-<p>相減得 $2r\sigma^2$，再除以 $n$。$\hat\sigma^2$ 無偏即可在期望中取代 $\sigma^2$；不要求 $\hat\sigma^2$ 與 RSS 獨立。若 $H$ 隨 $y$ 的搜尋結果改變，上述固定矩陣期望運算不再適用。</p>
-""")
+<p>$2r\sigma^2$ 這個樂觀偏差的推導（含近似偏差項為何相消），見上方<a href="#w06-detail-criteria-origins">三個準則的懲罰項推導</a>第一部分。</p>
+"""
 BODIES['ridge'] += r"""
 <h3>中心化後的 Ridge 解</h3>
 <p>先用訓練資料中心化 $X$ 與 $y$，斜率的目標為 $\|y-X\beta\|^2+\lambda\|\beta\|^2$。$\lambda&gt;0$ 時，無論 $X$ 是否滿欄秩都有唯一斜率解 $(X^TX+\lambda I)^{-1}X^Ty$。還原截距用 $\bar y-\bar x^T\hat\beta$；不能把原始 X 的截距欄也按相同 $\lambda$ 懲罰。</p>
