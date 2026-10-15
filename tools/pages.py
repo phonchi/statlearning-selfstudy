@@ -506,7 +506,7 @@ PAGES = [
         formula="Y = f(X) + ε｜f(x) = E(Y|X = x)｜可縮減 vs 不可縮減｜鄰域平均與維度詛咒｜偏差² + 變異 + Var(ε)｜Bayes 分類器｜KNN",
         deck="02_Statistical_Learning.pdf", deck_pages=41, lab="Ch02-statlearn-lab-zh.ipynb",
         islp=2, islp_label="ISLP Ch.2", esl_label="ESL Ch.2",
-        playlist="PLHNZtBNWQ-87OBZ1ggt-ZMj3gK2LfUufD",
+        playlist="",
         hero_svg=_svg_bias(),
         group="core",
         secs=[
@@ -605,7 +605,7 @@ PAGES = [
         formula="驗證集｜LOOCV｜k-fold CV｜偏差–變異取捨｜Bootstrap｜1−(1−1/n)ⁿ → 0.632",
         deck="05_Resampling_Methods.pdf", deck_pages=42, lab="Ch05-resample-lab-zh.ipynb",
         islp=5, islp_label="ISLP Ch.5", esl_label="ESL §7.1–7.4、7.10–7.11",
-        playlist="PLHNZtBNWQ-84VdV4eQXOMacVAIF065luN",
+        playlist="",
         extra_pills=[
             ('▶ 課程錄影：GLM 與交叉驗證', 'https://youtu.be/_ILYSXojMEk'),
             ('▶ 課程錄影：Bootstrap', 'https://youtu.be/Qpk6DH9GP0M'),
@@ -639,7 +639,7 @@ PAGES = [
         formula="最佳子集｜逐步選擇｜Cp｜AIC｜BIC｜調整後 R²｜Ridge L2｜Lasso L1｜PCR｜PLS",
         deck="06_Linear_Model_Selection.pdf", deck_pages=70, lab="Ch06-varselect-lab-zh.ipynb",
         islp=6, islp_label="ISLP Ch.6", esl_label="ESL §3.3–3.6、§7.1–7.7",
-        playlist="PLHNZtBNWQ-86msOZdtaMyKHwk2mWpOWmu",
+        playlist="",
         extra_pills=[
             ('▶ 課程錄影：子集選擇', 'https://youtu.be/-TRvLn3K4_c'),
             ('▶ 課程錄影：子集選擇與 Ridge 迴歸', 'https://youtu.be/NkBzX3Kh3mo'),
@@ -674,7 +674,7 @@ PAGES = [
         formula="多項式｜階梯函數｜基底函數｜迴歸樣條｜自然樣條｜平滑樣條｜局部迴歸｜GAM",
         deck="07_Moving_Beyond_Linearity.pdf", deck_pages=54, lab="Ch07-nonlin-lab-zh.ipynb",
         islp=7, islp_label="ISLP Ch.7", esl_label="ESL §5.1–5.7、§6.1–6.3、§9.1",
-        playlist="PLHNZtBNWQ-87lLBZoc83Gwofk8a1gkvfu",
+        playlist="",
         hero_svg=_svg_curves(),
         group="core",
         secs=[
@@ -703,7 +703,7 @@ PAGES = [
         deck="08_Tree-Based_Methods.pdf", deck_pages=80, lab="Ch08-baggboost-lab-zh.ipynb",
         islp=8, islp_label="ISLP Ch.8",
         esl_label="ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3",
-        playlist="PLHNZtBNWQ-87ZC7BDwkB-bgSbqggcWp6T,PLHNZtBNWQ-84JjvtG4zgpxTPF3HDJBnfR",
+        playlist="",
         hero_svg=_svg_tree(), bankquiz=True,
         group="core",
         secs=[
@@ -738,7 +738,7 @@ PAGES = [
         formula="超平面｜最大邊界｜支持向量｜軟邊界 C｜Hinge loss｜核技巧｜多項式核｜RBF 核",
         deck="09_Support_Vector_Machines.pdf", deck_pages=40, lab="Ch09-svm-lab-zh.ipynb",
         islp=9, islp_label="ISLP Ch.9", esl_label="ESL §6.6–6.9、§12.1–12.3",
-        playlist="PLHNZtBNWQ-87bbEwPnJsJirQbdJpfPD5O",
+        playlist="",
         hero_svg=_svg_margin(),
         group="core",
         secs=[
@@ -764,7 +764,7 @@ PAGES = [
         formula="PCA｜負荷量與得分｜PVE｜Scree plot｜Biplot｜矩陣補全｜K-means｜階層式分群｜Dendrogram",
         deck="12_Unsupervised_learning.pdf", deck_pages=106, lab="Ch12-unsup-lab-zh.ipynb",
         islp=12, islp_label="ISLP Ch.12", esl_label="ESL §13.1–13.3、§14.1–14.3、§14.5–14.9",
-        playlist="PLHNZtBNWQ-85BiSie5BdC-ElKcRw37fs1,PLHNZtBNWQ-87wNMJFe_UQj_DzsiHVZWkx",
+        playlist="",
         hero_svg=_svg_cluster(),
         group="core",
         secs=[

@@ -741,3 +741,10 @@ $\sigma^2$ 已知時 AIC 與 $C_p$ 的排序等價、Laplace→BIC，最後是�
 `origins_shots.js`／`.log`（mjx-merror 0、無橫向捲動）。commit `34c6743`。
 
 **同日第二輪（冗餘與符號）**：刪 `aic-bic-goals` 表的「公式」「懲罰隨 n 增加」兩列（新收合對照表已有）、新收合的 $\log n$ 倍數表（與主文 $n\ge8$、$n=400$ 約三倍重複）；截距常數的說明只留在 `cp-risk`（`reading_flow_ch1_6.py` 收合前段落改為指向它，並修正「比较」簡體字）；`criteria-scale` 的等價段改成只指向新收合；兩則問答縮掉重述主文的段落。新收合補齊所有符號定義（$n,y,X,\mu,\varepsilon,H$、$g,f,\theta,Y,E_g,\ell,\ell_{\text{new}},\theta_0,I,Q,\theta^\ast,J,K$、$M,P(M),\pi,J_n$、行列式），表格改用 $-2\ell(\hat\theta)$ 量尺。檢查紀錄附加在 `criteria-origins.log`。
+
+## 25. 課程錄影只放當學期（2026-10-15）
+
+使用者要求拿掉往年錄影。`pages.py` 的 `playlist` 只保留 2026 年的 `PLM37wbEIt77U`（0910，第 1 章）與 `PLFJni7Ws0IM0`（0924，第 3 章）；
+`PLHNZtBNWQ-…` 開頭的七個清單（2025 年、兩個 2023 年，依各清單首部影片的上傳日期核對）全部清空，第 2、7、8、9、12 章暫時沒有錄影。
+單支影片放在 `extra_pills`，標題已逐一對照 YouTube 原標題：第 3 章 1001 兩支、第 4 章 1001／1008 三支、第 5 章 1008 GLM 與 CV＋1015 Bootstrap、第 6 章 1015 兩支（清單 `PLaqIlhRn4u10`）。
+之後每週新錄影：當週播放清單放課程網站 `_lectures/NN_weekN.md`，自學站依影片內容拆到對應章節的 `extra_pills`。
