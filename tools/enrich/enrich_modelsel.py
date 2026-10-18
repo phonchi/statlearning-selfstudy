@@ -333,8 +333,6 @@ BODIES["ridge"] = f"""
            "這張 lab 卡把 scaler 放在內建 CV estimator 外層，因此 scaler 會先對傳入 pipeline 的全部資料擬合，"
            "<code>RidgeCV</code> 才在縮放後的資料內切折。")}
 
-  <p>改用主成分當座標來看，Ridge 可以看成<strong>連續版的 PCR</strong>：PCR 對各方向「留或丟」，Ridge 則平滑地收縮，學完主成分後在 <a href="#pcr">PCR 節</a>對照。</p>
-
 {info("Ridge 之前一定要標準化", '''懲罰項 $\\sum \\beta_j^2$ 對<strong>單位敏感</strong>。
   同一個變數用「元」還是「千元」為單位，最小平方的預測完全一樣（係數等比例調整），
   Ridge 的懲罰會隨係數尺度改變：係數變大 1000 倍，懲罰項就變大 $10^6$ 倍，這個變數受到的收縮也會更強。<br><br>
@@ -612,8 +610,9 @@ PCR_SIM = r"""
   <p>有限樣本中，對 $X$ 算出的樣本主成分只會近似 $\Phi_{\cdot m}$，所以 PCR 用前五個樣本主成分時，只能近似地抓到全部訊號。若要在樣本中精確做到，可以先對已產生的 $x_{ij}$ 做 PCA，再用樣本得分代入第三步產生 $y_i$。反過來，若真實係數在原始變數上就稀疏（例如只有兩個 $\beta_j$ 不為 0），Lasso 才會佔優。</p>
 """)
 
-PCR_RIDGE = r"""
-  <p><strong>Ridge 是連續版的 PCR。</strong>把資料改用主成分得分當座標後，兩種方法的擬合值都能寫成各主成分方向的貢獻相加，差別只在每個方向乘上的收縮因子：PCR 對前 $M$ 個方向乘 1、其餘乘 0；Ridge 對第 $m$ 個方向乘 $d_m^2/(d_m^2+\lambda)$，其中 $d_m^2=\sum_iz_{im}^2$ 隨 $m$ 遞減。變異大的方向幾乎不縮，變異小的方向縮得最多，Ridge 因此像是把 PCR 的「留或丟」換成平滑的漸進收縮（ESL 第 3.4.1、3.5.1 節）。</p>
+PCR_RIDGE = detail(
+    "w06-detail-ridge-pcr", "延伸（超出講義範圍）：Ridge 是連續版的 PCR", r"""
+  <p>把資料改用主成分得分當座標後，兩種方法的擬合值都能寫成各主成分方向的貢獻相加，差別只在每個方向乘上的收縮因子：PCR 對前 $M$ 個方向乘 1、其餘乘 0；Ridge 對第 $m$ 個方向乘 $d_m^2/(d_m^2+\lambda)$，其中 $d_m^2=\sum_iz_{im}^2$ 隨 $m$ 遞減。變異大的方向幾乎不縮，變異小的方向縮得最多，Ridge 因此像是把 PCR 的「留或丟」換成平滑的漸進收縮（ESL 第 3.4.1、3.5.1 節）。</p>
 """ + viz(svg("w06shrinkSvg", 300),
      [info_card("怎麼看",
                 '橫軸是主成分編號 $m$，縱軸是該方向的收縮因子。'
@@ -630,8 +629,8 @@ PCR_RIDGE = r"""
      '<label class="slider-label" style="margin:0 .4rem 0 .8rem;">$M$</label>'
      '<input type="range" id="w06shrinkMSl" min="1" max="10" step="1" value="4" '
      'oninput="w06shrinkDraw()" style="flex:1 1 100px;max-width:150px;min-width:0;">',
-     provenance=("illustrative", "概念示意：自選 d_m² = 100·0.6^(m−1)，m = 1,…,10；對照 ESL 圖 3.17 的收縮因子")) + detail(
-    "w06-detail-ridge-pcr", "計算細節：Ridge 與 PCR 在主成分座標下的對照", r"""
+     provenance=("illustrative", "概念示意：自選 d_m² = 100·0.6^(m−1)，m = 1,…,10；對照 ESL 圖 3.17 的收縮因子")) + r"""
+  <p><strong>計算細節。</strong></p>
   <p>設 $x_{ij}$、$y_i$ 都已中心化，且 $n\gt p$、沒有完全共線。令 $\Phi_{jm}$（$m=1,\ldots,p$）是全部 $p$ 個主成分方向，彼此正交且長度為 1；得分 $z_{im}=\sum_j\Phi_{jm}x_{ij}$。主成分得分兩兩不相關：$\sum_iz_{im}z_{il}=0$（$m\ne l$），並記 $d_m^2=\sum_{i=1}^nz_{im}^2$，依 $m$ 遞減。$d_m^2$ 就是 $n$ 倍的第 $m$ 個特徵值 $\ell_m$（用 $\frac1n$ 的慣例，見本節末的<a href="#w06-detail-pca-objectives">收合區</a>）；模擬資料裡的母體變異 $\sigma_m^2$ 是它的母體對應。</p>
   <p><strong>換座標。</strong>任何線性預測都能改寫：令 $\theta_m=\sum_j\Phi_{jm}\beta_j$，因為方向正交，</p>
   $$\sum_{j=1}^p\beta_jx_{ij}=\sum_{m=1}^p\theta_mz_{im},\qquad \sum_{j=1}^p\beta_j^2=\sum_{m=1}^p\theta_m^2 .$$
