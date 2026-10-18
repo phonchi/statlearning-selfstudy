@@ -296,7 +296,7 @@ LASSO_WHY_INTRO = r"""
     \underbrace{\min_{\beta}\ \mathrm{RSS}+\lambda\sum_{j=1}^p|\beta_j|}_{\text{懲罰式}}$$
   <p>Ridge 把 $|\beta_j|$ 換成 $\beta_j^2$，限制區域從菱形變成圓。最佳子集也能寫成限制式，只是預算數的是「有幾個係數不為 0」：</p>
   $$\min_{\beta}\ \mathrm{RSS}\ \ \text{s.t.}\ \sum_{j=1}^pI(\beta_j\ne0)\le s .$$
-  <p>$\sum_jI(\beta_j\ne0)$ 常記為 $\|\beta\|_0$，稱為 $L_0$ 限制（它不滿足範數的齊次性，嚴格說不是範數）。所以三個方法可以排成 $L_0$（最佳子集）、$L_1$（Lasso）、$L_2$（Ridge），差別只在預算怎麼量。$s$ 與 $\lambda$ 可以互相對應，但一般不是一對一。</p>
+  <p>這種限制稱為 $L_0$ 限制（常被叫做 $L_0$ 範數，但它不滿足範數的齊次性，嚴格說不是範數）。所以三個方法可以排成 $L_0$（最佳子集）、$L_1$（Lasso）、$L_2$（Ridge），差別只在預算怎麼量。$s$ 與 $\lambda$ 可以互相對應，但一般不是一對一。</p>
 """ + detail("w06-detail-penalty-constraint", "計算細節：限制式與懲罰式如何對應", r"""
   <p>以 Lasso 為例，令 $P(\beta)=\sum_j|\beta_j|$（Ridge 換成 $\sum_j\beta_j^2$）。</p>
   <p><strong>從懲罰式到限制式。</strong>固定 $\lambda\gt0$，設 $\hat\beta^\lambda$ 是懲罰式的解，令 $s=P(\hat\beta^\lambda)$。任取滿足 $P(\beta)\le s$ 的 $\beta$，因為 $\hat\beta^\lambda$ 讓懲罰式最小，</p>

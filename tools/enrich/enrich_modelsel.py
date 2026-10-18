@@ -954,7 +954,7 @@ $$\sum_{k=1}^pS_{jk}\Phi_k=\ell\,\Phi_j,\qquad j=1,\ldots,p .$$
 """)
 BODIES['pls'] += r"""
 <h3>第一個 PLS 方向：最大化共變異</h3>
-<p>設每個 $x_{ij}$ 已中心化並標準化（$\frac1n\sum_ix_{ij}^2=1$），$y_i$ 已中心化。記 $c_j=\operatorname{Cov}(X_j,Y)=\frac1n\sum_ix_{ij}y_i$。新特徵 $Z=\sum_j\Phi_jX_j$ 與 $Y$ 的共變異是 $\operatorname{Cov}(Y,Z)=\sum_j\Phi_jc_j$，所以第一個 PLS 方向解</p>
+<p>設每個 $x_{ij}$ 已中心化並標準化（$\frac1n\sum_ix_{ij}^2=1$），$y_i$ 已中心化。記 $c_j=\operatorname{Cov}(X_j,Y)=\frac1n\sum_ix_{ij}y_i$。為了簡潔，下面先把第一個方向的權重 $\Phi_{j1}$ 寫成 $\Phi_j$。新特徵 $Z=\sum_j\Phi_jX_j$ 與 $Y$ 的共變異是 $\operatorname{Cov}(Y,Z)=\sum_j\Phi_jc_j$，所以第一個 PLS 方向解</p>
 $$\max_{\sum_j\Phi_j^2=1}\Big(\sum_{j=1}^p\Phi_jc_j\Big)^2\quad\Longrightarrow\quad \Phi_{j1}=\frac{c_j}{\sqrt{\sum_kc_k^2}}\ \ (\text{正負號皆可}).$$
 <p>另一方面，$Y$ 對單一 $X_j$ 做簡單迴歸的斜率是 $\operatorname{Cov}(X_j,Y)/\operatorname{Var}(X_j)$。標準化後 $\operatorname{Var}(X_j)=1$，斜率正好是 $c_j=\operatorname{Corr}(X_j,Y)\operatorname{SD}(Y)$。因此講義「用簡單迴歸係數當權重」與最佳化的解只差一個正規化常數，權重也與相關係數成正比。</p>
 <p>注意目標是共變異而不是相關：$\operatorname{Cov}(Y,Z)=\operatorname{Corr}(Y,Z)\operatorname{SD}(Z)\operatorname{SD}(Y)$，PLS 同時考慮與 $Y$ 的關係及新特徵的變動量。若沒有先標準化，各斜率是 $\operatorname{Corr}(X_j,Y)\,\operatorname{SD}(Y)/\operatorname{SD}(X_j)$，不再與相關係數共用同一個倍數，所以講義的「權重與相關成比例」要連同標準化條件一起讀。</p>
