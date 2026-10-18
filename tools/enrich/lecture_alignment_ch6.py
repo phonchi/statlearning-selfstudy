@@ -83,13 +83,13 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <h3>白化是不是更好的 PCR？</h3>
 <p>不是。對相同的保留方向做無懲罰 OLS，各得分的縮放會被迴歸係數抵消，擬合不變；白化的定義與限制見上方<a href="#w06-detail-whitening">共變異數、SVD 與白化</a>。</p>
 <h3>解釋 $X$ 的變異，不是解釋 $y$ 的變異</h3>
-<p>Lab 的 <code>explained_variance_ratio_</code> 是 PCA 對 $X$ 的變異解釋比例；不能讀成 Salary 的解釋比例。少數 PC 捕捉大部分 $X$ 變異，仍可能漏掉對 $y$ 很重要的低變異方向。講義的模擬有一組把所有反應資訊放在前五個 PC，這才讓 $M=5$ 成為特別有效的結構；一般資料沒有這個保證。$M$ 的選擇應使用預測 CV，而非只以累積 $X$ 變異達到某百分比決定。</p>
+<p>Lab 的 <code>explained_variance_ratio_</code> 是 PCA 對 $X$ 的變異解釋比例；不能讀成 Salary 的解釋比例。少數 PC 捕捉大部分 $X$ 變異，仍可能漏掉對 $y$ 很重要的低變異方向。反例就是 PCR 節的<a href="#w06-detail-pcr-sim">前五個主成分模擬</a>：那組資料刻意把反應資訊全放在前五個主成分，一般資料沒有這個保證。$M$ 的選擇應使用預測 CV，而非只以累積 $X$ 變異達到某百分比決定。</p>
 <p>PCR 的原始係數限制在前 $M$ 個方向張成的子空間。它保留的是主成分方向，而沒有直接選出一組原始欄。Lab 將 <code>StandardScaler</code>、<code>PCA</code> 與 <code>LinearRegression</code> 放在同一 Pipeline 搜尋 $M$，讓每折重新學方向。只含截距的空模型可另行計算，不能把某個 API 的零成分是否可用當成空模型不存在的理由。</p>
 <p>對照：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.decomposition.PCA.html">PCA API 與得分／解釋變異</a>、<a href="https://scikit-learn.org/1.6/auto_examples/cross_decomposition/plot_pcr_vs_pls.html">PCR 與 PLS 官方例子</a>；完整非監督式解讀見<a href="unsupervised_learning.html">非監督式學習章</a>。</p>
 ''')],
 'pls': [('pls-reading','PLS 與 OLS：看了 $y$ 的方向是否一定較好？',r'''
-<p>PLS 的第一方向由 $X^\top y$ 決定，因此需要已觀測的訓練反應；PCR 的方向只看 $X$。講義用「與 $y$ 關係愈強，權重愈大」解釋第一方向，這需要先標準化（見<a href="#w06-detail-pls-covariance">PLS 的共變異目標</a>）。</p>
-<p>PLS 第一方向不等於直接求 OLS 的係數：OLS 用 $X^\top X$ 的逆（或廣義逆）處理變數之間的相關，PLS 從 $X^\top y$ 的方向開始，再逐步消去已解釋的成分。對完整秩方向使用足夠多成分，PLS 可重現 OLS 擬合；保留少數方向才施加低維限制。PLS 會形成新方向並逐步扣除已解釋的部分，不能只把各欄單變數回歸的預測值相加。</p>
+<p>PLS 的方向需要已觀測的訓練反應，PCR 的方向只看 $X$（第一方向的推導見<a href="#w06-detail-pls-covariance">PLS 的共變異目標</a>）。</p>
+<p>PLS 第一方向不等於直接求 OLS 的係數：OLS 同時解 $p$ 條正規方程，一次處理所有變數之間的相關；PLS 從各個 $\operatorname{Cov}(X_j,Y)$ 組成的方向開始，再逐步消去已解釋的成分。對完整秩方向使用足夠多成分，PLS 可重現 OLS 擬合；保留少數方向才施加低維限制。PLS 會形成新方向並逐步扣除已解釋的部分，不能只把各欄單變數回歸的預測值相加。</p>
 <p>「看了 $y$」可避免 PCR 忽略低變異預測方向，但也可能把訓練雜訊當訊號。增加 $M$ 仍有偏差與變異取捨，所以 Lab 對 <code>PLSRegression(n_components=M)</code> 做 CV，而不是預設 $M$ 越大越好。其 <code>scale=True</code> 預設會在擬合時縮放 $X$ 與 $y$，若另加 StandardScaler 要分清每一步處理什麼；預測會回到 $y$ 的原量尺。</p>
 <p>比較 PCR、PLS、Ridge 或 Lasso 時，使用同樣資料、同樣保留折與相同 MSE 定義。講義圖中的方向關係和 Lab 的 Hitters 最佳成分數，不構成某方法在所有資料上比較好的證據。</p>
 <p>來源：<a href="https://scikit-learn.org/1.6/modules/cross_decomposition.html">PLS 官方方法說明</a>、<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.cross_decomposition.PLSRegression.html">PLSRegression API</a>。</p>
@@ -107,7 +107,7 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
             bodies[sec] += '\n' + detail('w06-detail-'+slug, title, body)
     # Expand existing topic blocks in place, preserving deep links and avoiding duplicates.
     extra = {
-'w06-detail-shrinkage-map': r'''<p>Laplace 是連續分布，先驗本身沒有在 $\beta=0$ 放正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」；歸零來自取後驗眾數時 L1 懲罰的尖角。原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。</p>''',
+'w06-detail-shrinkage-map': r'''<p>Laplace 是連續分布，先驗本身沒有在 $\beta=0$ 放正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」。原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。</p>''',
 'w06-detail-deviance': r'''<h3>為何分類要輸入機率？</h3><p>離差評估的是模型為已觀察標籤分配了多少機率。預測相同類別的兩個模型，若一個機率接近 0.5、另一個非常接近正確標籤，分類錯誤率可以相同而離差不同；錯誤且過度自信時，對數損失會很大。二元逐筆 Bernoulli 的飽和概似為零，故離差是總對數損失的兩倍；合併成分組二項計數時，飽和項通常不再是零，要重新用完整定義。</p><p>sklearn 的 <code>predict_proba</code> 欄序由 <code>classes_</code> 決定；<code>log_loss</code> 的平均或總和由 <code>normalize</code> 決定。相同樣本數時兩者排序一致，數值仍相差 $n$ 倍。若要求 AIC／BIC 的常規最大概似版本，也要檢查邏輯斯模型是否取消預設正則化，而非直接把懲罰擬合當 MLE。</p><p>來源：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.metrics.log_loss.html">log_loss 定義</a>、<a href="https://www.statsmodels.org/stable/generated/statsmodels.genmod.families.family.Binomial.deviance.html">Binomial deviance</a>。</p>'''
     }
     for sec in bodies:

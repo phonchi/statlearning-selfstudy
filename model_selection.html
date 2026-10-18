@@ -1443,6 +1443,7 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 <p class="dx-note"><code>RidgeCV</code> 把「掃 $\lambda$ ＋ 交叉驗證」包成一步。<code>alphas</code> 接收一組候選值；排列順序本身不表示 <code>RidgeCV</code> 使用暖啟動。這張 lab 卡把 scaler 放在內建 CV estimator 外層，因此 scaler 會先對傳入 pipeline 的全部資料擬合，<code>RidgeCV</code> 才在縮放後的資料內切折。</p>
 <span class="dx-src" data-lab-cells="144,145" data-lab-ch="6">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div></div></details>
+<p>改用主成分當座標來看，Ridge 可以看成<strong>連續版的 PCR</strong>：PCR 對各方向「留或丟」，Ridge 則平滑地收縮，學完主成分後在 <a href="#pcr">PCR 節</a>對照。</p>
 <div class="info-box warm">
 <span class="info-label">Ridge 之前一定要標準化</span>
   懲罰項 $\sum \beta_j^2$ 對<strong>單位敏感</strong>。
@@ -1482,13 +1483,17 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 <div class="quiz-options" id="qRidgeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。係數會變成 1000 倍，懲罰項變成 $10^6$ 倍，這個變數於是被壓得特別兇，整個解就不同了。最小平方沒有這個問題。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(A)</span> 會變，因為 L2 懲罰對單位敏感。這正是為什麼要先標準化</div><div class="quiz-opt" data-correct="false" data-fb="&lt;strong&gt;最小平方&lt;/strong&gt;的係數等比例調整時，預測保持相同。Ridge 的懲罰項則依調整後的係數計算，換單位會改變懲罰與擬合之間的取捨。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(B)</span> 不會，因為線性模型對預測變數的線性變換不變</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;Ridge&lt;/code&gt; 預設&lt;strong&gt;不會&lt;/strong&gt;標準化（早期版本的 &lt;code&gt;normalize&lt;/code&gt; 參數已經移除）。你得自己包 &lt;code&gt;StandardScaler&lt;/code&gt;。" onclick="quizCheck('qRidge', this)"><span class="opt-letter">(C)</span> 不會，因為 scikit-learn 會自動標準化</div></div>
 <div class="quiz-feedback" id="qRidgeFeedback"></div>
 </div>
-<details class="qa-item reading-detail" id="w06-detail-ridge-solution"><summary>計算細節：Ridge 的矩陣解與方向收縮</summary>
+<details class="qa-item reading-detail" id="w06-detail-ridge-solution"><summary>計算細節：Ridge 的正規方程與唯一解</summary>
 <div class="detail-body"><h3>中心化後的 Ridge 解</h3>
-<p>先用訓練資料中心化 $X$ 與 $y$，斜率的目標為 $\|y-X\beta\|^2+\lambda\|\beta\|^2$。$\lambda&gt;0$ 時，無論 $X$ 是否滿欄秩都有唯一斜率解 $(X^TX+\lambda I)^{-1}X^Ty$。還原截距用 $\bar y-\bar x^T\hat\beta$；不能把原始 X 的截距欄也按相同 $\lambda$ 懲罰。</p>
-<details class="qa-item proof" id="w06proofRidge"><summary>證明：Ridge 閉式解與方向收縮</summary>
+<p>先用訓練資料把每個 $x_{ij}$ 與 $y_i$ 減去各自的平均，截距就可以分開處理。斜率最小化 $\sum_{i=1}^n\big(y_i-\sum_{j=1}^p\beta_jx_{ij}\big)^2+\lambda\sum_{j=1}^p\beta_j^2$，對每個 $\beta_j$ 偏微分設為 0，得到 $p$ 條線性方程（Ridge 的正規方程）：</p>
+$$\sum_{k=1}^p\Big(\sum_{i=1}^nx_{ij}x_{ik}\Big)\beta_k+\lambda\beta_j=\sum_{i=1}^nx_{ij}y_i,\qquad j=1,\ldots,p.$$
+<p>$\lambda\gt0$ 時，不論原始變數是否共線、甚至 $p\gt n$，這組方程都有唯一解。截距用 $\hat\beta_0=\bar y-\sum_j\hat\beta_j\bar x_j$ 還原；截距不能跟斜率一起用同一個 $\lambda$ 懲罰。Ridge 在各主成分方向上怎麼收縮，見 PCR 節的<a href="#w06-detail-ridge-pcr">Ridge 與 PCR 的對照</a>。</p>
+<details class="qa-item proof" id="w06proofRidge"><summary>證明：Ridge 正規方程的解唯一</summary>
 <div class="qa-a">
-<p>目標的梯度是 $-2X^T(y-X\beta)+2\lambda\beta$。設為零得 $(X^TX+\lambda I)\beta=X^Ty$。對任意非零 $v$，$v^T(X^TX+\lambda I)v=\|Xv\|^2+\lambda\|v\|^2&gt;0$，所以解唯一。</p>
-<p>若 $X=UDV^T$ 為精簡 SVD，則 $\hat\beta=V\operatorname{diag}\{d_j/(d_j^2+\lambda)\}U^Ty$，擬合值為 $U\operatorname{diag}\{d_j^2/(d_j^2+\lambda)\}U^Ty$。相對 OLS，各方向乘上 $d_j^2/(d_j^2+\lambda)$，小奇異值方向收縮較強。這也說明 Ridge 不等於挑掉一些原始變數。</p>
+<p>目標對 $\beta_j$ 的偏導數是 $-2\sum_ix_{ij}\big(y_i-\sum_kx_{ik}\beta_k\big)+2\lambda\beta_j$，設為零整理即得上面的方程。</p>
+<p>唯一性：任取不全為零的 $v_1,\ldots,v_p$，沿著方向 $(v_1,\ldots,v_p)$ 的二階導數為</p>
+$$2\Big[\sum_{i=1}^n\Big(\sum_{j=1}^px_{ij}v_j\Big)^2+\lambda\sum_{j=1}^pv_j^2\Big]\gt0 .$$
+<p>第一項可能為 0（例如變數共線時），但 $\lambda\sum_jv_j^2$ 一定為正，所以目標是嚴格凸函數，最小值只有一個。$\lambda=0$ 時少了這一項，共線就會讓解不唯一；最小平方在 $p\gt n$ 時的問題就出在這裡。</p>
 </div></details></div></details>
 <details class="qa-item reading-detail" id="w06-detail-ridge-bias"><summary>收縮為何可能更準？偏差與變異的取捨</summary>
 <div class="detail-body">
@@ -1514,11 +1519,43 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 <h3 id="dx-geom">為什麼 Lasso 會把係數壓成剛好 0：講義的三種解釋</h3>
 <p>講義從三個角度回答「為什麼 Lasso 會歸零、Ridge 不會」：限制式的幾何、正交設計下的閉式解，以及貝氏解讀。</p>
 <h4 id="w06-why-geom">解釋一：限制式的幾何</h4>
-<p>兩者都可以寫成「在預算內讓 RSS 最小」，藉由 Lagrange 乘數和懲罰式連在一起（$s$ 與 $\lambda$ 可對應，但一般不是一對一）：</p>
-  $$\min_{\beta}\mathrm{RSS}\ \ \text{s.t.}\ \sum_{j=1}^p|\beta_j|\le s\ \ (\text{Lasso，菱形}),\qquad
-    \min_{\beta}\mathrm{RSS}\ \ \text{s.t.}\ \sum_{j=1}^p\beta_j^2\le s\ \ (\text{Ridge，圓}).$$
-  <p>最佳子集也能寫成同樣的形式（ESL 第 3 章）：限制換成 $\sum_{j=1}^pI(\beta_j\ne0)\le s$，只是這個問題在計算上不可行。</p>
-<p>RSS 的等高線是以 $\hat\beta^{\mathrm{OLS}}$ 為中心的同心橢圓。解就是<strong>橢圓第一次碰到限制區域的那一點</strong>。菱形有<em>尖角</em>而且尖角落在座標軸上，碰撞很容易發生在尖角，那裡有一個座標是 0。圓沒有尖角，碰到座標軸是機率 0 的事。</p>
+<p>同一個收縮問題有兩種寫法。<strong>限制式</strong>（primal form）先給一個預算 $s$，只在預算內找 RSS 最小的係數；<strong>懲罰式</strong>（Lagrange form）把預算改成加在 RSS 後面的代價，由 $\lambda$ 控制。講義的 Lasso 示意圖（RSS 等高線碰上預算 $s$ 的限制區域）畫的就是限制式。</p>
+  $$\underbrace{\min_{\beta}\ \sum_{i=1}^n\Big(y_i-\beta_0-\sum_{j=1}^p\beta_jx_{ij}\Big)^2\ \ \text{s.t.}\ \sum_{j=1}^p|\beta_j|\le s}_{\text{限制式}}
+    \qquad\Longleftrightarrow\qquad
+    \underbrace{\min_{\beta}\ \mathrm{RSS}+\lambda\sum_{j=1}^p|\beta_j|}_{\text{懲罰式}}$$
+  <p>Ridge 把 $|\beta_j|$ 換成 $\beta_j^2$，限制區域從菱形變成圓。最佳子集也能寫成限制式，只是預算數的是「有幾個係數不為 0」：</p>
+  $$\min_{\beta}\ \mathrm{RSS}\ \ \text{s.t.}\ \sum_{j=1}^pI(\beta_j\ne0)\le s .$$
+  <p>$\sum_jI(\beta_j\ne0)$ 常記為 $\|\beta\|_0$，稱為 $L_0$ 限制（它不滿足範數的齊次性，嚴格說不是範數）。所以三個方法可以排成 $L_0$（最佳子集）、$L_1$（Lasso）、$L_2$（Ridge），差別只在預算怎麼量。$s$ 與 $\lambda$ 可以互相對應，但一般不是一對一。</p>
+<details class="qa-item reading-detail" id="w06-detail-penalty-constraint"><summary>計算細節：限制式與懲罰式如何對應</summary>
+<div class="detail-body">
+<p>以 Lasso 為例，令 $P(\beta)=\sum_j|\beta_j|$（Ridge 換成 $\sum_j\beta_j^2$）。</p>
+<p><strong>從懲罰式到限制式。</strong>固定 $\lambda\gt0$，設 $\hat\beta^\lambda$ 是懲罰式的解，令 $s=P(\hat\beta^\lambda)$。任取滿足 $P(\beta)\le s$ 的 $\beta$，因為 $\hat\beta^\lambda$ 讓懲罰式最小，</p>
+  $$\mathrm{RSS}(\beta)+\lambda P(\beta)\ \ge\ \mathrm{RSS}(\hat\beta^\lambda)+\lambda s\ \ge\ \mathrm{RSS}(\hat\beta^\lambda)+\lambda P(\beta),$$
+  <p>兩邊消去 $\lambda P(\beta)$ 得 $\mathrm{RSS}(\beta)\ge\mathrm{RSS}(\hat\beta^\lambda)$，所以 $\hat\beta^\lambda$ 也是預算 $s$ 下的限制式解。</p>
+<p><strong>從限制式到懲罰式。</strong>RSS 與 $P$ 都是凸函數，限制式的解滿足 KKT 條件：存在 Lagrange 乘數 $\lambda\ge0$，使同一個解也讓 $\mathrm{RSS}+\lambda P(\beta)$ 最小。若預算已經放得下最小平方解（$s\ge P(\hat\beta^{\mathrm{OLS}})$），限制沒有作用，對應的是 $\lambda=0$。</p>
+<p><strong>為什麼不是一對一。</strong>上面的對應依資料而定：所有夠大的 $s$ 都對應到 $\lambda=0$；解若不唯一，同一個 $\lambda$ 也可能對到不只一個 $s$。所以只能說兩種寫法描述同一族解，不能把某個 $\lambda$ 換算成固定的 $s$。</p>
+<p><strong>$L_0$ 的懲罰式。</strong>最佳子集也有懲罰式 $\mathrm{RSS}+\lambda\sum_jI(\beta_j\ne0)$。前面<a href="#criteria">選模準則</a>的 $C_p$ 就是這個形式：$n\,C_p=\mathrm{RSS}+2\hat\sigma^2d$，等於取 $\lambda=2\hat\sigma^2$；BIC 對應 $\lambda=\hat\sigma^2\log n$。因為 $L_0$ 不是凸的，KKT 的反方向不成立：懲罰式只會選到「RSS 對模型大小 $d$ 曲線」下凸包上的大小，限制式能選的大小則更多。</p>
+<p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348494/the-proof-of-equivalent-formulas-of-ridge-regression">stats.stackexchange.com</a>。</p></div></details>
+<p>三種限制式的計算難度差很多：$L_0$ 是非凸的組合搜尋，最難；Lasso 把它換成凸的 $L_1$，可以有效率地求解；Ridge 最容易，有閉式解，選 $\lambda$ 時還能用留一捷徑或廣義交叉驗證（GCV），不必真的重擬合。</p>
+<details class="qa-item reading-detail" id="w06-detail-primal-compute"><summary>計算細節：三種限制式的計算成本與 Ridge 的 GCV</summary>
+<div class="detail-body">
+<h4>$L_0$：組合搜尋</h4>
+<p>窮舉法要列出所有不超過 $s$ 個變數的子集，對每個子集做一次最小平方，再比較 RSS。$s=p$ 時就是<a href="#subset">子集選擇</a>一節的 $2^p$ 個模型：</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<thead><tr><th>$p$</th><th>$s$</th><th>要檢查的子集數 $\sum_{k=0}^{s}\binom pk$</th></tr></thead>
+<tbody><tr><td>20</td><td>10</td><td>616,666（約 62 萬）</td></tr><tr><td>30</td><td>15</td><td>614,429,672（約 6.1 億）</td></tr><tr><td>50</td><td>10</td><td>13,432,735,556（約 134 億）</td></tr><tr><td>50</td><td>50</td><td>$2^{50}\approx1.13\times10^{15}$</td></tr></tbody>
+</table></div>
+<p>一般情況下，最佳子集選擇屬於 NP-hard 問題，但這不表示所有情況都算不出來：$p$ 小時可以窮舉，分支界定法與混合整數最佳化也能處理部分中大型問題，只是最壞情況下仍無法有效率地保證全域最佳。$\sum_jI(\beta_j\ne0)$ 是不連續、非凸的函數；兩個各只有一個非零係數的解取平均，非零個數會變成兩個，限制區域因此不是凸集合。</p>
+<h4>$L_1$：凸問題</h4>
+<p>$\sum_j|\beta_j|$ 是凸函數，Lasso 的目標因此是凸的，任何局部最小值都是全域最小值。它沒有閉式解，求解方法見本節後面的<a href="#w06-detail-lasso-solution">座標更新</a>與 <a href="#w06-detail-lar-group">LAR</a>。</p>
+<h4>$L_2$：閉式解與 GCV</h4>
+<p>Ridge 的懲罰式可微，對 $\beta_j$ 偏微分設為 0，得到 $p$ 條線性方程，$\lambda\gt0$ 時解唯一（見 Ridge 節的<a href="#w06-detail-ridge-solution">正規方程</a>）。解出的擬合值是 $y$ 的線性組合，$\hat y_i=\sum_{k=1}^nh_{ik}(\lambda)\,y_k$，其中權重 $h_{ik}(\lambda)$ 只由 $x$ 與 $\lambda$ 決定。第 5 章的<a href="resampling_methods.html#w05-loocv-shortcut">留一捷徑</a>對 Ridge 同樣成立：</p>
+  $$\mathrm{CV}_{(n)}(\lambda)=\frac1n\sum_{i=1}^n\left(\frac{y_i-\hat y_i}{1-h_{ii}(\lambda)}\right)^2 .$$
+  <p>截距不懲罰時，$h_{ii}(\lambda)$ 包含截距貢獻的 $1/n$，加總為 $\sum_ih_{ii}(\lambda)=1+\mathrm{df}(\lambda)$，其中 $\mathrm{df}(\lambda)$ 是斜率部分的有效自由度（不含截距，與 ESL 的慣例相同）。GCV 再把每個 $h_{ii}(\lambda)$ 換成它們的平均：</p>
+  $$\mathrm{GCV}(\lambda)=\frac1n\sum_{i=1}^n\left(\frac{y_i-\hat y_i}{1-\{1+\mathrm{df}(\lambda)\}/n}\right)^2 .$$
+  <p>兩者都只要在每個 $\lambda$ 擬合一次，不必真的做 $n$ 次或 $K$ 次重擬合。$\mathrm{df}(\lambda)$ 用主成分寫出來的形式見 PCR 節的<a href="#w06-detail-ridge-pcr">Ridge 與 PCR 的對照</a>。sklearn 的 <code>RidgeCV</code> 在預設 <code>cv=None</code> 時就是用這種高效率的留一計算。Lasso 的擬合值不是 $y$ 的固定線性組合（哪些係數為 0 也由 $y$ 決定），所以沒有同樣精確的捷徑。</p>
+</div></details>
+<p>回到幾何。RSS 的等高線是以 $\hat\beta^{\mathrm{OLS}}$ 為中心的同心橢圓。解就是<strong>橢圓第一次碰到限制區域的那一點</strong>。菱形有<em>尖角</em>而且尖角落在座標軸上，碰撞很容易發生在尖角，那裡有一個座標是 0。圓沒有尖角，碰到座標軸是機率 0 的事。</p>
 <div class="viz-layout" data-provenance="book-redraw" data-source-note="依講義圖 6.7；約束最佳解以解析邊與 Lagrange 方程求得">
 <div>
 <div class="viz-panel">
@@ -1543,6 +1580,48 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
     </div>
 </div>
 </div>
+<p>尖角為什麼這麼容易被碰到？看菱形 $|\beta_1|+|\beta_2|\le1$ 的尖角 $P=(1,0)$。交於 $P$ 的兩條邊，外法線分別是 $(1,1)$ 與 $(1,-1)$；夾在這兩個方向之間的所有方向，都可以當作 $P$ 的支撐法線，合起來稱為 $P$ 的<strong>法線扇形</strong>（normal cone）。等高線是圓時，只要 $\hat\beta^{\mathrm{OLS}}$ 落在從 $P$ 張開的這個扇形裡，Lasso 解就是 $P$，$\beta_2$ 剛好為 0。扇形是一整塊區域，所以<strong>很多不同的最小平方解，都會對應到同一個稀疏解</strong>。圓在每一點只有一個法線方向，沒有扇形可以收留這麼多 OLS 解。</p>
+<div class="viz-layout" data-provenance="illustrative" data-source-note="概念示意：圓形 RSS 等高線、預算 s=1；解為 OLS 點在限制區域上的歐氏投影">
+<div>
+<div class="viz-panel">
+<svg class="viz-svg" height="360" id="w06fanSvg"></svg>
+<div class="status-banner" id="w06fanStatus"><span class="status-icon">›</span><span class="status-text">OLS 在扇形內時，Lasso 解停在尖角 P=(1, 0)。</span></div>
+<div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">$\hat\beta_2^{\mathrm{OLS}}$</label><input id="w06fanSl" max="150" min="-150" oninput="w06fanDraw()" step="5" style="flex:1 1 140px;max-width:220px;min-width:0;" type="range" value="40"/><button class="btn btn-toggle" id="w06fanBtn" onclick="w06fanToggle()">切換為 L2（Ridge）</button></div>
+<div class="viz-source"><span>概念示意</span></div>
+</div>
+</div>
+<div class="side-panel">
+<div class="info-card">
+<div class="ic-title">怎麼看</div>
+      藍色是限制區域，橘色陰影是尖角 $P$ 的法線扇形。拖動滑桿改變 $\hat\beta_2^{\mathrm{OLS}}$（$\hat\beta_1^{\mathrm{OLS}}$ 固定為 2），看綠點的 Lasso 解什麼時候離開 $P$。
+    </div>
+<div class="info-card">
+<div class="ic-title">目前的解</div>
+<div class="ic-row"><span class="ic-label">OLS 解</span><span class="ic-value" id="w06fanOls">—</span></div><div class="ic-row"><span class="ic-label">限制下的解</span><span class="ic-value" id="w06fanSol">—</span></div><div class="ic-row"><span class="ic-label">OLS 在扇形內？</span><span class="ic-value" id="w06fanIn">—</span></div>
+</div>
+<div class="info-card">
+<div class="ic-title">切換成 Ridge 對照</div>
+      圓的邊界在每一點只有一個外法線方向，限制下的解就是把 OLS 點沿半徑拉回圓上。只要 $\hat\beta_2^{\mathrm{OLS}}\ne0$，解的 $\beta_2$ 就不會是 0。
+    </div>
+</div>
+</div><details class="qa-item reading-detail" id="w06-detail-fan"><summary>計算細節：為什麼離開尖角要付一階代價</summary>
+<div class="detail-body">
+<p>取 $\mathrm{RSS}=(\beta_1-2)^2+(\beta_2-0.4)^2$，最小平方解是 $(2,0.4)$，限制為 $|\beta_1|+|\beta_2|\le1$。Lasso 解是 $P=(1,0)$。</p>
+<p><strong>Lasso：沿菱形的邊離開 $P$。</strong>想讓 $\beta_2$ 從 0 增加一點點 $\varepsilon\gt0$，菱形限制迫使 $\beta_1$ 至少降到 $1-\varepsilon$。RSS 的變化為</p>
+  $$\begin{aligned}\Delta\mathrm{RSS}&amp;=(1-\varepsilon-2)^2+(\varepsilon-0.4)^2-\big[(1-2)^2+0.4^2\big]\\&amp;=1.2\,\varepsilon+2\varepsilon^2\gt0 .\end{aligned}$$
+  <p>$\beta_2$ 確實更接近最小平方的 0.4，但要犧牲 $\beta_1$，讓它離 2 更遠；兩者相抵後 RSS 反而上升，所以解留在尖角。</p>
+<p><strong>扇形條件。</strong>把 $\hat\beta^{\mathrm{OLS}}-P$ 寫成兩條外法線的組合：$\hat\beta^{\mathrm{OLS}}-P=a(1,1)+c(1,-1)$，扇形內就是 $a\ge0$、$c\ge0$。解得 $a=\tfrac12(\hat\beta_1-1+\hat\beta_2)$、$c=\tfrac12(\hat\beta_1-1-\hat\beta_2)$，所以條件是</p>
+  $$|\hat\beta_2^{\mathrm{OLS}}|\le\hat\beta_1^{\mathrm{OLS}}-1 .$$
+  <p>本例 $\hat\beta_1^{\mathrm{OLS}}=2$，只要 $|\hat\beta_2^{\mathrm{OLS}}|\le1$，例如改成 $-0.5$ 或 $0.7$，解都仍是 $(1,0)$。嚴格的說法是：在 $P$ 點，RSS 下降最快的方向 $-\nabla\mathrm{RSS}=2(\hat\beta^{\mathrm{OLS}}-P)$ 落在法線扇形內；不是 RSS 梯度本身落在扇形內。</p>
+<p><strong>Ridge：沿圓周離開 $(1,0)$。</strong>限制換成 $\beta_1^2+\beta_2^2\le1$。把 $\beta_2$ 增加 $\varepsilon$，只需讓 $\beta_1=\sqrt{1-\varepsilon^2}\approx1-\varepsilon^2/2$。同一個 RSS 的變化變成</p>
+  $$\Delta\mathrm{RSS}=4-4\sqrt{1-\varepsilon^2}-0.8\,\varepsilon\approx-0.8\,\varepsilon+2\varepsilon^2\lt0\quad(\varepsilon\text{ 很小}),$$
+  <p>RSS 會下降，所以 Ridge 不會停在 $(1,0)$。</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<thead><tr><th></th><th>Lasso（菱形）</th><th>Ridge（圓）</th></tr></thead>
+<tbody><tr><td>$\beta_2$ 增加 $\varepsilon$</td><td>$\beta_1$ 至少減少 $\varepsilon$</td><td>$\beta_1$ 只需減少約 $\varepsilon^2/2$</td></tr><tr><td>離開座標軸的代價</td><td>一階，$O(\varepsilon)$</td><td>二階，$O(\varepsilon^2)$</td></tr></tbody>
+</table></div>
+<p>尖角容易產生稀疏解，原因就在這裡：Lasso 離開座標軸必須付一階代價，只要 RSS 的一階好處不夠大，就寧願讓 $\beta_2=0$；Ridge 在座標軸附近只付二階代價，只要最小平方解的 $\beta_2\ne0$，稍微離開座標軸幾乎總是划算。</p>
+</div></details>
 <h4 id="w06-why-diag">解釋二：正交設計下的閉式解（習題 6）</h4>
 <p>考慮最簡單的情況：$n=p$，$X$ 是對角元素為 1 的對角矩陣，並省略截距。最小平方問題變成逐個座標最小化 $\sum_{j=1}^p(y_j-\beta_j)^2$，解為 $\hat\beta_j=y_j$。加上兩種懲罰後：</p>
   $$\text{Ridge：}\ \hat\beta_j^R=\frac{y_j}{1+\lambda},\qquad
@@ -1561,15 +1640,36 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 </div></details>
 <h4 id="w06-why-bayes">解釋三〔選讀〕：貝氏解讀（習題 7）</h4>
 <p>貝氏觀點下，後驗正比於概似乘以先驗：$p(\beta\mid X,Y)\propto f(Y\mid X,\beta)\,p(\beta)$，並假設 $p(\beta)=\prod_{j=1}^pg(\beta_j)$。若 $g$ 是平均為 0 的<strong>常態分布</strong>，後驗眾數（給定資料下最可能的 $\beta$）就是 Ridge 的解；若 $g$ 是平均為 0 的<strong>雙指數（Laplace）分布</strong>，後驗眾數就是 Lasso 的解。兩種先驗的尺度參數都對應到 $\lambda$。</p>
-<p>Laplace 密度在 0 有尖峰，取對數後就是 $-|\beta_j|/b$ 這個在 0 有尖角的懲罰，所以後驗眾數可能剛好停在 0；常態先驗在 0 是平滑的圓頂，後驗眾數通常只會被拉近 0。這和解釋二的「尖角」是同一件事。</p>
+<p>選 Laplace 先驗，等於事前就認為<strong>多數係數應該很接近 0</strong>。變異數相同時，Laplace 在 0 附近放的機率密度比常態高，尾部又比常態厚：大部分係數被拉到接近 0，少數係數仍可以保持很大。常態先驗的尾部衰減得快，比較傾向讓每個係數都中等大小。</p>
+<p>Laplace 密度在 0 有尖峰，取對數後就是 $-|\beta_j|/b$ 這個在 0 有尖角的懲罰，所以後驗眾數可能剛好停在 0，得到稀疏解；常態先驗在 0 是平滑的圓頂，後驗眾數通常只會被拉近 0。這和解釋二的「尖角」是同一件事。下圖可以切換成負對數密度，直接看到兩種先驗各自對應的懲罰形狀。</p>
+<div class="viz-layout" data-provenance="illustrative" data-source-note="概念示意：標準常態與 b=1/√2 的 Laplace，兩者變異數皆為 1">
+<div>
+<div class="viz-panel">
+<svg class="viz-svg" height="300" id="w06priorSvg"></svg>
+<div class="status-banner" id="w06priorStatus"><span class="status-icon">›</span><span class="status-text">Laplace 在 0 附近較高、尾部較厚；常態在 0 是平滑的圓頂。</span></div>
+<div class="controls-bar"><button class="btn btn-toggle" id="w06priorBtn" onclick="w06priorToggle()">切換為負對數密度</button></div>
+<div class="viz-source"><span>概念示意</span></div>
+</div>
+</div>
+<div class="side-panel">
+<div class="info-card">
+<div class="ic-title">怎麼看</div>
+      兩條曲線的變異數都是 1。按下按鈕切換成負對數密度，比較兩者在 0 附近的形狀：一個平滑、一個有尖角。
+    </div>
+<div class="info-card">
+<div class="ic-title">同變異數下比較（常態／Laplace）</div>
+<div class="ic-row"><span class="ic-label">0 點的密度</span><span class="ic-value" id="w06priorD0">0.399／0.707</span></div><div class="ic-row"><span class="ic-label">$|\beta|\lt0.25$ 的機率</span><span class="ic-value" id="w06priorNear">0.197／0.298</span></div><div class="ic-row"><span class="ic-label">$|\beta|\gt3$ 的機率</span><span class="ic-value" id="w06priorTail">0.0027／0.0144</span></div>
+</div>
+</div>
+</div>
 <details class="qa-item reading-detail" id="w06-detail-shrinkage-map"><summary>延伸閱讀：收縮的貝氏解讀</summary>
 <div class="detail-body"><h3>收縮的貝氏解讀</h3>
 <p>獨立常態誤差、固定誤差變異數與不懲罰截距的設定下，高斯斜率先驗的 MAP 對應 Ridge，Laplace 斜率先驗的 MAP 對應 Lasso。其 RSS 目標的 $\lambda$ 分別為 $\sigma^2/\tau^2$ 與 $2\sigma^2/b$。完整常數對應見下方證明。</p>
 <details class="qa-item proof" id="w06proofMAP"><summary>證明：高斯／Laplace 先驗如何變成 Ridge／Lasso</summary>
 <div class="qa-a">
-<p>獨立 $N(x_i^T\beta,\sigma^2)$ 反應的負對數概似，除去與 $\beta$ 無關的常數後為 $\mathrm{RSS}/(2\sigma^2)$。各斜率獨立 $N(0,\tau^2)$ 的負對數先驗為 $\sum_j\beta_j^2/(2\tau^2)$；負對數後驗相加後乘以 $2\sigma^2$，成為 $\mathrm{RSS}+(\sigma^2/\tau^2)\sum_j\beta_j^2$。</p>
+<p>獨立 $N(\beta_0+\sum_j\beta_jx_{ij},\sigma^2)$ 反應的負對數概似，除去與 $\beta$ 無關的常數後為 $\mathrm{RSS}/(2\sigma^2)$。各斜率獨立 $N(0,\tau^2)$ 的負對數先驗為 $\sum_j\beta_j^2/(2\tau^2)$；負對數後驗相加後乘以 $2\sigma^2$，成為 $\mathrm{RSS}+(\sigma^2/\tau^2)\sum_j\beta_j^2$。</p>
 <p>Laplace 密度為 $e^{-|\beta_j|/b}/(2b)$，負對數先驗為 $\sum_j|\beta_j|/b$ 加常數，因此乘以 $2\sigma^2$ 後 $\lambda=2\sigma^2/b$。截距使用不懲罰的設定；$\sigma$、$\tau$、$b$ 在此視為固定。這是後驗眾數，後驗平均須積分計算，一般不會因 Laplace 先驗精確歸零。</p>
-</div></details><p>Laplace 是連續分布，先驗本身沒有在 $\beta=0$ 放正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」；歸零來自取後驗眾數時 L1 懲罰的尖角。原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。</p><p class="source-links">講義延伸來源：<a href="https://ekamperi.github.io/mathematics/2020/08/02/bayesian-connection-to-lasso-and-ridge-regression.html">ekamperi.github.io</a>。</p></div></details><h3 id="w06-lasso-path">Credit 上的 Lasso 路徑</h3>
+</div></details><p>Laplace 是連續分布，先驗本身沒有在 $\beta=0$ 放正機率的點質量，所以不能解讀成「每個係數事前有某機率恰為零」。原作者教材：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/bayesian.html#bayesian-regression">Bayesian Regression</a>。</p><p class="source-links">講義延伸來源：<a href="https://ekamperi.github.io/mathematics/2020/08/02/bayesian-connection-to-lasso-and-ridge-regression.html">ekamperi.github.io</a>。</p></div></details><h3 id="w06-lasso-path">Credit 上的 Lasso 路徑</h3>
 <div class="viz-layout" data-provenance="course-data" data-source-note="ISLP Credit 的標準化 Lasso 路徑；對照圖 6.6">
 <div>
 <div class="viz-panel">
@@ -1615,9 +1715,21 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
           0.        ,   39.62298193,  205.75273856,  124.55456561,
        -126.29986768,   15.70262427,  -59.50157967,   75.24590036,
          21.62698014,  -12.04423675,   -0.        ])</pre></div>
-<p class="dx-note">注意輸出裡有<strong>剛好等於 0</strong> 的係數。這些係數精確等於 0。這是 Lasso 跟 Ridge 最實際的差別：你可以直接說「這些變數被模型丟掉了」。</p>
+<p class="dx-note">這張卡用的是 Lab 的 Hitters 資料，和上圖的 Credit 不同。注意輸出裡有<strong>剛好等於 0</strong> 的係數。這是 Lasso 跟 Ridge 最實際的差別：你可以直接說「這些變數被模型丟掉了」。</p>
 <span class="dx-src" data-lab-cells="162,172" data-lab-ch="6">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div></div></details>
+<h3 id="w06-lasso-ridge-r2">Lasso 與 Ridge 的模擬比較：橫軸為什麼用訓練 $R^2$</h3>
+<p>講義用兩張圖，把 Lasso 與 Ridge 的平方偏差、變異與測試 MSE 畫在一起。第一張的模擬資料中 45 個預測變數都和反應有關，Ridge 的測試 MSE 略低；第二張只有兩個變數有關，Lasso 明顯較好（何時選哪一個，見下方 Q&amp;A「Lasso 一定比 Ridge 好嗎？」）。</p>
+<p>兩張圖的橫軸都不是 $\lambda$，而是<strong>訓練資料上的 $R^2$</strong>。兩個方法的 $\lambda$ 量尺不同，同一個數字代表的收縮程度不一樣，直接用 $\lambda$ 對齊沒有意義。訓練 $R^2$ 是兩者共同的擬合指標：$\lambda$ 變大、正則化變強，訓練 $R^2$ 就下降。用它當橫軸，可以比較兩個方法在相同訓練擬合程度下的測試 MSE；它也可以當作模型複雜度的間接指標，沿著正則化路徑看偏差與變異怎麼交換。</p>
+<details class="qa-item reading-detail" id="w06-detail-train-r2"><summary>計算細節：訓練 $R^2$ 能當複雜度指標到什麼程度</summary>
+<div class="detail-body">
+<p>對同一個方法，$\lambda$ 從大到小時，係數的限制愈來愈寬，訓練 RSS 不會上升，訓練 $R^2$ 因此單調增加：</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<thead><tr><th>訓練 $R^2$</th><th>正則化</th><th>有效的模型複雜度</th></tr></thead>
+<tbody><tr><td>低</td><td>強（$\lambda$ 大）</td><td>較低</td></tr><tr><td>高</td><td>弱（$\lambda$ 小）</td><td>較高</td></tr></tbody>
+</table></div>
+<p>限制是：訓練 $R^2$ 不等於正式的有效自由度。兩個方法在相同訓練 $R^2$ 下，用掉的自由度不一定相同，所以跨方法時只能說「訓練擬合程度相同」，不能說「模型複雜度完全相同」。Ridge 的有效自由度 $\mathrm{df}(\lambda)$ 見<a href="#w06-detail-primal-compute">三種限制式的計算成本</a>。</p>
+</div></details>
 <div class="qa-box">
 <div class="qa-head">觀念釐清</div>
 <details class="qa-item"><summary>Q：Lasso 一定比 Ridge 好嗎？</summary>
@@ -1638,17 +1750,13 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
 </div>
 <details class="qa-item reading-detail" id="w06-detail-lasso-solution"><summary>延伸閱讀：一般 X 的座標下降</summary>
 <div class="detail-body"><h3>Lasso 的零係數條件與座標更新</h3>
-<p>一般的 $X$ 沒有閉式解。套件常用座標下降：固定其他係數，只對 $\beta_j$ 求解，結果正是解釋二的軟門檻（把 $y_j$ 換成 $x_j$ 對部分殘差的內積，再除以 $x_j^\top x_j$）；逐一更新直到收斂。不同套件若用 $\mathrm{RSS}/(2n)$，相同 $\lambda$ 的數字不能直接比較。</p>
+<p>一般的 $X$ 沒有閉式解。套件常用座標下降：固定其他係數，只對 $\beta_j$ 求解，結果是解釋二的軟門檻：令部分殘差 $r_i^{(-j)}=y_i-\sum_{k\ne j}\beta_kx_{ik}$，先對 $\sum_ix_{ij}r_i^{(-j)}$ 取門檻 $\lambda/2$ 的軟門檻，再除以 $\sum_ix_{ij}^2$，即 $\hat\beta_j=\operatorname{sign}(u_j)\,(|u_j|-\lambda/2)_+\big/\sum_ix_{ij}^2$，其中 $u_j=\sum_ix_{ij}r_i^{(-j)}$；逐一更新直到收斂。不同套件若用 $\mathrm{RSS}/(2n)$，相同 $\lambda$ 的數字不能直接比較。</p>
 <p class="source-links">講義延伸來源：<a href="https://dafriedman97.github.io/mlbook/content/c2/s1/regularized.html#lasso-regression">dafriedman97.github.io</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/17781/derivation-of-closed-form-lasso-solution">stats.stackexchange.com</a>。</p></div></details><details class="qa-item reading-detail" id="w06-detail-lar-group"><summary>延伸閱讀：LAR 與 Group Lasso</summary>
 <div class="detail-body"><h3>最小角度迴歸與 Group Lasso</h3>
 <p>講義附錄只列出這兩個方法的連結，這裡各用一句話說明。LAR 從與殘差相關最大的特徵開始，沿活躍特徵的「等角」方向前進，其他特徵的相關追平時再加入；加上「係數走到零就移出」的規則，就能算出整條 Lasso 路徑（sklearn 的 <code>lars_path</code>、<code>LassoLars</code>）。</p>
 <p>Group Lasso 以 $\lambda\sum_g\sqrt{p_g}\|\beta_g\|_2$ 懲罰事先指定的各組係數，讓同一類別變數的虛擬欄或同一組基底整組進出模型；選入的組內係數不必稀疏。</p>
 <p>來源：<a href="https://scikit-learn.org/stable/modules/linear_model.html#least-angle-regression">LAR／Lasso 路徑官方說明</a>、<a href="https://group-lasso.readthedocs.io/en/latest/">Group Lasso 文件</a>。</p>
-</div></details><details class="qa-item reading-detail" id="w06-detail-penalty-constraint"><summary>計算細節：限制式與懲罰式的對應</summary>
-<div class="detail-body"><h3>限制式與懲罰式：如何對應？</h3>
-<p>令 $P(\beta)=\|\beta\|_1$（Lasso）或 $\|\beta\|_2^2$（Ridge）。兩種問題分別為 $\min\{\mathrm{RSS}+\lambda P(\beta)\}$ 與 $\min\mathrm{RSS}$ subject to $P(\beta)\le s$。它們可用適當參數得到同一個解，但<strong>$\lambda$與$s$一般不是一對一</strong>，對應也依資料而變。</p>
-<p>兩者之間的對應來自 Lagrange 乘數（凸最佳化的 KKT 條件）。</p>
-<p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348494/the-proof-of-equivalent-formulas-of-ridge-regression">stats.stackexchange.com</a>。</p></div></details><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348308/graphical-interpretation-of-lasso">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/414491/understanding-lasso-regressions-sparsity-geometrically">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/350046/the-graphical-intuiton-of-the-lasso-in-case-p-2?noredirect=1&amp;lq=1">stats.stackexchange.com</a>。</p>
+</div></details><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/348308/graphical-interpretation-of-lasso">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/414491/understanding-lasso-regressions-sparsity-geometrically">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/350046/the-graphical-intuiton-of-the-lasso-in-case-p-2?noredirect=1&amp;lq=1">stats.stackexchange.com</a>。</p>
 </section>
 <section id="lambda">
 <!-- GEN:BEGIN sec:lambda -->
@@ -1668,14 +1776,36 @@ $$\hat k=\min\{k:\bar E_k\le \bar E_{k^*}+\widehat{\mathrm{SE}}(\bar E_{k^*})\}.
   在那個 $\lambda$ 之下 11 個變數全部仍保留。這份資料的係數並不稀疏，
   所以在這個設定下保留了全部變數。
   <strong>Lasso 是否產生零係數，取決於資料與 $\lambda$ 的選擇。</strong></p>
-<div class="info-box">
-<span class="info-label">為什麼用對數等距選 $\lambda$</span>
-  因為 $\lambda$ 的作用是乘性的。從 1 到 2 的改變跟從 1000 到 1001
-  的改變完全不同量級——前者讓懲罰加倍，後者幾乎沒差。等距取樣會把幾乎全部的點浪費在
-  「懲罰太重、係數全被壓平」的那一端。<br/><br/>
-<code>np.logspace(-2, 5, 100)</code> 或 <code>10**np.linspace(a, b, 100)</code>
-  才是對的做法。
+<p><strong>為什麼用對數等距？</strong>正則化的效果取決於 $\lambda$ 的相對大小，而不是絕對增量：同樣加 1，$\lambda$ 從 0 到 1 會讓係數縮掉一半，從 99 到 100 幾乎沒有差別。等距網格會在模型幾乎不變的大 $\lambda$ 區域放太多點；對數網格讓每個數量級分到差不多的點數，各種正則化尺度都涵蓋得到。實作上用 <code>np.logspace(-2, 5, 100)</code> 或 <code>10**np.linspace(a, b, 100)</code>。</p>
+<div class="viz-layout" data-provenance="illustrative" data-source-note="概念示意：X 為單位矩陣時 Ridge 的保留比例；網格範圍自選">
+<div>
+<div class="viz-panel">
+<svg class="viz-svg" height="300" id="w06gridSvg"></svg>
+<div class="status-banner" id="w06gridStatus"><span class="status-icon">›</span><span class="status-text">橫軸為 λ：等距網格幾乎全部落在曲線已經變平的右側。</span></div>
+<div class="controls-bar"><button class="btn btn-toggle" id="w06gridBtn" onclick="w06gridToggle()">橫軸切換為 log₁₀ λ</button></div>
+<div class="viz-source"><span>概念示意</span></div>
 </div>
+</div>
+<div class="side-panel">
+<div class="info-card">
+<div class="ic-title">怎麼看</div>
+      曲線是係數保留比例 $r(\lambda)=1/(1+\lambda)$。兩組網格都在 $[0.001,100]$ 取 10 個點：<span style="color:var(--accent);font-weight:700;">紅點</span>是等距網格，<span style="color:var(--accent2);font-weight:700;">藍點</span>是對數網格。切換橫軸，看哪一組點落在曲線真正變化的地方。
+    </div>
+<div class="info-card">
+<div class="ic-title">落在 0.001 到 1 之間的點數</div>
+<div class="ic-row"><span class="ic-label">等距網格</span><span class="ic-value" id="w06gridLin">1／10</span></div><div class="ic-row"><span class="ic-label">對數網格</span><span class="ic-value" id="w06gridLog">6／10</span></div>
+</div>
+</div>
+</div><details class="qa-item reading-detail" id="w06-detail-log-grid"><summary>計算細節：最簡單的 Ridge 與係數保留比例</summary>
+<div class="detail-body">
+<p>沿用 Lasso 節「解釋二」的對角設計（<a href="#w06-detail-diag-closed-form">推導</a>），Ridge 解為 $\hat\beta_j(\lambda)=y_j/(1+\lambda)$，所以係數保留比例是</p>
+  $$r(\lambda)=\frac{\hat\beta_j(\lambda)}{y_j}=\frac1{1+\lambda}.$$
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<thead><tr><th>$\lambda$</th><th>係數保留比例 $r(\lambda)$</th></tr></thead>
+<tbody><tr><td>0</td><td>100%</td></tr><tr><td>0.1</td><td>90.9%</td></tr><tr><td>1</td><td>50.0%</td></tr><tr><td>10</td><td>9.1%</td></tr><tr><td>100</td><td>1.0%</td></tr></tbody>
+</table></div>
+<p>從 $\lambda=0$ 到 $1$，保留比例掉了一半；從 $\lambda=99$ 到 $100$，只從 1.00% 變成 0.99%。若搜尋範圍是 $[0.001,100]$，等距取 10 點時相鄰兩點差約 11.1，除了起點 0.001，其餘 9 點都落在 $\lambda\gt11$、保留比例不到 9% 的區域；對數等距時相鄰兩點的比值固定約 3.6，有 6 個點落在 $\lambda\lt1$。畫在 $\log\lambda$ 上，$r(\lambda)$ 是一條 S 形曲線，變化分散在好幾個數量級；畫在原尺度上，變化幾乎全擠在 $\lambda\lt10$ 的一小段。實際資料中，模型開始明顯改變的 $\lambda$ 事先不知道落在哪個數量級，所以在對數尺度上等距取點，讓每個數量級都分到點，也避免在模型幾乎不變的區域過度取樣。</p>
+</div></details>
 <details class="qa-item reading-detail" id="w06-detail-lab-lambda-1"><summary>完整實作：用 ElasticNetCV 選 $\lambda$ 並取最小 CV 誤差</summary>
 <div class="detail-body"><div class="deck-extra">
 <div class="dx-label">講義 06 · 用 ElasticNetCV 選 $\lambda$ 並取最小 CV 誤差</div>
@@ -1716,11 +1846,18 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <p>主成分迴歸（principal components regression, PCR）用的方向就是第 12 章的主成分：
   第一主成分是 $X$ 變異最大的方向，第二個是在跟第一個正交的條件下變異最大的方向，依此類推。</p>
 
-  $$Z_m = \sum_{j=1}^{p} \phi_{jm} X_j, \qquad
+  $$Z_m = \sum_{j=1}^{p} \Phi_{jm} X_j, \qquad
     y_i = \theta_0 + \sum_{m=1}^{M} \theta_m z_{im} + \varepsilon_i$$
 
   <p>$M$ 是調整參數，同樣用 CV 選。$X$ 滿欄秩且 $M=p$ 時 PCR 就退回最小平方（只是換了個座標）；
   $M$ 小的時候，被丟掉的那些低變異方向就是被收縮掉的部分。</p>
+<p>$Z_m=\sum_j\Phi_{jm}X_j$ 可以讀成<strong>投影</strong>：把第 $i$ 筆資料的 $p$ 個預測變數值 $(x_{i1},\ldots,x_{ip})$ 投影到方向 $(\Phi_{1m},\ldots,\Phi_{pm})$ 上，得到一個數，就是得分 $z_{im}=\sum_j\Phi_{jm}x_{ij}$。取 $M$ 個方向，就把每筆資料從 $p$ 個數換成 $M$ 個新特徵。PCA 的方向讓投影後的得分變異最大；這和「重建誤差最小」是同一件事，也和第 4 章 Fisher 判別的寫法形式類似，推導見本節末的<a href="#w06-detail-pca-objectives">收合區</a>。</p>
+<details class="qa-item reading-detail" id="w06-detail-projection"><summary>計算細節：得分是投影座標的條件</summary>
+<div class="detail-body">
+<p>中心化之後，若方向滿足 $\sum_{j=1}^p\Phi_{jm}^2=1$，$z_{im}=\sum_j\Phi_{jm}x_{ij}$ 就是第 $i$ 筆資料沿該方向的<strong>正交投影座標</strong>：投影點的第 $j$ 個座標是 $z_{im}\Phi_{jm}$，剩下的殘差 $x_{ij}-z_{im}\Phi_{jm}$ 與方向垂直，因為</p>
+  $$\sum_{j=1}^p\big(x_{ij}-z_{im}\Phi_{jm}\big)\Phi_{jm}=z_{im}-z_{im}\sum_j\Phi_{jm}^2=0 .$$
+  <p>方向長度不是 1 時，$z_{im}$ 只是一般的線性組合，數值會隨長度等比例縮放；這也是 PCA 要加上 $\sum_j\Phi_{jm}^2=1$ 的原因，否則把 $\Phi$ 放大就能讓變異無限變大。若 $M$ 個方向彼此正交（$\sum_j\Phi_{jm}\Phi_{jl}=0$，$m\ne l$），每筆資料在這 $M$ 個方向上的投影點為 $\sum_{m=1}^Mz_{im}\Phi_{jm}$，等於把 $p$ 維資料投影到 $M$ 維子空間。</p>
+</div></details>
 <div class="viz-layout" data-provenance="illustrative" data-source-note="依講義圖 6.14–6.15 的 PCR／PLS 方向差異示意">
 <div>
 <div class="viz-panel">
@@ -1766,6 +1903,62 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <p class="dx-note"><code>explained_variance_ratio_</code> 就是第 12 章的 PVE。累加起來可以回答「留幾個主成分才夠」。</p>
 <span class="dx-src" data-lab-cells="188" data-lab-ch="6">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div></div></details>
+<p>什麼資料對 PCR 有利？講義用一組模擬資料示範：<strong>$X$ 的前五個主成分包含關於 $Y$ 的全部資訊</strong>。此時 PCR 的測試 MSE 在 $M=5$ 有明顯的最小值；Ridge 與 Lasso 也都比最小平方好，但 PCR 和 Ridge 略勝 Lasso。要注意，只有前五個主成分和 $Y$ 有關，不代表只有前五個原始變數和 $Y$ 有關。</p>
+<details class="qa-item reading-detail" id="w06-detail-pcr-sim"><summary>計算細節：如何生成「訊號集中在前幾個主成分」的資料</summary>
+<div class="detail-body">
+<p>講義與課本只說明反應完全由前五個主成分決定，沒有列出全部設定。下面用講義的符號寫出一種符合這個描述的生成方式：先產生主成分得分，讓 $Y$ 只依賴前 5 個得分，再把得分「轉回」原始預測變數。</p>
+<p><strong>第一步：產生主成分得分。</strong>對 $i=1,\ldots,n$、$m=1,\ldots,p$，獨立抽 $z_{im}\sim N(0,\sigma_m^2)$，並取 $\sigma_1^2\gt\sigma_2^2\gt\cdots\gt\sigma_p^2\gt0$，讓前面的成分變異較大。</p>
+<p><strong>第二步：用正交方向產生原始預測變數。</strong>選一組彼此正交的單位方向 $\Phi_{jm}$，滿足 $\sum_{j=1}^p\Phi_{jm}\Phi_{jl}=1$（$m=l$）或 $0$（$m\ne l$），令</p>
+  $$x_{ij}=\sum_{m=1}^p z_{im}\Phi_{jm},\qquad j=1,\ldots,p .$$
+  <p>此時 $\operatorname{Cov}(X_j,X_k)=\sum_m\sigma_m^2\Phi_{jm}\Phi_{km}$，原始變數通常彼此相關；母體的主成分方向正是 $\Phi_{\cdot m}$，變異依序為 $\sigma_m^2$。正交性也讓得分可以反解回來：$z_{im}=\sum_j\Phi_{jm}x_{ij}$。</p>
+<p><strong>第三步：讓 $Y$ 只依賴前 5 個得分。</strong></p>
+  $$y_i=\theta_0+\sum_{m=1}^{5}\theta_m z_{im}+\varepsilon_i,\qquad \varepsilon_i\sim N(0,\sigma^2)\ \text{且與得分獨立}.$$
+  <p>前五個成分包含全部可預測的訊號，第 6 到第 $p$ 個成分與 $Y$ 沒有額外關係。代回 $z_{im}=\sum_j\Phi_{jm}x_{ij}$，就得到講義降維一節的係數關係：</p>
+  $$y_i=\theta_0+\sum_{j=1}^p\beta_jx_{ij}+\varepsilon_i,\qquad \beta_j=\sum_{m=1}^{5}\theta_m\Phi_{jm}.$$
+  <p>$\Phi_{jm}$ 一般不為 0，所以 $\beta_1,\ldots,\beta_p$ 通常全部不為 0。<strong>主成分空間裡的稀疏，不等於原始變數空間裡的稀疏。</strong></p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+<thead><tr><th>方法</th><th>在這個模擬中的情況</th></tr></thead>
+<tbody><tr><td>PCR（$M=5$）</td><td>保留全部有效訊號，丟掉其餘 $p-5$ 個無關方向</td></tr><tr><td>Ridge</td><td>把變異小的方向縮得多、變異大的方向縮得少（見下方對照），效果接近 PCR</td></tr><tr><td>Lasso</td><td>在原始變數上做選擇；真實的 $\beta_j$ 並不稀疏，它的長處用不上</td></tr></tbody>
+</table></div>
+<p>有限樣本中，對 $X$ 算出的樣本主成分只會近似 $\Phi_{\cdot m}$，所以 PCR 用前五個樣本主成分時，只能近似地抓到全部訊號。若要在樣本中精確做到，可以先對已產生的 $x_{ij}$ 做 PCA，再用樣本得分代入第三步產生 $y_i$。反過來，若真實係數在原始變數上就稀疏（例如只有兩個 $\beta_j$ 不為 0），Lasso 才會佔優。</p>
+</div></details>
+<p><strong>Ridge 是連續版的 PCR。</strong>把資料改用主成分得分當座標後，兩種方法的擬合值都能寫成各主成分方向的貢獻相加，差別只在每個方向乘上的收縮因子：PCR 對前 $M$ 個方向乘 1、其餘乘 0；Ridge 對第 $m$ 個方向乘 $d_m^2/(d_m^2+\lambda)$，其中 $d_m^2=\sum_iz_{im}^2$ 隨 $m$ 遞減。變異大的方向幾乎不縮，變異小的方向縮得最多，Ridge 因此像是把 PCR 的「留或丟」換成平滑的漸進收縮（ESL 第 3.4.1、3.5.1 節）。</p>
+<div class="viz-layout" data-provenance="illustrative" data-source-note="概念示意：自選 d_m² = 100·0.6^(m−1)，m = 1,…,10；對照 ESL 圖 3.17 的收縮因子">
+<div>
+<div class="viz-panel">
+<svg class="viz-svg" height="300" id="w06shrinkSvg"></svg>
+<div class="status-banner" id="w06shrinkStatus"><span class="status-icon">›</span><span class="status-text">λ 變大時，Ridge 的收縮因子從變異小的方向開始往 0 掉。</span></div>
+<div class="controls-bar"><label class="slider-label" style="margin-right:.4rem;">$\log_{10}\lambda$</label><input id="w06shrinkLam" max="30" min="-10" oninput="w06shrinkDraw()" step="1" style="flex:1 1 120px;max-width:180px;min-width:0;" type="range" value="10"/><label class="slider-label" style="margin:0 .4rem 0 .8rem;">$M$</label><input id="w06shrinkMSl" max="10" min="1" oninput="w06shrinkDraw()" step="1" style="flex:1 1 100px;max-width:150px;min-width:0;" type="range" value="4"/></div>
+<div class="viz-source"><span>概念示意</span></div>
+</div>
+</div>
+<div class="side-panel">
+<div class="info-card">
+<div class="ic-title">怎麼看</div>
+      橫軸是主成分編號 $m$，縱軸是該方向的收縮因子。<span style="color:var(--accent2);font-weight:700;">藍點</span>是 Ridge 的 $d_m^2/(d_m^2+\lambda)$，<span style="color:var(--accent);font-weight:700;">紅線</span>是 PCR 的 1／0 階梯。$d_m^2$ 為自選的遞減數值。
+    </div>
+<div class="info-card">
+<div class="ic-title">有效自由度</div>
+<div class="ic-row"><span class="ic-label">Ridge：$\sum_m d_m^2/(d_m^2+\lambda)$</span><span class="ic-value" id="w06shrinkDf">—</span></div><div class="ic-row"><span class="ic-label">PCR：保留的方向數 $M$</span><span class="ic-value" id="w06shrinkM">—</span></div>
+</div>
+</div>
+</div><details class="qa-item reading-detail" id="w06-detail-ridge-pcr"><summary>計算細節：Ridge 與 PCR 在主成分座標下的對照</summary>
+<div class="detail-body">
+<p>設 $x_{ij}$、$y_i$ 都已中心化，且 $n\gt p$、沒有完全共線。令 $\Phi_{jm}$（$m=1,\ldots,p$）是全部 $p$ 個主成分方向，彼此正交且長度為 1；得分 $z_{im}=\sum_j\Phi_{jm}x_{ij}$。主成分得分兩兩不相關：$\sum_iz_{im}z_{il}=0$（$m\ne l$），並記 $d_m^2=\sum_{i=1}^nz_{im}^2$，依 $m$ 遞減。$d_m^2$ 就是 $n$ 倍的第 $m$ 個特徵值 $\ell_m$（用 $\frac1n$ 的慣例，見本節末的<a href="#w06-detail-pca-objectives">收合區</a>）；模擬資料裡的母體變異 $\sigma_m^2$ 是它的母體對應。</p>
+<p><strong>換座標。</strong>任何線性預測都能改寫：令 $\theta_m=\sum_j\Phi_{jm}\beta_j$，因為方向正交，</p>
+  $$\sum_{j=1}^p\beta_jx_{ij}=\sum_{m=1}^p\theta_mz_{im},\qquad \sum_{j=1}^p\beta_j^2=\sum_{m=1}^p\theta_m^2 .$$
+  <p>第二式表示旋轉不改變係數的長度，所以 Ridge 的懲罰在新座標下形式不變。</p>
+<p><strong>Ridge 拆成 $p$ 個一維問題。</strong>展開平方，交叉項因得分正交而消失：</p>
+  $$\sum_i\Big(y_i-\sum_m\theta_mz_{im}\Big)^2+\lambda\sum_m\theta_m^2=\sum_iy_i^2+\sum_{m=1}^p\Big[(d_m^2+\lambda)\theta_m^2-2\theta_m\sum_iz_{im}y_i\Big].$$
+  <p>每個 $\theta_m$ 各自最小化方括號，得</p>
+  $$\hat\theta_m^{\mathrm{ridge}}=\frac{\sum_iz_{im}y_i}{d_m^2+\lambda}=\frac{d_m^2}{d_m^2+\lambda}\,\hat\theta_m,\qquad \hat\theta_m=\frac{\sum_iz_{im}y_i}{d_m^2},$$
+  <p>其中 $\hat\theta_m$ 是 $y$ 對第 $m$ 個得分做簡單迴歸的係數，也就是 PCR 在該方向的係數。兩種方法的擬合值因此是</p>
+  $$\hat y_i^{\mathrm{ridge}}=\sum_{m=1}^p\frac{d_m^2}{d_m^2+\lambda}\,\hat\theta_mz_{im},\qquad \hat y_i^{\mathrm{PCR}}=\sum_{m=1}^M\hat\theta_mz_{im}.$$
+  <p>PCR 的收縮因子是 1（$m\le M$）或 0（$m\gt M$）；Ridge 的收縮因子 $d_m^2/(d_m^2+\lambda)$ 介於 0 與 1 之間、隨 $m$ 遞減。原始係數用 $\beta_j=\sum_m\Phi_{jm}\theta_m$ 換回。</p>
+<p><strong>有效自由度。</strong>由上式，中心化後的斜率部分 $\hat y_i^{\mathrm{ridge}}=\sum_k h_{ik}(\lambda)y_k$，$h_{ik}(\lambda)=\sum_m z_{im}z_{km}/(d_m^2+\lambda)$。對角元素加總得</p>
+  $$\mathrm{df}(\lambda)=\sum_{i=1}^nh_{ii}(\lambda)=\sum_{m=1}^p\frac{d_m^2}{d_m^2+\lambda},$$
+  <p>從 $\lambda=0$ 時的 $p$ 平滑降到 $\lambda\to\infty$ 時的 0；PCR 用 $M$ 個方向時自由度就是 $M$。這就是前面 <a href="#w06-detail-primal-compute">GCV</a> 用到的 $\mathrm{df}(\lambda)$；加回截距那一份 $1/n$，才是留一捷徑裡的 $h_{ii}(\lambda)$。這套推導是 ESL 第 3.4.1 節（式 3.47）與第 3.5.1 節（圖 3.17）的純量寫法。</p>
+</div></details>
 <div class="qa-box">
 <div class="qa-head">觀念釐清</div>
 <details class="qa-item"><summary>Q：PCR 算不算變數選擇？</summary>
@@ -1775,7 +1968,7 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <div class="qa-a"><p>因為主成分是「變異最大的方向」，而變異數的大小完全取決於單位。</p><p>Credit 資料裡 <code>Limit</code> 的數值是幾千、<code>Cards</code> 是個位數。不標準化的話，第一主成分幾乎就等於 <code>Limit</code> 本身——這主要反映單位造成的尺度差異，不能直接當成重要性。第 12 章的 USArrests biplot 也呈現這個現象。</p></div>
 </details>
 </div>
-<p>PCR 的方向由 $X$ 決定，不使用 $y$；保留 $X$ 的高變異方向不保證保留最有用的預測訊號。成分數 $M$ 與原始變數數不同，少量成分仍可能用到許多原始欄位；滿欄秩且保留全部方向時，擬合值回到普通最小平方。</p><div class="quiz-box">
+<div class="quiz-box">
 <div class="quiz-label">QUIZ · PCR</div>
 <p>PCR 用 $M=2$ 個主成分。最終模型用到了幾個原始預測變數？</p>
 <div class="quiz-options" id="qPcrOptions"><div class="quiz-opt" data-correct="true" data-fb="對。PCR 不做變數選擇。這是它跟 Lasso 最重要的差別。它把 $p$ 維壓進 $M$ 維；一般仍可能需要全部原始欄位，個別 loading 則可以為零。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(A)</span> 可能仍用到全部 $p$ 個；$M$ 指成分數，並非原始變數數量</div><div class="quiz-opt" data-correct="false" data-fb="$M=2$ 指的是&lt;strong&gt;主成分&lt;/strong&gt;的個數，不是原始變數的個數。每個主成分的 loading 向量長度都是 $p$，而且通常每一項都不為零。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(B)</span> 2 個，就是 loadings 最大的那兩個</div><div class="quiz-opt" data-correct="false" data-fb="CV 選的是 $M$（主成分個數）。保留的 loading 決定哪些原始變數有貢獻；$M$ 不是所用原始變數的個數。" onclick="quizCheck('qPcr', this)"><span class="opt-letter">(C)</span> 不確定，要看 CV 選出多少</div></div>
@@ -1783,17 +1976,27 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 </div>
 <details class="qa-item reading-detail" id="w06-detail-whitening"><summary>計算細節：共變異數、SVD 與白化</summary>
 <div class="detail-body"><h3>從共變異數到白化</h3>
-<p>以下採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$。主成分方向是 $V$ 的欄，得分為 $XV=UD$；主成分方向滿足 $Sv=\lambda v$；最大變異與重建誤差的關係見下方證明。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
+<p>以下採每列一筆觀察的中心化矩陣 $X\in\mathbb R^{n\times p}$。若 $X=UDV^T$，則樣本共變異數 $S=X^TX/(n-1)=V\Lambda V^T$，其中 $\Lambda=D^2/(n-1)$（對角元素是特徵值 $\ell_j$，此處 $\Lambda$ 與懲罰參數 $\lambda$ 無關）。主成分方向是 $V$ 的欄，得分為 $XV=UD$；主成分方向滿足 $Sv=\ell v$；最大變異與重建誤差的關係見下方證明。講義也使用每欄一筆觀察的排列；對照公式時要連同矩陣一起轉置。</p>
 <p>保留正特徵值方向後，白化得分 $Z=XV\Lambda^{-1/2}$ 的樣本共變異數為單位矩陣。ZCA 白化再乘上 $V^T$ 回到原特徵座標；保留全部正秩方向且滿秩時為 $XV\Lambda^{-1/2}V^T$。白化會把低變異方向放大，因此小特徵值可能放大雜訊；普通 PCR 不需要白化，也不能把白化當成保證改善預測的步驟。</p>
-</div></details><details class="qa-item reading-detail" id="w06-detail-pca-objectives"><summary>計算細節：PCA 變異與重建目標</summary>
-<div class="detail-body"><h3>PCA 的最大變異與最小重建誤差</h3>
-<p>令 $X$ 是中心化、每列一筆觀察的矩陣，$S=X^TX/(n-1)$。第一方向解 $\max_{\|v\|=1}v^TSv$，前 $M$ 個方向組成 $V_M$，得分 $Z=XV_M$、重建 $\hat X=XV_MV_M^T$。同一組方向也最小化 $\|X-XVV^T\|_F^2$，其中 $V^TV=I_M$。這個目標只看 $X$，並沒有保證保留下來的方向最能預測 $y$。</p>
-<p>PCR 在得分上擬合 y，再把係數轉回 $\hat\beta=V_M\hat\theta$。保留所有正秩方向時，訓練擬合值與 OLS 相同；原始係數唯一性另需滿欄秩。主成分通常混合許多原始變數，但個別 loading 可為零，不能說每一欄必定有非零貢獻。</p>
-<details class="qa-item proof" id="w06proofPCA"><summary>證明：特徵方向、重建誤差與白化</summary>
+<details class="qa-item proof" id="w06proofWhiten"><summary>證明：白化得分的共變異數為單位矩陣</summary>
 <div class="qa-a">
-<p>對 $v^TSv-\lambda(v^Tv-1)$ 微分給 $Sv=\lambda v$。把單位 $v$ 寫在 $S$ 的正交特徵基底上，$v=\sum_jc_jv_j$、$\sum_jc_j^2=1$，則 $v^TSv=\sum_j\lambda_jc_j^2\le\lambda_1$，所以最大特徵值方向達到全域最大。</p>
-<p>對正交 $V$，投影與殘差正交，故 $\|X-XVV^T\|_F^2=\|X\|_F^2-\|XV\|_F^2=\|X\|_F^2-(n-1)\operatorname{tr}(V^TSV)$。取前 $M$ 個特徵方向最大化最後的 trace，所以同時最小化重建誤差。</p>
 <p>若 $X=UDV^T$，則 $S=VD^2V^T/(n-1)$，特徵值為 $d_j^2/(n-1)$，得分為 $UD$。只保留正特徵值，令 $Z=XV_r\Lambda_r^{-1/2}$，其樣本共變異數為 $\Lambda_r^{-1/2}V_r^TSV_r\Lambda_r^{-1/2}=I_r$。ZCA 的回投影 $ZV_r^T$ 在 $p$ 維中的共變異數為 $V_rV_r^T$，只有 $r=p$ 時才是 $I_p$。</p>
+</div></details>
+</div></details><details class="qa-item reading-detail" id="w06-detail-pca-objectives"><summary>計算細節：Rayleigh quotient、Fisher 與重建誤差</summary>
+<div class="detail-body"><h3>PCA 的最大變異與最小重建誤差</h3>
+<p>設 $x_{ij}$ 已中心化，樣本共變異數記為 $S_{jk}=\frac1n\sum_{i=1}^nx_{ij}x_{ik}$。講義附錄定義共變異數矩陣時用 $\frac1{n-1}$，推導最大變異時用 $\frac1n$；兩者只差常數倍，方向不變，本節用 $\frac1n$。方向 $(\Phi_{11},\ldots,\Phi_{p1})$ 上的得分 $z_{i1}=\sum_j\Phi_{j1}x_{ij}$，其樣本變異數除以方向長度的平方為</p>
+$$R(\Phi_{\cdot1})=\frac{\frac1n\sum_iz_{i1}^2}{\sum_j\Phi_{j1}^2}=\frac{\sum_{j=1}^p\sum_{k=1}^p\Phi_{j1}\Phi_{k1}S_{jk}}{\sum_{j=1}^p\Phi_{j1}^2}.$$
+<p>這個比值稱為 <strong>Rayleigh quotient</strong>。它不受方向長度影響，所以「在 $\sum_j\Phi_{j1}^2=1$ 下最大化得分變異」等於最大化 $R(\Phi_{\cdot1})$。最大值是共變異數的最大特徵值，達到最大值的方向就是第一主成分方向；第二主成分在與第一方向正交的條件下再最大化，依此類推。</p>
+<p><strong>與第 4 章 Fisher 判別的連結。</strong>第 4 章的 <a href="classification.html#w04fisher">Fisher 準則</a>同樣在找投影方向 $a$，最大化的是「投影後的類間散布 ÷ 類內散布」。兩者分子分母都是「方向的二次式」，Fisher 的比值稱為<strong>廣義</strong> Rayleigh quotient：分母換成類內散布，而不是方向的長度。PCA 不看類別，只問投影後整體散得多開；Fisher 問的是投影後類別分得多開。</p>
+<p><strong>最大變異等於最小重建誤差。</strong>用單位方向的投影點 $z_{i1}\Phi_{j1}$ 重建第 $i$ 筆資料，殘差與方向垂直（見本節前面的<a href="#w06-detail-projection">投影座標</a>），所以每筆資料都滿足畢氏定理：</p>
+$$\sum_{j=1}^px_{ij}^2=z_{i1}^2+\sum_{j=1}^p\big(x_{ij}-z_{i1}\Phi_{j1}\big)^2 .$$
+<p>對 $i$ 加總，左邊是固定的總平方和，與方向無關；右邊第一項是 $n$ 倍的得分變異，第二項是重建誤差。兩者相加為定值，所以讓得分變異最大的方向，必定讓重建誤差最小。取 $M$ 個正交方向時同理，總平方和等於 $M$ 個得分的平方和加上重建誤差。</p>
+<details class="qa-item proof" id="w06proofPCA"><summary>證明：Rayleigh quotient 的最大值是最大特徵值</summary>
+<div class="qa-a">
+<p>為了簡潔，暫時把 $\Phi_{j1}$ 寫成 $\Phi_j$。在 $\sum_j\Phi_j^2=1$ 下最大化 $\sum_j\sum_k\Phi_j\Phi_kS_{jk}$（講義附錄的作法）。引入 Lagrange 乘數 $\ell$，對 $\sum_j\sum_k\Phi_j\Phi_kS_{jk}-\ell\big(\sum_j\Phi_j^2-1\big)$ 對 $\Phi_j$ 偏微分設為 0：</p>
+$$\sum_{k=1}^pS_{jk}\Phi_k=\ell\,\Phi_j,\qquad j=1,\ldots,p .$$
+<p>所以極值方向必須是共變異數的特徵向量，$\ell$ 是對應的特徵值（這裡不用 $\lambda$，以免和懲罰參數混淆）。兩邊乘以 $\Phi_j$ 再對 $j$ 加總，得 $\sum_j\sum_k\Phi_j\Phi_kS_{jk}=\ell\sum_j\Phi_j^2=\ell$：在特徵向量上，得分變異恰好等於特徵值。因此最大值是最大特徵值 $\ell_1$，第一主成分就是對應的特徵向量。</p>
+<p>要確認它是全域最大，把任一單位方向寫成正交特徵向量 $v_{\cdot1},\ldots,v_{\cdot p}$ 的組合 $\Phi_j=\sum_rc_rv_{jr}$，$\sum_rc_r^2=1$。代入後得分變異為 $\sum_r\ell_rc_r^2\le\ell_1\sum_rc_r^2=\ell_1$。</p>
 </div></details>
 </div></details><details class="qa-item reading-detail" id="w06-detail-uncorrelated"><summary>延伸閱讀：正交、不相關與獨立</summary>
 <div class="detail-body"><h3>正交、不相關與獨立是三件事</h3>
@@ -1812,7 +2015,7 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <h3>白化是不是更好的 PCR？</h3>
 <p>不是。對相同的保留方向做無懲罰 OLS，各得分的縮放會被迴歸係數抵消，擬合不變；白化的定義與限制見上方<a href="#w06-detail-whitening">共變異數、SVD 與白化</a>。</p>
 <h3>解釋 $X$ 的變異，不是解釋 $y$ 的變異</h3>
-<p>Lab 的 <code>explained_variance_ratio_</code> 是 PCA 對 $X$ 的變異解釋比例；不能讀成 Salary 的解釋比例。少數 PC 捕捉大部分 $X$ 變異，仍可能漏掉對 $y$ 很重要的低變異方向。講義的模擬有一組把所有反應資訊放在前五個 PC，這才讓 $M=5$ 成為特別有效的結構；一般資料沒有這個保證。$M$ 的選擇應使用預測 CV，而非只以累積 $X$ 變異達到某百分比決定。</p>
+<p>Lab 的 <code>explained_variance_ratio_</code> 是 PCA 對 $X$ 的變異解釋比例；不能讀成 Salary 的解釋比例。少數 PC 捕捉大部分 $X$ 變異，仍可能漏掉對 $y$ 很重要的低變異方向。反例就是 PCR 節的<a href="#w06-detail-pcr-sim">前五個主成分模擬</a>：那組資料刻意把反應資訊全放在前五個主成分，一般資料沒有這個保證。$M$ 的選擇應使用預測 CV，而非只以累積 $X$ 變異達到某百分比決定。</p>
 <p>PCR 的原始係數限制在前 $M$ 個方向張成的子空間。它保留的是主成分方向，而沒有直接選出一組原始欄。Lab 將 <code>StandardScaler</code>、<code>PCA</code> 與 <code>LinearRegression</code> 放在同一 Pipeline 搜尋 $M$，讓每折重新學方向。只含截距的空模型可另行計算，不能把某個 API 的零成分是否可用當成空模型不存在的理由。</p>
 <p>對照：<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.decomposition.PCA.html">PCA API 與得分／解釋變異</a>、<a href="https://scikit-learn.org/1.6/auto_examples/cross_decomposition/plot_pcr_vs_pls.html">PCR 與 PLS 官方例子</a>；完整非監督式解讀見<a href="unsupervised_learning.html">非監督式學習章</a>。</p>
 <p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/22329/how-does-centering-the-data-get-rid-of-the-intercept-in-regression-and-pca">stats.stackexchange.com</a>。</p></div></details>
@@ -1825,9 +2028,13 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 
 <p>PCR 挑方向時<strong>完全沒看 $y$</strong>。若想讓 $y$ 也參與方向的選擇，可以使用 PLS。</p>
 <p>偏最小平方（partial least squares, PLS）修掉這一點：第一個方向的權重直接取
-  $\phi_{j1} \propto$ 每個 $X_j$ 與 $y$ 的簡單線性迴歸係數，
+  $\Phi_{j1} \propto$ 每個 $X_j$ 與 $y$ 的簡單線性迴歸係數，
   也就是<strong>跟 $y$ 相關性愈強的變數，權重愈大</strong>。
   取完第一個方向後，把各變數對它迴歸取殘差，再在殘差上重複同樣的步驟得到第二個方向。</p>
+<p>兩種方法的差別，寫成第一個方向的目標式最清楚。設各 $X_j$ 已標準化，方向長度固定為 1：</p>
+  $$\text{PCR：}\ \max_{\sum_j\Phi_{j1}^2=1}\ \operatorname{Var}\Big(\sum_{j=1}^p\Phi_{j1}X_j\Big),\qquad
+    \text{PLS：}\ \max_{\sum_j\Phi_{j1}^2=1}\ \operatorname{Corr}^2\Big(Y,\sum_{j=1}^p\Phi_{j1}X_j\Big)\operatorname{Var}\Big(\sum_{j=1}^p\Phi_{j1}X_j\Big).$$
+  <p>PCR 只要新特徵散得開；PLS 還要求它和 $Y$ 有關，化簡後等於找與 $Y$ 共變異平方最大的線性組合。上面講義用簡單迴歸係數當權重的作法，正好就是這個最佳化的解；推導與後續方向的算法見本節末的<a href="#w06-detail-pls-covariance">收合區</a>。</p>
 <p>上一節的互動示範了這個差別：拖滑桿改變 $y$ 的方向，PLS1 跟著轉、PC1 不動。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
 <thead><tr><th></th><th>方向怎麼挑</th><th>有沒有用到 $y$</th><th>做變數選擇嗎</th><th>何時較好</th></tr></thead>
@@ -1849,27 +2056,43 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <p class="dx-note"><code>PLSRegression</code> 的 <code>n_components</code> 跟 PCR 的 <code>n_components</code> 是同一個角色的調整參數，一樣用 CV 選。注意它預設 <code>scale=True</code>，已經幫你標準化了。</p>
 <span class="dx-src" data-lab-cells="192,194" data-lab-ch="6">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch06-varselect-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch06-varselect-lab-zh.ipynb</code></a></span>
 </div></div></details>
-<p>PLS 用 $X$ 與 $y$ 的共變動挑方向，所以 $y$ 改變時方向也可能改變。它仍然是降維後迴歸，不是 Lasso 那種原始變數選擇；成分數和前處理一樣要在訓練折內選定，沒有一致勝過 PCR 的保證。</p><div class="quiz-box">
+<p>PLS 的方向用到 $y$，所以成分數 $M$ 與標準化都要在訓練折內選定，否則驗證誤差會過度樂觀。</p><div class="quiz-box">
 <div class="quiz-label">QUIZ · PLS</div>
 <p>PLS 相對於 PCR 的差別是什麼？</p>
 <div class="quiz-options" id="qPlsOptions"><div class="quiz-opt" data-correct="true" data-fb="對。這是「監督式降維」對「非監督式降維」。也因為方向是用 $y$ 估出來的，PLS 的變異比 PCR 大，兩者實務上常表現相近。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(A)</span> 挑方向時用到了 $y$，所以方向會跟著 $y$ 轉；但降維與不做變數選擇這兩點跟 PCR 一樣</div><div class="quiz-opt" data-correct="false" data-fb="不會。歸零是 &lt;strong&gt;Lasso&lt;/strong&gt; 的性質。PLS 的每個成分仍然是全部 $p$ 個變數的線性組合。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(B)</span> PLS 會把不重要的變數歸零，所以比 PCR 好解釋</div><div class="quiz-opt" data-correct="false" data-fb="兩者都需要，理由相同（方向的定義對單位敏感）。&lt;code&gt;PLSRegression&lt;/code&gt; 只是預設 &lt;code&gt;scale=True&lt;/code&gt; 幫你做了。" onclick="quizCheck('qPls', this)"><span class="opt-letter">(C)</span> PLS 不需要標準化，PCR 需要</div></div>
 <div class="quiz-feedback" id="qPlsFeedback"></div>
 </div>
-<details class="qa-item reading-detail" id="w06-detail-pls-algorithm"><summary>延伸閱讀：PLS 的後續方向與新資料預測</summary>
-<div class="detail-body"><h3>PLS1：從方向到可用於新資料的預測</h3>
-<p>講義只說「取殘差後重複」：第一個方向 $w_1\propto X^\top y$ 算出得分 $t_1=Xw_1$ 後，把 $X$ 與 $y$ 中能由 $t_1$ 解釋的部分扣掉，在殘差上用同樣方式找第二個方向，依此類推。預測新資料時，沿用訓練時估好的平均、尺度與各步方向，不能用新資料重算方向。完整遞迴見 ESL 第 3.5 節。</p>
-</div></details><details class="qa-item reading-detail" id="w06-detail-pls-covariance"><summary>計算細節：PLS 的共變異目標</summary>
-<div class="detail-body"><h3>PLS最大化共變異，並非直接最大化相關</h3>
-<p>中心化後，第一PLS方向在單位長度$w$下最大化 $\operatorname{Cov}(Xw,y)$。由 $\operatorname{Cov}(Xw,y)=\operatorname{Corr}(Xw,y)\operatorname{SD}(Xw)\operatorname{SD}(y)$，PLS同時考慮與$y$的關係及得分的變動量。OLS則最小化殘差平方和，兩個目標不能混寫。</p>
-<p>單變數OLS斜率為 $\operatorname{Corr}(X_j,y)s_y/s_{X_j}$。只有先把每個$X_j$調成相同標準差，這些斜率才與相關係數使用共同倍數。因此講義PLS的「權重與相關成比例」須連同標準化條件閱讀。</p>
-<details class="qa-item proof" id="w06proofPLSCov"><summary>證明：第一PLS方向與相關係數量尺</summary>
+<details class="qa-item reading-detail" id="w06-detail-pls-covariance"><summary>計算細節：PLS 目標式與講義權重為何等價</summary>
+<div class="detail-body"><h3>第一個 PLS 方向：最大化共變異</h3>
+<p>設每個 $x_{ij}$ 已中心化並標準化（$\frac1n\sum_ix_{ij}^2=1$），$y_i$ 已中心化。記 $c_j=\operatorname{Cov}(X_j,Y)=\frac1n\sum_ix_{ij}y_i$。新特徵 $Z=\sum_j\Phi_jX_j$ 與 $Y$ 的共變異是 $\operatorname{Cov}(Y,Z)=\sum_j\Phi_jc_j$，所以第一個 PLS 方向解</p>
+$$\max_{\sum_j\Phi_j^2=1}\Big(\sum_{j=1}^p\Phi_jc_j\Big)^2\quad\Longrightarrow\quad \Phi_{j1}=\frac{c_j}{\sqrt{\sum_kc_k^2}}\ \ (\text{正負號皆可}).$$
+<p>另一方面，$Y$ 對單一 $X_j$ 做簡單迴歸的斜率是 $\operatorname{Cov}(X_j,Y)/\operatorname{Var}(X_j)$。標準化後 $\operatorname{Var}(X_j)=1$，斜率正好是 $c_j=\operatorname{Corr}(X_j,Y)\operatorname{SD}(Y)$。因此講義「用簡單迴歸係數當權重」與最佳化的解只差一個正規化常數，權重也與相關係數成正比。</p>
+<p>注意目標是共變異而不是相關：$\operatorname{Cov}(Y,Z)=\operatorname{Corr}(Y,Z)\operatorname{SD}(Z)\operatorname{SD}(Y)$，PLS 同時考慮與 $Y$ 的關係及新特徵的變動量。若沒有先標準化，各斜率是 $\operatorname{Corr}(X_j,Y)\,\operatorname{SD}(Y)/\operatorname{SD}(X_j)$，不再與相關係數共用同一個倍數，所以講義的「權重與相關成比例」要連同標準化條件一起讀。</p>
+<details class="qa-item proof" id="w06proofPLSCov"><summary>證明：Cauchy–Schwarz 給出第一 PLS 方向</summary>
 <div class="qa-a">
-<p>令$c=X^\top y$，中心化後的共變異為 $w^Tc/(n-1)$。Cauchy–Schwarz給 $w^Tc\le\|w\|\|c\|=\|c\|$，$c\ne0$時等號在$w=c/\|c\|$達到，便是前述第一方向。單變數斜率為 $S_{xy}/S_{xx}$；再以相關係數 $S_{xy}/\sqrt{S_{xx}S_{yy}}$ 代入，即得 $r\,s_y/s_x$。</p>
-</div></details><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/32464/how-does-the-correlation-coefficient-differ-from-regression-slope">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/179733/theory-behind-partial-least-squares-regression">stats.stackexchange.com</a>。</p></div></details>
+<p>由 Cauchy–Schwarz 不等式，</p>
+$$\Big(\sum_{j=1}^p\Phi_jc_j\Big)^2\le\Big(\sum_{j=1}^p\Phi_j^2\Big)\Big(\sum_{j=1}^pc_j^2\Big)=\sum_{j=1}^pc_j^2 .$$
+<p>只要不是所有 $c_j$ 都為 0，等號成立若且唯若 $\Phi_j$ 與 $c_j$ 成比例，再由 $\sum_j\Phi_j^2=1$ 決定比例常數，就得到上面的 $\Phi_{j1}$。簡單迴歸斜率 $\hat b_j=\sum_ix_{ij}y_i/\sum_ix_{ij}^2$；代入相關係數 $r_j=\sum_ix_{ij}y_i/\sqrt{\sum_ix_{ij}^2\sum_iy_i^2}$，即得 $\hat b_j=r_j\,\mathrm{SD}(Y)/\mathrm{SD}(X_j)$。</p>
+</div></details>
+<p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/32464/how-does-the-correlation-coefficient-differ-from-regression-slope">stats.stackexchange.com</a>。</p><p class="source-links">講義延伸來源：<a href="https://stats.stackexchange.com/questions/179733/theory-behind-partial-least-squares-regression">stats.stackexchange.com</a>。</p></div></details><details class="qa-item reading-detail" id="w06-detail-pls-algorithm"><summary>計算細節：PLS 的殘差化算法與新資料預測</summary>
+<div class="detail-body"><h3>後續方向：殘差化後重複（講義的算法）</h3>
+<p>講義說後續方向是「取殘差後重複」。用純量寫出來（ESL 第 3.5.2 節的 PLS 演算法），每一輪都是「最大化共變異 → 從 $X$ 扣掉已找到的方向 → 重複」：</p>
+<ol>
+<li><strong>第一個方向。</strong>$\Phi_{j1}=\sum_ix_{ij}y_i$（等於 $nc_j$；這裡不正規化成單位長度，方向乘上常數不影響最後的擬合值），得分 $z_{i1}=\sum_j\Phi_{j1}x_{ij}$。</li>
+<li><strong>殘差化（deflation）。</strong>把每個 $X_j$ 對 $Z_1$ 做簡單迴歸，留下 $Z_1$ 解釋不了的部分：
+  $$x_{ij}^{(2)}=x_{ij}-a_{j1}z_{i1},\qquad a_{j1}=\frac{\sum_iz_{i1}x_{ij}}{\sum_iz_{i1}^2}.$$
+  由迴歸殘差的性質，$\sum_iz_{i1}x_{ij}^{(2)}=0$：每個殘差都與 $Z_1$ 正交。</li>
+<li><strong>第二個方向。</strong>在殘差上用同樣的規則：$\Phi_{j2}=\sum_ix_{ij}^{(2)}y_i$，$z_{i2}=\sum_j\Phi_{j2}x_{ij}^{(2)}$。因為每個 $x_{ij}^{(2)}$ 都與 $Z_1$ 正交，$\sum_iz_{i1}z_{i2}=\sum_j\Phi_{j2}\sum_iz_{i1}x_{ij}^{(2)}=0$，所以 $Z_2$ 與 $Z_1$ 正交，不會重複第一個方向的資訊。</li>
+<li><strong>重複到 $M$ 個方向</strong>，最後做最小平方 $y_i=\theta_0+\sum_{m=1}^M\theta_mz_{im}+\varepsilon_i$。得分彼此正交，所以 $\hat\theta_m=\sum_iz_{im}y_i/\sum_iz_{im}^2$。</li>
+</ol>
+<p>把每一輪的方向換回原始變數的權重 $\alpha_j$（$Z_m=\sum_j\alpha_jX_j$，與上面作用在殘差上的 $\Phi_{jm}$ 不是同一組數字），第 $m$ 個方向等於在 $\sum_j\alpha_j^2=1$ 且「與前面的得分都正交」的條件下，最大化 $\operatorname{Cov}^2\big(Y,\sum_j\alpha_jX_j\big)$（ESL 第 3.5.2 節）。所以整個演算法就是把上面的共變異目標一輪一輪地解下去。</p>
+<p>兩個細節。第一，殘差化後的 $x_{ij}^{(2)}$ 不再有單位變異數，此時 $Y$ 對它做簡單迴歸的斜率是 $\operatorname{Cov}/\operatorname{Var}$，不再等於共變異。要維持與最佳化的等價，權重應該用殘差與 $Y$ 的共變異（如上），或明確說明每一輪重新標準化並採用哪一種 PLS 版本。第二，有些演算法同時把 $y_i$ 換成殘差 $y_i-\hat y_i^{(m-1)}$。因為 $x_{ij}^{(m)}$ 與前面所有得分正交，而 $\hat y_i^{(m-1)}$ 是那些得分的線性組合，$\sum_ix_{ij}^{(m)}y_i=\sum_ix_{ij}^{(m)}\big(y_i-\hat y_i^{(m-1)}\big)$，兩種做法得到相同的方向。</p>
+<p>預測新資料時，沿用訓練時估好的平均、尺度、各輪權重 $\Phi_{jm}$ 與殘差化係數 $a_{jm}$：新觀測依序算 $z_{\mathrm{new},m}=\sum_j\Phi_{jm}x_{\mathrm{new},j}^{(m)}$，再更新 $x_{\mathrm{new},j}^{(m+1)}=x_{\mathrm{new},j}^{(m)}-a_{jm}z_{\mathrm{new},m}$，不能用新資料重算方向。</p>
+</div></details>
 <details class="qa-item reading-detail" id="w06-detail-pls-reading"><summary>PLS 與 OLS：看了 $y$ 的方向是否一定較好？</summary>
 <div class="detail-body">
-<p>PLS 的第一方向由 $X^\top y$ 決定，因此需要已觀測的訓練反應；PCR 的方向只看 $X$。講義用「與 $y$ 關係愈強，權重愈大」解釋第一方向，這需要先標準化（見<a href="#w06-detail-pls-covariance">PLS 的共變異目標</a>）。</p>
-<p>PLS 第一方向不等於直接求 OLS 的係數：OLS 用 $X^\top X$ 的逆（或廣義逆）處理變數之間的相關，PLS 從 $X^\top y$ 的方向開始，再逐步消去已解釋的成分。對完整秩方向使用足夠多成分，PLS 可重現 OLS 擬合；保留少數方向才施加低維限制。PLS 會形成新方向並逐步扣除已解釋的部分，不能只把各欄單變數回歸的預測值相加。</p>
+<p>PLS 的方向需要已觀測的訓練反應，PCR 的方向只看 $X$（第一方向的推導見<a href="#w06-detail-pls-covariance">PLS 的共變異目標</a>）。</p>
+<p>PLS 第一方向不等於直接求 OLS 的係數：OLS 同時解 $p$ 條正規方程，一次處理所有變數之間的相關；PLS 從各個 $\operatorname{Cov}(X_j,Y)$ 組成的方向開始，再逐步消去已解釋的成分。對完整秩方向使用足夠多成分，PLS 可重現 OLS 擬合；保留少數方向才施加低維限制。PLS 會形成新方向並逐步扣除已解釋的部分，不能只把各欄單變數回歸的預測值相加。</p>
 <p>「看了 $y$」可避免 PCR 忽略低變異預測方向，但也可能把訓練雜訊當訊號。增加 $M$ 仍有偏差與變異取捨，所以 Lab 對 <code>PLSRegression(n_components=M)</code> 做 CV，而不是預設 $M$ 越大越好。其 <code>scale=True</code> 預設會在擬合時縮放 $X$ 與 $y$，若另加 StandardScaler 要分清每一步處理什麼；預測會回到 $y$ 的原量尺。</p>
 <p>比較 PCR、PLS、Ridge 或 Lasso 時，使用同樣資料、同樣保留折與相同 MSE 定義。講義圖中的方向關係和 Lab 的 Hitters 最佳成分數，不構成某方法在所有資料上比較好的證據。</p>
 <p>來源：<a href="https://scikit-learn.org/1.6/modules/cross_decomposition.html">PLS 官方方法說明</a>、<a href="https://scikit-learn.org/1.6/modules/generated/sklearn.cross_decomposition.PLSRegression.html">PLSRegression API</a>。</p>
@@ -1961,13 +2184,13 @@ $$\frac{\mathrm{RSS}}{2n}+\alpha\rho\|\beta\|_1+\frac{\alpha(1-\rho)}2\|\beta\|_
 <h3>三類工具對照</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
 <thead><tr><th></th><th>做什麼</th><th>調整參數</th><th>會歸零嗎</th><th>運算成本</th><th>何時最適合</th></tr></thead>
-<tbody><tr><td>最佳子集</td><td>搜遍 $2^p$ 個模型</td><td>模型大小 $k$</td><td>會（沒選就是 0）</td><td>$2^p$，$p&gt;40$ 不可行</td><td>$p$ 很小</td></tr><tr><td>Forward／backward</td><td>貪婪地一次加／減一個</td><td>模型大小 $k$</td><td>會</td><td>$1+p(p+1)/2$</td><td>$p$ 中等</td></tr><tr><td>Ridge（L2）</td><td>全部係數一起收縮</td><td>$\lambda$</td><td>通常不會；不是變數選擇方法</td><td>很快，有封閉解</td><td>很多變數都有小貢獻</td></tr><tr><td>Lasso（L1）</td><td>收縮 ＋ 部分歸零</td><td>$\lambda$</td><td><strong>會</strong></td><td>很快（座標下降）</td><td>真實係數稀疏</td></tr><tr><td>PCR</td><td>換成 $M$ 個非監督式方向</td><td>$M$</td><td>不選原始欄，個別 loading 可為零</td><td>很快</td><td>$X$ 的大變異方向跟 $y$ 有關</td></tr><tr><td>PLS</td><td>換成 $M$ 個監督式方向</td><td>$M$</td><td>不會</td><td>很快</td><td>$X$ 的大變異方向跟 $y$ 無關</td></tr></tbody>
+<tbody><tr><td>最佳子集</td><td>搜遍 $2^p$ 個模型</td><td>模型大小 $k$</td><td>會（沒選就是 0）</td><td>$2^p$，窮舉在 $p&gt;40$ 左右不可行</td><td>$p$ 很小</td></tr><tr><td>Forward／backward</td><td>貪婪地一次加／減一個</td><td>模型大小 $k$</td><td>會</td><td>$1+p(p+1)/2$</td><td>$p$ 中等</td></tr><tr><td>Ridge（L2）</td><td>全部係數一起收縮</td><td>$\lambda$</td><td>通常不會；不是變數選擇方法</td><td>很快，有封閉解</td><td>很多變數都有小貢獻</td></tr><tr><td>Lasso（L1）</td><td>收縮 ＋ 部分歸零</td><td>$\lambda$</td><td><strong>會</strong></td><td>很快（座標下降）</td><td>真實係數稀疏</td></tr><tr><td>PCR</td><td>換成 $M$ 個非監督式方向</td><td>$M$</td><td>不選原始欄，個別 loading 可為零</td><td>很快</td><td>$X$ 的大變異方向跟 $y$ 有關</td></tr><tr><td>PLS</td><td>換成 $M$ 個監督式方向</td><td>$M$</td><td>不選原始欄，個別 loading 可為零</td><td>很快</td><td>$X$ 的大變異方向跟 $y$ 無關</td></tr></tbody>
 </table></div>
 <details class="qa-item reading-detail" id="w06-detail-formula-reference"><summary>計算細節：完整公式速查</summary>
 <div class="detail-body"><h3>公式速查</h3>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
 <thead><tr><th>名稱</th><th>式子</th><th>備註</th></tr></thead>
-<tbody><tr><td>$C_p$</td><td>$\frac{1}{n}(\mathrm{RSS} + 2d\hat\sigma^2)$</td><td>式 6.2</td></tr><tr><td>AIC</td><td>$-2\hat\ell+2k$</td><td>最大概似版本；共同固定誤差變異數時與 $C_p$ 型排序一致</td></tr><tr><td>BIC</td><td>$\frac{1}{n}(\mathrm{RSS} + \log(n)\,d\hat\sigma^2)$</td><td>式 6.3，$\log n &gt; 2$ 時罰得比 $C_p$ 重</td></tr><tr><td>調整後 $R^2$</td><td>$1 - \frac{\mathrm{RSS}/(n-d-1)}{\mathrm{TSS}/(n-1)}$</td><td>式 6.4</td></tr><tr><td>Ridge</td><td>$\mathrm{RSS} + \lambda\sum_j \beta_j^2$</td><td>式 6.5，等價於 $\|\beta\|_2^2 \le s$</td></tr><tr><td>Lasso</td><td>$\mathrm{RSS} + \lambda\sum_j |\beta_j|$</td><td>式 6.7，等價於 $\|\beta\|_1 \le s$</td></tr><tr><td>主成分方向</td><td>$Z_m = \sum_j \phi_{jm} X_j$</td><td>式 6.16，$\phi$ 由 $X$ 的變異決定</td></tr></tbody>
+<tbody><tr><td>$C_p$</td><td>$\frac{1}{n}(\mathrm{RSS} + 2d\hat\sigma^2)$</td><td>式 6.2</td></tr><tr><td>AIC</td><td>$-2\hat\ell+2k$</td><td>最大概似版本；共同固定誤差變異數時與 $C_p$ 型排序一致</td></tr><tr><td>BIC</td><td>$\frac{1}{n}(\mathrm{RSS} + \log(n)\,d\hat\sigma^2)$</td><td>式 6.3，$\log n &gt; 2$ 時罰得比 $C_p$ 重</td></tr><tr><td>調整後 $R^2$</td><td>$1 - \frac{\mathrm{RSS}/(n-d-1)}{\mathrm{TSS}/(n-1)}$</td><td>式 6.4</td></tr><tr><td>Ridge</td><td>$\mathrm{RSS} + \lambda\sum_j \beta_j^2$</td><td>式 6.5，對應限制式 $\sum_j\beta_j^2 \le s$（見 Lasso 節的限制式與懲罰式）</td></tr><tr><td>Lasso</td><td>$\mathrm{RSS} + \lambda\sum_j |\beta_j|$</td><td>式 6.7，對應限制式 $\sum_j|\beta_j| \le s$</td></tr><tr><td>主成分方向</td><td>$Z_m = \sum_j \Phi_{jm} X_j$</td><td>式 6.16，$\Phi$ 由 $X$ 的變異決定</td></tr></tbody>
 </table></div>
 </div></details><div class="info-box">
 <span class="info-label">四個一定要記住的觀念</span>
@@ -2815,20 +3038,24 @@ function w06geomRss(b) {
   const d0 = b[0] - w06geomBhat[0], d1 = b[1] - w06geomBhat[1];
   return w06geomA[0][0] * d0 * d0 + 2 * w06geomA[0][1] * d0 * d1 + w06geomA[1][1] * d1 * d1;
 }
-function w06geomSolveL1(s) {
+function w06geomQuad(b, bh, A) {
+  const d0 = b[0] - bh[0], d1 = b[1] - bh[1];
+  return A[0][0] * d0 * d0 + 2 * A[0][1] * d0 * d1 + A[1][1] * d1 * d1;
+}
+function w06geomSolveL1(s, bh = w06geomBhat, A = w06geomA) {
   /* 在菱形四條邊上做一維二次最小化；端點由 clamp 精確納入。 */
   let best = null, bestV = Infinity;
   [-1, 1].forEach(a => [-1, 1].forEach(b => {
     const c = [0, b * s], v = [a, -b];
-    const d = [c[0] - w06geomBhat[0], c[1] - w06geomBhat[1]];
-    const Av = [w06geomA[0][0] * v[0] + w06geomA[0][1] * v[1],
-                w06geomA[1][0] * v[0] + w06geomA[1][1] * v[1]];
-    const Ad = [w06geomA[0][0] * d[0] + w06geomA[0][1] * d[1],
-                w06geomA[1][0] * d[0] + w06geomA[1][1] * d[1]];
+    const d = [c[0] - bh[0], c[1] - bh[1]];
+    const Av = [A[0][0] * v[0] + A[0][1] * v[1],
+                A[1][0] * v[0] + A[1][1] * v[1]];
+    const Ad = [A[0][0] * d[0] + A[0][1] * d[1],
+                A[1][0] * d[0] + A[1][1] * d[1]];
     const den = v[0] * Av[0] + v[1] * Av[1];
     const t = Math.max(0, Math.min(s, -(v[0] * Ad[0] + v[1] * Ad[1]) / den));
     const cand = [c[0] + t * v[0], c[1] + t * v[1]];
-    const value = w06geomRss(cand);
+    const value = w06geomQuad(cand, bh, A);
     if (value < bestV) { bestV = value; best = cand; }
   }));
   return best;
@@ -2911,6 +3138,164 @@ function w06geomDraw() {
     + (zeros ? '<strong>有 ' + zeros + ' 個係數剛好是 0。</strong>'
              : '兩個係數都不是 0'
                + (w06geomL1 ? '——把 s 再調小一點試試。' : '（L2 幾乎不會歸零）。')));
+}
+
+/* 新增四張圖共用：裁在繪圖區內、圖例文字（.axlab/.fit 的 CSS 會蓋掉顏色屬性，改用 style） */
+function w06clip(svc, id, g) {
+  const clip = svc.add('clipPath', { id: id }, svc.add('defs'));
+  svc.add('rect', { x: svc.pad.l, y: svc.pad.t, width: svc.iw, height: svc.ih }, clip);
+  g.setAttribute('clip-path', 'url(#' + id + ')');
+  return g;
+}
+function w06leg(svc, py, str, color, parent) {
+  const n = svc.add('text', { cls: 'vlab', x: svc.W - 20, y: py, 'text-anchor': 'end', style: 'fill:' + color }, parent);
+  n.textContent = str;
+  return n;
+}
+/* ---------- P05 尖角的法線扇形（圓形等高線、預算 s = 1） ---------- */
+let w06fanL1 = true;
+function w06fanToggle() {
+  w06fanL1 = !w06fanL1;
+  $('w06fanBtn').textContent = w06fanL1 ? '切換為 L2（Ridge）' : '切換為 L1（Lasso）';
+  w06fanDraw();
+}
+function w06fanDraw() {
+  const b2 = parseInt($('w06fanSl').value, 10) / 100, bh = [2, b2];
+  const I = [[1, 0], [0, 1]];
+  let sol;
+  if (w06fanL1) {
+    sol = Math.abs(bh[0]) + Math.abs(bh[1]) <= 1 ? bh.slice() : w06geomSolveL1(1, bh, I);
+  } else {
+    const r = Math.hypot(bh[0], bh[1]);
+    sol = r <= 1 ? bh.slice() : [bh[0] / r, bh[1] / r];
+  }
+  const inFan = Math.abs(b2) <= bh[0] - 1 + 1e-12;
+  const svc = HC.svg('w06fanSvg', { xd: [-1.4, 3.985], yd: [-1.5, 1.5], h: 360, w: 620 });
+  svc.clear();
+  svc.grid(6, 6, { xtitle: 'β₁', ytitle: 'β₂', xdec: 1, ydec: 1 });
+  const g = w06clip(svc, 'w06fanClip', svc.layer('geom'));
+  const pts = q => q.map(v => svc.X(v[0]) + ',' + svc.Y(v[1])).join(' ');
+  if (w06fanL1) {
+    svc.add('polygon', { points: pts([[1, 1e-9], [2.5, 1.5], [3.985, 1.5], [3.985, -1.5], [2.5, -1.5]]),
+                         fill: 'rgba(243,156,18,.18)', stroke: 'none' }, g);
+    svc.seg(1, 0, 2.5, 1.5, { cls: 'w06fanEdge', stroke: '#e67e22', sw: 1.8, dash: '6 4' }, g);
+    svc.seg(1, 0, 2.5, -1.5, { cls: 'w06fanEdge', stroke: '#e67e22', sw: 1.8, dash: '6 4' }, g);
+    svc.add('text', { cls: 'vlab', x: svc.X(3.3), y: svc.Y(1.22), 'text-anchor': 'middle', style: 'fill:#b9770e' }, g).textContent = '法線扇形';
+    svc.add('polygon', { points: pts([[1, 0], [0, 1], [-1, 0], [0, -1]]),
+                         fill: 'rgba(44,62,122,.16)', stroke: 'var(--accent2)', 'stroke-width': 2 }, g);
+    svc.txt(1, 0, 'P', { dx: -10, dy: -8, fill: 'var(--accent2)' }, g);
+  } else {
+    svc.add('ellipse', { cx: svc.X(0), cy: svc.Y(0), rx: svc.X(1) - svc.X(0), ry: svc.Y(0) - svc.Y(1),
+                         fill: 'rgba(44,62,122,.16)', stroke: 'var(--accent2)', 'stroke-width': 2 }, g);
+    svc.seg(0, 0, bh[0], bh[1], { stroke: 'var(--muted)', sw: 1.2, dash: '4 4' }, g);
+  }
+  const rSol = Math.hypot(sol[0] - bh[0], sol[1] - bh[1]);
+  [0.35, 0.7, rSol, rSol + 0.45].forEach(r => {
+    if (r <= 1e-9) return;
+    const isSol = Math.abs(r - rSol) < 1e-12;
+    svc.add('ellipse', { cx: svc.X(bh[0]), cy: svc.Y(bh[1]), rx: svc.X(r) - svc.X(0), ry: svc.Y(0) - svc.Y(r),
+                         fill: 'none', stroke: isSol ? 'var(--accent)' : 'rgba(192,57,43,.32)',
+                         'stroke-width': isSol ? 2.4 : 1.1 }, g);
+  });
+  svc.dot(bh[0], bh[1], { r: 5, fill: 'var(--accent)', stroke: '#fff', sw: 1.5 }, g);
+  svc.txt(bh[0], bh[1], 'β̂ (OLS)', { dy: -12, fill: 'var(--accent)' }, g);
+  svc.dot(sol[0], sol[1], { r: 6.5, fill: 'var(--accent3)', stroke: '#fff', sw: 2 }, g);
+  $('w06fanOls').textContent = '(2, ' + HC.fmt(b2, 2) + ')';
+  $('w06fanSol').textContent = '(' + HC.fmt(sol[0], 3) + ', ' + HC.fmt(sol[1], 3) + ')';
+  $('w06fanIn').textContent = w06fanL1 ? (inFan ? '是' : '否') : '（Ridge 沒有扇形）';
+  if (w06fanL1) {
+    setStatus('w06fanStatus', inFan
+      ? 'OLS 解 (2, ' + HC.fmt(b2, 2) + ')：第二座標的絕對值 ≤ 2 − 1 = 1，落在扇形內 → Lasso 解停在尖角 P = (1, 0)，<strong>β₂ 剛好是 0</strong>。'
+      : 'OLS 解 (2, ' + HC.fmt(b2, 2) + ')：第二座標的絕對值 > 1，離開扇形 → 解滑到菱形的邊上，兩個係數都不是 0。');
+  } else {
+    setStatus('w06fanStatus', 'Ridge 把 OLS 點沿半徑拉回圓上，解為 (' + HC.fmt(sol[0], 3) + ', '
+      + HC.fmt(sol[1], 3) + ')。' + (b2 === 0 ? 'OLS 的第二座標為 0 時，解才落在座標軸上。' : '只要 OLS 的第二座標不是 0，β₂ 就不是 0。'));
+  }
+}
+
+/* ---------- P05 常態與 Laplace 先驗（變異數皆為 1） ---------- */
+let w06priorLog = false;
+function w06priorToggle() {
+  w06priorLog = !w06priorLog;
+  $('w06priorBtn').textContent = w06priorLog ? '切換為密度' : '切換為負對數密度';
+  w06priorDraw();
+}
+function w06priorDraw() {
+  const b = 1 / Math.SQRT2;
+  const norm = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+  const lap = x => Math.exp(-Math.abs(x) / b) / (2 * b);
+  const f = w06priorLog ? [x => x * x / 2, x => Math.abs(x) / b] : [norm, lap];
+  const svc = HC.svg('w06priorSvg', { xd: [-4, 4], yd: w06priorLog ? [0, 6] : [0, 0.75], h: 300, w: 620 });
+  svc.clear();
+  svc.grid(8, 5, { xtitle: 'β', ytitle: w06priorLog ? '−log 密度（減去 0 點的值）' : '先驗密度',
+                   xdec: 0, ydec: w06priorLog ? 0 : 2 });
+  const g = w06clip(svc, 'w06priorClip', svc.layer('curves'));
+  const xs = HC.stat.seq(-4, 4, 401);
+  [[f[0], 'var(--accent2)', '常態（→ Ridge）'], [f[1], 'var(--accent)', 'Laplace（→ Lasso）']].forEach((c, k) => {
+    svc.poly(xs.map(x => [x, c[0](x)]), { cls: 'w06curve', stroke: c[1], sw: 2.4 }, g);
+    w06leg(svc, 32 + 18 * k, '── ' + c[2], c[1]);
+  });
+  setStatus('w06priorStatus', w06priorLog
+    ? '負對數密度：常態是平滑的拋物線 β²/2，Laplace 是在 0 有尖角的 √2·|β|，正是 Ridge 與 Lasso 的懲罰形狀。'
+    : '同樣的變異數下，Laplace 在 0 的密度 0.707 高於常態的 0.399，尾部也比較厚：多數係數接近 0，少數仍可很大。');
+}
+
+/* ---------- P06 等距與對數網格 ---------- */
+let w06gridLog = false;
+function w06gridToggle() {
+  w06gridLog = !w06gridLog;
+  $('w06gridBtn').textContent = w06gridLog ? '橫軸切換為 λ' : '橫軸切換為 log₁₀ λ';
+  w06gridDraw();
+}
+function w06gridDraw() {
+  const r = l => 1 / (1 + l);
+  const lin = HC.stat.seq(0.001, 100, 10);
+  const logs = HC.stat.seq(-3, 2, 10).map(t => Math.pow(10, t));
+  const tx = l => w06gridLog ? Math.log10(l) : l;
+  const svc = HC.svg('w06gridSvg', { xd: w06gridLog ? [-3, 2] : [0, 100], yd: [0, 1.2], h: 300, w: 620 });
+  svc.clear();
+  const sup = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³' };
+  svc.grid(5, 6, { xtitle: w06gridLog ? 'λ（對數刻度）' : 'λ', ytitle: '係數保留比例 r(λ)', ydec: 1,
+                   xfmt: v => w06gridLog ? '10' + String(Math.round(v)).split('').map(ch => sup[ch]).join('') : HC.fmt(v, 0) });
+  const g = svc.layer('curve');
+  const ts = HC.stat.seq(-3, 2, 300).map(t => Math.pow(10, t));
+  svc.poly(ts.map(l => [tx(l), r(l)]), { cls: 'w06curve', stroke: 'var(--muted)', sw: 2 }, g);
+  lin.forEach(l => svc.dot(tx(l), r(l), { r: 5.5, fill: 'var(--accent)', stroke: '#fff', sw: 1.2 }, g));
+  logs.forEach(l => svc.dot(tx(l), r(l), { r: 4, fill: 'var(--accent2)', stroke: '#fff', sw: 1.2 }, g));
+  w06leg(svc, 32, '● 等距網格', 'var(--accent)', g);
+  w06leg(svc, 50, '● 對數網格', 'var(--accent2)', g);
+  setStatus('w06gridStatus', w06gridLog
+    ? '橫軸為 log₁₀ λ：曲線是一條 S 形，對數網格的藍點均勻散在整條曲線上；紅點幾乎全擠在右側平坦處。'
+    : '橫軸為 λ：曲線在 λ < 10 就幾乎降到底，等距網格的紅點只有一個落在 λ < 1，其餘都在模型幾乎不變的區域。');
+}
+
+/* ---------- P07 Ridge 與 PCR 的收縮因子 ---------- */
+function w06shrinkDraw() {
+  const lam = Math.pow(10, parseInt($('w06shrinkLam').value, 10) / 10);
+  const M = parseInt($('w06shrinkMSl').value, 10);
+  const d2 = HC.stat.seq(1, 10, 10).map(m => 100 * Math.pow(0.6, m - 1));
+  const ridge = d2.map(d => d / (d + lam));
+  const df = ridge.reduce((a, v) => a + v, 0);
+  const svc = HC.svg('w06shrinkSvg', { xd: [0, 11], yd: [0, 1.2], h: 300, w: 620 });
+  svc.clear();
+  svc.grid(11, 6, { xtitle: '主成分編號 m（變異由大到小）', ytitle: '收縮因子', ydec: 1,
+                    xfmt: v => (v >= 1 && v <= 10) ? HC.fmt(v, 0) : '' });
+  const g = svc.layer('bars');
+  const step = [];
+  for (let m = 1; m <= 10; m++) {
+    const h = m <= M ? 1 : 0;
+    step.push([m - 0.5, h], [m + 0.5, h]);
+  }
+  svc.poly(step, { cls: 'w06curve', stroke: 'var(--accent)', sw: 2.4 }, g);
+  svc.poly(ridge.map((v, k) => [k + 1, v]), { cls: 'w06curve', stroke: 'var(--accent2)', sw: 1.6, dash: '4 3' }, g);
+  ridge.forEach((v, k) => svc.dot(k + 1, v, { r: 5, fill: 'var(--accent2)', stroke: '#fff', sw: 1.2 }, g));
+  w06leg(svc, 32, '● Ridge：d²ₘ/(d²ₘ+λ)', 'var(--accent2)', g);
+  w06leg(svc, 50, '── PCR：前 M 個為 1', 'var(--accent)', g);
+  $('w06shrinkDf').textContent = HC.fmt(df, 2);
+  $('w06shrinkM').textContent = String(M);
+  setStatus('w06shrinkStatus', 'λ = ' + HC.fmt(lam, lam < 1 ? 2 : 1) + '：Ridge 的有效自由度 ' + HC.fmt(df, 2)
+    + '，第 1 個方向保留 ' + HC.pct(ridge[0], 0) + '、第 10 個只保留 ' + HC.pct(ridge[9], 0)
+    + '。PCR 用 M = ' + M + ' 時自由度就是 ' + M + '，其餘方向直接歸零。');
 }
 
 /* ---------- P05 Lasso 路徑 ---------- */
@@ -3048,6 +3433,10 @@ function w06hdDraw() {
 w06subsetCounts();
 w06latReset();
 w06geomDraw();
+w06fanDraw();
+w06priorDraw();
+w06gridDraw();
+w06shrinkDraw();
 w06dirDraw();
 HC.ready(() => {
   w06ridgeDraw();

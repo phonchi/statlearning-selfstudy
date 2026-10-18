@@ -290,11 +290,42 @@ LASSO_WHY_INTRO = r"""
   <h3 id="dx-geom">為什麼 Lasso 會把係數壓成剛好 0：講義的三種解釋</h3>
   <p>講義從三個角度回答「為什麼 Lasso 會歸零、Ridge 不會」：限制式的幾何、正交設計下的閉式解，以及貝氏解讀。</p>
   <h4 id="w06-why-geom">解釋一：限制式的幾何</h4>
-  <p>兩者都可以寫成「在預算內讓 RSS 最小」，藉由 Lagrange 乘數和懲罰式連在一起（$s$ 與 $\lambda$ 可對應，但一般不是一對一）：</p>
-  $$\min_{\beta}\mathrm{RSS}\ \ \text{s.t.}\ \sum_{j=1}^p|\beta_j|\le s\ \ (\text{Lasso，菱形}),\qquad
-    \min_{\beta}\mathrm{RSS}\ \ \text{s.t.}\ \sum_{j=1}^p\beta_j^2\le s\ \ (\text{Ridge，圓}).$$
-  <p>最佳子集也能寫成同樣的形式（ESL 第 3 章）：限制換成 $\sum_{j=1}^pI(\beta_j\ne0)\le s$，只是這個問題在計算上不可行。</p>
-  <p>RSS 的等高線是以 $\hat\beta^{\mathrm{OLS}}$ 為中心的同心橢圓。解就是<strong>橢圓第一次碰到限制區域的那一點</strong>。菱形有<em>尖角</em>而且尖角落在座標軸上，碰撞很容易發生在尖角，那裡有一個座標是 0。圓沒有尖角，碰到座標軸是機率 0 的事。</p>
+  <p>同一個收縮問題有兩種寫法。<strong>限制式</strong>（primal form）先給一個預算 $s$，只在預算內找 RSS 最小的係數；<strong>懲罰式</strong>（Lagrange form）把預算改成加在 RSS 後面的代價，由 $\lambda$ 控制。講義的 Lasso 示意圖（RSS 等高線碰上預算 $s$ 的限制區域）畫的就是限制式。</p>
+  $$\underbrace{\min_{\beta}\ \sum_{i=1}^n\Big(y_i-\beta_0-\sum_{j=1}^p\beta_jx_{ij}\Big)^2\ \ \text{s.t.}\ \sum_{j=1}^p|\beta_j|\le s}_{\text{限制式}}
+    \qquad\Longleftrightarrow\qquad
+    \underbrace{\min_{\beta}\ \mathrm{RSS}+\lambda\sum_{j=1}^p|\beta_j|}_{\text{懲罰式}}$$
+  <p>Ridge 把 $|\beta_j|$ 換成 $\beta_j^2$，限制區域從菱形變成圓。最佳子集也能寫成限制式，只是預算數的是「有幾個係數不為 0」：</p>
+  $$\min_{\beta}\ \mathrm{RSS}\ \ \text{s.t.}\ \sum_{j=1}^pI(\beta_j\ne0)\le s .$$
+  <p>$\sum_jI(\beta_j\ne0)$ 常記為 $\|\beta\|_0$，稱為 $L_0$ 限制（它不滿足範數的齊次性，嚴格說不是範數）。所以三個方法可以排成 $L_0$（最佳子集）、$L_1$（Lasso）、$L_2$（Ridge），差別只在預算怎麼量。$s$ 與 $\lambda$ 可以互相對應，但一般不是一對一。</p>
+""" + detail("w06-detail-penalty-constraint", "計算細節：限制式與懲罰式如何對應", r"""
+  <p>以 Lasso 為例，令 $P(\beta)=\sum_j|\beta_j|$（Ridge 換成 $\sum_j\beta_j^2$）。</p>
+  <p><strong>從懲罰式到限制式。</strong>固定 $\lambda\gt0$，設 $\hat\beta^\lambda$ 是懲罰式的解，令 $s=P(\hat\beta^\lambda)$。任取滿足 $P(\beta)\le s$ 的 $\beta$，因為 $\hat\beta^\lambda$ 讓懲罰式最小，</p>
+  $$\mathrm{RSS}(\beta)+\lambda P(\beta)\ \ge\ \mathrm{RSS}(\hat\beta^\lambda)+\lambda s\ \ge\ \mathrm{RSS}(\hat\beta^\lambda)+\lambda P(\beta),$$
+  <p>兩邊消去 $\lambda P(\beta)$ 得 $\mathrm{RSS}(\beta)\ge\mathrm{RSS}(\hat\beta^\lambda)$，所以 $\hat\beta^\lambda$ 也是預算 $s$ 下的限制式解。</p>
+  <p><strong>從限制式到懲罰式。</strong>RSS 與 $P$ 都是凸函數，限制式的解滿足 KKT 條件：存在 Lagrange 乘數 $\lambda\ge0$，使同一個解也讓 $\mathrm{RSS}+\lambda P(\beta)$ 最小。若預算已經放得下最小平方解（$s\ge P(\hat\beta^{\mathrm{OLS}})$），限制沒有作用，對應的是 $\lambda=0$。</p>
+  <p><strong>為什麼不是一對一。</strong>上面的對應依資料而定：所有夠大的 $s$ 都對應到 $\lambda=0$；解若不唯一，同一個 $\lambda$ 也可能對到不只一個 $s$。所以只能說兩種寫法描述同一族解，不能把某個 $\lambda$ 換算成固定的 $s$。</p>
+  <p><strong>$L_0$ 的懲罰式。</strong>最佳子集也有懲罰式 $\mathrm{RSS}+\lambda\sum_jI(\beta_j\ne0)$。前面<a href="#criteria">選模準則</a>的 $C_p$ 就是這個形式：$n\,C_p=\mathrm{RSS}+2\hat\sigma^2d$，等於取 $\lambda=2\hat\sigma^2$；BIC 對應 $\lambda=\hat\sigma^2\log n$。因為 $L_0$ 不是凸的，KKT 的反方向不成立：懲罰式只會選到「RSS 對模型大小 $d$ 曲線」下凸包上的大小，限制式能選的大小則更多。</p>
+""") + r"""
+  <p>三種限制式的計算難度差很多：$L_0$ 是非凸的組合搜尋，最難；Lasso 把它換成凸的 $L_1$，可以有效率地求解；Ridge 最容易，有閉式解，選 $\lambda$ 時還能用留一捷徑或廣義交叉驗證（GCV），不必真的重擬合。</p>
+""" + detail("w06-detail-primal-compute", "計算細節：三種限制式的計算成本與 Ridge 的 GCV", r"""
+  <h4>$L_0$：組合搜尋</h4>
+  <p>窮舉法要列出所有不超過 $s$ 個變數的子集，對每個子集做一次最小平方，再比較 RSS。$s=p$ 時就是<a href="#subset">子集選擇</a>一節的 $2^p$ 個模型：</p>
+""" + table(["$p$", "$s$", "要檢查的子集數 $\\sum_{k=0}^{s}\\binom pk$"],
+            [["20", "10", "616,666（約 62 萬）"],
+             ["30", "15", "614,429,672（約 6.1 億）"],
+             ["50", "10", "13,432,735,556（約 134 億）"],
+             ["50", "50", "$2^{50}\\approx1.13\\times10^{15}$"]]) + r"""
+  <p>一般情況下，最佳子集選擇屬於 NP-hard 問題，但這不表示所有情況都算不出來：$p$ 小時可以窮舉，分支界定法與混合整數最佳化也能處理部分中大型問題，只是最壞情況下仍無法有效率地保證全域最佳。$\sum_jI(\beta_j\ne0)$ 是不連續、非凸的函數；兩個各只有一個非零係數的解取平均，非零個數會變成兩個，限制區域因此不是凸集合。</p>
+  <h4>$L_1$：凸問題</h4>
+  <p>$\sum_j|\beta_j|$ 是凸函數，Lasso 的目標因此是凸的，任何局部最小值都是全域最小值。它沒有閉式解，求解方法見本節後面的<a href="#w06-detail-lasso-solution">座標更新</a>與 <a href="#w06-detail-lar-group">LAR</a>。</p>
+  <h4>$L_2$：閉式解與 GCV</h4>
+  <p>Ridge 的懲罰式可微，對 $\beta_j$ 偏微分設為 0，得到 $p$ 條線性方程，$\lambda\gt0$ 時解唯一（見 Ridge 節的<a href="#w06-detail-ridge-solution">正規方程</a>）。解出的擬合值是 $y$ 的線性組合，$\hat y_i=\sum_{k=1}^nh_{ik}(\lambda)\,y_k$，其中權重 $h_{ik}(\lambda)$ 只由 $x$ 與 $\lambda$ 決定。第 5 章的<a href="resampling_methods.html#w05-loocv-shortcut">留一捷徑</a>對 Ridge 同樣成立：</p>
+  $$\mathrm{CV}_{(n)}(\lambda)=\frac1n\sum_{i=1}^n\left(\frac{y_i-\hat y_i}{1-h_{ii}(\lambda)}\right)^2 .$$
+  <p>截距不懲罰時，$h_{ii}(\lambda)$ 包含截距貢獻的 $1/n$，加總為 $\sum_ih_{ii}(\lambda)=1+\mathrm{df}(\lambda)$，其中 $\mathrm{df}(\lambda)$ 是斜率部分的有效自由度（不含截距，與 ESL 的慣例相同）。GCV 再把每個 $h_{ii}(\lambda)$ 換成它們的平均：</p>
+  $$\mathrm{GCV}(\lambda)=\frac1n\sum_{i=1}^n\left(\frac{y_i-\hat y_i}{1-\{1+\mathrm{df}(\lambda)\}/n}\right)^2 .$$
+  <p>兩者都只要在每個 $\lambda$ 擬合一次，不必真的做 $n$ 次或 $K$ 次重擬合。$\mathrm{df}(\lambda)$ 用主成分寫出來的形式見 PCR 節的<a href="#w06-detail-ridge-pcr">Ridge 與 PCR 的對照</a>。sklearn 的 <code>RidgeCV</code> 在預設 <code>cv=None</code> 時就是用這種高效率的留一計算。Lasso 的擬合值不是 $y$ 的固定線性組合（哪些係數為 0 也由 $y$ 決定），所以沒有同樣精確的捷徑。</p>
+""") + r"""
+  <p>回到幾何。RSS 的等高線是以 $\hat\beta^{\mathrm{OLS}}$ 為中心的同心橢圓。解就是<strong>橢圓第一次碰到限制區域的那一點</strong>。菱形有<em>尖角</em>而且尖角落在座標軸上，碰撞很容易發生在尖角，那裡有一個座標是 0。圓沒有尖角，碰到座標軸是機率 0 的事。</p>
 """
 
 LASSO_WHY_DIAG = r"""
@@ -317,5 +348,6 @@ LASSO_WHY_DIAG = r"""
 LASSO_WHY_BAYES = r"""
   <h4 id="w06-why-bayes">解釋三〔選讀〕：貝氏解讀（習題 7）</h4>
   <p>貝氏觀點下，後驗正比於概似乘以先驗：$p(\beta\mid X,Y)\propto f(Y\mid X,\beta)\,p(\beta)$，並假設 $p(\beta)=\prod_{j=1}^pg(\beta_j)$。若 $g$ 是平均為 0 的<strong>常態分布</strong>，後驗眾數（給定資料下最可能的 $\beta$）就是 Ridge 的解；若 $g$ 是平均為 0 的<strong>雙指數（Laplace）分布</strong>，後驗眾數就是 Lasso 的解。兩種先驗的尺度參數都對應到 $\lambda$。</p>
-  <p>Laplace 密度在 0 有尖峰，取對數後就是 $-|\beta_j|/b$ 這個在 0 有尖角的懲罰，所以後驗眾數可能剛好停在 0；常態先驗在 0 是平滑的圓頂，後驗眾數通常只會被拉近 0。這和解釋二的「尖角」是同一件事。</p>
+  <p>選 Laplace 先驗，等於事前就認為<strong>多數係數應該很接近 0</strong>。變異數相同時，Laplace 在 0 附近放的機率密度比常態高，尾部又比常態厚：大部分係數被拉到接近 0，少數係數仍可以保持很大。常態先驗的尾部衰減得快，比較傾向讓每個係數都中等大小。</p>
+  <p>Laplace 密度在 0 有尖峰，取對數後就是 $-|\beta_j|/b$ 這個在 0 有尖角的懲罰，所以後驗眾數可能剛好停在 0，得到稀疏解；常態先驗在 0 是平滑的圓頂，後驗眾數通常只會被拉近 0。這和解釋二的「尖角」是同一件事。下圖可以切換成負對數密度，直接看到兩種先驗各自對應的懲罰形狀。</p>
 """

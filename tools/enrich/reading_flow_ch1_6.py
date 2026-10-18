@@ -123,16 +123,15 @@ GROUPS = {2: {'bayes': [('KNN 的彈性與有效自由度', 'knn-df', '計算細
                    ('Permutation test：假如 X 與標籤沒有關聯？', 'permutation', '延伸閱讀：置換檢定與分類器評估')]},
  6: {'criteria': [('Cp 的風險目標、常數與選模', 'cp-risk', '計算細節：$C_p$ 的風險目標與常數'),
                   ('分類離差的數值如何對回軟體？', 'deviance', '完整實作：分類離差與軟體量尺')],
-     'ridge': [('中心化後的 Ridge 解', 'ridge-solution', '計算細節：Ridge 的矩陣解與方向收縮')],
+     'ridge': [('中心化後的 Ridge 解', 'ridge-solution', '計算細節：Ridge 的正規方程與唯一解')],
      'lasso': [('收縮的貝氏解讀', 'shrinkage-map', '延伸閱讀：收縮的貝氏解讀'),
                ('Lasso 的零係數條件與座標更新', 'lasso-solution', '延伸閱讀：一般 X 的座標下降'),
-               ('最小角度迴歸與 Group Lasso', 'lar-group', '延伸閱讀：LAR 與 Group Lasso'),
-               ('限制式與懲罰式：如何對應？', 'penalty-constraint', '計算細節：限制式與懲罰式的對應')],
+               ('最小角度迴歸與 Group Lasso', 'lar-group', '延伸閱讀：LAR 與 Group Lasso')],
      'pcr': [('從共變異數到白化', 'whitening', '計算細節：共變異數、SVD 與白化'),
-             ('PCA 的最大變異與最小重建誤差', 'pca-objectives', '計算細節：PCA 變異與重建目標'),
+             ('PCA 的最大變異與最小重建誤差', 'pca-objectives', '計算細節：Rayleigh quotient、Fisher 與重建誤差'),
              ('正交、不相關與獨立是三件事', 'uncorrelated', '延伸閱讀：正交、不相關與獨立')],
-     'pls': [('PLS1：從方向到可用於新資料的預測', 'pls-algorithm', '延伸閱讀：PLS 的後續方向與新資料預測'),
-             ('PLS最大化共變異，並非直接最大化相關', 'pls-covariance', '計算細節：PLS 的共變異目標')],
+     'pls': [('第一個 PLS 方向：最大化共變異', 'pls-covariance', '計算細節：PLS 目標式與講義權重為何等價'),
+             ('後續方向：殘差化後重複（講義的算法）', 'pls-algorithm', '計算細節：PLS 的殘差化算法與新資料預測')],
      'reference': [('在係數平面比較方法', 'coefficient-paths', '延伸閱讀：在係數平面比較方法')]}}
 
 BRIDGES = {
@@ -147,8 +146,7 @@ BRIDGES = {
     },
     6: {
         'criteria': r'<p>比較準則前須使用同一候選集合並確認量尺。本節 BIC／$C_p$ 的懲罰比較採共用 $\hat\sigma^2$ 的設定；常數能否省略見下方「$C_p$ 的風險目標與常數」，軟體各自估變異數的概似版本見「先分清估計量與比較量尺」。</p>',
-        'pcr': r'<p>PCR 的方向由 $X$ 決定，不使用 $y$；保留 $X$ 的高變異方向不保證保留最有用的預測訊號。成分數 $M$ 與原始變數數不同，少量成分仍可能用到許多原始欄位；滿欄秩且保留全部方向時，擬合值回到普通最小平方。</p>',
-        'pls': r'<p>PLS 用 $X$ 與 $y$ 的共變動挑方向，所以 $y$ 改變時方向也可能改變。它仍然是降維後迴歸，不是 Lasso 那種原始變數選擇；成分數和前處理一樣要在訓練折內選定，沒有一致勝過 PCR 的保證。</p>',
+        'pls': r'<p>PLS 的方向用到 $y$，所以成分數 $M$ 與標準化都要在訓練折內選定，否則驗證誤差會過度樂觀。</p>',
     },
 }
 
