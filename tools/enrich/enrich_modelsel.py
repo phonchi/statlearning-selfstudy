@@ -611,7 +611,7 @@ PCR_SIM = r"""
 """)
 
 PCR_RIDGE = detail(
-    "w06-detail-ridge-pcr", "延伸（超出講義範圍）：Ridge 是連續版的 PCR", r"""
+    "w06-detail-ridge-pcr", "Ridge 是連續版的 PCR", r"""
   <p>把資料改用主成分得分當座標後，兩種方法的擬合值都能寫成各主成分方向的貢獻相加，差別只在每個方向乘上的收縮因子：PCR 對前 $M$ 個方向乘 1、其餘乘 0；Ridge 對第 $m$ 個方向乘 $d_m^2/(d_m^2+\lambda)$，其中 $d_m^2=\sum_iz_{im}^2$ 隨 $m$ 遞減。變異大的方向幾乎不縮，變異小的方向縮得最多，Ridge 因此像是把 PCR 的「留或丟」換成平滑的漸進收縮（ESL 第 3.4.1、3.5.1 節）。</p>
 """ + viz(svg("w06shrinkSvg", 300),
      [info_card("怎麼看",
