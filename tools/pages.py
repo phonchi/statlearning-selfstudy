@@ -643,6 +643,9 @@ PAGES = [
         extra_pills=[
             ('▶ 課程錄影：子集選擇', 'https://youtu.be/-TRvLn3K4_c'),
             ('▶ 課程錄影：子集選擇與 Ridge 迴歸', 'https://youtu.be/NkBzX3Kh3mo'),
+            ('▶ 課程錄影：Lasso', 'https://youtu.be/nVEVKzIopW4'),
+            ('▶ 課程錄影：PCR 與 PLS', 'https://youtu.be/fi9qrdLDa3Y'),
+            ('▶ 課程錄影：高維度問題與總複習', 'https://youtu.be/nJ2ofkBeES8'),
         ],
         hero_svg=_svg_shrink(),
         group="core",

@@ -746,6 +746,6 @@ $\sigma^2$ 已知時 AIC 與 $C_p$ 的排序等價、Laplace→BIC，最後是�
 
 使用者要求拿掉往年錄影。`pages.py` 的 `playlist` 只保留 2026 年的 `PLM37wbEIt77U`（0910，第 1 章）與 `PLFJni7Ws0IM0`（0924，第 3 章）；
 `PLHNZtBNWQ-…` 開頭的七個清單（2025 年、兩個 2023 年，依各清單首部影片的上傳日期核對）全部清空，第 2、7、8、9、12 章暫時沒有錄影。
-單支影片放在 `extra_pills`，標題已逐一對照 YouTube 原標題：第 3 章 1001 兩支、第 4 章 1001／1008 三支、第 5 章 1008 GLM 與 CV＋1015 Bootstrap、第 6 章 1015 兩支（清單 `PLaqIlhRn4u10`）。
+單支影片放在 `extra_pills`，標題已逐一對照 YouTube 原標題：第 3 章 1001 兩支、第 4 章 1001／1008 三支、第 5 章 1008 GLM 與 CV＋1015 Bootstrap、第 6 章 1015 兩支（清單 `PLaqIlhRn4u10`）＋1022 Lasso、PCR 與 PLS、高維度問題與總複習三支（清單 `PLdjmTSeMn7F0`）。
 之後每週新錄影：當週播放清單放課程網站 `_lectures/NN_weekN.md`，自學站依影片內容拆到對應章節的 `extra_pills`。
 例外（使用者 2026-10-15 決定）：課程網站 `nsysu-math524` 第 2 週 `_lectures/02_week2.md` 保留 2025 年的 0917 清單 `PLHNZtBNWQ-87OBZ1ggt-ZMj3gK2LfUufD`，不要移除；「只放當學期」的規則只適用於自學站。
