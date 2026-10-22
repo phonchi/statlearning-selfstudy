@@ -749,3 +749,7 @@ $\sigma^2$ 已知時 AIC 與 $C_p$ 的排序等價、Laplace→BIC，最後是�
 單支影片放在 `extra_pills`，標題已逐一對照 YouTube 原標題：第 3 章 1001 兩支、第 4 章 1001／1008 三支、第 5 章 1008 GLM 與 CV＋1015 Bootstrap、第 6 章 1015 兩支（清單 `PLaqIlhRn4u10`）＋1022 Lasso、PCR 與 PLS、高維度問題與總複習三支（清單 `PLdjmTSeMn7F0`）。
 之後每週新錄影：當週播放清單放課程網站 `_lectures/NN_weekN.md`，自學站依影片內容拆到對應章節的 `extra_pills`。
 例外（使用者 2026-10-15 決定）：課程網站 `nsysu-math524` 第 2 週 `_lectures/02_week2.md` 保留 2025 年的 0917 清單 `PLHNZtBNWQ-87OBZ1ggt-ZMj3gK2LfUufD`，不要移除；「只放當學期」的規則只適用於自學站。
+
+**2026-10-22 離線版：**`python3 tools/build_offline.py` 會把根目錄已建好的 27 個 HTML 打包成斷網可用的 zip，輸出到 `dist/`（不進 git）。
+MathJax（`mathjax@3.2.2` 的 es5，去掉 `sre`）與 Chart.js 4.5.1（核對 sha384）放進 `vendor/`，移除 Google Fonts 改用系統字型，首頁標註離線版與產生日期。
+內容更新後要重新打包，先跑完 build 流程再執行。
