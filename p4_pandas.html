@@ -819,7 +819,7 @@ dtype: object</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 00 · 自我檢測</div>
   <p><code>frame['pop']</code> 拿到的是什麼？</p>
-  <div class="quiz-options" id="qSerOptions"><div class="quiz-opt" data-correct="false" data-fb="這個寫法回傳帶索引的 &lt;strong&gt;Series&lt;/strong&gt;，底下使用 NumPy 陣列。需要轉成陣列時，再呼叫 &lt;code&gt;.to_numpy()&lt;/code&gt;。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(A)</span> 一個 NumPy 陣列</div><div class="quiz-opt" data-correct="true" data-fb="對。這就是為什麼 &lt;code&gt;frame[&#x27;pop&#x27;] &amp;gt; 2&lt;/code&gt; 的結果也帶索引，可以直接拿回去索引原本的表。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(B)</span> 一個 Series，帶著原本的列索引</div><div class="quiz-opt" data-correct="false" data-fb="不是。用單一個字串取欄拿到的是 Series；要拿只有一欄的 DataFrame 得寫 &lt;code&gt;frame[[&#x27;pop&#x27;]]&lt;/code&gt;（雙層中括號）。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(C)</span> 一個 DataFrame，只有一欄</div></div>
+  <div class="quiz-options" id="qSerOptions"><div class="quiz-opt" data-correct="false" data-fb="這個寫法回傳帶索引的 &lt;strong&gt;Series&lt;/strong&gt;，底下使用 NumPy 陣列。需要轉成陣列時，再呼叫 &lt;code&gt;.to_numpy()&lt;/code&gt;。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(A)</span> 一個 NumPy 陣列</div><div class="quiz-opt" data-correct="false" data-fb="不是。用單一個字串取欄拿到的是 Series；要拿只有一欄的 DataFrame 得寫 &lt;code&gt;frame[[&#x27;pop&#x27;]]&lt;/code&gt;（雙層中括號）。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(B)</span> 一個 DataFrame，只有一欄</div><div class="quiz-opt" data-correct="true" data-fb="對。這就是為什麼 &lt;code&gt;frame[&#x27;pop&#x27;] &amp;gt; 2&lt;/code&gt; 的結果也帶索引，可以直接拿回去索引原本的表。" onclick="quizCheck('qSer', this)"><span class="opt-letter">(C)</span> 一個 Series，帶著原本的列索引</div></div>
   <div class="quiz-feedback" id="qSerFeedback"></div>
 </div>
 </section>
@@ -1220,7 +1220,7 @@ dtype: float64</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 03 · 自我檢測</div>
   <p><code>Auto['horsepower'].mean()</code> 在<strong>沒有</strong>加 <code>na_values=['?']</code> 的情況下會發生什麼？</p>
-  <div class="quiz-options" id="qNaOptions"><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不知道 &lt;code&gt;?&lt;/code&gt; 是遺漏，它只看到一欄字串。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(A)</span> 自動忽略問號，算出正確的平均</div><div class="quiz-opt" data-correct="true" data-fb="對。計算平均前，要先確認&lt;strong&gt;欄位讀成了數字&lt;/strong&gt;。所以拿到資料先看 &lt;code&gt;dtypes&lt;/code&gt;。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(B)</span> 報錯或算出無意義的結果，因為整欄是字串</div><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不會擅自把字串轉成數字，它的選擇是把整欄保持成 object。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(C)</span> 把問號當成 0 來算</div></div>
+  <div class="quiz-options" id="qNaOptions"><div class="quiz-opt" data-correct="true" data-fb="對。計算平均前，要先確認&lt;strong&gt;欄位讀成了數字&lt;/strong&gt;。所以拿到資料先看 &lt;code&gt;dtypes&lt;/code&gt;。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(A)</span> 報錯或算出無意義的結果，因為整欄是字串</div><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不知道 &lt;code&gt;?&lt;/code&gt; 是遺漏，它只看到一欄字串。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(B)</span> 自動忽略問號，算出正確的平均</div><div class="quiz-opt" data-correct="false" data-fb="不會。pandas 不會擅自把字串轉成數字，它的選擇是把整欄保持成 object。" onclick="quizCheck('qNa', this)"><span class="opt-letter">(C)</span> 把問號當成 0 來算</div></div>
   <div class="quiz-feedback" id="qNaFeedback"></div>
 </div>
 
@@ -1327,7 +1327,7 @@ foo -2.740490  0.700964</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p><code>df.groupby('A').sum()</code> 之後，欄 <code>A</code> 跑去哪了？</p>
-  <div class="quiz-options" id="qGrpOptions"><div class="quiz-opt" data-correct="false" data-fb="不是。分組之後 &lt;code&gt;A&lt;/code&gt; 不再是一般的欄。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(A)</span> 還在，只是移到最後一欄</div><div class="quiz-opt" data-correct="true" data-fb="對。所以要把它變回一般的欄得寫 &lt;code&gt;.reset_index()&lt;/code&gt;，或一開始就寫 &lt;code&gt;groupby(&#x27;A&#x27;, as_index=False)&lt;/code&gt;。很多「欄名找不到」的錯誤都出在這裡。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(B)</span> 變成結果的索引</div><div class="quiz-opt" data-correct="false" data-fb="不對。它沒有被加總，是因為它是&lt;strong&gt;分組的鍵&lt;/strong&gt;，不是被當成資料處理。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(C)</span> 被刪掉了，因為字串不能加總</div></div>
+  <div class="quiz-options" id="qGrpOptions"><div class="quiz-opt" data-correct="false" data-fb="不是。分組之後 &lt;code&gt;A&lt;/code&gt; 不再是一般的欄。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(A)</span> 還在，只是移到最後一欄</div><div class="quiz-opt" data-correct="false" data-fb="不對。它沒有被加總，是因為它是&lt;strong&gt;分組的鍵&lt;/strong&gt;，不是被當成資料處理。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(B)</span> 被刪掉了，因為字串不能加總</div><div class="quiz-opt" data-correct="true" data-fb="對。所以要把它變回一般的欄得寫 &lt;code&gt;.reset_index()&lt;/code&gt;，或一開始就寫 &lt;code&gt;groupby(&#x27;A&#x27;, as_index=False)&lt;/code&gt;。很多「欄名找不到」的錯誤都出在這裡。" onclick="quizCheck('qGrp', this)"><span class="opt-letter">(C)</span> 變成結果的索引</div></div>
   <div class="quiz-feedback" id="qGrpFeedback"></div>
 </div>
 </section>
@@ -1443,7 +1443,7 @@ foo -2.740490  0.700964</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · groupby</div>
   <p>想得到「每個 <code>origin</code> 的平均 <code>mpg</code>」，而且結果要是一張有 <code>origin</code> 欄的普通表，怎麼寫？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="算出來的數字是對的，但 &lt;code&gt;origin&lt;/code&gt; 變成了索引，不是一般的欄——題目要的是「有 origin 欄的普通表」。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> <code>Auto.groupby('origin')['mpg'].mean()</code></div><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;as_index=False&lt;/code&gt;（或事後 &lt;code&gt;.reset_index()&lt;/code&gt;）會把分組的鍵留成一般的欄。畫圖或再 merge 時都需要這個形式。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> <code>Auto.groupby('origin', as_index=False)['mpg'].mean()</code></div><div class="quiz-opt" data-correct="false" data-fb="這是把兩欄各自平均，完全沒有分組——會得到「origin 的平均值」這種沒有意義的數字。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> <code>Auto[['origin', 'mpg']].mean()</code></div></div>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="true" data-fb="對。&lt;code&gt;as_index=False&lt;/code&gt;（或事後 &lt;code&gt;.reset_index()&lt;/code&gt;）會把分組的鍵留成一般的欄。畫圖或再 merge 時都需要這個形式。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> <code>Auto.groupby('origin', as_index=False)['mpg'].mean()</code></div><div class="quiz-opt" data-correct="false" data-fb="算出來的數字是對的，但 &lt;code&gt;origin&lt;/code&gt; 變成了索引，不是一般的欄——題目要的是「有 origin 欄的普通表」。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> <code>Auto.groupby('origin')['mpg'].mean()</code></div><div class="quiz-opt" data-correct="false" data-fb="這是把兩欄各自平均，完全沒有分組——會得到「origin 的平均值」這種沒有意義的數字。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> <code>Auto[['origin', 'mpg']].mean()</code></div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
 </section>

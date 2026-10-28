@@ -8,6 +8,7 @@ shared.js）由 build_page.py 管，enrich 不碰。
 為什麼用腳本而不是直接改 HTML：內容要重跑、要 diff、程式碼區塊要用 hl() 上色，
 而且十章由不同人（或不同 agent）寫時，同一支 lib 保證組裝方式一致。
 """
+import random
 import re
 import sys
 from pathlib import Path
@@ -51,11 +52,40 @@ def apply(stem: str, bodies: dict, pagejs: str, frames: str = ""):
         src = splice_section(src, sid, fragment(body))
     pagejs = prose(pagejs)
     src = splice_pagejs(src, (frames + "\n\n" + pagejs) if frames else pagejs)
+    src = balance_quizzes(stem, src)
     if src != before:
         dest.write_text(src, encoding="utf-8")
     kb = dest.stat().st_size / 1024
     print(f"  {stem}.html  {len(bodies)} 節寫入  {kb:.0f} KB"
           + ("  （無變化）" if src == before else ""))
+
+
+QUIZ_RE = re.compile(r'(id="[^"]+Options">)(.*?)(</div>\s*<div class="quiz-feedback")', re.S)
+OPT_SEP = '<div class="quiz-opt" '
+
+
+def balance_quizzes(stem: str, src: str) -> str:
+    """把整頁 quiz 的正解位置平均分到 A/B/C，再以頁名為種子洗牌。
+
+    錯的選項保持原相對順序；同一份來源每次建置結果相同。
+    """
+    blocks = []
+    for m in QUIZ_RE.finditer(src):
+        opts = [OPT_SEP + c for c in m.group(2).split(OPT_SEP)[1:]]
+        right = [o for o in opts if o.startswith(OPT_SEP + 'data-correct="true"')]
+        if len(opts) == 3 and len(right) == 1:     # 略過題庫的 JS 模板字串
+            blocks.append((m, right[0], [o for o in opts if o is not right[0]]))
+    slots = [i % 3 for i in range(len(blocks))]
+    random.Random(f"quiz:{stem}").shuffle(slots)
+    out, last = [], 0
+    for (m, right, opts), k in zip(blocks, slots):
+        opts.insert(k, right)
+        opts = [re.sub(r'<span class="opt-letter">\([ABC]\)</span>',
+                       f'<span class="opt-letter">({"ABC"[i]})</span>', o, count=1)
+                for i, o in enumerate(opts)]
+        out += [src[last:m.start(2)], "".join(opts)]
+        last = m.end(2)
+    return "".join(out) + src[last:]
 
 
 def lab_output(ch: int, cell: int) -> str:
@@ -110,7 +140,10 @@ def detail(pid, title, body):
 
 
 def quiz(qid, label, question, options):
-    """三選一 quiz。options = [(是否正解, 選項 HTML, 為什麼), ...]，錯的也要寫為什麼。"""
+    """三選一 quiz。options = [(是否正解, 選項 HTML, 為什麼), ...]，錯的也要寫為什麼。
+
+    正解最後落在哪個位置由 apply() 的 balance_quizzes() 決定，撰寫順序不影響畫面。
+    """
     letters = "ABC"
     opts = []
     for i, (ok, text, why) in enumerate(options):

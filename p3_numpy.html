@@ -854,7 +854,7 @@ dtype(&#x27;int64&#x27;)
 <div class="quiz-box">
   <div class="quiz-label">PART 01 · 自我檢測</div>
   <p><code>X.shape</code> 是 <code>(10, 3)</code>，這個陣列是什麼？</p>
-  <div class="quiz-options" id="qShapeOptions"><div class="quiz-opt" data-correct="true" data-fb="對。統計資料的慣例就是這樣擺：&lt;strong&gt;列是觀測、欄是變數&lt;/strong&gt;，所以 n=10、p=3。整門課的 X 都是這個形狀。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(A)</span> 10 列 3 欄：10 筆觀測、每筆 3 個變數</div><div class="quiz-opt" data-correct="false" data-fb="順序反了。&lt;code&gt;shape&lt;/code&gt; 的第一個數字是&lt;strong&gt;列&lt;/strong&gt;數。如果真的是 10 個變數 3 筆觀測，shape 會是 &lt;code&gt;(3, 10)&lt;/code&gt;。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(B)</span> 10 個變數、每個變數 3 筆觀測</div><div class="quiz-opt" data-correct="false" data-fb="「幾維」看的是 &lt;code&gt;ndim&lt;/code&gt;，也就是 shape 這個 tuple 的長度。這裡 tuple 只有兩個數字，所以是二維。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(C)</span> 一個 10 維陣列，每一維長度 3</div></div>
+  <div class="quiz-options" id="qShapeOptions"><div class="quiz-opt" data-correct="false" data-fb="順序反了。&lt;code&gt;shape&lt;/code&gt; 的第一個數字是&lt;strong&gt;列&lt;/strong&gt;數。如果真的是 10 個變數 3 筆觀測，shape 會是 &lt;code&gt;(3, 10)&lt;/code&gt;。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(A)</span> 10 個變數、每個變數 3 筆觀測</div><div class="quiz-opt" data-correct="false" data-fb="「幾維」看的是 &lt;code&gt;ndim&lt;/code&gt;，也就是 shape 這個 tuple 的長度。這裡 tuple 只有兩個數字，所以是二維。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(B)</span> 一個 10 維陣列，每一維長度 3</div><div class="quiz-opt" data-correct="true" data-fb="對。統計資料的慣例就是這樣擺：&lt;strong&gt;列是觀測、欄是變數&lt;/strong&gt;，所以 n=10、p=3。整門課的 X 都是這個形狀。" onclick="quizCheck('qShape', this)"><span class="opt-letter">(C)</span> 10 列 3 欄：10 筆觀測、每筆 3 個變數</div></div>
   <div class="quiz-feedback" id="qShapeFeedback"></div>
 </div>
 
@@ -1183,7 +1183,7 @@ array([[ 4,  5,  6,  7],
 <div class="quiz-box">
   <div class="quiz-label">PART 04 · 自我檢測</div>
   <p><code>Auto</code> 有 392 列。<code>mask = Auto['mpg'] &gt; 30</code> 之後，<code>mask</code> 的長度是多少？</p>
-  <div class="quiz-options" id="qMaskOptions"><div class="quiz-opt" data-correct="true" data-fb="對。遮罩是&lt;strong&gt;跟被索引那一維一樣長&lt;/strong&gt;的布林陣列，符合條件的筆數則用 &lt;code&gt;mask.sum()&lt;/code&gt; 計算。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(A)</span> 392，每一列一個 True 或 False</div><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;code&gt;mask.sum()&lt;/code&gt; 的結果。遮罩本身必須跟原資料一樣長，否則 NumPy 不知道每個 True 對應哪一列。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(B)</span> 符合條件的筆數，例如 89</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;Auto[&#x27;mpg&#x27;] &amp;gt; 30&lt;/code&gt; 是&lt;strong&gt;向量化&lt;/strong&gt;比較，392 個數字各比一次，得到 392 個布林值。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(C)</span> 1，因為它是一個條件</div></div>
+  <div class="quiz-options" id="qMaskOptions"><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;code&gt;mask.sum()&lt;/code&gt; 的結果。遮罩本身必須跟原資料一樣長，否則 NumPy 不知道每個 True 對應哪一列。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(A)</span> 符合條件的筆數，例如 89</div><div class="quiz-opt" data-correct="true" data-fb="對。遮罩是&lt;strong&gt;跟被索引那一維一樣長&lt;/strong&gt;的布林陣列，符合條件的筆數則用 &lt;code&gt;mask.sum()&lt;/code&gt; 計算。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(B)</span> 392，每一列一個 True 或 False</div><div class="quiz-opt" data-correct="false" data-fb="&lt;code&gt;Auto[&#x27;mpg&#x27;] &amp;gt; 30&lt;/code&gt; 是&lt;strong&gt;向量化&lt;/strong&gt;比較，392 個數字各比一次，得到 392 個布林值。" onclick="quizCheck('qMask', this)"><span class="opt-letter">(C)</span> 1，因為它是一個條件</div></div>
   <div class="quiz-feedback" id="qMaskFeedback"></div>
 </div>
 
@@ -1346,7 +1346,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">PART 06 · 自我檢測</div>
   <p><code>X.shape</code> 是 <code>(10, 3)</code>，<code>X.sum(axis=1).shape</code> 是什麼？</p>
-  <div class="quiz-options" id="qAxisOptions"><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;code&gt;axis=0&lt;/code&gt; 的結果。&lt;code&gt;axis=1&lt;/code&gt; 摺掉的是&lt;strong&gt;欄&lt;/strong&gt;，剩下的是列的數量。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(A)</span> <code>(3,)</code></div><div class="quiz-opt" data-correct="true" data-fb="對。axis=1 把每一列的三個數字加起來，十列就得到十個數字。口訣：axis 指的是被摺掉的那一維。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(B)</span> <code>(10,)</code></div><div class="quiz-opt" data-correct="false" data-fb="不完全對，要加 &lt;code&gt;keepdims=True&lt;/code&gt; 才會是 &lt;code&gt;(10,1)&lt;/code&gt;。不加的話那一維會直接消失，得到 &lt;code&gt;(10,)&lt;/code&gt;。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(C)</span> <code>(10, 1)</code></div></div>
+  <div class="quiz-options" id="qAxisOptions"><div class="quiz-opt" data-correct="true" data-fb="對。axis=1 把每一列的三個數字加起來，十列就得到十個數字。口訣：axis 指的是被摺掉的那一維。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(A)</span> <code>(10,)</code></div><div class="quiz-opt" data-correct="false" data-fb="那是 &lt;code&gt;axis=0&lt;/code&gt; 的結果。&lt;code&gt;axis=1&lt;/code&gt; 摺掉的是&lt;strong&gt;欄&lt;/strong&gt;，剩下的是列的數量。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(B)</span> <code>(3,)</code></div><div class="quiz-opt" data-correct="false" data-fb="不完全對，要加 &lt;code&gt;keepdims=True&lt;/code&gt; 才會是 &lt;code&gt;(10,1)&lt;/code&gt;。不加的話那一維會直接消失，得到 &lt;code&gt;(10,)&lt;/code&gt;。" onclick="quizCheck('qAxis', this)"><span class="opt-letter">(C)</span> <code>(10, 1)</code></div></div>
   <div class="quiz-feedback" id="qAxisFeedback"></div>
 </div>
 
@@ -1450,7 +1450,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · 花式索引</div>
   <p><code>A[[0,1,2],[0,1,2]]</code> 拿到的是什麼？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="這是最常見的誤解。要子矩陣得用 &lt;code&gt;np.ix_&lt;/code&gt; 或 &lt;code&gt;A[[0,1,2]][:,[0,1,2]]&lt;/code&gt;。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 左上角 3×3 的子矩陣</div><div class="quiz-opt" data-correct="true" data-fb="對。兩個串列被逐位配對成 (0,0)、(1,1)、(2,2)，所以拿到的是對角線，shape 是 &lt;code&gt;(3,)&lt;/code&gt;。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 對角線上的三個數字</div><div class="quiz-opt" data-correct="false" data-fb="不會報錯，長度一樣就合法。長度不一樣才會像 lab 範例 那樣拋 &lt;code&gt;shape mismatch&lt;/code&gt;。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 會報錯，兩個串列不能同時給</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。兩個串列被逐位配對成 (0,0)、(1,1)、(2,2)，所以拿到的是對角線，shape 是 &lt;code&gt;(3,)&lt;/code&gt;。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 對角線上的三個數字</div><div class="quiz-opt" data-correct="false" data-fb="這是最常見的誤解。要子矩陣得用 &lt;code&gt;np.ix_&lt;/code&gt; 或 &lt;code&gt;A[[0,1,2]][:,[0,1,2]]&lt;/code&gt;。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 左上角 3×3 的子矩陣</div><div class="quiz-opt" data-correct="false" data-fb="不會報錯，長度一樣就合法。長度不一樣才會像 lab 範例 那樣拋 &lt;code&gt;shape mismatch&lt;/code&gt;。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 會報錯，兩個串列不能同時給</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
@@ -1458,7 +1458,7 @@ array([25,  4,  9, 16, 25, 36])</pre></div>
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 4 · 檢視與複本</div>
   <p>沿用本頁連續儲存的 A 矩陣，下列哪一個操作<strong>會</strong>複製一份資料？</p>
-  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="基本切片給的是檢視，改 B 會動到 A。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>B = A[1:3]</code></div><div class="quiz-opt" data-correct="false" data-fb="本例的 reshape 共用原資料；一般情況也可能需要複製。lab 範例 示範過改一個另一個跟著變。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>B = A.reshape((2, 8))</code></div><div class="quiz-opt" data-correct="true" data-fb="會。用整數串列的&lt;strong&gt;花式索引&lt;/strong&gt;沒辦法用「同一塊記憶體的不同讀法」表示，所以 NumPy 一定會配置一塊新的記憶體。布林索引也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>B = A[[1, 3]]</code></div></div>
+  <div class="quiz-options" id="qEx4Options"><div class="quiz-opt" data-correct="false" data-fb="基本切片給的是檢視，改 B 會動到 A。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(A)</span> <code>B = A[1:3]</code></div><div class="quiz-opt" data-correct="true" data-fb="會。用整數串列的&lt;strong&gt;花式索引&lt;/strong&gt;沒辦法用「同一塊記憶體的不同讀法」表示，所以 NumPy 一定會配置一塊新的記憶體。布林索引也一樣。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(B)</span> <code>B = A[[1, 3]]</code></div><div class="quiz-opt" data-correct="false" data-fb="本例的 reshape 共用原資料；一般情況也可能需要複製。lab 範例 示範過改一個另一個跟著變。" onclick="quizCheck('qEx4', this)"><span class="opt-letter">(C)</span> <code>B = A.reshape((2, 8))</code></div></div>
   <div class="quiz-feedback" id="qEx4Feedback"></div>
 </div>
 </section>
