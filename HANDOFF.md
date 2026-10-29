@@ -791,6 +791,7 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - 入夜：天色、霧、半球光、主光、海色平滑過渡，窗戶與路燈的 glow 材質亮起、光暈 Sprite、星點；狀態存 localStorage `slss-island:night`。
 - **效能（2026-10-29 v3）**：
   - 載入：importmap 把 `three.module.min.js` 內部 import 的未壓縮 `three.core.js` 對應到 `three.core.min.js`（`CORE_REMAP`）；四個模組在 `<head>` modulepreload 並平行 import。Fast 4G 節流實測，可互動時間 16.1 秒 → 3.7 秒，傳輸 3.3 MB → 0.59 MB。
+  - 字型：島嶼頁不載整套網頁字型（原本 Noto Sans／Serif TC＋JetBrains Mono 約 2.6 MB、40 個請求，佔傳輸九成），改用系統字型堆疊（CSS 變數 `--sans`／`--mono`）；只有頂列標題以 Google Fonts 的 `text=` 下載 Noto Serif TC 900 的那幾個字（約 3 KB，`build_island.TITLE`）。桌機實測 2853 KB → 約 255 KB（Vista 298 KB）。
   - 版面：`<head>` 的小 script 在有 WebGL 時先加 `html.gl-pending`，3D 版面與「群島載入中…」先出現；`scene.warm()`（`compileAsync`＋第一幀）完成才淡入畫布，失敗則退回 2D。
   - 繪製：除了海面一律 `MeshLambertMaterial`。島的各層依材質合併（`mergeIsles`）；小人、船、鳥、雲、噴泉球等用 `instancify()` 合成 InstancedMesh、每個動畫幀同步矩陣；拾取盒 `visible=false`；光暈與地面光斑只在入夜時繪製。每幀 367 → 39 個繪製呼叫，約 30 萬 → 18 萬個三角形。陰影 2048（手機 1024）只烘一次。
   - 節能：只剩環境動畫時約 30fps，互動時全速；45 秒沒有任何輸入就停止動畫（`window.__islandIdleMs` 可在測試時調短），有輸入即恢復。DPR 依幀時間自動 1.5 → 1.25 → 1，互動時夠快再升回，最低一級仍慢才停用生活感。分頁隱藏、捲出畫面、`prefers-reduced-motion` 時停止。

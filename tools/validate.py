@@ -686,7 +686,8 @@ def check_island(net=False):
         fail("ISLAND-SYNC", "island", "不應有 <img>：所有視覺都要 inline")
     for u in set(re.findall(r'https?://[^"\s\')<>]+', src)):
         if not (u.startswith(f"https://cdn.jsdelivr.net/npm/three@{I.THREE_VER}/")
-                or u.startswith("https://fonts.googleapis.com/css2?")):
+                or u.startswith("https://fonts.googleapis.com/css2?")
+                or u == "https://fonts.gstatic.com"):          # 字型檔來源的 preconnect
             fail("ISLAND-SYNC", "island", f"未允許的外部資源 {u}")
     im = re.search(r'<script type="importmap">\n(.*?)\n</script>', src, re.S)
     imap = json.loads(im.group(1)) if im else {}

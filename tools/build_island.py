@@ -8,6 +8,7 @@ Three.js 以 importmap 釘版載入，integrity 涵蓋每一個會被抓的模�
 """
 import html
 import json
+import urllib.parse
 import sys
 from pathlib import Path
 
@@ -34,8 +35,11 @@ THREE_SRI = {
 
 CORE_REMAP = {f"{_CDN}/build/three.core.js": f"{_CDN}/build/three.core.min.js"}
 
-FONTS = ("https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900"
-         "&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap")
+# 網頁字型只保留頂列標題：用 text= 只下載這幾個字（約 3 KB）；其餘一律用系統中文字型。
+# 原本整套 Noto Sans／Serif TC＋JetBrains Mono 約 2.6 MB、40 個請求，是網路載入的主要負擔。
+TITLE = "統計學習知識群島"
+FONTS = ("https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap&text="
+         + urllib.parse.quote(TITLE))
 
 
 def esc(s: str) -> str:
@@ -148,6 +152,7 @@ def build() -> str:
 /* 有 WebGL 的瀏覽器先排 3D 版面並顯示載入中，避免 2D 卡片閃一下再切換；失敗時 island.js 會移除 */
 if (window.WebGLRenderingContext) document.documentElement.classList.add('gl-pending');
 </script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="{FONTS}" rel="stylesheet">
 <style>
 {css}
@@ -161,7 +166,7 @@ if (window.WebGLRenderingContext) document.documentElement.classList.add('gl-pen
 <header class="isl-bar">
   <a class="isl-home" href="../index.html">← 回到章節總覽</a>
   <div class="isl-brand">
-    <h1>統計學習知識群島</h1>
+    <h1>{TITLE}</h1>
     <span class="isl-brand-en">Statistical Learning Archipelago · NSYSU MATH524</span>
   </div>
   <div class="isl-actions">

@@ -10,7 +10,8 @@
 /* 有 WebGL 的瀏覽器先排 3D 版面並顯示載入中，避免 2D 卡片閃一下再切換；失敗時 island.js 會移除 */
 if (window.WebGLRenderingContext) document.documentElement.classList.add('gl-pending');
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap&text=%E7%B5%B1%E8%A8%88%E5%AD%B8%E7%BF%92%E7%9F%A5%E8%AD%98%E7%BE%A4%E5%B3%B6" rel="stylesheet">
 <style>
 /* island/index.html 專用（3D 統計學習知識群島）。色票沿用 base.css：
    深藍 #2c3e7a、森林綠 #1a6b4a、米白 #f7f3eb、墨色 #1a1a2e。
@@ -20,10 +21,13 @@ if (window.WebGLRenderingContext) document.documentElement.classList.add('gl-pen
   --navy:#2c3e7a;--forest:#1a6b4a;--accent:#c0392b;--amber:#b9770e;
   --sand:#efe4cc;--isle-pre:#e9dcc0;--isle-core:#dcebd9;--isle-statistics:#d3e6d8;--isle-appendix:#dde2f0;
   --bar-h:64px;
+  /* 系統字型（不下載網頁字型）；只有頂列標題用 Noto Serif TC 的子集 */
+  --sans:system-ui,-apple-system,'PingFang TC','Microsoft JhengHei','Noto Sans CJK TC','Noto Sans TC','Heiti TC',sans-serif;
+  --mono:ui-monospace,'SFMono-Regular','Cascadia Mono',Menlo,Consolas,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{background:var(--paper);}
-body{font-family:'Noto Sans TC',sans-serif;color:var(--ink);line-height:1.7;font-size:16px;
+body{font-family:var(--sans);color:var(--ink);line-height:1.7;font-size:16px;
   -webkit-font-smoothing:antialiased;}
 button{font:inherit;}
 a{color:inherit;}
@@ -37,8 +41,8 @@ a{color:inherit;}
   border:1px solid rgba(255,255,255,.35);white-space:nowrap;transition:background .2s;}
 .isl-home:hover{background:rgba(255,255,255,.12);}
 .isl-brand{flex:1;min-width:0;}
-.isl-brand h1{font-family:'Noto Serif TC',serif;font-weight:900;font-size:1.25rem;letter-spacing:.06em;line-height:1.3;}
-.isl-brand-en{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;
+.isl-brand h1{font-family:'Noto Serif TC',var(--sans);font-weight:900;font-size:1.25rem;letter-spacing:.06em;line-height:1.3;}
+.isl-brand-en{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;
   color:rgba(255,255,255,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .isl-actions{display:flex;gap:.5rem;}
 .isl-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;
@@ -55,9 +59,9 @@ a{color:inherit;}
 .isle-core{background:var(--isle-core);}
 .isle-statistics{background:var(--isle-statistics);}
 .isle-appendix{background:var(--isle-appendix);}
-.isle h2{font-family:'Noto Serif TC',serif;font-size:1.35rem;font-weight:900;display:flex;flex-wrap:wrap;
+.isle h2{font-family:var(--sans);font-size:1.35rem;font-weight:900;display:flex;flex-wrap:wrap;
   align-items:baseline;gap:.2rem .7rem;color:var(--ink);}
-.isle-sub{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;letter-spacing:.1em;color:var(--forest);}
+.isle-sub{font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.1em;color:var(--forest);}
 .isle-appendix .isle-sub{color:var(--navy);}
 .isle-note{font-size:.88rem;color:var(--muted);margin:.2rem 0 .9rem;}
 .isl-items{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.8rem;}
@@ -68,8 +72,8 @@ a{color:inherit;}
 .isl-link:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,26,46,.1);border-color:#cfc6b3;}
 .isl-icon{grid-row:1/span 3;width:54px;height:47px;border-radius:10px;padding:5px;
   background:linear-gradient(150deg,#2c3e7a,#1a6b4a);}
-.isl-num{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.12em;color:var(--forest);}
-.isl-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:1.02rem;line-height:1.45;color:var(--ink);}
+.isl-num{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.12em;color:var(--forest);}
+.isl-title{font-family:var(--sans);font-weight:700;font-size:1.02rem;line-height:1.45;color:var(--ink);}
 .isl-landmark{font-size:.78rem;color:var(--navy);}
 .isl-blurb{grid-column:1/-1;font-size:.84rem;line-height:1.75;color:#4a463e;margin-top:.55rem;text-wrap:pretty;}
 .isl-refs{grid-column:1/-1;font-size:.76rem;color:var(--navy);margin-top:.45rem;line-height:1.6;}
@@ -129,17 +133,17 @@ a{color:inherit;}
 /* 地圖標籤：紙質小卡＋彩色編號章，貼在地標上方（位置由 island-scene.js 每次繪製時設定） */
 .isl-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
 .isl-tag{position:absolute;left:0;top:0;display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap;
-  pointer-events:auto;cursor:pointer;font:600 .8rem/1.2 'Noto Sans TC',sans-serif;color:#2b3a36;
+  pointer-events:auto;cursor:pointer;font:600 .8rem/1.2 var(--sans);color:#2b3a36;
   background:#fffdf6;border:1px solid rgba(60,72,68,.14);border-radius:999px;padding:.24rem .65rem .24rem .28rem;
   box-shadow:0 3px 10px rgba(33,52,58,.18),0 1px 0 rgba(255,255,255,.8) inset;
   transition:opacity .18s,box-shadow .18s,background .18s;will-change:transform;}
 .isl-tag::after{content:'';position:absolute;left:50%;bottom:-5px;width:9px;height:9px;margin-left:-4.5px;
   background:inherit;border-right:1px solid rgba(60,72,68,.14);border-bottom:1px solid rgba(60,72,68,.14);transform:rotate(45deg);}
 .isl-tag-num{display:inline-grid;place-items:center;min-width:1.55rem;height:1.25rem;padding:0 .3rem;border-radius:999px;
-  font:700 .7rem/1 'JetBrains Mono',monospace;color:#fff;background:#1a6b4a;}
+  font:700 .7rem/1 var(--mono);color:#fff;background:#1a6b4a;}
 .isl-tag-unit .isl-tag-num{background:#2f4566;}
 .isl-tag-pre .isl-tag-num{background:#b9770e;}
-.isl-tag-isle{padding:.3rem .8rem;font-family:'Noto Serif TC',serif;font-weight:900;font-size:.86rem;letter-spacing:.06em;
+.isl-tag-isle{padding:.3rem .8rem;font-family:var(--sans);font-weight:900;font-size:.86rem;letter-spacing:.06em;
   background:#2f4566;color:#fff;border-color:transparent;}
 .isl-tag-isle::after{border-color:transparent;}
 .isl-tag:hover,.isl-tag.is-hover{box-shadow:0 0 0 3px rgba(243,193,90,.55),0 6px 16px rgba(33,52,58,.24);}
@@ -152,7 +156,7 @@ a{color:inherit;}
 .isl-tag.is-compact{padding:.2rem;gap:0;}
 .isl-tag.is-compact .isl-tag-t{display:none;}   /* 擠不下時只留編號；滑過或選取時再看完整名稱 */
 .isl-night{position:absolute;right:1rem;bottom:2.4rem;min-height:40px;padding:.4rem 1.05rem;border-radius:999px;cursor:pointer;
-  font:600 .84rem/1 'Noto Sans TC',sans-serif;color:#2b3a36;background:rgba(255,253,246,.92);border:1px solid rgba(60,72,68,.16);
+  font:600 .84rem/1 var(--sans);color:#2b3a36;background:rgba(255,253,246,.92);border:1px solid rgba(60,72,68,.16);
   box-shadow:0 4px 14px rgba(33,52,58,.18);backdrop-filter:blur(6px);}
 .isl-night:hover{background:#fff;}
 .isl-stage.is-night .isl-night{color:#f7eed8;background:rgba(28,42,62,.88);border-color:rgba(255,255,255,.18);}
@@ -167,9 +171,9 @@ a{color:inherit;}
 .isl-panel-close{position:absolute;top:.55rem;right:.6rem;width:34px;height:34px;border-radius:50%;border:none;
   background:transparent;font-size:1.4rem;line-height:1;color:var(--muted);cursor:pointer;}
 .isl-panel-close:hover{background:rgba(26,26,46,.06);}
-.isl-panel-kicker{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.12em;color:var(--forest);
+.isl-panel-kicker{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.12em;color:var(--forest);
   padding-right:2rem;}
-.isl-panel h2{font-family:'Noto Serif TC',serif;font-size:1.3rem;font-weight:900;line-height:1.4;margin:.15rem 0 .1rem;padding-right:1.8rem;}
+.isl-panel h2{font-family:var(--sans);font-size:1.3rem;font-weight:900;line-height:1.4;margin:.15rem 0 .1rem;padding-right:1.8rem;}
 .isl-panel-landmark{font-size:.82rem;color:var(--navy);}
 .isl-panel-blurb{font-size:.9rem;line-height:1.8;color:#3d3a33;margin:.6rem 0 .7rem;text-wrap:pretty;}
 .isl-panel-refs{background:rgba(44,62,122,.06);border-radius:12px;padding:.55rem .75rem .6rem;margin-bottom:.8rem;}
