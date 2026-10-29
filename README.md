@@ -10,6 +10,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 課前準備與兩組附錄都是選讀，不列入評分。
 
 - 線上閱讀：https://phonchi.github.io/statlearning-selfstudy/
+- 3D 知識群島導覽：https://phonchi.github.io/statlearning-selfstudy/island/（點建築前往各單元；原首頁與教材不變）
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python](https://www.statlearning.com/)
 - 進階參考：[ESL — The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/)
 - 課程講義：[現行課程網站](https://phonchi.github.io/nsysu-math524/)（各頁「講義 PDF」與「中文 Lab」連結來源）

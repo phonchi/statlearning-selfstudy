@@ -127,6 +127,7 @@ def build_html():
     <h1>統計學習 <span class="green">×</span> <span class="blue">Python</span><br>互動自學網站</h1>
     <div class="subtitle">NSYSU MATH524 統計學習與資料探勘 · 依 ISLP 與課程講義編寫</div>
     <div class="big-formula">迴歸｜分類｜重抽樣｜模型選擇｜非監督式｜樣條與 GAM｜樹與集成｜SVM｜深度學習</div>
+    <a class="island-entry" href="island/">探索 3D 知識群島 →</a>
     <div class="scroll-hint">從課前準備開始<span>↓</span></div>
   </div>
 </div>
@@ -226,6 +227,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 課前準備與兩組附錄都是選讀，不列入評分。
 
 - 線上閱讀：{P.SITE_URL}
+- 3D 知識群島導覽：{P.SITE_URL}island/（點建築前往各單元；原首頁與教材不變）
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python]({P.BOOK_ISLP})
 - 進階參考：[ESL — The Elements of Statistical Learning]({P.BOOK_ESL})
 - 課程講義：[現行課程網站](https://phonchi.github.io/nsysu-math524/)（各頁「講義 PDF」與「中文 Lab」連結來源）
