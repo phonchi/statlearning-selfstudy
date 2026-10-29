@@ -795,6 +795,8 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
   - 版面：`<head>` 的小 script 在有 WebGL 時先加 `html.gl-pending`，3D 版面與「群島載入中…」先出現；`scene.warm()`（`compileAsync`＋第一幀）完成才淡入畫布，失敗則退回 2D。
   - 繪製：除了海面一律 `MeshLambertMaterial`。島的各層依材質合併（`mergeIsles`）；小人、船、鳥、雲、噴泉球等用 `instancify()` 合成 InstancedMesh、每個動畫幀同步矩陣；拾取盒 `visible=false`；光暈與地面光斑只在入夜時繪製。每幀 367 → 39 個繪製呼叫，約 30 萬 → 18 萬個三角形。陰影 2048（手機 1024）只烘一次。
   - 節能：只剩環境動畫時約 30fps，互動時全速；45 秒沒有任何輸入就停止動畫（`window.__islandIdleMs` 可在測試時調短），有輸入即恢復。DPR 依幀時間自動 1.5 → 1.25 → 1，互動時夠快再升回，最低一級仍慢才停用生活感。分頁隱藏、捲出畫面、`prefers-reduced-motion` 時停止。
+  - **繪製迴圈只能有一條**（2026-10-29 修正）：`controls.update()` 在 frame 裡會觸發 change → `requestRender()` 排下一幀，所以 frame 結尾只在 `raf` 為 0 時才再排，否則每轉一次鏡頭就多一條迴圈（修正前在 RTX 5070 上真實拖曳時一幀畫十幾次、最慢 117 ms）。browser_check 會比對拖曳期間的繪製次數與畫面幀數。標籤只在狀態或位置改變時才寫 DOM。
+  - 真實 GPU 驗證：WSL 連不到 Windows Chrome 的除錯埠，做法是把注入量測腳本的副本放到 Windows 暫存資料夾、用 Windows Chrome 開啟，PowerShell 以 `SendInput` 送出真實滑鼠拖曳，結果下載成 JSON 到 Downloads 再讀回。headless 的軟體算圖無法判斷流暢度。
   - 測試接口：`window.__island.stats()` 回傳繪製次數、DPR 等級與繪製呼叫數；browser_check 用它檢查閒置暫停與「繪製呼叫 ≤ 80」。
 
 **足跡。**「造訪」＝從島上點過前往教材；「完成」＝學生自己按 ✓。只存在該裝置瀏覽器的 localStorage

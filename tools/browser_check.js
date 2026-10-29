@@ -438,6 +438,17 @@ async function checkIsland(browser) {
       await page.screenshot({ path: path.join(SHOT_DIR, 'island_3d_night.png') });
       await page.click('#islNight'); await new Promise(r => setTimeout(r, 300));
       await page.evaluate(() => { try { localStorage.removeItem('slss-island:night'); } catch (e) {} });
+      // 拖曳旋轉時每個畫面幀最多畫一次（曾經因為重複排程，一幀畫十幾次）
+      {
+        const cv = await page.$('#islCanvas'), bb = await cv.boundingBox();
+        await page.evaluate(() => { window.__rafN = 0; const f = () => { window.__rafN++; if (window.__rafN < 1e6) requestAnimationFrame(f); }; requestAnimationFrame(f); });
+        const s0 = await page.evaluate(() => ({ d: window.__island.stats().draws, f: window.__rafN }));
+        await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await page.mouse.down();
+        for (let i = 0; i < 25; i++) { await page.mouse.move(bb.x + bb.width / 2 + i * 8, bb.y + bb.height / 2, { steps: 2 }); }
+        await page.mouse.up(); await new Promise(r => setTimeout(r, 600));
+        const s1 = await page.evaluate(() => ({ d: window.__island.stats().draws, f: window.__rafN }));
+        if (s1.d - s0.d > s1.f - s0.f + 3) note(stem, `拖曳時繪製次數（${s1.d - s0.d}）多於畫面幀數（${s1.f - s0.f}）：繪製迴圈被重複排程`);
+      }
       // 閒置暫停：把門檻調短，確認停止繪製；滑鼠一動就恢復
       const calls = await page.evaluate(() => window.__island.stats().calls);
       if (calls > 80) note(stem, `每幀繪製呼叫過多：${calls}`);

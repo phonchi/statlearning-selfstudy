@@ -1051,7 +1051,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   });
   function measureTags() {
     tags.forEach(T => {
-      T.el.classList.remove('is-compact'); T.w = T.el.offsetWidth; T.h = T.el.offsetHeight;
+      T.el.classList.remove('is-compact'); T.st = -1; T.w = T.el.offsetWidth; T.h = T.el.offsetHeight;
       T.cw = T.num ? T.num.offsetWidth + 10 : T.w;
     });
   }
@@ -1077,9 +1077,13 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
         if (T.num && !hits(box(T.cw))) { compact = true; r = box(T.cw); } else show = false;
       }
       if (show) placed.push(r);
-      T.el.classList.toggle('is-off', !show);
-      T.el.classList.toggle('is-compact', show && compact);
-      if (show) T.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, calc(-100% - 6px))`;
+      // 只在狀態或位置真的改變時才寫 DOM（每次寫入都會讓瀏覽器重算樣式）
+      const st = show ? (compact ? 2 : 1) : 0;
+      if (st !== T.st) { T.el.classList.toggle('is-off', !show); T.el.classList.toggle('is-compact', st === 2); T.st = st; }
+      if (show) {
+        const tf = `translate(${Math.round(x)}px, ${Math.round(y)}px) translate(-50%, calc(-100% - 6px))`;
+        if (tf !== T.tf) { T.el.style.transform = tf; T.tf = tf; }
+      }
     });
   }
 
@@ -1096,6 +1100,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   const wake = () => { const was = idle(); lastInput = performance.now(); if (was) requestRender(); };
   ['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, wake, { passive: true }));
   function setDprLevel(k) { dprLevel = Math.max(0, Math.min(DPRS.length - 1, k)); resize(); }
+  // 任何時候最多只有一個待執行的 frame（raf 非 0 就表示已排程）
   function requestRender() { need = true; if (!raf && alive) raf = requestAnimationFrame(frame); }
   function frame(now) {
     raf = 0; if (!alive) return;
@@ -1108,7 +1113,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
     }
     const busy = need || flying || moved || fading;
     // 只有環境動畫時限制在約 30fps
-    if (!busy && anim && now - lastDraw < 32) { raf = requestAnimationFrame(frame); return; }
+    if (!busy && anim && now - lastDraw < 32) { if (!raf) raf = requestAnimationFrame(frame); return; }
     if (anim) {
       const t = now / 1000;
       anims.forEach(f => f(t));
@@ -1130,7 +1135,8 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
       if (tagsDirty || flying || moved) { placeTags(); tagsDirty = false; }
       need = false;
     }
-    if (anim || flying || moved || fading) raf = requestAnimationFrame(frame);
+    // 只排一次：controls.update() 會觸發 change → requestRender() 已經排了下一幀，不能再多排一條迴圈
+    if ((anim || flying || moved || fading) && !raf) raf = requestAnimationFrame(frame);
   }
   const ro = new ResizeObserver(resize); ro.observe(stage);
   new IntersectionObserver(es => { onScreen = es[0].isIntersecting; requestRender(); }).observe(stage);
