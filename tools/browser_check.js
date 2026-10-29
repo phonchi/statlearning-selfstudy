@@ -10,7 +10,7 @@
  *   - 離線重載：.chart-fallback 要出現，SVG 元件仍在
  *   - 全頁截圖
  * island/index.html（3D 群島）另走 checkIsland()：WebGL 正常／CDN 被攔／getContext 回傳 null
- * 三種狀態 × 桌面與 390×844，確認 3D 畫得出來、點建築開面板、2D 備援、26 個入口都可達。
+ * 三種狀態 × 桌面與 390×844，確認 3D 畫得出來、點島／標籤開面板、入夜切換、2D 備援、26 個入口都可達。
  *
  * 用法：
  *   node tools/browser_check.js                     # 全部頁面
@@ -416,6 +416,28 @@ async function checkIsland(browser) {
       if (!done.cls || !done.saved) note(stem, `標記完成沒有生效：${JSON.stringify(done)}`);
       for (const b of await page.$$('.isl-jump-btn')) { await b.click(); await new Promise(r => setTimeout(r, 120)); }
       await page.click('#islReset');
+      await new Promise(r => setTimeout(r, 1200));
+      // 地圖標籤：全景時正課 11 章都要有標籤（擠不下時可退成只有編號）；點標籤＝選取
+      const tagInfo = await page.$$eval('.isl-tag-core', els => ({
+        total: els.length, shown: els.filter(e => !e.classList.contains('is-off')).length }));
+      if (tagInfo.shown < tagInfo.total) note(stem, `全景時正課標籤只顯示 ${tagInfo.shown}/${tagInfo.total}`);
+      const tag = await page.$('.isl-tag-core:not(.is-off)');
+      if (tag) {
+        const want = await tag.evaluate(el => el.querySelector('.isl-tag-t').textContent);
+        await tag.click(); await new Promise(r => setTimeout(r, 400));
+        const got = await page.$eval('#islPanelTitle', el => el.textContent);
+        if (got !== want) note(stem, `點地圖標籤「${want}」開成「${got}」`);
+        await page.keyboard.press('Escape');
+      }
+      // 入夜：按鈕狀態、畫面變暗並截圖
+      await page.click('#islNight'); await new Promise(r => setTimeout(r, 1800));
+      const night = await page.evaluate(() => ({
+        pressed: document.getElementById('islNight').getAttribute('aria-pressed'),
+        cls: document.getElementById('islStage').classList.contains('is-night') }));
+      if (night.pressed !== 'true' || !night.cls) note(stem, `入夜切換無效：${JSON.stringify(night)}`);
+      await page.screenshot({ path: path.join(SHOT_DIR, 'island_3d_night.png') });
+      await page.click('#islNight'); await new Promise(r => setTimeout(r, 300));
+      await page.evaluate(() => { try { localStorage.removeItem('slss-island:night'); } catch (e) {} });
       await page.evaluate(() => { try { localStorage.removeItem('slss-island:trail:v1'); } catch (e) {} });
     }
     await layout(page, '桌面 3D');

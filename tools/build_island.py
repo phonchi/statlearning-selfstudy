@@ -22,11 +22,12 @@ _CDN = f"https://cdn.jsdelivr.net/npm/three@{THREE_VER}"
 THREE_MAIN = f"{_CDN}/build/three.module.min.js"
 THREE_ADDONS = f"{_CDN}/examples/jsm/"
 # 每一個實際會被瀏覽器抓的檔案都要有雜湊；three.module.min.js 會再 import ./three.core.js。
-# 升版時：下載這三個檔，以 `openssl dgst -sha384 -binary f | openssl base64 -A` 重算。
+# 升版時：下載這四個檔，以 `openssl dgst -sha384 -binary f | openssl base64 -A` 重算。
 THREE_SRI = {
     THREE_MAIN: "sha384-EU5UWigB3OuXjAXooUegndJSqYber3YSJHDoMZs6rV96yY/ol/B4W8logw4CKWkA",
     f"{_CDN}/build/three.core.js": "sha384-mdKeCwPEcbDvzaxwhm+MVuLoMou+E7jQqrs4tmu/n8HBYPGI1kZt0MkJxlMR4zFM",
     f"{THREE_ADDONS}controls/OrbitControls.js": "sha384-LSqANrugPGTgf0eYsQTloqKWy926dOOXo2iZ9y6wLMIDEQoU9AaCLJF1Vcc7oJXr",
+    f"{THREE_ADDONS}geometries/RoundedBoxGeometry.js": "sha384-gHmgcgYfabbVCqiNiLLSop7dMvxAqZsQsjokoDYKyrHmCD5jCPvDvFaXaAkHtTfM",
 }
 
 FONTS = ("https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900"
@@ -119,7 +120,8 @@ def build() -> str:
     check_meta()
     recs = records()
     css = (TEMPLATE / "island.css").read_text(encoding="utf-8").rstrip()
-    js = (TEMPLATE / "island.js").read_text(encoding="utf-8").rstrip()
+    # UI 層與場景層 inline 進同一個 module（共用頂層名稱）
+    js = "\n\n".join((TEMPLATE / f).read_text(encoding="utf-8").rstrip() for f in ("island.js", "island-scene.js"))
     data = dict(isles=[dict(grp=g, **v) for g, v in M.ISLES.items()], pages=recs)
     data_json = json.dumps(data, ensure_ascii=False, indent=1).replace("</", "<\\/")
     importmap = json.dumps({"imports": {"three": THREE_MAIN, "three/addons/": THREE_ADDONS},
@@ -129,7 +131,7 @@ def build() -> str:
                       for g, v in M.ISLES.items())
     n_core = sum(1 for r in recs if r["grp"] == "core")
     return f"""<!DOCTYPE html>
-<!-- 產物：由 tools/build_island.py 產生，不要手改。文案在 tools/island_meta.py，樣式與程式在 tools/template/island.* -->
+<!-- 產物：由 tools/build_island.py 產生，不要手改。文案在 tools/island_meta.py，樣式與程式在 tools/template/island.*、island-scene.js -->
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -162,8 +164,9 @@ def build() -> str:
     <div class="isl-jumps" role="group" aria-label="跳到島嶼">
 {jumps}
     </div>
-    <div class="isl-tip" id="islTip" aria-hidden="true"></div>
-    <p class="isl-hint" aria-hidden="true">拖曳旋轉 · 滾輪或雙指縮放 · 點選建築</p>
+    <div class="isl-labels" id="islLabels"></div>
+    <button type="button" class="isl-night" id="islNight" aria-pressed="false">入夜</button>
+    <p class="isl-hint" aria-hidden="true">拖曳旋轉 · 滾輪或雙指縮放 · 點島或標籤</p>
   </div>
   <nav class="isl-list" id="islList" aria-label="群島章節列表">
     <p class="isl-intro">四座島、{len(recs)} 個單元，全部可以自由進入。主島的 {n_core} 章依授課順序排列；

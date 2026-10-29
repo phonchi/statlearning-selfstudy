@@ -770,8 +770,9 @@ MathJax（`mathjax@3.2.2` 的 es5，去掉 `sre`）與 Chart.js 4.5.1（核對 s
 | 建築名稱、簡介、正課 → 先備的「需要時可查閱」 | `tools/island_meta.py`（stem 為鍵；缺頁、多頁、refs 指錯都會讓產生器報錯） |
 | 章節順序、標題、分區 | 照舊只改 `tools/pages.py`，島上自動跟著變 |
 | 樣式 | `tools/template/island.css` |
-| 場景、建築配方、足跡、面板 | `tools/template/island.js` |
-| Three.js 版本 | `tools/build_island.py` 的 `THREE_VER` 與 `THREE_SRI`（三個檔都要重算 sha384，含被間接 import 的 `three.core.js`） |
+| 列表、足跡、面板、入夜按鈕（UI 層） | `tools/template/island.js` |
+| 場景：島、地標、道具、橋、海、生活感、標籤、日夜 | `tools/template/island-scene.js`（與 island.js 依序 inline 進同一個 module） |
+| Three.js 版本 | `tools/build_island.py` 的 `THREE_VER` 與 `THREE_SRI`（四個檔都要重算 sha384，含被間接 import 的 `three.core.js` 與 `RoundedBoxGeometry.js`） |
 
 改完：`python3 tools/build_island.py` → `python3 tools/validate.py --net` → `node tools/browser_check.js island`。
 `island/index.html` 是產物，不要手改。
@@ -782,10 +783,13 @@ WebGL 不可用時就是 2D 卡片地圖；WebGL 可用才 dynamic import Three.
 `file://` 也能開。Three.js 以 importmap 釘版載入，`integrity` 涵蓋每個實際抓取的模組；
 importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿到釘版檔案。
 
-**場景。**正交相機、仰角固定 35°，只能旋轉方位與縮放；有互動或動畫時才繪製，畫布捲出視窗或分頁隱藏時停止動畫；
-`prefers-reduced-motion` 時不播動畫、相機瞬切。建築全部是程序化幾何（沒有模型、沒有圖檔，`check_repo` 照樣禁止圖檔）。
-主島沿環狀小徑依授課順序放 01–10，11 深度學習（補充）在中央高地；三座附屬島各用一套建築語彙
-（港口、樹屋、工坊）。新增頁面時若沒在 `island.js` 的 `local` 位置表裡，會自動放在該島中心附近，仍可點選。
+**場景（2026-10-29 v2，黏土微縮風）。**以 REA 拆解 island.vista.tw、aweilab 物理群島與 isleforge 的「精緻度底線」後重做，只借概念與參數、程式全部自寫：
+- 島＝不規則輪廓的分層倒角擠出（沙底／深崖帶／草頂，11 深度學習多一層高地），外圈半透明淺水環與浪花環；正課 11 章各自一座小島，依授課順序以二次貝茲拱橋連成蛇形航線，課前港口、統計森林、Python 工坊是三座附屬島，外圍有小沙洲收邊。
+- 道具走 `PartKit`：零件清單（box、圓角 box、cyl、cone、sphere、rock、prism）最後依種類合併成 InstancedMesh、逐實例上色；會動的東西（噴泉、小人、帆船、鳥、雲）另建 mesh、不投影，小人用假陰影圓盤。
+- 光影：半球光＋投影主光＋補光，`PCFShadowMap`（r18x 已移除 PCFSoft，用 `shadow.radius` 柔化）、ACES；**陰影只烘一次**（`shadowMap.autoUpdate=false`，建好與足跡變更時設 `needsUpdate`）。改 shadow camera 範圍後一定要 `updateProjectionMatrix()`，否則只有預設 ±5 的範圍有陰影。
+- 標籤是 HTML（`#islLabels`），每次繪製時投影定位；正課 11 章常駐，擠不下時退成只顯示編號，再擠不下才隱藏；zoom ≥ 1.6 才展開附屬島的單元標籤、收起島名。標籤 `tabindex=-1`、`aria-hidden`，鍵盤仍走右側列表。
+- 入夜：天色、霧、半球光、主光、海色平滑過渡，窗戶與路燈的 glow 材質亮起、光暈 Sprite、星點；狀態存 localStorage `slss-island:night`。
+- 只在有動畫、互動、飛行或日夜過渡時繪製；分頁隱藏或畫布捲出畫面時停；連續約 3 秒低於 22fps 會停用生活感動畫並把 DPR 降到 1（headless 軟體算圖一定會觸發，截圖時看到的是靜態姿勢）。`prefers-reduced-motion` 時全部靜止、相機瞬切。
 
 **足跡。**「造訪」＝從島上點過前往教材；「完成」＝學生自己按 ✓。只存在該裝置瀏覽器的 localStorage
 （鍵 `slss-island:trail:v1`），原教材頁不會也不需要寫入。
