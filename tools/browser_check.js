@@ -9,6 +9,8 @@
  *   - 390×844 手機版：頁面本體不得橫向滾動
  *   - 離線重載：.chart-fallback 要出現，SVG 元件仍在
  *   - 全頁截圖
+ * island/index.html（3D 群島）另走 checkIsland()：WebGL 正常／CDN 被攔／getContext 回傳 null
+ * 三種狀態 × 桌面與 390×844，確認 3D 畫得出來、點建築開面板、2D 備援、26 個入口都可達。
  *
  * 用法：
  *   node tools/browser_check.js                     # 全部頁面
@@ -36,8 +38,10 @@ const CHROME = process.env.CHROME_PATH || (() => {
   return path.join(base, dirs[dirs.length - 1], 'chrome-linux64', 'chrome');
 })();
 
-const PAGES = process.argv.slice(2).length
-  ? process.argv.slice(2).map(s => s.replace(/\.html$/, ''))
+const ARGS = process.argv.slice(2).map(s => s.replace(/\.html$/, '').replace(/\/index$/, ''));
+const WITH_ISLAND = !ARGS.length || ARGS.includes('island');
+const PAGES = ARGS.length
+  ? ARGS.filter(s => s !== 'island')
   : fs.readdirSync(ROOT).filter(f => f.endsWith('.html') && f !== 'index.html')
       .map(f => f.replace(/\.html$/, ''));
 
@@ -295,6 +299,167 @@ async function checkOne(browser, stem) {
   return { charts: charts.length, svgs: svgs.length, btns: btns.length, cards: fc.n };
 }
 
+const ISLAND_IGNORE = [/software WebGL/i, /GL Driver Message/i, /GPU stall/i];
+
+/* 3D 群島：三種狀態 × 桌面／手機。回傳摘要字串。 */
+async function checkIsland(browser) {
+  const stem = 'island';
+  const url = 'file://' + path.join(ROOT, 'island', 'index.html');
+  const html = fs.readFileSync(path.join(ROOT, 'island', 'index.html'), 'utf8');
+  const total = (html.match(/class="isl-link"/g) || []).length;
+  fs.mkdirSync(SHOT_DIR, { recursive: true });
+  const summary = [];
+
+  async function open(mode) {
+    const page = await browser.newPage();
+    const errors = [];
+    page.on('console', m => {
+      if (m.type() === 'error' || m.type() === 'warning') {
+        const t = m.text();
+        if (!IGNORE.some(re => re.test(t)) && !ISLAND_IGNORE.some(re => re.test(t))) errors.push(`console.${m.type()}: ${t}`);
+      }
+    });
+    page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+    if (mode === 'cdn') {
+      await page.setRequestInterception(true);
+      page.on('request', req => {
+        if (/cdn\.jsdelivr\.net/.test(req.url())) req.abort().catch(() => {});
+        else req.continue().catch(() => {});
+      });
+    }
+    if (mode === 'nogl') {
+      await page.evaluateOnNewDocument(() => {
+        const orig = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
+          return /webgl/i.test(type) ? null : orig.call(this, type, ...rest);
+        };
+      });
+    }
+    return { page, errors };
+  }
+
+  // 頁面本體不得橫向捲動；26 個入口都要可見（可 Tab 到達）
+  async function layout(page, label) {
+    const r = await page.evaluate(() => {
+      const de = document.documentElement;
+      const links = [...document.querySelectorAll('.isl-link')];
+      return {
+        over: de.scrollWidth - de.clientWidth,
+        visible: links.filter(a => a.offsetParent !== null && a.tabIndex >= 0).length,
+        webgl: document.body.classList.contains('webgl-ready'),
+      };
+    });
+    if (r.over > 1) note(stem, `${label}：橫向溢出 ${r.over}px`);
+    if (r.visible !== total) note(stem, `${label}：只有 ${r.visible}/${total} 個入口可見`);
+    return r;
+  }
+
+  // 畫布是否真的畫出東西：截圖後在頁面裡解碼，數不同顏色
+  async function canvasColors(page) {
+    const el = await page.$('#islCanvas');
+    const b64 = await el.screenshot({ encoding: 'base64' });
+    return page.evaluate(async src => {
+      const img = new Image(); img.src = 'data:image/png;base64,' + src; await img.decode();
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+      const d = g.getImageData(0, 0, c.width, c.height).data, seen = new Set();
+      for (let i = 0; i < d.length; i += 4 * 97) seen.add((d[i] >> 3) << 10 | (d[i + 1] >> 3) << 5 | d[i + 2] >> 3);
+      return seen.size;
+    }, b64);
+  }
+
+  // (a) WebGL 正常
+  {
+    const { page, errors } = await open('gl');
+    await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });  // 3D 動畫持續繪製，不等 networkidle
+    await page.evaluate(() => { try { localStorage.removeItem('slss-island:trail:v1'); } catch (e) {} });
+    const ready = await page.waitForSelector('body.webgl-ready', { timeout: 30000 }).then(() => true, () => false);
+    if (!ready) note(stem, 'WebGL 可用時沒有進入 3D 模式');
+    else {
+      await new Promise(r => setTimeout(r, 1200));
+      const colors = await canvasColors(page);
+      if (colors < 40) note(stem, `3D 畫布幾乎是空的（${colors} 種顏色）`);
+      await page.screenshot({ path: path.join(SHOT_DIR, 'island_3d.png') });
+      // 點建築 → 面板
+      const pos = await page.evaluate(() => window.__island.screenPos('resampling_methods'));
+      await page.mouse.click(pos.x, pos.y);
+      await new Promise(r => setTimeout(r, 300));
+      const t1 = await page.$eval('#islPanel', el => el.hidden ? '' : document.getElementById('islPanelTitle').textContent);
+      if (t1 !== '重抽樣方法') note(stem, `點 Bootstrap 噴泉沒有開對面板（得到「${t1}」）`);
+      const refs = await page.$$eval('.isl-item.is-ref', els => els.length);
+      if (!refs) note(stem, '選取正課後沒有高亮相關先備頁');
+      // 列表 Enter → 面板、焦點到「前往教材」；Esc 關閉並還原焦點
+      await page.focus('.isl-item[data-stem="tree_based_methods"] .isl-link');
+      await page.keyboard.press('Enter');
+      await new Promise(r => setTimeout(r, 900));
+      const k = await page.evaluate(() => ({
+        title: document.getElementById('islPanelTitle').textContent,
+        focus: document.activeElement && document.activeElement.id,
+        href: document.getElementById('islPanelGo').getAttribute('href'),
+      }));
+      if (k.title !== '樹狀方法與集成學習' || k.focus !== 'islPanelGo') note(stem, `鍵盤選取失敗：${JSON.stringify(k)}`);
+      if (k.href !== '../tree_based_methods.html') note(stem, `「前往教材」連結錯誤：${k.href}`);
+      await page.screenshot({ path: path.join(SHOT_DIR, 'island_3d_selected.png') });
+      await page.keyboard.press('Escape');
+      const back = await page.evaluate(() => ({
+        hidden: document.getElementById('islPanel').hidden,
+        focus: document.activeElement && document.activeElement.dataset.stem,
+      }));
+      if (!back.hidden || back.focus !== 'tree_based_methods') note(stem, `Esc 沒有關閉面板或還原焦點：${JSON.stringify(back)}`);
+      // 足跡：標記完成 → 列表與 localStorage
+      await page.click('.isl-item[data-stem="introduction"] .isl-mark');
+      const done = await page.evaluate(() => ({
+        cls: document.querySelector('.isl-item[data-stem="introduction"]').classList.contains('is-done'),
+        saved: (localStorage.getItem('slss-island:trail:v1') || '').includes('introduction'),
+      }));
+      if (!done.cls || !done.saved) note(stem, `標記完成沒有生效：${JSON.stringify(done)}`);
+      for (const b of await page.$$('.isl-jump-btn')) { await b.click(); await new Promise(r => setTimeout(r, 120)); }
+      await page.click('#islReset');
+      await page.evaluate(() => { try { localStorage.removeItem('slss-island:trail:v1'); } catch (e) {} });
+    }
+    await layout(page, '桌面 3D');
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await new Promise(r => setTimeout(r, 900));
+    await layout(page, '手機 3D');
+    await page.screenshot({ path: path.join(SHOT_DIR, 'island_3d_mobile.png') });
+    errors.forEach(e => note(stem, '3D：' + e));
+    await page.close();
+    summary.push('3D ' + (ready ? 'OK' : '失敗'));
+  }
+
+  // (b) CDN 被攔、(c) WebGL 不可用 → 2D 地圖
+  for (const [mode, label] of [['cdn', 'CDN 失效'], ['nogl', '無 WebGL']]) {
+    const { page, errors } = await open(mode);
+    await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => {});
+    await new Promise(r => setTimeout(r, 2000));
+    const r = await layout(page, label + '桌面');
+    if (r.webgl) note(stem, `${label}時仍進入 3D 模式`);
+    const stageHidden = await page.$eval('#islStage', el => el.hidden);
+    if (!stageHidden) note(stem, `${label}時 3D 畫布沒有隱藏`);
+    // 2D 模式：點卡片直接前往教材（記錄造訪），不攔截
+    await page.click('.isl-mark');
+    const marked = await page.$eval('.isl-mark', el => el.getAttribute('aria-pressed'));
+    if (marked !== 'true') note(stem, `${label}時無法標記完成`);
+    await page.evaluate(() => { try { localStorage.removeItem('slss-island:trail:v1'); } catch (e) {} });
+    await page.screenshot({ path: path.join(SHOT_DIR, `island_2d_${mode}.png`), fullPage: true });
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await new Promise(r => setTimeout(r, 600));
+    await layout(page, label + '手機');
+    await page.screenshot({ path: path.join(SHOT_DIR, `island_2d_${mode}_mobile.png`) });
+    errors.forEach(e => note(stem, `${label}：${e}`));
+    await page.close();
+    summary.push(label + (r.webgl ? ' 失敗' : ' → 2D'));
+  }
+
+  // 每個入口都指到存在的教材頁
+  const missing = [...html.matchAll(/class="isl-link" href="\.\.\/([^"]+)"/g)]
+    .map(m => m[1]).filter(f => !fs.existsSync(path.join(ROOT, f)));
+  missing.forEach(f => note(stem, '入口指向不存在的 ' + f));
+  return `${total} 入口 · ${summary.join(' · ')}`;
+}
+
 (async () => {
   const browser = await puppeteer.launch({
     executablePath: CHROME,
@@ -311,6 +476,13 @@ async function checkOne(browser, stem) {
     const n = problems.length - before;
     const info = s ? `${s.charts} 圖表 · ${s.svgs} SVG · ${s.btns} 按鈕 · ${s.cards} 詞彙卡` : '';
     console.log(`  ${(stem + '.html').padEnd(34)} ${n === 0 ? 'OK  ' : n + ' 問題'} ${info}`);
+  }
+  if (WITH_ISLAND) {
+    const before = problems.length;
+    let info = '';
+    try { info = await checkIsland(browser); } catch (e) { note('island', '檢查中斷：' + e.message); }
+    const n = problems.length - before;
+    console.log(`  ${'island/index.html'.padEnd(34)} ${n === 0 ? 'OK  ' : n + ' 問題'} ${info}`);
   }
   await browser.close();
   console.log('');

@@ -646,6 +646,72 @@ def check_repo():
                  f"出現素材檔 {f.relative_to(ROOT)}：PDF／notebook 放 repo 外（見 .gitignore）")
 
 
+def check_island(net=False):
+    """3D 群島 island/index.html：產物同步、章節順序、相對連結、外部資源釘版＋SRI、用語。
+
+    頁面由 tools/build_island.py 產生；文案在 tools/island_meta.py。--net 時重新下載
+    Three.js 的每個模組並比對 sha384，確保記錄的雜湊與 CDN 上的檔案一致。
+    """
+    import base64
+    import urllib.request
+    import build_island as I
+    from check_taiwan_wording import UNWANTED
+    f = ROOT / "island" / "index.html"
+    if not f.exists():
+        fail("ISLAND-SYNC", "island", "尚未產生，先跑 python3 tools/build_island.py")
+        return
+    src = f.read_text(encoding="utf-8")
+    try:
+        want = I.build()
+    except SystemExit as e:
+        fail("ISLAND-SYNC", "island", str(e))
+        return
+    if src != want:
+        fail("ISLAND-SYNC", "island", "產物與產生器不一致（手改了，或改了 pages／island_meta／template 後沒重跑 build_island.py）")
+    m = re.search(r'<script type="application/json" id="island-data">\n(.*?)\n</script>', src, re.S)
+    data = json.loads(m.group(1)) if m else {"pages": []}
+    got = [(r["stem"], r["grp"]) for r in data["pages"]]
+    if got != [(p.stem, p.grp) for p in P.PAGES]:
+        fail("ISLAND-SYNC", "island", "內嵌章節順序與 pages.py 的 PAGES 不同")
+    groups = Counter(g for _, g in got)
+    if [groups[g] for g in ("pre", "core", "statistics", "appendix")] != [3, 11, 6, 6]:
+        warn("ISLAND-SYNC", "island", f"四島單元數為 {dict(groups)}（原設計 3／11／6／6）")
+    links = re.findall(r'class="isl-link" href="\.\./([^"]+)"', src)
+    if links != [p.file for p in P.PAGES]:
+        fail("ISLAND-SYNC", "island", "列表入口與 PAGES 不一致")
+    for href in set(re.findall(r'href="\.\./([^"#]+)"', src)) | {r["href"][3:] for r in data["pages"]}:
+        if not (ROOT / href).exists():
+            fail("ISLAND-SYNC", "island", f"連結指向不存在的 {href}")
+    if re.search(r"<img\b", src, re.I):
+        fail("ISLAND-SYNC", "island", "不應有 <img>：所有視覺都要 inline")
+    for u in set(re.findall(r'https?://[^"\s\')<>]+', src)):
+        if not (u.startswith(f"https://cdn.jsdelivr.net/npm/three@{I.THREE_VER}/")
+                or u.startswith("https://fonts.googleapis.com/css2?")):
+            fail("ISLAND-SYNC", "island", f"未允許的外部資源 {u}")
+    im = re.search(r'<script type="importmap">\n(.*?)\n</script>', src, re.S)
+    imap = json.loads(im.group(1)) if im else {}
+    integ = imap.get("integrity", {})
+    for spec, url in imap.get("imports", {}).items():
+        if not url.endswith("/") and url not in integ:
+            fail("ISLAND-SYNC", "island", f"importmap 的 {spec} 缺 integrity")
+    if integ != I.THREE_SRI:
+        fail("ISLAND-SYNC", "island", "importmap 的 integrity 與 build_island.THREE_SRI 不一致")
+    if net:
+        for url, sri in I.THREE_SRI.items():
+            try:
+                body = urllib.request.urlopen(urllib.request.Request(
+                    url, headers={"User-Agent": "Mozilla/5.0 sri-check"}), timeout=30).read()
+                got_sri = "sha384-" + base64.b64encode(hashlib.sha384(body).digest()).decode()
+                if got_sri != sri:
+                    fail("ISLAND-SYNC", url, f"SRI 不符：CDN 實際為 {got_sri}")
+            except Exception as e:
+                fail("ISLAND-SYNC", url, f"無法下載以驗證 SRI：{type(e).__name__}: {e}")
+    text = re.sub(r"<(script|style)\b.*?</\1>", "", src, flags=re.S)
+    words = sorted(set(UNWANTED.findall(text + json.dumps(data, ensure_ascii=False))))
+    if words:
+        fail("ISLAND-SYNC", "island", f"用語：{', '.join(words)}")
+
+
 def check_links(base=None):
     import urllib.error
     import urllib.request
@@ -698,6 +764,7 @@ def main(argv):
         check_index()
         check_repo()
         check_contrast_contract()
+        check_island(net="--net" in argv)
     if "--net" in argv:
         check_links()
 

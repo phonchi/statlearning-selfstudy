@@ -101,7 +101,8 @@ python3 tools/enrich/enrich_*.py   # 各章內容
 python3 tools/inject_data.py       # 詞彙卡與題庫（母檔在 data/）
 python3 tools/build_index.py       # 本檔與 index.html
 python3 tools/check_visual_claims.py  # 高風險視覺的來源與數值不變量
-python3 tools/validate.py --net    # 19 項具名檢查
+python3 tools/build_island.py      # island/index.html（3D 知識群島）
+python3 tools/validate.py --net    # 20 項具名檢查
 node tools/browser_check.js        # 瀏覽器逐項（含手機版與 CDN 失效）
 ```
 

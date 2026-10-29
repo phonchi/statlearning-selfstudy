@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<!-- 產物：由 tools/build_island.py 產生，不要手改。文案在 tools/island_meta.py，樣式與程式在 tools/template/island.* -->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="統計學習知識群島：以 3D 群島導覽 NSYSU MATH524 統計學習自學網站的 26 個單元，點選建築即可前往原教材。">
+<title>統計學習知識群島 — Statistical Learning Archipelago</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* island/index.html 專用（3D 統計學習知識群島）。色票沿用 base.css：
+   深藍 #2c3e7a、森林綠 #1a6b4a、米白 #f7f3eb、墨色 #1a1a2e。
+   預設樣式＝2D 卡片地圖（無 JS／CDN 失效／無 WebGL 都看得到）；body.webgl-ready 才切成 3D＋側欄。 */
+:root{
+  --ink:#1a1a2e;--paper:#f7f3eb;--card:#fffdf7;--card-border:#e8e2d6;--muted:#6f6a5f;
+  --navy:#2c3e7a;--forest:#1a6b4a;--accent:#c0392b;--amber:#b9770e;
+  --sand:#efe4cc;--isle-pre:#e9dcc0;--isle-core:#dcebd9;--isle-statistics:#d3e6d8;--isle-appendix:#dde2f0;
+  --bar-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--paper);}
+body{font-family:'Noto Sans TC',sans-serif;color:var(--ink);line-height:1.7;font-size:16px;
+  -webkit-font-smoothing:antialiased;}
+button{font:inherit;}
+a{color:inherit;}
+:focus-visible{outline:3px solid #f39c12;outline-offset:2px;}
+
+/* ── 頂列 ─────────────────────────────────────────── */
+.isl-bar{position:sticky;top:0;z-index:30;min-height:var(--bar-h);display:flex;align-items:center;gap:1rem;
+  padding:.6rem 1.2rem;color:#fff;background:linear-gradient(100deg,#1a1a2e 0%,#2c3e7a 55%,#1a6b4a 100%);
+  box-shadow:0 2px 12px rgba(26,26,46,.25);}
+.isl-home{color:#fff;text-decoration:none;font-size:.9rem;padding:.35rem .75rem;border-radius:999px;
+  border:1px solid rgba(255,255,255,.35);white-space:nowrap;transition:background .2s;}
+.isl-home:hover{background:rgba(255,255,255,.12);}
+.isl-brand{flex:1;min-width:0;}
+.isl-brand h1{font-family:'Noto Serif TC',serif;font-weight:900;font-size:1.25rem;letter-spacing:.06em;line-height:1.3;}
+.isl-brand-en{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;
+  color:rgba(255,255,255,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.isl-actions{display:flex;gap:.5rem;}
+.isl-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;
+  padding:.35rem .8rem;font-size:.85rem;cursor:pointer;white-space:nowrap;transition:background .2s;}
+.isl-btn:hover{background:rgba(255,255,255,.2);}
+
+/* ── 2D 地圖（預設）──────────────────────────────── */
+.isl-list{max-width:1180px;margin:0 auto;padding:1.6rem 1.2rem 3rem;}
+.isl-intro{font-size:.95rem;color:var(--muted);margin-bottom:1.4rem;text-wrap:pretty;}
+.isl-trail-note{display:inline-block;}
+.isle{border-radius:22px;padding:1.2rem 1.2rem 1.3rem;margin-bottom:1.4rem;border:1px solid rgba(26,26,46,.06);
+  box-shadow:0 6px 24px rgba(26,26,46,.06);}
+.isle-pre{background:var(--isle-pre);}
+.isle-core{background:var(--isle-core);}
+.isle-statistics{background:var(--isle-statistics);}
+.isle-appendix{background:var(--isle-appendix);}
+.isle h2{font-family:'Noto Serif TC',serif;font-size:1.35rem;font-weight:900;display:flex;flex-wrap:wrap;
+  align-items:baseline;gap:.2rem .7rem;color:var(--ink);}
+.isle-sub{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;letter-spacing:.1em;color:var(--forest);}
+.isle-appendix .isle-sub{color:var(--navy);}
+.isle-note{font-size:.88rem;color:var(--muted);margin:.2rem 0 .9rem;}
+.isl-items{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.8rem;}
+.isl-item{position:relative;}
+.isl-link{display:grid;grid-template-columns:54px 1fr;align-content:start;column-gap:.8rem;
+  height:100%;text-decoration:none;background:var(--card);border:1px solid var(--card-border);border-radius:14px;
+  padding:.85rem 2.6rem .9rem .85rem;transition:transform .18s,box-shadow .18s,border-color .18s;}
+.isl-link:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,26,46,.1);border-color:#cfc6b3;}
+.isl-icon{grid-row:1/span 3;width:54px;height:47px;border-radius:10px;padding:5px;
+  background:linear-gradient(150deg,#2c3e7a,#1a6b4a);}
+.isl-num{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.12em;color:var(--forest);}
+.isl-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:1.02rem;line-height:1.45;color:var(--ink);}
+.isl-landmark{font-size:.78rem;color:var(--navy);}
+.isl-blurb{grid-column:1/-1;font-size:.84rem;line-height:1.75;color:#4a463e;margin-top:.55rem;text-wrap:pretty;}
+.isl-refs{grid-column:1/-1;font-size:.76rem;color:var(--navy);margin-top:.45rem;line-height:1.6;}
+body.webgl-ready .isl-refs{display:none;}
+.isl-state{position:absolute;top:.85rem;right:2.55rem;width:10px;height:10px;border-radius:50%;}
+.isl-item.is-visited .isl-state{background:#f0b429;box-shadow:0 0 0 3px rgba(240,180,41,.25);}
+.isl-item.is-done .isl-state{display:none;}   /* 完成時勾選鈕本身就是綠色，不重複標示 */
+.isl-mark{position:absolute;top:.55rem;right:.55rem;width:30px;height:30px;border-radius:9px;cursor:pointer;
+  border:1.5px solid #cfc6b3;background:#fff;color:transparent;font-size:.95rem;line-height:1;
+  display:grid;place-items:center;transition:background .15s,border-color .15s,color .15s;}
+.isl-mark:hover{border-color:var(--forest);color:rgba(26,107,74,.45);}
+.isl-mark[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff;}
+.isl-item.is-ref .isl-link{border-color:var(--navy);box-shadow:0 0 0 2px rgba(44,62,122,.25);}
+.isl-item.is-current .isl-link{border-color:#f39c12;box-shadow:0 0 0 3px rgba(243,156,18,.35);}
+
+/* ── 3D 模式 ─────────────────────────────────────── */
+.isl-stage{position:relative;overflow:hidden;}
+body.webgl-ready .isl-main{display:grid;grid-template-columns:minmax(0,1fr) 340px;
+  height:calc(100vh - var(--bar-h));height:calc(100dvh - var(--bar-h));}
+body.webgl-ready .isl-stage{display:block;min-height:0;
+  background:radial-gradient(ellipse at 50% 40%,#a9c7d8 0%,#7fa3c0 55%,#5d7fa6 100%);}
+#islCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;outline:none;}
+#islCanvas:active{cursor:grabbing;}
+#islCanvas.is-hover{cursor:pointer;}
+#islCanvas:focus-visible{box-shadow:inset 0 0 0 3px #f39c12;}
+body.webgl-ready .isl-list{max-width:none;margin:0;padding:1rem .9rem 2rem;overflow-y:auto;min-height:0;
+  background:var(--paper);border-left:1px solid var(--card-border);}
+body.webgl-ready .isl-intro{font-size:.82rem;margin-bottom:.9rem;}
+body.webgl-ready .isle{border-radius:16px;padding:.8rem .7rem .7rem;margin-bottom:.9rem;box-shadow:none;}
+body.webgl-ready .isle h2{font-size:1.02rem;}
+body.webgl-ready .isle-note{font-size:.78rem;margin:.1rem 0 .5rem;}
+body.webgl-ready .isl-items{grid-template-columns:1fr;gap:.35rem;}
+body.webgl-ready .isl-link{grid-template-columns:2.1rem 1fr;grid-template-rows:auto auto;padding:.45rem 2.4rem .45rem .6rem;
+  border-radius:10px;}
+body.webgl-ready .isl-link:hover{transform:none;}
+body.webgl-ready .isl-icon,body.webgl-ready .isl-blurb{display:none;}
+body.webgl-ready .isl-num{grid-row:1/span 2;align-self:center;font-size:.78rem;}
+body.webgl-ready .isl-title{font-size:.9rem;}
+body.webgl-ready .isl-landmark{font-size:.72rem;}
+body.webgl-ready .isl-state{top:50%;right:2.45rem;transform:translateY(-50%);width:8px;height:8px;}
+body.webgl-ready .isl-mark{top:50%;transform:translateY(-50%);width:26px;height:26px;right:.45rem;border-radius:8px;font-size:.8rem;}
+
+.isl-jumps{position:absolute;left:1rem;top:1rem;display:flex;flex-wrap:wrap;gap:.4rem;max-width:calc(100% - 2rem);}
+.isl-jump-btn{background:rgba(255,253,247,.9);color:var(--ink);border:1px solid rgba(26,26,46,.12);border-radius:999px;
+  padding:.3rem .8rem;font-size:.82rem;cursor:pointer;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(26,26,46,.12);
+  transition:background .15s;}
+.isl-jump-btn:hover{background:#fff;}
+.isl-hint{position:absolute;right:1rem;bottom:.8rem;font-size:.78rem;color:rgba(255,255,255,.92);
+  text-shadow:0 1px 3px rgba(26,26,46,.6);pointer-events:none;}
+.isl-tip{position:absolute;left:0;top:0;pointer-events:none;transform:translate(-50%,-130%);white-space:nowrap;
+  background:rgba(26,26,46,.88);color:#fff;font-size:.82rem;padding:.25rem .65rem;border-radius:8px;opacity:0;
+  transition:opacity .12s;}
+.isl-tip.show{opacity:1;}
+.isl-tip b{font-family:'JetBrains Mono',monospace;font-weight:600;color:#f7d774;margin-right:.35rem;}
+
+/* ── 章節面板 ─────────────────────────────────────── */
+.isl-panel{position:fixed;z-index:40;left:1rem;bottom:1rem;width:min(380px,calc(100vw - 2rem));
+  background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:1.1rem 1.2rem 1.15rem;
+  box-shadow:0 18px 50px rgba(26,26,46,.28);animation:islPanelIn .22s ease-out;}
+.isl-panel[hidden]{display:none;}
+@keyframes islPanelIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.isl-panel-close{position:absolute;top:.55rem;right:.6rem;width:34px;height:34px;border-radius:50%;border:none;
+  background:transparent;font-size:1.4rem;line-height:1;color:var(--muted);cursor:pointer;}
+.isl-panel-close:hover{background:rgba(26,26,46,.06);}
+.isl-panel-kicker{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.12em;color:var(--forest);
+  padding-right:2rem;}
+.isl-panel h2{font-family:'Noto Serif TC',serif;font-size:1.3rem;font-weight:900;line-height:1.4;margin:.15rem 0 .1rem;padding-right:1.8rem;}
+.isl-panel-landmark{font-size:.82rem;color:var(--navy);}
+.isl-panel-blurb{font-size:.9rem;line-height:1.8;color:#3d3a33;margin:.6rem 0 .7rem;text-wrap:pretty;}
+.isl-panel-refs{background:rgba(44,62,122,.06);border-radius:12px;padding:.55rem .75rem .6rem;margin-bottom:.8rem;}
+.isl-panel-refs-h{font-size:.74rem;font-weight:700;color:var(--navy);letter-spacing:.06em;margin-bottom:.25rem;}
+.isl-panel-refs ul{list-style:none;display:flex;flex-wrap:wrap;gap:.3rem .45rem;}
+.isl-panel-refs a{font-size:.8rem;color:var(--navy);text-decoration:none;border-bottom:1px dotted var(--navy);}
+.isl-panel-refs a:hover{color:var(--accent);border-color:var(--accent);}
+.isl-panel-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+.isl-go{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.5rem 1.2rem;border-radius:12px;
+  background:var(--forest);color:#fff;text-decoration:none;font-weight:700;letter-spacing:.04em;transition:background .15s;}
+.isl-go:hover{background:#145a3e;}
+.isl-done{min-height:44px;padding:.5rem 1rem;border-radius:12px;border:1.5px solid #cfc6b3;background:#fff;color:var(--ink);
+  cursor:pointer;transition:background .15s,border-color .15s;}
+.isl-done:hover{border-color:var(--forest);}
+.isl-done[aria-pressed="true"]{background:#e3f0e8;border-color:var(--forest);color:var(--forest);font-weight:700;}
+
+/* ── 手機 ─────────────────────────────────────────── */
+@media (max-width:767px){
+  :root{--bar-h:56px;}
+  .isl-bar{padding:.5rem .75rem;gap:.6rem;}
+  .isl-brand h1{font-size:1.02rem;}
+  .isl-brand-en{display:none;}
+  .isl-home{font-size:.8rem;padding:.3rem .6rem;}
+  .isl-btn{font-size:.78rem;padding:.3rem .6rem;}
+  .isl-list{padding:1rem .75rem 2.5rem;}
+  .isl-items{grid-template-columns:1fr;}
+  body.webgl-ready .isl-main{display:block;height:auto;}
+  body.webgl-ready .isl-stage{height:55vh;height:55svh;}
+  body.webgl-ready .isl-list{border-left:none;overflow:visible;}
+  .isl-jumps{left:.6rem;top:.6rem;gap:.3rem;}
+  .isl-jump-btn{font-size:.74rem;padding:.25rem .6rem;}
+  .isl-hint{display:none;}
+  .isl-panel{left:0;right:0;bottom:0;width:auto;border-radius:20px 20px 0 0;max-height:70vh;overflow-y:auto;
+    padding-bottom:calc(1.15rem + env(safe-area-inset-bottom));}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}
+}
+</style>
+<script type="importmap">
+{
+ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+ },
+ "integrity": {
+  "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js": "sha384-EU5UWigB3OuXjAXooUegndJSqYber3YSJHDoMZs6rV96yY/ol/B4W8logw4CKWkA",
+  "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "sha384-mdKeCwPEcbDvzaxwhm+MVuLoMou+E7jQqrs4tmu/n8HBYPGI1kZt0MkJxlMR4zFM",
+  "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/controls/OrbitControls.js": "sha384-LSqANrugPGTgf0eYsQTloqKWy926dOOXo2iZ9y6wLMIDEQoU9AaCLJF1Vcc7oJXr"
+ }
+}
+</script>
+</head>
+<body>
+<header class="isl-bar">
+  <a class="isl-home" href="../index.html">← 回到章節總覽</a>
+  <div class="isl-brand">
+    <h1>統計學習知識群島</h1>
+    <span class="isl-brand-en">Statistical Learning Archipelago · NSYSU MATH524</span>
+  </div>
+  <div class="isl-actions">
+    <button type="button" class="isl-btn" id="islReset" hidden>重設視角</button>
+    <button type="button" class="isl-btn" id="islClear">清除足跡</button>
+  </div>
+</header>
+<main class="isl-main">
+  <div class="isl-stage" id="islStage" hidden>
+    <canvas id="islCanvas" tabindex="0" aria-label="3D 群島：拖曳旋轉、滾輪縮放、點選建築；也可用右側列表操作"></canvas>
+    <div class="isl-jumps" role="group" aria-label="跳到島嶼">
+      <button type="button" class="isl-jump-btn" data-grp="pre">啟航島</button>
+      <button type="button" class="isl-jump-btn" data-grp="core">統計學習主島</button>
+      <button type="button" class="isl-jump-btn" data-grp="statistics">統計森林島</button>
+      <button type="button" class="isl-jump-btn" data-grp="appendix">Python 工坊島</button>
+    </div>
+    <div class="isl-tip" id="islTip" aria-hidden="true"></div>
+    <p class="isl-hint" aria-hidden="true">拖曳旋轉 · 滾輪或雙指縮放 · 點選建築</p>
+  </div>
+  <nav class="isl-list" id="islList" aria-label="群島章節列表">
+    <p class="isl-intro">四座島、26 個單元，全部可以自由進入。主島的 11 章依授課順序排列；
+      其他三座島是選讀，需要時再查閱。<span class="isl-trail-note">「足跡」只存在這台裝置的瀏覽器裡。</span></p>
+    <section class="isle isle-pre" id="isle-pre" data-grp="pre" aria-labelledby="isle-pre-h">
+      <h2 id="isle-pre-h"><span class="isle-name">啟航島</span><span class="isle-sub">課前準備 · 選讀</span></h2>
+      <p class="isle-note">港口與燈塔：先把學習方法與環境準備好。</p>
+      <ol class="isl-items">
+        <li class="isl-item" data-stem="00a_why_code" data-grp="pre">
+          <a class="isl-link" href="../00a_why_code.html" data-stem="00a_why_code">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" stroke-width="3.5" fill="none" opacity=".85"><path d="M120 96 C 96 96, 84 118, 92 138 C 76 152, 84 180, 106 184 C 110 206, 142 212, 156 196 L 156 96 Z"/><path d="M156 96 C 180 96, 192 118, 184 138 C 200 152, 192 180, 170 184 C 166 206, 156 208, 156 196"/><path d="M124 128 h 22 M132 158 h 20 M170 128 h 14"/></g><g fill="#fff" opacity=".92"><path d="M248 108 c 0 -18 30 -18 30 0 c 0 14 -15 12 -15 28 h -12 c 0 -22 15 -18 15 -28 c 0 -8 -18 -8 -18 0 z"/><circle cx="257" cy="156" r="7"/></g></svg>
+            <span class="isl-num">A</span>
+            <span class="isl-title">AI 時代的資料分析學習迴圈</span>
+            <span class="isl-landmark">燈塔</span>
+            <span class="isl-blurb">資料分析的學習迴圈：提出想法、動手嘗試、觀察證據、修正理解，並讓 AI 留在迴圈裡協助你練習判斷。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="00b_setup" data-grp="pre">
+          <a class="isl-link" href="../00b_setup.html" data-stem="00b_setup">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".8"><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(0 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(45 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(90 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(135 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(180 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(225 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(270 167 140)"/><rect x="158" y="40" width="18" height="26" rx="3" transform="rotate(315 167 140)"/><circle cx="167" cy="140" r="58"/></g><circle cx="167" cy="140" r="28" fill="#2b3a67" opacity=".9"/><g stroke="#fff" stroke-width="4" fill="none" opacity=".9"><path d="M250 96 l 16 16 l 30 -32"/><path d="M250 156 l 16 16 l 30 -32"/><path d="M250 216 l 16 16 l 30 -32"/></g></svg>
+            <span class="isl-num">B</span>
+            <span class="isl-title">環境安裝</span>
+            <span class="isl-landmark">補給碼頭</span>
+            <span class="isl-blurb">從 Colab 到本機環境，跑出第一張圖；期中考使用電腦教室，考前用相同版本完整重跑一次。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="00c_ai_assisted" data-grp="pre">
+          <a class="isl-link" href="../00c_ai_assisted.html" data-stem="00c_ai_assisted">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".8"><path d="M40 60 h 180 a 8 8 0 0 1 8 8 v 56 a 8 8 0 0 1 -8 8 h -140 l -24 22 v -22 h -16 a 8 8 0 0 1 -8 -8 v -56 a 8 8 0 0 1 8 -8 z"/></g><g fill="#fff" opacity=".55"><path d="M120 168 h 180 a 8 8 0 0 1 8 8 v 56 a 8 8 0 0 1 -8 8 h -16 l -24 22 v -22 h -140 a 8 8 0 0 1 -8 -8 v -56 a 8 8 0 0 1 8 -8 z"/></g><g stroke="#2b3a67" stroke-width="5" fill="none" stroke-linecap="round"><path d="M74 92 l 14 14 l 28 -30"/></g><g stroke="#2b3a67" stroke-width="5" fill="none" stroke-linecap="round"><path d="M244 190 l 30 30 M274 190 l -30 30"/></g></svg>
+            <span class="isl-num">C</span>
+            <span class="isl-title">AI 輔助統計分析：從提問到驗證</span>
+            <span class="isl-landmark">領航站</span>
+            <span class="isl-blurb">用 AI 輔助統計分析：先分流任務、補足脈絡、小步生成，再核對統計解讀並留下可重現紀錄。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="isle isle-core" id="isle-core" data-grp="core" aria-labelledby="isle-core-h">
+      <h2 id="isle-core-h"><span class="isle-name">統計學習主島</span><span class="isle-sub">正課 11 章</span></h2>
+      <p class="isle-note">沿著環島小徑依授課順序排列，可自由進入任何一章。</p>
+      <ol class="isl-items">
+        <li class="isl-item" data-stem="introduction" data-grp="core">
+          <a class="isl-link" href="../introduction.html" data-stem="introduction">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g><rect x="30" y="50" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="100" y="50" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="170" y="50" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="240" y="50" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="30" y="112" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="100" y="112" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="170" y="112" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="240" y="112" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="30" y="174" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="100" y="174" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="170" y="174" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="240" y="174" width="56" height="46" rx="6" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/></g><g fill="#fff" opacity=".85"><rect x="30" y="50" width="56" height="46" rx="6"/><rect x="170" y="112" width="56" height="46" rx="6"/></g></svg>
+            <span class="isl-num">01</span>
+            <span class="isl-title">統計學習導論與 EDA</span>
+            <span class="isl-landmark">觀測塔</span>
+            <span class="isl-blurb">統計學習在做什麼、和相關領域如何分工；先看資料再建模，從探索式資料分析（EDA）讀懂 22 個資料集。</span>
+            <span class="isl-refs">需要時可查閱：機率、平均與變異、pandas 資料框、視覺化</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="statistical_learning" data-grp="core">
+          <a class="isl-link" href="../statistical_learning.html" data-stem="statistical_learning">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" fill="none" stroke-width="3" opacity=".85"><path d="M35 90 Q120 235 285 205"/></g><g stroke="#fff" fill="none" stroke-width="2.5" opacity=".55"><path d="M35 225 Q140 205 285 60"/></g><g stroke="#fff" fill="none" stroke-width="3.5" opacity=".95"><path d="M35 70 Q140 210 285 55"/></g><g fill="#fff" opacity=".95"><circle cx="152" cy="176" r="8"/></g><g stroke="#fff" stroke-width="2" opacity=".4" stroke-dasharray="4 4"><path d="M152 176 V245"/></g></svg>
+            <span class="isl-num">02</span>
+            <span class="isl-title">統計學習的基本框架</span>
+            <span class="isl-landmark">訓練／測試分岔路</span>
+            <span class="isl-blurb">Y = f(X) + ε 的基本框架：可縮減與不可縮減誤差、彈性與可解釋性、偏差–變異取捨，以及 Bayes 分類器與 KNN。</span>
+            <span class="isl-refs">需要時可查閱：機率、平均與變異、分布與抽樣、NumPy 陣列</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="linear_regression" data-grp="core">
+          <a class="isl-link" href="../linear_regression.html" data-stem="linear_regression">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".92"><circle cx="30" cy="210" r="6"/><circle cx="58" cy="190" r="6"/><circle cx="72" cy="200" r="6"/><circle cx="95" cy="168" r="6"/><circle cx="118" cy="172" r="6"/><circle cx="140" cy="148" r="6"/><circle cx="162" cy="136" r="6"/><circle cx="185" cy="142" r="6"/><circle cx="208" cy="112" r="6"/><circle cx="230" cy="100" r="6"/><circle cx="252" cy="96" r="6"/><circle cx="275" cy="74" r="6"/></g><g stroke="#fff" stroke-width="3" fill="none" opacity=".85"><path d="M22 224 L292 66"/><path d="M22 240 H300"/><path d="M22 240 V40"/></g></svg>
+            <span class="isl-num">03</span>
+            <span class="isl-title">線性迴歸</span>
+            <span class="isl-landmark">迴歸斜坡</span>
+            <span class="isl-blurb">簡單與多元線性迴歸：係數的標準誤與 t 檢定、F 檢定、R²，以及質性變數、交互作用與共線性等常見問題。</span>
+            <span class="isl-refs">需要時可查閱：從樣本推論母體、相關與迴歸〔選讀〕、建模 API</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="classification" data-grp="core">
+          <a class="isl-link" href="../classification.html" data-stem="classification">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" stroke-width="3" fill="none" opacity=".8"><path d="M30 210 Q110 60 290 90"/></g><g fill="#fff" opacity=".9"><circle cx="70" cy="90" r="7"/><circle cx="110" cy="60" r="7"/><circle cx="150" cy="52" r="7"/><circle cx="205" cy="55" r="7"/></g><g fill="none" stroke="#fff" stroke-width="2.5" opacity=".9"><rect x="62" y="182" width="14" height="14"/><rect x="122" y="205" width="14" height="14"/><rect x="186" y="160" width="14" height="14"/><rect x="240" y="140" width="14" height="14"/></g></svg>
+            <span class="isl-num">04</span>
+            <span class="isl-title">分類</span>
+            <span class="isl-landmark">雙色分類城門</span>
+            <span class="isl-blurb">邏輯斯迴歸、LDA、QDA 與 Naive Bayes；用混淆矩陣、ROC 與 AUC 比較分類結果，並延伸到 Poisson 迴歸。</span>
+            <span class="isl-refs">需要時可查閱：條件機率與獨立、分布與抽樣、貝氏推論〔選讀〕、建模 API</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="resampling_methods" data-grp="core">
+          <a class="isl-link" href="../resampling_methods.html" data-stem="resampling_methods">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g><rect x="40" y="50" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="88" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="50" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="88" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="136" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="88" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="126" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="184" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="126" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="164" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/><rect x="232" y="164" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="40" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="88" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="136" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="184" y="202" width="42" height="30" rx="4" fill="none" opacity=".45" stroke="#fff" stroke-width="2"/><rect x="232" y="202" width="42" height="30" rx="4" fill="#fff" opacity=".9" stroke="#fff" stroke-width="2"/></g></svg>
+            <span class="isl-num">05</span>
+            <span class="isl-title">重抽樣方法</span>
+            <span class="isl-landmark">Bootstrap 噴泉</span>
+            <span class="isl-blurb">驗證集法、LOOCV 與 k-fold 交叉驗證估計測試誤差；Bootstrap 重抽樣衡量估計量的不確定性。</span>
+            <span class="isl-refs">需要時可查閱：分布與抽樣、從樣本推論母體、建模 API</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="model_selection" data-grp="core">
+          <a class="isl-link" href="../model_selection.html" data-stem="model_selection">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" fill="none" stroke-width="3" opacity=".85"><path d="M40 60 Q150 130 285 132"/><path d="M40 120 Q150 132 285 133"/><path d="M40 205 Q150 140 285 134"/><path d="M40 165 Q150 138 285 133"/></g><g stroke="#fff" stroke-width="2" opacity=".5" stroke-dasharray="5 4"><path d="M30 133 H295"/></g><g fill="none" stroke="#fff" stroke-width="2.5" opacity=".8"><path d="M200 40 L235 75 L200 110 L165 75 Z"/></g></svg>
+            <span class="isl-num">06</span>
+            <span class="isl-title">線性模型選擇與正則化</span>
+            <span class="isl-landmark">修剪花園</span>
+            <span class="isl-blurb">變數很多時如何選模型：子集選擇與 Cp／AIC／BIC，Ridge 與 Lasso 正則化，以及 PCR 與 PLS 降維迴歸。</span>
+            <span class="isl-refs">需要時可查閱：相關與迴歸〔選讀〕、NumPy 陣列、建模 API</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="beyond_linearity" data-grp="core">
+          <a class="isl-link" href="../beyond_linearity.html" data-stem="beyond_linearity">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" fill="none" stroke-width="3" opacity=".85"><path d="M25 200 Q90 60 160 150 T295 80"/></g><g stroke="#fff" fill="none" stroke-width="2" opacity=".45" stroke-dasharray="6 5"><path d="M25 170 L295 110"/></g><g stroke="#fff" stroke-width="2" opacity=".5"><path d="M90 40 V230"/><path d="M160 40 V230"/><path d="M230 40 V230"/></g></svg>
+            <span class="isl-num">07</span>
+            <span class="isl-title">超越線性</span>
+            <span class="isl-landmark">樣條拱橋</span>
+            <span class="isl-blurb">線性不夠用時：多項式、階梯函數、迴歸樣條、平滑樣條、局部迴歸，最後組成廣義可加模型（GAM）。</span>
+            <span class="isl-refs">需要時可查閱：相關與迴歸〔選讀〕、視覺化</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="tree_based_methods" data-grp="core">
+          <a class="isl-link" href="../tree_based_methods.html" data-stem="tree_based_methods">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" stroke-width="3" fill="none" opacity=".85"><path d="M160 40 V70"/><path d="M160 70 L95 110"/><path d="M160 70 L225 110"/><path d="M95 110 L60 165"/><path d="M95 110 L130 165"/><path d="M225 110 L195 165"/><path d="M225 110 L262 165"/></g><g fill="#fff" opacity=".92"><rect x="140" y="20" width="40" height="22" rx="4"/><rect x="75" y="98" width="40" height="22" rx="4"/><rect x="205" y="98" width="40" height="22" rx="4"/><circle cx="60" cy="180" r="12"/><circle cx="130" cy="180" r="12"/><circle cx="195" cy="180" r="12"/><circle cx="262" cy="180" r="12"/></g></svg>
+            <span class="isl-num">08</span>
+            <span class="isl-title">樹狀方法與集成學習</span>
+            <span class="isl-landmark">決策樹森林</span>
+            <span class="isl-blurb">迴歸樹與分類樹的分裂與剪枝；再用 Bagging、隨機森林與 Boosting 把許多棵樹集成為更穩定的預測。</span>
+            <span class="isl-refs">需要時可查閱：分布與抽樣、建模 API</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="support_vector_machines" data-grp="core">
+          <a class="isl-link" href="../support_vector_machines.html" data-stem="support_vector_machines">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" stroke-width="3" opacity=".9"><path d="M40 220 L280 70"/></g><g stroke="#fff" stroke-width="2" opacity=".45" stroke-dasharray="7 5"><path d="M40 180 L280 30"/><path d="M40 260 L280 110"/></g><g fill="#fff" opacity=".92"><circle cx="105" cy="90" r="7"/><circle cx="160" cy="70" r="7"/><circle cx="95" cy="140" r="7"/></g><g fill="none" stroke="#fff" stroke-width="2.5" opacity=".92"><rect x="150" y="185" width="14" height="14"/><rect x="215" y="145" width="14" height="14"/><rect x="100" y="215" width="14" height="14"/></g></svg>
+            <span class="isl-num">09</span>
+            <span class="isl-title">支持向量機</span>
+            <span class="isl-landmark">最大間隔圍牆</span>
+            <span class="isl-blurb">用超平面把兩群資料分開：最大邊界、軟邊界與 C、hinge loss，以及透過核技巧處理非線性邊界。</span>
+            <span class="isl-refs">需要時可查閱：NumPy 陣列、建模 API</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="unsupervised_learning" data-grp="core">
+          <a class="isl-link" href="../unsupervised_learning.html" data-stem="unsupervised_learning">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".9"><circle cx="70" cy="70" r="7"/><circle cx="95" cy="55" r="7"/><circle cx="105" cy="88" r="7"/><circle cx="78" cy="100" r="7"/><circle cx="210" cy="70" r="7"/><circle cx="240" cy="58" r="7"/><circle cx="250" cy="92" r="7"/><circle cx="218" cy="98" r="7"/><circle cx="140" cy="185" r="7"/><circle cx="168" cy="172" r="7"/><circle cx="178" cy="205" r="7"/><circle cx="146" cy="212" r="7"/></g><g fill="none" stroke="#fff" stroke-width="2.5" opacity=".55"><ellipse cx="88" cy="78" rx="42" ry="38"/><ellipse cx="230" cy="79" rx="42" ry="38"/><ellipse cx="158" cy="193" rx="42" ry="38"/></g></svg>
+            <span class="isl-num">10</span>
+            <span class="isl-title">非監督式學習</span>
+            <span class="isl-landmark">群聚星球廣場</span>
+            <span class="isl-blurb">沒有標準答案的學習：主成分分析（PCA）、矩陣補全，以及 K-means 與階層式分群。</span>
+            <span class="isl-refs">需要時可查閱：機率、平均與變異、NumPy 陣列、視覺化</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="deep_learning" data-grp="core">
+          <a class="isl-link" href="../deep_learning.html" data-stem="deep_learning">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" stroke-width="1.5" fill="none" opacity=".35"><path d="M42 60 L128 45"/><path d="M42 60 L128 90"/><path d="M42 60 L128 135"/><path d="M42 60 L128 180"/><path d="M42 60 L128 225"/><path d="M42 110 L128 45"/><path d="M42 110 L128 90"/><path d="M42 110 L128 135"/><path d="M42 110 L128 180"/><path d="M42 110 L128 225"/><path d="M42 160 L128 45"/><path d="M42 160 L128 90"/><path d="M42 160 L128 135"/><path d="M42 160 L128 180"/><path d="M42 160 L128 225"/><path d="M42 210 L128 45"/><path d="M42 210 L128 90"/><path d="M42 210 L128 135"/><path d="M42 210 L128 180"/><path d="M42 210 L128 225"/><path d="M128 45 L214 85"/><path d="M128 45 L214 135"/><path d="M128 45 L214 185"/><path d="M128 90 L214 85"/><path d="M128 90 L214 135"/><path d="M128 90 L214 185"/><path d="M128 135 L214 85"/><path d="M128 135 L214 135"/><path d="M128 135 L214 185"/><path d="M128 180 L214 85"/><path d="M128 180 L214 135"/><path d="M128 180 L214 185"/><path d="M128 225 L214 85"/><path d="M128 225 L214 135"/><path d="M128 225 L214 185"/><path d="M214 85 L288 135"/><path d="M214 135 L288 135"/><path d="M214 185 L288 135"/></g><g fill="#fff" opacity=".92"><circle cx="42" cy="60" r="9"/><circle cx="42" cy="110" r="9"/><circle cx="42" cy="160" r="9"/><circle cx="42" cy="210" r="9"/><circle cx="128" cy="45" r="9"/><circle cx="128" cy="90" r="9"/><circle cx="128" cy="135" r="9"/><circle cx="128" cy="180" r="9"/><circle cx="128" cy="225" r="9"/><circle cx="214" cy="85" r="9"/><circle cx="214" cy="135" r="9"/><circle cx="214" cy="185" r="9"/><circle cx="288" cy="135" r="11"/></g></svg>
+            <span class="isl-num">11</span>
+            <span class="isl-title">深度學習（補充）</span>
+            <span class="isl-landmark">神經網路高塔</span>
+            <span class="isl-blurb">補充章：從單層到多層神經網路、卷積與循環網路，以及模型如何擬合與雙下降現象。本課未授課，供自學延伸。</span>
+            <span class="isl-refs">需要時可查閱：NumPy 陣列、建模 API</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="isle isle-statistics" id="isle-statistics" data-grp="statistics" aria-labelledby="isle-statistics-h">
+      <h2 id="isle-statistics-h"><span class="isle-name">統計森林島</span><span class="isle-sub">統計先備 · 查閱用</span></h2>
+      <p class="isle-note">正課讀到卡住時再來這片樹林查閱，不必先讀完。</p>
+      <ol class="isl-items">
+        <li class="isl-item" data-stem="s1_probability" data-grp="statistics">
+          <a class="isl-link" href="../s1_probability.html" data-stem="s1_probability">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><path d="M20 230 C90 230 110 50 160 50 C210 50 230 230 300 230" fill="none" stroke="#fff" stroke-width="10" opacity=".9"/><path d="M20 244 H300" stroke="#fff" stroke-width="6" opacity=".55"/></svg>
+            <span class="isl-num">S1</span>
+            <span class="isl-title">機率、平均與變異</span>
+            <span class="isl-landmark">機率樹屋</span>
+            <span class="isl-blurb">母體與樣本、事件與機率、隨機變數的期望值與變異數。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="s2_conditional" data-grp="statistics">
+          <a class="isl-link" href="../s2_conditional.html" data-stem="s2_conditional">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><path d="M20 230 C90 230 110 50 160 50 C210 50 230 230 300 230" fill="none" stroke="#fff" stroke-width="10" opacity=".9"/><path d="M20 244 H300" stroke="#fff" stroke-width="6" opacity=".55"/></svg>
+            <span class="isl-num">S2</span>
+            <span class="isl-title">條件機率與獨立</span>
+            <span class="isl-landmark">條件樹屋</span>
+            <span class="isl-blurb">條件機率、獨立與互斥，以及 Bayes 公式。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="s3_distributions" data-grp="statistics">
+          <a class="isl-link" href="../s3_distributions.html" data-stem="s3_distributions">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><path d="M20 230 C90 230 110 50 160 50 C210 50 230 230 300 230" fill="none" stroke="#fff" stroke-width="10" opacity=".9"/><path d="M20 244 H300" stroke="#fff" stroke-width="6" opacity=".55"/></svg>
+            <span class="isl-num">S3</span>
+            <span class="isl-title">分布與抽樣</span>
+            <span class="isl-landmark">分布樹屋</span>
+            <span class="isl-blurb">常用分布與抽樣分布，大數法則與中央極限定理。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="s4_inference" data-grp="statistics">
+          <a class="isl-link" href="../s4_inference.html" data-stem="s4_inference">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><path d="M20 230 C90 230 110 50 160 50 C210 50 230 230 300 230" fill="none" stroke="#fff" stroke-width="10" opacity=".9"/><path d="M20 244 H300" stroke="#fff" stroke-width="6" opacity=".55"/></svg>
+            <span class="isl-num">S4</span>
+            <span class="isl-title">從樣本推論母體</span>
+            <span class="isl-landmark">推論樹屋</span>
+            <span class="isl-blurb">點估計、標準誤、信賴區間、假設檢定與 p 值，以及 Bootstrap 入門。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="s5_bayesian" data-grp="statistics">
+          <a class="isl-link" href="../s5_bayesian.html" data-stem="s5_bayesian">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><path d="M20 230 C90 230 110 50 160 50 C210 50 230 230 300 230" fill="none" stroke="#fff" stroke-width="10" opacity=".9"/><path d="M20 244 H300" stroke="#fff" stroke-width="6" opacity=".55"/></svg>
+            <span class="isl-num">S5</span>
+            <span class="isl-title">貝氏推論〔選讀〕</span>
+            <span class="isl-landmark">貝氏樹屋</span>
+            <span class="isl-blurb">選讀：概似與最大概似，從先驗到後驗的更新。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="s6_regression" data-grp="statistics">
+          <a class="isl-link" href="../s6_regression.html" data-stem="s6_regression">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><path d="M20 230 C90 230 110 50 160 50 C210 50 230 230 300 230" fill="none" stroke="#fff" stroke-width="10" opacity=".9"/><path d="M20 244 H300" stroke="#fff" stroke-width="6" opacity=".55"/></svg>
+            <span class="isl-num">S6</span>
+            <span class="isl-title">相關與迴歸〔選讀〕</span>
+            <span class="isl-landmark">相關樹屋</span>
+            <span class="isl-blurb">選讀：共變異數與相關、最小平方法與殘差的解讀限制。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="isle isle-appendix" id="isle-appendix" data-grp="appendix" aria-labelledby="isle-appendix-h">
+      <h2 id="isle-appendix-h"><span class="isle-name">Python 工坊島</span><span class="isle-sub">Python 先備 · 查閱用</span></h2>
+      <p class="isle-note">正課會用到的語法與套件，需要時再進工坊。</p>
+      <ol class="isl-items">
+        <li class="isl-item" data-stem="p1_python_basics" data-grp="appendix">
+          <a class="isl-link" href="../p1_python_basics.html" data-stem="p1_python_basics">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".62"><rect x="46" y="54" width="210" height="14" rx="7"/><rect x="66" y="84" width="150" height="14" rx="7"/><rect x="66" y="114" width="176" height="14" rx="7"/><rect x="46" y="144" width="128" height="14" rx="7"/><rect x="46" y="174" width="232" height="14" rx="7"/><rect x="66" y="204" width="168" height="14" rx="7"/></g><g fill="#fff" opacity=".9"><rect x="46" y="234" width="96" height="14" rx="7"/></g><g stroke="#fff" stroke-width="3" opacity=".5"><path d="M30 40 V262"/></g></svg>
+            <span class="isl-num">P1</span>
+            <span class="isl-title">Python 基礎</span>
+            <span class="isl-landmark">基礎工坊</span>
+            <span class="isl-blurb">變數與型別、串列與切片、字典、字串格式化。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="p2_flow_functions" data-grp="appendix">
+          <a class="isl-link" href="../p2_flow_functions.html" data-stem="p2_flow_functions">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g stroke="#fff" stroke-width="3" fill="none" opacity=".85"><path d="M180 46 V78"/><path d="M120 108 H80 V160"/><path d="M240 108 H280 V160"/><path d="M180 138 V240"/><path d="M80 190 H280 V190"/></g><g fill="#fff" opacity=".9"><path d="M180 78 L240 108 L180 138 L120 108 Z"/><rect x="52" y="160" width="56" height="30" rx="5"/><rect x="252" y="160" width="56" height="30" rx="5"/><circle cx="180" cy="252" r="13"/></g></svg>
+            <span class="isl-num">P2</span>
+            <span class="isl-title">流程與函式</span>
+            <span class="isl-landmark">流程工坊</span>
+            <span class="isl-blurb">條件、迴圈、函式與作用域，以及如何讀懂錯誤訊息。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="p3_numpy" data-grp="appendix">
+          <a class="isl-link" href="../p3_numpy.html" data-stem="p3_numpy">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".28"><rect x="40" y="50" width="50" height="34" rx="4"/><rect x="98" y="50" width="50" height="34" rx="4"/><rect x="156" y="50" width="50" height="34" rx="4"/><rect x="214" y="50" width="50" height="34" rx="4"/><rect x="40" y="92" width="50" height="34" rx="4"/><rect x="98" y="92" width="50" height="34" rx="4"/><rect x="156" y="92" width="50" height="34" rx="4"/><rect x="214" y="92" width="50" height="34" rx="4"/><rect x="40" y="134" width="50" height="34" rx="4"/><rect x="98" y="134" width="50" height="34" rx="4"/><rect x="156" y="134" width="50" height="34" rx="4"/><rect x="214" y="134" width="50" height="34" rx="4"/><rect x="40" y="176" width="50" height="34" rx="4"/><rect x="98" y="176" width="50" height="34" rx="4"/><rect x="156" y="176" width="50" height="34" rx="4"/><rect x="214" y="176" width="50" height="34" rx="4"/></g><g fill="#fff" opacity=".95"><rect x="40" y="92" width="50" height="34" rx="4"/><rect x="156" y="92" width="50" height="34" rx="4"/><rect x="40" y="176" width="50" height="34" rx="4"/><rect x="156" y="176" width="50" height="34" rx="4"/></g><g stroke="#fff" stroke-width="3" fill="none" opacity=".8"><path d="M26 40 H26 V228 H26"/><path d="M20 40 H32"/><path d="M20 228 H32"/></g></svg>
+            <span class="isl-num">P3</span>
+            <span class="isl-title">NumPy 陣列</span>
+            <span class="isl-landmark">NumPy 工坊</span>
+            <span class="isl-blurb">ndarray 的 shape、索引、布林索引、廣播、axis 與亂數模擬。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="p4_pandas" data-grp="appendix">
+          <a class="isl-link" href="../p4_pandas.html" data-stem="p4_pandas">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".9"><rect x="40" y="46" width="64" height="26" rx="4"/><rect x="112" y="46" width="64" height="26" rx="4"/><rect x="184" y="46" width="64" height="26" rx="4"/><rect x="256" y="46" width="64" height="26" rx="4"/></g><g fill="#fff" opacity=".26"><rect x="40" y="80" width="64" height="24" rx="3"/><rect x="112" y="80" width="64" height="24" rx="3"/><rect x="184" y="80" width="64" height="24" rx="3"/><rect x="256" y="80" width="64" height="24" rx="3"/><rect x="40" y="112" width="64" height="24" rx="3"/><rect x="112" y="112" width="64" height="24" rx="3"/><rect x="184" y="112" width="64" height="24" rx="3"/><rect x="256" y="112" width="64" height="24" rx="3"/><rect x="40" y="144" width="64" height="24" rx="3"/><rect x="112" y="144" width="64" height="24" rx="3"/><rect x="184" y="144" width="64" height="24" rx="3"/><rect x="256" y="144" width="64" height="24" rx="3"/><rect x="40" y="176" width="64" height="24" rx="3"/><rect x="112" y="176" width="64" height="24" rx="3"/><rect x="184" y="176" width="64" height="24" rx="3"/><rect x="256" y="176" width="64" height="24" rx="3"/><rect x="40" y="208" width="64" height="24" rx="3"/><rect x="112" y="208" width="64" height="24" rx="3"/><rect x="184" y="208" width="64" height="24" rx="3"/><rect x="256" y="208" width="64" height="24" rx="3"/></g><g fill="#fff" opacity=".85"><rect x="184" y="80" width="64" height="24" rx="3"/><rect x="184" y="112" width="64" height="24" rx="3"/><rect x="184" y="144" width="64" height="24" rx="3"/><rect x="184" y="176" width="64" height="24" rx="3"/><rect x="184" y="208" width="64" height="24" rx="3"/></g></svg>
+            <span class="isl-num">P4</span>
+            <span class="isl-title">pandas 資料框</span>
+            <span class="isl-landmark">pandas 工坊</span>
+            <span class="isl-blurb">Series 與 DataFrame、loc／iloc、遺漏值、groupby 與資料串接。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="p5_visualization" data-grp="appendix">
+          <a class="isl-link" href="../p5_visualization.html" data-stem="p5_visualization">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".55"><rect x="44" y="150" width="34" height="60" rx="3"/><rect x="90" y="114" width="34" height="96" rx="3"/><rect x="136" y="72" width="34" height="138" rx="3"/><rect x="182" y="40" width="34" height="170" rx="3"/><rect x="228" y="78" width="34" height="132" rx="3"/><rect x="274" y="122" width="34" height="88" rx="3"/></g><path d="M44 176 C 110 150, 150 92, 200 66 S 280 78, 316 118" stroke="#fff" stroke-width="3.5" fill="none" opacity=".95"/><g stroke="#fff" stroke-width="3" opacity=".8"><path d="M34 214 H330"/><path d="M34 214 V40"/></g></svg>
+            <span class="isl-num">P5</span>
+            <span class="isl-title">視覺化</span>
+            <span class="isl-landmark">視覺化工坊</span>
+            <span class="isl-blurb">Matplotlib 與 Seaborn：先畫圖看分布與關係，再把模型畫進圖裡。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li class="isl-item" data-stem="p6_modeling_api" data-grp="appendix">
+          <a class="isl-link" href="../p6_modeling_api.html" data-stem="p6_modeling_api">
+            <svg class="isl-icon" viewBox="0 0 320 280" aria-hidden="true"><g fill="#fff" opacity=".78"><rect x="34" y="112" width="86" height="52" rx="8"/><rect x="140" y="112" width="86" height="52" rx="8"/><rect x="246" y="112" width="86" height="52" rx="8"/></g><g stroke="#fff" stroke-width="3.5" opacity=".9"><path d="M124 138 H136"/><path d="M230 138 H242"/></g><g stroke="#fff" stroke-width="3" fill="none" opacity=".7"><path d="M356 138 H392"/><path d="M392 138 l-12 -8 v16 z" fill="#fff"/></g><g fill="#fff" opacity=".5"><circle cx="60" cy="70" r="7"/><circle cx="88" cy="58" r="7"/><circle cx="116" cy="76" r="7"/></g></svg>
+            <span class="isl-num">P6</span>
+            <span class="isl-title">建模 API</span>
+            <span class="isl-landmark">建模工坊</span>
+            <span class="isl-blurb">statsmodels 與 scikit-learn：設計矩陣、fit／predict、訓練測試切分與交叉驗證。</span>
+            <span class="isl-state" aria-hidden="true"></span>
+          </a>
+        </li>
+      </ol>
+    </section>
+  </nav>
+  <aside class="isl-panel" id="islPanel" hidden aria-labelledby="islPanelTitle">
+    <button type="button" class="isl-panel-close" id="islPanelClose" aria-label="關閉">×</button>
+    <div class="isl-panel-kicker" id="islPanelKicker"></div>
+    <h2 id="islPanelTitle"></h2>
+    <div class="isl-panel-landmark" id="islPanelLandmark"></div>
+    <p class="isl-panel-blurb" id="islPanelBlurb"></p>
+    <div class="isl-panel-refs" id="islPanelRefs" hidden>
+      <div class="isl-panel-refs-h">需要時可查閱</div>
+      <ul id="islPanelRefList"></ul>
+    </div>
+    <div class="isl-panel-actions">
+      <a class="isl-go" id="islPanelGo" href="#">前往教材 →</a>
+      <button type="button" class="isl-done" id="islPanelDone" aria-pressed="false">標記完成</button>
+    </div>
+  </aside>
+</main>
+<script type="application/json" id="island-data">
+{
+ "isles": [
+  {
+   "grp": "pre",
+   "name": "啟航島",
+   "sub": "課前準備 · 選讀",
+   "note": "港口與燈塔：先把學習方法與環境準備好。"
+  },
+  {
+   "grp": "core",
+   "name": "統計學習主島",
+   "sub": "正課 11 章",
+   "note": "沿著環島小徑依授課順序排列，可自由進入任何一章。"
+  },
+  {
+   "grp": "statistics",
+   "name": "統計森林島",
+   "sub": "統計先備 · 查閱用",
+   "note": "正課讀到卡住時再來這片樹林查閱，不必先讀完。"
+  },
+  {
+   "grp": "appendix",
+   "name": "Python 工坊島",
+   "sub": "Python 先備 · 查閱用",
+   "note": "正課會用到的語法與套件，需要時再進工坊。"
+  }
+ ],
+ "pages": [
+  {
+   "stem": "00a_why_code",
+   "grp": "pre",
+   "seq": 1,
+   "code": "A",
+   "title": "AI 時代的資料分析學習迴圈",
+   "label": "課前 · AI 學習迴圈",
+   "landmark": "燈塔",
+   "blurb": "資料分析的學習迴圈：提出想法、動手嘗試、觀察證據、修正理解，並讓 AI 留在迴圈裡協助你練習判斷。",
+   "refs": [],
+   "href": "../00a_why_code.html"
+  },
+  {
+   "stem": "00b_setup",
+   "grp": "pre",
+   "seq": 2,
+   "code": "B",
+   "title": "環境安裝",
+   "label": "課前 · 環境安裝",
+   "landmark": "補給碼頭",
+   "blurb": "從 Colab 到本機環境，跑出第一張圖；期中考使用電腦教室，考前用相同版本完整重跑一次。",
+   "refs": [],
+   "href": "../00b_setup.html"
+  },
+  {
+   "stem": "00c_ai_assisted",
+   "grp": "pre",
+   "seq": 3,
+   "code": "C",
+   "title": "AI 輔助統計分析：從提問到驗證",
+   "label": "課前 · AI 協作",
+   "landmark": "領航站",
+   "blurb": "用 AI 輔助統計分析：先分流任務、補足脈絡、小步生成，再核對統計解讀並留下可重現紀錄。",
+   "refs": [],
+   "href": "../00c_ai_assisted.html"
+  },
+  {
+   "stem": "introduction",
+   "grp": "core",
+   "seq": 1,
+   "code": "01",
+   "title": "統計學習導論與 EDA",
+   "label": "ISLP Ch.1",
+   "landmark": "觀測塔",
+   "blurb": "統計學習在做什麼、和相關領域如何分工；先看資料再建模，從探索式資料分析（EDA）讀懂 22 個資料集。",
+   "refs": [
+    "s1_probability",
+    "p4_pandas",
+    "p5_visualization"
+   ],
+   "href": "../introduction.html"
+  },
+  {
+   "stem": "statistical_learning",
+   "grp": "core",
+   "seq": 2,
+   "code": "02",
+   "title": "統計學習的基本框架",
+   "label": "ISLP Ch.2",
+   "landmark": "訓練／測試分岔路",
+   "blurb": "Y = f(X) + ε 的基本框架：可縮減與不可縮減誤差、彈性與可解釋性、偏差–變異取捨，以及 Bayes 分類器與 KNN。",
+   "refs": [
+    "s1_probability",
+    "s3_distributions",
+    "p3_numpy"
+   ],
+   "href": "../statistical_learning.html"
+  },
+  {
+   "stem": "linear_regression",
+   "grp": "core",
+   "seq": 3,
+   "code": "03",
+   "title": "線性迴歸",
+   "label": "ISLP Ch.3",
+   "landmark": "迴歸斜坡",
+   "blurb": "簡單與多元線性迴歸：係數的標準誤與 t 檢定、F 檢定、R²，以及質性變數、交互作用與共線性等常見問題。",
+   "refs": [
+    "s4_inference",
+    "s6_regression",
+    "p6_modeling_api"
+   ],
+   "href": "../linear_regression.html"
+  },
+  {
+   "stem": "classification",
+   "grp": "core",
+   "seq": 4,
+   "code": "04",
+   "title": "分類",
+   "label": "ISLP Ch.4",
+   "landmark": "雙色分類城門",
+   "blurb": "邏輯斯迴歸、LDA、QDA 與 Naive Bayes；用混淆矩陣、ROC 與 AUC 比較分類結果，並延伸到 Poisson 迴歸。",
+   "refs": [
+    "s2_conditional",
+    "s3_distributions",
+    "s5_bayesian",
+    "p6_modeling_api"
+   ],
+   "href": "../classification.html"
+  },
+  {
+   "stem": "resampling_methods",
+   "grp": "core",
+   "seq": 5,
+   "code": "05",
+   "title": "重抽樣方法",
+   "label": "ISLP Ch.5",
+   "landmark": "Bootstrap 噴泉",
+   "blurb": "驗證集法、LOOCV 與 k-fold 交叉驗證估計測試誤差；Bootstrap 重抽樣衡量估計量的不確定性。",
+   "refs": [
+    "s3_distributions",
+    "s4_inference",
+    "p6_modeling_api"
+   ],
+   "href": "../resampling_methods.html"
+  },
+  {
+   "stem": "model_selection",
+   "grp": "core",
+   "seq": 6,
+   "code": "06",
+   "title": "線性模型選擇與正則化",
+   "label": "ISLP Ch.6",
+   "landmark": "修剪花園",
+   "blurb": "變數很多時如何選模型：子集選擇與 Cp／AIC／BIC，Ridge 與 Lasso 正則化，以及 PCR 與 PLS 降維迴歸。",
+   "refs": [
+    "s6_regression",
+    "p3_numpy",
+    "p6_modeling_api"
+   ],
+   "href": "../model_selection.html"
+  },
+  {
+   "stem": "beyond_linearity",
+   "grp": "core",
+   "seq": 7,
+   "code": "07",
+   "title": "超越線性",
+   "label": "ISLP Ch.7",
+   "landmark": "樣條拱橋",
+   "blurb": "線性不夠用時：多項式、階梯函數、迴歸樣條、平滑樣條、局部迴歸，最後組成廣義可加模型（GAM）。",
+   "refs": [
+    "s6_regression",
+    "p5_visualization"
+   ],
+   "href": "../beyond_linearity.html"
+  },
+  {
+   "stem": "tree_based_methods",
+   "grp": "core",
+   "seq": 8,
+   "code": "08",
+   "title": "樹狀方法與集成學習",
+   "label": "ISLP Ch.8",
+   "landmark": "決策樹森林",
+   "blurb": "迴歸樹與分類樹的分裂與剪枝；再用 Bagging、隨機森林與 Boosting 把許多棵樹集成為更穩定的預測。",
+   "refs": [
+    "s3_distributions",
+    "p6_modeling_api"
+   ],
+   "href": "../tree_based_methods.html"
+  },
+  {
+   "stem": "support_vector_machines",
+   "grp": "core",
+   "seq": 9,
+   "code": "09",
+   "title": "支持向量機",
+   "label": "ISLP Ch.9",
+   "landmark": "最大間隔圍牆",
+   "blurb": "用超平面把兩群資料分開：最大邊界、軟邊界與 C、hinge loss，以及透過核技巧處理非線性邊界。",
+   "refs": [
+    "p3_numpy",
+    "p6_modeling_api"
+   ],
+   "href": "../support_vector_machines.html"
+  },
+  {
+   "stem": "unsupervised_learning",
+   "grp": "core",
+   "seq": 10,
+   "code": "10",
+   "title": "非監督式學習",
+   "label": "ISLP Ch.12",
+   "landmark": "群聚星球廣場",
+   "blurb": "沒有標準答案的學習：主成分分析（PCA）、矩陣補全，以及 K-means 與階層式分群。",
+   "refs": [
+    "s1_probability",
+    "p3_numpy",
+    "p5_visualization"
+   ],
+   "href": "../unsupervised_learning.html"
+  },
+  {
+   "stem": "deep_learning",
+   "grp": "core",
+   "seq": 11,
+   "code": "11",
+   "title": "深度學習（補充）",
+   "label": "ISLP Ch.10 · 補充",
+   "landmark": "神經網路高塔",
+   "blurb": "補充章：從單層到多層神經網路、卷積與循環網路，以及模型如何擬合與雙下降現象。本課未授課，供自學延伸。",
+   "refs": [
+    "p3_numpy",
+    "p6_modeling_api"
+   ],
+   "href": "../deep_learning.html"
+  },
+  {
+   "stem": "s1_probability",
+   "grp": "statistics",
+   "seq": 1,
+   "code": "S1",
+   "title": "機率、平均與變異",
+   "label": "先備 · S1 統計",
+   "landmark": "機率樹屋",
+   "blurb": "母體與樣本、事件與機率、隨機變數的期望值與變異數。",
+   "refs": [],
+   "href": "../s1_probability.html"
+  },
+  {
+   "stem": "s2_conditional",
+   "grp": "statistics",
+   "seq": 2,
+   "code": "S2",
+   "title": "條件機率與獨立",
+   "label": "先備 · S2 統計",
+   "landmark": "條件樹屋",
+   "blurb": "條件機率、獨立與互斥，以及 Bayes 公式。",
+   "refs": [],
+   "href": "../s2_conditional.html"
+  },
+  {
+   "stem": "s3_distributions",
+   "grp": "statistics",
+   "seq": 3,
+   "code": "S3",
+   "title": "分布與抽樣",
+   "label": "先備 · S3 統計",
+   "landmark": "分布樹屋",
+   "blurb": "常用分布與抽樣分布，大數法則與中央極限定理。",
+   "refs": [],
+   "href": "../s3_distributions.html"
+  },
+  {
+   "stem": "s4_inference",
+   "grp": "statistics",
+   "seq": 4,
+   "code": "S4",
+   "title": "從樣本推論母體",
+   "label": "先備 · S4 統計",
+   "landmark": "推論樹屋",
+   "blurb": "點估計、標準誤、信賴區間、假設檢定與 p 值，以及 Bootstrap 入門。",
+   "refs": [],
+   "href": "../s4_inference.html"
+  },
+  {
+   "stem": "s5_bayesian",
+   "grp": "statistics",
+   "seq": 5,
+   "code": "S5",
+   "title": "貝氏推論〔選讀〕",
+   "label": "先備 · S5 統計",
+   "landmark": "貝氏樹屋",
+   "blurb": "選讀：概似與最大概似，從先驗到後驗的更新。",
+   "refs": [],
+   "href": "../s5_bayesian.html"
+  },
+  {
+   "stem": "s6_regression",
+   "grp": "statistics",
+   "seq": 6,
+   "code": "S6",
+   "title": "相關與迴歸〔選讀〕",
+   "label": "先備 · S6 統計",
+   "landmark": "相關樹屋",
+   "blurb": "選讀：共變異數與相關、最小平方法與殘差的解讀限制。",
+   "refs": [],
+   "href": "../s6_regression.html"
+  },
+  {
+   "stem": "p1_python_basics",
+   "grp": "appendix",
+   "seq": 1,
+   "code": "P1",
+   "title": "Python 基礎",
+   "label": "先備 · Python 基礎",
+   "landmark": "基礎工坊",
+   "blurb": "變數與型別、串列與切片、字典、字串格式化。",
+   "refs": [],
+   "href": "../p1_python_basics.html"
+  },
+  {
+   "stem": "p2_flow_functions",
+   "grp": "appendix",
+   "seq": 2,
+   "code": "P2",
+   "title": "流程與函式",
+   "label": "先備 · 流程與函式",
+   "landmark": "流程工坊",
+   "blurb": "條件、迴圈、函式與作用域，以及如何讀懂錯誤訊息。",
+   "refs": [],
+   "href": "../p2_flow_functions.html"
+  },
+  {
+   "stem": "p3_numpy",
+   "grp": "appendix",
+   "seq": 3,
+   "code": "P3",
+   "title": "NumPy 陣列",
+   "label": "先備 · NumPy 陣列",
+   "landmark": "NumPy 工坊",
+   "blurb": "ndarray 的 shape、索引、布林索引、廣播、axis 與亂數模擬。",
+   "refs": [],
+   "href": "../p3_numpy.html"
+  },
+  {
+   "stem": "p4_pandas",
+   "grp": "appendix",
+   "seq": 4,
+   "code": "P4",
+   "title": "pandas 資料框",
+   "label": "先備 · pandas 資料框",
+   "landmark": "pandas 工坊",
+   "blurb": "Series 與 DataFrame、loc／iloc、遺漏值、groupby 與資料串接。",
+   "refs": [],
+   "href": "../p4_pandas.html"
+  },
+  {
+   "stem": "p5_visualization",
+   "grp": "appendix",
+   "seq": 5,
+   "code": "P5",
+   "title": "視覺化",
+   "label": "先備 · 視覺化",
+   "landmark": "視覺化工坊",
+   "blurb": "Matplotlib 與 Seaborn：先畫圖看分布與關係，再把模型畫進圖裡。",
+   "refs": [],
+   "href": "../p5_visualization.html"
+  },
+  {
+   "stem": "p6_modeling_api",
+   "grp": "appendix",
+   "seq": 6,
+   "code": "P6",
+   "title": "建模 API",
+   "label": "先備 · 建模 API",
+   "landmark": "建模工坊",
+   "blurb": "statsmodels 與 scikit-learn：設計矩陣、fit／predict、訓練測試切分與交叉驗證。",
+   "refs": [],
+   "href": "../p6_modeling_api.html"
+  }
+ ]
+}
+</script>
+<script type="module">
+/* 3D 統計學習知識群島。build_island.py 會把本檔 inline 進 island/index.html 的 <script type="module">。
+ *
+ * 分兩層：
+ *   1. UI 層（不需要 Three.js）：章節列表、足跡（localStorage）、面板、鍵盤操作。
+ *      CDN 失效、WebGL 不可用時頁面停在 2D 地圖，這一層照常運作。
+ *   2. 場景層：WebGL 可用才以 dynamic import 載入 Three.js（importmap 釘版＋integrity），
+ *      成功後才在 <body> 加 .webgl-ready，切成 3D＋側欄。
+ * 建築全部是程序化幾何（box/cylinder/cone/icosahedron/torus/tube），沒有任何外部模型或圖檔。
+ */
+const DATA = JSON.parse(document.getElementById('island-data').textContent);
+const PAGES = DATA.pages;
+const BY = Object.fromEntries(PAGES.map(p => [p.stem, p]));
+const ISLES = Object.fromEntries(DATA.isles.map(i => [i.grp, i]));
+const $ = id => document.getElementById(id);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let scene = null;   // 3D 場景成功啟動後才有值
+
+/* ── 足跡：只存在這台裝置的瀏覽器。「造訪」＝從島上點過前往教材；「完成」＝學生自己標記 ── */
+const TRAIL_KEY = 'slss-island:trail:v1';
+function loadTrail() {
+  try {
+    const t = JSON.parse(localStorage.getItem(TRAIL_KEY) || '{}');
+    return { visited: t.visited || {}, done: t.done || {} };
+  } catch (e) { return { visited: {}, done: {} }; }
+}
+let trail = loadTrail();
+function saveTrail() {
+  try { localStorage.setItem(TRAIL_KEY, JSON.stringify(trail)); } catch (e) { /* 私密視窗等情況：只在本頁有效 */ }
+}
+function markVisited(stem) {
+  if (!BY[stem] || trail.visited[stem]) return;
+  trail.visited[stem] = Date.now(); saveTrail(); refreshTrail();
+}
+function setDone(stem, on) {
+  if (on) trail.done[stem] = Date.now(); else delete trail.done[stem];
+  saveTrail(); refreshTrail();
+}
+window.addEventListener('storage', e => { if (e.key === TRAIL_KEY) { trail = loadTrail(); refreshTrail(); } });
+
+/* ── 列表 ── */
+const items = new Map();   // stem → { li, link, mark }
+document.querySelectorAll('.isl-item').forEach(li => {
+  const stem = li.dataset.stem, link = li.querySelector('.isl-link');
+  const mark = document.createElement('button');
+  mark.type = 'button'; mark.className = 'isl-mark'; mark.textContent = '✓';
+  mark.addEventListener('click', () => setDone(stem, !trail.done[stem]));
+  li.appendChild(mark);
+  items.set(stem, { li, link, mark });
+  link.addEventListener('click', e => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !scene) {
+      markVisited(stem); return;               // 2D 模式或開新分頁：直接前往教材
+    }
+    e.preventDefault();                        // 3D 模式：先在島上選取，面板再提供前往連結
+    select(stem, { fly: true, trigger: link, keyboard: e.detail === 0 });
+  });
+  link.addEventListener('auxclick', e => { if (e.button === 1) markVisited(stem); });
+});
+
+function refreshTrail() {
+  items.forEach(({ li, mark }, stem) => {
+    const done = !!trail.done[stem], visited = !!trail.visited[stem];
+    li.classList.toggle('is-done', done);
+    li.classList.toggle('is-visited', visited && !done);
+    mark.setAttribute('aria-pressed', String(done));
+    mark.setAttribute('aria-label', (done ? '取消完成標記：' : '標記為已完成：') + BY[stem].title);
+    mark.title = done ? '已完成（再按一次取消）' : '標記為已完成';
+  });
+  if (current) syncDoneButton();
+  if (scene) scene.updateTrail();
+}
+
+/* ── 面板 ── */
+const panel = $('islPanel');
+let current = null, lastTrigger = null;
+function syncDoneButton() {
+  const done = !!trail.done[current];
+  $('islPanelDone').setAttribute('aria-pressed', String(done));
+  $('islPanelDone').textContent = done ? '✓ 已完成' : '標記完成';
+}
+function select(stem, { fly = false, trigger = null, keyboard = false } = {}) {
+  const p = BY[stem]; if (!p) return;
+  current = stem; lastTrigger = trigger || lastTrigger;
+  const isle = ISLES[p.grp];
+  $('islPanelKicker').textContent = `${isle.name} · ${p.code} · ${p.label}`;
+  $('islPanelTitle').textContent = p.title;
+  $('islPanelLandmark').textContent = '地標：' + p.landmark;
+  $('islPanelBlurb').textContent = p.blurb;
+  $('islPanelGo').href = p.href;
+  const refList = $('islPanelRefList');
+  refList.replaceChildren(...p.refs.map(r => {
+    const li = document.createElement('li'), a = document.createElement('a');
+    a.href = BY[r].href; a.textContent = `${BY[r].code} ${BY[r].title}`;
+    a.addEventListener('click', () => markVisited(r));
+    li.appendChild(a); return li;
+  }));
+  $('islPanelRefs').hidden = !p.refs.length;
+  syncDoneButton();
+  panel.hidden = false;
+  items.forEach(({ li }, s) => {
+    li.classList.toggle('is-current', s === stem);
+    li.classList.toggle('is-ref', p.refs.includes(s));
+  });
+  if (scene) scene.select(stem, fly);
+  if (keyboard) $('islPanelGo').focus();
+}
+function closePanel() {
+  if (panel.hidden) return;
+  panel.hidden = true; current = null;
+  items.forEach(({ li }) => li.classList.remove('is-current', 'is-ref'));
+  if (scene) scene.select(null, false);
+  if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
+  lastTrigger = null;
+}
+$('islPanelClose').addEventListener('click', closePanel);
+$('islPanelGo').addEventListener('click', () => { if (current) markVisited(current); });
+$('islPanelGo').addEventListener('auxclick', e => { if (e.button === 1 && current) markVisited(current); });
+$('islPanelDone').addEventListener('click', () => { if (current) setDone(current, !trail.done[current]); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+$('islClear').addEventListener('click', () => {
+  if (!Object.keys(trail.visited).length && !Object.keys(trail.done).length) return;
+  if (!window.confirm('清除這台裝置上的所有造訪與完成紀錄？')) return;
+  trail = { visited: {}, done: {} }; saveTrail(); refreshTrail();
+});
+refreshTrail();
+
+/* ── 3D 場景（可選）── */
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+  } catch (e) { return false; }
+}
+function fallback2D(reason) {
+  document.body.classList.remove('webgl-ready');
+  $('islStage').hidden = true; $('islReset').hidden = true;
+  scene = null;
+  console.info('3D 群島未啟用，改用 2D 地圖：' + reason);
+}
+if (hasWebGL()) {
+  initScene().catch(err => fallback2D(err && err.message ? err.message : String(err)));
+} else {
+  console.info('3D 群島未啟用，改用 2D 地圖：瀏覽器沒有 WebGL');
+}
+
+async function initScene() {
+  const THREE = await import('three');
+  const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+  const stage = $('islStage'), canvas = $('islCanvas');
+  document.body.classList.add('webgl-ready');
+  stage.hidden = false;
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  } catch (e) {
+    throw new Error('WebGLRenderer 建立失敗');
+  }
+  scene = buildWorld(THREE, OrbitControls, renderer, stage, canvas);
+  $('islReset').hidden = false;
+  $('islReset').addEventListener('click', () => scene && scene.reset());
+  document.querySelectorAll('.isl-jump-btn').forEach(b =>
+    b.addEventListener('click', () => scene && scene.flyToIsle(b.dataset.grp)));
+  canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); scene && scene.dispose(); fallback2D('WebGL context lost'); });
+  window.__island = { screenPos: stem => scene && scene.screenPos(stem) };
+  refreshTrail();
+  if (current) scene.select(current, false);
+}
+
+/* ═════════════════════════ 場景 ═════════════════════════ */
+function buildWorld(THREE, OrbitControls, renderer, stage, canvas) {
+  const C = {
+    grass: '#86b56f', grass2: '#5f9a5a', forest: '#1a6b4a', leaf: '#3f8f5a', sand: '#ecdcb5',
+    paper: '#f7f3eb', cream: '#fffdf7', navy: '#2c3e7a', navyL: '#4a63a8', red: '#c0392b',
+    redL: '#e8a49b', blue: '#2f6db5', blueL: '#a9c3e6', orange: '#e67e22', amber: '#f0b429',
+    wood: '#a0703f', woodD: '#6e4a2b', stone: '#cfc7b6', stoneD: '#9b9384', rock: '#7d7a73',
+    water: '#6f9fc4', shallow: '#9cc5dc', white: '#ffffff', ink: '#1a1a2e', teal: '#16a085',
+  };
+  const motion = () => !reduceMotion.matches;
+  const world = new THREE.Scene();
+  const rnd = mulberry32(524);
+
+  /* ── 材質與幾何小工具 ── */
+  const mats = new Map();
+  function mat(color, extra) {
+    const key = color + (extra ? JSON.stringify(extra) : '');
+    if (!mats.has(key)) mats.set(key, new THREE.MeshLambertMaterial({ color, flatShading: true, ...extra }));
+    return mats.get(key);
+  }
+  function put(geo, color, x = 0, y = 0, z = 0, extra) {
+    const m = new THREE.Mesh(geo, extra && extra.isMaterial ? extra : mat(color, extra));
+    m.position.set(x, y, z); return m;
+  }
+  // y 一律是「底面高度」，方便堆疊
+  const box = (w, h, d, c, x = 0, y = 0, z = 0) => put(new THREE.BoxGeometry(w, h, d), c, x, y + h / 2, z);
+  const cyl = (rt, rb, h, c, x = 0, y = 0, z = 0, seg = 8) => put(new THREE.CylinderGeometry(rt, rb, h, seg), c, x, y + h / 2, z);
+  const cone = (r, h, c, x = 0, y = 0, z = 0, seg = 6) => put(new THREE.ConeGeometry(r, h, seg), c, x, y + h / 2, z);
+  const ball = (r, c, x = 0, y = 0, z = 0, extra) => put(new THREE.IcosahedronGeometry(r, 0), c, x, y, z, extra);
+  const group = (...kids) => { const g = new THREE.Group(); kids.forEach(k => g.add(k)); return g; };
+  const roof = (w, h, d, c, y) => {           // 三角屋頂（擠出的三角形，屋脊沿 z 軸）
+    const tri = new THREE.Shape();
+    tri.moveTo(-w / 2, 0); tri.lineTo(w / 2, 0); tri.lineTo(0, h); tri.closePath();
+    const geo = new THREE.ExtrudeGeometry(tri, { depth: d, bevelEnabled: false });
+    geo.translate(0, 0, -d / 2);
+    return put(geo, c, 0, y, 0);
+  };
+  const glow = color => new THREE.MeshLambertMaterial({ color, emissive: color, emissiveIntensity: .55, flatShading: true });
+  const anims = [];                          // 每幀呼叫的 (t) => void
+  let need = true, raf = 0, onScreen = true, alive = true;   // 繪製迴圈狀態（requestRender 很早就會被呼叫）
+
+  /* ── 燈光 ── */
+  world.add(new THREE.HemisphereLight('#fff7e6', '#4d6f96', 1.9));
+  const sun = new THREE.DirectionalLight('#fff0d4', 2.4);
+  sun.position.set(-30, 60, 40); world.add(sun);
+
+  /* ── 島嶼地形 ── */
+  const shape = (th, seed) => 1 + .07 * Math.sin(3 * th + seed) + .045 * Math.sin(5 * th + seed * 2.3) + .025 * Math.sin(9 * th + seed * .7);
+  function shaped(geo, seed) {
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), z = p.getZ(i), r = Math.hypot(x, z);
+      if (r < 1e-6) continue;
+      const k = shape(Math.atan2(z, x), seed); p.setX(i, x * k); p.setZ(i, z * k);
+    }
+    geo.computeVertexNormals(); return geo;
+  }
+  const GROUND = 1.0;
+  const ISLE_GEO = {
+    core: { x: 0, z: 0, r: 15, seed: 1.3, grass: C.grass },
+    pre: { x: 19, z: 19, r: 7, seed: 4.1, grass: '#9cc27a' },
+    statistics: { x: -28.3, z: 8.5, r: 9.5, seed: 2.2, grass: C.grass2 },
+    appendix: { x: 8.5, z: -28.3, r: 9.5, seed: 5.7, grass: '#93b98a' },
+  };
+  const ocean = put(new THREE.CircleGeometry(160, 40), C.water, 0, .2, 0);
+  ocean.rotation.x = -Math.PI / 2; world.add(ocean);
+  Object.values(ISLE_GEO).forEach(I => {
+    const g = new THREE.Group(); g.position.set(I.x, 0, I.z);
+    const shallow = put(shaped(new THREE.CylinderGeometry(I.r * 1.5, I.r * 1.5, .05, 24), I.seed), C.shallow, 0, .22, 0);
+    g.add(shallow);
+    g.add(put(shaped(new THREE.CylinderGeometry(I.r * 1.18, I.r * .55, 2.6, 18), I.seed), C.stoneD, 0, -1.2, 0));
+    g.add(put(shaped(new THREE.CylinderGeometry(I.r * 1.1, I.r * 1.18, .7, 18), I.seed), C.sand, 0, .35, 0));
+    g.add(put(shaped(new THREE.CylinderGeometry(I.r, I.r * 1.03, .55, 18), I.seed), I.grass, 0, .725, 0));
+    world.add(g);
+    I.inside = (x, z, m = .82) => {             // 世界座標是否在島上（含邊界餘裕）
+      const dx = x - I.x, dz = z - I.z;
+      return Math.hypot(dx, dz) < I.r * shape(Math.atan2(dz, dx), I.seed) * m;
+    };
+  });
+  // 主島中央的高地：深度學習（補充）在這裡
+  const HILL = 1.7;
+  world.add(put(new THREE.CylinderGeometry(2.2, 4.4, HILL, 9), C.grass2, 0, GROUND + HILL / 2, 0));
+
+  /* ── 建築位置 ── */
+  const SLOTS = {};
+  const core = PAGES.filter(p => p.grp === 'core');
+  const ring = core.filter(p => p.stem !== 'deep_learning');
+  ring.forEach((p, i) => {
+    const th = (70 + i * (360 - 70) / ring.length + 18) * Math.PI / 180;
+    SLOTS[p.stem] = { x: Math.cos(th) * 10.6, y: GROUND, z: Math.sin(th) * 10.6 };
+  });
+  if (BY.deep_learning) SLOTS.deep_learning = { x: 0, y: GROUND + HILL, z: 0 };
+  // 附屬島以初始視角的「螢幕座標」排版：u 往右、v 往前（畫面下方），閱讀順序＝左到右、上到下
+  const local = { pre: [[-2.4, -1.6], [1.4, 5.2], [2.6, -1.2]],   // B 碼頭伸出前岸
+                  statistics: [[-4.2, -2.6], [0, -2.9], [4.2, -2.6], [-4.2, 2.3], [0, 2.6], [4.2, 2.3]],
+                  appendix: [[-4.2, -2.6], [0, -2.9], [4.2, -2.6], [-4.2, 2.3], [0, 2.6], [4.2, 2.3]] };
+  ['pre', 'statistics', 'appendix'].forEach(grp => {
+    const I = ISLE_GEO[grp];
+    PAGES.filter(p => p.grp === grp).forEach((p, i) => {
+      const [u, v] = local[grp][i] || [0, 0];
+      SLOTS[p.stem] = { x: I.x + (u + v) * Math.SQRT1_2, y: GROUND, z: I.z + (v - u) * Math.SQRT1_2 };
+    });
+  });
+  // 少數頁面可能被新增或刪除：沒有指定位置的頁面放在該島中心附近，確保 26 個入口都在
+  PAGES.forEach((p, i) => {
+    if (!SLOTS[p.stem]) { const I = ISLE_GEO[p.grp]; SLOTS[p.stem] = { x: I.x + (i % 3) - 1, y: GROUND, z: I.z + 1 }; }
+  });
+
+  /* ── 小徑、橋 ── */
+  const stoneGeo = new THREE.CylinderGeometry(.42, .48, .08, 6);
+  const pathPts = [];
+  for (let a = 0; a < 360; a += 7.5) pathPts.push([Math.cos(a * Math.PI / 180) * 7.2, Math.sin(a * Math.PI / 180) * 7.2]);
+  ring.forEach(p => {             // 環狀小徑到各棟建築的支線
+    const s = SLOTS[p.stem], r = Math.hypot(s.x, s.z);
+    for (let d = 8.2; d < r - 1.4; d += 1) pathPts.push([s.x / r * d, s.z / r * d]);
+  });
+  for (let d = 4.6; d < 6.6; d += 1) pathPts.push([d * Math.SQRT1_2 * -1, d * Math.SQRT1_2 * -1]);  // 上高地的路
+  const stones = new THREE.InstancedMesh(stoneGeo, mat('#e8dcc0'), pathPts.length);
+  const tmp = new THREE.Object3D();
+  pathPts.forEach(([x, z], i) => {
+    tmp.position.set(x, GROUND + .04, z); tmp.rotation.set(0, rnd() * 3, 0); tmp.updateMatrix();
+    stones.setMatrixAt(i, tmp.matrix);
+  });
+  world.add(stones);
+
+  const bridges = [];
+  function bridge(grp) {
+    const A = ISLE_GEO.core, B = ISLE_GEO[grp];
+    const dx = B.x - A.x, dz = B.z - A.z, L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L;
+    const s0 = A.r * shape(Math.atan2(uz, ux), A.seed) * .9, s1 = L - B.r * shape(Math.atan2(-uz, -ux), B.seed) * .9;
+    const n = Math.ceil((s1 - s0) / .55), ang = Math.atan2(ux, uz);
+    const planks = new THREE.InstancedMesh(new THREE.BoxGeometry(2.3, .14, .46), mat(C.wood), n + 1);
+    const posts = [];
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, s = s0 + (s1 - s0) * t, y = GROUND - .05 + Math.sin(Math.PI * t) * .9;
+      tmp.position.set(A.x + ux * s, y, A.z + uz * s); tmp.rotation.set(0, ang, 0); tmp.updateMatrix();
+      planks.setMatrixAt(i, tmp.matrix);
+      if (i % 3 === 0) posts.push([A.x + ux * s, y, A.z + uz * s]);
+    }
+    world.add(planks);
+    const postGeo = new THREE.BoxGeometry(.16, .9, .16);
+    const pm = new THREE.InstancedMesh(postGeo, mat(C.woodD), posts.length * 2);
+    posts.forEach(([x, y, z], i) => {
+      [-1, 1].forEach((side, j) => {
+        tmp.position.set(x + uz * 1.1 * side, y + .45, z - ux * 1.1 * side); tmp.rotation.set(0, 0, 0); tmp.updateMatrix();
+        pm.setMatrixAt(i * 2 + j, tmp.matrix);
+      });
+    });
+    world.add(pm);
+    bridges.push({ x0: A.x + ux * s0, z0: A.z + uz * s0, x1: A.x + ux * s1, z1: A.z + uz * s1 });
+  }
+  ['pre', 'statistics', 'appendix'].forEach(bridge);
+
+  /* ── 建築配方 ── */
+  const R = {};
+  // 01 觀測塔＋漂浮散點
+  R.introduction = () => {
+    const g = group(cyl(1.3, 1.45, .4, C.stone), cyl(.7, .95, 3.4, C.paper, 0, .4, 0, 8),
+      cyl(1.25, 1.25, .25, C.wood, 0, 3.8, 0, 8), cone(1.3, 1.3, C.navy, 0, 4.05, 0, 8),
+      box(.4, .6, .1, C.navy, 0, 1.2, .9), box(.36, .36, .1, C.amber, 0, 2.6, .85));
+    const dots = new THREE.Group();
+    [C.red, C.navy, C.forest, C.orange, C.navy, C.red, C.forest].forEach((c, i) => {
+      const a = i / 7 * Math.PI * 2; dots.add(ball(.2, c, Math.cos(a) * 1.9, 1.4 + (i * .37) % 1.9, Math.sin(a) * 1.9));
+    });
+    g.add(dots);
+    anims.push(t => { dots.rotation.y = t * .25; });
+    return g;
+  };
+  // 02 訓練／測試分岔路
+  R.statistical_learning = () => {
+    const g = group(box(.9, .08, 1.8, '#e8dcc0', 0, 0, 1));
+    [-1, 1].forEach(s => { const b = box(.8, .08, 1.9, '#e8dcc0', s * .75, 0, -.55); b.rotation.y = s * .55; g.add(b); });
+    g.add(cyl(.11, .13, 2.6, C.woodD, 0, 0, .2, 6));
+    const a1 = box(1.5, .42, .12, C.forest, .55, 2.0, .2), a2 = box(1.3, .42, .12, C.orange, -.5, 1.45, .2);
+    a1.rotation.y = -.35; a2.rotation.y = .35; g.add(a1, a2);
+    [[-1.5, -1.3], [-1.1, -1.7], [-1.6, -1.8]].forEach(([x, z]) => g.add(box(.45, .45, .45, C.forest, x, 0, z)));
+    g.add(box(.45, .45, .45, C.orange, 1.5, 0, -1.6));
+    return g;
+  };
+  // 03 迴歸斜坡穿過散點
+  R.linear_regression = () => {
+    const g = group(box(3.8, .25, 2.4, C.stone));
+    const ramp = box(4.0, .2, .8, C.navy, 0, 1.05, 0); ramp.rotation.z = .42; g.add(ramp);
+    g.add(box(.22, 1.6, .22, C.woodD, 1.2, .25, 0), box(.22, .55, .22, C.woodD, -1.0, .25, 0));
+    for (let i = 0; i < 9; i++) {
+      const x = -1.6 + i * .4, y = 1.25 + Math.tan(.42) * x + (rnd() - .5) * .9;
+      g.add(ball(.17, i % 2 ? C.red : C.forest, x, Math.max(.45, y), (rnd() - .5) * 1.4 + (i % 2 ? .55 : -.55)));
+    }
+    return g;
+  };
+  // 04 紅藍雙色分類城門
+  R.classification = () => {
+    const g = group(box(1.7, .06, 2.4, C.redL, -.85, 0, 0), box(1.7, .06, 2.4, C.blueL, .85, 0, 0),
+      box(.9, 2.7, .9, C.red, -1.2, 0, 0), box(.9, 2.7, .9, C.blue, 1.2, 0, 0),
+      box(1.35, .55, .9, C.red, -.67, 2.7, 0), box(1.35, .55, .9, C.blue, .67, 2.7, 0));
+    [-1.5, -.9, .9, 1.5].forEach(x => g.add(box(.3, .3, .9, x < 0 ? C.red : C.blue, x, 3.25, 0)));
+    g.add(cone(.22, .5, C.amber, 0, 3.25, 0, 4));
+    return g;
+  };
+  // 05 Bootstrap 噴泉：球不斷被「重抽」出來
+  R.resampling_methods = () => {
+    const g = group(cyl(1.6, 1.75, .5, C.stone, 0, 0, 0, 10), cyl(1.4, 1.4, .06, C.shallow, 0, .46, 0, 10),
+      cyl(.22, .3, 1.4, C.paper, 0, .5, 0, 6), cyl(.65, .22, .3, C.stone, 0, 1.9, 0, 8));
+    const cols = [C.red, C.navy, C.forest, C.amber];
+    const balls = [];
+    for (let i = 0; i < 10; i++) {
+      const b = ball(.15, cols[i % 4]); g.add(b);
+      balls.push({ b, a: i / 10 * Math.PI * 2 + i, ph: i / 10 });
+    }
+    const place = t => balls.forEach(({ b, a, ph }) => {
+      const u = (t * .55 + ph) % 1, r = .25 + 1.0 * u;
+      b.position.set(Math.cos(a) * r, 2.15 + 2.0 * u - 2.6 * u * u, Math.sin(a) * r);
+    });
+    place(0.37); anims.push(place);
+    return g;
+  };
+  // 06 修剪花園：灌木由高到低（正則化把係數往 0 收縮）
+  R.model_selection = () => {
+    const g = group(box(3.8, .18, 2.2, C.grass2));
+    [1.7, 1.25, .9, .6, .35].forEach((h, i) => g.add(box(.6, h, .9 + h * .2, i % 2 ? C.leaf : C.forest, -1.5 + i * .75, .18, 0)));
+    [-1.9, 1.9].forEach(x => [-1.05, 1.05].forEach(z => g.add(box(.12, .5, .12, C.woodD, x, .18, z))));
+    g.add(box(3.9, .08, .08, C.woodD, 0, .58, 1.05), box(3.9, .08, .08, C.woodD, 0, .58, -1.05));
+    return g;
+  };
+  // 07 樣條拱橋：曲線通過節點
+  R.beyond_linearity = () => {
+    const pts = [[-1.9, .2], [-1.1, 1.9], [-.2, 1.2], [.8, 2.5], [1.9, .2]].map(([x, y]) => new THREE.Vector3(x, y, 0));
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const g = group(box(.7, .5, 1.6, C.stone, -1.9, 0, 0), box(.7, .5, 1.6, C.stone, 1.9, 0, 0));
+    [-.5, .5].forEach(z => {
+      const tube = put(new THREE.TubeGeometry(curve, 40, .16, 5), C.orange, 0, 0, z); g.add(tube);
+    });
+    pts.slice(1, -1).forEach(p => g.add(ball(.24, C.navy, p.x, p.y, -.5), ball(.24, C.navy, p.x, p.y, .5)));
+    return g;
+  };
+  // 08 決策樹森林：一片樹＝集成
+  R.tree_based_methods = () => {
+    const g = new THREE.Group();
+    [[0, 0, 1.25], [-1.3, .7, .9], [1.2, .8, .95], [-.8, -1.1, .8], [1.0, -1.0, .85], [0, 1.5, .7]].forEach(([x, z, s], i) => {
+      g.add(cyl(.13 * s, .18 * s, 1.0 * s, C.woodD, x, 0, z, 5));
+      g.add(cone(.95 * s, 1.4 * s, i % 2 ? C.leaf : C.forest, x, .8 * s, z, 6));
+      g.add(cone(.7 * s, 1.1 * s, i % 2 ? C.forest : C.leaf, x, 1.6 * s, z, 6));
+    });
+    g.add(box(.5, .3, .12, C.amber, 0, 3.4, 0));
+    return g;
+  };
+  // 09 最大間隔圍牆：兩群資料，中間是邊界與兩條間隔線
+  R.support_vector_machines = () => {
+    const g = group(box(4, .06, 3, '#e3dccb'), box(.36, 1.3, 3, C.paper, 0, .06, 0), box(.5, .16, 3.1, C.stone, 0, 1.36, 0),
+      box(.1, .05, 3, C.amber, -.95, .06, 0), box(.1, .05, 3, C.amber, .95, .06, 0));
+    [[-1.05, -.9], [-1.5, .3], [-1.75, -.4], [-1.3, 1.0], [-1.8, .9]].forEach(([x, z]) => g.add(box(.42, .42, .42, C.red, x, .06, z)));
+    [[1.1, .6], [1.5, -.5], [1.8, .3], [1.35, -1.1], [1.75, 1.1]].forEach(([x, z]) => g.add(ball(.25, C.blue, x, .32, z)));
+    return g;
+  };
+  // 10 群聚星球廣場
+  R.unsupervised_learning = () => {
+    const g = group(cyl(2.0, 2.1, .2, C.stone, 0, 0, 0, 12));
+    [[C.red, -.85, .55], [C.navy, .9, .45], [C.forest, 0, -.95]].forEach(([c, cx, cz]) => {
+      for (let i = 0; i < 5; i++) {
+        const a = i / 5 * Math.PI * 2 + cx;
+        g.add(ball(.22, c, cx + Math.cos(a) * .42, .45 + (i % 2) * .25, cz + Math.sin(a) * .42));
+      }
+      g.add(cone(.16, .5, C.amber, cx, .2, cz, 4));
+    });
+    return g;
+  };
+  // 11 神經網路高塔（補充，位於中央高地）
+  R.deep_learning = () => {
+    const g = group(cyl(1.2, 1.4, .35, C.stone, 0, 0, 0, 8), cyl(.22, .26, 4.6, C.paper, 0, .35, 0, 6));
+    const layers = [5, 4, 4, 2], nodes = [];
+    const pulse = layers.map(() => glow(C.amber));
+    layers.forEach((n, li) => {
+      const y = .9 + li * 1.15, r = 1.05 - li * .15;
+      g.add(cyl(r + .25, r + .25, .12, C.navy, 0, y - .2, 0, 10));
+      const row = [];
+      for (let i = 0; i < n; i++) {
+        const a = i / n * Math.PI * 2;
+        const b = ball(.2, null, Math.cos(a) * r, y + .1, Math.sin(a) * r, pulse[li]); g.add(b);
+        row.push(b.position.clone());
+      }
+      nodes.push(row);
+    });
+    const seg = [];
+    for (let li = 0; li < nodes.length - 1; li++) nodes[li].forEach(a => nodes[li + 1].forEach(b => seg.push(a, b)));
+    const lines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(seg),
+      new THREE.LineBasicMaterial({ color: '#f7d774', transparent: true, opacity: .55 }));
+    g.add(lines, ball(.38, null, 0, 5.3, 0, glow('#f7d774')));
+    anims.push(t => pulse.forEach((m, i) => { m.emissiveIntensity = .25 + .75 * Math.max(0, Math.sin(t * 2.2 - i * .9)); }));
+    return g;
+  };
+  // 啟航島：港口語彙
+  R['00a_why_code'] = () => {               // 燈塔
+    const g = group(cyl(1.0, 1.15, .35, C.stone));
+    [C.red, C.cream, C.red, C.cream].forEach((c, i) => g.add(cyl(.62 - i * .07, .69 - i * .07, .75, c, 0, .35 + i * .75, 0, 8)));
+    const lamp = put(new THREE.CylinderGeometry(.45, .45, .5, 8), null, 0, 3.6, 0, glow('#f7d774')); g.add(lamp);
+    g.add(cyl(.62, .62, .1, C.navy, 0, 3.3, 0, 8), cone(.6, .6, C.navy, 0, 3.85, 0, 8));
+    anims.push(t => { lamp.material.emissiveIntensity = .45 + .4 * Math.max(0, Math.sin(t * 1.6)); });
+    return g;
+  };
+  R['00b_setup'] = () => {                 // 補給碼頭
+    const g = group(box(1.5, .14, 3.4, C.wood, 0, .05, .4));
+    [-1.1, .4, 1.9].forEach(z => [-.65, .65].forEach(x => g.add(box(.16, 1.2, .16, C.woodD, x, -.9, z))));
+    g.add(box(.7, .7, .7, C.wood, -.3, .19, -.6), box(.5, .5, .5, C.orange, .35, .19, -.3), box(.45, .45, .45, C.navy, -.25, .89, -.6));
+    return g;
+  };
+  R['00c_ai_assisted'] = () => {           // 領航站
+    const g = group(box(1.7, 1.2, 1.4, C.cream), roof(1.9, .9, 1.6, C.navy, 1.2),
+      box(.4, .7, .06, C.woodD, 0, 0, .72), box(.4, .3, .06, '#9cc5dc', -.5, .6, .72), box(.4, .3, .06, '#9cc5dc', .5, .6, .72),
+      cyl(.05, .05, 2.6, C.woodD, 1.05, 0, -.4, 5));
+    const flag = box(.7, .4, .04, C.forest, 1.42, 2.1, -.4); g.add(flag);
+    anims.push(t => { flag.rotation.y = Math.sin(t * 2.4) * .25; });
+    return g;
+  };
+  // 統計森林島：樹屋語彙
+  const treehouse = i => () => {
+    const h = 1.5 + (i % 3) * .35;
+    const g = group(cyl(.24, .32, h + .6, C.woodD, 0, 0, 0, 6), ball(1.15, C.leaf, -.3, h + 1.7, -.4), ball(.8, C.forest, .5, h + 1.9, -.6),
+      cyl(1.05, 1.05, .14, C.wood, 0, h, 0, 8), box(1.0, .8, .9, C.cream, 0, h + .14, .05),
+      roof(1.2, .65, 1.05, i % 2 ? C.forest : '#2f7f5a', h + .94), box(.32, .5, .05, C.woodD, 0, h + .14, .51));
+    for (let k = 0; k < 4; k++) g.add(box(.5, .06, .06, C.woodD, .75, .3 + k * h / 4, .5));
+    return g;
+  };
+  // Python 工坊島：工坊語彙
+  const workshop = i => () => {
+    const g = group(box(1.8, 1.1, 1.5, C.cream), roof(2.0, .85, 1.7, C.navy, 1.1),
+      box(.45, .75, .06, C.woodD, -.35, 0, .76), box(.45, .32, .06, '#f7d774', .45, .45, .76),
+      box(.32, .9, .32, C.stoneD, .55, 1.2, -.35));
+    const gear = put(new THREE.TorusGeometry(.26, .09, 4, 8), C.amber, .45, 1.05, .8); g.add(gear);
+    const puffs = [0, 1, 2].map(k => { const b = ball(.16 + k * .04, '#eef1f4', .55, 2.3, -.35); g.add(b); return b; });
+    anims.push(t => {
+      gear.rotation.z = t * .8 + i;
+      puffs.forEach((b, k) => { const u = (t * .35 + k / 3 + i * .13) % 1; b.position.set(.55 + u * .4, 2.2 + u * 1.3, -.35); b.scale.setScalar(.6 + u); });
+    });
+    return g;
+  };
+  PAGES.filter(p => p.grp === 'statistics').forEach((p, i) => { R[p.stem] = R[p.stem] || treehouse(i); });
+  PAGES.filter(p => p.grp === 'appendix').forEach((p, i) => { R[p.stem] = R[p.stem] || workshop(i); });
+  const generic = () => group(box(1.4, 1.2, 1.4, C.cream), roof(1.6, .8, 1.6, C.forest, 1.2));
+
+  /* ── 放置建築、招牌、拾取盒、足跡標記 ── */
+  const BADGE = { core: '#1a6b4a', pre: '#b9770e', statistics: '#2f7f5a', appendix: '#2c3e7a' };
+  const B = {};                    // stem → { g, pick, top, foot, visitRing, refRing, flag }
+  const picks = [];
+  const box3 = new THREE.Box3(), v3 = new THREE.Vector3();
+  const pickMat = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false });
+  const GLOW_VISIT = glow(C.amber), GLOW_DONE = glow(C.forest);
+  const ringGeo = r => { const t = new THREE.TorusGeometry(r, .1, 4, 28); t.rotateX(Math.PI / 2); return t; };
+  PAGES.forEach(p => {
+    const s = SLOTS[p.stem];
+    const g = (R[p.stem] || generic)();
+    g.position.set(s.x, s.y, s.z);
+    g.rotation.y = Math.PI / 4;              // 正面朝向初始視角
+    world.add(g);
+    g.updateMatrixWorld(true);
+    box3.setFromObject(g);
+    const size = box3.getSize(new THREE.Vector3());
+    const foot = Math.max(1.2, Math.min(2.4, Math.max(size.x, size.z) / 2));
+    const top = box3.max.y;
+    const pick = new THREE.Mesh(new THREE.BoxGeometry(foot * 2, top - s.y + 1.2, foot * 2), pickMat);
+    pick.position.set(s.x, (top + s.y + 1.2) / 2, s.z); pick.userData.stem = p.stem;
+    world.add(pick); picks.push(pick);
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: badge(p.code, BADGE[p.grp]), depthTest: false, transparent: true }));
+    sprite.scale.set(1.5, .84, 1); sprite.position.set(s.x, top + .75, s.z); sprite.renderOrder = 10;
+    world.add(sprite);
+    const visitRing = new THREE.Mesh(ringGeo(foot + .25), GLOW_VISIT); visitRing.position.set(s.x, s.y + .05, s.z);
+    const refRing = new THREE.Mesh(ringGeo(foot + .55), new THREE.MeshBasicMaterial({ color: C.navyL, transparent: true, opacity: .9 }));
+    refRing.position.set(s.x, s.y + .07, s.z);
+    const flag = group(cyl(.05, .05, 1.8, C.woodD, 0, 0, 0, 5), box(.75, .45, .04, C.forest, .4, 1.3, 0));
+    flag.position.set(s.x + foot * .8, s.y, s.z + foot * .8);
+    visitRing.visible = refRing.visible = flag.visible = false;
+    world.add(visitRing, refRing, flag);
+    B[p.stem] = { g, pick, top, foot, sprite, visitRing, refRing, flag, s };
+  });
+
+  /* ── 裝飾：樹、石頭（InstancedMesh）、帆船 ── */
+  const blocked = (x, z) => Object.values(SLOTS).some(s => Math.hypot(x - s.x, z - s.z) < 2.9)
+    || Math.abs(Math.hypot(x, z) - 7.2) < 1.0 || Math.hypot(x, z) < 5
+    || bridges.some(b => Math.hypot(x - b.x0, z - b.z0) < 2.2 || Math.hypot(x - b.x1, z - b.z1) < 2.2);
+  const treeSpots = [];
+  [['core', 46], ['statistics', 34], ['pre', 5], ['appendix', 8]].forEach(([grp, n]) => {
+    const I = ISLE_GEO[grp]; let tries = 0;
+    while (treeSpots.length < 1e4 && n > 0 && tries++ < 4000) {
+      const x = I.x + (rnd() * 2 - 1) * I.r, z = I.z + (rnd() * 2 - 1) * I.r;
+      if (!I.inside(x, z, .88) || blocked(x, z) || treeSpots.some(t => Math.hypot(t[0] - x, t[1] - z) < 1.15)) continue;
+      treeSpots.push([x, z, .65 + rnd() * .55, grp === 'statistics' || rnd() < .5]); n--;
+    }
+  });
+  const trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(.1, .14, .7, 5), mat(C.woodD), treeSpots.length);
+  const crownA = new THREE.InstancedMesh(new THREE.ConeGeometry(.65, 1.5, 6), mat(C.forest), treeSpots.length);
+  const crownB = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.7, 0), mat(C.leaf), treeSpots.length);
+  let na = 0, nb = 0;
+  treeSpots.forEach(([x, z, s, pine], i) => {
+    tmp.rotation.set(0, rnd() * 6, 0); tmp.scale.setScalar(s);
+    tmp.position.set(x, GROUND + .35 * s, z); tmp.updateMatrix(); trunk.setMatrixAt(i, tmp.matrix);
+    if (pine) { tmp.position.set(x, GROUND + (.7 + .75) * s, z); tmp.updateMatrix(); crownA.setMatrixAt(na++, tmp.matrix); }
+    else { tmp.position.set(x, GROUND + (.7 + .55) * s, z); tmp.updateMatrix(); crownB.setMatrixAt(nb++, tmp.matrix); }
+  });
+  crownA.count = na; crownB.count = nb;
+  world.add(trunk, crownA, crownB);
+  const rocks = [];
+  Object.values(ISLE_GEO).forEach(I => {
+    for (let k = 0; k < Math.round(I.r * 1.3); k++) {
+      const a = rnd() * Math.PI * 2, r = I.r * shape(a, I.seed) * (1.12 + rnd() * .12);
+      const x = I.x + Math.cos(a) * r, z = I.z + Math.sin(a) * r;
+      if (bridges.some(b => Math.hypot(x - b.x0, z - b.z0) < 2.6 || Math.hypot(x - b.x1, z - b.z1) < 2.6)) continue;
+      rocks.push([x, z, .35 + rnd() * .45]);
+    }
+  });
+  const rockMesh = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1, 0), mat(C.rock), rocks.length);
+  rocks.forEach(([x, z, s], i) => {
+    tmp.position.set(x, .3, z); tmp.rotation.set(rnd(), rnd() * 6, rnd()); tmp.scale.set(s, s * .7, s); tmp.updateMatrix();
+    rockMesh.setMatrixAt(i, tmp.matrix);
+  });
+  world.add(rockMesh);
+  const boat = group(box(1.4, .35, .55, C.woodD, 0, 0, 0), cyl(.04, .04, 1.4, C.cream, 0, .35, 0, 4));
+  const sail = put(new THREE.ConeGeometry(.55, 1.1, 3), C.cream, .1, 1.1, 0); sail.scale.set(.15, 1, 1); boat.add(sail);
+  world.add(boat);
+  const boatAt = t => { const a = t * .12, I = ISLE_GEO.pre; boat.position.set(I.x + Math.cos(a) * 11.5, .22, I.z + Math.sin(a) * 11.5); boat.rotation.y = -a; };
+  boatAt(1.1); anims.push(boatAt);
+
+  /* ── 選取標記 ── */
+  const marker = put(new THREE.ConeGeometry(.42, .9, 4), null, 0, 0, 0, glow(C.amber)); marker.rotation.x = Math.PI; marker.visible = false; world.add(marker);
+  let selected = null, refs = [];
+  anims.push(t => {
+    if (selected) marker.position.y = B[selected].top + 1.9 + Math.sin(t * 3) * .18;
+    refs.forEach(r => { B[r].refRing.material.opacity = .55 + .4 * Math.sin(t * 3); });
+  });
+
+  /* ── 相機與操作 ── */
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 600);
+  const HOME = new THREE.Vector3(1.5, 0, 1.5);
+  const POLAR = 55 * Math.PI / 180;
+  const controls = new OrbitControls(camera, canvas);
+  controls.enablePan = false;
+  controls.minPolarAngle = controls.maxPolarAngle = POLAR;
+  controls.minZoom = .75; controls.maxZoom = 4.5;
+  controls.enableDamping = motion(); controls.dampingFactor = .09;
+  controls.rotateSpeed = .7; controls.zoomSpeed = 1.1;
+  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_ROTATE };
+  function placeCamera(target, az = Math.PI / 4) {
+    controls.target.copy(target);
+    camera.position.set(target.x + Math.sin(POLAR) * Math.sin(az) * 150, target.y + Math.cos(POLAR) * 150,
+      target.z + Math.sin(POLAR) * Math.cos(az) * 150);
+    camera.lookAt(target);
+  }
+  placeCamera(HOME);
+  // 視錐：寬度要容納左右兩座附屬島（半寬約 37），高度至少 17；窄螢幕略為裁切兩翼
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    if (!w || !h) return;
+    const narrow = w < 768, aspect = w / h;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, narrow ? 1.5 : 2));
+    renderer.setSize(w, h, false);
+    const half = Math.max(17, (narrow ? 29 : 37.5) / aspect);
+    camera.left = -half * aspect; camera.right = half * aspect; camera.top = half; camera.bottom = -half;
+    camera.updateProjectionMatrix(); requestRender();
+  }
+  const ro = new ResizeObserver(resize);
+  ro.observe(stage);
+  resize();
+
+  // 飛行：平移 target（相機跟著平移）並調整 zoom
+  let fly = null;
+  function flyTo(target, zoom) {
+    const from = controls.target.clone(), z0 = camera.zoom;
+    if (!motion()) {
+      const off = camera.position.clone().sub(controls.target);
+      controls.target.copy(target); camera.position.copy(target).add(off);
+      camera.zoom = zoom; camera.updateProjectionMatrix(); controls.update(); requestRender(); return;
+    }
+    fly = { from, to: target.clone(), z0, z1: zoom, t0: performance.now(), dur: 750 };
+    requestRender();
+  }
+  function stepFly(now) {
+    if (!fly) return false;
+    const k = Math.min(1, (now - fly.t0) / fly.dur), e = 1 - Math.pow(1 - k, 3);
+    const off = camera.position.clone().sub(controls.target);
+    controls.target.lerpVectors(fly.from, fly.to, e);
+    camera.position.copy(controls.target).add(off);
+    camera.zoom = fly.z0 + (fly.z1 - fly.z0) * e; camera.updateProjectionMatrix();
+    if (k >= 1) fly = null;
+    return true;
+  }
+
+  /* ── 拾取與提示 ── */
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  const tip = $('islTip');
+  function pickAt(cx, cy) {
+    const r = canvas.getBoundingClientRect();
+    ndc.set((cx - r.left) / r.width * 2 - 1, -(cy - r.top) / r.height * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObjects(picks, false)[0];
+    return hit ? hit.object.userData.stem : null;
+  }
+  let hover = null, down = null;
+  function showTip(stem) {
+    if (stem === hover) { if (stem) placeTip(stem); return; }
+    hover = stem;
+    canvas.classList.toggle('is-hover', !!stem);
+    if (!stem) { tip.classList.remove('show'); return; }
+    const p = BY[stem];
+    tip.replaceChildren(Object.assign(document.createElement('b'), { textContent: p.code }), document.createTextNode(p.title));
+    tip.classList.add('show'); placeTip(stem);
+  }
+  function placeTip(stem) {
+    const b = B[stem]; v3.set(b.s.x, b.top + 1.4, b.s.z).project(camera);
+    tip.style.left = ((v3.x + 1) / 2 * canvas.clientWidth) + 'px';
+    tip.style.top = ((1 - v3.y) / 2 * canvas.clientHeight) + 'px';
+  }
+  canvas.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY }; });
+  canvas.addEventListener('pointermove', e => {
+    if (e.pointerType === 'mouse' && !e.buttons) showTip(pickAt(e.clientX, e.clientY));
+  });
+  canvas.addEventListener('pointerleave', () => showTip(null));
+  canvas.addEventListener('pointerup', e => {
+    if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) { down = null; return; }
+    down = null;
+    const stem = pickAt(e.clientX, e.clientY);
+    if (stem) {
+      select(stem, { trigger: canvas });
+      const it = items.get(stem);
+      if (it && window.innerWidth >= 768) {   // 側欄捲到對應項目（不用 scrollIntoView）
+        const list = $('islList');
+        list.scrollTop = it.li.offsetTop - list.clientHeight / 2;
+      }
+    } else closePanel();
+  });
+  canvas.addEventListener('keydown', e => {
+    const step = Math.PI / 12;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      const off = camera.position.clone().sub(controls.target);
+      off.applyAxisAngle(new THREE.Vector3(0, 1, 0), e.key === 'ArrowLeft' ? -step : step);
+      camera.position.copy(controls.target).add(off); controls.update(); requestRender(); e.preventDefault();
+    } else if (e.key === '+' || e.key === '=' || e.key === '-' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      const zin = e.key === '+' || e.key === '=' || e.key === 'ArrowUp';
+      camera.zoom = Math.min(controls.maxZoom, Math.max(controls.minZoom, camera.zoom * (zin ? 1.2 : 1 / 1.2)));
+      camera.updateProjectionMatrix(); requestRender(); e.preventDefault();
+    }
+  });
+  controls.addEventListener('change', () => { if (hover) placeTip(hover); requestRender(); });
+
+  /* ── 繪製迴圈：有動畫或互動才畫；頁面不可見或畫布捲出視窗時停止動畫 ── */
+  const animating = () => motion() && onScreen && document.visibilityState === 'visible';
+  function requestRender() { need = true; if (!raf && alive) raf = requestAnimationFrame(frame); }
+  function frame(now) {
+    raf = 0; if (!alive) return;
+    const flying = stepFly(now);
+    const moved = controls.update();
+    const anim = animating();
+    if (anim) { const t = now / 1000; anims.forEach(f => f(t)); }
+    if (need || anim || flying || moved) { renderer.render(world, camera); need = false; }
+    if (anim || flying || moved) raf = requestAnimationFrame(frame);
+  }
+  new IntersectionObserver(es => { onScreen = es[0].isIntersecting; requestRender(); }).observe(stage);
+  document.addEventListener('visibilitychange', requestRender);
+  reduceMotion.addEventListener('change', () => { controls.enableDamping = motion(); requestRender(); });
+  anims.forEach(f => f(1.7));          // 靜態姿勢（減少動態時也看得出噴泉、帆船）
+  if (selected) marker.position.y = B[selected].top + 1.9;
+  requestRender();
+
+  /* ── 對外介面 ── */
+  return {
+    select(stem, doFly) {
+      if (selected) B[selected].g.scale.setScalar(1);
+      refs.forEach(r => { B[r].refRing.visible = false; });
+      selected = stem && B[stem] ? stem : null;
+      refs = selected ? BY[selected].refs.filter(r => B[r]) : [];
+      refs.forEach(r => { B[r].refRing.visible = true; });
+      marker.visible = !!selected;
+      if (doFly) showTip(null);              // 從列表選取時，收起滑鼠留下的提示
+      if (selected) {
+        const b = B[selected];
+        marker.position.set(b.s.x, b.top + 1.9, b.s.z);
+        b.g.scale.setScalar(1.06);
+        if (doFly) flyTo(new THREE.Vector3(b.s.x, b.s.y, b.s.z), Math.max(camera.zoom, 2.1));
+      }
+      requestRender();
+    },
+    flyToIsle(grp) {
+      const I = ISLE_GEO[grp]; if (!I) return;
+      flyTo(new THREE.Vector3(I.x, GROUND, I.z), grp === 'core' ? 1.45 : 2.2);
+    },
+    reset() { flyTo(HOME.clone(), 1); },
+    updateTrail() {
+      PAGES.forEach(p => {
+        const b = B[p.stem], done = !!trail.done[p.stem], visited = !!trail.visited[p.stem];
+        b.flag.visible = done; b.visitRing.visible = visited || done;
+        b.visitRing.material = done ? GLOW_DONE : GLOW_VISIT;
+      });
+      requestRender();
+    },
+    dispose() { alive = false; ro.disconnect(); controls.dispose(); renderer.dispose(); },
+    // 給 tools/browser_check.js 用：建築在畫布上的像素位置（點擊測試）
+    screenPos(stem) {
+      const b = B[stem]; if (!b) return null;
+      v3.set(b.s.x, b.s.y + (b.top - b.s.y) * .45, b.s.z).project(camera);
+      const r = canvas.getBoundingClientRect();
+      return { x: r.left + (v3.x + 1) / 2 * r.width, y: r.top + (1 - v3.y) / 2 * r.height };
+    },
+  };
+
+  function badge(text, bg) {
+    const c = document.createElement('canvas'); c.width = 128; c.height = 72;
+    const g = c.getContext('2d');
+    g.fillStyle = bg; g.strokeStyle = '#fffdf7'; g.lineWidth = 6;
+    g.beginPath(); g.roundRect(5, 5, 118, 62, 28); g.fill(); g.stroke();
+    g.fillStyle = '#ffffff'; g.font = '700 36px "JetBrains Mono", ui-monospace, monospace';
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 64, 38);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    return t;
+  }
+}
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+</script>
+</body>
+</html>

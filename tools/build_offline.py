@@ -102,7 +102,8 @@ def main():
         f"產生日期：{stamp}\n\n"
         "解壓縮後用瀏覽器（Chrome／Edge／Firefox）開啟 index.html 即可，不需要網路。\n"
         "請保留整個資料夾結構（vendor/ 內是公式與圖表套件）。\n"
-        "課程錄影、講義 PDF、GitHub Lab 等外部連結需要網路才能開啟。\n",
+        "課程錄影、講義 PDF、GitHub Lab 等外部連結需要網路才能開啟。\n"
+        "線上版另有 3D 知識群島導覽（island/），需要網路，不包含在離線版。\n",
         encoding="utf-8")
 
     zpath = DIST / f"{NAME}-{stamp.replace('-', '')}.zip"

@@ -67,7 +67,8 @@ python3 tools/enrich/enrich_<page>.py     # 內容 → HTML（會順便重跑該
 python3 tools/inject_data.py <stem>       # 詞彙卡／題庫 → DATA 區段
 python3 tools/build_page.py               # GEN 區段（head/nav/TOC/標題列/chapter-nav/footer/shared.js）
 python3 tools/build_index.py              # index.html 與 README 章節表
-python3 tools/validate.py --net           # 19 項具名檢查
+python3 tools/build_island.py             # island/index.html（3D 知識群島，見 §26）
+python3 tools/validate.py --net           # 20 項具名檢查
 node    tools/browser_check.js            # 瀏覽器逐項
 git add -A && git commit && git push      # Pages 會自動重建
 ```
@@ -131,7 +132,7 @@ Chrome 版本不用寫死，`browser_check.js` 會抓 `~/.cache/puppeteer/chrome
 
 ## 4. 兩道品質關卡
 
-### `tools/validate.py` — 19 項具名檢查（純 stdlib，不用裝東西）
+### `tools/validate.py` — 20 項具名檢查（純 stdlib，不用裝東西）
 
 `STRUCT` 單例區塊 · `NAV-SYNC` 三處編號與 section 順序同步 · `ANCHOR` id 唯一且錨點可解析 ·
 `ORDER` cards 一定最後 · `BADGE` 每個 h2 至少一個合格徽章 · `QUIZ-TRIPLE` 三選一、
@@ -142,7 +143,8 @@ Chrome 版本不用寫死，`browser_check.js` 會抓 `~/.cache/puppeteer/chrome
 `MATHJAX`（JS 字串內無 `$`、含數學的 innerHTML 附近要有 `HC.retype`）·
 `FRAMES-META` 烘焙資料要有 src/seed/versions/gen · `GROUNDING` 每張 `.deck-extra` 要有
 `.dx-src`、預期輸出要能在 lab 索引裡找到 · `INDEX-SYNC` 卡片與母檔數字一致 ·
-`FLASHCARD` / `BANKQUIZ` 母檔格式 · `SIZE` · `LINKS`（`--net`）。
+`FLASHCARD` / `BANKQUIZ` 母檔格式 · `SIZE` · `LINKS`（`--net`）·
+`ISLAND-SYNC` 3D 群島產物同步、章序、相對連結、Three.js 釘版與 SRI（`--net` 時重新下載比對雜湊）。
 
 ### `tools/browser_check.js` — 真的開瀏覽器
 
@@ -151,6 +153,8 @@ console 無錯 · 按下每個按鈕、推每個滑桿與 select 到底 · 點�
 Q&A 展開後數學要排版 · **390×844 手機版頁面本體不得橫向滾動** ·
 **攔掉 cdn.jsdelivr.net 重載**（模擬 CDN 失效）：圖表要退回 `.chart-fallback`
 而手寫 SVG 元件必須仍然活著 · 全頁截圖。
+`island/index.html` 另跑三種狀態（WebGL 正常／CDN 被攔／`getContext` 回傳 null）×
+桌面與手機：3D 要真的畫出來、點建築開面板、鍵盤 Enter／Esc、26 個入口都可見。
 
 > **驗證不要只看「有沒有掛上」，要看截圖。** 參考線那個 bug 之所以活了八章，
 > 就是因為程式碼看起來對、console 也乾淨。用 Read 工具讀 PNG。
@@ -753,3 +757,38 @@ $\sigma^2$ 已知時 AIC 與 $C_p$ 的排序等價、Laplace→BIC，最後是�
 **2026-10-22 離線版：**`python3 tools/build_offline.py` 會把根目錄已建好的 27 個 HTML 打包成斷網可用的 zip，輸出到 `dist/`（不進 git）。
 MathJax（`mathjax@3.2.2` 的 es5，去掉 `sre`）與 Chart.js 4.5.1（核對 sha384）放進 `vendor/`，移除 Google Fonts 改用系統字型，首頁標註離線版與產生日期。
 內容更新後要重新打包，先跑完 build 流程再執行。
+
+---
+
+## 26. 3D 統計學習知識群島 `/island/`（2026-10-29）
+
+線上：https://phonchi.github.io/statlearning-selfstudy/island/ 。導覽用的附加層，**不取代**原首頁，
+也不嵌入教材；點建築後由面板連到原本的 26 頁。
+
+| 你要改什麼 | 改哪個檔 |
+|---|---|
+| 建築名稱、簡介、正課 → 先備的「需要時可查閱」 | `tools/island_meta.py`（stem 為鍵；缺頁、多頁、refs 指錯都會讓產生器報錯） |
+| 章節順序、標題、分區 | 照舊只改 `tools/pages.py`，島上自動跟著變 |
+| 樣式 | `tools/template/island.css` |
+| 場景、建築配方、足跡、面板 | `tools/template/island.js` |
+| Three.js 版本 | `tools/build_island.py` 的 `THREE_VER` 與 `THREE_SRI`（三個檔都要重算 sha384，含被間接 import 的 `three.core.js`） |
+
+改完：`python3 tools/build_island.py` → `python3 tools/validate.py --net` → `node tools/browser_check.js island`。
+`island/index.html` 是產物，不要手改。
+
+**架構。**單檔、DOM 優先：四座島的章節列表由 Python 直接輸出成語意 HTML，沒有 JS、CDN 失效或
+WebGL 不可用時就是 2D 卡片地圖；WebGL 可用才 dynamic import Three.js、加上 `body.webgl-ready`，
+同一份列表變成 3D 旁的快速列表。資料內嵌在 `<script type="application/json">`，不用 fetch，所以
+`file://` 也能開。Three.js 以 importmap 釘版載入，`integrity` 涵蓋每個實際抓取的模組；
+importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿到釘版檔案。
+
+**場景。**正交相機、仰角固定 35°，只能旋轉方位與縮放；有互動或動畫時才繪製，畫布捲出視窗或分頁隱藏時停止動畫；
+`prefers-reduced-motion` 時不播動畫、相機瞬切。建築全部是程序化幾何（沒有模型、沒有圖檔，`check_repo` 照樣禁止圖檔）。
+主島沿環狀小徑依授課順序放 01–10，11 深度學習（補充）在中央高地；三座附屬島各用一套建築語彙
+（港口、樹屋、工坊）。新增頁面時若沒在 `island.js` 的 `local` 位置表裡，會自動放在該島中心附近，仍可點選。
+
+**足跡。**「造訪」＝從島上點過前往教材；「完成」＝學生自己按 ✓。只存在該裝置瀏覽器的 localStorage
+（鍵 `slss-island:trail:v1`），原教材頁不會也不需要寫入。
+
+**離線 zip 不含島嶼**（需要 CDN 上的 Three.js）；`build_offline.py` 的 README.txt 已註明。
+
