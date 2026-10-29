@@ -132,6 +132,7 @@ function hasWebGL() {
   } catch (e) { return false; }
 }
 function fallback2D(reason) {
+  document.documentElement.classList.remove('gl-pending');
   document.body.classList.remove('webgl-ready');
   $('islStage').hidden = true; $('islReset').hidden = true;
   scene = null;
@@ -140,13 +141,14 @@ function fallback2D(reason) {
 if (hasWebGL()) {
   initScene().catch(err => fallback2D(err && err.message ? err.message : String(err)));
 } else {
+  document.documentElement.classList.remove('gl-pending');
   console.info('3D 群島未啟用，改用 2D 地圖：瀏覽器沒有 WebGL');
 }
 
 async function initScene() {
-  const THREE = await import('three');
-  const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
-  const { RoundedBoxGeometry } = await import('three/addons/geometries/RoundedBoxGeometry.js');
+  // 三個模組同時抓（<head> 已 modulepreload，通常已在快取裡）
+  const [THREE, { OrbitControls }, { RoundedBoxGeometry }] = await Promise.all([
+    import('three'), import('three/addons/controls/OrbitControls.js'), import('three/addons/geometries/RoundedBoxGeometry.js')]);
   const stage = $('islStage'), canvas = $('islCanvas');
   document.body.classList.add('webgl-ready');
   stage.hidden = false;
@@ -176,7 +178,9 @@ async function initScene() {
     try { localStorage.setItem(NIGHT_KEY, isNight ? '1' : '0'); } catch (e) { /* 只在本頁有效 */ }
   });
   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); scene && scene.dispose(); fallback2D('WebGL context lost'); });
-  window.__island = { screenPos: stem => scene && scene.screenPos(stem) };
+  window.__island = { screenPos: stem => scene && scene.screenPos(stem), stats: () => scene && scene.stats() };
   refreshTrail();
   if (current) scene.select(current, false);
+  await scene.warm();                       // 先編譯著色器、畫好第一幀，再淡入畫布
+  document.documentElement.classList.remove('gl-pending');
 }

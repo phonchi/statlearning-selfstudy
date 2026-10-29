@@ -789,7 +789,12 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - 光影：半球光＋投影主光＋補光，`PCFShadowMap`（r18x 已移除 PCFSoft，用 `shadow.radius` 柔化）、ACES；**陰影只烘一次**（`shadowMap.autoUpdate=false`，建好與足跡變更時設 `needsUpdate`）。改 shadow camera 範圍後一定要 `updateProjectionMatrix()`，否則只有預設 ±5 的範圍有陰影。
 - 標籤是 HTML（`#islLabels`），每次繪製時投影定位；正課 11 章常駐，擠不下時退成只顯示編號，再擠不下才隱藏；zoom ≥ 1.6 才展開附屬島的單元標籤、收起島名。標籤 `tabindex=-1`、`aria-hidden`，鍵盤仍走右側列表。
 - 入夜：天色、霧、半球光、主光、海色平滑過渡，窗戶與路燈的 glow 材質亮起、光暈 Sprite、星點；狀態存 localStorage `slss-island:night`。
-- 只在有動畫、互動、飛行或日夜過渡時繪製；分頁隱藏或畫布捲出畫面時停；連續約 3 秒低於 22fps 會停用生活感動畫並把 DPR 降到 1（headless 軟體算圖一定會觸發，截圖時看到的是靜態姿勢）。`prefers-reduced-motion` 時全部靜止、相機瞬切。
+- **效能（2026-10-29 v3）**：
+  - 載入：importmap 把 `three.module.min.js` 內部 import 的未壓縮 `three.core.js` 對應到 `three.core.min.js`（`CORE_REMAP`）；四個模組在 `<head>` modulepreload 並平行 import。Fast 4G 節流實測，可互動時間 16.1 秒 → 3.7 秒，傳輸 3.3 MB → 0.59 MB。
+  - 版面：`<head>` 的小 script 在有 WebGL 時先加 `html.gl-pending`，3D 版面與「群島載入中…」先出現；`scene.warm()`（`compileAsync`＋第一幀）完成才淡入畫布，失敗則退回 2D。
+  - 繪製：除了海面一律 `MeshLambertMaterial`。島的各層依材質合併（`mergeIsles`）；小人、船、鳥、雲、噴泉球等用 `instancify()` 合成 InstancedMesh、每個動畫幀同步矩陣；拾取盒 `visible=false`；光暈與地面光斑只在入夜時繪製。每幀 367 → 39 個繪製呼叫，約 30 萬 → 18 萬個三角形。陰影 2048（手機 1024）只烘一次。
+  - 節能：只剩環境動畫時約 30fps，互動時全速；45 秒沒有任何輸入就停止動畫（`window.__islandIdleMs` 可在測試時調短），有輸入即恢復。DPR 依幀時間自動 1.5 → 1.25 → 1，互動時夠快再升回，最低一級仍慢才停用生活感。分頁隱藏、捲出畫面、`prefers-reduced-motion` 時停止。
+  - 測試接口：`window.__island.stats()` 回傳繪製次數、DPR 等級與繪製呼叫數；browser_check 用它檢查閒置暫停與「繪製呼叫 ≤ 80」。
 
 **足跡。**「造訪」＝從島上點過前往教材；「完成」＝學生自己按 ✓。只存在該裝置瀏覽器的 localStorage
 （鍵 `slss-island:trail:v1`），原教材頁不會也不需要寫入。

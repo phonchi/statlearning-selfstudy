@@ -696,6 +696,12 @@ def check_island(net=False):
             fail("ISLAND-SYNC", "island", f"importmap 的 {spec} 缺 integrity")
     if integ != I.THREE_SRI:
         fail("ISLAND-SYNC", "island", "importmap 的 integrity 與 build_island.THREE_SRI 不一致")
+    pre = dict(re.findall(r'<link rel="modulepreload" href="([^"]+)" integrity="([^"]+)"', src))
+    if pre != I.THREE_SRI:
+        fail("ISLAND-SYNC", "island", "modulepreload 的檔案或 integrity 與 build_island.THREE_SRI 不一致")
+    for frm, to in imap.get("imports", {}).items():
+        if frm.startswith("https://") and to not in integ:
+            fail("ISLAND-SYNC", "island", f"importmap 把 {frm} 對應到沒有 integrity 的 {to}")
     if net:
         for url, sri in I.THREE_SRI.items():
             try:

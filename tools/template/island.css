@@ -1,6 +1,6 @@
 /* island/index.html 專用（3D 統計學習知識群島）。色票沿用 base.css：
    深藍 #2c3e7a、森林綠 #1a6b4a、米白 #f7f3eb、墨色 #1a1a2e。
-   預設樣式＝2D 卡片地圖（無 JS／CDN 失效／無 WebGL 都看得到）；body.webgl-ready 才切成 3D＋側欄。 */
+   預設樣式＝2D 卡片地圖（無 JS／CDN 失效／無 WebGL 都看得到）；body.webgl-ready（或載入中的 html.gl-pending）才切成 3D＋側欄。 */
 :root{
   --ink:#1a1a2e;--paper:#f7f3eb;--card:#fffdf7;--card-border:#e8e2d6;--muted:#6f6a5f;
   --navy:#2c3e7a;--forest:#1a6b4a;--accent:#c0392b;--amber:#b9770e;
@@ -59,7 +59,7 @@ a{color:inherit;}
 .isl-landmark{font-size:.78rem;color:var(--navy);}
 .isl-blurb{grid-column:1/-1;font-size:.84rem;line-height:1.75;color:#4a463e;margin-top:.55rem;text-wrap:pretty;}
 .isl-refs{grid-column:1/-1;font-size:.76rem;color:var(--navy);margin-top:.45rem;line-height:1.6;}
-body.webgl-ready .isl-refs{display:none;}
+:is(.gl-pending body, body.webgl-ready) .isl-refs{display:none;}
 .isl-state{position:absolute;top:.85rem;right:2.55rem;width:10px;height:10px;border-radius:50%;}
 .isl-item.is-visited .isl-state{background:#f0b429;box-shadow:0 0 0 3px rgba(240,180,41,.25);}
 .isl-item.is-done .isl-state{display:none;}   /* 完成時勾選鈕本身就是綠色，不重複標示 */
@@ -73,31 +73,38 @@ body.webgl-ready .isl-refs{display:none;}
 
 /* ── 3D 模式 ─────────────────────────────────────── */
 .isl-stage{position:relative;overflow:hidden;}
-body.webgl-ready .isl-main{display:grid;grid-template-columns:minmax(0,1fr) 340px;
+.gl-pending .isl-stage[hidden]{display:block;}            /* 3D 載入中：先排好舞台，避免版面跳動 */
+.isl-loading{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;
+  font-size:.9rem;letter-spacing:.08em;color:rgba(43,58,54,.7);animation:islPulse 1.4s ease-in-out infinite;}
+.gl-pending .isl-loading{display:block;}
+@keyframes islPulse{0%,100%{opacity:.45;}50%{opacity:1;}}
+#islCanvas{opacity:1;transition:opacity .5s ease;}
+.gl-pending #islCanvas{opacity:0;}
+:is(.gl-pending body, body.webgl-ready) .isl-main{display:grid;grid-template-columns:minmax(0,1fr) 340px;
   height:calc(100vh - var(--bar-h));height:calc(100dvh - var(--bar-h));}
-body.webgl-ready .isl-stage{display:block;min-height:0;
+:is(.gl-pending body, body.webgl-ready) .isl-stage{display:block;min-height:0;
   background:#a9d0c7;transition:background .6s;}
-body.webgl-ready .isl-stage.is-night{background:#1c2a3e;}
+:is(.gl-pending body, body.webgl-ready) .isl-stage.is-night{background:#1c2a3e;}
 #islCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;outline:none;}
 #islCanvas:active{cursor:grabbing;}
 #islCanvas.is-hover{cursor:pointer;}
 #islCanvas:focus-visible{box-shadow:inset 0 0 0 3px #f39c12;}
-body.webgl-ready .isl-list{max-width:none;margin:0;padding:1rem .9rem 2rem;overflow-y:auto;min-height:0;
+:is(.gl-pending body, body.webgl-ready) .isl-list{max-width:none;margin:0;padding:1rem .9rem 2rem;overflow-y:auto;min-height:0;
   background:var(--paper);border-left:1px solid var(--card-border);}
-body.webgl-ready .isl-intro{font-size:.82rem;margin-bottom:.9rem;}
-body.webgl-ready .isle{border-radius:16px;padding:.8rem .7rem .7rem;margin-bottom:.9rem;box-shadow:none;}
-body.webgl-ready .isle h2{font-size:1.02rem;}
-body.webgl-ready .isle-note{font-size:.78rem;margin:.1rem 0 .5rem;}
-body.webgl-ready .isl-items{grid-template-columns:1fr;gap:.35rem;}
-body.webgl-ready .isl-link{grid-template-columns:2.1rem 1fr;grid-template-rows:auto auto;padding:.45rem 2.4rem .45rem .6rem;
+:is(.gl-pending body, body.webgl-ready) .isl-intro{font-size:.82rem;margin-bottom:.9rem;}
+:is(.gl-pending body, body.webgl-ready) .isle{border-radius:16px;padding:.8rem .7rem .7rem;margin-bottom:.9rem;box-shadow:none;}
+:is(.gl-pending body, body.webgl-ready) .isle h2{font-size:1.02rem;}
+:is(.gl-pending body, body.webgl-ready) .isle-note{font-size:.78rem;margin:.1rem 0 .5rem;}
+:is(.gl-pending body, body.webgl-ready) .isl-items{grid-template-columns:1fr;gap:.35rem;}
+:is(.gl-pending body, body.webgl-ready) .isl-link{grid-template-columns:2.1rem 1fr;grid-template-rows:auto auto;padding:.45rem 2.4rem .45rem .6rem;
   border-radius:10px;}
-body.webgl-ready .isl-link:hover{transform:none;}
-body.webgl-ready .isl-icon,body.webgl-ready .isl-blurb{display:none;}
-body.webgl-ready .isl-num{grid-row:1/span 2;align-self:center;font-size:.78rem;}
-body.webgl-ready .isl-title{font-size:.9rem;}
-body.webgl-ready .isl-landmark{font-size:.72rem;}
-body.webgl-ready .isl-state{top:50%;right:2.45rem;transform:translateY(-50%);width:8px;height:8px;}
-body.webgl-ready .isl-mark{top:50%;transform:translateY(-50%);width:26px;height:26px;right:.45rem;border-radius:8px;font-size:.8rem;}
+:is(.gl-pending body, body.webgl-ready) .isl-link:hover{transform:none;}
+:is(.gl-pending body, body.webgl-ready) .isl-icon,:is(.gl-pending body, body.webgl-ready) .isl-blurb{display:none;}
+:is(.gl-pending body, body.webgl-ready) .isl-num{grid-row:1/span 2;align-self:center;font-size:.78rem;}
+:is(.gl-pending body, body.webgl-ready) .isl-title{font-size:.9rem;}
+:is(.gl-pending body, body.webgl-ready) .isl-landmark{font-size:.72rem;}
+:is(.gl-pending body, body.webgl-ready) .isl-state{top:50%;right:2.45rem;transform:translateY(-50%);width:8px;height:8px;}
+:is(.gl-pending body, body.webgl-ready) .isl-mark{top:50%;transform:translateY(-50%);width:26px;height:26px;right:.45rem;border-radius:8px;font-size:.8rem;}
 
 .isl-jumps{position:absolute;left:1rem;top:1rem;display:flex;flex-wrap:wrap;gap:.4rem;max-width:calc(100% - 2rem);}
 .isl-jump-btn{background:rgba(255,253,247,.9);color:var(--ink);border:1px solid rgba(26,26,46,.12);border-radius:999px;
@@ -175,9 +182,9 @@ body.webgl-ready .isl-mark{top:50%;transform:translateY(-50%);width:26px;height:
   .isl-btn{font-size:.78rem;padding:.3rem .6rem;}
   .isl-list{padding:1rem .75rem 2.5rem;}
   .isl-items{grid-template-columns:1fr;}
-  body.webgl-ready .isl-main{display:block;height:auto;}
-  body.webgl-ready .isl-stage{height:55vh;height:55svh;}
-  body.webgl-ready .isl-list{border-left:none;overflow:visible;}
+  :is(.gl-pending body, body.webgl-ready) .isl-main{display:block;height:auto;}
+  :is(.gl-pending body, body.webgl-ready) .isl-stage{height:55vh;height:55svh;}
+  :is(.gl-pending body, body.webgl-ready) .isl-list{border-left:none;overflow:visible;}
   .isl-jumps{left:.6rem;top:.6rem;gap:.3rem;}
   .isl-jump-btn{font-size:.74rem;padding:.25rem .6rem;}
   .isl-hint{display:none;}

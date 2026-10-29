@@ -3,7 +3,8 @@
 
 頁面是「DOM 優先」：四座島的章節列表由這裡直接輸出成語意 HTML，沒有 JS、CDN 失效
 或 WebGL 不可用時就是一張可點的 2D 地圖；WebGL 可用時，同一份列表變成 3D 場景旁的快速列表。
-Three.js 以 importmap 釘版載入，integrity 涵蓋每一個會被抓的模組（含 three.core.js）。
+Three.js 以 importmap 釘版載入，integrity 涵蓋每一個會被抓的模組；three.module.min.js 內部 import 的
+未壓縮 three.core.js 以 importmap 重新對應到 three.core.min.js，四個模組都在 <head> modulepreload。
 """
 import html
 import json
@@ -21,14 +22,17 @@ THREE_VER = "0.186.1"
 _CDN = f"https://cdn.jsdelivr.net/npm/three@{THREE_VER}"
 THREE_MAIN = f"{_CDN}/build/three.module.min.js"
 THREE_ADDONS = f"{_CDN}/examples/jsm/"
-# 每一個實際會被瀏覽器抓的檔案都要有雜湊；three.module.min.js 會再 import ./three.core.js。
+# 每一個實際會被瀏覽器抓的檔案都要有雜湊；three.module.min.js 會再 import ./three.core.js，
+# 那個是未壓縮版（解析 1.4 MB），所以 CORE_REMAP 把它對應到 three.core.min.js。
 # 升版時：下載這四個檔，以 `openssl dgst -sha384 -binary f | openssl base64 -A` 重算。
 THREE_SRI = {
     THREE_MAIN: "sha384-EU5UWigB3OuXjAXooUegndJSqYber3YSJHDoMZs6rV96yY/ol/B4W8logw4CKWkA",
-    f"{_CDN}/build/three.core.js": "sha384-mdKeCwPEcbDvzaxwhm+MVuLoMou+E7jQqrs4tmu/n8HBYPGI1kZt0MkJxlMR4zFM",
+    f"{_CDN}/build/three.core.min.js": "sha384-ktZslgpl0L71WZcQ5wKV96Z04i9QSjtmiU/kYpjDQSfJ5NJ8B79qDF63oNTbQySl",
     f"{THREE_ADDONS}controls/OrbitControls.js": "sha384-LSqANrugPGTgf0eYsQTloqKWy926dOOXo2iZ9y6wLMIDEQoU9AaCLJF1Vcc7oJXr",
     f"{THREE_ADDONS}geometries/RoundedBoxGeometry.js": "sha384-gHmgcgYfabbVCqiNiLLSop7dMvxAqZsQsjokoDYKyrHmCD5jCPvDvFaXaAkHtTfM",
 }
+
+CORE_REMAP = {f"{_CDN}/build/three.core.js": f"{_CDN}/build/three.core.min.js"}
 
 FONTS = ("https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900"
          "&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap")
@@ -124,8 +128,10 @@ def build() -> str:
     js = "\n\n".join((TEMPLATE / f).read_text(encoding="utf-8").rstrip() for f in ("island.js", "island-scene.js"))
     data = dict(isles=[dict(grp=g, **v) for g, v in M.ISLES.items()], pages=recs)
     data_json = json.dumps(data, ensure_ascii=False, indent=1).replace("</", "<\\/")
-    importmap = json.dumps({"imports": {"three": THREE_MAIN, "three/addons/": THREE_ADDONS},
+    importmap = json.dumps({"imports": {"three": THREE_MAIN, "three/addons/": THREE_ADDONS, **CORE_REMAP},
                             "integrity": THREE_SRI}, indent=1)
+    preload = "\n".join(f'<link rel="modulepreload" href="{u}" integrity="{h}" crossorigin="anonymous">'
+                         for u, h in THREE_SRI.items())
     sections = "\n".join(isle_section(g, recs) for g in M.ISLES)
     jumps = "\n".join(f'      <button type="button" class="isl-jump-btn" data-grp="{g}">{esc(v["name"])}</button>'
                       for g, v in M.ISLES.items())
@@ -138,6 +144,10 @@ def build() -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="統計學習知識群島：以 3D 群島導覽 NSYSU MATH524 統計學習自學網站的 {len(recs)} 個單元，點選建築即可前往原教材。">
 <title>統計學習知識群島 — Statistical Learning Archipelago</title>
+<script>
+/* 有 WebGL 的瀏覽器先排 3D 版面並顯示載入中，避免 2D 卡片閃一下再切換；失敗時 island.js 會移除 */
+if (window.WebGLRenderingContext) document.documentElement.classList.add('gl-pending');
+</script>
 <link href="{FONTS}" rel="stylesheet">
 <style>
 {css}
@@ -145,6 +155,7 @@ def build() -> str:
 <script type="importmap">
 {importmap}
 </script>
+{preload}
 </head>
 <body>
 <header class="isl-bar">
@@ -160,6 +171,7 @@ def build() -> str:
 </header>
 <main class="isl-main">
   <div class="isl-stage" id="islStage" hidden>
+    <p class="isl-loading" aria-hidden="true">群島載入中…</p>
     <canvas id="islCanvas" tabindex="0" aria-label="3D 群島：拖曳旋轉、滾輪縮放、點選建築；也可用右側列表操作"></canvas>
     <div class="isl-jumps" role="group" aria-label="跳到島嶼">
 {jumps}

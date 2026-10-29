@@ -438,6 +438,25 @@ async function checkIsland(browser) {
       await page.screenshot({ path: path.join(SHOT_DIR, 'island_3d_night.png') });
       await page.click('#islNight'); await new Promise(r => setTimeout(r, 300));
       await page.evaluate(() => { try { localStorage.removeItem('slss-island:night'); } catch (e) {} });
+      // 閒置暫停：把門檻調短，確認停止繪製；滑鼠一動就恢復
+      const calls = await page.evaluate(() => window.__island.stats().calls);
+      if (calls > 80) note(stem, `每幀繪製呼叫過多：${calls}`);
+      await page.evaluate(() => { window.__islandIdleMs = 1500; });
+      // 軟體算圖幀率很低，日夜淡出、飛行可能還在收尾：最多等 10 秒，直到連續 1 秒沒有新繪製
+      let d0 = 0, d1 = -1;
+      for (let k = 0; k < 10 && d1 !== d0; k++) {
+        d0 = await page.evaluate(() => window.__island.stats().draws);
+        await new Promise(r => setTimeout(r, 1000));
+        d1 = await page.evaluate(() => window.__island.stats().draws);
+      }
+      const motionOk = await page.evaluate(() => !matchMedia('(prefers-reduced-motion: reduce)').matches);
+      if (motionOk && d1 !== d0) note(stem, `閒置 10 秒後仍在繪製（最後 1 秒 ${d1 - d0} 幀）`);
+      const pos2 = await page.evaluate(() => window.__island.screenPos('linear_regression'));
+      await page.mouse.move(pos2.x + 5, pos2.y + 5); await page.mouse.move(pos2.x - 5, pos2.y);
+      await new Promise(r => setTimeout(r, 1200));
+      const d2 = await page.evaluate(() => window.__island.stats().draws);
+      if (motionOk && d2 <= d1) note(stem, '有操作後沒有恢復繪製');
+      await page.evaluate(() => { window.__islandIdleMs = 0; });
       await page.evaluate(() => { try { localStorage.removeItem('slss-island:trail:v1'); } catch (e) {} });
     }
     await layout(page, '桌面 3D');
