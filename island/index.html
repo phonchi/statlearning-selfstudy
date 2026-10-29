@@ -190,6 +190,60 @@ a{color:inherit;}
 .isl-done:hover{border-color:var(--forest);}
 .isl-done[aria-pressed="true"]{background:#e3f0e8;border-color:var(--forest);color:var(--forest);font-weight:700;}
 
+/* ── 代表互動圖 ───────────────────────────────────── */
+.isl-panel{max-height:calc(100vh - var(--bar-h) - 2rem);overflow-y:auto;overscroll-behavior:contain;}
+.isl-fig{margin:0 0 .85rem;border:1px solid var(--card-border);border-radius:14px;background:#fff;overflow:hidden;}
+.isl-fig[hidden]{display:none;}
+.isl-fig-img{display:block;background:#faf7ef;}
+.isl-fig-img img{display:block;width:100%;height:auto;max-height:210px;object-fit:contain;}
+.isl-fig figcaption{font-size:.8rem;line-height:1.65;color:#3d3a33;padding:.55rem .75rem 0;text-wrap:pretty;}
+.isl-fig-h{display:block;font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--forest);}
+.isl-fig-go{display:inline-block;margin:.3rem .75rem .6rem;font-size:.84rem;font-weight:700;color:var(--navy);text-decoration:none;
+  border-bottom:1.5px solid rgba(44,62,122,.35);}
+.isl-fig-go:hover{color:var(--accent);border-color:var(--accent);}
+
+/* ── 嚮導維導 ─────────────────────────────────────── */
+.isl-bubble{position:absolute;right:1rem;top:1rem;max-width:min(300px,calc(100% - 2rem));padding:.6rem 1rem .6rem 2.6rem;
+  border-radius:16px 16px 4px 16px;border:1px solid rgba(44,62,122,.18);background:#fffdf7;color:var(--ink);
+  font-size:.92rem;font-weight:700;line-height:1.5;text-align:left;cursor:pointer;box-shadow:0 10px 28px rgba(26,26,46,.18);
+  animation:islBubbleIn .35s ease-out;transition:padding .25s,font-size .25s;}
+.isl-bubble::before{content:"";position:absolute;left:.7rem;top:50%;width:1.4rem;height:1.4rem;margin-top:-.7rem;border-radius:50%;
+  background:radial-gradient(circle at 50% 62%,#f1c9a5 0 42%,transparent 43%),linear-gradient(#2c3e7a 0 45%,#e7f0ea 45%);}
+.isl-bubble:hover{border-color:var(--navy);}
+.isl-bubble.is-small{padding:.4rem .9rem .4rem 2.3rem;font-size:.82rem;border-radius:999px;}
+.isl-bubble.is-small::before{left:.55rem;}
+.isl-bubble[hidden]{display:none;}
+@keyframes islBubbleIn{from{opacity:0;transform:translateY(-6px) scale(.96);}to{opacity:1;transform:none;}}
+.isl-stage.is-night .isl-bubble{background:rgba(255,253,247,.95);}
+
+.isl-guide{display:flex;gap:.7rem;align-items:flex-start;margin:-.2rem 2rem .8rem 0;}
+.isl-guide[hidden]{display:none;}
+.isl-guide-face{flex:none;width:44px;height:44px;}
+.isl-guide-body{flex:1;min-width:0;}
+.isl-guide-who{display:flex;gap:.5rem;align-items:baseline;font-size:.82rem;color:var(--navy);}
+.isl-guide-who span{font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:.04em;}
+.isl-guide-text{position:relative;margin-top:.25rem;padding:.6rem .8rem;border-radius:4px 14px 14px 14px;background:#eef3ec;
+  font-size:.9rem;line-height:1.75;color:#2b3a36;text-wrap:pretty;}
+.isl-guide-choices{display:flex;flex-direction:column;gap:.45rem;margin-top:.6rem;}
+.isl-guide-choices:empty{display:none;}
+.isl-choice{display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;min-height:44px;padding:.5rem .85rem;border-radius:12px;
+  border:1.5px solid #cfc6b3;background:#fff;color:var(--ink);text-align:left;cursor:pointer;transition:border-color .15s,background .15s;}
+.isl-choice:hover{border-color:var(--forest);background:#f4f9f5;}
+.isl-choice b{font-size:.92rem;}
+.isl-choice span{font-size:.76rem;color:var(--muted);line-height:1.5;}
+.isl-panel-page[hidden]{display:none;}
+/* 面板很長時導覽鈕仍黏在面板底部 */
+.isl-guide-nav{position:sticky;bottom:-1.15rem;z-index:1;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;
+  margin:.85rem -1.2rem -1.15rem;padding:.75rem 1.2rem 1rem;border-top:1px dashed #ddd3bf;background:var(--card);}
+.isl-guide-nav[hidden]{display:none;}
+.isl-btn2{min-height:44px;padding:.45rem .95rem;border-radius:12px;border:1.5px solid #cfc6b3;background:#fff;color:var(--ink);
+  font-weight:700;cursor:pointer;}
+.isl-btn2:hover:not(:disabled){border-color:var(--navy);}
+.isl-btn2:disabled{opacity:.4;cursor:default;}
+.isl-btn2.is-primary{background:var(--navy);border-color:var(--navy);color:#fff;}
+.isl-btn2.is-primary:hover{background:#22306a;}
+.isl-btn2.is-quiet{margin-left:auto;border-color:transparent;background:transparent;color:var(--muted);font-weight:500;}
+
 /* ── 手機 ─────────────────────────────────────────── */
 @media (max-width:767px){
   :root{--bar-h:56px;}
@@ -208,8 +262,12 @@ a{color:inherit;}
   .isl-hint{display:none;}
   .isl-night{right:.6rem;bottom:.6rem;min-height:36px;font-size:.78rem;padding:.35rem .85rem;}
   .isl-tag{font-size:.72rem;}
-  .isl-panel{left:0;right:0;bottom:0;width:auto;border-radius:20px 20px 0 0;max-height:50vh;overflow-y:auto;
+  .isl-bubble{right:.6rem;top:auto;bottom:3.4rem;font-size:.84rem;}
+  .isl-fig-img img{max-height:170px;}
+  .isl-panel{left:0;right:0;bottom:0;width:auto;border-radius:20px 20px 0 0;max-height:62vh;max-height:62svh;overflow-y:auto;
     padding-bottom:calc(1.15rem + env(safe-area-inset-bottom));}
+  .isl-guide-nav{bottom:calc(-1.15rem - env(safe-area-inset-bottom));margin-bottom:calc(-1.15rem - env(safe-area-inset-bottom));
+    padding-bottom:calc(1rem + env(safe-area-inset-bottom));}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -259,6 +317,7 @@ a{color:inherit;}
       <button type="button" class="isl-jump-btn" data-grp="appendix">Python 工坊島</button>
     </div>
     <div class="isl-labels" id="islLabels"></div>
+    <button type="button" class="isl-bubble" id="islBubble" hidden>嗨，我是維導，要我帶你逛嗎？</button>
     <button type="button" class="isl-night" id="islNight" aria-pressed="false">入夜</button>
     <p class="isl-hint" aria-hidden="true">拖曳旋轉 · 滾輪或雙指縮放 · 點島或標籤</p>
   </div>
@@ -563,10 +622,24 @@ a{color:inherit;}
   </nav>
   <aside class="isl-panel" id="islPanel" hidden aria-labelledby="islPanelTitle">
     <button type="button" class="isl-panel-close" id="islPanelClose" aria-label="關閉">×</button>
+    <div class="isl-guide" id="islGuide" hidden>
+      <svg class="isl-guide-face" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#e7f0ea"/><circle cx="22" cy="27" r="11" fill="#f1c9a5"/><path d="M10 22 Q22 8 34 22 Z" fill="#2c3e7a"/><rect x="8" y="20.5" width="28" height="3.2" rx="1.6" fill="#22306a"/><circle cx="18.5" cy="27.5" r="1.4" fill="#2b2420"/><circle cx="25.5" cy="27.5" r="1.4" fill="#2b2420"/><path d="M19 32 Q22 34.5 25 32" stroke="#a5553d" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M38 22 V27" stroke="#5a4636" stroke-width="1.4"/><rect x="34.5" y="27" width="7" height="9" rx="2" fill="#f2b84b"/><rect x="34" y="26" width="8" height="2" rx="1" fill="#5a4636"/></svg>
+      <div class="isl-guide-body">
+        <div class="isl-guide-who"><b>維導</b><span id="islGuideStep"></span></div>
+        <p class="isl-guide-text" id="islGuideText" aria-live="polite"></p>
+        <div class="isl-guide-choices" id="islGuideChoices"></div>
+      </div>
+    </div>
+    <div class="isl-panel-page" id="islPanelPage">
     <div class="isl-panel-kicker" id="islPanelKicker"></div>
     <h2 id="islPanelTitle"></h2>
     <div class="isl-panel-landmark" id="islPanelLandmark"></div>
     <p class="isl-panel-blurb" id="islPanelBlurb"></p>
+    <figure class="isl-fig" id="islFig" hidden>
+      <a class="isl-fig-img" id="islFigLink" href="#"><img id="islFigImg" alt="" loading="lazy" decoding="async"></a>
+      <figcaption><span class="isl-fig-h">代表互動圖</span><span id="islFigCap"></span></figcaption>
+      <a class="isl-fig-go" id="islFigGo" href="#">去操作這張圖 →</a>
+    </figure>
     <div class="isl-panel-refs" id="islPanelRefs" hidden>
       <div class="isl-panel-refs-h">需要時可查閱</div>
       <ul id="islPanelRefList"></ul>
@@ -574,6 +647,12 @@ a{color:inherit;}
     <div class="isl-panel-actions">
       <a class="isl-go" id="islPanelGo" href="#">前往教材 →</a>
       <button type="button" class="isl-done" id="islPanelDone" aria-pressed="false">標記完成</button>
+    </div>
+    </div>
+    <div class="isl-guide-nav" id="islGuideNav" hidden>
+      <button type="button" class="isl-btn2" id="islGuidePrev">← 上一站</button>
+      <button type="button" class="isl-btn2 is-primary" id="islGuideNext">下一站 →</button>
+      <button type="button" class="isl-btn2 is-quiet" id="islGuideEnd">結束導覽</button>
     </div>
   </aside>
 </main>
@@ -616,7 +695,9 @@ a{color:inherit;}
    "landmark": "燈塔",
    "blurb": "資料分析的學習迴圈：提出想法、動手嘗試、觀察證據、修正理解，並讓 AI 留在迴圈裡協助你練習判斷。",
    "refs": [],
-   "href": "../00a_why_code.html"
+   "href": "../00a_why_code.html",
+   "guide": "這座燈塔照的是學習方法：先提出想法、動手試、看證據，再修正。之後每一章都會用到這個迴圈。",
+   "fig": null
   },
   {
    "stem": "00b_setup",
@@ -628,7 +709,9 @@ a{color:inherit;}
    "landmark": "補給碼頭",
    "blurb": "從 Colab 到本機環境，跑出第一張圖；期中考使用電腦教室，考前用相同版本完整重跑一次。",
    "refs": [],
-   "href": "../00b_setup.html"
+   "href": "../00b_setup.html",
+   "guide": "出海前先補給！在這裡把 Colab 或本機環境準備好，跑出你的第一張圖。",
+   "fig": null
   },
   {
    "stem": "00c_ai_assisted",
@@ -640,7 +723,9 @@ a{color:inherit;}
    "landmark": "領航站",
    "blurb": "用 AI 輔助統計分析：先分流任務、補足脈絡、小步生成，再核對統計解讀並留下可重現紀錄。",
    "refs": [],
-   "href": "../00c_ai_assisted.html"
+   "href": "../00c_ai_assisted.html",
+   "guide": "AI 是很好的副手，但方向盤要握在自己手上。這一站教你怎麼問、怎麼驗證它給的答案。",
+   "fig": null
   },
   {
    "stem": "introduction",
@@ -656,7 +741,15 @@ a{color:inherit;}
     "p4_pandas",
     "p5_visualization"
    ],
-   "href": "../introduction.html"
+   "href": "../introduction.html",
+   "guide": "歡迎登上主島！第一站先別急著建模，從觀測塔看清楚資料長什麼樣子。",
+   "fig": {
+    "src": "figs/introduction.webp",
+    "w": 846,
+    "h": 410,
+    "caption": "Wage 資料：薪資隨年齡先升後降，先看資料再決定模型。",
+    "href": "../introduction.html#w01ivWageAge"
+   }
   },
   {
    "stem": "statistical_learning",
@@ -672,7 +765,15 @@ a{color:inherit;}
     "s3_distributions",
     "p3_numpy"
    ],
-   "href": "../statistical_learning.html"
+   "href": "../statistical_learning.html",
+   "guide": "這條分岔路是整趟旅程的地圖：模型越有彈性，偏差越小、變異越大。之後每一章都在這條取捨上找平衡。",
+   "fig": {
+    "src": "figs/statistical_learning.webp",
+    "w": 889,
+    "h": 726,
+    "caption": "測試 MSE 拆成偏差²、變異與不可縮減誤差，彈性越大，偏差越小、變異越大。",
+    "href": "../statistical_learning.html#w02bvChart"
+   }
   },
   {
    "stem": "linear_regression",
@@ -688,7 +789,15 @@ a{color:inherit;}
     "s6_regression",
     "p6_modeling_api"
    ],
-   "href": "../linear_regression.html"
+   "href": "../linear_regression.html",
+   "guide": "沿著迴歸斜坡往上走：一條直線看似簡單，係數、標準誤和檢定都從這裡開始。",
+   "fig": {
+    "src": "figs/linear_regression.webp",
+    "w": 889,
+    "h": 729,
+    "caption": "拖動直線，看殘差平方和怎麼變；最小平方線讓它最小。",
+    "href": "../linear_regression.html#w03dragSvg"
+   }
   },
   {
    "stem": "classification",
@@ -705,7 +814,15 @@ a{color:inherit;}
     "s5_bayesian",
     "p6_modeling_api"
    ],
-   "href": "../classification.html"
+   "href": "../classification.html",
+   "guide": "答案從數字變成類別時，就來到雙色城門。先看 logistic 曲線怎麼把分數變成機率。",
+   "fig": {
+    "src": "figs/classification.webp",
+    "w": 889,
+    "h": 1020,
+    "caption": "調整 β₀、β₁，看 logistic 函數怎麼把線性分數轉成 0～1 的機率。",
+    "href": "../classification.html#w04shapeSvg"
+   }
   },
   {
    "stem": "resampling_methods",
@@ -721,7 +838,15 @@ a{color:inherit;}
     "s4_inference",
     "p6_modeling_api"
    ],
-   "href": "../resampling_methods.html"
+   "href": "../resampling_methods.html",
+   "guide": "噴泉裡的水一直重新落下，就像重抽樣：手上只有一份資料，也能估計測試誤差與不確定性。",
+   "fig": {
+    "src": "figs/resampling_methods.webp",
+    "w": 889,
+    "h": 819,
+    "caption": "有放回地重抽 200 次，估計量的分布直接給出標準誤。",
+    "href": "../resampling_methods.html#w05bootChart"
+   }
   },
   {
    "stem": "model_selection",
@@ -737,7 +862,15 @@ a{color:inherit;}
     "p3_numpy",
     "p6_modeling_api"
    ],
-   "href": "../model_selection.html"
+   "href": "../model_selection.html",
+   "guide": "變數太多會長得太茂盛，這座花園教你修剪：挑變數、加懲罰，或先降維。",
+   "fig": {
+    "src": "figs/model_selection.webp",
+    "w": 889,
+    "h": 726,
+    "caption": "L1 的菱形限制區碰到等高線時，容易落在角上，把係數壓成剛好 0。",
+    "href": "../model_selection.html#w06geomSvg"
+   }
   },
   {
    "stem": "beyond_linearity",
@@ -752,7 +885,15 @@ a{color:inherit;}
     "s6_regression",
     "p5_visualization"
    ],
-   "href": "../beyond_linearity.html"
+   "href": "../beyond_linearity.html",
+   "guide": "走過這座樣條拱橋，直線就能彎了：多項式、樣條，一路組成 GAM。",
+   "fig": {
+    "src": "figs/beyond_linearity.webp",
+    "w": 889,
+    "h": 636,
+    "caption": "提高多項式次數，曲線更貼資料，但兩端的信賴區間會急速變寬。",
+    "href": "../beyond_linearity.html#w08polySvg"
+   }
   },
   {
    "stem": "tree_based_methods",
@@ -767,7 +908,15 @@ a{color:inherit;}
     "s3_distributions",
     "p6_modeling_api"
    ],
-   "href": "../tree_based_methods.html"
+   "href": "../tree_based_methods.html",
+   "guide": "森林裡每棵樹都在把資料一刀一刀切開；很多棵樹一起投票，預測就穩多了。",
+   "fig": {
+    "src": "figs/tree_based_methods.webp",
+    "w": 889,
+    "h": 759,
+    "caption": "遞迴二元分裂：每一刀都把特徵空間切成更純的長方形。",
+    "href": "../tree_based_methods.html#w09growSvg"
+   }
   },
   {
    "stem": "support_vector_machines",
@@ -782,7 +931,15 @@ a{color:inherit;}
     "p3_numpy",
     "p6_modeling_api"
    ],
-   "href": "../support_vector_machines.html"
+   "href": "../support_vector_machines.html",
+   "guide": "這道圍牆想離兩邊都越遠越好：最大間隔、軟邊界，再用核技巧讓牆轉彎。",
+   "fig": {
+    "src": "figs/support_vector_machines.webp",
+    "w": 889,
+    "h": 821,
+    "caption": "最大間隔分類器：只有落在邊界上的支持向量決定那一刀。",
+    "href": "../support_vector_machines.html#w10marginSvg"
+   }
   },
   {
    "stem": "unsupervised_learning",
@@ -798,7 +955,15 @@ a{color:inherit;}
     "p3_numpy",
     "p5_visualization"
    ],
-   "href": "../unsupervised_learning.html"
+   "href": "../unsupervised_learning.html",
+   "guide": "廣場上沒有標準答案，只能讓資料自己聚成群。PCA 和分群都在這裡。",
+   "fig": {
+    "src": "figs/unsupervised_learning.webp",
+    "w": 889,
+    "h": 695,
+    "caption": "K-means 反覆「指派、更新中心」，直到分群不再改變。",
+    "href": "../unsupervised_learning.html#w07kmSvg"
+   }
   },
   {
    "stem": "deep_learning",
@@ -813,7 +978,15 @@ a{color:inherit;}
     "p3_numpy",
     "p6_modeling_api"
    ],
-   "href": "../deep_learning.html"
+   "href": "../deep_learning.html",
+   "guide": "最後一站在高地上：神經網路高塔。這章是補充，有興趣再慢慢爬上去。",
+   "fig": {
+    "src": "figs/deep_learning.webp",
+    "w": 889,
+    "h": 795,
+    "caption": "一層隱藏層的前向傳播：每個單元先做線性組合，再經 ReLU 等激活函數，非線性就從這裡進來。",
+    "href": "../deep_learning.html#w11fwdSvg"
+   }
   },
   {
    "stem": "s1_probability",
@@ -825,7 +998,9 @@ a{color:inherit;}
    "landmark": "機率樹屋",
    "blurb": "母體與樣本、事件與機率、隨機變數的期望值與變異數。",
    "refs": [],
-   "href": "../s1_probability.html"
+   "href": "../s1_probability.html",
+   "guide": "森林的第一間樹屋：母體、樣本、期望值和變異數。正課讀到這些詞卡住時，回來這裡。",
+   "fig": null
   },
   {
    "stem": "s2_conditional",
@@ -837,7 +1012,9 @@ a{color:inherit;}
    "landmark": "條件樹屋",
    "blurb": "條件機率、獨立與互斥，以及 Bayes 公式。",
    "refs": [],
-   "href": "../s2_conditional.html"
+   "href": "../s2_conditional.html",
+   "guide": "「已知 A，B 的機率是多少？」條件機率和 Bayes 公式，分類那章會常常用到。",
+   "fig": null
   },
   {
    "stem": "s3_distributions",
@@ -849,7 +1026,9 @@ a{color:inherit;}
    "landmark": "分布樹屋",
    "blurb": "常用分布與抽樣分布，大數法則與中央極限定理。",
    "refs": [],
-   "href": "../s3_distributions.html"
+   "href": "../s3_distributions.html",
+   "guide": "常態、t、二項……各種分布都住在這裡，中央極限定理也是。",
+   "fig": null
   },
   {
    "stem": "s4_inference",
@@ -861,7 +1040,9 @@ a{color:inherit;}
    "landmark": "推論樹屋",
    "blurb": "點估計、標準誤、信賴區間、假設檢定與 p 值，以及 Bootstrap 入門。",
    "refs": [],
-   "href": "../s4_inference.html"
+   "href": "../s4_inference.html",
+   "guide": "從樣本推回母體：標準誤、信賴區間和 p 值。迴歸係數的檢定就是靠它們。",
+   "fig": null
   },
   {
    "stem": "s5_bayesian",
@@ -873,7 +1054,9 @@ a{color:inherit;}
    "landmark": "貝氏樹屋",
    "blurb": "選讀：概似與最大概似，從先驗到後驗的更新。",
    "refs": [],
-   "href": "../s5_bayesian.html"
+   "href": "../s5_bayesian.html",
+   "guide": "選讀小屋：先驗加上資料，更新成後驗。想多了解貝氏觀點再進來看看。",
+   "fig": null
   },
   {
    "stem": "s6_regression",
@@ -885,7 +1068,9 @@ a{color:inherit;}
    "landmark": "相關樹屋",
    "blurb": "選讀：共變異數與相關、最小平方法與殘差的解讀限制。",
    "refs": [],
-   "href": "../s6_regression.html"
+   "href": "../s6_regression.html",
+   "guide": "選讀小屋：共變異數、相關與最小平方法，是線性迴歸那章的前奏。",
+   "fig": null
   },
   {
    "stem": "p1_python_basics",
@@ -897,7 +1082,9 @@ a{color:inherit;}
    "landmark": "基礎工坊",
    "blurb": "變數與型別、串列與切片、字典、字串格式化。",
    "refs": [],
-   "href": "../p1_python_basics.html"
+   "href": "../p1_python_basics.html",
+   "guide": "Python 工坊從最基本的工具開始：變數、串列、字典和字串。",
+   "fig": null
   },
   {
    "stem": "p2_flow_functions",
@@ -909,7 +1096,9 @@ a{color:inherit;}
    "landmark": "流程工坊",
    "blurb": "條件、迴圈、函式與作用域，以及如何讀懂錯誤訊息。",
    "refs": [],
-   "href": "../p2_flow_functions.html"
+   "href": "../p2_flow_functions.html",
+   "guide": "條件、迴圈和函式；看不懂錯誤訊息時，也可以來這間工坊問問。",
+   "fig": null
   },
   {
    "stem": "p3_numpy",
@@ -921,7 +1110,9 @@ a{color:inherit;}
    "landmark": "NumPy 工坊",
    "blurb": "ndarray 的 shape、索引、布林索引、廣播、axis 與亂數模擬。",
    "refs": [],
-   "href": "../p3_numpy.html"
+   "href": "../p3_numpy.html",
+   "guide": "NumPy 是做數值計算的車床：shape、廣播和亂數模擬都在這裡練。",
+   "fig": null
   },
   {
    "stem": "p4_pandas",
@@ -933,7 +1124,9 @@ a{color:inherit;}
    "landmark": "pandas 工坊",
    "blurb": "Series 與 DataFrame、loc／iloc、遺漏值、groupby 與資料串接。",
    "refs": [],
-   "href": "../p4_pandas.html"
+   "href": "../p4_pandas.html",
+   "guide": "pandas 工坊專門整理資料表：選欄、處理遺漏值、分組統計。",
+   "fig": null
   },
   {
    "stem": "p5_visualization",
@@ -945,7 +1138,9 @@ a{color:inherit;}
    "landmark": "視覺化工坊",
    "blurb": "Matplotlib 與 Seaborn：先畫圖看分布與關係，再把模型畫進圖裡。",
    "refs": [],
-   "href": "../p5_visualization.html"
+   "href": "../p5_visualization.html",
+   "guide": "畫圖的工坊：先畫出分布和關係，再把模型疊上去看。",
+   "fig": null
   },
   {
    "stem": "p6_modeling_api",
@@ -957,9 +1152,79 @@ a{color:inherit;}
    "landmark": "建模工坊",
    "blurb": "statsmodels 與 scikit-learn：設計矩陣、fit／predict、訓練測試切分與交叉驗證。",
    "refs": [],
-   "href": "../p6_modeling_api.html"
+   "href": "../p6_modeling_api.html",
+   "guide": "最後一間工坊：statsmodels 和 scikit-learn 的 fit、predict 和交叉驗證，正課的實作都靠它們。",
+   "fig": null
   }
- ]
+ ],
+ "tour": {
+  "name": "維導",
+  "hello": "嗨，我是維導，要我帶你逛嗎？",
+  "short": "維導帶路",
+  "ask": "想怎麼逛？我可以照你的需要選一條路線。",
+  "resume": "上次我們走到第 {n} 站「{title}」，要接著走嗎？",
+  "bye": "這條路線走完了！之後想去哪座島，直接點它就好；需要我時再按「維導帶路」。",
+  "routes": [
+   {
+    "key": "first",
+    "label": "第一次來",
+    "note": "啟航島 3 站，再照授課順序走正課 11 章",
+    "stems": [
+     "00a_why_code",
+     "00b_setup",
+     "00c_ai_assisted",
+     "introduction",
+     "statistical_learning",
+     "linear_regression",
+     "classification",
+     "resampling_methods",
+     "model_selection",
+     "beyond_linearity",
+     "tree_based_methods",
+     "support_vector_machines",
+     "unsupervised_learning",
+     "deep_learning"
+    ]
+   },
+   {
+    "key": "core",
+    "label": "照正課走",
+    "note": "正課 11 章，每站都能看代表互動圖",
+    "stems": [
+     "introduction",
+     "statistical_learning",
+     "linear_regression",
+     "classification",
+     "resampling_methods",
+     "model_selection",
+     "beyond_linearity",
+     "tree_based_methods",
+     "support_vector_machines",
+     "unsupervised_learning",
+     "deep_learning"
+    ]
+   },
+   {
+    "key": "prereq",
+    "label": "補先備",
+    "note": "統計森林島 6 站，再到 Python 工坊島 6 站",
+    "stems": [
+     "s1_probability",
+     "s2_conditional",
+     "s3_distributions",
+     "s4_inference",
+     "s5_bayesian",
+     "s6_regression",
+     "p1_python_basics",
+     "p2_flow_functions",
+     "p3_numpy",
+     "p4_pandas",
+     "p5_visualization",
+     "p6_modeling_api"
+    ]
+   }
+  ]
+ }
 }
 </script>
 <script type="module">
@@ -1045,7 +1310,10 @@ function syncDoneButton() {
 }
 function select(stem, { fly = false, trigger = null, keyboard = false } = {}) {
   const p = BY[stem]; if (!p) return;
+  if (tour && stem !== tourStem()) endTour();   // 導覽中點了別的地方：退出導覽，進度保留
+  if (!tour) { $('islGuide').hidden = true; $('islGuideNav').hidden = true; }
   current = stem; lastTrigger = trigger || lastTrigger;
+  $('islPanelPage').hidden = false;
   const isle = ISLES[p.grp];
   $('islPanelKicker').textContent = `${isle.name} · ${p.code} · ${p.label}`;
   $('islPanelTitle').textContent = p.title;
@@ -1060,6 +1328,15 @@ function select(stem, { fly = false, trigger = null, keyboard = false } = {}) {
     li.appendChild(a); return li;
   }));
   $('islPanelRefs').hidden = !p.refs.length;
+  const fig = p.fig;
+  $('islFig').hidden = !fig;
+  if (fig) {
+    const img = $('islFigImg');
+    img.width = fig.w; img.height = fig.h; img.src = fig.src;
+    img.alt = '代表互動圖：' + fig.caption;
+    $('islFigCap').textContent = fig.caption;
+    $('islFigLink').href = $('islFigGo').href = fig.href;
+  }
   syncDoneButton();
   panel.hidden = false;
   items.forEach(({ li }, s) => {
@@ -1071,6 +1348,7 @@ function select(stem, { fly = false, trigger = null, keyboard = false } = {}) {
 }
 function closePanel() {
   if (panel.hidden) return;
+  endTour();
   panel.hidden = true; current = null;
   items.forEach(({ li }) => li.classList.remove('is-current', 'is-ref'));
   if (scene) scene.select(null, false);
@@ -1081,6 +1359,10 @@ $('islPanelClose').addEventListener('click', closePanel);
 $('islPanelGo').addEventListener('click', () => { if (current) markVisited(current); });
 $('islPanelGo').addEventListener('auxclick', e => { if (e.button === 1 && current) markVisited(current); });
 $('islPanelDone').addEventListener('click', () => { if (current) setDone(current, !trail.done[current]); });
+['islFigLink', 'islFigGo'].forEach(id => {
+  $(id).addEventListener('click', () => { if (current) markVisited(current); });
+  $(id).addEventListener('auxclick', e => { if (e.button === 1 && current) markVisited(current); });
+});
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 $('islClear').addEventListener('click', () => {
   if (!Object.keys(trail.visited).length && !Object.keys(trail.done).length) return;
@@ -1088,6 +1370,97 @@ $('islClear').addEventListener('click', () => {
   trail = { visited: {}, done: {} }; saveTrail(); refreshTrail();
 });
 refreshTrail();
+
+/* ── 嚮導「維導」的導覽（只在 3D 模式提供）──
+   路線與台詞在 DATA.tour；進度 {route, i} 存在 localStorage，結束導覽時保留，走完才清掉。
+   導覽沿用同一個面板：上方是維導的對話列，中間是該站的章節內容，下方是上一站／下一站。 */
+const TOUR = DATA.tour, ROUTES = Object.fromEntries(TOUR.routes.map(r => [r.key, r]));
+const TOUR_KEY = 'slss-island:tour:v1';
+let tour = null;                                   // 導覽中：{ route, i }
+const tourStem = () => tour && ROUTES[tour.route].stems[tour.i];
+function savedTour() {
+  try {
+    const t = JSON.parse(localStorage.getItem(TOUR_KEY) || 'null');
+    if (t && ROUTES[t.route] && Number.isInteger(t.i) && t.i >= 0 && t.i < ROUTES[t.route].stems.length) return t;
+  } catch (e) { /* 壞掉的紀錄當作沒有 */ }
+  return null;
+}
+function saveTour(t) {
+  try { if (t) localStorage.setItem(TOUR_KEY, JSON.stringify(t)); else localStorage.removeItem(TOUR_KEY); } catch (e) { /* 只在本頁有效 */ }
+}
+function say(text, step = '', choices = []) {
+  $('islGuide').hidden = false;
+  $('islGuideText').textContent = text;
+  $('islGuideStep').textContent = step;
+  $('islGuideChoices').replaceChildren(...choices.map(([label, note, fn]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'isl-choice';
+    const t = document.createElement('b'); t.textContent = label; b.appendChild(t);
+    if (note) { const n = document.createElement('span'); n.textContent = note; b.appendChild(n); }
+    b.addEventListener('click', fn);
+    return b;
+  }));
+}
+// 沒有選取章節時，面板只顯示維導的對話（選路線、問要不要接著走、走完了）
+function guideOnly(text, choices) {
+  if (tour) endTour();
+  if (current) { current = null; items.forEach(({ li }) => li.classList.remove('is-current', 'is-ref')); if (scene) scene.select(null, false); }
+  $('islPanelPage').hidden = true; $('islGuideNav').hidden = true;
+  say(text, '', choices);
+  panel.hidden = false;
+  $('islGuideChoices').querySelector('button')?.focus();
+}
+function routeMenu() {
+  guideOnly(TOUR.ask, TOUR.routes.map(r => [r.label, `${r.note}（${r.stems.length} 站）`, () => startTour(r.key, 0)]));
+}
+function openTour() {
+  shrinkBubble();
+  const t = savedTour();
+  if (!t) { routeMenu(); return; }
+  const r = ROUTES[t.route], stem = r.stems[t.i];
+  guideOnly(TOUR.resume.replace('{n}', t.i + 1).replace('{title}', BY[stem].title),
+    [['接著走', `${r.label} · 第 ${t.i + 1}／${r.stems.length} 站`, () => startTour(t.route, t.i)],
+     ['重新選路線', '', routeMenu]]);
+}
+function startTour(route, i) {
+  tour = { route, i };
+  goStop(true);
+}
+function goStop(focusNext) {
+  const r = ROUTES[tour.route], stem = r.stems[tour.i], last = tour.i === r.stems.length - 1;
+  saveTour(tour);
+  select(stem, { fly: true });
+  panel.scrollTop = 0;
+  if (scene) scene.guideTo(stem);
+  say(BY[stem].guide, `第 ${tour.i + 1}／${r.stems.length} 站 · ${r.label}`);
+  $('islGuideChoices').replaceChildren();
+  $('islGuideNav').hidden = false;
+  $('islGuidePrev').disabled = tour.i === 0;
+  $('islGuideNext').textContent = last ? '完成導覽 ✓' : '下一站 →';
+  if (focusNext) $('islGuideNext').focus();
+}
+// 離開導覽：不論從 Esc、關閉鈕、點別的島或清單進來，都在這裡收掉對話列；save=false 表示走完了
+function endTour({ save = true } = {}) {
+  if (!tour) return;
+  if (!save) saveTour(null);
+  tour = null;
+  $('islGuide').hidden = true; $('islGuideNav').hidden = true;
+}
+$('islGuidePrev').addEventListener('click', () => { if (tour && tour.i > 0) { tour.i--; goStop(false); } });
+$('islGuideNext').addEventListener('click', () => {
+  if (!tour) return;
+  if (tour.i < ROUTES[tour.route].stems.length - 1) { tour.i++; goStop(false); return; }
+  endTour({ save: false });
+  guideOnly(TOUR.bye, [['好', '', closePanel]]);
+});
+$('islGuideEnd').addEventListener('click', closePanel);
+
+const bubble = $('islBubble');
+function shrinkBubble() {
+  if (bubble.classList.contains('is-small')) return;
+  bubble.classList.add('is-small'); bubble.textContent = TOUR.short;
+}
+bubble.addEventListener('click', openTour);
 
 /* ── 3D 場景（可選）── */
 function hasWebGL() {
@@ -1143,11 +1516,19 @@ async function initScene() {
     try { localStorage.setItem(NIGHT_KEY, isNight ? '1' : '0'); } catch (e) { /* 只在本頁有效 */ }
   });
   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); scene && scene.dispose(); fallback2D('WebGL context lost'); });
-  window.__island = { screenPos: stem => scene && scene.screenPos(stem), stats: () => scene && scene.stats() };
+  window.__island = { screenPos: stem => scene && scene.screenPos(stem), stats: () => scene && scene.stats(),
+    guidePos: () => scene && scene.guidePos() };
   refreshTrail();
   if (current) scene.select(current, false);
   await scene.warm();                       // 先編譯著色器、畫好第一幀，再淡入畫布
   document.documentElement.classList.remove('gl-pending');
+  // 群島淡入後，維導冒出來打招呼；過一陣子縮成小按鈕
+  bubble.setAttribute('aria-label', '請' + TOUR.name + '帶路');
+  setTimeout(() => {
+    if (!scene) return;
+    bubble.hidden = false;
+    setTimeout(shrinkBubble, 8000);
+  }, 1500);
 }
 
 /* 3D 群島的場景層：黏土微縮風。由 island.js 的 initScene() 呼叫 buildWorld()。
@@ -1934,6 +2315,66 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   });
   walk(1.3, 0); life.push(walk);
 
+  /* ── 嚮導「維導」：深藍外套、小帽、提一盞燈（入夜才亮）。只有一個，不做 instancing ──
+     跳到下一站是和 fly 一樣的狀態，由 frame() 裡的 stepGuide() 推進，不另開繪製迴圈。 */
+  const guideLamp = new THREE.MeshLambertMaterial({ color: '#f6c25a', emissive: '#ffb444', emissiveIntensity: .15 });
+  const guide = (() => {
+    const g = person('#2c3e7a', '#3f4a5c', '#f1c9a5', '#3b2a20'), u = g.userData;
+    const m = c => std(c);
+    const brim = new THREE.Mesh(GEO.cyl, m('#22306a')); brim.scale.set(.46, .04, .46); brim.position.y = 1.13; u.body.add(brim);
+    const crown = new THREE.Mesh(GEO.cyl, m('#2c3e7a')); crown.scale.set(.3, .2, .3); crown.position.y = 1.24; u.body.add(crown);
+    const band = new THREE.Mesh(GEO.cyl, m('#f2d488')); band.scale.set(.31, .05, .31); band.position.y = 1.17; u.body.add(band);
+    const scarf = new THREE.Mesh(GEO.round, m('#c4553a')); scarf.scale.set(.38, .08, .25); scarf.position.y = .84; u.body.add(scarf);
+    // 左手提燈：掛在手臂末端，跟著手臂擺
+    const lamp = new THREE.Group(); lamp.position.set(0, -.38, .06); u.armL.add(lamp);
+    const handle = new THREE.Mesh(GEO.cyl, m('#5a4636')); handle.scale.set(.02, .14, .02); handle.position.y = -.05; lamp.add(handle);
+    const cage = new THREE.Mesh(GEO.round, guideLamp); cage.scale.set(.17, .2, .17); cage.position.y = -.22; lamp.add(cage);
+    const cap = new THREE.Mesh(GEO.round, m('#5a4636')); cap.scale.set(.2, .05, .2); cap.position.y = -.1; lamp.add(cap);
+    g.scale.setScalar(1.6);                          // 比路人（.72）大一倍，遠看也認得出來
+    world.add(g);
+    return g;
+  })();
+  const camFlat = new THREE.Vector3();
+  // 某一站的落腳點：島上朝鏡頭那一側的前緣、略偏一邊，免得被地標擋住
+  function guideSpot(stem, out) {
+    const b = B[stem]; if (!b) return null;
+    camFlat.copy(camera.position).sub(controls.target); camFlat.y = 0; camFlat.normalize();
+    const a = Math.atan2(camFlat.z, camFlat.x) - .4, r = b.isCore ? b.isle.radius * .74 : 1.35;
+    return out.set(b.x + Math.cos(a) * r, b.y, b.z + Math.sin(a) * r);
+  }
+  function faceCamera() {
+    guide.rotation.y = Math.atan2(camera.position.x - guide.position.x, camera.position.z - guide.position.z);
+  }
+  let hop = null, waveUntil = 0;
+  function stepGuide(now) {
+    if (!hop) return false;
+    const k = Math.min(1, (now - hop.t0) / hop.dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    guide.position.lerpVectors(hop.from, hop.to, e);
+    guide.position.y += Math.sin(Math.PI * k) * hop.h;
+    const u = guide.userData; u.legL.rotation.x = -.6; u.legR.rotation.x = .3; u.armR.rotation.x = -2.4 * Math.sin(Math.PI * k);
+    if (k >= 1) { hop = null; faceCamera(); waveUntil = now + 2600; u.legL.rotation.x = u.legR.rotation.x = 0; }
+    return true;
+  }
+  function guideTo(stem) {
+    const to = guideSpot(stem, new THREE.Vector3()); if (!to) return;
+    if (!motion()) { hop = null; guide.position.copy(to); faceCamera(); requestRender(); return; }
+    const d = to.distanceTo(guide.position);
+    hop = { from: guide.position.clone(), to, t0: performance.now(), dur: Math.min(1300, 550 + d * 14), h: 1.1 + Math.min(4, d * .1) };
+    guide.rotation.y = Math.atan2(to.x - guide.position.x, to.z - guide.position.z);
+    requestRender();
+  }
+  const guideHomeStem = B['00c_ai_assisted'] ? '00c_ai_assisted' : PAGES[0].stem;   // 平時站在啟航島的領航站旁
+  anims.push(t => {
+    if (hop) return;
+    const u = guide.userData, now = t * 1000;
+    // 平時偶爾揮手（約每 9 秒一次）；剛到一站時揮比較久
+    const waving = now < waveUntil || (t % 9) < 1.4;
+    u.armR.rotation.x = waving ? -2.5 + Math.sin(t * 9) * .35 : 0;
+    u.armR.rotation.z = waving ? .25 : 0;
+    u.armL.rotation.x = -.35 + Math.sin(t * 1.6) * .08;
+    u.body.position.y = Math.abs(Math.sin(t * 1.6)) * .025;
+  });
+
   const WAKE_GEO = new THREE.PlaneGeometry(.7, 2.6), WAKE_MAT = basic('#ffffff', { transparent: true, opacity: .35, depthWrite: false });
   function sailboat(sail, hull) {
     const g = new THREE.Group();
@@ -2021,6 +2462,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
     seaMat.color.copy(mix(DAY.sea, NIGHT.sea, k));
     renderer.toneMappingExposure = DAY.exposure + (NIGHT.exposure - DAY.exposure) * k;
     glowMat.emissiveIntensity = k * 1.5; haloMat.opacity = k * .95; poolMat.opacity = k * .7;
+    guideLamp.emissiveIntensity = .15 + k * 1.8;
     nightOnly.forEach(o => { o.visible = k > .01; });
     cloudMat.opacity = .92 - k * .5; cloudMat.emissiveIntensity = .25 - k * .2;
     M.foam.color.copy(mix(C.foam, '#8fa3bd', k));
@@ -2092,6 +2534,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   }
   controls.target.copy(HOME);
   camera.position.copy(HOME).addScaledVector(FV, -DIST); camera.lookAt(HOME);
+  guideSpot(guideHomeStem, guide.position); faceCamera();
   // 視錐：寬度涵蓋整個群島（約 ±36），窄螢幕略裁兩翼
   function resize() {
     const w = stage.clientWidth, h = stage.clientHeight;
@@ -2257,13 +2700,13 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   function frame(now) {
     raf = 0; if (!alive) return;
     const dt = Math.min(.1, (now - last) / 1000); last = now;
-    const flying = stepFly(now), moved = controls.update(), anim = animating();
+    const flying = stepFly(now), hopping = stepGuide(now), moved = controls.update(), anim = animating();
     let fading = false;
     if (night !== nightTarget) {
       night = motion() ? (nightTarget > night ? Math.min(nightTarget, night + dt / 1.2) : Math.max(nightTarget, night - dt / 1.2)) : nightTarget;
       applyNight(night); fading = true;
     }
-    const busy = need || flying || moved || fading;
+    const busy = need || flying || hopping || moved || fading;
     // 只有環境動畫時限制在約 30fps
     if (!busy && anim && now - lastDraw < 32) { if (!raf) raf = requestAnimationFrame(frame); return; }
     if (anim) {
@@ -2288,7 +2731,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
       need = false;
     }
     // 只排一次：controls.update() 會觸發 change → requestRender() 已經排了下一幀，不能再多排一條迴圈
-    if ((anim || flying || moved || fading) && !raf) raf = requestAnimationFrame(frame);
+    if ((anim || flying || hopping || moved || fading) && !raf) raf = requestAnimationFrame(frame);
   }
   const ro = new ResizeObserver(resize); ro.observe(stage);
   new IntersectionObserver(es => { onScreen = es[0].isIntersecting; requestRender(); }).observe(stage);
@@ -2333,6 +2776,9 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
     },
     flyToIsle,
     reset() { flyTo(HOME.clone(), 1); },
+    // 嚮導跳到某一站（鏡頭由 select(stem, true) 負責）
+    guideTo,
+    guidePos() { const p = guide.position; return { x: p.x, y: p.y, z: p.z }; },
     setNight(on, instant) {
       nightTarget = on ? 1 : 0;
       if (instant || !motion()) { night = nightTarget; applyNight(night); }

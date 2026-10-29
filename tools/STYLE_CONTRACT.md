@@ -377,6 +377,7 @@ node tools/browser_check.js <stem>
 - 數值變更須重新執行產生器。已保存的新 FRAMES 可透過 `rebuild_content.py --frames-file STEM=PATH` 組裝；不能以保留舊 FRAMES 的重建取代重新計算。
 - 執行 `check_reader_contract.py`、`check_lab_rendered.py`、`test_reader_sources.py` 及原有內容／瀏覽器檢查。`check_lab_rendered.py` 使用 BeautifulSoup 核對完整呈現的程式及輸出，保留縮排。
 - 驗證截圖與 log 持久保存於 `tools/verification/<本次主題>/`；此目錄的圖像是驗收證據，不受「網站視覺必須 inline」規則限制。網站本身仍不用外掛圖檔。
+  唯一例外是 3D 群島面板的代表互動圖縮圖 `island/figs/<正課 stem>.webp`：由 `tools/build_island_figs.js` 從教材截取，只在點到該章時才下載；26 頁教材與離線 zip 仍然全部 inline。
 
 
 ## 13. 台灣教學用語（2026-09-08）

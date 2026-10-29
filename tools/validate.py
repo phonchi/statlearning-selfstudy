@@ -637,6 +637,9 @@ def check_repo():
         fail("FORBIDDEN", "repo", "缺 .nojekyll，GitHub Pages 會用 Jekyll 建置")
     for f in ROOT.rglob("*"):
         # Persistent screenshots are evidence; student-facing visuals remain inline.
+        # 唯一例外：3D 群島面板的代表圖縮圖 island/figs/<正課 stem>.webp（build_island_figs.js 產生，ISLAND-SYNC 另外核對）
+        if f.parent == ROOT / "island" / "figs" and f.suffix == ".webp":
+            continue
         if (not f.is_relative_to(ROOT / "tools" / "verification") and f.is_file()
                 and f.suffix.lower() in {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}):
             fail("FORBIDDEN", "repo", f"出現圖檔 {f.relative_to(ROOT)}：所有視覺都要 inline")
@@ -682,8 +685,17 @@ def check_island(net=False):
     for href in set(re.findall(r'href="\.\./([^"#]+)"', src)) | {r["href"][3:] for r in data["pages"]}:
         if not (ROOT / href).exists():
             fail("ISLAND-SYNC", "island", f"連結指向不存在的 {href}")
-    if re.search(r"<img\b", src, re.I):
-        fail("ISLAND-SYNC", "island", "不應有 <img>：所有視覺都要 inline")
+    # 唯一的 <img> 是面板的代表圖（src 由 JS 依 FIGS 設定）；island/figs/ 只能放 FIGS 列出的章節縮圖
+    imgs = re.findall(r"<img\b[^>]*>", src, re.I)
+    if [i for i in imgs if 'id="islFigImg"' not in i] or len(imgs) > 1:
+        fail("ISLAND-SYNC", "island", "除了代表圖 #islFigImg 以外不應有 <img>：其他視覺都要 inline")
+    figs = {f.stem for f in (ROOT / "island" / "figs").glob("*")} if (ROOT / "island" / "figs").exists() else set()
+    if figs != set(I.M.FIGS):
+        fail("ISLAND-SYNC", "island", f"island/figs/ 與 island_meta.FIGS 不一致：多 {sorted(figs - set(I.M.FIGS))}、缺 {sorted(set(I.M.FIGS) - figs)}")
+    for r in data["pages"]:
+        fg = r.get("fig")
+        if fg and not (ROOT / "island" / fg["src"]).exists():
+            fail("ISLAND-SYNC", "island", f"{r['stem']} 的代表圖 {fg['src']} 不存在")
     for u in set(re.findall(r'https?://[^"\s\')<>]+', src)):
         if not (u.startswith(f"https://cdn.jsdelivr.net/npm/three@{I.THREE_VER}/")
                 or u.startswith("https://fonts.googleapis.com/css2?")

@@ -10,7 +10,7 @@
  *   - 離線重載：.chart-fallback 要出現，SVG 元件仍在
  *   - 全頁截圖
  * island/index.html（3D 群島）另走 checkIsland()：WebGL 正常／CDN 被攔／getContext 回傳 null
- * 三種狀態 × 桌面與 390×844，確認 3D 畫得出來、點島／標籤開面板、入夜切換、2D 備援、26 個入口都可達。
+ * 三種狀態 × 桌面與 390×844，確認 3D 畫得出來、點島／標籤開面板、入夜切換、維導導覽與代表圖、2D 備援、26 個入口都可達。
  *
  * 用法：
  *   node tools/browser_check.js                     # 全部頁面
@@ -448,6 +448,54 @@ async function checkIsland(browser) {
         await page.mouse.up(); await new Promise(r => setTimeout(r, 600));
         const s1 = await page.evaluate(() => ({ d: window.__island.stats().draws, f: window.__rafN }));
         if (s1.d - s0.d > s1.f - s0.f + 3) note(stem, `拖曳時繪製次數（${s1.d - s0.d}）多於畫面幀數（${s1.f - s0.f}）：繪製迴圈被重複排程`);
+      }
+      // 維導導覽：氣泡 → 選「照正課走」→ 第 1 站有代表圖 → 下一站（嚮導移動、繪製不重複排程）→ 結束 → 再開會問要不要接著走
+      {
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        await page.evaluate(() => { try { localStorage.removeItem('slss-island:tour:v1'); } catch (e) {} });
+        const bubble = await page.waitForSelector('#islBubble:not([hidden])', { timeout: 5000 }).catch(() => null);
+        if (!bubble) note(stem, '開場沒有出現維導的氣泡');
+        else {
+          await bubble.click(); await sleep(300);
+          const routes = await page.$$('#islGuideChoices .isl-choice');
+          if (routes.length !== 3) note(stem, `選路線應有 3 個選項，得到 ${routes.length}`);
+          else {
+            await routes[1].click(); await sleep(900);
+            await page.waitForFunction(() => document.getElementById('islFigImg').complete, { timeout: 5000 }).catch(() => {});
+            const a = await page.evaluate(() => ({
+              step: document.getElementById('islGuideStep').textContent,
+              title: document.getElementById('islPanelTitle').textContent,
+              img: document.getElementById('islFigImg').naturalWidth,
+              href: document.getElementById('islFigGo').getAttribute('href'),
+              nav: !document.getElementById('islGuideNav').hidden,
+            }));
+            if (!a.step.startsWith('第 1／11 站') || a.title !== '統計學習導論與 EDA' || !a.nav) note(stem, `導覽第 1 站不對：${JSON.stringify(a)}`);
+            if (!a.img) note(stem, '代表互動圖縮圖沒有載入');
+            if (!/^\.\.\/introduction\.html#\w+$/.test(a.href || '')) note(stem, `代表圖連結錯誤：${a.href}`);
+            const g0 = await page.evaluate(() => window.__island.guidePos());
+            const s0 = await page.evaluate(() => ({ d: window.__island.stats().draws, f: window.__rafN }));
+            await page.click('#islGuideNext'); await sleep(2000);
+            const s1 = await page.evaluate(() => ({ d: window.__island.stats().draws, f: window.__rafN }));
+            if (s1.d - s0.d > s1.f - s0.f + 3) note(stem, `導覽跳站時繪製次數（${s1.d - s0.d}）多於畫面幀數（${s1.f - s0.f}）`);
+            const b = await page.evaluate(() => ({ title: document.getElementById('islPanelTitle').textContent, g: window.__island.guidePos() }));
+            if (b.title !== '統計學習的基本框架') note(stem, `「下一站」沒有前往第 2 站：${b.title}`);
+            if (Math.hypot(b.g.x - g0.x, b.g.z - g0.z) < 1) note(stem, '「下一站」後維導沒有移動');
+            await page.screenshot({ path: path.join(SHOT_DIR, 'island_3d_tour.png') });
+            await page.click('#islGuideEnd'); await sleep(200);
+            const c = await page.evaluate(() => ({ panel: document.getElementById('islPanel').hidden, guide: document.getElementById('islGuide').hidden }));
+            if (!c.panel || !c.guide) note(stem, `「結束導覽」沒有收起面板：${JSON.stringify(c)}`);
+            await page.click('#islBubble'); await sleep(300);
+            const r = await page.$$eval('#islGuideChoices .isl-choice b', els => els.map(e => e.textContent));
+            if (r[0] !== '接著走') note(stem, `再次開啟導覽沒有問要不要接著走：${JSON.stringify(r)}`);
+            // 導覽中點別的島：退出導覽，對話列不能殘留在一般面板上
+            await page.click('.isl-choice'); await sleep(600);
+            await page.click('.isl-item[data-stem="support_vector_machines"] .isl-link'); await sleep(400);
+            const e = await page.evaluate(() => ({ guide: document.getElementById('islGuide').hidden, nav: document.getElementById('islGuideNav').hidden }));
+            if (!e.guide || !e.nav) note(stem, `導覽中改選別章後，對話列沒有收起：${JSON.stringify(e)}`);
+            await page.keyboard.press('Escape');
+          }
+        }
+        await page.evaluate(() => { try { localStorage.removeItem('slss-island:tour:v1'); } catch (e) {} });
       }
       // 閒置暫停：把門檻調短，確認停止繪製；滑鼠一動就恢復
       const calls = await page.evaluate(() => window.__island.stats().calls);

@@ -782,6 +782,66 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   });
   walk(1.3, 0); life.push(walk);
 
+  /* ── 嚮導「維導」：深藍外套、小帽、提一盞燈（入夜才亮）。只有一個，不做 instancing ──
+     跳到下一站是和 fly 一樣的狀態，由 frame() 裡的 stepGuide() 推進，不另開繪製迴圈。 */
+  const guideLamp = new THREE.MeshLambertMaterial({ color: '#f6c25a', emissive: '#ffb444', emissiveIntensity: .15 });
+  const guide = (() => {
+    const g = person('#2c3e7a', '#3f4a5c', '#f1c9a5', '#3b2a20'), u = g.userData;
+    const m = c => std(c);
+    const brim = new THREE.Mesh(GEO.cyl, m('#22306a')); brim.scale.set(.46, .04, .46); brim.position.y = 1.13; u.body.add(brim);
+    const crown = new THREE.Mesh(GEO.cyl, m('#2c3e7a')); crown.scale.set(.3, .2, .3); crown.position.y = 1.24; u.body.add(crown);
+    const band = new THREE.Mesh(GEO.cyl, m('#f2d488')); band.scale.set(.31, .05, .31); band.position.y = 1.17; u.body.add(band);
+    const scarf = new THREE.Mesh(GEO.round, m('#c4553a')); scarf.scale.set(.38, .08, .25); scarf.position.y = .84; u.body.add(scarf);
+    // 左手提燈：掛在手臂末端，跟著手臂擺
+    const lamp = new THREE.Group(); lamp.position.set(0, -.38, .06); u.armL.add(lamp);
+    const handle = new THREE.Mesh(GEO.cyl, m('#5a4636')); handle.scale.set(.02, .14, .02); handle.position.y = -.05; lamp.add(handle);
+    const cage = new THREE.Mesh(GEO.round, guideLamp); cage.scale.set(.17, .2, .17); cage.position.y = -.22; lamp.add(cage);
+    const cap = new THREE.Mesh(GEO.round, m('#5a4636')); cap.scale.set(.2, .05, .2); cap.position.y = -.1; lamp.add(cap);
+    g.scale.setScalar(1.6);                          // 比路人（.72）大一倍，遠看也認得出來
+    world.add(g);
+    return g;
+  })();
+  const camFlat = new THREE.Vector3();
+  // 某一站的落腳點：島上朝鏡頭那一側的前緣、略偏一邊，免得被地標擋住
+  function guideSpot(stem, out) {
+    const b = B[stem]; if (!b) return null;
+    camFlat.copy(camera.position).sub(controls.target); camFlat.y = 0; camFlat.normalize();
+    const a = Math.atan2(camFlat.z, camFlat.x) - .4, r = b.isCore ? b.isle.radius * .74 : 1.35;
+    return out.set(b.x + Math.cos(a) * r, b.y, b.z + Math.sin(a) * r);
+  }
+  function faceCamera() {
+    guide.rotation.y = Math.atan2(camera.position.x - guide.position.x, camera.position.z - guide.position.z);
+  }
+  let hop = null, waveUntil = 0;
+  function stepGuide(now) {
+    if (!hop) return false;
+    const k = Math.min(1, (now - hop.t0) / hop.dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    guide.position.lerpVectors(hop.from, hop.to, e);
+    guide.position.y += Math.sin(Math.PI * k) * hop.h;
+    const u = guide.userData; u.legL.rotation.x = -.6; u.legR.rotation.x = .3; u.armR.rotation.x = -2.4 * Math.sin(Math.PI * k);
+    if (k >= 1) { hop = null; faceCamera(); waveUntil = now + 2600; u.legL.rotation.x = u.legR.rotation.x = 0; }
+    return true;
+  }
+  function guideTo(stem) {
+    const to = guideSpot(stem, new THREE.Vector3()); if (!to) return;
+    if (!motion()) { hop = null; guide.position.copy(to); faceCamera(); requestRender(); return; }
+    const d = to.distanceTo(guide.position);
+    hop = { from: guide.position.clone(), to, t0: performance.now(), dur: Math.min(1300, 550 + d * 14), h: 1.1 + Math.min(4, d * .1) };
+    guide.rotation.y = Math.atan2(to.x - guide.position.x, to.z - guide.position.z);
+    requestRender();
+  }
+  const guideHomeStem = B['00c_ai_assisted'] ? '00c_ai_assisted' : PAGES[0].stem;   // 平時站在啟航島的領航站旁
+  anims.push(t => {
+    if (hop) return;
+    const u = guide.userData, now = t * 1000;
+    // 平時偶爾揮手（約每 9 秒一次）；剛到一站時揮比較久
+    const waving = now < waveUntil || (t % 9) < 1.4;
+    u.armR.rotation.x = waving ? -2.5 + Math.sin(t * 9) * .35 : 0;
+    u.armR.rotation.z = waving ? .25 : 0;
+    u.armL.rotation.x = -.35 + Math.sin(t * 1.6) * .08;
+    u.body.position.y = Math.abs(Math.sin(t * 1.6)) * .025;
+  });
+
   const WAKE_GEO = new THREE.PlaneGeometry(.7, 2.6), WAKE_MAT = basic('#ffffff', { transparent: true, opacity: .35, depthWrite: false });
   function sailboat(sail, hull) {
     const g = new THREE.Group();
@@ -869,6 +929,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
     seaMat.color.copy(mix(DAY.sea, NIGHT.sea, k));
     renderer.toneMappingExposure = DAY.exposure + (NIGHT.exposure - DAY.exposure) * k;
     glowMat.emissiveIntensity = k * 1.5; haloMat.opacity = k * .95; poolMat.opacity = k * .7;
+    guideLamp.emissiveIntensity = .15 + k * 1.8;
     nightOnly.forEach(o => { o.visible = k > .01; });
     cloudMat.opacity = .92 - k * .5; cloudMat.emissiveIntensity = .25 - k * .2;
     M.foam.color.copy(mix(C.foam, '#8fa3bd', k));
@@ -940,6 +1001,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   }
   controls.target.copy(HOME);
   camera.position.copy(HOME).addScaledVector(FV, -DIST); camera.lookAt(HOME);
+  guideSpot(guideHomeStem, guide.position); faceCamera();
   // 視錐：寬度涵蓋整個群島（約 ±36），窄螢幕略裁兩翼
   function resize() {
     const w = stage.clientWidth, h = stage.clientHeight;
@@ -1105,13 +1167,13 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
   function frame(now) {
     raf = 0; if (!alive) return;
     const dt = Math.min(.1, (now - last) / 1000); last = now;
-    const flying = stepFly(now), moved = controls.update(), anim = animating();
+    const flying = stepFly(now), hopping = stepGuide(now), moved = controls.update(), anim = animating();
     let fading = false;
     if (night !== nightTarget) {
       night = motion() ? (nightTarget > night ? Math.min(nightTarget, night + dt / 1.2) : Math.max(nightTarget, night - dt / 1.2)) : nightTarget;
       applyNight(night); fading = true;
     }
-    const busy = need || flying || moved || fading;
+    const busy = need || flying || hopping || moved || fading;
     // 只有環境動畫時限制在約 30fps
     if (!busy && anim && now - lastDraw < 32) { if (!raf) raf = requestAnimationFrame(frame); return; }
     if (anim) {
@@ -1136,7 +1198,7 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
       need = false;
     }
     // 只排一次：controls.update() 會觸發 change → requestRender() 已經排了下一幀，不能再多排一條迴圈
-    if ((anim || flying || moved || fading) && !raf) raf = requestAnimationFrame(frame);
+    if ((anim || flying || hopping || moved || fading) && !raf) raf = requestAnimationFrame(frame);
   }
   const ro = new ResizeObserver(resize); ro.observe(stage);
   new IntersectionObserver(es => { onScreen = es[0].isIntersecting; requestRender(); }).observe(stage);
@@ -1181,6 +1243,9 @@ function buildWorld(THREE, addons, renderer, stage, canvas) {
     },
     flyToIsle,
     reset() { flyTo(HOME.clone(), 1); },
+    // 嚮導跳到某一站（鏡頭由 select(stem, true) 負責）
+    guideTo,
+    guidePos() { const p = guide.position; return { x: p.x, y: p.y, z: p.z }; },
     setNight(on, instant) {
       nightTarget = on ? 1 : 0;
       if (instant || !motion()) { night = nightTarget; applyNight(night); }

@@ -2376,12 +2376,17 @@ HC.revealHash = () => {
   }
   ancestors.reverse().forEach(el => { el.open = true; });
   if (target.tagName === 'DETAILS') target.open = true;
-  if (ancestors.length || target.tagName === 'DETAILS') {
-    HC.refreshDetail(ancestors[0] || target);
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
-    }));
-  }
+  if (ancestors.length || target.tagName === 'DETAILS') HC.refreshDetail(ancestors[0] || target);
+  // 載入後 MathJax、Chart.js 與字型還會讓上方內容變高，瀏覽器原生的錨點捲動會因此停錯位置：
+  // 頁面高度改變時就把目標拉回頂端，直到讀者自己捲動或操作，或 5 秒後為止。
+  const pin = () => window.scrollTo({top:Math.max(0, target.getBoundingClientRect().top + window.scrollY - 24), behavior:'auto'});
+  HC._unpinHash?.();
+  const ro = new ResizeObserver(() => pin());
+  const stop = () => { ro.disconnect(); clearTimeout(timer); ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => window.removeEventListener(ev, stop)); HC._unpinHash = null; };
+  const timer = setTimeout(stop, 5000);
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => window.addEventListener(ev, stop, {passive:true}));
+  HC._unpinHash = stop;
+  requestAnimationFrame(() => requestAnimationFrame(() => { pin(); ro.observe(document.body); }));
 };
 window.addEventListener('hashchange', HC.revealHash);
 window.addEventListener('load', HC.revealHash);

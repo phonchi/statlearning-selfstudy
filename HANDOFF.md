@@ -804,3 +804,32 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 
 **離線 zip 不含島嶼**（需要 CDN 上的 Three.js）；`build_offline.py` 的 README.txt 已註明。
 
+
+**嚮導「維導」與代表互動圖（2026-10-30）。**
+- **導覽**：
+  - 3D 就緒約 1.5 秒後，舞台右上角冒出「嗨，我是維導，要我帶你逛嗎？」，8 秒後縮成「維導帶路」。
+  - 點下去選路線（順序就是按鈕順序）：
+    - ① 第一次來：啟航島＋正課，14 站；
+    - ② 照正課走：11 站；
+    - ③ 補先備：統計森林島＋Python 工坊島，12 站。
+  - 導覽沿用原本的面板：上方是維導的對話列，下方是黏在底部的「上一站／下一站／結束導覽」。
+  - 進度 `{route, i}` 存在 localStorage `slss-island:tour:v1`，結束時保留，走完才清掉；再開時會問「要接著走嗎？」。
+  - 退出導覽一律走 `endTour()`：Esc、關閉、結束導覽、改選別章都會經過這裡，對話列不會殘留在一般面板上。
+  - 只有 3D 模式才有導覽。
+- **文案**：都在 `tools/island_meta.py`。
+  - `GUIDE`：每頁一兩句導覽詞，26 頁都要有。
+  - `TOUR`：路線與台詞。
+  - 產生器會檢查缺漏與路線 stem。
+- **3D 嚮導**（`island-scene.js`）：
+  - 外型沿用 `person()`，加上帽子、圍巾與提燈；燈的 emissive 接在 `applyNight`，入夜才亮。
+  - 平時站在領航站旁偶爾揮手。`guideTo(stem)` 會以拋物線跳到該站朝鏡頭的那一側。
+  - 跳躍是 `frame()` 裡的 `stepGuide()` 狀態（和 `fly` 一樣），**不能自己排 rAF**。
+  - browser_check 會比對跳站期間的繪製次數與畫面幀數。故意多排一條迴圈時，這項檢查確實會報錯。
+- **代表互動圖**：只有正課 11 章才有，設定在 `island_meta.FIGS`。
+  - `fig` 是教材裡圖的元素 id；`prep` 與 `wait` 是截圖前要先執行的動作（例如先跑到收斂）；`whole=False` 時只截圖本身。
+  - 縮圖由 `node tools/build_island_figs.js [stem…]` 產生到 `island/figs/<stem>.webp`。這需要網路，因為 Chart.js 從 CDN 載入。**教材改版後要重跑並 commit。**
+  - 面板裡的「去操作這張圖 →」連到 `頁面.html#圖id`。
+  - 這是 repo「視覺全部 inline」規則**唯一的例外**（使用者同意，STYLE_CONTRACT 已記載）。`validate.py` 只放行 `island/figs/*.webp`，而且檔案集合必須與 `FIGS` 相同。
+- **錨點捲動**（`shared.js` 的 `HC.revealHash`）：瀏覽器的原生錨點捲動，會被之後的 MathJax／Chart.js 排版推開，原本落點偏差 120～411 px。
+  - 現在頁面高度改變時，會把目標拉回距頂端 24 px。讀者一捲動或操作就停止，最多持續 5 秒。
+  - 11 個深連結實測都停在 24 px。
