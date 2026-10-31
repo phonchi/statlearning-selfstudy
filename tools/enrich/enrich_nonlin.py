@@ -74,7 +74,7 @@ BODIES["prologue"] = f"""
         ["立方樣條", "多加節點", "內部節點數 K（df = K+4）", "偏糟，信賴區間可能很寬", "次數固定 3，靠節點取得彈性"],
         ["自然樣條", "多加節點", "內部節點數 K（df = K+2）", "<span class='best'>好</span>，兩端是直線", "同樣的彈性、更穩的兩端"],
         ["平滑樣條", "調 λ", "有效自由度 df<sub>λ</sub>（連續）", "好（兩端線性）", "不必選節點，只要選 λ"],
-        ["局部迴歸", "調鄰域大小", "跨距 s", "偏糟（單邊資料）", "每次預測都要用到全部資料"]])}
+        ["局部迴歸", "調鄰域大小", "跨距 s", "變異偏大（單邊資料），局部直線可修正部分偏差", "每次預測都要用到全部資料"]])}
 
   <p>本章依照上表介紹各種方法，搭配例子與互動觀察擬合結果。
   <strong>先猜結果再按按鈕</strong>，再對照畫面，檢查自己對參數效果的理解。</p>
@@ -109,11 +109,11 @@ BODIES["poly"] = f"""
   共變異數矩陣，那麼</p>
 
   $$\\widehat{{\\operatorname{{Var}}}}\\left[\\hat f(x_0)\\right]
-    = \\ell_0^{{\\mathsf T}} \\hat C \\, \\ell_0 \\tag{{7.2}}$$
+    = \\ell_0^{{\\mathsf T}} \\hat C \\, \\ell_0$$
 
   <p>把每個 $x_0$ 的 $\\hat f(x_0) \\pm 2\\,\\mathrm{{SE}}$ 連起來，就是圖 7.1 那兩條虛線。
-  <strong>這個公式是整節的關鍵</strong>：$x_0$ 跑到資料邊界時 $x_0^{{15}}$ 大得離譜，
-  乘上共變異數矩陣以後變異就會大幅增加。下面把滑桿推到 15 就看得到。</p>
+  <strong>這個公式是整節的關鍵</strong>：常態線性模型下它等於 $\\hat\\sigma^2\\ell_0^{{\\mathsf T}}(B^{{\\mathsf T}}B)^{{-1}}\\ell_0$，
+  其中 $B$ 是基底的設計矩陣。邊界附近的 $x_0$ 槓桿值大，次數愈高愈明顯，所以變異集中在兩端。下面把滑桿推到 15 就看得到。</p>
 
 {viz(svg("w08polySvg", 300) + "\n" + svg("w08polyMse", 170),
      [info_card("怎麼看這張圖",
@@ -209,7 +209,7 @@ BODIES["step"] = f"""
                 '一個常數沒辦法表達段內的斜率。<strong>沒有自然切點的時候，'
                 '階梯函數會漏掉區間內的變化趨勢。</strong>不過流行病學與生物統計很愛用它'
                 '（例如固定的 5 歲一組），因為切點本身有現實意義。')],
-     "w08stepStatus", "拖橘色的切點看每一段的平均怎麼變。用上面的選單改段數。",
+     "w08stepStatus", "拖橘色的切點看每一段的平均怎麼變。用下面的選單改段數。",
      '<span class="slider-label" style="margin-right:.2rem;">段數</span>'
      '<select id="w08stepSel" class="mono" onchange="w08stepSetK()">'
      '<option value="2">2</option><option value="3">3</option>'
@@ -255,7 +255,8 @@ BODIES["basis"] = f"""
 {info("幾種常見的基底函數", '''<strong>多項式：</strong>$b_j(x) = x^j$<br>
   <strong>階梯函數：</strong>$b_j(x) = I(c_j \\le x < c_{j+1})$<br>
   <strong>立方樣條：</strong>$x, x^2, x^3$ 再加每個節點一個 $(x - \\xi_k)^3_+$<br>
-  <strong>自然樣條、B-樣條：</strong>同一個函數空間的另外幾組基底<br>
+  <strong>B-樣條：</strong>和立方樣條同一個函數空間的另一組基底<br>
+  <strong>自然樣條：</strong>再加上邊界條件，函數空間小了一點，所以基底少兩個<br>
   換基底就換方法，但擬合方法（最小平方）從頭到尾沒換過。
   小波（wavelet）與傅立葉級數也是合法的選擇，只是這一章不講。''')}
 
@@ -377,7 +378,7 @@ BODIES["splines"] = f"""
   <p>加上 $\\beta_4 h(x, \\xi)$ 只會讓<strong>三階</strong>導數在 ξ 跳（跳 $6\\beta_4$），
   函數值、一階、二階導數都保持連續。所以 K 個內部節點的立方樣條就是對
   $X, X^2, X^3, h(X,\\xi_1), \\ldots, h(X,\\xi_K)$ 做普通的最小平方，
-  K + 4 個係數；這裡 K 一律指內部節點數。這就是 (7.9)。</p>
+  K + 4 個係數；這裡 K 一律指內部節點數。</p>
 
 {qa("觀念釐清", [
     ("Q：為什麼三次樣條剛好要求到<strong>二階</strong>導數連續？多一階或少一階會怎樣？",
@@ -466,8 +467,8 @@ BODIES["natural"] = f"""
      '<button class="btn btn-toggle" id="w08natCubBtn" onclick="w08natToggleCubic()">立方樣條：開</button>',
      provenance=("course-data", "Wage 全體 3000 筆、相同內部節點的 cubic／natural spline；generator 計算曲線與信賴區間。"))}
 
-  <p>ISLP 圖 7.7 把這件事推到極端：<strong>15 個自由度的自然樣條 vs 14 次多項式</strong>。
-  兩者均含截距、各有 15 個自由度，但多項式在尾端大幅振盪，自然樣條則較穩定。
+  <p>ISLP 圖 7.7 把這件事推到極端：<strong>15 個自由度的自然樣條 vs 高次多項式</strong>。
+  課本寫 15 次（df 不含截距），講義寫 14 次（df 含截距），兩者彈性相當，但多項式在尾端大幅振盪，自然樣條則較穩定。
   這就是「樣條通常優於多項式」的理由：<strong>樣條靠加節點取得彈性、把次數鎖在 3；
   多項式只能靠拉高次數，而高次的代價全部集中在邊界。</strong></p>
 
@@ -553,7 +554,7 @@ BODIES["smooth"] = f"""
            "。此圖的重點：df = 2 幾乎是直線，df = 19 有明顯起伏；"
            "pygam 依 GCV 選出 df = 5.64，跟課本圖 7.8 用 LOOCV 選出的 6.8 很接近。"),
      [info_card("怎麼看這張圖",
-                '灰點是全部 3000 筆觀察，曲線是用<strong>全部 3000 筆</strong>擬合的平滑樣條。'
+                '灰點是全部 3000 筆觀察，曲線用<strong>全部 3000 筆</strong>擬合，實際上是 pyGAM 以 20 個基底的 P-spline 近似平滑樣條。'
                 '滑桿以有效自由度 df<sub>λ</sub> 顯示複雜度，每個刻度對應一個 λ，'
                 'df 較容易用來比較複雜度（λ = 5.2×10⁹ 對上 df = 2）。', "圖 7.8"),
       rows_card("這個 df 的成績",
@@ -566,7 +567,7 @@ BODIES["smooth"] = f"""
                 '課本圖 7.8 的 <strong>6.8</strong> 是用 LOOCV 挑的，'
                 '兩者的準則不同、答案自然不會完全一樣，但都落在 5～7，'
                 '<strong>結論一致：這份資料不需要 16 個自由度。</strong>')],
-     "w08lamStatus", "推滑桿改有效自由度。df = 2 是直線，df 愈大愈抖。",
+     "w08lamStatus", "推滑桿改有效自由度。df 接近 2 時接近直線，df 愈大愈抖。",
      slider("w08lamSl", "df", 0, 9, 1, 3, "5.0", "w08lamSet()")
      + '<button class="btn btn-toggle" id="w08lamPickBtn" onclick="w08lamTogglePick()">GCV 選出的曲線：開</button>'
      + '<button class="btn btn-reset" onclick="w08lamReset()">回到 df = 5</button>',
@@ -643,19 +644,20 @@ BODIES["loess"] = f"""
                 '<div class="pseudo-code" id="w08loessCode" style="font-size:.72rem;">'
                 '<span class="line" data-l="1"><span class="kw">for</span> x0 <span class="kw">in</span> 格點:</span>\n'
                 '<span class="line" data-l="2">    d = |x - x0|；取最近的 k = s·n 個</span>\n'
-                '<span class="line" data-l="3">    w = tricube(d / d_max)</span>\n'
+                '<span class="line" data-l="3">    w = <span id="w08loessKerCode">tricube(d / d_max)</span></span>\n'
                 '<span class="line" data-l="4">    b0, b1 = 加權最小平方(x, y, w)</span>\n'
                 '<span class="line" data-l="5">    f[x0] = b0 + b1 * x0</span></div>', "CODE"),
       rows_card("這個目標點",
                 [("跨距 s", "0.30", "w08loessSpanTxt"), ("鄰域點數 k", "—", "w08loessK"),
                  ("目標點 x₀", "—", "w08loessX0"), ("局部斜率 b₁", "—", "w08loessB1"),
-                 ("擬合值 f̂(x₀)", "—", "w08loessFhat")]),
+                 ("擬合值 f̂(x₀)", "—", "w08loessFhat"),
+                 ("曲線的最大折動", "—", "w08loessJump")]),
       info_card("圖上的元素",
                 '<span style="color:var(--pt-held);font-weight:700;">橘色垂直線</span>是目前的 x₀，'
-                '橘點是它的鄰域，<strong>黃色鐘形</strong>是 tricube 權重（越高越重），'
+                '橘點是它的鄰域，<strong>黃色曲線</strong>是權重（越高越重；可切換鐘形的 tricube 與等權重的方框），'
                 '短橘線段是這一次的加權迴歸直線，'
                 '<span style="color:var(--fit-line);font-weight:700;">紅色粗曲線</span>是掃過去累積出來的 f̂。'
-                '淡紅細線是這個 span 的完整曲線。', "圖 7.9"),
+                '淡紅細線是這個 span 的完整曲線，每 0.25 歲算一點；最大折動是相鄰兩段的變化量最多差多少。', "圖 7.9"),
       info_card("兩個要記住的限制",
                 '<strong>1. 記憶式（memory-based）：</strong>每做一次預測都要用到全部訓練資料，'
                 '沒有一組係數可以存下來。模型體積 = 資料體積。<br>'
@@ -665,7 +667,8 @@ BODIES["loess"] = f"""
      "w08loessStatus", "直接調 span 與 x₀，看鄰域、權重、局部斜率與擬合值怎麼一起變。",
      slider("w08loessSl", "span s", 10, 90, 5, 30, "0.30", "w08loessSetSpan()", "200px")
      + slider("w08loessXSl", "目標點 x₀", 20, 77, 1, 49, "49", "w08loessSetX0()", "200px")
-     + '<button class="btn btn-play" onclick="w08loessStart()">▶ 自動掃描（可選）</button>'
+     + '<button class="btn btn-toggle" id="w08loessKerBtn" onclick="w08loessToggleKer()">權重：tricube</button>'
+     '<button class="btn btn-play" onclick="w08loessStart()">▶ 自動掃描（可選）</button>'
      '<button class="btn btn-reset" onclick="w08loessReset()">重置</button>',
      provenance=("course-data", "Wage 全部 3000 筆；tricube 權重與局部線性最小平方由瀏覽器即時計算。"))}
 
@@ -755,8 +758,9 @@ BODIES["gam"] = f"""
                 'age 的 df 從 2 加到 10，Pseudo R² 只從 0.263 爬到 0.294；'
                 'year 的 df 從 2 加到 6，R² 從 0.292 到 0.293——'
                 '<strong>year 幾乎不需要非線性</strong>。'
-                'lab 儲存格 96 的 ANOVA 就是在檢定這件事，結論是「year 需要線性項'
-                '（p = 1.7e−07）但不需要非線性」。')],
+                'lab 儲存格 95 的 ANOVA 就是在檢定這件事，結論是「year 需要線性項'
+                '（p ≈ 0.002）但不需要非線性（p ≈ 0.435）」；'
+                '同一套檢定用在 age（儲存格 96）則顯示 age 明顯需要非線性（p ≈ 5.7e−07）。')],
      "w08gamStatus", "推兩個滑桿改 age 與 year 的自由度，右邊看模型整體的成績怎麼變。",
      slider("w08gamAgeSl", "age df", 0, 5, 1, 3, "5.0", "w08gamSet()", "200px")
      + slider("w08gamYearSl", "year df", 0, 4, 1, 3, "5.0", "w08gamSet()", "200px")
@@ -766,10 +770,10 @@ BODIES["gam"] = f"""
 {table(["GAM 的優點 ✔", "GAM 的限制 ✘"],
        [["每個 $X_j$ 各擬合一個非線性 $f_j$，不必手動試變換", "<strong>模型被限制成加法的</strong>，變數多的時候會漏掉重要的交互作用"],
         ["非線性擬合通常預測更準", "要交互作用得手動加 $X_j \\times X_k$ 或二維的 $f_{jk}$ 項"],
-        ["因為是加法的，可以固定其他變數單獨看某一個變數的效果", "交互作用須加入二維平滑項；本節另說明 thin-plate spline"],
+        ["因為是加法的，可以固定其他變數單獨看某一個變數的效果", "這個解讀只在加法假設成立時才可靠"],
         ["每個 $f_j$ 的平滑程度可以用自由度總結", "完全一般的模型還是得靠第 8 章的隨機森林與提升法"]])}
 
-  <p>整套邏輯搬到分類問題只要把 (7.17) 的 logit 換成加法形式：</p>
+  <p>整套邏輯搬到分類問題，只要把 logistic 迴歸的 logit 換成加法形式：</p>
 
   $$\\log\\left(\\frac{{p(X)}}{{1 - p(X)}}\\right) = \\beta_0 + f_1(X_1) + f_2(X_2)
     + \\cdots + f_p(X_p) \\tag{{7.18}}$$
@@ -891,7 +895,7 @@ BODIES["reference"] = f"""
         ["立方樣條", "$x, x^2, x^3, (x-\\xi_k)^3_+$", "內部節點數 K", "K + 4", "差（信賴區間可能很寬）", "CV（圖 7.6 右）"],
         ["自然樣條", "立方樣條 + 兩個自然邊界條件", "內部節點數 K", "K + 2", "<span class='best'>好</span>", "CV（圖 7.6 左）"],
         ["平滑樣條", "全部 x 當節點 + 二階導數懲罰", "λ", "df$_\\lambda$（連續，2 到 m；m 是相異 x 數）", "好", "LOOCV 捷徑 / GCV"],
-        ["局部迴歸", "鄰域內加權最小平方", "跨距 s", "以等效 df 表示", "差（單邊資料）", "CV"]])}
+        ["局部迴歸", "鄰域內加權最小平方", "跨距 s", "以等效 df 表示", "變異偏大（單邊資料）", "CV"]])}
 
   <h3>Wage 上的實測數字（本頁元件用的就是這些）</h3>
 {table(["多項式次數 d", "1", "2", "4", "8", "15"],
@@ -1500,8 +1504,34 @@ function w08lamTogglePick() {
 }
 function w08lamReset() { $('w08lamSl').value = '3'; w08lamDraw(); }
 
+/* ---------- P06 平滑樣條的收縮因子（烘焙特徵值，λ 即時算） ---------- */
+let w08shrinkSvc = null;
+function w08shrinkDraw() {
+  const F = FRAMES_w08shrink;
+  const lg = F.logLam[0] + (F.logLam[1] - F.logLam[0]) * parseInt($('w08shrinkSl').value, 10) / 40;
+  const lam = Math.pow(10, lg), rho = F.d.map(d => 1 / (1 + lam * d));
+  const df = rho.reduce((a, v) => a + v, 0), head = rho.slice(0, 12);
+  const dfHead = head.reduce((a, v) => a + v, 0);
+  if (!w08shrinkSvc) {
+    w08shrinkSvc = HC.svg('w08shrinkSvg', { xd: [0, 13], yd: [0, 1.1], h: 300 });
+    w08shrinkSvc.grid(13, 6, { xtitle: '方向編號 k（由平滑到彎曲）', ytitle: '留下的比例 1/(1+λdₖ)', ydec: 1,
+                               xfmt: v => (v >= 1 && v <= 12) ? HC.fmt(v, 0) : '' });
+  }
+  const g = w08shrinkSvc.clearLayer('main');
+  head.forEach((v, i) => w08shrinkSvc.box(i + 0.65, 0, i + 1.35, v,
+    { fill: i < 2 ? HC.tok.accent : HC.tok.accent2, cls: 'w08shrinkBar' }, g));
+  $('w08shrinkSlVal').textContent = HC.fmt(lg, 1);
+  $('w08shrinkLam').textContent = lam < 1 ? HC.fmt(lam, 3) : HC.fmt(lam, 0);
+  $('w08shrinkDf').textContent = HC.fmt(df, 2);
+  $('w08shrinkHead').textContent = HC.fmt(dfHead, 2);
+  $('w08shrinkTail').textContent = HC.fmt(df - dfHead, 2);
+  setStatus('w08shrinkStatus', '有效自由度 ' + HC.fmt(df, 2) + '：前兩個方向（常數、直線）留下 100%，第 3 個留下 '
+    + HC.pct(rho[2], 0) + '，第 6 個留下 ' + HC.pct(rho[5], 0) + '。');
+}
+
 /* ---------- P07 局部迴歸的 span 掃描器（live） ---------- */
-let w08loessSvc = null, w08loessPlayer = null;
+let w08loessSvc = null, w08loessPlayer = null, w08loessBox = false;
+function w08loessWt(u) { return w08loessBox ? (u <= 1 ? 1 : 0) : Math.pow(1 - u * u * u, 3); }
 function w08loessSpan() { return parseInt($('w08loessSl').value, 10) / 100; }
 function w08loessX0() { return parseFloat($('w08loessXSl').value); }
 function w08loessSetup() {
@@ -1518,7 +1548,7 @@ function w08loessAt(x0, span) {
   const X = [], y = [], w = [], idx = [];
   near.forEach(o => {
     const u = Math.min(1, o.d / dmax);
-    const wt = Math.pow(1 - u * u * u, 3);
+    const wt = w08loessWt(u);
     X.push([1, w08sub.xs[o.i] - x0]); y.push(w08sub.ys[o.i]); w.push(wt); idx.push(o.i);
   });
   const beta = w08solve(X, y, w);
@@ -1538,6 +1568,26 @@ function w08loessFull(span) {
   return HC.stat.seq(w08sub.xd[0] + 3, w08sub.xd[1] - 3, 34)
     .map(x0 => [x0, w08loessAt(x0, span).fit]);
 }
+/* 每 0.25 歲算一個擬合值：方框權重的跳動要在細格點上才看得出來。
+   jump 用二階差分的最大值，扣掉斜率，尾端的陡坡才不會被算成跳動。結果依設定暫存，滑桿才不會卡。 */
+const w08loessFineCache = {};
+function w08loessFine(span) {
+  const key = span + (w08loessBox ? 'b' : 't');
+  if (!w08loessFineCache[key]) {
+    const pts = [];
+    for (let x0 = w08sub.xd[0] + 3; x0 <= w08sub.xd[1] - 3; x0 += 0.25) pts.push([x0, w08loessAt(x0, span).fit]);
+    let jump = 0;
+    for (let i = 1; i < pts.length - 1; i++) jump = Math.max(jump, Math.abs(pts[i + 1][1] - 2 * pts[i][1] + pts[i - 1][1]));
+    w08loessFineCache[key] = { pts: pts, jump: jump };
+  }
+  return w08loessFineCache[key];
+}
+function w08loessToggleKer() {
+  w08loessBox = !w08loessBox;
+  $('w08loessKerBtn').textContent = '權重：' + (w08loessBox ? '方框' : 'tricube');
+  $('w08loessKerCode').textContent = w08loessBox ? '1（鄰域內等權重）' : 'tricube(d / d_max)';
+  w08loessShowX0();
+}
 function w08loessApply(f) {
   const s = w08loessSvc, g = s.clearLayer('main');
   const span = f.span, r = f.r;
@@ -1552,13 +1602,14 @@ function w08loessApply(f) {
   /* tricube 權重的鐘形：畫在圖的下緣 */
   const bell = [];
   for (let t = -1; t <= 1.0001; t += 0.05) {
-    const u = Math.abs(t), wt = Math.pow(1 - u * u * u, 3);
+    const u = Math.abs(t), wt = w08loessWt(u);
     bell.push([f.x0 + t * r.dmax, s.yd[0] + 6 + wt * (s.yd[1] - s.yd[0]) * 0.16]);
   }
+  if (w08loessBox) { bell.unshift([f.x0 - r.dmax, s.yd[0] + 6]); bell.push([f.x0 + r.dmax, s.yd[0] + 6]); }
   s.poly(bell, { stroke: '#d4ac0d', sw: 2, cls: 'w08localLine' }, g);
   s.seg(f.x0, s.yd[0], f.x0, s.yd[1], { stroke: HC.tok.held, sw: 2, dash: '5 4', cls: 'resid' }, g);
   /* 淡紅：這個 span 的完整曲線 */
-  s.poly(w08loessFull(span), { stroke: 'rgba(192,57,43,.30)', sw: 1.8, cls: 'w08localLine' }, g);
+  s.poly(w08loessFine(span).pts, { stroke: 'rgba(192,57,43,.45)', sw: 1.8, cls: 'w08localLine' }, g);
   /* 局部加權直線（只畫鄰域那一段） */
   const x1 = f.x0 - r.dmax, x2 = f.x0 + r.dmax;
   s.poly([[x1, r.b0 + r.b1 * (x1 - f.x0)], [x2, r.b0 + r.b1 * (x2 - f.x0)]],
@@ -1575,8 +1626,9 @@ function w08loessApply(f) {
   $('w08loessXSlVal').textContent = HC.fmt(f.x0, 1);
   $('w08loessB1').textContent = HC.fmt(r.b1, 3);
   $('w08loessFhat').textContent = HC.fmt(r.fit, 1);
+  $('w08loessJump').textContent = HC.fmt(w08loessFine(span).jump, 2);
   setStatus('w08loessStatus', 'x₀ = ' + HC.fmt(f.x0, 1) + '：取最近的 ' + r.k
-    + ' 點（橘色），用 tricube 權重（黃色鐘形）擬合一條加權直線（橘線段），'
+    + ' 點（橘色），用' + (w08loessBox ? '等權重（黃色方框）' : ' tricube 權重（黃色鐘形）') + '擬合一條加權直線（橘線段），'
     + '斜率 ' + HC.fmt(r.b1, 3) + '，它在 x₀ 的值 ' + HC.fmt(r.fit, 1)
     + ' 就是 f̂(x₀)。已經掃完 ' + f.path.length + ' / 34 個目標點。');
 }
@@ -1593,6 +1645,9 @@ function w08loessShowX0() {
 }
 function w08loessReset() {
   if (w08loessPlayer) w08loessPlayer.stop();
+  w08loessBox = false;
+  $('w08loessKerBtn').textContent = '權重：tricube';
+  $('w08loessKerCode').textContent = 'tricube(d / d_max)';
   $('w08loessSl').value = '30';
   $('w08loessXSl').value = '49';
   $('w08loessSlVal').textContent = '0.30';
@@ -1698,6 +1753,7 @@ w08knotSetup();
 w08knotDraw();
 w08loessSetup();
 w08loessReset();
+w08shrinkDraw();
 
 function w08lowessLabDraw() {
   const F = FRAMES_w08lowess, W = FRAMES_w08wage;
@@ -1728,6 +1784,8 @@ PAGEJS = clean_pagejs('beyond_linearity', PAGEJS)
 
 from lecture_alignment_ch7 import augment
 augment(BODIES)
+from nonlin_lecture_notes import augment as augment_notes
+augment_notes(BODIES, slider)
 
 if __name__ == "__main__":
     apply("beyond_linearity", BODIES, PAGEJS, frames())

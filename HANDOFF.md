@@ -833,3 +833,28 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - **錨點捲動**（`shared.js` 的 `HC.revealHash`）：瀏覽器的原生錨點捲動，會被之後的 MathJax／Chart.js 排版推開，原本落點偏差 120～411 px。
   - 現在頁面高度改變時，會把目標拉回距頂端 24 px。讀者一捲動或操作就停止，最多持續 5 秒。
   - 11 個深連結實測都停在 24 px。
+
+---
+
+## 27. 第 7 章依講義與教學筆記充實（2026-10-31）
+
+使用者提出 12 點（基底展開、CI 推導、階梯函數、固定與學習基底、節點連續、B-／P-spline、圖 7.6 的 df、平滑樣條的 $g$、有效自由度、附錄基底、局部迴歸權重與 df）。收合取捨由 GPT-6 與 Fable 各自判斷後綜合；使用者決定「併入既有並補足」，並做 W2、W3 兩個元件。
+
+**主軸**是兩條線，不說「一切都是固定基底」：基底展開（多項式到 GAM）與線性平滑器 $\hat y=Sy$、$\mathrm{df}=\operatorname{tr}S$（含局部迴歸）。
+
+**實作**
+- 新檔 `tools/enrich/nonlin_lecture_notes.py`，在 reading_flow、teaching_scope、lecture_alignment 之後才套用。`rep`／`cut` 要求比對字串恰好一次，上游文字改了會報錯。要改第 7 章內容時先看這裡。
+- 新收合 `w08-detail-basis-fixed-learned`；其餘併入既有 `logit-ci`、`step-coding`、`spline-calculation`、`natural-basis`、`smoothing-df`、`smoothing-computation`、`w08proof-smooth`、`local-calculation`。刪除重複的薄板、效果圖、OLS 殘差段落與三個講義文字層截斷的壞連結。
+- 元件：`w08shrink`（`FRAMES_w08shrink`：Wage 相異年齡的加權 Reinsch 懲罰特徵值，61 個）；`w08loessSvg` 加方框／tricube 切換，指標「最大折動」是每 0.25 歲格點的二階差分最大值，一階差分會把尾端陡坡算成跳動，34 點格點則看不出差別。
+- 詞彙卡 +2（P-樣條、線性平滑器），改寫「基底函數」。
+
+**一併修正的既有錯誤**
+- GAM 卡片把 age 的 ANOVA（儲存格 96）當成 year 的結論；改用儲存格 95（線性 p≈0.002、非線性 p≈0.435）。
+- 圖 7.7：課本是 15 次，講義是 14 次，差在 df 是否含截距。
+- 矩陣內的 `&A`、`&P` 會被建置流程改成 `&A;`、`&P;`，顯示多餘分號。**在 enrich 裡的矩陣，大寫字母前的 `&` 要寫成 `&amp;`。**
+- 式號：頁面未顯示的 (7.2)、(7.9)、(7.17) 改成文字；`x_0^{15}` 的錯誤解釋改為槓桿值。
+
+**推測，非事實**：圖 7.10 的 16.4、5.3 接近局部二次的 $\operatorname{tr}(LL^T)$（16.57、5.33），局部線性 $\operatorname{tr}L$ 只有 10.64、3.69；R `loess` 的 `enp` 確實是 $\operatorname{tr}(LL^T)$（原碼 `one.delta + 2*trL - N`），但課本未交代圖的設定。
+
+**驗證**：見 `tools/verification/ch7-lecture-refine-20261031/README.md`。Stack Exchange 連結擋抓取，未讀原文。
+

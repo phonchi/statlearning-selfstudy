@@ -236,6 +236,33 @@ for _d in list(gam_age.values()) + list(gam_year.values()) + [gam_edu]:
 GAM_YR = [float(np.floor(min(_allv) / 10) * 10), float(np.ceil(max(_allv) / 10) * 10)]
 
 
+# 平滑樣條的收縮特徵值：Wage 相異年齡上的 Reinsch 形式 K = Q R⁻¹ Qᵀ
+# 重複年齡以人數 w 加權，S = (W + λK)⁻¹W，特徵值 1/(1+λd)，d 是 W^(-1/2) K W^(-1/2) 的特徵值
+def _penalty(ux):
+    h = np.diff(ux)
+    m = len(ux)
+    Q = np.zeros((m, m - 2))
+    R = np.zeros((m - 2, m - 2))
+    for j in range(m - 2):
+        Q[j, j], Q[j + 1, j], Q[j + 2, j] = 1 / h[j], -1 / h[j] - 1 / h[j + 1], 1 / h[j + 1]
+        R[j, j] = (h[j] + h[j + 1]) / 3
+        if j < m - 3:
+            R[j, j + 1] = R[j + 1, j] = h[j + 1] / 6
+    return Q @ np.linalg.solve(R, Q.T)
+
+
+_ux, _cnt = np.unique(AGE, return_counts=True)
+_wi = 1 / np.sqrt(_cnt)
+SHRINK_D = np.linalg.eigvalsh((_wi[:, None] * _penalty(_ux)) * _wi[None, :])
+SHRINK_D = np.clip(SHRINK_D, 0, None)
+SHRINK_D[:2] = 0.0
+# log₁₀ λ 的範圍：df 約 30 到約 2.2
+_df = lambda lg: float(np.sum(1 / (1 + 10.0 ** lg * SHRINK_D)))
+_grid = np.arange(-4, 14, 0.5)
+SHRINK_LO = float(_grid[np.argmin(np.abs([_df(g) - 30 for g in _grid]))])
+SHRINK_HI = float(_grid[np.argmin(np.abs([_df(g) - 2.2 for g in _grid]))])
+
+
 LOWESS_GRID = np.linspace(A0, A1, 100)
 LOWESS = {str(span): r(sm.nonparametric.lowess(Y, AGE, frac=span, xvals=LOWESS_GRID), 6)
           for span in (0.2, 0.5)}
@@ -255,6 +282,12 @@ out = [
     js("FRAMES_w08lowess", {"grid": LOWESS_GRID.tolist(), "curves": LOWESS},
        f"{LAB} 的 lowess：Wage 全部 3000 筆，frac=0.2／0.5，xvals=100 點 age_grid",
        "無隨機性", "沿用 statsmodels lowess 預設 it=3 的穩健疊代。"),
+    js("FRAMES_w08shrink",
+       {"d": [float("%.5g" % v) for v in SHRINK_D], "logLam": [SHRINK_LO, SHRINK_HI], "m": int(len(_ux))},
+       f"Wage 的 {len(_ux)} 個相異年齡（{LAB} 的資料）；精確平滑樣條的懲罰矩陣，非 lab 輸出",
+       "無隨機性",
+       "d 是 W^(-1/2) K W^(-1/2) 的特徵值，K = Q R⁻¹ Qᵀ（ESL §5.4），W 是各年齡人數；"
+       "df = Σ 1/(1+λd)。λ 尺度與 pygam 的 P-spline 不同。"),
     js("FRAMES_w08wage",
        {"n": len(SUB), "age": sub_age.tolist(), "wage": sub_y.tolist(),
         "ageMin": A0, "ageMax": A1, "nFull": N, "nPool": int(len(POOL))},
