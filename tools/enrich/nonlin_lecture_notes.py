@@ -222,6 +222,17 @@ SHRINK_MAIN = r"""
   把這些因子加起來就是<strong>有效自由度</strong>。迴歸樣條靠基底的<em>個數</em>控制複雜度；平滑樣條留著基底，靠 $\lambda$ 調整每個基底方向留下<em>多少</em>。""", "warm") + "\n"
 
 
+COMPARE_DETAIL = detail("w08-detail-spline-compare", "迴歸樣條與平滑樣條怎麼選？", r"""
+<p>兩者都能得到三次樣條，差別在怎麼控制彈性：迴歸樣條限制模型能用多少個方向；平滑樣條允許很多方向，但限制每個方向能發揮多少。</p>
+""" + table(["", "迴歸樣條", "平滑樣條", "懲罰迴歸樣條（P-spline 等）"],
+            [["控制彈性靠", "節點的數量與位置", r"$\lambda$", r"有限個基底＋$\lambda$"],
+             ["目標", r"$\min_\beta\|y-B\beta\|^2$", r"$\min_g\sum_i(y_i-g(x_i))^2+\lambda\int g''^2$", r"$\min_\beta\|y-B\beta\|^2+\lambda\beta^{\mathsf T}\Omega\beta$"],
+             ["適合", "已知轉折點、想要低維又簡單的模型", "不想決定節點，讓 $\\lambda$ 決定平滑程度", "多變數或大型模型，如現代 GAM"],
+             ["要選什麼", "節點數或 df，用 CV", r"$\lambda$，用 CV 或 GCV", r"基底數上限，$\lambda$ 由 GCV 或 REML 選"]]) + r"""
+<p>這是一般傾向，不是絕對規則：迴歸樣條也能加懲罰，一維的平滑樣條也有高效率演算法。兩種方法可以調到相同的有效自由度，但限制函數的方式不同，曲線不會一樣。在 Wage 上，節點放在分位數的 5 節點立方樣條（9 個參數）和 $\mathrm{df}_\lambda=9$ 的平滑樣條，擬合值最多差約 5.6 千美元。mgcv 的 <code>s(x, bs="cr", k=20)</code> 裡，<code>k</code> 只是基底維度的上限，最後的有效自由度仍由懲罰決定。</p>
+""")
+
+
 def shrink_viz(slider):
     return viz(svg("w08shrinkSvg", 300),
                [info_card("怎麼看這張圖",
@@ -274,7 +285,7 @@ $$\{S_\lambda\}_{ii}=\frac{\partial\hat g_\lambda(x_i)}{\partial y_i},\qquad \ma
 def smooth(b, slider):
     rep(b, "smooth", "它是那個自然樣條的<strong>收縮版</strong>，收縮的程度由 λ 決定。</p>",
         "它是那個自然樣條的<strong>收縮版</strong>，收縮的程度由 λ 決定。</p>\n" + SHRINK_MAIN)
-    rep(b, "smooth", '<div class="qa-box">', shrink_viz(slider) + '\n<div class="qa-box">')
+    rep(b, "smooth", '<div class="qa-box">', shrink_viz(slider) + "\n" + COMPARE_DETAIL + '\n<div class="qa-box">')
     b["smooth"] = extend(b["smooth"], "w08-detail-smoothing-df", DF_NOTES)
     rep(b, "smooth", "深入計算：平滑矩陣、交叉驗證與 IRLS", "深入計算：函數空間、平滑矩陣、交叉驗證與 IRLS")
     cut(b, "smooth", "<h3>平滑矩陣與邏輯斯平滑</h3>", "<h3>由曲率懲罰到可計算的線性系統</h3>", G_SPACE_NOTES)

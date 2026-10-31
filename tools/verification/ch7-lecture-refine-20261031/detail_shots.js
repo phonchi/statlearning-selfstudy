@@ -15,7 +15,7 @@ for(const [w,h,tag] of [[1440,900,'d'],[390,844,'m']]){
  const m=await p.evaluate(()=>({merr:document.querySelectorAll('mjx-merror').length,hs:document.documentElement.scrollWidth-innerWidth,
    wide:[...document.querySelectorAll('.detail-body>p,.detail-body>table,mjx-container')].filter(e=>e.getBoundingClientRect().right>innerWidth+2&&!e.closest('[style*="overflow"]')&&!e.closest('mjx-container[display]')).length}));
  console.log(tag,JSON.stringify(m),'pageerrors',errs.length,errs.slice(0,2));
- for(const id of ['w08-detail-logit-ci','w08-detail-step-coding','w08-detail-basis-fixed-learned','w08-detail-spline-calculation','w08-detail-natural-basis','w08-detail-smoothing-df','w08-detail-smoothing-computation','w08-detail-local-calculation']){
+ for(const id of ['w08-detail-spline-compare','w08-detail-logit-ci','w08-detail-step-coding','w08-detail-basis-fixed-learned','w08-detail-spline-calculation','w08-detail-natural-basis','w08-detail-smoothing-df','w08-detail-smoothing-computation','w08-detail-local-calculation']){
   const el=await p.$('#'+id);const bb=await el.boundingBox();
   await p.evaluate(e=>e.scrollIntoView(),el);await new Promise(r=>setTimeout(r,120));
   await el.screenshot({path:`${OUT}/${tag}_${id}.png`,captureBeyondViewport:true}).catch(e=>console.log(id,e.message));

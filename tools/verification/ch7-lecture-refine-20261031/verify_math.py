@@ -125,4 +125,16 @@ for (deg, s), v in want.items():
 for s, v in ((.2, 16.6), (.7, 5.3)):
     Lq = Lmat(s, 2); v2 = (Lq * Lq).sum(); ok(f"局部二次 span {s}: tr(LLᵀ)≈{v}", round(v2, 1) == v, f"{v2:.2f}")
     ok(" 代數：δ1+2trL−n = tr(LLᵀ)", abs(np.trace((np.eye(n) - Lq).T @ (np.eye(n) - Lq)) + 2 * np.trace(Lq) - n - v2) < 1e-6) if s == .7 else None
+# 迴歸樣條與平滑樣條：相同 df、不同曲線
+kn5 = np.quantile(x, np.linspace(0, 1, 7)[1:-1]); T5 = np.r_[[18.] * 4, kn5, [80.] * 4]
+B5 = BSpline.design_matrix(x, T5, 3).toarray(); ok("5 內部節點的立方樣條 9 個參數", B5.shape[1] == 9)
+fr = B5 @ np.linalg.lstsq(B5, y, rcond=None)[0]
+lo, hi = 0., 8.
+for _ in range(60):
+    mid = (lo + hi) / 2
+    if (1 / (1 + 10.**mid * d)).sum() > 9: lo = mid
+    else: hi = mid
+lam9 = 10.**((lo + hi) / 2); ybar = np.array([y[x == a].mean() for a in ux])
+gs = np.linalg.solve(Wm + lam9 * Kp, Wm @ ybar); fs = gs[np.searchsorted(ux, x)]
+diff = np.abs(fr - fs).max(); ok("df=9 平滑樣條", abs((1 / (1 + lam9 * d)).sum() - 9) < 1e-6, f"max|差|={diff:.2f}")
 print("FAILURES", fails); raise SystemExit(1 if fails else 0)

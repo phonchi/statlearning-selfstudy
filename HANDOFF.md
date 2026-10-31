@@ -847,6 +847,7 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - 新收合 `w08-detail-basis-fixed-learned`；其餘併入既有 `logit-ci`、`step-coding`、`spline-calculation`、`natural-basis`、`smoothing-df`、`smoothing-computation`、`w08proof-smooth`、`local-calculation`。刪除重複的薄板、效果圖、OLS 殘差段落與三個講義文字層截斷的壞連結。
 - 元件：`w08shrink`（`FRAMES_w08shrink`：Wage 相異年齡的加權 Reinsch 懲罰特徵值，61 個）；`w08loessSvg` 加方框／tricube 切換，指標「最大折動」是每 0.25 歲格點的二階差分最大值，一階差分會把尾端陡坡算成跳動，34 點格點則看不出差別。
 - 詞彙卡 +2（P-樣條、線性平滑器），改寫「基底函數」。
+- 後續追加收合 `w08-detail-spline-compare`：迴歸樣條、平滑樣條與懲罰迴歸樣條的簡短比較。
 
 **一併修正的既有錯誤**
 - GAM 卡片把 age 的 ANOVA（儲存格 96）當成 year 的結論；改用儲存格 95（線性 p≈0.002、非線性 p≈0.435）。
