@@ -67,7 +67,7 @@ async function shot(page, file) {
 
 const DRAG_CHECKS = {
   beyond_linearity: [['#w08stepSvg rect.drag', 1, 'w08stepCuts[1]', 6, 0], ['#w08knotSvg .drag', 0, 'w08knotXi', 6, 0]],
-  deep_learning: [['#w11fwdSvg .w11node', 0, 'w11fwdX[0]', 0, 12]],
+  deep_learning: [['#w11fwdSvg .w11node', 0, 'w11fwdX[0]', 0, -12]],
   unsupervised_learning: [['#w07spinSvg .drag', 0, 'w07spinAngle', 0, 16]],
 };
 

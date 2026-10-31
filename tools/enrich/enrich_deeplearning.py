@@ -884,16 +884,18 @@ function w11fwdDraw() {
   for (let j = 0; j < 4; j++) {
     const node = s.add('circle', { cls: 'w11node', cx: w11fwdIX, cy: w11fwdY(j), r: 17,
                                    fill: 'var(--card)', stroke: 'var(--ink)', 'stroke-width': 2 }, gn);
-    s.add('text', { cls: 'w11ntxt', x: w11fwdIX, y: w11fwdY(j) + 5, 'text-anchor': 'middle',
+    s.add('text', { cls: 'w11ntxt', x: w11fwdIX, y: w11fwdY(j) + 5, 'text-anchor': 'middle', 'pointer-events': 'none',
                     'font-size': 13, 'font-family': HC.MONO, fill: 'var(--ink)' }, gn)
       .textContent = HC.fmt(w11fwdX[j], 1);
     s.add('text', { cls: 'w11ntxt', x: w11fwdIX - 30, y: w11fwdY(j) + 5, 'text-anchor': 'end',
                     'font-size': 13, fill: 'var(--muted)' }, gl)
       .textContent = 'X' + '₁₂₃₄'[j];
+    /* 相對拖曳：以按下時的值為起點，往上拖變大。把手重畫時會被換掉，這個閉包仍是拖曳中的那一個 */
+    let y0 = null, v0 = 0;
     HC.drag(node, s, (pt) => {
       if (pt.y === null) return;
-      // 拖曳回傳的是資料座標；這個 svg 的定義域就是 viewBox，所以直接把 y 換算成 −2…2
-      const v = Math.max(-2, Math.min(2, (200 - pt.y) / 70));
+      if (y0 === null) { y0 = pt.y; v0 = w11fwdX[j]; }
+      const v = Math.max(-2, Math.min(2, v0 + (pt.y - y0) / 70));
       w11fwdX[j] = Math.round(v * 10) / 10;
       w11fwdDraw();
     }, { lockX: true });
