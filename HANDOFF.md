@@ -855,6 +855,11 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - 矩陣內的 `&A`、`&P` 會被建置流程改成 `&A;`、`&P;`，顯示多餘分號。**矩陣裡 `&` 後面直接接字母時，一律寫 `&amp;` 或在 `&` 後加空格；小寫更危險，`&alpha` 會變成 α 實體而不報錯。**
 - 式號：頁面未顯示的 (7.2)、(7.9)、(7.17) 改成文字；`x_0^{15}` 的錯誤解釋改為槓桿值。
 
+**拖曳卡頓（同日）**
+- `HC.drag` 原本把移動事件聽在把手上，元件重畫又換掉把手，拖一下就斷（第 7 章切點與節點、第 10 章前向傳播節點、第 12 章 PCA 旋轉）。現在聽在 `window`，並以 rAF 合併移動事件。`browser_check.js` 的 `DRAG_CHECKS` 用真滑鼠驗證能連續移動，新增可拖把手時加進去。
+- 第 7 章的 3000 個散點改成 `w08dotPaths`（6 條 path）並只畫一次；階梯與節點元件改用 `w08ages` 的分組統計，數值與舊版逐字相同。背景散點現在在 `dots` 層，信賴區間色帶蓋在它上面。
+- `.axtitle` 設 `pointer-events:none`：節點元件的標題原本會擋住預設位置的把手。
+
 **推測，非事實**：圖 7.10 的 16.4、5.3 接近局部二次的 $\operatorname{tr}(LL^T)$（16.57、5.33），局部線性 $\operatorname{tr}L$ 只有 10.64、3.69；R `loess` 的 `enp` 確實是 $\operatorname{tr}(LL^T)$（原碼 `one.delta + 2*trL - N`），但課本未交代圖的設定。
 
 **驗證**：見 `tools/verification/ch7-lecture-refine-20261031/README.md`。Stack Exchange 連結擋抓取，未讀原文。

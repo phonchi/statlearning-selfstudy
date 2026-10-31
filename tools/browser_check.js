@@ -65,6 +65,12 @@ async function shot(page, file) {
   }
 }
 
+const DRAG_CHECKS = {
+  beyond_linearity: [['#w08stepSvg rect.drag', 1, 'w08stepCuts[1]', 6, 0], ['#w08knotSvg .drag', 0, 'w08knotXi', 6, 0]],
+  deep_learning: [['#w11fwdSvg .w11node', 0, 'w11fwdX[0]', 0, 12]],
+  unsupervised_learning: [['#w07spinSvg .drag', 0, 'w07spinAngle', 0, 16]],
+};
+
 async function checkOne(browser, stem) {
   const url = 'file://' + path.join(ROOT, stem + '.html');
   const page = await browser.newPage();
@@ -111,6 +117,26 @@ async function checkOne(browser, stem) {
     if (typeof HC !== 'undefined') await HC._mathQueue;
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   });
+  // 可拖把手要能連續拖：曾經因為重畫換掉把手，拖一下就斷（第 7、10 章與 PCA 旋轉）
+  for (const [sel, idx, read, dx, dy] of DRAG_CHECKS[stem] || []) {
+    const pos = await page.evaluate(async (sel, idx) => {
+      const y = document.querySelectorAll(sel)[idx].getBoundingClientRect().top + scrollY - 300;
+      window.scrollTo({ top: y, behavior: 'instant' });
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      const b = document.querySelectorAll(sel)[idx].getBoundingClientRect();
+      return [b.x + b.width / 2, b.y + b.height / 2];
+    }, sel, idx);
+    const seen = new Set();
+    await page.mouse.move(pos[0], pos[1]); await page.mouse.down();
+    for (let i = 1; i <= 6; i++) {
+      await page.mouse.move(pos[0] + i * dx, pos[1] + i * dy);
+      await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+      seen.add(await page.evaluate(read));
+    }
+    await page.mouse.up();
+    if (seen.size < 4) note(stem, `拖曳 ${sel} 無法連續移動：6 次移動只看到 ${seen.size} 個值`);
+  }
+
   const firstProof = await page.$('details.proof > summary');
   if (firstProof) {
     await firstProof.focus(); await page.keyboard.press('Enter');

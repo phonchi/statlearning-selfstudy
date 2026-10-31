@@ -437,7 +437,7 @@ footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border
 .viz-svg .ax{stroke:var(--muted);stroke-width:1;}
 .viz-svg .gridl{stroke:var(--grid-line);stroke-width:1;}
 .viz-svg .axlab{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--muted);}
-.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);}
+.viz-svg .axtitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;fill:var(--accent2);pointer-events:none;}
 .viz-svg .dot{stroke:#fff;stroke-width:1;}
 .viz-svg .dot.drag{cursor:grab;}
 .viz-svg .dot.drag:active{cursor:grabbing;}
@@ -2616,29 +2616,45 @@ HC.svg = (id, o = {}) => {
 HC.drag = (node, svc, onMove, opts = {}) => {
   const clampX = x => Math.max(svc.xd[0], Math.min(svc.xd[1], x));
   const clampY = y => Math.max(svc.yd[0], Math.min(svc.yd[1], y));
-  let active = false;
-  const start = ev => {
-    active = true; node.setAttribute('data-dragging', '1');
-    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
-    ev.preventDefault();
+  let active = false, last = null, raf = 0;
+  const flush = () => {
+    raf = 0;
+    if (!last) return;
+    const p = last;
+    last = null;
+    onMove(p);
   };
   const move = ev => {
     if (!active) return;
     const d = svc.toData(ev);
-    onMove({ x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) });
+    last = { x: opts.lockX ? null : clampX(d.x), y: opts.lockY ? null : clampY(d.y) };
+    if (!raf) raf = requestAnimationFrame(flush);
     ev.preventDefault();
   };
-  const end = () => { active = false; node.removeAttribute('data-dragging'); };
+  const end = () => {
+    if (!active) return;
+    active = false;
+    node.removeAttribute('data-dragging');
+    window.removeEventListener('pointermove', move);
+    window.removeEventListener('pointerup', end);
+    window.removeEventListener('pointercancel', end);
+    if (raf) cancelAnimationFrame(raf);
+    flush();
+  };
+  /* 移動聽在 window：許多元件重畫時會換掉把手，聽在 node 上拖一下就斷了 */
+  const start = ev => {
+    active = true; node.setAttribute('data-dragging', '1');
+    if (node.setPointerCapture && ev.pointerId !== undefined) node.setPointerCapture(ev.pointerId);
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+    ev.preventDefault();
+  };
   node.addEventListener('pointerdown', start);
-  node.addEventListener('pointermove', move);
-  node.addEventListener('pointerup', end);
-  node.addEventListener('pointercancel', end);
   node.style.touchAction = 'none';
   return () => {
     node.removeEventListener('pointerdown', start);
-    node.removeEventListener('pointermove', move);
-    node.removeEventListener('pointerup', end);
-    node.removeEventListener('pointercancel', end);
+    end();
   };
 };
 

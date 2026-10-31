@@ -1066,16 +1066,50 @@ const w08sub = (() => {
   const yhi = Math.ceil(Math.max.apply(null, F.wage) / 20) * 20 + 10;
   return { xs: F.age, ys: F.wage, n: F.age.length, xd: [16, 82], yd: [ylo, yhi] };
 })();
+/* 依年齡分組並預算總和。年齡只有 61 個值，分組後的正常方程與 3000 列完全相同，拖曳時才算得快 */
+const w08ages = (() => {
+  const by = new Map();
+  w08sub.xs.forEach((x, i) => {
+    if (!by.has(x)) by.set(x, { x: x, n: 0, sum: 0, sq: 0, idx: [] });
+    const a = by.get(x), y = w08sub.ys[i];
+    a.n++; a.sum += y; a.sq += y * y; a.idx.push(i);
+  });
+  return Array.from(by.values()).sort((a, b) => a.x - b.x);
+})();
+const w08tss = (() => {
+  const my = HC.stat.mean(w08sub.ys);
+  return w08sub.ys.reduce((t, y) => t + (y - my) ** 2, 0);
+})();
+function w08ageFit(row) {
+  const X = w08ages.map(a => row(a.x));
+  const beta = w08solve(X, w08ages.map(a => a.sum / a.n), w08ages.map(a => a.n));
+  let rss = 0;
+  w08ages.forEach((a, i) => { const f = w08dot(X[i], beta); rss += a.sq - 2 * f * a.sum + a.n * f * f; });
+  return { beta, rss, tss: w08tss, r2: w08tss > 0 ? 1 - rss / w08tss : NaN };
+}
 const w08GRAY = 'rgba(120,116,104,.55)';
 
 /* 把 age 壓到 [-1,1] 再取冪次：跟產生器的 tscale 同一個定義。
    不做這步的話 age^8 會讓正規方程的條件數爛掉，擬合出來的曲線會歪。 */
 function w08ts(a) { return 2 * (a - 18) / (80 - 18) - 1; }
 
+/* 3000 個點：併成幾條 path，拖曳與滑桿才不必每次重建 3000 個元素。
+   分 6 條是為了保留點重疊時變深的密度感；同一條 path 內重疊不會加深。 */
+function w08dotPaths(s, idx, r, attrs, g) {
+  const parts = [[], [], [], [], [], []];
+  idx.forEach((i, n) => {
+    parts[n % 6].push('M' + (s.X(w08sub.xs[i]) - r).toFixed(1) + ' ' + s.Y(w08sub.ys[i]).toFixed(1)
+      + 'a' + r + ' ' + r + ' 0 1 0 ' + 2 * r + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0');
+  });
+  return parts.filter(p => p.length).map(p => s.add('path',
+    Object.assign({ d: p.join(''), 'pointer-events': 'none' }, attrs), g));
+}
+/* 背景散點只畫一次，放在 g 的下面 */
 function w08scatter(s, g) {
-  for (let i = 0; i < w08sub.n; i++) {
-    s.dot(w08sub.xs[i], w08sub.ys[i], { r: 3.4, fill: w08GRAY, stroke: 'none' }, g);
-  }
+  if (s.w08dots) return;
+  s.w08dots = s.layer('dots');
+  g.parentNode.insertBefore(s.w08dots, g);
+  w08dotPaths(s, w08sub.xs.map((_, i) => i), 3.4, { fill: w08GRAY }, s.w08dots);
 }
 
 /* ---------- P01 多項式次數滑桿（baked：FRAMES_w08poly） ---------- */
@@ -1157,68 +1191,85 @@ function w08stepQuantileCuts(k) {
   for (let j = 1; j < k; j++) out.push(HC.stat.quantile(sorted, j / k));
   return out;
 }
+let w08stepHandles = [];
 function w08stepSetup() {
-  w08stepSvc = HC.svg('w08stepSvg', { xd: w08sub.xd, yd: w08sub.yd, h: 330 });
-  w08stepSvc.grid(6, 5, { xtitle: 'age（歲）', ytitle: 'wage（千美元）', xdec: 0, ydec: 0 });
+  const s = w08stepSvc = HC.svg('w08stepSvg', { xd: w08sub.xd, yd: w08sub.yd, h: 330 });
+  s.grid(6, 5, { xtitle: 'age（歲）', ytitle: 'wage（千美元）', xdec: 0, ydec: 0 });
+  ['bands', 'dots', 'main', 'cutLines', 'cuts'].forEach(n => s.layer(n));
+  /* 只有換段的年齡才要改顏色 */
+  w08ages.forEach(a => {
+    a.band = 0;
+    a.paths = w08dotPaths(s, a.idx, 3.4, { fill: HC.tok.train, opacity: .5 }, s.layer('dots'));
+  });
 }
 function w08stepSegments() {
   const edges = [w08sub.xd[0]].concat(w08stepCuts, [w08sub.xd[1]]);
   const segs = [];
   for (let j = 0; j < edges.length - 1; j++) {
-    const idx = [];
-    for (let i = 0; i < w08sub.n; i++) {
-      const x = w08sub.xs[i];
-      if (x >= edges[j] && (j === edges.length - 2 ? x <= edges[j + 1] : x < edges[j + 1])) idx.push(i);
-    }
-    const ys = idx.map(i => w08sub.ys[i]);
-    segs.push({ lo: edges[j], hi: edges[j + 1], n: ys.length,
-                mean: ys.length ? HC.stat.mean(ys) : NaN, idx: idx });
+    const last = j === edges.length - 2;
+    const seg = { lo: edges[j], hi: edges[j + 1], n: 0, sum: 0, sq: 0, ages: [] };
+    w08ages.forEach(a => {
+      if (a.x >= seg.lo && (last ? a.x <= seg.hi : a.x < seg.hi)) {
+        seg.n += a.n; seg.sum += a.sum; seg.sq += a.sq; seg.ages.push(a);
+      }
+    });
+    seg.mean = seg.n ? seg.sum / seg.n : NaN;
+    segs.push(seg);
   }
   return segs;
 }
-function w08stepDraw() {
-  const s = w08stepSvc, g = s.clearLayer('main');
-  const segs = w08stepSegments();
-  let rss = 0, tss = 0;
-  const my = HC.stat.mean(w08sub.ys);
-  segs.forEach(sg => {
-    sg.idx.forEach(i => { rss += (w08sub.ys[i] - sg.mean) ** 2; });
-  });
-  for (let i = 0; i < w08sub.n; i++) tss += (w08sub.ys[i] - my) ** 2;
-  segs.forEach((sg, j) => {
-    if (j % 2 === 0) s.box(sg.lo, s.yd[0], sg.hi, s.yd[1], { fill: 'rgba(44,62,122,.045)' }, g);
-    sg.idx.forEach(i => s.dot(w08sub.xs[i], w08sub.ys[i],
-      { r: 3.4, fill: j % 2 === 0 ? HC.tok.train : HC.tok.accent2, stroke: 'none', opacity: .5 }, g));
-    if (!Number.isNaN(sg.mean)) {
-      s.poly([[sg.lo, sg.mean], [sg.hi, sg.mean]], { cls: 'fit', sw: 3.4 }, g);
-      s.txt((sg.lo + sg.hi) / 2, sg.mean, HC.fmt(sg.mean, 1), { dy: -8, cls: 'vlab' }, g);
-    }
-  });
-  const drag = s.clearLayer('cuts');
-  w08stepCuts.forEach((c, j) => {
-    s.seg(c, s.yd[0], c, s.yd[1], { stroke: HC.tok.held, sw: 2, dash: '4 3', cls: 'resid' }, drag);
+/* 把手只在段數改變時才重建，拖曳中維持同一個元素 */
+function w08stepBuildHandles() {
+  const s = w08stepSvc, g = s.clearLayer('cuts');
+  w08stepHandles = w08stepCuts.map((c, j) => {
     const h = s.add('rect', {
-      x: s.X(c) - 7, y: s.pad.t + 2, width: 14, height: 16, rx: 4,
+      y: s.pad.t + 2, width: 14, height: 16, rx: 4,
       fill: HC.tok.held, stroke: '#fff', 'stroke-width': 1.5, cls: 'dot drag',
-    }, drag);
+    }, g);
     HC.drag(h, s, p => {
       const lo = j === 0 ? s.xd[0] + 2 : w08stepCuts[j - 1] + 2;
       const hi = j === w08stepCuts.length - 1 ? s.xd[1] - 2 : w08stepCuts[j + 1] - 2;
       w08stepCuts[j] = Math.max(lo, Math.min(hi, p.x));
       w08stepDraw();
     }, { lockY: true });
+    return h;
   });
+}
+function w08stepDraw() {
+  const s = w08stepSvc, bands = s.clearLayer('bands'), g = s.clearLayer('main'), lines = s.clearLayer('cutLines');
+  const segs = w08stepSegments();
+  let rss = 0;
+  segs.forEach((sg, j) => {
+    if (sg.n) rss += sg.sq - sg.n * sg.mean * sg.mean;
+    if (j % 2 === 0) s.box(sg.lo, s.yd[0], sg.hi, s.yd[1], { fill: 'rgba(44,62,122,.045)' }, bands);
+    sg.ages.forEach(a => {
+      if (a.band !== j % 2 + 1) {
+        a.band = j % 2 + 1;
+        a.paths.forEach(p => p.setAttribute('fill', j % 2 === 0 ? HC.tok.train : HC.tok.accent2));
+      }
+    });
+    if (!Number.isNaN(sg.mean)) {
+      s.poly([[sg.lo, sg.mean], [sg.hi, sg.mean]], { cls: 'fit', sw: 3.4 }, g);
+      s.txt((sg.lo + sg.hi) / 2, sg.mean, HC.fmt(sg.mean, 1), { dy: -8, cls: 'vlab' }, g);
+    }
+  });
+  if (w08stepHandles.length !== w08stepCuts.length) w08stepBuildHandles();
+  w08stepCuts.forEach((c, j) => {
+    s.seg(c, s.yd[0], c, s.yd[1], { stroke: HC.tok.held, sw: 2, dash: '4 3', cls: 'resid' }, lines);
+    w08stepHandles[j].setAttribute('x', s.X(c) - 7);
+  });
+  const r2 = w08tss > 0 ? 1 - rss / w08tss : NaN;
   $('w08stepSeg').textContent = String(segs.length);
   $('w08stepCutTxt').textContent = w08stepCuts.map(c => HC.fmt(c, 1)).join(' · ');
   $('w08stepRss').textContent = HC.fmt(rss, 0);
-  $('w08stepR2').textContent = HC.fmt(tss > 0 ? 1 - rss / tss : NaN, 4);
+  $('w08stepR2').textContent = HC.fmt(r2, 4);
   $('w08stepRows').innerHTML = segs.map((sg, j) =>
     '<div>第 ' + (j + 1) + ' 段 [' + HC.fmt(sg.lo, 1) + ', ' + HC.fmt(sg.hi, 1) + ')'
     + ' · n = ' + sg.n + ' · 平均 <b>' + HC.fmt(sg.mean, 1) + '</b></div>').join('');
   setStatus('w08stepStatus', segs.length + ' 段，切點在 '
     + w08stepCuts.map(c => HC.fmt(c, 1)).join('、')
     + '。每一段的紅線就是那一段的樣本平均，段內 RSS 合計 ' + HC.fmt(rss, 0)
-    + '，R² = ' + HC.fmt(tss > 0 ? 1 - rss / tss : NaN, 4) + '。');
+    + '，R² = ' + HC.fmt(r2, 4) + '。');
 }
 function w08stepSetK() {
   w08stepK = parseInt($('w08stepSel').value, 10);
@@ -1340,10 +1391,7 @@ function w08knotRow(x) {
 }
 function w08knotDraw() {
   const s = w08knotSvc, g = s.clearLayer('main');
-  const X = [];
-  for (let i = 0; i < w08sub.n; i++) X.push(w08knotRow(w08sub.xs[i]));
-  const beta = w08solve(X, w08sub.ys, null);
-  const st = w08fitStats(X, w08sub.ys, beta);
+  const st = w08ageFit(w08knotRow), beta = st.beta;
   w08scatter(s, g);
   /* 左右兩段分開畫，否則不連續的層級會被一條垂直線接起來 */
   const left = HC.stat.seq(s.xd[0] + 1, w08knotXi - 0.02, 90).filter(x => x <= w08knotXi);
@@ -1593,12 +1641,8 @@ function w08loessApply(f) {
   const span = f.span, r = f.r;
   s.box(f.x0 - r.dmax, s.yd[0], f.x0 + r.dmax, s.yd[1],
         { fill: 'rgba(243,156,18,.10)' }, g);
-  const inN = {};
-  r.idx.forEach(i => { inN[i] = true; });
-  for (let i = 0; i < w08sub.n; i++) {
-    s.dot(w08sub.xs[i], w08sub.ys[i],
-          { r: inN[i] ? 4.4 : 3, fill: inN[i] ? HC.tok.held : w08GRAY, stroke: 'none' }, g);
-  }
+  w08scatter(s, g);
+  w08dotPaths(s, r.idx, 4.4, { fill: HC.tok.held }, g);
   /* tricube 權重的鐘形：畫在圖的下緣 */
   const bell = [];
   for (let t = -1; t <= 1.0001; t += 0.05) {
