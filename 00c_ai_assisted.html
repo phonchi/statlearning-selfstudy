@@ -741,7 +741,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <h2>AI 擅長什麼、會在哪裡出錯 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 協作的責任界線（前言）</a></span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>AI 可以寫程式、整理資料、建議圖表，也能把統計術語講得很流暢。這一頁用一份資料走完一次小分析：
+  <p>這一頁用一份資料走完一次小分析：
   沿用 <a href="00b_setup.html#data">00B 取得的課程 Auto.csv</a>，從清理 <code>horsepower</code> 開始，
   一路到讀圖、比較模型與讀標準誤。每一步都讓 AI 起草，再由你核對。概念參考 Bruce、Bruce 與 Gedeck 的
   《AI-Assisted Statistics for Data Scientists》第三版，完整書目見頁末。</p>
@@ -759,7 +759,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>分級</th><th>適合的任務</th><th>至少要做的檢查</th></tr></thead>
   <tbody><tr><td>較低風險</td><td>你已懂概念、做過多次的資料整理；查語法；讀錯誤訊息；標準圖表的繪圖程式；檔案格式轉換</td><td>執行並比對一個已知小例子</td></tr><tr><td>中風險</td><td>EDA、特徵工程、模型與檢定的程式草稿、解讀圖表與模型輸出</td><td>核對假設、資料切分、單位與完整輸出</td></tr><tr><td>高風險</td><td>因果解釋、族群代表性、模型上線、正式結論與政策建議</td><td>由人主導；資料與研究設計提供依據，必要時加領域審查</td></tr></tbody>
-</table></div><p>書中轉引的低風險清單有一個共同前提：<strong>你在概念上已經懂、自己先試過</strong>，AI 只幫你補語法或樣板。你還不懂的概念，請 AI 解釋可以，但要回到文件或課程內容核對。</p></div></details>
+</table></div><p>書中轉引的低風險清單裡，寫程式與除錯的項目多半附了前提：<strong>你在概念上已經懂、自己先試過</strong>，AI 只幫你補語法或樣板。清單也列了學習用途，例如理解基本程式概念或參數的意義；這時請 AI 解釋可以，但要回到文件或課程內容核對。</p></div></details>
 
   <h3>AI 為什麼會說錯，而且說得很像對的</h3>
   <p>書中提出幾個解釋，後面幾節的例子都會用到：</p>
@@ -796,7 +796,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:END sec:context -->
 
   <p>AI 只看得到你給它的內容。欄位名稱通常很短，<code>year</code> 是西元年還是兩位數編碼？<code>origin</code> 的 1、2、3 代表什麼？
-  <code>?</code> 是遺漏還是一種車款？這些答案不在資料表裡，而在<strong>資料字典</strong>裡。書中建議把資料字典寫成 YAML
+  <code>?</code> 是遺漏還是一種車款？這些答案要查<strong>資料字典</strong>。書中建議把資料字典寫成 YAML
   這類機器可讀、人也看得懂的格式，連同幾列樣本一起交給 AI。</p>
 
   <p>下面是 Auto 的一份精簡字典。內容依 ISLP 的 <a href="https://islp.readthedocs.io/en/latest/datasets/Auto.html">Auto 資料說明</a>
@@ -899,6 +899,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 
   <p>新的 AI 工具可以直接讀圖片。你把圖貼上去，請它寫一段解讀，它通常能指出主要趨勢，再追問幾次，還可能提出你沒想到的分組或後續分析。
   這很有用。但書中的例子也顯示，模型會把密集區的範圍讀偏，或寫出圖上沒有的內容，語氣卻一樣篤定。</p>
+
+  <p>從這一節起，圖、摘要與模型都沿用課程 lab 的 392 筆完整資料，也就是排除 horsepower 缺值 5 列後的版本。
+  如果你用的是清理後仍保留 397 列的資料，摘要數字會略有不同（例如 mpg 的平均與第一四分位數）。</p>
 
   <p>在 Auto 上試一次。執行課程 Ch01 lab 的 pairplot，把圖交給 AI 解讀：</p>
 
@@ -1007,7 +1010,7 @@ max       24.800000   82.000000    3.000000</pre></div>
   還會主動建議取對數、加樣條或做交叉驗證。這些建議通常合理，但你要分清楚三件事：</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>問題</th><th>要看什麼</th></tr></thead>
-  <tbody><tr><td>有沒有關聯</td><td>係數的正負與 p 值；關聯不代表因果</td></tr><tr><td>效果多大</td><td>係數乘上合理的變化量，並保留單位</td></tr><tr><td>證據多強、多穩定</td><td>標準誤、區間，以及換一種資料切法後結果是否改變</td></tr></tbody>
+  <tbody><tr><td>有沒有關聯</td><td>係數的正負與 p 值；關聯不代表因果</td></tr><tr><td>效果多大</td><td>線性項：係數乘上合理的變化量，並保留單位；有二次項時，改比較兩個指定馬力值的預測差</td></tr><tr><td>證據多強、多穩定</td><td>標準誤、區間，以及換一種資料切法後結果是否改變</td></tr></tbody>
 </table></div>
 
   <p>在 Auto 上，AI 讀完上一節的圖，很可能會說「二次模型比線性好」。這句話要成立，至少要有兩種證據：
@@ -1070,7 +1073,7 @@ max       24.800000   82.000000    3.000000</pre></div>
   <h2>同一係數的兩個不確定性估計不一致時 <span class="sec-badge">課程 Lab Ch5 · lab 範例</span></h2>
 <!-- GEN:END sec:uncertainty -->
 
-  <p>迴歸輸出的係數旁邊通常附有標準誤，描述「如果重新抽一份樣本，這個係數大約會變動多少」。AI 讀到兩組不一樣的標準誤時，
+  <p>比較完預測，再看係數本身有多不確定。迴歸輸出的係數旁邊通常附有標準誤，描述「如果重新抽一份樣本，這個係數大約會變動多少」。AI 讀到兩組不一樣的標準誤時，
   常見的反應是挑一個、或說「其中一個算錯了」。比較好的第一步是<strong>追問兩種算法各自依賴什麼假設</strong>。</p>
 
   <p>課程 Ch05 lab 用兩種方法估計 mpg 對 horsepower 迴歸係數的標準誤：</p>
@@ -1139,17 +1142,17 @@ Name: std err, dtype: float64</pre></div>
   <thead><tr><th>係數</th><th>公式</th><th>bootstrap</th><th>怎麼讀</th></tr></thead>
   <tbody><tr><td>線性：截距</td><td>0.717</td><td>0.849</td><td>bootstrap 大約多 18%</td></tr><tr><td>線性：horsepower</td><td>0.0064（輸出顯示 0.006）</td><td>0.0074</td><td>bootstrap 大約多 14%</td></tr><tr><td>二次：horsepower</td><td>0.031</td><td>0.033</td><td>接近</td></tr><tr><td>二次：horsepower²</td><td>0.000（四捨五入）</td><td>0.00012</td><td>接近</td></tr><tr><td>二次：截距</td><td>1.800</td><td>2.068</td><td>仍有差距</td></tr></tbody>
 </table></div>
-<p><strong>線性模型的差距是值得追查的線索。</strong>公式標準誤要在模型形式正確、誤差變異固定時才準，而且它是把 horsepower 當作已知、
+<p><strong>線性模型的差距是值得追查的線索。</strong>除了模型形式正確、誤差變異固定這兩個假設，公式標準誤還把 horsepower 當作已知，
 只看誤差帶來的變動。mpg 與 horsepower 的關係是彎的，直線擬合的殘差被放大，誤差變異的估計也跟著受影響。
 bootstrap 每次連同 horsepower 一起重抽，模型形式不對或誤差變異不固定時，仍能反映係數實際的變動；它仍然假設各列彼此獨立，也不保證一定比較準。
 單看兩個數字，無法判斷差距來自哪一個假設，要再看殘差圖等證據。</p>
-<p><strong>改用二次模型後，斜率項的兩種估計變得接近，截距仍有差距。</strong>這提醒你，除了模型形式，其他假設也值得檢查，
+<p><strong>改用二次模型後，一次項與二次項係數的兩種估計變得接近，截距仍有差距。</strong>模型形式以外的假設也要看，
 例如 mpg 的分散程度是否隨馬力改變。課本說「二次模型的兩種估計對應得更好」，要對照每一個係數去看，不要只看結論。</p>
 <p><strong>能跑不代表做對：一個真實的例子。</strong>課程筆記本早先沿用 ISLP lab 的 <code>boot_SE</code>，依 index 標籤重抽；
 而目前 ISLP 套件載入的 Auto 以車名當 index，而且有重複（本頁資料字典寫過「同名的車可能出現不只一次」）。依標籤抽樣時，
 <code>D.loc</code> 會把同名的車一次全部取出，一份重抽樣本約有 690 列，而不是 392 列。
-程式沒有任何錯誤訊息，算出的截距標準誤約 0.73，看起來也很合理；但重抽的方式已經和原本的資料不同（同名的車整批進出、樣本變大），本例因此低估了變動。改成依列的位置抽樣後，
-結果與 ISLP 課本印出的 0.85 與 0.0074 相同。這類錯誤有個簡單的檢查：印出一份重抽樣本的列數，確認它等於 n。</p>
+程式沒有任何錯誤訊息，算出的截距標準誤約 0.73，看起來也合理。問題出在重抽方式：同名的車整批進出，樣本變大，本例因此低估了變動。
+改成依列的位置抽樣後，結果與 ISLP 課本印出的 0.85 與 0.0074 相同。這類錯誤有個簡單的檢查：印出一份重抽樣本的列數，確認它等於 n。</p>
 <p>完整說明見 <a href="resampling_methods.html#bootstrap">bootstrap</a> 與 <a href="linear_regression.html#problems">線性迴歸的潛在問題</a>。</p>
 </div></details>
 
@@ -1221,7 +1224,7 @@ bootstrap 每次連同 horsepower 一起重抽，模型形式不對或誤差變�
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 2 · 核對讀圖</div>
   <p>你請兩個 AI 描述 mpg 的分布。一個說「中間一半的車在 17 到 29 mpg」，另一個說「中間一半的車在 20 到 35 mpg」。你先做什麼？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。「中間一半」由 25% 與 75% 分位數決定，這裡是 17 與 29，第一個說法正確。若 AI 說的是「多數車」，四分位數就不夠，要直接算落在區間內的比例。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 用 <code>describe()</code> 的四分位數核對，再決定採用哪個說法</div><div class="quiz-opt" data-correct="false" data-fb="模型共識不能取代資料；三個模型也可能都讀錯。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 再問第三個 AI，看多數支持哪一個</div><div class="quiz-opt" data-correct="false" data-fb="把兩個未核對的說法平均，只會得到第三個未核對的說法。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 取兩個範圍的平均</div></div>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。「中間一半」由 25% 與 75% 分位數決定，392 筆版本是 17 與 29，第一個說法正確。若 AI 說的是「多數車」，四分位數就不夠，要直接算落在區間內的比例。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 用 <code>describe()</code> 的四分位數核對，再決定採用哪個說法</div><div class="quiz-opt" data-correct="false" data-fb="模型共識不能取代資料；三個模型也可能都讀錯。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 再問第三個 AI，看多數支持哪一個</div><div class="quiz-opt" data-correct="false" data-fb="把兩個未核對的說法平均，只會得到第三個未核對的說法。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 取兩個範圍的平均</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
