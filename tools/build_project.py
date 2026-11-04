@@ -51,15 +51,15 @@ FLOW = f"""
   <div class="step"><b>③ 下載原始檔</b>回到資料的原始機關下載，存進 <code>data/raw/</code>，記下網址與取得日期。</div>
   <div class="step"><b>④ 在本機分析</b>之後的清理、EDA、建模都從本機的原始檔開始跑，不再依賴線上查詢。</div>
 </div>
-{info("為什麼一定要落地存檔？",
+{info("為什麼要把原始檔存下來？",
       "線上查詢服務有額度限制，API 資料也會更新或修訂。只要原始檔存在本機，"
       "額度用完、服務改版或資料被更新，都不影響你的專題，助教也能重現你的結果。")}
 """
 
 # ── P02 ────────────────────────────────────────────────────────────────
 SOURCES = f"""
-<p>下表的來源都不強制使用，任何可靠的來源都可以。前五個是台灣的官方資料，免費、授權清楚；
-Twinkle Hub 適合「用中文描述需求、讓 agent 幫你找資料」；國際題目可以考慮 FRED 與 Our World in Data。</p>
+<p>下表的來源都不強制使用，任何可靠的來源都可以。前五個是台灣政府機關的官方資料，都免費，授權條款請到各站確認；
+Twinkle Hub 適合用中文描述需求、讓 agent 幫你找資料；做國際題目可以看 FRED 與 Our World in Data。</p>
 {table(["來源", "適合的題目", "怎麼取得", "帳號／金鑰"], [
     [a("https://data.gov.tw/", "政府資料開放平臺"), "各部會資料，題材最廣",
      "網頁下載（CSV、JSON、XML）；也有不需金鑰的 REST API", "不需要"],
@@ -100,8 +100,8 @@ Twinkle Hub 適合「用中文描述需求、讓 agent 幫你找資料」；國�
 # ── P03 ────────────────────────────────────────────────────────────────
 MCP = f"""
 <p><strong>MCP</strong>（Model Context Protocol）是讓 AI agent 呼叫外部工具的標準介面。
-資料平台提供 MCP 端點之後，agent 就能直接搜尋資料目錄、查詢資料，不用你手動翻網頁。
-下面以 Twinkle Hub 為例；其他提供遠端 MCP 的服務，接法都一樣，只是換網址與登入方式。</p>
+資料平台有 MCP 端點，agent 就能自己搜尋資料目錄、查資料，不用你一頁頁翻網站。
+下面用 Twinkle Hub 示範；其他提供遠端 MCP 的服務接法相同，換掉網址與登入方式就好。</p>
 
 <h3>1. 取得金鑰，放進環境變數</h3>
 <p>到 {a("https://hub.twinkleai.tw/zh-TW", "Twinkle Hub")} 註冊，在 Dashboard 取得以 <code>sk-</code> 開頭的金鑰。
@@ -121,7 +121,7 @@ claude mcp add --transport http twinkle-hub https://api.twinkleai.tw/mcp/ \\
   --header "Authorization: Bearer $TWINKLE_HUB_API_KEY"
 claude mcp list        # 確認狀態
 ''')}
-<p>預設存在你自己的使用者設定裡。不要加 <code>--scope project</code>，那會把金鑰寫進專案的 <code>.mcp.json</code>。</p>
+<p>這個設定預設存在你自己的使用者設定裡，不會進專案。別加 <code>--scope project</code>，加了金鑰會寫進專案的 <code>.mcp.json</code>，一 commit 就外流。</p>
 
 <p><strong>Codex CLI</strong>（Twinkle Hub 官方文件）：</p>
 {code('''
@@ -131,8 +131,8 @@ codex mcp list
 ''')}
 <p>如果啟動時出現 30 秒逾時，在 <code>~/.codex/config.toml</code> 的 <code>[mcp_servers.twinkle-hub]</code> 底下加一行 <code>startup_timeout_sec = 60</code>。</p>
 
-<p><strong>OpenCode</strong>（Twinkle Hub 文件沒有列出；以下依 {a("https://opencode.ai/docs/mcp-servers/", "OpenCode 官方 MCP 說明")} 撰寫，
-已在 OpenCode 1.18 確認設定能被讀取並連到端點）。在專案根目錄建立 <code>opencode.json</code>：</p>
+<p><strong>OpenCode</strong>（Twinkle Hub 文件沒寫，下面照 {a("https://opencode.ai/docs/mcp-servers/", "OpenCode 官方 MCP 說明")} 寫成，
+在 OpenCode 1.18 試過：設定讀得到，也連得上端點）。在專案根目錄建立 <code>opencode.json</code>：</p>
 {code('''
 {
   "$schema": "https://opencode.ai/config.json",
@@ -185,7 +185,7 @@ PROMPTS = f"""
 
 # ── P05 ────────────────────────────────────────────────────────────────
 REPRO = f"""
-<p>期末專題要求<strong>繳交的程式能從頭跑完，重現報告裡的數字與圖</strong>。照下面的結構整理，大部分問題就解決了：</p>
+<p>期末專題要求<strong>繳交的程式能從頭跑完，重現報告裡的數字與圖</strong>。專案可以照這個結構整理：</p>
 {code('''
 my-project/
 ├── README.md          # 怎麼跑：環境、執行指令、會產生哪些圖表
@@ -200,18 +200,18 @@ my-project/
 └── .gitignore         # 列入 .env；太大的資料檔也排除
 ''')}
 <ul>
-  <li><strong>固定隨機種子</strong>：切分資料、交叉驗證、隨機森林等都設 <code>random_state</code>。</li>
-  <li><strong>資料要拿得到</strong>：小檔案可以直接附上；大檔案附下載連結或 <code>fetch_data.py</code>，並寫明取得日期。
-  經 API 或 MCP 查詢的資料，要把查到的結果存成檔案一起附上，<strong>助教重現時不應該需要任何金鑰</strong>。</li>
-  <li><strong>交件前自己測一次</strong>：在乾淨的環境（例如新的 Colab 或新的虛擬環境）照 README 從頭跑，數字和圖要跟報告一致。</li>
+  <li>切分資料、交叉驗證、隨機森林這類有隨機性的步驟，都要設 <code>random_state</code>。</li>
+  <li>小檔案直接附上；大檔案附下載連結或 <code>fetch_data.py</code>，寫明取得日期。
+  經 API 或 MCP 查到的資料，要存成檔案一起附上，助教重現時不應該需要任何金鑰。</li>
+  <li>交件前找個乾淨的環境（新的 Colab 或新的虛擬環境），照 README 從頭跑一次，確認數字和圖跟報告一樣。</li>
 </ul>
-<p>要記錄哪些 AI 協作過程，可以參考 <a href="../00c_ai_assisted.html#record">課前準備 C 的紀錄表</a>；
-個資或未公開資料不要貼進雲端 AI 服務，也在同一節。</p>
+<p>AI 協作的過程要記哪些東西，可以參考 <a href="../00c_ai_assisted.html#record">課前準備 C 的紀錄表</a>；
+同一節也講了哪些資料（例如個資、未公開的研究資料）不該貼進雲端 AI 服務。</p>
 """
 
 # ── P06 ────────────────────────────────────────────────────────────────
 DISCLOSE = f"""
-<p>使用 AI 工具完全沒問題，但<strong>書面報告與簡報都要簡短說明</strong>用了哪些工具、用在哪些地方，
+<p>可以放心用 AI 工具，只是<strong>書面報告與簡報都要簡短說明</strong>用了哪些工具、用在哪裡，
 不需要附對話紀錄。報告放在 Acknowledgements 裡，簡報放一張投影片或某頁的角落即可。例如：</p>
 {code('''
 AI use: We used Claude Code to search Taiwan open-data catalogs and to draft
