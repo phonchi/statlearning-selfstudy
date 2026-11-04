@@ -1539,7 +1539,7 @@ $$\operatorname{Var}(\bar X)=\frac1{n^2}\left[\sum_i\operatorname{Var}(X_i)+2\su
 <div class="pseudo-code" style="font-size:.78rem;">
 <span class="line">Portfolio = load_data(<span class="str">'Portfolio'</span>)</span>
 <span class="line"><span class="kw">def</span> <span class="fn">alpha_func</span>(D, idx):</span>
-<span class="line">   cov_ = np.cov(D[[<span class="str">'X'</span>,<span class="str">'Y'</span>]].loc[idx], rowvar=<span class="num">False</span>)</span>
+<span class="line">   cov_ = np.cov(D[[<span class="str">'X'</span>,<span class="str">'Y'</span>]].iloc[idx], rowvar=<span class="num">False</span>)  <span class="com"># idx 是列的位置</span></span>
 <span class="line"> <span class="kw">return</span> ((cov_[<span class="num">1</span>,<span class="num">1</span>] - cov_[<span class="num">0</span>,<span class="num">1</span>]) /</span>
 <span class="line">           (cov_[<span class="num">0</span>,<span class="num">0</span>]+cov_[<span class="num">1</span>,<span class="num">1</span>]-<span class="num">2</span>*cov_[<span class="num">0</span>,<span class="num">1</span>]))</span>
 <span class="line"> </span>
@@ -1572,14 +1572,16 @@ $$\operatorname{Var}(\bar X)=\frac1{n^2}\left[\sum_i\operatorname{Var}(X_i)+2\su
 <span class="line">    first_, second_ = <span class="num">0</span>, <span class="num">0</span></span>
 <span class="line">    n = n <span class="kw">or</span> D.shape[<span class="num">0</span>]</span>
 <span class="line"> <span class="kw">for</span> _ <span class="kw">in</span> trange(B):</span>
-<span class="line">        idx = rng.choice(D.index,</span>
+<span class="line"> <span class="com"># 依「列的位置」抽樣：Auto 的 index 是車名且有重複，</span></span>
+<span class="line"> <span class="com"># 若用 D.index 抽標籤，D.loc 會把同名的車一次全部取出，重抽樣本會多於 n 列</span></span>
+<span class="line">        idx = rng.choice(D.shape[<span class="num">0</span>],</span>
 <span class="line">                         n,</span>
 <span class="line">                         replace=<span class="num">True</span>)</span>
 <span class="line">        value = func(D, idx)</span>
 <span class="line">        first_ += value</span>
 <span class="line">        second_ += value**<span class="num">2</span></span>
 <span class="line"> <span class="kw">return</span> np.sqrt(second_ / B - (first_ / B)**<span class="num">2</span>)</span></div>
-<p class="dx-note">在 Portfolio 資料上，$\mathrm{SE}(\hat\alpha)$ 的 bootstrap 估計是 <strong>0.0912</strong>。注意這支函式用 $E[\theta^2] - (E[\theta])^2$ 累加，不必存下 1000 個值。</p>
+<p class="dx-note">在 Portfolio 資料上，$\mathrm{SE}(\hat\alpha)$ 的 bootstrap 估計是 <strong>0.0912</strong>。注意這支函式用 $E[\theta^2] - (E[\theta])^2$ 累加，不必存下 1000 個值；它抽的是列的位置，不是 index 標籤。Auto 的 index 是車名且有重複，依標籤抽樣會把同名的車一次全部取出，標準誤會被低估。</p>
 <span class="dx-src" data-lab-cells="59,61" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">
@@ -1636,7 +1638,7 @@ $$\operatorname{Var}(\bar X)=\frac1{n^2}\left[\sum_i\operatorname{Var}(X_i)+2\su
 <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept     0.717
 horsepower    0.006
 Name: std err, dtype: float64</pre></div>
-<p class="dx-note">lab 說明 1000 次 bootstrap 給 $\mathrm{SE}(\hat\beta_0)\approx0.73$、$\mathrm{SE}(\hat\beta_1)\approx0.00609$，公式給 0.717 與 0.006。差異來自公式的假設：它用殘差估 $\sigma^2$，而直線模型漏掉了非線性，殘差被誇大；公式也假設 $x$ 固定。bootstrap 不依賴這些假設。</p>
+<p class="dx-note">1000 次 bootstrap 給 $\mathrm{SE}(\hat\beta_0)\approx0.85$、$\mathrm{SE}(\hat\beta_1)\approx0.0074$，公式給 0.717 與 0.006。差異來自公式的假設：它用殘差估 $\sigma^2$，而直線模型漏掉了非線性，殘差被誇大；公式也假設 $x$ 固定。bootstrap 不依賴這些假設，但仍假設各列彼此獨立，也不保證一定比較準。</p>
 <span class="dx-src" data-lab-cells="71,73" data-lab-ch="5">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" rel="noopener" target="_blank"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
 <div class="deck-extra">

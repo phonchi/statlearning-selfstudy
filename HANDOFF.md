@@ -285,15 +285,15 @@ MNIST 錯誤率課本 1.8%，lab 3.8%），因為切分、epoch 數與套件版�
 | 17 | `p4_pandas` | Ch1、Ch2 | 138 KB · 7 元件 · 25 卡 |
 | 18 | `p5_visualization` | Ch1、Ch2 | 140 KB · 7 元件 · 24 卡 |
 | 19 | `p6_modeling_api`（statsmodels 與 sklearn） | Ch3、Ch5 | 139 KB · 6 元件 · 25 卡 |
-| 20 | `00c_ai_assisted`（AI 輔助統計分析：從提問到驗證）·**課前準備** | Ch1、Ch3、Ch5 | 113 KB · 0 動態元件 · 18 卡 |
+| 20 | `00c_ai_assisted`（AI 輔助統計分析：從提問到驗證）·**課前準備** | Ch1、Ch5、Ch12 | 139 KB · 0 動態元件 · 3 卡（見 §29） |
 
 一般先備頁沿用正課的元件與自測規格；`00a`、`00c` 是概念型例外，
-不設動態元件下限，詞彙卡各 18 張，每主節一題 quiz、EX 三題（見 STYLE_CONTRACT 9.4）。
+不設動態元件下限，每主節一題 quiz、EX 三題（見 STYLE_CONTRACT 9.4）。詞彙卡只收統計術語（2026-09 起，見 `data/flashcard_exclusions.json`），張數依內容而定。
 
 `00a` 與 `00c` 的分工：**00A 講「如何在 AI 時代完成資料分析學習迴圈」**，
 AI 可參與找資料、清理、EDA、文字探勘、建模與溝通，但不能替學生跳過想法、嘗試、證據與修正；
-**00C 講「如何實際執行 AI-assisted statistical workflow」**，涵蓋任務分流、脈絡、
-小步執行、統計核對、反駁、重現性與資料安全。書籍內容只做短幅轉述，程式與輸出仍回到課程 lab。
+**00C 講「如何實際執行 AI-assisted statistical workflow」**，以一個 Auto 貫穿例涵蓋分流、資料字典、
+小步清理、讀圖、讀模型比較、兩種標準誤、反駁、重現性與資料安全（2026-11-04 改版，見 §29）。書籍內容只做短幅轉述，程式與輸出仍回到課程 lab。
 
 ### 9.2 工具鏈為它做了什麼（commit `494d293`）
 
@@ -880,3 +880,15 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 建置串（§2）已加入 `python3 tools/build_project.py`。
 
 **同日追加（第 2 輪，GPT-6 Astra 與 Fable 諮詢後）**：P03 開頭新增「先了解 MCP 能做什麼」的階段對照表（選題／找資料／初探／建模／報告）；P04 新增免費額度內做得到的四種查詢與「常見誤用」；新增 P05「用 AI 分析時要核對的事」（資料洩漏、資料本身、評估方式、解讀、查證 AI 說法、保護資料），原 P05／P06 順延為 P06／P07。依據是實測：**Twinkle 免費方案每次查詢最多 10 列**（明細與聚合結果皆同，回應 `_meta.query_rows_cap`），聚合對全量資料計算。方案若調整，P03 表格、限制段落與 P04 範例要一起改。
+
+
+## 29. 00C 依《AI-Assisted Statistics》加深加廣並重寫（2026-11-04）
+
+使用者要求依 `~/statslearning` 的書加深加廣、不冗餘，並與 Fable（Claude Fable 5.1）與 Astra（Codex gpt-6-astra）討論。兩者各做一次架構建議與一次成稿審查，確認的問題已修正。
+
+- **新架構（7 節）**：prologue 分工與分流（含「LLM 為何會錯」：補洞造文、in-context learning、CoT 兩面）→ context 資料字典（Auto YAML）→ iterate 小步清理 → plots 讀圖找證據（收合：PCA 載荷，Ch12 儲存格 13、29）→ compare 讀模型比較（收合：Ch5 儲存格 26、46）→ uncertainty 兩種標準誤（收合：Ch5 儲存格 67–77）→ record 反駁與紀錄。全頁一個 Auto 例；Boston 卡移除；`src_labs=(1, 5, 12)`；`sources.AI_TOPICS` 新增第 1、4 章。
+- **書的轉述**：不搬原書文字、圖與數字，不點名產品；書中案例只描述錯誤類型，示範一律用課程 lab 輸出。參考表刪去 00A 已收的研究文獻，改連 00A。
+- **詞彙卡**：3 張統計術語（完整案例分析、模型設定錯誤、成對 bootstrap）。
+- **課程 lab 修正（`~/nsysu-math524`）**：Ch05 lab 的 `boot_SE`（儲存格 59）依 `D.index` 標籤重抽，而 ISLP 0.4.0 的 Auto 以車名為 index、147 列同名，`D.loc` 會整批取出同名車（一份重抽約 690 列），bootstrap SE 被低估成 0.73／0.00609（cell 72 文字與此一致）。改為依列位置抽樣（儲存格 59），`alpha_func` 同步改 `.iloc`（儲存格 53），cell 72 文字改為 0.85／0.0074，並補存 61、71、75 的輸出（0.0912；0.848807／0.007352；2.067840／0.033019／0.000120），與 ISLP 書印出值一致；55、57、61、69 的既有輸出確認不變。重抽樣頁的卡片說明同步修正。紀錄與腳本：`tools/verification/ai-assisted-20261104/`（注意：本機環境為 pandas 3.0.2／numpy 2.4.3／statsmodels 0.15，與課程 Colab 不同；獨立佐證是位置抽樣逐位重現 ISLP 書中數字）。
+- **已知既存失敗（非本次造成）**：`tools/test_reader_fixes.py` 兩項、`tools/test_statistics_contract.py` 一項，在改版前的 HEAD 上同樣失敗。
+

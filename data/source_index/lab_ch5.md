@@ -629,7 +629,7 @@ Bootstrap 方法的一個巨大優勢是它幾乎可以應用於所有情況。�
 ```python
 Portfolio = load_data('Portfolio')
 def alpha_func(D, idx):
-   cov_ = np.cov(D[['X','Y']].loc[idx], rowvar=False)
+   cov_ = np.cov(D[['X','Y']].iloc[idx], rowvar=False)  # idx 是列的位置
    return ((cov_[1,1] - cov_[0,1]) /
            (cov_[0,0]+cov_[1,1]-2*cov_[0,1]))
 ```
@@ -686,7 +686,9 @@ def boot_SE(func,
     first_, second_ = 0, 0
     n = n or D.shape[0]
     for _ in trange(B):
-        idx = rng.choice(D.index,
+        # 依「列的位置」抽樣：Auto 的 index 是車名且有重複，
+        # 若用 D.index 抽標籤，D.loc 會把同名的車一次全部取出，重抽樣本會多於 n 列
+        idx = rng.choice(D.shape[0],
                          n,
                          replace=True)
         value = func(D, idx)
@@ -709,6 +711,12 @@ alpha_SE = boot_SE(alpha_func,
                    B=1000,
                    seed=0)
 alpha_SE
+```
+
+**輸出**
+
+```
+np.float64(0.09118176521277699)
 ```
 
 ## 儲存格 62 [md]
@@ -802,9 +810,17 @@ hp_se = boot_SE(hp_func,
 hp_se
 ```
 
+**輸出**
+
+```
+intercept     0.848807
+horsepower    0.007352
+dtype: float64
+```
+
 ## 儲存格 72 [md]
 
-這表示 ${\rm SE}(\hat{\beta}_0)$ 的 bootstrap 估計為 0.73，而 ${\rm SE}(\hat{\beta}_1)$ 的 bootstrap 估計為 0.00609。如第 3.1.2 節所討論的，標準公式可以用來計算線性模型中回歸係數的標準誤差。這些可以使用 `ISLP.models` 中的 `summarize()` 函數獲得。
+這表示 ${\rm SE}(\hat{\beta}_0)$ 的 bootstrap 估計為 0.85，而 ${\rm SE}(\hat{\beta}_1)$ 的 bootstrap 估計為 0.0074。如第 3.1.2 節所討論的，標準公式可以用來計算線性模型中回歸係數的標準誤差。這些可以使用 `ISLP.models` 中的 `summarize()` 函數獲得。
 
 ## 儲存格 73 [code]
 
@@ -836,6 +852,15 @@ quad_func = partial(boot_OLS,
                     quad_model,
                     'mpg')
 boot_SE(quad_func, Auto, B=1000)
+```
+
+**輸出**
+
+```
+intercept                                  2.067840
+poly(horsepower, degree=2, raw=True)[0]    0.033019
+poly(horsepower, degree=2, raw=True)[1]    0.000120
+dtype: float64
 ```
 
 ## 儲存格 76 [md]

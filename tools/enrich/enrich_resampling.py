@@ -770,13 +770,14 @@ BODIES["bootstrap"] = f"""
 
 {card("講義 05 · 通用的 boot_SE", lab_code(CH, 59), None, src=src("59、61"),
       note="在 Portfolio 資料上，$\\mathrm{SE}(\\hat\\alpha)$ 的 bootstrap 估計是 <strong>0.0912</strong>。"
-           "注意這支函式用 $E[\\theta^2] - (E[\\theta])^2$ 累加，不必存下 1000 個值。")}
+           "注意這支函式用 $E[\\theta^2] - (E[\\theta])^2$ 累加，不必存下 1000 個值；"
+           "它抽的是列的位置，不是 index 標籤。Auto 的 index 是車名且有重複，依標籤抽樣會把同名的車一次全部取出，標準誤會被低估。")}
 
 {card("講義 05 · 用 bootstrap 估計迴歸係數的標準誤", lab_code(CH, 65) + "\n\n" + lab_code(CH, 67) + "\n\n" + lab_code(CH, 69), lab_output(CH, 69), src=src("65、67、69"),
       note="<code>partial()</code> 凍結模型與反應變數兩個參數，得到 <code>boot_SE()</code> 需要的 (D, idx) 函式。上面是前 10 份 bootstrap 樣本的截距與斜率。")}
 {card("講義 05 · bootstrap 標準誤與公式標準誤", lab_code(CH, 71) + "\n\n" + lab_code(CH, 73), lab_output(CH, 73), src=src("71、73"),
-      note="lab 說明 1000 次 bootstrap 給 $\\mathrm{SE}(\\hat\\beta_0)\\approx0.73$、$\\mathrm{SE}(\\hat\\beta_1)\\approx0.00609$，公式給 0.717 與 0.006。"
-           "差異來自公式的假設：它用殘差估 $\\sigma^2$，而直線模型漏掉了非線性，殘差被誇大；公式也假設 $x$ 固定。bootstrap 不依賴這些假設。")}
+      note="1000 次 bootstrap 給 $\\mathrm{SE}(\\hat\\beta_0)\\approx0.85$、$\\mathrm{SE}(\\hat\\beta_1)\\approx0.0074$，公式給 0.717 與 0.006。"
+           "差異來自公式的假設：它用殘差估 $\\sigma^2$，而直線模型漏掉了非線性，殘差被誇大；公式也假設 $x$ 固定。bootstrap 不依賴這些假設，但仍假設各列彼此獨立，也不保證一定比較準。")}
 {card("講義 05 · 二次模型：兩種標準誤更接近", lab_code(CH, 75) + "\n\n" + lab_code(CH, 77), lab_output(CH, 77), src=src("75、77"),
       note="二次模型對資料的擬合好得多，bootstrap 與公式的標準誤因此對應得更好。")}
 

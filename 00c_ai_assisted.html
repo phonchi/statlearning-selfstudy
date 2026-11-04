@@ -679,14 +679,16 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <!-- GEN:BEGIN floatnav -->
 <nav class="float-nav" id="floatNav" aria-label="章節導覽">
   <div class="fn-title">章節導覽</div>
-  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">責任界線</span></a>
-  <a href="#triage" data-target="triage"><span class="fn-num">P01</span><span class="fn-name">先做任務分流</span></a>
-  <a href="#context" data-target="context"><span class="fn-num">P02</span><span class="fn-name">說清楚分析問題</span></a>
-  <a href="#iterate" data-target="iterate"><span class="fn-num">P03</span><span class="fn-name">小步生成與修正</span></a>
-  <a href="#verify" data-target="verify"><span class="fn-num">P04</span><span class="fn-name">核對統計解讀</span></a>
-  <a href="#record" data-target="record"><span class="fn-num">P05</span><span class="fn-name">反駁、紀錄與資料安全</span></a>
+  <a href="#prologue" data-target="prologue"><span class="fn-num">P00</span><span class="fn-name">分工與分流</span></a>
+  <a href="#context" data-target="context"><span class="fn-num">P01</span><span class="fn-name">交代資料</span></a>
+  <a href="#iterate" data-target="iterate"><span class="fn-num">P02</span><span class="fn-name">小步清理</span></a>
+  <a href="#plots" data-target="plots"><span class="fn-num">P03</span><span class="fn-name">讀圖找證據</span></a>
+  <a href="#compare" data-target="compare"><span class="fn-num">P04</span><span class="fn-name">讀模型比較</span></a>
+  <a href="#uncertainty" data-target="uncertainty"><span class="fn-num">P05</span><span class="fn-name">兩種標準誤</span></a>
+  <a href="#record" data-target="record"><span class="fn-num">P06</span><span class="fn-name">反駁與紀錄</span></a>
   <a href="#exercises" data-target="exercises"><span class="fn-num">EX</span><span class="fn-name">練習題</span></a>
   <a href="#reference" data-target="reference"><span class="fn-num">速查</span><span class="fn-name">重點速查與來源</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">關鍵詞彙卡</span></a>
   <a href="#top" class="fn-top" title="回到頂端"><span class="fn-num">↑ TOP</span></a>
 </nav>
 <!-- GEN:END floatnav -->
@@ -697,9 +699,9 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <g fill="#fff" opacity=".8"><path d="M40 60 h 180 a 8 8 0 0 1 8 8 v 56 a 8 8 0 0 1 -8 8 h -140 l -24 22 v -22 h -16 a 8 8 0 0 1 -8 -8 v -56 a 8 8 0 0 1 8 -8 z"/></g><g fill="#fff" opacity=".55"><path d="M120 168 h 180 a 8 8 0 0 1 8 8 v 56 a 8 8 0 0 1 -8 8 h -16 l -24 22 v -22 h -140 a 8 8 0 0 1 -8 -8 v -56 a 8 8 0 0 1 8 -8 z"/></g><g stroke="#2b3a67" stroke-width="5" fill="none" stroke-linecap="round"><path d="M74 92 l 14 14 l 28 -30"/></g><g stroke="#2b3a67" stroke-width="5" fill="none" stroke-linecap="round"><path d="M244 190 l 30 30 M274 190 l -30 30"/></g>
   </svg>
   <div class="hero-content">
-    <h1>用 <span class="orange">AI</span> 做統計分析：從提問到核對結果</h1>
+    <h1>用 <span class="orange">AI</span> 做統計分析：拿 Auto 一路做到底，每一步都核對</h1>
     <div class="subtitle">課前準備 C — 選讀，不列入評分</div>
-    <div class="big-formula">任務分流｜補足脈絡｜拆成小步｜執行與核對｜檢查假設與反例｜留下可重現紀錄</div>
+    <div class="big-formula">資料字典｜小步清理｜讀圖找證據｜讀模型比較｜兩種標準誤｜反駁與紀錄</div>
     <div class="scroll-hint">向下捲動開始互動<span>↓</span></div>
   </div>
 </div>
@@ -711,7 +713,7 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
   <p>① <strong>依序閱讀</strong>：每節先讀說明；遇到互動元件時，<em>先預測結果，再操作驗證</em>。
   ② <strong>對照程式範例</strong>：程式碼卡下方的「來源」標了課程練習筆記本（lab）；需要實作時，再打開原始筆記本對照。
   ③ <strong>檢查理解</strong>：答錯時先看回饋，再回到相關說明；標為延伸的內容可留待第二輪。
-  ④ 最後用<a href="#reference">重點速查與來源</a>複習。</p>
+  ④ 最後翻<a href="#cards">關鍵詞彙卡</a>自測術語，並用 <a href="#reference">重點速查與來源</a>查閱。</p>
   <p class="source-intro">教科書：<cite>An Introduction to Statistical Learning with Applications in Python</cite>（ISLP）；<br>AI 協作參考書：<cite>AI-Assisted Statistics for Data Scientists</cite>（第三版）。章節旁的來源標記可點到本頁書目。</p>
   <div class="sg-links"><a href="https://www.statlearning.com/" target="_blank" rel="noopener">📖 統計學習教科書（ISLP）</a><a href="index.html">🏠 章節總覽</a></div>
 </div>
@@ -720,187 +722,317 @@ mjx-container::-webkit-scrollbar-thumb{background:var(--card-border);border-radi
 <div class="toc">
   <div class="toc-title">CONTENTS · 內容目錄</div>
   <div class="toc-grid">
-    <a href="#prologue"><span class="toc-num">P00</span>責任界線</a>
-    <a href="#triage"><span class="toc-num">P01</span>先做任務分流</a>
-    <a href="#context"><span class="toc-num">P02</span>說清楚分析問題</a>
-    <a href="#iterate"><span class="toc-num">P03</span>小步生成與修正</a>
-    <a href="#verify"><span class="toc-num">P04</span>核對統計解讀</a>
-    <a href="#record"><span class="toc-num">P05</span>反駁、紀錄與資料安全</a>
+    <a href="#prologue"><span class="toc-num">P00</span>分工與分流</a>
+    <a href="#context"><span class="toc-num">P01</span>交代資料</a>
+    <a href="#iterate"><span class="toc-num">P02</span>小步清理</a>
+    <a href="#plots"><span class="toc-num">P03</span>讀圖找證據</a>
+    <a href="#compare"><span class="toc-num">P04</span>讀模型比較</a>
+    <a href="#uncertainty"><span class="toc-num">P05</span>兩種標準誤</a>
+    <a href="#record"><span class="toc-num">P06</span>反駁與紀錄</a>
     <a href="#exercises"><span class="toc-num">EX</span>練習題</a>
     <a href="#reference"><span class="toc-num">速查</span>重點速查與來源</a>
+    <a href="#cards"><span class="toc-num">CARD</span>關鍵詞彙卡</a>
   </div>
 </div>
 <!-- GEN:END toc -->
 <section id="prologue">
 <!-- GEN:BEGIN sec:prologue -->
   <div class="section-number">PROLOGUE · 開場</div>
-  <h2>AI 協作中的統計判斷與責任 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 協作的責任界線（前言）</a></span></h2>
+  <h2>AI 擅長什麼、會在哪裡出錯 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 協作的責任界線（前言）</a></span></h2>
 <!-- GEN:END sec:prologue -->
 
-  <p>AI 可以寫程式、整理資料、建議圖表，也能把統計術語講得很流暢。
-  你需要依研究問題核對這些建議。本頁練習<strong>完成一個可檢查的小任務</strong>。本頁沿用 <a href="00b_setup.html#data">00B 取得的課程 Auto.csv</a>：先只處理 horsepower 欄的特殊值，不急著建模。概念參考 Bruce、Bruce 與 Gedeck 的《AI-Assisted Statistics for Data Scientists》第三版，完整書目見頁末。</p>
+  <p>AI 可以寫程式、整理資料、建議圖表，也能把統計術語講得很流暢。這一頁用一份資料走完一次小分析：
+  沿用 <a href="00b_setup.html#data">00B 取得的課程 Auto.csv</a>，從清理 <code>horsepower</code> 開始，
+  一路到讀圖、比較模型與讀標準誤。每一步都讓 AI 起草，再由你核對。概念參考 Bruce、Bruce 與 Gedeck 的
+  《AI-Assisted Statistics for Data Scientists》第三版，完整書目見頁末。</p>
+
+  <p>這本書的前言區分兩種工作：<strong>定義清楚的標準題</strong>，例如「對這兩欄做簡單迴歸」，AI 通常能給出教科書式的答案；
+  <strong>目標模糊的專案</strong>，例如「這份資料能告訴我們什麼」，需要你先決定問題、資料能代表誰、哪些證據才算數。
+  後者不能只靠一段能跑的程式完成。</p>
 
 <div class="info-box warm">
-  <span class="info-label">先確認分工</span>
-  AI 可以提方案、補語法、產生程式草稿與指出可能的漏洞；<strong>你</strong>要決定問題怎麼定義、資料能代表誰、假設是否合理、證據足不足以支持結論，以及結果被採用後誰會承擔後果。
+  <span class="info-label">分流三問</span>
+  交給 AI 之前，先問：<strong>①答案明確嗎？②我能很快核對嗎？③錯了會造成什麼後果？</strong>三題都偏向「是、能、不嚴重」，就適合讓 AI 起草；任何一題答不出來，就先保留由人主導的步驟。
 </div>
 
+<details class="qa-item reading-detail" id="w20detail-triage"><summary>查閱：常見任務的分級與至少要做的檢查</summary>
+<div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>分級</th><th>適合的任務</th><th>至少要做的檢查</th></tr></thead>
+  <tbody><tr><td>較低風險</td><td>你已懂概念、做過多次的資料整理；查語法；讀錯誤訊息；標準圖表的繪圖程式；檔案格式轉換</td><td>執行並比對一個已知小例子</td></tr><tr><td>中風險</td><td>EDA、特徵工程、模型與檢定的程式草稿、解讀圖表與模型輸出</td><td>核對假設、資料切分、單位與完整輸出</td></tr><tr><td>高風險</td><td>因果解釋、族群代表性、模型上線、正式結論與政策建議</td><td>由人主導；資料與研究設計提供依據，必要時加領域審查</td></tr></tbody>
+</table></div><p>書中轉引的低風險清單有一個共同前提：<strong>你在概念上已經懂、自己先試過</strong>，AI 只幫你補語法或樣板。你還不懂的概念，請 AI 解釋可以，但要回到文件或課程內容核對。</p></div></details>
 
+  <h3>AI 為什麼會說錯，而且說得很像對的</h3>
+  <p>書中提出幾個解釋，後面幾節的例子都會用到：</p>
+  <ul>
+    <li><strong>補洞造文。</strong>大型語言模型擅長寫出通順、完整的文字。訓練時的人類回饋多半獎勵「清楚、有用」，
+    回饋者不一定逐條查證事實。書中認為這是原因之一：資訊不足時，模型可能用聽起來合理的內容把缺口補起來。</li>
+    <li><strong>脈絡學習不是重新訓練。</strong>在同一段對話裡，模型會跟著你的提示、例子與既有內容調整回答
+    （in-context learning），但模型本身沒有被重新訓練。你沒交代的資料定義，它不會自己知道。</li>
+    <li><strong>逐步推理有用，也有界線。</strong>要求模型逐步寫出推理（chain-of-thought），在數學與多步驟問題上常能提升表現；
+    但畫面上的步驟是語言上的鷹架，不等於模型內部真正的計算過程。步驟看起來合理，仍要用資料或重算核對。</li>
+  </ul>
 
 <div class="qa-box">
   <div class="qa-head">兩個常見誤會</div>
   <details class="qa-item"><summary>AI 能把分析跑完，為什麼還不能直接交報告？</summary>
-    <div class="qa-a">因為完整分析通常涉及目標釐清、資料脈絡與價值判斷。《AI-Assisted Statistics for Data Scientists》第三版前言特別區分了<strong>定義清楚的標準題</strong>與需要批判思考的模糊專案；後者不能只靠生成一段能跑的程式。</div>
+    <div class="qa-a">能跑的程式只回答「怎麼算」。這份樣本代表誰、指標是否回答你的問題、結論能推到多遠，都需要你判斷。</div>
   </details>
-  <details class="qa-item"><summary>多問一個模型，就等於完成驗證嗎？</summary>
-    <div class="qa-a">另一個模型可以提供第二意見。最後仍要根據資料、官方文件、獨立重算或領域專家的判斷核對結果。兩個模型也可能學到相同的錯誤。</div>
+  <details class="qa-item"><summary>模型越新越強，這些問題就會消失嗎？</summary>
+    <div class="qa-a">新版本在算術與程式上確實持續進步，但同一題在不同版本、甚至同一版本重問時都可能給出不同答案。所以本頁每一步都附上核對方法，不依賴某個特定模型。</div>
   </details>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">責任界線 · 自我檢測</div>
+  <div class="quiz-label">分工 · 自我檢測</div>
   <p>AI 已替你完成一份顧客流失模型。下列哪件事最後仍必須由你決定？</p>
-  <div class="quiz-options" id="qResponsibilityOptions"><div class="quiz-opt" data-correct="false" data-fb="這是規則清楚、容易核對的低風險任務。" onclick="quizCheck('qResponsibility', this)"><span class="opt-letter">(A)</span> 把欄位名稱改成 Python 可以使用的格式</div><div class="quiz-opt" data-correct="false" data-fb="可以讓 AI 起草，再用相同輸入比較兩邊輸出。" onclick="quizCheck('qResponsibility', this)"><span class="opt-letter">(B)</span> 把一段 R 程式翻成 Python</div><div class="quiz-opt" data-correct="true" data-fb="對。這牽涉樣本代表性、決策成本與受影響的人，答案不會只存在於程式輸出裡。" onclick="quizCheck('qResponsibility', this)"><span class="opt-letter">(C)</span> 這份樣本能不能支持對所有顧客採取留客措施</div></div>
+  <div class="quiz-options" id="qResponsibilityOptions"><div class="quiz-opt" data-correct="false" data-fb="這是規則清楚、容易核對的低風險任務。" onclick="quizCheck('qResponsibility', this)"><span class="opt-letter">(A)</span> 把欄位名稱改成 Python 可以使用的格式</div><div class="quiz-opt" data-correct="false" data-fb="可以讓 AI 起草，再對照原始輸出核對數字與單位。" onclick="quizCheck('qResponsibility', this)"><span class="opt-letter">(B)</span> 替模型輸出的表格加上清楚的標題與單位</div><div class="quiz-opt" data-correct="true" data-fb="對。這牽涉樣本代表性、決策成本與受影響的人，答案不會只存在於程式輸出裡。" onclick="quizCheck('qResponsibility', this)"><span class="opt-letter">(C)</span> 這份樣本能不能支持對所有顧客採取留客措施</div></div>
   <div class="quiz-feedback" id="qResponsibilityFeedback"></div>
-</div>
-</section>
-<section id="triage">
-<!-- GEN:BEGIN sec:triage -->
-  <div class="section-number">PART 01 · 先做任務分流</div>
-  <h2>依任務的驗證方式與所需判斷安排分工 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
-<!-- GEN:END sec:triage -->
-
-  <p>判斷哪些工作適合請 AI 協助時，先看任務的
-  <strong>答案是否明確</strong>、<strong>核對成本是否低</strong>，以及
-  <strong>錯了會造成什麼後果</strong>。越接近標準流程、核對成本越低，就越適合交給 AI 起草。</p>
-
-<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-triage-1"><summary>詳細比較：不同任務的驗證方式</summary>
-<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>分級</th><th>適合的任務</th><th>至少要做的檢查</th></tr></thead>
-  <tbody><tr><td>低風險</td><td>查語法、讀錯誤訊息、格式轉換、你熟悉的資料整理樣板</td><td>執行並比對一個已知小例子</td></tr><tr><td>中風險</td><td>EDA、標準圖表、特徵工程、模型與檢定程式草稿</td><td>檢查假設、資料切分、單位與完整輸出</td></tr><tr><td>高風險</td><td>因果解釋、族群代表性、模型上線、正式結論與政策建議</td><td>由人主導；補領域與倫理審查，由資料與研究設計提供判斷依據</td></tr></tbody>
-</table></div></details></div>
-
-<div class="info-box">
-  <span class="info-label">一個好用的分流問題</span>
-  先問自己：<strong>如果這段答案錯了，我能不能在五分鐘內用資料、測試或文件找出問題？</strong>需要更久核對的任務，先保留人工檢查步驟。
-</div>
-
-<div class="info-box purple">
-  <span class="info-label">🔗 接回本站課程</span>
-  資料型態與整理會在 <a href="p3_numpy.html">P3</a>、模型 API 與資料切分會在 <a href="p6_modeling_api.html">P6</a> 練習。你還不熟時，可以請 AI 解釋，再核對它建議的資料處理方式。
-</div>
-
-<div class="quiz-box">
-  <div class="quiz-label">任務分流 · 自我檢測</div>
-  <p>哪一項最適合先交給 AI 產生草稿？</p>
-  <div class="quiz-options" id="qTriageOptions"><div class="quiz-opt" data-correct="false" data-fb="這需要研究設計與因果假設，是高風險判斷。" onclick="quizCheck('qTriage', this)"><span class="opt-letter">(A)</span> 判斷觀察性資料中的相關是否證明因果</div><div class="quiz-opt" data-correct="false" data-fb="這還需要評估公平性、法規、成本與決策後果。" onclick="quizCheck('qTriage', this)"><span class="opt-letter">(B)</span> 決定信用模型是否應在真實客戶上線</div><div class="quiz-opt" data-correct="true" data-fb="對。目標明確，而且可以用同一份小資料直接比對輸出。" onclick="quizCheck('qTriage', this)"><span class="opt-letter">(C)</span> 把你看得懂的一段 pandas 篩選改寫成等價的 R 程式</div></div>
-  <div class="quiz-feedback" id="qTriageFeedback"></div>
 </div>
 </section>
 <section id="context">
 <!-- GEN:BEGIN sec:context -->
-  <div class="section-number">PART 02 · 說清楚分析問題</div>
-  <h2>方向、格式、例子、資料脈絡與驗收標準 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：生成式 AI 與提示設計（第 10 章）</a></span></h2>
+  <div class="section-number">PART 01 · 交代資料</div>
+  <h2>用資料字典把脈絡交給 AI <span class="sec-badge"><a href="#w20-source-ai-stats">參考：資料字典與用 AI 讀圖（第 1 章）</a></span><span class="sec-badge"><a href="#w20-source-ai-stats">參考：生成式 AI 與提示設計（第 10 章）</a></span></h2>
 <!-- GEN:END sec:context -->
 
-  <p>分析資料需要做許多決定。提問時可以拆成一次只交付一個
-  可驗收的小任務，並給足必要脈絡。以下五項資訊可以幫你交代清楚：</p>
+  <p>AI 只看得到你給它的內容。欄位名稱通常很短，<code>year</code> 是西元年還是兩位數編碼？<code>origin</code> 的 1、2、3 代表什麼？
+  <code>?</code> 是遺漏還是一種車款？這些答案不在資料表裡，而在<strong>資料字典</strong>裡。書中建議把資料字典寫成 YAML
+  這類機器可讀、人也看得懂的格式，連同幾列樣本一起交給 AI。</p>
 
-<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-context-1"><summary>提示五要素的完整對照</summary>
-<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>要素</th><th>你要說清楚什麼</th><th>例句</th></tr></thead>
-  <tbody><tr><td>方向</td><td>現在在哪一階段、這次只做什麼</td><td>「先檢查欄位型態，不要建模」</td></tr><tr><td>格式</td><td>工具、輸入輸出與呈現方式</td><td>「回傳可執行 pandas 程式與檢查表」</td></tr><tr><td>例子</td><td>一個正確小例子或預期結果</td><td>「缺值字串 '?' 應轉成 NaN」</td></tr><tr><td>脈絡</td><td>資料字典、單位、樣本範圍、已做步驟與限制</td><td>「year 是西元年；不可上傳個資」</td></tr><tr><td>驗收</td><td>怎樣才算完成、哪些條件不能破壞</td><td>「列數不變；轉換前後缺值數要列出」</td></tr></tbody>
-</table></div></details></div>
+  <p>下面是 Auto 的一份精簡字典。內容依 ISLP 的 <a href="https://islp.readthedocs.io/en/latest/datasets/Auto.html">Auto 資料說明</a>
+  與課程筆記本的實際輸出整理；說明文件沒寫的事（例如缺值的原因），就明寫「待確認」，不要自己補上。</p>
 
-  <p>先從資料文件確認 <code>?</code> 是否代表遺漏，再提供欄位定義與少量去識別範例。不同來源的 Auto.csv 與 Auto.data 的內容與讀法可能不同；不要在提示裡假定所有檔案都有相同的特殊值。</p>
+<div class="pseudo-code">
+<span class="line">name: Auto</span>
+<span class="line">source: ISLP Auto 資料說明；課程 Auto.csv（<span class="num">00</span>B 取得）</span>
+<span class="line">size: 課程 Auto.csv 有 <span class="num">397</span> 列；其中 <span class="num">5</span> 列的 horsepower 缺值</span>
+<span class="line">missing_codes:</span>
+<span class="line">  horsepower: <span class="str">&quot;?&quot;</span>      <span class="com"># 只出現在這一欄</span></span>
+<span class="line">  why_missing: 待確認   <span class="com"># 說明文件沒寫這 5 列為何缺值</span></span>
+<span class="line">features:</span>
+<span class="line">  mpg: 每加侖英里數，數值</span>
+<span class="line">  horsepower: 引擎馬力，數值；原始檔以 <span class="str">&quot;?&quot;</span> 表示缺值</span>
+<span class="line">  weight: 車重（磅），數值</span>
+<span class="line">  year: 車款年份，<span class="num">70</span>–<span class="num">82</span> 代表 <span class="num">1970</span>–<span class="num">1982</span></span>
+<span class="line">  origin: 產地編碼，<span class="num">1</span> = 美國、<span class="num">2</span> = 歐洲、<span class="num">3</span> = 日本</span>
+<span class="line">  name: 車名；同名的車可能出現不只一次</span></div>
+
+  <p>有了字典，再用書中整理的提示原則把任務說清楚：<strong>方向</strong>（現在只做什麼）、<strong>格式</strong>（要交回什麼）、
+  <strong>例子</strong>（一個正確的小例子；只用來示範格式時，內容不必是真實資料）、<strong>驗收</strong>（怎樣才算完成）。
+  複雜的工作先拆成幾個小任務，每個小任務各寫一個提示。</p>
 
 <div class="info-box purple">
   <span class="info-label">從模糊要求改成可驗收任務</span>
-  <strong>不要只說：</strong>「幫我清理這份資料。」<br><strong>改成：</strong>「現在只檢查 課程 Auto.csv 的 <code>horsepower</code>。依這份資料說明，<code>?</code> 代表遺漏；請給 pandas 程式轉成數值，列出轉換前後的 dtype、缺值數與列數。不得刪列。若資訊不足，先列問題，不要自行假設。」
+  <strong>不要只說：</strong>「幫我清理這份資料。」<br><strong>改成：</strong>「附上資料字典與前 10 列。現在只處理 <code>horsepower</code>：依字典把 <code>?</code> 轉成缺值，整欄轉成數值。回傳 pandas 程式，並列出轉換前後的 dtype、缺值數與列數。不得刪列。字典沒寫清楚的地方，先列問題，不要自行假設。」
 </div>
 
+<details class="qa-item reading-detail" id="w20detail-prompt-elements"><summary>查閱：提示要素與 Auto 例句</summary>
+<div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>要素</th><th>你要說清楚什麼</th><th>Auto 例句</th></tr></thead>
+  <tbody><tr><td>方向</td><td>現在在哪一階段、這次只做什麼</td><td>「先處理 horsepower，不要建模」</td></tr><tr><td>格式</td><td>工具、輸入輸出與呈現方式</td><td>「回傳可執行的 pandas 程式與前後對照表」</td></tr><tr><td>例子</td><td>一個正確小例子或預期結果</td><td>「字串 '?' 應轉成 NaN，'130' 應轉成 130.0」</td></tr><tr><td>脈絡</td><td>資料字典、單位、樣本範圍、已做步驟與限制</td><td>「year 是 70–82 的兩位數編碼」</td></tr><tr><td>驗收</td><td>怎樣才算完成、哪些條件不能破壞</td><td>「列數不變；新增缺值數恰好等於 ? 的個數」</td></tr><tr><td>分工</td><td>大任務拆成哪些小任務</td><td>「清理、畫圖、建模分三次問」</td></tr></tbody>
+</table></div></div></details>
+
 <div class="quiz-box">
-  <div class="quiz-label">說清楚任務 · 自我檢測</div>
-  <p>你要 AI 協助處理 <code>horsepower</code> 的遺漏值。哪個版本最容易驗收？</p>
-  <div class="quiz-options" id="qContextOptions"><div class="quiz-opt" data-correct="true" data-fb="對。任務範圍、特殊值、輸出與不能破壞的條件都已明確。" onclick="quizCheck('qContext', this)"><span class="opt-letter">(A)</span> 「? 代表遺漏。只處理 horsepower，轉成數值；回報轉換前後 dtype、缺值數與列數，不得刪列」</div><div class="quiz-opt" data-correct="false" data-fb="「乾淨」沒有定義，也沒有說哪些列或欄可以改。" onclick="quizCheck('qContext', this)"><span class="opt-letter">(B)</span> 「幫我把資料整理乾淨」</div><div class="quiz-opt" data-correct="false" data-fb="「最好」沒有標準，而且只看結論會失去核對過程。" onclick="quizCheck('qContext', this)"><span class="opt-letter">(C)</span> 「用最好的方法補值，最後只告訴我結果」</div></div>
+  <div class="quiz-label">交代資料 · 自我檢測</div>
+  <p>你請 AI 解讀 <code>origin</code> 對 <code>mpg</code> 的影響，但沒有附資料字典。最可能出現什麼問題？</p>
+  <div class="quiz-options" id="qContextOptions"><div class="quiz-opt" data-correct="false" data-fb="它通常會照樣回答，而且答得很有把握。" onclick="quizCheck('qContext', this)"><span class="opt-letter">(A)</span> AI 會拒絕回答，因為缺少資料</div><div class="quiz-opt" data-correct="false" data-fb="看過類似資料不代表知道你這份檔案的編碼與版本；要以你手上的字典為準。" onclick="quizCheck('qContext', this)"><span class="opt-letter">(B)</span> 沒有影響，AI 已經看過很多 Auto 資料</div><div class="quiz-opt" data-correct="true" data-fb="對。編碼的意義不在資料表裡；沒有字典，模型只能補洞，而補上的內容可能剛好錯。" onclick="quizCheck('qContext', this)"><span class="opt-letter">(C)</span> AI 可能把 1、2、3 當成連續數值，或自己猜一套產地對應</div></div>
   <div class="quiz-feedback" id="qContextFeedback"></div>
 </div>
 </section>
 <section id="iterate">
 <!-- GEN:BEGIN sec:iterate -->
-  <div class="section-number">PART 03 · 小步生成與修正</div>
-  <h2>一次做一件可執行、可檢查的事 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
+  <div class="section-number">PART 02 · 小步清理</div>
+  <h2>生成、執行、修正，再親自驗收 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
 <!-- GEN:END sec:iterate -->
 
-  <p>《AI-Assisted Statistics for Data Scientists》第三版第 11 章提醒我們用小任務反覆執行與修正。本節沿用 Auto 馬力欄的清理任務：
-  <strong>生成 → 執行 → 解析錯誤 → 修改 → 重跑</strong>。資料分析還要再加一層：
-  程式即使沒有報錯，也要檢查它做的是否真是你要求的事。第一次提示只有「幫我清理 Auto」，若 AI 擅自刪除含缺值的列，就回到上一節的提示，加上「不得刪列，回報前後列數與缺值數」，再執行。</p>
+  <p>書中描述 AI 寫程式的可靠流程：<strong>生成 → 執行 → 解析錯誤 → 修改 → 重跑</strong>。這個流程能讓程式跑得起來，
+  但「能跑」和「做對」是兩件事。常見的兩種失敗是：程式報錯；或者程式沒報錯，卻做了你沒要求的事。</p>
 
-<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-iterate-1"><summary>查閱：每輪交付物與檢查項目</summary>
-<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>每一輪</th><th>交付物</th><th>通過才往下走</th></tr></thead>
-  <tbody><tr><td>1. 先說清楚任務</td><td>一個小任務與驗收條件</td><td>AI 沒有自行補關鍵假設</td></tr><tr><td>2. 再生成</td><td>最小可執行程式與必要說明</td><td>變更範圍看得懂</td></tr><tr><td>3. 親自執行</td><td>錯誤訊息、警告、完整輸出</td><td>核對實際執行的結果</td></tr><tr><td>4. 對照預期</td><td>小例子、筆數、摘要或測試</td><td>能跑，而且做對</td></tr><tr><td>5. 保存再擴大</td><td>通過版本與下一個小任務</td><td>一次只新增一個不確定來源</td></tr></tbody>
-</table></div></details></div>
+  <p>回到 horsepower 的清理任務。假設第一次只說「幫我清理 Auto」，AI 交回的程式用 <code>dropna()</code> 把含缺值的列整列刪掉。
+  程式能跑，也沒有警告，但它把兩個決定混在一起了：</p>
+  <ol>
+    <li><strong>清理：</strong>把 <code>?</code> 轉成缺值、整欄轉成數值。這一步不應該改變列數。</li>
+    <li><strong>分析範圍：</strong>建模時要不要排除缺值的列。課程 lab 在這一步改用 392 筆完整資料；這是合理的分析決定，但要另外記錄，
+    包括排除了幾列、為什麼。</li>
+  </ol>
+  <p>分開之後，每一步都有清楚的驗收條件。pandas 的寫法（<code>na_values</code>、<code>dropna</code>）在
+  <a href="p4_pandas.html#na">P4 遺漏值</a> 有完整練習，這裡只看怎麼驗收 AI 交回的程式。</p>
+
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>驗收項目</th><th>怎麼判斷</th></tr></thead>
+  <tbody><tr><td>列數</td><td>清理前後應相同；不同就追查是哪一行刪了列</td></tr><tr><td>型態</td><td>horsepower 轉換後應能進行數值運算</td></tr><tr><td>缺值</td><td>新增的缺值數應恰好等於原本 ? 的個數，不多也不少</td></tr><tr><td>其他欄</td><td>沒有要求修改的欄位，內容應完全不變</td></tr></tbody>
+</table></div>
 
 <div class="info-box">
-  <span class="info-label">把錯誤原樣帶回去</span>
-  除錯時，附上<strong>完整錯誤訊息</strong>、套件版本、最小重現程式與你預期的行為。要求它先解釋最可能的原因，再提出最小修改；不要讓它為了通過一個例子直接寫死答案。
+  <span class="info-label">小心寫死答案</span>
+  如果你只告訴 AI「缺值應該是 5 個」，它可能反覆修改，最後直接寫出一個回傳 5 的程式。AI 同時想滿足好幾個目標，其中一個是回應你的要求。驗收時要換一個輸入（例如多放一個 <code>?</code>），確認輸出會照規則跟著改變。
 </div>
 
 <div class="qa-box">
-  <div class="qa-head">讓自我檢查變得具體</div>
-  <details class="qa-item"><summary>應該問「為什麼這段程式有效」嗎？</summary>
-    <div class="qa-a">說明可能很流暢，卻不一定能揭露漏洞。更好的問法是：「它假設了什麼？程式有沒有強制這些假設？哪些輸入會失敗？」</div>
+  <div class="qa-head">讓 AI 自我檢查時怎麼問</div>
+  <details class="qa-item"><summary>可以問「為什麼這段程式是對的」嗎？</summary>
+    <div class="qa-a">書中提醒，AI 補充的解釋常是錯誤出現的地方。更好的問法是：「這段程式假設了什麼？這些假設有沒有被程式強制檢查？什麼輸入會讓它失敗？」</div>
   </details>
-  <details class="qa-item"><summary>為什麼一次只改一小段？</summary>
-    <div class="qa-a">變更越大，越難定位是哪一步改變了資料或結論。小步驟讓每輪都有清楚的輸入、輸出與退回點，也比較容易保留可重現紀錄。</div>
+  <details class="qa-item"><summary>除錯時要給 AI 什麼？</summary>
+    <div class="qa-a">完整錯誤訊息、套件版本、最小重現程式與你預期的行為。請它先說明最可能的原因，再提出最小修改。</div>
   </details>
 </div>
 
+<details class="qa-item reading-detail" id="w20detail-iterate-rounds"><summary>查閱：每一輪的交付物與通過條件</summary>
+<div class="detail-body"><div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>每一輪</th><th>交付物</th><th>通過才往下走</th></tr></thead>
+  <tbody><tr><td>1. 先說清楚任務</td><td>一個小任務與驗收條件</td><td>AI 沒有自行補關鍵假設</td></tr><tr><td>2. 生成</td><td>最小可執行程式與必要說明</td><td>看得懂改了哪些地方</td></tr><tr><td>3. 親自執行</td><td>錯誤訊息、警告、完整輸出</td><td>看的是實際執行結果，不是 AI 的描述</td></tr><tr><td>4. 對照預期</td><td>小例子、列數、摘要或測試</td><td>能跑，而且做對</td></tr><tr><td>5. 保存再擴大</td><td>通過的版本與下一個小任務</td><td>一次只增加一個不確定來源</td></tr></tbody>
+</table></div></div></details>
+
 <div class="quiz-box">
-  <div class="quiz-label">小步迭代 · 自我檢測</div>
-  <p>AI 產生的程式沒有報錯，而且輸出正好是你要求的數字。下一步最合理的是什麼？</p>
-  <div class="quiz-options" id="qIterateOptions"><div class="quiz-opt" data-correct="false" data-fb="一個例子正確可能只是巧合，甚至可能被寫死。" onclick="quizCheck('qIterate', this)"><span class="opt-letter">(A)</span> 直接接受，因為能跑且答案正確</div><div class="quiz-opt" data-correct="true" data-fb="對。改變輸入後再核對結果，可以檢查程式是否遵守同一套規則。" onclick="quizCheck('qIterate', this)"><span class="opt-letter">(B)</span> 換一個邊界小例子，檢查輸入改變時輸出是否按規則改變</div><div class="quiz-opt" data-correct="false" data-fb="仍須執行程式來核對；文字說明也可能把同一個錯誤解釋得看似合理。" onclick="quizCheck('qIterate', this)"><span class="opt-letter">(C)</span> 要求 AI 再寫一段更長的理由</div></div>
+  <div class="quiz-label">小步清理 · 自我檢測</div>
+  <p>AI 的清理程式沒有報錯，列數與缺值數也和你預期的一樣。下一步最合理的是什麼？</p>
+  <div class="quiz-options" id="qIterateOptions"><div class="quiz-opt" data-correct="true" data-fb="對。改變輸入後再核對，才能檢查程式是否真的遵守規則。" onclick="quizCheck('qIterate', this)"><span class="opt-letter">(A)</span> 換一個邊界小例子，檢查輸入改變時輸出是否照規則改變</div><div class="quiz-opt" data-correct="false" data-fb="一個例子正確可能只是巧合，甚至可能被寫死。" onclick="quizCheck('qIterate', this)"><span class="opt-letter">(B)</span> 直接接受，因為能跑而且數字正確</div><div class="quiz-opt" data-correct="false" data-fb="說明再長也不等於執行結果；同一個錯誤也能被解釋得很合理。" onclick="quizCheck('qIterate', this)"><span class="opt-letter">(C)</span> 請 AI 再寫一段更詳細的理由</div></div>
   <div class="quiz-feedback" id="qIterateFeedback"></div>
 </div>
 </section>
-<section id="verify">
-<!-- GEN:BEGIN sec:verify -->
-  <div class="section-number">PART 04 · 核對統計解讀</div>
-  <h2>查定義、單位、假設、不確定性與資料流程 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
-<!-- GEN:END sec:verify -->
+<section id="plots">
+<!-- GEN:BEGIN sec:plots -->
+  <div class="section-number">PART 03 · 讀圖找證據</div>
+  <h2>AI 的圖說要能用資料重算 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
+<!-- GEN:END sec:plots -->
 
-  <p>現在檢查 AI 交回的清理程式。親自執行，並保存轉換前後的列數、horsepower 型態與缺值數。請從你實際使用的檔案計算並記錄這些數字。</p>
-<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>驗收項目</th><th>怎麼判斷</th></tr></thead>
-  <tbody><tr><td>列數</td><td>前後應相同；不同就追查是否擅自刪列</td></tr><tr><td>型態</td><td>轉換後應能進行數值運算</td></tr><tr><td>缺值</td><td>核對新增缺值是否恰好來自文件指定的特殊碼</td></tr><tr><td>其他欄</td><td>確認沒有被意外修改</td></tr></tbody>
-</table></div>
-<div class="quiz-box">
-  <div class="quiz-label">執行核對 · 自我檢測</div>
-  <p>你明確要求不得刪列，但程式跑完後列數減少了。下一步應怎麼做？</p>
-  <div class="quiz-options" id="qVerifyOptions"><div class="quiz-opt" data-correct="true" data-fb="對。你用具體輸出指出問題，也能檢查修正有沒有成功。" onclick="quizCheck('qVerify', this)"><span class="opt-letter">(A)</span> 找出刪列步驟，要求最小修改，重跑並再次比較列數與缺值</div><div class="quiz-opt" data-correct="false" data-fb="程式能跑不代表符合任務；列數已違反驗收條件。" onclick="quizCheck('qVerify', this)"><span class="opt-letter">(B)</span> 只要沒有錯誤訊息就接受</div><div class="quiz-opt" data-correct="false" data-fb="這是事後更改目標。是否刪列應由資料意義與分析目的決定，不能為了通過而放寬。" onclick="quizCheck('qVerify', this)"><span class="opt-letter">(C)</span> 把提示改成允許刪列，讓結果通過</div></div>
-  <div class="quiz-feedback" id="qVerifyFeedback"></div>
-</div>
-<details><summary>延伸：學完線性迴歸與重抽樣後，再核對統計解讀</summary>
-<p>以下係數、p 值與交叉驗證案例需要正課概念，可先讀 <a href="linear_regression.html">線性迴歸</a> 與 <a href="resampling_methods.html">重抽樣方法</a> 再回來。</p>
+  <p>新的 AI 工具可以直接讀圖片。你把圖貼上去，請它寫一段解讀，它通常能指出主要趨勢，再追問幾次，還可能提出你沒想到的分組或後續分析。
+  這很有用。但書中的例子也顯示，模型會把密集區的範圍讀偏，或寫出圖上沒有的內容，語氣卻一樣篤定。</p>
+
+  <p>在 Auto 上試一次。執行課程 Ch01 lab 的 pairplot，把圖交給 AI 解讀：</p>
+
 <div class="deck-extra">
-  <div class="dx-label">用完整輸出核對結論</div>
+  <div class="dx-label">課程 Ch01 · 成對散布圖</div>
   <div class="pseudo-code" style="font-size:.78rem;">
-  <span class="line">summarize(results)</span></div>
-  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              coef  std err       t  P&gt;|t|
-intercept  34.5538    0.563  61.415    0.0
-lstat      -0.9500    0.039 -24.528    0.0</pre></div>
-  <p class="dx-note">係數、標準誤、t 值與 p 值回答不同問題。你要 AI 說明 lstat 的結果時，必須要求它保留單位，並區分關聯、效果大小與證據強度。</p>
-  <span class="dx-src" data-lab-ch="3" data-lab-cells="26">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch03-linreg-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch03-linreg-lab-zh.ipynb</code></a></span>
+  <span class="line"><span class="com"># 欄位選取與資料清理/轉換；Seaborn 視覺化：變數成對關係圖</span></span>
+  <span class="line">sns.pairplot(Auto.loc[:,[<span class="str">&quot;mpg&quot;</span>,<span class="str">&quot;displacement&quot;</span>, <span class="str">&quot;horsepower&quot;</span>, <span class="str">&quot;weight&quot;</span>, <span class="str">&quot;cylinders&quot;</span>]], hue=<span class="str">&quot;cylinders&quot;</span>);</span></div>
+  <p class="dx-note">請自己執行這一格，再把圖交給 AI。看看它怎麼描述 mpg 與 horsepower 的關係，以及不同汽缸數的分組。</p>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="176">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
 </div>
 
+  <p>AI 的描述可能大致正確：馬力越大，每加侖跑的英里數越少，而且關係是彎的，不是直線。接下來要做的，是把它的每一句話分成三類：</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>核對點</th><th>你要追問或動手查什麼</th></tr></thead>
-  <tbody><tr><td>定義與單位</td><td>每個欄位、係數與指標的分母／單位是什麼？</td></tr><tr><td>假設</td><td>缺值、獨立性、分布、模型形式與抽樣假設是否合理？</td></tr><tr><td>不確定性</td><td>是否同時提供平均、區間、標準誤、各折結果或重複試驗？</td></tr><tr><td>關聯與因果</td><td>研究設計是否真的允許「造成」這個詞？</td></tr><tr><td>圖與數字</td><td>圖中的範圍、密度與離群值能否由資料摘要重算？</td></tr><tr><td>評估界線</td><td>測試資料是否保持未見；前處理與選變數是否只在訓練資料 fit？</td></tr></tbody>
+  <thead><tr><th>AI 說的話</th><th>例子</th><th>你怎麼核對</th></tr></thead>
+  <tbody><tr><td>圖上看得到的</td><td>「馬力越高，mpg 越低，而且曲線往右變平」</td><td>回到圖確認；用摘要數字或分組平均重算</td></tr><tr><td>要重算才能確認的</td><td>「中間一半的車在 75 到 125 馬力之間」</td><td>對照 <code>describe()</code> 的 25% 與 75% 分位數；說「多數」時則直接算區間內的比例</td></tr><tr><td>圖上根本沒有的</td><td>「新車比較省油」</td><td>pairplot 沒有畫 <code>year</code>；圖沒有編碼的條件，不能出現在圖的解讀裡</td></tr></tbody>
 </table></div>
 
 <div class="deck-extra">
-  <div class="dx-label">平均分數之外，保留不同切分下的變動</div>
+  <div class="dx-label">課程 Ch01 · 用摘要數字核對讀圖</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line"><span class="com"># 檢視資料基本資訊/摘要</span></span>
+  <span class="line">Auto.describe()</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>              mpg   cylinders  displacement  horsepower       weight  \
+count  392.000000  392.000000    392.000000  392.000000   392.000000   
+mean    23.445918    5.471939    194.411990  104.469388  2977.584184   
+std      7.805007    1.705783    104.644004   38.491160   849.402560   
+min      9.000000    3.000000     68.000000   46.000000  1613.000000   
+25%     17.000000    4.000000    105.000000   75.000000  2225.250000   
+50%     22.750000    4.000000    151.000000   93.500000  2803.500000   
+75%     29.000000    8.000000    275.750000  126.000000  3614.750000   
+max     46.600000    8.000000    455.000000  230.000000  5140.000000   
+
+       acceleration        year      origin  
+count    392.000000  392.000000  392.000000  
+mean      15.541327   75.979592    1.576531  
+std        2.758864    3.683737    0.805518  
+min        8.000000   70.000000    1.000000  
+25%       13.775000   73.000000    1.000000  
+50%       15.500000   76.000000    1.000000  
+75%       17.025000   79.000000    2.000000  
+max       24.800000   82.000000    3.000000</pre></div>
+  <p class="dx-note">horsepower 的 25%、50%、75% 分位數是 75、93.5、126，最小 46、最大 230。AI 說「中間一半的車」落在哪裡，用這組數字就能判斷。</p>
+  <span class="dx-src" data-lab-ch="1" data-lab-cells="173">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch01-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch01-lab-zh.ipynb</code></a></span>
+</div>
+
+  <p>書中整理了幾種讀圖時常見的錯誤，在 Auto 上都可能遇到：</p>
+  <ul>
+    <li><strong>跨模態誤讀。</strong>模型要先把影像轉成數值表示，再接回文字。統計圖充滿刻度、密度與圖例這類慣例，這一步特別容易出錯，
+    例如把密集區的範圍讀偏。</li>
+    <li><strong>重複與含糊。</strong>追問「你漏了什麼嗎？」時，它可能只是換句話重講一次，或用「靠近」「大致」這類說法帶過。</li>
+    <li><strong>同題不同答。</strong>換一個模型或重問一次，答案可能改變，甚至改回原本錯的版本。</li>
+    <li><strong>自動化偏誤。</strong>因為是 AI 產生的，就先入為主地相信它。對你不熟的概念，這種偏誤最難察覺。</li>
+  </ul>
+
+<div class="info-box purple">
+  <span class="info-label">🔗 接回本站課程</span>
+  mpg 與 horsepower 的彎曲關係，會在 <a href="linear_regression.html#problems">線性迴歸的潛在問題</a> 用殘差圖正式檢查，也是下一節比較線性與多項式模型的起點。
+</div>
+
+<details class="qa-item reading-detail" id="w20detail-pca"><summary>延伸：請 AI 解讀主成分載荷（學完非監督式學習再看）</summary>
+<div class="detail-body">
+<p>書中也示範把主成分分析的載荷貼給 AI，請它說明每個主成分代表什麼。在本站的非監督式學習 lab 上做同一件事，有兩個陷阱要先處理。</p>
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch12 · 欄位名稱</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">USArrests.columns</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>Index([&#x27;Murder&#x27;, &#x27;Assault&#x27;, &#x27;UrbanPop&#x27;, &#x27;Rape&#x27;], dtype=&#x27;object&#x27;)</pre></div>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="13">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch12 · 主成分載荷</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">pcaUS.components_</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([[ 0.53589947,  0.58318363,  0.27819087,  0.54343209],
+       [-0.41818087, -0.1879856 ,  0.87280619,  0.16731864],
+       [-0.34123273, -0.26814843, -0.37801579,  0.81777791],
+       [-0.6492278 ,  0.74340748, -0.13387773, -0.08902432]])</pre></div>
+  <p class="dx-note">每一列是一個主成分，每一行對應一個變數，順序是 Murder、Assault、UrbanPop、Rape。</p>
+  <span class="dx-src" data-lab-ch="12" data-lab-cells="29">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch12-unsup-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch12-unsup-lab-zh.ipynb</code></a></span>
+</div>
+<ol>
+  <li><strong>只貼陣列，AI 會自己補欄名。</strong>上面的輸出沒有變數名稱，也沒有說明列與行各代表什麼。只貼這個陣列，模型可能猜一組欄名，
+  或把列與行讀反。附上欄名與「每一列是一個主成分」，再請它解讀。</li>
+  <li><strong>正負號本身沒有方向意義。</strong>主成分的方向只確定到正負號，lab 稍後就把第二主成分整個翻號重畫。若 AI 說「第二主成分為負代表治安較好」，
+  要追問：整個主成分翻號後，這句話還成立嗎？可以解讀的是同一主成分內各變數的相對正負與大小。</li>
+</ol>
+<p>以這組載荷來看，第一主成分的四個載荷同號且三個犯罪變數較大，第二主成分以 UrbanPop 為主。這類敘述可以由數字直接核對；
+「某些州比較危險」則需要分數與更多脈絡，不能只從載荷推出。完整內容見 <a href="unsupervised_learning.html#pca">主成分分析</a>。</p>
+</div></details>
+
+<div class="quiz-box">
+  <div class="quiz-label">讀圖找證據 · 自我檢測</div>
+  <p>AI 看完 mpg 與 horsepower 的散布圖後寫道：「這張圖顯示 1980 年代的車更省油。」你該怎麼處理？</p>
+  <div class="quiz-options" id="qPlotsOptions"><div class="quiz-opt" data-correct="false" data-fb="常識可能是真的，但這張圖沒有畫年份，這句話不是從圖上讀出來的。" onclick="quizCheck('qPlots', this)"><span class="opt-letter">(A)</span> 接受，因為一般認為新車比較省油</div><div class="quiz-opt" data-correct="true" data-fb="對。圖沒有編碼的條件不能寫進圖的解讀；要回答新的問題，就換一張能回答它的圖。" onclick="quizCheck('qPlots', this)"><span class="opt-letter">(B)</span> 指出圖中沒有年份資訊；若想檢查這件事，另外畫 mpg 對 year 的圖</div><div class="quiz-opt" data-correct="false" data-fb="重問只會得到另一段文字；這句話要用一張畫了 year 的圖來檢查。" onclick="quizCheck('qPlots', this)"><span class="opt-letter">(C)</span> 換另一個模型重問，若它也這樣說就接受</div></div>
+  <div class="quiz-feedback" id="qPlotsFeedback"></div>
+</div>
+</section>
+<section id="compare">
+<!-- GEN:BEGIN sec:compare -->
+  <div class="section-number">PART 04 · 讀模型比較</div>
+  <h2>「二次比較好」需要哪些證據 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：用 AI 讀迴歸結果（第 4 章）</a></span></h2>
+<!-- GEN:END sec:compare -->
+
+  <p>讀完圖，下一步常是請 AI 比較幾個模型。書中示範把迴歸輸出貼給 AI，請它寫一段分析：它能指出哪些變數有關、效果大約多大，
+  還會主動建議取對數、加樣條或做交叉驗證。這些建議通常合理，但你要分清楚三件事：</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>問題</th><th>要看什麼</th></tr></thead>
+  <tbody><tr><td>有沒有關聯</td><td>係數的正負與 p 值；關聯不代表因果</td></tr><tr><td>效果多大</td><td>係數乘上合理的變化量，並保留單位</td></tr><tr><td>證據多強、多穩定</td><td>標準誤、區間，以及換一種資料切法後結果是否改變</td></tr></tbody>
+</table></div>
+
+  <p>在 Auto 上，AI 讀完上一節的圖，很可能會說「二次模型比線性好」。這句話要成立，至少要有兩種證據：
+  模型在<strong>沒參與擬合的資料</strong>上預測得比較好，而且這個差距<strong>換一種切法仍然存在</strong>。
+  只看擬合用資料上的誤差不夠，因為越複雜的模型在擬合資料上幾乎一定表現更好。</p>
+
+<details class="qa-item reading-detail" id="w20detail-validation"><summary>延伸：讀驗證誤差與切分變動（學完重抽樣方法再看）</summary>
+<div class="detail-body">
+<p>課程 Ch05 lab 把 392 筆資料切成一半訓練、一半驗證，比較一到三次多項式在驗證集上的均方誤差（MSE）：</p>
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch05 · 一次切分下的三個模型</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">MSE = np.zeros(<span class="num">3</span>)</span>
+  <span class="line"><span class="kw">for</span> idx, degree <span class="kw">in</span> enumerate(range(<span class="num">1</span>, <span class="num">4</span>)):</span>
+  <span class="line">    MSE[idx] = evalMSE([poly(<span class="str">&#x27;horsepower&#x27;</span>, degree)],</span>
+  <span class="line">                       <span class="str">&#x27;mpg&#x27;</span>,</span>
+  <span class="line">                       Auto_train,</span>
+  <span class="line">                       Auto_valid)</span>
+  <span class="line">MSE</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>array([25.57387819, 22.21802005, 22.66767544])</pre></div>
+  <p class="dx-note">線性約 25.6，二次約 22.2，三次約 22.7。線性到二次下降 3.4；二次到三次反而上升 0.45。</p>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="26">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch05 · 線性模型換 10 種切法</div>
   <div class="pseudo-code" style="font-size:.78rem;">
   <span class="line">validation = ShuffleSplit(n_splits=<span class="num">10</span>,</span>
   <span class="line">                          test_size=<span class="num">196</span>,</span>
@@ -911,52 +1043,161 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   <span class="line">                         cv=validation)</span>
   <span class="line">results[<span class="str">&#x27;test_score&#x27;</span>].mean(), results[<span class="str">&#x27;test_score&#x27;</span>].std()</span></div>
   <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>(np.float64(23.802232661034168), np.float64(1.4218450941091842))</pre></div>
-  <p class="dx-note">這個 lab 同時保留平均與標準差，讓你看到不同切分下的分數變動。比較模型時，還要依評估設計與變動來源判斷如何量化不確定性。</p>
+  <p class="dx-note">同一個線性模型，換 10 種隨機切法，驗證 MSE 的平均約 23.8、標準差約 1.4。這個標準差描述各次切分之間的差異，不是平均值的標準誤。</p>
   <span class="dx-src" data-lab-ch="5" data-lab-cells="46">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
 </div>
+<p>把兩張卡放在一起，可以看出 AI 的結論需要補什麼：</p>
+<ul>
+  <li><strong>單次切分的數字會隨切法改變。</strong>線性模型在第一張卡是 25.6，在 10 種切法下平均是 23.8。</li>
+  <li><strong>二次與三次差 0.45，單次切分無法判斷誰比較好。</strong>要回答這一題，得在多種切法下，用同一批切分成對比較兩個模型，
+  看差距的方向是否一致。</li>
+  <li><strong>線性到二次的改善較大，但仍應在多種切法下確認。</strong>本站 <a href="resampling_methods.html#validation">重抽樣方法</a> 會用多種切法與交叉驗證完成這個比較。</li>
+</ul>
+<p>請 AI 比較模型時，要它交回<strong>各次切分的分數</strong>而不只是平均，並說明切分方式與 <code>random_state</code>。
+如果它先用全部資料挑變數再做交叉驗證，評估會過度樂觀，見 <a href="resampling_methods.html#cvwrong">先選特徵再交叉驗證的錯誤</a>。</p>
+</div></details>
 
-<div class="info-box purple">
-  <span class="info-label">請 AI 找出假設與可能錯誤</span>
-  把初稿交回原本或另一個 AI，請它列出：①用了哪些假設；②最可能錯在哪；③什麼資料會推翻結論；④還缺哪個檢查。接著由你用資料、程式與文件裁決。<strong>另一個模型提出的異議也需要核對。</strong>
+<div class="quiz-box">
+  <div class="quiz-label">讀模型比較 · 自我檢測</div>
+  <p>AI 說：「三次模型在訓練資料上的誤差最小，所以它是最好的模型。」這個論證缺了什麼？</p>
+  <div class="quiz-options" id="qCompareOptions"><div class="quiz-opt" data-correct="false" data-fb="註解有助閱讀，但不能補上缺少的證據。" onclick="quizCheck('qCompare', this)"><span class="opt-letter">(A)</span> 缺了更詳細的程式註解</div><div class="quiz-opt" data-correct="false" data-fb="這是把「貼合已看過的資料」誤當成「預測新資料」。" onclick="quizCheck('qCompare', this)"><span class="opt-letter">(B)</span> 什麼都不缺，誤差最小就是最好</div><div class="quiz-opt" data-correct="true" data-fb="對。越複雜的模型在擬合資料上幾乎一定誤差更小；要比較的是對新資料的預測，而且結論要穩定。" onclick="quizCheck('qCompare', this)"><span class="opt-letter">(C)</span> 模型在沒參與擬合的資料上的表現，以及換一種切法後結論是否不變</div></div>
+  <div class="quiz-feedback" id="qCompareFeedback"></div>
 </div>
+</section>
+<section id="uncertainty">
+<!-- GEN:BEGIN sec:uncertainty -->
+  <div class="section-number">PART 05 · 兩種標準誤</div>
+  <h2>同一係數的兩個不確定性估計不一致時 <span class="sec-badge">課程 Lab Ch5 · lab 範例</span></h2>
+<!-- GEN:END sec:uncertainty -->
 
-</details>
+  <p>迴歸輸出的係數旁邊通常附有標準誤，描述「如果重新抽一份樣本，這個係數大約會變動多少」。AI 讀到兩組不一樣的標準誤時，
+  常見的反應是挑一個、或說「其中一個算錯了」。比較好的第一步是<strong>追問兩種算法各自依賴什麼假設</strong>。</p>
+
+  <p>課程 Ch05 lab 用兩種方法估計 mpg 對 horsepower 迴歸係數的標準誤：</p>
+  <ul>
+    <li><strong>公式標準誤：</strong>迴歸輸出直接給的數字，依賴模型形式正確、誤差變異固定等假設。</li>
+    <li><strong>bootstrap 標準誤：</strong>從資料中有放回地重抽很多次，每次重新擬合，看係數實際變動多少。</li>
+  </ul>
+  <p>兩者若明顯不同，不一定是誰算錯；它常在提醒你：模型的某個假設可能不成立。另一種可能是程式本身出了錯，
+  而且不會報錯。下面的延伸兩種情況都會遇到。</p>
+
+<details class="qa-item reading-detail" id="w20detail-bootstrap-se"><summary>延伸：公式標準誤與 bootstrap 標準誤（學完線性迴歸與重抽樣再看）</summary>
+<div class="detail-body">
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch05 · 線性模型的 bootstrap 標準誤</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">hp_func = partial(boot_OLS, MS([<span class="str">&#x27;horsepower&#x27;</span>]), <span class="str">&#x27;mpg&#x27;</span>)</span>
+  <span class="line">hp_se = boot_SE(hp_func,</span>
+  <span class="line">                Auto,</span>
+  <span class="line">                B=<span class="num">1000</span>,</span>
+  <span class="line">                seed=<span class="num">10</span>)</span>
+  <span class="line">hp_se</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept     0.848807
+horsepower    0.007352
+dtype: float64</pre></div>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="67,71">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch05 · 線性模型的公式標準誤</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">hp_model.fit(Auto, Auto[<span class="str">&#x27;mpg&#x27;</span>])</span>
+  <span class="line">model_se = summarize(hp_model.results_)[<span class="str">&#x27;std err&#x27;</span>]</span>
+  <span class="line">model_se</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept     0.717
+horsepower    0.006
+Name: std err, dtype: float64</pre></div>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="73">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch05 · 二次模型的 bootstrap 標準誤</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">quad_model = MS([poly(<span class="str">&#x27;horsepower&#x27;</span>, <span class="num">2</span>, raw=<span class="num">True</span>)])</span>
+  <span class="line">quad_func = partial(boot_OLS,</span>
+  <span class="line">                    quad_model,</span>
+  <span class="line">                    <span class="str">&#x27;mpg&#x27;</span>)</span>
+  <span class="line">boot_SE(quad_func, Auto, B=<span class="num">1000</span>)</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept                                  2.067840
+poly(horsepower, degree=2, raw=True)[0]    0.033019
+poly(horsepower, degree=2, raw=True)[1]    0.000120
+dtype: float64</pre></div>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="75">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+</div>
+<div class="deck-extra">
+  <div class="dx-label">課程 Ch05 · 二次模型的公式標準誤</div>
+  <div class="pseudo-code" style="font-size:.78rem;">
+  <span class="line">M = sm.OLS(Auto[<span class="str">&#x27;mpg&#x27;</span>],</span>
+  <span class="line">           quad_model.fit_transform(Auto))</span>
+  <span class="line">summarize(M.fit())[<span class="str">&#x27;std err&#x27;</span>]</span></div>
+  <div class="expected-out"><span class="eo-tag">預期輸出</span><pre>intercept                                  1.800
+poly(horsepower, degree=2, raw=True)[0]    0.031
+poly(horsepower, degree=2, raw=True)[1]    0.000
+Name: std err, dtype: float64</pre></div>
+  <p class="dx-note">二次項的 0.000 是四捨五入到小數三位的結果，不是「沒有不確定性」；bootstrap 那一格顯示 0.000120。請 AI 讀這種表時，要它注意顯示位數。</p>
+  <span class="dx-src" data-lab-ch="5" data-lab-cells="77">來源：<a href="https://github.com/phonchi/nsysu-math524/blob/main/static_files/presentations/Ch05-resample-lab-zh.ipynb" target="_blank" rel="noopener"><code>Ch05-resample-lab-zh.ipynb</code></a></span>
+</div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>係數</th><th>公式</th><th>bootstrap</th><th>怎麼讀</th></tr></thead>
+  <tbody><tr><td>線性：截距</td><td>0.717</td><td>0.849</td><td>bootstrap 大約多 18%</td></tr><tr><td>線性：horsepower</td><td>0.0064（輸出顯示 0.006）</td><td>0.0074</td><td>bootstrap 大約多 14%</td></tr><tr><td>二次：horsepower</td><td>0.031</td><td>0.033</td><td>接近</td></tr><tr><td>二次：horsepower²</td><td>0.000（四捨五入）</td><td>0.00012</td><td>接近</td></tr><tr><td>二次：截距</td><td>1.800</td><td>2.068</td><td>仍有差距</td></tr></tbody>
+</table></div>
+<p><strong>線性模型的差距是值得追查的線索。</strong>公式標準誤要在模型形式正確、誤差變異固定時才準，而且它是把 horsepower 當作已知、
+只看誤差帶來的變動。mpg 與 horsepower 的關係是彎的，直線擬合的殘差被放大，誤差變異的估計也跟著受影響。
+bootstrap 每次連同 horsepower 一起重抽，模型形式不對或誤差變異不固定時，仍能反映係數實際的變動；它仍然假設各列彼此獨立，也不保證一定比較準。
+單看兩個數字，無法判斷差距來自哪一個假設，要再看殘差圖等證據。</p>
+<p><strong>改用二次模型後，斜率項的兩種估計變得接近，截距仍有差距。</strong>這提醒你，除了模型形式，其他假設也值得檢查，
+例如 mpg 的分散程度是否隨馬力改變。課本說「二次模型的兩種估計對應得更好」，要對照每一個係數去看，不要只看結論。</p>
+<p><strong>能跑不代表做對：一個真實的例子。</strong>課程筆記本早先沿用 ISLP lab 的 <code>boot_SE</code>，依 index 標籤重抽；
+而目前 ISLP 套件載入的 Auto 以車名當 index，而且有重複（本頁資料字典寫過「同名的車可能出現不只一次」）。依標籤抽樣時，
+<code>D.loc</code> 會把同名的車一次全部取出，一份重抽樣本約有 690 列，而不是 392 列。
+程式沒有任何錯誤訊息，算出的截距標準誤約 0.73，看起來也很合理；但重抽的方式已經和原本的資料不同（同名的車整批進出、樣本變大），本例因此低估了變動。改成依列的位置抽樣後，
+結果與 ISLP 課本印出的 0.85 與 0.0074 相同。這類錯誤有個簡單的檢查：印出一份重抽樣本的列數，確認它等於 n。</p>
+<p>完整說明見 <a href="resampling_methods.html#bootstrap">bootstrap</a> 與 <a href="linear_regression.html#problems">線性迴歸的潛在問題</a>。</p>
+</div></details>
+
+<div class="quiz-box">
+  <div class="quiz-label">兩種標準誤 · 自我檢測</div>
+  <p>同一個係數，用兩種方法估計標準誤，結果明顯不同。AI 建議「採用比較小的那個，結論比較顯著」。你怎麼回應？</p>
+  <div class="quiz-options" id="qSEOptions"><div class="quiz-opt" data-correct="false" data-fb="依結論是否顯著來挑數字，是在挑想要的答案，不是在估計不確定性。" onclick="quizCheck('qSE', this)"><span class="opt-letter">(A)</span> 同意，因為標準誤越小越精確</div><div class="quiz-opt" data-correct="true" data-fb="對。差異本身是線索，可能指向模型假設不成立，也可能指向程式錯誤；報告時要說明用了哪一種、為什麼。" onclick="quizCheck('qSE', this)"><span class="opt-letter">(B)</span> 先追問兩種方法各自依賴的假設，也確認程式真的照方法執行，再決定怎麼報告</div><div class="quiz-opt" data-correct="false" data-fb="兩種方法的假設不同，平均沒有統計上的意義。" onclick="quizCheck('qSE', this)"><span class="opt-letter">(C)</span> 取兩個標準誤的平均</div></div>
+  <div class="quiz-feedback" id="qSEFeedback"></div>
+</div>
 </section>
 <section id="record">
 <!-- GEN:BEGIN sec:record -->
-  <div class="section-number">PART 05 · 反駁、紀錄與資料安全</div>
-  <h2>留下能重現、能追責的分析紀錄 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
+  <div class="section-number">PART 06 · 反駁與紀錄</div>
+  <h2>交叉質詢、保存紀錄、保護資料 <span class="sec-badge"><a href="#w20-source-ai-stats">參考：AI 分析的限制與責任（第 11 章）</a></span></h2>
 <!-- GEN:END sec:record -->
 
-  <p>要讓未來的你或同學重現結果，除了聊天紀錄，還需要保存
-  <strong>資料版本、執行環境、程式、輸出與人工決策</strong>；同時，能重現不代表
-  可以把敏感資料交給任意雲端模型。</p>
+  <p>到這裡，AI 已經交回清理程式、圖的解讀、模型比較與標準誤的說明。最後一步是讓這些內容經得起質疑，並留下別人能重跑的紀錄。</p>
 
-<div style="overflow-x:auto;"><details class="qa-item reading-detail" id="w20detail-record-1"><summary>查閱：完整重現紀錄清單</summary>
-<div class="detail-body"><table class="cmp-table" style="width:100%;font-size:.85rem;">
-  <thead><tr><th>至少要留下</th><th>具體內容</th></tr></thead>
-  <tbody><tr><td>任務與對話</td><td>原始 prompt、關鍵追問、日期、模型／工具名稱</td></tr><tr><td>資料來源</td><td>檔名或版本、下載日期、資料字典、篩選與排除規則</td></tr><tr><td>程式與環境</td><td>完整程式、套件版本、作業環境、seed／random_state</td></tr><tr><td>結果與檢查</td><td>完整輸出、警告、驗收結果、失敗嘗試與修正原因</td></tr><tr><td>人工決策</td><td>採納／拒絕哪個建議、誰核准、結論的適用範圍</td></tr></tbody>
-</table></div></details></div>
+  <h3>用另一個 AI 交叉質詢，但由你裁決</h3>
+  <p>書中建議兩種做法：請同一個 AI 批判自己的分析，或者更好的是，請另一個 AI 檢查。對自己熟悉的問題多試幾個模型，
+  可以知道哪一個在這類工作上比較可靠。做法上：</p>
+  <ul>
+    <li>至少讓兩個 AI 參與，加上你自己的判斷。</li>
+    <li>比較它們說法相同與不同的地方；對你沒把握的點，繼續追問。</li>
+    <li>問具體、帶有反駁意味的問題：「這個結論依賴哪些假設？什麼資料會推翻它？還缺哪個檢查？」</li>
+    <li>不熟的術語就直接問。請 AI 解釋你「應該早就懂」的概念，沒有人會笑你。</li>
+  </ul>
+  <p>第二個 AI 提出的異議也只是待查的線索。兩個模型可能學到相同的錯誤，同意彼此也不代表正確；最後仍要回到資料、程式與文件。</p>
 
-<div class="info-box warm">
-  <span class="info-label">上傳前先做資料分級</span>
-  公開資料可依授權使用；內部或受限資料先查組織規範；個資、健康、財務、未公開研究資料與金鑰預設<strong>不要直接貼進公開雲端模型</strong>。刪掉姓名不一定足以防止重新識別；必要時改用合成小例子、只提供摘要，或使用核准的本機／企業環境。
-</div>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>至少要留下</th><th>Auto 這次的例子</th></tr></thead>
+  <tbody><tr><td>任務與對話</td><td>關鍵 prompt、追問、日期、使用的模型與工具</td></tr><tr><td>資料來源</td><td>課程 Auto.csv 的取得日期；資料字典；? 的處理規則</td></tr><tr><td>程式與環境</td><td>清理與建模程式、套件版本、random_state 與 seed</td></tr><tr><td>結果與檢查</td><td>完整輸出、驗收結果、失敗的嘗試與修正原因</td></tr><tr><td>人工決策</td><td>排除 5 列缺值的理由；採納或拒絕 AI 哪些建議；結論的適用範圍</td></tr></tbody>
+</table></div>
 
 <div class="info-box">
   <span class="info-label">完成條件</span>
-  完成協作時，請確認<strong>別人能從保存的資料與程式重跑關鍵數字</strong>、知道 AI 參與了哪一步、也看得到你做過哪些人工判斷。
+  別人能用你保存的資料與程式<strong>重跑出關鍵數字</strong>，看得出 AI 參與了哪些步驟，也看得到你做過哪些判斷。本站 lab 已把程式、輸出與文字放在一起；在每段分析旁補上資料版本、seed、AI 協助範圍與驗收結果即可。
 </div>
 
-<div class="info-box purple">
-  <span class="info-label">🔗 把紀錄放進 notebook</span>
-  本站 lab 已把程式、輸出與文字解釋放在一起。你可以在每個分析段落再補上資料版本、seed、AI 協助範圍與驗收結果；方便之後核對與重跑。
+<div class="info-box warm">
+  <span class="info-label">上傳前先做資料分級</span>
+  Auto 是公開資料，可以直接拿來練習；真實工作的資料常常不是。內部或受限資料先查組織規範；個資、健康、財務、未公開研究資料與金鑰，預設<strong>不要直接貼進公開的雲端模型</strong>。刪掉姓名不一定足以防止重新識別；必要時改用合成的小例子、只提供摘要，或使用核准的本機或企業環境。
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">重現與安全 · 自我檢測</div>
-  <p>你有一份含病患紀錄的內部資料，想請公開聊天模型幫忙除錯。第一步應該是什麼？</p>
-  <div class="quiz-options" id="qRecordOptions"><div class="quiz-opt" data-correct="true" data-fb="對。先確認授權與資料流向，再選擇最少必要資訊。" onclick="quizCheck('qRecord', this)"><span class="opt-letter">(A)</span> 先查資料治理與工具使用規範；能不用真實個體資料就改用合成最小例子</div><div class="quiz-opt" data-correct="false" data-fb="去除直接識別欄位仍可能被其他欄位重新識別，也未必符合組織規範。" onclick="quizCheck('qRecord', this)"><span class="opt-letter">(B)</span> 刪掉姓名後直接上傳整份資料</div><div class="quiz-opt" data-correct="false" data-fb="模型的文字承諾不等於服務條款、技術控制或組織核准。" onclick="quizCheck('qRecord', this)"><span class="opt-letter">(C)</span> 要求模型承諾不保存資料</div></div>
+  <div class="quiz-label">紀錄與資料安全 · 自我檢測</div>
+  <p>你有一份含病患紀錄的內部資料，想請公開的聊天模型幫忙除錯。第一步應該是什麼？</p>
+  <div class="quiz-options" id="qRecordOptions"><div class="quiz-opt" data-correct="true" data-fb="對。先確認授權與資料流向，再只提供除錯所需的最少資訊。" onclick="quizCheck('qRecord', this)"><span class="opt-letter">(A)</span> 先查資料治理與工具使用規範；能不用真實個體資料，就改用合成的最小例子</div><div class="quiz-opt" data-correct="false" data-fb="其他欄位組合起來仍可能識別出個人，也未必符合組織規範。" onclick="quizCheck('qRecord', this)"><span class="opt-letter">(B)</span> 刪掉姓名後直接上傳整份資料</div><div class="quiz-opt" data-correct="false" data-fb="模型的文字承諾不等於服務條款、技術控制或組織核准。" onclick="quizCheck('qRecord', this)"><span class="opt-letter">(C)</span> 要求模型承諾不保存資料</div></div>
   <div class="quiz-feedback" id="qRecordFeedback"></div>
 </div>
 </section>
@@ -968,53 +1209,60 @@ lstat      -0.9500    0.039 -24.528    0.0</pre></div>
   <div class="sol-links"><a href="index.html" target="_blank" rel="noopener">🔗 本站章節總覽</a><a href="00a_why_code.html" target="_blank" rel="noopener">🔗 資料分析學習迴圈</a><a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists" target="_blank" rel="noopener">🔗 AI 協作參考書：作者程式與資料</a></div>
 <!-- GEN:END sec:exercises -->
 
-  <p>下面三題練習判斷分析前要補哪些資訊，以及如何核對、交付結果。</p>
+  <p>下面三題延續 Auto 的情境，練習判斷該補什麼資訊、怎麼核對 AI 的說法。</p>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 1 · 任務拆解</div>
-  <p>你想比較兩種促銷方案。哪個第一個 prompt 最合適？</p>
-  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="false" data-fb="「比較好」沒有指標，且分派方式與觀測單位都未交代。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 「分析這份資料並告訴我哪個促銷比較好」</div><div class="quiz-opt" data-correct="true" data-fb="對。你先縮小任務，要求它找缺口，而且沒有讓它跳過研究設計直接算 p 值。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 「先不要做檢定。請依這份資料字典列出分析前還缺的資訊，特別檢查分派方式、反應變數單位與重複觀測；輸出問題清單」</div><div class="quiz-opt" data-correct="false" data-fb="在看過研究設計、資料結構與效果大小之前，先指定結論規則會把錯誤藏起來。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 「幫我做 t 檢定，p&lt;.05 就宣布方案 B 勝出」</div></div>
+  <div class="quiz-label">EXERCISE 1 · 拆解任務</div>
+  <p>你想知道 Auto 中產地是否與油耗有關。哪個第一個 prompt 最合適？</p>
+  <div class="quiz-options" id="qEx1Options"><div class="quiz-opt" data-correct="true" data-fb="對。先縮小任務、要求找缺口；產地與重量、馬力一起變動，不先釐清就可能把重量的影響算到產地頭上。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(A)</span> 「附上資料字典。先不要建模：請列出分析前還缺的資訊，特別是 origin 的編碼方式、與產地一起變動的其他變數（如重量）；輸出問題清單」</div><div class="quiz-opt" data-correct="false" data-fb="「最省油」沒有說要比較什麼，也沒交代 origin 的編碼。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(B)</span> 「分析這份資料，告訴我哪個產地的車最省油」</div><div class="quiz-opt" data-correct="false" data-fb="先定下結論規則會跳過研究設計；觀察性資料的關聯也不能直接說成「造成」。" onclick="quizCheck('qEx1', this)"><span class="opt-letter">(C)</span> 「對 origin 做迴歸，p &lt; .05 就說產地造成油耗差異」</div></div>
   <div class="quiz-feedback" id="qEx1Feedback"></div>
 </div>
 
 <div class="quiz-box">
-  <div class="quiz-label">EXERCISE 2 · 特殊值</div>
-  <p>同一欄中同時有 0 與 ?，AI 建議全部當成遺漏。你先做什麼？</p>
-  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="false" data-fb="清理時應按資料定義決定如何處理；少見的值也可能有意義。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 採用建議，特殊值越少越乾淨</div><div class="quiz-opt" data-correct="false" data-fb="模型共識不能取代這份資料的欄位定義。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 改問另一個模型，多數同意就接受</div><div class="quiz-opt" data-correct="true" data-fb="對。零可能是合法數值，不能因為看起來特殊就刪除或轉成缺值。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 查欄位說明，確認兩者各代表什麼，再指定要轉換的值</div></div>
+  <div class="quiz-label">EXERCISE 2 · 核對讀圖</div>
+  <p>你請兩個 AI 描述 mpg 的分布。一個說「中間一半的車在 17 到 29 mpg」，另一個說「中間一半的車在 20 到 35 mpg」。你先做什麼？</p>
+  <div class="quiz-options" id="qEx2Options"><div class="quiz-opt" data-correct="true" data-fb="對。「中間一半」由 25% 與 75% 分位數決定，這裡是 17 與 29，第一個說法正確。若 AI 說的是「多數車」，四分位數就不夠，要直接算落在區間內的比例。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(A)</span> 用 <code>describe()</code> 的四分位數核對，再決定採用哪個說法</div><div class="quiz-opt" data-correct="false" data-fb="模型共識不能取代資料；三個模型也可能都讀錯。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(B)</span> 再問第三個 AI，看多數支持哪一個</div><div class="quiz-opt" data-correct="false" data-fb="把兩個未核對的說法平均，只會得到第三個未核對的說法。" onclick="quizCheck('qEx2', this)"><span class="opt-letter">(C)</span> 取兩個範圍的平均</div></div>
   <div class="quiz-feedback" id="qEx2Feedback"></div>
 </div>
 
 <div class="quiz-box">
   <div class="quiz-label">EXERCISE 3 · 留下交付物</div>
-  <p>清理程式通過了檢查。要讓同學接著重跑，至少要交付什麼？</p>
-  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="截圖沒有可執行程式，也未必交代資料版本與清理規則。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> AI 說成功的聊天截圖</div><div class="quiz-opt" data-correct="true" data-fb="對。這些才讓別人能重跑，並理解你為什麼這樣處理。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 資料取得方式、清理程式、環境與前後檢查結果，以及保留或拒絕建議的理由</div><div class="quiz-opt" data-correct="false" data-fb="同學無法還原哪些值被修改，也不能核對清理過程。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 只有處理後的檔案</div></div>
+  <p>整個 Auto 分析做完了。要讓同學接著重跑並理解你的決定，至少要交付什麼？</p>
+  <div class="quiz-options" id="qEx3Options"><div class="quiz-opt" data-correct="false" data-fb="截圖沒有可執行程式，也沒交代資料版本與清理規則。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(A)</span> AI 說分析成功的聊天截圖</div><div class="quiz-opt" data-correct="true" data-fb="對。這些能讓別人重跑，也能理解你為什麼這樣做。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(B)</span> 資料取得方式與字典、清理與建模程式、環境版本、驗收結果，以及排除缺值與採納建議的理由</div><div class="quiz-opt" data-correct="false" data-fb="同學無法知道資料怎麼清理、模型怎麼比較，也無法核對。" onclick="quizCheck('qEx3', this)"><span class="opt-letter">(C)</span> 只有最後的模型係數</div></div>
   <div class="quiz-feedback" id="qEx3Feedback"></div>
 </div>
-<p>延伸到建模時，連選欄位也必須放在適當的訓練流程中。讀完 <a href="p6_modeling_api.html#cv">P6 交叉驗證與洩漏</a>，再練習 <a href="resampling_methods.html#cvwrong">先選特徵再交叉驗證的錯誤案例</a>。</p>
 </section>
 <section id="reference">
 <!-- GEN:BEGIN sec:reference -->
   <div class="section-number">重點速查與來源</div>
   <h2>AI 輔助統計分析：從提問到驗證速查表 <span class="sec-badge">課前 · AI 協作</span></h2>
 <details class="qa-item reading-detail" id="w20-detail-sources"><summary>來源：完整書目與章節定位</summary><div class="detail-body"><div class="source-list"><h3>本頁書目與章節定位</h3><ul><li id="w20-source-islp"><strong>教科書</strong>：<cite>An Introduction to Statistical Learning with Applications in Python</cite>。James、Witten、Hastie、Tibshirani、Taylor，2023。<a href="https://www.statlearning.com/" target="_blank" rel="noopener">原書與下載資訊</a></li>
-<li id="w20-source-ai-stats"><strong>AI 協作參考書</strong>：<cite>AI-Assisted Statistics for Data Scientists</cite>。Peter Bruce、Andrew Bruce、Peter Gedeck，第三版，2026。<a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists" target="_blank" rel="noopener">作者提供的程式與資料</a><br>本頁對應：參考：AI 協作的責任界線（前言）；參考：AI 分析的限制與責任（第 11 章）；參考：生成式 AI 與提示設計（第 10 章）。</li></ul></div></div></details>
+<li id="w20-source-ai-stats"><strong>AI 協作參考書</strong>：<cite>AI-Assisted Statistics for Data Scientists</cite>。Peter Bruce、Andrew Bruce、Peter Gedeck，第三版，2026。<a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists" target="_blank" rel="noopener">作者提供的程式與資料</a><br>本頁對應：參考：AI 協作的責任界線（前言）；參考：資料字典與用 AI 讀圖（第 1 章）；參考：生成式 AI 與提示設計（第 10 章）；參考：AI 分析的限制與責任（第 11 章）；參考：用 AI 讀迴歸結果（第 4 章）。</li></ul></div></div></details>
 <!-- GEN:END sec:reference -->
 <p>需要核對完整公式、比較表或實作時，再展開下方速查。</p><details class="qa-item reading-detail" id="w20detail-reference"><summary>查閱完整速查與延伸提醒</summary>
 <div class="detail-body">
-  <p>下列來源說明本頁使用的協作流程與實作方法。</p>
+  <p>下列來源說明本頁使用的協作流程與實作方法。AI 能力與限制的研究整理見 <a href="00a_why_code.html#reference">00A 的參考資料</a>。</p>
 
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.8rem;">
   <thead><tr><th>來源</th><th>這一頁用到什麼</th></tr></thead>
-  <tbody><tr><td>Bruce, Bruce &amp; Gedeck, <cite>AI-Assisted Statistics for Data Scientists</cite>, 3rd ed.（Preface xv–xvi；Ch.10, pp. 433–435；Ch.11, pp. 447–454）</td><td>AI 的責任界線、提示脈絡、小任務、生成—執行—修正、自我批判與低風險任務分流。</td></tr><tr><td><a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists/blob/main/README.md">官方 GitHub README</a></td><td>核對第三版章節配置，以及官方程式與資料資源入口。</td></tr><tr><td>官方可瀏覽的 <a href="https://gedeck.github.io/ai-assisted-statistics-for-data-scientists/docs/R/">R 程式</a>、<a href="https://gedeck.github.io/ai-assisted-statistics-for-data-scientists/docs/python/">Python 程式</a>與 <a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists/tree/main/code">原始碼目錄</a></td><td>需要核對套件、輸出或改寫 R／Python 時，回到作者提供的程式與資料。</td></tr><tr><td><a href="https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence">NIST AI 600-1: Generative AI Profile</a></td><td>以治理、內容來源、資料隱私與人工監督管理生成式 AI 風險。</td></tr><tr><td><a href="https://www.microsoft.com/en-us/research/publication/its-like-a-rubber-duck-that-talks-back-understanding-generative-ai-assisted-data-analysis-workflows-through-a-participatory-prompting-study/">Drosos et al. (CHIWORK 2024)</a></td><td>小型參與式研究顯示 AI 可支援找資訊與形成分析策略，也會帶來提問、脈絡與驗證障礙；結果不應泛化成所有使用者。</td></tr><tr><td><a href="https://link.springer.com/article/10.1007/s10664-025-10622-4">Ramasamy et al. (Empirical Software Engineering, 2025)</a></td><td>研究發現 prompt 指明目前資料科學步驟，與建議接受度提升相關；不同任務類型的效益並不相同。</td></tr><tr><td><a href="https://www.nature.com/articles/s44387-025-00070-2">Yang et al. (npj Artificial Intelligence, 2026)</a></td><td>專門工具可支援資料轉換、檢定、迴歸與機器學習；同篇也強調個體資料進入雲端模型的隱私風險與研究限制。</td></tr><tr><td><a href="https://scikit-learn.org/stable/common_pitfalls.html">scikit-learn: Common pitfalls</a></td><td>前處理一致性、資料洩漏、Pipeline 與 random_state 的官方實作指引。</td></tr></tbody>
+  <tbody><tr><td>Bruce, Bruce &amp; Gedeck, <cite>AI-Assisted Statistics for Data Scientists</cite>, 3rd ed.（Preface；Ch.1 資料字典與用 AI 讀圖；Ch.4 用 AI 讀迴歸結果；Ch.7 用 AI 解讀主成分；Ch.10 提示設計、脈絡學習與逐步推理；Ch.11 準確性、vibe coding、用 AI 做統計分析）</td><td>標準題與模糊專案的區分、資料字典當脈絡、提示原則、生成—執行—修正、讀圖與讀表的錯誤類型、自我批判與多個 AI 交叉檢查、低風險任務清單。</td></tr><tr><td><a href="https://github.com/gedeck/ai-assisted-statistics-for-data-scientists/blob/main/README.md">官方 GitHub README</a>、<a href="https://gedeck.github.io/ai-assisted-statistics-for-data-scientists/docs/python/">Python 程式</a></td><td>需要核對原書範例的程式與資料時，回到作者提供的版本。</td></tr><tr><td><a href="https://islp.readthedocs.io/en/latest/datasets/Auto.html">ISLP：Auto 資料說明</a></td><td>本頁資料字典的欄位定義與編碼。</td></tr><tr><td><a href="https://scikit-learn.org/stable/common_pitfalls.html">scikit-learn: Common pitfalls</a></td><td>資料洩漏、前處理一致性與 random_state 的官方實作指引。</td></tr></tbody>
 </table></div>
-
-<div class="info-box">
-  <span class="info-label">一頁速記</span>
-  <strong>先分流：</strong>答案越明確、越容易核對，越適合交給 AI 起草。<br><strong>說清楚任務：</strong>方向、格式、例子、脈絡、驗收。<br><strong>反覆執行與修正：</strong>生成、執行、讀錯誤訊息、修改、重跑；能跑還要確認做對。<br><strong>最後核對：</strong>定義、單位、假設、不確定性、因果界線、資料切分與紀錄。
-</div>
-
-
 </div></details>
+</section>
+<section id="cards">
+<!-- GEN:BEGIN sec:cards -->
+  <div class="section-number">CARDS · 關鍵詞彙卡</div>
+  <h2>關鍵詞彙卡：點卡片翻面 <span class="sec-badge">課程詞彙</span></h2>
+  <p>詞彙卡整理本頁引用的課程 lab中常用的統計或機器學習專有名詞，正面附英文名稱。
+  先看正面的術語，試著說出定義，再翻面核對。可以洗牌複習，也可以搭配本章例子練習解釋。</p>
+  <details class="qa-item reading-detail" id="w20-detail-cards"><summary>複習：展開關鍵詞彙卡</summary>
+  <div class="detail-body"><div class="fc-controls">
+    <button id="fcShuffle">🔀 洗牌</button>
+    <button id="fcFlipAll">全部翻面</button>
+    <button id="fcUnflip">全部翻回</button>
+  </div>
+  <div class="fc-grid" id="fcGrid"></div></div></details>
+<!-- GEN:END sec:cards -->
 </section>
 <!-- GEN:BEGIN chapternav -->
 <div class="chapter-nav"><a class="prev" href="00b_setup.html"><div class="nav-dir">◂ 上一章</div><div class="nav-title">環境安裝</div></a><a class="home" href="index.html"><div class="nav-dir">INDEX</div><div class="nav-title">章節總覽</div></a><a class="next" href="introduction.html"><div class="nav-dir">下一章 ▸</div><div class="nav-title">統計學習導論與 EDA</div></a></div>
@@ -1678,7 +1926,7 @@ HC.initFlashcards = () => {
 <!-- PAGEJS:END -->
 <!-- DATA:BEGIN -->
 <script>
-const FLASHCARDS = [];
+const FLASHCARDS = [{"front":"完整案例分析（Complete-Case Analysis）","back":"只用所有分析變數都沒有缺值的列來擬合模型。Auto 從 397 列排除 horsepower 缺值的 5 列後剩 392 列，就是這種做法。它是分析範圍的決定，要記錄排除了幾列與理由；缺值若和反應變數有關，結果可能有偏誤。"},{"front":"模型設定錯誤（Model Misspecification）","back":"擬合的模型形式與資料實際的關係不符，例如用直線擬合彎曲的 mpg 與 horsepower 關係。殘差會被放大，依賴殘差的公式標準誤也會受影響；與 bootstrap 標準誤明顯不同，常是值得追查的線索。"},{"front":"成對 bootstrap（Pairs Bootstrap）","back":"迴歸中把每一列的 x 與 y 綁在一起有放回地重抽，再重新擬合模型，用係數在各次重抽間的變動估計標準誤。它不假設 x 固定，但仍假設各列彼此獨立；重抽時要抽列的位置，每份樣本都應有 n 列。"}];
 HC.initFlashcards();
 </script>
 <!-- DATA:END -->

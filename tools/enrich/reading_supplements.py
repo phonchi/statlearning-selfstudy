@@ -191,8 +191,8 @@ def apply_reading(stem, bodies, pagejs):
         _section(bodies, 'trouble', p+'troubleshooting', '遇到問題再查：症狀、原因與排解步驟', '<p>先讀錯誤訊息最後一行，確認套件、資料路徑與正在使用的 kernel。重啟後由上到下執行，可檢查筆記本是否依賴先前殘留狀態。</p>', ['qFix'])
 
     elif stem == '00c_ai_assisted':
-        for key, label in [('triage','詳細比較：不同任務的驗證方式'),('context','提示五要素的完整對照'),('iterate','查閱：每輪交付物與檢查項目'),('record','查閱：完整重現紀錄清單')]:
-            bodies[key] = _tables(bodies[key], p+key, label)
+        # The 2026-11 rewrite places its own reading details in the enrich source.
+        pass
 
     elif stem == 's1_probability':
         bodies['expectation'] = _heading(bodies['expectation'], '加總與加權平均', p+'expectation-rules', '計算延伸：期望值的加法規則', through_end=True)
