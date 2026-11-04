@@ -41,9 +41,9 @@ SECTIONS = [
 
 # ── P01 ────────────────────────────────────────────────────────────────
 FLOW = f"""
-<p>期末專題鼓勵大家用<strong>開放政府資料或其他真實資料</strong>，不要再分析一次網路上已經被做爛的資料集。
+<p>期末專題鼓勵大家用<strong>開放政府資料或其他真實資料</strong>，避免選用已被大量分析過的公開資料集。
 現在的 AI coding agent（例如 Claude Code、Codex CLI、OpenCode）可以幫你搜尋資料目錄、讀欄位說明、寫下載與清理程式，
-找資料這一步比以前省力很多。分析的想法和判斷還是要你自己來，AI 協作的原則請先讀
+找資料這一步比以前省力很多。分析的想法與判斷仍須由你自己負責，AI 協作的原則請先讀
 <a href="../00c_ai_assisted.html">課前準備 C：用 AI 做統計分析</a>。</p>
 <div class="project-steps">
   <div class="step"><b>① 先寫下問題</b>想回答什麼？結果要給誰看？一列資料代表什麼？</div>
@@ -82,7 +82,7 @@ Twinkle Hub 適合用中文描述需求、讓 agent 幫你找資料；做國際�
 ])}
 {info("Kaggle 與二手資料",
       "Kaggle 上很多資料是別人整理過的二手資料。使用前先追到原始出處，確認授權與收集方式；"
-      "熱門資料集要另外找出新的問題，不要只是重跑別人的筆記本。", "purple")}
+      "熱門資料集要另外找出新的問題，不要只是重做他人已完成的分析。", "purple")}
 {detail("project-more-sources", "其他可以參考的來源",
         "<ul>"
         f"<li>{a('https://tdx.transportdata.tw/', '交通部 TDX 運輸資料流通服務')}：交通資料很完整，但要註冊並等管理員審核，多為即時資料，需要自己存快照。</li>"
@@ -100,8 +100,8 @@ Twinkle Hub 適合用中文描述需求、讓 agent 幫你找資料；做國際�
 # ── P03 ────────────────────────────────────────────────────────────────
 MCP = f"""
 <p><strong>MCP</strong>（Model Context Protocol）是讓 AI agent 呼叫外部工具的標準介面。
-資料平台有 MCP 端點，agent 就能自己搜尋資料目錄、查資料，不用你一頁頁翻網站。
-下面用 Twinkle Hub 示範；其他提供遠端 MCP 的服務接法相同，換掉網址與登入方式就好。</p>
+資料平台有 MCP 端點，agent 就能自己搜尋資料目錄、查資料，不必手動逐頁瀏覽網站。
+下面用 Twinkle Hub 示範；其他提供遠端 MCP 的服務接法相同，只需更換網址與登入方式。</p>
 
 <h3>1. 取得金鑰，放進環境變數</h3>
 <p>到 {a("https://hub.twinkleai.tw/zh-TW", "Twinkle Hub")} 註冊，在 Dashboard 取得以 <code>sk-</code> 開頭的金鑰。
@@ -121,7 +121,7 @@ claude mcp add --transport http twinkle-hub https://api.twinkleai.tw/mcp/ \\
   --header "Authorization: Bearer $TWINKLE_HUB_API_KEY"
 claude mcp list        # 確認狀態
 ''')}
-<p>這個設定預設存在你自己的使用者設定裡，不會進專案。別加 <code>--scope project</code>，加了金鑰會寫進專案的 <code>.mcp.json</code>，一 commit 就外流。</p>
+<p>這個設定預設存在你自己的使用者設定裡，不會進入專案。請不要加 <code>--scope project</code>，否則金鑰會寫進專案的 <code>.mcp.json</code>，commit 後就會外流。</p>
 
 <p><strong>Codex CLI</strong>（Twinkle Hub 官方文件）：</p>
 {code('''
@@ -211,7 +211,7 @@ my-project/
 
 # ── P06 ────────────────────────────────────────────────────────────────
 DISCLOSE = f"""
-<p>可以放心用 AI 工具，只是<strong>書面報告與簡報都要簡短說明</strong>用了哪些工具、用在哪裡，
+<p>歡迎使用 AI 工具，但<strong>書面報告與簡報都要簡短說明</strong>用了哪些工具、用在哪裡，
 不需要附對話紀錄。報告放在 Acknowledgements 裡，簡報放一張投影片或某頁的角落即可。例如：</p>
 {code('''
 AI use: We used Claude Code to search Taiwan open-data catalogs and to draft
