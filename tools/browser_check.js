@@ -40,8 +40,9 @@ const CHROME = process.env.CHROME_PATH || (() => {
 
 const ARGS = process.argv.slice(2).map(s => s.replace(/\.html$/, '').replace(/\/index$/, ''));
 const WITH_ISLAND = !ARGS.length || ARGS.includes('island');
+const WITH_PROJECT = !ARGS.length || ARGS.includes('project');
 const PAGES = ARGS.length
-  ? ARGS.filter(s => s !== 'island')
+  ? ARGS.filter(s => s !== 'island' && s !== 'project')
   : fs.readdirSync(ROOT).filter(f => f.endsWith('.html') && f !== 'index.html')
       .map(f => f.replace(/\.html$/, ''));
 
@@ -586,6 +587,36 @@ async function checkIsland(browser) {
   return `${total} 入口 · ${summary.join(' · ')}`;
 }
 
+/* 期末專題指南（純靜態）：桌面與手機寬度各開一次，查 console 錯誤、水平溢出與錨點捲動。 */
+async function checkProject(browser) {
+  const stem = 'project';
+  const url = 'file://' + path.join(ROOT, 'project', 'index.html');
+  fs.mkdirSync(SHOT_DIR, { recursive: true });
+  const out = [];
+  for (const [name, vp] of [['desktop', { width: 1366, height: 900 }], ['mobile', { width: 390, height: 844, isMobile: true }]]) {
+    const page = await browser.newPage();
+    const errors = [];
+    page.on('console', m => {
+      if ((m.type() === 'error' || m.type() === 'warning') && !IGNORE.some(re => re.test(m.text()))) errors.push(`console.${m.type()}: ${m.text()}`);
+    });
+    page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+    await page.setViewport(vp);
+    await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+    const m = await page.evaluate(() => ({
+      overflow: document.documentElement.scrollWidth - window.innerWidth,
+      sections: document.querySelectorAll('section').length,
+      tocMissing: [...document.querySelectorAll('.toc a')].filter(a => !document.querySelector(a.getAttribute('href'))).length,
+    }));
+    if (m.overflow > 1) note(stem, `${name}：頁面水平溢出 ${m.overflow}px`);
+    if (m.tocMissing) note(stem, `${name}：${m.tocMissing} 個目錄連結找不到對應區塊`);
+    errors.forEach(e => note(stem, `${name}：${e}`));
+    await shot(page, path.join(SHOT_DIR, `project_${name}.png`));
+    out.push(`${name} ${m.sections} 節`);
+    await page.close();
+  }
+  return out.join(' · ');
+}
+
 (async () => {
   const browser = await puppeteer.launch({
     executablePath: CHROME,
@@ -609,6 +640,13 @@ async function checkIsland(browser) {
     try { info = await checkIsland(browser); } catch (e) { note('island', '檢查中斷：' + e.message); }
     const n = problems.length - before;
     console.log(`  ${'island/index.html'.padEnd(34)} ${n === 0 ? 'OK  ' : n + ' 問題'} ${info}`);
+  }
+  if (WITH_PROJECT) {
+    const before = problems.length;
+    let info = '';
+    try { info = await checkProject(browser); } catch (e) { note('project', '檢查中斷：' + e.message); }
+    const n = problems.length - before;
+    console.log(`  ${'project/index.html'.padEnd(34)} ${n === 0 ? 'OK  ' : n + ' 問題'} ${info}`);
   }
   await browser.close();
   console.log('');

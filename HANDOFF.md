@@ -68,6 +68,7 @@ python3 tools/inject_data.py <stem>       # 詞彙卡／題庫 → DATA 區段
 python3 tools/build_page.py               # GEN 區段（head/nav/TOC/標題列/chapter-nav/footer/shared.js）
 python3 tools/build_index.py              # index.html 與 README 章節表
 python3 tools/build_island.py             # island/index.html（3D 知識群島，見 §26）
+python3 tools/build_project.py            # project/index.html（期末專題指南，見 §28）
 python3 tools/validate.py --net           # 20 項具名檢查
 node    tools/browser_check.js            # 瀏覽器逐項
 git add -A && git commit && git push      # Pages 會自動重建
@@ -865,3 +866,15 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 
 **驗證**：見 `tools/verification/ch7-lecture-refine-20261031/README.md`。Stack Exchange 連結擋抓取，未讀原文。
 
+
+## 28. 期末專題指南 `project/`（2026-11-04）
+
+給學生的「真實資料來源 × 用 MCP 接上 AI agent（Claude Code／Codex／OpenCode）× 可重現交件」單頁，搭配當學期期末專題規範（docx 在 `~/statslearning/Final_Project_2026/`，不進 repo）。
+
+- **不註冊進 `pages.py`**：它不是教材章節，沒有 lab 出處、詞彙卡與題庫；註冊會連動 `island_meta`、3D 場景座標、首頁分區與 `nav_next`。做法比照 `island/`：內容寫在 `tools/build_project.py`，樣式 inline `base.css + stats.css + tools/template/project.css`，借用 `tools/enrich/lib.py` 的 `info()`／`table()`／`detail()`。
+- **首頁入口**：`build_index.py` 的「相關資源」多一張 `res-card`（刻意不用 `ch-card`，否則 INDEX-SYNC 會把它當章節卡），README 多一行。
+- **檢查**：`validate.py` 新增 `check_project()`（重建後逐 byte 比對、站內相對連結與錨點存在、頁內錨點、禁 `<img>`／`<script>`、`UNWANTED` 用語）；`browser_check.js` 新增 `checkProject()`（桌面 1366 與手機 390 各開一次：console 錯誤、水平溢出、目錄連結）。外部連結**不進** `--net` 的 LINKS：`fred.stlouisfed.org` 會擋非瀏覽器請求，改版時人工在瀏覽器點一次。
+- **內容原則**：不寫學期日期與配分（以當學期規範為準）；額度、方案、指令會變，頁面標注 `build_project.CHECKED`，改內容時一併更新。主軸是「agent 找資料 → 回原機關下載原始檔 → 本機分析」，讓 MCP 額度不成為專題的依賴。
+- **查證依據**（2026-11-04）：Twinkle Hub 官方 `llms.txt`、`/zh-TW/docs?aud=claude|codex`、定價頁；OpenCode 1.18.30 以假金鑰實測 `opencode.json` 的 remote MCP 設定可被讀取並連到端點（回 401，屬預期）。其餘來源的調查紀錄在 `~/statslearning/Final_Project_2026/consult/sources_survey.md`。
+
+建置串（§2）已加入 `python3 tools/build_project.py`。

@@ -183,6 +183,9 @@ def build_html():
       <a href="https://botlnec.github.io/islp/" target="_blank" rel="noopener">botlnec.github.io/islp</a> ·
       <a href="https://github.com/Mohamed-Badry/islp-solutions" target="_blank" rel="noopener">islp-solutions</a> ·
       <a href="https://yuhangzhou88.github.io/ESL_Solution/" target="_blank" rel="noopener">ESL_Solution</a></div>
+      <div class="res-card"><b>🧭 期末專題：真實資料 × AI agent</b>推薦的開放政府與真實資料來源、
+      用 MCP 把資料來源接進 Claude Code／Codex／OpenCode，以及讓結果可以重現的交件結構。<br>
+      <a href="project/">期末專題指南</a></div>
     </div>
   </section>
 </div>
@@ -228,6 +231,7 @@ NSYSU MATH524「統計學習與資料探勘」的互動自學配套網站，分�
 
 - 線上閱讀：{P.SITE_URL}
 - 3D 知識群島導覽：{P.SITE_URL}island/（點建築前往各單元；原首頁與教材不變）
+- 期末專題指南：{P.SITE_URL}project/（真實資料來源、用 MCP 接上 AI agent、可重現的交件結構）
 - 教科書：[ISLP — An Introduction to Statistical Learning with Applications in Python]({P.BOOK_ISLP})
 - 進階參考：[ESL — The Elements of Statistical Learning]({P.BOOK_ESL})
 - 課程講義：[現行課程網站](https://phonchi.github.io/nsysu-math524/)（各頁「講義 PDF」與「中文 Lab」連結來源）

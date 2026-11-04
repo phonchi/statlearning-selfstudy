@@ -731,6 +731,39 @@ def check_island(net=False):
         fail("ISLAND-SYNC", "island", f"用語：{', '.join(words)}")
 
 
+def check_project():
+    """期末專題指南 project/index.html：產物同步、站內相對連結與錨點、用語、無 <img>／<script>。
+
+    頁面由 tools/build_project.py 產生（不在 PAGES 裡）。外部連結不進 --net 的 LINKS：
+    fred.stlouisfed.org 會擋非瀏覽器請求，改版時人工在瀏覽器確認，並更新 build_project.CHECKED。
+    """
+    import build_project as BP
+    from check_taiwan_wording import UNWANTED
+    f = ROOT / "project" / "index.html"
+    if not f.exists():
+        fail("PROJECT-SYNC", "project", "尚未產生，先跑 python3 tools/build_project.py")
+        return
+    src = f.read_text(encoding="utf-8")
+    if src != BP.build():
+        fail("PROJECT-SYNC", "project", "產物與產生器不一致（手改了，或改了 build_project／template 後沒重跑）")
+    for href in set(re.findall(r'href="\.\./([^"]+)"', src)):
+        page, _, anchor = href.partition("#")
+        target = ROOT / page
+        if not target.exists():
+            fail("PROJECT-SYNC", "project", f"連結指向不存在的 {page}")
+        elif anchor and f'id="{anchor}"' not in target.read_text(encoding="utf-8"):
+            fail("PROJECT-SYNC", "project", f"{page} 沒有錨點 #{anchor}")
+    for anchor in re.findall(r'href="#([^"]+)"', src):
+        if f'id="{anchor}"' not in src:
+            fail("PROJECT-SYNC", "project", f"頁內錨點 #{anchor} 不存在")
+    if re.search(r"<(img|script)\b", src, re.I):
+        fail("PROJECT-SYNC", "project", "不應有 <img> 或 <script>：這頁是純靜態文件")
+    text = re.sub(r"<style\b.*?</style>", "", src, flags=re.S)
+    words = sorted(set(UNWANTED.findall(text)))
+    if words:
+        fail("PROJECT-SYNC", "project", f"用語：{', '.join(words)}")
+
+
 def check_links(base=None):
     import urllib.error
     import urllib.request
@@ -784,6 +817,7 @@ def main(argv):
         check_repo()
         check_contrast_contract()
         check_island(net="--net" in argv)
+        check_project()
     if "--net" in argv:
         check_links()
 
