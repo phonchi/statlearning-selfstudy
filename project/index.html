@@ -781,7 +781,7 @@ codex mcp list</pre></div>
 <p>如果啟動時出現 30 秒逾時，在 <code>~/.codex/config.toml</code> 的 <code>[mcp_servers.twinkle-hub]</code> 底下加一行 <code>startup_timeout_sec = 60</code>。</p>
 
 <p><strong>OpenCode</strong>（Twinkle Hub 文件沒寫，下面照 <a href="https://opencode.ai/docs/mcp-servers/" target="_blank" rel="noopener">OpenCode 官方 MCP 說明</a> 寫成，
-在 OpenCode 1.18 試過：設定讀得到，也連得上端點）。在專案根目錄建立 <code>opencode.json</code>：</p>
+已在 OpenCode 1.18 用真實金鑰實測可以查詢）。在專案根目錄建立 <code>opencode.json</code>：</p>
 <div class="pseudo-code"><pre>{
   &quot;$schema&quot;: &quot;https://opencode.ai/config.json&quot;,
   &quot;mcp&quot;: {
@@ -794,10 +794,17 @@ codex mcp list</pre></div>
   }
 }</pre></div>
 <p><code>{env:...}</code> 會在執行時讀環境變數，所以這個檔案裡沒有金鑰，可以放進 Git。用 <code>opencode mcp list</code> 確認狀態。</p>
+<p>沒有付費的 AI 訂閱也能先試：OpenCode 內建幾個免費模型（名稱以 <code>-free</code> 結尾，用 <code>opencode models</code> 查看），例如
+<code>opencode run -m opencode/deepseek-v4.1-flash-free "你的問題"</code>。免費模型的清單會變動，以 <code>opencode models</code> 的結果為準。</p>
+
+<div class="info-box green">
+  <span class="info-label">實測結果（2026-11-04）</span>
+  依上面三種設定各接一次，請 agent 查高雄市苓雅區 2025 年起的 3 筆實價登錄交易：Claude Code、Codex CLI、OpenCode（免費模型）都查詢成功，結果相同，每次都只執行一次資料查詢、扣 1 點。Twinkle Hub 的實價登錄有專用資料集 <code>lvr-trades</code>（預售屋 <code>lvr-presale</code>、租賃 <code>lvr-rentals</code>），日期另有西元欄位 <code>iso_trade_date</code>。回應會附授權與出處標示句，可直接用在報告。要注意兩件事：回傳筆數有上限（回應標示 <code>truncated</code>），沒指定排序時也不是最新的資料；完整資料仍請到內政部實價登錄下載。
+</div>
 
 <h3>3. 額度與學術方案</h3>
-<p>Twinkle Hub 免費方案每 5 小時 50 點、每週最多 200 點，多數查詢扣 1 點（2026-11-04 查證，方案可能調整，以
-<a href="https://hub.twinkleai.tw/zh-TW/pricing" target="_blank" rel="noopener">官方定價頁</a>為準）。這個額度拿來找資料夠用，
+<p>Twinkle Hub 免費方案每 5 小時 50 點、每週最多 200 點（2026-11-04 查證，方案可能調整，以
+<a href="https://hub.twinkleai.tw/zh-TW/pricing" target="_blank" rel="noopener">官方定價頁</a>為準）。每次資料查詢扣 1 點，回應的 <code>meta.usage.credit_price</code> 會寫明；查詢工具清單與參數說明不是資料查詢。剩餘點數請到 Dashboard 查看。這個額度拿來找資料夠用，
 拿來反覆抓大量資料就不夠，所以才要照 P01 的流程，找到後回原機關下載。
 需要更多額度可以用學校信箱申請 Edu 學術方案（申請方式見定價頁）；使用 Edu 方案的成果須註記「本研究由 Twinkle Hub 贊助資料服務」。</p>
 <div class="info-box">
