@@ -705,8 +705,9 @@ footer a{color:var(--accent2);}
 <a href="#sources"><span class="toc-num">P02</span>推薦的資料來源</a>
 <a href="#mcp"><span class="toc-num">P03</span>把資料來源接進 AI agent</a>
 <a href="#prompts"><span class="toc-num">P04</span>可以這樣問 agent</a>
-<a href="#repro"><span class="toc-num">P05</span>讓別人跑得出同樣的結果</a>
-<a href="#disclose"><span class="toc-num">P06</span>AI 使用聲明與資料出處</a>
+<a href="#check"><span class="toc-num">P05</span>用 AI 分析時要核對的事</a>
+<a href="#repro"><span class="toc-num">P06</span>讓別人跑得出同樣的結果</a>
+<a href="#disclose"><span class="toc-num">P07</span>AI 使用聲明與資料出處</a>
 <a href="#reference"><span class="toc-num">速查</span>連結與查證日期</a>
   </div>
 </div>
@@ -716,7 +717,8 @@ footer a{color:var(--accent2);}
 <h2>先想問題，再找資料</h2>
 <p>期末專題鼓勵大家用<strong>開放政府資料或其他真實資料</strong>，避免選用已被大量分析過的公開資料集。
 現在的 AI coding agent（例如 Claude Code、Codex CLI、OpenCode）可以幫你搜尋資料目錄、讀欄位說明、寫下載與清理程式，
-找資料這一步比以前省力很多。分析的想法與判斷仍須由你自己負責，AI 協作的原則請先讀
+找資料這一步比以前省力很多。分析的想法與判斷仍須由你自己負責。MCP 能做與不能做的事見 <a href="#mcp">P03</a>；
+請 AI 協助分析之前，先看 <a href="#check">P05 的核對清單</a>，更完整的原則在
 <a href="../00c_ai_assisted.html">課前準備 C：用 AI 做統計分析</a>。</p>
 <div class="project-steps">
   <div class="step"><b>① 先寫下問題</b>想回答什麼？結果要給誰看？一列資料代表什麼？</div>
@@ -756,9 +758,20 @@ Twinkle Hub 適合用中文描述需求、讓 agent 幫你找資料；做國際�
 <h2>把資料來源接進 AI agent</h2>
 <p><strong>MCP</strong>（Model Context Protocol）是讓 AI agent 呼叫外部工具的標準介面。
 資料平台有 MCP 端點，agent 就能自己搜尋資料目錄、查資料，不必手動逐頁瀏覽網站。
-下面用 Twinkle Hub 示範；其他提供遠端 MCP 的服務接法相同，只需更換網址與登入方式。</p>
+下面用 Twinkle Hub 示範。</p>
 
-<h3>1. 取得金鑰，放進環境變數</h3>
+<h3>1. 先了解 MCP 能做什麼</h3>
+<p>可以把 MCP 想成會查目錄、也會替你算摘要的圖書館員，而不是下載工具。依專題階段來看：</p>
+<div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
+  <thead><tr><th>階段</th><th>適合交給 MCP</th><th>不要用 MCP 做</th></tr></thead>
+  <tbody><tr><td>選題</td><td>用中文描述想法，請它列出候選資料集、欄位、年份範圍、授權與提供機關</td><td>替你決定題目：它只知道有沒有資料，不知道問題值不值得做</td></tr><tr><td>找資料</td><td>讀欄位定義、更新頻率與出處標示，找出原始檔的下載位置</td><td>當成下載工具：免費方案每次最多回 10 列、沒有翻頁，抓不完大多數資料集</td></tr><tr><td>初探</td><td>用聚合確認各組筆數、平均值範圍與時間涵蓋，判斷題目是否可行</td><td>當成正式分析：沒有中位數與分位數，聚合結果最多也只回 10 組</td></tr><tr><td>建模</td><td>不使用</td><td>用線上查詢結果建模：助教沒有金鑰就無法重現，額度用完分析也會中斷</td></tr><tr><td>報告</td><td>引用回應附的授權與出處標示句</td><td>把 MCP 回傳的數字直接寫進報告：每個數字都要能從本機的原始檔重算</td></tr></tbody>
+</table></div>
+<p>Twinkle Hub 免費方案的限制（2026-11-04 實測）：每次資料查詢扣 1 點，最多回 10 列，沒有翻頁。
+聚合（count、sum、avg、min、max）會對符合條件的全部資料計算，但結果同樣最多回 10 組；
+例如查高雄市各行政區的交易件數，只會拿到 38 區中的 10 區，要用條件分批查。
+點數上限和每次回傳的列數上限是兩回事，點數還有剩也一樣只回 10 列。</p>
+
+<h3>2. 取得金鑰，放進環境變數</h3>
 <p>到 <a href="https://hub.twinkleai.tw/zh-TW" target="_blank" rel="noopener">Twinkle Hub</a> 註冊，在 Dashboard 取得以 <code>sk-</code> 開頭的金鑰。
 <strong>金鑰不要寫進程式碼、筆記本、投影片或要 commit 的設定檔</strong>，一律放在環境變數：</p>
 <div class="pseudo-code"><pre># macOS／Linux：寫進 ~/.zshrc 或 ~/.bashrc，重開終端機
@@ -767,7 +780,7 @@ export TWINKLE_HUB_API_KEY=sk-你的金鑰
 # Windows PowerShell：設定後重開終端機
 setx TWINKLE_HUB_API_KEY &quot;sk-你的金鑰&quot;</pre></div>
 
-<h3>2. 依你用的 agent 加入 MCP 伺服器</h3>
+<h3>3. 依你用的 agent 加入 MCP 伺服器</h3>
 <p><strong>Claude Code</strong>（Twinkle Hub 官方文件提供的指令，金鑰改從環境變數帶入）：</p>
 <div class="pseudo-code"><pre>claude mcp add --transport http twinkle-hub https://api.twinkleai.tw/mcp/ \
   --header &quot;Authorization: Bearer $TWINKLE_HUB_API_KEY&quot;
@@ -799,17 +812,16 @@ codex mcp list</pre></div>
 
 <div class="info-box green">
   <span class="info-label">實測結果（2026-11-04）</span>
-  依上面三種設定各接一次，請 agent 查高雄市苓雅區 2025 年起的 3 筆實價登錄交易：Claude Code、Codex CLI、OpenCode（免費模型）都查詢成功，結果相同，每次都只執行一次資料查詢、扣 1 點。Twinkle Hub 的實價登錄有專用資料集 <code>lvr-trades</code>（預售屋 <code>lvr-presale</code>、租賃 <code>lvr-rentals</code>），日期另有西元欄位 <code>iso_trade_date</code>。回應會附授權與出處標示句，可直接用在報告。要注意兩件事：回傳筆數有上限（回應標示 <code>truncated</code>），沒指定排序時也不是最新的資料；完整資料仍請到內政部實價登錄下載。
+  依上面三種設定各接一次，請 agent 查高雄市苓雅區 2025 年起的 3 筆實價登錄交易：Claude Code、Codex CLI、OpenCode（免費模型）都查詢成功，結果相同，每次都只執行一次資料查詢、扣 1 點。Twinkle Hub 的實價登錄有專用資料集 <code>lvr-trades</code>（預售屋 <code>lvr-presale</code>、租賃 <code>lvr-rentals</code>），日期另有西元欄位 <code>iso_trade_date</code>。回應會附授權與出處標示句，可直接用在報告。要注意兩件事：免費方案每次最多回 10 列（回應標示 <code>truncated</code>），沒指定排序時也不是最新的資料；完整資料仍請到內政部實價登錄下載。
 </div>
 
-<h3>3. 額度與學術方案</h3>
+<h3>4. 額度與學術方案</h3>
 <p>Twinkle Hub 免費方案每 5 小時 50 點、每週最多 200 點（2026-11-04 查證，方案可能調整，以
-<a href="https://hub.twinkleai.tw/zh-TW/pricing" target="_blank" rel="noopener">官方定價頁</a>為準）。每次資料查詢扣 1 點，回應的 <code>meta.usage.credit_price</code> 會寫明；查詢工具清單與參數說明不是資料查詢。剩餘點數請到 Dashboard 查看。這個額度拿來找資料夠用，
-拿來反覆抓大量資料就不夠，所以才要照 P01 的流程，找到後回原機關下載。
+<a href="https://hub.twinkleai.tw/zh-TW/pricing" target="_blank" rel="noopener">官方定價頁</a>為準）。每次資料查詢扣 1 點，回應的 <code>meta.usage.credit_price</code> 會寫明；查詢工具清單與參數說明不是資料查詢。剩餘點數請到 Dashboard 查看。
 需要更多額度可以用學校信箱申請 Edu 學術方案（申請方式見定價頁）；使用 Edu 方案的成果須註記「本研究由 Twinkle Hub 贊助資料服務」。</p>
 <div class="info-box">
-  <span class="info-label">其他官方 MCP</span>
-  <a href="https://fred.stlouisfed.org/help/data/connecting-fred-to-ai-services/FRED-MCP-Connector" target="_blank" rel="noopener">FRED</a>、<a href="https://www.kaggle.com/docs/mcp" target="_blank" rel="noopener">Kaggle</a>、<a href="https://huggingface.co/docs/hub/en/hf-mcp-server" target="_blank" rel="noopener">Hugging Face</a> 也提供官方遠端 MCP。接法同上：換成各自的網址；需要登入的服務，依各家說明用 OAuth 登入（Claude Code 在對話中輸入 <code>/mcp</code>，Codex 用 <code>codex mcp login</code>）。
+  <span class="info-label">其他官方 MCP（依官方文件整理，尚未實測）</span>
+  <ul><li><a href="https://fred.stlouisfed.org/help/data/connecting-fred-to-ai-services/FRED-MCP-Connector" target="_blank" rel="noopener">FRED</a>：查美國與國際經濟時間序列，可產生 CSV／JSON 下載連結，下載後一樣存進 <code>data/raw/</code>。</li><li><a href="https://www.kaggle.com/docs/mcp" target="_blank" rel="noopener">Kaggle</a>：可搜尋並下載整份資料集，但要追到原始出處並確認授權。</li><li><a href="https://huggingface.co/docs/hub/en/hf-mcp-server" target="_blank" rel="noopener">Hugging Face</a>：搜尋機器學習資料集、讀資料卡；品質參差，授權要逐一確認。</li><li><a href="https://docs.datacommons.org/mcp/" target="_blank" rel="noopener">Google Data Commons</a>：回傳整理過的跨國或地區指標數值，沒有原始檔，適合快速比較；需要免費 API key。</li></ul>設定方式依各服務的說明；需要登入的服務用 OAuth 登入（Claude Code 在對話中輸入 <code>/mcp</code>，Codex 用 <code>codex mcp login</code>）。
 </div>
 </section>
 
@@ -829,10 +841,44 @@ codex mcp list</pre></div>
 讀 data/raw/ 的檔案，回報每個欄位的型態、缺值比例、單位與可疑的值
 （例如負的面積、民國年未轉換）。只回報，不要自動刪資料。</pre></div>
 <p>agent 回報的欄位意義、單位與資料筆數，都要自己對照原始資料說明再確認一次。</p>
+
+<h3>免費額度內做得到的查詢</h3>
+<p>下面每個提問大約只需要一次資料查詢（1 點），實際次數以 agent 的呼叫紀錄為準。</p>
+<ul>
+  <li><strong>確認樣本數</strong>：「用 twinkle-hub 的 lvr-trades，統計高雄市三民區、苓雅區、左營區 2024 年的交易件數與平均單價，只回傳聚合結果。」
+  三個區一次就能完整回傳；要看全市 38 區，就得用條件分批查。</li>
+  <li><strong>確認期間涵蓋</strong>：「篩選苓雅區，回傳交易日期的最小值、最大值與筆數。」可以確認起訖年份，但不能據此認定中間沒有缺期。</li>
+  <li><strong>先看真實值長相</strong>：「回傳苓雅區 2025 年起 10 筆交易，依交易日期由新到舊排序，附欄位說明與單位。」
+  看過日期格式、單位與欄位內容，再請 agent 寫下載與清理程式。</li>
+  <li><strong>找可以合併的資料</strong>：「找出可以和實價登錄依行政區合併的人口或所得資料集，列出欄位、年份、授權與原始下載網址，先不要下載。」</li>
+</ul>
+<div class="info-box warm">
+  <span class="info-label">常見誤用</span>
+  一是用條件切很多次，把明細拼成訓練資料：一週最多約 2,000 列，不保證不重複，也無法重現。二是把聚合結果當成分析：房價是偏態分布，平均數容易誤導，只回 10 組也可能漏掉部分地區。分析程式（例如 <code>analysis.py</code>）裡不要呼叫 MCP，一律讀本機的原始檔。
+</div>
+</section>
+
+<section id="check">
+<div class="section-number">PART 05 · 第 5 節</div>
+<h2>用 AI 分析時要核對的事</h2>
+<p>AI 很會寫 scikit-learn 程式，也很會把結果講得頭頭是道，但統計學習專題最常出錯的地方，AI 預設不會替你檢查。
+請 agent 分析前後，逐項核對：</p>
+<ol>
+  <li><strong>資料洩漏</strong>：標準化、補值、特徵選擇與調參只能用訓練資料估計（例如放進 <code>Pipeline</code> 再做交叉驗證）；
+  有時間順序的資料按時間切分，同一地區或個體重複出現時要分組切分；測試集只在最後用一次。AI 預設寫的 <code>train_test_split</code> 多半沒有處理這些。</li>
+  <li><strong>資料本身</strong>：確認每一列代表什麼，以及欄位定義與單位（民國年或西元年、總價或單價、坪或平方公尺）；
+  合併、篩選、刪除缺值前後都印出列數，看樣本有沒有悄悄變少或變偏。</li>
+  <li><strong>評估方式</strong>：先建立基準模型（例如線性或邏輯斯迴歸），依任務選擇驗證方式與指標，回報交叉驗證的平均與變異，不要只挑表現最好的一次。</li>
+  <li><strong>解讀結果</strong>：不只看 p 值或 accuracy，也要說明效果大小、不確定性與限制；類別不平衡時改看其他指標；相關不等於因果。</li>
+  <li><strong>查證 AI 的說法</strong>：AI 會自信地解釋欄位，甚至編出不存在的欄位或論文。欄位意義回原機關的說明核對，文獻要自己找到原文，報告裡的數字都要由你的程式重算。</li>
+  <li><strong>保護資料</strong>：個資、未公開資料與金鑰不要貼進雲端 AI 服務。</li>
+</ol>
+<p>怎麼把分析拆成小任務、要留哪些協作紀錄、哪些資料不能上傳，見
+<a href="../00c_ai_assisted.html">課前準備 C：用 AI 做統計分析</a>。</p>
 </section>
 
 <section id="repro">
-<div class="section-number">PART 05 · 第 5 節</div>
+<div class="section-number">PART 06 · 第 6 節</div>
 <h2>讓別人跑得出同樣的結果</h2>
 <p>期末專題要求<strong>繳交的程式能從頭跑完，重現報告裡的數字與圖</strong>。專案可以照這個結構整理：</p>
 <div class="pseudo-code"><pre>my-project/
@@ -857,7 +903,7 @@ codex mcp list</pre></div>
 </section>
 
 <section id="disclose">
-<div class="section-number">PART 06 · 第 6 節</div>
+<div class="section-number">PART 07 · 第 7 節</div>
 <h2>AI 使用聲明與資料出處</h2>
 <p>歡迎使用 AI 工具，但<strong>書面報告與簡報都要簡短說明</strong>用了哪些工具、用在哪裡，
 不需要附對話紀錄。報告放在 Acknowledgements 裡，簡報放一張投影片或某頁的角落即可。例如：</p>

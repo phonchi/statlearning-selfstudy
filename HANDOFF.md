@@ -878,3 +878,5 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - **查證依據**（2026-11-04）：Twinkle Hub 官方 `llms.txt`、`/zh-TW/docs?aud=claude|codex`、定價頁；OpenCode 1.18.30 以假金鑰實測 `opencode.json` 的 remote MCP 設定可被讀取並連到端點（回 401，屬預期）。同日以使用者的真實金鑰，照頁面指令讓 Claude Code 2.1.318、Codex CLI 0.165.0、OpenCode 1.18.30（免費模型 `opencode/deepseek-v4.1-flash-free`）各查一次 `lvr-trades`：三者皆成功，每次 1 次資料查詢、`meta.usage.credit_price` = 1；紀錄在 `~/statslearning/Final_Project_2026/consult/twinkle_test_20261104.md`。其餘來源的調查紀錄在 `~/statslearning/Final_Project_2026/consult/sources_survey.md`。
 
 建置串（§2）已加入 `python3 tools/build_project.py`。
+
+**同日追加（第 2 輪，GPT-6 Astra 與 Fable 諮詢後）**：P03 開頭新增「先了解 MCP 能做什麼」的階段對照表（選題／找資料／初探／建模／報告）；P04 新增免費額度內做得到的四種查詢與「常見誤用」；新增 P05「用 AI 分析時要核對的事」（資料洩漏、資料本身、評估方式、解讀、查證 AI 說法、保護資料），原 P05／P06 順延為 P06／P07。依據是實測：**Twinkle 免費方案每次查詢最多 10 列**（明細與聚合結果皆同，回應 `_meta.query_rows_cap`），聚合對全量資料計算。方案若調整，P03 表格、限制段落與 P04 範例要一起改。
