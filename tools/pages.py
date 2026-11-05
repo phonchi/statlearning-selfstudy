@@ -680,6 +680,11 @@ PAGES = [
         deck="07_Moving_Beyond_Linearity.pdf", deck_pages=54, lab="Ch07-nonlin-lab-zh.ipynb",
         islp=7, islp_label="ISLP Ch.7", esl_label="ESL §5.1–5.7、§6.1–6.3、§9.1",
         playlist="",
+        extra_pills=[
+            ('▶ 課程錄影：多項式迴歸與階梯函數', 'https://youtu.be/5zpXCSs4dN8'),
+            ('▶ 課程錄影：樣條', 'https://youtu.be/SXnzot1CyRY'),
+            ('▶ 課程錄影：局部迴歸與期末專題', 'https://youtu.be/jKmz2MkYZNs'),
+        ],
         hero_svg=_svg_curves(),
         group="core",
         secs=[
