@@ -892,3 +892,23 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - **課程 lab 修正（`~/nsysu-math524`）**：Ch05 lab 的 `boot_SE`（儲存格 59）依 `D.index` 標籤重抽，而 ISLP 0.4.0 的 Auto 以車名為 index、147 列同名，`D.loc` 會整批取出同名車（一份重抽約 690 列），bootstrap SE 被低估成 0.73／0.00609（cell 72 文字與此一致）。改為依列位置抽樣（儲存格 59），`alpha_func` 同步改 `.iloc`（儲存格 53），cell 72 文字改為 0.85／0.0074，並補存 61、71、75 的輸出（0.0912；0.848807／0.007352；2.067840／0.033019／0.000120），與 ISLP 書印出值一致；55、57、61、69 的既有輸出確認不變。重抽樣頁的卡片說明同步修正。紀錄與腳本：`tools/verification/ai-assisted-20261104/`（注意：本機環境為 pandas 3.0.2／numpy 2.4.3／statsmodels 0.15，與課程 Colab 不同；獨立佐證是位置抽樣逐位重現 ISLP 書中數字）。
 - **已知既存失敗（非本次造成）**：`tools/test_reader_fixes.py` 兩項、`tools/test_statistics_contract.py` 一項，在改版前的 HEAD 上同樣失敗。
 
+
+
+## 30. 第 7 章後半與第 8 章：為什麼用樹、集成的直覺（2026-11-08）
+
+使用者提供 ChatGPT 教學對話（局部迴歸基底展開、GAM、單棵樹的分裂與剪枝；**沒有任何集成內容**）與 `~/nsysu-math524/static_files/presentations/coin.html`（51% 硬幣多數決），要求開頭強調為什麼用樹與集成的直覺、對照講義補遺漏、`speak-human-tw` 直接潤稿，並與 Astra、Fable 討論（後兩輪改用 Herdr pane）。紀錄與 job ID 在 `tools/verification/ch7-8-trees-ensemble-20261108/README.md`。
+
+**第 8 章**
+- 新節 `motive`（PART 01，**放在 Hitters prologue 之後**：Fable 主張、使用者拍板）：樹的長處（自動交互作用、單調轉換不變）→ 單棵樹不穩定 → 元件 A `w09coinSvg`（獨立投票的精確二項機率，奇數 M 到 10001，PMF 自動放大＋正確率對 M）→ 元件 B `w09rhoSvg`（$\rho+(1-\rho)/B$ 的地板）→ 路線圖表。推導（常態近似、Condorcet、Hoeffding、講義 75% 與平手規則、coin.html 的兩個錯誤前提）在收合 `w09-detail-coin-math`。
+- 舊投票元件 `w09vote*` 移除；`why` 改名「投票分類器」，只展開「不同演算法」與硬／軟投票。`prologue` 的樹／線性對照表移到 motive。
+- 單樹：top-down 與 greedy 的區別、停止規則、類別分割 7 種與 one-versus-rest、greedy 盲點收合 `w09-detail-interaction-limits`（在 grow）、weakest-link 數值例與巢狀證明（模函數＋祖先封閉集合）、70/30 Gini 例、Heart 描述與 `Thal:a` 讀法。集成各節加直覺段與講義遺漏的數字（圖 8.8 圖例、Heart 13 取 4、基因例 15 類 45.7% 與二元 24% 分開講、圖 8.13、BART 初值）。全章 PART 編號改節名錨點（模組最後檢查不得殘留）。
+- 一併修正既有錯誤：見 README「審查意見的處理」。
+
+**第 7 章**：loess、gam 開頭各補兩條主線的動機段；backfitting 收合去重並補「何時真的需要 backfitting」；效果圖拆成獨立收合 `w08-detail-gam-effects`（PR＝CR、AV 不同、ISLP 圖是成分圖、偏殘差圖何時誤導、PDP 用途）；分類 GAM 規格與 Wage GAM 的 4／5 df；圖 7.8 的 16 vs 6.8 df。修 §27 遺留的 `\lambdad_j` 黏字。
+
+**實作**
+- 新檔 `tools/enrich/trees_lecture_notes.py`（第 8 章最後一層，`augment(BODIES, PAGEJS)` 回傳新 PAGEJS；舊 vote JS 區塊原地換成 coin／rho JS，**不能接在最後**，否則初始化呼叫早於宣告）與 `tools/enrich/nonlin_second_half.py`（第 7 章，在 `nonlin_lecture_notes` 之後）。`rep`／`cut` 恰好一次的寫法沿用 §27；`take`／`add`／`block` 處理整個收合的搬移與插入。
+- **`build_page.py` 不會替既有頁面新增 section**：新 `Sec` 要先在 HTML 手動插一個 `<section id=…><!-- GEN:BEGIN sec:… --><!-- GEN:END sec:… --></section>` 空殼，再跑 build_page 與 enrich。
+- `pages.py`：第 8 章新增 `motive`、`why` 改名；徽章頁碼修正（Ch7 natural 加 p.46、gam 改 p.34–54；Ch8 modern 加 p.70–73、stacking 改 p.63–69、74–80）。詞彙卡第 8 章 +2（Condorcet、相關的地板）、第 7 章 +1（偏殘差圖）。題庫 ch8 一句改寫。
+
+**驗證**：`verify_math.py` 28 項 PASS；全站 validate 0 失敗、browser_check 0 問題；check_* 系列通過；`check_lab_rendered` 的 8 個失敗在 HEAD 上相同（既存）。刻意未處理的既有冗餘列在 README。

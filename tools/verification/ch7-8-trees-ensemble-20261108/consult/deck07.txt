@@ -1,0 +1,719 @@
+            Moving Beyond Linearity
+
+                        Szu-Chi Chung
+
+Department of Applied Mathematics, National Sun Yat-sen University
+This course – focus on modeling and
+interpretation
+1.  Introduction
+2. Statistical learning
+3. Regression
+4. Classification
+5. Resampling methods
+6. Linear model selection and regularization (2)
+7. Moving Beyond Linearity (1.5)
+8. Tree-Based Methods (1.5)
+9. Support Vector Machines (1)
+10. Unsupervised Learning (2)
+
+     2
+3
+Moving Beyond Linearity
+ The truth is never linear! Or almost never!
+     But often the linearity assumption is good enough
+ When it is not . . .
+   polynomials
+   step functions
+   splines
+   local regression
+   generalized additive models
+
+These models oﬀer a lot of ﬂexibility, without losing the ease and interpretability
+of linear models
+
+
+ 4
+1. Polynomial Regression on wage dataset
+                                      2           𝑝
+                𝑦𝑖 = 𝛽0 + 𝛽1 𝑥𝑖 + 𝛽2 𝑥𝑖 + ⋯ + 𝛽𝑝 𝑥𝑝 + 𝜖𝑖
+
+
+
+
+ 5
+Details
+ Create new variables 𝑋1 = 𝑋, 𝑋2 = 𝑋 2 , etc and then treat as multiple linear
+  regression (confidence interval)
+                                            1   (𝑥𝑖 − 𝑥)ҧ 2
+                      𝐶. 𝐼. = 𝑦ො𝑖 ± 𝑡𝛼ൗ σෝ ( + 𝑛            2
+                                                              )
+                                       2    𝑛 σ𝑖=1(𝑥𝑖 − 𝑥)ҧ
+ Not really interested in the coeﬃcients; more interested in the ﬁtted function
+  values at any value 𝑥0 (pointwise):
+                     𝑓መ 𝑥0 = 𝛽መ0 + 𝛽መ1 𝑥0 + 𝛽መ2 𝑥02 + 𝛽መ3 𝑥03 + 𝛽መ4 𝑥04
+ In the ﬁgure we have computed the ﬁt and pointwise standard errors on a grid
+  of values for 𝑥0 . We show 𝑓መ 𝑥0 ± 2 ∙ 𝑠𝑒 𝑓መ 𝑥0
+ We either ﬁx the degree 𝑝 at some reasonably low value, else use cross-
+  validation to choose 𝑝
+ 6
+Details continued
+ Logistic regression follows naturally. For example, in ﬁgure we model
+                                                                         𝑝
+                                      exp(𝛽0 + 𝛽1 𝑥𝑖 + 𝛽2 𝑥𝑖2 + ⋯ + 𝛽𝑝 𝑥𝑖 )
+                Pr 𝑦𝑖 > 250 𝑥𝑖 =                                             𝑝
+                                    1 + exp(𝛽0 + 𝛽1 𝑥𝑖 + 𝛽2 𝑥𝑖2 + ⋯ + 𝛽𝑝 𝑥𝑖 )
+     To get conﬁdence intervals, compute upper and lower bounds on the logit scale, and then
+      invert to get on probability scale
+ Can ﬁt using poly = PolynomialFeatures(4)in formula
+ Caveat: polynomials have notorious tail behavior — very bad for extrapolation
+
+
+
+
+ 7
+2. Step Functions (Piecewise-constant)
+ Another way of creating transformations of a variable — cut the variable into
+  distinct regions with 𝐾 cutpoints 𝑐𝑗 , 1 ≤ 𝑗 ≤ 𝐾 and 𝐾 + 1 new variables
+     𝐶0 𝑋 = 𝐼 𝑋 < 35 , 𝐶1 𝑋 = 𝐼 35 ≤ 𝑋 < 50 , 𝐶2 𝑋 = 𝐼 50 ≤ 𝑋 < 65 , 𝐶3 𝑋
+     = 𝐼 𝑋 ≥ 65
+                𝑦𝑖 = 𝛽0 + 𝛽1 𝐶1 𝑥𝑖 + 𝛽2 𝐶2 𝑥𝑖 + ⋯ + 𝛽𝐾 𝐶𝐾 𝑥𝑖 + 𝜖𝑖
+
+
+
+
+ 8
+Step functions continued
+ Easy to work with. Creates dummy variables representing each group
+ Useful way of creating interactions that are easy to interpret. For example,
+  interaction eﬀect of Year and Age:
+                I(Year < 2005) · Age, I(Year ≥ 2005) · Age
+               would allow for diﬀerent linear functions in each age category
+ In Python: pd.cut(age,4) or pd.cut(age, [0, 35, 50, 65, 80])
+ Choice of cutpoints or knots can be problematic. For creating nonlinearities,
+  smoother alternatives such as splines are available
+
+
+
+
+ 9
+Link with the basis function
+ Instead of fitting the model in 𝑋, we fit
+                   𝑦𝑖 = 𝛽0 + 𝛽1 𝑏1 𝑥𝑖 + 𝛽2 𝑏2 𝑥𝑖 + ⋯ + 𝛽𝐾 𝑏𝐾 𝑥𝑖 + 𝜖𝑖
+                                            𝑗
+     For polynomial regression, 𝑏𝑗 𝑥𝑖 = 𝑥𝑖
+     For step function, 𝑏𝑗 𝑥𝑖 = 𝐼(𝑐𝑗 ≤ 𝑥𝑖 < 𝑐𝑗+1 )
+ We can think of the model as a standard linear model with predictors
+  𝑏1 𝑥𝑖 , 𝑏2 𝑥𝑖 , … , 𝑏𝐾 𝑥𝑖
+   We can use least squares to estimate the unknown regression coefficients
+   All of the inference tools for linear models can be used, such as standard errors for
+      the coefficient estimates and F-statistics for the model’s overall significance…
+
+
+
+
+ 10
+3. Regression Splines - Piecewise Polynomials
+ Instead of a single polynomial in 𝑋 over its whole domain, we can rather use
+  diﬀerent polynomials in regions deﬁned by knots
+                       𝛽01 + 𝛽11 𝑥𝑖 + 𝛽21 𝑥𝑖2 + 𝛽31 𝑥𝑖3 + 𝜖𝑖 𝑖𝑓 𝑥𝑖 < 𝑐;
+                 𝑦𝑖 = ൝
+                        𝛽02 + 𝛽12 𝑥𝑖 + 𝛽22 𝑥𝑖2 + 𝛽32 𝑥𝑖3 + 𝜖𝑖 𝑖𝑓 𝑥𝑖 ≥ 𝑐.
+ If we place 𝐾 different knots throughout the range of 𝑋, then we will end up
+  fitting 𝐾 + 1 different cubic polynomials
+
+ Better to add constraints to the
+  polynomials, e.g. continuity
+
+
+
+
+ 11
+3. Regression Splines - Piecewise Polynomials
+ The general definition of a degree-𝑑 spline: it is a piecewise degree-𝑑
+  polynomial, with continuity in derivatives up to degree 𝑑 − 1 at each knot
+     Note that we do not need to use a cubic polynomial. For example, we can instead ﬁt
+      piecewise linear functions!
+
+
+
+
+ 12
+3.1 Regression Splines - Linear Splines
+ How can we fit a piecewise degree-𝑑 polynomial under the constraint that it
+  (and possibly its first 𝑑 − 1 derivatives) be continuous?
+     It turns out that we can use the basis function to represent the regression spline (ESL 5.2)
+ A linear spline with knots at 𝜉𝑘 , 𝑘 = 1, . . . , 𝐾 is a piecewise linear polynomial
+  continuous at each knot
+   We can represent this model as
+                𝑦𝑖 = 𝛽0 + 𝛽1 𝑏1 𝑥𝑖 + 𝛽2 𝑏2 𝑥𝑖 + ⋯ + 𝛽𝐾+1 𝑏𝐾+1 𝑥𝑖 + 𝜖𝑖
+  Where the 𝑏𝑘 are basis functions, here we use truncated power basis per not
+                                         𝑏1 𝑥𝑖 = 𝑥𝑖
+                         𝑏𝑘+1 𝑥𝑖 = (𝑥𝑖 − 𝜉𝑘 )+ ,       𝑘 = 1, … , 𝐾
+  Here the ()+ means positive part; i.e.
+                                            𝑥 − 𝜉𝑘 𝑖𝑓𝑥𝑖 > 𝜉𝑘
+                            (𝑥𝑖 − 𝜉𝑘 )+ = ቊ 𝑖
+                                            0        𝑜𝑡ℎ𝑒𝑟𝑤𝑖𝑠𝑒
+ 13
+3.1 Regression Splines - Linear Splines
+
+
+
+
+ 14
+3.2 Regression Splines - Cubic Splines
+ A cubic spline with knots at 𝜉𝑘 , 𝑘 = 1, . . . , 𝐾 is a piecewise cubic polynomial
+  with continuous derivatives up to order 2 at each knot
+ Again we can represent this model with truncated power basis functions (𝐾 + 4
+  degrees of freedom)
+                𝑦𝑖 = 𝛽0 + 𝛽1 𝑏1 𝑥𝑖 + 𝛽2 𝑏2 𝑥𝑖 + ⋯ + 𝛽𝐾+3 𝑏𝐾+3 𝑥𝑖 + 𝜖𝑖
+
+                                      𝑏1 𝑥𝑖 = 𝑥𝑖
+                                     𝑏2 𝑥𝑖 = 𝑥𝑖2
+                                     𝑏3 𝑥𝑖 = 𝑥𝑖3
+                          𝑏𝑘+3 𝑥𝑖   = (𝑥𝑖 − 𝜉𝑘 )3+ , 𝑘 = 1, … , 𝐾
+  Where
+                                                   3
+                                   3
+                         (𝑥𝑖 − 𝜉𝑘 )+ = ቊ (𝑥𝑖 − 𝜉𝑘 )     𝑖𝑓𝑥𝑖 > 𝜉𝑘
+                                          0            𝑜𝑡ℎ𝑒𝑟𝑤𝑖𝑠𝑒
+ 15
+16
+17
+3.3 Regression Splines - Natural Cubic Splines
+ A natural cubic spline extrapolates linearly beyond the boundary knots
+   It has zero 2nd and 3rd derivative outside the boundary knots
+   This adds 4 = 2 × 2 extra constraints, and allows us to put more internal knots for the
+    same degrees of freedom as a regular cubic spline. The degree of freedom is thus 𝐾
+
+
+
+
+ 18
+Regression Splines
+ Fitting splines in Python is easy: bs(x, ...) for any degree splines, and
+  cr(x, ...) for natural cubic splines with any degree of freedom
+
+
+
+
+ 19
+Regression Splines
+ The regression spline should have lot of knots in ﬂexible regions , because in
+  those regions the polynomial coeﬃcients can change rapidly
+   Hence, one option is to place more knots in places where we feel the function might vary
+    most rapidly, and to place fewer knots where it seems more stable
+   In specific fields like biostatistics and epidemiology. For example, 5-year age groups are
+    often used to deﬁne the bins
+   While these option can work, in practice it is common to place knots in a uniform fashion
+      1.   We have ﬁt a natural cubic spline with three knots, the knot locations were chosen as the 25th,
+           50th, and 75th percentiles of age
+      2.   You can also specify the desired degrees of freedom, and then have the software automatically
+           place the corresponding number of knots at uniform quantiles of the data
+
+
+
+
+ 20
+Regression Splines
+ How many knots should we use, or equivalently how many degrees of freedom
+  should our spline contain?
+      One option is to try diﬀerent numbers of knots and see which produces best looking curve
+ A more objective approach is to use cross-validation
+  1.    We remove a portion of the data (say 10%), ﬁt a spline with a certain number of knots to
+        the remaining data, and then use the spline to make predictions for the held-out portion
+  2.    We repeat this process multiple times until each observation has been left out once, and
+        then compute the overall cross-validated RSS
+  3.    This procedure can be repeated for diﬀerent numbers of knots 𝐾
+  4.    Then the value of 𝐾 giving the smallest test RSS is chosen
+
+
+
+
+ 21
+Regression Splines
+ Ten-fold cross-validation for selecting the degrees of freedom when ﬁtting
+  splines to the Wage data. The response is wage and the predictor age
+     Left: A natural cubic spline. Right: A cubic spline
+
+
+
+
+ 22
+Knot placement
+ Therefore, we can first decide 𝐾, the number of knots, and then place them at
+  appropriate quantiles of the observed 𝑋
+   A cubic spline with 𝐾 knots has 𝐾 + 4 parameters or degrees of freedom
+   A natural cubic spline with 𝐾 knots has 𝐾 degrees of freedom
+
+
+
+
+                                                                 Comparison of a degree-14
+                                                                 polynomial and a natural
+                                                                 cubic spline, each with 15df.
+
+
+
+
+ 23
+4. Smoothing Splines
+ Consider this criterion for ﬁtting a smooth function 𝑔(𝑥) to some data:
+                                  𝑛
+
+                            min ෍(𝑦𝑖 − 𝑔(𝑥𝑖 ))2 +𝜆 න 𝑔′′ (𝑡)2 𝑑𝑡
+                            𝑔∈𝑆
+                                  𝑖=1
+
+ The ﬁrst term is RSS, and tries to make 𝑔(𝑥) match the data at each 𝑥𝑖
+ The second term is a roughness penalty and controls how wiggly 𝑔(𝑥) is. It is
+  modulated by the tuning parameter 𝜆 ≥ 0
+   The smaller 𝜆, the more wiggly the function, eventually interpolating 𝑦𝑖 when 𝜆 = 0
+   As 𝜆 → ∞, the function 𝑔(𝑥) becomes linear - it will just be a straight line that passes as
+    closely as possible to the training points
+
+
+
+
+ 24
+Smoothing Splines
+ The unique minimizer of this penalized RSS is a shrunken version of natural
+  cubic spline with knots at the unique values of 𝑥𝑖 , 𝑖 = 1, . . . , 𝑛
+ Seems like there will be 𝑛 features and presumably overﬁtting of the data. But,
+  the smoothing term shrinks the model towards the linear ﬁt
+   Eﬀective degrees of freedom decrease from 𝑛 to 2 as we increase λ
+   Smoothing splines avoid the knot-selection issue, leaving a single 𝜆 to be chosen
+   The vector of 𝑛 ﬁtted values can be written as 𝑔
+                                                   ොλ = 𝑆λ 𝑦, where 𝑆λ is a 𝑛 × 𝑛 matrix
+    (determined by the 𝑥𝑖 and λ). The eﬀective degrees of freedom are given by
+                                              𝑛
+
+                                     𝑑𝑓λ = ෍{𝑆λ }𝑖𝑖
+                                             𝑖=1
+
+
+
+
+ 25
+Smoothing Splines – choosing 𝜆
+ We can also specify 𝑑𝑓 rather than 𝜆!
+ The leave-one-out (LOO) cross-validated error is given by
+
+                             𝑛                     𝑛              2
+                                    (−𝑖)    2
+                                                 𝑦𝑖 − 𝑔ොλ (𝑥𝑖 )
+                 𝑅𝑆𝑆𝑐𝑣 𝜆 = ෍(𝑦𝑖 − 𝑔ො𝜆 (𝑥𝑖 )) = ෍
+                                                  1 − {𝑆λ }𝑖𝑖
+                            𝑖=1                   𝑖=1
+
+
+                 (−𝑖)
+ The notation 𝑔
+               ො𝜆 (𝑥𝑖 ) indicates the fitted value for this smoothing spline
+  evaluated at 𝑥𝑖 , where the fit uses all of the training observations except for the
+  𝑖th observation 𝑥𝑖 , 𝑦𝑖
+
+
+
+ 26
+Smoothing Splines
+
+
+
+
+ 27
+5. Local Regression
+ Local regression
+ computes the ﬁt at a
+ target point 𝑥0 using
+ only the regression
+ nearby training
+ observations
+
+
+
+
+ 28
+Local Regression
+ In Step 3 of Algorithm 7.1, the weights 𝐾𝑖0 will diﬀer for each value of 𝑥0 .
+   At a new point, we need to ﬁt a new weighted least squares regression model by
+    minimizing (7.14) for a new set of weights
+   Like KNN, local regression is referred to as a memory-based procedure, because we need
+    all the training data each time we wish to compute a prediction
+ With a sliding weight function,
+  we can ﬁt separate linear ﬁts
+  over the range of 𝑋 by
+  weighted least squares
+     See text for more details, and
+      lowess() function in Python
+
+
+
+ 29
+Local Regression
+ A simulated data, with one target point near 0.4,
+  and another near the boundary at 0.05
+   The blue line represents the function 𝑓(𝑥) from which
+    the data were generated, and the light orange line
+                                                  መ
+    corresponds to the local regression estimate 𝑓(𝑥)
+   The yellow bell-shape indicates weights assigned to
+    each point, decreasing to zero with distance from the
+                                  መ 0 ) at 𝑥0 is obtained
+    target point. The ﬁtted value 𝑓(𝑥
+    by ﬁtting a weighted linear regression (orange line
+    segment)
+
+
+
+
+ 30
+Local Regression - considerations
+ Choices: span 𝑠 (Step 1), the weighting function 𝐾 (Step 2), and whether to ﬁt
+  a linear, constant, or quadratic regression (Step 3)
+ The most important choice is the span 𝑠, similar to the tuning parameter 𝜆 in
+  smoothing splines: it controls the ﬂexibility of the non-linear ﬁt
+   The smaller the value of 𝑠, the more local and wiggly will be our ﬁt; alternatively, a very
+    large value of 𝑠 will lead to a global ﬁt to the data using all of the training observations
+   We can use cross-validation to choose 𝑠, or we can specify it directly
+
+ Next figure displays local linear regression ﬁts on the Wage data, using two
+  values of 𝑠: 0.7 and 0.2
+     The ﬁt obtained using 𝑠 = 0.7 is smoother than that obtained using 𝑠 = 0.2
+
+
+
+ 31
+Local Regression
+
+
+
+
+ 32
+Local Regression
+ The idea of local regression can be generalized in many diﬀerent ways
+     In a setting with multiple features 𝑋1 , 𝑋2 , … , 𝑋𝑝 , one very useful generalization involves
+      fitting a multiple linear regression model that is global in some variables, but local in
+      another, such as time. Such varying coefficient models are a useful way of adapting a
+      model to the most recently gathered data
+
+     Local regression also generalizes very naturally when we want to fit models that are local
+      in a pair of variables 𝑋1 and 𝑋2 , rather than one. We can simply use two-dimensional
+      neighborhoods, and fit bivariate linear regression models using the observations that are
+      near each target point in two-dimensional space.
+
+
+
+
+ 33
+6. GAMs for Regression Problems
+ A natural way to extend the multiple linear regression model
+                        𝑦𝑖 = 𝛽0 + 𝛽1 𝑋𝑖1 + 𝛽2 𝑋𝑖2 + ⋯ + 𝛽𝑝 𝑋𝑖𝑝 + 𝜖𝑖
+  in order to allow for non-linear relationships between each feature and the response
+
+
+ The generalized additive model (GAM) can be written as
+                            𝑝                        𝑝   𝐾
+
+                𝑦𝑖 = 𝛽0 + ෍ 𝑓𝑗 (𝑥𝑖𝑗 ) + 𝜖𝑖 = 𝛽0 + ෍ ෍ 𝛽𝑗𝑘 𝑏𝑗𝑘 (𝑥𝑖𝑗 ) + 𝜖𝑖
+                           𝑗=1                      𝑗=1 𝑘=1
+
+
+
+ It is called an additive model because we calculate a separate 𝑓𝑗 for each 𝑋𝑗 ,
+  and then add together all of their contributions
+
+ 34
+GAMs for Regression Problems
+ The beauty of GAMs is that we can use learned methods as building blocks for
+ fitting an additive model. Consider ﬁtting the model on the Wage data:
+
+                 𝑤𝑎𝑔𝑒 = 𝛽0 + 𝑓1 𝑦𝑒𝑎𝑟 + 𝑓2 𝑎𝑔𝑒 + 𝑓3 𝑒𝑑𝑢𝑐𝑎𝑡𝑖𝑜𝑛 + 𝜖
+
+   Year and age are quantitative variables. Education is a qualitative variable with ﬁve levels:
+    <HS, HS, <Coll, Coll, >Coll, referring to the amount of high school or college education
+    that an individual has completed
+   𝑓1 and 𝑓2 : natural splines with 4 and 5 d.f.s, respectively
+   𝑓3 : separate constant for each level, via the dummy variable approach
+
+
+
+ Figure below shows the ﬁtted model using least squares
+
+ 35
+Generalized Additive Models
+ Allows for ﬂexible nonlinearities in several variables, but retains the additive
+  structure of linear models (Partial residual plot)
+                   𝑦𝑖 = 𝛽0 + 𝑓1 𝑥𝑖1 + 𝑓2 𝑥𝑖2 + ⋯ + 𝑓𝑝 𝑥𝑖𝑝 + 𝜖𝑖
+
+
+
+
+ 36
+Generalized Additive Models
+ Figure below shows a similar triple of plots, but this time 𝑓1 , 𝑓2 : smoothing
+  splines with 4 and 5 d.f.s, respectively
+   It can be fit via backfitting which repeatedly updating the ﬁt for each predictor in turn,
+    holding the others ﬁxed
+   As demonstrated, in most situations, the diﬀerences in the GAMs obtained using
+    smoothing splines versus natural splines are small
+
+
+
+
+ 37
+Pros and Cons of GAMs
+ The advantages and limitations of a GAM
+ ✓ GAMs allow us to ﬁt a non-linear 𝑓𝑗 to each 𝑋𝑗 , so that we can automatically model non-
+   linear relationships. The non-linear ﬁts can potentially make more accurate predictions for
+   the response 𝑌
+ ✓ Because the model is additive, we can still examine the eﬀect of each 𝑋𝑗 on 𝑌 individually
+   while holding all of the other variables ﬁxed
+ ✓ The smoothness of the function 𝑓𝑗 for the variable 𝑋𝑗 can be summarized via degrees of
+   freedom
+
+
+
+
+ 38
+Pros and Cons of GAMs
+ The advantages and limitations of a GAM
+  X The main limitation of GAMs is that the model is restricted to be additive: important
+      interactions can be missed
+       We can manually add interaction terms to the GAM model by including additional predictors of
+        the form 𝑋𝑗 × 𝑋𝑘
+       In addition, we can add low-dimensional interaction functions of the form 𝑓𝑗𝑘 (𝑋𝑗 , 𝑋𝑘 ) into the
+        model; such terms can be ﬁt using two-dimensional smoothers such as local regression, or two-
+        dimensional splines
+ For fully general models, we have to look for even more flexible approaches
+  such as random forests and boosting, described in Chapter 8. GAMs provide a
+  useful compromise between linear and fully nonparametric models
+
+
+ 39
+GAMs for Classiﬁcation Problems
+ GAMs can also be used when 𝑌 is qualitative. Assume 𝑌 takes on values zero
+  or one, and let
+                                  𝑝(𝑋) = Pr(𝑌 = 1|𝑋)
+ Extend the logistic regression model to the logistic regression GAM:
+                           𝑝(𝑋)
+                    log(          ) = 𝛽0 + 𝑓1 𝑋1 + 𝑓2 𝑋2 + ⋯ + 𝑓𝑝 𝑋𝑝
+                         1 − 𝑝(𝑋)
+ The general form of GAM
+              𝜂 𝐸 𝑌 𝑋1 , … , 𝑋𝑝     = 𝛽0 + 𝑓1 𝑋1 + 𝑓2 𝑋2 + ⋯ + 𝑓𝑝 𝑋𝑝
+
+
+
+
+ 40
+GAMs for Classiﬁcation Problems
+ We ﬁt a GAM to the Wage data to predict the probability that an individual’s
+  income exceeds $250,000 per year:
+
+                    𝑝 𝑋 = Pr(𝑤𝑎𝑔𝑒 > 250|𝑦𝑒𝑎𝑟, 𝑎𝑔𝑒, 𝑒𝑑𝑢𝑐𝑎𝑡𝑖𝑜𝑛)
+
+
+ Consider the GAM:
+                       𝑝(𝑋)
+                log(          ) = 𝛽0 + 𝛽1 × 𝑦𝑒𝑎𝑟 + 𝑓2 𝑎𝑔𝑒 + 𝑓3 𝑒𝑑𝑢𝑐𝑎𝑡𝑖𝑜𝑛
+                     1 − 𝑝(𝑋)
+   𝑓2 : smoothing spline with ﬁve d.f.
+   𝑓3 : a step function, with dummy variables for each level of education
+
+
+
+
+ 41
+GAMs for Classiﬁcation Problems
+
+
+
+
+ 42
+GAMs for Classiﬁcation Problems
+ The last panel looks suspicious, with very wide conﬁdence intervals for level
+  <HS. In fact, there are no ones for that category: no individuals with less than
+  a high school education make more than $250,000 per year
+ Hence we reﬁt the GAM, excluding the individuals with less than a high school
+  education and obtain the following figure
+
+
+
+
+ 43
+   GAMs for Classiﬁcation Problems
+
+
+
+
+We observe that age and
+education have a much
+larger eﬀect than year
+on the probability of
+being a high earner
+
+
+
+
+     44
+     Appendix
+
+
+
+
+45
+Natural Cubic Spline Basis (ESL 5.2)
+ A natural cubic spline model with 𝐾 knots is represented by 𝐾 basis functions:
+
+
+          𝑓(𝑥𝑖 ) = 𝑦𝑖 = 𝛽0 𝑏0 𝑥𝑖 + 𝛽1 𝑏1 𝑥𝑖 + 𝛽2 𝑏2 𝑥𝑖 + ⋯ + 𝛽𝐾−1 𝑏𝐾−1 𝑥𝑖 + 𝜖𝑖
+
+                                       𝑏0 𝑥𝑖 = 1
+                                       𝑏1 𝑥𝑖 = 𝑥𝑖
+                             𝑏𝑘 𝑥𝑖   = 𝑑𝑘−2 𝑥𝑖 − 𝑑𝐾−1 𝑥𝑖
+  where
+                         (𝑥𝑖 − 𝜉𝑘+1 )3 −(𝑥𝑖 − 𝜉𝐾 )3
+               𝑑𝑘 𝑥𝑖   =                            ,   𝑘 = 0, … , 𝐾 − 2
+                                𝜉𝐾 − 𝜉𝑘+1
+
+
+
+
+ 46
+Smoothing Splines (ESL 5.4 and appendix of ESL ch5)
+ The objective function is the penalized RSS
+
+
+                    𝑅𝑆𝑆 𝛽, λ = 𝑦 − 𝐵𝛽 𝑇 𝑦 − 𝐵𝛽 + λ𝛽 𝑇 Ω𝐵 𝛽
+                      Where 𝑦 = (𝑦1 , … , 𝑦𝑛 )′ , 𝛽 = (𝛽1 , … , 𝛽𝑛 )′ and
+                       (𝐵)𝑖𝑗 = 𝑏𝑗 𝑥𝑖 , and Ω𝑗𝑘 = ‫𝑗𝑏 ׬‬′′ (𝑡)𝑏𝑘′′ (𝑡) 𝑑𝑡
+ The estimate
+                           𝛽መ = (𝐵𝑇 𝐵 + λΩ𝐵 )−1 𝐵𝑇 𝑦 = 𝑆λ 𝑦
+ This is a generalized ridge regression (when Ω𝐵 = 𝐼, it’s a ridge regression)
+ Can show that 𝑆λ = (𝐼 + λ𝑀)−1 where the matrix 𝑀 does not depend on 𝜆
+
+
+
+
+ 47
+Nonparametric Logistic Regression (ESL 5.6)
+ Consider logistic regression with a single x:
+                                          𝑝(𝑋)
+                                  log(           ) = 𝑔(𝑥)
+                                        1 − 𝑝(𝑋)
+  And a penalized log-likelihood criterion
+                   𝑁
+                                                                 1
+         𝑙 𝑔, 𝜆 = ෍{𝑦𝑖 log(𝑝(𝑥𝑖 )) + (1 − 𝑦𝑖 ) log(1 − 𝑝(𝑥𝑖 ))} − 𝜆 න 𝑔′′ 𝑡 2 𝑑𝑡
+                                                                 2
+                   𝑖=1
+                         𝑁
+                                                          1
+                   = ෍{𝑦𝑖 𝑔 𝑥𝑖    − log(1 + 𝑒 𝑔 𝑥𝑖 )} −     𝜆 න 𝑔′′ 𝑡 2 𝑑𝑡
+                                                          2
+                         𝑖=1
+
+ Again can show that the optimal 𝑔 is a natural spline with knots at the
+  datapoint
+ Can use Newton-Raphson to do the fitting
+
+ 48
+Thin-Plate Splines (Multidimensional Splines) (ESL 5.7)
+ The discussion up to this point has been one-dimensional. The higher-
+  dimensional analogue of smoothing splines are “thin-plate splines.” In 2-D,
+  instead of minimizing
+                              𝑛
+
+                       min ෍(𝑦𝑖 − 𝑔(𝑥𝑖 ))2 +λ න 𝑔′′ (𝑡)2 𝑑𝑡
+                       𝑔∈𝑆
+                             𝑖=1
+  Minimized
+                                   𝑛
+
+                             min ෍(𝑦𝑖 − 𝑔(𝑥𝑖 ))2 +λ𝐽(𝑓)
+                             𝑔∈𝑆
+                                   𝑖=1
+  Where
+                         𝜕 2 𝑔(𝑥) 2 𝜕 2 𝑔(𝑥) 2 𝜕 2 𝑔(𝑥) 2
+                𝐽 𝑓 = ඵ(      2 ) +( 𝜕𝑥 𝑥 ) +(      2 ) 𝑑𝑥1 𝑑𝑥2
+                           𝜕𝑥1          1 2      𝜕𝑥2
+
+ 49
+Thin-Plate Splines
+ The solution has the form:
+                                              𝑁
+
+                         𝑔 𝑥 = 𝛽0 + 𝛽 𝑇 𝑥 + ෍ 𝛼𝑗 ℎ𝑗 (𝑥)
+                                             𝑗=1
+  Where
+                       ℎ𝑗 𝑥 = η(|𝑥 − 𝑥𝑗 |) and η 𝑧 = 𝑧 2 log 𝑧 2
+
+
+
+
+ 50
+B-spline (ESL 5-Appendix)
+ Since the space of spline functions of a particular order and knot sequence is a
+  vector space, there are many equivalent bases for representing them (just as
+  there are for ordinary polynomials.)
+ While the truncated power basis is conceptually simple, it is not too attractive
+  numerically: powers of large numbers can lead to severe rounding problems
+ In practice, we often use another basis: the B-spline basis, which allows for
+  efficient computations even when the number of knots 𝐾 is large (each basis
+  function has a local support)
+ See here for more information
+
+
+
+
+ 51
+Some notes about plotting
+ Partial regression plot (added variable plots)
+     https://en.wikipedia.org/wiki/Partial_regression_plot
+ Partial residual plot (c.f. CCPR plot)
+   https://en.wikipedia.org/wiki/Partial_residual_plot
+   https://stats.stackexchange.com/questions/279576/partial-residuals-plot
+   https://stats.stackexchange.com/questions/423375/why-is-there-residual-dots-in-plot-of-
+    gam
+ Residual
+   https://stats.stackexchange.com/questions/189584/why-do-residuals-in-linear-regression-
+    always-sum-to-zero-when-an-intercept-is-in
+   https://stats.stackexchange.com/questions/474102/why-is-the-correlation-between-
+    independent-variables-regressor-and-residuals-zer
+
+ 52
+Partial dependence plots (PDP)
+ Partial dependence plots show how a feature affects predictions
+ This is useful to answer questions like:
+     Controlling for all other house features, what impact do longitude and latitude have on
+      home prices? Are predicted health differences between two groups due to differences in
+      their diets, or due to some other factor?
+ If you are familiar with linear or logistic regression models, partial dependence
+  plots can be interpreted similarly to the coefficients in those models
+   Though, partial dependence plots on sophisticated models can capture more complex
+    patterns than coefficients from simple models
+   Partial dependence plots are calculated after a model has been fitted
+
+
+
+
+ 53
+Partial dependence plots (PDP)
+ The partial dependence function for regression is defined as
+                                                                   𝑛
+                                                                1            (𝑖)
+          𝑓መ𝑆 𝑥𝑆 = 𝐸𝑋𝐶 𝑓መ 𝑥𝑆 , 𝑋𝐶   = න 𝑓መ 𝑥𝑠 , 𝑋𝐶 𝑝 𝑥𝐶 𝑑𝑥𝐶 =     ෍ 𝑓መ 𝑥𝑆 , 𝑋𝐶
+                                                                𝑛
+                                                                  𝑖=1
+  The 𝑥𝑆 are the features for which the partial dependence function should be plotted and 𝑋𝐶
+  are the other features used in the model 𝑓, መ which are here treated as random variables
+ It works by marginalizing the model output
+   over the distribution of the features in set 𝐶, so
+   that the function shows the relationship
+   between the 𝑆 we are interested in and the
+   predicted outcome. Computing this integral for
+   various values of 𝑥𝑠 produces a PDP plot
+ It is assumed that the feature(s) for which the
+   partial dependence is computed are not
+   correlated with other features
+ 54
+

@@ -1,0 +1,115 @@
+diff --git a/data/flashcards_zh/ch7.json b/data/flashcards_zh/ch7.json
+index 19dd9e0..b280418 100644
+--- a/data/flashcards_zh/ch7.json
++++ b/data/flashcards_zh/ch7.json
+@@ -111,6 +111,10 @@
+     "front": "逆向擬合（Backfitting）",
+     "back": "擬合 GAM 的標準演算法：輪流更新每一個 fⱼ，更新時把其他項固定，對偏殘差 rᵢ = yᵢ − Σ_{k≠j} f̂ₖ(xᵢₖ) 做一次單變數平滑。這樣只要有單變數的擬合工具就能擬合多變數加法模型。"
+   },
++  {
++    "front": "偏殘差圖（Partial Residual Plot）",
++    "back": "把 e_i + f̂_j(x_ij)，也就是扣掉其他項估計效果後剩下的部分，對 x_j 作圖；又叫 component-plus-residual（CR）圖。backfitting 每一步平滑的就是這組資料。預測變數高度相關或漏了交互作用時，圖上的形狀可能誤導。和部分迴歸圖（added-variable plot）是不同的圖。"
++  },
+   {
+     "front": "偏依賴圖（Partial Dependence Plot）",
+     "back": "用來呈現模型預測如何隨某個變數改變。計算時，把每筆資料中這個變數都設成同一個指定值，其他變數保留各筆資料原有的值，再把模型預測取平均。對不同的指定值重複計算，就得到曲線。這是對其他變數在資料中的分布取平均，不是把其他變數固定在平均值。"
+diff --git a/data/flashcards_zh/ch8.json b/data/flashcards_zh/ch8.json
+index be02e43..8250243 100644
+--- a/data/flashcards_zh/ch8.json
++++ b/data/flashcards_zh/ch8.json
+@@ -51,6 +51,10 @@
+     "front": "多數投票（Majority Vote / Hard Voting）",
+     "back": "M 個分類器各投一票，票多的類別當答案。若各分類器獨立且正確率都是 p，投票的正確率是二項尾機率。p > 0.5 時隨 M 上升趨近 1，p < 0.5 時趨近 0。"
+   },
++  {
++    "front": "Condorcet 陪審團定理（Condorcet's Jury Theorem）",
++    "back": "M 個彼此獨立、各自答對機率 p > 0.5 的投票者，多數決答對的機率隨 M 增加趨近 1；p < 0.5 時反而趨近 0。關鍵前提是獨立：同一份資料訓練出來的模型常常一起犯錯，投再多票也到不了這個極限。"
++  },
+   {
+     "front": "Bagging（Bootstrap Aggregation）",
+     "back": "用 bootstrap 重抽樣產生 B 份訓練資料、各擬合一棵深樹、把預測平均（分類則多數投票）。降低變異，不降低偏差——所以樹要長很深、不剪枝。"
+@@ -67,6 +71,10 @@
+     "front": "去相關（Decorrelation）",
+     "back": "限制每次分裂可選的變數，讓樹有機會長得更不一樣。在其他條件相同時，降低相關性有助於平均降低變異；但限制 m 也可能減弱預測能力，整體效果要看驗證誤差。樹變弱不等於變異數一定增加。"
+   },
++  {
++    "front": "相關的地板 ρσ²（Correlation Floor）",
++    "back": "B 個預測各自變異 σ²、兩兩相關 ρ，平均之後的變異是 ρσ² + (1−ρ)σ²/B。第二項隨 B 消失，第一項不管種幾棵樹都在。Bagging 靠 B 壓第二項，random forest 靠每個節點抽變數把 ρ 本身壓低。"
++  },
+   {
+     "front": "Boosting（提升法）",
+     "back": "樹序列式地長出來，每棵都用前面那些樹的資訊。沒有 bootstrap，每棵樹都看全部資料，只是目標（或權重）被改過。逐步降低偏差——所以樹要很淺。"
+diff --git a/tools/enrich/enrich_nonlin.py b/tools/enrich/enrich_nonlin.py
+index 4acfaa7..ecb9e5c 100644
+--- a/tools/enrich/enrich_nonlin.py
++++ b/tools/enrich/enrich_nonlin.py
+@@ -1830,6 +1830,8 @@ from lecture_alignment_ch7 import augment
+ augment(BODIES)
+ from nonlin_lecture_notes import augment as augment_notes
+ augment_notes(BODIES, slider)
++from nonlin_second_half import augment as augment_second_half
++augment_second_half(BODIES)
+ 
+ if __name__ == "__main__":
+     apply("beyond_linearity", BODIES, PAGEJS, frames())
+diff --git a/tools/enrich/enrich_trees.py b/tools/enrich/enrich_trees.py
+index 0451654..1bdb89a 100644
+--- a/tools/enrich/enrich_trees.py
++++ b/tools/enrich/enrich_trees.py
+@@ -2188,6 +2188,8 @@ PAGEJS = clean_pagejs('tree_based_methods', PAGEJS)
+ 
+ from lecture_alignment_ch8 import augment
+ augment(BODIES)
++from trees_lecture_notes import augment as augment_notes
++PAGEJS = augment_notes(BODIES, PAGEJS)
+ 
+ if __name__ == "__main__":
+     apply("tree_based_methods", BODIES, PAGEJS, frames())
+diff --git a/tools/pages.py b/tools/pages.py
+index 1855c8b..ee129de 100644
+--- a/tools/pages.py
++++ b/tools/pages.py
+@@ -697,11 +697,11 @@ PAGES = [
+             Sec("splines", "迴歸樣條", "分段三次多項式，在節點上接得平滑",
+                 "ISLP §7.4.1–7.4.3|講義 07 · p.11–20"),
+             Sec("natural", "自然樣條", "自然樣條：以線性約束處理兩端的擬合",
+-                "ISLP §7.4.4–7.4.5|講義 07 · p.18–23"),
++                "ISLP §7.4.4–7.4.5|講義 07 · p.18–23、46"),
+             Sec("smooth", "平滑樣條", "換個想法：直接懲罰彎曲程度，用有效自由度描述複雜度",
+                 "ISLP §7.5|講義 07 · p.24–27"),
+             Sec("loess", "局部迴歸", "只看附近的點，加權配一條線", "ISLP §7.6|講義 07 · p.28–33"),
+-            Sec("gam", "GAM", "每個變數各配一條曲線，再加起來", "ISLP §7.7|講義 07 · p.34–48"),
++            Sec("gam", "GAM", "每個變數各配一條曲線，再加起來", "ISLP §7.7|講義 07 · p.34–54"),
+         ],
+     ),
+     Page(
+@@ -719,6 +719,8 @@ PAGES = [
+         secs=[
+             Sec("prologue", "樹如何預測", "把特徵空間切成方塊，每塊給一個預測值",
+                 "ISLP §8.1|講義 08 · p.2–9", kicker="PROLOGUE · 開場"),
++            Sec("motive", "為什麼種森林", "樹抓得到交互作用，卻很不穩定：為什麼要種一片森林",
++                "ISLP §8.1.4、§8.2|講義 08 · p.3、30–31、62"),
+             Sec("grow", "迴歸樹的生長", "遞迴二元分裂：每次選擇讓 RSS 降低最多的分裂",
+                 "ISLP §8.1.1|講義 08 · p.10–14"),
+             Sec("prune", "剪枝", "先長太大再剪：成本複雜度與 α", "ISLP §8.1.1|講義 08 · p.15–21"),
+@@ -726,7 +728,7 @@ PAGES = [
+                 "ISLP §8.1.2|講義 08 · p.22–27"),
+             Sec("vslinear", "樹 vs 線性模型", "哪一種對，看真實邊界長什麼樣",
+                 "ISLP §8.1.3–8.1.4|講義 08 · p.28–29"),
+-            Sec("why", "為什麼要集成", "投票與大數法則：一群弱分類器怎麼變強",
++            Sec("why", "投票分類器", "多樣性從哪裡來：用不同的演算法一起投票",
+                 "講義 08 · p.30–31|ESL §16.1 · 進階"),
+             Sec("bagging", "Bagging 與 OOB", "重抽樣造很多棵樹再平均；利用袋外樣本評估",
+                 "ISLP §8.2.1|講義 08 · p.32–37"),
+@@ -735,9 +737,9 @@ PAGES = [
+             Sec("boosting", "Boosting", "慢慢學：AdaBoost 與梯度提升",
+                 "ISLP §8.2.3|講義 08 · p.43–51|ESL §10.1–10.10 · 進階"),
+             Sec("modern", "XGBoost 與後繼者", "XGBoost、LightGBM、CatBoost 與該調的超參數",
+-                "講義 08 · p.52–61|ESL §10.10–10.14 · 進階", eslx=True),
++                "講義 08 · p.52–61、70–73|ESL §10.10–10.14 · 進階", eslx=True),
+             Sec("stacking", "Stacking 與 BART", "變數重要度、堆疊法，以及貝氏版的加法樹",
+-                "ISLP §8.2.4|講義 08 · p.66–79", eslx=True),
++                "ISLP §8.2.4|講義 08 · p.63–69、74–80", eslx=True),
+         ],
+     ),
+     Page(

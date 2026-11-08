@@ -1,0 +1,1063 @@
+                Tree-Based Methods
+
+                        Szu-Chi Chung
+
+Department of Applied Mathematics, National Sun Yat-sen University
+Tree-based Methods
+ Here we describe tree-based methods for regression and classiﬁcation
+   Firstly stratifying or segmenting the predictor space into a number of simple regions
+   Use the mean or the mode response value for the training observations in the region to
+    which it belongs for inference
+ Since the set of splitting rules used to segment the predictor space can be
+  summarized in a tree, these types of approaches are known as decision-tree
+  methods
+
+
+
+
+ 2
+Pros and Cons
+ Tree-based methods are simple and useful for interpretation
+x However, they typically are not competitive with the best supervised learning
+  approaches in terms of prediction accuracy
+ Hence we also discuss
+   bagging
+   random forests
+   boosting
+
+ These methods grow multiple trees which are then combined to yield a single
+  consensus prediction
+     Combining a large number of trees can often result in dramatic improvements in prediction
+      accuracy, at the expense of some loss interpretation
+
+
+ 3
+Baseball salary data: how would you stratify it?
+ We first remove missing data and log-transform Salary in the Hitters dataset
+     Salary is color-coded from low (blue, green) to high (yellow, red)
+
+
+
+
+ 4
+A taste of decision tree
+ Overall, the tree stratiﬁes or segments the players into three regions of
+  predictor space:
+ 𝑅1 = { 𝑋 | 𝑌𝑒𝑎𝑟𝑠 < 4.5 }
+ 𝑅2 = { 𝑋 | 𝑌𝑒𝑎𝑟𝑠 ≥ 4.5, 𝐻𝑖𝑡𝑠 < 117.5 }
+ 𝑅3 = 𝑋 𝑌𝑒𝑎𝑟𝑠 ≥ 4.5, 𝐻𝑖𝑡𝑠 ≥ 117.5 }
+
+
+
+
+ 5
+Decision tree for these data
+
+
+
+
+ 6
+Details of previous ﬁgure
+ For the Hitters data, a regression tree for predicting the log salary of a
+  baseball player, based on the number of years that he has played in the major
+  leagues and the number of hits that he made in the previous year
+   At a given internal node, the label (of the form 𝑋𝑗 < 𝑡𝑘 ) indicates the left-hand branch
+    emanating from that split, and the right-hand branch corresponds to 𝑋𝑗 ≥ 𝑡𝑘 . For instance,
+    the split at the top of the tree results in two large branches. The left-hand branch
+    corresponds to Years< 4.5, and the right-hand branch corresponds to Years ≥ 4.5
+   The tree has two internal nodes and three terminal nodes, or leaves. The number in each
+    leaf is the mean of the response for the observations that fall there
+
+
+
+
+ 7
+Details of previous ﬁgure
+ In keeping with the tree analogy, the regions 𝑅1 , 𝑅2 , and 𝑅3 are also known as
+  terminal nodes
+   Decision trees are typically drawn upside down, in the sense that the leaves are at the
+    bottom of the tree
+   The points along the tree where the predictor space is split are referred to as internal nodes
+   In the hitters tree, the two internal nodes are indicated by the text 𝑌𝑒𝑎𝑟𝑠 < 4.5 and 𝐻𝑖𝑡𝑠 <
+    117.5
+
+
+
+
+ 8
+Interpretation
+1.   Years is the most important factor in determining Salary, and players with
+    less experience earn lower salaries than more experienced players
+2. Given that a player is less experienced, the number of Hits that he made in
+    the previous year seems to play little role in his Salary
+3. But among players who have been in the major leagues for ﬁve or more years,
+    the number of Hits made in the previous year does aﬀect Salary, and
+    players who made more Hits last year tend to have higher salaries
+ Surely an over-simpliﬁcation, but compared to a regression model, it is easy to
+  display, interpret and explain
+
+
+
+ 9
+Details of the tree-building process
+1.        We divide the predictor space — that is, the set of possible values for
+          𝑋1 , 𝑋2 , … , 𝑋𝑝 — into 𝐽 distinct and non-overlapping regions, 𝑅1 , 𝑅2 , … , 𝑅𝐽
+2.        For every observation that falls into the region 𝑅𝑗 , we make the same
+          prediction, which is simply the mean of the response values for the training
+          observations in 𝑅𝑗
+ How do we construct the regions
+     𝑅1 , 𝑅2 , … , 𝑅𝐽 ?
+      In theory, the regions could have any shape!
+      However, we choose to divide the predictor
+       space into high-dimensional rectangles, or
+       boxes, for simplicity and for ease of
+       interpretation of the resulting predictive model
+     10
+Details of the tree-building process – Step 1
+ The goal is to ﬁnd boxes 𝑅1 , 𝑅2 , … , 𝑅𝐽 that minimize the RSS, given by
+                                         𝐽
+
+                                        ෍ ෍ (𝑦𝑖 − 𝑦ො𝑅𝑗 )2
+                                        𝑗=1 𝑖∈𝑅𝑗
+  𝑦ො𝑅𝑗 is the mean response for the training observations within the 𝑗th box
+ Unfortunately, it is still computationally infeasible to consider every possible
+  partition of the feature space into 𝐽 boxes
+  1.   We take a top-down, greedy approach that is known as recursive binary splitting
+  2.   The approach is top-down because it begins at the top of the tree and then successively
+       splits the predictor space
+  3.   It is greedy because, at each step, the best split is made at that particular step, rather than
+       looking ahead and picking a split that will lead to a better tree in some future step
+
+ 11
+Details of the tree-building process – Step 1
+ We ﬁrst select the predictor 𝑋𝑗 and the cutpoint 𝑠 such that splitting the
+  predictor space into the regions {𝑋|𝑋𝑗 < 𝑠 } and {𝑋|𝑋𝑗 ≥ 𝑠 } leads to the
+  greatest possible reduction in RSS (choosing 𝑗 and 𝑠)
+                             ෍            (𝑦𝑖 − 𝑦ො𝑅1 )2 +       ෍        (𝑦𝑖 − 𝑦ො𝑅2 )2
+                         𝑖:𝑥𝑖 𝜖𝑅1 (𝑗,𝑠)                     𝑖:𝑥𝑖 𝜖𝑅2 (𝑗,𝑠)
+
+ Next, we look for the best predictor and best cutpoint in order to split the data
+  further so as to minimize the RSS within each of the resulting regions
+   Instead of splitting the entire predictor space, we split one of the two previously identiﬁed
+    regions. We now have three regions
+   Again, we look to split one of these three regions further, so as to minimize the RSS
+   The process continues until a stopping criterion is reached; for instance, we may continue
+    until no region contains more than ﬁve observations
+ 12
+Details of the tree-building process – Step 1
+ If the predictor is quantitative, this means considering all possible thresholds
+  for splitting
+     The threshold value is drawn from the sorted observation
+ If the predictor is categorical, this means considering all ways to split the
+  categories into two groups
+   We may rank the categories according to the average value of the target variable for
+    observations in each category (label encoding) and split them like quantitative variables
+   If the target is qualitative, we may use this strategy (All combinations or one versus rest)
+
+
+
+
+ 13
+Predictions
+ A ﬁve-region example of
+  this approach is shown
+ We predict the response for
+  a given test observation
+  using the mean of the
+  training observations in the
+  region to which that test
+  observation belongs
+
+
+
+
+ 14
+Regularization
+ The process described above may produce good predictions on the training set,
+  but is likely to overﬁt the data, leading to poor test set performance
+ A smaller tree with fewer splits (that is, fewer regions 𝑅1 , 𝑅2 , … , 𝑅𝐽 ) might lead
+  to lower variance and better interpretation at the cost of a little bias
+   A simple way to limit a tree’s size is to directly regulate its depth, the size of its terminal
+    nodes (training data belongs to them), or both
+   One possible alternative to the process described above is to grow the tree only so long as
+    the decrease in the RSS due to each split exceeds some threshold
+   These strategy will result in smaller trees, but is too short-sighted: a seemingly worthless
+    split early on in the tree might be followed by a very good split — that is, a split that leads
+    to a large reduction in RSS later on
+
+
+
+ 15
+Pruning a tree
+ A better strategy is to grow a very large tree 𝑇0 , and then prune it back in order
+  to obtain a subtree
+   Again, considering all possible subtrees is not practical! Cost complexity pruning — also
+    known as weakest link pruning — is used to do this
+   We consider a sequence of trees indexed by a nonnegative tuning parameter 𝛼. For each
+    value of 𝛼, there corresponds a subtree 𝑇 ⊂ 𝑇0 such that
+                              |𝑇|
+
+                              ෍     ෍ (𝑦𝑖 − 𝑦ො𝑅𝑚 )2 + 𝛼|𝑇|
+                              𝑚=1 𝑖:𝑥𝑖 ∈𝑅𝑚
+  is as small as possible
+   Here |𝑇| indicates the number of terminal nodes of the tree 𝑇, 𝑅𝑚 is the rectangle (i.e. the
+     subset of predictor space) corresponding to the 𝑚th terminal node, and 𝑦ො𝑅𝑚 is the mean of
+     the training observations in 𝑅𝑚
+
+ 16
+Choosing the best subtree
+ The tuning parameter 𝛼 controls a trade-oﬀ between the subtree’s complexity
+  and its ﬁt to the training data
+ Note that a similar formulation was used in order to control the complexity of a
+  linear model when we discuss lasso!
+ It turns out that as we increase 𝛼 from zero, branches get pruned from the tree
+  in a nested and predictable fashion!
+   We select an optimal value 𝛼ො using cross-validation
+   We then return to the full data set and obtain the subtree corresponding to 𝛼
+                                                                                ො
+
+
+
+
+ 17
+18
+Baseball example revisit
+1.        First, we randomly divided the data set in half, yielding 132 observations in
+          the training set and 131 observations in the test set
+2.        We then built a large regression tree on the training data and varied 𝛼 in order
+          to create subtrees with diﬀerent numbers of terminal nodes
+3.        Finally, we performed six-fold cross-validation in order to estimate the cross-
+          validated MSE of the trees as a function of 𝛼
+
+
+
+
+     19
+Baseball example revisit
+
+
+
+
+ 20
+Baseball example continued
+
+
+
+
+ 21
+Classiﬁcation Trees
+ Very similar to a regression tree, except that it is used to predict a qualitative
+  response rather than a quantitative one
+     For a classiﬁcation tree, we predict that each observation belongs to the most commonly
+      occurring class of training observations in the region to which it belongs
+       The proportions among the training observations that fall into that region also matter!
+
+   We also use recursive binary splitting to grow a classiﬁcation tree
+   In the classiﬁcation setting, RSS cannot be used as a criterion for making the binary splits
+
+
+
+
+ 22
+Details of classiﬁcation trees
+ A natural alternative to RSS is the classiﬁcation error rate
+     This is simply the fraction of the training observations in that region that do not belong to
+      the most common class
+                                  1
+                            𝐸=         ෍ 𝐼(𝑦𝑖 ≠ 𝑦ො𝑖 ) = 1 − max 𝑝Ƹ 𝑚𝑘
+                                 𝑁𝑚                            𝑘
+                                     𝑖∈𝑅𝑚
+  Where 𝑦ො𝑖 = 𝑎𝑟𝑔 max 𝑝Ƹ 𝑚𝑘 and 𝑝Ƹ𝑚𝑘 represents the proportion of training observations in the
+                       𝑘
+  𝑚th region that are from the 𝑘th class
+ However classiﬁcation error is not suﬃciently sensitive for tree-growing, and
+  in practice two other measures are preferable
+
+
+
+
+ 23
+Gini index and cross-entropy
+ The Gini index for a specific node is deﬁned by
+                                   𝐾            𝐾
+
+                         𝐺 = 1 − ෍ 𝑝Ƹ𝑚𝑘 2 = ෍ 𝑝Ƹ 𝑚𝑘 (1 − 𝑝Ƹ 𝑚𝑘 )
+                                  𝑖=1          𝑖=1
+   The Gini index takes on a small value if all of the 𝑝Ƹ𝑚𝑘 ’s are close to zero or one
+   For this reason, the Gini index is referred to as a measure of node purity — a small value
+    indicates that a node contains predominantly observations from a single class
+ An alternative to the Gini index is cross-entropy, given by
+                                          𝐾
+
+                                 𝐷 = − ෍ 𝑝Ƹ𝑚𝑘 log 𝑝Ƹ 𝑚𝑘
+                                         𝑘=1
+ It turns out that the Gini index and the cross-entropy are very similar
+  numerically and both differentiable
+ 24
+Gini index and cross-entropy
+ In order to evaluate the purity of a split (rather than that of a node), we use the
+  weighted Gini index or weighted cross-entropy
+   Consider a split of node which creates children 𝑅𝑚 𝐿 and 𝑅 𝑅
+                                                               𝑚
+                                                         𝐿                                  𝑅
+   Let the fraction of training observations going to 𝑅𝑚  be 𝑁𝐿 and the fraction going to 𝑅𝑚 be
+    𝑁𝑅 . The weighted loss (whether with the Gini index or the cross-entropy) is defined as
+                                            𝐿 + 𝑁 𝐺(𝑅 𝑅 )
+                                  𝐿 = 𝑁𝐿 𝐺 𝑅𝑚      𝑅     𝑚
+                                             or
+                                            𝐿            𝑅
+                                  𝐿 = 𝑁𝐿 𝐶 𝑅𝑚   + 𝑁𝑅 𝐶 (𝑅𝑚 )
+
+
+
+
+ 25
+Example: Heart data
+ These data contain a binary outcome HD for 303 patients who presented with
+  chest pain
+ An outcome value of Yes indicates the presence of heart disease based on an
+  angiographic test, while No means no heart disease. There are 13 predictors
+  including Age, Sex, Chol (a cholesterol measurement), and other heart and lung
+  function measurements
+ Cross-validation yields a tree with six terminal nodes. See next ﬁgure
+
+
+
+
+ 26
+ There are some qualitative predictors
+ Some of the splits yield two terminal nodes
+  that have the same predicted value
+   Though the split 𝑅𝑒𝑠𝑡𝐸𝐶𝐺 < 1 does not reduce the
+    classification error, it improves the Gini index and
+    the entropy, which are more sensitive to node purity
+  (weighted by the observation in each subtree)
+
+
+
+
+ 27
+Trees Versus Linear Models
+ Regression tree assume a model
+ of a form
+              𝑀
+
+      𝑓 𝑋 = ෍ 𝑐𝑚 1(𝑋∈𝑅𝑚 )
+             𝑚=1
+ Top Row: True linear boundary;
+  Bottom row: true non-linear
+  boundary
+ Left column: linear model;
+  Right column: tree-based
+  model
+
+
+ 28
+Advantages and Disadvantages of Trees
+ Pros
+  Trees are very easy to explain to people. In fact, they are even easier to explain than linear
+   regression!
+  Some people believe that decision trees more closely mirror human decision-making than
+   do the regression and classiﬁcation approaches seen in previous chapters
+  Trees can be displayed graphically, and are easily interpreted even by a non-expert
+   (especially if they are small)
+  Trees can easily handle qualitative predictors without the need to create dummy variables
+
+ Cons
+ x    Unfortunately, trees generally do not have the same level of predictive accuracy as some of
+      the other regression and classiﬁcation approaches seen in this book
+ However, by aggregating many decision trees, the predictive performance of
+ trees can be substantially improved. We introduce these concepts next
+ 29
+Why and when to use ensemble learning?
+ Suppose you pose a complex question to thousands of random people and then
+ aggregate their answers. In many cases, you will find aggregated answer is
+ better than an expert’s answer. This is called the wisdom of the crowd
+  If you aggregate the predictions of a group of predictors (such as classifiers or regressors),
+   you will often get better predictions than with the best individual predictor
+  A group of predictors is called an ensemble; thus, this technique is called Ensemble
+   Learning, and an Ensemble Learning algorithm is called an Ensemble method
+       You will often use Ensemble methods near the end of a project, once you have already built a few
+        good predictors, to combine them into an even better predictor
+     In fact, the winning solutions in Machine Learning competitions often involve several
+      Ensemble methods
+
+
+
+ 30
+Simple example - Voting classifier
+ Suppose you train a few classifiers, each one achieving about 80% accuracy
+     A very simple way to create an even better classifier is to aggregate the predictions of each
+      classifier and predict the class that gets the most votes. This majority-vote classifier is
+      called a hard voting classifier
+     If you build an ensemble containing 1,000
+      classifiers that are weak learners and individually
+      correct only 51% of the time. If you predict the
+      majority voted class, you can hope for up to 75%
+      accuracy!
+       Only true if all classifiers are perfectly independent
+        and make uncorrelated errors!
+       One way to get diverse classifiers is to train them
+        using very different algorithms
+
+
+ 31
+Ensemble method - Bagging
+ Another approach is to use the same training algorithm for every predictor but
+  train them on a different dataset
+ Recall that given a set of 𝑛 independent observations 𝑍1 , … , 𝑍𝑛 , each with
+  variance 𝜎 2 , the variance of the mean 𝑍ҧ of the observations is given by 𝜎 2 /𝑛
+ In other words, averaging a set of observations reduces variance. Of course,
+  this is not practical because we generally do not have access to multiple
+  training sets
+     Bootstrap aggregation, or bagging, is a general-purpose procedure for reducing the
+      variance of a statistical learning method
+
+
+
+
+ 32
+Bagging— continued
+ We can bootstrap, by taking repeated samples from the (single) training data
+  set
+   In this approach, we generate 𝐵 diﬀerent
+    bootstrapped training data sets
+   We then train our method on the 𝑏th
+    bootstrapped training set in order to get
+    𝑓መ ∗𝑏 (𝑥), the prediction at a point 𝑥. We then
+    average all the predictions to obtain
+                           𝐵
+                    1
+            𝑓𝑏𝑎𝑔 𝑥 = ෍ 𝑓መ ∗𝑏 𝑥
+             መ
+                    𝐵
+                          𝑏=1
+
+
+
+
+ 33
+Bagging classiﬁcation trees
+ The above prescription applied to regression trees
+   These trees are grown deep, and are not pruned. Hence each individual tree has high
+    variance, but low bias. For classiﬁcation, we take a majority vote among the 𝐵 predictions
+   It scales well because the predictors can all be trained in parallel and the predictions can be
+    made in parallel, too
+   Feature sampling is also possible, which is called random subspaces methods
+       When combining both, it is called random patches
+
+
+
+
+ 34
+Bagging the heart data
+ The number of trees 𝐵 is not a
+  critical parameter with bagging;
+  using a very large value of 𝐵
+  will not lead to overfitting
+ In practice, we use a value of 𝐵
+  sufficiently large that the error
+  has settled down
+
+
+
+
+ 35
+Details of previous ﬁgure
+ Bagging and random forest results for the Heart data.
+   The dashed line indicates the test error resulting from a single classiﬁcation tree. The test
+    error (black and orange) is shown as a function of 𝐵, the number of bootstrapped training
+    sets used
+   Random forests were applied with 𝑚 = 𝑝
+   The green and blue traces show the OOB error, which in this case is considerably lower by
+    chance
+
+
+
+
+ 36
+Out-of-Bag Error Estimation
+ It turns out that there is a very straightforward way to estimate the test error of
+  a bagged model
+   Recall that the key to bagging is that trees are repeatedly ﬁt to bootstrapped subsets of the
+    observations. One can show that, on average, each bagged tree makes use of around two-
+    thirds of the observations (Exercise 2 of Chapter 5)
+   The remaining one-third of the observations not used to ﬁt a given bagged tree are referred
+    to as out-of-bag (OOB) observations
+   We can predict the response for the 𝑖th observation using each of the trees in which that
+    observation was OOB. This will yield around 𝐵/3 predictions for the 𝑖th observation,
+    which we average (or vote)
+   This estimate is essentially the LOO cross-validation error for bagging, if 𝐵 is large (ESL,
+    exercise 15.2)
+
+
+ 37
+Ensemble method - Random Forests
+ Random forests provide an improvement over bagged trees by way of a small
+ tweak that decorrelates the trees. This reduces the variance when we average
+  As in bagging, we build a number of decision trees on bootstrapped training samples
+  But when building these decision trees, each time a split in a tree is considered, a random
+   selection of 𝑚 predictors is chosen as split candidates from the full set of 𝑝 predictors
+       The split is allowed to use only one of those 𝑚 predictors!
+       A fresh selection of 𝑚 predictors is taken at each split, and typically we choose 𝑚 ≈   𝑝 — that is,
+        the number of predictors considered at each split is approximately equal to the square root of the
+        total number of predictors (4 out of the 13 for the Heart data)
+
+
+
+
+ 38
+Ensemble method - Random Forests
+ Suppose that there is one very strong predictor in the data set. Then, in
+ the collection of bagged trees, most or all of the trees will use this strong
+ predictor in the top split
+  Consequently, all of the bagged trees will look quite similar to each other
+  Random forests overcome this problem by forcing each split to consider only a subset
+   of the predictors
+  Using a small value of 𝑚 in building a random forest will typically be helpful when we
+   have a large number of strongly correlated predictors
+  C.f. Extra tree
+
+
+
+
+ 39
+Example: gene expression data
+ We applied random forests to a high-dimensional biological data set consisting of
+  expression measurements of 4,718 genes measured on tissue samples from 349
+  patients
+   There are around 20,000 genes in humans, and individual genes have diﬀerent levels of activity, or
+    expression, in particular cells, tissues, and biological conditions
+   Each of the patient samples has a qualitative label with 15 diﬀerent levels: either normal or one of
+    14 diﬀerent types of cancer
+ Preprocessing
+   We use random forests to predict cancer type based on the 500 genes that have the largest variance
+    in the training set
+   We randomly divided the observations into a training and a test set, and applied random forests to
+    the training set for three diﬀerent values of the number of splitting variables 𝑚
+
+
+
+ 40
+Results: gene expression data
+ As with bagging, random forests will not overfit if we increase 𝐵, so in
+ practice we use a value of 𝐵 sufficiently large for the error rate to have
+ settled down
+
+
+
+
+ 41
+Details of previous ﬁgure
+ Results from random forests for the ﬁfteen-class gene expression data set with
+  𝑝 = 500 predictors
+ The test error is displayed as a function of the number of trees. Each colored
+  line corresponds to a diﬀerent value of 𝑚, the number of predictors available
+  for splitting at each interior tree node
+ Random forests (𝑚 < 𝑝) lead to a slight improvement over bagging (𝑚 =
+  𝑝). Note that a single classiﬁcation tree has an error rate of 45.7%
+
+
+
+
+ 42
+Ensemble method - Boosting
+ Like bagging, boosting is a general approach that can be applied to many
+  statistical learning methods for regression or classiﬁcation
+
+ Recall that bagging involves creating multiple copies of the original training
+  data set using the bootstrap, ﬁtting a separate decision tree to each copy, and
+  then combining all of the trees in order to create a single predictive model
+     Notably, each tree is built on a bootstrap data set, independent of the other trees
+
+
+ Boosting works in a similar way, except that the trees are grown sequentially:
+  each tree is grown using information from previously grown trees
+     Boosting does not involve bootstrap sampling; instead, each tree is fit on a modified
+      version of the original data set
+ 43
+  Ensemble method - AdaBoost
+   One way for a new predictor to correct its predecessor is to pay a bit more
+     attention to the training instances that the predecessor underfitted
+        This results in new predictors focusing more and more on the hard cases. This is the
+         technique used by AdaBoost
+
+        The algorithm increases the relative
+         weight of misclassified training instances.
+         Then it trains a second classifier, using
+         the updated weights, and again makes
+         predictions on the training set, updates
+         the instance weights, and so on
+           1 − 𝑒𝑗                𝑤𝑗 𝑖 × 𝑒 −𝛼𝑗 𝑖𝑓ℎ𝑗 (𝑥𝑖 ) = 𝑦𝑖
+𝛼𝑗 = η log          𝑤𝑗+1 (𝑖) = ൝
+             𝑒𝑗                  𝑤𝑗 𝑖 × 𝑒 𝛼𝑗 𝑖𝑓ℎ𝑗 (𝑥𝑖 ) ≠ 𝑦𝑖
+                                   𝐵
+
+              𝑦ො = 𝑎𝑟𝑔𝑚𝑎𝑥𝑘        ෍           𝛼𝑗
+    44                        𝑗=1,ℎ𝑗 (𝑥) =𝑘
+Gradient Boosting
+ A very popular boosting algorithm is
+  Gradient Boosting
+   Gradient Boosting works by sequentially
+    adding predictors to an ensemble, each one
+    correcting its predecessor
+   Instead of tweaking the instance weights at
+    every iteration like AdaBoost does, this method
+    tries to fit the new predictor to the residual
+    errors made by the previous predictor
+
+
+
+
+ 45    https://sefiks.com/2018/10/04/a-step-by-step-gradient-boosting-decision-tree-example/
+Gradient Boosting algorithm for regression trees (GBDT/GBRT)
+
+
+
+
+ 46
+What is the idea behind this procedure?
+ Unlike ﬁtting a single large decision tree to the data, which amounts to ﬁtting
+  the data and potentially overﬁtting, the boosting approach instead learns slowly
+   Given the current model, we ﬁt a decision tree to the residuals (gradient) from the model.
+    We then add this new decision tree into the ﬁtted function in order to update the residuals
+   Each of these trees can be rather small, with just a few terminal nodes, determined by the
+    parameter 𝑑 in the algorithm
+   By ﬁtting small trees to the residuals, we slowly improve 𝑓መ in areas where it does not
+    perform well. The shrinkage parameter 𝜆 slows the process down even further, allowing
+    more and diﬀerent shaped trees to attack the residuals
+
+
+
+
+ 47
+Gradient Boosting
+ Gradient Boosting has three tuning parameters
+    The number of trees 𝐵 (Boosting can overfit therefore choose this by CV)
+   The shrinkage parameter 𝜆 (Typical values are 0.01 or 0.001)
+   The number 𝑑 of splits in each tree (Often 𝑑 = 1 works well, in which case each
+  tree is a stump, consisting of a single split which leads to an additive model) is the interaction
+  depth
+ Gradient Boosting for classiﬁcation is similar in spirit to boosting for
+  regression, but is a bit more complex (ESL ch10)
+ The Python package XGboost (gradient boosted models) handles a variety of
+  regression and classiﬁcation problems
+
+
+ 48
+Gene expression data continued
+
+
+
+
+ 49
+Details of previous ﬁgure
+ Results from performing boosting and random forests on the ﬁfteen-class gene
+ expression data set in order to predict cancer versus normal (Binary
+ classification)
+   The test error is displayed as a function of the number of trees. For the two boosted models,
+    𝜆 = 0.01. Depth-1 trees slightly outperform depth-2 trees, and both outperform the random
+    forest
+   The test error rate for a single tree is 24%
+
+   In boosting, because the growth of a particular tree takes into account the other
+      trees that have already been grown, smaller trees are typically sufficient. Using
+      smaller trees can aid in interpretability as well; for instance, using stumps leads to
+      an additive model (Exercise 2)
+
+
+ 50
+Variable importance measure
+ For bagged/boosting regression trees,
+  we record the total amount that the
+  RSS is decreased due to splits over a
+  given predictor, averaged over all 𝐵
+  trees. A large value indicates an
+  important predictor
+ Similarly, for bagged/boosting
+  classiﬁcation trees, we add up the
+  total amount that the Gini index is
+  decreased by splits over a given
+  predictor, averaged over all 𝐵 trees
+
+ 51
+XGBoost
+
+
+
+                                        https://towardsdatascience.com/catboost-vs-light-gbm-vs-xgboost-5f93620723db
+
+
+ XGBoost, short for Extreme Gradient Boosting, is a form of gradient boosting
+  included built-in regularization and impressive gains in speed
+     The need for faster algorithms is evident when dealing with big data
+ XGBoost or Gradient Boosting Decision Tree (GBDT)
+   Don’t need to perform scaling (Only the relative size matters)
+   Don’t need encoding
+   When given a missing data point, XGBoost treats missing value as a feature and scores
+    different split options and chooses the one with the best results
+ 52
+XGBoost
+ Performance gain
+     XGBoost adds built-in regularization to achieve accuracy gains beyond gradient boosting.
+      XGBoost is a regularized version of gradient boosting
+       For more information about the objective function, please refer to here or here
+       In addition to the regularization term, it used an approximation similar to Newton's Method
+        which is more accurate than naïve gradient boosting. An in-depth discussion can be found here
+
+
+
+
+ Take a look at how to handle categorical variables and missing value
+   Encode categorical variable before entering the algorithm
+   Missing values can be automatically handled
+
+
+
+ 53
+XGBoost
+ XGBoot presents
+  Parallel computing – Quantile sketch
+  Approximate split-finding algorithm on weighted quantile
+
+
+
+
+                                 https://www.youtube.com/watch?v=oRrKeUCEbq8
+
+
+
+
+ 54
+XGBoost
+ XGBoot presents
+  Can handle sparse matrix (Sparsity-aware split finding)
+  Cache-aware access – improve cache performance (Puts gradient and hessian in it)
+  Block compression – compress data which is stored in hard disk and parallel reading
+  Random sampling on samples or features
+
+
+
+
+ 55
+LightGBM
+ For speed, use Histogram-based Gradient Boosting (HGB) and Exclusive
+ Feature Bundling
+     It works by binning the input features, replacing them with integers. The number of bins is
+      controlled defaults to 255 and cannot be set any higher than this. The way the bins are built
+      (𝑂(𝑛)) removes the need for sorting (O(𝑛𝑙𝑜𝑔 𝑛 )) the features when training each tree
+       The complexity of split a single node reduce from 𝑂(𝑛𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠 × 𝑛𝑙𝑜𝑔(𝑛)) to 𝑂(𝑛𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠 × 𝑛)
+
+     Binning can enormously reduce the number of possible thresholds that the training
+      algorithm needs to evaluate. Moreover, working with integers makes it possible to use
+      faster and more memory-efficient data structures
+     Exclusive Feature Bundling algorithm, which
+      can reduce the number of features by
+      regrouping mutually exclusive features into a
+      bundle (c.f. One hot vs label encoding)
+ 56
+LightGBM
+ Optimization in accuracy
+     Gradient-based One-Side Sampling (GOSS), which adjust the sampling strategy
+       Keeps all data instances with large gradients and performs random sampling for data instances
+        with small gradients. Data points with larger gradients have higher errors and would be important
+        for finding the optimal split point
+  Leaf-wise (Best-first) tree growth instead of fixed ordered, see discussion here
+  Optimal Split for Categorical Features
+       Use a strategy similar to target encoding
+
+
+
+
+ 57                                 https://medium.com/riskified-technology/xgboost-lightgbm-or-catboost-which-boosting-
+                                    algorithm-should-i-use-e7fda7bb36bc
+CatBoost
+ Symmetric trees
+     CatBoost builds symmetric (balanced) trees, unlike XGBoost and LightGBM. In every step,
+      leaves from the previous tree are split using the same condition. The feature-split pair that
+      accounts for the lowest loss is selected and used for all the level’s nodes
+       This balanced tree architecture aids in efficient CPU implementation, decreases prediction time
+        and controls overfitting as the structure serves as regularization
+ Ordered boosting
+  When calculating the gradient estimate of a data instance, classic algorithms use the same
+   data that the model was built with
+  CatBoost, on the other hand, uses the concept of ordered boosting to train the model on a
+   subset of data while calculating residuals on another subset, thus preventing overfitting
+
+
+
+ 58
+CatBoost
+ Sampling techniques
+     MVS can be considered a variant of the GOSS, and provide a lower variance for estimating
+      the gradient
+ CatBoost adds native supports for all kinds of features, be it numeric,
+  categorical, or text and saves time and effort in preprocessing
+     Take a look at how to deal with categorical features here
+ Visualization tools provided
+
+
+
+
+ 59
+Hyperparameters
+1. For faster speed
+   Setting bagging fraction ratio to randomly choose instances
+   Use feature sub-sampling (random subspace) by setting the fraction of features
+   Use a smaller number of bins for Histogram-based Gradient Boosting
+
+2. For better accuracy
+   Use a smaller learning rate with a larger number of iterations (number of estimators)
+   Use a larger number of bins for Histogram-based Gradient Boosting
+   Try different categorical encoding methods
+
+3. Prevent overfitting
+   Use a larger value of the number of data in leaf to avoid splitting
+   Use a smaller number of depth to avoid growing deeper tree
+   Try to adjust regularization strength in the objective function
+   Use DART (Like dropout in neural network)
+ 60
+Hyperparameters
+
+                             XGBoost                    LightGBM                CatBoost
+Speed                        subsample                  bagging_fraction        subsample
+                             colsample_bytree           feature_fraction        rsm
+                             n_estimator                num_iterations          iterations
+Control overfitting/accuracy learning_rate (0.01~0.2)   learning_rate           learning_rate
+                             max_depth                  max_depth, num_leaves   depth
+                             min_child_weight           min_data_in_leaf        l2-leaf-reg
+Categorical variable         Experimental               categorical_feature     cat_features
+                                                                                one_hot_max_szie
+
+
+
+
+  61
+Conclusion
+ In conclusion, ensemble learning is versatile, powerful, and fairly simple to use
+   Ensemble can help push your system’s performance to its limits
+   Random Forests and GBDT are among the first models you should test on most Machine
+    Learning tasks, and they particularly shine with heterogeneous tabular data. Moreover, as
+    they require very little preprocessing, they’re great to get a prototype up and running
+    quickly
+ About the choice of the framework
+   XGBoost has the largest community and provides sufficient support for production
+   LightGBM may be a better choice when considering the speed and accuracy
+   CatBoost is a choice when the dataset is small or when the categorical variables are
+    important in the model
+
+
+
+ 62
+Appendix
+The tree training algorithm
+ ID3 (Iterative Dichotomiser 3) was developed in 1986 by Ross Quinlan. The
+   algorithm creates a multiway tree, finding for each node (i.e. in a greedy
+   manner) the categorical feature that will yield the largest information gain for
+   categorical targets. Trees are grown to their maximum size and then a pruning
+   step is usually applied to improve the ability of the tree to generalise to unseen
+   data
+ C4.5 is the successor to ID3 and removed the restriction that features must be
+   categorical by dynamically defining a discrete attribute (based on numerical
+   variables) that partitions the continuous attribute value into a discrete set of
+   intervals. C4.5 converts the trained trees (i.e. the output of the ID3 algorithm)
+   into sets of if-then rules. These accuracy of each rule is then evaluated to
+   determine the order in which they should be applied. Pruning is done by
+   removing a rule’s precondition if the accuracy of the rule improves without it
+  64
+The tree training algorithm
+ C5.0 is Quinlan’s latest version release under a proprietary license. It uses less
+  memory and builds smaller rulesets than C4.5 while being more accurate
+ CART (Classification and Regression Trees) is very similar to C4.5, but it
+  differs in that it supports numerical target variables (regression) and does not
+  compute rule sets. CART constructs binary trees using the feature and
+  threshold that yield the largest information gain at each node
+ scikit-learn uses an optimised version of the CART algorithm; however, scikit-
+  learn implementation does not support categorical variables for now
+     Scikit-learn’s default max _𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠 = 𝑛_𝑓𝑒𝑎𝑡𝑢𝑟𝑒𝑠
+
+
+
+
+ 65
+Other ensemble methods - Stacking
+ Stacking is based on a simple idea: instead of using trivial functions (such as
+  hard/soft voting) to aggregate the predictions of all predictors in an ensemble,
+  why don’t we train a model to perform this aggregation?
+   To train the blender (aggregator), you first need
+    to build the blending training set
+   You can use cross-validation on every estimator
+    in the ensemble to get out-of-sample
+    predictions for each instance in the original
+    training set
+       These can be used as the input features to train
+        the blender, and the targets can be simply be
+        copied from the original training set
+
+
+ 66
+Other ensemble methods
+ Extra-trees
+   In extremely randomized trees, randomness goes one step further in the way splits are
+    computed
+   As in random forests, a random subset of candidate features is used, but instead of looking
+    for the most discriminative thresholds, thresholds are drawn at random for each candidate
+    feature and the best of these randomly-generated thresholds is picked as the splitting rule
+   This usually allows to reduce the variance of the model a bit more, at the expense of a
+    slightly greater increase in bias
+
+
+
+
+ 67
+Other ensemble methods - AdaBoost
+ The following shows the decision boundaries of five consecutive predictors on
+  the moons dataset
+     The first classifier gets many instances wrong, so their weights get boosted. The second
+      classifier therefore does a better job on these instances, and so on
+   The plot on the right represents the
+    same sequence of predictors, except
+    that the learning rate is halved
+   As you can see, this sequential learning
+    technique has some similarities with
+    Gradient Descent, except that instead
+    of tweaking a single predictor’s
+    parameters to minimize a cost function,
+    AdaBoost adds predictors to the
+    ensemble, gradually making it better
+ 68
+ESL 10.9 – Boosting Trees
+
+
+
+
+ 69
+Encoding categorical variable – One hot encoding
+ Categorical data can be extremely useful. However, in its original form, it is
+  unrecognizable to most models. We can use different “encoding” techniques
+     One hot encoding convert it to dummy variables by produces one feature per category
+       In linear and logistic regression, one hot encoding causes problems with multicollinearity. In such
+        cases, one dummy is omitted (its value can be inferred from the other values)
+       The number of categorical features should be small so that it can be effectively applied
+
+                      Animal       Target       isCat        isDog         isHamster
+                      Cat          1            1            0             0
+                      Hamster      0            0            0             1
+                      Cat          0            1            0             0
+                      Dog          1            0            1             0
+                      Hamster      0            0            0             1
+                      Cat          1            1            0             0
+                      Dog          0            0            1             0
+ 70
+Encoding categorical variable – Label encoding
+ Ordinal encoding or label encoding will transform each categorical feature to
+  one new feature of integers (0 to number of features-1)
+     This coding suggests an ordering. Furthermore, it implies that the diﬀerence between cat
+      and dog is the same as between dog and hamster
+                        Animal            Target            Animal_encoded
+                        Cat               1                 0
+                        Hamster           0                 2
+                        Cat               0                 0
+                        Dog               1                 1
+                        Hamster           0                 2
+                        Cat               1                 0
+                        Dog               0                 1
+
+
+ 71
+Encoding categorical variable – Target encoding
+ Target encoding or mean encoding will replace a feature's categories with some
+  number derived from the target
+   Group the data by each category and count the number of occurrences of each target.
+    Calculate the average of the target given each specific category and add it to a new column
+   A target encoding derives numbers for the categories using the feature's most important
+    property: its relationship with the target
+                        Animal            Target            Animal_encoded
+                        Cat               1                 0.67
+                        Hamster           0                 0.50
+                        Cat               0                 0.67
+                        Dog               0                 0.00
+                        Hamster           1                 0.50
+                        Cat               1                 0.67
+ 72                     Dog               0                 0.00
+Encoding categorical variable – Target encoding
+ When a category only occurs a few times in the dataset, any statistics
+  calculated on its group are unlikely to be very accurate and may leak the target
+     To avoid target leak and overfitting, target encoding need to be trained on an independent
+      "encoding" split. You can use cross-validation in practice
+
+
+
+
+ 73                            https://medium.com/@pouryaayria/k-fold-target-encoding-dfe9a594874b
+Ensemble method - Bayesian Additive Regression Trees (BART)
+ BART is related to the bagging and boosting approaches: each tree is
+  constructed in a random manner as in bagging and random forests, and each
+  tree tries to capture signal not yet accounted for by the current model, as in
+  boosting
+   The main novelty in BART is the way in which new trees are generated
+   Let 𝐾 denote the number of regression trees, and 𝐵 the number of iterations for which the
+    BART algorithm will be run. The notation 𝑓መ𝑘𝑏 (𝑥) represents the prediction at 𝑥 for the 𝑘th
+    regression tree used in the 𝑏th iteration
+   At the end of each iteration, the 𝐾 trees from that iteration will be summed 𝑓መ 𝑏 (𝑥) =
+    σ𝐾     መ𝑏
+      𝑘=1 𝑓𝑘 (𝑥) for 𝑏 = 1, … , 𝐵
+
+
+
+
+ 74
+Bayesian Additive Regression Trees (BART)
+ There are two components to this
+ perturbation:
+ 1.   We may change the structure of
+      the tree by adding or pruning
+      branches
+ 2.   We may change the prediction in
+      each terminal node of the tree
+ Algorithm 8.3 can be viewed as a
+ Markov chain Monte Carlo for
+ fitting the BART model
+
+
+
+ 75
+76
+Bayesian Additive Regression Trees (BART)
+ We typically throw away the first few of these prediction models, since models
+  obtained in the earlier iterations tend not to provide very good results
+     We can let 𝐿 denote the number of burn-in iterations; for instance, we might take 𝐿 = 200.
+      Then, to obtain a single prediction, we simply take the average after the burn-in iterations,
+               1
+      𝑓መ 𝑥 =      σ𝐵𝑏=𝐿+1 𝑓መ 𝑏 𝑥
+              𝐵−𝐿
+ A key element is that in Step 3(a)ii., we do not fit a fresh tree to the current
+  partial residual: instead, we try to improve the fit to the current partial residual
+  by slightly modifying the tree obtained in the previous iteration
+ This guards against overfitting since it limits how “hard” we fit the data in each
+  iteration. Furthermore, the individual trees are typically quite small. We limit
+  the tree size in order to avoid overfitting the data, which would be more likely
+  to occur if we grew very large trees
+ 77
+78
+Tuning parameters for BART
+ When we apply BART, we must select the number of trees 𝐾, the number
+ of iterations 𝐵, and the number of burn-in iterations 𝐿. We typically
+ choose large values for 𝐵 and 𝐾, and a moderate value for 𝐿
+     For instance, 𝐾 = 200, 𝐵 = 1,000, and 𝐿 = 100 is a reasonable choice. BART has
+      been shown to have very impressive out-of-box performance — that is, it performs
+      well with minimal tuning
+
+
+
+
+ 79
+Reference
+ ESL Chapter 8,9,10,15,16
+ https://github.com/serengil/chefboost
+
+
+
+
+ 80
+
