@@ -2190,6 +2190,8 @@ from lecture_alignment_ch8 import augment
 augment(BODIES)
 from trees_lecture_notes import augment as augment_notes
 PAGEJS = augment_notes(BODIES, PAGEJS)
+from scope_trim import ch8 as trim_scope
+trim_scope(BODIES)
 
 if __name__ == "__main__":
     apply("tree_based_methods", BODIES, PAGEJS, frames())

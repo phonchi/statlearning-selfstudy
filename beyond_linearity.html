@@ -1360,10 +1360,10 @@ $$B_{i,0}(x)=I(t_i\le x&lt;t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B
 
   <p>所以平滑樣條同樣是基底展開。把 $g$ 寫成 $\sum_j\beta_jb_j$ 代回 (7.11)，就得到</p>
   $$\min_\beta\ \|y-B\beta\|^2+\lambda\beta^{\mathsf T}\Omega\beta,\qquad \Omega_{jk}=\int b_j''(t)b_k''(t)\,dt,$$
-  <p>解是 $\hat\beta=(B^{\mathsf T}B+\lambda\Omega)^{-1}B^{\mathsf T}y$，形式上就是廣義的<a href="model_selection.html#ridge">脊迴歸</a>。差別在 $\Omega$ 不懲罰常數與直線；脊迴歸的單位矩陣則對每個方向都懲罰。</p>
+  <p>這裡 $B$ 的第 $i$ 列第 $j$ 行是 $b_j(x_i)$。解是 $\hat\beta=(B^{\mathsf T}B+\lambda\Omega)^{-1}B^{\mathsf T}y$，形式上就是廣義的<a href="model_selection.html#ridge">脊迴歸</a>。差別在 $\Omega$ 不懲罰常數與直線；脊迴歸的單位矩陣則對每個方向都懲罰。</p>
 <div class="info-box warm">
   <span class="info-label">「收縮版」到底縮了什麼？</span>
-  不是把整條曲線乘上一個小於 1 的常數。把 $y$ 拆到一組由平滑排到彎曲的方向後，第 $k$ 個方向乘上 $1/(1+\lambda d_k)$：<br>
+  不是把整條曲線乘上一個小於 1 的常數。把 $y$ 拆到一組由平滑排到彎曲的方向後，第 $k$ 個方向乘上 $1/(1+\lambda d_k)$，其中 $d_k\ge0$ 衡量這個方向有多彎曲，愈彎曲愈大：<br>
   <strong>$d_1=d_2=0$：</strong>常數與直線完全保留。<br>
   <strong>$d_k$ 愈大：</strong>愈彎曲的方向，縮得愈多。<br>
   把這些因子加起來就是<strong>有效自由度</strong>。迴歸樣條靠基底的<em>個數</em>控制複雜度；平滑樣條留著基底，靠 $\lambda$ 調整每個基底方向留下<em>多少</em>。
@@ -1388,6 +1388,7 @@ $$B_{i,0}(x)=I(t_i\le x&lt;t_{i+1}),\qquad B_{i,d}(x)=\frac{x-t_i}{t_{i+d}-t_i}B
     \left(y_i - \hat g_\lambda^{(-i)}(x_i)\right)^2
     = \sum_{i=1}^{n} \left[\frac{y_i - \hat g_\lambda(x_i)}
     {1 - \{S_\lambda\}_{ii}}\right]^2$$
+  <p>$\hat g_\lambda^{(-i)}$ 是拿掉第 $i$ 筆後重新擬合的函數。</p>
 
 
 <h3>為什麼跡可以叫自由度？</h3>
@@ -1414,7 +1415,7 @@ $$\{S_\lambda\}_{ii}=\frac{\partial\hat g_\lambda(x_i)}{\partial y_i},\qquad \ma
   <div class="side-panel">
     <div class="info-card">
       <div class="ic-title">怎麼看這張圖 <span class="ic-badge">圖 7.8</span></div>
-      灰點是全部 3000 筆觀察，曲線用<strong>全部 3000 筆</strong>擬合，實際上是 pyGAM 以 20 個基底的 P-spline 近似平滑樣條。滑桿以有效自由度 df<sub>λ</sub> 顯示複雜度，每個刻度對應一個 λ，df 較容易用來比較複雜度。課本圖 7.8 比較 16 df 與留一交叉驗證選出的 6.8 df 兩條曲線，在這份資料上兩者差別不大。
+      灰點是全部 3000 筆觀察，曲線用<strong>全部 3000 筆</strong>擬合，實際上是 pyGAM 以 20 個基底的 P-spline（懲罰樣條）近似平滑樣條。滑桿以有效自由度 df<sub>λ</sub> 顯示複雜度，每個刻度對應一個 λ，df 較容易用來比較複雜度。課本圖 7.8 比較 16 df 與留一交叉驗證選出的 6.8 df 兩條曲線，在這份資料上兩者差別不大。
     </div>
     <div class="info-card">
       <div class="ic-title">目前設定</div>
@@ -1453,9 +1454,9 @@ $$\{S_\lambda\}_{ii}=\frac{\partial\hat g_\lambda(x_i)}{\partial y_i},\qquad \ma
 <p>兩者都能得到三次樣條，差別在怎麼控制彈性：迴歸樣條限制模型能用多少個方向；平滑樣條允許很多方向，但限制每個方向能發揮多少。</p>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th></th><th>迴歸樣條</th><th>平滑樣條</th><th>懲罰迴歸樣條（P-spline 等）</th></tr></thead>
-  <tbody><tr><td>控制彈性靠</td><td>節點的數量與位置</td><td>$\lambda$</td><td>有限個基底＋$\lambda$</td></tr><tr><td>目標</td><td>$\min_\beta\|y-B\beta\|^2$</td><td>$\min_g\sum_i(y_i-g(x_i))^2+\lambda\int g''^2$</td><td>$\min_\beta\|y-B\beta\|^2+\lambda\beta^{\mathsf T}\Omega\beta$</td></tr><tr><td>適合</td><td>已知轉折點、想要低維又簡單的模型</td><td>不想決定節點，讓 $\lambda$ 決定平滑程度</td><td>多變數或大型模型，如現代 GAM</td></tr><tr><td>要選什麼</td><td>節點數或 df，用 CV</td><td>$\lambda$，用 CV 或 GCV</td><td>基底數上限，$\lambda$ 由 GCV 或 REML 選</td></tr></tbody>
+  <tbody><tr><td>控制彈性靠</td><td>節點的數量與位置</td><td>$\lambda$</td><td>有限個基底＋$\lambda$</td></tr><tr><td>目標</td><td>$\min_\beta\|y-B\beta\|^2$</td><td>$\min_g\sum_i(y_i-g(x_i))^2+\lambda\int g''^2$</td><td>$\min_\beta\|y-B\beta\|^2+\lambda\beta^{\mathsf T}\Omega\beta$</td></tr><tr><td>適合</td><td>已知轉折點、想要低維又簡單的模型</td><td>不想決定節點，讓 $\lambda$ 決定平滑程度</td><td>多變數或大型模型，如現代 GAM</td></tr><tr><td>要選什麼</td><td>節點數或 df，用 CV</td><td>$\lambda$，用 CV 或 GCV</td><td>基底數上限，$\lambda$ 由 GCV（廣義交叉驗證）或 REML（限制最大概似）選</td></tr></tbody>
 </table></div>
-<p>這是一般傾向，不是絕對規則：迴歸樣條也能加懲罰，一維的平滑樣條也有高效率演算法。兩種方法可以調到相同的有效自由度，但限制函數的方式不同，曲線不會一樣。在 Wage 上，節點放在分位數的 5 節點立方樣條（9 個參數）和 $\mathrm{df}_\lambda=9$ 的平滑樣條，擬合值最多差約 5.6 千美元。mgcv 的 <code>s(x, bs="cr", k=20)</code> 裡，<code>k</code> 只是基底維度的上限，最後的有效自由度仍由懲罰決定。</p>
+<p>這是一般傾向，不是絕對規則：迴歸樣條也能加懲罰，一維的平滑樣條也有高效率演算法。兩種方法可以調到相同的有效自由度，但限制函數的方式不同，曲線不會一樣。mgcv 的 <code>s(x, bs="cr", k=20)</code> 裡，<code>k</code> 只是基底維度的上限，最後的有效自由度仍由懲罰決定。</p>
 </div></details>
 <div class="qa-box">
   <div class="qa-head">觀念釐清</div>
@@ -1476,7 +1477,7 @@ $$\{S_\lambda\}_{ii}=\frac{\partial\hat g_\lambda(x_i)}{\partial y_i},\qquad \ma
 
 <details class="qa-item reading-detail" id="w08-detail-smoothing-computation"><summary>深入計算：函數空間、平滑矩陣、交叉驗證與 IRLS</summary>
 <div class="detail-body"><h3>$g$ 在哪裡找？為什麼解是三次？</h3>
-<p>(7.11) 不是對所有函數求最小，$g$ 要夠光滑，懲罰項才有定義。直觀的設定是 $C^2[a,b]$（二階導數存在且連續）。嚴格一點用 Sobolev 空間 $H^2[a,b]=\{g:g,g',g''\in L^2[a,b]\}$，導數以弱導數理解，二階導數不必處處存在。兩者的最佳解相同，而且解本身是 $C^2$ 的。</p>
+<p>(7.11) 不是對所有函數求最小，$g$ 要夠光滑，懲罰項才有定義。直觀的設定是 $C^2[a,b]$（二階導數存在且連續）。嚴格一點用 Sobolev 空間 $H^2[a,b]=\{g:g,g',g''\in L^2[a,b]\}$（$L^2$ 指平方可積），導數以弱導數理解，二階導數不必處處存在。兩者的最佳解相同，而且解本身是 $C^2$ 的。</p>
 <p>解的形狀可以由變分推出來。令 $g_\varepsilon=g+\varepsilon h$，其中 $h$ 只在相鄰資料點之間 $(x_i,x_{i+1})$ 不為零。因為沒有動到任何 $g(x_i)$，RSS 不變，所以最佳解要讓 $\int[g'']^2$ 在這個擾動下不再下降：</p>
 $$\left.\frac{d}{d\varepsilon}\int[g_\varepsilon'']^2\right|_{\varepsilon=0}=2\int g''h''=2\int g^{(4)}h=0.$$
 <p>第二個等號分部積分兩次，邊界項因 $h$ 在區間兩端附近為零而消失。對所有這樣的 $h$ 都成立，所以兩點之間 $g^{(4)}=0$，也就是三次多項式。為零的是<strong>四階導數</strong>：三次多項式的三階導數是常數，不一定是 0。穿過資料點時，RSS 那一項讓三階導數可以跳，因此節點就落在資料點；端點的斜率不受資料約束，又給出 $g''(a)=g''(b)=0$，這正是自然邊界條件。</p>
@@ -1484,7 +1485,7 @@ $$\left.\frac{d}{d\varepsilon}\int[g_\varepsilon'']^2\right|_{\varepsilon=0}=2\i
   <thead><tr><th>懲罰</th><th>$\int[g']^2$</th><th>$\int[g'']^2$</th><th>$\int[g''']^2$</th><th>$\int[g^{(m)}]^2$</th></tr></thead>
   <tbody><tr><td>節點間滿足</td><td>$g''=0$</td><td>$g^{(4)}=0$</td><td>$g^{(6)}=0$</td><td>$g^{(2m)}=0$</td></tr><tr><td>節點間的次數</td><td>1</td><td>3</td><td>5</td><td>$2m-1$</td></tr></tbody>
 </table></div>
-<p>我們沒有事先假設 $g$ 是樣條，三次與節點位置都是最佳化導出來的。</p>
+<p>表中的 $m$ 是導數的階數，和前面的相異設計點數 $m$ 無關。我們沒有事先假設 $g$ 是樣條，三次與節點位置都是最佳化導出來的。</p>
 <h3>由曲率懲罰到可計算的線性系統</h3><p>寫 $g(x)=\sum_j\beta_jb_j(x)$、$B_{ij}=b_j(x_i)$、$\Omega_{jk}=\int b_j''b_k''$，最小化 $\|y-B\beta\|^2+\lambda\beta^T\Omega\beta$。當 $B^TB+\lambda\Omega$ 可逆時，係數與擬合值分別是</p>
 $$\hat\beta=(B^TB+\lambda\Omega)^{-1}B^Ty,\qquad\hat y=B\hat\beta=S_\lambda y.$$
 <p>實務上解線性系統，不必顯式求逆。若 $B$ 是相異設計點上的方形可逆基底矩陣，令 $M=B^{-T}\Omega B^{-1}$，就有 $S_\lambda=(I+\lambda M)^{-1}$。若 $M$ 的特徵值是 $d_j\ge0$，則</p>
@@ -1526,7 +1527,7 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
 <div class="info-box">
   <span class="info-label">ISLP 演算法 7.1 · 在 X = x₀ 的局部迴歸</span>
   <strong>1.</strong> 取出 x 離 x₀ 最近的
-  s = k/n 比例的訓練點。<br>
+  s = k/n 比例的訓練點（k 是鄰域點數、n 是總筆數）。<br>
   <strong>2.</strong> 給鄰域內每個點一個權重 $K_{i0}$：最近的最重，最遠的那個剛好是 0，
   鄰域外全部是 0。<br>
   <strong>3.</strong> 用這些權重做加權最小平方，找 $\hat\beta_0, \hat\beta_1$ 使
@@ -1534,9 +1535,9 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   <strong>4.</strong> 在 x₀ 的擬合值就是 $\hat f(x_0) = \hat\beta_0 + \hat\beta_1 x_0$。
 </div>
 
-  <p>放回本章的兩條主線看。基底展開走到這裡變成<strong>局部</strong>的：每個 $x_0$ 各用一組以自己為中心的基底 $1,(x-x_0)$（演算法 7.1 寫成 $\beta_0+\beta_1x$，只是參數化不同），係數 $\hat\beta(x_0)$ 隨目標點改變；迴歸樣條則是整條曲線共用同一組係數。線性平滑器那條線照樣成立：權重只看距離、不看 $y$，所以擬合值仍是 $y$ 的線性組合，$\hat y=Ly$，自由度是 $\operatorname{tr}L$，跨距扮演平滑樣條裡 $\lambda$ 的角色（前提是固定跨距、不做穩健化）。</p>
+  <p>放回本章的兩條主線看。基底展開走到這裡變成<strong>局部</strong>的：每個 $x_0$ 各用一組以自己為中心的基底 $1,(x-x_0)$（演算法 7.1 寫成 $\beta_0+\beta_1x$，只是參數化不同），係數 $\hat\beta(x_0)$ 隨目標點改變；迴歸樣條則是整條曲線共用同一組係數。線性平滑器那條線照樣成立：權重只看距離、不看 $y$，所以擬合值仍是 $y$ 的線性組合，$\hat y=Ly$（$L$ 的第 $i$ 列是第 $i$ 個點的局部權重組合），自由度是 $\operatorname{tr}L$，跨距扮演平滑樣條裡 $\lambda$ 的角色（前提是固定跨距、不做穩健化）。</p>
 
-  <p>局部迴歸其實分兩步：先<strong>選鄰域</strong>，決定哪些點參與；再<strong>依距離給權重</strong>，決定每個點有多少影響力。權重帶來兩個好處。第一，離 $x_0$ 愈近的點愈能代表 $x_0$ 的情況，影響就該愈大。第二，如果鄰域內一律等權重（方框），點一進出鄰域擬合值就會跳；tricube 讓鄰域邊緣的權重平滑降到 0，曲線隨 $x_0$ 移動時也比較平順。下面的元件可以切換兩種權重，比較淡紅曲線的鋸齒：span = 0.3 時，方框的最大折動約 1.06，tricube 只有約 0.39。</p>
+  <p>局部迴歸其實分兩步：先<strong>選鄰域</strong>，決定哪些點參與；再<strong>依距離給權重</strong>，決定每個點有多少影響力。權重帶來兩個好處。第一，離 $x_0$ 愈近的點愈能代表 $x_0$ 的情況，影響就該愈大。第二，如果鄰域內一律等權重（方框），點一進出鄰域擬合值就會跳；tricube 讓鄰域邊緣的權重平滑降到 0，曲線隨 $x_0$ 移動時也比較平順。下面的元件可以切換兩種權重，比較淡紅曲線的鋸齒。</p>
 
   <p>要做的選擇有三個：權重函數 K、第 3 步擬合常數／直線／二次、以及<strong>跨距</strong>（span）s。它們彼此獨立：同一種權重可以配不同次數的局部多項式。平滑的權重函數之間差異通常不大，最關鍵的是 s：
   <strong>它控制平滑程度，作用類似平滑樣條的 λ</strong>。
@@ -1622,10 +1623,10 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   <div class="quiz-feedback" id="qLoFeedback"></div>
 </div>
 <details class="qa-item reading-detail" id="w08-detail-local-calculation"><summary>局部加權擬合、自由度與多變數延伸</summary>
-<div class="detail-body"><h3>局部加權擬合</h3><p>用中心化的局部設計向量 $b_i=(1,x_i-x_0)^T$，令 $W_0=\operatorname{diag}(K_{i0})$。當 $B_0^TW_0B_0$ 可逆（局部設計滿秩），$\hat\beta=(B_0^TW_0B_0)^{-1}B_0^TW_0y$，而 $\hat f(x_0)=\hat\beta_0$；下一個目標點要重新選鄰居、權重和局部係數。擬合值剛好等於截距，是因為基底以 $x_0$ 為中心：其他基底在 $x=x_0$ 都是 0。把 $\hat f(x_0)$ 展開成 $\sum_i w_i^*(x_0)\,y_i$，這些等價權重不一定等於原本的核權重，也不一定全是正的；局部直線在邊界會給某些點負權重，用來修正鄰居只在單側造成的偏差。常用 tricube 權重 $K(u)=(1-|u|^3)^3I(|u|&lt;1)$，其中 $u=(x_i-x_0)/h(x_0)$；$h(x_0)$ 可由第 $k$ 近鄰決定。</p><p>權重不是觀測誤差精確變異數的倒數，推論不能無條件照搬一般 WLS。</p><h3>局部迴歸的自由度怎麼估？</h3>
-<p>權重只看距離、不看 $y$，所以每個目標點的擬合值都是 $y$ 的線性組合：$\hat f(x_0)=\ell(x_0)^{\mathsf T}y$，其中 $\ell(x_0)^{\mathsf T}=e_1^{\mathsf T}(B_0^{\mathsf T}W_0B_0)^{-1}B_0^{\mathsf T}W_0$，$e_1$ 取出截距。把各訓練點的 $\ell(x_i)^{\mathsf T}$ 疊成矩陣 $L$，就有 $\hat y=Ly$，自由度和平滑樣條一樣定義成 $\operatorname{tr}L$（ESL §6.2）。跨距愈大，鄰居愈多，$\operatorname{tr}L$ 愈小。在 Wage 上用局部線性、tricube、不做穩健化實算，span 0.2、0.5、0.7、1.0 分別約是 10.6、4.9、3.7、2.4；span = 1.0 仍依距離加權，所以不會剛好是 2。</p>
+<div class="detail-body"><h3>局部加權擬合</h3><p>用中心化的局部設計向量 $b_i=(1,x_i-x_0)^T$，令 $B_0$ 是以 $b_i^{\mathsf T}$ 為各列的矩陣、$W_0=\operatorname{diag}(K_{i0})$。當 $B_0^TW_0B_0$ 可逆（局部設計滿秩），$\hat\beta=(B_0^TW_0B_0)^{-1}B_0^TW_0y$，而 $\hat f(x_0)=\hat\beta_0$；下一個目標點要重新選鄰居、權重和局部係數。擬合值剛好等於截距，是因為基底以 $x_0$ 為中心：其他基底在 $x=x_0$ 都是 0。把 $\hat f(x_0)$ 展開成 $\sum_i w_i^*(x_0)\,y_i$，這些等價權重不一定等於原本的核權重，也不一定全是正的；局部直線在邊界會給某些點負權重，用來修正鄰居只在單側造成的偏差。常用 tricube 權重 $K(u)=(1-|u|^3)^3I(|u|&lt;1)$，其中 $u=(x_i-x_0)/h(x_0)$；$h(x_0)$ 可由第 $k$ 近鄰決定。</p><p>權重不是觀測誤差精確變異數的倒數，推論不能無條件照搬一般 WLS。</p><h3>局部迴歸的自由度怎麼估？</h3>
+<p>權重只看距離、不看 $y$，所以每個目標點的擬合值都是 $y$ 的線性組合：$\hat f(x_0)=\ell(x_0)^{\mathsf T}y$，其中 $\ell(x_0)^{\mathsf T}=e_1^{\mathsf T}(B_0^{\mathsf T}W_0B_0)^{-1}B_0^{\mathsf T}W_0$，$e_1$ 取出截距。把各訓練點的 $\ell(x_i)^{\mathsf T}$ 疊成矩陣 $L$，就有 $\hat y=Ly$，自由度和平滑樣條一樣定義成 $\operatorname{tr}L$（ESL §6.2）。跨距愈大，鄰居愈多，$\operatorname{tr}L$ 愈小。span = 1.0 仍依距離加權，所以自由度不會剛好是 2。</p>
 <p><code>statsmodels</code> 的 <code>lowess</code> 不提供自由度，也沒有回傳 $L$，要自己依上式計算。穩健化迭代（<code>it&gt;0</code>）的權重會依殘差而變，擬合就不再是 $y$ 的線性函數，$\operatorname{tr}L$ 只能當近似。</p>
-<p>自由度的定義不只一種，比較時要看清楚。課本圖 7.10 的圖例標 16.4 與 5.3，文字說是局部線性，但上面的 $\operatorname{tr}L$ 只有 10.6 與 3.7。改算<strong>局部二次的 $\operatorname{tr}(LL^{\mathsf T})$</strong> 則得 16.6 與 5.3。R 的 <code>loess</code> 預設二次，回報的 <a href="https://github.com/wch/r-source/blob/trunk/src/library/stats/R/loess.R">enp</a> 就是這個量，所以圖例很可能來自這個設定。這是本頁的推測，課本沒有交代。</p>
+<p>自由度的定義不只一種，例如 $\operatorname{tr}L$ 與 $\operatorname{tr}(LL^{\mathsf T})$；比較不同軟體或課本圖上標的自由度時，要先確認用的是哪一種。</p>
 <h3>局部的次數與穩健化</h3>
 <p>局部常數只做加權平均，在邊界的鄰居只剩單側，容易有偏差；局部直線能修正部分邊界趨勢，但樣本稀疏或局部設計秩不足時仍不穩定。小跨距保留細節也增加變異，大跨距平均更多資料也可能抹去真實變化。跨距需在訓練資料內用驗證比較，不能只看曲線是否穿過每個點。</p>
 <p>Lab 使用 <code>statsmodels.nonparametric.lowess</code> 的 <code>frac</code> 控制鄰居比例。<code>it</code> 是殘差穩健化的額外迭代，會依殘差降低離群觀測權重；不是多項式的次數。Wage 圖中的局部擬合若要與手寫一次加權直線比較，必須同時對照排序、跨距與穩健化迭代的設定。</p>
@@ -1684,7 +1685,7 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
 
 
 <h3>Wage 模型中的三個成分各自代表什麼？</h3>
-<p>講義先使用 $wage=\beta_0+f_1(year)+f_2(age)+f_3(education)+\varepsilon$：年份和年齡是平滑項，教育是五個水準的組別效果。固定基底時，將各項的基底欄串接即可使用 OLS；需要懲罰時，則在相同目標中加入各平滑項的曲率成本，即 $\min\|y-\beta_01-B\beta\|^2+\sum_j\lambda_j\beta_j^{\mathsf T}S_j\beta_j$，這也是 mgcv 的估計框架。每個平滑項都需要可識別限制，例如訓練樣本上的平均效果為零，常數水準由截距承接。</p>
+<p>講義先使用 $wage=\beta_0+f_1(year)+f_2(age)+f_3(education)+\varepsilon$：年份和年齡是平滑項，教育是五個水準的組別效果。固定基底時，將各項的基底欄串接即可使用 OLS；需要懲罰時，則在相同目標中加入各平滑項的曲率成本，即 $\min\|y-\beta_01-B\beta\|^2+\sum_j\lambda_j\beta_j^{\mathsf T}\Omega_j\beta_j$（$\Omega_j$ 是第 $j$ 項的曲率懲罰矩陣），這也是 mgcv 的估計框架。每個平滑項都需要可識別限制，例如訓練樣本上的平均效果為零，常數水準由截距承接。</p>
 <p>Lab 的 <code>LinearGAM(s(0)+s(1)+f(2))</code> 用欄位位置指出項：<code>s</code> 表示樣條平滑，<code>f</code> 表示類別項。欄位順序不是文字標籤，必須核對傳入矩陣中 year、age、education 的位置。各項曲線的縱軸是模型成分，不能直接當成未控制其他變數的平均薪資。</p>
 <p>講義比較自然樣條與平滑樣條的 GAM，說明相同加法結構可以換一維擬合方法作為組件（building block）。曲線相似不代表估計法相同。自然樣條控制基底維度，平滑樣條控制平滑懲罰；pyGAM 的 <code>gridsearch</code> 在它提供的候選規則下選平滑參數，與自行安排的外層效能評估仍是兩個步驟。</p>
 <p>若年齡效果隨教育改變，單一 $f_2(age)$ 不足以表示，要明確加入交互作用或二維平滑項，並重新驗證；不能把任何殘差結構都當成該增加平滑項。</p>
@@ -1693,7 +1694,7 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
 <details class="qa-item reading-detail" id="w08-detail-gam-backfit"><summary>完整演算法：偏殘差與可識別的 backfitting</summary>
 <div class="detail-body"><h3>讓加法成分可識別的 backfitting</h3><p>常數可在截距與成分之間任意移動，因此使用 $\sum_i f_j(x_{ij})=0$ 的樣本中心化限制。平方損失下先令 $\hat\beta_0=\bar y$、各成分為 0，再循環更新每一個 $j$。好處是只要有一維的擬合工具，就能擬合任意多變數的加法模型；ISLP §7.9 第 11、12 題用線性迴歸版本讓你手動跑一遍。</p><ol><li>算偏殘差 $r_i=y_i-\hat\beta_0-\sum_{k\ne j}\hat f_k(x_{ik})$。</li><li>用指定的一維平滑器擬合 $r$ 對 $x_j$，得到暫時成分 $\tilde f_j$。</li><li>令 $\hat f_j(x)=\tilde f_j(x)-n^{-1}\sum_i\tilde f_j(x_{ij})$，保持成分中心化。</li><li>重複完整輪次，直到目標與擬合值的變化小於事先設定的容許量。</li></ol><p>對 Gaussian GAM，固定基底與二次懲罰也可聯合解線性系統；二元 GAM 須在 IRLS 的工作反應與權重下更新，不能直接對 $0/1$ 反應套普通 backfitting。</p><p>那什麼時候真的需要 backfitting？自然樣條這類固定基底，直接聯合最小平方最簡單；局部迴歸沒有一組全域基底，沒辦法橫向疊成設計矩陣，這時 backfitting 最方便。現代套件如 R 的 <code>mgcv</code> 用懲罰迴歸樣條做聯合估計，非高斯反應則用懲罰的 IRLS（PIRLS）。</p>
 <details class="qa-item proof" id="w08proof-backfit"><summary>證明：backfitting 為何是分塊最小化</summary>
-<div class="qa-a"><p>固定其他成分後，總目標中依賴 $f_j$ 的部分恰是 $\sum_i(r_i-f_j(x_{ij}))^2+\lambda_jJ(f_j)$，所以精確的一維更新會使同一目標不增加。對固定基底、凸二次懲罰及可識別的聯合系統，分塊更新可解同一最小化問題；任意套入非線性平滑器時，不可直接承諾這個收斂結果。中心化固定的是參數表示，避免把常數在各成分之間反覆搬動。</p></div></details>
+<div class="qa-a"><p>固定其他成分後，總目標中依賴 $f_j$ 的部分恰是 $\sum_i(r_i-f_j(x_{ij}))^2+\lambda_jJ(f_j)$（$J$ 是粗糙度懲罰，例如 $\int f_j''^2$），所以精確的一維更新會使同一目標不增加。對固定基底、凸二次懲罰及可識別的聯合系統，分塊更新可解同一最小化問題；任意套入非線性平滑器時，不可直接承諾這個收斂結果。中心化固定的是參數表示，避免把常數在各成分之間反覆搬動。</p></div></details>
 </div></details>
 
 <div class="viz-layout" data-provenance="course-data" data-source-note="Wage 的 year／age／education GAM；曲線、信賴區間與整體指標由 generator 計算。">
@@ -1729,22 +1730,22 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
       education 是類別變數，在 <code>pygam</code> 裡用 <code>f_gam(2, lam=0)</code> 指定——<strong>類別項就是每個層級一個常數，沒有「平滑程度」可以調</strong>，而且 <code>lam=0</code> 表示完全不收縮。它的自由度固定是「層級數 − 1」。
     </div>
     <div class="info-card">
-      <div class="ic-title">加 df 換到多少</div>
-      age 的 df 從 2 加到 10，Pseudo R² 只從 0.263 爬到 0.294；year 的 df 從 2 加到 6，R² 從 0.292 到 0.293——<strong>year 幾乎不需要非線性</strong>。lab 範例 的 ANOVA 就是在檢定這件事，結論是「year 需要線性項（p ≈ 0.002）但不需要非線性（p ≈ 0.435）」；同一套檢定用在 age則顯示 age 明顯需要非線性（p ≈ 5.7e−07）。
+      <div class="ic-title">year 需要非線性嗎</div>
+      lab 用 ANOVA 檢定 year 需不需要非線性項，結論是「year 需要線性項（p ≈ 0.002）但不需要非線性（p ≈ 0.435）」；同一套檢定用在 age，則顯示 age 明顯需要非線性（p ≈ 5.7e−07）。
     </div>
   </div>
 </div>
 
-<details class="qa-item reading-detail" id="w08-detail-gam-effects"><summary>效果圖怎麼讀：成分圖、偏殘差圖、部分迴歸圖與 PDP</summary>
+<details class="qa-item reading-detail" id="w08-detail-gam-effects"><summary>效果圖怎麼讀：成分圖、偏殘差圖、部分迴歸圖與偏依賴圖</summary>
 <div class="detail-body">
-<p><strong>成分圖</strong>畫已擬合的 $\hat f_j(x)$，條件是其他加法成分保持不變。<strong>偏殘差圖</strong>把 $e_i+\hat f_j(x_{ij})$ 對 $x_{ij}$ 作圖：相當於先扣掉其他項再看該項的剩餘結構。點的散佈仍含雜訊與其他遺漏項，並不要求所有點落在曲線上。</p>
+<p><strong>成分圖</strong>畫已擬合的 $\hat f_j(x)$，條件是其他加法成分保持不變。<strong>偏殘差圖</strong>把 $e_i+\hat f_j(x_{ij})$（$e_i$ 是完整模型的殘差）對 $x_{ij}$ 作圖：相當於先扣掉其他項再看該項的剩餘結構。點的散佈仍含雜訊與其他遺漏項，並不要求所有點落在曲線上。</p>
 <p><strong>部分迴歸圖</strong>適用於線性模型的指定欄位：先把 $y$ 對其他欄位迴歸取殘差，再把該 $x_j$ 對其他欄位迴歸取殘差，兩組殘差間的斜率等於原模型的係數。若一個樣條項有多個基底欄，不能把單一基底欄的斜率當成整個年齡曲線；這與偏殘差圖的縱軸和目的不同。</p>
 <p><strong>名字對照。</strong>偏殘差圖（partial residual plot）也叫 component-plus-residual plot（CR 圖，statsmodels 叫 CCPR），兩者是同一種圖。部分迴歸圖（partial regression plot）又叫 added-variable plot（AV 圖），兩軸都是殘差，是不同的圖。ISLP 圖 7.11–7.13 只畫中心化的 $\hat f_j$ 和 ±2 個標準誤，沒有畫殘差點，所以是成分圖。</p>
 <p><strong>偏殘差圖會誤導的時候。</strong>$r_{ij}=y_i-\hat\beta_0-\sum_{k\ne j}\hat f_k(x_{ik})$ 扣掉的只是<strong>模型估出來的</strong>其他效果。預測變數彼此高度相關，或模型漏了交互作用時，扣錯的部分會留在圖上，看起來像是 $x_j$ 的效果。backfitting 每一步拿去平滑的，就是這張圖上的 $(x_j,r_j)$：圖是用眼睛看，backfitting 是真的拿去擬合。</p>
-<p><strong>PDP 的用途。</strong>模型擬合之後，PDP 回答「平均而言，這個特徵怎麼影響預測」，讀法類似迴歸係數，可以套在任何模型上。例如房價模型裡經緯度與房價的關係，或某種飲食對健康指標的平均影響。目標特徵和其他特徵高度相關時，PDP 會拿去評估資料裡很少出現的組合，解讀要小心，下面會再說明。</p>
-<p><strong>PDP</strong> 每次固定目標特徵值，把其餘特徵依訓練樣本逐列帶入模型，再平均預測：$\hat f_S(x_S)=n^{-1}\sum_i\hat f(x_S,x_C^{(i)})$。把其他特徵固定在平均值只是一個切片，對非線性模型兩者不同。加法迴歸中的 PDP 與成分曲線只差常數，但分類 GAM 的 logistic 轉換是非線性，平均機率不等於平均 logit 再轉換。年齡與教育高度相關時，替換年齡可能產生訓練資料中少見或未出現的組合；「控制其他變數」的圖形文字不構成因果識別。</p>
+<p><strong>偏依賴圖（partial dependence plot, PDP）的用途。</strong>模型擬合之後，PDP 回答「平均而言，這個特徵怎麼影響預測」，讀法類似迴歸係數，可以套在任何模型上。例如房價模型裡經緯度與房價的關係，或某種飲食對健康指標的平均影響。目標特徵和其他特徵高度相關時，PDP 會拿去評估資料裡很少出現的組合，解讀要小心，下面會再說明。</p>
+<p><strong>PDP</strong> 每次固定目標特徵值，把其餘特徵依訓練樣本逐列帶入模型，再平均預測：$\hat f_S(x_S)=n^{-1}\sum_i\hat f(x_S,x_C^{(i)})$，其中 $S$ 是要看的特徵，$C$ 是其餘特徵，$x_C^{(i)}$ 是第 $i$ 筆資料的其餘特徵值。把其他特徵固定在平均值只是一個切片，對非線性模型兩者不同。加法迴歸中的 PDP 與成分曲線只差常數，但分類 GAM 的 logistic 轉換是非線性，平均機率不等於平均 logit 再轉換。年齡與教育高度相關時，替換年齡可能產生訓練資料中少見或未出現的組合；「控制其他變數」的圖形文字不構成因果識別。</p>
 <details class="qa-item proof" id="w08proof-fwl"><summary>證明：部分迴歸斜率與 OLS 殘差正交性</summary>
-<div class="qa-a"><p>把完整線性設計分成 $[Z,x]$，$Z$ 含截距及其他項，令 $M_Z=I-Z(Z^TZ)^{-1}Z^T$。固定 $x$ 的係數 $b$ 時，對 $Z$ 最小化後剩下 $\|M_Z(y-xb)\|^2$，微分得 $\hat b=(x^TM_Zx)^{-1}x^TM_Zy$，正是殘差 $M_Zy$ 對 $M_Zx$ 的斜率；需各分母可逆。完整 OLS 正常方程給 $X^Te=0$；設計含一整欄 1 時亦有 $\sum_i e_i=0$。這是擬合後樣本內的代數限制，並沒有證明誤差與解釋變數獨立；沒有截距、帶懲罰或用新資料時也不能原樣套用。</p></div></details></div></details>
+<div class="qa-a"><p>把完整線性設計分成 $[Z,x]$，$Z$ 含截距及其他項，令 $M_Z=I-Z(Z^TZ)^{-1}Z^T$。固定 $x$ 的係數 $b$ 時，對 $Z$ 最小化後剩下 $\|M_Z(y-xb)\|^2$，微分得 $\hat b=(x^TM_Zx)^{-1}x^TM_Zy$，正是殘差 $M_Zy$ 對 $M_Zx$ 的斜率；需各分母可逆。完整 OLS 正常方程給 $X^Te=0$（$e$ 是殘差向量）；設計含一整欄 1 時亦有 $\sum_i e_i=0$。這是擬合後樣本內的代數限制，並沒有證明誤差與解釋變數獨立；沒有截距、帶懲罰或用新資料時也不能原樣套用。</p></div></details></div></details>
 <div style="overflow-x:auto;"><table class="cmp-table" style="width:100%;font-size:.85rem;">
   <thead><tr><th>GAM 的優點 ✔</th><th>GAM 的限制 ✘</th></tr></thead>
   <tbody><tr><td>每個 $X_j$ 各擬合一個非線性 $f_j$，不必手動試變換</td><td><strong>模型被限制成加法的</strong>，變數多的時候會漏掉重要的交互作用</td></tr><tr><td>非線性擬合通常預測更準</td><td>要交互作用得手動加 $X_j \times X_k$ 或二維的 $f_{jk}$ 項</td></tr><tr><td>因為是加法的，可以固定其他變數單獨看某一個變數的效果</td><td>這個解讀只在加法假設成立時才可靠</td></tr><tr><td>每個 $f_j$ 的平滑程度可以用自由度總結</td><td>完全一般的模型還是得靠第 8 章的隨機森林與提升法</td></tr></tbody>
@@ -1755,7 +1756,7 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
   $$\log\left(\frac{p(X)}{1 - p(X)}\right) = \beta_0 + f_1(X_1) + f_2(X_2)
     + \cdots + f_p(X_p) \tag{7.18}$$
 
-  <p>一般寫成 $g\left(E[Y\mid X]\right)=\beta_0+\sum_{j=1}^{p}f_j(X_j)$：加法結構放在連結函數 $g$ 上，而不是加性誤差。</p>
+  <p>一般寫成 $g\left(E[Y\mid X]\right)=\beta_0+\sum_{j=1}^{p}f_j(X_j)$：加法結構放在連結函數 $g$ 上，而不是加性誤差（這個 $g$ 和平滑樣條的 $g$ 無關）。</p>
 
   <details class="qa-item reading-detail" id="w08-detail-gam-classification"><summary>分類 GAM 的稀有事件算例</summary>
 <div class="detail-body"><p>講義的模型是 $\operatorname{logit}P(\text{wage}&gt;250)=\beta_0+\beta_1\,\text{year}+f_2(\text{age})+f_3(\text{education})$：year 只用線性項，$f_2$ 是 5 df 的平滑樣條，$f_3$ 是每個學歷一個常數的階梯函數。</p><p>ISLP 圖 7.13 對 <code>Wage</code> 擬合 $I(\text{wage} > 250)$，
@@ -1785,10 +1786,10 @@ $$ (B^TWB+\lambda\Omega)\beta_{\rm new}=B^TWz.$$
 </div>
 
 <details class="qa-item reading-detail" id="w08-detail-gam-thinplate"><summary>延伸：薄板樣條與二維交互作用</summary>
-<div class="detail-body"><h3>薄板樣條的完整表示</h3><p>薄板樣條把一維曲率懲罰推廣到平面，最小化 $\sum_i(y_i-g(x_{i1},x_{i2}))^2+\lambda J(g)$。把這類 $g(x_j,x_k)$ 加入 GAM 可以表示交互作用，複雜度也必須另外控制。</p><p>二維輸入 $x=(x_1,x_2)^T$ 的曲率懲罰為 $J(g)=\iint(g_{11}^2+2g_{12}^2+g_{22}^2)\,dx_1dx_2$。對互異且仿射設計滿秩的資料點，解可表示成</p>
+<div class="detail-body"><h3>薄板樣條的完整表示</h3><p>薄板樣條把一維曲率懲罰推廣到平面，最小化 $\sum_i(y_i-g(x_{i1},x_{i2}))^2+\lambda J(g)$。把這類 $g(x_j,x_k)$ 加入 GAM 可以表示交互作用，複雜度也必須另外控制。</p><p>二維輸入 $x=(x_1,x_2)^T$ 的曲率懲罰為 $J(g)=\iint(g_{11}^2+2g_{12}^2+g_{22}^2)\,dx_1dx_2$，$g_{ab}$ 是對 $x_a$、$x_b$ 的二階偏導數。對互異且仿射設計滿秩的資料點，解可表示成</p>
 $$g(x)=\beta_0+\beta_1x_1+\beta_2x_2+\sum_{i=1}^n\alpha_i\eta(\|x-x_i\|),\quad\eta(r)=r^2\log r,\quad\eta(0)=0,$$
 $$\sum_i\alpha_i=0,\qquad\sum_i\alpha_ix_{i1}=0,\qquad\sum_i\alpha_ix_{i2}=0.$$
-<p>徑向基底的整體常數可吸收入 $\lambda$；講義的 $r^2\log r^2$ 與這裡差一個常數 2，使用時要連同懲罰尺度對齊。令 $K_{ij}=\eta(\|x_i-x_j\|)$、$P_i=(1,x_{i1},x_{i2})$，吸收常數後可解區塊系統 $\begin{pmatrix}K+\lambda I&amp;P\\P^T&amp;0\end{pmatrix}\binom\alpha\beta=\binom y0$。它同時限制徑向部分並保留不受曲率懲罰的平面。</p>
+<p>徑向基底的整體常數可吸收入 $\lambda$；講義的 $r^2\log r^2$ 與這裡差一個常數 2，使用時要連同懲罰尺度對齊。令 $K_{ij}=\eta(\|x_i-x_j\|)$（這個 $K$ 是核矩陣，和局部迴歸的權重 $K$ 無關）、$P_i=(1,x_{i1},x_{i2})$，吸收常數後可解區塊系統 $\begin{pmatrix}K+\lambda I&amp;P\\P^T&amp;0\end{pmatrix}\binom\alpha\beta=\binom y0$。它同時限制徑向部分並保留不受曲率懲罰的平面。</p>
 
 <p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://en.wikipedia.org/wiki/Partial_regression_plot" target="_blank" rel="noopener">部分迴歸圖</a>、<a href="https://en.wikipedia.org/wiki/Partial_residual_plot" target="_blank" rel="noopener">偏殘差圖</a>、<a href="https://stats.stackexchange.com/questions/423375/why-is-there-residual-dots-in-plot-of-gam" target="_blank" rel="noopener">GAM 圖中的殘差</a>、<a href="https://stats.stackexchange.com/questions/189584/why-do-residuals-in-linear-regression-always-sum-to-zero-when-an-intercept-is-in" target="_blank" rel="noopener">含截距 OLS 的殘差和</a>、<a href="https://stats.stackexchange.com/questions/474102/why-is-the-correlation-between-independent-variables-regressor-and-residuals-zer" target="_blank" rel="noopener">OLS 殘差與設計欄的正交性</a>、<a href="https://christophm.github.io/interpretable-ml-book/pdp.html" target="_blank" rel="noopener">PDP 的計算與限制</a>。</p></div></details>
 </section>
