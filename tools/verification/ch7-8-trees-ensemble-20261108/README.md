@@ -46,3 +46,16 @@
 | 有一份流傳的硬幣範例寫著「bagging 創造了獨立性」 | 「流傳的」是模糊歸屬 | 有些硬幣範例會寫「bagging 創造了獨立性」 |
 | 自動找交互作用，正是第 8 章的樹擅長的事。 | 強調墊字「正是」 | 自動找交互作用是第 8 章的樹擅長的事。 |
 | 這張圖畫的 $(x_j,r_j)$，正是 backfitting 每一步拿去平滑的資料：前者是用眼睛看，後者是真的去擬合。 | 「前者／後者」要讀者回頭對照 | backfitting 每一步拿去平滑的，就是這張圖上的 $(x_j,r_j)$：圖是用眼睛看，backfitting 是真的拿去擬合。 |
+
+## 後續：範圍修剪與符號補定義（同日）
+
+使用者要求把「真實的樹不獨立」的 ρσ² 推導與元件 B 移進收合（新 id `w09-detail-rho-floor`），並全面檢查超出範圍的內容與未定義符號。Astra（pane `astra-scope`，job `d7e36cf8-8fd8-46bc-a91c-09cfcafcfc93`）與 Fable（pane `fable-scope`，job `22a7cfb6-2b14-4a5b-8866-41696dc32e7d`）各審一次、複核一次；原文在 `scope/`。實作在 `tools/enrich/scope_trim.py`（兩章建置的最後一層）。
+
+**使用者的決定與處理**
+- 這次新增的 Hoeffding 上界段與 $E[X_1X_2\mid X_1]=0$ 推導：整段刪除。greedy 收合改名「樹抓交互作用要切幾刀」，只留「四象限要三刀」；`verify_math.py` 同步移除對應的檢查，剩 25 項全過。
+- 第 8 章講義只一句帶過的進階內容，照 §23 縮成 1–2 句，收合 id 保留：XGBoost 推導與證明（`w09proof-xgboost` 移除）、GOSS／MVS／有序目標統計／DART 公式與三段重複（改成一張「各一句」表）、BART 先驗與後驗推導（`w09proof-bart-leaf` 移除）、SAMME 與重複的損失段、置換重要度（留一句）、target encoding 平滑公式與 sklearn 細節。**Huber、絕對損失、多類別 deviance 保留**：Fable 說講義沒有，但講義 p.69 的 ESL 表就列了這些（已轉成影像核對）。
+- 第 7 章：使用者 10/31 提過的主題保留（特徵值例、Sobolev／變分推導、方框／tricube 元件與其「最大折動」即時讀值），只刪自算的靜態數字與推測：LOWESS 的 10.6／4.9／3.7／2.4 與「圖 7.10 來自 $\operatorname{tr}(LL^{\mathsf T})$」的推測、折動 1.06／0.39、5.6 千美元、GAM df 掃描的 Pseudo R²。懲罰 IRLS、FWL 證明、薄板約束保留。Astra 複核時建議連元件的「最大折動」讀值一起刪，因屬使用者選定的元件而不採用。
+- 未定義符號：葉數 $M$／$c_m$、$\hat y_{R_j}$、$T_0$、$T_t$／$|T_t|$／$R(\cdot)$、$t_L$／$t_R$、類別數 $K$、$\hat f^{*b}$、AdaBoost 的 $w_j(i)$／$\eta$／$h_j$（並註明 $\alpha_j$ 與剪枝的 $\alpha$ 無關）、梯度提升的 $m$ 與 $\nu$ 對應演算法 8.2 的 $b$ 與 $\lambda$、XGBoost 的 $\lambda$ 是葉值 L2 懲罰、BART 的 $\hat f^b$（統一記號）、分類器個數 $M$ 與葉數無關；第 7 章的 $d_k$、$B_{ij}$、$\hat g^{(-i)}_\lambda$、$L$、$B_0$、$k/n$、$\Omega_j$（原 $S_j$，與平滑矩陣撞名）、$e_i$、$e$、$J$、$g_{ab}$、PDP 的 $S$／$C$／$x_C^{(i)}$、連結函數 $g$、懲罰階數表的 $m$、$L^2$、核矩陣 $K$；縮寫 MCMC、GOSS、EFB、MVS、AUC、GCV、REML、P-spline、PDP 首次出現展開。
+- 複核另修：$d_k$ 不寫成「懲罰矩陣的特徵值」（那是 $M=B^{-\mathsf T}\Omega B^{-1}$ 的特徵值，不是 $\Omega$ 的）；修剪時誤刪的 $p=1/(1+e^{-F})$ 補回；ordered boosting 與有序目標統計分成兩列講清楚；AdaBoost 定義句與原句重複、BART 兩段重複與記號、XGBoost 收合的官方連結、三處多餘半形空白。
+
+`checks_scope.log`：全站 validate 0 失敗、browser_check 0 問題、check_* 系列通過、兩頁展開後 MathJax 錯誤 0；`check_lab_rendered` 仍是既存的 8 個失敗。

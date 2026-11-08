@@ -48,14 +48,6 @@ check("常態近似 M=1000：z≈0.63、Φ≈73.6%", abs(z1 - .63) < .005 and ro
       f"z={z1:.4f} Φ={Phi(z1):.4f}")
 check("常態近似 M=10000：z≈2.0、Φ≈97.7%", abs(z2 - 2.0) < .005 and round(Phi(z2) * 100, 1) == 97.7,
       f"z={z2:.4f} Φ={Phi(z2):.4f}")
-# Hoeffding：p>½ 時答錯機率 ≤ exp(−2M(p−½)²)；p<½ 時答對機率 ≤ exp(−2M(½−p)²)
-ok = True
-for M in (11, 101, 1001, 10001):
-    for p in (.51, .55, .6, .7):
-        ok &= (1 - tail(M, p, (M + 1) // 2)) <= math.exp(-2 * M * (p - .5) ** 2) + 1e-12
-        q = 1 - p
-        ok &= tail(M, q, (M + 1) // 2) <= math.exp(-2 * M * (.5 - q) ** 2) + 1e-12
-check("Hoeffding 兩個方向的上界都成立", ok)
 
 # ── 2. 相關平均的變異 ρσ² + (1−ρ)σ²/B（蒙地卡羅） ─────────────────────
 rng = random.Random(20261108)
@@ -163,48 +155,6 @@ ovr = {frozenset([frozenset(x), frozenset(levels) - frozenset(x)]) for x in leve
 check("4 個水準有 2^(4−1)−1=7 種二分法", len(parts) == 7 == 2 ** 3 - 1)
 check("one-versus-rest 只有 4 種且漏掉 {A,B}|{C,D}",
       len(ovr) == 4 and frozenset([frozenset("AB"), frozenset("CD")]) not in ovr)
-
-# ── 6. 貪婪搜尋的盲點：Y = X₁X₂ ────────────────────────────────────────
-rng = random.Random(11)
-n = 4000
-X = [(rng.uniform(-1, 1), rng.uniform(-1, 1)) for _ in range(n)]
-Y = [a * b + rng.gauss(0, .05) for a, b in X]
-
-
-def rss(ys):
-    if not ys:
-        return 0.0
-    mu = sum(ys) / len(ys)
-    return sum((y - mu) ** 2 for y in ys)
-
-
-tot = rss(Y)
-best1 = 0.0
-for j in (0, 1):
-    order = sorted(range(n), key=lambda i: X[i][j])
-    ys = [Y[i] for i in order]
-    pre, pre2 = [0.0], [0.0]
-    for y in ys:
-        pre.append(pre[-1] + y)
-        pre2.append(pre2[-1] + y * y)
-    for k in range(20, n - 20):
-        l = pre2[k] - pre[k] ** 2 / k
-        r = (pre2[n] - pre2[k]) - (pre[n] - pre[k]) ** 2 / (n - k)
-        best1 = max(best1, tot - l - r)
-quad = [[Y[i] for i in range(n) if (X[i][0] < 0) == s and (X[i][1] < 0) == u] for s in (0, 1) for u in (0, 1)]
-gain2 = tot - sum(rss(q) for q in quad)
-check("單一刀的 RSS 降幅 < 1%，四象限（3 刀）降幅 > 50%",
-      best1 / tot < .01 and gain2 / tot > .5, f"一刀 {best1 / tot:.4f}，三刀 {gain2 / tot:.3f}")
-
-# 完全對稱的四點：任何單一刀的 RSS 降幅恰為 0
-pts = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
-ys4 = [a * b for a, b in pts]
-gains = []
-for j in (0, 1):
-    left = [y for (x, y) in zip(pts, ys4) if x[j] < 0]
-    right = [y for (x, y) in zip(pts, ys4) if x[j] >= 0]
-    gains.append(rss(ys4) - rss(left) - rss(right))
-check("對稱四點 Y=X₁X₂：單一刀降幅恰為 0", all(abs(g) < 1e-12 for g in gains), str(gains))
 
 # ── 7. 局部直線在邊界的等價權重可為負 ─────────────────────────────────
 xs = [i / 20 for i in range(21)]

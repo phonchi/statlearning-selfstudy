@@ -912,3 +912,6 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 - `pages.py`：第 8 章新增 `motive`、`why` 改名；徽章頁碼修正（Ch7 natural 加 p.46、gam 改 p.34–54；Ch8 modern 加 p.70–73、stacking 改 p.63–69、74–80）。詞彙卡第 8 章 +2（Condorcet、相關的地板）、第 7 章 +1（偏殘差圖）。題庫 ch8 一句改寫。
 
 **驗證**：`verify_math.py` 28 項 PASS；全站 validate 0 失敗、browser_check 0 問題；check_* 系列通過；`check_lab_rendered` 的 8 個失敗在 HEAD 上相同（既存）。刻意未處理的既有冗餘列在 README。
+
+**同日後續（範圍修剪）**：ρσ² 推導與元件 B 移入收合 `w09-detail-rho-floor`（正文只留白話；bagging 正文自行寫出公式與符號）。依使用者拍板新增 `tools/enrich/scope_trim.py`（兩章最後一層）：第 8 章講義一句帶過的 XGBoost／GOSS／MVS／DART／BART 後驗／SAMME／置換重要度／target encoding 細節縮成 1–2 句（Huber 等損失因講義 p.69 有表而保留）；第 7 章只刪自算數字與推測，使用者 10/31 提過的主題保留；Hoeffding 與 $E[X_1X_2\mid X_1]$ 段刪除；補齊兩章未定義符號與縮寫。細節與審查 job ID 見驗證目錄 README「後續」一節。**之後若要再改這兩章，注意 `scope_trim.py` 跑在最後，會比對前幾層的輸出。**
+
