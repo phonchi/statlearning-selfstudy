@@ -2188,6 +2188,8 @@ PAGEJS = clean_pagejs('tree_based_methods', PAGEJS)
 
 from lecture_alignment_ch8 import augment
 augment(BODIES)
+from trees_lecture_notes import augment as augment_notes
+PAGEJS = augment_notes(BODIES, PAGEJS)
 
 if __name__ == "__main__":
     apply("tree_based_methods", BODIES, PAGEJS, frames())

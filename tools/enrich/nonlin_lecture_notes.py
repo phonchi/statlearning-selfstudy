@@ -375,7 +375,7 @@ def dedupe(b):
     z = b_gam.index('<p class="source-links">本主題的講義來源與延伸閱讀：<a href="https://en.wikipedia.org/wiki/Partial_regression_plot')
     b["gam"] = b_gam[:p] + b_gam[q:z] + b_gam[p:q] + b_gam[z:]
     rep(b, "smooth", r"若 $M$ 的特徵值是 $\mu_j\ge0$", r"若 $M$ 的特徵值是 $d_j\ge0$")
-    b["smooth"] = b["smooth"].replace(r"\mu_j", "d_j")
+    b["smooth"] = b["smooth"].replace(r"\lambda\mu_j", r"\lambda d_j").replace(r"\mu_j", "d_j")
     # 局部迴歸的 lab 收合移到演算法之後，span 先定義再用
     src = b["loess"]
     a = src.index('<details class="qa-item reading-detail" id="w08-detail-lowess-lab-plot">')

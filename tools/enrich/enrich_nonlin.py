@@ -1830,6 +1830,8 @@ from lecture_alignment_ch7 import augment
 augment(BODIES)
 from nonlin_lecture_notes import augment as augment_notes
 augment_notes(BODIES, slider)
+from nonlin_second_half import augment as augment_second_half
+augment_second_half(BODIES)
 
 if __name__ == "__main__":
     apply("beyond_linearity", BODIES, PAGEJS, frames())
