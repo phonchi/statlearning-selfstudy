@@ -684,6 +684,7 @@ PAGES = [
             ('▶ 課程錄影：多項式迴歸與階梯函數', 'https://youtu.be/5zpXCSs4dN8'),
             ('▶ 課程錄影：樣條', 'https://youtu.be/SXnzot1CyRY'),
             ('▶ 課程錄影：局部迴歸與期末專題', 'https://youtu.be/jKmz2MkYZNs'),
+            ('▶ 課程錄影：GAM', 'https://youtu.be/CxfmL21gPuM'),
         ],
         hero_svg=_svg_curves(),
         group="core",
@@ -714,6 +715,10 @@ PAGES = [
         islp=8, islp_label="ISLP Ch.8",
         esl_label="ESL §9.2、§8.7–8.8、§10.1–10.14、§15.1–15.3",
         playlist="",
+        extra_pills=[
+            ('▶ 課程錄影：迴歸樹', 'https://youtu.be/TpvReTcJdvU'),
+            ('▶ 課程錄影：分類樹', 'https://youtu.be/MEAB-4XXus0'),
+        ],
         hero_svg=_svg_tree(), bankquiz=True,
         group="core",
         secs=[
