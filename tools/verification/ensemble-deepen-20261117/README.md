@@ -58,6 +58,6 @@
 
 ## 已知、刻意未處理
 
-- 沿用的 AdaBoost 元件：data-source-note 寫 16 點、狀態列寫「1/18」，是上游既有的不一致（本次未動元件 JS）。
+- ~~沿用的 AdaBoost 元件：data-source-note 寫 16 點、狀態列寫「1/18」~~：已修（後續 commit），資料實為 16 點；`enrich_trees.py` 的第 0 輪狀態列改由 `w09adaPts.length` 產生，瀏覽器實測顯示「16 筆…（1/16）」。
 - XGBoost 元件不實作 `min_child_weight` 門檻，側欄明寫示意設定相當於 0。
 - CatBoost `border_count` 的預設值沒有在來源中核對，比較表只列參數名。

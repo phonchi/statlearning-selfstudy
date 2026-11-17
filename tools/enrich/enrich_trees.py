@@ -2139,7 +2139,7 @@ function w09adaApply(f) {
   document.getElementById('w09adaEns').textContent =
     Number.isNaN(f.ens) ? '—' : HC.pct(f.ens, 1);
   setStatus('w09adaStatus', f.j === 0
-    ? '第 0 輪：18 筆資料的權重全部相同（1/18），還沒有任何分類器。'
+    ? '第 0 輪：' + w09adaPts.length + ' 筆資料的權重全部相同（1/' + w09adaPts.length + '），還沒有任何分類器。'
     : '第 ' + f.j + ' 輪：最好的 stump 切在 x = ' + HC.fmt(f.thr, 2)
       + '，加權錯誤率 e = ' + HC.fmt(f.err, 3) + '，所以這一輪的份量 α = ½ ln((1−e)/e) = '
       + HC.fmt(f.alpha, 3) + '。答錯的 ' + f.wrong.length
