@@ -2193,5 +2193,12 @@ PAGEJS = augment_notes(BODIES, PAGEJS)
 from scope_trim import ch8 as trim_scope
 trim_scope(BODIES)
 
+# 集成各節整節重寫（2026-11-17）：最後一層，覆寫 why…stacking 並新增拆出的節。
+# ENS_SKIP=1 時略過，給 ens_snapshot.py 取上游快照用。
+import os
+if not os.environ.get("ENS_SKIP"):
+    from ensemble_deepen import augment as deepen_ensembles
+    PAGEJS = deepen_ensembles(BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("tree_based_methods", BODIES, PAGEJS, frames())
