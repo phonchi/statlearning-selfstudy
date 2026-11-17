@@ -1,0 +1,10 @@
+const path=require('path'),fs=require('fs');
+const P=path.join(process.env.HOME,'.cache/selfstudy-node');const pp=require(path.join(P,'node_modules','puppeteer-core'));
+const base=path.join(process.env.HOME,'.cache/puppeteer/chrome'),d=fs.readdirSync(base).sort();const CH=path.join(base,d[d.length-1],'chrome-linux64','chrome');
+const file=process.argv[2];
+(async()=>{const b=await pp.launch({executablePath:CH,args:['--no-sandbox']});const p=await b.newPage();
+await p.setViewport({width:390,height:844});await p.goto('file://'+file,{waitUntil:'networkidle2',timeout:60000});
+await p.evaluate(async()=>{document.querySelectorAll('details').forEach(d=>d.open=true);await MathJax.startup.promise;await MathJax.typesetPromise();});
+await new Promise(r=>setTimeout(r,1500));
+const r=await p.evaluate(()=>[...document.querySelectorAll('.detail-body>p,.detail-body>table,section>p,mjx-container')].filter(e=>e.getBoundingClientRect().right>innerWidth+2&&!e.closest('[style*="overflow"]')&&!e.closest('mjx-container[display]')).map(e=>{let a=e.parentElement;while(a&&getComputedStyle(a).overflowX==='visible')a=a.parentElement;return (e.closest('section')||{}).id+' '+e.tagName+' 0 '+(a?(a.tagName+'.'+a.className+':'+getComputedStyle(a).overflowX):'none')}));
+const c={};r.forEach(x=>{const k=x.split(' ')[0]+' '+x.split(' ')[1]+' '+x.split(' ').slice(3).join(' ');c[k]=(c[k]||0)+1});console.log(JSON.stringify(c,null,1));await b.close();})();

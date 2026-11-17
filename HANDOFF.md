@@ -28,7 +28,7 @@
 | `model_selection` | Ch.6 | 205 KB | 6 | 4 | 27 | — |
 | `unsupervised_learning` | Ch.12 | 255 KB | 3 | 6 | 30 | — |
 | `beyond_linearity` | Ch.7 | 245 KB | 5 | 7 | 28 | — |
-| `tree_based_methods` | Ch.8 | 257 KB | 4 | 6 | 30 | 6 |
+| `tree_based_methods` | Ch.8 | 456 KB | 2 | 10 | 40 | 8 |
 | `support_vector_machines` | Ch.9 | 240 KB | 3 | 6 | 26 | — |
 | `deep_learning` | **Ch.10 · 補充** | 210 KB | 2 | 4 | 27 | — |
 
@@ -914,4 +914,26 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 **驗證**：`verify_math.py` 28 項 PASS；全站 validate 0 失敗、browser_check 0 問題；check_* 系列通過；`check_lab_rendered` 的 8 個失敗在 HEAD 上相同（既存）。刻意未處理的既有冗餘列在 README。
 
 **同日後續（範圍修剪）**：ρσ² 推導與元件 B 移入收合 `w09-detail-rho-floor`（正文只留白話；bagging 正文自行寫出公式與符號）。依使用者拍板新增 `tools/enrich/scope_trim.py`（兩章最後一層）：第 8 章講義一句帶過的 XGBoost／GOSS／MVS／DART／BART 後驗／SAMME／置換重要度／target encoding 細節縮成 1–2 句（Huber 等損失因講義 p.69 有表而保留）；第 7 章只刪自算數字與推測，使用者 10/31 提過的主題保留；Hoeffding 與 $E[X_1X_2\mid X_1]$ 段刪除；補齊兩章未定義符號與縮寫。細節與審查 job ID 見驗證目錄 README「後續」一節。**之後若要再改這兩章，注意 `scope_trim.py` 跑在最後，會比對前幾層的輸出。**
+
+
+## 31. 第 8 章集成學習全面加深加廣（2026-11-17）
+
+使用者要求依講義 08（p.30–80）與其中連結、加上一段 ChatGPT 教學問答，把集成部分全面加深加廣，並與 Gemini 3.8（`agy`，`gemini-3.8-flash-high`）、Astra、Fable 討論改寫與潤稿。紀錄、job ID、來源筆記與審查處理在 `tools/verification/ensemble-deepen-20261117/README.md`。
+
+**決策**
+- **推翻 §30「範圍修剪」對集成部分的縮減**：XGBoost 推導、GOSS／EFB／MVS／DART、ordered boosting、類別編碼、BART 先驗與 MCMC 都補回並加深。正文寫直覺、核心公式與短例；推導、證明、套件細節、成套 lab 一律放收合。單棵樹各節與第 7 章不動。BART 依講義附錄的定位整段放在 stacking 的收合。
+- **STYLE_CONTRACT §13 的例外**：這一章的集成部分，使用者明確允許用講義連結（StatQuest、官方文件、論文）與學生問答裡的算例，以及標明「概念示意」的元件資料。2026-09 依講義刪除的自算置換重要度（`w09vimpSel`）仍不放回。
+- **分節（10 節，舊 id 保留）**：`why` 投票與基學習器 → `bagging` → `rf` → `boosting`（AdaBoost＋演算法 8.2＋一般負梯度）→ 新 `importance` → `modern`（XGBoost）→ 新 `splitsearch` → 新 `categorical` → 新 `successors`（LightGBM、CatBoost、DART、調參、套件選擇、樹演算法簡史）→ `stacking`（含 BART 收合）。三方共識加二比一多數定案（使用者指示「有共識就直接寫」）。
+- **新元件**：`w09xgb*`（葉值與增益，StatQuest 四點例；示意不設 `min_child_weight`）、`w09split*`（精確／等頻分箱／Hessian 加權分位，LCG 種子 26117）、`w09stack*`（折外預測流程，K=3／5，正確與錯誤做法）。三者都是 SVG＋滑桿／按鈕，沒有可拖把手，不必加 `DRAG_CHECKS`。
+- 詞彙卡第 8 章 30→40（新增軟投票、基學習器、梯度提升、偽殘差、置換重要度、加權分位草圖、Leaf-wise 生長、對稱樹、目標編碼、折外預測；改寫 6 張的過時說法）；題庫 3→8。
+
+**實作**
+- 新層 `tools/enrich/ensemble_deepen.py` 掛在 `enrich_trees.py` 最後（在 `scope_trim.ch8` 之後），**整節覆寫**十個集成節的 `BODIES`；上游各層照常執行、結果被覆寫，所以 `scope_trim.py` 與 `trees_lecture_notes.py` 沒有改。內容在 `ens_a.py`（why、bagging、rf、importance）、`ens_b.py`（boosting、modern、splitsearch）、`ens_c.py`（categorical、successors、stacking）；共用工具 `ens_common.py`（`grab_viz`／`grab_details` 從上游輸出取出既有元件，id 不變；`lab()`；`links()`）。組裝層另做兩件事：檢查舊句不得殘留（`STALE`），以及清掉「講義 p.73」被讀者層刪頁碼後留下的半形空格。
+- **之後要改集成各節，改 `ens_*.py`，不要改上游各層**（上游對這十節的修改會被覆寫）。要改 motive 或單棵樹各節，仍照 §30 的層序。
+- 開發預覽：`ENS_SKIP=1` 讓 `enrich_trees` 略過新層；`python3 tools/enrich/ens_snapshot.py` 存上游快照（含 FRAMES）到驗證目錄的 `consult/old_bodies.json`（不入 repo），`python3 tools/enrich/ens_preview.py ens_b <輸出.html>` 拼出單一模組的預覽頁，不寫 repo。
+- `pages.py`：第 8 章新增四個 `Sec`，徽章頁碼對齊講義；新節空殼依 §30 的方法先手插再跑 `build_page.py`。
+
+**核實後的重要更正**（細節見驗證目錄 `consult/synthesis.md`）：XGBoost 的精確搜尋用預先排序的欄區塊、只排序一次；講義 p.56 的 O(n log n)→O(n) 是 scikit-learn 傳統 GBDT 對 HGBT 的對比；Hessian 加權分位草圖只對應 `tree_method='approx'`，預設 `hist` 不用；`min_child_weight` 是子節點 Hessian 和下限；XGBoost 1.5 起原生支援類別（講義與 lab 的「實驗性」已過時）；CatBoost CPU 預設 Plain＋MVS、分裂評分 Cosine；講義 p.56「箱數不能超過 255」是 scikit-learn HGBT 的限制；AdaBoost 講義對稱式取 η=½ 與 ESL 演算法 10.1 等價；OOB 抽球 n=20 的極限是 35.85%；lab 儲存格 238 把投票結果標成 `StackingClassifier`、135 的「6→2」與輸出（3）不一致、heart 網格每次只搜一個參數。
+
+**驗證**：三組核算 17／78／23 項全過；validate 0 失敗（本頁 456 KB 的 SIZE 警告）；全站 browser_check 0 問題；check_* 全過；`check_lab_rendered` 8 個既存失敗與 HEAD 相同；展開截圖 mjx-merror 0、無橫向捲動。
 

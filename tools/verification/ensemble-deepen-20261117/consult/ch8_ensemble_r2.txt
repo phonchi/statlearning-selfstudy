@@ -1,0 +1,1029 @@
+
+################ SECTION why (4037 chars)
+
+PART 06 · 投票與基學習器
+### 多樣性從哪裡來：選什麼成員、怎麼投票 講義 08進階參考 · 第 8.8 節、第 16.1 節 · 進階
+開頭的硬幣說明了投票什麼時候有用：成員各自比瞎猜好，而且錯的地方不一樣。ESL 第 16.1 節把集成學習拆成兩件事：先造出一群基學習器（base learner），再決定怎麼把它們合併。後面每一節都是在回答這兩個問題的不同組合，對照表在路線圖。這一節先看最直接的答案：合併的規則固定不變，多樣性來自用不同的演算法。
+### 硬投票與軟投票
+硬投票（hard voting）讓每個分類器投一票，票多的類別勝出。軟投票（soft voting）平均各分類器給每一類的機率，再挑機率最大的那一類。兩者多半會選同一類，但不一定。三個分類器給「類別 1」的機率是 0.51、0.52、0.01 時，硬投票兩票對一票選類別 1；軟投票的平均是 (0.51+0.52+0.01)/3 ≈ 0.347，選類別 0。前兩個只是勉強偏向 1，第三個卻非常確定是 0，軟投票把「有多確定」也算進去了。
+  📌 軟投票的代價
+  要平均的是機率，所以各模型的機率要可信（校準過）。硬投票只需要標籤，對機率尺度不敏感。式子、權重與校準的細節在下方收合。
+### 硬投票、軟投票、權重與機率校準
+兩種規則的式子。設有 $M$ 個分類器，$h_j(x)$ 是第 $j$ 個的預測類別，$\hat p_{jk}(x)$ 是它給類別 $k$ 的機率。
+$$\text{硬投票：}\ \hat y=\arg\max_k\sum_{j=1}^M I\big(h_j(x)=k\big),\qquad
+\text{軟投票：}\ \hat y=\arg\max_k\sum_{j=1}^M w_j\,\hat p_{jk}(x).$$
+軟投票的權重 $w_j$ 預設相等；scikit-learn 的 VotingClassifier(weights=…) 讓你自己指定。硬投票平手時，scikit-learn 依類別標籤的排序挑第一個。
+為什麼平均機率通常比數票好。ESL 第 8.7 節舉過一個例子：某個 $x$ 真正屬於類別 1 的機率是 0.75，但每棵樹都預測類別 1。這時「投給類別 1 的比例」是 1，完全看不出那 25% 的不確定。改成平均各樹葉子裡的類別比例，得到的數字比較接近真正的機率，而且樹的棵數少時變異也比較小。scikit-learn 的 random forest 分類器用的就是平均機率。
+軟投票的前提是機率可信。不同模型輸出的機率尺度不一樣，有的偏極端、有的擠在 0.5 附近；直接平均時，最敢講話的模型會主導結果。scikit-learn 的文件建議只在校準良好（well-calibrated）的分類器之間用軟投票，必要時先用 CalibratedClassifierCV 校準。「有 predict_proba」不代表數值可靠。
+和 stacking 的關係。ESL 第 8.8 節把等權平均稱為委員會（committee）方法。加權軟投票是同一件事，只是權重由人指定；stacking 則用折外預測從資料學權重，ESL 建議把權重限制成非負、總和為 1。所以三者是一條線：等權 → 人給權重 → 資料學權重，愈往後愈有彈性，也愈需要資料與獨立驗證。
+### 基學習器怎麼挑
+答案取決於合併的方式要對付什麼：
+方法需要的基學習器為什麼常見選擇
+Bagging／random forest低偏差、高變異、資料一動就變的模型平均只壓變異、不動偏差，所以成員一開始就要夠有彈性長很深、不剪枝的樹
+Boosting簡單、偏差大但變異小的弱學習器（weak learner）每一步只修正一小塊還沒解釋的部分，序列地降低偏差stump 或淺樹
+投票／stacking各自夠準、但錯在不同地方的模型成員的錯誤不重疊，合併時才互相抵銷邏輯斯迴歸、K 近鄰、SVM、樸素貝氏、樹，混著用
+不是每種模型都適合拿去平均。bagging 只對不穩定的估計有用：資料換一點、結果就大變的方法，平均起來才有東西可以壓。樣本平均這類線性統計量，bagging 之後幾乎不變（ESL 習題 15.4）；ESL 也提到 K 近鄰這類較穩定的方法通常不太受 bagging 影響。反過來，boosting 的基學習器若是線性模型，一路加起來還是線性模型，學不到新的形狀。
+所以實務上兩邊都用樹。樹可以處理混合型態的變數、不必標準化、自己長出交互作用，而且只要調深度，就能從「很深、低偏差」一路調到「只切一刀的 stump」，同一種基學習器同時符合 bagging 與 boosting 的需求。投票和 stacking 則反過來，刻意混用不同演算法，讓錯誤不要重疊。
+### 反例：0-1 損失下，bagging 一個很差的分類器會更差
+平方損失下，ESL 第 8.7 節證明了「理想的聚合」不會增加均方誤差：令 $f_{\rm ag}(x)=E_P\hat f^*(x)$ 是從真實母體 $P$ 重複抽訓練集、再平均的結果，則
+$$E_P\big[Y-\hat f^*(x)\big]^2=E_P\big[Y-f_{\rm ag}(x)\big]^2+E_P\big[\hat f^*(x)-f_{\rm ag}(x)\big]^2\ \ge\ E_P\big[Y-f_{\rm ag}(x)\big]^2 .$$
+平均拿掉的正好是第二項，也就是變異。注意這是對「從母體抽樣」的理想聚合成立；實際的 bagging 從同一份訓練資料重抽，書上只說這暗示它通常也會降低均方誤差，不是保證。
+分類的 0-1 損失沒有這種分解。ESL 的反例：真實類別永遠是 1；某個分類器有 0.4 的機率把所有點都判成 1、0.6 的機率全判成 0，所以單獨用時錯誤率是 0.6。把很多份這樣的分類器拿來投票，多數票幾乎一定是 0，錯誤率變成 1.0。
+這就是開頭硬幣例子的反面：每個成員答對的機率低於一半時，投票會把劣勢放大。結論和硬幣一樣，只是方向相反：投票只放大成員原本的傾向。
+### Lab：Carseats 上的硬投票
+三個不同演算法的硬投票，與各自的 5 折交叉驗證準確率
+  clf1 = make_pipeline(StandardScaler(),KNeighborsClassifier(n_neighbors=10))
+  clf2 = DecisionTreeClassifier(random_state=1)
+  clf3 = GaussianNB()
+  estimators = [
+      ("knn", clf1),
+      ("dc", clf2),
+      ("nb", clf3)
+  ]
+  vclf = VotingClassifier(estimators=estimators, voting='hard')
+  k = 5
+  kf5 = KFold(n_splits=k, shuffle=True, random_state=1)
+  print('5-fold cross validation:\n')
+  for clf, label in zip([clf1, clf2, clf3, vclf],
+                        ['KNN',
+                         'DecisionTreeClassifier',
+                         'Naive Bayes',
+                         'StackingClassifier']):
+      scores = cross_val_score(clf, X_train, y_train, cv=kf5, scoring='accuracy')
+      print("Accuracy: %0.2f (+/- %0.2f) [%s]"
+            % (scores.mean(), scores.std(), label))
+預期輸出
+5-fold cross validation:
+Accuracy: 0.78 (+/- 0.06) [KNN]
+Accuracy: 0.73 (+/- 0.07) [DecisionTreeClassifier]
+Accuracy: 0.79 (+/- 0.07) [Naive Bayes]
+Accuracy: 0.82 (+/- 0.04) [StackingClassifier]
+輸出最後一列的標籤寫成 StackingClassifier，那是 lab 迴圈裡標籤沿用了下一格的名字；這一列其實是硬投票 vclf 的結果。四個模型用同一組 kf5 折，所以可以直接比較：投票的 0.82 高於單一模型最好的 0.79。
+  來源：Ch08-baggboost-lab-zh.ipynb
+同一份資料上 stacking 的結果放在 Stacking 一節。準確率差個 0.01–0.03，對照括號裡的標準差，差距並不大；這個例子用來看流程，排名不足為據。
+QUIZ · 投票與基學習器
+三個分類器對同一筆資料給「類別 1」的機率分別是 0.9、0.45、0.45。硬投票與軟投票各會預測哪一類？
+(A) 兩者都選類別 1，因為有一個分類器非常確定
+(B) 硬投票選類別 0，軟投票選類別 1
+(C) 兩者都選類別 0，因為多數分類器偏向 0
+本主題的講義來源與延伸閱讀：多數決 75% 與 97% 的算法、scikit-learn 集成方法：投票與 stacking。
+
+
+################ SECTION bagging (5397 chars)
+
+PART 07 · Bagging 與 OOB
+### 重抽樣造很多棵樹再平均；用袋外樣本估計測試誤差 教科書 · 第 8.2.1 節講義 08進階參考 · 第 8.7 節、第 15.3 節 · 進階
+回到樹。單棵樹的問題是變異太大：把訓練資料隨機切成兩半各長一棵，兩棵可能完全不像。降低變異最古典的辦法是平均：$n$ 個獨立、變異都是 $\sigma^2$ 的觀測，平均的變異是 $\sigma^2/n$。所以理想的做法是蒐集 $B$ 份獨立的訓練資料，各擬合一棵樹，再把預測平均起來。
+問題是我們只有一份資料。那就用第 5 章的 bootstrap：從 $n$ 筆訓練資料有放回地抽 $n$ 筆，重複 $B$ 次，造出 $B$ 份訓練資料。在每一份上長一棵樹，再平均，這就是 bootstrap aggregation，簡稱 bagging：
+$$\hat f_{\rm bag}(x)=\frac1B\sum_{b=1}^B\hat f^{*b}(x),$$
+其中 $\hat f^{*b}$ 是用第 $b$ 份 bootstrap 樣本長出來的樹。bootstrap 本來是用來估計一個估計量有多不穩；bagging 用同一個程序來降低它。它沒有製造新的資訊：每份 bootstrap 樣本平均只含約 63% 的不同觀測。
+分類問題有兩種合併方式：每棵樹投一票、票多的類別勝出，或平均每棵樹給各類的機率。講義與 ISLP 用投票；scikit-learn 的 random forest 平均機率，ESL 也指出平均機率在樹少時變異較小。
+bagging 的樹要長很深，而且不剪枝。這和剪枝那一節的直覺相反，但道理一致：每棵樹偏差小、變異大，平均把變異壓下來，而偏差在平均時不會變。所以 bagging 主要治變異，幾乎不治偏差；平均多少棵樹的效果還受樹與樹之間的相關限制，見開頭那節的收合。
+### 袋外樣本：免費的驗證集
+有放回抽 $n$ 次，某一筆始終沒被抽到的機率是
+$$\left(1-\frac1n\right)^n\ \xrightarrow[n\to\infty]{}\ e^{-1}\approx0.368 .$$
+所以每棵樹大約只用到三分之二的資料，剩下沒用到的叫做袋外樣本（out-of-bag, OOB）。對這棵樹來說，它們是沒看過的資料。$n$ 不大時這個比例略低：$n=20$ 時是 $0.95^{20}\approx35.85\%$，$n=100$ 時是 36.60%。
+›按「長一棵樹」看一次有放回重抽：虛線框的球就是這棵樹的袋外樣本。
+→ 長一棵樹▶ 連長 200 棵重置
+模擬示意
+這一棵樹的抽樣
+被抽中幾筆（去重）—
+OOB 幾筆—
+這次的 OOB 比例—
+累計樹的棵數 B0
+累計 OOB 比例—
+理論值 (1−1/20)²⁰35.85%
+怎麼看
+      20 顆球＝20 筆訓練資料。每按一次就是「長一棵樹」：有放回抽 20 次，實心＝被抽到（右上角的 ×k 是被抽到幾次），虛線空框＝這棵樹沒看過它。按幾十次，右邊的累計 OOB 比例會靠近 35.85%，也就是 $n=20$ 時的 $(1-1/20)^{20}$；資料筆數很大時才趨近 $1/e\approx36.8\%$。
+OOB 誤差怎麼算。對第 $i$ 筆，找出所有沒用到它的樹（大約 $B/3$ 棵），用它們預測第 $i$ 筆再平均（或投票），得到它的 OOB 預測；$n$ 筆都做一次，就得到 OOB 誤差。因為每筆都只由沒看過它的樹預測，ISLP 說這是 bagging 測試誤差的有效估計，而且 $B$ 夠大時它幾乎等於 LOOCV 誤差，成本卻只有一次擬合。這個「幾乎等於」要在什麼條件下才成立，見下方收合。
+### 樹要種幾棵
+講義與 ISLP 都說：$B$ 不是關鍵的參數，用很大的 $B$ 也不會過度擬合。原因是加樹並沒有增加模型的彈性，只是把「無限多棵樹的平均」估得更準；實務上挑一個大到誤差已經平掉的 $B$ 就好。不過這不表示 bagging 不會過度擬合：如果每棵樹本身長得太複雜，它們的平均也可能太複雜，這時要調的是樹，不是 $B$。
+ISLP 圖 8.8 用 Heart 資料畫出誤差隨 $B$ 下降、然後平掉的樣子，還有三個細節：虛線是單棵分類樹的測試誤差；random forest 那條用 $m=\sqrt p$；兩條 OOB 誤差在這張圖裡明顯比測試誤差低，ISLP 說這只是碰巧。
+### 加樹為什麼不會過度擬合：蒙地卡羅極限與它的限制
+B 只是蒙地卡羅的樣本數。給定訓練資料，bootstrap 是一個隨機機制；ESL 第 8.7 節把「真正的」bagging 估計寫成對這個機制取期望值 $E_{\hat P}\hat f^*(x)$，$\hat P$ 是訓練資料的經驗分佈。我們用的
+$$\hat f_{\rm bag}(x)=\frac1B\sum_{b=1}^B\hat f^{*b}(x)$$
+只是這個期望值的蒙地卡羅估計。$B$ 愈大，估計愈接近那個固定的極限；模型的形狀由每棵樹多深、資料是什麼決定，和 $B$ 無關。random forest 也一樣，ESL 第 15.3.4 節寫成
+$$\hat f_{\rm rf}(x)=E_\Theta T(x;\Theta)=\lim_{B\to\infty}\hat f^{B}_{\rm rf}(x),$$
+$\Theta$ 代表一棵樹的隨機性（抽到哪些樣本、每個節點抽到哪些變數）。所以「$B$ 加大」不會讓模型更會記住訓練資料，只會讓平均更穩。這和 boosting 不同：boosting 每多一棵樹，模型就多一塊可以擬合雜訊的彈性。
+但極限本身可能過度擬合。ESL 同一節接著說：完全長滿的樹平均起來可能是一個太複雜的模型，帶有不必要的變異。這時要調的是每棵樹的深度或葉子大小，不是 $B$。ESL 的經驗是用長滿的樹通常損失不大，還少一個要調的參數；分類問題對這件事更不敏感。
+直覺版。請很多人各自猜一個數字再平均：多找幾個人，只會讓平均更穩，不會讓平均更愛鑽牛角尖。可是如果每個人都把同一份考古題背得滾瓜爛熟，他們的平均也一樣只會背考古題。前者是 $B$，後者是每棵樹的深度與資料本身。
+### OOB 為什麼接近 LOOCV：條件與限度
+先看 OOB 預測用了哪些樹。第 $i$ 筆資料不在某份 bootstrap 樣本裡的機率是 $(1-1/n)^n$，所以 $B$ 棵樹裡大約有 $(1-1/n)^nB\approx0.37B$ 棵沒看過它。第 $i$ 筆的 OOB 預測就是這些樹的平均（或投票）。
+再看這些樹是怎麼來的。在「第 $i$ 筆沒被抽到」的條件下，這份 bootstrap 樣本等於從其餘 $n-1$ 筆有放回地抽 $n$ 次。所以這些樹全都沒有用到第 $i$ 筆，而 $B$ 很大時，它們的平均會接近「只用其餘 $n-1$ 筆做 bagging」的預測。這正是 LOOCV 對第 $i$ 筆做的事：拿掉它、用其他資料訓練、再預測它。
+兩本書都只給結論。ISLP 說 $B$ 夠大時 OOB 誤差「幾乎等於」LOOCV 誤差，ESL 說它和 $N$ 折交叉驗證幾乎相同並留作習題 15.2；兩者都沒有在正文證明。上面的論證說明了方向，也看得出兩個差別：OOB 那邊每份樣本抽 $n$ 次，LOOCV 的 bagging 若照常抽 $n-1$ 次，兩者的訓練規則就不完全相同；每筆的 OOB 預測只用了約 $0.37B$ 棵樹，所以 $B$ 要夠大，蒙地卡羅的誤差才會小。
+用 OOB 時要小心的事。
+OOB 只排除了「這筆資料參與這棵樹的訓練」。若在切分之前就用全部資料做了目標編碼、變數篩選或其他用到 $y$ 的前處理，OOB 不會替你排除這些洩漏。
+同一位病人有多筆記錄時，另一筆可能仍在樹裡；OOB 不保證同一群組的資料分開。
+反覆挑 OOB 分數最好的超參數，被挑中那組的 OOB 誤差會偏樂觀（第 5 章的選擇偏差）。最後回報的誤差仍要來自沒參與選參的資料。
+OOB 需要有袋外樣本。照 ISLP 演算法 8.2 做的 boosting 每棵樹都看全部資料，沒有 OOB；但每輪只用一部分資料的隨機梯度提升（stochastic gradient boosting）就有，scikit-learn 會給 oob_improvement_，不過官方文件說這個估計通常偏悲觀，建議改用交叉驗證。
+### Lab：Boston 上的 bagging
+Bagging：每次分裂都看全部 12 個變數的 random forest
+  bag_boston = RF(max_features=X_train.shape[1], random_state=0)
+  bag_boston.fit(X_train, y_train)
+預期輸出
+RandomForestRegressor(max_features=12, random_state=0)
+  來源：Ch08-baggboost-lab-zh.ipynb
+測試集 MSE
+  ax = subplots(figsize=(8,8))[1]
+  y_hat_bag = bag_boston.predict(X_test)
+  ax.scatter(y_hat_bag, y_test)
+  np.mean((y_test - y_hat_bag)**2)
+預期輸出
+np.float64(14.634700151315787)<Figure size 800x800 with 1 Axes><figure omitted>
+  來源：Ch08-baggboost-lab-zh.ipynb
+樹加到 500 棵
+  bag_boston = RF(max_features=X_train.shape[1],
+                  n_estimators=500,
+                  random_state=0).fit(X_train, y_train)
+  y_hat_bag = bag_boston.predict(X_test)
+  np.mean((y_test - y_hat_bag)**2)
+預期輸出
+np.float64(14.605662565263161)
+從 100 棵（預設）加到 500 棵，測試 MSE 只從 14.63 變成 14.61：平均早就穩定了，再加樹只多花計算時間。
+  來源：Ch08-baggboost-lab-zh.ipynb
+RandomForestRegressor 把 max_features 設成變數個數時，每次分裂都能看全部變數，就是 bagging。lab 用同一個函式做 bagging 和下一節的 random forest，差別只在這一個參數。
+觀念釐清
+### Q：Bagging 為什麼能降變異，卻幾乎不降偏差？
+固定 $x$，考慮重複訓練造成的變動。每棵 bootstrap 樹的預測分佈都一樣，期望值都是 $\mu(x)$；平均 $B$ 棵之後，期望值還是 $\mu(x)$，所以偏差 $\mu(x)-f(x)$ 和單棵 bootstrap 樹相同（ESL 第 15.2 節：唯一的改善來自降低變異）。變異則會下降，但只能壓掉樹與樹之間不相關的部分，共同的 $\rho\sigma^2$ 留下來，這是下一節 random forest 要對付的。
+所以要拿去平均的，是偏差小、變異大的東西。長很深、不剪枝的樹正是這樣：彈性大、偏差小，資料一換就長成另一棵。反過來，把每棵樹都剪成三個葉子再平均，偏差還是那麼大。
+### Q：既然有 OOB 誤差，還需要交叉驗證嗎？
+只是要估 bagging 或 random forest 本身的測試誤差時，OOB 就夠了，而且擬合一次就順便拿到，不必像 $k$ 折那樣擬合 $k$ 次。需要交叉驗證或獨立驗證集的情況有三種：拿誤差去挑超參數（挑完要另外估）；前處理用到了 $y$（要把前處理關在折裡）；以及沒有袋外樣本的方法，例如每棵樹都用全部資料的 boosting。細節在上方「OOB 為什麼接近 LOOCV」收合。
+QUIZ · Bagging 與 OOB
+Lab 把 bagging 的樹從 100 棵加到 500 棵，測試 MSE 只從 14.63 變成 14.61。最合理的解讀是？
+(A) 這表示 bagging 已經開始過度擬合，應該把 B 調回 100
+(B) 平均已經穩定了；加樹只讓平均更接近它的極限，不會增加模型的彈性，所以挑一個大到誤差已經平掉的 B 就好
+(C) 這表示每棵樹太深，應該先用交叉驗證幫每棵樹剪枝
+本主題的講義來源與延伸閱讀：Bagging 的流程、樣本平均數的變異、ESL 習題解答（含習題 15.1 的相關平均變異）、scikit-learn 的 bagging 與 OOB 分數。
+
+
+################ SECTION rf (4560 chars)
+
+PART 08 · Random Forest
+### 每次分裂重新抽 m 個變數：用一點偏差換來樹與樹之間的低相關 教科書 · 第 8.2.2 節講義 08進階參考 · 第 15.1–15.4 節 · 進階
+bagging 的樹若常常依賴同一組變數，預測也會一起出錯。設想資料裡有一個特別強的變數：幾乎每一棵 bagged 樹都會拿它當根節點的分裂變數，根一樣，下面的結構也大同小異，$B$ 棵樹像複製品，相關 $\rho$ 接近 1，平均一百棵和平均一棵差不多。
+Random forest 只改一個地方：每次要分裂時，先從 $p$ 個變數裡隨機抽 $m$ 個當候選，這一刀只能從這 $m$ 個裡選；下一次分裂再重新抽一次。於是平均有 $(p-m)/p$ 的分裂根本看不到那個強變數，其他變數才有機會出頭，樹與樹長得比較不一樣，這叫去相關（decorrelate）。$m=p$ 時 random forest 就是 bagging，所以 bagging 是它的特例。
+以 ISLP 的 Heart 資料為例，$p=13$、取 $m\approx\sqrt{13}$ 就是每次分裂只看 4 個變數，約 $9/13\approx69\%$ 的分裂看不到任何一個指定的變數。用開頭那節收合的公式來說，random forest 想壓低的是平均不掉的那一項 $\rho\sigma^2$。
+  📌 代價
+  每一刀的選擇變少，單棵樹可能變弱、偏差變大。去相關換到的變異下降，要大過偏差的上升才划算，這要用驗證資料判斷。
+### m 為什麼常取 √p
+ISLP 說「通常取 $m\approx\sqrt p$」，這是 random forest 發明者的經驗建議，不是推導出來的最佳值。ESL 說分類常用 $\sqrt p$、迴歸常用 $p/3$，並明說應該當成調整參數。scikit-learn 的迴歸器甚至預設每次看全部變數。$m$ 愈小，樹與樹愈不相關，但每棵樹愈弱；預測變數很多又彼此高度相關時，小一點的 $m$ 通常有幫助，有用的變數只占少數時，太小的 $m$ 則會讓多數分裂只能在雜訊裡挑。
+### m 的取捨：相關變低、偏差變高
+ESL 的變異分解。ESL 第 15.4 節把 random forest 在固定 $x$ 的預測變異寫成
+$$\operatorname{Var}\hat f_{\rm rf}(x)=\rho(x)\,\sigma^2(x),$$
+$\sigma^2(x)$ 是單棵隨機樹預測的變異，$\rho(x)$ 是同一份訓練資料長出來的兩棵樹在 $x$ 的相關。這個相關是對「換一份訓練資料、重新訓練」而言的理論量，不是拿一座已經長好的森林、去算樹與樹的預測相關；給定訓練資料時，兩棵樹的隨機抽樣彼此獨立（ESL 習題 15.5）。$m$ 變小時，$\rho(x)$ 下降（ESL 圖 15.9），平均的變異跟著下降。
+代價是偏差。每次分裂能挑的變數變少，常常挑不到最好的那個，所以單棵樹的偏差上升，整座森林的偏差也跟著上升（ESL 第 15.4.2 節）。ESL 的結論是：bagging 與 random forest 的改善完全來自降低變異；$m$ 的選擇是偏差與變異的取捨，和 ridge 迴歸的懲罰參數類似。
+相關變數少時，小 $m$ 會失手。如果 $p$ 個變數裡只有 $r$ 個有用，一個節點的 $m$ 個候選裡至少有一個有用變數的機率是 $1-\binom{p-r}{m}\big/\binom{p}{m}$。ESL 第 15.3.4 節的例子：2 個有用變數加 100 個雜訊變數、$m=\lfloor\sqrt{102}\rfloor=10$ 時，這個機率只有 0.19；6 個有用變數加 100 個雜訊、$m=10$ 時是 0.46。大部分的分裂都只能在雜訊裡挑，表現就會變差。
+預設值只是起點。ESL 說 random forest 的發明者建議：分類用 $m=\lfloor\sqrt p\rfloor$、最小節點大小 1；迴歸用 $m=\lfloor p/3\rfloor$、最小節點大小 5，並且明說這些值應該當成調整參數；它的 California housing 例子裡 $m=6$ 遠好於預設的 2。scikit-learn 稱這些是「經驗上不錯的預設」，分類器預設 max_features='sqrt'，迴歸器預設 1.0（也就是 bagging），並提醒最好的參數要用交叉驗證挑。沒有任何一本書推導出 $\sqrt p$。
+### 證明：平均樹的變異與相關性
+固定預測位置 $x$。設各棵樹的預測 $T_1,\dots,T_B$ 變異都是 $\sigma^2$、兩兩相關都是 $\rho$，則
+$$\operatorname{Var}\Big(\frac1B\sum_{b=1}^BT_b\Big)=\frac1{B^2}\Big\{B\sigma^2+B(B-1)\rho\sigma^2\Big\}=\rho\sigma^2+\frac{1-\rho}{B}\sigma^2 .$$
+第一個等號是把變異展開成 $B$ 個變異項加 $B(B-1)$ 個共變異項，每個共變異都是 $\rho\sigma^2$。只有第二項隨 $B$ 消失。這裡的 $\sigma^2$ 與 $\rho$ 是對重複訓練而言的量；跨測試點算出來的相關係數不能代進來。
+### 隨機化可以發生在不同層次
+抽樣本、抽變數、在哪裡抽變數，可以各自開關。這張表把講義提到的幾種做法放在一起：
+做法抽樣本（列）抽變數（欄）在哪裡抽變數
+Pasting不放回抽一部分——
+Baggingbootstrap——
+Random subspace—抽一部分每棵樹開始前抽一次，整棵樹都用這組
+Random patches抽一部分抽一部分每棵樹開始前抽一次
+Random forestbootstrap抽 $m$ 個每個節點重新抽
+Extra-trees預設不抽（scikit-learn）抽 $m$ 個每個節點重新抽，切點也隨機產生
+Random forest 結合了 bagging 的抽樣本與「每個節點抽變數」。Extra-trees 更進一步，連切點都隨機產生，講義說它通常能再降一點變異，代價是偏差稍微增加。
+### 隨機化的層次：random subspace、random patches 與 Extra-trees
+變數在哪裡抽，結果不一樣。依 Louppe 與 Geurts 的整理，Ho（1998）的 random subspace 在每棵樹開始前抽一組變數，整棵樹都只用這組。Louppe 與 Geurts（2012）的 random patches 同時抽樣本與變數，也是整棵樹抽一次；他們的論文特別指出，這和 random forest、Extra-trees「在每個節點重新抽變數」不同。舉例來說，三個變數裡每棵樹固定只看其中兩個，是 subspace；同一棵樹的根節點看 $\{X_1,X_2\}$、它的子節點換成 $\{X_2,X_3\}$，才是 random forest。scikit-learn 的 BaggingClassifier(max_features=…) 抽的是「每個基學習器用幾個變數」，所以它做出來的是 subspace，不是 random forest。
+Random patches 的原始動機是記憶體：資料大到放不進記憶體時，每棵樹只讀一小塊。它們在 29 個資料集上的實驗發現，抽變數對準確度很重要，只抽樣本的 pasting 常常效果很差；不過這是那組資料與調參方式下的結果，不是一般定理。
+Extra-trees。極端隨機樹（extremely randomized trees）和 random forest 一樣在每個節點抽候選變數，但不去搜尋每個變數的最佳門檻值，而是替每個候選變數隨機產生一個門檻值，再從這些隨機切點裡挑最好的。scikit-learn 文件說這通常能再降一點變異，代價是偏差稍微再增加；搜尋門檻值的計算也省下來了。scikit-learn 的 ExtraTreesClassifier 預設 bootstrap=False，每棵樹看全部樣本，所以預設沒有 OOB。
+ESL 的文獻註記提到，「random forest」這個名稱最早由 Ho（1995）提出，指的是在隨機子空間裡長樹再取共識。
+### 講義的基因表達例子
+這份資料有 349 位病人、4,718 個基因的表現量，反應變數有 15 類（正常或 14 種癌症之一）。先挑訓練資料中變異最大的 500 個基因當預測變數，再比較 $m=p$、$p/2$、$\sqrt p$ 三種設定（ISLP 圖 8.10）。單棵分類樹的測試錯誤率是 45.7%，全部猜最多的那一類則是 75.4%；400 棵樹之後誤差就平掉了，$m=\sqrt p$ 比 bagging 略好。這個結果只針對這份資料與這次切分。和 bagging 一樣，random forest 也不會因為 $B$ 變大而過度擬合。
+### Lab：Boston 上的 random forest
+每次分裂只看 6 個變數
+  RF_boston = RF(max_features=6,
+                 random_state=0).fit(X_train, y_train)
+  y_hat_RF = RF_boston.predict(X_test)
+  np.mean((y_test - y_hat_RF)**2)
+預期輸出
+np.float64(20.04276446710527)
+測試 MSE 20.04，比上一節 bagging 的 14.63 還差。這份資料、這個切分下，限制變數反而吃虧；$m$ 要拿驗證資料挑，不能預設愈小愈好。
+  來源：Ch08-baggboost-lab-zh.ipynb
+lab 也提醒了預設值的差別：RandomForestRegressor() 預設每次分裂看全部變數（等於 bagging），RandomForestClassifier() 預設看 $\sqrt p$ 個。
+QUIZ · Random Forest
+Random forest 每次分裂只從 m 個隨機挑出的變數裡選。這 m 個變數是怎麼抽的？
+(A) 每棵樹開始前抽一次 m 個變數，整棵樹都只用這 m 個
+(B) 每一次分裂都重新隨機抽 m 個，所以同一棵樹的不同節點可以用不同的變數組
+(C) 挑重要度最高的 m 個變數，分裂才不會浪費在雜訊上
+本主題的講義來源與延伸閱讀：Random forest 去相關、Ho（1998）random subspace、Louppe 與 Geurts（2012）random patches、Extra-trees 官方說明、AI-Assisted Statistics 第 6 章程式範例。
+
+
+################ SECTION boosting (9657 chars)
+
+PART 09 · Boosting
+### 慢慢學：AdaBoost、演算法 8.2 與一般損失的梯度提升 教科書 · 第 8.2.3 節講義 08進階參考 · 第 10.1–10.12 節 · 進階
+Bagging 與 random forest 是並行的：B 棵樹互不參照，可以同時長。Boosting 正好相反，樹是一棵接一棵長出來的，每一棵都依前面那些樹的結果決定自己要修什麼。演算法 8.2 也不做 bootstrap，每棵樹都看全部資料，只是要擬合的目標換成了還沒解釋掉的部分（ISLP §8.2.3）。講義說 bagging 的每棵樹「各自建立在自己的 bootstrap 樣本上」，指的是建樹時互不參照，不是說樹的預測彼此獨立。
+因為每一棵新樹都考慮了已經長好的樹，boosting 主要在降低偏差，小樹就夠用。Bagging 則反過來，拿低偏差、高變異的深樹去平均，壓的是變異。
+從階梯函數看 boosting。一棵只用一個變數、切 $d$ 刀的樹，畫出來是有 $d+1$ 階的階梯函數；多個變數時是把特徵空間切成方塊、每塊一個常數（分段常數函數）。Boosting 把很多棵這種小樹乘上 $\lambda$ 再相加，結果仍是分段常數，但階梯可以細到逼近平滑的曲線。如果每棵都是 stump（$d=1$），每棵只碰一個變數，加總以後就是 $\hat f(x)=\sum_j f_j(x_j)$ 的加法模型；$d=2$ 才開始出現兩個變數的交互作用。
+講義的梯度提升連著三頁：先用一個逐步算例（每一輪擬合殘差、全部採用，等於學習率 1 的特例）說明想法，接著列出 ISLP 演算法 8.2，最後解釋它為什麼「學得慢」。演算法 8.2 只有三步：
+  迴歸樹的提升法，ISLP 演算法 8.2
+  1. 令 $\hat f(x) = 0$，殘差 $r_i = y_i$。
+  2. 對 $b = 1, 2, \dots, B$：
+     (a) 用 $(X, r)$ 擬合一棵只有 $d$ 次分裂（$d+1$ 個葉子）的小樹 $\hat f^b$；
+     (b) 把收縮後的它加進去：$\hat f(x) \leftarrow \hat f(x) + \lambda \hat f^b(x)$；
+     (c) 更新殘差：$r_i \leftarrow r_i - \lambda \hat f^b(x_i)$。
+  3. 輸出 $\hat f(x) = \sum_{b=1}^{B} \lambda \hat f^b(x)$。
+步驟 (a) 擬合的是目前模型的殘差 $r$：第一棵樹抓走一部分結構，剩下沒解釋掉的變成新的目標，第二棵樹再去抓它。$\lambda$ 讓每一棵只採用一小部分，ISLP 的說法是 boosting 學得很慢，而在統計學習裡，學得慢的方法往往表現得好。
+›直接調 B 看第 b 棵樹後的擬合與殘差；自動播放只是可選總覽。
+λ0.35B0最大深度 D1（stump）2▶ 自動播放（可選）重置
+模擬示意
+虛擬碼
+f = 0；r = y
+for b in range(B):
+    tree = 擬合一棵淺樹(X, r)
+    f += λ * tree(X)
+    r -= λ * tree(X)
+目前狀態
+已加入的樹 b0
+學習率 λ0.35
+每棵樹的葉子數2
+訓練 MSE—
+殘差的標準差—
+兩個面板
+      上面是目前的擬合 $\hat f$（橘線）疊在資料上。下面是目前的殘差 $r$，以及下一棵樹準備加上去的那個階梯（虛線）。注意它總是往殘差最偏的地方去。
+λ 調小：每一步只走一點點，需要更多棵樹，但擬合出來的曲線更平滑；λ 調到 1：幾步就衝過去，然後開始抖。
+Boosting 有三個要調的參數。和 bagging 不同，它真的會過度擬合：
+參數意思常見取法調錯會怎樣
+B（樹的棵數）跑幾輪用交叉驗證或提前停止（early stopping）選太大會過度擬合，只是通常發生得很慢；bagging 與 random forest 加樹不會有這個問題
+λ（收縮、學習率）每棵樹只採用 λ 倍0.01 或 0.001 這類小數λ 愈小，需要的 B 愈大；兩者要一起選，沒有固定的換算比例
+d（每棵樹的分裂次數）交互作用深度（interaction depth）常常 d = 1 就夠d 次分裂最多牽涉 d 個變數，所以 d 決定模型能有幾階交互作用；d = 1 的 stump 得到加法模型
+Lab 與上面的元件用 max_depth 限制最大深度，這裡記為 $D$，它和課本的分裂次數 $d$ 不同：最大深度 $D$ 的二元樹最多有 $2^D$ 片葉，實際可以更少；$d$ 次分裂則一定有 $d+1$ 片葉。
+講義用同一份基因表達資料改做二元分類（癌症或正常），比較 boosting 與 random forest（ISLP 圖 8.11）。兩個 boosting 模型都用 $\lambda=0.01$。正文說深度 1 的樹勝過深度 2，兩者又都勝過 random forest；圖說則說明標準誤約 0.02，這些差異都不顯著。單棵樹的測試錯誤率是 24%。這是二元問題，和 random forest 一節 15 類、單棵樹 45.7% 的問題不同，兩個數字不能直接比。
+### Lab：Boston 上的梯度提升與兩種學習率
+梯度提升
+  boost_boston = GBR(n_estimators=5000,
+                     learning_rate=0.001,
+                     max_depth=3,
+                     random_state=0)
+  boost_boston.fit(X_train, y_train)
+預期輸出
+GradientBoostingRegressor(learning_rate=0.001, n_estimators=5000,
+                          random_state=0)
+  來源：Ch08-baggboost-lab-zh.ipynb
+測試誤差隨樹數變化，以及最終的測試 MSE
+  test_error = np.zeros_like(boost_boston.train_score_)
+  for idx, y_ in enumerate(boost_boston.staged_predict(X_test)):
+     test_error[idx] = np.mean((y_test - y_)**2)
+  plot_idx = np.arange(boost_boston.train_score_.shape[0])
+  ax = subplots(figsize=(8,8))[1]
+  ax.plot(plot_idx,
+          boost_boston.train_score_,
+          'b',
+          label='Training')
+  ax.plot(plot_idx,
+          test_error,
+          'r',
+          label='Test')
+  ax.legend();
+  y_hat_boost = boost_boston.predict(X_test);
+  np.mean((y_test - y_hat_boost)**2)
+預期輸出
+np.float64(14.481405918831591)
+  來源：Ch08-baggboost-lab-zh.ipynb
+把學習率改成 0.2
+  boost_boston = GBR(n_estimators=5000,
+                     learning_rate=0.2,
+                     max_depth=3,
+                     random_state=0)
+  boost_boston.fit(X_train,
+                   y_train)
+  y_hat_boost = boost_boston.predict(X_test);
+  np.mean((y_test - y_hat_boost)**2)
+預期輸出
+np.float64(14.501514553719565)
+  來源：Ch08-baggboost-lab-zh.ipynb
+Lab（程式與輸出在上面的收合）在 Boston 資料上用 learning_rate=0.001 得到測試 MSE 14.48，改成 0.2 得到 14.50。這只說明在這一次切分、5000 棵深度 3 的樹之下兩組設定差不多；換一份資料或少一些樹，結果可能不同，所以 $B$、$\lambda$、$d$ 仍要一起用驗證資料選。
+### 從殘差到一般損失：梯度提升
+演算法 8.2 擬合殘差，是因為平方損失 $\tfrac12(y-f)^2$ 對預測值 $f$ 的負梯度正好是 $y-f$，也就是殘差。換成別的損失，只要把「殘差」換成負梯度：
+$$r_{i}=-\left.\frac{\partial L(y_i,f)}{\partial f}\right|_{f=f_{m-1}(x_i)} .$$
+這叫偽殘差（pseudo-residual）。用小樹擬合它，得到葉區域 $R_j$；接著每一片葉各自找最好的修正量
+$$\gamma_j=\arg\min_{\gamma}\sum_{x_i\in R_j}L\big(y_i,\,f_{m-1}(x_i)+\gamma\big).$$
+為什麼還要 argmin？樹只告訴我們「怎麼分區、每區大概往哪個方向修」，但每一區該走多遠要看損失本身。平方損失下這一步的解就是葉內殘差平均，各葉不同；其他損失沒有這麼簡單。
+分類用 logistic 損失。模型輸出的是 log-odds $F$，機率 $p=1/(1+e^{-F})$。對 $F$ 微分，梯度是 $p-y$，負梯度是 $y-p$：所以「梯度就是殘差」不精確，梯度是負的殘差，負梯度才是殘差，而且這個殘差是機率尺度的 $y-p$，修正量卻加在 log-odds 上。葉值沒有閉式解，常用一步 Newton 近似 $\gamma_j\approx\sum(y_i-p_i)/\sum p_i(1-p_i)$。例如第一輪所有 $p=0.5$，某片葉有三筆、$y=(1,1,0)$：分子 $0.5$、分母 $0.75$，葉值約 $0.667$，對應的機率是 $1/(1+e^{-0.667})\approx0.661$（還沒乘學習率）。
+### 梯度提升的完整演算法、各種損失與兩種 log-odds 尺度
+### ESL 演算法 10.3：一般損失的梯度提升
+$f_0(x)=\arg\min_\gamma\sum_iL(y_i,\gamma)$，先用最好的常數。
+對 $m=1,\dots,M$：
+算偽殘差 $r_{im}=-\left[\dfrac{\partial L(y_i,f(x_i))}{\partial f(x_i)}\right]_{f=f_{m-1}}$；
+用最小平方對 $r_{im}$ 擬合一棵迴歸樹，得到葉區域 $R_{jm}$，$j=1,\dots,J_m$；
+每一片葉各自求 $\gamma_{jm}=\arg\min_\gamma\sum_{x_i\in R_{jm}}L\big(y_i,f_{m-1}(x_i)+\gamma\big)$；
+$f_m(x)=f_{m-1}(x)+\nu\sum_j\gamma_{jm}I(x\in R_{jm})$。
+輸出 $f_M$。
+$\nu$ 是學習率，就是演算法 8.2 的 $\lambda$；ESL 的 $M$ 是樹數，對應 ISLP 的 $B$。ESL 的樹用終端節點數 $J$ 描述大小，$J$ 片葉就是 $J-1$ 次分裂，所以 ISLP 的 $d$ 等於 $J-1$；ESL §10.11 的經驗是 $4\le J\le8$ 通常就夠。
+### 各種損失的負梯度與葉值
+損失負梯度（偽殘差）每片葉的 γ
+平方 $\tfrac12(y-f)^2$$y-f$（就是殘差）葉內殘差的平均
+絕對 $|y-f|$$\operatorname{sign}(y-f)$葉內殘差的中位數
+Huber$|y-f|\le\delta$ 時是 $y-f$，否則 $\delta\operatorname{sign}(y-f)$沒有閉式解，用迭代或近似
+二元 logistic（完整 log-odds）$y-p$沒有閉式解；一步 Newton 得 $\sum(y-p)/\sum p(1-p)$
+多類別 deviance第 $k$ 個分數是 $I(y=k)-p_k$對每一類各長一棵樹，各自近似
+Huber 損失對小殘差用平方、對大殘差改用線性，負梯度被截在 $\pm\delta$，極端值的影響因此有上限（ESL §10.6 與表 10.2）。
+一步 Newton 的葉值。logistic 損失對 log-odds 的一階、二階導數是 $g_i=p_i-y_i$、$h_i=p_i(1-p_i)$。從 $\gamma=0$ 出發走一步 Newton 法，
+$$\gamma_j\approx-\frac{\sum_{i\in R_j}g_i}{\sum_{i\in R_j}h_i}=\frac{\sum_{i\in R_j}(y_i-p_i)}{\sum_{i\in R_j}p_i(1-p_i)},$$
+就是 ESL 習題 10.8 的式 10.57（多類別版本是演算法 10.4）。XGBoost 的葉值只是在分母多加一個 $\lambda$，見 XGBoost 一節。
+兩種 log-odds 尺度。ESL §10.5 為了和 AdaBoost 對齊，把 logistic 寫成 $Y\in\{-1,1\}$、$p=1/(1+e^{-2f})$，此時 $f$ 是一半的 log-odds，負梯度是 $2(y'-p)$（$y'=(Y+1)/2$）。scikit-learn 與 XGBoost 用 $y\in\{0,1\}$ 與完整 log-odds $F$，負梯度是 $y-p$、二階導數是 $p(1-p)$。兩者差常數倍，看公式時先確認是哪一種。
+### 證明：擬合負梯度就是往損失下降的方向走
+把訓練點上的預測看成向量 $F=(F(x_1),\dots,F(x_n))$。對小步長 $\epsilon$，$L(F+\epsilon h)=L(F)+\epsilon\nabla L(F)^{\mathsf T}h+O(\epsilon^2)$。選 $h=-\nabla L(F)$ 時一階變化是 $-\epsilon\|\nabla L(F)\|^2\le0$，這是最陡下降方向。梯度只在訓練點上有定義，所以用最小平方把負梯度近似成一棵小樹，新資料也能用；葉值再用每片葉的 argmin 決定步長。樹只是近似，擬合得不好時，不能光憑名稱保證每一步都下降，所以學習率要小。
+### AdaBoost：不改目標，改權重
+AdaBoost 是更早的提升法。它不改目標，改每一筆資料的權重：這一輪答錯的點，下一輪權重變大，下一個分類器就會特別在意它們。講義的寫法是
+$$\alpha_j = \eta \log \frac{1 - e_j}{e_j}, \qquad
+  w_{j+1}(i) = \begin{cases}
+    w_j(i) \cdot e^{-\alpha_j} & \text{答對} \\
+    w_j(i) \cdot e^{+\alpha_j} & \text{答錯}
+  \end{cases}, \qquad
+  \hat y = \arg\max_k \sum_{j:\, h_j(x) = k} \alpha_j .$$
+$w_j(i)$ 是第 $j$ 輪第 $i$ 筆資料的權重，$e_j$ 是第 $j$ 個分類器 $h_j$ 的加權錯誤率，$\eta$ 控制更新幅度（這裡的 $\alpha_j$ 和剪枝的 $\alpha$ 無關）。$\alpha_j$ 有兩個用途：它決定下一輪權重放大多少，也是 $h_j$ 在最後投票裡的份量。錯誤率愈低，$\alpha_j$ 愈大，票愈重；$e_j$ 要小於 0.5，$\alpha_j$ 才是正的。
+講義附錄用 moons 資料畫出連續五個分類器的決策邊界：第一個分類器答錯很多點，這些點的權重被放大，第二個就把它們分得比較好，依此類推。講義右邊的圖把學習率減半，每一輪的權重調整比較溫和，決策邊界的變化也比較慢。這和梯度下降很像，差別在 AdaBoost 每一輪加進一個新的分類器，梯度下降則是調整同一個模型的參數。
+### AdaBoost：權重怎麼更新、α 從哪裡來
+### AdaBoost 的權重更新
+η 取 ½ 還是 1？講義的更新是對稱的：答對乘 $e^{-\alpha_j}$、答錯乘 $e^{\alpha_j}$。一輪之後，答錯者相對答對者的權重比是 $e^{2\alpha_j}=\big((1-e_j)/e_j\big)^{2\eta}$。取 $\eta=\tfrac12$ 時這個比值是 $(1-e_j)/e_j$，和 ESL 演算法 10.1（只把答錯者乘上 $e^{\alpha_m}$，$\alpha_m=\log\frac{1-\mathrm{err}_m}{\mathrm{err}_m}$）以及 Freund 與 Schapire 原版的權重更新完全相同，正規化之後一樣；投票份量只差一個共同的 2 倍，取 argmax 的結果不變。若在這組對稱式裡取 $\eta=1$，比值會變成平方，是更激進的另一種更新。下面的元件取 $\eta=\tfrac12$。
+›按「單步」跑一輪 AdaBoost：看答錯的點怎麼變大，切點怎麼被逼著移動。
+▶ 開始→ 單步重置
+概念示意
+這一輪
+第幾輪 j0 / 10
+這一輪的切點—
+加權錯誤率 e—
+這一輪的權重 α—
+集成的訓練錯誤率—
+怎麼看
+      每個圈是一筆資料，圈的大小＝它現在的權重；上排是 A 類、下排是 B 類。灰色虛線是這一輪 stump 的切點，答錯的點畫成粗黑框。按單步幾次就會看到：答錯的圈一輪一輪變大，逼得後面的 stump 改切在別的地方。
+集成錯誤率為什麼會來回跳
+      每一輪都在換一份加權後的資料，所以新加進來的 stump 是為了那份加權資料而選的，對「未加權的訓練錯誤率」不保證每一輪都更好。這個例子在第 6 輪第一次歸零、第 7 輪又跳回 1 個錯，之後穩定在 0——請連續比較多輪的錯誤率。
+為什麼 boosting 的樹可以很淺
+      每一棵只要修掉前面還沒處理好的一小塊，所以小樹就夠用（ISLP §8.2.3）。但小樹也有代價：stump 只用一個變數，很多棵 stump 加起來仍是加法模型，要表示交互作用就得讓 d 大於 1。
+### 證明：AdaBoost 的 α 是指數損失下的最佳步長
+令二元標籤 $y_i\in\{-1,1\}$、分類器輸出 $h(x)\in\{-1,1\}$，目前的模型是 $F_{m-1}$。ESL §10.4 把 AdaBoost 看成在指數損失 $L(y,F)=e^{-yF}$ 下一次加一項的前向逐步擬合（forward stagewise）。加入 $\beta h_m$ 後的損失是
+$$\sum_i e^{-y_i(F_{m-1}(x_i)+\beta h_m(x_i))}=\sum_i w_i\,e^{-\beta y_ih_m(x_i)},\qquad w_i=e^{-y_iF_{m-1}(x_i)}.$$
+把權重正規化成總和 1，令 $e=\sum_iw_iI(y_i\ne h_m(x_i))$，損失變成 $Z(\beta)=(1-e)e^{-\beta}+e\,e^{\beta}$。對 $\beta$ 微分令其為 0：$e\,e^{\beta}=(1-e)e^{-\beta}$，所以
+$$\beta_m=\tfrac12\log\frac{1-e}{e}.$$
+二階導數為正，這是極小值。下一輪的權重是 $w_i e^{-\beta_m y_ih_m(x_i)}$：答對乘 $e^{-\beta_m}$、答錯乘 $e^{\beta_m}$，正是講義 $\eta=\tfrac12$ 的對稱式。因為 $-y_ih_m(x_i)=2I(y_i\ne h_m(x_i))-1$，同一個更新也可以寫成「只把答錯者乘上 $e^{2\beta_m}$，所有人再乘共同的 $e^{-\beta_m}$」；共同因子在正規化時消失，所以 ESL 演算法 10.1 的 $\alpha_m=2\beta_m=\log\frac{1-e}{e}$ 與它等價（ESL 式 10.15）。
+指數損失的族群最佳解是 $F^*(x)=\tfrac12\log\frac{P(Y=1\mid x)}{P(Y=-1\mid x)}$（ESL 式 10.16），所以 AdaBoost 加總出來的分數是在估計一半的對數勝算（log-odds）。這和後面 logistic 損失用的完整 log-odds 差一個 2 倍，兩種尺度不要混用。
+觀念釐清
+### 平方損失下，每片葉的修正量會不會退化成「全部區域同一個修正」？
+不會。演算法 10.3 的第 (c) 步對每一片葉各自求 argmin。平方損失時，第 $j$ 片葉的解是落在這片葉裡的殘差平均，每片葉各有自己的值（ESL §10.9 式 10.30）。
+「單一修正量」是另一件事：一般的最陡下降法沿整個負梯度向量只找一個步長 $\rho_m$。梯度提升在樹的每個終端區域各做一次一維搜尋（ESL §10.10），所以比單一步長更細。平方損失下這兩者剛好接得起來：樹本身擬合殘差，葉值就是殘差平均，全域步長取 1 即可。
+### Boosting 有袋外（OOB）樣本嗎？
+演算法 8.2 不做 bootstrap，每棵樹都看全部資料，所以沒有 OOB。隨機梯度提升（stochastic gradient boosting）是例外：它每一輪不放回地抽一部分資料（ESL §10.12 建議常用一半）來長樹，沒被抽到的就能用來算 OOB 改善量，scikit-learn 的 oob_improvement_ 就是它。官方文件提醒這個估計通常偏悲觀，選樹數仍建議用交叉驗證。
+QUIZ · Boosting
+用平方損失做梯度提升時，第 m 輪長好樹之後，某一片葉的修正量 γ 該取什麼？
+(A) 所有葉共用同一個修正量，用整體的一維搜尋決定
+(B) 落在這片葉裡的原始 y 的平均
+(C) 落在這片葉裡的殘差的平均
+本主題的講義來源與延伸閱讀：提升法推導、梯度提升逐步算例、StatQuest：梯度提升（迴歸）、ESL 習題解答。
+
+
+################ SECTION importance (3181 chars)
+
+PART 10 · 變數重要度
+### 幾百棵樹貼不上牆：用分裂貢獻與置換看模型依賴哪些變數 教科書 · 第 8.2.1 節講義 08進階參考 · 第 10.13.1 節、第 15.3.2 節 · 進階
+單一棵樹最大的優點是可以畫出來給人看。集成之後這個優點就沒了：你不可能把 500 棵樹貼在牆上。變數重要度（variable importance）是讀集成模型最常見的工具，bagging、random forest 與 boosting 都能用。
+講義的定義：
+迴歸樹：把某個變數在所有分裂中造成的 RSS 下降總量加起來，再對 $B$ 棵樹平均。
+分類樹：同樣的做法，改成 Gini 指數下降總量。
+數值大的變數，就是樹常拿來切、而且切了很有用的變數。ISLP 圖 8.9 是 Heart 資料的結果，以最大值為 100 標準化，前三名是 Thal、Ca、ChestPain。
+為什麼是平均，不是加總？平均就是加總除以 $B$，兩者的排名與相對大小完全一樣。差別在加總會隨 $B$ 一路變大：種 100 棵和種 500 棵的森林，加總的數字差五倍，平均則可以直接比較。ISLP 圖 8.9 又除以最大值、scikit-learn 又正規化成總和為 1，這些都只是換尺度。有用的是「對很多棵樹」取平均：單棵樹的重要度很不穩，對很多棵樹平均才穩定，ESL 定義 boosting 的重要度時也是這樣說的。
+圖表需要連網載入 Chart.js由分裂造成的純度下降衡量變數重要度。
+›長條是分裂造成的不純度下降，在所有樹上平均後的相對值。
+重要度
+課程／lab 資料
+怎麼看
+      lab 的 random forest（每次分裂看 6 個變數）在 Boston 上的分裂重要度，數值是 lab 輸出的相對重要度（所有變數加總為 1）。lstat 與 rm 各約 0.33 到 0.36，遙遙領先；其餘變數都不到 0.07。長條只說「樹很常拿它來切、切了很有效」，不說方向，也不說因果。
+### 怎麼讀，不能怎麼讀
+它描述模型怎麼用變數，不是因果。重要度高只表示樹很愛用它來切，和「改變它就會改變 $y$」是兩回事。
+它沒有方向。迴歸係數有正負，重要度沒有；要看變數往哪個方向推預測，得另外畫偏依賴圖（partial dependence plot）。
+相關的變數會互相稀釋。兩個幾乎一樣的變數（例如公分與英吋量的身高），功勞會被拆開。重要度低不等於沒用，所以「排名最後就可以刪掉」是危險的推論。
+不純度重要度偏好可切的地方多的變數，而且算在訓練資料上。在沒參與訓練的資料上打亂一欄、看表現掉多少的置換重要度（permutation importance）可以補上這兩點。
+Boosting 的模型也用同樣的方式讀重要度；BART 另有「每個變數在樹裡出現幾次」的摘要，放在 Stacking 與 BART 一節的收合。
+### 不純度重要度的偏誤，以及置換重要度的細節
+不純度重要度的式子。設 $v(t)$ 是節點 $t$ 用來分裂的變數，$\Delta_t$ 是這次分裂讓 RSS（分類時是加權 Gini 指數）下降的量。第 $j$ 個變數在 $B$ 棵樹上的重要度是
+$$\mathrm{Imp}_j=\frac1B\sum_{b=1}^B\ \sum_{t\in T_b:\,v(t)=j}\Delta_t .$$
+這是講義的概念公式。scikit-learn 的 random forest 實作順序略有不同：每棵樹先把自己的重要度正規化成總和 1，再對樹平均，最後再正規化一次；所以它是各棵樹「相對重要度」的平均，和先把原始下降量平均再正規化不完全相同，排名也可能略有差異。兩種做法都是非負的。ESL 第 10.13.1 節替 boosting 定義的版本是先算每棵樹裡的（平方）改善量總和，再對 $M$ 棵樹平均，理由是平均有穩定的效果，比單棵樹可靠。
+三個偏誤。
+算在訓練資料上。$\Delta_t$ 是訓練資料上的改善，深樹在訓練資料上切出來的改善有一部分是雜訊。
+偏好可切的地方多的變數。連續值很多、或類別水準很多的變數，候選切點多，比較容易碰巧找到一個在訓練資料上看起來不錯的切法；scikit-learn 文件明白警告不純度重要度偏好這種高基數（high cardinality）變數。
+相關的變數互相分攤。兩個幾乎相同的變數，樹在不同節點會輪流挑其中一個，功勞被拆開，兩個看起來都不太重要。拆分不保證是一半一半。
+置換重要度。在沒參與訓練的資料上（測試集，或 random forest 的 OOB 樣本），把第 $j$ 欄的值隨機打亂，重算表現，下降的量就是重要度；重複打亂 $R$ 次取平均：
+$$\mathrm{PI}_j=\frac1R\sum_{r=1}^R\Big[\text{表現}(\text{原資料})-\text{表現}(\text{第 }j\text{ 欄打亂後})\Big].$$
+它問的是「模型有多依賴這一欄」，因為用的是沒參與訓練的資料，可以是負的：打亂後表現沒有變差，只表示模型在這份評估資料上看不出這一欄有穩定的正向貢獻；要判斷是不是雜訊，得重複打亂幾次、看變動有多大。ESL 第 15.3.2 節的 OOB 版本就是在每棵樹的 OOB 樣本上這樣做，再對所有樹平均。
+置換重要度也有限制。相關的變數同樣會互相代打：打亂一個，另一個仍然帶著差不多的資訊，下降就不多。打亂也可能造出現實中不會出現的組合。而且它衡量的是「這個模型」有多依賴這一欄，不是「拿掉這一欄、重新訓練」會差多少；ESL 提醒，重新訓練時其他變數可能接手。
+### Lab：讀取 random forest 的分裂重要度
+讀取分裂重要度
+  feature_imp = pd.DataFrame(
+      {'importance':RF_boston.feature_importances_},
+      index=feature_names)
+  feature_imp.sort_values(by='importance', ascending=False)
+預期輸出
+         importance
+lstat      0.356203
+rm         0.332163
+ptratio    0.067270
+crim       0.055404
+indus      0.053851
+dis        0.041582
+nox        0.035225
+tax        0.025355
+age        0.021506
+rad        0.004784
+chas       0.004203
+zn         0.002454
+這是由該變數的分裂造成的節點不純度總減少量，在所有樹上平均後的相對值。社區的財富水準（lstat）與房屋大小（rm）遠遠領先其他變數。
+  來源：Ch08-baggboost-lab-zh.ipynb
+上面的互動圖用的就是這個模型（max_features=6），不純度那一欄的數字與這裡相同。
+QUIZ · 變數重要度
+兩個高度相關的變數 X₁、X₂ 在 random forest 的不純度重要度都只排中後段。下列哪個解讀最合理？
+(A) 兩者都可以刪掉，因為重要度低代表對 y 沒有影響
+(B) 改用置換重要度就能消除相關變數的問題
+(C) 它們可能在分攤同一份資訊；要判斷這份資訊重不重要，可以一起置換或一起拿掉兩者再比較
+本主題的講義來源與延伸閱讀：scikit-learn：不純度重要度的偏誤與置換重要度。
+
+
+################ SECTION modern (10221 chars)
+
+PART 11 · XGBoost
+### 用梯度與 Hessian 決定葉值和分裂：加了正則化的梯度提升 講義 08進階參考 · 第 10.10 節 · 進階ESL 進階
+XGBoost（Extreme Gradient Boosting）是梯度提升的一個實作，講義的說法是「內建正則化的梯度提升，加上很大的速度改進」。這一節講統計上的部分：目標函數、葉值、分裂增益與缺失值；速度上的部分（切點怎麼找、直方圖、平行化）放在下一節。和所有樹模型一樣，它只看特徵的大小順序，所以不必先標準化。
+第 $t$ 輪要加一棵新樹 $f_t$。XGBoost 的目標除了損失，還加了一項對這棵樹本身的懲罰：
+$$\text{Obj}^{(t)}=\sum_{i=1}^{n}l\big(y_i,\ \hat y_i^{(t-1)}+f_t(x_i)\big)+\gamma T+\tfrac12\lambda\sum_{j=1}^{T}w_j^2 .$$
+$T$ 是葉子數，$w_j$ 是第 $j$ 片葉的輸出值。$\gamma$ 是「多開一片葉要付的代價」，$\lambda$ 是葉值的 L2 懲罰。這裡的 $\lambda$ 不是 ISLP 的學習率，XGBoost 的學習率另外叫 $\eta$。
+二階近似。對每一筆資料，把損失在上一輪的預測附近展開到二階，只需要兩個數：一階導數 $g_i$ 與二階導數（Hessian）$h_i$。同一片葉的資料得到同一個值，所以把葉 $j$ 裡的 $g_i$、$h_i$ 加起來記成 $G_j$、$H_j$，每片葉的目標就成了一條拋物線 $G_jw_j+\tfrac12(H_j+\lambda)w_j^2$。拋物線的最低點與一刀的增益是
+$$w_j^*=-\frac{G_j}{H_j+\lambda},\qquad
+\text{Gain}=\frac12\left[\frac{G_L^2}{H_L+\lambda}+\frac{G_R^2}{H_R+\lambda}-\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\right]-\gamma .$$
+講義說這是「類似 Newton 法的近似」：沒有 $\lambda$ 時 $w^*=-G/H$ 就是 Newton 法的一步。
+損失$g_i$$h_i$葉值 $w^*$
+平方 $\tfrac12(y-\hat y)^2$$\hat y_i-y_i$（負的殘差）1$\dfrac{\sum r_i}{n+\lambda}$，$\lambda=0$ 時是葉內殘差平均
+logistic（log-odds 尺度）$p_i-y_i$$p_i(1-p_i)$$\dfrac{\sum(y_i-p_i)}{\sum p_i(1-p_i)+\lambda}$
+logistic 的葉值和 Boosting 一節的一步 Newton 葉值只差分母裡的 $\lambda$。StatQuest 影片裡的 output value $O$ 就是 $w^*$：$p_i$ 是上一輪預測的機率，$O$ 的單位是 log-odds，乘上學習率 $\eta$ 之後加在 log-odds 上，再換回機率。
+λ 的直覺。葉值 $-G/(H+\lambda)$ 會縮成 $\lambda=0$ 時的 $H/(H+\lambda)$ 倍。$H$ 大的葉（資料多，或分類時有很多猶豫的點）幾乎不受影響；$H$ 小的葉（只有一兩筆，或都是預測得很篤定的點）被往 0 拉得最多。$\lambda$ 也出現在增益的分母，會壓低小葉子帶來的增益，使它們比較不容易被切出來。效果和嶺迴歸一樣：不讓少數幾筆資料決定一片葉的輸出。
+γ 的直覺。Gain 已經扣掉 $\gamma$，所以 $\gamma$ 是一刀至少要帶來的下降量。它和剪枝一節成本複雜度剪枝的「每片葉付 $\alpha$」是同一個想法，但流程不同：$\gamma$ 直接進入每一刀的增益，增益扣掉 $\gamma$ 後不為正的切法就不採用。StatQuest 影片描述的是「先長到 max_depth，再由下往上剪掉 Gain 為負的分支，子分支保留時父分支也保留」；現行預設的 hist 在展開節點時就會依增益、深度與葉數限制決定要不要切，不保證先長滿再剪。不論哪種流程，$\gamma$ 都是同一個門檻。$\lambda>0$ 時，未扣 $\gamma$ 的增益本身也可能是負的，所以 $\gamma=0$ 不等於不剪。
+›換切點、拖 λ 與 γ，看兩片葉的值與這一刀的增益怎麼變。
+損失迴歸（平方損失）分類：第一輪，p 全是 0.5分類：已有預測，有篤定也有猶豫切點x < 15λ0γ0
+概念示意
+左葉
+G（梯度和）—
+H（Hessian 和）—
+葉值 w*—
+右葉
+G（梯度和）—
+H（Hessian 和）—
+葉值 w*—
+這一刀
+增益（論文式，含 ½、扣 γ）—
+StatQuest 的 Gain（不含 ½、未扣 γ）—
+切不切—
+第 1 筆的新預測（η = 0.3）—
+怎麼看
+      上圖的柱子是每筆資料的負梯度 −g（迴歸時就是殘差），圓點愈大代表 Hessian h 愈大；虛線是目前的切點。下圖左邊是兩片葉的葉值：空心框是 λ = 0 時的值，實心是目前 λ 下的值，λ 愈大，實心柱縮得愈多。右邊是這一刀的增益，紅線是 γ；增益超過紅線才切。
+迴歸模式用 StatQuest XGBoost 第 1 集的四筆資料（初始預測 0.5，殘差 −10.5、6.5、7.5、−7.5）。影片的 γ 是拿不含 ½ 的 Gain 比，換成論文式要除以 2。
+這個示意沒有設 min_child_weight（相當於 0）。分類模式每片葉的 H 都小於官方預設的 1，真的用預設值訓練時，這些切法都會被擋下。「不切」時，第 1 筆的新預測改用不分裂的單一葉值。
+迴歸模式的預設狀態就是影片的例子：切在 $x<15$ 時，左葉只有殘差 −10.5，右葉是 6.5、7.5、−7.5。$\lambda=0$ 時兩片葉的值是 −10.5 與 2.17，StatQuest 的 Gain 是 120.33（論文式含 ½ 是 60.17）。換到另外兩個切點，Gain 只有 4 與 56.33，所以第一刀切在 15。在 $\lambda=0$ 下乘上 $\eta=0.3$，第一筆的預測從 0.5 變成 $0.5+0.3\times(-10.5)=-2.65$。把 $\lambda$ 拉到 1，左葉的值減半成 −5.25，StatQuest 的 Gain 降到 62.49（論文式 31.24），第一筆的預測則變成 $0.5+0.3\times(-5.25)=-1.075$。
+min_child_weight。這個參數限制的是子節點的 Hessian 總和 $H$，預設 1，不是梯度、也不一定是筆數。平方損失下 $h_i=1$，它就是最少筆數；logistic 損失下最猶豫的點每筆只貢獻 0.25，篤定的點更少，所以分類時它要求的筆數會比 1 多很多。切到分類模式，拖切點時可以看到篤定的點（小圓點）對 $H$ 幾乎沒有貢獻。
+缺失值。講義說 XGBoost 會自己處理缺失值。做法是在每個節點把缺失的資料分別全部丟到左邊、全部丟到右邊各算一次增益，選增益大的方向當這個節點的預設方向；之後預測時，缺失值就走這條路。這裡的缺失是特徵 $x$ 缺失、$y$ 有值：有 $y$ 才算得出 $g_i$、$h_i$，這筆資料才能參與訓練。$y$ 缺失的資料不能拿來做監督式訓練，只能先移除，或在建模前另外處理。
+### 證明：二階展開後，每片葉的最佳值是 −G/(H+λ)，分裂增益是兩個結構分數的差
+第 $t$ 輪的目標是 $\sum_i l\big(y_i,\hat y_i^{(t-1)}+f_t(x_i)\big)+\Omega(f_t)$。把損失在目前預測 $\hat y_i^{(t-1)}$ 附近做二階泰勒展開：
+$$l\big(y_i,\hat y_i^{(t-1)}+f\big)\approx l\big(y_i,\hat y_i^{(t-1)}\big)+g_if+\tfrac12h_if^2 .$$
+第一項和新樹無關，丟掉。樹把每筆資料送到某一片葉，同一片葉 $j$ 的所有資料得到同一個值 $w_j$。把求和依葉重組（$I_j$ 是落在葉 $j$ 的資料，$G_j=\sum_{i\in I_j}g_i$、$H_j=\sum_{i\in I_j}h_i$，$T$ 是葉數）：
+$$\tilde{\mathcal L}=\sum_{j=1}^{T}\Big[G_jw_j+\tfrac12(H_j+\lambda)w_j^2\Big]+\gamma T .$$
+各葉互不干擾，每一項是 $w_j$ 的開口向上拋物線。配平方：
+$$G_jw_j+\tfrac12(H_j+\lambda)w_j^2=\tfrac12(H_j+\lambda)\Big(w_j+\frac{G_j}{H_j+\lambda}\Big)^2-\frac12\frac{G_j^2}{H_j+\lambda},$$
+所以最低點在 $w_j^*=-G_j/(H_j+\lambda)$，最低值是 $-\tfrac12G_j^2/(H_j+\lambda)$。$\lambda=0$ 時 $w_j^*=-G_j/H_j$，正是 Newton 法的一步；$\lambda>0$ 等於在 Newton 步上加了嶺迴歸式的收縮。
+把一片葉切成左右兩片，葉數多 1，目標值的下降量就是
+$$\text{Gain}=\frac12\left[\frac{G_L^2}{H_L+\lambda}+\frac{G_R^2}{H_R+\lambda}-\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\right]-\gamma .$$
+Gain 不大於 0 就不值得切（論文式 5–7）。StatQuest 影片的 similarity score 是 $G^2/(H+\lambda)$，省略了 ½；只拿來互相比較時，同乘 2 不影響哪一刀最好，但和 γ 比的時候要用同一個尺度。
+### logistic 損失的 g 與 h，以及影片裡的 O、p、p₀
+二元分類 $y\in\{0,1\}$，模型輸出 log-odds $F$，$p=1/(1+e^{-F})$，損失是 $l=-[y\log p+(1-y)\log(1-p)]$。因為 $dp/dF=p(1-p)$，
+$$g=\frac{\partial l}{\partial F}=p-y,\qquad h=\frac{\partial^2 l}{\partial F^2}=p(1-p).$$
+所以 $g$ 是負的殘差，$-g=y-p$ 才是殘差；$h$ 在 $p=0.5$ 時最大，等於 0.25，$p$ 接近 0 或 1 時趨近 0。代入葉值公式：
+$$w^*=\frac{\sum_{i}(y_i-p_i)}{\sum_i p_i(1-p_i)+\lambda}.$$
+對照 StatQuest 第 3 集。影片把新樹的葉輸出叫 output value，記作 $O$，它就是這裡的 $w^*$。影片的 $p_i$ 是上一輪對第 $i$ 筆預測的機率，$p^0$ 是第一輪之前的初始預測；兩者在第一輪是同一個數，之後 $p_i$ 會隨每一輪更新。$O$ 的單位是 log-odds，所以新預測要在 log-odds 上相加再換回機率：
+$$\log\frac{p_i^{\text{new}}}{1-p_i^{\text{new}}}=\log\frac{p_i}{1-p_i}+\eta\,O .$$
+不能把 $O$ 直接加到機率上。影片的初始預測 0.5 對應 log-odds 0，這是當時 base_score 的預設；新版 XGBoost 的截距處理會依版本與目標函數而不同，以官方文件為準。迴歸用平方損失時 $g=-(y-\hat y)$、$h=1$，葉值是 $\sum r_i/(n+\lambda)$，$\lambda=0$ 時就是葉內殘差平均，和 Boosting 一節的梯度提升一致。
+### min_child_weight、max_delta_step 與缺失值的演算法
+min_child_weight：官方定義是「子節點所需的樣本權重（Hessian）總和下限」，預設 1；分裂後任一子節點的 $H$ 小於它就不切。平方損失下 $h_i=1$，它就等於每個子節點的最少筆數。logistic 損失下 $h_i=p_i(1-p_i)\le0.25$，預設值 1 至少需要 4 筆最猶豫（$p=0.5$）的資料；若葉裡都是已經被預測得很篤定的點，需要的筆數更多。這個限制擋住的是「$H$ 很小、葉值 $-G/(H+\lambda)$ 卻可能很大」的葉。LightGBM 也有同名參數，它是 min_sum_hessian_in_leaf 的別名，預設只有 0.001，LightGBM 主要靠 min_data_in_leaf（預設 20 筆）控制葉的大小。
+max_delta_step：限制每片葉輸出的絕對值，預設 0 表示不限制。官方說它在類別極度不平衡的 logistic 迴歸可能有幫助，建議值 1 到 10；理由同上，$H$ 很小時葉值容易暴衝。
+缺失值的預設方向（論文演算法 3）。在某個節點評估特徵 $x_k$ 時，$G$、$H$ 用節點內全部資料計算，但只掃 $x_k$ 不缺失的那些資料，而且掃兩趟：第一趟依 $x_k$ 由小到大累加左邊，缺失的資料自動落在右邊；第二趟由大到小累加右邊，缺失的落在左邊。兩趟所有候選切點中增益最大的那一個，同時決定切點與預設方向。之後預測時，這個特徵缺失的資料就走預設方向。每個節點各自學一個方向，而且只掃非缺失值，計算量和非缺失值的個數成正比。
+要小心「缺失」的定義：missing 預設是 NaN；用 scipy 稀疏矩陣餵資料時，沒有存的 0 也會被當成缺失（官方 FAQ），這和密集矩陣裡的 0 是不同的值。
+觀念釐清
+### XGBoost 的 λ 和 ISLP 演算法 8.2 的 λ 一樣嗎？
+不一樣。ISLP 的 $\lambda$ 是學習率（收縮），每棵樹只採用 $\lambda$ 倍；XGBoost 的學習率叫 $\eta$（參數 eta，預設 0.3）。XGBoost 的 $\lambda$（參數 lambda，預設 1）是葉值的 L2 懲罰，出現在葉值與增益的分母裡。兩者都讓模型保守一點，但作用的地方不同：$\eta$ 在整棵樹算好之後打折，$\lambda$ 在算葉值時就把它往 0 拉。StatQuest 第 1 集說 $\lambda$ 預設是 0，那是舊的說法，現行官方文件是 1。
+### XGBoost 切分的時候，是對負梯度或 Hessian 切嗎？
+不是。切分永遠是對特徵 $x$ 切，例如「$x_k<15$」。每筆資料的 $g_i$、$h_i$ 只是拿來算每一個候選切點的 $G_L,H_L,G_R,H_R$ 與增益的統計量。新樹擬合的是負梯度這件事，表現在增益公式裡：葉值 $-G/(H+\lambda)$ 往負梯度的方向走，增益衡量的是這樣分組能讓二階近似的損失降多少。
+### Lab：heart_disease 上的 XGBoost 調參與提前停止
+Lab 在 303 筆、13 個特徵的 heart_disease.csv 上，先用預設設定與分層 5 折交叉驗證得到基準準確率 0.79，各折在 0.74 到 0.82 之間。
+基準：預設 XGBoost 的交叉驗證準確率
+  # The 'binary:logistic' objective is standard for binary 分類 in determining the loss function
+  model = XGBClassifier(booster='gbtree', objective='binary:logistic', random_state=42)
+  # Obtain scores of cross-validation
+  scores = cross_val_score(model, X, y, cv=kfold)
+  # Display accuracy
+  print('Accuracy:', np.round(scores, 2))
+  # Display mean accuracy
+  print('Accuracy mean: %0.2f' % (scores.mean()))
+預期輸出
+Accuracy: [0.82 0.75 0.74 0.82 0.8 ]
+Accuracy mean: 0.79
+  來源：Ch08-baggboost-lab-zh.ipynb
+每次只搜一個參數的 grid_search
+  def grid_search(params, random=False):
+      xgb = XGBClassifier(booster='gbtree', objective='binary:logistic', random_state=42)
+      kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+      if random:
+          grid = RandomizedSearchCV(xgb, params, cv=kfold, n_iter=20, n_jobs=-1, random_state=42)
+      else:
+          # Instantiate GridSearchCV as grid_reg
+          grid = GridSearchCV(xgb, params, cv=kfold, n_jobs=-1)
+      # Fit grid_reg on X_train and y_train
+      grid.fit(X, y)
+      # Extract best params
+      best_params = grid.best_params_
+      # Print best params
+      print("Best params:", best_params)
+      # Compute best score
+      best_score = grid.best_score_
+      # Print best score
+      print("Best score: {:.5f}".format(best_score))
+  來源：Ch08-baggboost-lab-zh.ipynb
+grid_search 每次都新建一個模型，只搜傳進去的那一個參數，其他參數都維持預設。所以下表各列彼此獨立，不是逐步累加的調參；也不能把最好的幾個值湊在一起，就假設會更好。
+這次只搜的參數候選值最佳值最佳 CV 準確率
+learning_rate0.01–0.50.50.79557
+max_depth2, 3, 5, 6, 830.81197
+gamma0–20.10.81197
+min_child_weight1–540.81197
+subsample0.5–10.50.81536
+colsample_bytree0.5–10.70.80552
+n_estimators100, 200, 400, 8004000.79541
+只搜 max_depth
+  grid_search(params={'max_depth':[2, 3, 5, 6, 8]})
+預期輸出
+Best params: {'max_depth': 3}
+Best score: 0.81197
+  來源：Ch08-baggboost-lab-zh.ipynb
+只搜 subsample
+  grid_search(params={'subsample':[0.5, 0.7, 0.8, 0.9, 1]})
+預期輸出
+Best params: {'subsample': 0.5}
+Best score: 0.81536
+  來源：Ch08-baggboost-lab-zh.ipynb
+只搜 n_estimators
+  grid_search(params={'n_estimators':[100, 200, 400, 800]})
+預期輸出
+Best params: {'n_estimators': 400}
+Best score: 0.79541
+  來源：Ch08-baggboost-lab-zh.ipynb
+讀這張表的方式：max_depth 從預設 6 降到 3、或把 subsample 降到 0.5，交叉驗證準確率約 0.81 到 0.82，比基準高約 2 個百分點，方向都是讓模型簡單一點。n_estimators 最好的是 400，得 0.79541，和基準相當，Lab 的說法是「並未帶來更好的結果」。各折之間的差距本來就有 0.08，這些 0.01 到 0.02 的差別要保守看待。Lab 文字寫 max_depth「從 6 改為 2」，但輸出的最佳值是 3，以輸出為準。
+提前停止：設定 early_stopping_rounds=10
+  eval_metric = 'error'
+  model = XGBClassifier(random_state=42, early_stopping_rounds=10, eval_metric=eval_metric)
+  eval_set = [(X_test, y_test)]
+  # eval_metric 和 eval_set 保留在 fit() 中，因為它們是訓練時需要的資料
+  model.fit(X_train, y_train, eval_set=eval_set, verbose=True)
+  y_pred = model.predict(X_test)
+  accuracy = accuracy_score(y_test, y_pred)
+  print("Accuracy: %.2f%%" % (accuracy * 100.0))
+預期輸出
+[0]	validation_0-error:0.15789
+[1]	validation_0-error:0.19737
+[2]	validation_0-error:0.17105
+[3]	validation_0-error:0.19737
+[4]	validation_0-error:0.15789
+[5]	validation_0-error:0.18421
+[6]	validation_0-error:0.18421
+[7]	validation_0-error:0.18421
+[8]	validation_0-error:0.18421
+[9]	validation_0-error:0.18421
+Accuracy: 84.21%
+  來源：Ch08-baggboost-lab-zh.ipynb
+驗證集的錯誤率在第 0 輪最低（0.15789），lab 保存的紀錄列到第 9 輪，之後各輪都沒有更低；只看保存的輸出，無法確定實際在哪一輪停止。最後的準確率 84.21% 等於 1 − 0.15789，也就是用了錯誤率最低那一輪的模型。這個 Lab 把測試集當成 eval_set 來決定何時停止，等於用測試集選了樹數，這個準確率會偏樂觀；實務上要另外切一份驗證集。
+QUIZ · XGBoost
+二元分類用 logistic 損失時，XGBoost 的 min_child_weight=1 限制的是什麼？
+(A) 每個子節點裡 p(1−p) 的總和至少要 1
+(B) 每個子節點至少要有 1 筆資料
+(C) 每個子節點裡梯度和的絕對值至少要 1
+本主題的講義來源與延伸閱讀：XGBoost 原論文、XGBoost 官方的提升樹推導、二階泰勒近似的討論、StatQuest：XGBoost 第 1 集（迴歸）、StatQuest：XGBoost 第 3 集（數學細節）、XGBoost 參數說明、XGBoost 缺失值處理、樹模型與特徵尺度、XGBoost 官方文件。
+
+
+################ SECTION splitsearch (4703 chars)
+
+PART 12 · 切點搜尋
+### 候選切點從哪裡來：精確搜尋、分位草圖與直方圖 講義 08ESL 進階
+上一節的增益公式告訴我們「某一刀好不好」，這一節回答另一個問題：要試哪些刀？對連續特徵，門檻值有無限多個，但把資料依 $x$ 排序後，相鄰兩個相異值之間的任何門檻都分出同一組左右，所以只要試相鄰相異值的中點。$u$ 個相異值只有 $u-1$ 個候選。排序後由小到大掃一次，邊掃邊累加左邊的 $G_L$、$H_L$，右邊用總和減，就算得出每個候選的增益。這叫精確貪婪搜尋（exact greedy）。
+排序要做幾次？照字面實作，每個節點都對自己的資料重新排序，每個特徵每個節點要花 $O(n\log n)$。scikit-learn 傳統的 GradientBoostingClassifier 就是這樣，官方文件說它要「在每個節點、對每個特徵排序」。XGBoost 論文 §4.1 改成在訓練前把每個特徵欄排序一次，存成區塊，之後每一層線性掃一次就收集到所有葉的統計量。所以「XGBoost 每個節點都要重新排序」並不正確；精確搜尋的主要成本是每一層仍要掃過所有資料。
+### 近似搜尋：只試分位點
+資料很多時，連「每層掃過所有資料」都嫌慢。近似搜尋先依特徵的分位數挑出少數候選切點，把資料歸進這些切點隔出來的箱子，只在箱子邊界上找最好的一刀。論文用一個參數 $\epsilon$ 控制分位點的密度，候選大約 $1/\epsilon$ 個。
+為什麼要用 Hessian 加權？二階近似的目標可以改寫成
+$$\sum_{i}\tfrac12 h_i\Big(f(x_i)-\big(-g_i/h_i\big)\Big)^2+\Omega(f)+\text{常數},$$
+也就是以 $h_i$ 為權重、以 $-g_i/h_i$ 為標籤的加權最小平方。每筆資料對損失的份量和 $h_i$ 成正比，所以論文（§3.3）讓每個箱子分到大致相同的 $h$ 總和，而不是相同的筆數。論文印的標籤是 $g_i/h_i$，展開核對後應是 $-g_i/h_i$，權重是 $h_i$ 的結論不受影響。
+迴歸用平方損失時 $h_i=1$，加權分位就是普通的分位數。分類時 $h_i=p_i(1-p_i)$：預測得很篤定的點 $h$ 小，猶豫的點 $h$ 大，所以猶豫的區域會切得比較細。StatQuest 第 4 集的例子：六筆資料上一輪的機率是 0.1、0.1、0.9、0.9、0.6、0.4，權重是 0.09、0.09、0.09、0.09、0.24、0.24，分成 0.18、0.18、0.24、0.24 四箱，兩個猶豫的點各自一箱，不會一正一負的殘差被併在同一箱裡互相抵銷。
+直方圖對誰切？分箱的對象永遠是特徵值 $x$，切點也永遠是「$x_k$ 小於某個門檻」。每個箱子裡累加的是落在裡面的 $\sum g$ 與 $\sum h$；算增益時，從左到右把箱子的 $G$、$H$ 累加起來就好。XGBoost 不是對梯度或 Hessian 切，Hessian 只在加權分位裡用來決定箱子的邊界。
+›切換方法與箱數，看候選切點落在哪裡、少掉多少增益。
+方法精確搜尋（相鄰值中點）等頻分箱（hist）Hessian 加權分位（approx）上一輪預測兩端篤定、中間猶豫有一段篤定地預測錯第一輪：p 全是 0.5箱數8
+概念示意
+這個方法
+候選切點數—
+最佳切點 x—
+最佳增益—
+和精確搜尋比
+精確搜尋的最佳增益—
+少掉的增益—
+各箱 h 總和（最小～最大）—
+怎麼看
+      上圖每個點是一筆資料，上排 y = 1、下排 y = 0，圓點愈大代表 h = p(1−p) 愈大，也就是上一輪的預測愈猶豫。底下的刻度是這個方法的候選切點，交錯的色塊是分箱。下圖灰線是精確搜尋時每個切點的增益，彩色點是這個方法實際會試的切點，大圓圈是它選中的那一個。
+分箱的對象永遠是特徵值 x；箱子裡累加的是 g 與 h。這裡 λ 取 0，只比較候選切點的位置。
+預設是精確搜尋：33 個候選，最好的一刀在 $x=4.55$。切到等頻分箱、8 箱，只剩 7 個候選，最好的一刀落在 3.75，增益少了 36%；改成 Hessian 加權分位，6 個候選就找到和精確搜尋同一刀，「各箱 h 總和」也從 0～0.97 拉近到 0.17～0.49。
+把上一輪預測換成「有一段篤定地預測錯」，結果反過來：$x$ 在 4 到 6 之間的 $y=1$ 被篤定地預測成 0，這些點的 $h$ 很小、$|g|$ 卻很大。加權分位在那一段放的切點太少，8 箱時少了 82% 的增益，等頻分箱反而找得到。加權的依據是二階近似裡每筆資料的份量，並不保證每次都切得比較好。換成「第一輪：p 全是 0.5」，所有 $h_i$ 都是 0.25，兩種分箱的切點完全一樣。
+### 直方圖法
+LightGBM 與現行 XGBoost 的預設 hist 走得更遠：訓練前就把每個連續特徵分成固定的箱子（XGBoost 的 max_bin 預設 256，LightGBM 預設 255），之後每個節點只做兩件事：掃過節點內的資料，把 $g$、$h$ 累加到各箱；再掃過箱子的邊界找最好的一刀。第二步的工作量是箱數，不再是資料筆數。兩個兄弟節點的直方圖加起來等於父節點的直方圖，所以只要對資料較少的那一邊建直方圖，另一邊用父節點減掉就好（直方圖相減）。整數的箱子編號也比浮點數省記憶體、存取更連續。
+講義說建箱只要 $O(n)$、免去排序的 $O(n\log n)$，單一節點的成本從 $O(\text{特徵數}\times n\log n)$ 降到 $O(\text{特徵數}\times n)$。這是 scikit-learn 文件拿傳統 GBDT（每個節點都排序）和直方圖版 HGBT 比較的說法；和 XGBoost 只排序一次的精確搜尋比，直方圖法的好處主要是每個節點掃箱子而不是掃資料。講義說箱數「不能超過 255」也是 scikit-learn HGBT 的限制，LightGBM 的 max_bin 可以調得更大。
+XGBoost 的 tree_method候選切點何時決定分位的權重對應論文
+exact不用決定，試所有相異值—精確貪婪＋只排序一次的區塊
+approx每棵樹開始前，用全部資料重做Hessian $h_i$近似搜尋的全域提案
+hist（auto 等於它，是預設）訓練前做一次只用使用者給的樣本權重官方說是 LightGBM 的做法
+所以「XGBoost 用 Hessian 加權分位草圖」指的是論文與 tree_method='approx'。論文另有每個節點都重做分位的局部提案，現行版本已經移除。官方建議：平方損失的 Hessian 是常數，加權沒有意義，直接用 hist；用其他損失時 approx 有時比較準但比較慢，多數情況把 hist 的 max_bin 調大就能達到相近的準確度。
+### 平行計算後怎麼合併
+資料分散在多個核心或多台機器時，每個工作者只看自己那一份資料。直方圖法的合併很簡單：大家用同一組箱子邊界，各自累加自己資料的 $\sum g$、$\sum h$，再把各箱的數字相加，結果和一台機器算的完全一樣，之後照常掃箱子邊界找最好的一刀。LightGBM 的資料平行也是這樣，用歸約（reduce）把各機的直方圖加起來。
+分位草圖（quantile sketch）解決的是前一步：箱子邊界放哪裡。要算精確的分位數得把全部資料排序，資料分散時代價很高；草圖讓每台機器先各自做一份小摘要，再把摘要合併，得到誤差有上界（排名誤差約 $\epsilon$）的近似分位數。論文的貢獻是做出能處理加權資料、而且可以合併與精簡的草圖。所以兩種合併不同：草圖合併得到的是近似的邊界，直方圖相加得到的是精確的統計量。
+這些設計省下多少時間？Lab 在系外行星資料上比較了 scikit-learn 傳統的梯度提升、XGBoost、LightGBM 與 CatBoost 的訓練時間，程式與輸出放在 LightGBM 與 CatBoost 一節的收合：同樣 100 棵深度 2 的樹，傳統實作要幾百秒，三個現代套件都在半分鐘以內。
+### 系統面：快取、壓縮與分片，以及論文的複雜度
+講義列了 XGBoost 在系統上的幾個設計，這些和統計無關，但決定了它在大資料上的速度。
+column block（只排序一次）。論文 §4.1 說，樹學習最花時間的是把資料排好序。XGBoost 在訓練前把每一個特徵欄排好序，存成壓縮欄格式（CSC）的區塊，之後每一層只要線性掃一次，就能同時收集同一層所有葉的候選切點統計量。設 $K$ 是樹數、$d$ 是最大深度、$\|x\|_0$ 是非缺失值的個數、$n$ 是資料筆數，論文的複雜度是
+做法原本用 column block
+精確搜尋$O(Kd\|x\|_0\log n)$$O(Kd\|x\|_0+\|x\|_0\log n)$
+近似搜尋（$q$ 個候選、區塊最多 $B$ 列）$O(Kd\|x\|_0\log q)$$O(Kd\|x\|_0+\|x\|_0\log B)$
+$\|x\|_0\log n$ 是一次性的排序成本，可以攤到所有輪次上。
+快取感知存取（cache-aware access）。依特徵值的順序掃描時，每一步要去拿那一筆資料的 $g_i$、$h_i$，而它們是依列的順序存放，所以是跳著讀記憶體。統計量放不進 CPU 快取時，每次讀取都可能要到主記憶體去拿。講義附的延遲表（約 2012 年的數字）是：讀一次 L1 快取約 0.5 ns，讀一次主記憶體約 100 ns，相差約 200 倍。XGBoost 的做法是每個執行緒先把要用到的梯度統計量預先搬到自己的緩衝區，再成批累加；近似搜尋則把每個區塊的大小定在 $2^{16}$ 筆，讓統計量放得進快取（論文 §4.2）。
+區塊壓縮與分片（block compression、sharding）。資料大到放不進記憶體時，要從硬碟讀區塊。依延遲表，從硬碟循序讀 1 MB 約 20 ms，是記憶體的 80 倍，而壓縮 1 KB 只要約 3 µs，所以 XGBoost 把區塊壓縮後再存（論文報告壓縮率約 26% 到 29%），用解壓的計算換讀硬碟的時間；有多顆硬碟時把資料交錯分到各顆，同時讀取（論文 §4.3）。
+隨機抽樣。XGBoost 也能對每棵樹抽樣部分資料（subsample）與部分特徵（colsample_bytree、colsample_bylevel、colsample_bynode），既能減少過度擬合，也減少計算。
+QUIZ · 切點搜尋
+直方圖法（例如 XGBoost 的 hist 或 LightGBM）裡的「直方圖」是對什麼分箱？
+(A) 對每筆資料的梯度 g 分箱，切點落在梯度的分位數上
+(B) 對 Hessian h 分箱，h 大的資料自成一箱
+(C) 對特徵值 x 分箱，每個箱子累加落在裡面的 g 與 h
+本主題的講義來源與延伸閱讀：候選門檻值怎麼選、XGBoost 原論文、XGBoost 的三種 tree method、StatQuest：XGBoost 第 4 集（加速技巧）、分位草圖概觀、記憶體存取延遲表、LightGBM 原理筆記、LightGBM 的直方圖與平行化。
+
+
+################ SECTION categorical (7025 chars)
+
+PART 13 · 類別特徵
+### 類別變數怎麼交給樹：編碼方式與目標洩漏 講義 08ESL 進階
+樹的分裂看的是大小順序，類別變數沒有大小。把類別交給樹有兩條路：先把它變成數字（編碼），或讓樹直接把類別分成兩堆（原生類別分割）。講義比較了三種編碼，其中只有一種用到 $y$，問題也出在這一種。
+動物yone-hot：isCat · isDog · isHamster整數編碼目標編碼
+Cat11 · 0 · 000.67
+Hamster00 · 0 · 120.50
+Cat01 · 0 · 000.67
+Dog00 · 1 · 010.00
+Hamster10 · 0 · 120.50
+Cat11 · 0 · 000.67
+Dog00 · 1 · 010.00
+One-hot：每個類別一欄 0／1。線性模型有截距時要刪掉一欄，否則完全共線。樹不需要刪，但每個 0／1 欄只能做「是不是某一類」的分裂：一刀可以分出 $\{Dog\}$ 對其他，想把四個類別兩兩分組就得切兩刀以上；類別很多時欄位暴增，樹也會長得又深又偏。
+整數（label／ordinal）編碼：Cat、Dog、Hamster 編成 0、1、2。這給類別加了一個原本沒有的順序。對樹來說，數值大小本身不重要（改成 0、1、100 切法也一樣），順序才重要：一個門檻只能切出連續的一段：可以做 $\{Cat\}$ 對 $\{Dog, Hamster\}$、$\{Cat, Dog\}$ 對 $\{Hamster\}$，卻做不出 $\{Cat, Hamster\}$ 對 $\{Dog\}$。類別本來就有順序（例如教育程度）時才合理。scikit-learn 的 LabelEncoder 是給 $y$ 用的，特徵要用 OrdinalEncoder 或 OneHotEncoder。
+目標編碼（target／mean encoding）：每個類別換成該類別的 $y$ 平均。上表 Cat 出現三次、$y$ 是 1、0、1，所以編成 $2/3\approx0.67$；Hamster 是 $(0+1)/2=0.5$；Dog 是 0。一欄就裝下了「這個類別和 $y$ 有多相關」，類別再多也只有一欄。
+  目標編碼用到了 y，就得照「用到 y 的步驟要關在折裡面」處理
+  某一筆的編碼如果用到它自己的 $y$，模型在訓練時等於先偷看了答案；類別樣本越少，偷看得越多。講義的建議是：編碼要在獨立的資料上估計，實務上用交叉驗證（K 折目標編碼）。這和第 5 章「任何用到 $y$ 的前處理都要在每一折裡面重做」是同一條規則。
+CatBoost 的作法是有序目標統計（ordered target statistics）：把資料隨機排列，每一筆只用排在它前面的資料計算編碼。自己的 $y$ 永遠不會進入自己的編碼，也不必另外切一份資料。下面兩個收合分別說明洩漏的極端例與有序統計怎麼逐列計算。
+### 目標編碼為什麼會洩漏：兩個反例、平滑的限度與四種補救
+反例一：每個類別只出現一次。例如顧客編號這種欄位。直接用全資料的類別平均編碼，第 $k$ 筆的編碼就是它自己的 $y_k$；加上平滑也只是 $(y_k+ap)/(1+a)$。取 $a=1$、$p=0.5$，訓練時 $y=1$ 的那幾筆編成 0.75、$y=0$ 的編成 0.25，切在 0.5 就把訓練資料完全分開。測試資料的編號都是新的，只能編成先驗 $p=0.5$，那一刀完全沒用：訓練準確率 100%，測試等於瞎猜。
+平滑的限度。常見的平滑把小類別拉向全體平均 $p$：
+$$\hat x_k=\frac{\sum_{j}\mathbb 1\{x_j=x_k\}\,y_j+a\,p}{\sum_{j}\mathbb 1\{x_j=x_k\}+a},\qquad a\gt 0.$$
+類別樣本少時編碼靠近 $p$，樣本多時靠近該類別自己的平均。平滑可以讓小類別不那麼極端，但分子仍然含有 $y_k$ 本身，所以反例一的洩漏還在。
+反例二：留一（leave-one-out）也會洩漏。直覺上「算第 $k$ 筆的編碼時把它自己拿掉」就安全了。CatBoost 論文指出不然。設某個類別特徵是常數（所有樣本同一類），共 $n=11$ 筆、其中 $n^+=6$ 筆 $y=1$，取 $a=0$。留一編碼是 $(n^+-y_k)/(n-1)$：$y=1$ 的樣本得 $5/10=0.5$，$y=0$ 的樣本得 $6/10=0.6$。這個欄位本來毫無資訊，留一之後卻能用一刀（切在 0.55）把訓練資料完全分開，因為編碼仍然隨自己的 $y_k$ 變動，只是方向反過來。
+補救。
+獨立的編碼切分（講義）：另留一份資料只用來算編碼，模型在其餘資料上訓練。最乾淨，代價是少了一份訓練資料。
+K 折目標編碼：把訓練資料分成 K 折，每一折的編碼只用其他折的 $y$ 計算；測試資料用全部訓練資料計算。這和 stacking 的折外預測是同一件事。
+平滑：上面的先驗 $a,p$，讓小類別靠向整體平均；通常與 K 折一起用。
+有序目標統計（CatBoost）：見下一個收合。
+不管哪一種，「編碼對照表」都只能從訓練資料估計，交叉驗證時也要在每一折的訓練部分重新估計，不能先在全資料上編好再切折。
+### CatBoost 的有序目標統計：逐列算一次
+CatBoost 借用時間序列的想法：先把訓練資料隨機排列，當作人工的「時間」，第 $k$ 筆的編碼只能用排在它前面的資料：
+$$\hat x_k=\frac{\sum_{j:\,\sigma(j)\lt\sigma(k)}\mathbb 1\{x_j=x_k\}\,y_j+a\,p}{\sum_{j:\,\sigma(j)\lt\sigma(k)}\mathbb 1\{x_j=x_k\}+a}.$$
+自己的 $y_k$ 從頭到尾沒有進入自己的編碼，又不必像獨立切分那樣丟掉資料。測試資料則用全部訓練資料計算。
+官方文件把公式寫成 $\dfrac{countInClass+prior}{totalCount+1}$，其中 countInClass 是之前同類別中 $y=1$ 的次數、totalCount 是之前同類別的筆數。對照論文的式子，這等於取 $a=1$、$prior=a\,p$。下表是官方文件的例子（prior = 0.05），照公式逐列重算：
+順序類別y之前同類的 (y=1 次數, 筆數)編碼 (count + 0.05)/(total + 1)
+1rock0(0, 0)0.05 / 1 = 0.05
+2indie0(0, 0)0.05 / 1 = 0.05
+3rock1(0, 1)0.05 / 2 = 0.025
+4rock1(1, 2)1.05 / 3 = 0.35
+5pop1(0, 0)0.05 / 1 = 0.05
+6indie1(0, 1)0.05 / 2 = 0.025
+7rock0(2, 3)2.05 / 4 = 0.5125
+看第 4 列：它自己的 $y=1$，但編碼 0.35 只用到前面兩筆 rock（一個 0、一個 1），自己的答案沒有混進去。第 7 列看到前面三筆 rock（0、1、1），得 $2.05/4=0.5125$。
+代價是排在前面的資料編碼很不穩：第 1、3 列幾乎只剩先驗。所以 CatBoost 在不同的提升輪使用不同的排列，讓每筆資料不會總是排在最前面。官方教學另外提到，CatBoost 預設每個類別特徵會產生好幾種編碼（三種先驗的 Borders 加上一個與 $y$ 無關的計數編碼 Counter），還會把類別特徵兩兩組合成新特徵。
+另一條路是讓樹直接分割類別。$k$ 個類別分成兩堆有 $2^{k-1}-1$ 種分法，但先把類別依「各自想要的修正量」排序，就只需要試 $k-1$ 刀。LightGBM 與新版 XGBoost 都這樣做；XGBoost 自 1.5 版起原生支援類別特徵，講義與 lab 說它「實驗性」是舊版的狀況。
+### 原生類別分割：先排序，再切 k−1 刀
+樹也可以不編碼，直接把 $k$ 個類別分成兩堆。所有分法有 $2^{k-1}-1$ 種，$k=10$ 就有 511 種。迴歸樹的生長一節證明過一個捷徑：平方損失下，先依各類別的平均反應排序，最佳的兩堆一定是排序後的前段對後段（Fisher 1958 的分組結果），只需比較 $k-1$ 個切點。
+LightGBM 把同一個捷徑搬到梯度提升：每個類別先累計自己的梯度和 $G_c$ 與 Hessian 和 $H_c$，依 $\sum g/\sum h$ 排序後只掃相鄰切點。$-G_c/H_c$ 正是「這個類別單獨成一片葉時的 Newton 葉值」（XGBoost 一節的 $w^*=-G/(H+\lambda)$ 去掉 $\lambda$），所以排序的意思是「依每個類別想要的修正量排隊」。
+示意數字。四個類別的梯度統計如下表，$\lambda=0$。依 $-G_c/H_c$ 排成 D、B、C、A 後，三個連續切點的增益（XGBoost 的增益公式，不扣 $\gamma$）分別是 5.34、7.85、7.52；把全部 7 種兩堆分法都算一遍，最大的仍是 $\{D,B\}$ 對 $\{C,A\}$ 的 7.85，正好是排序後的第二個切點。
+類別$G_c=\sum g_i$$H_c=\sum h_i$$-G_c/H_c$（排序鍵）
+D42−2
+B24−0.5
+C−120.5
+A−632
+三個套件的做法：
+LightGBM：categorical_feature 指定類別欄；類別數不超過 max_cat_to_onehot（預設 4）時改用「一類對其他」，否則用上面的排序法，另有 cat_smooth、min_data_per_group 等參數防止小類別過度擬合。
+XGBoost：1.5 版起原生支援類別特徵（pandas 欄位設成 category，並設 enable_categorical=True），1.6 版加入同樣的排序分割；只能搭配 hist 或 approx。講義與 lab 的「實驗性支援、建議自己先編碼」是舊版的說法。
+CatBoost：cat_features 指定類別欄；類別數不超過 one_hot_max_size（一般情況預設 2）時用 one-hot，否則用上一個收合的有序目標統計。
+排序用的是訓練資料自己的梯度，類別很多、每類樣本很少時一樣會過度擬合，這和目標編碼的問題同源。
+### Lab：Melbourne 房價的類別欄怎麼交給三個套件
+Lab 用 Melbourne 房價資料（10,864 筆訓練資料）比較三個套件處理類別欄的方式。先把文字欄轉成 pandas 的 category 型別：
+把文字欄轉成 category 型別
+  for col in X_train_cat.columns:
+    X[col] = X[col].astype('category')
+    X_v[col] = X_v[col].astype('category')
+  來源：Ch08-baggboost-lab-zh.ipynb
+LightGBM 直接讀這些 category 欄，輸出顯示用到 18 個特徵：
+LightGBM 直接吃 category 欄
+  lgbr = lgb.LGBMRegressor(boosting_type='gbdt', random_state=42, n_jobs=-1)
+  lgbr.fit(X, y_train)
+預期輸出
+[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.000602 seconds.
+You can set `force_row_wise=true` to remove the overhead.
+And if memory is not enough, you can set `force_col_wise=true`.
+[LightGBM] [Info] Total Bins 2194
+[LightGBM] [Info] Number of data points in the train set: 10864, number of used features: 18
+[LightGBM] [Info] Start training from score 1076087.345453
+LGBMRegressor(n_jobs=-1, random_state=42)
+  來源：Ch08-baggboost-lab-zh.ipynb
+XGBoost 那一段（同一份資料）要小心讀：程式把類別欄轉型之後，呼叫的是 xgb.fit(X_train, y_train)，而 X_train 先前用 select_dtypes(exclude=['object']) 只留下數值欄，輸出也顯示 enable_categorical=False。所以那個 XGBoost 模型其實沒有用到任何類別欄。
+CatBoost 要求類別欄是字串或整數，lab 先把缺失值補成字串 'nan'，讓「缺失」本身成為一個類別：
+CatBoost：缺失值補成字串，再指定類別欄
+  categorical_features_names = list(X_train_cat.columns)
+  for col in categorical_features_names:
+    X[col] = X.loc[:,col].fillna(value='nan')
+    X_v[col] = X_v.loc[:,col].fillna(value='nan')
+    X[col] = X[col].astype('category')
+    X_v[col] = X_v[col].astype('category')
+  來源：Ch08-baggboost-lab-zh.ipynb
+全部類別改用 one-hot
+  catbr = CatBoostRegressor(n_estimators=100, random_state=42, thread_count=-1, logging_level = 'Silent', cat_features=categorical_features_names, one_hot_max_size=500)
+  catbr.fit(X, y_train)
+  preds = catbr.predict(X_v)
+  mean_absolute_error(y_valid, preds)
+預期輸出
+163165.1377008556
+  來源：Ch08-baggboost-lab-zh.ipynb
+Lab 接著逐一改 CatBoost 的類別參數，各自重新訓練（每次只改一個參數，不是累積調參），驗證集 MAE 如下：
+CatBoost 的類別設定（其他參數不變）驗證集 MAE
+one_hot_max_size=500（全部改用 one-hot）163,165
+model_size_reg=0165,007
+model_size_reg=1160,828
+max_ctr_complexity=6163,529
+max_ctr_complexity=0（不做類別組合）164,721
+simple_ctr='Counter'（只用出現次數）164,993
+simple_ctr='Borders'166,921
+simple_ctr='Buckets'168,169
+ctr_target_border_count=10166,282
+九個設定的 MAE 落在 160,828 到 168,169 之間，最大與最小只差約 4.6%，而且全部來自同一次訓練／驗證切分。這種差距換一個切分可能就換了順序，不足以說哪一種編碼普遍較好；lab 沒有印出預設設定的 MAE，所以這張表也不能拿來和預設比。
+QUIZ · 類別特徵
+訓練資料有一欄「顧客編號」，每個編號只出現一次。直接用全資料的類別平均做目標編碼後，訓練準確率接近 100%，測試卻和瞎猜差不多。主要原因是什麼？
+(A) 每筆的編碼用到了自己的 y，訓練時編碼幾乎就是答案；測試時的新編號只能拿到先驗
+(B) 編號的類別太多，樹的深度不夠，學不到每個類別
+(C) 目標編碼把類別資訊壓成一個數字而損失資訊，改用整數編碼就能解決
+本主題的講義來源與延伸閱讀：K 折目標編碼、類別編碼的三種做法、CatBoost 類別轉數值、CatBoost 原論文、CatBoost 類別參數教學、XGBoost 原生類別支援、LightGBM 類別最佳分割、Fisher（1958）分組問題。
+
+
+################ SECTION successors (8728 chars)
+
+PART 14 · LightGBM 與 CatBoost
+### 兩個後繼者在生長、抽樣與類別處理上的差別，以及怎麼調參 講義 08ESL 進階
+XGBoost、LightGBM、CatBoost 都是梯度提升樹：一輪加一棵樹，每棵樹擬合損失的梯度資訊，也都用直方圖加速。分裂怎麼評分、葉值怎麼估計則依套件與設定而異：XGBoost 與 LightGBM 預設用 XGBoost 一節那種梯度與 Hessian 的增益，CatBoost 預設的分裂評分是餘弦相似度（Cosine），葉值估計也可選梯度步或 Newton 步。三者的差別集中在幾件事：樹怎麼長、每一輪用哪些資料、類別特徵怎麼處理（上一節）。
+XGBoostLightGBMCatBoost
+樹怎麼長（預設）逐層（grow_policy='depthwise'），可改 lossguide逐葉／最佳優先（leaf-wise）對稱樹（SymmetricTree），可改 Depthwise、Lossguide
+控制大小的主要參數max_depth（預設 6）num_leaves（預設 31）depth（預設 6，即 64 片葉）
+每輪用哪些資料subsample、colsample_*bagging_fraction、feature_fraction；可選 GOSS預設 MVS 重要性抽樣（CPU、subsample=0.8）
+類別特徵1.5 版起原生支援排序後分割有序目標統計、類別組合
+其他特色加權分位草圖、稀疏感知直方圖相減、EFBordered boosting（CPU 預設不開）
+### 樹怎麼長
+三者每一刀都挑增益最大的切點，差別在「現在有好幾片葉子能切，先切哪一片」。XGBoost 預設逐層長：同一層的節點都處理完才往下一層，用 max_depth 控制大小。LightGBM 是逐葉（leaf-wise）：在所有葉子裡挑增益最大的那一片先切，用 num_leaves 控制大小，樹可能很不平衡。CatBoost 預設對稱樹：同一層的所有節點共用同一個條件，結構最受限，預測最快。
+逐層、深度優先、逐葉只是三種展開順序：候選切點、評分方式與停止條件都相同、而且沒有葉數或深度預算時，三者長到底會得到同一棵樹，差別只出在預算有限的時候。對稱樹不一樣，它限制同一層必須共用條件，是對結構的限制，長到底也不會變成一般的樹。學生常問「一般的決策樹不也是一刀一刀挑最好的嗎」，答案在下面的收合。
+### 「一般的樹不也是一刀一刀挑最好的嗎？」：分裂準則與生長順序
+這裡要分開兩件事。分裂準則回答「給定一個節點，用哪個變數、切在哪」；三種生長方式在這一點上完全相同，都是挑增益最大的那一刀。生長順序回答「現在有好幾個節點都還能切，先切哪一個」。
+CART、C4.5 的遞迴寫法是深度優先：先把左邊整支長完，再回頭長右邊，挑的是「目前這個節點裡最好的一刀」，不會比較其他節點。LightGBM 的 leaf-wise 是最佳優先（best-first）：在所有還能切的葉子裡，挑增益最大的那一片先切。
+如果不設任何預算、長到停止條件再剪枝，三種順序最後長出同一棵樹，順序無關緊要。順序只有在預算有限時才重要，例如只准切 3 刀，或葉數固定為 31。示意數字：根節點切成 A、B 之後，A 最好的一刀增益 2、B 最好的一刀增益 10；再往下，A 的子節點最多 0.5、B 的子節點最多 3。只准切 3 刀時：
+生長順序三刀依序切在三刀的增益合計
+逐層（depthwise）根 → A → B根 + 2 + 10
+深度優先（先左後右）根 → A → A 的子節點根 + 2 + 0.5
+最佳優先（leaf-wise）根 → B → B 的子節點根 + 10 + 3
+同樣的刀數，最佳優先把預算花在最有價值的地方，所以 LightGBM 官方說固定葉數時 leaf-wise 的訓練損失通常較低；代價是某一支可能長得很深，小資料時容易過度擬合，要用 num_leaves、min_data_in_leaf，必要時再加 max_depth（設了 max_depth 仍然是 leaf-wise，只是限制最深到哪）。最佳優先也不是 LightGBM 獨有：scikit-learn 的決策樹設了 max_leaf_nodes 時就改用最佳優先的順序。
+CatBoost 的對稱樹（oblivious tree）更受限：同一層的所有節點共用同一個「變數＋門檻」。深度 6 的對稱樹有 64 片葉，卻只有 6 個不同的條件，預測時把 6 個比較結果排成 6 個位元就是葉子的編號，所以推論很快；結構本身的限制也是一種正則化。
+### 每一輪用哪些資料
+和 bagging 一樣，提升也可以每輪只用一部分資料（隨機梯度提升），三個套件都有列抽樣與欄抽樣的參數。LightGBM 與 CatBoost 另外依梯度大小抽樣：梯度大的資料錯得多、對找分裂最重要，全部保留；梯度小的資料只抽一部分，再放大權重補回份量。LightGBM 的版本叫 GOSS，CatBoost 的叫 MVS。LightGBM 還有 EFB，把很少同時非零的稀疏欄合成一欄。
+### LightGBM 的 GOSS 與 EFB
+GOSS（gradient-based one-side sampling）的出發點是：梯度的絕對值小的資料已經擬合得不錯，對找分裂的貢獻也小。演算法：
+依 $|g_i|$ 由大到小排序，前 $a\times100\%$ 的資料全部保留（集合 $A$）。
+從其餘資料中隨機抽 $b\times100\%$（以全體筆數計算比例，集合 $B$）。
+算增益時，$B$ 裡每筆的梯度乘上 $\dfrac{1-a}{b}$，把被抽樣的小梯度資料放大回原本的份量。
+以 $n=1000$、$a=0.2$、$b=0.1$ 為例：保留 200 筆大梯度資料，從其餘 800 筆抽 $0.1\times1000=100$ 筆，每筆乘上 $(1-0.2)/0.1=8$，$100\times8=800$，剛好補回那 800 筆的份量。這組 $a,b$ 正是 LightGBM 的預設（top_rate=0.2、other_rate=0.1）。論文 §3.2 有一處寫成從其餘資料抽 $b\times|A^c|$，與演算法 2 的寫法不一致；那樣抽的話補權重應是 $1/b$，這裡以演算法 2 為準。4.0 版起，GOSS 用 data_sample_strategy='goss' 開啟（舊版寫 boosting='goss'）。
+EFB（exclusive feature bundling）處理高維稀疏資料：很多欄很少同時非零，例如一組 one-hot 欄。把它們加上位移後合成一欄：A 的值在 $[0,10)$、B 的值在 $[0,20)$，就把 B 加 10 變成 $[10,30)$，兩欄合為一欄，直方圖的成本從「資料數 × 特徵數」降成「資料數 × 綁好的欄數」。找最少的綁法是 NP-hard，LightGBM 用貪婪法並容許少量衝突。講義拿它和 one-hot、label encoding 對照：EFB 等於把一組互斥的 one-hot 欄重新收回一欄。
+CatBoost 名字裡的 Cat 指類別（categorical）。它除了有序目標統計，還提出 ordered boosting：算某一筆的殘差時，預測只來自沒看過這筆 $y$ 的模型，避免訓練資料上的殘差系統性偏小。注意現行 CPU 版預設並不開這個模式。
+### CatBoost 的 ordered boosting、MVS 與預設值
+預測偏移（prediction shift）。梯度提升每一輪用「目前模型在訓練資料上的預測」算殘差（或梯度）。可是目前的模型是用這些資料自己的 $y$ 訓練出來的，它在訓練資料上的預測比在新資料上準，殘差就系統性地偏小，下一棵樹學到的修正量因此偏掉。CatBoost 論文把這叫做一種目標洩漏，並在一個簡單設定（平方損失、兩個二元特徵、兩輪 stump）下算出偏誤大小與 $1/(n-1)$ 成正比。
+Ordered boosting 用和有序目標統計同一個排列：第 $k$ 筆的殘差仍是 $y_k$ 減去預測，但這個預測由「只看過排在它前面的資料」的模型產生，所以算預測的模型沒有用過它自己的 $y$。直接照做需要 $n$ 個模型，實作只保留長度為 $2^j$ 的前綴模型，把成本降到與一般提升同一個量級。論文的實驗顯示它在小資料上特別有用，速度約比一般模式（Plain）慢 1.7 倍。
+現行預設要另外查。官方參數頁寫 CPU 上 boosting_type 預設是 Plain；只有 GPU、資料不超過 5 萬筆且不是多類別時才預設 Ordered。有序目標統計（類別編碼）不受這個參數影響，Plain 模式也照樣使用。抽樣方面，論文用 Bayesian bootstrap（每筆權重 $a^{t}$，$a=-\log\psi$、$\psi$ 均勻分佈），現行版本在 CPU、非多類別、以單筆資料為抽樣單位時預設 MVS、subsample=0.8；資料少於 100 筆、多類別或排序任務另有預設，以官方參數頁為準。
+MVS（minimal variance sampling）是重要性抽樣：梯度最大的資料一定入選，其餘資料以與 $|g_i|$ 成正比的機率 $p_i$ 入選，入選後乘上 $1/p_i$ 還原份量。GOSS 對「其餘資料」一律用同一個機率，MVS 讓機率隨梯度連續變化，官方文件說它估計梯度和的變異比 GOSS 小；但它主要是為了加速，用來正則化未必最好。
+### 調參
+講義把調參分成三組：求快（每輪抽部分列與欄、少用一些箱數）、求準（較小的學習率配較多棵樹、較多箱數、試不同的類別編碼）、防過度擬合（葉子最少要有多少資料、限制深度、調整目標函數裡的正則化強度、用 DART）。同一個概念在三個套件裡名稱與預設都不同：
+目的XGBoostLightGBMCatBoost
+求快：每輪只用部分列與欄subsamplecolsample_bytreebagging_fraction（要搭配 bagging_freq）feature_fractionsubsamplersm
+樹的棵數n_estimators（預設 100）num_iterations（預設 100）iterations（預設 1000）
+學習率learning_rate（預設 0.3）learning_rate（預設 0.1）learning_rate（多數損失下自動決定）
+樹的大小max_depth（預設 6）num_leaves（預設 31）max_depthdepth（預設 6）
+葉子的最小份量min_child_weight（Hessian 和，預設 1）min_data_in_leaf（預設 20）min_sum_hessian_in_leaf（別名 min_child_weight，預設 0.001）min_data_in_leaf（只在非對稱樹有效）
+葉值的 L2 懲罰lambda（預設 1）lambda_l2（預設 0）l2_leaf_reg（預設 3）
+切點的箱數max_bin（預設 256）max_bin（預設 255，可再調高）border_count
+類別特徵enable_categoricalmax_cat_to_onehotcategorical_featuremax_cat_to_onehot（預設 4）cat_featuresone_hot_max_size
+表裡有兩個容易混淆的地方。LightGBM 也有一個叫 min_child_weight 的參數，它是 min_sum_hessian_in_leaf 的別名，定義和 XGBoost 相同（葉內 Hessian 和的下限），預設卻只有 0.001，實際上主要靠 min_data_in_leaf=20 控制葉的大小。講義說箱數「預設 255、不能更高」，那是 scikit-learn 的 HistGradientBoosting 的限制；LightGBM 的 max_bin 可以調高，XGBoost 預設 256。
+### DART：把 dropout 搬到提升樹
+梯度提升用很多棵樹、很小的學習率時，最早的幾棵樹貢獻最大，後面加入的樹只在修補很小的殘差，模型對前面幾棵樹的依賴很重。DART（dropouts meet multiple additive regression trees）借用神經網路的 dropout：每一輪隨機拿掉 $k$ 棵舊樹，新樹去擬合「其餘樹」留下的殘差。
+新樹與被拿掉的樹都會擬合到差不多的東西，直接加回去會修正過頭，所以要重新縮放。XGBoost 的預設 normalize_type='tree'：新樹的權重是 $1/(k+\eta)$，被拿掉的舊樹乘上 $k/(k+\eta)$。以 $k=1$、$\eta=0.1$ 為例，兩者都乘上約 0.909。
+講義把它列為防止過度擬合的選項。代價是訓練較慢（每輪都要重算被拿掉之後的預測），而且隨機拿樹會讓 early stopping 不穩定。XGBoost 現在用 rate_drop、skip_drop 等參數控制，舊的 booster='dart' 名稱仍保留相容。
+### Lab：系外行星資料上的速度比較
+Lab 用克卜勒系外行星資料（訓練集 3,815 筆、3,197 個特徵）比較四個實作的速度，設定都是 100 棵、最大深度 2。數字取自 lab 的輸出（Colab 上單次執行）：
+模型（都是 100 棵、最大深度 2）測試準確率執行時間（秒）
+scikit-learn GradientBoostingClassifier0.9874624.8
+XGBoost0.991424.3
+LightGBM0.991413.1
+CatBoost0.991415.1
+三個 GBDT 套件比傳統實作快約 26 到 48 倍。scikit-learn 的文件說明傳統的 GradientBoostingClassifier 在每個節點都要對每個特徵排序，三個套件則改用直方圖並平行處理（見切點搜尋一節）。LightGBM 的訊息裡有一行 Total Bins 815235，$3197\times255=815{,}235$，正好是每個特徵 255 箱。
+準確率那一欄不能拿來比模型：同一段訊息顯示訓練集只有 26 筆正類、3,789 筆負類，正類不到 0.7%，全部猜負類的準確率就接近 0.99。這份資料只適合看速度。
+LightGBM 的速度測試
+  start = time.time()
+  # Instantiate the XGBRegressor, xg_reg
+  lg_reg = lgb.LGBMClassifier(n_estimators=100, max_depth=2, random_state=42)
+  # Fit xg_reg to training set
+  lg_reg.fit(X_train, y_train)
+  # Predict labels of test set, y_pred
+  y_pred = lg_reg.predict(X_test)
+  score = accuracy_score(y_pred, y_test)
+  print('Score: ' + str(score))
+  end = time.time()
+  elapsed = end - start
+  print('Run Time: ' + str(elapsed) + ' seconds')
+輸出很長：每一輪都印出「沒有正增益的分裂」的警告。最後兩行是 Score: 0.9913522012578616 與 Run Time: 13.139190673828125 seconds。
+  來源：Ch08-baggboost-lab-zh.ipynb
+CatBoost 的速度測試
+  start = time.time()
+  # Instantiate the XGBRegressor, xg_reg
+  ca_reg = CatBoostClassifier(n_estimators=100, max_depth=2, random_state=42, logging_level = 'Silent')
+  # Fit xg_reg to training set
+  ca_reg.fit(X_train, y_train)
+  # Predict labels of test set, y_pred
+  y_pred = ca_reg.predict(X_test)
+  score = accuracy_score(y_pred, y_test)
+  print('Score: ' + str(score))
+  end = time.time()
+  elapsed = end - start
+  print('Run Time: ' + str(elapsed) + ' seconds')
+預期輸出
+Score: 0.9913522012578616
+Run Time: 15.102735042572021 seconds
+  來源：Ch08-baggboost-lab-zh.ipynb
+### 怎麼選套件，以及樹模型在表格資料上的位置
+講義的結論：random forest 與 GBDT 是大多數表格資料任務最先該試的模型，幾乎不需要前處理，很快就能做出第一版。三個套件的選擇：XGBoost 社群最大、上線支援最完整；LightGBM 在速度與準確度上常有優勢；資料量小或類別特徵很重要時考慮 CatBoost。這是經驗建議，實際仍要用同一套交叉驗證比較。
+講義連結的 Grinsztajn、Oyallon、Varoquaux（2022）用 45 個表格資料集比較樹模型與深度學習，結論是中型資料（約一萬筆）上，即使不算速度優勢，樹模型仍然最好。他們找出三個原因：
+神經網路偏好平滑的函數，而表格資料的目標函數常常不規則；樹本來就是分段常數，不受這個偏好限制。
+沒有資訊的特徵對多層感知器傷害較大，對樹的影響小得多。
+表格資料的欄位各有意義，不該旋轉；多層感知器的學習程序對旋轉不變，等於忽略了這個結構。把資料隨機旋轉之後，排名就反過來了。
+讀這篇要注意範圍：樹模型只測了 random forest、scikit-learn 的梯度提升與 XGBoost，沒有 LightGBM 與 CatBoost；機制分析只做數值特徵與分類；附錄也指出資料越大差距越小。
+### 附錄：樹的訓練演算法簡史（講義）
+講義附錄整理了幾個常見的樹演算法，迴歸樹的生長一節的收合也提過它們與類別分割的關係：
+演算法分裂特色
+ID3（Quinlan 1986）多叉，只能用類別特徵以資訊增益貪婪地挑特徵；長到最大再剪枝
+C4.5多叉把連續變數動態切成區間；把樹轉成 if-then 規則，再以拿掉規則前提的方式剪枝
+C5.0多叉Quinlan 的商業版本：較省記憶體、規則集較小
+CART二元支援迴歸（數值目標），不產生規則集；scikit-learn 的決策樹是它的最佳化版本
+講義另外提醒兩件和 scikit-learn 有關的事：它的決策樹不直接接受字串類別（要先編碼），以及單棵 DecisionTreeClassifier 預設 max_features 等於全部特徵。想看 ID3、C4.5、CART、CHAID 怎麼把樹寫成規則，可以玩講義最後連結的 chefboost：它直接接受類別欄，並把樹輸出成 Python 的 if 敘述。
+QUIZ · LightGBM 與 CatBoost
+同樣只准一棵樹有 31 片葉，LightGBM 的 leaf-wise 生長和 XGBoost 預設的逐層生長，差別在哪裡？
+(A) leaf-wise 每片葉子用的分裂準則不同，所以能找到逐層生長找不到的切點
+(B) 每一刀都在所有還能切的葉子裡挑增益最大的，預算會集中在最有價值的分支，樹可能很不平衡
+(C) leaf-wise 讓同一層的所有節點共用同一個切點，所以預測特別快
+本主題的講義來源與延伸閱讀：LightGBM 功能說明、LightGBM 原論文（GOSS 與 EFB）、LightGBM 參數、leaf-wise 與 level-wise、scikit-learn 決策樹的 max_leaf_nodes、CatBoost 原論文、CatBoost MVS、CatBoost 參數預設、XGBoost 參數、DART 官方說明、三個套件怎麼選、何時選 CatBoost、三個 boosting 套件比較、表格資料上的樹與深度學習、ID3、C4.5、C5.0 與 CART、ID3 演算法、chefboost。
+
+
+################ SECTION stacking (6875 chars)
+
+PART 15 · Stacking 與 BART
+### 訓練一個模型來合併預測；附錄：貝氏版的加法樹 教科書 · 第 8.2.4 節講義 08進階參考 · 第 8.8 節 · 進階ESL 進階
+投票用一個固定的規則合併成員：多數決，或平均機率，權重由人指定。Stacking（堆疊法）問一個很自然的問題：為什麼不訓練一個模型來做這件合併？這個負責合併的模型叫合併器（blender，也叫 meta-learner），常用邏輯斯迴歸這種簡單模型（講義）。
+關鍵在合併器的訓練資料怎麼來。它的特徵是各成員的預測，目標是原本的 $y$。如果直接拿成員在訓練資料上的預測，那些預測好得不真實：一棵不剪枝的深樹幾乎背下了訓練標籤，合併器會以為它近乎完美而把權重都給它，到了新資料卻沒有這個優勢。所以每個成員的預測都要是折外預測（out-of-fold）：每一筆的預測都來自沒看過它的模型。
+›12 筆訓練資料依序分成 K 折。按「→ 單步」逐折產生折外預測。
+折數 KK = 5K = 3做法正確：折外預測錯誤：訓練內預測▶ 開始→ 單步重置
+概念示意
+目前狀態
+步驟—
+基模型用來訓練的資料—
+ẑ 已填的格數—
+其中「看過自己 y」的格數—
+怎麼看這張圖
+      左邊是 12 筆訓練資料，色條標出它屬於第幾折；右邊 ẑ₁、ẑ₂ 是兩個基模型的預測，也就是合併器的訓練特徵。每一格寫著「哪一折被拿出來時」填的：寫「不含折 3」表示產生這格的模型沒有用到第 3 折。切到「錯誤：訓練內預測」看看每一格都標成「看過」時，合併器學到的是什麼。
+完整流程四步：
+把訓練資料分成 K 折。對每個基模型、每一折：只用其餘 K−1 折訓練，預測被拿出來的那一折。
+依原本的列順序把折外預測排好，得到 $n\times M$ 的矩陣 $\hat Z$（$M$ 是基模型個數）。迴歸用預測值，分類通常用類別機率。
+用 $\hat Z$ 當特徵、原本的 $y$ 當目標，訓練合併器。
+每個基模型改用全部訓練資料重新擬合一次。新資料先經過這些基模型得到 $\hat z$，再交給合併器輸出預測。
+ESL §8.8 從另一個角度說明為什麼要這樣做：在母體層級，用最佳的線性組合合併幾個模型不會比其中任何一個差；可是在訓練資料上直接迴歸，最複雜的那個模型訓練誤差最小，權重就會全給它。改用留一（或 K 折）預測，複雜模型得不到不公平的高權重。
+### Lab：Carseats 上的 stacking
+Stacking 合併器
+  sclf = StackingClassifier(estimators=estimators, final_estimator=LogisticRegression())
+  print('5-fold cross validation:\n')
+  for clf, label in zip([clf1, clf2, clf3, sclf],
+                        ['KNN',
+                         'DecisionTreeClassifier',
+                         'Naive Bayes',
+                         'StackingClassifier']):
+      scores = cross_val_score(clf, X_train, y_train, cv=kf5, scoring='accuracy')
+      print("Accuracy: %0.2f (+/- %0.2f) [%s]"
+            % (scores.mean(), scores.std(), label))
+預期輸出
+5-fold cross validation:
+Accuracy: 0.78 (+/- 0.06) [KNN]
+Accuracy: 0.73 (+/- 0.07) [DecisionTreeClassifier]
+Accuracy: 0.79 (+/- 0.07) [Naive Bayes]
+Accuracy: 0.81 (+/- 0.05) [StackingClassifier]
+  來源：Ch08-baggboost-lab-zh.ipynb
+Lab 在同一份 Carseats 資料上（程式與輸出在上面的收合），stacking 的 0.81 比三個成員都好，但沒有比投票的 0.82 好（lab 投票那一段把投票結果的標籤印成 StackingClassifier，其實那一行是 VotingClassifier）。兩者差距在一個標準差之內。stacking 要學權重，需要更多資料，不保證勝過簡單平均。
+### scikit-learn 的 StackingClassifier 做了什麼，以及怎麼評估整個流程
+Lab 用的是 StackingClassifier，合併器設為 LogisticRegression()。背後的機制（scikit-learn 文件）：
+cv 預設 5 折（分類時用 StratifiedKFold，不打亂順序）。內部用 cross_val_predict 產生折外預測來訓練合併器；基模型另外用全部訓練資料擬合，給預測時用。
+final_estimator 預設就是邏輯斯迴歸。stack_method='auto' 依序嘗試 predict_proba、decision_function、predict；二元分類用機率時只留一欄，因為兩欄加起來恆為 1、完全共線。
+passthrough=True 時合併器除了 $\hat Z$ 也看原始特徵。
+cv='prefit' 表示基模型已經擬合好，直接拿它們在訓練資料上的預測訓練合併器。如果這些基模型就是用同一份資料訓練的，文件的警告是過度擬合的風險非常高：這正是元件裡的「錯誤做法」。
+兩層 CV 的用途不同。Stacking 內部的 5 折只是用來造 $\hat Z$，不是在評估整個流程。Lab 外面再包一層 cross_val_score(sclf, X_train, y_train, cv=kf5)，每一折都把「造 $\hat Z$＋訓練合併器＋重擬合基模型」整套重做，才是在估計整個 stacking 的表現。這和巢狀 CV「內層選超參數、外層估誤差」的結構相同，只是內層的工作不同。基模型裡的標準化、編碼與變數篩選，也都要放在對應的訓練折內做。
+合併器的權重。ESL §8.8 的 stacking 寫成用留一預測 $\hat f_m^{-i}(x_i)$ 做迴歸：
+$$\hat w^{\rm st}=\arg\min_w\sum_{i=1}^N\Big[y_i-\sum_{m=1}^M w_m\hat f_m^{-i}(x_i)\Big]^2,$$
+並建議限制權重非負、總和為 1。這樣的合併器就像一個學出權重的軟投票，比較不會被某個成員的極端預測帶走；邏輯斯迴歸當合併器時權重可以是負的，成員高度相關時要留意。把權重限制成「一個 1、其餘 0」，stacking 就退化成用留一 CV 選一個最好的模型。
+「別用自己的 $y$」不只出現在 stacking。本章有好幾個技巧都在處理同一個問題：
+技巧用到 y 的步驟怎麼避開自己的 y
+Bagging 的 OOB 誤差評估第 $i$ 筆的預測只用沒抽到第 $i$ 筆的樹
+K 折目標編碼類別的 $y$ 平均第 $i$ 筆的編碼只用其他折
+有序目標統計（CatBoost）類別的 $y$ 平均只用排在前面的資料
+Ordered boosting（CatBoost）算第 $i$ 筆殘差時用的預測預測只來自沒看過第 $i$ 筆的模型
+Stacking合併器的訓練特徵 $\hat Z$第 $i$ 列只用沒看過它的基模型
+講義把 BART 放在附錄，這裡也收在收合裡：它是另一種把很多棵樹加起來的方法，用貝氏先驗和 MCMC 取代 boosting 的收縮與 bagging 的重抽。
+### 附錄：BART，貝氏版的加法樹（講義）
+BART（Bayesian additive regression trees）同時像 bagging 與 boosting：每棵樹都帶著隨機性建出來，這點像 bagging 與 random forest；每棵樹又都在抓目前還沒被解釋掉的訊號，這點像 boosting。模型是 $K$ 棵樹的和加上常態誤差：
+$$Y=\sum_{k=1}^{K}f_k(X)+\varepsilon,\qquad \varepsilon\sim N(0,\sigma^2).$$
+演算法（ISLP 演算法 8.3）。記 $\hat f_k^b(x)$ 為第 $b$ 輪第 $k$ 棵樹在 $x$ 的預測。
+一開始讓 $K$ 棵樹都只有一片葉，葉值是 $\frac{1}{nK}\sum_i y_i$，加起來剛好是 $y$ 的平均。
+第 $b=2,\dots,B$ 輪，依序更新第 $k=1,\dots,K$ 棵樹：先算這棵樹要負責的偏殘差
+$$r_i=y_i-\sum_{k'\lt k}\hat f_{k'}^{\,b}(x_i)-\sum_{k'\gt k}\hat f_{k'}^{\,b-1}(x_i),$$
+再從上一輪的 $\hat f_k^{\,b-1}$ 出發做一個小擾動：長一刀、剪一刀、改切法，或改葉值。擾動是否接受由 MCMC 決定，偏向能改善偏殘差擬合的那些。
+每輪結束時 $\hat f^b(x)=\sum_{k=1}^K\hat f_k^b(x)$。丟掉前 $L$ 輪暖機之後取平均：
+$$\hat f(x)=\frac{1}{B-L}\sum_{b=L+1}^{B}\hat f^b(x).$$
+第 2 步不重新擬合一棵新樹，只從上一輪的樹做小擾動，這是 MCMC 在樹的空間裡移動的方式。講義說這樣每輪不會擬合得太用力；不過正式地說，BART 的正則化來自下面的先驗（偏好小樹、葉值往 0 收縮），局部擾動主要影響的是抽樣怎麼探索不同的樹。每一輪更新完 $K$ 棵樹之後，還要再從條件後驗抽一次誤差變異 $\sigma^2$。
+先驗（Chipman、George、McCulloch 2010）。正則化來自三個先驗：
+樹的形狀：深度 $d$ 的節點繼續分裂的機率是 $\alpha(1+d)^{-\beta}$，預設 $\alpha=0.95$、$\beta=2$，越深越不容易再分。在這個設定下，一棵樹的葉子數先驗如下表，大部分機率在 2–3 片葉，和 boosting 偏好小樹是同一個方向。
+葉子數1234≥ 5
+先驗機率0.050.550.280.090.03
+葉值：先把 $y$ 平移縮放到 $[-0.5,0.5]$，每個葉值 $\mu\sim N(0,\sigma_\mu^2)$，$\sigma_\mu=0.5/(k\sqrt K)$，預設 $k=2$。$K=200$ 時 $\sigma_\mu\approx0.018$：每棵樹只能貢獻很小的一份，論文說這對應梯度提升的收縮參數。
+誤差變異：$\sigma^2\sim\nu\lambda/\chi^2_\nu$，預設 $\nu=3$，$\lambda$ 取到讓 $P(\sigma\lt\hat\sigma)=0.90$，$\hat\sigma$ 是粗略的高估值（例如 $y$ 的標準差）。
+MCMC 的四種提議。更新一棵樹的結構時用 Metropolis–Hastings，四種移動的提議機率是：長一刀 0.25、剪一刀 0.25、改某個內部節點的切法 0.40、交換父子節點的切法 0.10。葉值是共軛常態，可以先積分掉再抽，所以不需要可逆跳躍（reversible jump）。這套「每次只更新一棵樹、其他樹固定」的作法叫貝氏 backfitting，和第 7 章 GAM的 backfitting 是同一個想法。
+三個數字。樹的棵數 $K$、總輪數 $B$、暖機輪數 $L$。講義建議 $K=200$、$B=1000$、$L=100$（講義另一處的例子用 $L=200$）。$B$ 與 $K$ 意義不同：$K$ 是模型裡有幾棵樹，$B$ 是抽了幾個後驗樣本；加大 $B$ 讓平均更準，不會讓模型變複雜。BART 出名的是幾乎不用調參就有不錯的表現（講義的說法是開箱即用的表現好）。ISLP 圖 8.13 在 Heart 資料上比較：BART 過了暖機之後訓練與測試誤差都很平穩，boosting 跑到幾百輪後開始過度擬合。
+Lab。為了跑得快，lab 只用 5 輪暖機、15 個保留樣本，遠少於講義的建議：
+BART 模型
+  bart_boston = BART(random_state=0, burnin=5, ndraw=15)
+  bart_boston.fit(X_train, y_train)
+預期輸出
+BART(burnin=5, ndraw=15, random_state=0)
+  來源：Ch08-baggboost-lab-zh.ipynb
+BART 的測試 MSE
+  yhat_test = bart_boston.predict(X_test.astype(np.float32))
+  np.mean((y_test - yhat_test)**2)
+預期輸出
+np.float64(22.145009458109225)
+  來源：Ch08-baggboost-lab-zh.ipynb
+不確定性。因為每一輪都是一組後驗樣本，BART 不只給一個預測：保留的 $\hat f^b(x)$ 的分位數構成平均反應 $f(x)$ 的可信區間；若要預測一筆新觀測，還要把誤差 $\varepsilon$ 加進去（每一輪用當輪的 $\sigma$ 抽一個），得到更寬的預測區間。兩者的差別和第 3 章信賴區間與預測區間的差別相同。這些區間只有在 MCMC 已經收斂時才可信；暖機太短或樣本太少時，要多跑幾條鏈或看抽樣軌跡。
+測試 MSE 22.15，lab 說與 random forest（20.04）相近。BART 也能看每個變數在所有樹裡被用來分裂的平均次數，作用類似變數重要度：
+每個變數在樹裡出現的平均次數
+  var_inclusion = pd.Series(bart_boston.variable_inclusion_.mean(0),
+                                 index=D.columns)
+  var_inclusion
+預期輸出
+crim       26.933333
+zn         27.866667
+indus      26.466667
+chas       22.466667
+nox        26.600000
+rm         29.800000
+age        22.733333
+dis        26.466667
+rad        23.666667
+tax        24.133333
+ptratio    24.266667
+lstat      31.000000
+dtype: float64
+  來源：Ch08-baggboost-lab-zh.ipynb
+出現最多的是 lstat（31.0）與 rm（29.8），和 random forest 重要度排前兩名的變數相同；但各變數的次數都在 22 到 31 之間，差距比重要度小得多。這是「被用了幾次」，不是「每次貢獻多少」。
+本主題的講義來源與延伸閱讀：BART 投影片（Lopes）、BART 原論文（Chipman、George、McCulloch）、ISLP 的 BART 實作。
+QUIZ · Stacking
+訓練 stacking 的合併器時，成員模型給合併器的預測一定要是折外預測。為什麼？
+(A) 成員在自己訓練資料上的預測好得不真實，合併器會學成「相信最會過度擬合的那個成員」
+(B) 因為 scikit-learn 的 StackingClassifier 規定一定要傳入 cv 參數
+(C) 因為合併器需要比成員更多的訓練資料，交叉驗證可以把資料量放大
+本主題的講義來源與延伸閱讀：scikit-learn 的 stacking、StackingClassifier 參數、mlxtend 的 StackingCVClassifier。
+
