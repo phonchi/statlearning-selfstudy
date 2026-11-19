@@ -718,6 +718,9 @@ PAGES = [
         extra_pills=[
             ('▶ 課程錄影：迴歸樹', 'https://youtu.be/TpvReTcJdvU'),
             ('▶ 課程錄影：分類樹', 'https://youtu.be/MEAB-4XXus0'),
+            ('▶ 課程錄影：投票分類器與 Bagging', 'https://youtu.be/fbTYRgq1Y38'),
+            ('▶ 課程錄影：隨機森林與 Boosting', 'https://youtu.be/DGbGkiGG84U'),
+            ('▶ 課程錄影：XGBoost、LightGBM 與 CatBoost', 'https://youtu.be/AYVLtr6KYOA'),
         ],
         hero_svg=_svg_tree(), bankquiz=True,
         group="core",
