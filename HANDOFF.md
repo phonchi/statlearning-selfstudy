@@ -29,7 +29,7 @@
 | `unsupervised_learning` | Ch.12 | 255 KB | 3 | 6 | 30 | — |
 | `beyond_linearity` | Ch.7 | 245 KB | 5 | 7 | 28 | — |
 | `tree_based_methods` | Ch.8 | 456 KB | 2 | 10 | 40 | 8 |
-| `support_vector_machines` | Ch.9 | 240 KB | 3 | 6 | 26 | — |
+| `support_vector_machines` | Ch.9 | 330 KB | 2 | 5 | 37 | 6 |
 | `deep_learning` | **Ch.10 · 補充** | 210 KB | 2 | 4 | 27 | — |
 
 合計 2.3 MB · 37 個 Chart.js 圖表 · 55 個手寫 SVG 元件 · 296 張詞彙卡 · 18 題題庫 · 約 125 個 quiz。
@@ -231,7 +231,7 @@ MNIST 錯誤率課本 1.8%，lab 3.8%），因為切分、epoch 數與套件版�
   （「各有優缺點」「因人而異」）**全站零命中**，中國用語掃描的命中也幾乎都是誤判
   （「演算法」含「算法」、「變數組合」含「數組」、「水平邊緣」是方向不是水準）。
   這個站的散文本來就有主張、也沒有罐頭句。以後再跑只要盯破折號密度就好。
-- 題庫（`bankquiz`）目前只有第 3、4、8 章。要加就寫 `data/questions_zh/chN.json`
+- 題庫（`bankquiz`）目前有第 3、4、8、9 章。要加就寫 `data/questions_zh/chN.json`
   並在 `pages.py` 把那一章的 `bankquiz=True`。第 10 章是補充章，沒有題庫。
 - `data/questions_zh/` 的題目是四選一，`.quiz-box` 的是三選一——兩套引擎不同，這是刻意的
   （題庫由 `inject_data.py` 在前端產生，不受 `QUIZ-TRIPLE` 檢查管）。
@@ -936,4 +936,53 @@ importmap 的 integrity 要 Chrome 127 以上才會強制，舊瀏覽器仍拿�
 **核實後的重要更正**（細節見驗證目錄 `consult/synthesis.md`）：XGBoost 的精確搜尋用預先排序的欄區塊、只排序一次；講義 p.56 的 O(n log n)→O(n) 是 scikit-learn 傳統 GBDT 對 HGBT 的對比；Hessian 加權分位草圖只對應 `tree_method='approx'`，預設 `hist` 不用；`min_child_weight` 是子節點 Hessian 和下限；XGBoost 1.5 起原生支援類別（講義與 lab 的「實驗性」已過時）；CatBoost CPU 預設 Plain＋MVS、分裂評分 Cosine；講義 p.56「箱數不能超過 255」是 scikit-learn HGBT 的限制；AdaBoost 講義對稱式取 η=½ 與 ESL 演算法 10.1 等價；OOB 抽球 n=20 的極限是 35.85%；lab 儲存格 238 把投票結果標成 `StackingClassifier`、135 的「6→2」與輸出（3）不一致、heart 網格每次只搜一個參數。
 
 **驗證**：三組核算 17／78／23 項全過；validate 0 失敗（本頁 456 KB 的 SIZE 警告）；全站 browser_check 0 問題；check_* 全過；`check_lab_rendered` 8 個既存失敗與 HEAD 相同；展開截圖 mjx-merror 0、無橫向捲動。
+
+
+## 32. 第 9 章全章稽核與加深，講義 08／09 上線（2026-11-22）
+
+老師 11-22 重出講義 09。使用者要求三件事：把課程網站的 PDF 換成新版；依一段 ChatGPT 學生問答（29 問）強化第 9 章，超出範圍的內容放收合，以講義為黃金標準；改完請 Astra 與 Fable 審閱。紀錄、job ID、來源筆記與審閱處理都在 `tools/verification/ch9-svm-deepen-20261122/README.md`。
+
+**課程網站**
+- `phonchi/nsysu-math524` commit `110d1b8`：08（11-17 版）與 09（11-22 版）講義一起上線。08 的上線是使用者在 grill 時決定的。
+- 只 stage 這兩個 PDF；工作目錄裡的 pptx、Zone.Identifier 等未追蹤檔沒有動。
+- 自學站的講義連結本來就指向 live repo 的 main，不必改。`deck_08`、`deck_09` 的索引無變化。
+
+**範圍規則（使用者定案，之後改第 9 章都照這個）**
+- 講義文字、ISLP 第 9 章、課程中文 Lab：等同講義，可放正文。
+- 講義內嵌連結：範圍內，但只能放收合。
+- 以上都沒有的內容：只能放收合。
+- 這條規則套用到全章既有正文，逐段稽核。講義已有的主題，正文用 2–4 句講直覺，推導放收合。
+- 不加新元件，改加題目與詞彙卡。
+- 講義附錄 p.37–40 依 §31 的先例放收合，p.40 三種核的優缺點表例外，放正文。
+
+**實作**
+- **新層 `tools/enrich/svm_deepen.py`**：掛在 `enrich_svm.py` 最後，在 `lecture_alignment_ch9.augment` 之後，整節覆寫七節。
+  - 內容分在 `svm_a.py`（prologue、maxmargin）、`svm_b.py`（soft、hinge）、`svm_c.py`（kernel、multiclass、vslogit）。
+  - 共用工具在 `svm_common.py`：`grab_viz`、`grab_details`、`grab_quiz`、`grab_qa` 從上游取出既有元件，id 不變；`lab()` 固定用第 9 章。
+  - 組裝層有兩份清單：`STALE` 是不得殘留的舊句；`FIXES` 更正沿用的上游段落，每個字串必須恰好出現一次。
+- **之後要改第 9 章各節，改 `svm_*.py`**。上游各層（`enrich_svm` 本體、`svm_completion`、`reading_flow`、`teaching_scope`、`lecture_alignment_ch9`）的輸出會被覆寫。`SVM_SKIP=1` 可以略過新層。
+- **新增題庫的步驟**：在 `pages.py` 設 `bankquiz=True`，並依 §30 先在 HTML 手插 `<section id="bankquiz">` 空殼（GEN 區段），再跑 `build_page.py`。否則 `check_reading_flow` 會報 `#bankquiz` 錨點找不到。
+- **錨點**：`check_teaching_scope.py` 要求 `w10-primal-dual`、`w10-soft-dual`、`w10-proof-hard-dual`、`w10-proof-soft-dual` 存在。`w10-primal-dual` 現在是 maxmargin 正文「怎麼解：primal 與 dual」的標題。
+- **`pages.py`**：徽章頁碼改為 maxmargin「p.8–9、17」、soft「ISLP §9.1.5、9.2／p.10–16、18」、hinge 加「p.30–31」、kernel「p.19–28、40」。
+- **詞彙卡與題庫**：詞彙卡 29→37 張，新增仿射子空間、純量投影、函數間隔、幾何間隔、Mercer 定理、核嶺迴歸、核 PCA、ε-不敏感損失；題庫新增 6 題。
+
+**稽核發現並修正的既有問題**
+- 上游閱讀層把講義的核心式收進了收合：ISLP 式 9.9–9.11、9.12–9.15、9.25、二次映射例、p.31 的四句比較。這些都已提回正文。
+- multiclass 節有三句在描述早已移除的元件。
+- SVR 收合有 `&y;`／`&w;` 的實體錯誤。
+- 多類別表格有一列「K 很大時考慮 OVA」，沒有出處。
+
+**審閱後的重要更正**（細節見 `consult/brief_recheck.md`）
+- 預算大只保證「可行」。const ≥ 2·min(n₊,n₋) 時，式 (3) 的最佳解退化成 β=0；超過這個門檻時，式 (1) 的 M 沒有上限。
+- 軟邊界固定的是參考邊界 f=±1，不是「最近點函數間隔為 1」。
+- 核嶺迴歸改用不含截距、不置中的寫法。欄置中後 XXᵀ 必奇異。
+- 支持向量的兩種定義（幾何定義與對偶的 α̂>0）只在退化時不同。
+- 「比較對象是 KNN」沒有來源，正文改用 ISLP 的說法。
+- 講義 p.19 的圖是一類在中間、另一類分在兩端。
+- 「K 不大用 OVO」是講義的建議，不是 ISLP 的。
+- 講義附錄 p.38 感知器的更新式方向相反，頁面已註明；尚未回報老師。
+
+**審閱**：Astra 三輪（job `72e22753…`→`89cfb9f3…`→`ac7b3d94…`，最終「可定稿」），Fable 兩輪（第 2 輪「可定稿」）。Astra 第 2 輪認為正文的三個等價式過長；講義 p.15 原文就有這三式，保留未縮，交由使用者決定。
+
+**驗證**：`verify_svm.py` 54 項 PASS；validate 只剩其他章既有的 4 個外部連結失敗；check_* 全過；`check_lab_rendered` 的 8 個既存失敗與 HEAD 相同；第 9 章與全站 browser_check 0 問題；展開全部收合後的截圖 mjx-merror 為 0、沒有橫向捲動。
 

@@ -1725,5 +1725,12 @@ PAGEJS = clean_pagejs('support_vector_machines', PAGEJS)
 from lecture_alignment_ch9 import augment
 augment(BODIES)
 
+# 2026-11-22 全章稽核與加深（HANDOFF §32）：最後一層，整節覆寫七節。
+# SVM_SKIP=1 時略過，給快照工具取上游輸出用。
+import os  # noqa: E402
+if not os.environ.get("SVM_SKIP"):
+    from svm_deepen import augment as deepen_svm
+    PAGEJS = deepen_svm(BODIES, PAGEJS)
+
 if __name__ == "__main__":
     apply("support_vector_machines", BODIES, PAGEJS, frames())
